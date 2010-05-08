@@ -171,7 +171,7 @@ if ($conf->agenda->enabled) show_array_actions_to_do(10);
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-    $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.total as total_ttc, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+    $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.total as total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     $sql.= ", ".MAIN_DB_PREFIX."propal as p";
     $sql.= ", ".MAIN_DB_PREFIX."c_propalst as c";
@@ -207,7 +207,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
                 print "<td><a href=\"fiche.php?id=".$obj->socid."\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
                 print "<td align=\"right\">";
-                print dol_print_date($obj->dp,'day')."</td>\n";
+                print dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
                 print "<td align=\"right\">".price($obj->total_ttc)."</td></tr>\n";
                 $i++;
                 $total += $obj->price;

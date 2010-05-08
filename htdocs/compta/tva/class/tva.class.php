@@ -40,10 +40,10 @@ class Tva extends CommonObject
 	var $errors=array();				//!< To return several error codes (or messages)
 	//var $element='tva';			//!< Id that identify managed objects
 	//var $table_element='tva';	//!< Name of table without prefix where object is stored
-    
+
     var $id;
     var $ref;
-    
+
 	var $tms;
 	var $datep;
 	var $datev;
@@ -54,20 +54,20 @@ class Tva extends CommonObject
 	var $fk_user_creat;
 	var $fk_user_modif;
 
-    
 
-	
+
+
     /**
      *      \brief      Constructor
      *      \param      DB      Database handler
      */
-    function Tva($DB) 
+    function Tva($DB)
     {
         $this->db = $DB;
         return 1;
     }
 
-	
+
     /**
      *      \brief      Create in database
      *      \param      user        User that create
@@ -76,9 +76,9 @@ class Tva extends CommonObject
     function create($user)
     {
     	global $conf, $langs;
-    	
+
 		// Clean parameters
-        
+
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
@@ -86,14 +86,14 @@ class Tva extends CommonObject
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
 
-        
+
 
 		// Check parameters
 		// Put here code to add control on parameters values
-		
+
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."tva(";
-		
+
 		$sql.= "tms,";
 		$sql.= "datep,";
 		$sql.= "datev,";
@@ -103,9 +103,9 @@ class Tva extends CommonObject
 		$sql.= "fk_bank,";
 		$sql.= "fk_user_creat,";
 		$sql.= "fk_user_modif";
-		
+
         $sql.= ") VALUES (";
-        
+
 		$sql.= " ".$this->db->idate($this->tms).",";
 		$sql.= " ".$this->db->idate($this->datep).",";
 		$sql.= " ".$this->db->idate($this->datev).",";
@@ -115,7 +115,7 @@ class Tva extends CommonObject
 		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->fk_bank."'").",";
 		$sql.= " '".$this->fk_user_creat."',";
 		$sql.= " '".$this->fk_user_modif."'";
-        
+
 		$sql.= ")";
 
 	   	dol_syslog("Tva::create sql=".$sql, LOG_DEBUG);
@@ -123,7 +123,7 @@ class Tva extends CommonObject
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");
-    
+
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             $interface=new Interfaces($this->db);
@@ -150,9 +150,9 @@ class Tva extends CommonObject
     function update($user=0, $notrigger=0)
     {
     	global $conf, $langs;
-    	
+
 		// Clean parameters
-        
+
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
@@ -160,14 +160,14 @@ class Tva extends CommonObject
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
 
-        
+
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
-        
+
 		$sql.= " tms=".$this->db->idate($this->tms).",";
 		$sql.= " datep=".$this->db->idate($this->datep).",";
 		$sql.= " datev=".$this->db->idate($this->datev).",";
@@ -178,7 +178,7 @@ class Tva extends CommonObject
 		$sql.= " fk_user_creat='".$this->fk_user_creat."',";
 		$sql.= " fk_user_modif='".$this->fk_user_modif."'";
 
-        
+
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog("Tva::update sql=".$sql, LOG_DEBUG);
@@ -202,8 +202,8 @@ class Tva extends CommonObject
 
         return 1;
     }
-  
-  
+
+
     /*
      *    \brief      Load object in memory from database
      *    \param      id          id object
@@ -215,10 +215,10 @@ class Tva extends CommonObject
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
-		
-		$sql.= " ".$this->db->pdate('t.tms')." as tms,";
-		$sql.= " ".$this->db->pdate('t.datep')." as datep,";
-		$sql.= " ".$this->db->pdate('t.datev')." as datev,";
+
+		$sql.= " t.tms,";
+		$sql.= " t.datep,";
+		$sql.= " t.datev,";
 		$sql.= " t.amount,";
 		$sql.= " t.label,";
 		$sql.= " t.note,";
@@ -228,11 +228,11 @@ class Tva extends CommonObject
 		$sql.= " b.fk_account,";
 		$sql.= " b.fk_type,";
 		$sql.= " b.rappro";
-		
+
         $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
         $sql.= " WHERE t.rowid = ".$id;
-    
+
     	dol_syslog("Tva::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -240,24 +240,24 @@ class Tva extends CommonObject
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-    
+
                 $this->id    = $obj->rowid;
                 $this->ref   = $obj->rowid;
-				$this->tms = $obj->tms;
-				$this->datep = $obj->datep;
-				$this->datev = $obj->datev;
+				$this->tms   = $this->db->jdate($obj->tms);
+				$this->datep = $this->db->jdate($obj->datep);
+				$this->datev = $this->db->jdate($obj->datev);
 				$this->amount = $obj->amount;
 				$this->label = $obj->label;
-				$this->note = $obj->note;
+				$this->note  = $obj->note;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->fk_account = $obj->fk_account;
 				$this->fk_type = $obj->fk_type;
-				$this->rappro = $obj->rappro;
+				$this->rappro  = $obj->rappro;
             }
             $this->db->free($resql);
-            
+
             return 1;
         }
         else
@@ -267,8 +267,8 @@ class Tva extends CommonObject
             return -1;
         }
     }
-    
-    
+
+
  	/*
 	*   \brief      Delete object in database
     *	\param      user        User that delete
@@ -277,10 +277,10 @@ class Tva extends CommonObject
 	function delete($user)
 	{
 		global $conf, $langs;
-	
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
 		$sql.= " WHERE rowid=".$this->id;
-	
+
 	   	dol_syslog("Tva::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
@@ -289,7 +289,7 @@ class Tva extends CommonObject
             dol_syslog("Tva::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
-	
+
         // Appel des triggers
         include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
         $interface=new Interfaces($this->db);
@@ -300,7 +300,7 @@ class Tva extends CommonObject
 		return 1;
 	}
 
-  
+
 	/**
 	 *		\brief		Initialise object with example values
 	 *		\remarks	id must be 0 if object instance is a specimen.
@@ -308,7 +308,7 @@ class Tva extends CommonObject
 	function initAsSpecimen()
 	{
 		$this->id=0;
-		
+
 		$this->tms='';
 		$this->datep='';
 		$this->datev='';
@@ -319,10 +319,10 @@ class Tva extends CommonObject
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
 
-		
+
 	}
 
-	
+
     /*
      *      \brief      Hum la fonction s'appelle 'Solde' elle doit a mon avis calcluer le solde de TVA, non ?
      *
@@ -470,32 +470,32 @@ class Tva extends CommonObject
     function addPayment($user)
     {
         global $conf,$langs;
-        
+
         $this->db->begin();
-        
+
         // Check parameters
         $this->amount=price2num($this->amount);
 		if (! $this->label)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
-			return -3;   
+			return -3;
 		}
         if ($this->amount <= 0)
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
-            return -4;   
+            return -4;
         }
         if ($conf->banque->enabled && (empty($this->accountid) || $this->accountid <= 0))
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Account"));
-            return -5;   
+            return -5;
         }
         if ($conf->banque->enabled && (empty($this->paymenttype) || $this->paymenttype <= 0))
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
-            return -5;   
+            return -5;
         }
-                
+
         // Insertion dans table des paiement tva
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep, datev, amount";
         if ($this->note)  $sql.=", note";
@@ -525,9 +525,9 @@ class Tva extends CommonObject
                     $acc = new Account($this->db);
 					$result=$acc->fetch($this->accountid);
 					if ($result <= 0) dol_print_error($db);
-									
+
                     $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
-            	  
+
                     // Mise a jour fk_bank dans llx_tva. On connait ainsi la ligne de tva qui a g�n�r� l'�criture bancaire
                     if ($bank_line_id > 0)
 					{
@@ -538,8 +538,8 @@ class Tva extends CommonObject
 						$this->error=$acc->error;
 						$ok=0;
 					}
-            	  
-                    // Mise a jour liens 
+
+                    // Mise a jour liens
                     $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/compta/tva/fiche.php?id=', "(VATPayment)", "payment_vat");
                     if ($result < 0)
                     {
@@ -547,8 +547,8 @@ class Tva extends CommonObject
                     	$ok=0;
                     }
 	            }
-                
-				if ($ok) 
+
+				if ($ok)
 				{
 					$this->db->commit();
 					return $this->id;
@@ -573,7 +573,7 @@ class Tva extends CommonObject
             return -1;
         }
     }
-	
+
     /**
      *      \brief      Mise a jour du lien entre le paiement tva et la ligne g�n�r�e dans llx_bank
      *      \param      id_bank     Id compte bancaire
@@ -605,20 +605,20 @@ class Tva extends CommonObject
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
-		
+
 		$result='';
-		
+
 		$lien = '<a href="'.DOL_URL_ROOT.'/compta/tva/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
-		
+
 		$picto='payment';
 		$label=$langs->trans("ShowVatPayment").': '.$this->ref;
-		
+
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;
-	}		
+	}
 
 }
 ?>

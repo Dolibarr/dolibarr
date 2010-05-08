@@ -191,7 +191,7 @@ class FactureRec extends Facture
 		dol_syslog("Facture::Fetch rowid=".$rowid.", societe_id=".$socid, LOG_DEBUG);
 
 		$sql = 'SELECT f.titre,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
-		$sql.= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
+		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note, f.note_public, f.fk_user_author';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -231,7 +231,7 @@ class FactureRec extends Facture
 				$this->close_note             = $obj->close_note;
 				$this->socid                  = $obj->fk_soc;
 				$this->statut                 = $obj->fk_statut;
-				$this->date_lim_reglement     = $obj->dlr;
+				$this->date_lim_reglement     = $this->db->jdate($obj->dlr);
 				$this->mode_reglement_id      = $obj->fk_mode_reglement;
 				$this->mode_reglement_code    = $obj->mode_reglement_code;
 				$this->mode_reglement         = $obj->mode_reglement_libelle;

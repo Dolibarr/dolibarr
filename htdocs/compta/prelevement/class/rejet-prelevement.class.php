@@ -294,8 +294,7 @@ class RejetPrelevement
   function fetch($rowid)
   {
 
-    $sql = "SELECT ".$this->db->pdate("pr.date_rejet")." as dr";
-    $sql.= ", motif";
+    $sql = "SELECT pr.date_rejet as dr, motif";
     $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_rejet as pr";
     $sql.= " WHERE pr.fk_prelevement_lignes =".$rowid;
 
@@ -307,7 +306,7 @@ class RejetPrelevement
 	    $obj = $this->db->fetch_object();
 
 	    $this->id             = $rowid;
-	    $this->date_rejet     = $obj->dr;
+	    $this->date_rejet     = $this->db->jdate($obj->dr);
 	    $this->motif          = $this->motifs[$obj->motif];
 
 	    $this->db->free();

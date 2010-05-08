@@ -68,7 +68,7 @@ class RemiseCheque extends CommonObject
 		global $conf;
 
 		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.number, bc.statut, bc.nbcheque";
-		$sql.= ", ".$this->db->pdate("bc.date_bordereau"). " as date_bordereau";
+		$sql.= ", bc.date_bordereau as date_bordereau";
 		$sql.= ", ba.label as account_label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON bc.fk_bank_account = ba.rowid";
@@ -84,7 +84,7 @@ class RemiseCheque extends CommonObject
 			{
 				$this->id             = $obj->rowid;
 				$this->amount         = $obj->amount;
-				$this->date_bordereau = $obj->date_bordereau;
+				$this->date_bordereau = $this->db->jdate($obj->date_bordereau);
 				$this->account_id     = $obj->fk_bank_account;
 				$this->account_label  = $obj->account_label;
 				$this->author_id      = $obj->fk_user_author;

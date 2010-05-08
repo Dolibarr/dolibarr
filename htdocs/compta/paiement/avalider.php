@@ -55,7 +55,7 @@ if ($page == -1) $page = 0 ;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount, p.statut";
+$sql = "SELECT p.rowid, p.datep as dp, p.amount, p.statut";
 $sql .=", c.libelle as paiement_type, p.num_paiement";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
 if ($socid)
@@ -96,7 +96,7 @@ if ($resql)
         $var=!$var;
         print "<tr $bc[$var]>";
         print '<td>'.'<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
-        print '<td width="80" align="center">'.dol_print_date($objp->dp,'day')."</td>\n";
+        print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
         print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
         print '<td align="right">'.price($objp->amount).'</td>';
         print '<td align="center">';

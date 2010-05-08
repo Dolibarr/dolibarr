@@ -191,7 +191,7 @@ if ($socid > 0)
 
 		print '<table class="noborder" width="100%">';
 		$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
-		$sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite,";
+		$sql.= " p.datep as dp, p.fin_validite as datelimite,";
 		$sql.= " c.label as statut, c.id as statutid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ", ".MAIN_DB_PREFIX."propal as p";
@@ -226,11 +226,11 @@ if ($socid > 0)
 				print "<td><a href=\"../propal.php?propalid=$objp->propalid\">";
 				print img_object($langs->trans("ShowPropal"),"propal");
 				print " ".$objp->ref."</a>\n";
-				if ( $objp->dp < ($now - $conf->propal->cloture->warning_delay) && $objp->fk_statut == 1 )
+				if ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay) && $objp->fk_statut == 1)
 				{
 					print " ".img_warning();
 				}
-				print "</td><td align=\"right\">".dol_print_date($objp->dp,"day")."</td>\n";
+				print "</td><td align=\"right\">".dol_print_date($db->jdate($objp->dp),"day")."</td>\n";
 				print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 				print "<td align=\"right\">".$propal_static->LibStatut($objp->fk_statut,5)."</td></tr>\n";
 				$i++;

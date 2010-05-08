@@ -35,14 +35,14 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
  */
 class ComptaJournalPdf extends FPDF  {
 
-  function Footer()
-  {
-    $this->SetY(-10);
-    //Police Arial italique 8
-    $this->SetFont('Arial','I',8);
+	function Footer()
+	{
+		$this->SetY(-10);
+		//Police Arial italique 8
+		$this->SetFont('Arial','I',8);
 
-    $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
-  }
+		$this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+	}
 }
 
 ?>

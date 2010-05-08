@@ -117,7 +117,7 @@ function factures ($db, $year, $month, $paye)
 {
 	global $bc,$conf;
 
-	$sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
+	$sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.total, f.datef as df, f.paye, f.rowid as facid ";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ",".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut = 1";
@@ -154,7 +154,7 @@ function factures ($db, $year, $month, $paye)
 	  	print "<td><a href=\"../facture.php?facid=".$objp->facid."\">".$objp->facnumber."</a></td>\n";
 	  	if ($objp->df > 0 )
 	  	{
-	  		print "<td align=\"right\">".dol_print_date($objp->df)."</td>\n";
+	  		print "<td align=\"right\">".dol_print_date($db->jdate($objp->df))."</td>\n";
 	  	}
 	  	else
 	  	{

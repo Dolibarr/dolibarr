@@ -216,10 +216,10 @@ class BonPrelevement extends CommonObject
     	global $conf;
 
         $sql = "SELECT p.rowid, p.ref, p.amount, p.note, p.credite";
-        $sql.= ", ".$this->db->pdate("p.datec")." as dc";
-        $sql.= ", ".$this->db->pdate("p.date_trans")." as date_trans";
+        $sql.= ", p.datec as dc";
+        $sql.= ", p.date_trans as date_trans";
         $sql.= ", p.method_trans, p.fk_user_trans";
-        $sql.= ", ".$this->db->pdate("p.date_credit")." as date_credit";
+        $sql.= ", p.date_credit as date_credit";
         $sql.= ", p.fk_user_credit";
         $sql.= ", p.statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
@@ -237,15 +237,15 @@ class BonPrelevement extends CommonObject
                 $this->id                 = $obj->rowid;
                 $this->ref                = $obj->ref;
                 $this->amount             = $obj->amount;
-                $this->note               = stripslashes($obj->note);
-                $this->datec              = $obj->dc;
+                $this->note               = $obj->note;
+                $this->datec              = $this->db->jdate($obj->dc);
                 $this->credite            = $obj->credite;
 
-                $this->date_trans         = $obj->date_trans;
+                $this->date_trans         = $this->db->jdate($obj->date_trans);
                 $this->method_trans       = $obj->method_trans;
                 $this->user_trans         = $obj->fk_user_trans;
 
-                $this->date_credit        = $obj->date_credit;
+                $this->date_credit        = $this->db->jdate($obj->date_credit);
                 $this->user_credit        = $obj->fk_user_credit;
 
                 $this->statut             = $obj->statut;
