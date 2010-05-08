@@ -515,8 +515,6 @@ if ($_GET["action"] == 'create')
             {
                 print '<tr><td>'.$langs->trans("Project").'</td><td>';
                 select_projects($soc->id,$_REQUEST["projectid"],"projectid");
-                //$project = new Project($db);
-                //$form->select_array("projectid",$project->liste_array($soc->id),$_REQUEST["projectid"],1);
                 print "</td></tr>";
             }
 
