@@ -386,7 +386,7 @@ class pdf_oursin extends ModelePDFFactures
 		}
 
 		// Loop on each payment
-		$sql = "SELECT ".$this->db->pdate("p.datep")."as date, pf.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
+		$sql = "SELECT p.datep as date, pf.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
 		$sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
 		$sql.= "WHERE pf.fk_paiement = p.rowid and pf.fk_facture = ".$fac->id." ";
 		$sql.= "ORDER BY p.datep";
@@ -401,7 +401,7 @@ class pdf_oursin extends ModelePDFFactures
 				$row = $this->db->fetch_row($resql);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 3, dol_print_date($row[0],'day',false,$outputlangs,true), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row[0]),'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($row[1]), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
@@ -981,7 +981,7 @@ class pdf_oursin extends ModelePDFFactures
 	    if ($conf->propal->enabled)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-			
+
 			$outputlangs->load('propal');
 			foreach($object->linked_object as $key => $val)
 			{
@@ -1007,7 +1007,7 @@ class pdf_oursin extends ModelePDFFactures
 		if ($conf->commande->enabled)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-			
+
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
