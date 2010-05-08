@@ -1051,7 +1051,7 @@ class Commande extends CommonObject
 				$this->cond_reglement_code    = $obj->cond_reglement_code;
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
-				$this->date_livraison         = $db->jdate($obj->date_livraison);
+				$this->date_livraison         = $this->db->jdate($obj->date_livraison);
 				$this->fk_delivery_address    = $obj->fk_adresse_livraison;
 				$this->propale_id             = $obj->fk_source;
 				$this->lignes                 = array();
