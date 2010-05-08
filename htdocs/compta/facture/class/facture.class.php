@@ -2733,7 +2733,7 @@ class Facture extends CommonObject
 
 	/**
 	 *		\brief		Initialise an example of invoice with random values
-	 *					Used to build preivew of invoices or demo
+	 *					Used to build preview of invoices or demo
 	 */
 	function initAsSpecimen()
 	{
