@@ -127,7 +127,7 @@ function show_array_actions_to_do($max=5)
 	include_once(DOL_DOCUMENT_ROOT.'/comm/action/actioncomm.class.php');
 	include_once(DOL_DOCUMENT_ROOT.'/societe/class/client.class.php');
 
-	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, a.fk_user_author, a.percent,";
+	$sql = "SELECT a.id, a.label, a.datep as dp, a.fk_user_author, a.percent,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.nom as sname, s.rowid, s.client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
@@ -178,13 +178,16 @@ function show_array_actions_to_do($max=5)
 	            $customerstatic->client=$obj->client;
 	            print '<td>'.$customerstatic->getNomUrl(1,'',16).'</td>';
 
-				// Date
-				print '<td width="100" align="right">'.dol_print_date($obj->dp,'day').'&nbsp;';
+	            $datep=$db->jdate($obj->dp);
+	            $datep2=$db->jdate($obj->dp2);
+
+	            // Date
+				print '<td width="100" align="right">'.dol_print_date($datep,'day').'&nbsp;';
 				$late=0;
-				if ($obj->percent == 0 && $obj->dp && date("U",$obj->dp) < time()) $late=1;
-				if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && date("U",$obj->dp) < time()) $late=1;
-				if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && date("U",$obj->dp2) < time()) $late=1;
-				if ($obj->percent > 0 && $obj->percent < 100 && ! $obj->dp2 && $obj->dp && date("U",$obj->dp) < time()) $late=1;
+				if ($obj->percent == 0 && $datep && $datep < time()) $late=1;
+				if ($obj->percent == 0 && ! $datep && $datep2 && $datep2 < time()) $late=1;
+				if ($obj->percent > 0 && $obj->percent < 100 && $datep2 && $datep2 < time()) $late=1;
+				if ($obj->percent > 0 && $obj->percent < 100 && ! $datep2 && $datep && $datep < time()) $late=1;
 				if ($late) print img_warning($langs->trans("Late"));
 				print "</td>";
 
@@ -214,7 +217,7 @@ function show_array_last_actions_done($max=5)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 
-	$sql = "SELECT a.id, a.percent, ".$db->pdate("a.datep")." as da, ".$db->pdate("a.datep2")." as da2, a.fk_user_author, a.label,";
+	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.rowid, s.nom as sname, s.client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
@@ -265,7 +268,7 @@ function show_array_last_actions_done($max=5)
 			print '<td>'.$customerstatic->getNomUrl(1,'',24).'</td>';
 
 			// Date
-			print '<td width="100" align="right">'.dol_print_date($obj->da2,'day');
+			print '<td width="100" align="right">'.dol_print_date($db->jdate($obj->da2),'day');
 			print "</td>";
 
 			// Statut
@@ -274,8 +277,8 @@ function show_array_last_actions_done($max=5)
 			print "</tr>\n";
 			$i++;
 		}
-		// TODO Ajouter rappel pour "il y a des contrats � mettre en service"
-		// TODO Ajouter rappel pour "il y a des contrats qui arrivent � expiration"
+		// TODO Ajouter rappel pour "il y a des contrats a mettre en service"
+		// TODO Ajouter rappel pour "il y a des contrats qui arrivent a expiration"
 		print "</table><br>";
 
 		$db->free($resql);

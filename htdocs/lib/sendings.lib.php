@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 function shipping_prepare_head($object)
 {
 	global $langs, $conf, $user;
-	
+
 	$langs->load("sendings");
 	$langs->load("deliveries");
 
@@ -71,7 +71,7 @@ function shipping_prepare_head($object)
 function delivery_prepare_head($object)
 {
 	global $langs, $conf, $user;
-	
+
 	$langs->load("sendings");
 	$langs->load("deliveries");
 
@@ -126,8 +126,8 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked";
 	$sql.= ", ed.qty as qty_shipped, ed.fk_expedition as expedition_id";
-	$sql.= ", e.ref as exp_ref, ".$db->pdate("e.date_expedition")." as date_expedition,";
-	//if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, ".$db->pdate("l.date_delivery")." as date_delivery, ld.qty as qty_received,";
+	$sql.= ", e.ref as exp_ref, e.date_expedition,";
+	//if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
 	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
 	$sql.= ' p.description as product_desc';
 	$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
@@ -221,7 +221,7 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 
 				print '<td align="center">'.$objp->qty_shipped.'</td>';
 
-				print '<td align="center" nowrap="nowrap">'.dol_print_date($objp->date_expedition,'day').'</td>';
+				print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->date_expedition),'day').'</td>';
 				if ($conf->livraison_bon->enabled)
 				{
 					if ($objp->livraison_id)

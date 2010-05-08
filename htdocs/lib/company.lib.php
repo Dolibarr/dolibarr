@@ -415,8 +415,8 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 		print '</tr>';
 
 		$sql = "SELECT a.id, a.label,";
-		$sql.= " ".$db->pdate("a.datep")." as dp,";
-		$sql.= " ".$db->pdate("a.datea")." as da,";
+		$sql.= " a.datep as dp,";
+		$sql.= " a.datea as da,";
 		$sql.= " a.percent,";
 		$sql.= " a.propalrowid, a.fk_user_author, a.fk_contact,";
 		$sql.= " c.code as acode, c.libelle,";
@@ -444,14 +444,16 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 				{
 					$var = !$var;
 
+					$datep=$obj->dp;
+
 					$obj = $db->fetch_object($result);
 					print "<tr ".$bc[$var].">";
 
-					print '<td width="100" align="left" nowrap="nowrap">'.dol_print_date($obj->dp,'dayhour')."</td>\n";
+					print '<td width="100" align="left" nowrap="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
 
 					// Picto warning
 					print '<td width="16">';
-					if ($obj->dp && date("U",$obj->dp) < time()) print ' '.img_warning("Late");
+					if ($datep && $datep < time()) print ' '.img_warning("Late");
 					else print '&nbsp;';
 					print '</td>';
 
@@ -535,8 +537,8 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 	{
 		// Recherche histo sur actioncomm
 		$sql = "SELECT a.id, a.label,";
-		$sql.= " ".$db->pdate("a.datep")." as dp,";
-		$sql.= " ".$db->pdate("a.datep2")." as dp2,";
+		$sql.= " a.datep as dp,";
+		$sql.= " a.datep2 as dp2,";
 		$sql.= " a.note, a.percent,";
 		$sql.= " a.propalrowid as pid, a.fk_commande as oid, a.fk_facture as fid,";
 		$sql.= " a.fk_user_author, a.fk_contact,";
@@ -562,7 +564,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$histo[$numaction]=array('type'=>'action','id'=>$obj->id,'date'=>$obj->dp2,'note'=>$obj->label,'percent'=>$obj->percent,
+				$histo[$numaction]=array('type'=>'action','id'=>$obj->id,'date'=>$db->jdate($obj->dp2),'note'=>$obj->label,'percent'=>$obj->percent,
 				'acode'=>$obj->acode,'libelle'=>$obj->libelle,
 				'userid'=>$obj->user_id,'login'=>$obj->login,
 				'contact_id'=>$obj->fk_contact,'name'=>$obj->name,'firstname'=>$obj->firstname,
@@ -582,7 +584,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		$langs->load("mails");
 
 		// Recherche histo sur mailing
-		$sql = "SELECT m.rowid as id, ".$db->pdate("mc.date_envoi")." as da, m.titre as note, '100' as percentage,";
+		$sql = "SELECT m.rowid as id, mc.date_envoi as da, m.titre as note, '100' as percentage,";
 		$sql.= " 'AC_EMAILING' as acode,";
 		$sql.= " u.rowid as user_id, u.login";	// User that valid action
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u";
@@ -602,7 +604,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$histo[$numaction]=array('type'=>'mailing','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percentage,
+				$histo[$numaction]=array('type'=>'mailing','id'=>$obj->id,'date'=>$db->jdate($obj->da),'note'=>$obj->note,'percent'=>$obj->percentage,
 				'acode'=>$obj->acode,'libelle'=>$obj->libelle,
 				'userid'=>$obj->user_id,'login'=>$obj->login,
 				'contact_id'=>$obj->contact_id);

@@ -72,7 +72,7 @@ print_fiche_titre($langs->trans("Bookmarks"));
 
 if ($mesg) print $mesg;
 
-$sql = "SELECT b.fk_soc as rowid, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon,";
+$sql = "SELECT b.fk_soc as rowid, b.dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon,";
 $sql.= " u.login, u.name, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql.= " WHERE 1=1";
@@ -166,7 +166,7 @@ if ($resql)
         print "</td>\n";
 
         // Date creation
-        print '<td align="center">'.dol_print_date($obj->dateb,'day') ."</td>";
+        print '<td align="center">'.dol_print_date($db->jdate($obj->dateb),'day') ."</td>";
 
         // Actions
         print "<td>";

@@ -107,7 +107,7 @@ $form=new Form($db);
 $sql = "SELECT s.rowid as socid, s.nom,";
 $sql.= " p.rowid as cidp, p.name, p.firstname, p.email,";
 $sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv,";
-$sql.= " ".$db->pdate("p.tms")." as tms,";
+$sql.= " p.tms,";
 $sql.= " cp.code as pays_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as cp ON cp.rowid = p.fk_pays";
@@ -332,7 +332,7 @@ if ($result)
         }
 
 		// Date
-		print '<td align="center">'.dol_print_date($obj->tms,"day").'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($obj->tms),"day").'</td>';
 
 		// Private/Public
 		print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';

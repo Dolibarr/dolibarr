@@ -155,7 +155,7 @@ class CommActionRapport
 		$pdf->SetFont('Arial','',8);
 
 		$sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
-		$sql.= " a.id,".$this->db->pdate("a.datep")." as dp, ".$this->db->pdate("a.datep2")." as dp2,";
+		$sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
 		$sql.= " a.fk_contact, a.note, a.percent as percent,";
 		$sql.= " c.libelle,";
 		$sql.= " u.login";
@@ -196,7 +196,7 @@ class CommActionRapport
 				$y++;
 
 				$pdf->SetXY($this->marge_gauche, $y);
-				$pdf->MultiCell(22, $height, dol_print_date($obj->dp,"day")."\n".dol_print_date($obj->dp,"hour"), 0, 'L', 0);
+				$pdf->MultiCell(22, $height, dol_print_date($this->db->jdate($obj->dp),"day")."\n".dol_print_date($this->db->jdate($obj->dp),"hour"), 0, 'L', 0);
 				$y0 = $pdf->GetY();
 
 				$pdf->SetXY(26, $y);
