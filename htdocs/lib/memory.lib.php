@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,46 @@ $shmoffset=100;
 
 
 
+/**	\brief      Save data into a memory area shared by all users, all sessions on server
+ *  \param      $memoryid		Memory id of shared area
+ * 	\param		$data			Data to save
+ * 	\return		int				<0 if KO, Nb of bytes written if OK
+ */
+function dol_setcache($memoryid,$data)
+{
+	global $conf;
+
+	// Using a memcached server
+	if (! empty($conf->memcached->enabled))
+	{
+	}
+	else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
+	{
+		dol_setshmop($memoryid,$data);
+	}
+}
+
+/**	\brief      Read a memory area shared by all users, all sessions on server
+ *  \param      $memoryid		Memory id of shared area
+ * 	\return		int				<0 if KO, data if OK
+ */
+function dol_getcache($memoryid)
+{
+	global $conf;
+
+	// Using a memcached server
+	if (! empty($conf->memcached->enabled))
+	{
+	}
+	else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
+	{
+		$data=dol_getshmop($memoryid);
+	}
+
+	return $data;
+}
+
+
 
 /**	\brief      Return shared memory address used to store dataset with key memoryid
  *  \param      $memoryid		Memory id of shared area
@@ -60,32 +100,6 @@ function dol_listshmop()
 		if (! is_numeric($result) || $result > 0) $resarray[$key]=$result;
 	}
 	return $resarray;
-}
-
-/**	\brief      Read a memory area shared by all users, all sessions on server
- *  \param      $memoryid		Memory id of shared area
- * 	\return		int				0=Nothing is done, <0 if KO, >0 if OK
- */
-function dol_getshmop($memoryid)
-{
-	global $shmkeys,$shmoffset;
-
-	if (empty($shmkeys[$memoryid]) || ! function_exists("shmop_open")) return 0;
-	$shmkey=dol_getshmopaddress($memoryid);;
-	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
-	$handle=@shmop_open($shmkey,'a',0,0);
-	if ($handle)
-	{
-		$size=trim(shmop_read($handle,0,6));
-		if ($size) $data=unserialize(shmop_read($handle,6,$size));
-		else return -1;
-		shmop_close($handle);
-	}
-	else
-	{
-		return -2;
-	}
-	return $data;
 }
 
 /**	\brief      Save data into a memory area shared by all users, all sessions on server
@@ -117,9 +131,35 @@ function dol_setshmop($memoryid,$data)
 	}
 	else
 	{
-		print 'Error in shmop_open';
+		print 'Error in shmop_open for memoryid='.$memoryid.' shmkey='.$shmkey.' 6+size=6+'.$size;
 		return -1;
 	}
+}
+
+/**	\brief      Read a memory area shared by all users, all sessions on server
+ *  \param      $memoryid		Memory id of shared area
+ * 	\return		int				<0 if KO, data if OK
+ */
+function dol_getshmop($memoryid)
+{
+	global $shmkeys,$shmoffset;
+
+	if (empty($shmkeys[$memoryid]) || ! function_exists("shmop_open")) return 0;
+	$shmkey=dol_getshmopaddress($memoryid);;
+	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
+	$handle=@shmop_open($shmkey,'a',0,0);
+	if ($handle)
+	{
+		$size=trim(shmop_read($handle,0,6));
+		if ($size) $data=unserialize(shmop_read($handle,6,$size));
+		else return -1;
+		shmop_close($handle);
+	}
+	else
+	{
+		return -2;
+	}
+	return $data;
 }
 
 ?>

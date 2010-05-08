@@ -150,7 +150,7 @@ class Translate {
 
 		$newdomain = $domain;
 		$modulename = '';
-		
+
 		// Search if module directory name is different of lang file name
 		if (preg_match('/^([^@]+)?@([^@]+)$/i',$domain,$regs))
 		{
@@ -193,15 +193,23 @@ class Translate {
 			{
 				$found=false;
 
-				// Enable cache of lang file in memory (faster but need more memory)
-				// Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
-				$enablelangcacheinmemory=((isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))?true:false);
-				//$enablelangcacheinmemory=true;
+				// Enable cache of lang file in memory (not by default)
+				$usecachekey='';
+				// Using a memcached server
+				if (! empty($conf->memcached->enabled))
+				{
+					$usecachekey=$langofdir.'_'.$newdomain;
+				}
+				// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
+				else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
+				{
+					$usecachekey=$newdomain;
+				}
 
-				if ($alt == 2 && $enablelangcacheinmemory)
+				if ($alt == 2 && $usecachekey)
 				{
 					require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
-					$tmparray=dol_getshmop($newdomain);
+					$tmparray=dol_getcache($usecachekey);
 					if (is_array($tmparray) && sizeof($tmparray))
 					{
 						$this->tab_translate=array_merge($this->tab_translate,$tmparray);
@@ -217,7 +225,7 @@ class Translate {
 				{
 					if ($fp = @fopen($file_lang,"rt"))
 					{
-						if ($enablelangcacheinmemory) $tabtranslatedomain=array();	// To save lang in session
+						if ($usecachekey) $tabtranslatedomain=array();	// To save lang content in cache
 
 						while ($ligne = fgets($fp,4096))	// Ex: Need 225ms for all fgets on all lang file for Third party page. Same speed than file_get_contents
 						{
@@ -246,13 +254,12 @@ class Translate {
 									else
 									{
 										// On stocke toujours dans le tableau Tab en UTF-8
-										//if (empty($this->charset_inputfile[$newdomain]) || $this->charset_inputfile[$newdomain] == 'UTF-8')      $value=utf8_decode($value);
 										if (empty($this->charset_inputfile[$newdomain]) || $this->charset_inputfile[$newdomain] == 'ISO-8859-1') $value=utf8_encode($value);
 
 										//print 'XX'.$key;
 										$this->tab_translate[$key]=$value;
 
-										if ($enablelangcacheinmemory) $tabtranslatedomain[$key]=$value;	// To save lang in session
+										if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 									}
 								}
 							}
@@ -260,11 +267,11 @@ class Translate {
 						fclose($fp);
 						$fileread=1;
 
-						// To save lang in session
-						if ($alt == 2 && $enablelangcacheinmemory && sizeof($tabtranslatedomain))
+						// To save lang content into session
+						if ($alt == 2 && $usecachekey && sizeof($tabtranslatedomain))
 						{
 							require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
-							$size=dol_setshmop($newdomain,$tabtranslatedomain);
+							$size=dol_setcache($newdomain,$tabtranslatedomain);
 						}
 						//exit;
 						break;		// Break loop on each root dir
@@ -520,7 +527,7 @@ class Translate {
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0)
 	{
 		global $conf;
-		
+
 		// We scan directory langs to detect available languages
 		$handle=opendir($langdir."/langs");
 		$langs_available=array();
