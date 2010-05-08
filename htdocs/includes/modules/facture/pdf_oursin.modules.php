@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  \class      pdf_oursin
- \brief      Classe permettant de g�n�rer les factures au mod�le oursin
+ \brief      Classe permettant de generer les factures au modele oursin
  */
 
 class pdf_oursin extends ModelePDFFactures
@@ -43,8 +43,8 @@ class pdf_oursin extends ModelePDFFactures
 	var $marges=array("g"=>10,"h"=>5,"d"=>10,"b"=>15);
 
 	/**
-	 \brief  Constructeur
-	 \param	db		handler acc�s base de donn�e
+	 *	\brief  Constructeur
+	 *	\param	db		Database handler
 	 */
 	function pdf_oursin($db)
 	{
@@ -101,7 +101,7 @@ class pdf_oursin extends ModelePDFFactures
 
 	/**
 	 *		\brief      Fonction generant la facture sur le disque
-	 *		\param	    fac				Objet facture a generer (ou id si ancienne methode)
+	 *		\param	    fac				Objet invoice to build (or id if old method)
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int     		1=ok, 0=ko
 	 */
@@ -125,7 +125,7 @@ class pdf_oursin extends ModelePDFFactures
 			if (! is_object($fac))
 			{
 				$id = $fac;
-				$fac = new Facture($this->db,"",$id);
+				$fac = new Facture($this->db);
 				$ret=$fac->fetch($id);
 			}
 			$fac->fetch_client();

@@ -135,7 +135,7 @@ class ModeleNumRefFactures
 /**
  *	\brief   	Cree un facture sur disque en fonction du modele de FACTURE_ADDON_PDF
  *	\param   	db  			objet base de donnee
- *	\param   	id				id de la facture a creer
+ *	\param   	id				Object invoice (or id of invoice)
  *	\param	    message			message
  *	\param	    modele			force le modele a utiliser ('' to not force)
  *	\param		outputlangs		objet lang a utiliser pour traduction
@@ -178,10 +178,20 @@ function facture_pdf_create($db, $id, $message, $modele, $outputlangs)
 		$sav_charset_output=$outputlangs->charset_output;
 		if ($obj->write_file($id, $outputlangs) > 0)
 		{
-			// Success in building document. We build meta file.
-			facture_meta_create($db, $id);
-			// et on supprime l'image correspondant au preview
-			facture_delete_preview($db, $id);
+			if (! is_object($id))	// Old method
+			{
+				// Success in building document. We build meta file.
+				facture_meta_create($db, $id);
+				// et on supprime l'image correspondant au preview
+				facture_delete_preview($db, $id);
+			}
+			else
+			{
+				// Success in building document. We build meta file.
+				facture_meta_create($db, $id->id);
+				// et on supprime l'image correspondant au preview
+				facture_delete_preview($db, $id->id);
+			}
 
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;

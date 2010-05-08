@@ -101,7 +101,7 @@ class pdf_crabe extends ModelePDFFactures
 
 	/**
 	 *		\brief      Fonction generant la facture sur le disque
-	 *		\param	    fac				Objet facture a generer (ou id si ancienne methode)
+	 *		\param	    fac				Objet invoice to build (or id if old method)
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int     		1=ok, 0=ko
 	 */
@@ -125,7 +125,7 @@ class pdf_crabe extends ModelePDFFactures
 			if (! is_object($fac))
 			{
 				$id = $fac;
-				$fac = new Facture($this->db,"",$id);
+				$fac = new Facture($this->db);
 				$ret=$fac->fetch($id);
 			}
 
@@ -147,7 +147,6 @@ class pdf_crabe extends ModelePDFFactures
 				$dir = $conf->facture->dir_output . "/" . $facref;
 				$file = $dir . "/" . $facref . ".pdf";
 			}
-
 			if (! file_exists($dir))
 			{
 				if (create_exdir($dir) < 0)
