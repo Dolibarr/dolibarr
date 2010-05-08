@@ -392,8 +392,8 @@ if ($id > 0 || ! empty($ref))
 		 */
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.description, l.price, l.qty, l.tva_tx, l.fk_remise_except, l.remise_percent, l.subprice,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
-		$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
-		$sql.= ' '.$db->pdate('l.date_end').' as date_end,';
+		$sql.= ' l.date_start,';
+		$sql.= ' l.date_end,';
 		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
 		$sql.= ' p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX."commandedet as l";
@@ -452,7 +452,7 @@ if ($id > 0 || ! empty($ref))
 					print $html->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
-					print_date_range($objp->date_start,$objp->date_end);
+					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 
 					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
@@ -492,7 +492,7 @@ if ($id > 0 || ! empty($ref))
 						print $text.' '.nl2br($objp->description);
 
 						// Show range
-						print_date_range($objp->date_start,$objp->date_end);
+						print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 					}
 					print "</td>\n";
 				}

@@ -369,7 +369,7 @@ if ($socid > 0)
 	{
 		print '<table class="noborder" width=100%>';
 
-		$sql  = "SELECT p.rowid,p.title,p.ref,p.public,".$db->pdate("p.dateo")." as do";
+		$sql  = "SELECT p.rowid,p.title,p.ref,p.public, p.dateo as do";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " WHERE p.fk_soc = $societe->id";
 		$sql .= " ORDER BY p.dateo DESC";
@@ -408,7 +408,7 @@ if ($socid > 0)
 						// Label
 						print '<td>'.$obj->title.'</td>';
 						// Date
-						print '<td align="right">'.dol_print_date($obj->do,"day").'</td>';
+						print '<td align="right">'.dol_print_date($db->jdate($obj->do),"day").'</td>';
 
 						print '</tr>';
 					}

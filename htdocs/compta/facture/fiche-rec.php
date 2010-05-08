@@ -175,8 +175,8 @@ if ($_GET["action"] == 'create')
 		$sql.= ' l.fk_remise_except,';
 		$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
-		$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
-		$sql.= ' '.$db->pdate('l.date_end').' as date_end,';
+		$sql.= ' l.date_start,';
+		$sql.= ' l.date_end,';
 		$sql.= ' l.product_type,';
 		$sql.= ' p.ref, p.fk_product_type, p.label as product,';
 		$sql.= ' p.description as product_desc';
@@ -237,7 +237,7 @@ if ($_GET["action"] == 'create')
 					print $html->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
-					print_date_range($objp->date_start,$objp->date_end);
+					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 
 					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
@@ -254,7 +254,7 @@ if ($_GET["action"] == 'create')
 					print $text.' '.nl2br($objp->description);
 
 					// Show range
-					print_date_range($objp->date_start,$objp->date_end);
+					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 
 					print "</td>\n";
 				}

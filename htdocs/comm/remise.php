@@ -136,7 +136,7 @@ if ($_socid > 0)
 	/*
 	 * Liste de l'historique des avoirs
 	 */
-	$sql  = "SELECT rc.rowid,rc.remise_client,rc.note,".$db->pdate("rc.datec")." as dc,";
+	$sql  = "SELECT rc.rowid,rc.remise_client,rc.note, rc.datec as dc,";
 	$sql.= " u.login, u.rowid as user_id";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
 	$sql.= " WHERE rc.fk_soc =". $objsoc->id;
@@ -162,7 +162,7 @@ if ($_socid > 0)
 			$obj = $db->fetch_object($resql);
 			$tag = !$tag;
 			print '<tr '.$bc[$tag].'>';
-			print '<td>'.dol_print_date($obj->dc,"dayhour").'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
 			print '<td align="center">'.$obj->remise_client.' %</td>';
 			print '<td align="left">'.$obj->note.'</td>';
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';

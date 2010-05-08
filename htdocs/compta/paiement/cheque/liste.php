@@ -54,7 +54,7 @@ $accountstatic=new Account($db);
 
 llxHeader('',$langs->trans("ChequesReceipts"));
 
-$sql = "SELECT bc.rowid, bc.number as ref, ".$db->pdate("bc.date_bordereau") ." as dp,";
+$sql = "SELECT bc.rowid, bc.number as ref, bc.date_bordereau as dp,";
 $sql.= " bc.nbcheque, bc.amount, bc.statut,";
 $sql.= " ba.rowid as bid, ba.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
@@ -119,7 +119,7 @@ if ($resql)
 		print '</td>';
 
 		// Date
-		print '<td align="center">'.dol_print_date($objp->dp,'day').'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
 
 		// Banque
 		print '<td>';

@@ -229,7 +229,7 @@ if ($_GET['action'] == 'new')
 	print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	print '</table><br>';
 
-	$sql = "SELECT ba.rowid as bid, ".$db->pdate("b.dateo")." as date,";
+	$sql = "SELECT ba.rowid as bid, b.dateo as date,";
 	$sql.= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b ";
 	$sql.= ",".MAIN_DB_PREFIX."bank_account as ba ";
@@ -247,7 +247,7 @@ if ($_GET['action'] == 'new')
 		while ( $obj = $db->fetch_object($resql) )
 		{
 			$accounts[$obj->bid] = $obj->label;
-			$lines[$obj->bid][$i]["date"] = $obj->date;
+			$lines[$obj->bid][$i]["date"] = $db->jdate($obj->date);
 			$lines[$obj->bid][$i]["amount"] = $obj->amount;
 			$lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
 			$lines[$obj->bid][$i]["numero"] = $obj->num_chq;
@@ -401,7 +401,7 @@ else
 				print '&nbsp;';
 			}
 			print '</td>';
-			print '<td align="center">'.dol_print_date($objp->datec,'day').'</td>';
+			print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'day').'</td>';
 			if($remisecheque->statut == 0)
 			{
 				print '<td align="right"><a href="fiche.php?id='.$remisecheque->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';

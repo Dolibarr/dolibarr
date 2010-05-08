@@ -65,7 +65,7 @@ if (! $sortfield) $sortfield="f.facnumber";
  */
 
 $sql= "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid";
-$sql.= ", ".$db->pdate("pfd.date_demande")." as date_demande";
+$sql.= ", pfd.date_demande as date_demande";
 $sql.= ", pfd.fk_user_demande";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -136,7 +136,7 @@ if ( $db->query($sql) )
 		print $thirdpartystatic->getNomUrl(1,'customer');
 		print '</td>';
 
-		print '<td align="center">'.dol_print_date($obj->date_demande,'day').'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($obj->date_demande),'day').'</td>';
 
 		if (!array_key_exists($obj->fk_user_demande,$users))
 		{

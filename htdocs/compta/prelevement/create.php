@@ -131,7 +131,7 @@ print '<br>';
 $limit=5;
 
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
-$sql.= ", ".$db->pdate("p.datec")." as datec";
+$sql.= ", p.datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= " WHERE p.entity = ".$conf->entity;
 $sql.= " ORDER BY datec DESC";
@@ -161,7 +161,7 @@ if ($result)
 		$bprev->ref=$obj->ref;
 		print $bprev->getNomUrl(1);
 		print "</td>\n";
-		print '<td align="center">'.dol_print_date($obj->datec,'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
 		print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie)."</td>\n";
 

@@ -72,7 +72,7 @@ if ($_GET["propalid"] > 0)
 		/*
 		 *   Propal
 		 */
-		$sql = 'SELECT s.nom, s.rowid, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp, p.note,';
+		$sql = 'SELECT s.nom, s.rowid, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, p.datep as dp, p.note,';
 		$sql.= ' p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql.= ', '.MAIN_DB_PREFIX.'propal as p';

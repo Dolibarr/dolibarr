@@ -328,7 +328,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		 * List of unpaid invoices
 		 */
 		$sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.type, ';
-		$sql.= $db->pdate('f.datef').' as df';
+		$sql.= ' f.datef as df';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' WHERE f.fk_soc = '.$facture->socid;
 		$sql.= ' AND f.paye = 0';
@@ -388,7 +388,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					print "</td>\n";
 
 					// Date
-					print '<td align="center">'.dol_print_date($objp->df,'day')."</td>\n";
+					print '<td align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 
 					// Prix
 					print '<td align="right">'.price($objp->total_ttc).'</td>';
@@ -494,7 +494,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 	if (! $sortorder) $sortorder='DESC';
 	if (! $sortfield) $sortfield='p.datep';
 
-	$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.amount, f.amount as fa_amount, f.facnumber';
+	$sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.facnumber';
 	$sql .=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
 	$sql .= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
@@ -529,7 +529,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td><a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
-			print '<td>'.dol_print_date($objp->dp)."</td>\n";
+			print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
 			print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
 			print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';
 			print '</tr>';

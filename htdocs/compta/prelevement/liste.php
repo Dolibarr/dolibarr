@@ -49,7 +49,7 @@ $sortorder = (empty($_GET["sortorder"])) ? "DESC" : $_GET["sortorder"];
 $sortfield = (empty($_GET["sortfield"])) ? "p.datec" : $_GET["sortfield"];
 $offset = $conf->liste_limit * $page ;
 
-$sql = "SELECT p.rowid, p.statut, p.ref, pl.amount,".$db->pdate("p.datec")." as datec";
+$sql = "SELECT p.rowid, p.statut, p.ref, pl.amount, p.datec";
 $sql.= " , s.nom, s.code_client";
 $sql.= " , pl.rowid as rowid_ligne, pl.statut as statut_ligne";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
@@ -138,7 +138,7 @@ if ($result)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
       print '<td><a href="fiche.php?id='.$obj->rowid.'">'.$obj->nom."</a></td>\n";
-      print '<td align="center">'.dol_print_date($obj->datec,'day')."</td>\n";
+      print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
       print '<td align="right">'.price($obj->amount)."</td>\n";
       print '<td align="center"><a href="fiche.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
       print '<td>&nbsp;</td>';

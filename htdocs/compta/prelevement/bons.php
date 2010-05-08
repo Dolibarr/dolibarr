@@ -55,7 +55,7 @@ if (! $sortfield) $sortfield="p.datec";
  *
  */
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
-$sql.= ", ".$db->pdate("p.datec")." as datec";
+$sql.= ", p.datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= " WHERE p.entity = ".$conf->entity;
 $sql.= " ORDER BY $sortfield $sortorder ";
@@ -100,7 +100,7 @@ if ($result)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-      print '<td align="center">'.dol_print_date($obj->datec,'day')."</td>\n";
+      print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
       print '<td align="right">'.price($obj->amount)."</td>\n";
 

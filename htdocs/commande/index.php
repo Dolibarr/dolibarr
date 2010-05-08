@@ -126,7 +126,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 $max=5;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid,";
-$sql.= " ".$db->pdate("date_cloture")." as datec";
+$sql.= " date_cloture as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -180,7 +180,7 @@ if ($resql)
 			print '</td>';
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-			print '<td>'.dol_print_date($obj->datec).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datec)).'</td>';
 			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 			print '</tr>';
 			$i++;

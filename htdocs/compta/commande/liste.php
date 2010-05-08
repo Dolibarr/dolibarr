@@ -60,7 +60,7 @@ $now=gmmktime();
 llxHeader();
 
 $sql = "SELECT s.nom, s.rowid as socid,";
-$sql.= " c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande,";
+$sql.= " c.rowid, c.ref, c.total_ht, c.date_commande as date_commande,";
 $sql.= " c.fk_statut, c.facture";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."commande as c";
@@ -144,7 +144,7 @@ if ($resql)
         print '</td>';
 
         print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-        if (($objp->date_commande < ($now - $conf->commande->traitement->warning_delay)) && $objp->statutid == 1 ) print img_picto($langs->trans("Late"),"warning");
+        if (($db->jdate($objp->date_commande) < ($now - $conf->commande->traitement->warning_delay)) && $objp->statutid == 1 ) print img_picto($langs->trans("Late"),"warning");
         print '</td>';
 
         print '<td width="16" align="right" class="nobordernopadding">';
@@ -160,10 +160,10 @@ if ($resql)
         print "</td>";
 
         print "<td align=\"center\">";
-        $y = dol_print_date($objp->date_commande,"%Y");
-        $m = dol_print_date($objp->date_commande,"%m");
-        $mt = dol_print_date($objp->date_commande,"%b");
-        $d = dol_print_date($objp->date_commande,"%d");
+        $y = dol_print_date($db->jdate($objp->date_commande),"%Y");
+        $m = dol_print_date($db->jdate($objp->date_commande),"%m");
+        $mt = dol_print_date($db->jdate($objp->date_commande),"%b");
+        $d = dol_print_date($db->jdate($objp->date_commande),"%d");
         print $d."\n";
         print " <a href=\"liste.php?year=$y&amp;month=$m\">";
         print $mt."</a>\n";

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
 		\file       htdocs/compta/paiement/cheque/index.php
 		\ingroup    compta
@@ -91,13 +91,13 @@ else
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
-$sql = "SELECT bc.rowid,".$db->pdate("bc.date_bordereau")." as db, bc.amount, bc.number";
+$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.number";
 $sql.= ", bc.statut, bc.nbcheque";
 $sql.= ", ba.label, ba.rowid as bid";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE ba.rowid = bc.fk_bank_account";
-$sql.= " AND bc.entity = ".$conf->entity; 
+$sql.= " AND bc.entity = ".$conf->entity;
 $sql.= " ORDER BY bc.rowid";
 $sql.= " DESC LIMIT 10";
 
@@ -129,7 +129,7 @@ if ($resql)
 		print "<tr $bc[$var]>\n";
 
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
-		print '<td>'.dol_print_date($objp->db,'day').'</td>';
+		print '<td>'.dol_print_date($db->jdate($objp->db),'day').'</td>';
 		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$objp->nbcheque.'</td>';
 		print '<td align="right">'.price($objp->amount).'</td>';

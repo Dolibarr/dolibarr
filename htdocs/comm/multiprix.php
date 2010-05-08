@@ -127,7 +127,7 @@ if ($_socid > 0)
 	/*
 	 * Liste de l'historique des remises
 	 */
-	$sql  = "SELECT rc.rowid,rc.price_level,".$db->pdate("rc.datec")." as dc, u.rowid as uid, u.login";
+	$sql  = "SELECT rc.rowid,rc.price_level, rc.datec as dc, u.rowid as uid, u.login";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe_prices as rc, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE rc.fk_soc =". $objsoc->id;
 	$sql .= " AND u.rowid = rc.fk_user_author";
@@ -151,7 +151,7 @@ if ($_socid > 0)
 			$obj = $db->fetch_object($resql);
 			$tag = !$tag;
 			print '<tr '.$bc[$tag].'>';
-			print '<td>'.dol_print_date($obj->dc,"dayhour").'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
 			print '<td>'.$obj->price_level.' </td>';
 			$userstatic->id=$obj->uid;
 			$userstatic->nom=$obj->login;

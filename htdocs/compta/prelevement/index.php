@@ -134,7 +134,7 @@ else
  *
  */
 $limit=5;
-$sql = "SELECT p.rowid, p.ref, p.amount,".$db->pdate("p.datec")." as datec";
+$sql = "SELECT p.rowid, p.ref, p.amount, p.datec";
 $sql .= " ,p.statut ";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " ORDER BY datec DESC LIMIT ".$limit;
@@ -164,7 +164,7 @@ if ($result)
 
 		print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-		print '<td>'.dol_print_date($obj->datec,"dayhour")."</td>\n";
+		print '<td>'.dol_print_date($db->jdate($obj->datec),"dayhour")."</td>\n";
 
 		print '<td align="right">'.price($obj->amount)."</td>\n";
 

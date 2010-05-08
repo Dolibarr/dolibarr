@@ -72,7 +72,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $_GET['page'] ;
 
 $sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
-$sql.= ' '.$db->pdate('c.date_commande').' as date_commande, c.fk_statut, c.facture as facturee';
+$sql.= ' c.date_commande, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -199,7 +199,7 @@ if ($resql)
 		print '</td>';
 
 		print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $objp->date_commande < ($now - $conf->commande->traitement->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_commande) < ($now - $conf->commande->traitement->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 
 		print '<td width="16" align="right" class="nobordernopadding">';
@@ -222,10 +222,10 @@ if ($resql)
 		print '<td>'.$objp->ref_client.'</td>';
 
 		// Date
-		$y = dol_print_date($objp->date_commande,'%Y');
-		$m = dol_print_date($objp->date_commande,'%m');
-		$ml = dol_print_date($objp->date_commande,'%B');
-		$d = dol_print_date($objp->date_commande,'%d');
+		$y = dol_print_date($db->jdate($objp->date_commande),'%Y');
+		$m = dol_print_date($db->jdate($objp->date_commande),'%m');
+		$ml = dol_print_date($db->jdate($objp->date_commande),'%B');
+		$d = dol_print_date($db->jdate($objp->date_commande),'%d');
 		print '<td align="right">';
 		print $d;
 		print ' <a href="liste.php?year='.$y.'&amp;month='.$m.'">'.$ml.'</a>';

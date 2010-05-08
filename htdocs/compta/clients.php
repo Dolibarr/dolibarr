@@ -95,7 +95,7 @@ if ($mode == 'search') {
  *
  */
 
-$sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
+$sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea";
 $sql.= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -204,7 +204,7 @@ if ($result)
 		print '<td>'.$obj->ville.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
-		print '<td align="right">'.dol_print_date($obj->datec).'</td>';
+		print '<td align="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		print "</tr>\n";
 		$i++;
 	}
