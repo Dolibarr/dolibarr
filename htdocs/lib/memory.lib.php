@@ -34,7 +34,8 @@ $shmoffset=100;
 
 
 
-/**	\brief      Save data into a memory area shared by all users, all sessions on server
+/**
+ * 	\brief      Save data into a memory area shared by all users, all sessions on server
  *  \param      $memoryid		Memory id of shared area
  * 	\param		$data			Data to save
  * 	\return		int				<0 if KO, Nb of bytes written if OK
@@ -42,18 +43,36 @@ $shmoffset=100;
 function dol_setcache($memoryid,$data)
 {
 	global $conf;
+	$result=0;
 
 	// Using a memcached server
-	if (! empty($conf->memcached->enabled))
+	if (! empty($conf->memcached->enabled) && class_exists('Memcached'))
 	{
+		$m=new Memcached();
+		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
+		//$m->setOption(Memcached::OPT_COMPRESSION, false);
+		$m->add($memoryid,$data);
+		$rescode=$m->getResultCode();
+		if ($rescode == 0)
+		{
+			return sizeof($data);
+		}
+		else
+		{
+			return -$rescode;
+		}
 	}
+	// Using shmop
 	else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
 	{
-		dol_setshmop($memoryid,$data);
+		$result=dol_setshmop($memoryid,$data);
 	}
+
+	return $result;
 }
 
-/**	\brief      Read a memory area shared by all users, all sessions on server
+/**
+ * 	\brief      Read a memory area shared by all users, all sessions on server
  *  \param      $memoryid		Memory id of shared area
  * 	\return		int				<0 if KO, data if OK
  */
@@ -62,20 +81,38 @@ function dol_getcache($memoryid)
 	global $conf;
 
 	// Using a memcached server
-	if (! empty($conf->memcached->enabled))
+	if (! empty($conf->memcached->enabled) && class_exists('Memcached'))
 	{
+		$m=new Memcached();
+		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
+		//$m->setOption(Memcached::OPT_COMPRESSION, false);
+		$data=$m->get($memoryid);
+		$rescode=$m->getResultCode();
+		//print "memoryid=".$memoryid." - rescode=".$rescode." - date=".sizeof($data)."\n<br>";
+		//var_dump($data);
+		if ($rescode == 0)
+		{
+			return $data;
+		}
+		else
+		{
+			return -$rescode;
+		}
 	}
+	// Using shmop
 	else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
 	{
 		$data=dol_getshmop($memoryid);
+		return $data;
 	}
 
-	return $data;
+	return 0;
 }
 
 
 
-/**	\brief      Return shared memory address used to store dataset with key memoryid
+/**
+ * 	\brief      Return shared memory address used to store dataset with key memoryid
  *  \param      $memoryid		Memory id of shared area
  * 	\return		int				<0 if KO, Memoy address of shared memory for key
  */
@@ -86,7 +123,8 @@ function dol_getshmopaddress($memoryid)
 	return $shmkeys[$memoryid]+$shmoffset;
 }
 
-/**	\brief      Return list of contents of all memory area shared
+/**
+ * 	\brief      Return list of contents of all memory area shared
  * 	\return		int				0=Nothing is done, <0 if KO, >0 if OK
  */
 function dol_listshmop()
@@ -102,7 +140,8 @@ function dol_listshmop()
 	return $resarray;
 }
 
-/**	\brief      Save data into a memory area shared by all users, all sessions on server
+/**
+ * 	\brief      Save data into a memory area shared by all users, all sessions on server
  *  \param      $memoryid		Memory id of shared area
  * 	\param		$data			Data to save
  * 	\return		int				<0 if KO, Nb of bytes written if OK
@@ -136,7 +175,8 @@ function dol_setshmop($memoryid,$data)
 	}
 }
 
-/**	\brief      Read a memory area shared by all users, all sessions on server
+/**
+ * 	\brief      Read a memory area shared by all users, all sessions on server
  *  \param      $memoryid		Memory id of shared area
  * 	\return		int				<0 if KO, data if OK
  */

@@ -198,7 +198,7 @@ class Translate {
 				// Using a memcached server
 				if (! empty($conf->memcached->enabled))
 				{
-					$usecachekey=$langofdir.'_'.$newdomain;
+					$usecachekey=$newdomain.'_'.$langofdir;
 				}
 				// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 				else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
