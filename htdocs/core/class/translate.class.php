@@ -271,7 +271,7 @@ class Translate {
 						if ($alt == 2 && $usecachekey && sizeof($tabtranslatedomain))
 						{
 							require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
-							$size=dol_setcache($newdomain,$tabtranslatedomain);
+							$size=dol_setcache($usecachekey,$tabtranslatedomain);
 						}
 						//exit;
 						break;		// Break loop on each root dir
