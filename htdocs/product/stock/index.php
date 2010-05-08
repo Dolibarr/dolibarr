@@ -110,7 +110,7 @@ print '</td><td valign="top" width="70%" class="notopnoleft">';
 $max=10;
 $sql = "SELECT p.rowid, p.label as produit,";
 $sql.= " s.label as stock, s.rowid as entrepot_id,";
-$sql.= " m.value, ".$db->pdate("m.datem")." as datem";
+$sql.= " m.value, m.datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s";
 $sql.= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
@@ -143,7 +143,7 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td>'.dol_print_date($objp->datem,'dayhour').'</td>';
+		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
 		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
 		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
 		print "</a></td>\n";

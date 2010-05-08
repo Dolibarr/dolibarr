@@ -413,7 +413,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 // Liste des evolutions du prix
 $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx,";
 $sql.= " p.price_level, p.price_min, p.price_min_ttc,";
-$sql.= " ".$db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
+$sql.= " p.date_price as dp, u.rowid as user_id, u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."product_price as p,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE fk_product = ".$product->id;
@@ -471,7 +471,7 @@ if ($result)
 			$var=!$var;
 			print "<tr $bc[$var]>";
 			// Date
-			print "<td>".dol_print_date($objp->dp,"dayhour")."</td>";
+			print "<td>".dol_print_date($db->jdate($objp->dp),"dayhour")."</td>";
 
 			// Price level
 			if ($conf->global->PRODUIT_MULTIPRICES)

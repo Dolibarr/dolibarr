@@ -73,7 +73,7 @@ if (isset($_REQUEST['catid']))
 
 $title=$langs->trans("ProductsAndServices");
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte,';
 $sql.= ' SUM(s.reel) as stock_physique';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock as s,';

@@ -54,7 +54,7 @@ llxHeader();
 
 print_fiche_titre($langs->trans("ListOfGroups"));
 
-$sql = "SELECT g.rowid, g.nom, g.entity, ".$db->pdate("g.datec")." as datec";
+$sql = "SELECT g.rowid, g.nom, g.entity, g.datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql .= " WHERE g.entity IN (0,".$conf->entity.")";
 if ($_POST["search_group"])
@@ -91,7 +91,7 @@ if ($resql)
         	print img_redstar($langs->trans("GlobalGroup"));
         }
         print "</td>";
-        print '<td width="100" align="center">'.dol_print_date($obj->datec,"day").'</td>';
+        print '<td width="100" align="center">'.dol_print_date($db->jdate($obj->datec),"day").'</td>';
         print "</tr>\n";
         $i++;
     }

@@ -57,9 +57,9 @@ llxHeader();
 print_fiche_titre($langs->trans("ListOfUsers"));
 
 $sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.fk_societe, u.login,";
-$sql.= " ".$db->pdate("u.datec")." as datec,";
-$sql.= " ".$db->pdate("u.tms")." as datem,";
-$sql.= " ".$db->pdate("u.datelastlogin")." as datelastlogin,";
+$sql.= " u.datec,";
+$sql.= " u.tms as datem,";
+$sql.= " u.datelastlogin,";
 $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -121,10 +121,10 @@ if ($result)
         print '</td>';
 
         // Date creation
-        print '<td nowrap="nowrap" align="center">'.dol_print_date($obj->datec,"day").'</td>';
+        print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($obj->datec),"day").'</td>';
 
         // Date last login
-        print '<td nowrap="nowrap" align="center">'.dol_print_date($obj->datelastlogin,"dayhour").'</td>';
+        print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($obj->datelastlogin),"dayhour").'</td>';
 
 		// Statut
 		$userstatic->statut=$obj->statut;

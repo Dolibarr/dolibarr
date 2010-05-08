@@ -627,13 +627,13 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		$helpurl='';
 		if (isset($_GET["type"]) && $_GET["type"] == 0) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 		if (isset($_GET["type"]) && $_GET["type"] == 1)	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-		
+
 		llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
-		
+
 		if (! isset($product))
 		{
 			$canvas = new Canvas($db,$user);
-			
+
 			$product = $canvas->load_canvas('product',$_GET["canvas"]);
 
 			$canvas->assign_values('create');
@@ -662,11 +662,11 @@ if ($_GET["id"] || $_GET["ref"])
 	if (!empty($productstatic->canvas))
 	{
 		$canvas = new Canvas($db,$user);
-			
+
 		$product = $canvas->load_canvas('product',$productstatic->canvas);
 		$canvas->fetch($productstatic->id,'',$_GET["action"]);
 	}
-	
+
 	llxHeader('',$langs->trans("CardProduct".$product->type));
 
 	if ( $result )
@@ -695,7 +695,7 @@ if ($_GET["id"] || $_GET["ref"])
 				$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,2);
 				if ($ret == 'html') print '<br>';
 			}
-			
+
 			$canvas->assign_values('view');
 			$canvas->display_canvas();
 		}
@@ -776,7 +776,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 	if($conf->propal->enabled && $user->rights->propale->creer)
 	{
 		$propal = new Propal($db);
-		
+
 		$langs->load("propal");
 
 		print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
@@ -797,7 +797,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 		// Liste de "Mes propals"
 		print '<tr><td width="50%" valign="top">';
 
-		$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.ref,".$db->pdate("p.datep")." as dp";
+		$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.ref, p.datep as dp";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
 		$sql.= " WHERE p.fk_soc = s.rowid";
 		$sql.= " AND p.entity = ".$conf->entity;
@@ -893,7 +893,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 	if($conf->commande->enabled && $user->rights->commande->creer)
 	{
 		$commande = new Commande($db);
-		
+
 		$langs->load("orders");
 
 		print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
@@ -914,7 +914,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 		// Liste de "Mes commandes"
 		print '<tr><td width="50%" valign="top">';
 
-		$sql = "SELECT s.nom, s.rowid as socid, c.rowid as commandeid, c.ref,".$db->pdate("c.date_commande")." as dc";
+		$sql = "SELECT s.nom, s.rowid as socid, c.rowid as commandeid, c.ref, c.date_commande as dc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql.= " WHERE c.fk_soc = s.rowid";
 		$sql.= " AND c.entity = ".$conf->entity;
@@ -942,7 +942,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 					print "<td nowrap>";
 					print "<a href=\"../commande/fiche.php?id=".$objc->commandeid."\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
 					print "<td><a href=\"../comm/fiche.php?socid=".$objc->socid."\">".dol_trunc($objc->nom,18)."</a></td>\n";
-					print "<td nowrap=\"nowrap\">".dol_print_date($objc->dc,"%d %b")."</td>\n";
+					print "<td nowrap=\"nowrap\">".dol_print_date($db->jdate($objc->dc),"%d %b")."</td>\n";
 					print '<td><input type="hidden" name="commandeid" value="'.$objc->commandeid.'">';
 					print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
 					print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
@@ -1027,7 +1027,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 		// Liste de Mes factures
 		print '<tr><td width="50%" valign="top">';
 
-		$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
+		$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber, f.datef as df";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " WHERE f.fk_soc = s.rowid";
 		$sql.= " AND f.entity = ".$conf->entity;
@@ -1055,7 +1055,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 					print "<td nowrap>";
 					print "<a href=\"../compta/facture.php?facid=".$objp->factureid."\">".img_object($langs->trans("ShowBills"),"bill")." ".$objp->facnumber."</a></td>\n";
 					print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
-					print "<td nowrap=\"nowrap\">".dol_print_date($objp->df,"%d %b")."</td>\n";
+					print "<td nowrap=\"nowrap\">".dol_print_date($db->jdate($objp->df),"%d %b")."</td>\n";
 					print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
 					print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
 					print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
@@ -1089,7 +1089,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 			// Liste de Autres factures
 			$var=true;
 
-			$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
+			$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber, f.datef as df";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 			$sql.= " WHERE f.fk_soc = s.rowid";
 			$sql.= " AND f.entity = ".$conf->entity;

@@ -80,7 +80,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  */
 $max=10;
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.fk_societe, ".$db->pdate("u.datec")." as datec,";
+$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.fk_societe, u.datec,";
 $sql.= " u.entity, u.ldap_sid, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
@@ -125,7 +125,7 @@ if ($resql)
 		}
 		else print $langs->trans("InternalUser");
 		print '</td>';
-		print "<td align=\"right\">".dol_print_date($obj->datec,'dayhour')."</td>";
+		print "<td align=\"right\">".dol_print_date($db->jdate($obj->datec),'dayhour')."</td>";
 		print '</tr>';
 		$i++;
 	}
@@ -144,7 +144,7 @@ else
  */
 $max=5;
 
-$sql = "SELECT g.rowid, g.nom, g.note, g.entity, ".$db->pdate("g.datec")." as datec";
+$sql = "SELECT g.rowid, g.nom, g.note, g.entity, g.datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 $sql.= " ORDER BY g.datec DESC";
@@ -170,7 +170,7 @@ if ( $db->query($sql) )
 			print img_picto($langs->trans("GlobalGroup"),'redstar');
 		}
 		print "</td>";
-		print "<td width=\"80\" align=\"center\">".dol_print_date($obj->datec)."</td>";
+		print "<td width=\"80\" align=\"center\">".dol_print_date($db->jdate($obj->datec))."</td>";
 		print "</tr>";
 		$i++;
 	}
