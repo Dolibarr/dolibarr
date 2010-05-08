@@ -1379,7 +1379,7 @@ class Propal extends CommonObject
 		$ga = array();
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
-		$sql.= " ".$this->db->pdate("p.datep")." as dp, ".$this->db->pdate("p.fin_validite")." as datelimite";
+		$sql.= " p.datep as dp, p.fin_validite as datelimite";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql.= " WHERE p.entity = ".$conf->entity;
 		$sql.= " AND p.fk_soc = s.rowid";

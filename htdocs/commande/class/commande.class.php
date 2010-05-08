@@ -2190,9 +2190,9 @@ class Commande extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, '.$this->db->pdate('date_creation').' as datec,';
-		$sql.= ' '.$this->db->pdate('date_valid').' as datev,';
-		$sql.= ' '.$this->db->pdate('date_cloture').' as datecloture,';
+		$sql = 'SELECT c.rowid, date_creation as datec,';
+		$sql.= ' date_valid as datev,';
+		$sql.= ' date_cloture as datecloture,';
 		$sql.= ' fk_user_author, fk_user_valid, fk_user_cloture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql.= ' WHERE c.rowid = '.$id;
@@ -2224,9 +2224,9 @@ class Commande extends CommonObject
 					$this->user_cloture   = $cluser;
 				}
 
-				$this->date_creation     = $obj->datec;
-				$this->date_validation   = $obj->datev;
-				$this->date_cloture      = $obj->datecloture;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_cloture      = $this->db->jdate($obj->datecloture);
 			}
 
 			$this->db->free($result);

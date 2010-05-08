@@ -349,8 +349,8 @@ class AdresseLivraison
 		global $langs;
 		global $conf;
 
-		$sql = 'SELECT a.rowid, a.fk_societe, a.label, a.nom, a.address, a.datec as date_creation';
-		$sql .= ', a.tms as date_update';
+		$sql = 'SELECT a.rowid, a.fk_societe, a.label, a.nom, a.address,'.$this->db->pdate('a.datec').' as dc';
+		$sql .= ','. $this->db->pdate('a.tms').' as date_update';
 		$sql .= ', a.cp,a.ville, a.note, a.fk_pays, a.tel, a.fax';
 		$sql .= ', p.code as pays_code, p.libelle as pays';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_adresse_livraison as a';
@@ -366,17 +366,17 @@ class AdresseLivraison
 				$this->id				= $obj->rowid;
 				$this->socid			= $obj->fk_societe;
 
-				$this->date_update		= $this->db->jdate($obj->date_update);
-				$this->date_creation 	= $this->db->jdate($obj->date_creation);
+				$this->date_update		= $obj->date_update;
+				$this->date_creation 	= $obj->date_creation;
 
-				$this->label 			= $obj->label;
-				$this->nom 				= $obj->nom;
-				$this->adresse 			= $obj->address; // TODO obsolete
-				$this->address 			= $obj->address;
+				$this->label 			= stripslashes($obj->label);
+				$this->nom 				= stripslashes($obj->nom);
+				$this->adresse 			= stripslashes($obj->address); // TODO obsolete
+				$this->address 			= stripslashes($obj->address);
 				$this->cp 				= $obj->cp;
-				$this->ville 			= $obj->ville;
-				$this->adresse_full 	= $obj->address . "\n". $obj->cp . ' '. $obj->ville;
-				$this->full_address 	= $obj->address . "\n". $obj->cp . ' '. $obj->ville; //TODO obsolete
+				$this->ville 			= stripslashes($obj->ville);
+				$this->adresse_full 	= stripslashes($obj->address) . "\n". $obj->cp . ' '. stripslashes($obj->ville);
+				$this->full_address 	= stripslashes($obj->address) . "\n". $obj->cp . ' '. stripslashes($obj->ville); //TODO obsolete
 
 				$this->pays_id 			= $obj->fk_pays;
 				$this->pays_code 		= $obj->fk_pays?$obj->pays_code:'';

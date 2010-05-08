@@ -179,9 +179,9 @@ class Mailing extends CommonObject
 		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql .= ", m.statut, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
-		$sql .= ", ".$this->db->pdate("m.date_creat") . " as date_creat";
-		$sql .= ", ".$this->db->pdate("m.date_valid") . " as date_valid";
-		$sql .= ", ".$this->db->pdate("m.date_envoi") . " as date_envoi";
+		$sql .= ", m.date_creat";
+		$sql .= ", m.date_valid";
+		$sql .= ", m.date_envoi";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 		$sql .= " WHERE m.rowid = ".$rowid;
 
@@ -210,9 +210,9 @@ class Mailing extends CommonObject
 				$this->user_creat         = $obj->fk_user_creat;
 				$this->user_valid         = $obj->fk_user_valid;
 
-				$this->date_creat         = $obj->date_creat;
-				$this->date_valid         = $obj->date_valid;
-				$this->date_envoi         = $obj->date_envoi;
+				$this->date_creat         = $this->db->jdate($obj->date_creat);
+				$this->date_valid         = $this->db->jdate($obj->date_valid);
+				$this->date_envoi         = $this->db->jdate($obj->date_envoi);
 
 				return 1;
 			}
