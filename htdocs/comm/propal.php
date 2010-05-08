@@ -1407,8 +1407,8 @@ if ($id > 0 || ! empty($ref))
 	$sql = 'SELECT pt.rowid, pt.description, pt.fk_product, pt.fk_remise_except,';
 	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
 	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.marge_tx, pt.marque_tx, pt.pa_ht, pt.special_code,';
-	$sql.= ' '.$db->pdate('pt.date_start').' as date_start,';
-	$sql.= ' '.$db->pdate('pt.date_end').' as date_end,';
+	$sql.= ' pt.date_start,';
+	$sql.= ' pt.date_end,';
 	$sql.= ' pt.product_type,';
 	$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
 	$sql.= ' p.description as product_desc';
@@ -1473,7 +1473,7 @@ if ($id > 0 || ! empty($ref))
 					print $html->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
-					print_date_range($objp->date_start,$objp->date_end);
+					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 
 					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
@@ -1513,7 +1513,7 @@ if ($id > 0 || ! empty($ref))
 						print $text.' '.nl2br($objp->description);
 
 						// Show range
-						print_date_range($objp->date_start,$objp->date_end);
+						print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 					}
 					print "</td>\n";
 				}
@@ -1716,18 +1716,7 @@ if ($id > 0 || ! empty($ref))
 				print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 				print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 				print '</tr>' . "\n";
-				/*
-				 if ($conf->service->enabled)
-				 {
-				 print "<tr $bc[$var]>";
-				 print '<td colspan="5">Si produit de type service a duree limitee: Du ';
-				 print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
-				 print ' au ';
-				 print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
-				 print '</td>';
-				 print '</tr>' . "\n";
-				 }
-				 */
+
 				print "</form>\n";
 			}
 

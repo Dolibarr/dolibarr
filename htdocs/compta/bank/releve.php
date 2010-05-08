@@ -254,7 +254,7 @@ else
 	}
 
 	// Recherche les ecritures pour le releve
-	$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv";
+	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv";
 	$sql.= ", b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " WHERE b.num_releve='".$num."'";
@@ -283,13 +283,13 @@ else
 			print "<tr $bc[$var]>";
 
 			// Date operation
-			print '<td nowrap="nowrap" align="center">'.dol_print_date($objp->do,"day").'</td>';
+			print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
 
 			// Date de valeur
 			print '<td align="center" valign="center" nowrap="nowrap">';
 			print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
 			print img_previous().'</a> ';
-			print dol_print_date($objp->dv,"day") .' ';
+			print dol_print_date($db->jdate($objp->dv),"day") .' ';
 			print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
 			print img_next().'</a>';
 			print "</td>\n";

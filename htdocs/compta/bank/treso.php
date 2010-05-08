@@ -152,7 +152,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	// Remainder to pay in future
 
 	// Customer invoices
-	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.facnumber as ref, f.total_ttc, f.type, ".$db->pdate("f.date_lim_reglement")." as dlr,";
+	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.facnumber as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
 	$sql.= " s.rowid as socid, s.nom, s.fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
@@ -161,7 +161,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " ORDER BY dlr ASC";
 
 	// Supplier invoices
-	$sql2= " SELECT 'supplier_invoice' as family, ff.rowid as objid, ff.facnumber as ref, (-1*ff.total_ttc) as total_ttc, ff.type, ".$db->pdate("ff.date_lim_reglement")." as dlr,";
+	$sql2= " SELECT 'supplier_invoice' as family, ff.rowid as objid, ff.facnumber as ref, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
 	$sql2.= " s.rowid as socid, s.nom, s.fournisseur";
 	$sql2.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
@@ -170,7 +170,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql2.= " ORDER BY dlr ASC";
 
 	// Social contributions
-	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, ".$db->pdate("cs.date_ech")." as dlr";
+	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";
 	$sql3.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql3.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
 	$sql3.= " WHERE cs.entity = ".$conf->entity;
@@ -190,7 +190,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		{
 			$sqlobj = $db->fetch_object($result);
 			$tab_sqlobj[] = $sqlobj;
-			$tab_sqlobjOrder[]= $sqlobj->dlr;
+			$tab_sqlobjOrder[]= $db->jdate($sqlobj->dlr);
 		}
 		$db->free($result);
 	}
@@ -205,7 +205,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		{
 			$sqlobj = $db->fetch_object($result2);
 			$tab_sqlobj[] = $sqlobj;
-			$tab_sqlobjOrder[]= $sqlobj->dlr;
+			$tab_sqlobjOrder[]= $db->jdate($sqlobj->dlr);
 		}
 		$db->free($result2);
 	}
@@ -221,7 +221,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		{
 			$sqlobj = $db->fetch_object($result3);
 			$tab_sqlobj[] = $sqlobj;
-			$tab_sqlobjOrder[]= $sqlobj->dlr;
+			$tab_sqlobjOrder[]= $db->jdate($sqlobj->dlr);
 		}
 		$db->free($result3);
 	}
@@ -303,7 +303,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			$solde += $total_ttc;
 
 			print "<tr $bc[$var]>";
-			print '<td>'.dol_print_date($obj->dlr,"day")."</td>";
+			print '<td>'.dol_print_date($db->jdate($obj->dlr),"day")."</td>";
 			print "<td>".$ref."</td>";
 			print "<td>".$refcomp."</td>";
 			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price($total_ttc)."</td><td>&nbsp;</td>"; };

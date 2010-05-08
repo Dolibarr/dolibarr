@@ -348,7 +348,7 @@ else
 
 	// Liste des cheques
 	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
-	$sql.= " ".$db->pdate("b.dateo")." as date,".$db->pdate("b.datec")." as datec, b.banque,";
+	$sql.= " b.dateo as date, b.datec as datec, b.banque,";
 	$sql.= " p.rowid as pid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= ", ".MAIN_DB_PREFIX."bank as b";

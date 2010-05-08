@@ -387,19 +387,19 @@ if ($socid > 0)
 	if ($conf->propal->enabled && $user->rights->propale->lire)
 	{
 		$propal_static = new Propal($db);
-		
+
 		$proposals = $propal_static->liste_array(0, 0, 0, $objsoc->id, $MAXLIST);
-		
+
 		//var_dump($proposals);
 
 		print '<table class="noborder" width="100%">';
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
-		$sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-		$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
-		$sql .= " AND s.rowid = ".$objsoc->id;
-		$sql .= " ORDER BY p.datep DESC";
+		$sql.= " p.datep as dp, p.fin_validite as datelimite";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+		$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
+		$sql.= " AND s.rowid = ".$objsoc->id;
+		$sql.= " ORDER BY p.datep DESC";
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -419,11 +419,11 @@ if ($socid > 0)
 				$objp = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
 				print "<td nowrap><a href=\"propal.php?propalid=$objp->propalid\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a>\n";
-				if ( ($objp->dp < $now - $conf->propal->cloture->warning_delay) && $objp->fk_statut == 1 )
+				if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 )
 				{
 					print " ".img_warning();
 				}
-				print '</td><td align="right" width="80">'.dol_print_date($objp->dp,'day')."</td>\n";
+				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
 				print '<td align="right" nowrap="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
 				$var=!$var;
@@ -449,7 +449,7 @@ if ($socid > 0)
 
 		$sql = "SELECT s.nom, s.rowid,";
 		$sql.= " c.rowid as cid, c.total_ht, c.ref, c.fk_statut, c.facture,";
-		$sql.= " ".$db->pdate("c.date_commande")." as dc";
+		$sql.= " c.date_commande as dc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql.= " WHERE c.fk_soc = s.rowid ";
 		$sql.= " AND s.rowid = ".$objsoc->id;
@@ -473,7 +473,7 @@ if ($socid > 0)
 				$var=!$var;
 				print "<tr $bc[$var]>";
 				print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
-				print '</td><td align="right" width="80">'.dol_print_date($objp->dc,'day')."</td>\n";
+				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
 				print '<td align="right" width="100">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
 				$i++;
@@ -496,7 +496,7 @@ if ($socid > 0)
 
 		print '<table class="noborder" width="100%">';
 
-		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, ".$db->pdate("c.datec")." as dc";
+		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, c.datec as dc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".$objsoc->id;
@@ -527,7 +527,7 @@ if ($socid > 0)
 				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
 				print $contrat->getNomUrl(1,12);
 				print "</td>\n";
-				print '<td align="right" width="80">'.dol_print_date($objp->dc,'day')."</td>\n";
+				print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td width="20">&nbsp;</td>';
 				print '<td align="right" nowrap="nowrap">';
 				$contrat->fetch_lignes();
@@ -552,7 +552,7 @@ if ($socid > 0)
 	{
 		print '<table class="noborder" width="100%">';
 
-		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, ".$db->pdate("f.datei")." as di";
+		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.datei as di";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND s.rowid = ".$objsoc->id;
@@ -576,7 +576,7 @@ if ($socid > 0)
 				$objp = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
 				print '<td nowrap><a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a>'."\n";
-				print '</td><td align="right">'.dol_print_date($objp->di,"day").'</td>'."\n";
+				print '</td><td align="right">'.dol_print_date($db->jdate($objp->di),"day").'</td>'."\n";
 				print '</tr>';
 				$var=!$var;
 				$i++;
@@ -598,7 +598,7 @@ if ($socid > 0)
 	{
 		print '<table class="noborder" width=100%>';
 
-		$sql  = "SELECT p.rowid,p.title,p.ref,p.public,".$db->pdate("p.dateo")." as do";
+		$sql  = "SELECT p.rowid,p.title,p.ref,p.public, p.dateo as do";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " WHERE p.fk_soc = $objsoc->id";
 		$sql .= " ORDER BY p.dateo DESC";
@@ -637,7 +637,7 @@ if ($socid > 0)
 						// Label
 						print '<td>'.$obj->title.'</td>';
 						// Date
-						print '<td align="right">'.dol_print_date($obj->do,"day").'</td>';
+						print '<td align="right">'.dol_print_date($db->jdate($obj->do),"day").'</td>';
 
 						print '</tr>';
 					}
@@ -669,19 +669,21 @@ if ($socid > 0)
 			//$num = sizeOf($result);
 			$num=$chronodocs_static->get_nb_chronodocs($objsoc->id);
 
-			if ($num > 0) {
+			if ($num > 0)
+			{
 				print '<tr class="liste_titre">';
 				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastChronodocs",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/chronodocs/index.php?socid='.$objsoc->id.'">'.$langs->trans("AllChronodocs").' ('.$num.')</td></tr></table></td>';
 				print '</tr>';
 			}
-			while ($i < $num && $i < $MAXLIST) {
+			while ($i < $num && $i < $MAXLIST)
+			{
 				$obj = array_shift($result);
 				$var = !$var;
 				print "<tr $bc[$var]>";
 				print '<td><a href="'.DOL_URL_ROOT.'/chronodocs/fiche.php?id='.$obj->fichid.'">'.img_object($langs->trans("ShowChronodocs"),"generic")." ".$obj->ref.'</a></td>';
 
 				print "<td align=\"left\">".dol_trunc($obj->title,30) ."</td>";
-				print "<td align=\"right\">".dol_print_date($obj->dp,'day')."</td>\n";
+				print "<td align=\"right\">".dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
 				print "</tr>";
 
 				$i++;

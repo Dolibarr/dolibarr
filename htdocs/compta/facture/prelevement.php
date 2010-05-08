@@ -167,8 +167,8 @@ if ($_GET["facid"] > 0)
 		 *
 		 */
 
-		$sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
-		$sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
+		$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+		$sql .= " , pfd.date_traite as date_traite";
 		$sql .= " , pfd.amount";
 		$sql .= " , u.rowid as user_id, u.name, u.firstname, u.login";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
@@ -222,7 +222,7 @@ if ($_GET["facid"] > 0)
 				$var=!$var;
 
 				print "<tr $bc[$var]>";
-				print '<td align="left">'.dol_print_date($obj->date_demande,'day')."</td>\n";
+				print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 				print '<td align="center">En attente de traitement</td>';
 				print '<td align="center">'.price($obj->amount).'</td>';
 				print '<td align="center">-</td>';
@@ -243,8 +243,8 @@ if ($_GET["facid"] > 0)
 			dol_print_error($db);
 		}
 
-		$sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
-		$sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
+		$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande";
+		$sql .= " , pfd.date_traite";
 		$sql .= " , pfd.fk_prelevement_bons, pfd.amount";
 		$sql .= " , u.rowid as user_id, u.name, u.firstname, u.login";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
@@ -267,9 +267,9 @@ if ($_GET["facid"] > 0)
 
 				print "<tr $bc[$var]>";
 
-				print '<td align="center">'.dol_print_date($obj->date_demande)."</td>\n";
+				print '<td align="center">'.dol_print_date($db->jdate($obj->date_demande))."</td>\n";
 
-				print '<td align="center">'.dol_print_date($obj->date_traite)."</td>\n";
+				print '<td align="center">'.dol_print_date($db->jdate($obj->date_traite))."</td>\n";
 
 				print '<td align="center">'.price($obj->amount).'</td>';
 

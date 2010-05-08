@@ -277,7 +277,7 @@ $max=3;
 
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
+	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -407,7 +407,7 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
-	$sql = "SELECT s.nom, s.rowid, ".$db->pdate("s.datec")." as dc";
+	$sql = "SELECT s.nom, s.rowid, s.datec as dc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.fournisseur = 1";
@@ -438,7 +438,7 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 				$company->nom=$objp->nom;
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap="nowrap">'.$company->getNomUrl(1,'supplier',48).'</td>';
-				print '<td align="right">'.dol_print_date($objp->dc,'day').'</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($objp->dc),'day').'</td>';
 				print '</tr>';
 				$var=!$var;
 				$i++;
@@ -533,7 +533,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
 
-	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
+	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -573,7 +573,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				print $propalstatic->getNomUrl(1);
 				print '</td>';
 				print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
-				if ($obj->dp < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($db->jdate($obj->dp) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->ref);
@@ -586,7 +586,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
 				print "<td align=\"left\"><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company")." ".dol_trunc($obj->nom,44)."</a></td>\n";
 				print "<td align=\"right\">";
-				print dol_print_date($obj->dp,'day')."</td>\n";
+				print dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
 				print "<td align=\"right\">".price($obj->total_ttc)."</td>";
 				print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
 				print "</tr>\n";
