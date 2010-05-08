@@ -73,7 +73,7 @@ $offset = $conf->liste_limit * $page ;
  * Mode Liste
  */
 
-$sql = "SELECT s.rowid as socid, s.nom, ".$db->pdate("cf.date_commande")." as dc,";
+$sql = "SELECT s.rowid as socid, s.nom, cf.date_commande as dc,";
 $sql.= " cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s,";
@@ -177,7 +177,7 @@ if ($resql)
 		print "<td align=\"center\" width=\"100\">";
 		if ($obj->dc)
 		{
-			print dol_print_date($obj->dc,"day");
+			print dol_print_date($db->jdate($obj->dc),"day");
 		}
 		else
 		{

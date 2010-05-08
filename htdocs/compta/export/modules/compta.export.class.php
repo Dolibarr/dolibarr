@@ -62,7 +62,7 @@ class ComptaExport
 
 		$error = 0;
 
-		$sql = "SELECT f.rowid as facid, f.facnumber, ".$this->db->pdate("f.datef")." as datef";
+		$sql = "SELECT f.rowid as facid, f.facnumber, f.datef";
 		$sql .= " , f.total_ttc, f.tva ";
 		$sql .= " ,s.nom, s.rowid as socid, s.code_compta";
 		$sql .= " , l.price, l.tva_tx";
@@ -99,7 +99,7 @@ class ComptaExport
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->linec[$i][0] = $obj->datef;
+				$this->linec[$i][0] = $this->db->jdate($obj->datef);
 				$this->linec[$i][1] = $obj->facid;
 				$this->linec[$i][2] = $obj->code_compta;
 				$this->linec[$i][3] = $obj->nom;
@@ -138,7 +138,7 @@ class ComptaExport
 		$error = 0;
 
 		$sql = "SELECT p.rowid as paymentid, f.facnumber";
-		$sql .= " ,".$this->db->pdate("p.datep")." as datep";
+		$sql .= " , p.datep";
 		$sql .= " , pf.amount";
 		$sql .= " , s.nom, s.code_compta";
 		$sql .= " , cp.libelle, f.increment";
@@ -170,7 +170,7 @@ class ComptaExport
 	  {
 	  	$obj = $this->db->fetch_object($resql);
 
-	  	$this->linep[$i][0] = $obj->datep;
+	  	$this->linep[$i][0] = $this->db->jdate($obj->datep);
 	  	$this->linep[$i][1] = $obj->paymentid;
 	  	$this->linep[$i][2] = $obj->code_compta;
 	  	$this->linep[$i][3] = $obj->nom;

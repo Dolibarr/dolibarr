@@ -40,7 +40,7 @@ function propals ($db, $year, $month)
 {
 	global $bc,$langs,$conf;
 
-	$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+	$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.price, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	$sql.= ", ".MAIN_DB_PREFIX."c_propalst as c";
@@ -91,7 +91,7 @@ function propals ($db, $year, $month)
 
 		print "<td><a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->propalid."\">".$objp->ref."</a></td>\n";
 
-		print "<td align=\"right\">".dol_print_date($objp->dp)."</td>\n";
+		print "<td align=\"right\">".dol_print_date($db->jdate($objp->dp))."</td>\n";
 
 		print "<td align=\"right\">".price($objp->price)."</td>\n";
 		print "<td align=\"center\">".$objp->statut."</td>\n";

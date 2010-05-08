@@ -51,7 +51,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $sql = "SELECT s.nom, s.rowid as socid, f.description, f.ref";
-$sql.= ", ".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
+$sql.= ", f.datei as dp, f.rowid as fichid, f.fk_statut, f.duree";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."fichinter as f ";
 $sql.= " WHERE f.fk_soc = s.rowid";
@@ -124,7 +124,7 @@ if ( $db->query($sql) )
 			print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->rowid.$filter."\">".$objp->nom."</a></TD>\n";
 		}
 		print '<td>'.nl2br($objp->description).'</td>';
-		print "<td>".dol_print_date($objp->dp,"%d %B %Y")."</td>\n";
+		print "<td>".dol_print_date($db->jdate($objp->dp),"day")."</td>\n";
 		print '<td align="center">'.sprintf("%.1f",$objp->duree).'</td>';
 		$DureeTotal += $objp->duree;
 		print "</tr>\n";

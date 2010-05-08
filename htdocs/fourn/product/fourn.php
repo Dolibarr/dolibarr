@@ -132,7 +132,7 @@ if ($_GET["id"])
 		 * Prix
 		 */
 
-		$sql = "SELECT p.price, p.quantity,".$db->pdate("tms") ." as date_releve";
+		$sql = "SELECT p.price, p.quantity, tms as date_releve";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as p";
 		$sql .=" WHERE p.fk_soc = ".$product->fourn->id;
 		$sql .= " AND p.fk_product = ".$product->id;
@@ -148,7 +148,7 @@ if ($_GET["id"])
 	  	$objp = $db->fetch_object($resql);
 	  	$var=!$var;
 	  	print "<tr $bc[$var]>";
-	  	print '<td>'.dol_print_date($objp->date_releve).'</td>';
+	  	print '<td>'.dol_print_date($db->datej($objp->date_releve)).'</td>';
 	  	print '<td align="right">'.price($objp->price).'</td>';
 	  	print '<td align="center">'.$objp->quantity.'</td></tr>';
 

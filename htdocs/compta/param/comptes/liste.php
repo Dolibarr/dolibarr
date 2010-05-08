@@ -46,7 +46,7 @@ $offset = $conf->liste_limit * $page ;
  *
  */
 
-$sql = "SELECT cg.rowid, cg.numero, cg.intitule, ".$db->pdate("cg.date_creation")." as dc";
+$sql = "SELECT cg.rowid, cg.numero, cg.intitule, cg.date_creation as dc";
 
 $sql .= " FROM ".MAIN_DB_PREFIX."compta_compte_generaux as cg";
 
@@ -109,7 +109,7 @@ if ($resql)
       print '<td>'.$obj->numero.'</td>'."\n";
       print '<td>'.$obj->intitule.'</td>';
       print '<td align="right" width="100">';
-      print dol_print_date($obj->dc);
+      print dol_print_date($db->jdate($obj->dc));
 
       print '</td>';
       print "</tr>\n";

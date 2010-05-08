@@ -57,7 +57,7 @@ $pagenext = $page + 1;
 
 
 $sql = "SELECT s.nom, s.rowid as socid,";								// Ou
-$sql.= " d.rowid, d.type, ".$db->pdate("d.dated")." as dd, d.km, ";		// Comment
+$sql.= " d.rowid, d.type, d.dated as dd, d.km, ";		// Comment
 $sql.= " u.name, u.firstname";											// Qui
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= ", ".MAIN_DB_PREFIX."deplacement as d";
@@ -100,7 +100,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';
       print '<td>'.$langs->trans($objp->type).'</td>';
-      print '<td>'.dol_print_date($objp->dd,'day').'</td>';
+      print '<td>'.dol_print_date($db->jdate($objp->dd),'day').'</td>';
       if ($objp->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
       else print '<td>&nbsp;</td>';
       print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';

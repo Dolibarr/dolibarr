@@ -1092,7 +1092,7 @@ class AccountLine
 	 */
 	function info($rowid)
 	{
-		$sql = 'SELECT b.rowid, '.$this->db->pdate('b.datec').' as datec,';
+		$sql = 'SELECT b.rowid, b.datec,';
 		$sql.= ' b.fk_user_author, b.fk_user_rappro';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'bank as b';
 		$sql.= ' WHERE b.rowid = '.$rowid;
@@ -1118,7 +1118,7 @@ class AccountLine
 					$this->user_rappro = $ruser;
 				}
 
-				$this->date_creation     = $obj->datec;
+				$this->date_creation     = $this->db->jdate($obj->datec);
 				//$this->date_rappro       = $obj->daterappro;    // \todo pas encore g�r�e
 			}
 			$this->db->free($result);

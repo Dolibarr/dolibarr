@@ -56,7 +56,7 @@ if ($sortfield == "") $sortfield="ec.date_export";
 llxHeader('','Compta - Export');
 
 
-$sql = "SELECT ec.rowid,".$db->pdate("ec.date_export")." as date_export, ec.ref";
+$sql = "SELECT ec.rowid, ec.date_export as date_export, ec.ref";
 $sql .= " FROM ".MAIN_DB_PREFIX."export_compta as ec";
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -88,7 +88,7 @@ if ($result)
 		print "<tr $bc[$var]>";
 
 		print '<td>'.$obj->ref.'</td>';
-		print '<td>'.dol_print_date($obj->date_export,"dayhour").'</td>';
+		print '<td>'.dol_print_date($db->jdate($obj->date_export),"dayhour").'</td>';
 		print '<td><a href="index.php?action=export&amp;id='.$obj->rowid.'">'.$langs->trans("ReBuild").'</a></td>';
 		print "</tr>\n";
 		$i++;

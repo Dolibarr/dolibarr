@@ -48,7 +48,7 @@ $tva_static = new Tva($db);
 
 print_fiche_titre($langs->trans("VATPayments"));
 
-$sql = "SELECT rowid, amount, label, ".$db->pdate("f.datev")." as dm";
+$sql = "SELECT rowid, amount, label, f.datev as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as f ";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " ORDER BY dm DESC";
@@ -78,7 +78,7 @@ if ($result)
 		$tva_static->ref=$obj->rowid;
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
-        print '<td align="left">'.dol_print_date($obj->dm,'day')."</td>\n";
+        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
         $total = $total + $obj->amount;
 
         print "<td align=\"right\">".price($obj->amount)."</td>";

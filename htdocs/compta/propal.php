@@ -197,7 +197,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 
 	if ($conf->projet->enabled) $rowspan++;
-	
+
 	//Local taxes
 	if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
@@ -327,9 +327,9 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="right" colspan="2">'.price($propal->total_localtax2).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 		}
-	}	
-	
-	
+	}
+
+
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
@@ -575,8 +575,8 @@ else
 	$sql = "SELECT s.nom, s.rowid as socid, s.client,";
 	$sql.= " p.rowid as propalid, p.ref, p.fk_statut,";
 	$sql.= " p.total_ht, p.tva, p.total,";
-	$sql.= $db->pdate("p.datep")." as dp, ";
-	$sql.= $db->pdate("p.fin_validite")." as dfin";
+	$sql.= " p.datep as dp,";
+	$sql.= " p.fin_validite as dfin";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -676,7 +676,7 @@ else
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-			if ($objp->fk_statut == 1 && $objp->dfin < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+			if ($objp->fk_statut == 1 && $db->jdate($objp->dfin) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 			print '</td>';
 
 			print '<td width="16" align="right" class="nobordernopadding">';
@@ -700,10 +700,10 @@ else
 
 			// Date
 			print "<td align=\"right\">";
-			$y = dol_print_date($objp->dp,"%Y");
-			$m = dol_print_date($objp->dp,"%m");
-			$mt = dol_print_date($objp->dp,"%b");
-			$d = dol_print_date($objp->dp,"%d");
+			$y = dol_print_date($db->jdate($objp->dp),"%Y");
+			$m = dol_print_date($db->jdate($objp->dp),"%m");
+			$mt = dol_print_date($db->jdate($objp->dp),"%b");
+			$d = dol_print_date($db->jdate($objp->dp),"%d");
 			print $d."\n";
 			print " <a href=\"propal.php?year=$y&month=$m\">";
 			print $mt."</a>\n";

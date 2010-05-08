@@ -89,14 +89,13 @@ if($_GET["id"])
 {
     $sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price,";
     $sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,";
-    $sql .= " ".$db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end,";
+    $sql .= " l.date_start as date_start, l.date_end as date_end,";
     $sql .= " l.fk_code_ventilation ";
     $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
     $sql .= " , ".MAIN_DB_PREFIX."facture as f";
     $sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut = 1 AND l.rowid = ".$_GET["id"];
 
     $result = $db->query($sql);
-
     if ($result)
     {
         $num_lignes = $db->num_rows($result);

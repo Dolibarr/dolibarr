@@ -53,7 +53,7 @@ llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M
 $donationstatic=new Don($db);
 
 // Genere requete de liste des dons
-$sql = "SELECT d.rowid, ".$db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe,";
+$sql = "SELECT d.rowid, d.datedon, d.prenom, d.nom, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
 $sql.= " p.title as projet";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
@@ -108,7 +108,7 @@ if ($result)
 		print "<td>".stripslashes($objp->prenom)."</td>\n";
 		print "<td>".stripslashes($objp->nom)."</td>\n";
 		print "<td>".stripslashes($objp->societe)."</td>\n";
-		print '<td align="center">'.dol_print_date($objp->datedon).'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($objp->datedon)).'</td>';
 		if ($conf->projet->enabled) {
 			print "<td>$objp->projet</td>\n";
 		}

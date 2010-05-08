@@ -139,7 +139,7 @@ if ( $societe->fetch($socid) )
 			print '</td></tr>';
 		}
 	}
-	
+
 	print '</table>';
 
 	print '</td><td valign="top" width="50%" class="notopnoleftnoright">';
@@ -178,7 +178,7 @@ if ( $societe->fetch($socid) )
 
 	if ($user->rights->fournisseur->commande->lire)
 	{
-		$sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
+		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 		$sql.= " WHERE p.fk_soc =".$societe->id;
 		$sql.= " ORDER BY p.date_commande DESC";
@@ -204,7 +204,7 @@ if ( $societe->fetch($socid) )
 				print '<td align="center" width="80">';
 				if ($obj->dc)
 				{
-					print dol_print_date($obj->dc,'day');
+					print dol_print_date($db->jdate($obj->dc),'day');
 				}
 				else
 				{
@@ -234,7 +234,7 @@ if ( $societe->fetch($socid) )
 
 	if ($user->rights->fournisseur->facture->lire)
 	{
-		$sql = 'SELECT p.rowid,p.libelle,p.facnumber,p.fk_statut,'.$db->pdate('p.datef').' as df, total_ttc as amount, paye';
+		$sql = 'SELECT p.rowid,p.libelle,p.facnumber,p.fk_statut, p.datef as df, total_ttc as amount, paye';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as p';
 		$sql.= ' WHERE p.fk_soc = '.$societe->id;
 		$sql.= ' ORDER BY p.datef DESC';
@@ -256,7 +256,7 @@ if ( $societe->fetch($socid) )
 				print '<td>';
 				print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
 				print img_object($langs->trans('ShowBill'),'bill').' '.$obj->facnumber.'</a> '.dol_trunc($obj->libelle,14).'</td>';
-				print '<td align="center" nowrap="nowrap">'.dol_print_date($obj->df,'day').'</td>';
+				print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->df),'day').'</td>';
 				print '<td align="right" nowrap="nowrap">'.price($obj->amount).'</td>';
 				print '<td align="right" nowrap="nowrap">'.$facturestatic->LibStatut($obj->paye,$obj->fk_statut,5).'</td>';
 				print '</tr>';

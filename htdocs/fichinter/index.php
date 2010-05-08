@@ -66,7 +66,7 @@ llxHeader();
 
 $sql = "SELECT";
 $sql.= " f.ref, f.rowid as fichid, f.fk_statut, f.description,";
-$sql.= " fd.description as descriptiondetail, ".$db->pdate("fd.date")." as dp, fd.duree,";
+$sql.= " fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 $sql.= " s.nom, s.rowid as socid";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -135,7 +135,7 @@ if ($result)
 		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44)."</a></td>\n";
 		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
 		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
-		print '<td align="center">'.dol_print_date($objp->dp,'dayhour')."</td>\n";
+		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
 		print '<td align="right">'.ConvertSecondToTime($objp->duree).'</td>';
 		print '<td align="right">'.$interventionstatic->LibStatut($objp->fk_statut,5).'</td>';
 

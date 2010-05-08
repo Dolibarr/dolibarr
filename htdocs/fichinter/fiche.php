@@ -667,8 +667,8 @@ elseif ($fichinterid)
 	/*
 	 * Lignes d'intervention
 	 */
-	$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang';
-	$sql.= ', '.$db->pdate('ft.date').' as date_intervention';
+	$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
+	$sql.= ' ft.date as date_intervention';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 	$sql.= ' WHERE ft.fk_fichinter = '.$fichinterid;
 	$sql.= ' ORDER BY ft.rang ASC, ft.rowid';
@@ -705,7 +705,7 @@ elseif ($fichinterid)
 				print nl2br($objp->description);
 
 				// Date
-				print '<td align="center" width="150">'.dol_print_date($objp->date_intervention,'dayhour').'</td>';
+				print '<td align="center" width="150">'.dol_print_date($db->jdate($objp->date_intervention),'dayhour').'</td>';
 
 				// Duration
 				print '<td align="right" width="150">'.ConvertSecondToTime($objp->duree).'</td>';
@@ -778,7 +778,7 @@ elseif ($fichinterid)
 
 				// Date d'intervention
 				print '<td align="center" nowrap="nowrap">';
-				$html->select_date($objp->date_intervention,'di',1,1,0,"date_intervention");
+				$html->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
 				print '</td>';
 
 				// Duration

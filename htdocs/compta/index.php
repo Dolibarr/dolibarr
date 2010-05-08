@@ -470,7 +470,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 
 	$langs->load("boxes");
 
-	$sql = "SELECT s.nom, s.rowid, ".$db->pdate("s.datec")." as dc";
+	$sql = "SELECT s.nom, s.rowid, s.datec as dc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.client IN (1, 3)";
@@ -508,7 +508,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
-				print '<td align="right">'.dol_print_date($objp->dc,'day').'</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($objp->dc),'day').'</td>';
 				print '</tr>';
 
 				$i++;

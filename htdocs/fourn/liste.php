@@ -67,7 +67,7 @@ $htmlother=new FormOther($db);
 
 llxHeader();
 
-$sql = "SELECT s.rowid as socid, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm";
+$sql = "SELECT s.rowid as socid, s.nom, s.ville, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm";
 $sql.= " , code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -177,7 +177,7 @@ if ($resql)
 		print "<td>".$obj->ville."</td>\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_compta_fournisseur.'&nbsp;</td>';
-		print '<td align="center">'.dol_print_date($obj->datec).'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		print "<td>&nbsp;</td>\n";
 		print "</tr>\n";
 		$i++;
