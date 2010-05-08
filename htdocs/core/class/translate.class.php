@@ -215,9 +215,9 @@ class Translate {
 						$this->tab_translate=array_merge($this->tab_translate,$tmparray);
 						//print $newdomain."\n";
 						//var_dump($this->tab_translate);
-						$this->tab_loaded[$newdomain]=3;    // Set this file as loaded from cache in session
+						$this->tab_loaded[$newdomain]=3;    // Set this file as loaded from cache
 						$fileread=1;
-						$found=true;
+						$found=true;						// Found in dolibarr PHP cache
 					}
 				}
 
@@ -267,7 +267,7 @@ class Translate {
 						fclose($fp);
 						$fileread=1;
 
-						// To save lang content into session
+						// To save lang content in cache
 						if ($alt == 2 && $usecachekey && sizeof($tabtranslatedomain))
 						{
 							require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
