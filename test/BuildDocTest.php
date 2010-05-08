@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/FactureTest.php
+ *      \file       test/BuildDocTest.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -45,14 +45,10 @@ if (empty($user->id))
  * @covers User
  * @covers Translate
  * @covers Conf
- * @covers Interfaces
  * @covers CommonObject
- * @covers Facture
- * @covers FactureLigne
- * @covers ModeleNumRefFactures
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FactureTest extends PHPUnit_Framework_TestCase
+class BuildDocTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -63,9 +59,9 @@ class FactureTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return FactureTest
+	 * @return BuildDocTest
 	 */
-	function FactureTest()
+	function BuildDocTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -115,8 +111,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers	ModelePDFFactures
+     * @covers	pdf_crabe
+     * @covers	pdf_oursin
      */
-    public function testFactureCreate()
+    public function testFactureBuild()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -124,113 +123,28 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+		$conf->facture->dir_output.='/temp';
 		$localobject=new Facture($this->savdb);
     	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+    	$localobject->socid=1;
+
+    	// Crabe
+    	$localobject->modelpdf='crabe';
+    	$result=facture_pdf_create($db, $localobject, '', $localobject->modelpdf, $langs);
 
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
-    	return $result;
-    }
 
-    /**
-     * @depends	testFactureCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureFetch($id)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new Facture($this->savdb);
-    	$result=$localobject->fetch($id);
+    	// Oursin
+    	$localobject->modelpdf='oursin';
+    	$result=facture_pdf_create($db, $localobject, '', $localobject->modelpdf, $langs);
 
     	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
+    	print __METHOD__." result=".$result."\n";
+
+    	return 0;
     }
 
-    /**
-     * @depends	testFactureFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureUpdate($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject->note='New note after update';
-    	$result=$localobject->update($user);
-
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $localobject;
-    }
-
-    /**
-     * @depends	testFactureUpdate
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureValid($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-    	$result=$localobject->validate($user);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-
-    	$this->assertLessThan($result, 0);
-    	return $localobject->id;
-    }
-
-	/**
-     * @depends	testFactureValid
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureDelete($id)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new Facture($this->savdb);
-    	$result=$localobject->fetch($id);
-		$result=$localobject->delete($id);
-
-		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
-    }
-
-    /**
-     *
-     */
-    /*public function testVerifyNumRef()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new Facture($this->savdb);
-    	$result=$localobject->ref='refthatdoesnotexists';
-		$result=$localobject->VerifyNumRef();
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
-    	return $result;
-    }*/
 }
 ?>

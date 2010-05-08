@@ -1,10 +1,21 @@
 <phpunit>
 <filter>
   <blacklist>
-    <directory suffix=".php">../test/</directory>
-    <directory suffix=".php">../htdocs/includes/adodbtime/</directory>
-    <directory suffix=".php">../htdocs/includes/artichow/</directory>
-    <directory suffix=".php">../htdocs/includes/fpdf/</directory>
+    <directory>../test/</directory>
+    <directory>../htdocs/includes/adodbtime/</directory>
+    <directory>../htdocs/includes/artichow/</directory>
+    <directory>../htdocs/includes/barcode/php-barcode/</directory>
+    <directory>../htdocs/includes/fpdf/</directory>
+    <directory>../htdocs/includes/efc_xfss/</directory>
+    <directory>../htdocs/includes/fckeditor/</directory>
+    <directory>../htdocs/includes/iphone/</directory>
+    <directory>../htdocs/includes/jcrop/</directory>
+    <directory>../htdocs/includes/jquery/</directory>
+    <directory>../htdocs/includes/odtphp/</directory>
+    <directory>../htdocs/includes/nusoap/</directory>
+    <directory>../htdocs/includes/pwc/</directory>
+    <directory>../htdocs/includes/smarty/</directory>
+    <directory>../htdocs/includes/vcard/</directory>
     <file>../htdocs/lib/databases/mssql.lib.php</file>
     <file>../htdocs/lib/databases/pgsql.lib.php</file>
     <file>../htdocs/lib/databases/mysql.lib.php</file>
@@ -13,6 +24,8 @@
   <whitelist>
     <directory suffix=".class.php">../htdocs/</directory>
     <directory suffix=".lib.php">../htdocs/</directory>
+    <directory suffix=".modules.php">../htdocs/</directory>
+    <file>../htdocs/includes/modules/facture/modules_facture.php</file>
   </whitelist>
 </filter>
 </phpunit>
