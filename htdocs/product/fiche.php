@@ -855,7 +855,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 			print '<td width="50%" valign="top">';
 
 			$var=true;
-			$otherprop = $propal->liste_array(1, ' <> '.$user->id);
+			$otherprop = $propal->liste_array(1,1,1);
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" width="100%">';

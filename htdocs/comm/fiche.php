@@ -383,9 +383,14 @@ if ($socid > 0)
 	/*
 	 * Last proposals
 	 */
+	// TODO remplacer par une fonction
 	if ($conf->propal->enabled && $user->rights->propale->lire)
 	{
-		$propal_static=new Propal($db);
+		$propal_static = new Propal($db);
+		
+		$proposals = $propal_static->liste_array(0, 0, 0, $objsoc->id, $MAXLIST);
+		
+		//var_dump($proposals);
 
 		print '<table class="noborder" width="100%">';
 

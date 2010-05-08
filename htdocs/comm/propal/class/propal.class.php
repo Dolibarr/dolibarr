@@ -1369,44 +1369,51 @@ class Propal extends CommonObject
 
 	/**
 	 *    \brief      Renvoi la liste des propal (eventuellement filtree sur un user) dans un tableau
-	 *    \param      brouillon       0=non brouillon, 1=brouillon
-	 *    \param      user            Objet user de filtre
-	 *    \return     int             -1 si erreur, tableau resultat si ok
+	 *    \param      draft				0=not draft, 1=draft
+	 *    \param      notcurrentuser	0=current user, 1=not current user
+	 *    \return     int				-1 si erreur, tableau resultat si ok
 	 */
 
-	function liste_array ($brouillon=0, $user='')
+	function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datep', $sortorder='DESC')
 	{
+		global $conf,$user;
+		
 		$ga = array();
 
-		$sql = "SELECT rowid, ref";
-		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-		$sql.= " WHERE entity = ".$conf->entity;
-
-		if ($brouillon)
-		{
-			$sql.= " AND fk_statut = 0";
-			if ($user) $sql.= " AND fk_user_author".$user;
-		}
-		else
-		{
-			if ($user) $sql.= " AND fk_user_author".$user;
-		}
-
-		$sql.= " ORDER BY datep DESC";
+		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
+		$sql.= " ".$this->db->pdate("p.datep")." as dp, ".$this->db->pdate("p.fin_validite")." as datelimite";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " AND p.fk_soc = s.rowid";
+		$sql.= " AND p.fk_statut = c.id";
+		if ($socid) $sql.= " AND s.rowid = ".$socid;
+		if ($draft)	$sql.= " AND p.fk_statut = 0";
+		if ($notcurrentuser) $sql.= " AND p.fk_user_author <> ".$user->id;
+		$sql.= " ORDER BY $sortfield $sortorder";
+		$sql.= $this->db->plimit($limit,$offset);
 
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			$nump = $this->db->num_rows($result);
+			$num = $this->db->num_rows($result);
 
-			if ($nump)
+			if ($num)
 			{
 				$i = 0;
-				while ($i < $nump)
+				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
 
-					$ga[$obj->rowid] = $obj->ref;
+					if ($shortlist)
+					{
+						$ga[$obj->propalid] = $obj->ref;
+					}
+					else
+					{
+						$ga[$i]['id']	= $obj->propalid;
+						$ga[$i]['ref'] 	= $obj->ref;
+					}
+					
 					$i++;
 				}
 			}
