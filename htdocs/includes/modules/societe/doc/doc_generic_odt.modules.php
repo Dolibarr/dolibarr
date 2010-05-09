@@ -81,9 +81,17 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	 */
 	function get_substitutionarray_mysoc($mysoc)
 	{
-var_dump($mysoc);exit;
+		global $conf;
+
+		if (empty($mysoc->forme_juridique) && ! empty($mysoc->forme_juridique_code))
+		{
+			$mysoc->forme_juridique=getFormeJuridiqueLabel($mysoc->forme_juridique_code);
+		}
+
+		$logotouse=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
+
 		return array(
-			'mycompany_logo'=>$mysoc->logo,
+			'mycompany_logo'=>$logotouse,
 			'mycompany_name'=>$mysoc->name,
 			'mycompany_email'=>$mysoc->email,
 			'mycompany_phone'=>$mysoc->phone,
@@ -113,6 +121,8 @@ var_dump($mysoc);exit;
 	 */
 	function get_substitutionarray_object($object)
 	{
+		global $conf;
+
 		return array(
 			'company_name'=>$object->name,
 			'company_email'=>$object->email,
@@ -300,18 +310,26 @@ var_dump($mysoc);exit;
 				require_once(DOL_DOCUMENT_ROOT.'/includes/odtphp/odf.php');
 				$odfHandler = new odf($srctemplatepath, array(
 						'PATH_TO_TMP'	  => $conf->societe->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got bad compression method when using PhpZipProxy.
+						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}')
 				);
-				//print $odfHandler; exit;
+				//var_dump($odfHandler); exit;
 
 				// Make substitutions
 				$tmparray=$this->get_substitutionarray_mysoc($mysoc);
 				foreach($tmparray as $key=>$value)
 				{
 					try {
-						$odfHandler->setVars($key, $value, true, 'UTF-8');
+						if (preg_match('/logo$/',$key))	// Image
+						{
+							//var_dump($value);exit;
+							$odfHandler->setImage($key, $value);
+						}
+						else	// Text
+						{
+							$odfHandler->setVars($key, $value, true, 'UTF-8');
+						}
 					}
 					catch(OdfException $e)
 					{
@@ -321,7 +339,14 @@ var_dump($mysoc);exit;
 				foreach($tmparray as $key=>$value)
 				{
 					try {
-						$odfHandler->setVars($key, $value, true, 'UTF-8');
+						if (preg_match('/logo$/',$key))	// Image
+						{
+							$odfHandler->setImage($key, $value);
+						}
+						else	// Text
+						{
+							$odfHandler->setVars($key, $value, true, 'UTF-8');
+						}
 					}
 					catch(OdfException $e)
 					{
