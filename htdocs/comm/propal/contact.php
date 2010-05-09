@@ -279,12 +279,12 @@ if ($id > 0 || ! empty($ref))
 
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$propal->client->id;
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($propal, 'propalid', $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($propal, 'propalid', $selectedCompany, 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
 			//$contactAlreadySelected = $propal->getListContactId('external');		// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
-			$nbofcontacts=$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
+			$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid', 0, $contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';

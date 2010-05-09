@@ -267,15 +267,15 @@ if ($id > 0 || ! empty($ref))
 
 			print '</form>';
 
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="addcontact">';
-			print '<input type="hidden" name="source" value="external">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
-
 			// Line to add external contact. Only if project is linked to a third party.
 			if ($project->societe->id)
 			{
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="addcontact">';
+				print '<input type="hidden" name="source" value="external">';
+				print '<input type="hidden" name="id" value="'.$id.'">';
+
 				$var=!$var;
 				print "<tr $bc[$var]>";
 
@@ -289,7 +289,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				print '<td colspan="1">';
-				$nbofcontacts=$html->select_contacts($selectedCompany,'','contactid',0);
+				$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid', 0);
 				if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 				print '</td>';
 				print '<td>';
@@ -299,9 +299,9 @@ if ($id > 0 || ! empty($ref))
 				if (! $nbofcontacts) print ' disabled="true"';
 				print '></td>';
 				print '</tr>';
-			}
 
-			print "</form>";
+				print "</form>";
+			}
 
 			print '<tr><td colspan="6">&nbsp;</td></tr>';
 		}
