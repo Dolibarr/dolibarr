@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -615,8 +615,6 @@ class Societe extends CommonObject
 				$this->zip 			= $obj->cp;
 				$this->ville 		= $obj->ville;// TODO obsolete
 				$this->town 		= $obj->ville;
-				$this->adresse_full = $obj->address . "\n". $obj->cp . ' '. $obj->ville; // TODO obsolete
-				$this->full_address = $obj->address . "\n". $obj->cp . ' '. $obj->ville;
 
 				$this->pays_id 		= $obj->fk_pays;
 				$this->pays_code 	= $obj->fk_pays?$obj->pays_code:'';
@@ -1358,6 +1356,18 @@ class Societe extends CommonObject
 			dol_print_error($this->db);
 		}
 
+	}
+
+	/**
+	 * 	\brief		Return full address of a third party (TODO in format of its country)
+	 *	\return		string		Full address string
+	 */
+	function getFullAddress()
+	{
+		$ret='';
+		$ret.=($this->address?$this->address."\n":'');
+		$ret.=trim($this->zip.' '.$this->town);
+		return $ret;
 	}
 
 

@@ -304,8 +304,6 @@ class AdresseLivraison
 						$ligne->adresse         = $objp->address; // TODO obsolete
 						$ligne->cp              = $objp->cp;
 						$ligne->ville           = $objp->ville;
-						$ligne->adresse_full    = $objp->address . "\n". $objp->cp . ' '. $objp->ville;
-						$ligne->full_address    = $objp->address . "\n". $objp->cp . ' '. $objp->ville; // TODO obsolete
 						$ligne->pays_id         = $objp->fk_pays;
 						$ligne->pays_code       = $objp->fk_pays?$objp->pays_code:'';
 						$ligne->pays            = $objp->fk_pays?($langs->trans('Country'.$objp->pays_code)!='Country'.$objp->pays_code?strtoupper($langs->trans('Country'.$objp->pays_code)):$objp->pays):'';
@@ -349,8 +347,8 @@ class AdresseLivraison
 		global $langs;
 		global $conf;
 
-		$sql = 'SELECT a.rowid, a.fk_societe, a.label, a.nom, a.address,'.$this->db->pdate('a.datec').' as dc';
-		$sql .= ','. $this->db->pdate('a.tms').' as date_update';
+		$sql = 'SELECT a.rowid, a.fk_societe, a.label, a.nom, a.address, a.datec as date_creation';
+		$sql .= ', a.tms as date_update';
 		$sql .= ', a.cp,a.ville, a.note, a.fk_pays, a.tel, a.fax';
 		$sql .= ', p.code as pays_code, p.libelle as pays';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_adresse_livraison as a';
@@ -366,17 +364,15 @@ class AdresseLivraison
 				$this->id				= $obj->rowid;
 				$this->socid			= $obj->fk_societe;
 
-				$this->date_update		= $obj->date_update;
-				$this->date_creation 	= $obj->date_creation;
+				$this->date_update		= $this->db->jdate($obj->date_update);
+				$this->date_creation 	= $this->db->jdate($obj->date_creation);
 
-				$this->label 			= stripslashes($obj->label);
-				$this->nom 				= stripslashes($obj->nom);
-				$this->adresse 			= stripslashes($obj->address); // TODO obsolete
-				$this->address 			= stripslashes($obj->address);
+				$this->label 			= $obj->label;
+				$this->nom 				= $obj->nom;
+				$this->adresse 			= $obj->address; // TODO obsolete
+				$this->address 			= $obj->address;
 				$this->cp 				= $obj->cp;
-				$this->ville 			= stripslashes($obj->ville);
-				$this->adresse_full 	= stripslashes($obj->address) . "\n". $obj->cp . ' '. stripslashes($obj->ville);
-				$this->full_address 	= stripslashes($obj->address) . "\n". $obj->cp . ' '. stripslashes($obj->ville); //TODO obsolete
+				$this->ville 			= $obj->ville;
 
 				$this->pays_id 			= $obj->fk_pays;
 				$this->pays_code 		= $obj->fk_pays?$obj->pays_code:'';
@@ -487,7 +483,6 @@ class AdresseLivraisonLigne
 	var $adresse;
 	var $cp;
 	var $ville;
-	var $adresse_full;
 	var $pays_id;
 	var $pays_code;
 	var $pays;

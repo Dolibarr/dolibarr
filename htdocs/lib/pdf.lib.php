@@ -213,35 +213,35 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		$ligne1.=($ligne1?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
 	}
 	// Prof Id 1
-	if ($fromcompany->profid1 && ($fromcompany->pays_code != 'FR' || ! $fromcompany->profid2))
+	if ($fromcompany->idprof1 && ($fromcompany->pays_code != 'FR' || ! $fromcompany->idprof2))
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId1",$fromcompany->pays_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$ligne1.=($ligne1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid1);
+		$ligne1.=($ligne1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof1);
 	}
 	// Prof Id 2
-	if ($fromcompany->profid2)
+	if ($fromcompany->idprof2)
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId2",$fromcompany->pays_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$ligne1.=($ligne1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid2);
+		$ligne1.=($ligne1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof2);
 	}
 
 	// Second line of company infos
 	$ligne2="";
 	// Prof Id 3
-	if ($fromcompany->profid3)
+	if ($fromcompany->idprof3)
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId3",$fromcompany->pays_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$ligne2.=($ligne2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid3);
+		$ligne2.=($ligne2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof3);
 	}
 	// Prof Id 4
-	if ($fromcompany->profid4)
+	if ($fromcompany->idprof4)
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId4",$fromcompany->pays_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$ligne2.=($ligne2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid4);
+		$ligne2.=($ligne2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
 	}
 	// IntraCommunautary VAT
 	if ($fromcompany->tva_intra != '')

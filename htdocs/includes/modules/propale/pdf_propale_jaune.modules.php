@@ -405,7 +405,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 		            $pdf->SetXY($this->marge_gauche, $posy);
 	                $pdf->SetFont('Arial','',8);
-	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->adresse_full), 0, 'L', 0);
+	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
 		            $posy=$pdf->GetY()+2;
 	            }
 	        }
