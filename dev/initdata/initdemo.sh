@@ -128,7 +128,7 @@ fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/initdemo.sql"
 #mysql -P$port -u$admin $passwd $base < $mydir/initdemo.sql
 echo "mysql -P$port $base < $mydir/initdemo.sql"
-mysql -P$port $base < $mydir/initdemo.sql
+mysql -P$port -u$admin $passwd $base < $mydir/initdemo.sql
 
 echo "Dolibarr data demo has been loaded."
 echo
