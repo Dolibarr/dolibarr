@@ -104,7 +104,7 @@ class modSociete extends DolibarrModules
 
 		$this->const[$r][0] = "COMPANY_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/odttemplates/thirdparties";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/thirdparties";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -277,9 +277,9 @@ class modSociete extends DolibarrModules
 		//$this->remove($options);
 
 		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
-		$dirodt=DOL_DATA_ROOT.'/odttemplates/thirdparties';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/thirdparties';
 		create_exdir($dirodt);
-		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/thirdparties/template_thirdparty.odt',$dirodt.'/template_thirdparty.odt',0,0);
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/doctemplates/thirdparties/template_thirdparty.odt',$dirodt.'/template_thirdparty.odt',0,0);
 
 		$sql = array();
 

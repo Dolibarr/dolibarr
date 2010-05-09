@@ -79,7 +79,8 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 				{
 					create_exdir($conf->mycompany->dir_output.'/logos/');
 				}
-				if (dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->mycompany->dir_output.'/logos/'.$original_file,1,0,$_FILES['logo']['error']) > 0)
+				$result=dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->mycompany->dir_output.'/logos/'.$original_file,1,0,$_FILES['logo']['error']);
+				if ($result > 0)
 				{
 					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file,'chaine',0,'',$conf->entity);
 
@@ -107,6 +108,12 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 						else dol_syslog($imgThumbMini);
 					}
 					else dol_syslog($langs->trans("ErrorImageFormatNotSupported"),LOG_WARNING);
+				}
+				else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
+				{
+					$langs->load("errors");
+					$tmparray=explode(':',$result);
+					$message .= '<div class="error">'.$langs->trans('ErrorFileIsInfectedWithAVirus',$tmparray[1]).'</div>';
 				}
 				else
 				{

@@ -70,3 +70,4 @@ WarningsOnXLines=Alertes sur <b>%s</b> lignes sources
 ErrorFileIsInfectedWithAVirus=L'antivirus n'a pas pu valider ce fichier (il est probablement infecté par un virus) !
 ErrorSpecialCharNotAllowedForField=Les caractères spéciaux ne sont pas admis pour le champ "%s"
 WarningNoDocumentModelActivated=Aucun modèle, pour la génération de document, n'a été activé. Un modèle sera pris par défaut en attendant la correction de configuration du module.
+ErrorDatabaseParameterWrong=Le paramètre de configuration de la base de donnée '<b>%s</b>' a une valeur non compatible pour une utilisation de Dolibarr (doit avoir la valeur '<b>%s</b>').

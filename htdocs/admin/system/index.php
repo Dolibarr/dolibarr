@@ -89,9 +89,20 @@ $dblabel=$db->getLabel();
 $dbversion=$db->getVersion();
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" .$dblabel." ".$dbversion."</td></tr>\n";
 print '</table>';
+// Add checks on database options
+if ($db->type == 'pgsql')
+{
+	// Check option standard_conforming_strings is on
+	$paramarray=$db->getServerParametersValues('standard_conforming_strings');
+	if ($paramarray['standard_conforming_strings'] != 'on' && $paramarray['standard_conforming_strings'] != 1)
+	{
+		$langs->load("errors");
+		print '<div class="error">'.$langs->trans("ErrorDatabaseParameterWrong",'standard_conforming_strings','on').'</div>';
+	}
+}
 print '<br>';
 
-// Database
+// Browser
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Browser")."</td></tr>\n";
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("UserAgent")."</td><td>" .$_SERVER["HTTP_USER_AGENT"]."</td></tr>\n";

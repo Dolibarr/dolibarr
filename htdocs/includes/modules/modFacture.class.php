@@ -92,7 +92,7 @@ class modFacture extends DolibarrModules
 
 		$this->const[$r][0] = "FACTURE_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/odttemplates/invoices";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/invoices";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -217,9 +217,9 @@ class modFacture extends DolibarrModules
 		$this->remove();
 
 		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
-		$dirodt=DOL_DATA_ROOT.'/odttemplates/invoices';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/invoices';
 		create_exdir($dirodt);
-		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/invoices/template_invoice.odt',$dirodt.'/template_invoice.odt',0,0);
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/doctemplates/invoices/template_invoice.odt',$dirodt.'/template_invoice.odt',0,0);
 
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,

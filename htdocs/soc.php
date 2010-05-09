@@ -294,40 +294,47 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 /*
  * Generate document
  */
-if ($_REQUEST['action'] == 'builddoc' && ! is_numeric($_REQUEST['model']))	// En get ou en post
+if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-	require_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
-
-	$soc = new Societe($db);
-	$soc->fetch($socid);
-	$soc->fetch_client();
-
-	/*if ($_REQUEST['model'])
+	if (is_numeric($_REQUEST['model']))
 	{
-		$fac->setDocModel($user, $_REQUEST['model']);
-	}
-	*/
-
-	// Define output language
-	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
-	if (! empty($newlang))
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($newlang);
-	}
-	$result=thirdparty_doc_create($db, $soc->id, '', $_REQUEST['model'], $outputlangs);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$result);
-		exit;
+		$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
 	}
 	else
 	{
-		Header ('Location: '.$_SERVER["PHP_SELF"].'?socid='.$soc->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
-		exit;
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
+
+		$soc = new Societe($db);
+		$soc->fetch($socid);
+		$soc->fetch_client();
+
+		/*if ($_REQUEST['model'])
+		{
+			$fac->setDocModel($user, $_REQUEST['model']);
+		}
+		*/
+
+		// Define output language
+		$outputlangs = $langs;
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+		if (! empty($newlang))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		$result=thirdparty_doc_create($db, $soc->id, '', $_REQUEST['model'], $outputlangs);
+		if ($result <= 0)
+		{
+			dol_print_error($db,$result);
+			exit;
+		}
+		else
+		{
+			Header ('Location: '.$_SERVER["PHP_SELF"].'?socid='.$soc->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+			exit;
+		}
 	}
 }
 

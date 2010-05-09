@@ -82,6 +82,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	function get_substitutionarray_mysoc($mysoc)
 	{
 		return array(
+			'mycompany_logo'=>$mysoc->logo,
 			'mycompany_name'=>$mysoc->name,
 			'mycompany_email'=>$mysoc->email,
 			'mycompany_phone'=>$mysoc->phone,
@@ -90,13 +91,15 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			'mycompany_zip'=>$mysoc->zip,
 			'mycompany_town'=>$mysoc->town,
 			'mycompany_country'=>$mysoc->country,
-			'mycompany_url'=>$mysoc->url,
+			'mycompany_web'=>$mysoc->url,
+			'mycompany_juridicalstatus'=>$mysoc->forme_juridique,
+			'mycompany_capital'=>$mysoc->capital,
 			'mycompany_barcode'=>$mysoc->gencode,
-			'mycompany_vat'=>$mysoc->tva_intra,
 			'mycompany_idprof1'=>$mysoc->profid1,
 			'mycompany_idprof2'=>$mysoc->profid2,
 			'mycompany_idprof3'=>$mysoc->profid3,
 			'mycompany_idprof4'=>$mysoc->profid4,
+			'mycompany_vatnumber'=>$mysoc->tva_intra,
 			'mycompany_note'=>$mysoc->note
 		);
 	}
@@ -118,13 +121,15 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			'company_zip'=>$object->zip,
 			'company_town'=>$object->town,
 			'company_country'=>$object->country,
-			'company_url'=>$object->url,
+			'company_web'=>$object->url,
 			'company_barcode'=>$object->gencode,
-			'company_vat'=>$object->tva_intra,
+			'company_vatnumber'=>$object->tva_intra,
 			'company_customercode'=>$object->code_client,
 			'company_suppliercode'=>$object->code_fournisseur,
 			'company_customeraccountancycode'=>$object->code_compta,
 			'company_supplieraccountancycode'=>$object->code_compta_fournisseur,
+			'company_juridicalstatus'=>$object->forme_juridique,
+			'company_capital'=>$object->capital,
 			'company_idprof1'=>$object->idprof1,
 			'company_idprof2'=>$object->idprof2,
 			'company_idprof3'=>$object->idprof3,

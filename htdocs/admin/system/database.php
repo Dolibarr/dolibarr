@@ -64,13 +64,13 @@ $base=0;
 $sqls = array();
 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 {
-	$sqls[0] = "SHOW VARIABLES";
-	$sqls[1] = "SHOW STATUS";
+	$sqls[0] = "SHOW VARIABLES";	// TODO Use function getServerParametersValues
+	$sqls[1] = "SHOW STATUS";		// TODO Use function getServerStatusValues
 	$base=1;
 }
 else if ($conf->db->type == 'pgsql')
 {
-	$sqls[0] = "select name,setting from pg_settings;";
+	$sqls[0] = "select name,setting from pg_settings";
 	$base=2;
 }
 else if ($conf->db->type == 'mssql')

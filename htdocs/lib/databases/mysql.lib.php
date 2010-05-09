@@ -1155,6 +1155,47 @@ class DoliDb
 		return $fullpathofimport;
 	}
 
+	/**
+	 *	\brief		Return value of server parameters
+	 * 	\param		filter		Filter list on a particular value
+	 * 	\return		string		Value for parameter
+	 */
+	function getServerParametersValues($filter='')
+	{
+		$result=array();
+
+		$sql='SHOW VARIABLES';
+		if ($filter) $sql.=" LIKE '".addslashes($key)."'";
+		$resql=$this->query($sql);
+		if ($resql)
+		{
+			$obj=$this->fetch_object($resql);
+			$result[$obj->Variable_name]=$obj->Value;
+		}
+
+		return $result;
+	}
+
+	/**
+	 *	\brief		Return value of server status
+	 * 	\param		filter		Filter list on a particular value
+	 * 	\return		string		Value for parameter
+	 */
+	function getServerStatusValues($key,$filter='')
+	{
+		$result=array();
+
+		$sql='SHOW STATUS';
+		if ($filter) $sql.=" LIKE '".addslashes($key)."'";
+		$resql=$this->query($sql);
+		if ($resql)
+		{
+			$obj=$this->fetch_object($resql);
+			$result[$obj->Variable_name]=$obj->Value;
+		}
+
+		return $result;
+	}
 }
 
 ?>

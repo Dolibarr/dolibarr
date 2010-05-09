@@ -1221,5 +1221,25 @@ class DoliDb
 		return $fullpathofmysqldump;
 	}
 
+	/**
+	 *	\brief		Return value of server parameters
+	 * 	\param		filter		Filter list on a particular value
+	 *	\return		string		Value for parameter
+	 */
+	function getServerParametersValues($filter='')
+	{
+		$result=array();
+
+		$resql='select name,setting from pg_settings';
+		if ($filter) $resql.=" WHERE name = '".addslashes($filter)."'";
+		$resql=$this->query($resql);
+		if ($resql)
+		{
+			$obj=$this->fetch_object($resql);
+			$result[$obj->name]=$obj->setting;
+		}
+
+		return $result;
+	}
 }
 ?>
