@@ -210,6 +210,8 @@ if ($id > 0 || ! empty($ref))
 
 		print '</div>';
 
+
+
 		/*
 		* Lignes de contacts
 		*/
@@ -217,7 +219,7 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		* Ajouter une ligne de contact
-		* Non affich� en mode modification de ligne
+		* Non affiche en mode modification de ligne
 		*/
 		if ($_GET["action"] != 'editline' && $user->rights->propale->creer)
 		{
@@ -298,7 +300,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr><td colspan="6">&nbsp;</td></tr>';
 		}
 
-		// Liste des contacts li�s
+		// Liste des contacts lies
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("Company").'</td>';
@@ -308,7 +310,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td colspan="2">&nbsp;</td>';
 		print "</tr>\n";
 
-		$societe = new Societe($db);
+		$companystatic = new Societe($db);
 		$var = true;
 
 		foreach(array('internal','external') as $source)
@@ -334,7 +336,7 @@ if ($id > 0 || ! empty($ref))
 				if ($tab[$i]['socid'] > 0)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$tab[$i]['socid'].'">';
-					print img_object($langs->trans("ShowCompany"),"company").' '.$societe->get_nom($tab[$i]['socid']);
+					print img_object($langs->trans("ShowCompany"),"company").' '.$companystatic->get_nom($tab[$i]['socid']);
 					print '</a>';
 				}
 				if ($tab[$i]['socid'] < 0)

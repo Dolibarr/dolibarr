@@ -291,7 +291,7 @@ if ($id > 0)
 		print '<td colspan="2">&nbsp;</td>';
 		print "</tr>\n";
 
-		$societe = new Societe($db);
+		$companystatic = new Societe($db);
     	$var = true;
 
 		foreach(array('internal','external') as $source)
@@ -317,7 +317,7 @@ if ($id > 0)
 				if ($tab[$i]['socid'] > 0)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$tab[$i]['socid'].'">';
-					print img_object($langs->trans("ShowCompany"),"company").' '.$societe->get_nom($tab[$i]['socid']);
+					print img_object($langs->trans("ShowCompany"),"company").' '.$companystatic->get_nom($tab[$i]['socid']);
 					print '</a>';
                 }
 				if ($tab[$i]['socid'] < 0)
