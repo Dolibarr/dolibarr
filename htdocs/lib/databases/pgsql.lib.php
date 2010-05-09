@@ -33,7 +33,7 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 
 /**
  *	\class      DoliDb
- *	\brief      Classe permettant de gerer la database de dolibarr
+ *	\brief      Class to drive a Postgresql database for Dolibarr
  */
 class DoliDb
 {
@@ -42,14 +42,14 @@ class DoliDb
 	var $label='PostgreSQL';      // Label of manager
 	//! Charset
 	var $forcecharset='latin1';
-	var $versionmin=array(8,1,0);	// Version min database
+	var $versionmin=array(8,4,0);	// Version min database
 
 	var $results;                 // Resultset de la derniere requete
 
 	var $connected;               // 1 si connecte, 0 sinon
 	var $database_selected;       // 1 si base selectionne, 0 sinon
-	var $database_name;			  // Nom base selectionnee
-	var $database_user;	   //! Nom user base
+	var $database_name;			//! Nom base selectionnee
+	var $database_user;	   		//! Nom user base
 	var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
 	var $lastquery;
 	var $lastqueryerror;		// Ajout d'une variable en cas d'erreur
@@ -152,11 +152,11 @@ class DoliDb
 	 */
 	function convertSQLFromMysql($line)
 	{
-		# comments or empty lines
+		# Removed empty line if this is a comment line for SVN tagging
 		if (preg_match('/^--\s\$Id/i',$line)) {
 			return '';
 		}
-		# comments or empty lines
+		# Return line if this is a comment
 		if (preg_match('/^#/i',$line) || preg_match('/^$/i',$line) || preg_match('/^--/i',$line))
 		{
 			return $line;
@@ -186,16 +186,6 @@ class DoliDb
 			# tinytext/mediumtext -> text
 			$line=preg_replace('/tinytext/i','text',$line);
 			$line=preg_replace('/mediumtext/i','text',$line);
-
-			# char -> varchar
-			# PostgreSQL would otherwise pad with spaces as opposed
-			# to MySQL! Your user interface may depend on this!
-			//    		s/(\s+)char/${1}varchar/gi;
-
-			# nuke date representation (not supported in PostgreSQL)
-			//    		s/datetime default '[^']+'/datetime/i;
-			//    		s/date default '[^']+'/datetime/i;
-			//    		s/time default '[^']+'/datetime/i;
 
 			# change not null datetime field to null valid ones
 			# (to support remapping of "zero time" to null
@@ -252,49 +242,26 @@ class DoliDb
 
 			// Remove () in the tables in FROM if one table
 			$line=preg_replace('/FROM\s*\((([a-z_]+)\s+as\s+([a-z_]+)\s*)\)/i','FROM \\1',$line);
-			//print $line;
+			//print $line."\n";
 
 			// Remove () in the tables in FROM if two table
 			$line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2',$line);
-			//print $line;
+			//print $line."\n";
 
 			// Remove () in the tables in FROM if two table
 			$line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2, \\3',$line);
-			//print $line;
-		} #  END of if ($create_sql ne "") i.e. were inside create table statement so processed datatypes
-		else {	# not inside create table
-			#---- fix data in inserted data: (from MS world)
-			# FIX: disabled for now
-			/*    		if (00 && /insert into/i) {
-			s!\x96!-!g;	# --
-			s!\x93!"!g;	# ``
-			s!\x94!"!g;	# ''
-			s!\x85!... !g;	# \ldots
-			s!\x92!`!g;
-			}
-			*/
-			# fix dates '0000-00-00 00:00:00' (should be null)
-			/*    		s/'0000-00-00 00:00:00'/null/gi;
-			s/'0000-00-00'/null/gi;
-			s/'00:00:00'/null/gi;
-			s/([12]\d\d\d)([01]\d)([0-3]\d)([0-2]\d)([0-6]\d)([0-6]\d)/'$1-$2-$3 $4:$5:$6'/;
+			//print $line."\n";
 
-			if (/create\s+table\s+(\w+)/i) {
-			$create_sql = $_;
-			/create\s*table\s*(\w+)/i;
-			$table=$1 if (defined($1));
-			} else {
-			print OUT $_;
-			}
-			*/
-		} # end of if inside create_table
-
+			// Replace espacing \' by ''
+			$line=preg_replace("/\\\'/","''",$line);
+			//print $line."\n";
+		}
 
 		return $line;
 	}
 
 	/**
-	 * \brief      Selectionne une database.
+	 * \brief      	Select a database
 	 * \param		database		nom de la database
 	 * \return		boolean         true si ok, false si ko
 	 * \remarks 	Ici postgresql n'a aucune fonction equivalente de mysql_select_db
