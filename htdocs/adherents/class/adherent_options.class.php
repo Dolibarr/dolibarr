@@ -133,13 +133,14 @@ class AdherentOptions
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label SET";
-			$sql.= " name = '".$attrname."',";
-			$sql.= " label = '".addslashes($label)."',";
-			$sql.= " type = '".$type."',";
-			$sql.= " pos = '".$pos."',";
-			$sql.= " size = '".$size."',";
-			$sql.= " entity = ".$conf->entity;
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label(name, label, type, pos, size, entity)";
+			$sql.= " VALUES('".$attrname."',";
+			$sql.= " '".addslashes($label)."',";
+			$sql.= " '".$type."',";
+			$sql.= " '".$pos."',";
+			$sql.= " '".$size."',";
+			$sql.= " ".$conf->entity;
+			$sql.=')';
 
 			dol_syslog("AdherentOptions::create_label sql=".$sql);
 			if ($this->db->query($sql))
