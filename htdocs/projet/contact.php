@@ -341,9 +341,8 @@ if ($id > 0 || ! empty($ref))
 				print '<td align="left">';
 				if ($tab[$i]['socid'] > 0)
 				{
-					print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$tab[$i]['socid'].'">';
-					print img_object($langs->trans("ShowCompany"),"company").' '.$companystatic->get_nom($tab[$i]['socid']);
-					print '</a>';
+					$companystatic->fetch($tab[$i]['socid']);
+					print $companystatic->getNomUrl(1);
 				}
 				if ($tab[$i]['socid'] < 0)
 				{

@@ -200,6 +200,8 @@ if ($id > 0 || ! empty($ref))
 
 		print '</div>';
 
+		// TODO All contact.php pages use this huge part of code. Use a function instead.
+
 		/*
 		* Lignes de contacts
 		*/
@@ -207,12 +209,10 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		* Ajouter une ligne de contact
-		* Non affich� en mode modification de ligne
+		* Non affiche en mode modification de ligne
 		*/
 		if ($_GET["action"] != 'editline' && $user->rights->fournisseur->facture->creer)
 		{
-			// TODO All contacts page should use same code
-
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
 			print '<td>'.$langs->trans("Company").'</td>';
@@ -324,9 +324,8 @@ if ($id > 0 || ! empty($ref))
 				print '<td align="left">';
 				if ($tab[$i]['socid'] > 0)
 				{
-					print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$tab[$i]['socid'].'">';
-					print img_object($langs->trans("ShowCompany"),"company").' '.$companystatic->get_nom($tab[$i]['socid']);
-					print '</a>';
+					$companystatic->fetch($tab[$i]['socid']);
+					print $companystatic->getNomUrl(1);
 				}
 				if ($tab[$i]['socid'] < 0)
 				{

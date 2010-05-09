@@ -279,7 +279,7 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			//$contactAlreadySelected = $contrat->getListContactId('external');		// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
-			$nbofcontacts=$html->select_contacts($selectedCompany, $selected = '', 'contactid', 0, $contactAlreadySelected);
+			$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid', 0, $contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
@@ -331,9 +331,8 @@ if ($id > 0)
 				print '<td align="left">';
 				if ($tab[$i]['socid'] > 0)
 				{
-					print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$tab[$i]['socid'].'">';
-					print img_object($langs->trans("ShowCompany"),"company").' '.$companystatic->get_nom($tab[$i]['socid']);
-					print '</a>';
+					$companystatic->fetch($tab[$i]['socid']);
+					print $companystatic->getNomUrl(1);
                 }
 				if ($tab[$i]['socid'] < 0)
 				{

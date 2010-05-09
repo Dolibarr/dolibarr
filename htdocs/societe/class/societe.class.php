@@ -1332,33 +1332,6 @@ class Societe extends CommonObject
 
 
 	/**
-	 *    \brief      Renvoie le nom d'une societe a partir d'un id
-	 *    \param      id      	id company we search for name
-	 *	\return		string		Third party name
-	 */
-	function get_nom($id)
-	{
-
-		$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$id."';";
-
-		$result = $this->db->query($sql);
-
-		if ($result)
-		{
-			if ($this->db->num_rows())
-			{
-				$obj = $this->db->fetch_object($result);
-				return $obj->nom;
-			}
-			$this->db->free();
-		}
-		else {
-			dol_print_error($this->db);
-		}
-
-	}
-
-	/**
 	 * 	\brief		Return full address of a third party (TODO in format of its country)
 	 *	\return		string		Full address string
 	 */
