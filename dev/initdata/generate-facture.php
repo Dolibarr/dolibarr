@@ -33,7 +33,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Recupere root dolibarr
 $path=preg_replace('/generate-facture.php/i','',$_SERVER["PHP_SELF"]);
-require ($path."../htdocs/master.inc.php");
+require ($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 
