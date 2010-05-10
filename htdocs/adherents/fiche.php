@@ -1340,7 +1340,7 @@ if ($rowid && $action != 'edit')
 			if ($user->rights->societe->creer)
 			{
 				if ($adh->statut != -1) print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
-				else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a>';
+				else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
 			}
 			else
 			{
