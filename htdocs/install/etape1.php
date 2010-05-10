@@ -27,7 +27,7 @@
  *		\version    $Id$
  */
 
-define('DONOTLOADCONF',1);	// To avoid loading conf by file inc..php
+define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
 
 include("./inc.php");
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
@@ -201,6 +201,9 @@ if ($_POST["action"] == "set")
 			}
 		}
 	}
+	
+	// Force https
+	$_POST["main_force_https"] = ((isset($_POST["main_force_https"]) && $_POST["main_force_https"] == "on")?'1':'0');
 
 	// Write conf file on disk
 	if (! $error)
@@ -558,6 +561,9 @@ function write_conf_file($conffile)
 
 		/* Authentication */
 		fputs($fp, '$dolibarr_main_authentication=\'dolibarr\';');
+		fputs($fp,"\n");
+		
+		fputs($fp, '$dolibarr_main_force_https=\''.$_POST["main_force_https"].'\';');
 		fputs($fp,"\n");
 
 		fputs($fp, '?>');
