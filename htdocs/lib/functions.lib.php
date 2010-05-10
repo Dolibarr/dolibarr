@@ -3336,5 +3336,76 @@ function dol_eval($s)
 	return 1;
 }
 
+/**
+ * 	\brief		For replace glob() function
+ */
+if (! function_exists('glob'))
+{
+	function glob($pattern)
+	{
+		#get pathname (everything up until the last / or \)
+		$path=$output=null;
+		if(PHP_OS=='WIN32') $slash='\\';
+		else $slash='/';
+		$lastpos=strrpos($pattern,$slash);
+		
+		if(!($lastpos===false))
+		{
+			$path=substr($pattern,0,-$lastpos-1);
+			$pattern=substr($pattern,$lastpos);
+		}
+		else
+		{
+			#no dir info, use current dir
+			$path=getcwd();
+		}
+
+		$handle=@opendir($path);
+		if($handle===false) return false;
+		
+		while($dir=readdir($handle))
+		{
+			if(pattern_match($pattern,$dir)) $output[]=$dir;
+		}
+		
+		closedir($handle);
+		
+		if(is_array($output)) return $output;
+		return false;
+	}
+}
+
+/**
+ * 	\brief		For dol_glob() function
+ */
+function pattern_match($pattern,$string)
+{
+	#basically prepare a regular expression
+	$out=null;
+	$chunks=explode(';',$pattern);
+	foreach($chunks as $pattern)
+	{
+		$escape=array('$','^','.','{','}','(',')','[',']','|');
+		while(strpos($pattern,'**')!==false) $pattern=str_replace('**','*',$pattern);
+		
+		foreach($escape as $probe) $pattern=str_replace($probe,"\\$probe",$pattern);
+		
+		$pattern=str_replace('?*','*',str_replace('*?','*',str_replace('*',".*",str_replace('?','.{1,1}',$pattern))));
+		$out[]=$pattern;
+	}
+	
+	if(count($out)==1)
+	{
+		return(preg_match('/^'.$out[0].'$/i',$string));
+	}
+	else
+	{
+		foreach($out as $tester)
+		{
+			if(preg_match('/^'.$tester.'$/i',$string)) return true;
+			return false;
+		}
+	}
+}
 
 ?>
