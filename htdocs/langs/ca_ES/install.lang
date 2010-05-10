@@ -1,7 +1,7 @@
-# Dolibarr language file - ca_ES - install
-CHARSET= UTF-8
-InstallEasy= Hem procurat que la instal·lació sigui el més simple possible, vostè només ha de seguir els passos un a un.
-MiscellanousChecks= Comprovació dels Prerequisits
+# Dolibarr language file - ca_ES - install 
+CHARSET=UTF-8
+InstallEasy=Hem procurat que la instal·lació sigui el més simple possible, vostè només ha de seguir els passos un a un.
+MiscellanousChecks=Comprovació dels Prerequisits
 DolibarrWelcome=Benvingut a Dolibarr
 ConfFileExists=L'arxiu de configuració <b>%s</b> existeix.
 ConfFileDoesNotExists=El fitxer de configuració <b>%s</b> no existeix!
@@ -38,6 +38,8 @@ ConfigurationFile=Arxiu de configuració
 WebPagesDirectory=Carpeta que conté les pàgines web
 DocumentsDirectory=Carpeta que ha de contenir els documents generats (PDF, etc.)
 URLRoot=URL Arrel
+ForceHttps=Forçar connexions segures (https)
+CheckToForceHttps=Marqueu aquesta opció per forçar connexions segures (https).<br>Per a això és necessari que el servidor web està configurat amb un certificat SSL.
 DolibarrDatabase=Base de dades Dolibarr
 DatabaseChoice=Elecció de la base de dades
 DatabaseType=Tipus de la base de dades
@@ -144,8 +146,8 @@ NextStepMightLastALongTime=El següent pas pot trigar diversos minuts. Després 
 MigrationCustomerOrderShipping=Actualització de les dades de expedicions de comandes de clients
 MigrationShippingDelivery=Actualització de les dades de expedicions
 MigrationShippingDelivery2=Actualització de les dades expedicions 2
-#########
-# upgrade
+#########=undefined=
+# upgrade=undefined=
 MigrationFixData=Correcció de dades desnormalitzades
 MigrationOrder=Migració de dades de les comandes clients
 MigrationSupplierOrder=Migració de dades de les comandes a proveïdors
@@ -155,54 +157,54 @@ MigrationContract=Migració de dades dels contractes
 MigrationSuccessfullUpdate=Actualització finalitzada
 MigrationUpdateFailed=L'actualització ha fallat
 MigrationRelationshipTables=Migració de les taules de relació (%s)
-# Payments Update
+# Payments Update=undefined=
 MigrationPaymentsUpdate=Actualització dels pagaments (vincle nn pagaments-factures)
 MigrationPaymentsNumberToUpdate=%s pagament(s) a actualitzar
 MigrationProcessPaymentUpdate=Actualització pagament(s) %s
 MigrationPaymentsNothingToUpdate=No hi ha més pagaments orfes que hagin de corregir.
 MigrationPaymentsNothingUpdatable=Cap pagament orfe de correcció.
-# Contracts Update
+# Contracts Update=undefined=
 MigrationContractsUpdate=Actualització dels contractes sense detalls (gestió del contracte + detall de contracte)
 MigrationContractsNumberToUpdate=%s contracte(s) a actualitzar
 MigrationContractsLineCreation=Creació linia contracte per contracte Ref. %s
 MigrationContractsNothingToUpdate=No hi ha més contractes (vinculats a un producte) sense línies de detalls que hagin de corregir.
 MigrationContractsFieldDontExist=Els camps fk_facture no existeixen ja. No hi ha operació pendent.
-# Contracts Empty Dates Update
+# Contracts Empty Dates Update=undefined=
 MigrationContractsEmptyDatesUpdate=Actualització de les dades de contractes no indicades
 MigrationContractsEmptyDatesUpdateSuccess=Ok per data de contracte
 MigrationContractsEmptyDatesNothingToUpdate=No hi ha més properes dates de contractes.
 MigrationContractsEmptyCreationDatesUpdateSuccess=Ok per la data de creació
 MigrationContractsEmptyCreationDatesNothingToUpdate=No hi ha més properes dates de creació.
-# Contracts Invalid Dates Update
+# Contracts Invalid Dates Update=undefined=
 MigrationContractsInvalidDatesUpdate=Actualització dades contracte incorrectes (per contractes amb detall en servei)
 MigrationContractsInvalidDateFix=Corregir contracte %s (data contracte=%s, Data posada en servei min=%s)
 MigrationContractsInvalidDatesNumber=%s contractes modificats
 MigrationContractsInvalidDatesNothingToUpdate=No hi ha més de contractes que hagin de corregir-se.
-# Contracts Incoherent Dates Update
+# Contracts Incoherent Dates Update=undefined=
 MigrationContractsIncoherentCreationDateUpdate=Actualització de les dades de creació de contracte que tenen un valor incoherent
 MigrationContractsIncoherentCreationDateUpdateSuccess=Ok
 MigrationContractsIncoherentCreationDateNothingToUpdate=No hi ha més dades de contractes.
-# Reopening Contracts
+# Reopening Contracts=undefined=
 MigrationReopeningContracts=Reobertura dels contractes que tenen almenys un servei actiu no tancat
 MigrationReopenThisContract=Reobertura contracte %s
 MigrationReopenedContractsNumber=%s contractes modificats
 MigrationReopeningContractsNothingToUpdate=No hi ha més contractes que hagin de reobrirse.
-# Migration transfert
+# Migration transfert=undefined=
 MigrationBankTransfertsUpdate=Actualització dels vincles entre registres bancaris i una transferència entre compte
 MigrationBankTransfertsNothingToUpdate=Cap vincle desfasat
-# Migration delivery
+# Migration delivery=undefined=
 MigrationShipmentOrderMatching=Actualitzar notes d'expedició
 MigrationDeliveryOrderMatching=Actualitzar recepcions
 MigrationDeliveryDetail=Actualitzar recepcions
-# Migration stock
+# Migration stock=undefined=
 MigrationStockDetail=Actualitzar valor en stock dels productes
-# Migration menus
+# Migration menus=undefined=
 MigrationMenusDetail=Actualització de la taula de menús dinàmics
-# Migration delivery address
+# Migration delivery address=undefined=
 MigrationDeliveryAddress=Actualització de les adreces d'enviament en les notes de lliurament
-# Migration project task actors
+# Migration project task actors=undefined=
 MigrationProjectTaskActors=Migració de la taula llx_projet_task_actors
-# Migration project user resp
+# Migration project user resp=undefined=
 MigrationProjectUserResp=Migració del camp fk_user_resp de llx_projet a llx_element_contact
-# Migration project task time
+# Migration project task time=undefined=
 MigrationProjectTaskTime=Actualització de temps dedicat en segons
