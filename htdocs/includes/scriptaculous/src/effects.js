@@ -1,6 +1,6 @@
-// script.aculo.us effects.js v1.8.2, Tue Nov 18 18:30:58 +0100 2008
+// script.aculo.us effects.js v1.8.3, Thu Oct 08 11:23:33 +0200 2009
 
-// Copyright (c) 2005-2008 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
+// Copyright (c) 2005-2009 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
 // Contributors:
 //  Justin Palmer (http://encytemedia.com/)
 //  Mark Pilgrim (http://diveintomark.org/)
@@ -98,7 +98,7 @@ var Effect = {
     }
   },
   DefaultOptions: {
-    duration:   0.3,   // seconds	(DOL CHANGE: Reduc time to show effect)
+    duration:   1.0,   // seconds
     fps:        100,   // 100= assume 66fps max.
     sync:       false, // true for combining
     from:       0.0,
@@ -147,14 +147,13 @@ var Effect = {
     'blind':  ['BlindDown','BlindUp'],
     'appear': ['Appear','Fade']
   },
-  toggle: function(element, effect) {
+  toggle: function(element, effect, options) {
     element = $(element);
-    effect = (effect || 'appear').toLowerCase();
-    var options = Object.extend({
+    effect  = (effect || 'appear').toLowerCase();
+    
+    return Effect[ Effect.PAIRS[ effect ][ element.visible() ? 1 : 0 ] ](element, Object.extend({
       queue: { position:'end', scope:(element.id || 'global'), limit: 1 }
-    }, arguments[2] || { });
-    Effect[element.visible() ?
-      Effect.PAIRS[effect][1] : Effect.PAIRS[effect][0]](element, options);
+    }, options || {}));
   }
 };
 
@@ -230,12 +229,6 @@ Effect.Queue = Effect.Queues.get('global');
 Effect.Base = Class.create({
   position: null,
   start: function(options) {
-    function codeForEvent(options,eventName){
-      return (
-        (options[eventName+'Internal'] ? 'this.options.'+eventName+'Internal(this);' : '') +
-        (options[eventName] ? 'this.options.'+eventName+'(this);' : '')
-      );
-    }
     if (options && options.transition === false) options.transition = Effect.Transitions.linear;
     this.options      = Object.extend(Object.extend({ },Effect.DefaultOptions), options || { });
     this.currentFrame = 0;

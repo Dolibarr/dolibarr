@@ -1,3 +1,19 @@
+*V1.8.3* (October 8, 2009)
+
+* Update to Prototype 1.6.1
+
+* Effect.toggle to return effect (to be able to do Effect.toggle(element, 'appear', {sync: true});)  [RStankov]
+
+* Use element.identify() for fetching element.id in Sortable.create  [RStankov]
+
+* Fix deprecated usage of Position.cumulativeOffset. [#182 state:resolved]  [James Wheare]
+
+* Make loader work for application/xhtml+xml served documents.  Closes #95.  [Pavel Sedek]
+
+* Check for Windows Media plugin and RealPlayer plugin in Firefox on Windows to allow sound playback.  Closes #36, #86.  [Alexander Gavazov et al.]
+
+* Remove dead code in effects.js.  Closes #125.  [Confusioner]
+
 *V1.8.2* (November 18, 2008)
 
 * Update to Prototype 1.6.0.3
