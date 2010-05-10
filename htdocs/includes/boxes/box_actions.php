@@ -109,7 +109,7 @@ class box_actions extends ModeleBoxes {
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left" nowrap="1"',
-					'text' => dol_trunc($label,12),
+					'text' => dol_trunc($label,18),
 					'text2'=> $late,
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
 
@@ -118,7 +118,7 @@ class box_actions extends ModeleBoxes {
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-					'text' => dol_trunc($objp->nom,12),
+					'text' => $objp->nom,
 					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="left" nowrap="nowrap"',
