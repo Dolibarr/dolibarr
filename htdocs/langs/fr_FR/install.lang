@@ -14,12 +14,12 @@ PHPSupportPOSTGETOk=Ce PHP supporte bien les variables POST et GET.
 PHPSupportPOSTGETKo=Il est possible que ce PHP ne supporte pas les variables POST et/ou GET. Vérifier le paramètre <b>variables_order</b> du php.ini.
 PHPSupportGD=Ce PHP supporte les fonctions graphiques GD.
 PHPSupportUTF8=Ce PHP supporte les fonctions UTF8.
-PHPMemoryOK=Votre mémoire maximum de session PHP est défini à <b>%s</b>. Ceci devrait être suffisant.
-PHPMemoryTooLow=Votre mémoire maximum de session PHP est défini à <b>%s</b> octets. Ceci est trop faible. Il est recommandé de modifier le paramètre <b>memory_limit</b> de votre fichier <b>php.ini</b> à au moins <b>%s</b> octets.
+PHPMemoryOK=Votre mémoire maximum de session PHP est définie à <b>%s</b>. Ceci devrait être suffisant.
+PHPMemoryTooLow=Votre mémoire maximum de session PHP est définie à <b>%s</b> octets. Ceci est trop faible. Il est recommandé de modifier le paramètre <b>memory_limit</b> de votre fichier <b>php.ini</b> à au moins <b>%s</b> octets.
 Recheck=Cliquez ici pour un test plus probant
 ErrorPHPDoesNotSupportSessions=Votre installation PHP ne supporte pas les sessions. Cette fonctionnalité est requise pour faire fonctionner Dolibarr. Vérifiez votre configuration de PHP.
 ErrorPHPDoesNotSupportGD=Ce PHP ne supporte pas les fonctions graphiques GD. Aucun graphique ne sera disponible.
-ErrorPHPDoesNotSupportUTF8=Ce PHP ne supporte pas les fonctions UTF8. Résolver le problème avant d'install Dolibarr car il ne pourra pas fonctionner correctement.
+ErrorPHPDoesNotSupportUTF8=Ce PHP ne supporte pas les fonctions UTF8. Résolvez le problème avant d'installer Dolibarr car il ne pourra pas fonctionner correctement.
 ErrorDirDoesNotExists=Le répertoire <b>%s</b> n'existe pas ou n'est pas accessible.
 ErrorGoBackAndCorrectParameters=Revenez en arrière et corrigez les paramètres invalides.
 ErrorWrongValueForParameter=Vous avez peut-être saisi une mauvaise valeur pour le paramètre '%s'.
@@ -27,9 +27,9 @@ ErrorFailedToCreateDatabase=Echec de création de la base '%s'.
 ErrorFailedToConnectToDatabase=Echec de connexion à la base '%s'.
 ErrorPHPVersionTooLow=Version de PHP trop ancienne. La version %s est requise.
 ErrorConnectedButDatabaseNotFound=Connection au serveur réussi mais base '%s' introuvable.
-ErrorDatabaseAlreadyExists=La base de donnée '%s' existe déjà.
-IfDatabaseNotExistsGoBackAndUncheckCreate=Si la base n'existe pas, revenez en arrière et cochez l'option "Créer la base de donnée".
-IfDatabaseExistsGoBackAndCheckCreate=Si la base existe déjà, revenez en arrière et désactiver l'option "Créer la base de donnée".
+ErrorDatabaseAlreadyExists=La base de données '%s' existe déjà.
+IfDatabaseNotExistsGoBackAndUncheckCreate=Si la base n'existe pas, revenez en arrière et cochez l'option "Créer la base de données".
+IfDatabaseExistsGoBackAndCheckCreate=Si la base existe déjà, revenez en arrière et désactiver l'option "Créer la base de données".
 PHPVersion=Version PHP
 YouCanContinue=Vous pouvez continuer...
 PleaseBePatient=Merci de patienter...
@@ -38,6 +38,8 @@ ConfigurationFile=Fichier de configuration
 WebPagesDirectory=Répertoire contenant les pages web
 DocumentsDirectory=Répertoire devant contenir les documents générés (PDF, etc.)
 URLRoot=URL Racine
+ForceHttps=Forcer les connexions sécurisées (https)
+CheckToForceHttps=Cochez cette option pour forcer les connexions sécurisées (https).<br>Ceci nécessite que le serveur web soit configuré avec un certificat SSL.
 DolibarrDatabase=Base de données Dolibarr
 DatabaseChoice=Choix de la base de données
 DatabaseType=Type de la base de données
@@ -52,13 +54,13 @@ AdminLogin=Login du propriétaire de la base de données Dolibarr.
 Password=Mot de passe
 PasswordAgain=Vérification du mot de passe
 AdminPassword=Mot de passe du propriétaire de la base de données Dolibarr.
-CreateDatabase=Créer la base de donnée
+CreateDatabase=Créer la base de données
 CreateUser=Créer le propriétaire
 DatabaseSuperUserAccess=Serveur de base de données - Accès super utilisateur
 CheckToCreateDatabase=Cochez cette option si la base de données n'existe pas et doit être créée.<br>Dans ce cas, il faut renseigner le login/mot de passe du superutilisateur au bas de cette page.
 CheckToCreateUser=Cochez cette option si l'utilisateur propriétaire n'existe pas et doit être créé.<br>Dans ce cas, il faut renseigner le nom et mot de passe du propriétaire à créer ainsi que le login/mot de passe du superutilisateur au bas de cette page. Si la case n'est pas cochée, le nom et mot de passe du propriétaire doivent exister. 
 Experimental=(expérimental)
-DatabaseRootLoginDescription=Login de l'utilisateur de la base ayant les droits de création de bases de données ou de comptes pour la base, inutile si la base et son compte d'accès existe déjà (comme lorsque vous êtes chez un hébergeur).
+DatabaseRootLoginDescription=Login de l'utilisateur de la base ayant les droits de création de bases de données ou de comptes pour la base, inutile si la base et son compte d'accès existent déjà (comme lorsque vous êtes chez un hébergeur).
 KeepEmptyIfNoPassword=Laissez vide si l'administrateur n'a pas de mot de passe
 SaveConfigurationFile=Enregistrement du fichier de configuration
 ConfigurationSaving=Enregistrement du fichier de configuration
@@ -94,7 +96,7 @@ DolibarrAdminLogin=Login de l'utilisateur administrateur de Dolibarr
 FailedToCreateAdminLogin=Echec de la création du compte administrateur Dolibarr.
 AdminLoginAlreadyExists=Compte administrateur Dolibarr '<b>%s</b>' déjà existant.
 WarningRemoveInstallDir=Attention, pour des raisons de sécurité, une fois l'installation terminée, il est conseillé de supprimer manuellement le répertoire <b>install</b>, ou d'y placer un fichier nommé <b>install.lock</b> en lecture seule.
-ThisPHPDoesNotSupportTypeBase=Le système PHP ne supporta pas les interfaces d'accès pour les bases %s
+ThisPHPDoesNotSupportTypeBase=Le système PHP ne supporte pas les interfaces d'accès pour les bases %s
 FunctionNotAvailableInThisPHP=Non disponible sur ce PHP
 MigrateScript=Script de migration
 ChoosedMigrateScript=Choix du script de migration
@@ -117,26 +119,26 @@ ServerVersion=Version du serveur de base de données
 YouMustCreateItAndAllowServerToWrite=Vous devez créer ce dossier et permettre au serveur web d'écrire dans celui-ci.
 CharsetChoice=Choix du codage des caractères
 CharacterSetClient=Codage utilisé pour l'affichage des pages
-CharacterSetClientComment=Veuillez choisir le codage que vous souhaitez pour l'affichage des pages.<br/> Le codage proposé par défaut est celui de votre base de donnée par défaut.
+CharacterSetClientComment=Veuillez choisir le codage que vous souhaitez pour l'affichage des pages.<br/> Le codage proposé par défaut est celui de votre base de données par défaut.
 CollationConnection=Ordre de tri utilisé pour la base de données
-CollationConnectionComment=Veuillez choisir la page de code définissant l'ordre de tri des caractères utilisé par la base de donnée. Ce paramètre est aussi appelé 'collation' par certaines bases de données.<br/> Ce paramètre n'est pas sélectionnable si votre base est déjà créée.
+CollationConnectionComment=Veuillez choisir la page de code définissant l'ordre de tri des caractères utilisés par la base de données. Ce paramètre est aussi appelé 'collation' par certaines bases de données.<br/> Ce paramètre n'est pas sélectionnable si votre base est déjà créée.
 CharacterSetDatabase=Codage utilisé pour la base de données
 CharacterSetDatabaseComment=Veuillez choisir le codage que vous désirez choisir pour la création de la base de données.<br/> Ce paramètre n'est pas sélectionnable si votre base est déjà créée.
-YouAskDatabaseCreationSoDolibarrNeedToConnect=Vous avez demandé la création de la base de donnée <b>%s</b>, mais pour cela, Dolibarr doit se connecter sur le serveur <b>%s</b> via le super utilisateur <b>%s</b>.
-YouAskLoginCreationSoDolibarrNeedToConnect=Vous avez demandé la création du login de base de donnée <b>%s</b>, mais pour cela, Dolibarr doit se connecter sur le serveur <b>%s</b> via le super utilisateur <b>%s</b>.
-BecauseConnectionFailedParametersMayBeWrong=La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects.
-OrphelinsPaymentsDetectedByMethod=Paiement orphelins detectés par la méthode %s
-RemoveItManuallyAndPressF5ToContinue=Supprimer le manuellement et appuyez sur F5 pour continuer.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=Vous avez demandé la création de la base de données <b>%s</b>, mais pour cela, Dolibarr doit se connecter sur le serveur <b>%s</b> via le super utilisateur <b>%s</b>.
+YouAskLoginCreationSoDolibarrNeedToConnect=Vous avez demandé la création du login de base de données <b>%s</b>, mais pour cela, Dolibarr doit se connecter sur le serveur <b>%s</b> via le super utilisateur <b>%s</b>.
+BecauseConnectionFailedParametersMayBeWrong=La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-être incorrects.
+OrphelinsPaymentsDetectedByMethod=Paiement orphelins détectés par la méthode %s
+RemoveItManuallyAndPressF5ToContinue=Supprimez le manuellement et appuyez sur F5 pour continuer.
 KeepDefaultValuesWamp=Comme vous utilisez l'assistant d'installation Dolibarr depuis DoliWamp, les valeurs proposées aux paramètres sont déjà optimisées. Ne les modifier qu'en connaissance de cause.
-KeepDefaultValuesDeb=Comme vous utilisez l'assistant d'installation Dolibarr depuis un package Ubuntu ou Debian, les valeurs proposées aux paramètres sont déjà optimisées. Seul le mot de passe du propriétaire de la base de données à créer est à renseigner. Ne modifier les autres informations qu'en connaissance de cause.
-KeepDefaultValuesMamp=Comme vous utilisez l'assistant d'installation Dolibarr depuis DoliMamp, les valeurs proposées aux paramètres sont déjà optimisées. Ne les modifier qu'en connaissance de cause.
+KeepDefaultValuesDeb=Comme vous utilisez l'assistant d'installation Dolibarr depuis un package Ubuntu ou Debian, les valeurs proposées aux paramètres sont déjà optimisées. Seul le mot de passe du propriétaire de la base de données à créer est à renseigner. Ne modifiez les autres informations qu'en connaissance de cause.
+KeepDefaultValuesMamp=Comme vous utilisez l'assistant d'installation Dolibarr depuis DoliMamp, les valeurs proposées aux paramètres sont déjà optimisées. Ne les modifiez qu'en connaissance de cause.
 FieldRenamed=Champ renommé
 IfLoginDoesNotExistsCheckCreateUser=Si le login n'existe pas encore, vous devez cocher l'option "Créer l'utilisateur"
-ErrorConnection=Le serveur "<b>%s</b>", nom de base "<b>%s</b>", login "<b>%s</b>", ou mot de passe de la base de donnée est peut-être incorrect ou la version du client PHP trop ancienne par rapport à la version de la base de donnée.
+ErrorConnection=Le serveur "<b>%s</b>", nom de base "<b>%s</b>", login "<b>%s</b>", ou mot de passe de la base de données est peut-être incorrect ou la version du client PHP trop ancienne par rapport à la version de la base de données.
 InstallChoiceRecommanded=Choix recommandé pour installer la version <b>%s</b> depuis votre version actuelle <b>%s</b> 
 InstallChoiceSuggested=<b>Choix suggéré par l'installeur</b>.
 CheckThatDatabasenameIsCorrect=Vérifiez que le nom de base "<b>%s</b>" est correct.
-IfAlreadyExistsCheckOption=Si ce nom est correct et que cette base n'existe pas déjà, vous devez cocher l'option "Créer la base de donnée".
+IfAlreadyExistsCheckOption=Si ce nom est correct et que cette base n'existe pas déjà, vous devez cocher l'option "Créer la base de données".
 OpenBaseDir=Paramètre php openbasedir
 YouAskToCreateDatabaseSoRootRequired=Vous avez coché la case "Créer la base de donnée". Pour cela, le login/mot de passe du superutilisateur (en bas de formulaire) sont obligatoire.
 YouAskToCreateDatabaseUserSoRootRequired=Vous avez coché la case "Créer l'utilisateur propriétaire" de la base. Pour cela, le login/mot de passe du superutilisateur (en bas de formulaire) sont obligatoire.
@@ -152,64 +154,64 @@ MigrationProposal=Migration de données sur les propositions commerciales
 MigrationInvoice=Migration de données sur les factures clients
 MigrationContract=Migration de données sur les contrats
 MigrationSuccessfullUpdate=Mise à jour réussie
-MigrationUpdateFailed=La mise à jour à échouée
+MigrationUpdateFailed=La mise à jour a échoué
 MigrationRelationshipTables=Migration des tables de liaison (%s)
 
 # Payments Update
-MigrationPaymentsUpdate=Mise a jour des paiments (lien n-n paiements-factures)
-MigrationPaymentsNumberToUpdate=%s paiement(s) à mettre à jour
-MigrationProcessPaymentUpdate=Mise a jour paiement(s) %s
-MigrationPaymentsNothingToUpdate=Pas ou plus de paiements orphelins à corriger.
-MigrationPaymentsNothingUpdatable=Pas ou plus de paiements orphelins corrigeable.
+MigrationPaymentsUpdate=Mise à jour des paiements (lien n-n paiements-factures)
+MigrationPaymentsNumberToUpdate=%s paiement(s) a mettre à jour
+MigrationProcessPaymentUpdate=Mise à jour paiement(s) %s
+MigrationPaymentsNothingToUpdate=Pas ou plus de paiement orphelin à corriger.
+MigrationPaymentsNothingUpdatable=Pas ou plus de paiement orphelin corrigeable.
 
 # Contracts Update
-MigrationContractsUpdate=Mise a jour des contrats sans details (gestion du contrat + detail de contrat)
-MigrationContractsNumberToUpdate=%s contrat(s) à mettre à jour
+MigrationContractsUpdate=Mise à jour des contrats sans détail (gestion du contrat + détail de contrat)
+MigrationContractsNumberToUpdate=%s contrat(s) a mettre à jour
 MigrationContractsLineCreation=Création ligne contrat pour contrat ref %s
-MigrationContractsNothingToUpdate=Pas ou plus de contrats (liés à un produit) sans lignes de details à corriger.
+MigrationContractsNothingToUpdate=Pas ou plus de contrats (liés à un produit) sans ligne de détail à corriger.
 MigrationContractsFieldDontExist=Le champs fk_facture n'existe plus. Pas d'opération à faire.
 
 # Contracts Empty Dates Update
-MigrationContractsEmptyDatesUpdate=Mise a jour des dates de contrats non renseignées
+MigrationContractsEmptyDatesUpdate=Mise à jour des dates de contrats non renseignées
 MigrationContractsEmptyDatesUpdateSuccess=Ok pour date de contrat
 MigrationContractsEmptyDatesNothingToUpdate=Pas ou plus de date de contrats à renseigner.
 MigrationContractsEmptyCreationDatesUpdateSuccess=Ok pour date création
 MigrationContractsEmptyCreationDatesNothingToUpdate=Pas ou plus de date de création à renseigner.
 
 # Contracts Invalid Dates Update
-MigrationContractsInvalidDatesUpdate=Mise a jour dates contrat incorrectes (pour contrats avec detail en service)
+MigrationContractsInvalidDatesUpdate=Mise à jour dates contrat incorrectes (pour contrats avec détail en service)
 MigrationContractsInvalidDateFix=Correction contrat %s (Date contrat=%s, Date mise service min=%s)
 MigrationContractsInvalidDatesNumber=%s contrats modifiés
 MigrationContractsInvalidDatesNothingToUpdate=Pas ou plus de contrats à corriger.
 
 # Contracts Incoherent Dates Update
-MigrationContractsIncoherentCreationDateUpdate=Mise a jour des dates de création de contrat qui ont une valeur incohérente
+MigrationContractsIncoherentCreationDateUpdate=Mise à jour des dates de création de contrat qui ont une valeur incohérente
 MigrationContractsIncoherentCreationDateUpdateSuccess=Ok
 MigrationContractsIncoherentCreationDateNothingToUpdate=Pas ou plus de date de contrats à corriger.
 
 # Reopening Contracts
-MigrationReopeningContracts=Reouverture des contrats qui ont au moins un service actif non fermé
+MigrationReopeningContracts=Réouverture des contrats qui ont au moins un service actif non fermé
 MigrationReopenThisContract=Réouverture contrat %s
 MigrationReopenedContractsNumber=%s contrats modifiés
 MigrationReopeningContractsNothingToUpdate=Pas ou plus de contrats à réouvrir.
 
 # Migration transfert
-MigrationBankTransfertsUpdate=Mise a jour des liens entre ecriture bancaire et un transfert entre compte
+MigrationBankTransfertsUpdate=Mise à jour des liens entre écriture bancaire et un transfert entre compte
 MigrationBankTransfertsNothingToUpdate=Aucun lien non à jour
 
 # Migration delivery
-MigrationShipmentOrderMatching=Mise a jour bon expedition
-MigrationDeliveryOrderMatching=Mise a jour bon reception
-MigrationDeliveryDetail=Mise a jour bon reception
+MigrationShipmentOrderMatching=Mise à jour bon expédition
+MigrationDeliveryOrderMatching=Mise à jour bon réception
+MigrationDeliveryDetail=Mise à jour bon réception
 
 # Migration stock
-MigrationStockDetail=Mise a jour valeur en stock des produits
+MigrationStockDetail=Mise à jour valeur en stock des produits
 
 # Migration menus
-MigrationMenusDetail=Mise a jour table des menus dynamiques
+MigrationMenusDetail=Mise à jour table des menus dynamiques
 
 # Migration delivery address
-MigrationDeliveryAddress=Mise a jour des adresses de livraison dans les bons d'expedition
+MigrationDeliveryAddress=Mise à jour des adresses de livraison dans les bons d'expédition
 
 # Migration project task actors
 MigrationProjectTaskActors=Migration de la table llx_projet_task_actors

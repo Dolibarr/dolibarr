@@ -114,8 +114,10 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 print $langs->trans("WithNoSlashAtTheEnd")."<br>";
 print $langs->trans("Examples").":<br>";
 ?>
+<ul>
 <li>/var/www/dolibarr/htdocs</li>
 <li>C:/wwwroot/dolibarr/htdocs</li>
+</ul>
 </td>
 </tr>
 
@@ -145,8 +147,10 @@ print $langs->trans("WithNoSlashAtTheEnd")."<br>";
 print $langs->trans("DirectoryRecommendation")."<br>";
 print $langs->trans("Examples").":<br>";
 ?>
+<ul>
 <li>/var/dolibarr_documents</li>
 <li>C:/My Documents/dolibarr/</li>
+</ul>
 </td>
 </tr>
 
@@ -187,8 +191,19 @@ print $dolibarr_main_url_root;
 <?php
 print $langs->trans("Examples").":<br>";
 ?>
+<ul>
 <li>http://localhost/</li>
 <li>http://www.myserver.com:8180/dolibarr</li>
+</ul>
+</tr>
+
+<tr>
+<td valign="top" class="label">
+<?php echo $langs->trans("ForceHttps"); ?>
+<td class="label" valign="top"><input type="checkbox" name="main_force_https"<?php if ($force_install_mainforcehttps) print ' checked="on"'; ?>></td>
+<td class="comment">
+<?php echo $langs->trans("CheckToForceHttps"); ?>
+</td>
 </tr>
 
 <!-- Dolibarr database -->
