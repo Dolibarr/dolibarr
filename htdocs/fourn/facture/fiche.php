@@ -978,7 +978,7 @@ else
 
 					// Show product and description
 					print '<td>';
-					if (($conf->produit->enabled || $conf->service->enabled) && $fac->lignes[$i]->fk_product)
+					if (($conf->product->enabled || $conf->service->enabled) && $fac->lignes[$i]->fk_product)
 					{
 						print '<input type="hidden" name="idprod" value="'.$fac->lignes[$i]->fk_product.'">';
 						$product_static=new ProductFournisseur($db);
@@ -991,7 +991,7 @@ else
 					else
 					{
 						print $html->select_type_of_lines($fac->lignes[$i]->product_type,'type',1);
-						if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+						if ($conf->product->enabled && $conf->service->enabled) print '<br>';
 					}
 
 					// Description - Editor wysiwyg
@@ -1128,8 +1128,8 @@ else
 
 				$forceall=1;	// For suppliers, we always show all types
 				print $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
-				if ($forceall || ($conf->produit->enabled && $conf->service->enabled)
-				|| (empty($conf->produit->enabled) && empty($conf->service->enabled))) print '<br>';
+				if ($forceall || ($conf->product->enabled && $conf->service->enabled)
+				|| (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 
 				// Editor wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
@@ -1163,7 +1163,7 @@ else
 				print '</form>';
 
 				// Ajout de produits/services predefinis
-				if ($conf->produit->enabled || $conf->service->enabled)
+				if ($conf->product->enabled || $conf->service->enabled)
 				{
 					print '<tr class="liste_titre">';
 					print '<td colspan="4">';

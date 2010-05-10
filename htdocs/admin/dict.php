@@ -29,7 +29,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 
 $langs->load("other");
 $langs->load("admin");
@@ -235,7 +235,7 @@ $tabcond[10]= true;
 $tabcond[11]= true;
 $tabcond[12]= $conf->facture->enabled||$conf->fournisseur->enabled;
 $tabcond[13]= $conf->facture->enabled||$conf->fournisseur->enabled;
-$tabcond[14]= $conf->produit->enabled&&$conf->global->PRODUIT_USE_ECOTAXE;
+$tabcond[14]= $conf->product->enabled&&$conf->global->PRODUIT_USE_ECOTAXE;
 $tabcond[15]= true;
 $tabcond[16]= $conf->societe->enabled;
 $tabcond[17]= $conf->deplacement->enabled;

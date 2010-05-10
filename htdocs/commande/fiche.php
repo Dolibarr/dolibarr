@@ -1896,7 +1896,7 @@ else
 						else
 						{
 							print $html->select_type_of_lines($objp->product_type,'type',1);
-							if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+							if ($conf->product->enabled && $conf->service->enabled) print '<br>';
 						}
 
 						// Editor wysiwyg
@@ -1992,7 +1992,7 @@ else
 				print '<td>';
 
 				print $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
-				if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+				if ($conf->product->enabled && $conf->service->enabled) print '<br>';
 
 				// Editor wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
@@ -2035,7 +2035,7 @@ else
 				print '</form>';
 
 				// Ajout de produits/services predefinis
-				if ($conf->produit->enabled || $conf->service->enabled)
+				if ($conf->product->enabled || $conf->service->enabled)
 				{
 					print '<tr class="liste_titre">';
 					print '<td colspan="3">';

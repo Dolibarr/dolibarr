@@ -1758,7 +1758,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td '.$colspan.'>';
 
 		print $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
-		if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+		if ($conf->product->enabled && $conf->service->enabled) print '<br>';
 
 		// Editor wysiwyg
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
@@ -1789,7 +1789,7 @@ if ($id > 0 || ! empty($ref))
 		print '</form>';
 
 		// Ajout de produits/services predefinis
-		if ($conf->produit->enabled || $conf->service->enabled)
+		if ($conf->product->enabled || $conf->service->enabled)
 		{
 			if ($conf->global->PRODUIT_USE_MARKUP)
 			{

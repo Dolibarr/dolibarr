@@ -862,7 +862,7 @@ if ($id > 0 || ! empty($ref))
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 				print '<a name="'.$commandline->id.'"></a>'; // ancre pour retourner sur la ligne
-				if (($conf->produit->enabled || $conf->service->enabled) && $commandline->fk_product > 0)
+				if (($conf->product->enabled || $conf->service->enabled) && $commandline->fk_product > 0)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$commandline->product_id.'">';
 					print img_object($langs->trans('ShowProduct'),'product');
@@ -874,7 +874,7 @@ if ($id > 0 || ! empty($ref))
 				else
 				{
 					print $html->select_type_of_lines($commandline->product_type,'type',1);
-					if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+					if ($conf->product->enabled && $conf->service->enabled) print '<br>';
 				}
 
 				// Description - Editor wysiwyg
@@ -933,8 +933,8 @@ if ($id > 0 || ! empty($ref))
 
 			$forceall=1;
 			print $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
-			if ($forceall || ($conf->produit->enabled && $conf->service->enabled)
-			|| (empty($conf->produit->enabled) && empty($conf->service->enabled))) print '<br>';
+			if ($forceall || ($conf->product->enabled && $conf->service->enabled)
+			|| (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 
 			// Editor wysiwyg
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
@@ -965,7 +965,7 @@ if ($id > 0 || ! empty($ref))
 			print '</form>';
 
 			// Ajout de produits/services predefinis
-			if ($conf->produit->enabled || $conf->service->enabled)
+			if ($conf->product->enabled || $conf->service->enabled)
 			{
 				print '<tr class="liste_titre">';
 				print '<td colspan="3">';

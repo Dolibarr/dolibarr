@@ -274,7 +274,7 @@ if ($_GET["action"] == 'create')
 	if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
 	{
 		print '<tr><td colspan="3">';
-		if ($conf->produit->enabled || $conf->service->enabled)
+		if ($conf->product->enabled || $conf->service->enabled)
 		{
 			$lib=$langs->trans("ProductsAndServices");
 

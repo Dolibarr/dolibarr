@@ -293,7 +293,7 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		if ($conf->produit->enabled) $original_file=$conf->produit->dir_output.'/'.$original_file;
+		if ($conf->product->enabled) $original_file=$conf->produit->dir_output.'/'.$original_file;
 		elseif ($conf->service->enabled) $original_file=$conf->service->dir_output.'/'.$original_file;
 	}
 

@@ -140,7 +140,7 @@ session_start();
 require_once("master.inc.php");
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
-if ($conf->file->main_force_https)
+if (! empty($conf->file->main_force_https))
 {
 	$newurl='';
 	if ($conf->file->main_force_https == '1')
@@ -1034,7 +1034,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
 	}
 
-	if ((($conf->produit->enabled && $user->rights->produit->lire) || ($conf->service->enabled && $user->rights->service->lire))
+	if ((($conf->product->enabled && $user->rights->produit->lire) || ($conf->service->enabled && $user->rights->service->lire))
 	&& $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE)
 	{
 		$langs->load("products");

@@ -62,7 +62,7 @@ class FormBarCode
 		$disable = '';
 
 		// We check if barcode is already selected by default
-		if ((($conf->produit->enabled || $conf->service->enabled) && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
+		if ((($conf->product->enabled || $conf->service->enabled) && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
 		    ($conf->societe->enabled && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id))
 		{
 			$disable = 'disabled="disabled"';

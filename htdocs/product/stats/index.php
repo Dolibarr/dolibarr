@@ -69,11 +69,11 @@ if ($db->query($sql))
 }
 $db->free();
 
-if ($conf->produit->enabled && $conf->service->enabled)
+if ($conf->product->enabled && $conf->service->enabled)
 {
 	print_fiche_titre($langs->trans("ProductsAndServicesStatistics"), $mesg);
 }
-elseif ($conf->produit->enabled)
+elseif ($conf->product->enabled)
 {
 	print_fiche_titre($langs->trans("ProductsStatistics"), $mesg);
 }

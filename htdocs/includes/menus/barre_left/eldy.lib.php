@@ -565,7 +565,7 @@ function print_left_eldy_menu($db,$menu_array)
 		if ($mainmenu == 'products')
 		{
 			// Products
-			if ($conf->produit->enabled)
+			if ($conf->product->enabled)
 			{
 				$newmenu->add(DOL_URL_ROOT."/product/index.php?leftmenu=product&amp;type=0", $langs->trans("Products"), 0, $user->rights->produit->lire);
 				if ($user->societe_id == 0)

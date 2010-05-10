@@ -60,7 +60,7 @@ if ((isset($_GET["type"]) && $_GET["type"] == 0) || empty($conf->service->enable
 	$transAreaType = $langs->trans("ProductsArea");
 	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->produit->enabled))
+if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enabled))
 {
 	$transAreaType = $langs->trans("ServicesArea");
 	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
@@ -119,7 +119,7 @@ while ($objp = $db->fetch_object($result))
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-if ($conf->produit->enabled)
+if ($conf->product->enabled)
 {
 	$statProducts = "<tr $bc[0]>";
 	$statProducts.= '<td><a href="liste.php?type=0&amp;envente=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';

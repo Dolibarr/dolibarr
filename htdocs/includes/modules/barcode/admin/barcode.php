@@ -266,7 +266,7 @@ if ($conf->societe->enabled)
 }
 
 // Module produits
-if ($conf->produit->enabled)
+if ($conf->product->enabled)
 {
 	$var=!$var;
 	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";

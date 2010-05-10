@@ -100,7 +100,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 
 
 	// Products-Services
-	if ($conf->produit->enabled || $conf->service->enabled)
+	if ($conf->product->enabled || $conf->service->enabled)
 	{
 		$langs->load("products");
 
@@ -114,8 +114,8 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 			$classname = 'class="tmenu"';
 		}
 		$chaine="";
-		if ($conf->produit->enabled) { $chaine.=$langs->trans("Products"); }
-		if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+		if ($conf->product->enabled) { $chaine.=$langs->trans("Products"); }
+		if ($conf->product->enabled && $conf->service->enabled) { $chaine.="/"; }
 		if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
 
 		$idsel='products';

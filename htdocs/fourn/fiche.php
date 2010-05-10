@@ -158,7 +158,7 @@ if ( $societe->fetch($socid) )
 	/*
 	 * List of products
 	 */
-	if ($conf->produit->enabled || $conf->service->enabled)
+	if ($conf->product->enabled || $conf->service->enabled)
 	{
 		$langs->load("products");
 		print '<table class="noborder" width="100%">';

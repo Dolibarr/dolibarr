@@ -199,3 +199,4 @@ ALTER TABLE llx_menu DROP INDEX idx_menu_uk_menu;
 
 ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, position, url, entity);
 
+UPDATE llx_const SET name = 'MAIN_MODULE_PRODUCT' WHERE name = 'MAIN_MODULE_PRODUIT';

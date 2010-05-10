@@ -76,7 +76,7 @@ if ($db->query($sql))
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-if ($conf->produit->enabled)
+if ($conf->product->enabled)
 {
     print "<tr $bc[0]>";
     print '<td><a href="liste.php?type=0">'.$langs->trans("Products").'</a></td><td>'.round($prodser[0]).'</td>';
