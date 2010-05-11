@@ -297,7 +297,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
  *	\brief		Effacement d'une constante dans la base de donnees
  *	\sa			dolibarr_get_const, dolibarr_sel_const
  *	\param	    db          Handler d'acces base
- *	\param	    name		Nom ou rowid de la constante
+ *	\param	    name		Name of constant or rowid of line
  *	\param	    entity		Multi company id, -1 for all entities
  *	\return     int         <0 if KO, >0 if OK
  */
@@ -306,7 +306,9 @@ function dolibarr_del_const($db, $name, $entity=1)
 	global $conf;
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql.=" WHERE (".$db->decrypt('name')." = '".addslashes($name)."' OR rowid = '".addslashes($name)."')";
+	$sql.= " WHERE (".$db->decrypt('name')." = '".addslashes($name)."'";
+	if (is_numeric($name)) $sql.= " OR rowid = '".addslashes($name)."'";
+	$sql.= ")";
 	if ($entity >= 0) $sql.= " AND entity = ".$entity;
 
 	dol_syslog("admin.lib::dolibarr_del_const sql=".$sql);

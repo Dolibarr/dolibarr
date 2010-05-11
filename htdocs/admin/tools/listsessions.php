@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -176,7 +176,7 @@ if ($savehandler == 'files')
 
 		// Login
 		print '<td>'.$sessionentry['login'].'</td>';
-		
+
 		// ID
 		print '<td align="left" nowrap="nowrap">';
 		if ("$key" == session_id()) print $form->textwithpicto($key,$langs->trans("YourSession"));

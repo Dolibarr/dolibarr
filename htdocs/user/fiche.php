@@ -1086,7 +1086,14 @@ else
 			if ($caneditfield &&
 			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || (($fuser->entity == $conf->entity) || $fuser->entity == $user->entity)) )
 			{
-				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+				if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
+				{
+					print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("DisabledInMonoUserMode")).'">'.$langs->trans("Modify").'</a>';
+				}
+				else
+				{
+					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+				}
 			}
 			elseif ($caneditpassword && ! $fuser->ldap_sid &&
 			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
