@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -386,7 +386,8 @@ if ($id > 0 || ! empty($ref))
 		 */
 		print '<table class="liste" width="100%">';
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type, cd.description, cd.price, cd.tva_tx, cd.subprice,";
+		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type, cd.description,";
+		$sql.= " cd.price, cd.tva_tx, cd.subprice,";
 		$sql.= " cd.qty,";
 		$sql.= ' cd.date_start,';
 		$sql.= ' cd.date_end,';
@@ -396,7 +397,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql.= " WHERE cd.fk_commande = ".$commande->id;
 		// $sql.= " AND p.fk_product_type <> 1";		Why this line ?
-		$sql.= " GROUP by cd.rowid, cd.fk_product";
+		//$sql.= " GROUP by cd.rowid, cd.fk_product";
 		$sql.= " ORDER BY cd.rang, cd.rowid";
 
 		//print $sql;
