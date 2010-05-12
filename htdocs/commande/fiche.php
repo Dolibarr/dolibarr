@@ -274,11 +274,11 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->commande->creer)
 		$ret=$com->fetch($_GET['id']);
 		if ($ret > 0)
 		{
-	  $com->insert_discount($_POST["remise_id"]);
+	  		$com->insert_discount($_POST["remise_id"]);
 		}
 		else
 		{
-	  dol_print_error($db,$com->error);
+	 		dol_print_error($db,$com->error);
 		}
 	}
 }
@@ -754,7 +754,7 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 	}
 }
 
-// Efface les fichiers
+// Remove file in doc form
 if ($_REQUEST['action'] == 'remove_file')
 {
 	$com = new Commande($db);
@@ -775,41 +775,14 @@ if ($_POST['addfile'])
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-	// Set tmp user directory
+	// Set tmp user directory TODO Use a dedicated directory for temp mails files
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir = $vardir.'/temp/';
 
-	if (create_exdir($upload_dir) >= 0)
-	{
-		$resupload=dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0,0,$_FILES['addedfile']['error']);
-		if (is_numeric($resupload) && $resupload > 0)
-		{
-			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-
-			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
-			$formmail = new FormMail($db);
-			// Add file in list of files in session
-			$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
-		}
-		else
-		{
-			$langs->load("errors");
-			if ($resupload < 0)	// Unknown error
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-			}
-			else	// Known error
-			{
-				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
-			}
-		}
-	}
+	$mesg=dol_add_file_process($upload_dir,0,0);
 
 	$_GET["action"]='presend';
+	$_POST["action"]='presend';
 }
 
 /*
@@ -817,36 +790,16 @@ if ($_POST['addfile'])
  */
 if (! empty($_POST['removedfile']))
 {
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir = $vardir.'/temp/';
 
-	$keytodelete=$_POST['removedfile'];
-	$keytodelete--;
+	$mesg=dol_remove_file_process($_POST['removedfile'],0);
 
-	$listofpaths=array();
-	$listofnames=array();
-	$listofmimes=array();
-	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
-
-	if ($keytodelete >= 0)
-	{
-		$pathtodelete=$listofpaths[$keytodelete];
-		$filetodelete=$listofnames[$keytodelete];
-		$result = dol_delete_file($pathtodelete,1);
-		if ($result >= 0)
-		{
-			$message = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
-			//print_r($_FILES);
-
-			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
-			$formmail = new FormMail($db);
-			$formmail->remove_attached_files($keytodelete);
-		}
-	}
 	$_GET["action"]='presend';
+	$_POST["action"]='presend';
 }
 
 /*
@@ -858,6 +811,8 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 
 	$commande= new Commande($db);
 	$result=$commande->fetch($_POST['orderid']);
+	$result=$commande->fetch_client();
+
 	if ($result)
 	{
 		$ref = dol_sanitizeFileName($commande->ref);
@@ -865,8 +820,6 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 
 		if (is_readable($file))
 		{
-			$commande->fetch_client();
-
 			if ($_POST['sendto'])
 			{
 				// Le destinataire a ete fourni via le champ libre
@@ -1318,10 +1271,11 @@ else
 	/* Mode vue et edition                                                         */
 	/*                                                                             */
 	/* *************************************************************************** */
-	$now=gmmktime();
+	$now=dol_now();
 
-	$id = $_GET['id'];
-	$ref= $_GET['ref'];
+	$id = $_REQUEST['id'];
+	$ref= $_REQUEST['ref'];
+
 	if ($id > 0 || ! empty($ref))
 	{
 		if ($mesg) print $mesg.'<br>';
@@ -2302,7 +2256,7 @@ else
 				$formmail->param['action']='send';
 				$formmail->param['models']='order_send';
 				$formmail->param['orderid']=$commande->id;
-				$formmail->param['returnurl']=DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
+				$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$commande->id;
 
 				// Init list of files
 				if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')

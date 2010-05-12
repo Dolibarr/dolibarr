@@ -22,8 +22,8 @@
 
 /**
  *	\file		htdocs/fourn/commande/fiche.php
- *	\ingroup	commande
- *	\brief		Fiche commande
+ *	\ingroup	supplier, order
+ *	\brief		Card supplier order
  *	\version	$Id$
  */
 
@@ -461,7 +461,7 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
 	}
 }
 
-// Delete file
+// Delete file in doc form
 if ($action=='remove_file')
 {
 	$commande = new CommandeFournisseur($db);
@@ -510,6 +510,195 @@ if ($_GET["action"]	== 'create')
 	}
 }
 
+/*
+ * Add file in email form
+ */
+if ($_POST['addfile'])
+{
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+	// Set tmp user directory TODO Use a dedicated directory for temp mails files
+	$vardir=$conf->user->dir_output."/".$user->id;
+	$upload_dir = $vardir.'/temp/';
+
+	$mesg=dol_add_file_process($upload_dir,0,0);
+
+	$_GET["action"]='presend';
+	$_POST["action"]='presend';
+}
+
+/*
+ * Remove file in email form
+ */
+if (! empty($_POST['removedfile']))
+{
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+	// Set tmp user directory
+	$vardir=$conf->user->dir_output."/".$user->id;
+	$upload_dir = $vardir.'/temp/';
+
+	$mesg=dol_remove_file_process($_POST['removedfile'],0);
+
+	$_GET["action"]='presend';
+	$_POST["action"]='presend';
+}
+
+/*
+ * Send mail
+ */
+if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
+{
+	$langs->load('mails');
+
+	$commande= new Commande($db);
+	$result=$commande->fetch($_POST['orderid']);
+	$result=$commande->fetch_client();
+
+	if ($result)
+	{
+		$ref = dol_sanitizeFileName($commande->ref);
+		$file = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+
+		if (is_readable($file))
+		{
+			if ($_POST['sendto'])
+			{
+				// Le destinataire a ete fourni via le champ libre
+				$sendto = $_POST['sendto'];
+				$sendtoid = 0;
+			}
+			elseif ($_POST['receiver'])
+			{
+				// Le destinataire a ete fourni via la liste deroulante
+				if ($_POST['receiver'] < 0)	// Id du tiers
+				{
+					$sendto = $commande->client->email;
+					$sendtoid = 0;
+				}
+				else	// Id du contact
+				{
+					$sendto = $commande->client->contact_get_email($_POST['receiver']);
+					$sendtoid = $_POST['receiver'];
+				}
+			}
+
+			if (strlen($sendto))
+			{
+				$langs->load("commercial");
+
+				$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+				$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
+				$message = $_POST['message'];
+				$sendtocc = $_POST['sendtocc'];
+				$deliveryreceipt = $_POST['deliveryreceipt'];
+
+				if ($_POST['action'] == 'send')
+				{
+					if (strlen($_POST['subject'])) $subject=$_POST['subject'];
+					else $subject = $langs->transnoentities('Order').' '.$commande->ref;
+					$actiontypecode='AC_COM';
+					$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+					if ($message)
+					{
+						$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
+						$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
+						$actionmsg.=$message;
+					}
+					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
+				}
+
+				// Create form object
+				include_once('../core/class/html.formmail.class.php');
+				$formmail = new FormMail($db);
+
+				$attachedfiles=$formmail->get_attached_files();
+				$filepath = $attachedfiles['paths'];
+				$filename = $attachedfiles['names'];
+				$mimetype = $attachedfiles['mimes'];
+
+				// Send mail
+				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+				if ($mailfile->error)
+				{
+					$mesg='<div class="error">'.$mailfile->error.'</div>';
+				}
+				else
+				{
+					$result=$mailfile->sendfile();
+					if ($result)
+					{
+						$mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+
+						$error=0;
+
+						// Initialisation donnees
+						$commande->sendtoid=$sendtoid;
+						$commande->actiontypecode=$actiontypecode;
+						$commande->actionmsg = $actionmsg;
+						$commande->actionmsg2= $actionmsg2;
+						$commande->orderrowid=$commande->id;
+
+						// Appel des triggers
+						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+						$interface=new Interfaces($db);
+						$result=$interface->run_triggers('ORDER_SENTBYMAIL',$commande,$user,$langs,$conf);
+						if ($result < 0) { $error++; $this->errors=$interface->errors; }
+						// Fin appel triggers
+
+						if ($error)
+						{
+							dol_print_error($db);
+						}
+						else
+						{
+							// Redirect here
+							// This avoid sending mail twice if going out and then back to page
+							Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&mesg='.urlencode($mesg));
+							exit;
+						}
+					}
+					else
+					{
+						$langs->load("other");
+						$mesg='<div class="error">';
+						if ($mailfile->error)
+						{
+							$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+							$mesg.='<br>'.$mailfile->error;
+						}
+						else
+						{
+							$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+						}
+						$mesg.='</div>';
+					}
+				}
+			}
+			else
+			{
+				$langs->load("other");
+				$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
+				$_GET["action"]='presend';
+				dol_syslog('Recipient email is empty');
+			}
+		}
+		else
+		{
+			$langs->load("other");
+			$mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
+			dol_syslog('Failed to read file: '.$file);
+		}
+	}
+	else
+	{
+		$langs->load("other");
+		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
+		dol_syslog('Impossible de lire les donnees de la facture. Le fichier facture n\'a peut-etre pas ete genere.');
+	}
+}
+
 
 /*
  * View
@@ -520,6 +709,8 @@ llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 $html =	new	Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
+$productstatic = new Product($db);
+
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -527,12 +718,11 @@ $formorder = new FormOrder($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-$now=gmmktime();
-
-$productstatic = new Product($db);
+$now=dol_now();
 
 $id = $_REQUEST['id'];
 $ref= $_REQUEST['ref'];
+
 if ($id > 0 || ! empty($ref))
 {
 	//if ($mesg) print $mesg.'<br>';
@@ -1023,133 +1213,216 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 
-		/**
-		 * Boutons actions
-		 */
-		if ($user->societe_id == 0 && $_GET['action'] != 'editline' && $_GET['action'] != 'delete')
+		if ($_GET['action'] != 'presend')
 		{
-			print '<div	class="tabsAction">';
 
-			if ($commande->statut == 0 && $num > 0)
+			/**
+			 * Boutons actions
+			 */
+			if ($user->societe_id == 0 && $_GET['action'] != 'editline' && $_GET['action'] != 'delete')
 			{
-				if ($user->rights->fournisseur->commande->valider)
+				print '<div	class="tabsAction">';
+
+				// Validate
+				if ($commande->statut == 0 && $num > 0)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=valid"';
-					print '>'.$langs->trans('Validate').'</a>';
+					if ($user->rights->fournisseur->commande->valider)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=valid"';
+						print '>'.$langs->trans('Validate').'</a>';
+					}
 				}
-			}
 
-			if ($commande->statut == 1)
-			{
-				if ($user->rights->fournisseur->commande->approuver)
+				// Approve
+				if ($commande->statut == 1)
 				{
-					print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+					if ($user->rights->fournisseur->commande->approuver)
+					{
+						print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
 
-					print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+						print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+					}
+
+					if ($user->rights->fournisseur->commande->annuler)
+					{
+						print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+					}
+
+				}
+
+				// Send
+				if ($commande->statut > 1)
+				{
+					if ($user->rights->fournisseur->commande->approuver)
+					{
+						$comref = dol_sanitizeFileName($commande->ref);
+						$file = $conf->fournisseur->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
+						if (file_exists($file))
+						{
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+						}
+					}
+				}
+
+				// Cancel
+				if ($commande->statut == 2)
+				{
+					if ($user->rights->fournisseur->commande->annuler)
+					{
+						print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+					}
 				}
 
 				if ($user->rights->fournisseur->commande->annuler)
 				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}
 
+				print "</div>";
 			}
 
-			if ($commande->statut == 2)
+
+			print '<table width="100%"><tr><td width="50%" valign="top">';
+			print '<a name="builddoc"></a>'; // ancre
+
+			/*
+			 * Documents	generes
+			 */
+			$comfournref = dol_sanitizeFileName($commande->ref);
+			$file =	$conf->fournisseur->dir_output . '/commande/' . $comfournref .	'/'	. $comfournref . '.pdf';
+			$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
+			$filedir = $conf->fournisseur->dir_output	. '/commande/' .	$comfournref;
+			$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
+			$genallowed=$user->rights->fournisseur->commande->creer;
+			$delallowed=$user->rights->fournisseur->commande->supprimer;
+
+			$somethingshown=$formfile->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+
+			print '</td><td valign="top" width="50%">';
+
+			if ( $user->rights->fournisseur->commande->commander && ($commande->statut == 2 || $commande->statut == 6))
 			{
-				if ($user->rights->fournisseur->commande->annuler)
-				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
-				}
+				/**
+				 * Commander (action=commande)
+				 */
+				print '<br>';
+				print '<form name="commande" action="fiche.php?id='.$commande->id.'&amp;action=commande" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden"	name="action" value="commande">';
+				print '<table class="border" width="100%">';
+				print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
+				print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
+				$date_com = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+				print $html->select_date($date_com,'','','','',"commande");
+				print '</td></tr>';
+
+				print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
+				$formorder->select_methodes_commande($_POST["methodecommande"],"methodecommande",1);
+				print '</td></tr>';
+
+				print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
+				print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
+				print '</table>';
+				print '</form>';
 			}
 
-			if ($user->rights->fournisseur->commande->annuler)
+			if ( $user->rights->fournisseur->commande->receptionner	&& ($commande->statut == 3 ||$commande->statut == 4	))
 			{
-				print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+				/**
+				 * Receptionner (action=livraison)
+				 */
+				print '<br>';
+				print '<form action="fiche.php?id='.$commande->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden"	name="action" value="livraison">';
+				print '<table class="border" width="100%">';
+				print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
+				print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
+				print $html->select_date('','','','','',"commande");
+				print "</td></tr>\n";
+
+				print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
+				$liv = array();
+				$liv[''] = '&nbsp;';
+				$liv['tot']	= $langs->trans("TotalWoman");
+				$liv['par']	= $langs->trans("PartialWoman");
+				$liv['nev']	= $langs->trans("NeverReceived");
+				$liv['can']	= $langs->trans("Canceled");
+
+				print $html->select_array("type",$liv);
+
+				print '</td></tr>';
+				print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="comment"></td></tr>';
+				print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
+				print "</table>\n";
+				print "</form>\n";
 			}
 
-			print "</div>";
+			// List of actions on element
+	//		include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+	//		$formactions=new FormActions($db);
+	//		$somethingshown=$formactions->showactions($commande,'supplier_order',$socid);
+
+
+			print '</td></tr></table>';
 		}
 
-		print '<table width="100%"><tr><td width="50%" valign="top">';
-		print '<a name="builddoc"></a>'; // ancre
 
 
 		/*
-		 * Documents	generes
+		 * Action presend
+		 *
 		 */
-		$comfournref = dol_sanitizeFileName($commande->ref);
-		$file =	$conf->fournisseur->dir_output . '/commande/' . $comfournref .	'/'	. $comfournref . '.pdf';
-		$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
-		$filedir = $conf->fournisseur->dir_output	. '/commande/' .	$comfournref;
-		$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
-		$genallowed=$user->rights->fournisseur->commande->creer;
-		$delallowed=$user->rights->fournisseur->commande->supprimer;
-
-		$somethingshown=$formfile->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
-
-
-		print '</td><td	width="50%"	valign="top">';
-
-
-		if ( $user->rights->fournisseur->commande->commander && ($commande->statut == 2 || $commande->statut == 6))
+		if ($_GET['action'] == 'presend')
 		{
-			/**
-			 * Commander (action=commande)
-			 */
+			$ref = dol_sanitizeFileName($commande->ref);
+			$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+
 			print '<br>';
-			print '<form name="commande" action="fiche.php?id='.$commande->id.'&amp;action=commande" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden"	name="action" value="commande">';
-			print '<table class="border" width="100%">';
-			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
-			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
-			$date_com = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
-			print $html->select_date($date_com,'','','','',"commande");
-			print '</td></tr>';
+			print_titre($langs->trans('SendOrderByMail'));
 
-			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
-			$formorder->select_methodes_commande($_POST["methodecommande"],"methodecommande",1);
-			print '</td></tr>';
+			// Cree l'objet formulaire mail
+			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+			$formmail = new FormMail($db);
+			$formmail->fromtype = 'user';
+			$formmail->fromid   = $user->id;
+			$formmail->fromname = $user->fullname;
+			$formmail->frommail = $user->email;
+			$formmail->withfrom=1;
+			$formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
+			$formmail->withtosocid=$soc->id;
+			$formmail->withtocc=1;
+			$formmail->withtoccsocid=0;
+			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+			$formmail->withtocccsocid=0;
+			$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+			$formmail->withfile=2;
+			$formmail->withbody=1;
+			$formmail->withdeliveryreceipt=1;
+			$formmail->withcancel=1;
+			// Tableau des substitutions
+			$formmail->substit['__ORDERREF__']=$commande->ref;
+			// Tableau des parametres complementaires
+			$formmail->param['action']='send';
+			$formmail->param['models']='supplier_order_send';
+			$formmail->param['orderid']=$commande->id;
+			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$commande->id;
 
-			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
-			print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
-			print '</table>';
-			print '</form>';
+			// Init list of files
+			if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+			{
+				$formmail->clear_attached_files();
+				$formmail->add_attached_files($file,$ref.'.pdf','application/pdf');
+			}
+
+			// Show form
+			$formmail->show_form();
+
+			print '<br>';
 		}
 
-		if ( $user->rights->fournisseur->commande->receptionner	&& ($commande->statut == 3 ||$commande->statut == 4	))
-		{
-			/**
-			 * Receptionner (action=livraison)
-			 */
-			print '<br>';
-			print '<form action="fiche.php?id='.$commande->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden"	name="action" value="livraison">';
-			print '<table class="border" width="100%">';
-			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
-			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-			print $html->select_date('','','','','',"commande");
-			print "</td></tr>\n";
-
-			print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
-			$liv = array();
-			$liv[''] = '&nbsp;';
-			$liv['tot']	= $langs->trans("TotalWoman");
-			$liv['par']	= $langs->trans("PartialWoman");
-			$liv['nev']	= $langs->trans("NeverReceived");
-			$liv['can']	= $langs->trans("Canceled");
-
-			print $html->select_array("type",$liv);
-
-			print '</td></tr>';
-			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="comment"></td></tr>';
-			print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
-			print "</table>\n";
-			print "</form>\n";
-		}
 		print '</td></tr></table>';
+
 	}
 	else
 	{

@@ -447,42 +447,15 @@ if ($_POST["action"] == 'update' && empty($_POST["removedfile"]) && empty($_POST
 	$mil = new Mailing($db);
 	$mil->fetch($_POST["id"]);
 
-	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
-
 	$isupload=0;
 
 	// If upload file
-	$i='';
-	if (! empty($_POST["addfile".$i]) && ! empty($conf->global->MAIN_UPLOAD_DOC))
+	if (! empty($_POST["addfile"]) && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		$isupload=1;
+		$upload_dir = $conf->mailing->dir_output."/".get_exdir($mil->id,2,0,1);
 
-		if (! is_dir($upload_dir)) create_exdir($upload_dir);
-
-		if (is_dir($upload_dir))
-		{
-			$resupload = dol_move_uploaded_file($_FILES['addedfile'.$i]['tmp_name'], $upload_dir . "/" . $_FILES['addedfile'.$i]['name'],1,0,$_FILES['addedfile'.$i]['error']);
-			if (is_numeric($resupload) && $resupload > 0)
-			{
-				$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-			}
-			else
-			{
-				$langs->load("errors");
-				if ($resupload < 0)	// Unknown error
-				{
-					$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-				}
-				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-				{
-					$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-				}
-				else	// Known error
-				{
-					$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
-				}
-			}
-		}
+		$mesg=dol_add_file_process($upload_dir,0,1);
 	}
 
 	if (! $isupload)
@@ -934,6 +907,7 @@ else
 			 * Mailing en mode edition
 			 */
 
+			if ($mesg) print $mesg."<br>";
 			if ($message) print $message."<br>";
 
 			print '<table class="border" width="100%">';

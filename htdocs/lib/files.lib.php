@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -447,5 +447,112 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	return 1;
 }
 
+
+/**
+ * Get and save an upload file (for example after submitting a new file a mail form).
+ * All information used are in db, conf, langs, user and _FILES.
+ *
+ * @param	upload_dir				Directory to store upload files
+ * @param	allowoverwrite			1=Allow overwrite existing file
+ * @param	donotupdatesession		1=Do no edit _SESSION variable
+ * @return	string					Message with result of upload and store.
+ */
+function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=0)
+{
+	global $db,$user,$conf,$langs,$_FILES;
+
+	$mesg='';
+
+	if (! empty($_FILES['addedfile']['tmp_name']))
+	{
+		if (create_exdir($upload_dir) >= 0)
+		{
+			$resupload = dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],$allowoverwrite,0, $_FILES['addedfile']['error']);
+			if (is_numeric($resupload) && $resupload > 0)
+			{
+				$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+
+				if (empty($donotupdatesession))
+				{
+					include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+					$formmail = new FormMail($db);
+					$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
+				}
+			}
+			else
+			{
+				$langs->load("errors");
+				if ($resupload < 0)	// Unknown error
+				{
+					$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+				}
+				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+				{
+					$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+				}
+				else	// Known error
+				{
+					$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+				}
+			}
+		}
+	}
+	else
+	{
+		$langs->load("errors");
+		$mesg = '<div class="warning">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("File")).'</div>';
+	}
+
+	return $mesg;
+}
+
+
+/**
+ * Remove an uploaded file (for example after submitting a new file a mail form).
+ * All information used are in db, conf, langs, user and _FILES.
+ *
+ * @param	filenb					File nb to delete
+ * @param	donotupdatesession		1=Do no edit _SESSION variable
+ * @return	string					Message with result of upload and store.
+ */
+function dol_remove_file_process($filenb,$donotupdatesession=0)
+{
+	global $db,$user,$conf,$langs,$_FILES;
+
+	$mesg='';
+
+	$keytodelete=$filenb;
+	$keytodelete--;
+
+	$listofpaths=array();
+	$listofnames=array();
+	$listofmimes=array();
+	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
+	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
+	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+
+	if ($keytodelete >= 0)
+	{
+		$pathtodelete=$listofpaths[$keytodelete];
+		$filetodelete=$listofnames[$keytodelete];
+		$result = dol_delete_file($pathtodelete,1);
+		if ($result >= 0)
+		{
+			$langs->load("other");
+
+			$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
+			//print_r($_FILES);
+
+			if (empty($donotupdatesession))
+			{
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+				$formmail = new FormMail($db);
+				$formmail->remove_attached_files($keytodelete);
+			}
+		}
+	}
+
+	return $mesg;
+}
 
 ?>

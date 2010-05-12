@@ -104,8 +104,10 @@ class FormActions
 		$sql.= ' WHERE a.fk_user_author = u.rowid';
 		if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
 		if ($typeelement == 'invoice') $sql.= ' AND a.fk_facture = '.$object->id;
+		if ($typeelement == 'supplier_invoice') $sql.= ' AND a.fk_supplier_invoice = '.$object->id;
 		if ($typeelement == 'propal')  $sql.= ' AND a.propalrowid = '.$object->id;
 		if ($typeelement == 'order')   $sql.= ' AND a.fk_commande = '.$object->id;
+		if ($typeelement == 'supplier_order')   $sql.= ' AND a.fk_supplier_order = '.$object->id;
 		if ($typeelement == 'project') $sql.= ' AND a.fk_project = '.$object->id;
 
 		dol_syslog("FormActions::showactions sql=".$sql);
@@ -116,10 +118,12 @@ class FormActions
 			if ($num)
 			{
 				if ($typeelement == 'invoice') $title=$langs->trans('ActionsOnBill');
+				if ($typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnSupplierBill');
 				if ($typeelement == 'propal')  $title=$langs->trans('ActionsOnPropal');
 				if ($typeelement == 'order')   $title=$langs->trans('ActionsOnOrder');
+				if ($typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnSupplierOrder');
 				if ($typeelement == 'project') $title=$langs->trans('ActionsOnProject');
-				
+
 				print_titre($title);
 
 				$i = 0; $total = 0;	$var=true;
