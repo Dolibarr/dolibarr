@@ -267,7 +267,7 @@ class CommandeFournisseur extends Commande
 				dol_print_error($this->db);
 				$error++;
 			}
-			
+
 			if (! $error)
 			{
 				// Rename directory if dir was a temporary ref
@@ -282,7 +282,7 @@ class CommandeFournisseur extends Commande
 					if (file_exists($dirsource))
 					{
 						dol_syslog("CommandeFournisseur::valid() rename dir ".$dirsource." into ".$dirdest);
-							
+
 						if (@rename($dirsource, $dirdest))
 						{
 							dol_syslog("Rename ok");
@@ -292,7 +292,7 @@ class CommandeFournisseur extends Commande
 					}
 				}
 			}
-			
+
 			if (! $error)
 			{
 				$result = 1;
@@ -808,6 +808,7 @@ class CommandeFournisseur extends Commande
 			$pu=$pu_ttc;
 		}
 		$desc=trim($desc);
+		if (empty($txtva)) $txtva=0;
 
 		// Check parameters
 		if ($qty < 1 && ! $fk_product)
