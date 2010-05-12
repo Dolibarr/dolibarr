@@ -638,7 +638,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 						$commande->actiontypecode=$actiontypecode;
 						$commande->actionmsg = $actionmsg;
 						$commande->actionmsg2= $actionmsg2;
-						$commande->orderrowid=$commande->id;
+						$commande->supplierorderrowid=$commande->id;
 
 						// Appel des triggers
 						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -1249,8 +1249,6 @@ if ($id > 0 || ! empty($ref))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
-						print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
-
 						$comref = dol_sanitizeFileName($commande->ref);
 						$file = $conf->fournisseur->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
 						if (file_exists($file))

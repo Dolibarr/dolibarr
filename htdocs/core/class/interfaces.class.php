@@ -60,12 +60,12 @@ class Interfaces
 		// Check parameters
 		if (! is_object($object) || ! is_object($conf))	// Error
 		{
-   			dol_syslog('interface::run_triggers was called with wrong parameters object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERROR);
+   			dol_syslog('interface::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERROR);
    			return -1;
 		}
 		if (! is_object($user) || ! is_object($langs))	// Warning
 		{
-   			dol_syslog('interface::run_triggers was called with wrong parameters object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
+   			dol_syslog('interface::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
 		}
 
 		foreach($conf->triggers_modules as $dir)
@@ -88,7 +88,7 @@ class Interfaces
 					if (in_array($modName,$modules))
 					{
 						$langs->load("errors");
-						dol_syslog("Interface::run_triggers ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
+						dol_syslog("Interface::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
 						continue;
 					}
 
@@ -108,7 +108,7 @@ class Interfaces
 
 					if (! $qualified)
 					{
-						dol_syslog("Interfaces::run_triggers Triggers for file '".$file."' need module to be enabled",LOG_INFO);
+						dol_syslog("Interfaces::run_triggers action=".$action." Triggers for file '".$file."' need module to be enabled",LOG_INFO);
 						continue;
 					}
 
@@ -120,11 +120,11 @@ class Interfaces
 						// Bypass if workflow module is enabled and if the trigger asked to be disable in such case
 						if ($conf->workflow->enabled && ! empty($objMod->disabled_if_workflow))
 						{
-							dol_syslog("Interfaces::run_triggers Bypass triggers for file '".$file."'",LOG_INFO);
+							dol_syslog("Interfaces::run_triggers action=".$action." Bypass triggers for file '".$file."'",LOG_INFO);
 							continue;
 						}
 
-						dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
+						dol_syslog("Interfaces::run_triggers action=".$action." Launch triggers for file '".$file."'",LOG_INFO);
 
 						$modules[$i] = $modName;
 						//dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
@@ -151,7 +151,7 @@ class Interfaces
 					}
 					else
 					{
-						dol_syslog("Interfaces::run_triggers Failed to instantiate trigger for file '".$file."'",LOG_ERROR);
+						dol_syslog("Interfaces::run_triggers action=".$action." Failed to instantiate trigger for file '".$file."'",LOG_ERROR);
 					}
 				}
 			}
@@ -160,7 +160,7 @@ class Interfaces
 
 		if ($nbko)
 		{
-			dol_syslog("Interfaces::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_ERR);
+			dol_syslog("Interfaces::run_triggers action=".$action." Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_ERR);
 			return -$nbko;
 		}
 		else

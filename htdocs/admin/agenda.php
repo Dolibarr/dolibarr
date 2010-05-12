@@ -51,6 +51,7 @@ $eventstolog=array(
 	array('id'=>'BILL_SENTBYMAIL',        'test'=>$conf->facture->enabled),
 	array('id'=>'FICHEINTER_VALIDATE',    'test'=>$conf->ficheinter->enabled),
 	array('id'=>'ORDER_SUPPLIER_VALIDATE','test'=>$conf->fournisseur->enabled),
+	array('id'=>'ORDER_SUPPLIER_SENTBYMAIL','test'=>$conf->fournisseur->enabled),
 	array('id'=>'BILL_SUPPLIER_VALIDATE', 'test'=>$conf->fournisseur->enabled),
 	array('id'=>'BILL_SUPPLIER_PAYED',    'test'=>$conf->fournisseur->enabled),
 //	array('id'=>'PAYMENT_CUSTOMER_CREATE','test'=>$conf->facture->enabled),

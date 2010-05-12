@@ -396,24 +396,25 @@ class CMailFile
 				{
 					$this->error="Failed to send mail to HOST=".$server.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					$res=false;
 				}
 				else
 				{
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->smtps->setDebug(true);
 					$result=$this->smtps->sendMsg();
 					//print $result;
+
+					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
+
+					$result=$this->smtps->getErrors();
+					if (empty($this->error) && empty($result)) $res=true;
+					else
+					{
+						if (empty($this->error)) $this->error=$result;
+						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+						$res=false;
+					}
 				}
-
-				if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
-
-				$result=$this->smtps->getErrors();
-				if (empty($this->error) && empty($result)) $res=true;
-				else
-				{
-					if (empty($this->error)) $this->error=$result;
-					$res=false;
-				}
-
 			}
 			else
 			{

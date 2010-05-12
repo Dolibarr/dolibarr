@@ -324,6 +324,17 @@ class InterfaceActionsAuto
 			$object->propalrowid=$object->facid=0;
 			$ok=1;
 		}
+        elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("bills");
+            $langs->load("agenda");
+            $langs->load("orders");
+            $ok=1;
+
+			// Parameters $object->xxx defined by caller
+        }
 		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
