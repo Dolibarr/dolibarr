@@ -17,17 +17,17 @@
  */
 
 /**
-        \file       htdocs/bookmarks/class/bookmark.class.php
-        \ingroup    bookmark
-        \brief      File the bookmark class
-        \version    $Id$
-*/
+ *      \file       htdocs/bookmarks/class/bookmark.class.php
+ *      \ingroup    bookmark
+ *      \brief      File the bookmark class
+ *      \version    $Id$
+ */
 
 
 /**
-        \class      Bookmark
-        \brief      Class for managing bookmarks
-*/
+ *		\class      Bookmark
+ *		\brief      Class for managing bookmarks
+ */
 
 class Bookmark
 {

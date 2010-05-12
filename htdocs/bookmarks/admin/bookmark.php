@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**	    \file       htdocs/admin/bookmark.php
+/**	    \file       htdocs/bookmarks/admin/bookmark.php
  *		\ingroup    bookmark
  *		\brief      Page to setup bookmark module
  *		\version    $Id$

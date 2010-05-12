@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/adherents/adherent_type.class.php
+ *	\file       htdocs/adherents/class/adherent_type.class.php
  *	\ingroup    member
  *	\brief      Fichier de la classe gerant les types d'adherents
  *	\author     Rodolphe Quiedeville

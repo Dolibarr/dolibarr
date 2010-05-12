@@ -18,7 +18,7 @@
  */
 
 /**
- *		\file 		htdocs/adherents/cotisation.class.php
+ *		\file 		htdocs/adherents/class/cotisation.class.php
  *      \ingroup    member
  *		\brief      File of class to manage subscriptions
  *		\version    $Id$

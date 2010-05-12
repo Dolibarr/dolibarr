@@ -22,7 +22,7 @@
  */
 
 /**
- *	\file       htdocs/adherents/adherent.class.php
+ *	\file       htdocs/adherents/class/adherent.class.php
  *	\ingroup    member
  *	\brief      Fichier de la classe permettant la gestion d'un adherent
  *	\version    $Id$
