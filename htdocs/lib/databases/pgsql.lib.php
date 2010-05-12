@@ -662,7 +662,7 @@ class DoliDb
 	 */
 	function ifsql($test,$resok,$resko)
 	{
-		return 'IF('.$test.','.$resok.','.$resko.')';
+		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
 	}
 
 

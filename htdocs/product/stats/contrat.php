@@ -53,7 +53,7 @@ $offset = $conf->liste_limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="c.datec";
+if (! $sortfield) $sortfield="c.date_contrat";
 
 
 /*
@@ -98,18 +98,6 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
 		print '</tr>';
 
-		// Prix
-		print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">';
-		if ($product->price_base_type == 'TTC')
-		{
-			print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
-		}
-		else
-		{
-			print price($product->price).' '.$langs->trans($product->price_base_type);
-		}
-		print '</td></tr>';
-
 		// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 		print $product->getLibStatut(2);
@@ -121,11 +109,12 @@ if ($_GET["id"] || $_GET["ref"])
 
 		print '</div>';
 
+		$now=dol_now();
 
 		$sql = "SELECT";
 		$sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
-		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > ".$db->idate(mktime()),1,0).') as nb_running,';
-		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= ".$db->idate(mktime()).")",1,0).') as nb_late,';
+		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > '".$db->idate($now)."'",1,0).") as nb_running,";
+		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= '".$db->idate($now)."')",1,0).') as nb_late,';
 		$sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
 		$sql.= " c.rowid as rowid, c.date_contrat, c.statut as statut,";
 		$sql.= " s.nom, s.rowid as socid, s.code_client";
