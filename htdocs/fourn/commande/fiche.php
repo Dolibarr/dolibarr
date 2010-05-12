@@ -372,7 +372,7 @@ if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->rec
 	}
 }
 
-if ($_REQUEST["action"] == 'confirm_cancel' && $_REQUEST["confirm"] == 'yes' &&	$user->rights->fournisseur->commande->annuler)
+if ($_REQUEST["action"] == 'confirm_cancel' && $_REQUEST["confirm"] == 'yes' &&	$user->rights->fournisseur->commande->commander)
 {
 	$commande =	new	CommandeFournisseur($db);
 	$commande->fetch($id);
@@ -468,7 +468,7 @@ if ($action=='remove_file')
 
 	if ($commande->fetch($id))
 	{
-		$upload_dir =	$conf->commande->dir_output	. "/";
+		$upload_dir =	$conf->fournisseur->commande->dir_output . "/";
 		$file =	$upload_dir	. '/' .	$_GET['file'];
 		dol_delete_file($file);
 		$mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -1242,19 +1242,15 @@ if ($id > 0 || ! empty($ref))
 
 						print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
 					}
-
-					if ($user->rights->fournisseur->commande->annuler)
-					{
-						print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
-					}
-
 				}
 
 				// Send
-				if ($commande->statut > 1)
+				if ($commande->statut == 2)
 				{
-					if ($user->rights->fournisseur->commande->approuver)
+					if ($user->rights->fournisseur->commande->commander)
 					{
+						print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+
 						$comref = dol_sanitizeFileName($commande->ref);
 						$file = $conf->fournisseur->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
 						if (file_exists($file))
@@ -1267,13 +1263,13 @@ if ($id > 0 || ! empty($ref))
 				// Cancel
 				if ($commande->statut == 2)
 				{
-					if ($user->rights->fournisseur->commande->annuler)
+					if ($user->rights->fournisseur->commande->commander)
 					{
 						print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
 					}
 				}
 
-				if ($user->rights->fournisseur->commande->annuler)
+				if ($user->rights->fournisseur->commande->supprimer)
 				{
 					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}
@@ -1376,7 +1372,7 @@ if ($id > 0 || ! empty($ref))
 		if ($_GET['action'] == 'presend')
 		{
 			$ref = dol_sanitizeFileName($commande->ref);
-			$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+			$file = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 			print '<br>';
 			print_titre($langs->trans('SendOrderByMail'));

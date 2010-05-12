@@ -114,7 +114,7 @@ class modFournisseur extends DolibarrModules
 
 		                    $r++;
 		                    $this->rights[$r][0] = 1182;
-		                    $this->rights[$r][1] = 'Lire les commandes fournisseur';
+		                    $this->rights[$r][1] = 'Consulter les commandes fournisseur';
 		                    $this->rights[$r][2] = 'r';
 		                    $this->rights[$r][3] = 1;
 		                    $this->rights[$r][4] = 'commande';
@@ -146,7 +146,7 @@ class modFournisseur extends DolibarrModules
 
 		                    $r++;
 		                    $this->rights[$r][0] = 1186;
-		                    $this->rights[$r][1] = 'Commander une commande fournisseur';
+		                    $this->rights[$r][1] = 'Commander/Annuler une commande fournisseur';
 		                    $this->rights[$r][2] = 'w';
 		                    $this->rights[$r][3] = 0;
 		                    $this->rights[$r][4] = 'commande';
@@ -169,16 +169,8 @@ class modFournisseur extends DolibarrModules
 		                    $this->rights[$r][5] = 'cloturer';
 
 		                    $r++;
-		                    $this->rights[$r][0] = 1189;
-		                    $this->rights[$r][1] = 'Annuler les commandes fournisseur';
-		                    $this->rights[$r][2] = 'd';
-		                    $this->rights[$r][3] = 0;
-		                    $this->rights[$r][4] = 'commande';
-		                    $this->rights[$r][5] = 'annuler';
-
-		                    $r++;
 		                    $this->rights[$r][0] = 1231;
-		                    $this->rights[$r][1] = 'Lire les factures fournisseur';
+		                    $this->rights[$r][1] = 'Consulter les factures fournisseur';
 		                    $this->rights[$r][2] = 'r';
 		                    $this->rights[$r][3] = 1;
 		                    $this->rights[$r][4] = 'facture';

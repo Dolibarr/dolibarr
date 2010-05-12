@@ -223,7 +223,7 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *		\brief		Valide la commande
+	 *		\brief		Validate an order
 	 *		\param		user		Utilisateur qui valide
 	 */
 	function valid($user)
@@ -327,65 +327,6 @@ class CommandeFournisseur extends Commande
 		{
 			$this->error='Not Authorized';
 			dol_syslog("CommandeFournisseur::valid ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
-
-	/**
-	 * 		\brief		Annule la commande
-	 * 		\param		user		Utilisateur qui demande annulation
-	 *		\remarks	L'annulation se fait apres la validation
-	 */
-	function Cancel($user)
-	{
-		global $langs,$conf;
-
-		//dol_syslog("CommandeFournisseur::Cancel");
-		$result = 0;
-		if ($user->rights->fournisseur->commande->annuler)
-		{
-			$statut = 6;
-
-			$this->db->begin();
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
-			$sql .= " WHERE rowid = ".$this->id;
-			dol_syslog("CommandeFournisseur::Cancel sql=".$sql);
-			if ($this->db->query($sql))
-			{
-				$result = 0;
-				$this->log($user, $statut, time());
-
-				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
-
-				if ($error == 0)
-				{
-					$this->db->commit();
-					return 1;
-				}
-				else
-				{
-					$this->db->rollback();
-					$this->error=$this->db->lasterror();
-					return -1;
-				}
-			}
-			else
-			{
-				$this->db->rollback();
-				$this->error=$this->db->lasterror();
-				dol_syslog("CommandeFournisseur::Cancel ".$this->error);
-				return -1;
-			}
-		}
-		else
-		{
-			dol_syslog("CommandeFournisseur::Cancel Not Authorized");
 			return -1;
 		}
 	}
@@ -620,9 +561,8 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * Refuse une commande
-	 *
-	 *
+	 * 		\brief		Refuse an order
+	 * 		\param		user		User making action
 	 */
 	function refuse($user)
 	{
@@ -661,6 +601,65 @@ class CommandeFournisseur extends Commande
 			dol_syslog("CommandeFournisseur::Refuse Not Authorized");
 		}
 		return $result ;
+	}
+
+	/**
+	 * 		\brief		Cancel an approved order
+	 * 		\param		user		User making action
+	 *		\remarks	L'annulation se fait apres l'approbation
+	 */
+	function Cancel($user)
+	{
+		global $langs,$conf;
+
+		//dol_syslog("CommandeFournisseur::Cancel");
+		$result = 0;
+		if ($user->rights->fournisseur->commande->commander)
+		{
+			$statut = 6;
+
+			$this->db->begin();
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
+			$sql .= " WHERE rowid = ".$this->id;
+			dol_syslog("CommandeFournisseur::Cancel sql=".$sql);
+			if ($this->db->query($sql))
+			{
+				$result = 0;
+				$this->log($user, $statut, time());
+
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('ORDER_SUPPLIER_CANCEL',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+
+				if ($error == 0)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->lasterror();
+					return -1;
+				}
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				dol_syslog("CommandeFournisseur::Cancel ".$this->error);
+				return -1;
+			}
+		}
+		else
+		{
+			dol_syslog("CommandeFournisseur::Cancel Not Authorized");
+			return -1;
+		}
 	}
 
 

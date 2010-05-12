@@ -344,17 +344,11 @@ if ($id > 0 || ! empty($ref))
 
 					print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
 				}
-
-				if ($user->rights->fournisseur->commande->annuler)
-				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
-				}
-
 			}
 
 			if ($commande->statut == 2)
 			{
-				if ($user->rights->fournisseur->commande->annuler)
+				if ($user->rights->fournisseur->commande->commander)
 				{
 					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
 				}
