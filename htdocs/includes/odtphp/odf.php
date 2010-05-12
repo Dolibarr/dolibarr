@@ -9,7 +9,7 @@ class OdfException extends Exception
  * Encoding : ISO-8859-1
  * Last commit by $Author$
  * Date - $Date$
- * SVN Revision - $Rev: 42 $
+ * SVN Revision - $Rev: 56 $
  * Id : $Id$
  *
  * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
@@ -26,9 +26,10 @@ class Odf
 		'PATH_TO_TMP' => '/tmp'
 		);
 		protected $file;
-		protected $contentXml;
+		protected $contentXml;			// To store content of content.xml file
+		protected $manifestXml;			// To store content of META-INF/manifest.xml file
 		protected $tmpfile;
-		protected $tmpdir;
+		protected $tmpdir='';
 		protected $images = array();
 		protected $vars = array();
 		protected $segments = array();
@@ -53,7 +54,7 @@ class Odf
 			}
 
 			$md5uniqid = md5(uniqid());
-			if ($this->config['PATH_TO_TMP']) $this->tmpdir = preg_replace('|[\/]$|','',$this->config['PATH_TO_TMP']);
+			if ($this->config['PATH_TO_TMP']) $this->tmpdir = preg_replace('|[\/]$|','',$this->config['PATH_TO_TMP']);	// Remove last \ or /
 			$this->tmpdir .= ($this->tmpdir?'/':'').$md5uniqid;
 			$this->tmpfile = $this->tmpdir.'/'.$md5uniqid.'.odt';	// We keep .odt extension to allow OpenOffice usage during debug.
 
@@ -69,20 +70,25 @@ class Odf
 
 			// Load zip proxy
 			$zipHandler = $this->config['ZIP_PROXY'];
-			define('PCLZIP_TEMPORARY_DIR',$this->tmpdir);
+			if (!defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR',$this->tmpdir);
 			include_once('zip/'.$zipHandler.'.php');
 			if (! class_exists($this->config['ZIP_PROXY'])) {
 				throw new OdfException($this->config['ZIP_PROXY'] . ' class not found - check your php settings');
 			}
 			$this->file = new $zipHandler($this->tmpdir);
 
+
 			if ($this->file->open($filename) !== true) {	// This also create the tmpdir directory
-				throw new OdfException("Error while Opening the file '$filename' - Check your odt file");
+				throw new OdfException("Error while Opening the file '$filename' - Check your odt filename");
 			}
 			if (($this->contentXml = $this->file->getFromName('content.xml')) === false) {
-				throw new OdfException("Nothing to parse - check that the content.xml file is correctly formed");
+				throw new OdfException("Nothing to parse - Check that the content.xml file is correctly formed in source file '$filename'");
 			}
-			$this->file->close();	// This also remove the tmpdir directory
+			if (($this->manifestXml = $this->file->getFromName('META-INF/manifest.xml')) === false) {
+ 				throw new OdfException("Something is wrong with META-INF/manifest.xm in source file '$filename'");
+			}
+			$this->file->close();
+
 
 			//print "tmpdir=".$tmpdir;
 			//print "filename=".$filename;
@@ -112,6 +118,7 @@ class Odf
 			$this->vars[$this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']] = str_replace("\n", "<text:line-break/>", $value);
 			return $this;
 		}
+
 		/**
 		 * Assign a template variable as a picture
 		 *
@@ -138,6 +145,7 @@ IMG;
 			$this->setVars($key, $xml, false);
 			return $this;
 		}
+
 		/**
 		 * Move segment tags for lines of tables
 		 * Called automatically within the constructor
@@ -166,6 +174,7 @@ IMG;
 				}
 			}
 		}
+
 		/**
 		 * Merge template variables
 		 * Called automatically for a save
@@ -176,6 +185,7 @@ IMG;
 		{
 			$this->contentXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->contentXml);
 		}
+
 		/**
 		 * Add the merged segment to the document
 		 *
@@ -194,6 +204,7 @@ IMG;
 			$this->contentXml = preg_replace($reg, $segment->getXmlParsed(), $this->contentXml);
 			return $this;
 		}
+
 		/**
 		 * Display all the current template variables
 		 *
@@ -203,6 +214,7 @@ IMG;
 		{
 			return print_r('<pre>' . print_r($this->vars, true) . '</pre>', true);
 		}
+
 		/**
 		 * Display the XML content of the file from odt document
 		 * as it is at the moment
@@ -213,6 +225,7 @@ IMG;
 		{
 			return $this->contentXml;
 		}
+
 		/**
 		 * Display loop segments declared with setSegment()
 		 *
@@ -222,6 +235,7 @@ IMG;
 		{
 			return '<pre>' . print_r(implode(' ', array_keys($this->segments)), true) . '</pre>';
 		}
+
 		/**
 		 * Declare a segment in order to use it in a loop
 		 *
@@ -261,8 +275,9 @@ IMG;
 				$this->_save();
 			}
 		}
+
 		/**
-		 * Internal save
+		 * Write output file onto disk
 		 *
 		 * @throws OdfException
 		 * @return void
@@ -276,9 +291,26 @@ IMG;
 			}
 			foreach ($this->images as $imageKey => $imageValue) {
 				$this->file->addFile($imageKey, 'Pictures/' . $imageValue);
+            	$this->addImageToManifest($imageValue);
 			}
+        	if (! $this->file->addFromString('./META-INF/manifest.xml', $this->manifestXml)) {
+            	throw new OdfException('Error during file export: manifest.xml');
+        	}
 			$this->file->close();
 		}
+
+		/**
+		 * Update Manifest file according to added image files
+		 *
+		 * @param string	$file		Image file to add into manifest content
+		 */
+		public function addImageToManifest($file)
+		{
+		        $extension = explode('.', $file);
+		        $add = ' <manifest:file-entry manifest:media-type="image/'.$extension[1].'" manifest:full-path="Pictures/'.$file.'"/>'."\n";
+		        $this->manifestXml = str_replace('</manifest:manifest>', $add.'</manifest:manifest>', $this->manifestXml);
+		}
+
 		/**
 		 * Export the file as attached file by HTTP
 		 *
