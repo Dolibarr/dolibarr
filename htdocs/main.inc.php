@@ -749,9 +749,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 	//header("Content-type: text/html; charset=UTF-8");
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-	
-	// PHP compression
-	if (isset($conf->global->MAIN_OPTIMIZE_SPEED)) ob_start("ob_gzhandler");
+
+	// On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
+	if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
 
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
