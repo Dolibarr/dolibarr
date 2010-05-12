@@ -551,11 +551,11 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 {
 	$langs->load('mails');
 
-	$commande= new Commande($db);
+	$commande= new CommandeFournisseur($db);
 	$result=$commande->fetch($_POST['orderid']);
-	$result=$commande->fetch_client();
+	$result=$commande->fetch_thirdparty();
 
-	if ($result)
+	if ($result > 0)
 	{
 		$ref = dol_sanitizeFileName($commande->ref);
 		$file = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
@@ -596,8 +596,8 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 				if ($_POST['action'] == 'send')
 				{
 					if (strlen($_POST['subject'])) $subject=$_POST['subject'];
-					else $subject = $langs->transnoentities('Order').' '.$commande->ref;
-					$actiontypecode='AC_COM';
+					else $subject = $langs->transnoentities('CustomerOrder').' '.$commande->ref;
+					$actiontypecode='AC_SUP_ORD';
 					$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
 					if ($message)
 					{
@@ -609,7 +609,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 				}
 
 				// Create form object
-				include_once('../core/class/html.formmail.class.php');
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 				$formmail = new FormMail($db);
 
 				$attachedfiles=$formmail->get_attached_files();
@@ -643,7 +643,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 						// Appel des triggers
 						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 						$interface=new Interfaces($db);
-						$result=$interface->run_triggers('ORDER_SENTBYMAIL',$commande,$user,$langs,$conf);
+						$result=$interface->run_triggers('ORDER_SUPPLIER_SENTBYMAIL',$commande,$user,$langs,$conf);
 						if ($result < 0) { $error++; $this->errors=$interface->errors; }
 						// Fin appel triggers
 

@@ -33,11 +33,13 @@
 --
 
 delete from llx_c_actioncomm where id in (1,2,3,4,5,8,9,50);
-insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 1, 'AC_TEL',  'system', 'Appel Téléphonique' ,NULL);
-insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 2, 'AC_FAX',  'system', 'Envoi Fax'          ,NULL);
-insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 3, 'AC_PROP', 'system', 'Envoi Proposition'  ,'propal');
-insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 4, 'AC_EMAIL','system', 'Envoi Email'        ,NULL);
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 1, 'AC_TEL',  'system', 'Phone call' ,NULL);
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 2, 'AC_FAX',  'system', 'Fax send'          ,NULL);
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 3, 'AC_PROP', 'system', 'Send commercial proposal by email'  ,'propal');
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 4, 'AC_EMAIL','system', 'Send Email'        ,NULL);
 insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 5, 'AC_RDV',  'system', 'Rendez-vous'        ,NULL);
-insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 8, 'AC_COM',  'system', 'Envoi Commande'     ,'order');
-insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 9, 'AC_FAC',  'system', 'Envoi Facture'      ,'invoice');
-insert into llx_c_actioncomm (id, code, type, libelle, module) values (50, 'AC_OTH',  'system', 'Autre'              ,NULL);
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 8, 'AC_COM',  'system', 'Send customer order by email'     ,'order');
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 9, 'AC_FAC',  'system', 'Send customer invoice by email'      ,'invoice');
+insert into llx_c_actioncomm (id, code, type, libelle, module) values (30, 'AC_SUP_ORD',  'system', 'Send supplier invoice by email'      ,'supplier_order');
+insert into llx_c_actioncomm (id, code, type, libelle, module) values (31, 'AC_SUP_INV',  'system', 'Send supplier invoice by email'      ,'supplier_invoice');
+insert into llx_c_actioncomm (id, code, type, libelle, module) values (50, 'AC_OTH',  'system', 'Other'              ,NULL);

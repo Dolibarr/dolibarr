@@ -171,7 +171,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 	$deliveryreceipt= $_POST["deliveryreceipt"];
 
 	// Create form object
-	include_once('../core/class/html.formmail.class.php');
+	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 	$formmail = new FormMail($db);
 
 	$attachedfiles=$formmail->get_attached_files();

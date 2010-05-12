@@ -25,13 +25,14 @@ For users:
 - New: Move permission "see hidden categories" into "see hidden products/services".
 - New: Can delete several files at once in FTP module.
 - New: Add box "last contracts".
+- New: Works even if Web hosting provider has disabled glob function.
 - Fix: Format number was wrong for ar_AR language.
 - Fix: Can change password if has only permission change password.
 - Fix: Project PDF document show the tasks.
 - Fix: bug #29278 : SMTP fails with IP
 - Fix: Default language on login page.
 - Fix: Complete support of euros sign (even in PDF).
-
+ 
 For developers:
 - More comments in code.
 - Uniformize some code. 

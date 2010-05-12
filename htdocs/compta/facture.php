@@ -1128,9 +1128,9 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 
 	$fac = new Facture($db,'',$_POST['facid']);
 	$result=$fac->fetch($_POST['facid']);
-	$result=$fac->fetch_client();
+	$result=$fac->fetch_thirdparty();
 
-	if ($result)
+	if ($result > 0)
 	{
 		$ref = dol_sanitizeFileName($fac->ref);
 		$file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
@@ -1197,7 +1197,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 				}
 
 				// Create form object
-				include_once('../core/class/html.formmail.class.php');
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 				$formmail = new FormMail($db);
 
 				$attachedfiles=$formmail->get_attached_files();

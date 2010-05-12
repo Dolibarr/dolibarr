@@ -811,9 +811,9 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 
 	$commande= new Commande($db);
 	$result=$commande->fetch($_POST['orderid']);
-	$result=$commande->fetch_client();
+	$result=$commande->fetch_thirdparty();
 
-	if ($result)
+	if ($result > 0)
 	{
 		$ref = dol_sanitizeFileName($commande->ref);
 		$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
@@ -867,7 +867,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 				}
 
 				// Create form object
-				include_once('../core/class/html.formmail.class.php');
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 				$formmail = new FormMail($db);
 
 				$attachedfiles=$formmail->get_attached_files();

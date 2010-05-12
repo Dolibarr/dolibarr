@@ -410,10 +410,10 @@ class CommonObject
 	}
 
 	/**
-	 *    	\brief      Charge le tiers d'id $this->socid dans this->client
+	 *    	\brief      Load the third party of object from id $this->socid into this->client
 	 *		\return		int			<0 if KO, >0 if OK
 	 */
-	function fetch_client()
+	function fetch_thirdparty()
 	{
 		global $conf;
 
@@ -427,6 +427,15 @@ class CommonObject
 		if ($conf->global->PRODUIT_MULTIPRICES && empty($this->client->price_level)) $this->client->price_level=1;
 
 		return $result;
+	}
+
+	/**
+	 * @deprecated Replaced by fetch_thirdparty
+	 * Kept for backward compatibility
+	 */
+	function fetch_client()
+	{
+		return $this->fetch_thirdparty();
 	}
 
 	/**

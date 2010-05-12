@@ -416,15 +416,16 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 	$langs->load('mails');
 
 	$propal= new Propal($db);
-	if ( $propal->fetch($_POST['propalid']) )
+	$result=$propal->fetch($_POST['propalid']);
+	$result=$propal->fetch_thirdparty();
+
+	if ($result > 0)
 	{
 		$propalref = dol_sanitizeFileName($propal->ref);
 		$file = $conf->propale->dir_output . '/' . $propalref . '/' . $propalref . '.pdf';
 
 		if (is_readable($file))
 		{
-			$propal->fetch_client();
-
 			if ($_POST['sendto'])
 			{
 				// Le destinataire a ete fourni via le champ libre
@@ -472,7 +473,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 				}
 
 				// Create form object
-				include_once('../core/class/html.formmail.class.php');
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 				$formmail = new FormMail($db);
 
 				$attachedfiles=$formmail->get_attached_files();
@@ -1963,7 +1964,7 @@ if ($id > 0 || ! empty($ref))
 		print_titre($langs->trans('SendPropalByMail'));
 
 		// Create form object
-		include_once('../core/class/html.formmail.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 		$formmail = new FormMail($db);
 		$formmail->fromtype = 'user';
 		$formmail->fromid   = $user->id;

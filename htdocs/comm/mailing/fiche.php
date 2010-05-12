@@ -823,7 +823,7 @@ else
 				print_titre($langs->trans("TestMailing"));
 
 				// Create l'objet formulaire mail
-				include_once("../../core/class/html.formmail.class.php");
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 				$formmail = new FormMail($db);
 				$formmail->fromname = $mil->email_from;
 				$formmail->frommail = $mil->email_from;
