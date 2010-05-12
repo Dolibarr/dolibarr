@@ -191,6 +191,7 @@ dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 /*
  *  Module numerotation
  */
+print_titre($langs->trans("DeliveryOrderNumberingModules"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
