@@ -117,31 +117,33 @@ class FormProduct
 		}
 		print '</select>';
 	}
-	
+
 	/**
-	 *  \brief      Selection des unites de mesure
-	 *  \param      name                Nom champ html
-	 *  \param      measuring_style     Le style de mesure : weight, volume,...
-	 *  \param      default             Forcage de l'unite
+	 *  \brief      Output a combo box with list of units
+	 *  \param      name                Name of HTML field
+	 *  \param      measuring_style     Unit to show: weight, size, surface, volume
+	 *  \param      default             Force unit
+	 * 	\param		adddefault			Add empty unit called "Default"
 	 *  \remarks pour l'instant on ne definit pas les unites dans la base
 	 */
 	function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
 	{
 		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault);
 	}
-	
+
 	/**
-	 *  \brief      Selection des unites de mesure
-	 *  \param      name                Nom champ html
-	 *  \param      measuring_style     Le style de mesure : weight, volume,...
-	 *  \param      default             Forcage de l'unite
+	 *  \brief      Return a combo box with list of units
+	 *  \param      name                Name of HTML field
+	 *  \param      measuring_style     Unit to show: weight, size, surface, volume
+	 *  \param      default             Force unit
+	 * 	\param		adddefault			Add empty unit called "Default"
 	 *  \remarks pour l'instant on ne definit pas les unites dans la base
 	 */
 	function load_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
 	{
 		global $langs,$conf,$mysoc;
 		$langs->load("other");
-		
+
 		$return='';
 
 		if ($measuring_style == 'weight')
@@ -186,7 +188,7 @@ class FormProduct
 			$return.= '>'.$value.'</option>';
 		}
 		$return.= '</select>';
-		
+
 		return $return;
 	}
 

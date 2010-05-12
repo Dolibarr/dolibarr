@@ -46,6 +46,8 @@ Enlevement=Gotten by customer
 DocumentModelSimple=Simple document model
 WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
 StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated
+DateDeliveryPlanned=Planed date of delivery
+DateReceived=Date delivery received
 
 # Sending methods
 SendingMethodCATCH=Catch by customer

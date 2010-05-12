@@ -1567,7 +1567,7 @@ class Commande extends CommonObject
 	}
 
 	/**
-	 *      \brief      Definit une date de livraison
+	 *      \brief      Set the planned delivery date
 	 *      \param      user        		Objet utilisateur qui modifie
 	 *      \param      date_livraison      Date de livraison
 	 *      \return     int         		<0 si ko, >0 si ok
@@ -1577,10 +1577,10 @@ class Commande extends CommonObject
 		if ($user->rights->commande->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-			$sql.= " SET date_livraison = ".($date_livraison ? $this->db->idate($date_livraison) : 'null');
-			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+			$sql.= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog("Commande::set_date_livraison sql=$sql",LOG_DEBUG);
+			dol_syslog("Commande::set_date_livraison sql=".$sql,LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{

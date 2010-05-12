@@ -221,13 +221,19 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 
 				print '<td align="center">'.$objp->qty_shipped.'</td>';
 
+				// Date shipping was planed
 				print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->date_expedition),'day').'</td>';
+
+
 				if ($conf->livraison_bon->enabled)
 				{
 					if ($objp->livraison_id)
 					{
+						// Ref
 						print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->livraison_ref.'<a></td>';
+						// Qty received
 						print '<td align="center">'.$objp->qty_received.'</td>';
+						// Date shipping real
 						print '<td>'.dol_print_date($objp->date_delivery,'day').'</td>';
 					}
 					else

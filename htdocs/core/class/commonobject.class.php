@@ -1022,7 +1022,7 @@ class CommonObject
 	function setStatut($statut,$elementId='',$elementType='')
 	{
 		$elementId = (!empty($elementId)?$elementId:$this->id);
-		$elementTable = (!empty($elementType)?$elementType:$this->element);
+		$elementTable = (!empty($elementType)?$elementType:$this->table_element);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
 		$sql.= " SET fk_statut = ".$statut;

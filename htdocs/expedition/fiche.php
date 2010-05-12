@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -72,7 +72,6 @@ if ($_POST["action"] == 'add')
 	// Creation de l'objet expedition
 	$expedition = new Expedition($db);
 
-	$expedition->date_expedition	= time();
 	$expedition->note				= $_POST["note"];
 	$expedition->origin				= $origin;
 	$expedition->origin_id			= $origin_id;
@@ -83,8 +82,8 @@ if ($_POST["action"] == 'add')
 	$expedition->size_units			= $_POST["size_units"];
 	$expedition->weight_units		= $_POST["weight_units"];
 
-	// On boucle sur chaque ligne du document d'origine pour completer objet expedition
-	// avec qte a livrer
+	// On va boucler sur chaque ligne du document d'origine pour completer objet expedition
+	// avec info diverses + qte a livrer
 	$classname = ucfirst($expedition->origin);
 	$object = new $classname($db);
 	$object->fetch($expedition->origin_id);
@@ -92,7 +91,7 @@ if ($_POST["action"] == 'add')
 
 	$expedition->socid					= $object->socid;
 	$expedition->ref_customer			= $object->ref_client;
-	$expedition->date_delivery			= $object->date_livraison;
+	$expedition->date_delivery			= $object->date_livraison;	// Date delivery planed
 	$expedition->fk_delivery_address	= $object->fk_delivery_address;
 	$expedition->expedition_method_id	= $_POST["expedition_method_id"];
 	$expedition->tracking_number		= $_POST["tracking_number"];
@@ -189,6 +188,34 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 	}
 }
 
+if ($_REQUEST["action"] == 'open')
+{
+	if ($user->rights->expedition->valider )
+	{
+		$expedition = new Expedition($db);
+		$expedition->fetch($_GET["id"]);
+		$result = $expedition->setStatut(0);
+		if ($result < 0)
+		{
+			$mesg = $expedition->error;
+		}
+	}
+}
+
+if ($_POST['action'] == 'setdate_livraison' && $user->rights->expedition->creer)
+{
+	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+	$datelivraison=dol_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+
+	$shipping = new Expedition($db);
+	$shipping->fetch($_GET['id']);
+	$result=$shipping->set_date_livraison($user,$datelivraison);
+	if ($result < 0)
+	{
+		$mesg='<div class="error">'.$shipping->error.'</div>';
+	}
+}
+
 /*
  * Build doc
  */
@@ -275,7 +302,7 @@ if ($_GET["action"] == 'create')
 			/*
 			 *   Document source
 			 */
-			print '<form action="fiche.php" method="post">';
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
@@ -318,7 +345,10 @@ if ($_GET["action"] == 'create')
 
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
-			print '<td colspan="3">'.dol_print_date($object->date_livraison,'day')."</td>\n";
+			print '<td colspan="3">';
+			print dol_print_date($object->date_livraison,"day");
+			//$html->select_date($object->date_livraison,'date_delivery');
+			print "</td>\n";
 			print '</tr>';
 
 			// Delivery address
@@ -351,31 +381,31 @@ if ($_GET["action"] == 'create')
 
 			print '<tr><td>';
 			print $langs->trans("Weight");
-			print '</td><td><input name="weight" size="4" value=""></td><td>';
-			print $formproduct->select_measuring_units("weight_units","weight");
+			print '</td><td><input name="weight" size="4" value="'.$_POST["weight"].'"></td><td>';
+			print $formproduct->select_measuring_units("weight_units","weight",$_POST["weight_units"]);
 			print '</td></tr><tr><td>';
 			print $langs->trans("Width");
-			print ' </td><td><input name="sizeW" size="4" value=""></td>';
-			print '<td>&nbsp;</td></tr><tr><td>';
-			print $langs->trans("Height");
-			print '</td><td><input name="sizeH" size="4" value=""></td><td>';
+			print ' </td><td><input name="sizeW" size="4" value="'.$_POST["sizeW"].'"></td><td rowspan="3">';
 			print $formproduct->select_measuring_units("size_units","size");
 			print '</td></tr><tr><td>';
+			print $langs->trans("Height");
+			print '</td><td><input name="sizeH" size="4" value="'.$_POST["sizeH"].'"></td>';
+			print '</tr><tr><td>';
 			print $langs->trans("Depth");
-			print '</td><td><input name="sizeS" size="4" value=""></td>';
-			print '<td>&nbsp;</td></tr>';
+			print '</td><td><input name="sizeS" size="4" value="'.$_POST["sizeS"].'"></td>';
+			print '</tr>';
 
 			// Delivery method
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
 			print '<td colspan="3">';
 			$expe->fetch_delivery_methods();
-			$html->select_array("expedition_method_id",$expe->meths,'',1,0,0,0,"",1);
+			$html->select_array("expedition_method_id",$expe->meths,$_POST["expedition_method_id"],1,0,0,0,"",1);
 			print "</td></tr>\n";
 
 			// Tracking number
 			print "<tr><td>".$langs->trans("TrackingNumber")."</td>";
 			print '<td colspan="3">';
-			print '<input name="tracking_number" size="20">';
+			print '<input name="tracking_number" size="20" value="'.$_POST["tracking_number"].'">';
 			print "</td></tr>\n";
 
 			print "</table>";
@@ -709,13 +739,33 @@ else
 			print '</tr>';
 
 			// Date
-			print '<tr><td>'.$langs->trans("Date").'</td>';
-			print '<td colspan="3">'.dol_print_date($expedition->date,"daytext")."</td>\n";
+			print '<tr><td>'.$langs->trans("DateCreation").'</td>';
+			print '<td colspan="3">'.dol_print_date($expedition->date_creation,"daytext")."</td>\n";
 			print '</tr>';
 
-			// Date delivery planned
-			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
-			print '<td colspan="3">'.dol_print_date($expedition->date_delivery,'daytext')."</td>\n";
+			// Delivery date planed
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DateDeliveryPlanned');
+			print '</td>';
+
+			if ($_GET['action'] != 'editdate_livraison' && $expedition->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$expedition->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+			if ($_GET['action'] == 'editdate_livraison')
+			{
+				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$expedition->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="setdate_livraison">';
+				$html->select_date($expedition->date_delivery?$expedition->date_delivery:-1,'liv_','','','',"setdate_livraison");
+				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print $expedition->date_delivery ? dol_print_date($expedition->date_delivery,'daytext') : '&nbsp;';
+			}
+			print '</td>';
 			print '</tr>';
 
 			// Delivery address
@@ -882,9 +932,14 @@ else
 				// Entrepot source
 				if ($conf->stock->enabled)
 				{
-					$entrepot = new Entrepot($db);
-					$entrepot->fetch($lignes[$i]->entrepot_id);
-					print '<td align="left">'.$entrepot->getNomUrl(1).'</td>';
+					print '<td align="left">';
+					if ($lignes[$i]->entrepot_id > 0)
+					{
+						$entrepot = new Entrepot($db);
+						$entrepot->fetch($lignes[$i]->entrepot_id);
+						print $entrepot->getNomUrl(1);
+					}
+					print '</td>';
 				}
 
 
@@ -906,6 +961,11 @@ else
 		if ($user->societe_id == 0)
 		{
 			print '<div class="tabsAction">';
+
+			if ($expedition->statut > 0 && $user->rights->expedition->valider)
+			{
+				print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=open">'.$langs->trans("Modify").'</a>';
+			}
 
 			if ($expedition->statut == 0 && $num_prod > 0)
 			{

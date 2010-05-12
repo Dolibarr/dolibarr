@@ -32,7 +32,7 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/co
 
 /**
  *	\class      Expedition
- *	\brief      Classe de gestion des expeditions
+ *	\brief      Class to manage shippings
  */
 class Expedition extends CommonObject
 {
@@ -53,7 +53,19 @@ class Expedition extends CommonObject
 	var $lignes;
 	var $meths;
 
-	var $date_delivery;
+	var $trueWeight;
+	var $weight_units;
+	var $trueWidth;
+	var $width_units;
+	var $trueHeight;
+	var $height_units;
+	var $trueDepth;
+	var $depth_units;
+	// A denormalized value
+	var $trueSize;
+
+	var $date_delivery;		// Date delivery planed
+	var $date_expedition;	// Date delivery real
 	var $date_creation;
 	var $date_valid;
 
@@ -115,14 +127,14 @@ class Expedition extends CommonObject
 		$sql.= "'(PROV)'";
 		$sql.= ", '".$this->ref_customer."'";
 		$sql.= ", ".$conf->entity;
-		$sql.= ", ".$this->db->idate(gmmktime());
+		$sql.= ", '".$this->db->idate(gmmktime())."'";
 		$sql.= ", ".$user->id;
-		$sql.= ", ".$this->db->idate($this->date_expedition);
-		$sql.= ", ".$this->db->idate($this->date_delivery);
+		$sql.= ", ".($this->date_expedition>0?"'".$this->db->idate($this->date_expedition)."'":"null");
+		$sql.= ", ".($this->date_delivery>0?"'".$this->db->idate($this->date_delivery)."'":"null");
 		$sql.= ", ".$this->socid;
 		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:"null");
 		$sql.= ", ".($this->expedition_method_id>0?$this->expedition_method_id:"null");
-		$sql.= ", '". $this->tracking_number."'";
+		$sql.= ", '".addslashes($this->tracking_number)."'";
 		$sql.= ", ".$this->weight;
 		$sql.= ", ".$this->sizeS;
 		$sql.= ", ".$this->sizeW;
@@ -258,9 +270,11 @@ class Expedition extends CommonObject
 				$this->ref_customer			= $obj->ref_customer;
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
+				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date                 = $this->db->jdate($obj->date_expedition);	// TODO obsolete
-				$this->date_shipping        = $this->db->jdate($obj->date_expedition);
-				$this->date_delivery        = $this->db->jdate($obj->date_delivery);
+				$this->date_expedition      = $this->db->jdate($obj->date_expedition);	// TODO obsolete
+				$this->date_shipping        = $this->db->jdate($obj->date_expedition);	// Date real
+				$this->date_delivery        = $this->db->jdate($obj->date_delivery);	// Date planed
 				$this->fk_delivery_address  = $obj->fk_adresse_livraison;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->expedition_method_id = $obj->fk_expedition_methode;
@@ -624,12 +638,13 @@ class Expedition extends CommonObject
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_asked";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref, p.fk_product_type, p.label, p.weight, p.weight_units, p.volume, p.volume_units";
-		$sql.= " FROM (".MAIN_DB_PREFIX."commandedet as cd";
-		$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed)";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON (p.rowid = cd.fk_product)";
+		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
+		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql.= " WHERE ed.fk_expedition = ".$this->id;
 		$sql.= " AND ed.fk_origin_line = cd.rowid";
 
+		dol_syslog("Expedition::fetch_lines sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -801,6 +816,40 @@ class Expedition extends CommonObject
 			$xnbp++;
 		}
 
+	}
+
+	/**
+	 *      \brief      Set the planned delivery date
+	 *      \param      user        		Objet utilisateur qui modifie
+	 *      \param      date_livraison      Date de livraison
+	 *      \return     int         		<0 si ko, >0 si ok
+	 */
+	function set_date_livraison($user, $date_livraison)
+	{
+		if ($user->rights->expedition->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
+			$sql.= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql.= " WHERE rowid = ".$this->id;
+
+			dol_syslog("Expedition::set_date_livraison sql=".$sql,LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->date_delivery = $date_livraison;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Commande::set_date_livraison ".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+		else
+		{
+			return -2;
+		}
 	}
 
 	/**

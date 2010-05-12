@@ -240,13 +240,13 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 
-		// Date de livraison
+		// Delivery date planed
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('DeliveryDate');
+		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if (1 == 2 && $_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+		if (1 == 2 && $_GET['action'] != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($_GET['action'] == 'editdate_livraison')
@@ -254,7 +254,7 @@ if ($id > 0 || ! empty($ref))
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
-			$html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
+			$html->select_date($commande->date_livraison>0?$commande->date_livraison:-1,'liv_','','','',"setdate_livraison");
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}

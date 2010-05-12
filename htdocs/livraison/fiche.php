@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
@@ -470,12 +470,12 @@ else
 			print '</tr>';
 
 			// Date
-			print '<tr><td>'.$langs->trans("Date").'</td>';
+			print '<tr><td>'.$langs->trans("DateCreation").'</td>';
 			print '<td colspan="3">'.dol_print_date($delivery->date_creation,'daytext')."</td>\n";
 			print '</tr>';
 
-			// Date delivery planned
-			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
+			// Date delivery real / Received
+			print '<tr><td>'.$langs->trans("DateReceived").'</td>';
 			print '<td colspan="3">'.dol_print_date($delivery->date_delivery,'daytext')."</td>\n";
 			print '</tr>';
 
