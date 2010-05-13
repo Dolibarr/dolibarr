@@ -53,6 +53,9 @@ $left=($langs->direction=='rtl'?'right':'left');
 $fontsize=empty($conf->browser->phone)?'12':'12';
 $fontsizesmaller=empty($conf->browser->phone)?'11':'11';
 
+$fontlist='arial,tahoma,verdana,helvetica';
+//$fontlist='Verdana,Helvetica,Arial,sans-serif';
+
 ?>
 
 /* ============================================================================== */
@@ -67,7 +70,7 @@ body {
 <?php } ?>
 	color: #101010;
 	font-size: <?php print $fontsize ?>px;
-    font-family: arial,tahoma,verdana,helvetica;
+    font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -75,11 +78,11 @@ body {
     <?php print 'direction: '.$langs->direction.";\n"; ?>
 }
 
-a:link, a:visited, a:hover, a:active { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
 
 input {
 	font-size: <?php print $fontsize ?>px;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -87,7 +90,7 @@ input {
 }
 input.flat {
 	font-size: <?php print $fontsize ?>px;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -95,7 +98,7 @@ input.flat {
 }
 textarea  {
 	font-size: <?php print $fontsize ?>px;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -103,7 +106,7 @@ textarea  {
 }
 textarea.flat {
 	font-size: <?php print $fontsize ?>px;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -111,14 +114,14 @@ textarea.flat {
 }
 select.flat {
     font-size: <?php print $fontsize ?>px;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 .button {
-    font-family: helvetica, verdana, arial, sans-serif;
+    font-family: <?php print $fontlist ?>;
 	border: 0px;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
@@ -126,7 +129,7 @@ select.flat {
     margin: 0px 0px 0px 0px;
 }
 .button:focus  {
-    font-family: helvetica, verdana, arial, sans-serif;
+    font-family: <?php print $fontlist ?>;
 	color: #222244;
 	border: 0px;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
@@ -135,7 +138,7 @@ select.flat {
     margin: 0px 0px 0px 0px;
 }
 .buttonajax {
-    font-family: helvetica, verdana, arial, sans-serif;
+    font-family: <?php print $fontlist ?>;
 	border: 0px;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
@@ -445,20 +448,20 @@ img.printer {
 }
 <?php } ?>
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 6px; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 6px; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; }
 
 
 div.blockvmenupair, div.blockvmenuimpair {
     width:164px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
 	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
@@ -478,7 +481,7 @@ div.help {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
 	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
@@ -494,7 +497,7 @@ td.barre {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #b3c5cc;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
 	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
@@ -552,7 +555,7 @@ div.tabsAction {
 a.tabTitle {
     background: #436976;
     color: white;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
     font-weight: normal;
     padding: 0px 6px;
     margin: 0px 6px;
@@ -566,7 +569,7 @@ a.tabTitle {
 a.tab:link {
     background: #dee7ec;
     color: #436976;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
@@ -581,7 +584,7 @@ a.tab:link {
 a.tab:visited {
     background: #dee7ec;
     color: #436976;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
@@ -596,7 +599,7 @@ a.tab:visited {
 a.tab#active {
     background: white;
     border-bottom: #dee7ec 1px solid;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
     color: #436976;
     padding: 0px 6px;
     margin: 0em 0.2em;
@@ -612,7 +615,7 @@ a.tab#active {
 a.tab:hover {
     background: white;
     color: #436976;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
@@ -626,7 +629,7 @@ a.tab:hover {
 
 a.tabimage {
     color: #436976;
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -642,7 +645,7 @@ td.tab {
 /* Nouvelle syntaxe a utiliser */
 
 a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active, a.butActionDelete, a.butActionDelete:link, a.butActionDelete:visited, a.butActionDelete:hover, a.butActionDelete:active {
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
 	font-weight: bold;
 	background: white;
 	border: 1px solid #8CACBB;
@@ -670,7 +673,7 @@ a.butActionDelete:hover {
 }
 
 .butActionRefused {
-	font-family: helvetica, verdana, arial, sans-serif !important;
+	font-family: <?php print $fontlist ?> !important;
 	font-weight: bold !important;
 	background: white !important;
 	border: 1px solid #AAAAAA !important;
@@ -686,6 +689,14 @@ a.butActionDelete:hover {
 /* ============================================================================== */
 /* Tables                                                                         */
 /* ============================================================================== */
+
+/*
+#undertopmenu {
+background-image: url("<?php echo DOL_URL_ROOT.'/theme/eldy/img/gradient.gif' ?>");
+background-repeat: repeat-x;
+}
+*/
+
 
 .nocellnopadd {
 list-style-type:none;
@@ -812,7 +823,7 @@ background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 color: #334444;
-font-family: helvetica, verdana, arial, sans-serif;
+font-family: <?php print $fontlist ?>;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
@@ -821,7 +832,7 @@ background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 color: #334444;
-font-family: helvetica, verdana, arial, sans-serif;
+font-family: <?php print $fontlist ?>;
 font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
@@ -832,7 +843,7 @@ background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 color: #F5FFFF;
-font-family: helvetica, verdana, arial, sans-serif;
+font-family: <?php print $fontlist ?>;
 font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
@@ -858,7 +869,7 @@ th {
 /* background: #7699A9; */
 background: #91ABB3;
 color: #334444;
-font-family: helvetica, verdana, arial, sans-serif;
+font-family: <?php print $fontlist ?>;
 font-weight: bold;
 border-left: 1px solid #FFFFFF;
 border-right: 1px solid #FFFFFF;
@@ -870,7 +881,7 @@ white-space: nowrap;
 .impair {
 /* background: #d0d4d7; */
 background: #eaeaea;
-font-family: helvetica, verdana, arial, sans-serif;
+font-family: <?php print $fontlist ?>;
 border: 0px;
 }
 /*
@@ -883,7 +894,7 @@ border: 0px;
 .pair	{
 /* background: #e6ebed; */
 background: #f4f4f4;
-font-family: helvetica, verdana, arial, sans-serif;
+font-family: <?php print $fontlist ?>;
 border: 0px;
 }
 /*
@@ -909,7 +920,7 @@ background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 color: #334444;
-font-family: arial, helvetica, verdana, sans-serif;
+font-family: <?php print $fontlist ?>, sans-serif;
 font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
@@ -920,17 +931,17 @@ white-space: nowrap;
 tr.box_impair {
 /* background: #e6ebed; */
 background: #eaeaea;
-font-family: arial, helvetica, verdana, sans-serif;
+font-family: <?php print $fontlist ?>;
 }
 
 tr.box_pair {
 /* background: #d0d4d7; */
 background: #f4f4f4;
-font-family: arial, helvetica, verdana, sans-serif;
+font-family: <?php print $fontlist ?>;
 }
 
 tr.fiche {
-font-family: helvetica, verdana, arial, sans-serif;
+font-family: <?php print $fontlist ?>;
 }
 
 
@@ -1012,7 +1023,7 @@ border: 0px;
 }
 
 div.titre {
-	font-family: helvetica, verdana, arial, sans-serif;
+	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	color: #336666;
 	text-decoration: none;
@@ -1640,21 +1651,21 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  width : 50%;
  height : 24px;
  line-height : 12px;
- font-family : helvetica, verdana, arial, sans-serif;
+ font-family : <?php print $fontlist ?>;
  font-size : 8pt;
  color : black;
  text-align : center;
 }
 .btnColor {
  width : 100%;
- font-family : helvetica, verdana, arial, sans-serif;
+ font-family : <?php print $fontlist ?>;
  font-size : 10pt;
  padding : 0px;
  margin : 0px;
 }
 .btnPalette {
  width : 100%;
- font-family : helvetica, verdana, arial, sans-serif;
+ font-family : <?php print $fontlist ?>;
  font-size : 8pt;
  padding : 0px;
  margin : 0px;
