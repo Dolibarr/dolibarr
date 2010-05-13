@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2005-2010 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +65,9 @@ class modPhenix extends DolibarrModules
 		$this->special = 1;
 		// Name of png file (without png) used for this module
 		$this->picto='calendar';
+		
+		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
+		$this->triggers = 1;
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
@@ -75,7 +78,7 @@ class modPhenix extends DolibarrModules
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->langfiles = array("@phenix");
+		$this->langfiles = array();
 		
 		// Constants
 		$this->const = array();			// List of parameters

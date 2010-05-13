@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_modPhenix_Phenixsynchro.class.php
+        \file       htdocs/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php
         \ingroup    phenix
         \brief      Fichier de gestion des triggers phenix
 		\version	$Id$
