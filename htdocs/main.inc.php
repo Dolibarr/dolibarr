@@ -1017,7 +1017,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	$bookmarks='';
 
 	//    print '<div class="vmenuplusfiche">'."\n";
-	print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable"><tr><td class="vmenu" valign="top">';
+	print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr><td class="vmenu" valign="top">';
 
 	print "\n";
 
