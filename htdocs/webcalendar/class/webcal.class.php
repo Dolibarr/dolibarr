@@ -18,7 +18,7 @@
  */
 
 /**
-        \file       htdocs/webcal/webcal.class.php
+        \file       htdocs/webcalendar/class/webcal.class.php
         \ingroup    webcalendar
 		\brief      Ensemble des fonctions permettant d'acceder a la database webcalendar.
 		\author     Rodolphe Quiedeville.

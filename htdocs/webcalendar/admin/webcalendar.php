@@ -21,7 +21,7 @@
  */
 
 /**
- *    \file       htdocs/admin/webcalendar.php
+ *    \file       htdocs/webcalendar/admin/webcalendar.php
  *    \ingroup    webcalendar
  *    \brief      Page de configuration du module webcalendar
  *    \version    $Id$
@@ -29,7 +29,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/webcal/class/webcal.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/webcalendar/class/webcal.class.php');
 
 
 if (!$user->admin)

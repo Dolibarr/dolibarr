@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**	    \file       htdocs/webcal/webcal.php
+/**	    \file       htdocs/webcalendar/webcal.php
         \ingroup    webcalendar
 		\brief      Page generant 2 frames, une pour le menu Dolibarr, l'autre pour l'affichage du calendrier
 		\author	    Laurent Destailleur

@@ -18,7 +18,7 @@
  */
 
 /**
- *  	\file 		htdocs/webcal/webcaltop.php
+ *  	\file 		htdocs/webcalendar/webcaltop.php
  *      \ingroup    webcalendar
  *      \brief      Top frame to show calendar
  *      \version    $Id$

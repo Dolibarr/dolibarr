@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**	    \file       htdocs/webcal/webcalexport.php
+/**	    \file       htdocs/webcalendar/webcalexport.php
         \ingroup    webcalendar
 		\brief      Page export webcalendar
 		\version    $Id$
@@ -26,7 +26,7 @@
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/webcal/class/webcal.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/webcalendar/class/webcal.class.php');
 
 // C'est un wrapper, donc header vierge
 function llxHeader() { print '<html><title>Export cal</title><body>'; }
