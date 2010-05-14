@@ -142,7 +142,7 @@ class Template
 	 */
 	function assignTag($tag,$id,$tag_array)
 	{
-		if(!$this->cache_activate or $this->cache_isExpired)
+		if(!$this->cache_activate || $this->cache_isExpired)
 		{
 			if( $this->checkArray($tag_array) )
 			{
@@ -187,7 +187,7 @@ class Template
 	 */
 	function assignInclude($id,$file="")
 	{
-		if(!$this->cache_activate or $this->cache_isExpired)
+		if(!$this->cache_activate || $this->cache_isExpired)
 		{
 			if( empty($file) )
 			{
@@ -213,7 +213,7 @@ class Template
 	 */
 	function htmlSelect($name,$array,$selected="",$htmlAttribut="")
 	{
-		if(!$this->cache_activate or $this->cache_isExpired)
+		if(!$this->cache_activate || $this->cache_isExpired)
 		{
 			//on test la balise avec l'option selected
 			$select = $this->findTag("HTMLSELECT",$name,"SELECTED");
@@ -245,7 +245,7 @@ class Template
 	 */
 	function view()
 	{
-		if(!$this->cache_activate or $this->cache_isExpired)
+		if(!$this->cache_activate || $this->cache_isExpired)
 		{
 			$this->assignAutoInclude();
 			if(!$this->debug)
