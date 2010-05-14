@@ -66,7 +66,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 	else
 	{
-		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl"))
+		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl.php"))
 		{
 			$template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
 		}
