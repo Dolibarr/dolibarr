@@ -279,7 +279,7 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 
 			migrate_shipping_delivery2($db,$langs,$conf);
 
-			migrate_module_menus($db,$langs,$conf);
+			migrate_reload_modules($db,$langs,$conf);
 
 			migrate_reload_menu($db,$langs,$conf);
 		}
@@ -1783,14 +1783,15 @@ function migrate_delete_old_dir($db,$langs,$conf)
 /*
  * Disable/Reenable features modules.
  * We must do this when internal menu of module or permissions has changed
+ * or when triggers have moved.
  */
-function migrate_module_menus($db,$langs,$conf)
+function migrate_reload_modules($db,$langs,$conf)
 {
-	dolibarr_install_syslog("upgrade2::migrate_module_menus");
+	dolibarr_install_syslog("upgrade2::migrate_reload_modules");
 
 	if (! empty($conf->global->MAIN_MODULE_AGENDA))
 	{
-		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Agenda");
+		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Agenda");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modAgenda.class.php');
 		$mod=new modAgenda($db);
 		$mod->remove('noboxes');
@@ -1798,28 +1799,28 @@ function migrate_module_menus($db,$langs,$conf)
 	}
 	if (! empty($conf->global->MAIN_MODULE_PHENIX))
 	{
-		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Phenix");
+		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Phenix");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modPhenix.class.php');
 		$mod=new modPhenix($db);
 		$mod->init();
 	}
 	if (! empty($conf->global->MAIN_MODULE_WEBCALENDAR))
 	{
-		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Webcalendar");
+		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Webcalendar");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modWebcalendar.class.php');
 		$mod=new modWebcalendar($db);
 		$mod->init();
 	}
 	if (! empty($conf->global->MAIN_MODULE_MANTIS))
 	{
-		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Mantis");
+		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Mantis");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modMantis.class.php');
 		$mod=new modMantis($db);
 		$mod->init();
 	}
 	if (! empty($conf->global->MAIN_MODULE_SOCIETE))
 	{
-		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Societe");
+		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Societe");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modSociete.class.php');
 		$mod=new modSociete($db);
 		$mod->remove('noboxes');
@@ -1827,14 +1828,14 @@ function migrate_module_menus($db,$langs,$conf)
 	}
 	if (! empty($conf->global->MAIN_MODULE_PRODUIT))	// Permission has changed into 2.7
 	{
-		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Produit");
+		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Produit");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modProduct.class.php');
 		$mod=new modProduct($db);
 		$mod->init();
 	}
 	if (! empty($conf->global->MAIN_MODULE_SERVICE))	// Permission has changed into 2.7
 	{
-		dolibarr_install_syslog("upgrade2::migrate_module_menus Reactivate module Service");
+		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Service");
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modService.class.php');
 		$mod=new modService($db);
 		$mod->init();
