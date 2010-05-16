@@ -33,7 +33,8 @@ For users:
 - Fix: bug #29278 : SMTP fails with IP
 - Fix: Default language on login page.
 - Fix: Complete support of euros sign (even in PDF).
- 
+- Fix: Bad setup of phpMyAdmin for DoliWamp installer.
+
 For developers:
 - More comments in code.
 - Uniformize some code. 

@@ -557,6 +557,7 @@ begin
 	        // sinon on prends le fichier par defaut
 	        LoadStringFromFile (srcFile, srcContents);
 	        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
+	        StringChange (srcContents, 'WAMPMYSQLPORT', myport);
 	        SaveStringToFile(destFile,srcContents, False);
 		    end
 		
