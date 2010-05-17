@@ -182,8 +182,6 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer && (empty($proje
 	print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'"></textarea>';
 	print '</td></tr>';
 
-	//$tasksarray=$task->getTasksArray(0, $user, $projectid, 0, 1);	// Check
-
 	print '<tr><td colspan="2" align="center">';
 	//if (sizeof($tasksarray))
 	//{

@@ -320,7 +320,7 @@ class Task extends CommonObject
 			$this->db->rollback();
 			return 0;
 		}
-		
+
 		if (! $error)
 		{
 			// Delete linked contacts
@@ -449,7 +449,7 @@ class Task extends CommonObject
 	/**
 	 * Return list of task for all projects or for one particular project
 	 * Sort order is on project, TODO then of position of task, and last on title of first level task
-	 * @param	usert		Object user to limit task affected to a particular user
+	 * @param	usert		Object user to limit tasks affected to a particular user
 	 * @param	userp		Object user to limit projects of a particular user and public projects
 	 * @param	projectid	Project id
 	 * @param	socid		Third party id
@@ -500,9 +500,16 @@ class Task extends CommonObject
 
 				$obj = $this->db->fetch_object($resql);
 
-				if ((! $obj->public) && (is_object($userp) || is_object($usert)))	// If not public and we ask a filter on user
+				if ((! $obj->public) && (is_object($userp)))	// If not public and we ask a filter on project owned by a user
 				{
-					if (! $this->getUserRolesForProjectsOrTasks($userp, $usert, $obj->projectid, $obj->taskid))
+					if (! $this->getUserRolesForProjectsOrTasks($userp, 0, $obj->projectid, 0))
+					{
+						$error++;
+					}
+				}
+				if (is_object($usert))							// If we ask a filter on a user affected to a task
+				{
+					if (! $this->getUserRolesForProjectsOrTasks(0, $usert, $obj->projectid, $obj->taskid))
 					{
 						$error++;
 					}
@@ -537,11 +544,11 @@ class Task extends CommonObject
 
 	/**
 	 * Return list of roles for a user for each projects or each tasks (or a particular project or task)
-	 * @param 	userp
-	 * @param	usert			Deprecated. Permissions are on project.
+	 * @param 	userp			Return roles on project for this user (task id can't be defined)
+	 * @param	usert			Return roles on task for this user
 	 * @param 	projectid		Project id to filter on a project
 	 * @param 	taskid			Task id to filter on a task
-	 * @return 	array			Array (projectid => 'list of roles for project')
+	 * @return 	array			Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
 	 */
 	function getUserRolesForProjectsOrTasks($userp,$usert,$projectid=0,$taskid=0)
 	{
@@ -550,8 +557,13 @@ class Task extends CommonObject
 
 		dol_syslog("Task::getUserRolesForProjectsOrTasks userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
 
-		// We want role of user for projet or role of user for task. Both are not possible.
+		// We want role of user for a projet or role of user for a task. Both are not possible.
 		if (empty($userp) && empty($usert))
+		{
+			$this->error="CallWithWrongParameters";
+			return -1;
+		}
+		if (! empty($userp) && ! empty($usert))
 		{
 			$this->error="CallWithWrongParameters";
 			return -1;
@@ -577,7 +589,7 @@ class Task extends CommonObject
 		}
 		if ($taskid)
 		{
-			if ($userp) $sql.= " ERROR SHOULD NOT HAPPEN ";
+			if ($userp) $sql.= " ERROR SHOULD NOT HAPPENS";
 			if ($usert) $sql.= " AND pt.rowid = ".$taskid;
 		}
 
