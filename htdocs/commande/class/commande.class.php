@@ -551,23 +551,20 @@ class Commande extends CommonObject
 						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
 						if ($result < 0) { $error++; }
 					}
-
-					if (! $error)
-					{
-						$this->statut=-1;
-						$this->db->commit();
-						return $result;
-					}
-					else
-					{
-						$this->error=$mouvP->error;
-						$this->db->rollback();
-						return $result;
-					}
 				}
 
-				$this->db->commit();
-				return 1;
+				if (! $error)
+				{
+					$this->statut=-1;
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->error=$mouvP->error;
+					$this->db->rollback();
+					return -1;
+				}
 			}
 			else
 			{

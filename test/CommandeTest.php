@@ -183,11 +183,30 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-    	return $localobject->id;
+    	return $localobject;
     }
 
     /**
      * @depends	testCommandeValid
+     * The depends says test is run only if previous is ok
+     */
+    public function testCommandeCancel($localobject)
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+    	$result=$localobject->cancel($user);
+
+    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+    	return $localobject->id;
+    }
+
+    /**
+     * @depends	testCommandeCancel
      * The depends says test is run only if previous is ok
      */
     public function testCommandeDelete($id)
