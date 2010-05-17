@@ -71,7 +71,6 @@ class Mailing extends CommonObject
 	function Mailing($DB)
 	{
 		$this->db = $DB ;
-		$this->db_table = MAIN_DB_PREFIX."mailing";
 
 		// List of language codes for status
 		$this->statuts[0] = 'MailingStatusDraft';
@@ -100,7 +99,7 @@ class Mailing extends CommonObject
 			return -1;
 		}
 
-		$sql = "INSERT INTO ".$this->db_table;
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
 		$sql .= " (date_creat, fk_user_creat, entity)";
 		$sql .= " VALUES (".$this->db->idate(mktime()).", ".$user->id.", ".$conf->entity.")";
 
@@ -113,7 +112,7 @@ class Mailing extends CommonObject
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			$this->id = $this->db->last_insert_id($this->db_table);
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailing");
 
 			if ($this->update($user) > 0)
 			{

@@ -524,6 +524,8 @@ class Commande extends CommonObject
 	{
 		global $conf;
 
+		$error=0;
+
 		if ($user->rights->commande->valider)
 		{
 			$this->db->begin();
@@ -533,20 +535,26 @@ class Commande extends CommonObject
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND fk_statut = 1";
 
-			if ($this->db->query($sql) )
+			dol_syslog("Commande::cancel sql=".$sql, LOG_DEBUG);
+			if ($this->db->query($sql))
 			{
 				// If stock is decremented on validate order, we must reincrement it
-				if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+				if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-					$mouvP = new MouvementStock($this->db);
-					// We increment stock of product (and sub-products)
-					$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-					$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
-
-					if ($result > 0)
+					if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
 					{
+						$mouvP = new MouvementStock($this->db);
+						// We increment stock of product (and sub-products)
+						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
+						if ($result < 0) { $error++; }
+					}
+
+					if (! $error)
+					{
+						$this->statut=-1;
 						$this->db->commit();
 						return $result;
 					}

@@ -55,6 +55,8 @@ class MouvementStock
 		$error = 0;
 		dol_syslog("MouvementStock::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price label=$label");
 
+		$now=dol_now();
+
 		$this->db->begin();
 
 		$product = new Product($this->db);
@@ -69,7 +71,7 @@ class MouvementStock
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
 			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price)";
-			$sql.= " VALUES (".$this->db->idate(gmmktime()).", ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.",";
+			$sql.= " VALUES ('".$this->db->idate($now)."', ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.",";
 			$sql.= " ".$user->id.",";
 			$sql.= " '".addslashes($label)."',";
 			$sql.= " '".price2num($price)."')";
@@ -77,7 +79,7 @@ class MouvementStock
 			dol_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
 			if ($resql = $this->db->query($sql))
 			{
-				$mvid = $this->db->last_insert_id($resql);
+				$mvid = $this->db->last_insert_id(MAIN_DB_PREFIX."stock_mouvement");
 			}
 			else
 			{

@@ -732,8 +732,7 @@ class User extends CommonObject
 				dol_syslog("User::Create sql=".$sql, LOG_DEBUG);
 				if ($result)
 				{
-					$table =  "".MAIN_DB_PREFIX."user";
-					$this->id = $this->db->last_insert_id($table);
+					$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."user");
 
 					// Set default rights
 					if ($this->set_default_rights() < 0)
