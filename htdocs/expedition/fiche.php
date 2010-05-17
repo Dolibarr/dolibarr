@@ -49,7 +49,7 @@ $langs->load('other');
 $langs->load('propal');
 
 $origin = "expedition";
-$origin_id = isset($_GET["id"])?$_GET["id"]:'';
+$origin_id = isset($_REQUEST["id"])?$_REQUEST["id"]:'';
 $id = $origin_id;
 
 $origin     = $_GET["origin"]?$_GET["origin"]:$_POST["origin"];				// Example: commande, propal
@@ -216,6 +216,44 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->expedition->creer)
 	}
 }
 
+// Action update description of emailing
+if ($_REQUEST["action"] == 'settrackingnumber' || $_REQUEST["action"] == 'settrackingurl'
+|| $_REQUEST["action"] == 'settrueWeight'
+|| $_REQUEST["action"] == 'settrueWidth'
+|| $_REQUEST["action"] == 'settrueHeight'
+|| $_REQUEST["action"] == 'settrueDepth'
+|| $_REQUEST["action"] == 'setexpedition_method_id')
+{
+	$error=0;
+
+	$shipping = new Expedition($db);
+	$result=$shipping->fetch($_REQUEST['id']);
+	if ($result < 0) dol_print_error($db,$shipping->error);
+
+	if ($_REQUEST["action"] == 'settrackingnumber')  $shipping->tracking_number = trim($_REQUEST["trackingnumber"]);
+	if ($_REQUEST["action"] == 'settrackingurl')     $shipping->tracking_url = trim($_REQUEST["trackingurl"]);
+	if ($_REQUEST["action"] == 'settrueWeight')      $shipping->trueWeight = trim($_REQUEST["trueWeight"]);
+	if ($_REQUEST["action"] == 'settrueWidth')       $shipping->trueWidth = trim($_REQUEST["trueWidth"]);
+	if ($_REQUEST["action"] == 'settrueHeight')      $shipping->trueHeight = trim($_REQUEST["trueHeight"]);
+	if ($_REQUEST["action"] == 'settrueDepth')       $shipping->trueDepth = trim($_REQUEST["trueDepth"]);
+	if ($_REQUEST["action"] == 'setexpedition_method_id')       $shipping->expedition_method_id = trim($_REQUEST["expedition_method_id"]);
+
+	if (! $error)
+	{
+		if ($shipping->update($user) >= 0)
+		{
+			Header("Location: fiche.php?id=".$shipping->id);
+			exit;
+		}
+		$mesg=$shipping->error;
+	}
+
+	$mesg='<div class="error">'.$mesg.'</div>';
+	$_GET["action"]="";
+	$_GET["id"]=$_REQUEST["id"];
+}
+
+
 /*
  * Build doc
  */
@@ -269,7 +307,6 @@ $formproduct = new FormProduct($db);
  *********************************************************************/
 if ($_GET["action"] == 'create')
 {
-
 	$expe = new Expedition($db);
 
 	print_fiche_titre($langs->trans("CreateASending"));
@@ -316,11 +353,11 @@ if ($_GET["action"] == 'create')
 
 			// Ref
 			print '<tr><td width="30%">';
-			if ($conf->commande->enabled)
+			if ($origin == 'commande' && $conf->commande->enabled)
 			{
 				print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$object->ref;
 			}
-			else
+			if ($origin == 'propal' && $conf->propal->enabled)
 			{
 				print $langs->trans("RefProposal").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/comm/fiche.php?propalid='.$object->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$object->ref;
 			}
@@ -338,10 +375,6 @@ if ($_GET["action"] == 'create')
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 			print '</tr>';
-
-			// Date
-			print "<tr><td>".$langs->trans("Date")."</td>";
-			print '<td colspan="3">'.dol_print_date($object->date,"day")."</td></tr>\n";
 
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
@@ -611,10 +644,10 @@ else
 /*                                                                             */
 /* *************************************************************************** */
 {
-	if ($_GET["id"] > 0)
+	if (! empty($_REQUEST["id"]) || ! empty($_REQUEST["ref"]))
 	{
 		$expedition = new Expedition($db);
-		$result = $expedition->fetch($_GET["id"]);
+		$result = $expedition->fetch($_REQUEST["id"],$_REQUEST["ref"]);
 		if ($result < 0)
 		{
 			dol_print_error($db,$expedition->error);
@@ -749,7 +782,7 @@ else
 			print $langs->trans('DateDeliveryPlanned');
 			print '</td>';
 
-			if ($_GET['action'] != 'editdate_livraison' && $expedition->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$expedition->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+			if ($_GET['action'] != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$expedition->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editdate_livraison')
@@ -782,20 +815,9 @@ else
 			}
 
 			// Weight
-			print '<tr><td>'.$langs->trans("TotalWeight").'</td>';
-			print '<td colspan="3">';
-			if ($expedition->trueWeight)
-			{
-				// If sending weigth defined
-				print $expedition->trueWeight.' '.measuring_units_string($expedition->weight_units,"weight");
-			}
-			else
-			{
-				// If sending Weight not defined we use sum of products
-				// TODO Show in best unit
-				if ($totalWeight > 0) print $totalWeight.' '.measuring_units_string(0,"weight");
-				else print '&nbsp;';
-			}
+			print '<tr><td>'.$html->editfieldkey("TotalWeight",'trueWeight',$expedition->trueWeight,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $html->editfieldval("TotalWeight",'trueWeight',$expedition->trueWeight,'id',$expedition->id,$user->rights->expedition->creer);
+			print measuring_units_string($expedition->weight_units,"weight");
 			print '</td></tr>';
 
 			// Volume Total
@@ -816,17 +838,23 @@ else
 			print "</td>\n";
 			print '</tr>';
 
-			// Taille
-			print '<tr><td>'.$langs->trans("Size").'</td>';
-			print '<td colspan="3">';
-			if ($expedition->trueWidth || $expedition->trueHeight || $expedition->trueDepth)
-			{
-				// If sending size defined
-				print $expedition->trueSize.' '.measuring_units_string($expedition->size_units,"size");
-			}
-			else print '&nbsp;';
-			print "</td>\n";
-			print '</tr>';
+			// Width
+			print '<tr><td>'.$html->editfieldkey("Width",'trueWidth',$expedition->trueWidth,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $html->editfieldval("Width",'trueWidth',$expedition->trueWidth,'id',$expedition->id,$user->rights->expedition->creer);
+			print measuring_units_string($expedition->width_units,"size");
+			print '</td></tr>';
+
+			// Height
+			print '<tr><td>'.$html->editfieldkey("Height",'trueHeight',$expedition->trueHeight,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $html->editfieldval("Height",'trueHeight',$expedition->trueHeight,'id',$expedition->id,$user->rights->expedition->creer);
+			print measuring_units_string($expedition->height_units,"size");
+			print '</td></tr>';
+
+			// Depth
+			print '<tr><td>'.$html->editfieldkey("Depth",'trueDepth',$expedition->trueDepth,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $html->editfieldval("Depth",'trueDepth',$expedition->trueDepth,'id',$expedition->id,$user->rights->expedition->creer);
+			print measuring_units_string($expedition->depth_units,"size");
+			print '</td></tr>';
 
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td>';
@@ -834,26 +862,47 @@ else
 			print '</tr>';
 
 			// Sending method
-			print '<tr><td>'.$langs->trans("SendingMethod").'</td>';
-			print '<td colspan="3">';
-			if ($expedition->expedition_method_id > 0)
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('SendingMethod');
+			print '</td>';
+
+			if ($_GET['action'] != 'editexpedition_method_id') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editexpedition_method_id&amp;id='.$expedition->id.'">'.img_edit($langs->trans('SetSendingMethod'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+			if ($_GET['action'] == 'editexpedition_method_id')
 			{
-				// Get code using getLabelFromKey
-				$code=$langs->getLabelFromKey($db,$expedition->expedition_method_id,'expedition_methode','rowid','code');
-				print $langs->trans("SendingMethod".strtoupper($code));
+				print '<form name="setexpedition_method_id" action="'.$_SERVER["PHP_SELF"].'?id='.$expedition->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="setexpedition_method_id">';
+				$expedition->fetch_delivery_methods();
+				$html->select_array("expedition_method_id",$expedition->meths,$expedition->expedition_method_id,1,0,0,0,"",1);
+				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
 			}
-			else print '&nbsp;';
+			else
+			{
+				if ($expedition->expedition_method_id > 0)
+				{
+					// Get code using getLabelFromKey
+					$code=$langs->getLabelFromKey($db,$expedition->expedition_method_id,'expedition_methode','rowid','code');
+					print $langs->trans("SendingMethod".strtoupper($code));
+				}
+			}
 			print '</td>';
 			print '</tr>';
 
 			// Tracking Number
-			print '<tr><td>'.$langs->trans("TrackingNumber").'</td>';
-			print '<td>'.$expedition->tracking_number.'</td>';
+			print '<tr><td>'.$html->editfieldkey("TrackingNumber",'trackingnumber',$expedition->tracking_number,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $html->editfieldval("TrackingNumber",'trackingnumber',$expedition->tracking_number,'id',$expedition->id,$user->rights->expedition->creer);
+			print '</td></tr>';
+
 			if ($expedition->tracking_url)
 			{
-				print '<td colspan="2">'.$expedition->tracking_url."</td>\n";
+				print '<tr><td>'.$html->editfieldkey("TrackingUrl",'trackingurl',$expedition->tracking_url,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+				print $html->editfieldval("TrackingUrl",'trackingurl',$expedition->tracking_url,'id',$expedition->id,$user->rights->expedition->creer);
+				print '</td></tr>';
 			}
-			print '</tr>';
 
 			print "</table>\n";
 
@@ -888,6 +937,7 @@ else
 			{
 				print "<tr ".$bc[$var].">";
 
+				// Product
 				if ($lignes[$i]->fk_product > 0)
 				{
 					print '<td>';
@@ -962,10 +1012,10 @@ else
 		{
 			print '<div class="tabsAction">';
 
-			if ($expedition->statut > 0 && $user->rights->expedition->valider)
+			/*if ($expedition->statut > 0 && $user->rights->expedition->valider)
 			{
 				print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=open">'.$langs->trans("Modify").'</a>';
-			}
+			}*/
 
 			if ($expedition->statut == 0 && $num_prod > 0)
 			{

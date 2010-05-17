@@ -157,9 +157,9 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 
 			print '<table class="liste" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td align="left">'.$langs->trans("Description").'</td>';
 			//print '<td align="left">'.$langs->trans("QtyOrdered").'</td>';
 			print '<td align="left">'.$langs->trans("SendingSheet").'</td>';
+			print '<td align="left">'.$langs->trans("Description").'</td>';
 			print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
 			print '<td align="center">'.$langs->trans("DateSending").'</td>';
 			if ($conf->livraison_bon->enabled)
@@ -177,6 +177,10 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 				$objp = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
 
+				// Sending id
+				print '<td align="left" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->exp_ref.'<a></td>';
+
+				// Description
 				if ($objp->fk_product > 0)
 				{
 					print '<td>';
@@ -215,9 +219,6 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 				}
 
 				//print '<td align="center">'.$objp->qty_asked.'</td>';
-
-				// Sending id
-				print '<td align="left" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->exp_ref.'<a></td>';
 
 				print '<td align="center">'.$objp->qty_shipped.'</td>';
 

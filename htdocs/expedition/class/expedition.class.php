@@ -51,7 +51,8 @@ class Expedition extends CommonObject
 	var $origin;
 	var $origin_id;
 	var $lignes;
-	var $meths;
+	var $expedition_method_id;
+	var $statut;
 
 	var $trueWeight;
 	var $weight_units;
@@ -136,9 +137,9 @@ class Expedition extends CommonObject
 		$sql.= ", ".($this->expedition_method_id>0?$this->expedition_method_id:"null");
 		$sql.= ", '".addslashes($this->tracking_number)."'";
 		$sql.= ", ".$this->weight;
-		$sql.= ", ".$this->sizeS;
-		$sql.= ", ".$this->sizeW;
-		$sql.= ", ".$this->sizeH;
+		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
+		$sql.= ", ".$this->sizeW;	// TODO Should use this->trueWidth
+		$sql.= ", ".$this->sizeH;	// TODO Should use this->trueHeight
 		$sql.= ", ".$this->weight_units;
 		$sql.= ", ".$this->size_units;
 		$sql.= ")";
@@ -553,9 +554,114 @@ class Expedition extends CommonObject
 		}
 	}
 
-	/**
-	 * Supprime la fiche
-	 *
+    /**
+     *      \brief      Update database
+     *      \param      user        	User that modify
+     *      \param      notrigger	    0=launch triggers after, 1=disable triggers
+     *      \return     int         	<0 if KO, >0 if OK
+     */
+    function update($user=0, $notrigger=0)
+    {
+    	global $conf, $langs;
+		$error=0;
+
+		// Clean parameters
+
+		if (isset($this->ref)) $this->ref=trim($this->ref);
+		if (isset($this->entity)) $this->entity=trim($this->entity);
+		if (isset($this->ref_customer)) $this->ref_customer=trim($this->ref_customer);
+		if (isset($this->socid)) $this->socid=trim($this->socid);
+		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
+		if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
+		if (isset($this->fk_adresse_livraison)) $this->fk_adresse_livraison=trim($this->fk_adresse_livraison);
+		if (isset($this->expedition_method_id)) $this->expedition_method_id=trim($this->expedition_method_id);
+		if (isset($this->tracking_number)) $this->tracking_number=trim($this->tracking_number);
+		if (isset($this->statut)) $this->statut=trim($this->statut);
+		if (isset($this->trueDepth)) $this->trueDepth=trim($this->trueDepth);
+		if (isset($this->trueWidth)) $this->trueWidth=trim($this->trueWidth);
+		if (isset($this->trueHeight)) $this->trueHeight=trim($this->trueHeight);
+		if (isset($this->size_units)) $this->size_units=trim($this->size_units);
+		if (isset($this->weight_units)) $this->weight_units=trim($this->weight_units);
+		if (isset($this->trueWeight)) $this->weight=trim($this->trueWeight);
+		if (isset($this->note)) $this->note=trim($this->note);
+		if (isset($this->model_pdf)) $this->model_pdf=trim($this->model_pdf);
+
+
+
+		// Check parameters
+		// Put here code to add control on parameters values
+
+        // Update request
+        $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
+
+		$sql.= " tms=".(strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql.= " ref=".(isset($this->ref)?"'".addslashes($this->ref)."'":"null").",";
+		$sql.= " ref_customer=".(isset($this->ref_customer)?"'".addslashes($this->ref_customer)."'":"null").",";
+		$sql.= " fk_soc=".(isset($this->socid)?$this->socid:"null").",";
+		$sql.= " date_creation=".(strlen($this->date_creation)!=0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
+		$sql.= " fk_user_author=".(isset($this->fk_user_author)?$this->fk_user_author:"null").",";
+		$sql.= " date_valid=".(strlen($this->date_valid)!=0 ? "'".$this->db->idate($this->date_valid)."'" : 'null').",";
+		$sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
+		$sql.= " date_expedition=".(strlen($this->date_expedition)!=0 ? "'".$this->db->idate($this->date_expedition)."'" : 'null').",";
+		$sql.= " date_delivery=".(strlen($this->date_delivery)!=0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
+		$sql.= " fk_adresse_livraison=".(isset($this->fk_adresse_livraison)?$this->fk_adresse_livraison:"null").",";
+		$sql.= " fk_expedition_methode=".(isset($this->expedition_method_id)?$this->expedition_method_id:"null").",";
+		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".addslashes($this->tracking_number)."'":"null").",";
+		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
+		$sql.= " height=".(isset($this->trueHeight)?$this->trueHeight:"null").",";
+		$sql.= " width=".(isset($this->trueWidth)?$this->trueWidth:"null").",";
+		$sql.= " size_units=".(isset($this->size_units)?$this->size_units:"null").",";
+		$sql.= " size=".(isset($this->trueDepth)?$this->trueDepth:"null").",";
+		$sql.= " weight_units=".(isset($this->weight_units)?$this->weight_units:"null").",";
+		$sql.= " weight=".(isset($this->trueWeight)?$this->trueWeight:"null").",";
+		$sql.= " note=".(isset($this->note)?"'".addslashes($this->note)."'":"null").",";
+		$sql.= " model_pdf=".(isset($this->model_pdf)?"'".addslashes($this->model_pdf)."'":"null").",";
+		$sql.= " entity=".$conf->entity;
+
+        $sql.= " WHERE rowid=".$this->id;
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+	            // Uncomment this and change MYOBJECT to your own tag if you
+	            // want this action call a trigger.
+
+	            //// Call triggers
+	            //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+	            //$interface=new Interfaces($this->db);
+	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            //// End call triggers
+	    	}
+		}
+
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+    }
+
+    /**
+	 * 	\brief		Delete shipping
 	 */
 	function delete()
 	{
@@ -894,11 +1000,18 @@ class Expedition extends CommonObject
 			}
 		}
 
-		if ($code) {
+		if ($code)
+		{
 			$classname = "methode_expedition_".strtolower($code);
-			require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php");
-			$obj = new $classname();
-			$url = $obj->provider_url_status($this->tracking_number);
+
+			$url='';
+			if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php"))
+			{
+				require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php");
+				$obj = new $classname();
+				$url = $obj->provider_url_status($this->tracking_number);
+			}
+
 			if ($url)
 			{
 				$this->tracking_url = sprintf('<a target="_blank" href="%s">url</a>',$url,$url);
