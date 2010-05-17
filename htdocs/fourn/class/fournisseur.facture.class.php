@@ -50,7 +50,7 @@ class FactureFournisseur extends Facture
 	var $ref;
 	var $ref_supplier;
 	var $socid;
-	//! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proformat invoice
+	//! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proforma invoice
 	var $type;
 	//! 0=draft,
 	//! 1=validated

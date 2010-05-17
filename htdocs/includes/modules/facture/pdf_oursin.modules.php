@@ -917,7 +917,7 @@ class pdf_oursin extends ModelePDFFactures
 		if ($object->type == 1) $title=$outputlangs->transnoentities("InvoiceReplacement");
 		if ($object->type == 2) $title=$outputlangs->transnoentities("InvoiceAvoir");
 		if ($object->type == 3) $title=$outputlangs->transnoentities("InvoiceDeposit");
-		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProFormat");
+		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProForma");
 		$pdf->MultiCell(100, 10, $title.' '.$outputlangs->transnoentities("Of").' '.dol_print_date($object->date,"day",false,$outputlangs,true), '' , 'L');
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY($this->marges['g'],$posy);

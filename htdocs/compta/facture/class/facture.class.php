@@ -66,7 +66,7 @@ class Facture extends CommonObject
 	var $datem;
 	var $ref;
 	var $ref_client;
-	//! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proformat invoice
+	//! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proforma invoice
 	var $type;
 	var $amount;
 	var $remise;
@@ -2070,7 +2070,7 @@ class Facture extends CommonObject
 		if ($this->type == 1) return $langs->trans("InvoiceReplacement");
 		if ($this->type == 2) return $langs->trans("InvoiceAvoir");
 		if ($this->type == 3) return $langs->trans("InvoiceDeposit");
-		if ($this->type == 4) return $langs->trans("InvoiceProFormat");
+		if ($this->type == 4) return $langs->trans("InvoiceProForma");
 		return $langs->trans("Unknown");
 	}
 

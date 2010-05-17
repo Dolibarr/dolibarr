@@ -635,7 +635,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		}
 	}
 
-	// Standard or deposit or proformat invoice
+	// Standard or deposit or proforma invoice
 	if (($_POST['type'] == 0 || $_POST['type'] == 3 || $_POST['type'] == 4) && $_POST['fac_rec'] <= 0)
 	{
 		$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -1515,13 +1515,13 @@ if ($_GET['action'] == 'create')
 	print $desc;
 	print '</td></tr>'."\n";
 
-	// Proformat
+	// Proforma
 	if ($conf->global->FACTURE_USE_PROFORMAT)
 	{
 		print '<tr height="18"><td width="16px" valign="middle">';
 		print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="true"':'').'>';
 		print '</td><td valign="middle">';
-		$desc=$html->textwithpicto($langs->trans("InvoiceProFormat"),$langs->transnoentities("InvoiceProFormatDesc"),1);
+		$desc=$html->textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
 		print $desc;
 		print '</td></tr>'."\n";
 	}
