@@ -475,6 +475,8 @@ class Commande extends CommonObject
 				// If stock is decremented on validate order, we must reincrement it
 				if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 				{
+					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+
 					$mouvP = new MouvementStock($this->db);
 					// We increment stock of product (and sub-products)
 					$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
