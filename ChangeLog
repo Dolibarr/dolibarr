@@ -34,6 +34,7 @@ For users:
 - Fix: Default language on login page.
 - Fix: Complete support of euros sign (even in PDF).
 - Fix: Bad setup of phpMyAdmin for DoliWamp installer.
+- Fix: Tracking number should be available on sending sheets.
 
 For developers:
 - More comments in code.
