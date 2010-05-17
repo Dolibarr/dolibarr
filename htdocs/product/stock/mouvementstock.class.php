@@ -77,7 +77,7 @@ class MouvementStock
 			dol_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
 			if ($resql = $this->db->query($sql))
 			{
-				$mvid = $this->db->last_insert_id($resql);
+				$mvid = $this->db->last_insert_id(MAIN_DB_PREFIX."stock_mouvement");
 			}
 			else
 			{
