@@ -1,58 +1,58 @@
 # Dolibarr language file - it_IT - errors          
 CHARSET=UTF-8
-ErrorLoginAlreadyExists=Login %s esiste già. 
-ErrorGroupAlreadyExists=Gruppo %s esiste già. 
-ErrorDuplicateTrigger=Un trigger file con class name '<b> %s </b>' è presente più volte. Rimuovi file trigger duplicati dalla directory '<b> %s </b>'.
-ErrorFailToDeleteFile=Impossibile rimuovere il file '<b> %s </b>'.
-ErrorFailToCreateFile=Impossibile creare il file '<b> %s </b>'.
-ErrorFailToRenameDir=Impossibile rinominare la directory '<b> %s </b>' in '<b> %s </b>'.
-ErrorFailToCreateDir=Impossibile creare la directory '<b> %s </b>'.
-ErrorThisContactIsAlreadyDefinedAsThisType=Questo contatto è già stato definito come contatto per questo tipo.
-ErrorCashAccountAcceptsOnlyCashMoney=Questo conto corrente è un conto di cassa, in modo che accetta solo pagamenti in contanti.
-ErrorFromToAccountsMustDiffers=Conti bancari di origine e di destinazione devono essere differenti.
-ErrorBadThirdPartyName=Valore non valido per il nome della terza parte
-ErrorBadCustomerCodeSyntax=Sintassi errata per il codice cliente
-ErrorCustomerCodeRequired=Codice cliente richiesto
-ErrorCustomerCodeAlreadyUsed=Codice cliente già utilizzato
-ErrorPrefixRequired=Prefisso
-ErrorBadSupplierCodeSyntax=Sintassi errata per il codice fornitore
-ErrorSupplierCodeRequired=Il codice fornitore è un dato necessario
-ErrorSupplierCodeAlreadyUsed=Codice fornitore già utilizzato
-ErrorBadParameters=Parametri errati
-ErrorFailedToWriteInDir=Impossibile scrivere nella directory %s
-ErrorFoundBadEmailInFile=Trovata sintassi errata e-mail per %s righe nel file (ad esempio, alla linea %s con e-mail= %s)
-UserCannotBeDelete=L'utente non può essere eliminato. Forse è associato ad alcuni elementi di Dolibarr.
-ErrorFieldsRequired=Alcuni campi obbligatori non sono stati riempiti.
-ErrorFailedToCreateDir=Impossibile creare una directory. Verifica che il server Web utente ha i permessi per scrivere documenti nella directory  Dolibarr. Se il parametro <b> safe_mode </b> è abilitato su questo PHP, verificare che i file php Dolibarr possiede al server web utente (o gruppo).
-ErrorNoMailDefinedForThisUser=Nessun messaggio definito per questo utente
-ErrorFeatureNeedJavascript=Questa funzione javascript necessita di essere attivata al lavoro. Modificare questa impostazione in - visualizzazione.
-ErrorTopMenuMustHaveAParentWithId0=Un menu di tipo 'Top' non può avere un menu principale. Metti 0 menu genitori o scegliere un menu di tipo 'sinistra'.
-ErrorLeftMenuMustHaveAParentId=Un menu di tipo 'rimasto' necessario disporre di un id genitore .
-ErrorFileNotFound=File non trovato (Bad percorso sbagliato autorizzazioni o accesso negato da openbasedir parametro)
-ErrorFunctionNotAvailableInPHP=Funzione <b> %s </b> è necessario per questa funzione, ma non è disponibile in questa versione / configurazione di PHP.
-ErrorDirAlreadyExists=Una directory con questo nome esiste già.
-WarningAllowUrlFopenMustBeOn=Parametro <b> allow_url_fopen </b> deve essere impostato su <b> su </b> nel filer <b> php.ini </b> per avere questo modulo di lavoro completamente. È necessario modificare questo file manualmente.
-ErrorFieldCanNotContainSpecialCharacters=Campo <b> %s </b> non contiene caratteri speciali.
+ErrorLoginAlreadyExists			    =Login %s già esistente
+ErrorGroupAlreadyExists			    =Gruppo %s già esistente
+ErrorDuplicateTrigger				   =Un trigger file con class name '<b> %s </b>' è presente più volte. Rimuovi file trigger duplicati dalla directory '<b> %s </b>'.
+ErrorFailToDeleteFile				   =Impossibile rimuovere il file '<b> %s </b>'.
+ErrorFailToCreateFile				   =Impossibile creare il file '<b> %s </b>'.
+ErrorFailToRenameDir				   =Impossibile rinominare la directory '<b> %s </b>' in '<b> %s </b>'.
+ErrorFailToCreateDir				   =Impossibile creare la directory '<b> %s </b>'.
+ErrorThisContactIsAlreadyDefinedAsThisType	   =Questo contatto è già stato definito come contatto per questo tipo.
+ErrorCashAccountAcceptsOnlyCashMoney		   =Questo conto corrente è un conto di cassa che accetta solo pagamenti in contanti.
+ErrorFromToAccountsMustDiffers			   =Conti bancari di origine e di destinazione devono essere differenti.
+ErrorBadThirdPartyName				   =Valore non valido per il nome della terza parte
+ErrorBadCustomerCodeSyntax			   =Sintassi errata per il codice cliente
+ErrorCustomerCodeRequired			   =Codice cliente necessario
+ErrorCustomerCodeAlreadyUsed			   =Codice cliente già utilizzato
+ErrorPrefixRequired				   =Prefisso necessario
+ErrorBadSupplierCodeSyntax			   =Sintassi errata per il codice fornitore
+ErrorSupplierCodeRequired			   =Il codice fornitore è un dato necessario
+ErrorSupplierCodeAlreadyUsed			   =Codice fornitore già utilizzato
+ErrorBadParameters				   =Parametri errati
+ErrorFailedToWriteInDir				   =Impossibile scrivere nella directory %s
+ErrorFoundBadEmailInFile			   =Trovata sintassi errata e-mail nelle righe %s del file (ad esempio, alla linea %s con e-mail = %s)
+UserCannotBeDelete				   =L'utente non può essere eliminato. Forse è associato ad alcuni elementi di Dolibarr.
+ErrorFieldsRequired				   =Alcuni campi obbligatori non sono stati riempiti.
+ErrorFailedToCreateDir				   =Impossibile creare una directory. Verifica che l'utente del server Web abbia i permessi per scrivere documenti nella directory  Dolibarr. Se il parametro <b> safe_mode </b> è abilitato in PHP, verificare che i file php Dolibarr appartengano all'utente del server web (o gruppo).
+ErrorNoMailDefinedForThisUser			   =Nessun messaggio definito per questo utente
+ErrorFeatureNeedJavascript			   =Questa funzione necessita di javascript per essere attivata. Modificare questa impostazione nel menu Impostazioni -> layout di visualizzazione.
+ErrorTopMenuMustHaveAParentWithId0		   =Un menu di tipo 'Top' non può avere un menu principale. Metti 0 menu genitori o scegliere un menu di tipo 'sinistra'.
+ErrorLeftMenuMustHaveAParentId			   =Un menu di tipo 'sub-menu' deve avere di un id genitore .
+ErrorFileNotFound				   =File non trovato (percorso errato o autorizzazioni insufficienti per l'accesso)
+ErrorFunctionNotAvailableInPHP			   =L'estensione <b> %s </b> è necessaria per questa funzione, ma non è disponibile in questa versione / configurazione di PHP.
+ErrorDirAlreadyExists				   =Una directory con questo nome esiste già.
+WarningAllowUrlFopenMustBeOn			   =Il parametro <b> allow_url_fopen </b> deve essere impostato su <b> on </b> nel file <b> php.ini </b> per avere questo modulo di lavoro completamente funzionante. È necessario modificare questo file manualmente.
+ErrorFieldCanNotContainSpecialCharacters	   =Campo <b> %s </b> non può contenere caratteri speciali.
 
 
 // Date 2009-01-18 19:41:54
 // START - Lines generated via parser
 // Reference language: en_US
 ErrorFailToDeleteDir=Impossibile eliminare directory <b>&#39; %s&#39;.</b>
-ErrorFailedToDeleteJoinedFiles=Impossibile eliminare entità perché non vi è aderito alcuni file. Rimuovere i file prima aderire.
-ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Trovato email sintassi errata per %s righe nel file (ad esempio linea con l&#39;e-mail %s= %s)
-ErrorUserCannotBeDelete=L&#39;utente non può essere soppresso. Può essere che è associato a Dolibarr entità.
-WarningBuildScriptNotRunned=<b>Script %s</b> non è stato ancora eseguito a costruire grafici, o non ci sono dati da visualizzare.
-WarningBookmarkAlreadyExists=Un segnalibro con questo titolo o questo obiettivo (URL) già esistente.
-WarningPassIsEmpty=Attenzione, la password di database è vuoto. Si tratta di un buco di sicurezza. Si dovrebbe aggiungere una password per il database e cambiare il tuo conf.php file per riflettere questo.
-ErrorNoAccountancyModuleLoaded=N. contabile modulo attivato
-ErrorExportDuplicateProfil=Questo profilo nome esiste già fissato per l&#39;esportazione.
-ErrorLDAPSetupNotComplete=Dolibarr-LDAP corrispondenti non è completa.
-ErrorLDAPMakeManualTest=A. Ldif file è stato generato nella directory %s. Prova a caricare manualmente dalla riga di comando per avere maggiori informazioni sugli errori.
-ErrorCantSaveADoneUserWithZeroPercentage=Impossibile salvare un azione con &quot;statuto non iniziato&quot; se il campo &quot;da fare&quot; è anche riempita.
-ErrorRefAlreadyExists=Rif. utilizzato per la creazione esiste già.
-ErrorPleaseTypeBankTransactionReportName=Si prega di tipo bancario ricevimento nome transazione in cui è riportato (o AAAAMM Formato AAAAMMGG)
-ErrorRecordHasChildren=Impossibile eliminare i record in quanto ha alcuni bambini.
+ErrorFailedToDeleteJoinedFiles=Impossibile eliminare file collegati. Rimuovere i collegamenti file prima di rimuovere.
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Trovato sintassi email errata nelle righe %s del file (ad esempio linea con l&#39;e-mail %s = %s)
+ErrorUserCannotBeDelete=L&#39;utente non può essere eliminato. Probabilmente è necessario al funzionamento di Dolibarr.
+WarningBuildScriptNotRunned=<b>Lo script %s</b> per costruire il grafico non è stato eseguito, o non ci sono dati da visualizzare.
+WarningBookmarkAlreadyExists=Un segnalibro con questo titolo o questo link (URL) è già esistente.
+WarningPassIsEmpty=Attenzione, non risulta assegnata la password del database. Si tratta di un buco di sicurezza. Si dovrebbe aggiungere una password per il database e cambiare il conf.php file per riflettere il cambiamento.
+ErrorNoAccountancyModuleLoaded=Modulo contabilità non attivato
+ErrorExportDuplicateProfil=Questo nome di profilo esiste già l&#39;esportazione.
+ErrorLDAPSetupNotComplete=la configurazione per l'uso di LDAP non è completa.
+ErrorLDAPMakeManualTest=Un file Ldif è stato generato nella directory %s. Prova a caricare manualmente dalla riga di comando per avere maggiori informazioni sugli errori.
+ErrorCantSaveADoneUserWithZeroPercentage=Impossibile salvare un azione con &quot;stato non iniziato&quot; se il campo &quot;da fare&quot; non è vuoto.
+ErrorBillRefAlreadyExists=Rif. utilizzato per la creazione esiste già.
+ErrorPleaseTypeBankTransactionReportName=Indicare il nome del report della transazione bancaria (o AAAAMM Formato AAAAMMGG)
+ErrorRecordHasChildren=Impossibile eliminare i record in quanto ha altri record dipendenti.
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
 
@@ -60,6 +60,6 @@ ErrorRecordHasChildren=Impossibile eliminare i record in quanto ha alcuni bambin
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
 // Reference language: en_US
 CHARSET=UTF-8
-MenuManager=Menu gestore
+MenuManager=Gestore menu
 ErrorUrlNotValid=L&#39;indirizzo del sito Internet non è corretto
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

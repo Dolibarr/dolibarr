@@ -3,30 +3,30 @@ CHARSET=UTF-8
 Delivery=Consegna
 Deliveries=Consegne
 DeliveryCard=Scheda consegna
-DeliveryOrder=Consegna dell'ordine
-DeliveryOrders=Consegne degli ordini
+DeliveryOrder=Ordine di consegna
+DeliveryOrders=Ordini di consegna
 DeliveryDate=Data di consegna
 CreateDeliveryOrder=Genera ordine di consegna
 SetDeliveryDate=Imposta la data di spedizione
-ValidateDeliveryReceipt=Valida la ricevuta di consegna
-ValidateDeliveryReceiptConfirm=Sei sicuro di voler validare questa ricevuta di consegna?
+ValidateDeliveryReceipt=Convalida la ricevuta di consegna
+ValidateDeliveryReceiptConfirm=Sei sicuro di voler convalidare questa ricevuta di consegna?
 
 # merou PDF model						   
-NameAndSignature=Nome e firma : 
-ToAndDate=A___________________________________ il ____/_____/__________
-GoodStatusDeclaration=Dichiaro di aver ricevuto le merci di cui sopra in buone condizioni,
-Deliverer=Chi consegna : 
-Date=Data : 
-Sender=Mittente
-Recipient=Destinatario
-ICOMM=N° Part. IVA : 
-APE=Iscr. trib. : 
-SIRET=R.E.A. : 
+NameAndSignature				=Nome e firma : 
+ToAndDate 						=A___________________________________ il ____/_____/__________
+GoodStatusDeclaration 			=Dichiaro di aver ricevuto le merci di cui sopra in buone condizioni,
+Deliverer						=Chi consegna : 
+Date 							=Data : 
+Sender							=Mittente
+Recipient						=Destinatario
+ICOMM							=N° Part. IVA : 
+APE								=Iscr. trib. : 
+SIRET							=R.E.A. : 
 
 // Date 2009-01-18 19:41:54
 // START - Lines generated via parser
 // Reference language: en_US
-DeliveryDateShort=Consegna. data
+DeliveryDateShort=Data consegna
 QtyDelivered=Quantità consegnata
 DeliveryMethod=Metodo di consegna
 TrackingNumber=Numero di tracking

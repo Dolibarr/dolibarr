@@ -1,24 +1,24 @@
 # Dolibarr language file - it_IT - trips    
 CHARSET=UTF-8
-Trip=Viaggio 
-Trips=Viaggi 
-TripsAndExpenses=Viaggi e spese 
-TripCard=Scheda viaggio 
-AddTrip=Aggiungi viaggio 
-ListOfTrips=Elenco dei viaggi 
-ListOfFees=Elenco delle tasse 
-NewTrip=Nuovo viaggio 
-CompanyVisited=Società / Fondazione visitato 
-Kilometers=Chilometri 
-FeesKilometersOrAmout=O importo km 
-DeleteTrip=Elimina viaggio 
-ConfirmDeleteTrip=Sei sicuro di voler eliminare questo viaggio? 
-TF_OTHER=Altro 
-TF_LUNCH=Pranzo 
-TF_TRIP=Viaggio
+Trip					    =Viaggio 
+Trips					    =Viaggi 
+TripsAndExpenses			    =Viaggi e spese 
+TripCard				    =Scheda viaggio 
+AddTrip					    =Aggiungi viaggio 
+ListOfTrips				    =Elenco dei viaggi 
+ListOfFees				    =Elenco delle tariffe 
+NewTrip					    =Nuovo viaggio 
+CompanyVisited				    =Società / Fondazione visitata 
+Kilometers				    =Chilometri 
+FeesKilometersOrAmout			    =Tariffa kilometrica o importo
+DeleteTrip				    =Elimina viaggio 
+ConfirmDeleteTrip			    =Sei sicuro di voler eliminare questo viaggio? 
+TF_OTHER				    =Altro 
+TF_LUNCH				    =Pranzo 
+TF_TRIP					    =Viaggio
 
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
 // Reference language: en_US
-ListTripsAndExpenses=Elenco dei viaggi e le spese
+ListTripsAndExpenses=Elenco dei viaggi e delle spese
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

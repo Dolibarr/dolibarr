@@ -1,32 +1,33 @@
 # Dolibarr language file - it_IT - projects 
 CHARSET=UTF-8
-Project=Progetto 
-Projects=Progetti 
-Myprojects=I miei progetti 
-ProjectsArea=Sezione progetti 
-NewProject=Nuovo progetto 
-AddProject=Aggiungi il progetto 
-DeleteAProject=Supprimer un progetto 
-OfficerProject=Ufficiale di progetto 
-ConfirmDeleteAProject=Sei sicuro di voler eliminare questo progetto? 
-LastProjects=Ultimi %s progetti 
-AllProjects=Tutti i progetti 
-ShowProject=Visualizza progetto 
-SetProject=Impostare progetto 
-NoProject=Nessun progetto definito 
-NbOpenTasks=Numeri aperto compiti 
-MyTasks=I miei compiti 
-Tasks=Compiti 
-Task=Attività 
-NewTask=Nuova attività 
-AddDuration=Aggiungi durata 
-Activity=Attività 
-MyActivity=La mia attività 
-DurationEffective=Durata effettiva 
-ListProposalsAssociatedProject=L'elenco delle proposte commerciali associati al progetto 
-ListOrdersAssociatedProject=Gli elenchi degli ordini associati al progetto 
-ListInvoicesAssociatedProject=L'elenco delle fatture connesse con il progetto
-
+Project					    =Progetto 
+Projects				    =Progetti 
+Myprojects				    =I miei progetti 
+ProjectsArea				    =Sezione progetti 
+NewProject				    =Nuovo progetto 
+AddProject				    =Aggiungi un progetto 
+DeleteAProject				    =Elimina un progetto 
+OfficerProject				    =Responsabile del progetto 
+ConfirmDeleteAProject			    =Sei sicuro di voler eliminare questo progetto? 
+LastProjects				    =Ultimi %s progetti 
+AllProjects				    =Tutti i progetti 
+ShowProject				    =Visualizza progetto 
+SetProject				    =Imposta progetto 
+NoProject				    =Nessun progetto definito 
+NbOpenTasks				    =Numeri attività aperte
+MyTasks					    =Le mie attività 
+Tasks					    =Attività
+Task					    =Attività 
+NewTask					    =Nuova attività 
+AddDuration				    =Aggiungi durata 
+Activity				    =Attività 
+MyActivity				    =La mia attività 
+DurationEffective			    =Durata effettiva 
+ListProposalsAssociatedProject		    =Elenco delle proposte commerciali associate al progetto 
+ListOrdersAssociatedProject		    =Elenco degli ordini associati al progetto 
+ListInvoicesAssociatedProject		    =Elenco delle fatture associate al progetto
+SimpleNumRefModelDesc			    =Restituisce un numero di riferimento nel formato PJyymm-nnnn dove yy è l'anno, mm è il mese e nnnn è una sequenza progressiva che non ritorna a 0.
+DocumentModelBaleine			    =Modello di rapporto di progetto completo (logo, etc..)
 
 // Date 2009-01-18 19:41:54
 // START - Lines generated via parser
@@ -35,7 +36,7 @@ SharedProject=Progetto condiviso
 DeleteATask=Eliminazione di un compito
 ConfirmDeleteATask=Sei sicuro di voler eliminare questo compito?
 ProjectsList=Elenco dei progetti
-NbOfProjects=Numero di progetti
+NbOfProjects=Numero dei progetti
 TimeSpent=Tempo trascorso
 RefTask=Rif. attività
 LabelTask=Etichetta compito
@@ -46,13 +47,13 @@ Activities=Compiti / attività
 MyActivities=I miei compiti / attività
 MyProjects=I miei progetti
 Time=Tempo
-ListSupplierOrdersAssociatedProject=Elenco dei fornitori ordini associati al progetto
-ListSupplierInvoicesAssociatedProject=Elenco delle fatture fornitori associati al progetto
+ListSupplierOrdersAssociatedProject=Elenco degli ordini fornitori associati al progetto
+ListSupplierInvoicesAssociatedProject=Elenco delle fatture fornitori associate al progetto
 ListContractAssociatedProject=Elenco dei contratti associati al progetto
 ActivityOnProjectThisWeek=Attività sul progetto di questa settimana
 ActivityOnProjectThisMonth=Attività sul progetto di questo mese
-ActivityOnProjectThisYear=Attività sul progetto in corso
-ChildOfTask=Fanciullo del progetto / attività
+ActivityOnProjectThisYear=Attività sul progetto nell'anno in corso
+ChildOfTask=Figlio del progetto / attività
 NotOwnerOfProject=Non proprietario di questo progetto privato
 AffectedTo=Interessato a
 // Date 2009-01-18 19:41:54
@@ -62,6 +63,6 @@ AffectedTo=Interessato a
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
 // Reference language: en_US
 CHARSET=UTF-8
-ListPredefinedInvoicesAssociatedProject=Elenco dei clienti &#39;fatture predefiniti associati con il progetto
-CantRemoveProject=Questo progetto non può essere rimosso in quanto è di riferimento da parte di alcuni altri oggetti (fatture, ordini o altri). Vedi scheda referers.
+ListPredefinedInvoicesAssociatedProject=Elenco delle fatture clienti predefinite associate con il progetto
+CantRemoveProject=Questo progetto non può essere rimosso in quanto è di riferimento per alcuni altri oggetti (fatture, ordini o altri). Vedi scheda referers.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

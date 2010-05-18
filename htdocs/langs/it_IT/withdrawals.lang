@@ -1,41 +1,41 @@
 # Dolibarr language file - it_IT - withdrawals "bonifico periodico" o "disposizione permanente di bonifico", se è una domiciliazione di bollette è meglio "RID".
 CHARSET=UTF-8
-StandingOrdersArea=Sezione ordini permanenti 
-CustomersStandingOrdersArea=Sezione ordini permanenti clienti
-StandingOrders=Ordini permanenti 
-StandingOrder=Ordini permanenti 
-NewStandingOrder=Nuovo ordine permanente 
-Withdrawals=Prelievi 
-Withdrawal=Ritiro 
-WithdrawalsReceipts=Ricevute prelievi
-WithdrawalReceipt=Ricevuta domiciliazione
-WithdrawalReceiptShort=Ricevuta 
-LastWithdrawalReceipts=Ultimo %s ricevute dei prelievi 
-WithdrawedBills=Fatture delle domiciliazioni
-WithdrawalsLines=Linee delle domiciliazioni
-RequestStandingOrderToTreat=Richiesta di ordini permanenti da trattare
-RequestStandingOrderTreated=Richiesta di ordini permanenti trattati 
-CustomersStandingOrders=Ordini permanenti clienti  
-CustomerStandingOrder=Ordine permanente cliente 
+StandingOrdersArea			       =Sezione ordini permanenti 
+CustomersStandingOrdersArea		       =Sezione ordini permanenti clienti
+StandingOrders				       =Ordini permanenti 
+StandingOrder				       =Ordine permanente 
+NewStandingOrder			       =Nuovo ordine permanente 
+Withdrawals				       =Prelievi 
+Withdrawal				       =Prelievo 
+WithdrawalsReceipts			       =Ricevute prelievi
+WithdrawalReceipt			       =Ricevuta prelievo
+WithdrawalReceiptShort			       =Ricevuta 
+LastWithdrawalReceipts			       =Ultimo %s ricevute dei prelievi 
+WithdrawedBills				       =Fatture delle domiciliazioni
+WithdrawalsLines			       =Linee dei prelievi
+RequestStandingOrderToTreat		       =Richiesta di ordini permanenti da trattare
+RequestStandingOrderTreated		       =Richiesta di ordini permanenti trattati 
+CustomersStandingOrders			       =Ordini permanenti clienti  
+CustomerStandingOrder			       =Ordine permanente cliente 
 
 // Date 2009-01-18 19:41:54
 // START - Lines generated via parser
 // Reference language: en_US
-NbOfInvoiceToWithdraw=Nb di ritirare la richiesta con fattura
-InvoiceWaitingWithdraw=Fattura di attesa per ritirare
-AmountToWithdraw=Importo di ritirare
-WithdrawsRefused=Ritira rifiutato
-NoInvoiceToWithdraw=Nessun cliente fattura in modalità di pagamento &quot;ritirare&quot; è in attesa. Vai su &#39;Prelevare&#39; sulla scheda fattura carta a fare una richiesta.
-ResponsibleUser=Merito utente
-WithdrawalsSetup=Ritiro di setup
-WithdrawStatistics=Ritira &#39;statistiche
-WithdrawRejectStatistics=Prelevare respinge &#39;statistiche
-LastWithdrawalReceipt=Ultimo %s ritiro ricevute
-MakeWithdrawRequest=Effettuare una richiesta di ritirare
-ThirdPartyBankCode=Da parte di terzi codice bancario
-ThirdPartyDeskCode=Scrivania codice da parte di terzi
-NoInvoiceCouldBeWithdrawed=N. fattura withdrawed con successo. Verificare che sulla fattura sono le imprese con un valido BAN.
-ClassCredited=Classificazione accreditati
-ClassCreditedConfirm=Sei sicuro di voler classificare questo ritiro ricevuta come accreditati sul vostro conto in banca?
+NbOfInvoiceToWithdraw=N di fatture da prelevare 
+InvoiceWaitingWithdraw=Fattura di attesa di prelievo
+AmountToWithdraw=Importo da prelevare
+WithdrawsRefused=Prelievo rifiutato
+NoInvoiceToWithdraw=Nessuna fattura clienti in modalità di pagamento prelievo è in attesa. Vai alla scheda fattura prelievi e fai una richiesta.
+ResponsibleUser=Utente responsabile
+WithdrawalsSetup=Impostazione prelievi
+WithdrawStatistics=Statistiche prelievi
+WithdrawRejectStatistics=Statistiche prelievi respinti
+LastWithdrawalReceipt=Ultime %s ricevute prelievo
+MakeWithdrawRequest=Effettuare una richiesta di prelievo
+ThirdPartyBankCode=Codice bancario di terze parti
+ThirdPartyDeskCode=Codice ufficio di terze parti
+NoInvoiceCouldBeWithdrawed=Non ci sono fatture riscuotibili con prelievo. Verificare che sulle fatture sia riportato il corretto codice IBAN.
+ClassCredited=Classifica accreditata
+ClassCreditedConfirm=Sei sicuro di voler classificare questa ricevuta di prelievo come accreditata sul vostro conto bancario?
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser

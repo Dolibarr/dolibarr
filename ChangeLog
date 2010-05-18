@@ -36,6 +36,9 @@ For users:
 - Fix: Bad setup of phpMyAdmin for DoliWamp installer.
 - Fix: Tracking number should be available on sending sheets.
 
+For tranlators:
+- Fix: Major update of italian translation.
+
 For developers:
 - More comments in code.
 - Uniformize some code. 

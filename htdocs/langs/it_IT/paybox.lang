@@ -1,0 +1,32 @@
+/*
+ * Language code: it_IT
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-13 20:49:18
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+PayBoxSetup=Impostazioni modulo Paybox
+PayBoxDesc=Questo modulo offre la possibilità per i clienti di pagare prodotti e servizi tramite il servizio gratuito on-line offerto da  <a href="http://www.paybox.com" target="_blank">Paybox</a>. 
+FollowingUrlAreAvailableToMakePayments=Di seguito sono disponibili gli URL di una pagina che offre a un cliente la possibilità di effettuare un pagamento sui vari oggetti Dolibarr (fatture, prodotti, etc..)
+PaymentForm=Forma di pagamento
+WelcomeOnPaymentPage=Benvenuti sul nostro servizio di pagamento online
+ThisScreenAllowsYouToPay=Questa schermata consente di effettuare un pagamento online su %s.
+ThisIsInformationOnPayment=Si tratta di informazioni per effettuare un pagamento
+ToComplete=Per completare
+YourEMail=E-mail per la conferma del pagamento
+Creditor=Creditore
+PaymentCode=Codice pagamento
+PayBoxDoPayment=Vai a pagamento
+YouWillBeRedirectedOnPayBox=Verrai reindirizzato sulle pagine sicure di Paybox per inserire le informazioni della carta di credito
+PleaseBePatient=Vi preghiamo di essere pazienti
+Continue=Successivo
+ToOfferALinkForOnlinePaymentOnOrder=URL per offrire il pagamento on-line tramite %s per un ordine
+ToOfferALinkForOnlinePaymentOnInvoice=URL per offrire il pagamento on-line tramite %s per una fattura
+ToOfferALinkForOnlinePaymentOnContractLine=URL per offrire il pagamento on-line tramite %s per un contratto di linea
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL di offrire il pagamento on-line tramite %s per un importo libero
+YouCanAddTagOnUrl=È inoltre possibile aggiungere il parametro <b>&tag=<i>valore</i></b> ad uno qualsiasi di questi URL per specificare un commento personalizzato al pagamento (obbligatorio solo per il pagamento libero).
+SetupPayBoxToHavePaymentCreatedAutomatically=Imposta il tuo Paybox tramite l'url <b>%s</b> per creare automaticamente il pagamento quando viene convalidato da Paybox.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
