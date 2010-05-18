@@ -76,7 +76,7 @@ if ($resql)
 	$i=0;
 	while($obj=$db->fetch_object($resql))
 	{
-	var_dump($obj);
+		//var_dump($obj);
 		$i++;
 		$property[$i]['field']=$obj->Field;
 		if ($obj->Key == 'PRI')
