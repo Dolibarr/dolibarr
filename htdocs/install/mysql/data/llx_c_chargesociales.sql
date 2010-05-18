@@ -50,8 +50,8 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 --
 -- Belgique
 --
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 201, 'ONSS',						1,1,'BE_TAXONSS'   ,'2');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 210, 'Precompte professionnel', 	1,1,'BE_TAXPREPRO' ,'2');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 220, 'Prime d'existence', 		1,1,'BE_TAXPRIEXI' ,'2');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 230, 'Precompte immobilier', 	1,1,'BE_TAXPREIMMO','2');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 201, 'ONSS',						1,1,'BETAXONSS'   ,'2');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 210, 'Precompte professionnel', 	1,1,'BETAXPREPRO' ,'2');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 220, 'Prime d\'existence', 		1,1,'BETAXPRIEXI' ,'2');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 230, 'Precompte immobilier', 	1,1,'BETAXPREIMMO','2');
 
