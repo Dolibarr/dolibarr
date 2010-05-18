@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -32,10 +32,13 @@
 -- Types de charges
 --
 
+--
+-- France
+--
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 1, 'Allocations familiales', 1,1,'TAXFAM'   ,'1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 2, 'CSG Deductible',         1,1,'TAXCSGD'  ,'1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 3, 'CSG/CRDS NON Deductible',0,1,'TAXCSGND' ,'1');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (10, 'Taxe apprenttissage',    0,1,'TAXAPP'   ,'1');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (10, 'Taxe apprentissage',     0,1,'TAXAPP'   ,'1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (11, 'Taxe professionnelle',   0,1,'TAXPRO'   ,'1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (20, 'Impots locaux/fonciers', 0,1,'TAXFON'   ,'1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (25, 'Impots revenus',         0,1,'TAXREV'   ,'1');
@@ -43,3 +46,12 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (40, 'Mutuelle',               0,1,'TAXMUT'   ,'1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (50, 'Assurance vieillesse',   0,1,'TAXRET'   ,'1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (60, 'Assurance Chomage',      0,1,'TAXCHOM'  ,'1');
+
+--
+-- Belgique
+--
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 201, 'ONSS',						1,1,'BE_TAXONSS'   ,'2');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 210, 'Precompte professionnel', 	1,1,'BE_TAXPREPRO' ,'2');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 220, 'Prime d'existence', 		1,1,'BE_TAXPRIEXI' ,'2');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 230, 'Precompte immobilier', 	1,1,'BE_TAXPREIMMO','2');
+
