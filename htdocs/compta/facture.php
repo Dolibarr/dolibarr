@@ -1768,7 +1768,7 @@ if ($_GET['action'] == 'create')
 		$title=$langs->trans('Services');
 
 		$sql = 'SELECT pt.rowid, pt.description,';
-		$sql = ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
+		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
 		$sql.= ' pt.date_ouverture_prevue as date_debut_prevue, pt.date_ouverture as date_debut_reel,';
 		$sql.= ' pt.date_fin_validite as date_fin_prevue, pt.date_cloture as date_fin_reel,';
 		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
