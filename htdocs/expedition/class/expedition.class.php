@@ -362,11 +362,13 @@ class Expedition extends CommonObject
 		// Define new ref
 		$num = "EXP".$this->id;
 
+		$now=dol_now();
+
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
 		$sql.= " ref='".$num."'";
 		$sql.= ", fk_statut = 1";
-		$sql.= ", date_valid = ".$this->db->idate(mktime());
+		$sql.= ", date_valid = '".$this->db->idate($now)."'";
 		$sql.= ", fk_user_valid = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -374,8 +376,8 @@ class Expedition extends CommonObject
 		$resql=$this->db->query($sql);
 		if (! $resql)
 		{
-			dol_syslog("Expedition::valid() Echec update - 10 - sql=".$sql, LOG_ERR);
-			dol_print_error($this->db);
+			dol_syslog("Expedition::valid Echec update - 10 - sql=".$sql, LOG_ERR);
+			$this->error=$this->db->lasterror();
 			$error++;
 		}
 
@@ -384,7 +386,7 @@ class Expedition extends CommonObject
 			// If stock increment is done on sending (recommanded choice)
 			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 			{
-				require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
+				require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 				// Loop on each product line to add a stock movement
 				// TODO possibilite d'expedier a partir d'une propale ou autre origine
@@ -420,7 +422,7 @@ class Expedition extends CommonObject
 				else
 				{
 					$this->db->rollback();
-					$this->error=$this->db->error()." - sql=$sql";
+					$this->error=$this->db->error();
 					dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
 					return -2;
 				}
@@ -463,7 +465,7 @@ class Expedition extends CommonObject
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('DELIVERY_VALIDATE',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('SHIPPING_VALIDATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
@@ -475,9 +477,13 @@ class Expedition extends CommonObject
 		}
 		else
 		{
+			foreach($this->errors as $errmsg)
+			{
+	            dol_syslog(get_class($this)."::valid ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
 			$this->db->rollback();
-			$this->error=$this->db->lasterror();
-			return -1;
+			return -1*$error;
 		}
 	}
 
@@ -630,15 +636,12 @@ class Expedition extends CommonObject
 		{
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
+	            // Call triggers
+	            include_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('SHIPPING_MODIFY',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            // End call triggers
 	    	}
 		}
 
