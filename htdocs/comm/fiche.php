@@ -406,13 +406,11 @@ if ($socid > 0)
 		{
 			$var=true;
 			$num = $db->num_rows($resql);
-			if ($num > 0)
-			{
-				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$objsoc->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td></tr></table></td>';
-				print '</tr>';
-				$var=!$var;
-			}
+
+			print '<tr class="liste_titre">';
+			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$objsoc->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td></tr></table></td>';
+			print '</tr>';
+
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
@@ -460,12 +458,11 @@ if ($socid > 0)
 		{
 			$var=true;
 			$num = $db->num_rows($resql);
-			if ($num >0 )
-			{
-				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllOrders").' ('.$num.')</a></td></tr></table></td>';
-				print '</tr>';
-			}
+
+			print '<tr class="liste_titre">';
+			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllOrders").' ('.$num.')</a></td></tr></table></td>';
+			print '</tr>';
+
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{

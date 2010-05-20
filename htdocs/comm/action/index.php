@@ -249,8 +249,7 @@ if ($resql)
 		$action->userdone->id=$obj->fk_user_done;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
-		// They are date start and end of action but modified to not be outside
-		// calendar view.
+		// They are date start and end of action but modified to not be outside calendar view.
 		if ($action->percentage <= 0)
 		{
 			$action->date_start_in_calendar=$action->datep;
@@ -269,37 +268,43 @@ if ($resql)
 			$action->ponctuel=1;
 		}
 
-		if ($action->date_start_in_calendar < $firstdaytoshow) $action->date_start_in_calendar=$firstdaytoshow;
-		if ($action->date_end_in_calendar > $lastdaytoshow) $action->date_end_in_calendar=$lastdaytoshow;
-
-		// Add an entry in actionarray for each day
-		$daycursor=$action->date_start_in_calendar;
-		$annee = date('Y',$daycursor);
-		$mois = date('m',$daycursor);
-		$jour = date('d',$daycursor);
-
-		// Loop on each day covered by action to prepare an index to show on calendar
-		$loop=true; $j=0;
-		$daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
-		do
+		// Check values
+		if ($action->date_end_in_calendar < $firstdaytoshow ||
+		$action->date_start_in_calendar > $lastdaytoshow)
 		{
-			//if ($action->id==408) print 'daykey='.$daykey.' '.$action->datep.' '.$action->datef.'<br>';
-
-			//if ($action->datef && $action->datef == $daykey && $action->datep < $action->datef)
-			//{	// We discard such index. This means it's end of a range ending on last day + 1 at 00:00:00.
-			//}
-			//else
-			//{
-			$actionarray[$daykey][]=$action;
-			$j++;
-			//}
-			$daykey+=60*60*24;
-			if ($daykey > $action->date_end_in_calendar) $loop=false;
+			// This record is out of visible range
 		}
-		while ($loop);
+		else
+		{
+			if ($action->date_start_in_calendar < $firstdaytoshow) $action->date_start_in_calendar=$firstdaytoshow;
+			if ($action->date_end_in_calendar > $lastdaytoshow) $action->date_end_in_calendar=$lastdaytoshow;
+
+			// Add an entry in actionarray for each day
+			$daycursor=$action->date_start_in_calendar;
+			$annee = date('Y',$daycursor);
+			$mois = date('m',$daycursor);
+			$jour = date('d',$daycursor);
+
+			// Loop on each day covered by action to prepare an index to show on calendar
+			$loop=true; $j=0;
+			$daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
+			do
+			{
+				//if ($action->id==408) print 'daykey='.$daykey.' '.$action->datep.' '.$action->datef.'<br>';
+
+				$actionarray[$daykey][]=$action;
+				$j++;
+
+				$daykey+=60*60*24;
+				if ($daykey > $action->date_end_in_calendar) $loop=false;
+			}
+			while ($loop);
+
+			//print 'Event '.$i.' id='.$action->id.' (start='.dol_print_date($action->datep).'-end='.dol_print_date($action->datef);
+			//print ' startincalendar='.dol_print_date($action->date_start_in_calendar).'-endincalendar='.dol_print_date($action->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
+		}
 		$i++;
 
-		//print 'Event '.$i.' id='.$action->id.' (start='.dol_print_date($action->datep).'-end='.dol_print_date($action->datef).') was added in '.$j.' different index days in array<br>';
 	}
 }
 else
@@ -405,14 +410,15 @@ if ($_GET["action"] != 'show_day')		// View by month
 	}
 	echo " </tr>\n";
 
-	// In loops, tmpday contains day nb in current month (can be negative for days of previous month)
+	// In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
+	//var_dump($actionarray);
+	//print $tmpday;
 	for($iter_week = 0; $iter_week < 6 ; $iter_week++)
 	{
 		echo " <tr>\n";
 		for($iter_day = 0; $iter_day < 7; $iter_day++)
 		{
-			/* Show days before the beginning of the current month
-			 (previous month)  */
+			/* Show days before the beginning of the current month (previous month)  */
 			if($tmpday <= 0)
 			{
 				$style='cal_other_month';

@@ -65,7 +65,7 @@ class Propal extends CommonObject
 	var $datec;						// Date of creation
 	var $datev;						// Date of validation
 	var $date;						// Date of proposal
-	var $datep;						// Duplicate with date
+	var $datep;						// Same than date
 	var $date_livraison;
 	var $fin_validite;
 

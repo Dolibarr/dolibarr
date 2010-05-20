@@ -623,6 +623,7 @@ else
 			$html->select_date($fac->datep,'','','','',"update",1,1);
 			print '</td></tr>';
 
+			// Due date
 			print '<tr><td>'.$langs->trans('DateEcheance').'</td><td nowrap="nowrap">';
 			$html->select_date($fac->date_echeance,'ech','','','',"update",1,1);
 			if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
@@ -875,7 +876,7 @@ else
 			print '<tr>';
 			print '<td>'.$langs->trans('DateEcheance').'</td><td colspan="3">';
 			print dol_print_date($fac->date_echeance,'daytext');
-			if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+			if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td></tr>';
 
 			// Status

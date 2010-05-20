@@ -216,29 +216,28 @@ class Fournisseur extends Societe
 	}
 
 	/**
-	 *    \brief      Cr�� une categorie fournisseur
-	 *    \param      user        Utilisateur qui cr�e
-	 *	\param		name		Nom categorie
-	 *    \return     int         <0 si ko, 0 si ok
+	 *    	\brief      Create a supplier category
+	 *    	\param      user        User asking creation
+	 *		\param		name		Nom categorie
+	 *    	\return     int         <0 si ko, 0 si ok
 	 */
 	function CreateCategory($user, $name)
 	{
-		dol_syslog("Fournisseur::CreateCategory");
-
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
 		$sql.= " VALUES ";
 		$sql.= " ('".addslashes($name)."',1,1)";
 
-		$result = $this->db->query($sql);
-
-		if ($result == 1)
+		dol_syslog("Fournisseur::CreateCategory sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
 			dol_syslog("Fournisseur::CreateCategory : Success");
 			return 0;
 		}
 		else
 		{
-			dol_syslog("Fournisseur::CreateCategory : Failed (".$this->db->error().")");
+			$this->error=$this->db->lasterror();
+			dol_syslog("Fournisseur::CreateCategory : Failed (".$this->error.")");
 			return -1;
 		}
 	}

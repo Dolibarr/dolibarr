@@ -191,7 +191,7 @@ if ( $societe->fetch($socid) )
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?$num:$MAXLIST)).'</td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
 			print '<td align="right"><a href="commande/liste.php?socid='.$societe->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td></tr></table>';
 			print '</td></tr>';
 			while ($i < $num && $i <= $MAXLIST)
@@ -234,10 +234,13 @@ if ( $societe->fetch($socid) )
 
 	if ($user->rights->fournisseur->facture->lire)
 	{
-		$sql = 'SELECT p.rowid,p.libelle,p.facnumber,p.fk_statut, p.datef as df, total_ttc as amount, paye';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as p';
-		$sql.= ' WHERE p.fk_soc = '.$societe->id;
-		$sql.= ' ORDER BY p.datef DESC';
+		$sql = 'SELECT f.rowid,f.libelle,f.facnumber,f.fk_statut,f.datef as df,f.total_ttc as amount,f.paye,';
+		$sql.= ' SUM(pf.amount) as am';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn';
+		$sql.= ' WHERE f.fk_soc = '.$societe->id;
+		$sql.= ' GROUP BY f.rowid,f.libelle,f.facnumber,f.fk_statut,f.datef,f.total_ttc,f.paye';
+		$sql.= ' ORDER BY f.datef DESC';
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -258,7 +261,9 @@ if ( $societe->fetch($socid) )
 				print img_object($langs->trans('ShowBill'),'bill').' '.$obj->facnumber.'</a> '.dol_trunc($obj->libelle,14).'</td>';
 				print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->df),'day').'</td>';
 				print '<td align="right" nowrap="nowrap">'.price($obj->amount).'</td>';
-				print '<td align="right" nowrap="nowrap">'.$facturestatic->LibStatut($obj->paye,$obj->fk_statut,5).'</td>';
+				print '<td align="right" nowrap="nowrap">';
+				print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$obj->am);
+				print '</td>';
 				print '</tr>';
 				$i++;
 			}
