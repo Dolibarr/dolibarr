@@ -465,8 +465,9 @@ class Task extends CommonObject
 		//print $usert.'-'.$userp.'-'.$projectid.'-'.$socid.'-'.$mode.'<br>';
 
 		// List of tasks (does not care about permissions. Filtering will be done later)
-		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public";
-		$sql.= ", t.rowid as taskid, t.label, t.fk_task_parent, t.duration_effective, t.progress";
+		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public,";
+		$sql.= " t.rowid as taskid, t.label, t.fk_task_parent, t.duration_effective, t.progress,";
+		$sql.= " t.dateo as date_start, t.datee as date_end";
 		if ($mode == 0)
 		{
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -528,6 +529,8 @@ class Task extends CommonObject
 					$tasks[$i]->duration     = $obj->duration_effective;
 					$tasks[$i]->progress     = $obj->progress;
 					$tasks[$i]->public       = $obj->public;
+					$tasks[$i]->date_start   = $this->db->jdate($obj->date_start);
+					$tasks[$i]->date_end     = $this->db->jdate($obj->date_end);
 				}
 
 				$i++;
