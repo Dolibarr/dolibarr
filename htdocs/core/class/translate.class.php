@@ -397,7 +397,7 @@ class Translate {
 		if (! empty($this->tab_translate[$key]))	// Translation is available
 		{
 			$str=preg_replace('/\\\"/','"',$this->tab_translate[$key]);	// To solve some translation keys containing key=abc\"def\"ghi instead of abc"def"ghi
-			if (! preg_match('/^Format/',$str)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d
+			if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d
 			if ($maxsize) $str=dol_trunc($str,$maxsize);
 			// On remplace les tags HTML par __xx__ pour eviter traduction par htmlentities
 			$newstr=str_replace('<','__lt__',$str);
