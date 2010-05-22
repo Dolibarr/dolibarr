@@ -51,7 +51,9 @@ if (! empty($_GET["login"]))    $filters['login']=$_GET["login"];
 if (! empty($_GET["logina"]))   $filters['logina']=$_GET["logina"];
 if (! empty($_GET["logint"]))   $filters['logint']=$_GET["logint"];
 if (! empty($_GET["logind"]))   $filters['logind']=$_GET["logind"];
-
+// Not older than
+if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY=100;
+$filters['notolderthan']=$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
 
 // Check config
 if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))
@@ -74,6 +76,7 @@ if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_
 	llxFooterVierge('$Date$ - $Revision$');
 	exit;
 }
+
 
 // Define filename with prefix on filters predica (each predica set must have on cache file)
 $filename='';

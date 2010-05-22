@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.9 compared to 2.8 *****
 
 For users:
+- New: Can set a past delay to limit calendar export.
 - New: Can join files on emailing campaigns.
 - New: Add statistics on trips and expenses module.
 - New: Can reopen a closed customer order.

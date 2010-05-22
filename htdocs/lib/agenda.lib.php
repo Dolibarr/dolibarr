@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -306,7 +306,7 @@ function agenda_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
-	$head[$h][1] = $langs->trans("Other");
+	$head[$h][1] = $langs->trans("Export");
 	$head[$h][2] = 'xcal';
 	$h++;
 

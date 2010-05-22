@@ -1138,6 +1138,7 @@ YourCompanyDoesNotUseVAT=Votre institution est configurée comme non assujettie 
 ##### Agenda #####= undefined
 AgendaSetup= Configuration du module actions et agenda
 PasswordTogetVCalExport= Clé pour autoriser lien export
+PastDelayVCalExport=Ne pas exporter les évênements de plus de
 ##### ClickToDial #####= undefined
 ClickToDialDesc= Ce module permet d'ajouter un petit picto à côté des numéros de téléphones des contacts. Un clic sur ce picto provoque l'appel de l'URL définie dans ce paramétrage. Ceci permet de provoquer des appels à un serveur de téléphonie depuis Dolibarr qui peut alors composer le numéro sur un system SIP par exemple.
 ##### Point Of Sales (CashDesk) #####

@@ -46,9 +46,10 @@ if ($actionsave)
     $db->begin();
 
     $i+=dolibarr_set_const($db,'MAIN_AGENDA_XCAL_EXPORTKEY',trim($_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_PAST_DELAY',trim($_POST["MAIN_AGENDA_EXPORT_PAST_DELAY"]),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_CACHE',trim($_POST["MAIN_AGENDA_EXPORT_CACHE"]),'chaine',0,'',$conf->entity);
 
-    if ($i >= 2)
+    if ($i >= 3)
     {
         $db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
@@ -65,6 +66,8 @@ if ($actionsave)
 /**
  * View
  */
+
+if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY=100;
 
 llxHeader();
 
@@ -98,6 +101,12 @@ print "<td>&nbsp;</td>";
 print "</tr>";
 
 print "<tr class=\"pair\">";
+print "<td>".$langs->trans("PastDelayVCalExport")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_EXPORT_PAST_DELAY\" value=\"". ($_POST["MAIN_AGENDA_EXPORT_PAST_DELAY"]?$_POST["MAIN_AGENDA_EXPORT_PAST_DELAY"]:$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY) . "\" size=\"10\"> ".$langs->trans("days")."</td>";
+print "<td>&nbsp;</td>";
+print "</tr>";
+
+print "<tr class=\"impair\">";
 print "<td>".$langs->trans("UseACacheDelay")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_EXPORT_CACHE\" value=\"". ($_POST["MAIN_AGENDA_EXPORT_CACHE"]?$_POST["MAIN_AGENDA_EXPORT_CACHE"]:$conf->global->MAIN_AGENDA_EXPORT_CACHE) . "\" size=\"10\"></td>";
 print "<td>&nbsp;</td>";

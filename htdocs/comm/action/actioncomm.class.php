@@ -585,6 +585,7 @@ class ActionComm
 		global $conf,$langs,$dolibarr_main_url_root;
 
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
+		require_once (DOL_DOCUMENT_ROOT ."/lib/date.lib.php");
 
 		dol_syslog("ActionComm::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
 
@@ -609,12 +610,14 @@ class ActionComm
 		$buildfile=true;
 		$login='';$logina='';$logind='';$logint='';
 
+		$now = dol_now();
+
 		if ($cachedelay)
 		{
-			$now = gmmktime();
-			if (filemtime($outputfile) > ($now - $cachedelay))
+			$nowgmt = dol_now('gmt');
+			if (filemtime($outputfile) > ($nowgmt - $cachedelay))
 			{
-				dol_syslog("ActionComm::build_exportfile file ".$outputfile." not older than now - cachedelay (".$now." - ".$cachedelay."). Build is canceled");
+				dol_syslog("ActionComm::build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
 				$buildfile = false;
 			}
 		}
@@ -625,8 +628,8 @@ class ActionComm
 			$eventarray=array();
 
 			$sql = "SELECT a.id,";
-			$sql.= " a.datep,";
-			$sql.= " a.datep2,";
+			$sql.= " a.datep,";		// Start
+			$sql.= " a.datep2,";	// End
 			$sql.= " a.durationp,";
 			$sql.= " a.datec, a.tms as datem,";
 			$sql.= " a.note, a.label, a.fk_action as type_id,";
@@ -644,7 +647,8 @@ class ActionComm
 			$sql.= " WHERE a.fk_action=c.id";
 			foreach ($filters as $key => $value)
 			{
-				if ($key == 'year')     $sql.=' AND a.datep BETWEEN ( )'; // TODO Put year range
+				if ($key == 'notolderthan') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";
+				if ($key == 'year')     $sql.=" AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($value,1))."' AND '".$this->db->idate(dol_get_last_day($value,12))."'";
 				if ($key == 'idaction') $sql.=' AND a.id='.$value;
 				if ($key == 'login')
 				{
@@ -680,8 +684,8 @@ class ActionComm
 				}
 			}
 			$sql.= " AND a.datep IS NOT NULL";		// To exclude corrupted events and avoid errors in lightning/sunbird import
-			//$sql.= " AND a.datep != 'null'";	// To exclude corrupted events and avoid errors in lightning/sunbird import
 			$sql.= " ORDER by datep";
+			//print $sql;exit;
 
 			dol_syslog("ActionComm::build_exportfile select events sql=".$sql);
 			$resql=$this->db->query($sql);
