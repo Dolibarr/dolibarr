@@ -305,7 +305,6 @@ else
 	$nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 0, $tasksrole);
 	print "</table>";
 
-	print '</div>';
 
 	// Test if database is clean. If not we clean it.
 	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' sizeof($tasksarray)='.sizeof($tasksarray).' sizeof($tasksrole)='.sizeof($tasksrole).'<br>';
