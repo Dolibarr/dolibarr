@@ -795,7 +795,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 		}
 
-		if ($conf->global->MAIN_USE_JQUERY)
+		if (! defined('DISABLE_JQUERY') && $conf->global->MAIN_USE_JQUERY)
 		{
 			print '<!-- Includes for JQuery (Ajax library) -->'."\n";
 			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/themes/base/jquery-ui.css" type="text/css" />'."\n";
@@ -843,7 +843,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window'.$mini.$ext.'"></script>'."\n";
 			}
 
-			if ($conf->global->MAIN_USE_JQUERY)
+			if (! defined('DISABLE_JQUERY') && $conf->global->MAIN_USE_JQUERY)
 			{
 				print '<!-- Includes for JQuery (Ajax library) -->'."\n";
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/jquery.min.js"></script>'."\n";
@@ -857,7 +857,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			print '<!-- Includes specific to page -->'."\n";
 			foreach($arrayofjs as $jsfile)
 			{
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/'.$jsfile.'"></script>'."\n";
+				if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.$jsfile.'"></script>'."\n";
 			}
 		}
 
