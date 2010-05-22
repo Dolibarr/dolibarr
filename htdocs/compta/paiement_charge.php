@@ -66,7 +66,7 @@ if ($_POST["action"] == 'add_paiement')
 
 	if (! $error)
 	{
-		$paiement_id = 0;
+		$paymentid = 0;
 
 		// Read possible payments
 		$amounts = array();
@@ -90,9 +90,9 @@ if ($_POST["action"] == 'add_paiement')
 		$paiement->paiementtype = $_POST["paiementtype"];
 		$paiement->num_paiement = $_POST["num_paiement"];
 		$paiement->note         = $_POST["note"];
-		$paiement_id = $paiement->create($user);
+		$paymentid = $paiement->create($user);
 
-		if ($paiement_id > 0)
+		if ($paymentid > 0)
 		{
 			// On determine le montant total du paiement
 			$total=0;
@@ -136,7 +136,7 @@ if ($_POST["action"] == 'add_paiement')
 		else
 		{
 			$db->rollback();
-			$mesg = "Failed to create payment: paiement_id=$paiement_id ".$db->error();
+			$mesg = "Failed to create payment: paiement_id=$paymentid ".$db->error();
 		}
 	}
 
