@@ -74,6 +74,8 @@ ActionsOnProject=Actions sur le projet
 YouAreNotContactOfProject=Vous n'êtes pas contact de ce projet privé
 DeleteATimeSpent=Suppression du temps consommé
 ConfirmDeleteATimeSpent=Êtes-vous sûr de vouloir supprimer ce temps consommé ?
+DoNotShowMyTasksOnly=Voir aussi les taches qui ne me sont pas affectées
+ShowMyTasksOnly=Ne voir que les taches qui me sont affectées
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Chef de projet
 TypeContact_project_external_PROJECTLEADER=Chef de projet

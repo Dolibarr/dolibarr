@@ -42,6 +42,7 @@ $result = restrictedArea($user, 'projet', $projectid);
 $userAccess=0;
 
 $langs->load("users");
+$langs->load("projects");
 
 
 /*
@@ -199,12 +200,11 @@ else
 {
 	/*
 	 * Fiche projet en mode visu
-	 *
 	 */
 	$userstatic=new User($db);
 
 	$tab='tasks';
-	if ($_REQUEST["mode"]=='mine') $tab='mytasks';
+	//if ($_REQUEST["mode"]=='mine') $tab='mytasks';
 
 	$head=project_prepare_head($project);
 	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($project->public?'projectpub':'project'));
@@ -265,6 +265,23 @@ else
 	print '</div>';
 
 	print '<br>';
+
+
+	// Link to switch in "my task" / "all task"
+	print '<table width="100%"><tr><td align="right">';
+	if ($_REQUEST["mode"] == 'mine')
+	{
+		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
+		//print ' - ';
+		//print $langs->trans("ShowMyTaskOnly");
+	}
+	else
+	{
+		//print $langs->trans("DoNotShowMyTaskOnly");
+		//print ' - ';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&mode=mine">'.$langs->trans("ShowMyTasksOnly").'</a>';
+	}
+	print '</td></tr></table>';
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,12 +85,22 @@ function project_prepare_head($object)
     $head[$h][2] = 'tasks';
 	$h++;
 
+	/* Now this is a filter in the Task tab.
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$object->id.'&mode=mine';
 	$head[$h][1] = $langs->trans("MyTasks");
     $head[$h][2] = 'mytasks';
 	$h++;
+	*/
 
-    return $head;
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/projet/gant/gantview.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Gantt");
+    	$head[$h][2] = 'gantt';
+    	$h++;
+	}
+
+	return $head;
 }
 
 
