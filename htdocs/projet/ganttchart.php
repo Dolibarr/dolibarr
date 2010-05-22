@@ -148,7 +148,7 @@ function constructGanttLine($array_contacts,$tarr,$task,$project_dependencies,$l
 	// Define percent
 	$percent = $task['task_percent_complete']?$task['task_percent_complete']:0;
 	// Link
-	$link=DOL_URL_ROOT.'/projet/tasks/task?id='.$task["task_id"];
+	$link=DOL_URL_ROOT.'/projet/tasks/task.php?id='.$task["task_id"];
 	// Name
 	$name=$task['task_name'];
 	for($i=0; $i < $level; $i++) { $name=' &nbsp; &nbsp; '.$name; }
