@@ -92,9 +92,9 @@ function project_prepare_head($object)
 	$h++;
 	*/
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/projet/gant/gantview.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Gantt");
     	$head[$h][2] = 'gantt';
     	$h++;
@@ -122,7 +122,7 @@ function task_prepare_head($object)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Affectations");
+	$head[$h][1] = $langs->trans("TaskRessourceLinks");
 	$head[$h][2] = 'contact';
 	$h++;
 

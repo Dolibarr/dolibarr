@@ -29,6 +29,16 @@ FPDFI and FPDF_TPL:
 * Replaced all sprintf(%0.2f) by sprintf(%0.2F) (Fix bug)
 
 
+JSGANTT:
+--------
+* Replace in function JSGantt.taskLink
+var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+with
+// LDR To open in same window
+//var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+window.location.href=pRef
+
+
 PHP-BARCODE:
 ------------
 If files are replaced by new version, following changes must be done:

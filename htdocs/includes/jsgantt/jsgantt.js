@@ -1905,9 +1905,9 @@ JSGantt.folder= function (pID,ganttObj) {
             JSGantt.show(pID, 1, ganttObj);
 
                if (JSGantt.isIE()) 
-                  {JSGantt.findObj('group_'+pID).innerText = '–';}
+                  {JSGantt.findObj('group_'+pID).innerText = 'ï¿½';}
                else
-                  {JSGantt.findObj('group_'+pID).textContent = '–';}
+                  {JSGantt.findObj('group_'+pID).textContent = 'ï¿½';}
 
          }
 
@@ -1979,7 +1979,7 @@ JSGantt.show =  function (pID, pTop, ganttObj) {
          } else {
 
             if (JSGantt.isIE()) { // IE;
-               if( JSGantt.findObj('group_'+pID).innerText == '–') {
+               if( JSGantt.findObj('group_'+pID).innerText == 'ï¿½') {
                   JSGantt.findObj('child_'+vID).style.display = "";
                   JSGantt.findObj('childgrid_'+vID).style.display = "";
                   vList[i].setVisible(1);
@@ -1987,7 +1987,7 @@ JSGantt.show =  function (pID, pTop, ganttObj) {
 
             } else {
 
-               if( JSGantt.findObj('group_'+pID).textContent == '–') {
+               if( JSGantt.findObj('group_'+pID).textContent == 'ï¿½') {
                   JSGantt.findObj('child_'+vID).style.display = "";
                   JSGantt.findObj('childgrid_'+vID).style.display = "";
                   vList[i].setVisible(1);
@@ -2017,7 +2017,9 @@ JSGantt.taskLink = function(pRef,pWidth,pHeight)
     if(pWidth)  {vWidth =pWidth;}  else {vWidth =400;}
     if(pHeight) {vHeight=pHeight;} else {vHeight=400;}
 
-    var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth); 
+    // LDR To open in same window
+    //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+    window.location.href=pRef
 
   };
 
