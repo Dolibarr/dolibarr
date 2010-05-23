@@ -157,7 +157,8 @@ if ($_GET["action"] == 'deleteline' && $user->rights->projet->creer)
  * View
  */
 
-llxHeader('', $langs->trans("Project"), "Project");
+$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+llxHeader('', $langs->trans("Project"), $help_url);
 
 $html = new Form($db);
 $formcompany= new FormCompany($db);

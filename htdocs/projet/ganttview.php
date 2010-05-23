@@ -179,37 +179,44 @@ $tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(0,
 //var_dump($tasksrole);
 
 
-// Show Gant diagram from $taskarray using JSGantt
-
-$dateformat=$langs->trans("FormatDateShort");
-$dateformat=strtolower($langs->trans("FormatDateShortJava"));
-$array_contacts=array();
-$tasks=array();
-$project_dependencies=array();
-$project_id=$project->id;
-$i=0;
-foreach($tasksarray as $key => $val)
+if (sizeof($tasksarray)>0)
 {
-//	if ($val->date_start && $val->date_end)
-//	{
-		$tasks[$i]['task_id']=$val->id;
-		$tasks[$i]['task_parent']=$val->fk_parent;
-		$tasks[$i]['task_is_group']=0;
-		$tasks[$i]['task_milestone']=0;
-		$tasks[$i]['task_percent_complete']=$val->progress;
-		$tasks[$i]['task_name']=$val->label;
-		$tasks[$i]['task_start_date']=$val->date_start;
-		$tasks[$i]['task_end_date']=$val->date_end;
-		$i++;
-//	}
+
+	// Show Gant diagram from $taskarray using JSGantt
+
+	$dateformat=$langs->trans("FormatDateShort");
+	$dateformat=strtolower($langs->trans("FormatDateShortJava"));
+	$array_contacts=array();
+	$tasks=array();
+	$project_dependencies=array();
+	$project_id=$project->id;
+	$i=0;
+	foreach($tasksarray as $key => $val)
+	{
+	//	if ($val->date_start && $val->date_end)
+	//	{
+			$tasks[$i]['task_id']=$val->id;
+			$tasks[$i]['task_parent']=$val->fk_parent;
+			$tasks[$i]['task_is_group']=0;
+			$tasks[$i]['task_milestone']=0;
+			$tasks[$i]['task_percent_complete']=$val->progress;
+			$tasks[$i]['task_name']=$val->label;
+			$tasks[$i]['task_start_date']=$val->date_start;
+			$tasks[$i]['task_end_date']=$val->date_end;
+			$i++;
+	//	}
+	}
+	//var_dump($tasks);
+
+	print "\n";
+	print '<div id="tabs" style="border: 1px solid #ACACAC;">'."\n";
+	include_once(DOL_DOCUMENT_ROOT.'/projet/ganttchart.php');
+	print '</div>'."\n";
 }
-//var_dump($tasks);
-
-print "\n";
-print '<div id="tabs">'."\n";
-include_once(DOL_DOCUMENT_ROOT.'/projet/ganttchart.php');
-print '</div>'."\n";
-
+else
+{
+	print $langs->trans("NoTasks");
+}
 
 $db->close();
 

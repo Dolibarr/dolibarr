@@ -309,9 +309,16 @@ else
 	print '<td align="right">'.$langs->trans("Progress").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 	print "</tr>\n";
-	// Show all lines in taskarray (recursive function to go down on tree)
-	$j=0;
-	$nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 0, $tasksrole);
+	if (sizeof($tasksarray) > 0)
+	{
+		// Show all lines in taskarray (recursive function to go down on tree)
+		$j=0;
+		$nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 0, $tasksrole);
+	}
+	else
+	{
+		print '<tr><td colspan="'.($projectstatic->id?"5":"4").'">'.$langs->trans("NoTasks").'</td></tr>';
+	}
 	print "</table>";
 
 
