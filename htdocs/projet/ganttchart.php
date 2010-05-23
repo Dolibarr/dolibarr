@@ -30,14 +30,6 @@
 
 <script language="javascript" type="text/javascript">
 
-var g = new JSGantt.GanttChart('g',document.getElementById('GanttChartDIV'), 'day');
-var booShowRessources = 1;
-var booShowDurations = 1;
-var booShowComplete = 1;
-var barText = "Resource";
-var graphFormat = "day";
-
-
 function DisplayHideRessources(boxName) {
 	graphFormat = g.getFormat();
 	if(boxName.checked == true) {
@@ -88,11 +80,18 @@ function reloadGraph() {
 }
 
 
+var g = new JSGantt.GanttChart('g',document.getElementById('GanttChartDIV'), 'day');
+var booShowRessources = 1;
+var booShowDurations = 1;
+var booShowComplete = 1;
+var barText = "Resource";
+var graphFormat = "day";
+
 g.setDateInputFormat('mm/dd/yyyy');  // Set format of input dates ('mm/dd/yyyy', 'dd/mm/yyyy', 'yyyy-mm-dd')
 g.setDateDisplayFormat('<?php echo $dateformat; ?>');	// Set format to display dates ('mm/dd/yyyy', 'dd/mm/yyyy', 'yyyy-mm-dd')
-g.setShowRes(1); 	// Show/Hide Responsible (0/1)
-g.setShowDur(1); 	// Show/Hide Duration (0/1)
-g.setShowComp(1); 	// Show/Hide % Complete(0/1)
+g.setShowRes(1); 		// Show/Hide Responsible (0/1)
+g.setShowDur(1); 		// Show/Hide Duration (0/1)
+g.setShowComp(1); 		// Show/Hide % Complete(0/1)
 g.setShowStartDate(1); 	// Show/Hide % Complete(0/1)
 g.setShowEndDate(1); 	// Show/Hide % Complete(0/1)
 g.setFormatArr("day","week","month","quarter") // Set format options (up to 4 : "minute","hour","day","week","month","quarter")

@@ -704,7 +704,7 @@ function print_left_eldy_menu($db,$menu_array)
 		}
 
 		/*
-		 * Menu PROJETS
+		 * Menu PROJECTS
 		 */
 		if ($mainmenu == 'project')
 		{
@@ -716,19 +716,19 @@ function print_left_eldy_menu($db,$menu_array)
 				$newmenu->add(DOL_URL_ROOT."/projet/fiche.php?leftmenu=projects&action=create&mode=mine", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
 				$newmenu->add(DOL_URL_ROOT."/projet/liste.php?leftmenu=projects&mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
 
-				$newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire);
-				$newmenu->add(DOL_URL_ROOT."/projet/fiche.php?leftmenu=projects&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
-				$newmenu->add(DOL_URL_ROOT."/projet/liste.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire);
+				$newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire && $user->rights->projet->all->lire);
+				$newmenu->add(DOL_URL_ROOT."/projet/fiche.php?leftmenu=projects&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer && $user->rights->projet->all->creer);
+				$newmenu->add(DOL_URL_ROOT."/projet/liste.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->all->lire);
 
 				$newmenu->add(DOL_URL_ROOT."/projet/activity/index.php?mode=mine", $langs->trans("MyActivities"), 0, $user->rights->projet->lire);
 				$newmenu->add(DOL_URL_ROOT."/projet/tasks/fiche.php?action=create&mode=mine", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
 				$newmenu->add(DOL_URL_ROOT."/projet/tasks/index.php?mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
 				$newmenu->add(DOL_URL_ROOT."/projet/activity/list.php?mode=mine", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
 
-				$newmenu->add(DOL_URL_ROOT."/projet/activity/index.php", $langs->trans("Activities"), 0, $user->rights->projet->lire);
-				$newmenu->add(DOL_URL_ROOT."/projet/tasks/fiche.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
-				$newmenu->add(DOL_URL_ROOT."/projet/tasks/index.php", $langs->trans("List"), 1, $user->rights->projet->lire);
-				$newmenu->add(DOL_URL_ROOT."/projet/activity/list.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
+				$newmenu->add(DOL_URL_ROOT."/projet/activity/index.php", $langs->trans("Activities"), 0, $user->rights->projet->lire && $user->rights->projet->all->lire);
+				$newmenu->add(DOL_URL_ROOT."/projet/tasks/fiche.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer && $user->rights->projet->all->creer);
+				$newmenu->add(DOL_URL_ROOT."/projet/tasks/index.php", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->all->lire);
+				$newmenu->add(DOL_URL_ROOT."/projet/activity/list.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer && $user->rights->projet->all->creer);
 			}
 		}
 

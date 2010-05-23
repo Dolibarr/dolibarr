@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
@@ -63,7 +63,7 @@ if (! empty($_POST["action"]) && $_POST["action"] == 'set')
 			print '<div class="error">'.$langs->trans("ErrorUnknownSyslogConstant",$_POST["facility"]).'</div>';
 		}
 	}
-	
+
 	if ($optionlogoutput == "file")
 	{
 		$filelog=$_POST["filename"];
@@ -119,7 +119,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Value").'</td>';
 print '<td align="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=true;
@@ -145,7 +145,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setlevel">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
 print '<td align="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=true;

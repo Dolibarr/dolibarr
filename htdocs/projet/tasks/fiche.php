@@ -36,6 +36,12 @@ $projectid='';
 $projectid=isset($_REQUEST["id"])?$_REQUEST["id"]:$_POST["id"];
 
 // Security check
+if (empty($user->rights->projet->all->lire))
+{
+	$_GET["mode"]='mine';
+	$_POST["mode"]='mine';
+	$_REQUEST["mode"]='mine';
+}
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
@@ -204,7 +210,6 @@ else
 	$userstatic=new User($db);
 
 	$tab='tasks';
-	//if ($_REQUEST["mode"]=='mine') $tab='mytasks';
 
 	$head=project_prepare_head($project);
 	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($project->public?'projectpub':'project'));
@@ -271,9 +276,13 @@ else
 	print '<table width="100%"><tr><td align="right">';
 	if ($_REQUEST["mode"] == 'mine')
 	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
-		//print ' - ';
-		//print $langs->trans("ShowMyTaskOnly");
+		if ($user->rights->projet->all->lire)
+		{
+			print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
+			//print ' - ';
+			//print $langs->trans("ShowMyTaskOnly");
+		}
+		//else print '<a href="#">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
 	}
 	else
 	{

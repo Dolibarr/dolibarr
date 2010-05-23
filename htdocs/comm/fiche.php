@@ -588,69 +588,6 @@ if ($socid > 0)
 	}
 
 	/*
-	 * Last linked projects
-	 */
-	// TODO remplacer par une fonction
-	if ($conf->projet->enabled && $user->rights->projet->lire)
-	{
-		print '<table class="noborder" width=100%>';
-
-		$sql  = "SELECT p.rowid,p.title,p.ref,p.public, p.dateo as do";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-		$sql .= " WHERE p.fk_soc = $objsoc->id";
-		$sql .= " ORDER BY p.dateo DESC";
-
-		$result=$db->query($sql);
-		if ($result)
-		{
-			$num = $db->num_rows($result);
-			if ($num > 0)
-			{
-				require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-
-				$projectstatic = new Project($db);
-
-				print '<tr class="liste_titre">';
-				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastProjects",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllProjects").' ('.$num.')</td></tr></table></td>';
-				print '</tr>';
-
-				$var=true;
-				$i = 0 ;
-				while ($i < $num && $i < $MAXLIST)
-				{
-					$obj = $db->fetch_object($result);
-					$projectstatic->fetch($obj->rowid);
-
-					// To verify role of users
-					$userAccess = $projectstatic->restrictedProjectArea($user,1);
-
-					if ($user->rights->projet->lire && $userAccess > 0)
-					{
-						$var = !$var;
-						print "<tr $bc[$var]>";
-
-						// Ref
-						print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
-						// Label
-						print '<td>'.$obj->title.'</td>';
-						// Date
-						print '<td align="right">'.dol_print_date($db->jdate($obj->do),"day").'</td>';
-
-						print '</tr>';
-					}
-					$i++;
-				}
-			}
-			$db->free($result);
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-		print "</table>";
-	}
-
-	/*
 	 * Last linked chronodocs
 	 */
 	// TODO add function to add an external module

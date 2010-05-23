@@ -1500,10 +1500,11 @@ else
 
 	print '<br>';
 
-	/*
-	 * Contact List
-	 */
-	show_contacts($conf,$langs,$db,$soc);
+	// Contacts list
+	$result=show_contacts($conf,$langs,$db,$soc);
+
+	// Projects list
+	$result=show_projects($conf,$langs,$db,$soc);
 }
 
 $db->close();

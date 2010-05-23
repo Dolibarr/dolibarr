@@ -77,6 +77,7 @@ ConfirmDeleteATimeSpent=Êtes-vous sûr de vouloir supprimer ce temps consommé 
 DoNotShowMyTasksOnly=Voir aussi les taches qui ne me sont pas affectées
 ShowMyTasksOnly=Ne voir que les taches qui me sont affectées
 TaskRessourceLinks=Affectation ressources
+ProjectsDedicatedToThisThirdParty=Projets dédiés à ce tiers
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Chef de projet
 TypeContact_project_external_PROJECTLEADER=Chef de projet

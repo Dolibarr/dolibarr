@@ -286,6 +286,96 @@ function getFormeJuridiqueLabel($code)
 }
 
 
+
+/**
+ * 		\brief		Show html area for list of projects
+ *		\param		conf		Object conf
+ * 		\param		lang		Object lang
+ * 		\param		db			Database handler
+ * 		\param		objsoc		Third party object
+ */
+function show_projects($conf,$langs,$db,$objsoc)
+{
+	global $user;
+
+	$i = -1 ;
+
+	if ($conf->projet->enabled && $user->rights->projet->lire)
+	{
+		$langs->load("projects");
+
+		print "\n";
+		print_titre($langs->trans("ProjectsDedicatedToThisThirdParty"));
+		print "\n".'<table class="noborder" width=100%>';
+
+		$sql  = "SELECT p.rowid,p.title,p.ref,p.public, p.dateo as do, p.datee as de";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " WHERE p.fk_soc = ".$objsoc->id;
+		$sql .= " ORDER BY p.dateo DESC";
+
+		$result=$db->query($sql);
+		if ($result)
+		{
+			$num = $db->num_rows($result);
+
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Name").'</td><td align="center">'.$langs->trans("DateStart").'</td><td align="center">'.$langs->trans("DateEnd").'</td>';
+			print '</tr>';
+
+			if ($num > 0)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+
+				$projectstatic = new Project($db);
+
+				$i=0;
+				$var=true;
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($result);
+					$projectstatic->fetch($obj->rowid);
+
+					// To verify role of users
+					$userAccess = $projectstatic->restrictedProjectArea($user,1);
+
+					if ($user->rights->projet->lire && $userAccess > 0)
+					{
+						$var = !$var;
+						print "<tr $bc[$var]>";
+
+						// Ref
+						print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
+						// Label
+						print '<td>'.$obj->title.'</td>';
+						// Date start
+						print '<td align="center">'.dol_print_date($db->jdate($obj->do),"day").'</td>';
+						// Date end
+						print '<td align="center">'.dol_print_date($db->jdate($obj->de),"day").'</td>';
+
+						print '</tr>';
+					}
+					$i++;
+				}
+			}
+			else
+			{
+				print '<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
+			}
+			$db->free($result);
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		print "</table>";
+
+		print "<br>\n";
+	}
+
+	return $i;
+}
+
+
 /**
  * 		\brief		Show html area for list of contacts
  *		\param		conf		Object conf
@@ -297,6 +387,8 @@ function show_contacts($conf,$langs,$db,$objsoc)
 {
 	global $user;
 	global $bc;
+
+	$i=-1;
 
 	$contactstatic = new Contact($db);
 
@@ -325,12 +417,13 @@ function show_contacts($conf,$langs,$db,$objsoc)
 	$sql .= " ORDER by p.datec";
 
 	$result = $db->query($sql);
-	$i = 0;
 	$num = $db->num_rows($result);
-	$var=true;
 
 	if ($num)
 	{
+		$i=0;
+		$var=true;
+
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result);
@@ -383,6 +476,8 @@ function show_contacts($conf,$langs,$db,$objsoc)
 	print "\n</table>\n";
 
 	print "<br>\n";
+
+	return $i;
 }
 
 

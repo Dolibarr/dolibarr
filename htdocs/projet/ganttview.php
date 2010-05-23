@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/projet/ganttview.php
  *	\ingroup    projet
- *	\brief      Gantt diagrame of a project
+ *	\brief      Gantt diagramm of a project
  *	\version    $Id$
  */
 
@@ -40,6 +40,12 @@ $projectid='';
 $projectid=isset($_REQUEST["id"])?$_REQUEST["id"]:$_POST["id"];
 
 // Security check
+if (empty($user->rights->projet->all->lire))
+{
+	$_GET["mode"]='mine';
+	$_POST["mode"]='mine';
+	$_REQUEST["mode"]='mine';
+}
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
@@ -64,6 +70,7 @@ $arrayofcss=array(
 
 $arrayofjs=array(
 '/includes/jsgantt/jsgantt.js',
+'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang,
 '/includes/jquery/jquery.min.js',
 );
 
