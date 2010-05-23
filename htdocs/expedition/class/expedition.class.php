@@ -463,7 +463,7 @@ class Expedition extends CommonObject
 		if (! $error)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('SHIPPING_VALIDATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -637,7 +637,7 @@ class Expedition extends CommonObject
 			if (! $notrigger)
 			{
 	            // Call triggers
-	            include_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
+	            include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
 	            $result=$interface->run_triggers('SHIPPING_MODIFY',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
