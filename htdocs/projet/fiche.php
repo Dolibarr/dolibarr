@@ -48,8 +48,18 @@ if (! empty($_REQUEST['socid_id']))
 if ($projectid == '' && $projectref == '' && ($_GET['action'] != "create" && $_POST['action'] != "add" && $_POST["action"] != "update" && !$_POST["cancel"])) accessforbidden();
 
 // Security check
+if (empty($user->rights->projet->all->lire))
+{
+	$_GET["mode"]='mine';
+	$_POST["mode"]='mine';
+	$_REQUEST["mode"]='mine';
+}
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
+
+
 
 
 /*
@@ -229,13 +239,14 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && 
  *	View
  */
 
+$html = new Form($db);
+$formfile = new FormFile($db);
+$userstatic = new User($db);
+
+
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Projects"),$help_url);
 
-$html = new Form($db);
-$formfile = new FormFile($db);
-
-$userstatic=new User($db);
 
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
@@ -403,11 +414,13 @@ else
 	}
 	else
 	{
-
 		print '<table class="border" width="100%">';
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+		// Define a complementary filter for search of next/prev ref.
+		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+		$project->next_prev_filter=" rowid in (".$projectsListId.")";
 		print $html->showrefnav($project,'ref','',1,'ref','ref');
 		print '</td></tr>';
 

@@ -46,14 +46,25 @@ if ($conf->facture->enabled)  $langs->load("bills");
 if ($conf->commande->enabled) $langs->load("orders");
 if ($conf->propal->enabled)   $langs->load("propal");
 
-// Security check
 $projectid='';
 $ref='';
 if (isset($_GET["id"]))  { $projectid=$_GET["id"]; }
 if (isset($_GET["ref"])) { $ref=$_GET["ref"]; }
-if ($projectid == '' && $ref == '') accessforbidden();
+if ($projectid == '' && $ref == '')
+{
+	dol_print_error('','Bad parameter');
+	exit;
+}
 
 // Security check
+if (empty($user->rights->projet->all->lire))
+{
+	$_GET["mode"]='mine';
+	$_POST["mode"]='mine';
+	$_REQUEST["mode"]='mine';
+}
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
@@ -82,6 +93,9 @@ dol_fiche_head($head, 'element', $langs->trans("Project"),0,($project->public?'p
 print '<table class="border" width="100%">';
 
 print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+// Define a complementary filter for search of next/prev ref.
+$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+$project->next_prev_filter=" rowid in (".$projectsListId.")";
 print $form->showrefnav($project,'ref','',1,'ref','ref');
 print '</td></tr>';
 

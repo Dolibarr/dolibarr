@@ -32,6 +32,14 @@ $langs->load('projects');
 $id = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
+if (empty($user->rights->projet->all->lire))
+{
+	$_GET["mode"]='mine';
+	$_POST["mode"]='mine';
+	$_REQUEST["mode"]='mine';
+}
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $id);
 
@@ -117,6 +125,9 @@ if ($id > 0 || ! empty($ref))
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+		// Define a complementary filter for search of next/prev ref.
+		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+		$project->next_prev_filter=" rowid in (".$projectsListId.")";
 		print $html->showrefnav($project,'ref','',1,'ref','ref');
 		print '</td></tr>';
 

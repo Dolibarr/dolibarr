@@ -37,6 +37,8 @@ with
 // LDR To open in same window
 //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
 window.location.href=pRef
+* Replace hard coded string with i18n["String"];
+
 
 
 PHP-BARCODE:

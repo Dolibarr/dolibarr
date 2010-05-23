@@ -71,5 +71,6 @@ i18n["October"] = "<?php echo $langs->transnoentities("October") ?>";
 i18n["November"] = "<?php echo $langs->transnoentities("November") ?>";
 i18n["December"] = "<?php echo $langs->transnoentities("December") ?>";
 i18n["Quarter"] = "<?php echo $langs->transnoentities("Quarter") ?>";
+i18n["Period"] = "<?php echo $langs->transnoentities("Period") ?>";
 
 

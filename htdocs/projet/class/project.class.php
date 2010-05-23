@@ -24,7 +24,7 @@
  *		\brief      Fichier de la classe de gestion des projets
  *		\version    $Id$
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
 /**
  *		\class      Project
@@ -354,11 +354,11 @@ class Project extends CommonObject
 	function delete($user, $notrigger=0)
 	{
 		global $conf;
-		
+
 		$error=0;
 
 		$this->db->begin();
-		
+
 		if (! $error)
 		{
 			// Delete linked contacts

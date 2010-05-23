@@ -35,6 +35,14 @@ $langs->load('other');
 $id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
 
 // Security check
+if (empty($user->rights->projet->all->lire))
+{
+	$_GET["mode"]='mine';
+	$_POST["mode"]='mine';
+	$_REQUEST["mode"]='mine';
+}
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 $socid=0;
 $id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
@@ -59,6 +67,7 @@ $project = new Project($db);
 if (! $project->fetch($_GET['id'],$_GET['ref']) > 0)
 {
 	dol_print_error($db);
+	exit;
 }
 
 
@@ -150,6 +159,9 @@ if ($id > 0 || ! empty($ref))
 
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+	// Define a complementary filter for search of next/prev ref.
+	$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+	$project->next_prev_filter=" rowid in (".$projectsListId.")";
 	print $form->showrefnav($project,'ref','',1,'ref','ref');
 	print '</td></tr>';
 
