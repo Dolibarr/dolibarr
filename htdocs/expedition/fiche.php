@@ -817,7 +817,7 @@ else
 			// Weight
 			print '<tr><td>'.$html->editfieldkey("TotalWeight",'trueWeight',$expedition->trueWeight,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
 			print $html->editfieldval("TotalWeight",'trueWeight',$expedition->trueWeight,'id',$expedition->id,$user->rights->expedition->creer);
-			print measuring_units_string($expedition->weight_units,"weight");
+			print $expedition->weight_units?measuring_units_string($expedition->weight_units,"weight"):'';
 			print '</td></tr>';
 
 			// Volume Total
@@ -841,19 +841,19 @@ else
 			// Width
 			print '<tr><td>'.$html->editfieldkey("Width",'trueWidth',$expedition->trueWidth,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
 			print $html->editfieldval("Width",'trueWidth',$expedition->trueWidth,'id',$expedition->id,$user->rights->expedition->creer);
-			print measuring_units_string($expedition->width_units,"size");
+			print $expedition->trueWidth?measuring_units_string($expedition->width_units,"size"):'';
 			print '</td></tr>';
 
 			// Height
 			print '<tr><td>'.$html->editfieldkey("Height",'trueHeight',$expedition->trueHeight,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
 			print $html->editfieldval("Height",'trueHeight',$expedition->trueHeight,'id',$expedition->id,$user->rights->expedition->creer);
-			print measuring_units_string($expedition->height_units,"size");
+			print $expedition->trueHeight?measuring_units_string($expedition->height_units,"size"):'';
 			print '</td></tr>';
 
 			// Depth
 			print '<tr><td>'.$html->editfieldkey("Depth",'trueDepth',$expedition->trueDepth,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
 			print $html->editfieldval("Depth",'trueDepth',$expedition->trueDepth,'id',$expedition->id,$user->rights->expedition->creer);
-			print measuring_units_string($expedition->depth_units,"size");
+			print $expedition->trueDepth?measuring_units_string($expedition->depth_units,"size"):'';
 			print '</td></tr>';
 
 			// Status

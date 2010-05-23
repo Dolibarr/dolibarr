@@ -115,8 +115,8 @@ if ($resql)
 		print "<a href=\"fiche.php?id=".$objp->rowid."\">".$objp->ref."</a></td>\n";
 		// Third party
 		print '<td>';
-		$companystatic->id=$objp->id;
-		$companystatic->ref=$objp->id;
+		$companystatic->id=$objp->socid;
+		$companystatic->ref=$objp->socname;
 		$companystatic->nom=$objp->socname;
 		print $companystatic->getNomUrl(1);
 		print '</td>';
