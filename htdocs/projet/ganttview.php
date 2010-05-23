@@ -193,18 +193,16 @@ if (sizeof($tasksarray)>0)
 	$i=0;
 	foreach($tasksarray as $key => $val)
 	{
-	//	if ($val->date_start && $val->date_end)
-	//	{
-			$tasks[$i]['task_id']=$val->id;
-			$tasks[$i]['task_parent']=$val->fk_parent;
-			$tasks[$i]['task_is_group']=0;
-			$tasks[$i]['task_milestone']=0;
-			$tasks[$i]['task_percent_complete']=$val->progress;
-			$tasks[$i]['task_name']=$val->label;
-			$tasks[$i]['task_start_date']=$val->date_start;
-			$tasks[$i]['task_end_date']=$val->date_end;
-			$i++;
-	//	}
+		$tasks[$i]['task_id']=$val->id;
+		$tasks[$i]['task_parent']=$val->fk_parent;
+		$tasks[$i]['task_is_group']=0;
+		$tasks[$i]['task_milestone']=0;
+		$tasks[$i]['task_percent_complete']=$val->progress;
+		$tasks[$i]['task_name']=$val->label;
+		$tasks[$i]['task_start_date']=$val->date_start;
+		$tasks[$i]['task_end_date']=$val->date_end;
+		$tasks[$i]['task_color']='b4d1ea';
+		$i++;
 	}
 	//var_dump($tasks);
 

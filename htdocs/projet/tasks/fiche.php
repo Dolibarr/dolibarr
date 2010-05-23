@@ -42,6 +42,8 @@ if (empty($user->rights->projet->all->lire))
 	$_POST["mode"]='mine';
 	$_REQUEST["mode"]='mine';
 }
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
@@ -222,6 +224,9 @@ else
 	print '<tr><td width="30%">';
 	print $langs->trans("Ref");
 	print '</td><td>';
+	// Define a complementary filter for search of next/prev ref.
+	$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+	$project->next_prev_filter=" rowid in (".$projectsListId.")";
 	print $form->showrefnav($project,'ref','',1,'ref','ref','',$param);
 	print '</td></tr>';
 

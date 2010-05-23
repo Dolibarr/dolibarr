@@ -153,8 +153,8 @@ function constructGanttLine($array_contacts,$tarr,$task,$project_dependencies,$l
 	for($i=0; $i < $level; $i++) { $name=' &nbsp; &nbsp; '.$name; }
 	// Add line to gantt
 	$s = "// Add taks id=".$tasks["task_id"]." level = ".$level."\n";
-	//$s.= "g.AddElementItem(new JSGantt.ElementItem('task',".$task['task_id'].",'".$name."','".$start_date."', '".$end_date."', 'b4d1ea', '', ".$task['task_milestone'].", '".$ressources."', ".$percent.", ".($task["task_is_group"]>0?1:0).", ".$parent.", 1".($depend?", ".$depend:"")."));";
-	$s = "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".$name."','".$start_date."', '".$end_date."', 'b4d1ea', '".$link."', ".$task['task_milestone'].", '".$ressources."', ".$percent.", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1".($depend?",".$depend:"")."));";
+	//$s.= "g.AddElementItem(new JSGantt.ElementItem('task',".$task['task_id'].",'".$name."','".$start_date."', '".$end_date."', '".$task['task_color']."', '', ".$task['task_milestone'].", '".$ressources."', ".$percent.", ".($task["task_is_group"]>0?1:0).", ".$parent.", 1".($depend?", ".$depend:"")."));";
+	$s = "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".$name."','".$start_date."', '".$end_date."', '".$task['task_color']."', '".$link."', ".$task['task_milestone'].", '".$ressources."', ".$percent.", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."'));";
 	echo $s."\n";
 }
 
