@@ -99,6 +99,7 @@ if ($id > 0 || ! empty($ref))
 
 
 $userstatic=new User($db);
+$companystatic=new Societe($db);
 
 $tab='gantt';
 
@@ -174,7 +175,7 @@ print '<br>';
 // can have a parent that is not affected to him).
 $tasksarray=$task->getTasksArray(0, 0, $project->id, $socid, 0);
 // We load also tasks limited to a particular user
-$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(0,$user,$project->id,0) : '');
+//$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(0,$user,$project->id,0) : '');
 //var_dump($tasksarray);
 //var_dump($tasksrole);
 
@@ -193,15 +194,47 @@ if (sizeof($tasksarray)>0)
 	$i=0;
 	foreach($tasksarray as $key => $val)
 	{
+		$task->fetch($val->id);
 		$tasks[$i]['task_id']=$val->id;
 		$tasks[$i]['task_parent']=$val->fk_parent;
 		$tasks[$i]['task_is_group']=0;
 		$tasks[$i]['task_milestone']=0;
 		$tasks[$i]['task_percent_complete']=$val->progress;
+		//$tasks[$i]['task_name']=$task->getNomUrl(1);
 		$tasks[$i]['task_name']=$val->label;
 		$tasks[$i]['task_start_date']=$val->date_start;
 		$tasks[$i]['task_end_date']=$val->date_end;
 		$tasks[$i]['task_color']='b4d1ea';
+		$idofusers=$task->getListContactId('internal');
+		$idofthirdparty=$task->getListContactId('external');
+		$s='';
+		if (sizeof($idofusers)>0)
+		{
+			$s.=$langs->trans("Internals").': ';
+			$i=0;
+			foreach($idofusers as $key => $valid)
+			{
+				$userstatic->fetch($valid);
+				if ($i) $s.=',';
+				$s.=$userstatic->login;
+				$i++;
+			}
+		}
+		if (sizeof($idofusers)>0 && (sizeof($idofthirdparty)>0)) $s.=' - ';
+		if (sizeof($idofusers)>0)
+		{
+			$s.=$langs->trans("Externals").': ';
+			$i=0;
+			foreach($idofthirdparty as $key => $valid)
+			{
+				$companystatic->fetch($valid);
+				if ($i) $s.=',';
+				$s.=$companystatic->name;
+				$i++;
+			}
+		}
+		if ($s) $tasks[$i]['task_resources']='<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
+		//print "xxx".$val->id.$tasks[$i]['task_resources'];
 		$i++;
 	}
 	//var_dump($tasks);

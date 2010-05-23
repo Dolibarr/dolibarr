@@ -561,6 +561,7 @@ ValidateBefore=Card must be validated before using this feature
 Visibility=Visibility
 Private=Private
 Hidden=Hidden
+Resources=Resources
 # Week day
 Day1=Monday
 Day2=Tuesday

@@ -103,8 +103,8 @@ $tnums = count($tasks);
 for ($tcursor=0; $tcursor < $tnums; $tcursor++) {
 	$t = $tasks[$tcursor];
 	if ($t["task_parent"] == 0) {
-		constructGanttLine($array_contacts,$tasks,$t,$project_dependencies,$level,$project_id);
-		findChildGanttLine($array_contacts,$tasks,$t["task_id"],$project_dependencies,$level+1);
+		constructGanttLine($tasks,$t,$project_dependencies,$level,$project_id);
+		findChildGanttLine($tasks,$t["task_id"],$project_dependencies,$level+1);
 	}
 }
 ?>
@@ -120,15 +120,14 @@ else
 
 <?php
 
-function constructGanttLine($array_contacts,$tarr,$task,$project_dependencies,$level=0,$project_id=null){
+function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_id=null){
 	$start_date = $task["task_start_date"];
 	$end_date = $task["task_end_date"];
 	if (!$end_date) $end_date = $start_date;
 	$start_date = dol_print_date($start_date,"%m/%d/%Y");
 	$end_date = dol_print_date($end_date,"%m/%d/%Y");
-	// Ressources
-	$ressources = $array_contacts[$task["task_id"]];
-	//$ressources = 'ee';	// TODO Add list of ressources
+	// Resources
+	$resources = $task["task_resources"];
 	// Define depend (ex: "", "4,13", ...)
 	$depend = "\"";
 	$count = 0;
@@ -153,18 +152,18 @@ function constructGanttLine($array_contacts,$tarr,$task,$project_dependencies,$l
 	for($i=0; $i < $level; $i++) { $name=' &nbsp; &nbsp; '.$name; }
 	// Add line to gantt
 	$s = "// Add taks id=".$tasks["task_id"]." level = ".$level."\n";
-	//$s.= "g.AddElementItem(new JSGantt.ElementItem('task',".$task['task_id'].",'".$name."','".$start_date."', '".$end_date."', '".$task['task_color']."', '', ".$task['task_milestone'].", '".$ressources."', ".$percent.", ".($task["task_is_group"]>0?1:0).", ".$parent.", 1".($depend?", ".$depend:"")."));";
-	$s = "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".$name."','".$start_date."', '".$end_date."', '".$task['task_color']."', '".$link."', ".$task['task_milestone'].", '".$ressources."', ".$percent.", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."'));";
+	//$s.= "g.AddElementItem(new JSGantt.ElementItem('task',".$task['task_id'].",'".$name."','".$start_date."', '".$end_date."', '".$task['task_color']."', '', ".$task['task_milestone'].", '".$resources."', ".$percent.", ".($task["task_is_group"]>0?1:0).", ".$parent.", 1".($depend?", ".$depend:"")."));";
+	$s = "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".$name."','".$start_date."', '".$end_date."', '".$task['task_color']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".$percent.", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."'));";
 	echo $s."\n";
 }
 
-function findChildGanttLine($array_contacts,$tarr,$parent,$project_dependencies,$level) {
+function findChildGanttLine($tarr,$parent,$project_dependencies,$level) {
 	$n=count( $tarr );
 	for ($x=0; $x < $n; $x++) {
 		if($tarr[$x]["task_parent"] == $parent && $tarr[$x]["task_parent"] != $tarr[$x]["task_id"])
 		{
-			constructGanttLine($array_contacts,$tarr,$tarr[$x],$project_dependencies,$level,null);
-			findChildGanttLine($array_contacts,$tarr,$tarr[$x]["task_id"],$project_dependencies,$level+1);
+			constructGanttLine($tarr,$tarr[$x],$project_dependencies,$level,null);
+			findChildGanttLine($tarr,$tarr[$x]["task_id"],$project_dependencies,$level+1);
 		}
 	}
 }

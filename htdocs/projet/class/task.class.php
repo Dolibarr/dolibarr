@@ -447,7 +447,7 @@ class Task extends CommonObject
 	}
 
 	/**
-	 * Return list of task for all projects or for one particular project
+	 * Return list of tasks for all projects or for one particular project
 	 * Sort order is on project, TODO then of position of task, and last on title of first level task
 	 * @param	usert		Object user to limit tasks affected to a particular user
 	 * @param	userp		Object user to limit projects of a particular user and public projects
@@ -547,8 +547,8 @@ class Task extends CommonObject
 
 	/**
 	 * Return list of roles for a user for each projects or each tasks (or a particular project or task)
-	 * @param 	userp			Return roles on project for this user (task id can't be defined)
-	 * @param	usert			Return roles on task for this user
+	 * @param 	userp			Return roles on project for this internal user (task id can't be defined)
+	 * @param	usert			Return roles on task for this internal user
 	 * @param 	projectid		Project id to filter on a project
 	 * @param 	taskid			Task id to filter on a task
 	 * @return 	array			Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
@@ -573,7 +573,7 @@ class Task extends CommonObject
 		}
 
 		/* Liste des taches et role sur les projets ou taches */
-		$sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code";
+		$sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code, ctc.source";
 		if ($userp) $sql.= " FROM ".MAIN_DB_PREFIX."projet as pt";
 		if ($usert) $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
@@ -585,6 +585,7 @@ class Task extends CommonObject
 		if ($userp) $sql.= " AND ec.fk_socpeople = ".$userp->id;
 		if ($usert) $sql.= " AND ec.fk_socpeople = ".$usert->id;
 		$sql.= " AND ec.statut = 4";
+		$sql.= " AND ctc.source = 'internal'";
 		if ($projectid)
 		{
 			if ($userp) $sql.= " AND pt.rowid = ".$projectid;
@@ -595,8 +596,8 @@ class Task extends CommonObject
 			if ($userp) $sql.= " ERROR SHOULD NOT HAPPENS";
 			if ($usert) $sql.= " AND pt.rowid = ".$taskid;
 		}
-
 		//print $sql;
+
 		dol_syslog("Task::getUserRolesForProjectsOrTasks sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -625,10 +626,10 @@ class Task extends CommonObject
 	 *      \brief      Return list of id of contacts of task
 	 *      \return     array		Array of id of contacts
 	 */
-	function getListContactId()
+	function getListContactId($source='internal')
 	{
 		$contactAlreadySelected = array();
-		$tab = $this->liste_contact(-1,'internal');
+		$tab = $this->liste_contact(-1,$source);
 		$num=sizeof($tab);
 		$i = 0;
 		while ($i < $num)

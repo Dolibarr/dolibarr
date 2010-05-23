@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 /**
  *		\file       htdocs/projet/jsgantt_language.js.php
  *		\brief      Fichier de javascript de traduction pour JSGantt
@@ -53,7 +52,7 @@ i18n["sWeek"] = "<?php echo $langs->transnoentities("Week") ?>";
 i18n["sMonth"] = "<?php echo $langs->transnoentities("Month") ?>";
 i18n["sQuarter"] = "<?php echo $langs->transnoentities("Quarter") ?>";
 i18n["View"] = "<?php echo $langs->transnoentities("View") ?>";
-i18n["Resource"] = "<?php echo $langs->transnoentities("Ressource") ?>";
+i18n["Resource"] = "<?php echo $langs->transnoentities("Resources") ?>";
 i18n["Duration"] = "<?php echo $langs->transnoentities("Duration") ?>";
 i18n["Start_Date"] = "<?php echo $langs->transnoentities("DateStart") ?>";
 i18n["End_Date"] = "<?php echo $langs->transnoentities("DateEnd") ?>";

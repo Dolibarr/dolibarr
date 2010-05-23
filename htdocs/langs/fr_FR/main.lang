@@ -560,6 +560,7 @@ ValidateBefore=La fiche doit être validée pour pouvoir utiliser cette fonction
 Visibility=Visibilité
 Private=Privé
 Hidden=Caché
+Resources=Ressources
 # Week day
 Day1=Lundi
 Day2=Mardi
