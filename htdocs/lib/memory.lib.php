@@ -19,7 +19,7 @@
 
 /**
  *  \file		htdocs/lib/memory.lib.php
- *  \brief		Set of function for memory management
+ *  \brief		Set of function for memory/cache management
  *  \version	$Id$
  */
 
@@ -62,6 +62,21 @@ function dol_setcache($memoryid,$data)
 			return -$rescode;
 		}
 	}
+	else if (! empty($conf->memcached->enabled) && class_exists('Memcache'))
+	{
+		$m=new Memcache();
+		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
+		//$m->setOption(Memcached::OPT_COMPRESSION, false);
+		$result=$m->add($memoryid,$data);
+		if ($result)
+		{
+			return sizeof($data);
+		}
+		else
+		{
+			return -1;
+		}
+	}
 	// Using shmop
 	else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
 	{
@@ -97,6 +112,23 @@ function dol_getcache($memoryid)
 		else
 		{
 			return -$rescode;
+		}
+	}
+	else if (! empty($conf->memcached->enabled) && class_exists('Memcache'))
+	{
+		$m=new Memcache();
+		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
+		//$m->setOption(Memcached::OPT_COMPRESSION, false);
+		$data=$m->get($memoryid);
+		//print "memoryid=".$memoryid." - rescode=".$rescode." - date=".sizeof($data)."\n<br>";
+		//var_dump($data);
+		if ($data)
+		{
+			return $data;
+		}
+		else
+		{
+			return -1;
 		}
 	}
 	// Using shmop
