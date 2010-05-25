@@ -270,6 +270,8 @@ ConfirmSplitDiscount=Êtes-vous sûr de vouloir scinder la réduction de <b>%s</
 TypeAmountOfEachNewDiscount=Saisissez le montant de chacune des deux parts :
 TotalOfTwoDiscountMustEqualsOriginal=La somme du montant des 2 nouvelles réductions doit être équivalente au montant de la réduction à scinder.
 ConfirmRemoveDiscount=Êtes-vous sûr de vouloir supprimer cette réduction ?
+RelatedBill=Facture associée
+RelatedBills=Factures associées
 
 # PaymentConditions
 PaymentConditionShortRECEP=A réception

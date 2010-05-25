@@ -273,6 +273,8 @@ ConfirmSplitDiscount=Are you sure you want to split this discount of <b>%s</b> %
 TypeAmountOfEachNewDiscount=Input amount for each of two parts :
 TotalOfTwoDiscountMustEqualsOriginal=Total of two new discount must be equal to original discount amount. 
 ConfirmRemoveDiscount=Are you sure you want to remove this discount ?
+RelatedBill=Related invoice
+RelatedBills=Related invoices
 
 # PaymentConditions
 PaymentConditionShortRECEP=Immediate

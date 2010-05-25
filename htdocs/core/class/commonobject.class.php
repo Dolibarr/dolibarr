@@ -1099,9 +1099,9 @@ class CommonObject
 		$num = sizeof($objectid);
 		if ($num)
 		{
-			// TODO uniformiser emplacement classe
 			$classpath = $object.'/class';
 			$tplpath = $object;
+			// TODO uniformiser emplacement classe
 			if ($object == 'facture') $tplpath = 'compta/'.$object; $classpath = $tplpath.'/class';
 			if ($object == 'propal') $tplpath = 'comm/'.$object; $classpath = $tplpath.'/class';
 

@@ -21,7 +21,8 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php 
+<?php
+$langs->load("orders");
 if ($somethingshown) { echo '<br>'; }
 print_titre($langs->trans('RelatedOrders'));
 ?>
@@ -32,7 +33,7 @@ print_titre($langs->trans('RelatedOrders'));
 	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
 </tr>
-<?php 
+<?php
 $var=true;
 for ($i = 0 ; $i < $num ; $i++)
 {

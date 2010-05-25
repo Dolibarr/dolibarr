@@ -21,9 +21,10 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php 
+<?php
+$langs->load("contracts");
 if ($somethingshown) { echo '<br>'; }
-print_titre($langs->trans('RelatedContract'));
+print_titre($langs->trans('RelatedContracts'));
 ?>
 <table class="noborder" width="100%">
 <tr class="liste_titre">
@@ -32,7 +33,7 @@ print_titre($langs->trans('RelatedContract'));
 	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
 </tr>
-<?php 
+<?php
 $var=true;
 for ($i = 0 ; $i < $num ; $i++)
 {

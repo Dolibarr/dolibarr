@@ -21,7 +21,8 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php 
+<?php
+$langs->load("bills");
 if ($somethingshown) { echo '<br>'; }
 if ($num > 1) print_titre($langs->trans("RelatedBills"));
 else print_titre($langs->trans("RelatedBill"));
@@ -33,7 +34,7 @@ else print_titre($langs->trans("RelatedBill"));
 	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
 </tr>
-<?php 
+<?php
 $var=true;
 for ($i = 0 ; $i < $num ; $i++)
 {
@@ -49,7 +50,7 @@ for ($i = 0 ; $i < $num ; $i++)
 <?php
 $total = $total + $linkedObjectBlock->total_ht;
 $i++;
-} 
+}
 ?>
 <tr class="liste_total">
 	<td align="left" colspan="2"><?php echo $langs->trans("TotalHT"); ?></td>
