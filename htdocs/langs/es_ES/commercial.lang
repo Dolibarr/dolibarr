@@ -1,5 +1,5 @@
-# Dolibarr language file - es_ES - commercial
-CHARSET= UTF-8
+# Dolibarr language file - es_ES - commercial 
+CHARSET=UTF-8
 Commercial=Comercial
 CommercialArea=Área comercial
 CommercialCard=Ficha comercial
@@ -68,13 +68,15 @@ ErrorStatusCantBeZeroIfStarted=Si el campo '<b>Fecha de realización</b>' contie
 ActionAC_TEL=Llamada telefónica
 ActionAC_FAX=Envío Fax
 ActionAC_PROP=Envío presupuesto por correo
-ActionAC_EMAIL=Envio E-Mail
+ActionAC_EMAIL=Envío E-Mail
 ActionAC_RDV=Cita
-ActionAC_FAC=Envío factura por correo
-ActionAC_REL=Recordatorio factura por correo
+ActionAC_FAC=Envío factura a cliente por correo
+ActionAC_REL=Recordatorio factura a cliente por correo
 ActionAC_CLO=Cierre
 ActionAC_EMAILING=Envío mailing masivo
-ActionAC_COM=Envío pedido por correo
+ActionAC_COM=Envío pedido de cliente por correo
+ActionAC_SUP_ORD=Envío pedido a proveedor por correo
+ActionAC_SUP_INV=Envío factura de proveedor por correo
 Stats=Estadísticas de venta
 CAOrder=Volumen de negocios (Pedidos validados)
 FromTo=de %s a %s
