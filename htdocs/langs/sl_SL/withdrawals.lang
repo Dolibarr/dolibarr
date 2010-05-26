@@ -1,0 +1,36 @@
+﻿# Dolibarr language file - sl_SL - withdrawals
+CHARSET=UTF-8
+StandingOrdersArea=Področje trajnikov
+CustomersStandingOrdersArea=Področje trajnikov kupcev
+StandingOrders=Trajniki
+StandingOrder=Trajnik
+NewStandingOrder=Nov trajnik
+Withdrawals=Nakazila
+Withdrawal=Nakazilo
+WithdrawalsReceipts=Potrdila o nakazilih
+WithdrawalReceipt=Potrdilo o nakazilu
+WithdrawalReceiptShort=Potrdilo
+LastWithdrawalReceipts=Zadnjih %s potrdil o nakazilih
+WithdrawedBills=Nakazila po računih
+WithdrawalsLines=Nakazane postavke
+RequestStandingOrderToTreat=Zahtevek po izvršitvi trajnikov
+RequestStandingOrderTreated=Zahtevek po izvršenih trajnikih
+CustomersStandingOrders=Trajniki kupcev
+CustomerStandingOrder=Trajnik kupca
+NbOfInvoiceToWithdraw=Število računov z zahtevo po nakazilih
+InvoiceWaitingWithdraw=Računi, ki čakajo na nakazilo
+AmountToWithdraw=Vrednost za nakazilo
+WithdrawsRefused=Zavrnjena nakazila
+NoInvoiceToWithdraw=Ni čakajočih plačil kupcev v načinu "nakazilo". Za izdelavo zahtevka pojdite na jeziček 'Nakazilo' na kartici računa.
+ResponsibleUser=Odgovorni uporabnik
+WithdrawalsSetup=Nastavitev nakazil
+WithdrawStatistics=Statistika nakazil
+WithdrawRejectStatistics=Statistika zavrnjenih nakazil
+LastWithdrawalReceipt=Zadnjih %s potrdil nakazil
+MakeWithdrawRequest=Izdelaj zahtevek za nakazilo
+ThirdPartyBankCode=Bančna koda partnerja
+ThirdPartyDeskCode=Račun partnerja
+NoInvoiceCouldBeWithdrawed=Noben račun ni bil uspešno nakazan. Preverite, če imajo izdajatelji računov veljaven BAN.
+ClassCredited=Označi kot prejeto
+ClassCreditedConfirm=Ali zares želite to potrdilo o nakazilu označiti kot »v dobro« na vašem bančnem računu ?
+
