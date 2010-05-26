@@ -35,7 +35,7 @@ class Canvas
 	var $template_dir;		// Directory with all core and external templates files
 	var $action;
 	var $smarty;
-	
+
 	var $error;
 
    /**
@@ -47,42 +47,44 @@ class Canvas
 		$this->db = $DB ;
 		$this->user = $user;
 	}
-	
+
 	/**
 	 * 	\brief 		Load canvas
+	 * 	\param		Name of first part of canvas
+	 * 	\canvas		Name of second part of canvas
 	 */
 	function load_canvas($object,$canvas)
 	{
 		global $langs;
 
+		$part1=$object;
+		$part2=$canvas;
+
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
 		{
-			if (file_exists(DOL_DOCUMENT_ROOT.'/'.$regs[2].'/canvas/'.$regs[1].'/'.$object.'.'.$regs[1].'.class.php'))
-			{
-				$filecanvas = DOL_DOCUMENT_ROOT.'/'.$regs[2].'/canvas/'.$regs[1].'/'.$object.'.'.$regs[1].'.class.php';
-				$classname = ucfirst($object).ucfirst($regs[1]);
-				$this->template_dir = DOL_DOCUMENT_ROOT.'/'.$regs[2].'/canvas/'.$regs[1].'/tpl/';
-				
-				include_once($filecanvas);
-				$this->object = new $classname($this->db,0,$this->user);
-				$this->smarty = $this->object->smarty;
-				
-				return $this->object;
-			}
-			else
-			{
-				$this->error = $langs->trans('CanvasIsInvalid');
-				return 0;
-			}
-			
+			$part1=$regs[2];
+			$part2=$regs[1];
+		}
+
+		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/'.$part1.'.'.$part2.'.class.php'))
+		{
+			$filecanvas = DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/'.$part1.'.'.$part2.'.class.php';
+			$classname = ucfirst($part1).ucfirst($part2);
+			$this->template_dir = DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/tpl/';
+
+			include_once($filecanvas);
+			$this->object = new $classname($this->db,0,$this->user);
+			$this->smarty = $this->object->smarty;
+
+			return $this->object;
 		}
 		else
 		{
-			$this->error = $langs->trans('BadCanvasName');
+			$this->error = $langs->trans('CanvasIsInvalid');
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * 	\brief 		Fetch object values
 	 */
@@ -102,7 +104,7 @@ class Canvas
 		if (!empty($this->smarty))
 		{
 			global $smarty;
-			
+
 			$this->object->assign_smarty_values($smarty, $this->action);
 			$smarty->template_dir = $this->template_dir;
 		}
@@ -110,20 +112,20 @@ class Canvas
 		{
 			$this->object->assign_values($this->action);
 		}
-		
+
 	}
-	
+
 	/**
 	 * 	\brief 		Display canvas
 	 */
 	function display_canvas()
 	{
 		global $conf, $langs;
-		
+
 		if (!empty($this->smarty))
 		{
 			global $smarty;
-			
+
 			$smarty->display($this->action.'.tpl');
 		}
 		else

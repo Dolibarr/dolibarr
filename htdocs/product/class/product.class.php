@@ -127,7 +127,7 @@ class Product extends CommonObject
 
 	//! Product ID already linked to a reference supplier
 	var $product_id_already_linked;
-	
+
 	var $nbphoto;
 
 	/**
@@ -2493,7 +2493,7 @@ class Product extends CommonObject
 	 * 		\param		showfilename	1=Show filename
 	 * 		\param		showaction		1=Show icon with action links (resize, delete)
 	 * 		\param		maxheight		Max height of image when size=1
-	 *    	\return     int         	Number of photos shown
+	 *    	\return     string			Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
 	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxheight=120)
 	{
@@ -2507,7 +2507,7 @@ class Product extends CommonObject
 		$dirthumb = $dir.'thumbs/';
 		$pdirthumb = $pdir.'thumbs/';
 
-		$return='';
+		$return='<!-- Photo -->';
 		$nbphoto=0;
 
 		$dir_osencoded=dol_osencode($dir);
@@ -2623,9 +2623,9 @@ class Product extends CommonObject
 
 			closedir($handle);
 		}
-		
+
 		$this->nbphoto = $nbphoto;
-		
+
 		return $return;
 	}
 
@@ -2797,7 +2797,7 @@ class Product extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *  \brief 		Load type of canvas
 	 *  \param		id		product id
@@ -2806,7 +2806,7 @@ class Product extends CommonObject
 	function getCanvas($id, $ref)
 	{
 		global $conf;
-		
+
 		$sql = "SELECT rowid, ref, canvas";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE entity = ".$conf->entity;
@@ -2817,11 +2817,11 @@ class Product extends CommonObject
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
-			
+
 			$this->id 		= $obj->rowid;
 			$this->ref 		= $obj->ref;
 			$this->canvas 	= $obj->canvas;
-			
+
 			return 1;
 		}
 		else
@@ -2830,7 +2830,7 @@ class Product extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *  \brief 		Affecte les valeurs communes
 	 */
@@ -2838,28 +2838,28 @@ class Product extends CommonObject
 	{
 		global $conf,$langs;
 		global $html;
-		
+
 		// canvas
 		$this->tpl['canvas'] = $this->canvas;
-		
+
 		// id
 		$this->tpl['id'] = $this->id;
-		
+
 		// Ref
 		$this->tpl['ref'] = $this->ref;
-		
+
 		// Label
 		$this->tpl['label'] = $this->libelle;
-		
+
 		// Description
 		$this->tpl['description'] = nl2br($this->description);
-		
+
 		// Statut
 		$this->tpl['status'] = $this->getLibStatut(2);
-		
+
 		// Note
 		$this->tpl['note'] = nl2br($this->note);
-		
+
 		// Hidden
 		if ($this->user->rights->produit->hidden)
 		{
@@ -2869,38 +2869,38 @@ class Product extends CommonObject
 		{
 			$this->tpl['hidden'] = yn("No");
 		}
-		
+
 		if ($action == 'create')
-		{	
+		{
 			// Price
 			$this->tpl['price'] = $this->price;
 			$this->tpl['price_min'] = $this->price_min;
 			$this->tpl['price_base_type'] = $html->load_PriceBaseType($this->price_base_type, "price_base_type");
-			
+
 			// VAT
 			$this->tpl['tva_tx'] = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
 		}
-		
+
 		if ($action == 'create' || $action == 'edit')
 		{
 			// Status
 			$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 			$this->tpl['status'] = $html->selectarray('statut',$statutarray,$this->status);
-			
+
 			// Hidden
 			if ($this->user->rights->produit->hidden)
 			{
 				$this->tpl['hidden'] = $html->selectyesno('hidden',$this->hidden);
 			}
-			
+
 			// TODO creer fonction
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				
+
 				$doleditor=new DolEditor('desc',$this->description,160,'dolibarr_notes','',false);
 				$this->tpl['doleditor_description'] = $doleditor;
-				
+
 				$doleditor=new DolEditor('note',$this->note,180,'dolibarr_notes','',false);
 				$this->tpl['doleditor_note'] = $doleditor;
 			}
@@ -2910,14 +2910,14 @@ class Product extends CommonObject
 				$textarea.= $this->description;
 				$textarea.= '</textarea>';
 				$this->tpl['textarea_description'] = $textarea;
-				
+
 				$textarea = '<textarea name="note" rows="8" cols="70">';
 				$textarea.= $this->note;
 				$textarea.= '</textarea>';
 				$this->tpl['textarea_note'] = $textarea;
 			}
 		}
-		
+
 		if ($action == 'view')
 		{
 			// Ref

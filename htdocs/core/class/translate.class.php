@@ -127,7 +127,7 @@ class Translate {
 	 *  \brief      Load translation key-value for a particular file, into a memory array.
 	 *              If data for file already loaded, do nothing.
 	 * 				All data in translation array are stored in UTF-8 format.
-	 *  \param      domain      		File name to load (.lang file). Use @ before value if domain is in a module directory.
+	 *  \param      domain      		File name to load (.lang file). Use file@module if file is in a module directory.
 	 *  \param      alt         		0,1,2
 	 * 	\param		soptafterdirection	Stop when the DIRECTION tag is found (optimize)
 	 * 	\param		forcelangdir		To force a lang directory

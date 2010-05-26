@@ -382,6 +382,15 @@ function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 	if (! $notab) print "\n".'<div class="tabBar">'."\n";
 }
 
+/**
+ *	\brief      Show tab footer of a card
+ *	\param      notab		0=Add tab footer, 1=no tab footer
+ */
+function dol_fiche_end($notab=0)
+{
+	if (! $notab) print "\n</div>\n";
+}
+
 
 /**
  *	\brief      Add a delay to a date
@@ -2052,7 +2061,7 @@ function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpat
 function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
 	global $conf;
-	
+
 	$return='';
 
 	if ($picto == 'setup') $picto='title.png';
@@ -2069,7 +2078,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 		$return.= '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
 	}
 	$return.= '</tr></table>'."\n";
-	
+
 	return $return;
 }
 
@@ -3348,7 +3357,7 @@ if (! function_exists('glob'))
 		if(PHP_OS=='WIN32') $slash='\\';
 		else $slash='/';
 		$lastpos=strrpos($pattern,$slash);
-		
+
 		if(!($lastpos===false))
 		{
 			$path=substr($pattern,0,-$lastpos-1);
@@ -3362,14 +3371,14 @@ if (! function_exists('glob'))
 
 		$handle=@opendir($path);
 		if($handle===false) return false;
-		
+
 		while($dir=readdir($handle))
 		{
 			if(pattern_match($pattern,$dir)) $output[]=$dir;
 		}
-		
+
 		closedir($handle);
-		
+
 		if(is_array($output)) return $output;
 		return false;
 	}
@@ -3387,13 +3396,13 @@ function pattern_match($pattern,$string)
 	{
 		$escape=array('$','^','.','{','}','(',')','[',']','|');
 		while(strpos($pattern,'**')!==false) $pattern=str_replace('**','*',$pattern);
-		
+
 		foreach($escape as $probe) $pattern=str_replace($probe,"\\$probe",$pattern);
-		
+
 		$pattern=str_replace('?*','*',str_replace('*?','*',str_replace('*',".*",str_replace('?','.{1,1}',$pattern))));
 		$out[]=$pattern;
 	}
-	
+
 	if(count($out)==1)
 	{
 		return(preg_match('/^'.$out[0].'$/i',$string));
