@@ -52,6 +52,7 @@ $fieldid = isset($_GET["ref"])?'ref':'rowid';
 $socid=$user->societe_id?$user->societe_id:0;
 $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
+// For canvas usage
 if (empty($_GET["canvas"]))
 {
 	$_GET["canvas"] = 'default@product';
@@ -641,6 +642,8 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		if ($_GET["type"]==1) $title=$langs->trans("NewService");
 		else $title=$langs->trans("NewProduct");
 		print_fiche_titre($title);
+
+		if ($mesg) print $mesg."\n";
 
 		print '<table class="border" width="100%">';
 		print '<tr>';
