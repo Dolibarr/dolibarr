@@ -48,6 +48,7 @@ function dol_setcache($memoryid,$data)
 	// Using a memcached server
 	if (! empty($conf->memcached->enabled) && class_exists('Memcached'))
 	{
+		$memoryid=session_name().'_'.$memoryid;
 		$m=new Memcached();
 		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
@@ -64,6 +65,7 @@ function dol_setcache($memoryid,$data)
 	}
 	else if (! empty($conf->memcached->enabled) && class_exists('Memcache'))
 	{
+		$memoryid=session_name().'_'.$memoryid;
 		$m=new Memcache();
 		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
@@ -98,6 +100,7 @@ function dol_getcache($memoryid)
 	// Using a memcached server
 	if (! empty($conf->memcached->enabled) && class_exists('Memcached'))
 	{
+		$memoryid=session_name().'_'.$memoryid;
 		$m=new Memcached();
 		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
@@ -116,6 +119,7 @@ function dol_getcache($memoryid)
 	}
 	else if (! empty($conf->memcached->enabled) && class_exists('Memcache'))
 	{
+		$memoryid=session_name().'_'.$memoryid;
 		$m=new Memcache();
 		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
