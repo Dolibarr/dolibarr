@@ -712,7 +712,7 @@ $heightforframes=48;
 
 /**
  *		\brief   	Show HTML header HTML + BODY + Top menu + left menu + DIV
- * 		\param   	head
+ * 		\param   	head			Add optionnal head lines
  * 		\param   	title
  * 		\param      help_url
  * 		\param   	target
@@ -885,6 +885,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '""];';
 		print '</script>'."\n";
 
+		if (! empty($head)) print $head."\n";
 		if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";
 
 		print "</head>\n\n";

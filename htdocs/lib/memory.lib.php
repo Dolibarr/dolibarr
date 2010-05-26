@@ -50,7 +50,8 @@ function dol_setcache($memoryid,$data)
 	{
 		$memoryid=session_name().'_'.$memoryid;
 		$m=new Memcached();
-		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
+		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
+		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		$m->add($memoryid,$data);
 		$rescode=$m->getResultCode();
@@ -67,7 +68,8 @@ function dol_setcache($memoryid,$data)
 	{
 		$memoryid=session_name().'_'.$memoryid;
 		$m=new Memcache();
-		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
+		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
+		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		$result=$m->add($memoryid,$data);
 		if ($result)
@@ -102,7 +104,8 @@ function dol_getcache($memoryid)
 	{
 		$memoryid=session_name().'_'.$memoryid;
 		$m=new Memcached();
-		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
+		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
+		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		$data=$m->get($memoryid);
 		$rescode=$m->getResultCode();
@@ -121,7 +124,8 @@ function dol_getcache($memoryid)
 	{
 		$memoryid=session_name().'_'.$memoryid;
 		$m=new Memcache();
-		$result=$m->addServer($conf->global->MEMCACHED_SERVER, $conf->global->MEMCACHED_PORT);
+		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
+		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		$data=$m->get($memoryid);
 		//print "memoryid=".$memoryid." - rescode=".$rescode." - date=".sizeof($data)."\n<br>";
