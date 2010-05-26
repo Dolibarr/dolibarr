@@ -771,7 +771,7 @@ else
 			print '<td colspan="3">'.$expedition->ref_customer."</a></td>\n";
 			print '</tr>';
 
-			// Date
+			// Date creation
 			print '<tr><td>'.$langs->trans("DateCreation").'</td>';
 			print '<td colspan="3">'.dol_print_date($expedition->date_creation,"daytext")."</td>\n";
 			print '</tr>';

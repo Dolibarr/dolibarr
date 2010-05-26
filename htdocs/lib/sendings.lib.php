@@ -123,10 +123,11 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 	global $html;
 
 	$product_static=new Product($db);
+	$expedition=new Expedition($db);
 
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked";
-	$sql.= ", ed.qty as qty_shipped, ed.fk_expedition as expedition_id";
-	$sql.= ", e.ref as exp_ref, e.date_expedition,";
+	$sql.= ", ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line";
+	$sql.= ", e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition,";
 	//if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
 	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
 	$sql.= ' p.description as product_desc';
@@ -160,13 +161,14 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 			//print '<td align="left">'.$langs->trans("QtyOrdered").'</td>';
 			print '<td align="left">'.$langs->trans("SendingSheet").'</td>';
 			print '<td align="left">'.$langs->trans("Description").'</td>';
+			print '<td align="center">'.$langs->trans("DateCreation").'</td>';
+			print '<td align="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-			print '<td align="center">'.$langs->trans("DateSending").'</td>';
 			if ($conf->livraison_bon->enabled)
             {
                 print '<td>'.$langs->trans("DeliveryOrder").'</td>';
-                print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
-				print '<td align="center">'.$langs->trans("DeliveryDate").'</td>';
+                //print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
+				print '<td align="right">'.$langs->trans("DeliveryDate").'</td>';
             }
 			print "</tr>\n";
 
@@ -220,22 +222,48 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 
 				//print '<td align="center">'.$objp->qty_asked.'</td>';
 
+				// Date creation
+				print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->date_creation),'day').'</td>';
+
+				// Date shipping creation
+				print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->date_delivery),'day').'</td>';
+
+				// Qty shipped
 				print '<td align="center">'.$objp->qty_shipped.'</td>';
 
-				// Date shipping was planed
-				print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->date_expedition),'day').'</td>';
-
-
+				// Informations on receipt
 				if ($conf->livraison_bon->enabled)
 				{
-					if ($objp->livraison_id)
+					include_once(DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php');
+					$expedition->id=$objp->sendingid;
+					$expedition->load_object_linked($expedition->id,$expedition->element,-1,-1);
+					$livraison_id=$expedition->linked_object['delivery'][0];
+
+					if ($livraison_id)
 					{
+						$receiving=new Livraison($db);
+						$receiving->fetch($livraison_id);
+
+						// $expedition->fk_origin_line = id of det line of order
+						// $receiving->fk_origin_line = id of det line of order
+						// $receiving->origin may be 'shipping'
+						// $receiving->origin_id may be id of shipping
+
 						// Ref
-						print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->livraison_ref.'<a></td>';
+						print '<td>';
+						print $receiving->getNomUrl($db);
+						//print '<a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
+						print '</td>';
 						// Qty received
-						print '<td align="center">'.$objp->qty_received.'</td>';
+						//print '<td align="center">';
+						// TODO No solution for the moment to link a line det of receipt with a line det of shipping,
+						// so no way to know the qty received for this line of shipping.
+						//print $langs->trans("FeatureNotYetAvailable");
+						//print '</td>';
 						// Date shipping real
-						print '<td>'.dol_print_date($objp->date_delivery,'day').'</td>';
+						print '<td align="right">';
+						print dol_print_date($receiving->date_delivery,'day');
+						print '</td>';
 					}
 					else
 					{

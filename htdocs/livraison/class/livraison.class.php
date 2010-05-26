@@ -270,8 +270,8 @@ class Livraison extends CommonObject
 				$this->note                 = $obj->note;
 				$this->note_public          = $obj->note_public;
 				$this->modelpdf             = $obj->model_pdf;
-				$this->origin               = $obj->origin;
-				$this->origin_id            = $obj->origin_id;
+				$this->origin               = $obj->origin;		// May be 'shipping'
+				$this->origin_id            = $obj->origin_id;	// May be id of shipping
 
 				$this->db->free($result);
 
@@ -631,6 +631,31 @@ class Livraison extends CommonObject
 	}
 
 	/**
+	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+
+		$result='';
+		$urlOption='';
+
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		$picto='sending';
+		$label=$langs->trans("ShowReceiving").': '.$this->ref;
+
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		$result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
+
+	/**
 	 *
 	 *
 	 */
@@ -869,45 +894,6 @@ class Livraison extends CommonObject
 			dol_syslog("livraison.class.php::getRemainingDelivered ".$this->error, LOG_ERR);
 			return -1;
 		}
-	}
-
-	/**
-	 *      \brief      Renvoie un tableau avec les livraisons par ligne
-	 *      \param      filtre_statut       Filtre sur statut
-	 *      \return     int                 0 si OK, <0 si KO
-	 *      \TODO  obsolete
-	 */
-	function livraison_array($filtre_statut=-1)
-	{
-		$this->livraisons = array();
-
-		$sql = 'SELECT cd.fk_product, SUM(ld.qty)';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'livraisondet as ld';
-		$sql.= ', '.MAIN_DB_PREFIX.'livraison as l';
-		$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
-		$sql.= ', '.MAIN_DB_PREFIX.'commandedet as cd';
-		$sql.= ' WHERE ld.fk_livraison = l.rowid';
-		$sql.= ' AND ld.fk_commande_ligne = cd .rowid';
-		$sql.= ' AND cd.fk_commande = c.rowid';
-		$sql.= ' AND cd.fk_commande =' .$this->id;
-		if ($filtre_statut >= 0) $sql.=' AND l.fk_statut = '.$filtre_statut;
-		$sql.= ' GROUP BY cd.fk_product ';
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$row = $this->db->fetch_row($resql);
-				$this->livraisons[$row[0]] = $row[1];
-				$i++;
-			}
-			$this->db->free();
-		}
-
-		return 0;
 	}
 
 }
