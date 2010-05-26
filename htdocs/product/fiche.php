@@ -130,6 +130,8 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 	$product=new Product($db);
 
 	$usecanvas=$_POST["canvas"];
+	if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
+
 	if (! empty($usecanvas))	// Overwrite product here
 	{
 		$canvas = new Canvas($db,$user);
@@ -216,6 +218,8 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 		$product=new Product($db);
 
 		$usecanvas=$_POST["canvas"];
+		if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
+
 		if (! empty($usecanvas))	// Overwrite product here
 		{
 			$canvas = new Canvas($db,$user);
@@ -625,12 +629,179 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 	llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 
 	$usecanvas=$_GET["canvas"];
+	if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
+
 	if (empty($usecanvas))
 	{
-		// TODO Restore simple code here
+		print '<form action="fiche.php" method="post">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
 
+		if ($_GET["type"]==1) $title=$langs->trans("NewService");
+		else $title=$langs->trans("NewProduct");
+		print_fiche_titre($title);
 
+		print '<table class="border" width="100%">';
+		print '<tr>';
+		print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$_POST["ref"].'">';
+		if ($_error == 1)
+		{
+			print $langs->trans("RefAlreadyExists");
+		}
+		print '</td></tr>';
 
+		// Label
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$_POST["libelle"].'"></td></tr>';
+
+		// Status
+		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
+		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+		$html->select_array('statut',$statutarray,$_POST["statut"]);
+		print '</td></tr>';
+
+		// Stock min level
+		if ($_GET["type"] != 1 && $conf->stock->enabled)
+		{
+			print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
+			print '<input name="seuil_stock_alerte" size="4" value="'.$_POST["seuil_stock_alerte"].'">';
+			print '</td></tr>';
+		}
+		else
+		{
+			print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+		}
+
+		// Description (used in invoice, propal...)
+		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('desc',$_POST["desc"],160,'dolibarr_notes','',false);
+			$doleditor->Create();
+		}
+		else
+		{
+			print '<textarea name="desc" rows="4" cols="90">';
+			print $_POST["desc"];
+			print '</textarea>';
+		}
+
+		print "</td></tr>";
+
+		// Nature
+		if ($_GET["type"] != 1)
+		{
+			print '<tr><td>'.$langs->trans("Nature").'</td><td>';
+			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+			$html->select_array('finished',$statutarray,$_POST["finished"]);
+			print '</td></tr>';
+		}
+
+		//Duration
+		if ($_GET["type"] == 1)
+		{
+			print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
+			print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
+			print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
+			print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
+			print '<input name="duration_unit" type="radio" value="m">'.$langs->trans("Month").'&nbsp;';
+			print '<input name="duration_unit" type="radio" value="y">'.$langs->trans("Year").'&nbsp;';
+			print '</td></tr>';
+		}
+
+		if ($_GET["type"] != 1)	// Le poids et le volume ne concerne que les produits et pas les services
+		{
+			// Weight
+			print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+			print '<input name="weight" size="4" value="'.$_POST["weight"].'">';
+			print $formproduct->select_measuring_units("weight_units","weight");
+			print '</td></tr>';
+			// Length
+			print '<tr><td>'.$langs->trans("Length").'</td><td>';
+			print '<input name="size" size="4" value="'.$_POST["size"].'">';
+			print $formproduct->select_measuring_units("size_units","size");
+			print '</td></tr>';
+			// Surface
+			print '<tr><td>'.$langs->trans("Surface").'</td><td>';
+			print '<input name="surface" size="4" value="'.$_POST["surface"].'">';
+			print $formproduct->select_measuring_units("surface_units","surface");
+			print '</td></tr>';
+			// Volume
+			print '<tr><td>'.$langs->trans("Volume").'</td><td>';
+			print '<input name="volume" size="4" value="'.$_POST["volume"].'">';
+			print $formproduct->select_measuring_units("volume_units","volume");
+			print '</td></tr>';
+		}
+
+		// Hidden
+		if (($_GET["type"] != 1 && $user->rights->produit->hidden)
+		|| ($_GET["type"] == 1 && $user->rights->service->hidden))
+		{
+			print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
+			print $html->selectyesno('hidden',$product->hidden);
+			print '</td></tr>';
+		}
+		else
+		{
+			print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
+			print yn("No");
+			print '</td></tr>';
+		}
+
+		// Note (invisible sur facture, propales...)
+		print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('note',$_POST["note"],180,'dolibarr_notes','',false);
+			$doleditor->Create();
+		}
+		else
+		{
+			print '<textarea name="note" rows="8" cols="70">';
+			print $_POST["note"];
+			print '</textarea>';
+		}
+		print "</td></tr>";
+		print '</table>';
+
+		print '<br>';
+
+		if ($conf->global->PRODUIT_MULTIPRICES)
+		{
+			// We do no show price array on create when multiprices enabled.
+			// We must set them on prices tab.
+		}
+		else
+		{
+			print '<table class="border" width="100%">';
+
+			// PRIX
+			print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
+			print '<td><input name="price" size="10" value="'.$product->price.'">';
+			print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
+			print '</td></tr>';
+
+			// MIN PRICE
+			print '<tr><td>'.$langs->trans("MinPrice").'</td>';
+			print '<td><input name="price_min" size="10" value="'.$product->price_min.'">';
+			print '</td></tr>';
+
+			// VAT
+			print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
+			print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+			print '</td></tr>';
+
+			print '</table>';
+
+			print '<br>';
+		}
+
+		print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+
+		print '</form>';
 	}
 	else
 	{
@@ -655,6 +826,7 @@ if ($_GET["id"] || $_GET["ref"])
 	$productstatic = new Product($db);
 	$result = $productstatic->getCanvas($_GET["id"],$_GET["ref"]);
 	$usecanvas=$productstatic->canvas;
+	if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
 
 	if (empty($usecanvas))
 	{
