@@ -51,11 +51,12 @@ $offset = $limit * $_GET["page"] ;
  */
 
 $companystatic=new Societe($db);
+$shipment=new Expedition($db);
 
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('',$langs->trans('ListOfSendings'),$helpurl);
 
-$sql = "SELECT e.rowid, e.ref, e.date_expedition, e.fk_statut";
+$sql = "SELECT e.rowid, e.ref, e.date_delivery, e.date_expedition, e.fk_statut";
 $sql.= ", s.nom as socname, s.rowid as socid";
 $sql.= " FROM (".MAIN_DB_PREFIX."expedition as e";
 if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
@@ -98,10 +99,11 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","",$param,'width="15%"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", $param,'width="25%" align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),"liste.php","e.date_expedition","",$param, 'width="25%" align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","",$param,'width="10%" align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", $param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateDeliveryPlanned"),"liste.php","e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateReceived"),"liste.php","e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 	$var=True;
 
@@ -111,8 +113,11 @@ if ($resql)
 
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print "<td><a href=\"fiche.php?id=".$objp->rowid."\">".img_object($langs->trans("ShowSending"),"sending").'</a>&nbsp;';
-		print "<a href=\"fiche.php?id=".$objp->rowid."\">".$objp->ref."</a></td>\n";
+		print "<td>";
+		$shipment->id=$objp->rowid;
+		$shipment->ref=$objp->ref;
+		print $shipment->getNomUrl(1);
+		print "</td>\n";
 		// Third party
 		print '<td>';
 		$companystatic->id=$objp->socid;
@@ -120,13 +125,17 @@ if ($resql)
 		$companystatic->nom=$objp->socname;
 		print $companystatic->getNomUrl(1);
 		print '</td>';
-		// Date
+		// Date delivery  planed
 		print "<td align=\"center\">";
-		print dol_print_date($db->jdate($objp->date_expedition),"day");
+		print dol_print_date($db->jdate($objp->date_delivery),"day");
 		/*$now = time();
 		if ( ($now - $db->jdate($objp->date_expedition)) > $conf->warnings->lim && $objp->statutid == 1 )
 		{
 		}*/
+		print "</td>\n";
+		// Date real
+		print "<td align=\"center\">";
+		print dol_print_date($db->jdate($objp->date_expedition),"day");
 		print "</td>\n";
 
 		print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';

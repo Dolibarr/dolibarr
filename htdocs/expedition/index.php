@@ -21,12 +21,13 @@
 /**
  *       \file       htdocs/expedition/index.php
  *       \ingroup    expedition
- *       \brief      Page accueil du module expedition
+ *       \brief      Home page of shipping area.
  *       \version    $Id$
  */
 
 require("../main.inc.php");
 require(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+require(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 
 $langs->load("orders");
 $langs->load("sendings");
@@ -37,6 +38,7 @@ $langs->load("sendings");
 
 $orderstatic=new Commande($db);
 $companystatic=new Societe($db);
+$shipment=new Expedition($db);
 
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('',$langs->trans("Sendings"),$helpurl);
@@ -92,9 +94,17 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr $bc[$var]><td nowrap=\"nowrap\"><a href=\"fiche.php?id=".$obj->rowid."\">".$obj->ref."</a></td>";
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a></td></tr>';
+			print "<tr ".$bc[$var]."><td nowrap=\"nowrap\">";
+			$shipment->id=$obj->rowid;
+			$shipment->ref=$obj->ref;
+			print $shipment->getNomUrl(1);
+			print "</td>";
+			print '<td>';
+			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a>';
+			print '</td>';
+			print '<td>';
+			if ($obj->commande_id) print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
+			print '</td></tr>';
 			$i++;
 		}
 		print "</table><br>";

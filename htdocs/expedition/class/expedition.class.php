@@ -794,6 +794,31 @@ class Expedition extends CommonObject
 	}
 
 	/**
+	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+
+		$result='';
+		$urlOption='';
+
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		$picto='sending';
+		$label=$langs->trans("ShowSending").': '.$this->ref;
+
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		$result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
+
+	/**
 	 *    \brief      Retourne le libelle du statut d'une expedition
 	 *    \return     string      Libelle
 	 */
