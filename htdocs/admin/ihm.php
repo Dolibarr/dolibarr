@@ -95,7 +95,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
  */
 
 $wikihelp='EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
-llxHeader($langs->trans("Setup"),'',$wikihelp);
+llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 $html=new Form($db);
 $formadmin=new FormAdmin($db);

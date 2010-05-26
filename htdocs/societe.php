@@ -115,7 +115,7 @@ if ($user->societe_id > 0)
  */
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader($langs->trans("ThirdParty"),'',$help_url);
+llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $form=new Form($db);
 $companystatic=new Societe($db);

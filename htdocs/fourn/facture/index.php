@@ -93,7 +93,7 @@ if ($_POST["mode"] == 'search')
 $now=gmmktime();
 $html=new Form($db);
 
-llxHeader($langs->trans("SuppliersInovices"),'','EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
+llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
 $sql = "SELECT s.rowid as socid, s.nom, ";
 $sql.= " fac.rowid as ref, fac.rowid as facid, fac.facnumber, fac.datef, fac.date_lim_reglement as date_echeance,";

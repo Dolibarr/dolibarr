@@ -53,7 +53,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
  */
 
 $wikihelp='EN:Module_ClickToDial_En|FR:Module_ClickToDial|ES:Módulo_ClickTodial_Es';
-llxHeader($langs->trans("ClickToDialSetup"),'',$wikihelp);
+llxHeader('',$langs->trans("ClickToDialSetup"),$wikihelp);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("ClickToDialSetup"),$linkback,'setup');

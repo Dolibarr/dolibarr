@@ -244,7 +244,7 @@ if (! $server) $server='127.0.0.1';
  */
 
 $wikihelp='EN:Setup EMails|FR:Paramétrage EMails|ES:Configuración EMails';
-llxHeader($langs->trans("Setup"),'',$wikihelp);
+llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print_fiche_titre($langs->trans("EMailsSetup"),'','setup');
 

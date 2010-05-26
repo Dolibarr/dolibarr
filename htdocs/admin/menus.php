@@ -89,7 +89,7 @@ $html=new Form($db);
 $htmladmin=new FormAdmin($db);
 
 $wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader($langs->trans("Setup"),'',$wikihelp);
+llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print_fiche_titre($langs->trans("Menus"),'','setup');
 
