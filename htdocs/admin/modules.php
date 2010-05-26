@@ -115,7 +115,7 @@ function Activate($value,$withdeps=1)
 		$result=$objMod->init();
 		if ($result <= 0) $ret=$objMod->error;
 	}
-	
+
 	if ($withdeps)
 	{
 		if (is_array($objMod->depends) && !empty($objMod->depends))
@@ -129,7 +129,7 @@ function Activate($value,$withdeps=1)
 				}
 			}
 		}
-		
+
 		if (is_array($objMod->conflictwith) && !empty($objMod->conflictwith))
 		{
 			// Desactivation des modules qui entrent en conflit
@@ -207,8 +207,8 @@ function UnActivate($value,$requiredby=1)
  */
 $_SESSION["mode"]=$mode;
 
-$wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader($langs->trans("Setup"),'',$wikihelp);
+$help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
+llxHeader('',$langs->trans("Setup"),$help_url);
 
 print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
 
@@ -448,7 +448,7 @@ foreach ($orders as $key => $value)
         if (! empty($conf->global->$const_name))
         {
             $disableSetup = 0;
-            
+
         	// Module actif
             if (! empty($objMod->always_enabled) || (($conf->global->MAIN_MODULE_MULTICOMPANY && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
             {
@@ -514,7 +514,7 @@ foreach ($orders as $key => $value)
 
             // Module non actif
            	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-           	print img_picto($langs->trans("Disabled"),'off'); 
+           	print img_picto($langs->trans("Disabled"),'off');
            	print "</a></td>\n  <td>&nbsp;</td>\n";
         }
 

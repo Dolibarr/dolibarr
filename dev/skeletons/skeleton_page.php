@@ -89,7 +89,7 @@ if ($_REQUEST["action"] == 'add')
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('MyPageName','','');
+llxHeader('','MyPageName','');
 
 $form=new Form($db);
 
@@ -104,7 +104,7 @@ $form=new Form($db);
 * Put here code to view linked object
 ****************************************************/
 $myobject->load_object_linked($myobject->id,$myobject->element);
-				
+
 foreach($myobject->linked_object as $object => $objectid)
 {
 	if($conf->$object->enabled)
