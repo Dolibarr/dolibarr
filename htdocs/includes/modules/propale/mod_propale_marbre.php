@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		$posindice=8;
 		$sql = "SELECT MAX(SUBSTRING(ref,".$posindice.")) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-		$sql.= " WHERE ref like '".$this->prefix."%'";
+		$sql.= " WHERE ref LIKE '".$this->prefix."%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -118,8 +118,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 			return -1;
 		}
 
-		$date=$propal->datep;
-		//$yymm = strftime("%y%m",time());
+		$date = (!empty($propal->datep)?$propal->datep:dol_now('tzserver'));
 		$yymm = strftime("%y%m",$date);
 		$num = sprintf("%04s",$max+1);
 
