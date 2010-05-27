@@ -118,7 +118,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 			return -1;
 		}
 
-		$date = (!empty($propal->datep)?$propal->datep:dol_now('tzserver'));
+		$date = time();
 		$yymm = strftime("%y%m",$date);
 		$num = sprintf("%04s",$max+1);
 

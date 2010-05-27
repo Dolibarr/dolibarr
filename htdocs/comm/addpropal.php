@@ -64,7 +64,6 @@ if ($_GET["action"] == 'create')
 	}
 
 	$propal = new Propal($db);
-	$propal->date=time();
 
 	$numpr='';
 	$obj = $conf->global->PROPALE_ADDON;
