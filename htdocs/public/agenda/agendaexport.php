@@ -79,13 +79,24 @@ if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_
 
 
 // Define filename with prefix on filters predica (each predica set must have on cache file)
-$filename='';
-$shortfilename='';
-if ($format == 'vcal') $shortfilename='dolibarrcalendar.vcs';
-if ($format == 'ical') $shortfilename='dolibarrcalendar.ics';
-if ($format == 'rss')  $shortfilename='dolibarrcalendar.rss';
+$shortfilename='dolibarrcalendar';
 $filename=$shortfilename;
-if (! $filename)
+// Complete long filename
+foreach ($filters as $key => $value)
+{
+	if ($key == 'year')     $filename.='-year'.$value;
+	if ($key == 'idaction') $filename.='-id'.$value;
+	if ($key == 'login')	$filename.='-login'.$value;
+	if ($key == 'logina')	$filename.='-logina'.$value;	// Author
+	if ($key == 'logind')	$filename.='-logind'.$value;	// Affected to
+	if ($key == 'logint')	$filename.='-logint'.$value;	// Done by
+}
+// Add extension
+if ($format == 'vcal') { $shortfilename.='.vcs'; $filename.='.vcs'; }
+if ($format == 'ical') { $shortfilename.='.ics'; $filename.='.ics'; }
+if ($format == 'rss')  { $shortfilename.='.rss'; $filename.='.rss'; }
+
+if ($shortfilename=='dolibarrcalendar')
 {
 	$langs->load("main");
 	$langs->load("errors");
@@ -94,16 +105,6 @@ if (! $filename)
 	llxFooterVierge('$Date$ - $Revision$');
 	exit;
 }
-foreach ($filters as $key => $value)
-{
-	if ($key == 'year')     $filename.='.year'.$value;
-	if ($key == 'idaction') $filename.='.id'.$value;
-	if ($key == 'login')	$filename.='.login'.$value;
-	if ($key == 'logina')	$filename.='.logina'.$value;
-	if ($key == 'logind')	$filename.='.logind'.$value;
-	if ($key == 'logint')	$filename.='.logint'.$value;
-}
-
 
 $agenda=new ActionComm($db);
 

@@ -654,7 +654,7 @@ class ActionComm
 				{
 					$login=$value;
 					$userforfilter=new User($this->db);
-					$userforfilter->fetch($value);
+					$result=$userforfilter->fetch('',$value);
 					$sql.= " AND (";
 					$sql.= " a.fk_user_author = ".$userforfilter->id;
 					$sql.= " OR a.fk_user_action = ".$userforfilter->id;
@@ -665,21 +665,21 @@ class ActionComm
 				{
 					$logina=$value;
 					$userforfilter=new User($this->db);
-					$userforfilter->fetch($value);
+					$result=$userforfilter->fetch('',$value);
 					$sql.= " AND a.fk_user_author = ".$userforfilter->id;
 				}
 				if ($key == 'logint')
 				{
 					$logint=$value;
 					$userforfilter=new User($this->db);
-					$userforfilter->fetch($value);
+					$result=$userforfilter->fetch('',$value);
 					$sql.= " AND a.fk_user_action = ".$userforfilter->id;
 				}
 				if ($key == 'logind')
 				{
 					$logind=$value;
 					$userforfilter=new User($this->db);
-					$userforfilter->fetch($value);
+					$result=$userforfilter->fetch('',$value);
 					$sql.= " AND a.fk_user_done = ".$userforfilter->id;
 				}
 			}
