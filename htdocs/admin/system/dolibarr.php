@@ -97,9 +97,10 @@ print '<br>';
 
 
 // Shmop
-$shmoparray=dol_listshmop();
-if (sizeof($shmoparray) > 0)
+if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
 {
+	$shmoparray=dol_listshmop();
+
 	$var=true;
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
