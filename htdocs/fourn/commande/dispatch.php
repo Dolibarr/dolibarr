@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005	     Eric	Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file      htdocs/fourn/commande/fiche.php
+ *	\file      htdocs/fourn/commande/dispatch.php
  *	\ingroup   commande
  *	\brief     Fiche de ventilation des commandes fournisseurs
  *	\version   $Id$
@@ -64,16 +64,23 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 	{
 		if ( preg_match('/^product_([0-9]+)$/i', $key, $reg) )
 		{
-	  $prod = "product_".$reg[1];
-	  $qty = "qty_".$reg[1];
-	  $ent = "entrepot_".$reg[1];
-	  $pu = "pu_".$reg[1];
-	  $result = $commande->DispatchProduct($user, $_POST[$prod], $_POST[$qty], $_POST[$ent], $_POST[$pu]);
+			$prod = "product_".$reg[1];
+			$qty = "qty_".$reg[1];
+			$ent = "entrepot_".$reg[1];
+			$pu = "pu_".$reg[1];
+			$result = $commande->DispatchProduct($user, $_POST[$prod], $_POST[$qty], $_POST[$ent], $_POST[$pu]);
 		}
 	}
 
-	Header("Location: dispatch.php?id=".$_GET["id"]);
-	exit;
+	if ($result > 0)
+	{
+		Header("Location: dispatch.php?id=".$_GET["id"]);
+		exit;
+	}
+	else
+	{
+		$mesg=$commande->error;
+	}
 }
 
 
@@ -86,7 +93,7 @@ llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
 $html =	new Form($db);
 
-$now=gmmktime();
+$now=dol_now();
 
 $id = $_GET['id'];
 $ref= $_GET['ref'];
@@ -160,6 +167,10 @@ if ($id > 0 || ! empty($ref))
 		if ($mesg) print $mesg;
 		else print '<br>';
 
+
+		$disabled=1;
+		if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) $disabled=0;
+
 		/*
 		 * Lignes de commandes
 		 */
@@ -200,6 +211,9 @@ if ($id > 0 || ! empty($ref))
 				$num = $db->num_rows($resql);
 				$i = 0;
 
+				$remaintodispatch=$objp->qty - $products_dispatched[$objp->fk_product];
+				if ($remaintodispatch < 0) $remaintodispatch=0;
+
 				if ($num)
 				{
 					print '<tr class="liste_titre">';
@@ -207,8 +221,8 @@ if ($id > 0 || ! empty($ref))
 
 					print '<td align="right">'.$langs->trans("QtyOrdered").'</td>';
 					print '<td align="right">'.$langs->trans("QtyDispatched").'</td>';
-					print '<td align="right">'.$langs->trans("Warehouse").'</td>';
 					print '<td align="right">'.$langs->trans("QtyDelivered").'</td>';
+					print '<td align="right">'.$langs->trans("Warehouse").'</td>';
 					print "</tr>\n";
 				}
 
@@ -234,20 +248,22 @@ if ($id > 0 || ! empty($ref))
 						print '<td align="right">'.$objp->qty.'</td>';
 						print '<td align="right">'.$products_dispatched[$objp->fk_product].'</td>';
 
-						print '<td align="right">';
+						// Dispatch
+						print '<td align="right"><input name="qty_'.$i.'" type="text" size="8" value="'.($remaintodispatch).'"></td>';
 
+						// Warehouse
+						print '<td align="right">';
 						if (sizeof($user->entrepots) === 1)
 						{
 							$uentrepot = array();
 							$uentrepot[$user->entrepots[0]['id']] = $user->entrepots[0]['label'];
-							$html->select_array("entrepot_".$i, $uentrepot);
+							print $html->selectarray("entrepot_".$i, $uentrepot, '', $disabled, 0, 0, 0, '', 0, 0, $disabled);
 						}
 						else
 						{
-							$html->select_array("entrepot_".$i, $entrepot->list_array());
+							print $html->selectarray("entrepot_".$i, $entrepot->list_array(), '', $disabled, 0, 0, 0, '', 0, 0, $disabled);
 						}
 						print "</td>\n";
-						print '<td align="right"><input name="qty_'.$i.'" type="text" size="8" value="'.($objp->qty-$products_dispatched[$objp->fk_product]).'"></td>';
 						print "</tr>\n";
 					}
 					$i++;
@@ -261,22 +277,24 @@ if ($id > 0 || ! empty($ref))
 
 			print "</table>\n";
 			print "<br/>\n";
-			print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center></form>';
+
+			print '<center><input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"></center>';
+
+			print '</form>';
 		}
 
 		print "<br/>\n";
+
+		// List of already dispatching
 		print '<table class="noborder" width="100%">';
 
-
-		$sql = "SELECT p.ref,cfd.fk_product, cfd.qty";
-		$sql.= ", cfd.rowid";
-		$sql.= ", p.label, e.label as entrepot";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
-		$sql.= " , ".MAIN_DB_PREFIX."product as p ";
-		$sql.= " , ".MAIN_DB_PREFIX."entrepot as e ";
+		$sql = "SELECT p.ref, p.label, e.label as entrepot,";
+		$sql.= " cfd.fk_product, cfd.qty, cfd.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product as p,";
+		$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
 		$sql.= " WHERE cfd.fk_commande = ".$commande->id;
 		$sql.= " AND cfd.fk_product = p.rowid";
-		$sql.= " AND cfd.fk_entrepot = e.rowid";
 		$sql.= " ORDER BY cfd.rowid ASC";
 
 		$resql = $db->query($sql);
@@ -305,7 +323,7 @@ if ($id > 0 || ! empty($ref))
 				print "</td>\n";
 
 				print '<td align="right">'.$objp->qty.'</td>';
-				print '<td align="right">'.stripslashes($objp->entrepot).'</td>';
+				print '<td align="right">'.$objp->entrepot.'</td>';
 				print "</tr>\n";
 
 				$i++;
@@ -328,45 +346,8 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<div	class="tabsAction">';
 
-			if ($commande->statut == 0 && $num > 0)
-			{
-				if ($user->rights->fournisseur->commande->valider)
-				{
-					print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
-				}
-			}
-
-			if ($commande->statut == 1)
-			{
-				if ($user->rights->fournisseur->commande->approuver)
-				{
-					print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
-
-					print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
-				}
-			}
-
-			if ($commande->statut == 2)
-			{
-				if ($user->rights->fournisseur->commande->commander)
-				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
-				}
-			}
-
-			if ($commande->statut == 0)
-			{
-				if ($user->rights->fournisseur->commande->creer)
-				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-				}
-			}
 			print "</div>";
 		}
-		/*
-		 *
-		 *
-		 */
 	}
 	else
 	{

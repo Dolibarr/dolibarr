@@ -1513,7 +1513,7 @@ class Form
 		print '</select>';
 		if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	}
-	
+
 	/**
 	 *      \brief      Selection HT ou TTC
 	 *      \param      selected        Id pre-selectionne
@@ -1532,9 +1532,9 @@ class Form
 	function load_PriceBaseType($selected='',$htmlname='price_base_type')
 	{
 		global $langs;
-		
+
 		$return='';
-		
+
 		$return.= '<select class="flat" name="'.$htmlname.'">';
 		$options = array(
 					'HT'=>$langs->trans("HT"),
@@ -1553,7 +1553,7 @@ class Form
 			$return.= '</option>';
 		}
 		$return.= '</select>';
-		
+
 		return $return;
 	}
 
@@ -2206,7 +2206,7 @@ class Form
 			return 1;
 		}
 	}
-	
+
 	/**
 	 *      \brief      Output an HTML select vat rate
 	 *      \param      name                Nom champ html
@@ -2244,7 +2244,7 @@ class Form
 	function load_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='', $info_bits=0)
 	{
 		global $langs,$conf,$mysoc;
-		
+
 		$return='';
 
 		$txtva=array();
@@ -2357,7 +2357,7 @@ class Form
 			}
 			$return.= '</select>';
 		}
-		
+
 		return $return;
 	}
 
@@ -2703,9 +2703,10 @@ class Form
 	 *	\param  option          Valeur de l'option en fonction du type choisi
 	 *	\param  translate       Traduire la valeur
 	 * 	\param	maxlen			Length maximum for labels
+	 * 	\param	disabled		Html select box is disabled
 	 * 	\return	string			HTML select string
 	 */
-	function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0, $maxlen=0)
+	function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0, $maxlen=0, $disabled=0)
 	{
 		global $langs;
 
@@ -2714,11 +2715,11 @@ class Form
 		// \TODO Simplify optionType and option (only one should be necessary)
 		if ($optionType == 1 && $option != '')
 		{
-			$out.='<select class="flat" name="'.$htmlname.'" '.$option.'>';
+			$out.='<select '.($disabled?'disabled="true"':'').' class="flat" name="'.$htmlname.'" '.$option.'>';
 		}
 		else
 		{
-			$out.='<select class="flat" name="'.$htmlname.'">';
+			$out.='<select '.($disabled?'disabled="true"':'').' class="flat" name="'.$htmlname.'">';
 		}
 
 		if ($show_empty)

@@ -91,7 +91,7 @@ function ordersupplier_prepare_head($commande)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if ($conf->stock->enabled)
+	if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
 	{
 		$langs->load("stocks");
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$commande->id;

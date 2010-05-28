@@ -505,7 +505,7 @@ class CommandeFournisseur extends Commande
 				$this->log($user, 2, time());	// Statut 2
 
 				// If stock is incremented on validate order, we must increment it
-				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER == 1)
+				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
@@ -918,36 +918,22 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 * 	\brief	Dispatch un element de la commande dans un stock
+	 * Add a product into a stock warehouse.
+	 *
+	 * @param unknown_type $user
+	 * @param unknown_type $product
+	 * @param unknown_type $qty
+	 * @param unknown_type $entrepot	Id of warehouse to add product
+	 * @param unknown_type $price
+	 * @return unknown
 	 */
-	function DispatchProducts($user, $products, $qtys, $entrepots)
-	{
-		global $conf;
-		require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
-
-		$this->db->begin();
-
-		if ( is_array($products) )
-		{
-
-		}
-		else
-		{
-			$res = $this->DispatchProduct($user, $product, $qty, $entrepot);
-		}
-
-		$this->db->rollback();
-
-		return $res;
-	}
-
 	function DispatchProduct($user, $product, $qty, $entrepot, $price=0)
 	{
 		global $conf;
 		$error = 0;
 		require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
 
-		dol_syslog("CommandeFournisseur::DispatchProduct");
+		$now=dol_now();
 
 		if ( ($this->statut == 3 || $this->statut == 4 || $this->statut == 5) && $qty > 0)
 		{
@@ -955,23 +941,26 @@ class CommandeFournisseur extends Commande
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch ";
 			$sql.= " (fk_commande,fk_product, qty, fk_entrepot, fk_user, datec) VALUES ";
-			$sql.= " ('".$this->id."','".$product."','".$qty."','".$entrepot."','".$user->id."',".$this->db->idate(mktime()).")";
+			$sql.= " ('".$this->id."','".$product."','".$qty."',".($entrepot>0?"'".$entrepot."'":"null").",'".$user->id."','".$this->db->idate($now)."')";
 
+			dol_syslog("CommandeFournisseur::DispatchProduct sql=".$sql);
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
-				$error = -1;
+				$this->error=$this->db->lasterror();
+				$error++;
 			}
+
 			// Si module stock gere et que expedition faite depuis un entrepot
-			if (!$error && $conf->stock->enabled && $entrepot)
+			if (!$error && $entrepot > 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
 			{
 				$mouv = new MouvementStock($this->db);
 				$result=$mouv->reception($user, $product, $entrepot, $qty, $price);
 				if ($result < 0)
 				{
-					$this->error=$this->db->error()." - sql=$sql";
-					dol_syslog("CommandeFournisseur::DispatchProduct".$this->error, LOG_ERR);
-					$error = -2;
+					$this->error=$mouv->error;
+					dol_syslog("CommandeFournisseur::DispatchProduct ".$this->error, LOG_ERR);
+					$error++;
 				}
 				$i++;
 			}

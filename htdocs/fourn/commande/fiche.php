@@ -1314,8 +1314,8 @@ if ($id > 0 || ! empty($ref))
 				$formorder->select_methodes_commande($_POST["methodecommande"],"methodecommande",1);
 				print '</td></tr>';
 
-				print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
-				print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
+				print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
+				print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("ToOrder").'"></td></tr>';
 				print '</table>';
 				print '</form>';
 			}
@@ -1346,8 +1346,8 @@ if ($id > 0 || ! empty($ref))
 				print $html->select_array("type",$liv);
 
 				print '</td></tr>';
-				print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="comment"></td></tr>';
-				print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
+				print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';
+				print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Receive").'"></td></tr>';
 				print "</table>\n";
 				print "</form>\n";
 			}

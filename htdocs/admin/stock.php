@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,17 +80,20 @@ if ($_POST["action"] == 'STOCK_CALCULATE_ON_BILL'
 		dol_print_error("Error in some requests", LOG_ERR);
 	}
 }
-// Mode of stock decrease
+// Mode of stock increase
 if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_BILL'
-|| $_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER')
+|| $_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER'
+|| $_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')
 {
 	$count=0;
 	$db->begin();
 	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", '','chaine',0,'',$conf->entity);
 	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", '','chaine',0,'',$conf->entity);
+	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", '','chaine',0,'',$conf->entity);
 	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_BILL')           $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", $_POST["STOCK_CALCULATE_ON_SUPPLIER_BILL"],'chaine',0,'',$conf->entity);
 	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $_POST["STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER"],'chaine',0,'',$conf->entity);
-	if ($count == 3)
+	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $_POST["STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER"],'chaine',0,'',$conf->entity);
+	if ($count == 4)
 	{
 		$db->commit();
 		Header("Location: stock.php");
@@ -241,6 +244,17 @@ if ($conf->commande->enabled)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER\">";
 	print $html->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</form>\n</td>\n</tr>\n";
+
+	$var=!$var;
+	print "<tr ".$bc[$var].">";
+	print '<td width="60%">'.$langs->trans("ReStockOnDispatchOrder").'</td>';
+	print '<td width="160" align="right">';
+	print "<form method=\"post\" action=\"stock.php\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER\">";
+	print $html->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
 }
