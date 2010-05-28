@@ -61,19 +61,19 @@ class CommonObject
 	}
 
 	/**
-	 *      \brief      Ajoute un contact associe au l'entite definie dans $this->element
-	 *      \param      fk_socpeople        Id du contact a ajouter
-	 *   	\param 		type_contact 		Type de contact (code ou id)
-	 *      \param      source              external=Contact externe (llx_socpeople), internal=Contact interne (llx_user)
-	 *      \return     int                 <0 si erreur, >0 si ok
+	 *      \brief      Add a link between element $this->element and a contact
+	 *      \param      fk_socpeople        Id of contact to link
+	 *   	\param 		type_contact 		Type of contact (code or id)
+	 *      \param      source              external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 *      \return     int                 <0 if KO, >0 if OK
 	 */
 	function add_contact($fk_socpeople, $type_contact, $source='external',$notrigger=0)
 	{
-		global $conf,$langs;
+		global $user,$conf,$langs;
 
 		dol_syslog("CommonObject::add_contact $fk_socpeople, $type_contact, $source");
 
-		// Verification parametres
+		// Check parameters
 		if ($fk_socpeople <= 0)
 		{
 			$this->error=$langs->trans("ErrorWrongValueForParameter","1");
@@ -108,7 +108,7 @@ class CommonObject
 			}
 		}
 
-		$datecreate = time();
+		$datecreate = dol_now();
 
 		// Insertion dans la base
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
@@ -131,7 +131,7 @@ class CommonObject
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// End call triggers
 			}
-			
+
 			return 1;
 		}
 		else
@@ -143,7 +143,7 @@ class CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->error()." - $sql";
+				$this->error=$this->db->error();
 				dol_syslog($this->error,LOG_ERR);
 				return -1;
 			}
@@ -151,11 +151,11 @@ class CommonObject
 	}
 
 	/**
-	 *      \brief      Mise a jour du statut d'un contact
-	 *      \param      rowid               La reference du lien contact-entite
-	 * 		\param		statut	            Le nouveau statut
-	 *      \param      type_contact_id     Description du type de contact
-	 *      \return     int                 <0 si erreur, =0 si ok
+	 *      \brief      Update a link to contact line
+	 *      \param      rowid               Id of line contact-element
+	 * 		\param		statut	            New status of link
+	 *      \param      type_contact_id     Id of contact type
+	 *      \return     int                 <0 if KO, >= 0 if OK
 	 */
 	function update_contact($rowid, $statut, $type_contact_id)
 	{
@@ -177,14 +177,14 @@ class CommonObject
 	}
 
 	/**
-	 *    \brief      Supprime une ligne de contact
-	 *    \param      rowid			La reference du contact
+	 *    \brief      Delete a link to contact line
+	 *    \param      rowid			Id of link line to delete
 	 *    \return     statur        >0 si ok, <0 si ko
 	 */
 	function delete_contact($rowid,$notrigger=0)
 	{
-		global $conf;
-		
+		global $user,$langs,$conf;
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 		$sql.= " WHERE rowid =".$rowid;
 
@@ -200,7 +200,7 @@ class CommonObject
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// End call triggers
 			}
-			
+
 			return 1;
 		}
 		else
@@ -212,13 +212,13 @@ class CommonObject
 	}
 
 	/**
-	 *    \brief      Supprime une ligne de contact
-	 *    \return     statur        >0 si ok, <0 si ko
+	 *    \brief      Delete all links between an object $this and all its contacts
+	 *    \return     int	>0 if OK, <0 if KO
 	 */
 	function delete_linked_contact()
 	{
 		$temp = array();
-		$typeContact = $this->liste_type_contact(0);
+		$typeContact = $this->liste_type_contact('');
 
 		foreach($typeContact as $key => $value)
 		{
@@ -344,7 +344,7 @@ class CommonObject
 		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE tc.element='".$this->element."'";
-		if (!empty($source)) $sql.= " AND tc.source='".$source."'";
+		if (! empty($source)) $sql.= " AND tc.source='".$source."'";
 		$sql.= " ORDER by tc.".$order;
 
 		$resql=$this->db->query($sql);
