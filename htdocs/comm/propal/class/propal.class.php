@@ -1601,6 +1601,8 @@ class Propal extends CommonObject
 	function delete($user, $notrigger=0)
 	{
 		global $conf,$langs;
+		
+		$error=0;
 
 		$this->db->begin();
 
@@ -1657,10 +1659,18 @@ class Propal extends CommonObject
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// End call triggers
 				}
-
-				dol_syslog("Suppression de la proposition $this->id par $user->id", LOG_DEBUG);
-				$this->db->commit();
-				return 1;
+				
+				if (!$error)
+				{
+					dol_syslog("Suppression de la proposition $this->id par $user->id", LOG_DEBUG);
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					return 0;
+				}
 			}
 			else
 			{
