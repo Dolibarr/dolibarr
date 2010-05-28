@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,15 +19,16 @@
  */
 
 /**
-		\file       htdocs/fourn/product/liste.php
-		\ingroup    produit
-		\brief      Page liste des produits ou services
-		\version    $Id$
-*/
+ *		\file       htdocs/fourn/product/liste.php
+ *		\ingroup    produit
+ *		\brief      Page liste des produits ou services
+ *		\version    $Id$
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php");
 
 $langs->load("products");
 $langs->load("suppliers");
