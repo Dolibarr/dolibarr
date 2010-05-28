@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -350,9 +350,9 @@ function form_constantes($tableau)
 				{
 					$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 				}
-				$form->select_array('constvalue',$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
+				print $form->selectarray('constvalue',$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
 				print '</td><td>';
-				$form->select_array('consttype',array('yesno','texte','chaine'),1);
+				print $form->selectarray('consttype',array('yesno','texte','chaine'),1);
 			}
 			else
 			{
@@ -361,7 +361,7 @@ function form_constantes($tableau)
 				{
 					print $form->selectyesno('constvalue',$obj->value,1);
 					print '</td><td>';
-					$form->select_array('consttype',array('yesno','texte','chaine'),0);
+					print $form->selectarray('consttype',array('yesno','texte','chaine'),0);
 				}
 				else if ($obj->type == 'texte')
 				{
@@ -369,13 +369,13 @@ function form_constantes($tableau)
 					print $obj->value;
 					print "</textarea>\n";
 					print '</td><td>';
-					$form->select_array('consttype',array('yesno','texte','chaine'),1);
+					print $form->selectarray('consttype',array('yesno','texte','chaine'),1);
 				}
 				else
 				{
 					print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
 					print '</td><td>';
-					$form->select_array('consttype',array('yesno','texte','chaine'),2);
+					print $form->selectarray('consttype',array('yesno','texte','chaine'),2);
 				}
 				print '</td>';
 			}
