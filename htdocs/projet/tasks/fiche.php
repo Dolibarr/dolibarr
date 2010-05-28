@@ -43,7 +43,7 @@ if (empty($user->rights->projet->all->lire))
 	$_REQUEST["mode"]='mine';
 }
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
-if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
+//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 

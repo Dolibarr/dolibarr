@@ -48,10 +48,11 @@ $page = $page == -1 ? 0 : $page;
 /*
  * View
  */
+
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
-$title=$langs->trans("Tasks");
-if ($mine) $title=$langs->trans("MyTasks");
+$title=$langs->trans("Activities");
+if ($mine) $title=$langs->trans("MyActivities");
 
 llxHeader("",$title,"Projet");
 
@@ -67,6 +68,15 @@ if ($_GET["id"])
 }
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+
+// Show description of content
+if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
+else
+{
+	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
+	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+}
+
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user

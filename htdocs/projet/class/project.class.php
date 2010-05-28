@@ -742,12 +742,14 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * Return array of projects authorized for a user
+	 * Return array of projects affected to a user, authorized to a user, or all projects
 	 *
-	 * @param unknown_type $user
-	 * @return unknown
+	 * @param 	user		User object
+	 * @param 	mode		0=All project I have permission on, 1=Affected to me only, 2=Will return list of all projects
+	 * @param 	list		0=Return array,1=Return string list
+	 * @return 	array or string
 	 */
-	function getProjectsAuthorizedForUser($user,$mine=0,$list=0)
+	function getProjectsAuthorizedForUser($user,$mode=0,$list=0)
 	{
 		global $conf;
 
@@ -760,14 +762,18 @@ class Project extends CommonObject
 		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 		$sql.= " WHERE p.entity = ".$conf->entity;
 
-		if ($mine)
+		if ($mode == 2)
+		{
+			// No filter. Use this if user has permission to see all project
+		}
+		if ($mode == 1)
 		{
 			$sql.= " AND ec.element_id = p.rowid";
 			$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
 			$sql.= " AND ctc.element = '".$this->element."'";
 			$sql.= " AND ec.fk_socpeople = ".$user->id;
 		}
-		else
+		if ($mode == 0)
 		{
 			$sql.= " AND ( p.public = 1";
 			$sql.= " OR p.fk_user_creat = ".$user->id;

@@ -107,6 +107,14 @@ if ($resql)
 	if ($mine) $text=$langs->trans('MyProjects');
 	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
+	// Show description of content
+	if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
+	else
+	{
+		if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
+		else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+	}
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","","","",$sortfield,$sortorder);

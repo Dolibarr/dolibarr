@@ -165,20 +165,28 @@ function task_prepare_head($object)
 
 
 /**
- *		\brief      Show a combo list with projects qualified for a third party)
- *		\param      socid       Id third party (-1=all, 0=projects not linked to a third party, id=projects not linked or linked to third party id)
+ *		\brief      Show a combo list with projects qualified for a third party
+ *		\param      socid       Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
  *		\param      selected    Id project preselected
  *		\param      htmlname    Nom de la zone html
- *		\return     int         Nbre de projet si ok, <0 si ko
+ *		\return     int         Nbre of project if OK, <0 if KO
  */
 function select_projects($socid=-1, $selected='', $htmlname='projectid')
 {
 	global $db,$user,$conf,$langs;
 
+	$projectstatic=new Project($db);
+	$projectsListId = '';
+	if (empty($user->rights->projet->all->lire))
+	{
+		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+	}
+
 	// On recherche les projets
 	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
 	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
 	$sql.= " WHERE p.entity = ".$conf->entity;
+	if ($projectsListId) $sql.= " AND p.rowid in (".$projectsListId.")";
 	if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 	if ($socid > 0) $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc='0' OR p.fk_soc IS NULL)";
 	$sql.= " ORDER BY p.title ASC";
@@ -211,6 +219,8 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 						print ' disabled="true"';
 						$labeltoshow.=' - '.$langs->trans("Draft");
 					}
+					//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
+					//else $labeltoshow.=' ('.$langs->trans("Private").')';
 					print '>'.$labeltoshow.'</option>';
 				}
 				$i++;
