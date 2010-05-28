@@ -67,9 +67,9 @@ class CommonObject
 	 *      \param      source              external=Contact externe (llx_socpeople), internal=Contact interne (llx_user)
 	 *      \return     int                 <0 si erreur, >0 si ok
 	 */
-	function add_contact($fk_socpeople, $type_contact, $source='external')
+	function add_contact($fk_socpeople, $type_contact, $source='external',$notrigger=0)
 	{
-		global $langs;
+		global $conf,$langs;
 
 		dol_syslog("CommonObject::add_contact $fk_socpeople, $type_contact, $source");
 
@@ -122,6 +122,16 @@ class CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			if (! $notrigger)
+			{
+				// Call triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers(strtoupper($this->element).'_ADD_CONTACT',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// End call triggers
+			}
+			
 			return 1;
 		}
 		else
@@ -171,14 +181,26 @@ class CommonObject
 	 *    \param      rowid			La reference du contact
 	 *    \return     statur        >0 si ok, <0 si ko
 	 */
-	function delete_contact($rowid)
+	function delete_contact($rowid,$notrigger=0)
 	{
+		global $conf;
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 		$sql.= " WHERE rowid =".$rowid;
 
 		dol_syslog("CommonObject::delete_contact sql=".$sql);
 		if ($this->db->query($sql))
 		{
+			if (! $notrigger)
+			{
+				// Call triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers(strtoupper($this->element).'_DELETE_CONTACT',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// End call triggers
+			}
+			
 			return 1;
 		}
 		else
