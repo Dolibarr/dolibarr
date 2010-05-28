@@ -174,6 +174,11 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Lignes de commandes
 		 */
+		if ($commande->statut <= 2 || $commande->statut >= 6)
+		{
+			print $langs->trans("OrderStatusNotReadyToDispatch");
+		}
+
 		if ($commande->statut == 3 || $commande->statut == 4 || $commande->statut == 5)
 		{
 			print '<form method="POST" action="dispatch.php?id='.$commande->id.'">';
@@ -211,9 +216,6 @@ if ($id > 0 || ! empty($ref))
 				$num = $db->num_rows($resql);
 				$i = 0;
 
-				$remaintodispatch=$objp->qty - $products_dispatched[$objp->fk_product];
-				if ($remaintodispatch < 0) $remaintodispatch=0;
-
 				if ($num)
 				{
 					print '<tr class="liste_titre">';
@@ -227,14 +229,26 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				$entrepot = new Entrepot($db);
+				$nbfreeproduct=0;
+				$nbproduct=0;
 
 				$var=true;
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
+
 					// On n'affiche pas les produits personnalises
-					if ($objp->fk_product)
+					if (! $objp->fk_product > 0)
 					{
+						$nbfreeproduct++;
+					}
+					else
+					{
+						$nbproduct++;
+
+						$remaintodispatch=($objp->qty - $products_dispatched[$objp->fk_product]);
+						if ($remaintodispatch < 0) $remaintodispatch=0;
+
 						$var=!$var;
 						print "<tr ".$bc[$var].">";
 						print '<td>';
@@ -278,16 +292,19 @@ if ($id > 0 || ! empty($ref))
 			print "</table>\n";
 			print "<br/>\n";
 
-			print '<center><input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"></center>';
+			if ($nbproduct)
+			{
+				print '<center><input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"></center>';
+			}
+			if (! $nbproduct && $nbfreeproduct)
+			{
+				print $langs->trans("NoPredefinedProductToDispatch");
+			}
 
 			print '</form>';
 		}
 
-		print "<br/>\n";
-
 		// List of already dispatching
-		print '<table class="noborder" width="100%">';
-
 		$sql = "SELECT p.ref, p.label, e.label as entrepot,";
 		$sql.= " cfd.fk_product, cfd.qty, cfd.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p,";
@@ -303,50 +320,57 @@ if ($id > 0 || ! empty($ref))
 			$num = $db->num_rows($resql);
 			$i = 0;
 
-			if ($num)
+			if ($num > 0)
 			{
+				print "<br/>\n";
+
+				print '<table class="noborder" width="100%">';
+
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Description").'</td>';
 				print '<td align="right">'.$langs->trans("QtyDispatched").'</td>';
 				print '<td align="right">'.$langs->trans("Warehouse").'</td>';
 				print "</tr>\n";
+
+				$var=false;
+
+				while ($i < $num)
+				{
+					$objp = $db->fetch_object($resql);
+					print "<tr $bc[$var]>";
+					print '<td>';
+					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
+					print ' - '.$objp->label;
+					print "</td>\n";
+
+					print '<td align="right">'.$objp->qty.'</td>';
+					print '<td align="right">'.$objp->entrepot.'</td>';
+					print "</tr>\n";
+
+					$i++;
+					$var=!$var;
+				}
+				$db->free($resql);
+
+				print "</table>\n";
 			}
-			$var=false;
-
-			while ($i < $num)
-			{
-				$objp = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
-				print '<td>';
-				print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
-				print ' - '.$objp->label;
-				print "</td>\n";
-
-				print '<td align="right">'.$objp->qty.'</td>';
-				print '<td align="right">'.$objp->entrepot.'</td>';
-				print "</tr>\n";
-
-				$i++;
-				$var=!$var;
-			}
-			$db->free($resql);
 		}
 		else
 		{
 			dol_print_error($db);
 		}
 
-		print "</table>\n";
-		print '</div>';
+		dol_fiche_end();
+
 
 		/**
 		 * Boutons actions
 		 */
 		if ($user->societe_id == 0 && $commande->statut	< 3	&& ($_GET["action"]	<> 'valid' || $_GET['action'] == 'builddoc'))
 		{
-			print '<div	class="tabsAction">';
+			//print '<div	class="tabsAction">';
 
-			print "</div>";
+			//print "</div>";
 		}
 	}
 	else

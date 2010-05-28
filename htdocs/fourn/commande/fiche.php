@@ -81,6 +81,30 @@ if ($_REQUEST['action'] ==	'setremisepercent' && $user->rights->fournisseur->com
 	$id=$_REQUEST['id'];
 }
 
+if ($_GET['action'] == 'reopen' && $user->rights->fournisseur->commande->approuver)
+{
+	$order = new CommandeFournisseur($db);
+	$result = $order->fetch($_REQUEST['id']);
+	if ($order->statut == 5 || $order->statut == 6 || $order->statut == 7 || $order->statut == 9)
+	{
+		if ($order->statut == 5) $newstatus=4;	// Received->Received partially
+		if ($order->statut == 6) $newstatus=2;	// Canceled->Approved
+		if ($order->statut == 7) $newstatus=3;	// Canceled->Process running
+		if ($order->statut == 9) $newstatus=1;	// Refused->Validated
+
+		$result = $order->setStatus($user,$newstatus);
+		if ($result > 0)
+		{
+			Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_REQUEST['id']);
+			exit;
+		}
+		else
+		{
+			$mesg='<div class="error">'.$order->error.'</div>';
+		}
+	}
+}
+
 /*
  *	Ajout d'une	ligne produit dans la commande
  */
@@ -341,6 +365,7 @@ if ($_REQUEST['action'] ==	'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 	}
 }
 
+// Receive
 if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->receptionner)
 {
 	$commande =	new	CommandeFournisseur($db);
@@ -1267,6 +1292,15 @@ if ($id > 0 || ! empty($ref))
 					}
 				}
 
+				// Reopen
+				if ($commande->statut == 5 || $commande->statut == 6 || $commande->statut == 7 || $commande->statut == 9)
+				{
+					if ($user->rights->fournisseur->commande->commander)
+					{
+						print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+					}
+				}
+
 				if ($user->rights->fournisseur->commande->supprimer)
 				{
 					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
@@ -1294,7 +1328,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '</td><td valign="top" width="50%">';
 
-			if ( $user->rights->fournisseur->commande->commander && ($commande->statut == 2 || $commande->statut == 6))
+			if ( $user->rights->fournisseur->commande->commander && $commande->statut == 2)
 			{
 				/**
 				 * Commander (action=commande)

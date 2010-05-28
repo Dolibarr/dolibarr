@@ -522,7 +522,6 @@ class FactureFournisseur extends Facture
 
 		$this->db->begin();
 
-		dol_syslog("FactureFournisseur::set_unpaid rowid=".$this->id, LOG_DEBUG);
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
 		$sql.= ' SET paye=0, fk_statut=1, close_code=null, close_note=null';
 		$sql.= ' WHERE rowid = '.$this->id;
@@ -543,8 +542,8 @@ class FactureFournisseur extends Facture
 		else
 		{
 			$error++;
-			$this->error=$this->db->error();
-			dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
+			dol_syslog("FactureFournisseur::set_unpaid ".$this->error);
 		}
 
 		if (! $error)

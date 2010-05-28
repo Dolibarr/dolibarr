@@ -49,6 +49,10 @@ class CommandeFournisseur extends Commande
 
 	var $ref;
 	var $brouillon;
+	var $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally
+	 						//                                                          -> 7=Canceled/Never received -> 3=Process
+							//										-> 6=Canceled -> 2=Approved
+							//  		              -> 9=Refused  -> 1=Validated
 
 
 	/**   \brief      Constructeur
@@ -67,6 +71,7 @@ class CommandeFournisseur extends Commande
 		$this->statuts[4] = 'StatusOrderReceivedPartially';
 		$this->statuts[5] = 'StatusOrderReceivedAll';
 		$this->statuts[6] = 'StatusOrderCanceled';
+		$this->statuts[7] = 'StatusOrderCanceled';
 		$this->statuts[9] = 'StatusOrderRefused';
 	}
 
@@ -373,7 +378,7 @@ class CommandeFournisseur extends Commande
 			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
 			if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
 			if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
-			if ($statut==6) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
+			if ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
 			if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
 		}
 		if ($mode == 4)
@@ -384,7 +389,7 @@ class CommandeFournisseur extends Commande
 			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==6) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
@@ -395,7 +400,7 @@ class CommandeFournisseur extends Commande
 			if ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
 			if ($statut==4) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
 			if ($statut==5) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
-			if ($statut==6) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut5');
+			if ($statut==6 || $statut==7) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut5');
 			if ($statut==9) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut5');
 		}
 	}
@@ -981,6 +986,7 @@ class CommandeFournisseur extends Commande
 			return -2;
 		}
 	}
+
 	/**
 	 * Supprime une ligne de la commande
 	 *
@@ -1106,21 +1112,21 @@ class CommandeFournisseur extends Commande
 
 		dol_syslog("CommandeFournisseur::Livraison");
 
-		if ($user->rights->fournisseur->commande->receptionner && $date < gmmktime())
+		if ($user->rights->fournisseur->commande->receptionner)
 		{
-			if ($type == 'tot')	$statut = 5;
 			if ($type == 'par') $statut = 4;
-			if ($type == 'nev') $statut = 6;
-			if ($type == 'can') $statut = 6;
+			if ($type == 'tot')	$statut = 5;
+			if ($type == 'nev') $statut = 7;
+			if ($type == 'can') $statut = 7;
 
-			if ($statut == 4 or $statut == 5 or $statut == 6)
+			if ($statut == 4 or $statut == 5 or $statut == 7)
 			{
 				$this->db->begin();
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 				$sql.= " SET fk_statut = ".$statut;
 				$sql.= " WHERE rowid = ".$this->id;
-				$sql.= " AND fk_statut IN (3,4)";
+				$sql.= " AND fk_statut IN (3,4)";	// Process running or Partially received
 
 				dol_syslog("CommandeFournisseur::Livraison sql=".$sql);
 				$resql=$this->db->query($sql);
@@ -1263,6 +1269,47 @@ class CommandeFournisseur extends Commande
 		}
 	}
 
+
+	/**
+	 *      \brief      Tag order with a particular status
+	 *      \param      user        Object user that change status
+	 *      \return     int         <0 if KO, >0 if OK
+	 */
+	function setStatus($user,$status)
+	{
+		global $conf,$langs;
+		$error=0;
+
+		$this->db->begin();
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
+		$sql.= ' SET fk_statut='.$status;
+		$sql.= ' WHERE rowid = '.$this->id;
+
+		dol_syslog("CommandeFournisseur::setStatus sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+
+		}
+		else
+		{
+			$error++;
+			$this->error=$this->db->lasterror();
+			dol_syslog("CommandeFournisseur::setStatus ".$this->error);
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 	/**
 	 *      \brief     	Update line
