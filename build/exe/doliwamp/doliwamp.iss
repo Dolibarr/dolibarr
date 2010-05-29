@@ -80,7 +80,7 @@ Name: "desktopicon"; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:
 Name: "{app}\logs"
 Name: "{app}\tmp"
 Name: "{app}\dolibarr_documents"
-Name: "{app}\bin\apache\apache\logs"
+Name: "{app}\bin\apache\apache2.4.9\logs"
 
 [Files]
 ; Stop/start
