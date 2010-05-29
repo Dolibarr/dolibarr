@@ -2,10 +2,12 @@ build
 dev/dbmodel
 dev/fpdf
 dev/initdemo
+dev/initdata
 dev/iso-normes
 dev/licence
 dev/load
 dev/skeletons/*socpeople*
+dev/spec
 dev/test
 dev/uml
 dev/xdebug
@@ -19,7 +21,7 @@ doc/dev/iso-normes
 doc/flyer
 doc/font
 doc/rollup
-doc/tshirt
+doc/tshirts
 doc/wiki
 document
 documents
@@ -55,6 +57,7 @@ htdocs/postnuke
 htdocs/public/bplc
 htdocs/rapport
 htdocs/theme/rodolphe
+htdocs/theme/eldy/img/menus/tango*
 htdocs/telephonie
 htdocs/voyage
 mssql
@@ -64,7 +67,7 @@ scripts/courrier
 scripts/lolix
 scripts/product/import-product.php
 scripts/product/materiel.net.php
-test/
+test
 CVS
 *~
 .#*
