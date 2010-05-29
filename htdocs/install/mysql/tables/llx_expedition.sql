@@ -34,7 +34,7 @@ create table llx_expedition
   fk_user_valid         integer,						-- valideur
   date_expedition       date,							-- shipping date
   date_delivery			date 		DEFAULT NULL,		-- delivery date
-  fk_adresse_livraison  integer		DEFAULT NULL, 		-- adresse de livraison
+  fk_address  			integer		DEFAULT NULL, 		-- adresse de livraison
   fk_expedition_methode integer,
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,

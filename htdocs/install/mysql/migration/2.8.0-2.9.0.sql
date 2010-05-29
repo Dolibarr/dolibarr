@@ -205,3 +205,13 @@ UPDATE llx_const SET name = 'MAIN_MODULE_PRODUCT' WHERE name = 'MAIN_MODULE_PROD
 -- Add more predefined action codes --
 insert into llx_c_actioncomm (id, code, type, libelle, module) values (30, 'AC_SUP_ORD',  'system', 'Send supplier invoice by email'      ,'supplier_order');
 insert into llx_c_actioncomm (id, code, type, libelle, module) values (31, 'AC_SUP_INV',  'system', 'Send supplier invoice by email'      ,'supplier_invoice');
+
+-- rename llx_societe_adresse_livraison
+ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_adresse_livraison;
+ALTER TABLE llx_expedition DROP INDEX idx_expedition_fk_adresse_livraison;
+ALTER TABLE llx_livraison DROP FOREIGN KEY fk_livraison_fk_adresse_livraison;
+ALTER TABLE llx_livraison DROP INDEX idx_livraison_fk_adresse_livraison;
+ALTER TABLE llx_societe_adresse_livraison RENAME TO llx_societe_address;
+ALTER TABLE llx_societe_address CHANGE nom name varchar(60);
+ALTER TABLE llx_societe_address CHANGE fk_societe fk_soc integer DEFAULT 0;
+

@@ -29,7 +29,11 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
-if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
+if ($conf->projet->enabled)
+{
+	require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+	require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
+}
 
 $langs->load("propal");
 if ($conf->projet->enabled) $langs->load("projects");
@@ -179,10 +183,10 @@ if ($_GET["action"] == 'create')
 	{
 		print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
 		print '<td colspan="3">';
-		$numaddress = $html->select_adresse_livraison($soc->fk_delivery_address, $_GET['socid'],'adresse_livraison_id',1);
+		$numaddress = $html->select_address($soc->fk_delivery_address, $_GET['socid'],'fk_address',1);
 		if ($numaddress==0)
 		{
-			print ' &nbsp; <a href=../comm/adresse_livraison.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
+			print ' &nbsp; <a href=../comm/address.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
 		}
 		print '</td></tr>';
 	}

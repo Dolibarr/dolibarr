@@ -392,7 +392,7 @@ if ($_GET["action"] == 'create')
 				print '<td colspan="3">';
 				if (!empty($object->fk_delivery_address))
 				{
-					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','commande',$object->id);
+					$html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','commande',$object->id);
 				}
 				print '</td></tr>'."\n";
 			}
@@ -809,7 +809,7 @@ else
 				print '<td colspan="3">';
 				if (!empty($expedition->fk_delivery_address))
 				{
-					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$expedition->id,$expedition->fk_delivery_address,$expedition->deliveryaddress->socid,'none','shipment',$expedition->id);
+					$html->form_address($_SERVER['PHP_SELF'].'?id='.$expedition->id,$expedition->fk_delivery_address,$expedition->deliveryaddress->socid,'none','shipment',$expedition->id);
 				}
 				print '</td></tr>'."\n";
 			}

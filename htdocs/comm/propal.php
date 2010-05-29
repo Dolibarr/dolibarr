@@ -209,7 +209,7 @@ if ($_POST['action'] == 'setdeliveryadress' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
-	$result=$propal->set_adresse_livraison($user,$_POST['adresse_livraison_id']);
+	$result=$propal->set_adresse_livraison($user,$_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$propal->error);
 }
 
@@ -240,7 +240,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$propal->ref       				= $_POST['ref'];
 			$propal->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			$propal->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
-			$propal->fk_delivery_address 	= $_POST['adresse_livraison_id'];
+			$propal->fk_delivery_address 	= $_POST['fk_address'];
 			$propal->duree_validite			= $_POST['duree_validite'];
 			$propal->cond_reglement_id 		= $_POST['cond_reglement_id'];
 			$propal->mode_reglement_id 		= $_POST['mode_reglement_id'];
@@ -267,7 +267,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$propal->ref_client 			= $_POST['ref_client'];
 		$propal->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		$propal->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
-		$propal->fk_delivery_address 	= $_POST['fk_delivery_address'];
+		$propal->fk_delivery_address 	= $_POST['fk_address'];
 		$propal->duree_validite 		= $_POST['duree_validite'];
 		$propal->cond_reglement_id 		= $_POST['cond_reglement_id'];
 		$propal->mode_reglement_id 		= $_POST['mode_reglement_id'];
@@ -1227,11 +1227,11 @@ if ($id > 0 || ! empty($ref))
 
 		if ($_GET['action'] == 'editdelivery_adress')
 		{
-			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->fk_delivery_address,$_GET['socid'],'fk_delivery_address','propal',$propal->id);
+			$html->form_address($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->fk_delivery_address,$_GET['socid'],'fk_address','propal',$propal->id);
 		}
 		else
 		{
-			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->fk_delivery_address,$_GET['socid'],'none','propal',$propal->id);
+			$html->form_address($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->fk_delivery_address,$_GET['socid'],'none','propal',$propal->id);
 		}
 		print '</td></tr>';
 	}

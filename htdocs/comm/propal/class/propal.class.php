@@ -1092,16 +1092,16 @@ class Propal extends CommonObject
 	 *      \param      adresse_livraison      Adresse de livraison
 	 *      \return     int         		<0 si ko, >0 si ok
 	 */
-	function set_adresse_livraison($user, $adresse_livraison)
+	function set_adresse_livraison($user, $address_id)
 	{
 		if ($user->rights->propale->creer)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison = '".$adresse_livraison."'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison = '".$address_id."'";
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			if ($this->db->query($sql) )
 			{
-				$this->fk_delivery_address = $adresse_livraison;
+				$this->fk_delivery_address = $address_id;
 				return 1;
 			}
 			else

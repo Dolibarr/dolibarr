@@ -1613,16 +1613,16 @@ class Commande extends CommonObject
 	 *      \param      adresse_livraison      Adresse de livraison
 	 *      \return     int         		<0 si ko, >0 si ok
 	 */
-	function set_adresse_livraison($user, $fk_delivery_address)
+	function set_adresse_livraison($user, $fk_address)
 	{
 		if ($user->rights->commande->creer)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$fk_delivery_address."'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$fk_address."'";
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			if ($this->db->query($sql) )
 			{
-				$this->fk_delivery_address = $fk_delivery_address;
+				$this->fk_delivery_address = $fk_address;
 				return 1;
 			}
 			else

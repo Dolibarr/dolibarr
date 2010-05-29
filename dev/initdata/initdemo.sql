@@ -1325,7 +1325,7 @@ CREATE TABLE `llx_commande` (
   `fk_cond_reglement` int(11) DEFAULT NULL,
   `fk_mode_reglement` int(11) DEFAULT NULL,
   `date_livraison` date DEFAULT NULL,
-  `fk_adresse_livraison` int(11) DEFAULT NULL,
+  `fk_address` int(11) DEFAULT NULL,
   `import_key` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_commande_ref` (`ref`,`entity`),
@@ -2251,7 +2251,7 @@ CREATE TABLE `llx_expedition` (
   `date_valid` datetime DEFAULT NULL,
   `fk_user_valid` int(11) DEFAULT NULL,
   `date_expedition` date DEFAULT NULL,
-  `fk_adresse_livraison` int(11) DEFAULT NULL,
+  `fk_address` int(11) DEFAULT NULL,
   `fk_expedition_methode` int(11) DEFAULT NULL,
   `tracking_number` varchar(50) DEFAULT NULL,
   `fk_statut` smallint(6) DEFAULT '0',
@@ -2268,9 +2268,9 @@ CREATE TABLE `llx_expedition` (
   KEY `idx_expedition_fk_soc` (`fk_soc`),
   KEY `idx_expedition_fk_user_author` (`fk_user_author`),
   KEY `idx_expedition_fk_user_valid` (`fk_user_valid`),
-  KEY `idx_expedition_fk_adresse_livraison` (`fk_adresse_livraison`),
+  KEY `idx_expedition_fk_address` (`fk_address`),
   KEY `idx_expedition_fk_expedition_methode` (`fk_expedition_methode`),
-  CONSTRAINT `fk_expedition_fk_adresse_livraison` FOREIGN KEY (`fk_adresse_livraison`) REFERENCES `llx_societe_adresse_livraison` (`rowid`),
+  CONSTRAINT `fk_expedition_fk_address` FOREIGN KEY (`fk_address`) REFERENCES `llx_societe_address` (`rowid`),
   CONSTRAINT `fk_expedition_fk_expedition_methode` FOREIGN KEY (`fk_expedition_methode`) REFERENCES `llx_expedition_methode` (`rowid`),
   CONSTRAINT `fk_expedition_fk_soc` FOREIGN KEY (`fk_soc`) REFERENCES `llx_societe` (`rowid`),
   CONSTRAINT `fk_expedition_fk_user_author` FOREIGN KEY (`fk_user_author`) REFERENCES `llx_user` (`rowid`),
@@ -2879,7 +2879,7 @@ CREATE TABLE `llx_livraison` (
   `date_valid` datetime DEFAULT NULL,
   `fk_user_valid` int(11) DEFAULT NULL,
   `date_livraison` date DEFAULT NULL,
-  `fk_adresse_livraison` int(11) DEFAULT NULL,
+  `fk_address` int(11) DEFAULT NULL,
   `fk_statut` smallint(6) DEFAULT '0',
   `total_ht` double(24,8) DEFAULT '0.00000000',
   `note` text,
@@ -2890,8 +2890,8 @@ CREATE TABLE `llx_livraison` (
   KEY `idx_livraison_fk_soc` (`fk_soc`),
   KEY `idx_livraison_fk_user_author` (`fk_user_author`),
   KEY `idx_livraison_fk_user_valid` (`fk_user_valid`),
-  KEY `idx_livraison_fk_adresse_livraison` (`fk_adresse_livraison`),
-  CONSTRAINT `fk_livraison_fk_adresse_livraison` FOREIGN KEY (`fk_adresse_livraison`) REFERENCES `llx_societe_adresse_livraison` (`rowid`),
+  KEY `idx_livraison_fk_address` (`fk_address`),
+  CONSTRAINT `fk_livraison_fk_address` FOREIGN KEY (`fk_address`) REFERENCES `llx_societe_address` (`rowid`),
   CONSTRAINT `fk_livraison_fk_soc` FOREIGN KEY (`fk_soc`) REFERENCES `llx_societe` (`rowid`),
   CONSTRAINT `fk_livraison_fk_user_author` FOREIGN KEY (`fk_user_author`) REFERENCES `llx_user` (`rowid`),
   CONSTRAINT `fk_livraison_fk_user_valid` FOREIGN KEY (`fk_user_valid`) REFERENCES `llx_user` (`rowid`)
@@ -3862,7 +3862,7 @@ CREATE TABLE `llx_propal` (
   `note_public` text,
   `model_pdf` varchar(50) DEFAULT NULL,
   `date_livraison` date DEFAULT NULL,
-  `fk_adresse_livraison` int(11) DEFAULT NULL,
+  `fk_address` int(11) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_propal_ref` (`ref`,`entity`),
   KEY `idx_propal_fk_soc` (`fk_soc`),
@@ -4026,17 +4026,17 @@ INSERT INTO `llx_societe` VALUES (1,0,NULL,'2010-02-08 12:39:02','2010-02-07 02:
 UNLOCK TABLES;
 
 --
--- Table structure for table `llx_societe_adresse_livraison`
+-- Table structure for table `llx_societe_address`
 --
 
-DROP TABLE IF EXISTS `llx_societe_adresse_livraison`;
-CREATE TABLE `llx_societe_adresse_livraison` (
+DROP TABLE IF EXISTS `llx_societe_address`;
+CREATE TABLE `llx_societe_address` (
   `rowid` int(11) NOT NULL AUTO_INCREMENT,
   `datec` datetime DEFAULT NULL,
   `tms` timestamp NOT NULL,
   `label` varchar(30) DEFAULT NULL,
-  `fk_societe` int(11) DEFAULT '0',
-  `nom` varchar(60) DEFAULT NULL,
+  `fk_soc` int(11) DEFAULT '0',
+  `name` varchar(60) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
   `cp` varchar(10) DEFAULT NULL,
   `ville` varchar(50) DEFAULT NULL,
@@ -4050,12 +4050,12 @@ CREATE TABLE `llx_societe_adresse_livraison` (
 ) TYPE=InnoDB;
 
 --
--- Dumping data for table `llx_societe_adresse_livraison`
+-- Dumping data for table `llx_societe_address`
 --
 
-LOCK TABLES `llx_societe_adresse_livraison` WRITE;
-/*!40000 ALTER TABLE `llx_societe_adresse_livraison` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_societe_adresse_livraison` ENABLE KEYS */;
+LOCK TABLES `llx_societe_address` WRITE;
+/*!40000 ALTER TABLE `llx_societe_address` DISABLE KEYS */;
+/*!40000 ALTER TABLE `llx_societe_address` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

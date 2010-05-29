@@ -719,21 +719,20 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *
-	 * Lit une adresse de livraison
-	 *
+	 * Lit une adresse
+	 * TODO: utiliser la classe address
 	 */
-	function fetch_adresse_livraison($id)
+	function fetch_address($id)
 	{
 		global $conf,$langs;
 
-		$sql = "SELECT l.rowid, l.label, l.fk_societe, l.nom, l.address, l.cp";
+		$sql = "SELECT l.rowid, l.label, l.fk_soc, l.name, l.address, l.cp";
 		$sql .= ", l.tms as dm, l.datec as dc";
 		$sql .= ", l.ville, l.fk_pays, l.note, l.tel, l.fax";
 		$sql .= ", p.libelle as pays, p.code as pays_code, s.nom as socname";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison as l";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_address as l";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON l.fk_pays = p.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON l.fk_societe = s.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON l.fk_soc = s.rowid";
 		$sql .= " WHERE l.rowid = ".$id;
 
 		$result = $this->db->query($sql) ;
@@ -746,11 +745,10 @@ class Societe extends CommonObject
 			$this->datec          = $this->db->jdate($obj->dc);
 			$this->datem          = $this->db->jdate($obj->dm);
 			$this->label          = $obj->label;
-			$this->socid          = $obj->fk_societe;
+			$this->socid          = $obj->fk_soc;
 			$this->societe        = $obj->socname;
-			$this->nom            = $obj->nom;
+			$this->name           = $obj->name;
 			$this->address        = $obj->address;
-			$this->adresse        = $obj->address; // TODO obsolete
 			$this->cp             = $obj->cp;
 			$this->ville          = $obj->ville;
 			$this->pays_id        = $obj->fk_pays;

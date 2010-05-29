@@ -1311,19 +1311,19 @@ class Form
 	}
 
 	/**
-	 *    \brief      Retourne la liste deroulante des adresses de livraison
+	 *    \brief      Retourne la liste deroulante des adresses
 	 *    \param      selected        Id contact pre-selectionn
 	 *    \param      htmlname        Nom champ formulaire
 	 */
-	function select_adresse_livraison($selected='', $socid, $htmlname='adresse_livraison_id',$showempty=0)
+	function select_address($selected='', $socid, $htmlname='address_id',$showempty=0)
 	{
 		// On recherche les utilisateurs
 		$sql = "SELECT a.rowid, a.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX ."societe_adresse_livraison as a";
-		$sql .= " WHERE a.fk_societe = ".$socid;
+		$sql .= " FROM ".MAIN_DB_PREFIX ."societe_address as a";
+		$sql .= " WHERE a.fk_soc = ".$socid;
 		$sql .= " ORDER BY a.label ASC";
 
-		dol_syslog("Form::select_adresse_livraison sql=".$sql);
+		dol_syslog("Form::select_address sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
@@ -2118,7 +2118,7 @@ class Form
 	 *		\param		origin        	Origine de l'appel pour pouvoir creer un retour
 	 *      \param      originid      	Id de l'origine
 	 */
-	function form_adresse_livraison($page, $selected='', $socid, $htmlname='adresse_livraison_id', $origin='', $originid='')
+	function form_address($page, $selected='', $socid, $htmlname='address_id', $origin='', $originid='')
 	{
 		global $langs,$conf;
 		if ($htmlname != "none")
@@ -2128,21 +2128,21 @@ class Form
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
-			$this->select_adresse_livraison($selected, $socid, $htmlname, 1);
+			$this->select_address($selected, $socid, $htmlname, 1);
 			print '</td>';
 			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			$langs->load("companies");
-			print ' &nbsp; <a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$originid.'>'.$langs->trans("AddAddress").'</a>';
+			print ' &nbsp; <a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$originid.'>'.$langs->trans("AddAddress").'</a>';
 			print '</td></tr></table></form>';
 		}
 		else
 		{
 			if ($selected)
 			{
-				require_once(DOL_DOCUMENT_ROOT ."/comm/class/adresse_livraison.class.php");
-				$livraison=new AdresseLivraison($this->db);
-				$result=$livraison->fetch_adresse($selected);
-				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&id='.$livraison->id.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$livraison->label.'</a>';
+				require_once(DOL_DOCUMENT_ROOT ."/comm/class/address.class.php");
+				$address=new Address($this->db);
+				$result=$address->fetch_address($selected);
+				print '<a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$address->socid.'&id='.$address->id.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$address->label.'</a>';
 			}
 			else
 			{

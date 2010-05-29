@@ -196,7 +196,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->cond_reglement_id    = $_POST['cond_reglement_id'];
 	$commande->mode_reglement_id    = $_POST['mode_reglement_id'];
 	$commande->date_livraison       = $datelivraison;
-	$commande->fk_delivery_address  = $_POST['fk_delivery_address'];
+	$commande->fk_delivery_address  = $_POST['fk_address'];
 	$commande->contactid            = $_POST['contactidp'];
 
 	$NBLINES=8;
@@ -231,7 +231,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 			}
 		}
 
-		$_GET['id'] = $commande->id;
+		$_GET['id'] = $commande_id;
 		$action = '';
 	}
 
@@ -315,7 +315,7 @@ if ($_POST['action'] == 'setdeliveryadress' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
-	$commande->set_adresse_livraison($user,$_POST['adresse_livraison_id']);
+	$commande->set_adresse_livraison($user,$_POST['fk_address']);
 }
 
 if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
@@ -1076,10 +1076,10 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			// Delivery address
 			if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
 			{
-				// Link to edit: $html->form_adresse_livraison($_SERVER['PHP_SELF'].'?action=create','',$soc->id,'adresse_livraison_id','commande','');
+				// Link to edit: $html->form_address($_SERVER['PHP_SELF'].'?action=create','',$soc->id,'adresse_livraison_id','commande','');
 				print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td>';
-				$numaddress = $html->select_adresse_livraison($soc->fk_delivery_address, $_GET['socid'],'fk_delivery_address',1);
-				print ' &nbsp; <a href="../comm/adresse_livraison.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
+				$numaddress = $html->select_address($soc->fk_delivery_address, $_GET['socid'],'fk_address',1);
+				print ' &nbsp; <a href="../comm/address.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
 				print '</td></tr>';
 			}
 
@@ -1273,8 +1273,8 @@ else
 	/* *************************************************************************** */
 	$now=dol_now();
 
-	$id = $_REQUEST['id'];
-	$ref= $_REQUEST['ref'];
+	$id = $_GET['id'];
+	$ref= $_GET['ref'];
 
 	if ($id > 0 || ! empty($ref))
 	{
@@ -1531,11 +1531,11 @@ else
 
 				if ($_GET['action'] == 'editdelivery_adress')
 				{
-					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'fk_delivery_address','commande',$commande->id);
+					$html->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'fk_address','commande',$commande->id);
 				}
 				else
 				{
-					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'none','commande',$commande->id);
+					$html->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'none','commande',$commande->id);
 				}
 				print '</td></tr>';
 			}
