@@ -196,6 +196,8 @@ if ($id > 0 || ! empty($ref))
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
+		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+		$task->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		print $html->showrefnav($task,'id','',1,'rowid','ref','','');
 		print '</td></tr>';
 

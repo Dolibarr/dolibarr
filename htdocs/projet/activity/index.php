@@ -89,6 +89,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND date_format(task_date,'%d%m%y') = ".strftime("%d%m%y",time());
+$sql.= " AND p.rowid in ('".$projectsListId."')";
 $sql.= " GROUP BY p.rowid";
 
 $resql = $db->query($sql);
@@ -139,6 +140,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND date_format(date_add(task_date, INTERVAL 1 DAY),'%d%m%y') = ".strftime("%d%m%y",time());
+$sql.= " AND p.rowid in ('".$projectsListId."')";
 $sql.= " GROUP BY p.rowid";
 
 $resql = $db->query($sql);
@@ -191,6 +193,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND week(task_date) = ".strftime("%W",time());
+$sql.= " AND p.rowid in ('".$projectsListId."')";
 $sql.= " GROUP BY p.rowid";
 
 $resql = $db->query($sql);
@@ -241,6 +244,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND month(task_date) = ".strftime("%m",$now);
+$sql.= " AND p.rowid in ('".$projectsListId."')";
 $sql.= " GROUP BY p.rowid";
 
 $resql = $db->query($sql);
@@ -284,6 +288,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND YEAR(task_date) = ".strftime("%Y",$now);
+$sql.= " AND p.rowid in ('".$projectsListId."')";
 $sql.= " GROUP BY p.rowid";
 
 $var=false;

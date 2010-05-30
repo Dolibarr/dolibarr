@@ -80,7 +80,7 @@ function project_prepare_head($object)
     }
 
     // Then tab for sub level of projet, i mean tasks
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Tasks");
     $head[$h][2] = 'tasks';
 	$h++;
@@ -349,8 +349,9 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
  * @param 	$var				Color
  * @param 	$showproject		Show project columns
  * @param	$taskrole			Array of roles of user for each tasks
+ * @param	$projectsListId		List of id of project allowed to user (separated with comma)
  */
-function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole)
+function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='')
 {
 	global $user, $bc, $langs;
 
@@ -358,6 +359,8 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 
 	$projectstatic = new Project($db);
 	$taskstatic = new Task($db);
+
+	$projectsArrayId=explode(',',$projectsListId);
 
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
@@ -413,7 +416,8 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 					$projectstatic->id=$lines[$i]->fk_project;
 					$projectstatic->ref=$lines[$i]->projectref;
 					$projectstatic->public=$lines[$i]->public;
-					print $projectstatic->getNomUrl(1);
+					if ($lines[$i]->public || in_array($lines[$i]->fk_project,$projectsArrayId)) print $projectstatic->getNomUrl(1);
+					else print $projectstatic->getNomUrl(1,'nolink');
 					if ($showlineingray) print '</i>';
 					print "</td>";
 				}
@@ -436,7 +440,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				// Title of task
 				print "<td>";
 				if ($showlineingray) print '<i>';
-				else print '<a href="task.php?id='.$lines[$i]->id.'">';
+				else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'">';
 				for ($k = 0 ; $k < $level ; $k++)
 				{
 					print "&nbsp; &nbsp; &nbsp;";
@@ -466,7 +470,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				if (! $showlineingray) $inc++;
 
 				$level++;
-				if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole);
+				if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId);
 				$level--;
 			}
 		}

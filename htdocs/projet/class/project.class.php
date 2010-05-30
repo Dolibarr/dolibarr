@@ -592,7 +592,7 @@ class Project extends CommonObject
 	/**
 	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\param		option			Sur quoi pointe le lien
+	 *	\param		option			Variante ('', 'nolink')
 	 *	\return		string			Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
@@ -600,9 +600,14 @@ class Project extends CommonObject
 		global $langs;
 
 		$result='';
+		$lien='';
+		$lienfin='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$this->id.'">';
-		$lienfin='</a>';
+		if ($option != 'nolink')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$this->id.'">';
+			$lienfin='</a>';
+		}
 
 		$picto='projectpub';
 		if (! $this->public) $picto='project';

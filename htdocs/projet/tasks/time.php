@@ -51,6 +51,11 @@ if ($_POST["action"] == 'addtimespent' && $user->rights->projet->creer)
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")).'</div>';
 		$error++;
 	}
+	if (empty($_POST["userid"]))
+	{
+		$mesg='<div class="error">'.$langs->trans('ErrorUserNotAffectedToTask').'</div>';
+		$error++;
+	}
 
 	if (! $error)
 	{
@@ -137,6 +142,8 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && 
  * View
  */
 
+$project=new Project($db);
+
 llxHeader("",$langs->trans("Task"));
 
 $html = new Form($db);
@@ -177,6 +184,8 @@ if ($_GET["id"] > 0)
 		print '<tr><td width="30%">';
 		print $langs->trans("Ref");
 		print '</td><td colspan="3">';
+		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+		$task->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		print $html->showrefnav($task,'id','',1,'rowid','ref','','');
 		print '</td></tr>';
 

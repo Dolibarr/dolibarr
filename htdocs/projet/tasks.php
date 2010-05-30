@@ -19,13 +19,13 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/fiche.php
+ *	\file       htdocs/projet/tasks.php
  *	\ingroup    projet
- *	\brief      Fiche taches d'un projet
+ *	\brief      List all tasks of a project
  *	\version    $Id$
  */
 
-require ("../../main.inc.php");
+require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");

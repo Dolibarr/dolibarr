@@ -128,9 +128,10 @@ if ($action=='delete')
  * View
  */
 
-llxHeader('',$langs->trans('Project'));
-
 $form = new Form($db);
+$project = new Project($db);
+
+llxHeader('',$langs->trans('Project'));
 
 if ($id > 0 || ! empty($ref))
 {
@@ -154,6 +155,8 @@ if ($id > 0 || ! empty($ref))
 	print '<tr><td width="30%">';
 	print $langs->trans("Ref");
 	print '</td><td colspan="3">';
+	$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+	$task->next_prev_filter=" fk_projet in (".$projectsListId.")";
 	print $form->showrefnav($task,'id','',1,'rowid','ref','','');
 	print '</td>';
 	print '</tr>';

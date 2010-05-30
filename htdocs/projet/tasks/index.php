@@ -32,6 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 $langs->load('projects');
+$langs->load('users');
 
 // Security check
 $socid=0;
@@ -77,9 +78,8 @@ else
 	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
 
-
-//$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
-
+// Get list of project id allowed to user
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).
@@ -97,7 +97,7 @@ print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print "</tr>\n";
 // Show all lines in taskarray (recursive function to go down on tree)
 $j=0; $level=0;
-$nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 1, $tasksrole);
+$nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 1, $tasksrole, $projectsListId);
 print "</table>";
 
 print '</div>';

@@ -115,6 +115,7 @@ llxHeader("",$langs->trans("Task"));
 
 $html = new Form($db);
 $formother = new FormOther($db);
+$project = new Project($db);
 
 if ($taskid)
 {
@@ -215,6 +216,8 @@ if ($taskid)
 			print '<tr><td width="30%">';
 			print $langs->trans("Ref");
 			print '</td><td colspan="3">';
+			$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+			$task->next_prev_filter=" fk_projet in (".$projectsListId.")";
 			print $html->showrefnav($task,'id','',1,'rowid','ref','','');
 			print '</td>';
 			print '</tr>';
