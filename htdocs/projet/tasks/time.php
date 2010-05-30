@@ -239,7 +239,8 @@ if ($_GET["id"] > 0)
 
 			// Contributor
 			print '<td nowrap="nowrap">';
-			$contactoftask=$task->getListContactId('thirdparty');
+			$contactoftask=$task->getListContactId('internal');
+			print img_object('','user');
 			print $html->select_users($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$contactoftask);
 			print '</td>';
 
