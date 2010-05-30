@@ -36,7 +36,9 @@ $socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
 $title = $langs->trans("Projects");
 
 // Security check
-if ($user->societe_id > 0) $socid = $user->societe_id;
+$socid=0;
+if ($user->societe_id > 0) $socid=$user->societe_id;
+
 
 if ($socid > 0)
 {

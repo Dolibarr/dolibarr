@@ -34,7 +34,11 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 $taskid = (isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:''));
 $taskref = (isset($_GET["ref"])?$_GET["ref"]:'');
 
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
 if (!$user->rights->projet->lire) accessforbidden();
+
 
 /*
  * Actions
@@ -121,12 +125,12 @@ if ($taskid)
 	{
 		$result=$projectstatic->fetch($task->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
-		
+
 		// To verify role of users
 		$userAccess = $projectstatic->restrictedProjectArea($user);
 
 		if ($mesg) print $mesg;
-		
+
 		$head=task_prepare_head($task);
 
 		dol_fiche_head($head, 'task', $langs->trans("Task"),0,'projecttask');

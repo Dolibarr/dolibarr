@@ -33,11 +33,11 @@ require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
 // Security check
+$socid=0;
+if ($user->societe_id > 0) $socid=$user->societe_id;
+//$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
-if ($user->societe_id > 0)
-{
-	$socid = $user->societe_id;
-}
+
 
 $langs->load("projects");
 
@@ -46,7 +46,7 @@ $langs->load("projects");
  * View
  */
 
-$now = gmmktime();
+$now = dol_now();
 
 $projectstatic=new Project($db);
 

@@ -2377,10 +2377,11 @@ class Form
 	 *		@param	form_name 		Nom du formulaire de provenance. Utilise pour les dates en popup.
 	 *		@param	d				1=Affiche aussi les jours, mois, annees
 	 * 		@param	addnowbutton	Add a button "Now"
-	 * 		@param	nooutput		Do not output zone but return it
+	 * 		@param	nooutput		Do not output html string but return it
+	 * 		@param 	disabled		Disable input fields
 	 * 		@return	nothing or string if nooutput is 1
 	 */
-	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowbutton=0, $nooutput=0)
+	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowbutton=0, $nooutput=0, $disabled=0)
 	{
 		global $conf,$langs;
 
@@ -2440,13 +2441,17 @@ class Form
 				{
 					// Zone de saisie manuelle de la date
 					$retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
+					$retstring.=($disabled?' disabled="true"':'');
 					$retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\'); "';
 					$retstring.='>';
 
 					// Icone calendrier
-					$retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
-					$base=DOL_URL_ROOT.'/lib/';
-					$retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$conf->format_date_short_java.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
+					if (! $disabled)
+					{
+						$retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
+						$base=DOL_URL_ROOT.'/lib/';
+						$retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$conf->format_date_short_java.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
+					}
 
 					$retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
 					$retstring.='<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
@@ -2489,7 +2494,7 @@ class Form
 			if (! $conf->use_javascript_ajax || ! $conf->use_popup_calendar)
 			{
 				// Jour
-				$retstring.='<select class="flat" name="'.$prefix.'day">';
+				$retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'day">';
 
 				if ($empty || $set_time == -1)
 				{
@@ -2511,7 +2516,7 @@ class Form
 
 				$retstring.="</select>";
 
-				$retstring.='<select class="flat" name="'.$prefix.'month">';
+				$retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'month">';
 				if ($empty || $set_time == -1)
 				{
 					$retstring.='<option value="0" selected="true">&nbsp;</option>';
@@ -2529,11 +2534,11 @@ class Form
 				// Year
 				if ($empty || $set_time == -1)
 				{
-					$retstring.='<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
+					$retstring.='<input'.($disabled?' disabled="true"':'').' class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
 				}
 				else
 				{
-					$retstring.='<select class="flat" name="'.$prefix.'year">';
+					$retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'year">';
 
 					for ($year = $syear - 5; $year < $syear + 10 ; $year++)
 					{
@@ -2559,7 +2564,7 @@ class Form
 			/*
 			 * Affiche heure en select
 			 */
-			$retstring.='<select class="flat" name="'.$prefix.'hour">';
+			$retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'hour">';
 			if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
 			for ($hour = 0; $hour < 24; $hour++)
 			{
@@ -2585,7 +2590,7 @@ class Form
 			/*
 			 * Affiche min en select
 			 */
-			$retstring.='<select class="flat" name="'.$prefix.'min">';
+			$retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'min">';
 			if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
 			for ($min = 0; $min < 60 ; $min++)
 			{

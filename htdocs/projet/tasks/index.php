@@ -35,8 +35,8 @@ $langs->load('projects');
 
 // Security check
 $socid=0;
-if (!$user->rights->projet->lire) accessforbidden();
 if ($user->societe_id > 0) $socid = $user->societe_id;
+if (!$user->rights->projet->lire) accessforbidden();
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -44,12 +44,12 @@ $page = isset($_GET["page"])? $_GET["page"]:$_POST["page"];
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+
 
 /*
  * View
  */
-
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
 $title=$langs->trans("Activities");
 if ($mine) $title=$langs->trans("MyActivities");
@@ -77,6 +77,8 @@ else
 	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
 
+
+//$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user

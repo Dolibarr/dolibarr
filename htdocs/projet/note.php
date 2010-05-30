@@ -31,16 +31,12 @@ $langs->load('projects');
 
 $id = isset($_GET["id"])?$_GET["id"]:'';
 
-// Security check
-if (empty($user->rights->projet->all->lire))
-{
-	$_GET["mode"]='mine';
-	$_POST["mode"]='mine';
-	$_REQUEST["mode"]='mine';
-}
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-if ($user->societe_id) $socid=$user->societe_id;
+
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $id);
 
 

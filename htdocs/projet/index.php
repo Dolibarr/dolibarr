@@ -35,8 +35,8 @@ $langs->load("projects");
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
 // Security check
-//if (! $user->rights->projet->all->lire) $mine=1;		// Special for projects
-if ($user->societe_id > 0) $socid = $user->societe_id;
+$socid=0;
+if ($user->societe_id > 0) $socid=$user->societe_id;
 if (!$user->rights->projet->lire) accessforbidden();
 
 

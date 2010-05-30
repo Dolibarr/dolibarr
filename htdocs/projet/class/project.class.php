@@ -692,13 +692,15 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *		\brief		Check permissions
+	 *	\brief		Check permissions
+	 * 	@param		user		Object user to evaluate
+	 * 	@param 		noprint		0=Print forbidden message if no permission, 1=Return -1 if no permission
 	 */
-	function restrictedProjectArea($user,$list=0)
+	function restrictedProjectArea($user,$noprint=0)
 	{
 		// To verify role of users
 		$userAccess = 0;
-		if ((!empty($this->user_author_id) && $this->user_author_id == $user->id) || $user->rights->projet->all->lire)
+		if ($user->rights->projet->all->lire)
 		{
 			$userAccess = 1;
 		}
@@ -713,21 +715,28 @@ class Project extends CommonObject
 				$userRole = $this->liste_contact(4,$source);
 				$num=sizeof($userRole);
 
-				$i = 0;
-				while ($i < $num)
+				$nblinks = 0;
+				while ($nblinks < $num)
 				{
-					if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
+					if (preg_match('/PROJECT/',$userRole[$nblinks]['code']) && $user->id == $userRole[$nblinks]['id'])
 					{
 						$userAccess++;
 					}
-					$i++;
+					$nblinks++;
 				}
 			}
+			//if (empty($nblinks))	// If nobody has permission, we grant creator
+			//{
+			//	if ((!empty($this->user_author_id) && $this->user_author_id == $user->id))
+			//	{
+			//		$userAccess = 1;
+			//	}
+			//}
 		}
 
-		if (!$userAccess && !$this->public)
+		if (! $userAccess)
 		{
-			if (!$list)
+			if (!$noprint)
 			{
 				accessforbidden('',0);
 			}
@@ -776,7 +785,7 @@ class Project extends CommonObject
 		if ($mode == 0)
 		{
 			$sql.= " AND ( p.public = 1";
-			$sql.= " OR p.fk_user_creat = ".$user->id;
+			//$sql.= " OR p.fk_user_creat = ".$user->id;
 			$sql.= " OR ( ec.element_id = p.rowid";
 			$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
 			$sql.= " AND ctc.element = '".$this->element."'";

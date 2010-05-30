@@ -38,7 +38,8 @@ $langs->load("companies");
 $taskid = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'projet', $taskid, 'projet_task');
 if (!$user->rights->projet->lire) accessforbidden();
 

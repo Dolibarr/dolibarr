@@ -315,7 +315,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 			if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) $disabled=0;
 
 			print '<td nowrap="nowrap">';
-			print $form->select_date('',$lines[$i]->id,'','','',"addtime");
+			print $form->select_date('',$lines[$i]->id,'','','',"addtime",1,0,1,$disabled);
 			print '&nbsp;&nbsp;&nbsp;';
 			print $form->select_duration($lines[$i]->id,'',$disabled);
 			print '&nbsp;<input type="submit" class="button"'.($disabled?' disabled="true"':'').' value="'.$langs->trans("Add").'">';

@@ -32,20 +32,14 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load('projects');
 $langs->load('other');
 
-$id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
-
-// Security check
-if (empty($user->rights->projet->all->lire))
-{
-	$_GET["mode"]='mine';
-	$_POST["mode"]='mine';
-	$_REQUEST["mode"]='mine';
-}
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-$socid=0;
+
 $id = isset($_GET["id"])?$_GET["id"]:'';
-if ($user->societe_id) $socid=$user->societe_id;
+
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid=$user->societe_id;
 $result=restrictedArea($user,'projet',$id,'');
 
 // Get parameters

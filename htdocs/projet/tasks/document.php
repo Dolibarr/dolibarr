@@ -30,19 +30,22 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
-if (!$user->rights->projet->lire) accessforbidden();
 
 $langs->load('projects');
 $langs->load('other');
 
-$id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
+
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
+
+$id = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
 $socid=0;
-$id = isset($_GET["id"])?$_GET["id"]:'';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result=restrictedArea($user,'projet',$id,'');
+if (!$user->rights->projet->lire) accessforbidden();
 
 // Get parameters
 $page=$_GET["page"];

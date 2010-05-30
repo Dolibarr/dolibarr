@@ -33,7 +33,11 @@ require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 $langs->load('projects');
 
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
 if (!$user->rights->projet->lire) accessforbidden();
+
 
 /*
  * Actions

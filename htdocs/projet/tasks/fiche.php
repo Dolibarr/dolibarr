@@ -32,20 +32,14 @@ require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
-$projectid='';
-$projectid=isset($_REQUEST["id"])?$_REQUEST["id"]:$_POST["id"];
-
-// Security check
-if (empty($user->rights->projet->all->lire))
-{
-	$_GET["mode"]='mine';
-	$_POST["mode"]='mine';
-	$_REQUEST["mode"]='mine';
-}
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $projectid);
+
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
+//$result = restrictedArea($user, 'projet', $projectid);
+if (!$user->rights->projet->lire) accessforbidden();
 
 $userAccess=0;
 

@@ -33,7 +33,8 @@ $langs->load('projects');
 $id = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
 if (!$user->rights->projet->lire) accessforbidden();
 //$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 
