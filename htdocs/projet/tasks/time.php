@@ -152,7 +152,6 @@ if ($_GET["id"] > 0)
 {
 	/*
 	 * Fiche projet en mode visu
-	 *
 	 */
 	$task = new Task($db);
 	$projectstatic = new Project($db);
@@ -163,8 +162,9 @@ if ($_GET["id"] > 0)
 		$result=$projectstatic->fetch($task->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
-		// To verify role of users
-		$userAccess = $projectstatic->restrictedProjectArea($user);
+		// To get role of users
+		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
+		//$arrayofuseridoftask=$task->getListContactId('internal');
 
 		$head=task_prepare_head($task);
 
@@ -210,7 +210,7 @@ if ($_GET["id"] > 0)
 		/*
 		 * Add time spent
 		 */
-		if ($user->rights->projet->creer && $userAccess)
+		if ($user->rights->projet->creer)
 		{
 			print '<br>';
 
@@ -374,7 +374,7 @@ if ($_GET["id"] > 0)
   		    	print '<br>';
   		    	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
   		    }
-  		    else if ($user->rights->projet->creer && $userAccess)
+  		    else if ($user->rights->projet->creer)
 			{
 				print '&nbsp;';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=editline&amp;lineid='.$task_time->rowid.'">';

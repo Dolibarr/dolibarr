@@ -58,7 +58,6 @@ if ($mine) $title=$langs->trans("MyActivities");
 llxHeader("",$title,"Projet");
 
 $form=new Form($db);
-
 $projectstatic = new Project($db);
 $taskstatic = new Task($db);
 
@@ -108,7 +107,7 @@ print '</div>';
 if ($user->rights->projet->creer)
 {
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?action=create">'.$langs->trans('AddTask').'</a>';
+	print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/tasks.php?action=create">'.$langs->trans('AddTask').'</a>';
 	print '</div>';
 }
 

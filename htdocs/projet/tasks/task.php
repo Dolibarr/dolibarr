@@ -128,7 +128,8 @@ if ($taskid)
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
 		// To verify role of users
-		$userAccess = $projectstatic->restrictedProjectArea($user);
+		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
+		//$arrayofuseridoftask=$task->getListContactId('internal');
 
 		if ($mesg) print $mesg;
 

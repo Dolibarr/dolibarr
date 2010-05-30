@@ -181,7 +181,8 @@ if ($id > 0 || ! empty($ref))
 		if (! empty($project->socid)) $project->societe->fetch($project->socid);
 
 		// To verify role of users
-		$userAccess = $project->restrictedProjectArea($user);
+		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
+		//$arrayofuseridoftask=$task->getListContactId('internal');
 
 		$head = task_prepare_head($task);
 		dol_fiche_head($head, 'contact', $langs->trans("Task"), 0, 'projecttask');

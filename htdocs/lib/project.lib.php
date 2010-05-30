@@ -86,7 +86,7 @@ function project_prepare_head($object)
 	$h++;
 
 	/* Now this is a filter in the Task tab.
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$object->id.'&mode=mine';
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&mode=mine';
 	$head[$h][1] = $langs->trans("MyTasks");
     $head[$h][2] = 'mytasks';
 	$h++;

@@ -136,7 +136,8 @@ llxHeader('',$langs->trans('Project'));
 if ($id > 0 || ! empty($ref))
 {
 	// To verify role of users
-	$userAccess = $projectstatic->restrictedProjectArea($user);
+	//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
+	//$arrayofuseridoftask=$task->getListContactId('internal');
 
 	$head = task_prepare_head($task);
 	dol_fiche_head($head, 'document', $langs->trans("Task"), 0, 'projecttask');

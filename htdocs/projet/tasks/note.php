@@ -110,7 +110,8 @@ if ($id > 0 || ! empty($ref))
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
 		// To verify role of users
-		$userAccess = $projectstatic->restrictedProjectArea($user);
+		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
+		//$arrayofuseridoftask=$task->getListContactId('internal');
 
 		$head = task_prepare_head($task);
 		dol_fiche_head($head, 'note', $langs->trans('Task'), 0, 'projecttask');
@@ -188,7 +189,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		print '<div class="tabsAction">';
 
-		if ((($user->rights->projet->creer && $userAccess) || $user->rights->projet->all->creer) && $_GET['action'] <> 'edit')
+		if (($user->rights->projet->creer || $user->rights->projet->all->creer) && $_GET['action'] <> 'edit')
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 		}
