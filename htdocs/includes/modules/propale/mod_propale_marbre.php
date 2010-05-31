@@ -68,9 +68,10 @@ class mod_propale_marbre extends ModeleNumRefPropales
 
 		$pryymm='';
 
-		$sql = "SELECT MAX(ref)";
+		$sql = "SELECT MAX(ref) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -78,13 +79,15 @@ class mod_propale_marbre extends ModeleNumRefPropales
 			$row = $db->fetch_row($resql);
 			if ($row) $pryymm = substr($row[0],0,6);
 		}
-		if (! $pryymm || preg_match('/PR[0-9][0-9][0-9][0-9]/i',$pryymm))
+
+		if (! $pryymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$pryymm))
 		{
 			return true;
 		}
 		else
 		{
-			$this->error='Une propal commencant par $pryymm existe en base et est incompatible avec cette numerotation. Supprimer la ou renommer la pour activer ce module.';
+			$langs->load("errors");
+			$this->error=$langs->trans('ErrorNumRefModel');
 			return false;
 		}
 	}
@@ -98,12 +101,11 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	{
 		global $db,$conf;
 
-		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
+		// D'abord on recupere la valeur max
 		$posindice=8;
-		 // TODO le 0+ cree une erreur sous pgsql mais est utile sous mysql si utilisation de différent module dans le passé
-		$sql = "SELECT MAX(0+SUBSTRING(ref FROM ".$posindice.")) as max";
+		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-		$sql.= " WHERE ref LIKE '".$this->prefix."%'";
+		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);

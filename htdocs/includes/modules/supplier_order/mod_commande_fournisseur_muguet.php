@@ -29,16 +29,16 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/supplier_order/modules_comman
 
 
 /**	    \class      mod_commande_fournisseur_muguet
-		\brief      Classe du modele de numerotation de reference de commande fournisseur Muguet
-*/
+ *		\brief      Classe du modele de numerotation de reference de commande fournisseur Muguet
+ */
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 	var $nom = 'Muguet';
 	var $prefix='CF';
-    
-    
+
+
     /**     \brief      Renvoi la description du modele de numerotation
      *      \return     string      Texte descripif
      */
@@ -64,12 +64,13 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     function canBeActivated()
     {
     	global $conf;
-    	
+
         $coyymm='';
-        
-        $sql = "SELECT MAX(ref)";
+
+        $sql = "SELECT MAX(ref) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-        $sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -82,8 +83,9 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         }
         else
         {
-            $this->error='Une commande commencant par $coyymm existe en base et est incompatible avec cette numerotation. Supprimer la ou renommer la pour activer ce module.';
-            return false;    
+			$langs->load("errors");
+			$this->error=$langs->trans('ErrorNumRefModel');
+            return false;
         }
     }
 
@@ -96,13 +98,13 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     {
         global $db,$conf;
 
-        // D'abord on recupere la valeur max (reponse immediate car champ indexe)
+        // D'abord on recupere la valeur max
         $posindice=8;
-        $sql = "SELECT MAX(SUBSTRING(ref,".$posindice.")) as max";
+        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-        $sql.= " WHERE ref like '".$this->prefix."%'";
+		$sql.= " WHERE ref like '".$this->prefix."____-%'";
         $sql.= " AND entity = ".$conf->entity;
-        
+
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -110,12 +112,12 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
             if ($obj) $max = intval($obj->max);
             else $max=0;
         }
-    
+
 		//$date=time();
         $date=$object->date_commande;
         $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
-        
+
         return $this->prefix.$yymm."-".$num;
     }
 

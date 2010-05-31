@@ -59,6 +59,38 @@ class mod_project_simple extends ModeleNumRefProjects
     }
 
 
+    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numerotation de fonctionner.
+     *      \return     boolean     false si conflit, true si ok
+     */
+    function canBeActivated()
+    {
+    	global $conf;
+
+        $coyymm='';
+
+        $sql = "SELECT MAX(ref) as max";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet";
+		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            if ($row) $coyymm = substr($row[0],0,6);
+        }
+        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+        {
+            return true;
+        }
+        else
+        {
+			$langs->load("errors");
+			$this->error=$langs->trans('ErrorNumRefModel');
+            return false;
+        }
+    }
+
 
    /**
 	*  \brief      Return next value
@@ -72,9 +104,9 @@ class mod_project_simple extends ModeleNumRefProjects
 
 		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref,".$posindice.")) as max";
+		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
-		$sql.= " WHERE ref like '".$this->prefix."%'";
+		$sql.= " WHERE ref like '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);

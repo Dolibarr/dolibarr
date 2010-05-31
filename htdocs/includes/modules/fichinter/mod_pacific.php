@@ -19,69 +19,69 @@
  */
 
 /**
-    \file       htdocs/includes/modules/fichinter/mod_pacific.php
-	\ingroup    fiche intervention
-	\brief      Fichier contenant la classe du modele de numerotation de reference de fiche intervention Pacific
-	\version    $Id$
-*/
+ \file       htdocs/includes/modules/fichinter/mod_pacific.php
+ \ingroup    fiche intervention
+ \brief      Fichier contenant la classe du modele de numerotation de reference de fiche intervention Pacific
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 
 /**
-    \class      mod_pacific
-		\brief      Classe du moderotation de reference de fiche intervention Pacific
-*/
-
+ *  \class      mod_pacific
+ *	\brief      Classe du moderotation de reference de fiche intervention Pacific
+ */
 class mod_pacific extends ModeleNumRefFicheinter
 {
 	var $prefix='FI';
 	var $error='';
-	
-	
+
+
 	/**   \brief      Constructeur
-	*/
+	 */
 	function mod_pacific()
 	{
 		$this->nom = "pacific";
 	}
 
 
-    /**     \brief      Renvoi la description du modele de numerotation
-     *      \return     string      Texte descripif
-     */
-    function info()
-    {
-	 	global $langs;
+	/**     \brief      Renvoi la description du modele de numerotation
+	 *      \return     string      Texte descripif
+	 */
+	function info()
+	{
+		global $langs;
 
 		$langs->load("bills");
-		
-    	return $langs->trans('PacificNumRefModelDesc1',$this->prefix);
-    }
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Example
-     */
-    function getExample()
-    {
-        return $this->prefix."0501-0001";
-    }
+		return $langs->trans('PacificNumRefModelDesc1',$this->prefix);
+	}
 
-    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numerotation de fonctionner.
-     *      \return     boolean     false si conflit, true si ok
-     */
+	/**     \brief      Renvoi un exemple de numerotation
+	 *      \return     string      Example
+	 */
+	function getExample()
+	{
+		return $this->prefix."0501-0001";
+	}
+
+	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numerotation de fonctionner.
+	 *      \return     boolean     false si conflit, true si ok
+	 */
 	function canBeActivated()
 	{
 		global $langs,$conf;
-	
+
 		$langs->load("bills");
-	
+
 		$fayymm='';
-	
+
 		$sql = "SELECT MAX(ref)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
+		$sql.= " WHERE ref like '".$this->prefix."____-%'";
 		$sql.= " WHERE entity = ".$conf->entity;
-		
+
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -94,54 +94,54 @@ class mod_pacific extends ModeleNumRefFicheinter
 		}
 		else
 		{
-			$this->error=$langs->trans('PacificNumRefModelError');
+			$langs->load("errors");
+			$this->error=$langs->trans('ErrorNumRefModel');
 			return false;
 		}
 	}
 
 	/**		\brief      Renvoi prochaine valeur attribuee
-	*      	\param      objsoc      Objet societe
-	*      	\param      ficheinter	Object ficheinter
-	*      	\return     string      Valeur
-	*/
-  function getNextValue($objsoc=0,$ficheinter='')
+	 *      	\param      objsoc      Objet societe
+	 *      	\param      ficheinter	Object ficheinter
+	 *      	\return     string      Valeur
+	 */
+	function getNextValue($objsoc=0,$object='')
 	{
 		global $db,$conf;
-		
+
 		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
-    $posindice=8;
-    
-    $sql = "SELECT MAX(SUBSTRING(ref,".$posindice.")) as max";
-    $sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
-		$sql.= " WHERE ref like '".$this->prefix."%'";
+		$posindice=8;
+		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
+		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
-        
+
 		$resql=$db->query($sql);
-    if ($resql)
-    {
-    	$obj = $db->fetch_object($resql);
-      if ($obj) $max = intval($obj->max);
-      else $max=0;
-    }
-    
-    //$date=time();
-    $date=$ficheinter->date;
-    $yymm = strftime("%y%m",$date);
-    $num = sprintf("%04s",$max+1);
-        
-    return $this->prefix.$yymm."-".$num;
-  }
-    
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $max = intval($obj->max);
+			else $max=0;
+		}
+
+		//$date=time();
+		$date=$object->date;
+		$yymm = strftime("%y%m",$date);
+		$num = sprintf("%04s",$max+1);
+
+		return $this->prefix.$yymm."-".$num;
+	}
+
 	/**		\brief      Return next free value
-    *      	\param      objsoc      Object third party
-	* 		\param		objforref	Object for number to search
-    *   	\return     string      Next free value
-    */
-    function getNumRef($objsoc,$objforref)
-    {
-        return $this->getNextValue($objsoc,$objforref);
-    }
-    
+	 *      	\param      objsoc      Object third party
+	 * 		\param		objforref	Object for number to search
+	 *   	\return     string      Next free value
+	 */
+	function getNumRef($objsoc,$objforref)
+	{
+		return $this->getNextValue($objsoc,$objforref);
+	}
+
 }
 
 ?>

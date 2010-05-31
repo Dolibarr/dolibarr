@@ -57,7 +57,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	}
 
 	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette num�rotation de fonctionner.
+	 *                  de conflits qui empechera cette numerotation de fonctionner.
 	 *      \return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -69,9 +69,9 @@ class mod_facture_terre extends ModeleNumRefFactures
 		// Check invoice num
 		$fayymm='';
 
-		$sql = "SELECT MAX(facnumber)";
+		$sql = "SELECT MAX(facnumber) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql.= " WHERE facnumber like '".$this->prefixinvoice."%'";
+		$sql.= " WHERE facnumber LIKE '".$this->prefixinvoice."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -82,7 +82,8 @@ class mod_facture_terre extends ModeleNumRefFactures
 		}
 		if ($fayymm && ! preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i',$fayymm))
 		{
-			$this->error=$langs->trans('TerreNumRefModelError');
+			$langs->load("errors");
+			$this->error=$langs->trans('ErrorNumRefModel');
 			return false;
 		}
 
@@ -91,7 +92,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 
 		$sql = "SELECT MAX(facnumber)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql.= " WHERE facnumber like '".$this->prefixcreditnote."%'";
+		$sql.= " WHERE facnumber LIKE '".$this->prefixcreditnote."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -121,12 +122,11 @@ class mod_facture_terre extends ModeleNumRefFactures
 		if ($facture->type == 2) $prefix=$this->prefixcreditnote;
 		else $prefix=$this->prefixinvoice;
 
-		// D'abord on recupere la valeur max (reponse immediate car champ ind�x�)
+		// D'abord on recupere la valeur max
 		$posindice=8;
-
-		$sql = "SELECT MAX(SUBSTRING(facnumber,".$posindice.")) as max";
+		$sql = "SELECT MAX(SUBSTRING(facnumber FROM ".$posindice.")) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql.= " WHERE facnumber like '".$prefix."%'";
+		$sql.= " WHERE facnumber LIKE '".$prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);

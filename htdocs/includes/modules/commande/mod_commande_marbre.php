@@ -19,123 +19,125 @@
  */
 
 /**
-     	\file       htdocs/includes/modules/commande/mod_commande_marbre.php
-		\ingroup    commande
-		\brief      Fichier contenant la classe du modele de num�rotation de reference de commande Marbre
-		\version    $Id$
-*/
+ \file       htdocs/includes/modules/commande/mod_commande_marbre.php
+ \ingroup    commande
+ \brief      Fichier contenant la classe du modele de num�rotation de reference de commande Marbre
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
 
 /**	    \class      mod_commande_marbre
-		\brief      Classe du modele de numerotation de reference de commande Marbre
-*/
+ \brief      Classe du modele de numerotation de reference de commande Marbre
+ */
 
 class mod_commande_marbre extends ModeleNumRefCommandes
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='CO';
-  var $error='';
-  var $nom='Marbre';
-	
-    
-    /**     \brief      Renvoi la description du modele de numerotation
-     *      \return     string      Texte descripif
-     */
-    function info()
-    {
+	var $error='';
+	var $nom='Marbre';
+
+
+	/**     \brief      Renvoi la description du modele de numerotation
+	 *      \return     string      Texte descripif
+	 */
+	function info()
+	{
 		global $langs;
 		return $langs->trans("MarbreNumRefDesc",$this->prefix);
-    }
+	}
 
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Example
-     */
-    function getExample()
-    {
-        return $this->prefix."0501-0001";
-    }
+	/**     \brief      Renvoi un exemple de numerotation
+	 *      \return     string      Example
+	 */
+	function getExample()
+	{
+		return $this->prefix."0501-0001";
+	}
 
 
-    /**     \brief      Test si les numeros deje en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numerotation de fonctionner.
-     *      \return     boolean     false si conflit, true si ok
-     */
-    function canBeActivated()
-    {
-    	global $conf;
-    	
-    	$coyymm='';
-    	
-    	$sql = "SELECT MAX(ref)";
-      $sql.= " FROM ".MAIN_DB_PREFIX."commande";
-      $sql.= " WHERE ref like '".$this->prefix."%'";
-      $sql.= " AND entity = ".$conf->entity;
-      
-      $resql=$db->query($sql);
-      if ($resql)
-      {
-      	$row = $db->fetch_row($resql);
-        if ($row) $coyymm = substr($row[0],0,6);
-      }
-      if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
-      {
-      	$this->error='Une commande commencant par $coyymm existe en base et est incompatible avec cette numerotation. Supprimer la ou renommer la pour activer ce module.';
-      	return false;    
-      }
+	/**     \brief      Test si les numeros deje en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numerotation de fonctionner.
+	 *      \return     boolean     false si conflit, true si ok
+	 */
+	function canBeActivated()
+	{
+		global $conf;
 
-        return true;
-    }
+		$coyymm='';
+
+		$posindice=8;
+		$sql = "SELECT MAX(ref) as max";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande";
+		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			if ($row) $coyymm = substr($row[0],0,6);
+		}
+		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+		{
+			$langs->load("errors");
+			$this->error=$langs->trans('ErrorNumRefModel');
+			return false;
+		}
+
+		return true;
+	}
 
 	/**		\brief      Return next value
-	*      	\param      objsoc      Objet third party
-	*		\param		commande	Object order
-	*      	\return     string      Value if OK, 0 if KO
-	*/
-    function getNextValue($objsoc,$commande)
-    {
-    	global $db,$conf;
-    	
-    	// D'abord on recupere la valeur max (reponse immediate car champ indexe)
-      $posindice=8;
-      $sql = "SELECT MAX(SUBSTRING(ref,".$posindice.")) as max";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."commande";
-    	$sql.= " WHERE ref like '".$this->prefix."%'";
-    	$sql.= " AND entity = ".$conf->entity;
-    	
-    	$resql=$db->query($sql);
-      if ($resql)
-      {
-      	$obj = $db->fetch_object($resql);
-        if ($obj) $max = intval($obj->max);
-        else $max=0;
-      }
-      else
-      {
-      	dol_syslog("mod_commande_marbre::getNextValue sql=".$sql);
-        return -1;
-      }
-      
-      //$date=time();
-      $date=$commande->date;
-      $yymm = strftime("%y%m",$date);
-      $num = sprintf("%04s",$max+1);
-        
-      dol_syslog("mod_commande_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
-      return $this->prefix.$yymm."-".$num;
-    }
+	 *      \param      objsoc      Objet third party
+	 *		\param		commande	Object order
+	 *      \return     string      Value if OK, 0 if KO
+	 */
+	function getNextValue($objsoc,$commande)
+	{
+		global $db,$conf;
+
+		// D'abord on recupere la valeur max
+		$posindice=8;
+		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande";
+		$sql.= " WHERE ref like '".$this->prefix."____-%'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $max = intval($obj->max);
+			else $max=0;
+		}
+		else
+		{
+			dol_syslog("mod_commande_marbre::getNextValue sql=".$sql);
+			return -1;
+		}
+
+		//$date=time();
+		$date=$commande->date;
+		$yymm = strftime("%y%m",$date);
+		$num = sprintf("%04s",$max+1);
+
+		dol_syslog("mod_commande_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
+		return $this->prefix.$yymm."-".$num;
+	}
 
 
 	/**		\brief      Return next free value
-    *      	\param      objsoc      Object third party
-	* 		\param		objforref	Object for number to search
-    *   	\return     string      Next free value
-    */
-    function commande_get_num($objsoc,$objforref)
-    {
-        return $this->getNextValue($objsoc,$objforref);
-    }
-    
+	 *      \param      objsoc      Object third party
+	 * 		\param		objforref	Object for number to search
+	 *   	\return     string      Next free value
+	 */
+	function commande_get_num($objsoc,$objforref)
+	{
+		return $this->getNextValue($objsoc,$objforref);
+	}
+
 }
 ?>
