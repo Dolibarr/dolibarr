@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -124,14 +124,14 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		{
 			$_GET["action"] = 'edit';
 			$_GET["id"] = $_POST["id"];
-			$mesg = '<div class="error">Fiche non mise � jour !' . "<br>" . $entrepot->error.'</div>';
+			$mesg = '<div class="error">'.$entrepot->error.'</div>';
 		}
 	}
 	else
 	{
 		$_GET["action"] = 'edit';
 		$_GET["id"] = $_POST["id"];
-		$mesg = '<div class="error">Fiche non mise � jour !' . "<br>" . $entrepot->error.'</div>';
+		$mesg = '<div class="error">'.$entrepot->error.'</div>';
 	}
 }
 

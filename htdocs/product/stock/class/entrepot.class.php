@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -276,12 +276,11 @@ class Entrepot extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql  = "SELECT e.rowid, e.datec,";
-		$sql .= " e.datem,";
-		$sql .= " fk_user_author";
-		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql .= " WHERE e.rowid = ".$id;
+		$sql = "SELECT e.rowid, e.datec, e.tms as datem, e.fk_user_author";
+		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+		$sql.= " WHERE e.rowid = ".$id;
 
+		dol_syslog("Entrepot::info sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
