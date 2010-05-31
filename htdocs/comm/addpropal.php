@@ -85,8 +85,9 @@ if ($_GET["action"] == 'create')
 	// Si numero deja pris (ne devrait pas arriver), on incremente par .num+1
 	$sql = "SELECT count(*) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-	$sql.= " WHERE ref LIKE '$numpr%'";
+	$sql.= " WHERE ref LIKE '".$numpr."%'";
 	$sql.= " AND entity = ".$conf->entity;
+	
 	$resql=$db->query($sql);
 	if ($resql)
 	{

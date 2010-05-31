@@ -100,7 +100,8 @@ class mod_propale_marbre extends ModeleNumRefPropales
 
 		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref,".$posindice.")) as max";
+		 // TODO le 0+ cree une erreur sous pgsql mais est utile sous mysql si utilisation de différent module dans le passé
+		$sql = "SELECT MAX(0+SUBSTRING(ref FROM ".$posindice.")) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql.= " WHERE ref LIKE '".$this->prefix."%'";
 		$sql.= " AND entity = ".$conf->entity;
