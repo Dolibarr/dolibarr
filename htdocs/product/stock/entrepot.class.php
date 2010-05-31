@@ -276,9 +276,7 @@ class Entrepot extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql  = "SELECT e.rowid, e.datec,";
-		$sql .= " e.datem,";
-		$sql .= " fk_user_author";
+		$sql  = "SELECT e.rowid, e.datec, e.tms as datem, e.fk_user_author";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql .= " WHERE e.rowid = ".$id;
 
