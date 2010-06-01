@@ -110,7 +110,7 @@ if ($_POST["action"] == 'add' && $user->rights->societe->contact->creer)
 
     if (! $_POST["name"])
     {
-        array_push($error,$langs->trans("ErrorFieldRequired",$langs->trans("Lastname")));
+        array_push($error,$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label")));
         $_GET["action"]="create";
     }
 
@@ -270,8 +270,8 @@ if ($user->rights->societe->contact->creer)
 		print '<table class="border" width="100%">';
 
 		// Name
-		print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
-		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
+		print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td><input name="name" type="text" size="30" maxlength="80" value="'.$contact->name.'"></td>';
+		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="30" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
 
 		// Company
 		if ($socid)
