@@ -38,7 +38,7 @@ accessforbidden();
 /*
  * Actions
  */
-if ($_POST["action"] == 'STOCK_USERSTOCK')
+/*if ($_POST["action"] == 'STOCK_USERSTOCK')
 {
 	dolibarr_set_const($db, "STOCK_USERSTOCK", $_POST["STOCK_USERSTOCK"],'chaine',0,'',$conf->entity);
 	//On desactive l'autocreation si l'option "stock personnel" est desactivee
@@ -49,7 +49,9 @@ if ($_POST["action"] == 'STOCK_USERSTOCK')
 	Header("Location: stock.php");
 	exit;
 }
-elseif ($_POST["action"] == 'STOCK_USERSTOCK_AUTOCREATE')
+else
+*/
+if ($_POST["action"] == 'STOCK_USERSTOCK_AUTOCREATE')
 {
 	dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", $_POST["STOCK_USERSTOCK_AUTOCREATE"],'chaine',0,'',$conf->entity);
 	Header("Location: stock.php");
@@ -133,10 +135,10 @@ print '</tr>'."\n";
 // sousproduits activation/desactivation
 $var=!$var;
 
-print "<tr ".$bc[$var].">";
+/*print "<tr ".$bc[$var].">";
 print '<td width="60%">'.$langs->trans("UserWarehouse").'</td>';
 print '<td width="160" align="right">';
-print "<form method=\"post\" action=\"stock.php\">";
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK\">";
 print $html->selectyesno("STOCK_USERSTOCK",$conf->global->STOCK_USERSTOCK,1);
@@ -146,7 +148,7 @@ print "</form>\n</td>\n</tr>\n";
 if ($conf->global->STOCK_USERSTOCK == 1)
 {
 	$var=!$var;
-
+*/
 	print "<tr ".$bc[$var].">";
 	print '<td width="60%">'.$langs->trans("UserWarehouseAutoCreate").'</td>';
 
@@ -155,12 +157,11 @@ if ($conf->global->STOCK_USERSTOCK == 1)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK_AUTOCREATE\">";
 	print $html->selectyesno("STOCK_USERSTOCK_AUTOCREATE",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
-
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print "</td>\n";
 	print "</tr>\n";
-}
+/*} */
 
 
 // Title rule for stock decrease
