@@ -24,6 +24,8 @@
  *      \ingroup    societe
  *      \version    $Id$
  */
+require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+
 function project_prepare_head($object)
 {
 	global $langs, $conf, $user;
