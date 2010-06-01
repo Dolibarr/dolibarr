@@ -282,7 +282,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 	}
 	if (! empty($_POST["remise_id_for_payment"]))
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 		$discount = new DiscountAbsolute($db);
 		$discount->fetch($_POST["remise_id_for_payment"]);
 
