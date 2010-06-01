@@ -98,5 +98,4 @@ LastModifiedProposals=Viimeisin %s muutetut ehdotukset
 DatePropal=Päiväys Ehdotuksen
 ProposalsAndProposalsLines=Kaupalliset ehdotusta ja linjat
 ProposalLine=Ehdotus linja
-MarbreNumRefModelDesc=Paluu numero on muodossa %syymm-nnnn ehdotuksia jossa VV on vuosi, mm kuukausi ja nnnn on sarja ilman taukoa eikä palata 0
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin       <regis@dolibarr.fr>
+ * Copyright (C) 2010 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,14 +40,13 @@ class mod_project_simple extends ModeleNumRefProjects
 	var $nom = "Simple";
 
 
-
     /**     \brief      Return description of numbering module
      *      \return     string      Text with description
      */
     function info()
     {
     	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc");
+      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
     }
 
 
@@ -65,11 +65,12 @@ class mod_project_simple extends ModeleNumRefProjects
      */
     function canBeActivated()
     {
-    	global $conf;
+    	global $conf,$langs;
 
-        $coyymm='';
+        $coyymm=''; $max='';
 
-        $sql = "SELECT MAX(ref) as max";
+		$posindice=8;
+		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
         $sql.= " AND entity = ".$conf->entity;
@@ -77,7 +78,7 @@ class mod_project_simple extends ModeleNumRefProjects
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $coyymm = substr($row[0],0,6);
+            if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
         }
         if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
         {
@@ -86,7 +87,7 @@ class mod_project_simple extends ModeleNumRefProjects
         else
         {
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel');
+			$this->error=$langs->trans('ErrorNumRefModel',$max);
             return false;
         }
     }
@@ -102,7 +103,7 @@ class mod_project_simple extends ModeleNumRefProjects
     {
 		global $db,$conf;
 
-		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
+		// D'abord on recupere la valeur max
 		$posindice=8;
 		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet";

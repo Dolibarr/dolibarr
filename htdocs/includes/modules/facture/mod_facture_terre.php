@@ -42,9 +42,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	function info()
 	{
 		global $langs;
-
 		$langs->load("bills");
-
 		return $langs->trans('TerreNumRefModelDesc1',$this->prefixinvoice,$this->prefixcreditnote);
 	}
 
@@ -67,9 +65,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$langs->load("bills");
 
 		// Check invoice num
-		$fayymm='';
+		$fayymm=''; $max='';
 
-		$sql = "SELECT MAX(facnumber) as max";
+		$posindice=8;
+		$sql = "SELECT MAX(SUBSTRING(facnumber FROM ".$posindice.")) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber LIKE '".$this->prefixinvoice."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -78,19 +77,20 @@ class mod_facture_terre extends ModeleNumRefFactures
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) $fayymm = substr($row[0],0,6);
+			if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
 		}
 		if ($fayymm && ! preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i',$fayymm))
 		{
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel');
+			$this->error=$langs->trans('ErrorNumRefModel',$max);
 			return false;
 		}
 
 		// Check credit note num
 		$fayymm='';
 
-		$sql = "SELECT MAX(facnumber)";
+		$posindice=8;
+		$sql = "SELECT MAX(SUBSTRING(facnumber FROM ".$posindice.")) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber LIKE '".$this->prefixcreditnote."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -99,11 +99,11 @@ class mod_facture_terre extends ModeleNumRefFactures
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) $fayymm = substr($row[0],0,6);
+			if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
 		}
 		if ($fayymm && ! preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i',$fayymm))
 		{
-			$this->error=$langs->trans('TerreNumRefModelError');
+			$this->error=$langs->trans('ErrorNumRefModel',$max);
 			return false;
 		}
 

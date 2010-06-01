@@ -763,6 +763,7 @@ RunningUpdateProcessMayBeRequired=Running the upgrade process seems to be requir
 YouMustRunCommandFromCommandLineAfterLoginToUser=You must run this command from command line after login to a shell with user <b>%s</b>.
 YourPHPDoesNotHaveSSLSupport=SSL functions not available in your PHP
 DownloadMoreSkins=More skins to download
+SimpleNumRefModelDesc=Return the reference number with format %syymm-nnnn where yy is year, mm is month and nnnn is a sequence without hole and with no reset
 
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.

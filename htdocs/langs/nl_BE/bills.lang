@@ -314,15 +314,6 @@ TitanNumRefModelDesc2=The year is incremented by 1 and the increment number is i
 TitanNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
 TitanNumRefModelDesc4=In this example, we shall have on the 1st September 2006 an invoice named FA0700001
 
-# uranus
-UranusNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, préfixé par l'année sur un seul chiffre
-
-# venus
-VenusNumRefModelDesc1=Renvoie le numéro de facture sous la forme, FA-PREF-030202, où PREF est le préfixe commercial de la société, et est suivi de la date sur un format de 6 digits avec Année, Mois et Jour
-
-MarbreNumRefModelDesc=Model Marbre
-
-
 // START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
 // Reference language: en_US
 BillsStatisticsSuppliers=Leveranciers facturen statistieken

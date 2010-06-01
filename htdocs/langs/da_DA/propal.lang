@@ -100,5 +100,3 @@ LastModifiedProposals=Seneste %s ændrede forslag
 DatePropal=Dato for forslag
 ProposalsAndProposalsLines=Kommercielle forslag og linjer
 ProposalLine=Forslag linje
-MarbreNumRefModelDesc=Retur numero med format %syymm-nnnn for forslag, hvor yy er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

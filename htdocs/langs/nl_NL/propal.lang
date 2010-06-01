@@ -88,5 +88,3 @@ TypeContact_propal_external_CUSTOMER=Contact klant tracking voorstel
 # Document models
 DocModelAzurDescription=Een complete offerte model (logo. ..)
 DocModelJauneDescription=Geel offerte model
-# NumRef Modules
-MarbreNumRefModelDesc=Geeft het aantal als PRyymm-nnnn waar yy jaar is, mm de maand en nnnn een naadloze sequencer zonder vervangings 0

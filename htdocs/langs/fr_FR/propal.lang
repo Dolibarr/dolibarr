@@ -86,5 +86,3 @@ TypeContact_propal_external_CUSTOMER=Contact client suivi propale
 # Documents models
 DocModelAzurDescription=Modèle de propositions commerciales complet (logo...)
 DocModelJauneDescription=Modèle de proposition Jaune
-# NumRef Modules
-MarbreNumRefModelDesc=Renvoie le numéro sous la forme PRyymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0

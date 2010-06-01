@@ -764,6 +764,7 @@ RunningUpdateProcessMayBeRequired=Sembla necessari realitzar el procés d'actual
 YouMustRunCommandFromCommandLineAfterLoginToUser=Ha d'executar la comanda des d'un shell després d'haver iniciat sessió amb el compte <b>%s</b>.
 YourPHPDoesNotHaveSSLSupport=Funcions SSL no disponibles al vostre PHP
 DownloadMoreSkins=Més temes per descarregar
+SimpleNumRefModelDesc=Retorna el nombre sota el format %syymm-nnnn on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0
 ##### Module password generation= undefined==
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.

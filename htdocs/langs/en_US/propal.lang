@@ -86,5 +86,3 @@ TypeContact_propal_external_CUSTOMER=Customer contact following-up proposal
 # Document models
 DocModelAzurDescription=A complete proposal model (logo...)
 DocModelJauneDescription=Jaune proposal model
-# NumRef Modules
-MarbreNumRefModelDesc=Return numero with format %syymm-nnnn for proposals where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

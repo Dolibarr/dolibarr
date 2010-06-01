@@ -764,6 +764,7 @@ RunningUpdateProcessMayBeRequired=Update lijkt verplicht (Programma versie %s ve
 YouMustRunCommandFromCommandLineAfterLoginToUser=U dient dit commando vanaf de 'command line' te runnen na in te loggen op de shell met gebruiker <b>%s</b>.
 YourPHPDoesNotHaveSSLSupport=SSL functies niet beschikbaar in uw PHP
 DownloadMoreSkins=Meer thema-huiden te downloaden
+SimpleNumRefModelDesc=Geeft het aantal als %syymm-nnnn waar yy jaar is, mm de maand en nnnn een sequencer naadloos en zonder vervangde 0
 
 ##### Module password generation
 PasswordGenerationStandard=Een wachtwoord gegenereerd volgens interne Dolibarr algoritme: 8 karakters met gedeelde nummers en tekens in kleine letters.

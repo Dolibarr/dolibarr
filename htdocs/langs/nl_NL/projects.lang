@@ -85,5 +85,3 @@ TypeContact_project_task_internal_CONTRIBUTOR=Medewerker
 TypeContact_project_task_external_CONTRIBUTOR=Medewerker
 # Documenten modulen
 DocumentModelBaleine=Model Project Report Compleet (logo. ..)
-# NumRef Modules
-SimpleNumRefModelDesc=Geeft het aantal als PJyymm-nnnn waar yy jaar is, mm de maand en nnnn een sequencer naadloos en zonder vervangde 0

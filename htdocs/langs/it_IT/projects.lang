@@ -26,7 +26,6 @@ DurationEffective			    =Durata effettiva
 ListProposalsAssociatedProject		    =Elenco delle proposte commerciali associate al progetto 
 ListOrdersAssociatedProject		    =Elenco degli ordini associati al progetto 
 ListInvoicesAssociatedProject		    =Elenco delle fatture associate al progetto
-SimpleNumRefModelDesc			    =Restituisce un numero di riferimento nel formato PJyymm-nnnn dove yy è l'anno, mm è il mese e nnnn è una sequenza progressiva che non ritorna a 0.
 DocumentModelBaleine			    =Modello di rapporto di progetto completo (logo, etc..)
 
 // Date 2009-01-18 19:41:54

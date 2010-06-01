@@ -39,12 +39,13 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	var $prefix='CF';
 
 
-    /**     \brief      Renvoi la description du modele de numerotation
-     *      \return     string      Texte descripif
+    /**     \brief      Return description of numbering module
+     *      \return     string      Text with description
      */
     function info()
     {
-		return "Renvoie le numero sous la forme ".$this->prefix."yymm-nnnn ou yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise a 0";
+    	global $langs;
+      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
     }
 
 
@@ -63,11 +64,12 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
      */
     function canBeActivated()
     {
-    	global $conf;
+    	global $conf,$langs;
 
-        $coyymm='';
+        $coyymm=''; $max='';
 
-        $sql = "SELECT MAX(ref) as max";
+		$posindice=8;
+		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
         $sql.= " AND entity = ".$conf->entity;
@@ -75,7 +77,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $coyymm = substr($row[0],0,6);
+            if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
         }
         if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
         {
@@ -84,7 +86,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         else
         {
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel');
+			$this->error=$langs->trans('ErrorNumRefModel',$max);
             return false;
         }
     }

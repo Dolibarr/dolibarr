@@ -86,5 +86,3 @@ TypeContact_propal_external_CUSTOMER=Contacte client seguiment pressupost
 # Documents models
 DocModelAzurDescription=Model de pressupost complet (logo...)
 DocModelJauneDescription=Model de pressupost Jaune
-# NumRef Modules 
-MarbreNumRefModelDesc=Retorna el nombre sota el format PRyymm-nnnn on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0

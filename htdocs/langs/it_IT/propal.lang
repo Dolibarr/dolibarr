@@ -81,7 +81,6 @@ LastModifiedProposals=Ultimo %s proposte modificate
 DatePropal=Data della proposta
 ProposalsAndProposalsLines=Proposta commerciale e le linee
 ProposalLine=Linea della proposta
-MarbreNumRefModelDesc=Restituisce un numero con formato %syymm-nnnn in cui yy è l'anno, mm è il mese e nnnn è una sequenza progressiva senza ritorno a 0.
 TypeContact_propal_internal_SALESREPFOLL=Responsabile proposta vendita
 TypeContact_propal_external_BILLING=Contatto proposta fatturazione
 TypeContact_propal_external_CUSTOMER=Contatto proposta clienti

@@ -35,27 +35,17 @@ class mod_pacific extends ModeleNumRefFicheinter
 {
 	var $prefix='FI';
 	var $error='';
+	var $nom = 'pacific';
 
 
-	/**   \brief      Constructeur
-	 */
-	function mod_pacific()
-	{
-		$this->nom = "pacific";
-	}
-
-
-	/**     \brief      Renvoi la description du modele de numerotation
-	 *      \return     string      Texte descripif
-	 */
-	function info()
-	{
-		global $langs;
-
-		$langs->load("bills");
-
-		return $langs->trans('PacificNumRefModelDesc1',$this->prefix);
-	}
+	/**     \brief      Return description of numbering module
+     *      \return     string      Text with description
+     */
+    function info()
+    {
+    	global $langs;
+      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+    }
 
 	/**     \brief      Renvoi un exemple de numerotation
 	 *      \return     string      Example
@@ -75,9 +65,10 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 		$langs->load("bills");
 
-		$fayymm='';
+		$fayymm=''; $max='';
 
-		$sql = "SELECT MAX(ref)";
+		$posindice=8;
+		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql.= " WHERE ref like '".$this->prefix."____-%'";
 		$sql.= " WHERE entity = ".$conf->entity;
@@ -86,7 +77,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) $fayymm = substr($row[0],0,6);
+			if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
 		}
 		if (! $fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$fayymm))
 		{
@@ -95,7 +86,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 		else
 		{
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel');
+			$this->error=$langs->trans('ErrorNumRefModel',$max);
 			return false;
 		}
 	}
@@ -109,7 +100,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	{
 		global $db,$conf;
 
-		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
+		// D'abord on recupere la valeur max
 		$posindice=8;
 		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";

@@ -90,6 +90,3 @@ TypeContact_propal_external_CUSTOMER=Kontakt pri kupcu za sledenje ponudbe
 DocModelAzurDescription=Vzorec kompletne ponudbe (logo...)
 DocModelJauneDescription=Vzorec ponudbe Jaune
 
-# NumRef Modules
-MarbreNumRefModelDesc=Predlaga številko ponudbe v formatu %syymm-nnnn, kjer je yy leto, mm mesec in nnnn zaporedna številka brez presledka, večja od 0
-

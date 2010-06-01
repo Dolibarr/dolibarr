@@ -606,6 +606,7 @@ MAIN_MAX_DECIMALS_SHOWN							   =Max decimali per i prezzi indicati sullo scher
 ParameterActiveForNextInputOnly						   =Parametro efficace solo per il prossimo inserimento 
 NoEventOrNoAuditSetup							   =Nessun evento di sicurezza è stato ancora registrato. Questo può essere normale se non è stato attivato sulla pagina "Impostazioni - sicurezza - controllo".
 NoEventFoundWithCriteria						   =Nessun evento di sicurezza è stato trovato con i criteri di ricerca impostati.
+SimpleNumRefModelDesc			    =Restituisce un numero di riferimento nel formato %syymm-nnnn dove yy è l'anno, mm è il mese e nnnn è una sequenza progressiva che non ritorna a 0.
 									   
 ##### Users setup #####							   
 UserGroupSetup								   =Impostazioni utenti e gruppi

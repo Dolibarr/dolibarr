@@ -90,5 +90,3 @@ TypeContact_project_task_internal_CONTRIBUTOR=Participant
 TypeContact_project_task_external_CONTRIBUTOR=Participant
 # Documents models #
 DocumentModelBaleine=Model d'informe de projecte complet (logo...)
-# NumRef Modules #
-SimpleNumRefModelDesc=Retorna el nombre sota el format PJyymm-nnnn on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0

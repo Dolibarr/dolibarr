@@ -39,14 +39,14 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	var $nom='Marbre';
 
 
-	/**     \brief      Renvoi la description du modele de numerotation
-	 *      \return     string      Texte descripif
-	 */
-	function info()
-	{
-		global $langs;
-		return $langs->trans("MarbreNumRefDesc",$this->prefix);
-	}
+    /**     \brief      Return description of numbering module
+     *      \return     string      Text with description
+     */
+    function info()
+    {
+    	global $langs;
+      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+    }
 
 
 	/**     \brief      Renvoi un exemple de numerotation
@@ -64,12 +64,12 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 */
 	function canBeActivated()
 	{
-		global $conf;
+		global $conf,$langs;
 
-		$coyymm='';
+		$coyymm=''; $max='';
 
 		$posindice=8;
-		$sql = "SELECT MAX(ref) as max";
+		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -78,12 +78,12 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) $coyymm = substr($row[0],0,6);
+			if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
 		}
 		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
 		{
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel');
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
 			return false;
 		}
 
