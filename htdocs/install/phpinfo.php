@@ -23,6 +23,6 @@
         \version    $Id$
 */
 
-phpinfo()
+phpinfo();
 
 ?>
