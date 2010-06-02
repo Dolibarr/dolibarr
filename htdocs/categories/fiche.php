@@ -29,6 +29,8 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
+$langs->load("categories");
+
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['socid_id']))
 {
