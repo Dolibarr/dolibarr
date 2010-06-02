@@ -33,6 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formorder.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/modules_commandefournisseur.php');
 require_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php";
 require_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php";
+require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT."/lib/fourn.lib.php";
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
@@ -231,6 +232,11 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
  */
 if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
 {
+	$product=new Product($db);
+	if ($_POST["elrowid"])
+	{
+		if ($product->fetch($_POST["elrowid"]) < 0) dol_print_error($db);
+	}
 	$commande =	new	CommandeFournisseur($db,"",$id);
 	if ($commande->fetch($id) < 0) dol_print_error($db);
 
@@ -242,7 +248,7 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 	$_POST['tva_tx'],
 	'HT',
 	0,
-	$_POST["type"]
+	isset($_POST["type"])?$_POST["type"]:$product->type
 	);
 
 	if ($result	>= 0)
@@ -1069,17 +1075,18 @@ if ($id > 0 || ! empty($ref))
 			// Ligne en mode update
 			if ($_GET["action"]	== 'editline' && $user->rights->fournisseur->commande->creer && ($_GET["rowid"] == $commandline->id))
 			{
+				print "\n";
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;etat=1&amp;ligne_id='.$commandline->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateligne">';
-				print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
+				print '<input type="hidden" name="id" value="'.$commande->id.'">';
 				print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 				print '<a name="'.$commandline->id.'"></a>'; // ancre pour retourner sur la ligne
 				if (($conf->product->enabled || $conf->service->enabled) && $commandline->fk_product > 0)
 				{
-					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$commandline->product_id.'">';
+					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$commandline->fk_product.'">';
 					print img_object($langs->trans('ShowProduct'),'product');
 					print ' '.$commandline->ref_fourn.'</a>';
 					print ' ('.$commandline->ref.')';
@@ -1112,7 +1119,7 @@ if ($id > 0 || ! empty($ref))
 				print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($commandline->subprice).'"></td>';
 				print '<td align="right"><input size="2" type="text" name="qty" value="'.$commandline->qty.'"></td>';
 				print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="remise_percent" value="'.$commandline->remise_percent.'">%</td>';
-				print '<td align="center" colspan="3"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+				print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 				print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 				print '</tr>' .	"\n";
 				print "</form>\n";
