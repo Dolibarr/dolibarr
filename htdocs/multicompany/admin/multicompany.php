@@ -51,6 +51,11 @@ if ($_GET["action"] == 'setvisible')
 }
 
 
+
+/*
+ * View
+ */
+
 llxHeader('',$langs->trans("MultiCompanySetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -66,8 +71,8 @@ $smarty->template_dir = DOL_DOCUMENT_ROOT.'/multicompany/tpl/';
 
 if ($_GET["action"] == 'create')
 {
-	print_titre($langs->trans("AddNewEntity"));
-	
+	print_titre($langs->trans("AddEntity"));
+
 	$template = 'add-entity.tpl';
 }
 
@@ -77,8 +82,8 @@ if ($_GET["action"] == 'create')
 
 else if ($_GET["action"] == 'modify')
 {
-	print_titre($langs->trans("EditEntity"));	
-	
+	print_titre($langs->trans("EditEntity"));
+
 	$template = 'edit-entity.tpl';
 }
 
@@ -88,13 +93,13 @@ else if ($_GET["action"] == 'modify')
 
 else
 {
-	print_titre($langs->trans("ListOfEntity"));
-	
+	print_titre($langs->trans("ListOfEntities"));
+
 	$mc->getEntities(1);
 	//var_dump($mc->entities);
-	
+
 	$template = 'admin-entity.tpl';
-	
+
 }
 
 $mc->assign_smarty_values($smarty,$_GET["action"]);
