@@ -282,7 +282,7 @@ if ($nboftargetok) {
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     		unlink("$FILENAMETGZ.tgz");
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-   		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
+   		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
    		    $ret=`$cmd`;
             if ($OS =~ /windows/i)
             {
