@@ -242,12 +242,13 @@ if (! empty($_SESSION["disablemodules"]))
 }
 
 // Init Smarty
+/*
 if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 {
 	// Usage of const in conf.php file (deprecated) can overwrite default dir.
-	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
-	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
-	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
+	$dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
+	$dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
+	$dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
 
 	// Create directory if not exist
 	if (! is_dir($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
@@ -265,6 +266,7 @@ if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 		dol_print_error('',"Library Smarty ".$smarty_libs." not found.");
 	}
 }
+*/
 
 /*
  * Phase authentication / login
