@@ -241,8 +241,7 @@ if (! empty($_SESSION["disablemodules"]))
 	}
 }
 
-// Init Smarty
-/*
+// Init Smarty (used by some modules like multicompany)
 if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 {
 	// Usage of const in conf.php file (deprecated) can overwrite default dir.
@@ -266,7 +265,6 @@ if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 		dol_print_error('',"Library Smarty ".$smarty_libs." not found.");
 	}
 }
-*/
 
 /*
  * Phase authentication / login
