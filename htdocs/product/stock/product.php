@@ -421,7 +421,7 @@ if ($resql)
 		print '<td align="right">'.price(price2num($obj->pmp*$obj->reel,'MT')).'</td>';
 		print '</tr>'; ;
 		$total = $total + $obj->reel;
-		$totalvalue = $totalvalue + price2num($obj->pmp,'MT')*$obj->reel;
+		$totalvalue = $totalvalue + price2num($obj->pmp*$obj->reel,'MT');
 		$i++;
 		$var=!$var;
 	}
