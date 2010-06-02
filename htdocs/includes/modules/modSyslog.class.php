@@ -34,7 +34,6 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
  *	\class      modSyslog
  *	\brief      Classe de description et activation du module Syslog
  */
-
 class modSyslog extends DolibarrModules
 {
 
@@ -63,7 +62,7 @@ class modSyslog extends DolibarrModules
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
 		$this->special = 2;
 		// Name of image file used for this module.
-		$this->picto='generic';
+		$this->picto='technic';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();

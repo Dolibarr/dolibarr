@@ -54,7 +54,7 @@ class modExport extends DolibarrModules
 		$this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
-		$this->picto='';
+		$this->picto='technic';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/export/temp");

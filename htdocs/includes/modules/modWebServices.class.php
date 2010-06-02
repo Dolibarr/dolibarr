@@ -57,7 +57,7 @@ class modWebServices extends DolibarrModules
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
 		$this->special = 1;
 		// Name of image file used for this module.
-		$this->picto='generic';
+		$this->picto='technic';
 
         // Data directories to create when module is enabled
         $this->dirs = array();
