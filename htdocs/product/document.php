@@ -66,7 +66,7 @@ if ($_GET['id'] || $_GET["ref"])
     if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-    if ($conf->product->enabled) $upload_dir = $conf->produit->dir_output.'/'.dol_sanitizeFileName($product->ref);
+    if ($conf->product->enabled) $upload_dir = $conf->product->dir_output.'/'.dol_sanitizeFileName($product->ref);
     elseif ($conf->service->enabled) $upload_dir = $conf->service->dir_output.'/'.dol_sanitizeFileName($product->ref);
 }
 $modulepart='produit';

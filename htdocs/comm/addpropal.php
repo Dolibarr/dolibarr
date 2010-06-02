@@ -87,7 +87,7 @@ if ($_GET["action"] == 'create')
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal";
 	$sql.= " WHERE ref LIKE '".$numpr."%'";
 	$sql.= " AND entity = ".$conf->entity;
-	
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -293,9 +293,9 @@ if ($_GET["action"] == 'create')
 				print '<tr><td>';
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-				$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size,$soc->price_level);
+				$html->select_produits('',"idprod".$i,'',$conf->product->limit_size,$soc->price_level);
 				else
-				$html->select_produits('',"idprod".$i,'',$conf->produit->limit_size);
+				$html->select_produits('',"idprod".$i,'',$conf->product->limit_size);
 				print '</td>';
 				print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
 				print '<td><input type="text" size="2" name="remise'.$i.'" value="'.$soc->remise_client.'">%</td>';

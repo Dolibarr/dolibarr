@@ -42,7 +42,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		$product = new Product($db);
 		$result = $product->fetch($_GET["id"]);
 
-		$product->add_photo($conf->produit->dir_output, $_FILES['photofile']);
+		$product->add_photo($conf->product->dir_output, $_FILES['photofile']);
 	}
 }
 /*
@@ -140,7 +140,7 @@ if ($_GET["id"])
 			$nbbyrow=5;
 
 			$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
-			$dir = $conf->produit->dir_output . '/'. $pdir;
+			$dir = $conf->product->dir_output . '/'. $pdir;
 
 			print '<br><table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 

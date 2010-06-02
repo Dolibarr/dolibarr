@@ -127,7 +127,7 @@ if ($_GET["id"] || $_GET["ref"])
 		// Generation des graphs
 		$WIDTH=380;
 		$HEIGHT=160;
-		$dir = (!empty($conf->produit->dir_temp)?$conf->produit->dir_temp:$conf->service->dir_temp);
+		$dir = (!empty($conf->product->dir_temp)?$conf->product->dir_temp:$conf->service->dir_temp);
 		if (! file_exists($dir.'/'.$product->id))
 		{
 			if (create_exdir($dir.'/'.$product->id) < 0)

@@ -44,7 +44,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 $mesg = '';
-$dir = (!empty($conf->produit->dir_output)?$conf->produit->dir_output:$conf->service->dir_output);
+$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
 
 /*
  * Actions

@@ -1697,9 +1697,9 @@ if ($_GET['action'] == 'create')
 				print '<td>';
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES)
-				$html->select_produits('','idprod'.$i,'',$conf->produit->limit_size,$soc->price_level);
+				$html->select_produits('','idprod'.$i,'',$conf->product->limit_size,$soc->price_level);
 				else
-				$html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
+				$html->select_produits('','idprod'.$i,'',$conf->product->limit_size);
 				print '</td>';
 				print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
 				print '<td nowrap="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td>';
@@ -3065,11 +3065,11 @@ else
 					// multiprix
 					if($conf->global->PRODUIT_MULTIPRICES)
 					{
-						$html->select_produits((! empty($_POST['idprod'])?$_POST['idprod']:''),'idprod','',$conf->produit->limit_size,$soc->price_level);
+						$html->select_produits((! empty($_POST['idprod'])?$_POST['idprod']:''),'idprod','',$conf->product->limit_size,$soc->price_level);
 					}
 					else
 					{
-						$html->select_produits((! empty($_POST['idprod'])?$_POST['idprod']:''),'idprod','',$conf->produit->limit_size);
+						$html->select_produits((! empty($_POST['idprod'])?$_POST['idprod']:''),'idprod','',$conf->product->limit_size);
 					}
 
 					if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';

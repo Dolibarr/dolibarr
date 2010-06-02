@@ -577,7 +577,7 @@ if (! defined('NOLOGIN'))
 	}
 	if (isset($user->conf->PRODUIT_LIMIT_SIZE))		// Can be 0
 	{
-		$conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
+		$conf->product->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
 	}
 	// Replace conf->css by personalized value
 	if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)

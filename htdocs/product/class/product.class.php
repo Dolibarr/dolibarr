@@ -68,7 +68,7 @@ class Product extends CommonObject
 	// Local taxes
 	var $localtax1_tx;
 	var $localtax2_tx;
-	//! Type 0 for regular product, 1 for service, 2 for assembly kit, 3 for stock kit
+	//! Type 0 for regular product, 1 for service (Advanced feature: 2 for assembly kit, 3 for stock kit)
 	var $type;
 	var $typestring;
 

@@ -199,7 +199,7 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		$original_file=(!empty($conf->produit->dir_temp)?$conf->produit->dir_temp:$conf->service->dir_temp).'/'.$original_file;
+		$original_file=(!empty($conf->product->dir_temp)?$conf->product->dir_temp:$conf->service->dir_temp).'/'.$original_file;
 	}
 
 	// Wrapping for products or services
@@ -209,7 +209,7 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		$original_file=(!empty($conf->produit->dir_output)?$conf->produit->dir_output:$conf->service->dir_output).'/'.$original_file;
+		$original_file=(!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output).'/'.$original_file;
 	}
 
 	// Wrapping for categories
@@ -269,7 +269,7 @@ if ($modulepart)
 	elseif ($modulepart == 'graph_product')
 	{
 		$accessallowed=1;
-		$original_file=$conf->produit->dir_temp.'/'.$original_file;
+		$original_file=$conf->product->dir_temp.'/'.$original_file;
 	}
 
 	// Wrapping pour les code barre

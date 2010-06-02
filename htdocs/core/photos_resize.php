@@ -44,7 +44,13 @@ if ($modulepart=='produit|service' && (! $user->rights->produit->lire && ! $user
 
 if ($_POST["action"] == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POST["sizex"]) != "") && (isset($_POST["sizey"]) != ""))
 {
-	$fullpath=$conf->produit->dir_output."/".$original_file;
+	$product=new Product($db);
+	$result=$product->fetch($_POST["id"]);
+	$dir=$conf->product->dir_output;	// By default
+	if ($product->type == 0) $dir=$conf->product->dir_output;
+	if ($product->type == 1) $dir=$conf->service->dir_output;
+
+	$fullpath=$dir."/".$original_file;
 	$result=dol_imageResizeOrCrop($fullpath,0,$_POST['sizex'],$_POST['sizey']);
 
 	if ($result == $fullpath)
@@ -63,7 +69,13 @@ if ($_POST["action"] == 'confirm_resize' && (isset($_POST["file"]) != "") && (is
 // Crop d'une image
 if ($_POST["action"] == 'confirm_crop')
 {
-	$fullpath=$conf->produit->dir_output."/".$original_file;
+	$product=new Product($db);
+	$result=$product->fetch($_POST["id"]);
+	$dir=$conf->product->dir_output;	// By default
+	if ($product->type == 0) $dir=$conf->product->dir_output;
+	if ($product->type == 1) $dir=$conf->service->dir_output;
+
+	$fullpath=$dir."/".$original_file;
 	$result=dol_imageResizeOrCrop($fullpath,1,$_POST['w'],$_POST['h'],$_POST['x'],$_POST['y']);
 
 	if ($result == $fullpath)
@@ -91,7 +103,7 @@ print_fiche_titre($langs->trans("Image"));
 
 if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
-$infoarray=dol_getImageSize($conf->produit->dir_output."/".urldecode($_GET["file"]));
+$infoarray=dol_getImageSize($conf->product->dir_output."/".urldecode($_GET["file"]));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
 print $langs->trans("CurrentInformationOnImage").':';
@@ -129,7 +141,7 @@ print $langs->trans("DefineNewAreaToPick").'...<br>';
 print '<br>';
 print '<img style="border: 1px solid #888888;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.$original_file.'" alt="Taille origine" id="cropbox" />';
 print '<br>';
-$infoarray=dol_getImageSize($conf->produit->dir_output."/".urldecode($_GET["file"]));
+$infoarray=dol_getImageSize($conf->product->dir_output."/".urldecode($_GET["file"]));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
 print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$_GET['id'].'" method="post" onsubmit="return checkCoords();">

@@ -341,9 +341,9 @@ class Conf
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;
 		$this->liste_limit=$this->global->MAIN_SIZE_LISTE_LIMIT;
 
-		// $this->produit->limit_size = constante de taille maximale des select de produit
+		// $this->product->limit_size = constante de taille maximale des select de produit
 		if (! isset($this->global->PRODUIT_LIMIT_SIZE)) $this->global->PRODUIT_LIMIT_SIZE=100;
-		$this->produit->limit_size=$this->global->PRODUIT_LIMIT_SIZE;
+		$this->product->limit_size=$this->global->PRODUIT_LIMIT_SIZE;
 
 		// $this->theme et $this->css
 		if (empty($this->global->MAIN_THEME)) $this->global->MAIN_THEME="eldy";
@@ -412,6 +412,9 @@ class Conf
 		$this->adherent->cotisation->warning_delay=$this->global->MAIN_DELAY_MEMBERS*24*60*60;
 		$this->bank->rappro->warning_delay=$this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE*24*60*60;
 		$this->bank->cheque->warning_delay=(isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT)?$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT:0)*24*60*60;
+
+		// For backward compatibility
+		$this->produit=$this->product;
 	}
 
 }

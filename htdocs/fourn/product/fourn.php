@@ -105,7 +105,7 @@ if ($_GET["id"])
 		print '<tr><td width="20%">'.$langs->trans("InternalRef").'</td><td width="40%">'.$product->ref.'</td>';
 
 		print '<td class="photo" valign="top" rowspan="6">';
-		$product->show_photos($conf->produit->dir_output,1,1,0);
+		$product->show_photos($conf->product->dir_output,1,1,0);
 		print '</td></tr>';
 
 		print "<tr>";

@@ -1780,11 +1780,11 @@ if ($id > 0 || ! empty($ref))
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES)
 			{
-				$html->select_produits('','idprod','',$conf->produit->limit_size,$societe->price_level);
+				$html->select_produits('','idprod','',$conf->product->limit_size,$societe->price_level);
 			}
 			else
 			{
-				$html->select_produits('','idprod','',$conf->produit->limit_size);
+				$html->select_produits('','idprod','',$conf->product->limit_size);
 			}
 			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 

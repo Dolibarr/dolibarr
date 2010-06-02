@@ -58,7 +58,6 @@ function dol_getImageSize($file)
  * 		\param		src_x			Position of croping image in source image (not use if mode=0)
  * 		\param		src_y			Position of croping image in source image (not use if mode=0)
  *		\return		int				File name if OK, error message if KO
- *		\remarks					With file=myfile.jpg -> myfile_small.jpg
  */
 function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $src_y=0)
 {
@@ -244,7 +243,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 	// Free memory
 	imagedestroy($imgThumb);
 
-	clearstatcache();	// File was replaced by a modified on, so we clear file caches.
+	clearstatcache();	// File was replaced by a modified one, so we clear file caches.
 
 	return $imgThumbName;
 }

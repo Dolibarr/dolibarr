@@ -1174,9 +1174,9 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 						print '<tr><td>';
 						// multiprix
 						if($conf->global->PRODUIT_MULTIPRICES)
-						print $html->select_produits('','idprod'.$i,'',$conf->produit->limit_size,$soc->price_level);
+						print $html->select_produits('','idprod'.$i,'',$conf->product->limit_size,$soc->price_level);
 						else
-						print $html->select_produits('','idprod'.$i,'',$conf->produit->limit_size);
+						print $html->select_produits('','idprod'.$i,'',$conf->product->limit_size);
 						print '</td>';
 						print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
 						print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td></tr>';
@@ -2019,11 +2019,11 @@ else
 					// multiprix
 					if($conf->global->PRODUIT_MULTIPRICES)
 					{
-						$html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
+						$html->select_produits('','idprod','',$conf->product->limit_size,$soc->price_level);
 					}
 					else
 					{
-						$html->select_produits('','idprod','',$conf->produit->limit_size);
+						$html->select_produits('','idprod','',$conf->product->limit_size);
 					}
 
 					if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';

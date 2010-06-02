@@ -1047,11 +1047,11 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 
 			$nblignes=4;
-			if ($product->is_photo_available($conf->produit->dir_output))
+			if ($product->is_photo_available($conf->product->dir_output))
 			{
 				// Photo
 				print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
-				print $product->show_photos($conf->produit->dir_output,1,1,0,0,0,80);
+				print $product->show_photos($conf->product->dir_output,1,1,0,0,0,80);
 				print '</td>';
 			}
 

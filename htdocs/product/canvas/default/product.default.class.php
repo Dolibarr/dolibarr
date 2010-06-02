@@ -33,7 +33,7 @@ class ProductDefault extends Product
 	var $errno = 0;
 	//! Template container
 	var $tpl = array();
-	
+
 	/**
 	 *    \brief      Constructeur de la classe
 	 *    \param      DB          Handler acces base de donnees
@@ -53,14 +53,14 @@ class ProductDefault extends Product
 
 		$this->next_prev_filter = "canvas='default'";
 	}
-	
+
 	function getTitle()
 	{
 		global $langs;
-		
+
 		return $langs->trans("Products");
 	}
-	
+
 	/**
 	 *    \brief      Lecture des donnees dans la base
 	 *    \param      id          Product id
@@ -71,7 +71,7 @@ class ProductDefault extends Product
 
 		return $result;
 	}
-	
+
 	/**
 	 *    \brief      Assigne les valeurs pour les templates
 	 *    \param      object     object
@@ -81,53 +81,53 @@ class ProductDefault extends Product
 		global $conf,$langs;
 		global $html;
 		global $formproduct;
-		
+
 		parent::assign_values($action);
-		
+
 		// Stock alert
 		$this->tpl['seuil_stock_alerte'] = $this->seuil_stock_alerte;
-		
+
 		if ($action == 'create')
 		{
 			// Title
 			$this->tpl['title'] = load_fiche_titre($langs->trans("NewProduct"));
 		}
-		
+
 		if ($action == 'edit')
 		{
 			$this->tpl['title'] = load_fiche_titre($langs->trans('Modify').' '.$langs->trans('Product').' : '.$this->ref, "");
 		}
-		
+
 		if ($action == 'create' || $action == 'edit')
 		{
 			// Finished
 			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
 			$this->tpl['finished'] = $html->selectarray('finished',$statutarray,$this->finished);
-			
+
 			// Weight
 			$this->tpl['weight'] = $this->weight;
 			$this->tpl['weight_units'] = $formproduct->load_measuring_units("weight_units","weight",$this->weight_units);
-			
+
 			// Length
 			$this->tpl['length'] = $this->length;
 			$this->tpl['length_units'] = $formproduct->load_measuring_units("length_units","size",$this->length_units);
-			
+
 			// Surface
 			$this->tpl['surface'] = $this->surface;
 			$this->tpl['surface_units'] = $formproduct->load_measuring_units("surface_units","surface",$this->surface_units);
-			
+
 			// Volume
 			$this->tpl['volume'] = $this->volume;
 			$this->tpl['volume_units'] = $formproduct->load_measuring_units("volume_units","volume",$this->volume_units);
 		}
-		
+
 		if ($action == 'view')
-		{	
+		{
 			// Photo
 			$this->tpl['nblignes'] = 4;
-			if ($this->is_photo_available($conf->produit->dir_output))
+			if ($this->is_photo_available($conf->product->dir_output))
 			{
-				$this->tpl['photos'] = $this->show_photos($conf->produit->dir_output,1,1,0,0,0,80);
+				$this->tpl['photos'] = $this->show_photos($conf->product->dir_output,1,1,0,0,0,80);
 			}
 
 			// Nature
@@ -158,20 +158,20 @@ class ProductDefault extends Product
 			}
 		}
 	}
-	
+
 	/**
 	 * 	\brief	Fetch datas list
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
 		global $conf, $langs;
-		
+
 		$this->list_datas = array();
-		
+
 		//$_GET["sall"] = 'LL';
 		// Clean parameters
 		$sall=trim(isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"]);
-		
+
 		foreach($this->field_list as $field)
 		{
 			if ($field['enabled'])
@@ -180,12 +180,12 @@ class ProductDefault extends Product
 				$$fieldname = trim(isset($_GET[$fieldname])?$_GET[$fieldname]:$_POST[$fieldname]);
 			}
 		}
-		
+
 		$sql = 'SELECT DISTINCT ';
-		
+
 		// Fields requiered
 		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte';
-		
+
 		// Fields not requiered
 		foreach($this->field_list as $field)
 		{
@@ -198,7 +198,7 @@ class ProductDefault extends Product
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 		$sql.= " WHERE p.entity = ".$conf->entity;
 		if (!$user->rights->produit->hidden) $sql.=' AND p.hidden = 0';
-		
+
 		if ($sall)
 		{
 			$clause = '';
@@ -213,7 +213,7 @@ class ProductDefault extends Product
 			}
 			$sql.= ")";
 		}
-		
+
 		// Search fields
 		foreach($this->field_list as $field)
 		{
@@ -223,7 +223,7 @@ class ProductDefault extends Product
 				if (${$fieldname}) $sql.= " AND ".$field['name']." LIKE '%".addslashes(${$fieldname})."%'";
 			}
 		}
-		
+
 		if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 		{
 			$sql.= " AND p.envente = ".addslashes($_GET["envente"]);
@@ -244,17 +244,17 @@ class ProductDefault extends Product
 			while ($i < min($num,$limit))
 			{
 				$datas = array();
-				
+
 				$obj = $this->db->fetch_object($resql);
 
 				$datas["id"]        = $obj->rowid;
-				
+
 				foreach($this->field_list as $field)
 				{
 					if ($field['enabled'])
 					{
 						$alias = $field['alias'];
-						
+
 						if ($alias == 'ref')
 						{
 							$this->id 		= $obj->rowid;
@@ -287,7 +287,7 @@ class ProductDefault extends Product
 			print $sql;
 		}
 	}
-	
+
 }
- 
+
 ?>
