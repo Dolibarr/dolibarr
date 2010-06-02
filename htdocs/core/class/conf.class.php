@@ -248,7 +248,9 @@ class Conf
 		$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
 		$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 		$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
-		// Module service
+		// Module product/service
+		$this->product->dir_output=$rootfordata."/produit";
+		$this->product->dir_temp  =$rootfordata."/produit/temp";
 		$this->service->dir_output=$rootfordata."/produit";
 		$this->service->dir_temp  =$rootfordata."/produit/temp";
 		// Module contrat

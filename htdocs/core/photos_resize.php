@@ -46,6 +46,7 @@ if ($_POST["action"] == 'confirm_resize' && (isset($_POST["file"]) != "") && (is
 {
 	$product=new Product($db);
 	$result=$product->fetch($_POST["id"]);
+	if ($result <= 0) dol_print_error($db,'Failed to load object');
 	$dir=$conf->product->dir_output;	// By default
 	if ($product->type == 0) $dir=$conf->product->dir_output;
 	if ($product->type == 1) $dir=$conf->service->dir_output;
@@ -55,7 +56,7 @@ if ($_POST["action"] == 'confirm_resize' && (isset($_POST["file"]) != "") && (is
 
 	if ($result == $fullpath)
 	{
-		header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$_POST["product"].'&action=addthumb&file='.urldecode($_POST["file"]));
+		header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$_POST["id"].'&action=addthumb&file='.urldecode($_POST["file"]));
 		exit;
 	}
 	else
@@ -71,6 +72,7 @@ if ($_POST["action"] == 'confirm_crop')
 {
 	$product=new Product($db);
 	$result=$product->fetch($_POST["id"]);
+	if ($result <= 0) dol_print_error($db,'Failed to load object');
 	$dir=$conf->product->dir_output;	// By default
 	if ($product->type == 0) $dir=$conf->product->dir_output;
 	if ($product->type == 1) $dir=$conf->service->dir_output;
@@ -80,7 +82,7 @@ if ($_POST["action"] == 'confirm_crop')
 
 	if ($result == $fullpath)
 	{
-		header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$_POST["product"].'&action=addthumb&file='.urldecode($_POST["file"]));
+		header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$_POST["id"].'&action=addthumb&file='.urldecode($_POST["file"]));
 		exit;
 	}
 	else
@@ -123,8 +125,8 @@ print $langs->trans("NewLength").': <input class="flat" name="sizex" size="10" t
 print $langs->trans("NewHeight").': <input class="flat" name="sizey" size="10" type="text" > px &nbsp; <br>';
 print '<input type="hidden" name="file" value="'.$_GET['file'].'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
-print '<input type="hidden" name="product" value="'.$_GET['id'].'" />';
-print '<input type="hidden" name="id" value="'.$_GET['id'].'" />';
+print '<input type="hidden" name="product" value="'.$_REQUEST['id'].'" />';
+print '<input type="hidden" name="id" value="'.$_REQUEST['id'].'" />';
 print '<br><input class="button" name="sendit" value="'.dol_escape_htmltag($langs->trans("Resize")).'" type="submit" />';
 print '</fieldset>';
 print '<br></form>';
@@ -157,8 +159,8 @@ print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$_GET['id'].'" method="post" 
 
       <input type="hidden" id="file" name="file" value="'.urlencode($original_file).'" />
       <input type="hidden" id="action" name="action" value="confirm_crop" />
-      <input type="hidden" id="product" name="product" value="'.$_GET['id'].'" />
-	  <input type="hidden" name="id" value="'.$_GET['id'].'" />
+      <input type="hidden" id="product" name="product" value="'.$_REQUEST['id'].'" />
+	  <input type="hidden" name="id" value="'.$_REQUEST['id'].'" />
       <br><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
    </form>';
 print '</fieldset>';
