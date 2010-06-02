@@ -49,10 +49,11 @@ For tranlators:
 For developers:
 - More comments in code.
 - Uniformize some code. 
-- Delete all useless pre.inc.php files.
+- Delete all useless pre.inc.php files (this also increase speed).
 - Fix W3C errors in page forging.
 - Qual: Mutualize code of menu managers.
 - Better isolation of modules files and dolibarr core files. 
+- task #8682 : Remove functions unix_timestamp
 
 WARNING: 
 - A lot of class files (*.class.php) has moved into subdirectories. So If you use
