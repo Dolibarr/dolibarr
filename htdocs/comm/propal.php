@@ -281,7 +281,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$propal->origin		= $_POST['origin'];
 		$propal->origin_id	= $_POST['originid'];
 
-		for ($i = 1 ; $i <= $conf->global->PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
+		for ($i = 1 ; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i++)
 		{
 			if ($_POST['idprod'.$i])
 			{

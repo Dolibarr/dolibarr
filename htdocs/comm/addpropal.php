@@ -288,7 +288,7 @@ if ($_GET["action"] == 'create')
 			print '<td>'.$langs->trans("Qty").'</td>';
 			print '<td>'.$langs->trans("ReductionShort").'</td>';
 			print '</tr>';
-			for ($i = 1 ; $i <= $conf->global->PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
+			for ($i = 1 ; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i++)
 			{
 				print '<tr><td>';
 				// multiprix

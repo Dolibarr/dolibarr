@@ -98,11 +98,6 @@ if ($_POST["action"] == 'set_PROPALE_FREE_TEXT')
 	dolibarr_set_const($db, "PROPALE_FREE_TEXT",$_POST["PROPALE_FREE_TEXT"],'chaine',0,'',$conf->entity);
 }
 
-if ($_POST["action"] == 'setnbprod')
-{
-	dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$_POST["value"],'chaine',0,'',$conf->entity);
-}
-
 if ($_POST["action"] == 'setdefaultduration')
 {
 	dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$_POST["value"],'chaine',0,'',$conf->entity);
