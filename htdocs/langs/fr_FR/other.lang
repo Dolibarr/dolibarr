@@ -131,6 +131,8 @@ NewHeight=Nouvelle hauteur
 NewSizeAfterCropping=Nouvelles dimensions après recadrage
 DefineNewAreaToPick=Définissez la zone d'image à conserver (clic gauche sur l'image puis drag vers les coins opposés)
 CurrentInformationOnImage=Informations courantes sur l'image
+YouReceiveMailBecauseOfNotification=Vous recevez ce message car votre email a été abonnée à certaines notifications automatiques pour vous informer d'évenements particuliers issus du logiciel %s de %s.
+YouReceiveMailBecauseOfNotification2=L'évenement en question est le suivant:
 
 ##### Bookmark #####
 Bookmark=Marque-page

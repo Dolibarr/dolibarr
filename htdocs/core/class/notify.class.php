@@ -120,11 +120,11 @@ class Notify
      * 		\param		objet_type	Type of object the notification deals on (facture, order, propal, order_supplier...). Just for log in llx_notify.
      * 		\param		objet_id	Id of object the notification deals on
      * 		\param		file		Attach a file
-     *		\return		int			<0 if KO or number of changes if OK
+     *		\return		int			<0 if KO, or number of changes if OK
      */
     function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
     {
-        global $conf,$langs;
+        global $conf,$langs,$mysoc,$dolibarr_main_url_root;
 
         $langs->load("other");
 
@@ -154,11 +154,42 @@ class Notify
 
                 if (strlen($sendto))
                 {
-                	$application=(defined('MAIN_APPLICATION_TITLE')?MAIN_APPLICATION_TITLE:'Dolibarr');
-                    $subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
-                    $message = $texte;
-                    $filename = explode("/",$file);
-					$msgishtml=0;
+                	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+                	$application=($conf->global->MAIN_APPLICATION_TITLE?$conf->global->MAIN_APPLICATION_TITLE:'Dolibarr ERP/CRM');
+
+                	$subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+
+                	$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
+                	$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
+                	$message.= "\n";
+                    $message.= $texte;
+                    // Add link
+                    switch($objet_type)
+                    {
+                    	case 'ficheinter':
+						    $link=DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objet_id;
+    						break;
+                    	case 'propal':
+						    $link=DOL_URL_ROOT.'/comm/propal.php?id='.$objet_id;
+    						break;
+    					case 'facture':
+						    $link=DOL_URL_ROOT.'/facture/fiche.php?facid='.$objet_id;
+    						break;
+                    	case 'order':
+						    $link=DOL_URL_ROOT.'/commande/fiche.php?facid='.$objet_id;
+    						break;
+    					case 'order_supplier':
+						    $link=DOL_URL_ROOT.'/fourn/commande/fiche.php?facid='.$objet_id;
+    						break;
+                    }
+                    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
+                    if ($link) $message.="\n".$urlwithouturlroot.$link;
+
+                    $filename = basename($file);
+
+                    $mimefile=dol_mimetype($file);
+
+                    $msgishtml=0;
 
                     $replyto = $conf->notification->email_from;
 
@@ -167,7 +198,7 @@ class Notify
 	                    $replyto,
 	                    $message,
 	                    array($file),
-	                    array("application/pdf"),
+	                    array($mimefile),
 	                    array($filename[sizeof($filename)-1]),
 	                    '', '', 0, $msgishtml
 	                    );
