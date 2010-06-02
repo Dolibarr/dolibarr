@@ -462,7 +462,7 @@ else
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value="'.$entrepot->libelle.'"></td></tr>';
+			print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value="'.$entrepot->libelle.'"></td></tr>';
 
 			print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
 
