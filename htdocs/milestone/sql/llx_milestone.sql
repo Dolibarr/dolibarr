@@ -21,6 +21,8 @@
 create table llx_milestone
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  fk_element			integer NOT NULL,
+  elementtype			varchar(16) NOT NULL,
   label					varchar(255) NOT NULL,
   description			text,
   datec					datetime,						-- date creation

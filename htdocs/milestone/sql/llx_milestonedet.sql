@@ -18,11 +18,10 @@
 -- $Id$
 -- ============================================================================
 
-create table llx_element_milestone
+create table llx_milestonedet
 (
   rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
-  fk_element		integer NOT NULL,
-  elementtype		varchar(16) NOT NULL,
-  fk_milestone		integer NOT NULL
+  fk_milestone		integer NOT NULL,
+  fk_element_line	integer NOT NULL
 ) type=innodb;
 

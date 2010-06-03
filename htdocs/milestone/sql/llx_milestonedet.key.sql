@@ -19,11 +19,11 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_element_milestone ADD UNIQUE INDEX idx_element_milestone_idx1 (fk_element, elementtype, fk_milestone);
+ALTER TABLE llx_milestonedet ADD UNIQUE INDEX idx_milestonedet_idx1 (fk_milestone, fk_element_line);
 
-ALTER TABLE llx_element_milestone ADD INDEX idx_element_milestone_fk_milestone (fk_milestone);
+ALTER TABLE llx_milestonedet ADD INDEX idx_milestonedet_fk_milestone (fk_milestone);
 
-ALTER TABLE llx_element_milestone ADD CONSTRAINT fk_element_milestone_fk_milestone FOREIGN KEY (fk_milestone) REFERENCES llx_milestone(rowid);
+ALTER TABLE llx_milestonedet ADD CONSTRAINT fk_milestonedet_fk_milestone FOREIGN KEY (fk_milestone) REFERENCES llx_milestone(rowid);
 
--- Pas de contrainte sur fk_element car pointe sur differentes tables
+-- Pas de contrainte sur fk_element_line car pointe sur differentes tables
 	
