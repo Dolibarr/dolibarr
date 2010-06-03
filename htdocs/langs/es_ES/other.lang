@@ -131,6 +131,8 @@ NewHeight= Nueva altura
 NewSizeAfterCropping= Nuevas dimensiones después de recortar
 DefineNewAreaToPick= Establezca la zona de imagen a conservar (clic izquierdo sobre la imagen y arrastre hasta la esquina opuesta)
 CurrentInformationOnImage= Información actual sobre la imagen
+YouReceiveMailBecauseOfNotification=Usted está recibiendo este mensaje porque su correo electrónico está suscrito a algunas notificaciones automáticas para informarle acerca de eventos especiales del programa %s de %s.
+YouReceiveMailBecauseOfNotification2=El evento en cuestión es el siguiente:
 ##### Bookmark #####= 
 Bookmark= Marcador
 Bookmarks= Marcadores
@@ -150,12 +152,12 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink= Indicar un URL http externo o un UR
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark= Elegir si debe abrise la página en una nueva ventana o en la actual
 BookmarksManagement= Gestión de marcadores
 ListOfBookmarks= Listado de marcadores
-##### Webcal #####= 
+##### Webcal #####
 LoginWebcal= Login Webcalendar
 ErrorWebcalLoginNotDefined= El login Webcalendar asociado a su usuario Dolibarr <b>%s</b> no está definido
-##### Phenix #####= 
+##### Phenix #####
 ErrorPhenixLoginNotDefined= El login Phenix asociado a su cuenta Dolibarrr <b>%s</b>  no está definido
-##### Calendar common #####= 
+##### Calendar common #####
 AddCalendarEntry= Añadir entrada en el calendario
 NewCompanyToDolibarr= Empresa %s insertada en Dolibarr
 ContractValidatedInDolibarr= Contrato %s validado en Dolibarr
@@ -174,7 +176,7 @@ MemberValidatedInDolibarr= Miembro %s validado en Dolibarr
 MemberResiliatedInDolibarr= Miembro %s dado de baja en Dolibarr
 MemberDeletedInDolibarr= Miembro %s eliminado de Dolibarr
 MemberSubscriptionAddedInDolibarr= Subscripción del miembro % añadida en Dolibarr
-##### Export #####= 
+##### Export #####
 ExportsArea= Área de exportaciones
 AvailableFormats= Formatos disponibles
 LibraryUsed= Librería utilizada
