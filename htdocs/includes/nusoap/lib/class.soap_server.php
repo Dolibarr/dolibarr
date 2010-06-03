@@ -236,6 +236,14 @@ class nusoap_server extends nusoap_base {
 	function service($data){
 		global $HTTP_SERVER_VARS;
 
+		if (isset($_SERVER['REQUEST_METHOD'])) {
+			$rm = $_SERVER['REQUEST_METHOD'];
+		} elseif (isset($HTTP_SERVER_VARS['REQUEST_METHOD'])) {
+			$rm = $HTTP_SERVER_VARS['REQUEST_METHOD'];
+		} else {
+			$rm = '';
+		}
+
 		if (isset($_SERVER['QUERY_STRING'])) {
 			$qs = $_SERVER['QUERY_STRING'];
 		} elseif (isset($HTTP_SERVER_VARS['QUERY_STRING'])) {
@@ -243,34 +251,9 @@ class nusoap_server extends nusoap_base {
 		} else {
 			$qs = '';
 		}
-		$this->debug("In service, query string=$qs");
+		$this->debug("In service, request method=$rm query string=$qs strlen(\$data)=" . strlen($data));
 
-		if (preg_match('/wsdl/', $qs) ){
-			$this->debug("In service, this is a request for WSDL");
-			if($this->externalWSDLURL){
-              if (strpos($this->externalWSDLURL,"://")!==false) { // assume URL
-				header('Location: '.$this->externalWSDLURL);
-              } else { // assume file
-                header("Content-Type: text/xml\r\n");
-                $fp = fopen($this->externalWSDLURL, 'r');
-                fpassthru($fp);
-              }
-			} elseif ($this->wsdl) {
-				header("Content-Type: text/xml; charset=ISO-8859-1\r\n");
-				print $this->wsdl->serialize($this->debug_flag);
-				if ($this->debug_flag) {
-					$this->debug('wsdl:');
-					$this->appendDebug($this->varDump($this->wsdl));
-					print $this->getDebugAsXMLComment();
-				}
-			} else {
-				header("Content-Type: text/html; charset=ISO-8859-1\r\n");
-				print "This service does not provide WSDL";
-			}
-		} elseif ($data == '' && $this->wsdl) {
-			$this->debug("In service, there is no data, so return Web description");
-			print $this->wsdl->webDescription();
-		} else {
+		if ($rm == 'POST') {
 			$this->debug("In service, invoke the request");
 			$this->parse_request($data);
 			if (! $this->fault) {
@@ -280,6 +263,45 @@ class nusoap_server extends nusoap_base {
 				$this->serialize_return();
 			}
 			$this->send_response();
+		} elseif (preg_match('/wsdl/', $qs) ){
+			$this->debug("In service, this is a request for WSDL");
+			if ($this->externalWSDLURL){
+              if (strpos($this->externalWSDLURL, "http://") !== false) { // assume URL
+				$this->debug("In service, re-direct for WSDL");
+				header('Location: '.$this->externalWSDLURL);
+              } else { // assume file
+				$this->debug("In service, use file passthru for WSDL");
+                header("Content-Type: text/xml\r\n");
+				$pos = strpos($this->externalWSDLURL, "file://");
+				if ($pos === false) {
+					$filename = $this->externalWSDLURL;
+				} else {
+					$filename = substr($this->externalWSDLURL, $pos + 7);
+				}
+                $fp = fopen($this->externalWSDLURL, 'r');
+                fpassthru($fp);
+              }
+			} elseif ($this->wsdl) {
+				$this->debug("In service, serialize WSDL");
+				header("Content-Type: text/xml; charset=ISO-8859-1\r\n");
+				print $this->wsdl->serialize($this->debug_flag);
+				if ($this->debug_flag) {
+					$this->debug('wsdl:');
+					$this->appendDebug($this->varDump($this->wsdl));
+					print $this->getDebugAsXMLComment();
+				}
+			} else {
+				$this->debug("In service, there is no WSDL");
+				header("Content-Type: text/html; charset=ISO-8859-1\r\n");
+				print "This service does not provide WSDL";
+			}
+		} elseif ($this->wsdl) {
+			$this->debug("In service, return Web description");
+			print $this->wsdl->webDescription();
+		} else {
+			$this->debug("In service, no Web description");
+			header("Content-Type: text/html; charset=ISO-8859-1\r\n");
+			print "This service does not provide a Web description";
 		}
 	}
 
@@ -345,7 +367,7 @@ class nusoap_server extends nusoap_base {
 						$enc = substr(strstr($v, '='), 1);
 						$enc = str_replace('"', '', $enc);
 						$enc = str_replace('\\', '', $enc);
-						if (preg_match('/^(ISO-8859-1|US-ASCII|UTF-8)$/i', $enc)) {
+						if (preg_match('/^(ISO-8859-1|US-ASCII|UTF-8)$/i',$enc)) {
 							$this->xml_encoding = strtoupper($enc);
 						} else {
 							$this->xml_encoding = 'US-ASCII';
@@ -379,7 +401,7 @@ class nusoap_server extends nusoap_base {
 						$enc = substr(strstr($v, '='), 1);
 						$enc = str_replace('"', '', $enc);
 						$enc = str_replace('\\', '', $enc);
-						if (preg_match('/^(ISO-8859-1|US-ASCII|UTF-8)$/i', $enc)) {
+						if (preg_match('/^(ISO-8859-1|US-ASCII|UTF-8)$/i',$enc)) {
 							$this->xml_encoding = strtoupper($enc);
 						} else {
 							$this->xml_encoding = 'US-ASCII';
@@ -471,6 +493,17 @@ class nusoap_server extends nusoap_base {
 	function invoke_method() {
 		$this->debug('in invoke_method, methodname=' . $this->methodname . ' methodURI=' . $this->methodURI . ' SOAPAction=' . $this->SOAPAction);
 
+		//
+		// if you are debugging in this area of the code, your service uses a class to implement methods,
+		// you use SOAP RPC, and the client is .NET, please be aware of the following...
+		// when the .NET wsdl.exe utility generates a proxy, it will remove the '.' or '..' from the
+		// method name.  that is fine for naming the .NET methods.  it is not fine for properly constructing
+		// the XML request and reading the XML response.  you need to add the RequestElementName and
+		// ResponseElementName to the System.Web.Services.Protocols.SoapRpcMethodAttribute that wsdl.exe
+		// generates for the method.  these parameters are used to specify the correct XML element names
+		// for .NET to use, i.e. the names with the '.' in them.
+		//
+		$orig_methodname = $this->methodname;
 		if ($this->wsdl) {
 			if ($this->opData = $this->wsdl->getOperationData($this->methodname)) {
 				$this->debug('in invoke_method, found WSDL operation=' . $this->methodname);
@@ -492,8 +525,6 @@ class nusoap_server extends nusoap_base {
 		// if a . is present in $this->methodname, we see if there is a class in scope,
 		// which could be referred to. We will also distinguish between two deliminators,
 		// to allow methods to be called a the class or an instance
-		$class = '';
-		$method = '';
 		if (strpos($this->methodname, '..') > 0) {
 			$delim = '..';
 		} else if (strpos($this->methodname, '.') > 0) {
@@ -501,13 +532,23 @@ class nusoap_server extends nusoap_base {
 		} else {
 			$delim = '';
 		}
+		$this->debug("in invoke_method, delim=$delim");
 
-		if (strlen($delim) > 0 && substr_count($this->methodname, $delim) == 1 &&
-			class_exists(substr($this->methodname, 0, strpos($this->methodname, $delim)))) {
-			// get the class and method name
-			$class = substr($this->methodname, 0, strpos($this->methodname, $delim));
-			$method = substr($this->methodname, strpos($this->methodname, $delim) + strlen($delim));
-			$this->debug("in invoke_method, class=$class method=$method delim=$delim");
+		$class = '';
+		$method = '';
+		if (strlen($delim) > 0 && substr_count($this->methodname, $delim) == 1) {
+			$try_class = substr($this->methodname, 0, strpos($this->methodname, $delim));
+			if (class_exists($try_class)) {
+				// get the class and method name
+				$class = $try_class;
+				$method = substr($this->methodname, strpos($this->methodname, $delim) + strlen($delim));
+				$this->debug("in invoke_method, class=$class method=$method delim=$delim");
+			} else {
+				$this->debug("in invoke_method, class=$try_class not found");
+			}
+		} else {
+			$try_class = '';
+			$this->debug("in invoke_method, no class to try");
 		}
 
 		// does method exist?
@@ -515,7 +556,7 @@ class nusoap_server extends nusoap_base {
 			if (!function_exists($this->methodname)) {
 				$this->debug("in invoke_method, function '$this->methodname' not found!");
 				$this->result = 'fault: method not found';
-				$this->fault('SOAP-ENV:Client',"method '$this->methodname' not defined in service");
+				$this->fault('SOAP-ENV:Client',"method '$this->methodname'('$orig_methodname') not defined in service('$try_class' '$delim')");
 				return;
 			}
 		} else {
@@ -523,7 +564,7 @@ class nusoap_server extends nusoap_base {
 			if (!in_array($method_to_compare, get_class_methods($class))) {
 				$this->debug("in invoke_method, method '$this->methodname' not found in class '$class'!");
 				$this->result = 'fault: method not found';
-				$this->fault('SOAP-ENV:Client',"method '$this->methodname' not defined in service");
+				$this->fault('SOAP-ENV:Client',"method '$this->methodname'/'$method_to_compare'('$orig_methodname') not defined in service/'$class'('$try_class' '$delim')");
 				return;
 			}
 		}
@@ -609,7 +650,7 @@ class nusoap_server extends nusoap_base {
 	function serialize_return() {
 		$this->debug('Entering serialize_return methodname: ' . $this->methodname . ' methodURI: ' . $this->methodURI);
 		// if fault
-		if (isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
+		if (isset($this->methodreturn) && is_object($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
 			$this->debug('got a fault object from method');
 			$this->fault = $this->methodreturn;
 			return;
@@ -658,9 +699,17 @@ class nusoap_server extends nusoap_base {
 				$this->debug('style is rpc for serialization: use is ' . $this->opData['output']['use']);
 				if ($this->opData['output']['use'] == 'literal') {
 					// http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html R2735 says rpc/literal accessor elements should not be in a namespace
-					$payload = '<ns1:'.$this->methodname.'Response xmlns:ns1="'.$this->methodURI.'">'.$return_val.'</ns1:'.$this->methodname."Response>";
+					if ($this->methodURI) {
+						$payload = '<ns1:'.$this->methodname.'Response xmlns:ns1="'.$this->methodURI.'">'.$return_val.'</ns1:'.$this->methodname."Response>";
+					} else {
+						$payload = '<'.$this->methodname.'Response>'.$return_val.'</'.$this->methodname.'Response>';
+					}
 				} else {
-					$payload = '<ns1:'.$this->methodname.'Response xmlns:ns1="'.$this->methodURI.'">'.$return_val.'</ns1:'.$this->methodname."Response>";
+					if ($this->methodURI) {
+						$payload = '<ns1:'.$this->methodname.'Response xmlns:ns1="'.$this->methodURI.'">'.$return_val.'</ns1:'.$this->methodname."Response>";
+					} else {
+						$payload = '<'.$this->methodname.'Response>'.$return_val.'</'.$this->methodname.'Response>';
+					}
 				}
 			} else {
 				$this->debug('style is not rpc for serialization: assume document');
@@ -675,8 +724,8 @@ class nusoap_server extends nusoap_base {
 			//if($this->debug_flag){
             	$this->appendDebug($this->wsdl->getDebug());
             //	}
-			if (isset($opData['output']['encodingStyle'])) {
-				$encodingStyle = $opData['output']['encodingStyle'];
+			if (isset($this->opData['output']['encodingStyle'])) {
+				$encodingStyle = $this->opData['output']['encodingStyle'];
 			} else {
 				$encodingStyle = '';
 			}
@@ -797,7 +846,12 @@ class nusoap_server extends nusoap_base {
 	* @access   private
 	*/
     function parseRequest($headers, $data) {
-		$this->debug('Entering parseRequest() for data of length ' . strlen($data) . ' and type ' . $headers['content-type']);
+		$this->debug('Entering parseRequest() for data of length ' . strlen($data) . ' headers:');
+		$this->appendDebug($this->varDump($headers));
+    	if (!isset($headers['content-type'])) {
+			$this->setError('Request not of type text/xml (no content-type header)');
+			return false;
+    	}
 		if (!strstr($headers['content-type'], 'text/xml')) {
 			$this->setError('Request not of type text/xml');
 			return false;
@@ -945,7 +999,7 @@ class nusoap_server extends nusoap_base {
 		if(false == $use) {
 			$use = "encoded";
 		}
-		if ($use == 'encoded' && $encodingStyle = '') {
+		if ($use == 'encoded' && $encodingStyle == '') {
 			$encodingStyle = 'http://schemas.xmlsoap.org/soap/encoding/';
 		}
 

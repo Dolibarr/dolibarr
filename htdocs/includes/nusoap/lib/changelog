@@ -582,3 +582,67 @@
 - wsdl: Fix typo in parametersMatchWrapped (thanks Sam Stepanyan)
 - soap_transport_http: Fix three typos in setProxy (thanks Sam Stepanyan)
 - nusoap_xmlschema: Fix typo in serializeTypeDef (thanks Sam Stepanyan)
+
+2007-11-06, version 1.0rc1
+- wsdl: Improve handling of return values from doc/lit methods
+- nusoap_server: Handle case when method is not in a namespace
+
+2007-11-27, version 1.0rc1
+- nusoap_server: always try to invoke service for a POST
+- nusoap_server: only return Location: for WSDL at http://...
+- nusoap_base: change some syntax associated with globalDebugLevel
+
+2008-01-08, version 1.0rc1
+- nusoap_server: fix a typo where = was used instead of == (thanks J. (Johan) Bosma)
+
+2008-01-10, version 1.0rc1
+- nusoap_client: handle case where request or response has no content-type header (thanks Ingo Fischer)
+- nusoap_server: handle case where request or response has no content-type header (thanks Ingo Fischer)
+- wsdl: change CSS for .title in webDescription (thanks Marcus Uy)
+
+2008-01-25, version 1.0rc1
+- nusoap_xmlschema: when an element is of a complexType that is an extension, copy extensionBase from the type
+- nusoap_xmlschema: do not apply elementFormDefault to globally defined elements
+
+2008-02-11, version 1.0rc1
+- wsdl: internally set form of wrapped parameter elements to unqualified (so server handles correctly)
+
+2008-03-03, version 1.0.rc1
+- nusoap_xmlschema: fix extension when base type has no explicit prefix
+- nusoap_xmlschema: support XML Schema include
+- wsdl: improve support for sequence by serializing inherited attributes and elements first
+
+2008-03-04, version 1.0.rc1
+- wsdl: allow WSDL port name to be specified in getOperations
+- nusoap_client: allow WSDL port name to be specified in ctor
+
+2008-03-06, version 1.0rc1
+- wsdl: fix some port name variable references
+- nusoap_base: change comments regarding preferred mode of support
+- wsdl2nusoap: initial revision
+
+2008-03-14, version 1.0rc1
+- nusoap_base: fix timezone offset in timestamp_to_iso8601 (thanks Mario Trojan)
+
+2008-03-27, version 1.0rc1
+- nusoap_server: fix bug setting encodingStyle in serialize_return (thanks Luca Gobbo)
+
+2008-05-15, version 1.0rc1
+- nusoap_parser: handle case where Header or Body tags are used within SOAP messages (thanks Sergey Zhuravlev)
+
+2008-08-26, version 1.0rc1
+- wsdl: serialize simpleContent for complexType
+- wsdl: avoid serializing complexType elements with no value and minOccurs = 0 regardless of nillability
+
+2010-04-26, version 0.9.5
+- nusoap_xmlschema: replace regex function calls (ereg, eregi, split) with PCRE calls (preg_match, preg_split) (thanks Pier-Luc Duchaine)
+- wsdl: replace regex function calls (ereg, eregi, split) with PCRE calls (preg_match, preg_split) (thanks Pier-Luc Duchaine)
+- soap_transport_http: replace regex function calls (ereg, eregi, split) with PCRE calls (preg_match, preg_split) (thanks Pier-Luc Duchaine)
+- soap_transport_http: remove call to deprecated function set_magic_quotes_runtime
+- nusoap_server: replace regex function calls (ereg, eregi, split) with PCRE calls (preg_match, preg_split) (thanks Pier-Luc Duchaine)
+- nusoap_server: check that value is an object before calling get_class (thanks Pier-Luc Duchaine)
+- nusoap_parser: replace regex function calls (ereg, eregi, split) with PCRE calls (preg_match, preg_split) (thanks Pier-Luc Duchaine)
+- nusoap_client: replace regex function calls (ereg, eregi, split) with PCRE calls (preg_match, preg_split) (thanks Pier-Luc Duchaine)
+- nusoap_client: do not assign the return value of new by reference (it is deprecated) (thanks Pier-Luc Duchaine)
+- nusoap_base: replace regex function calls (ereg, eregi, split) with PCRE calls (preg_match, preg_split) (thanks Pier-Luc Duchaine)
+- nusoapmime: do not assign the return value of new by reference (it is deprecated)
