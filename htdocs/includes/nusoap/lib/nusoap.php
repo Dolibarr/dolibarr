@@ -7950,7 +7950,7 @@ class soapclient_nusoap extends nusoap_base  {
 				unset($paramCommentStr);
 			}
 		}
-		$evalStr = 'class nusoap_proxy_'.$r.' extends nusoap_client {
+		$evalStr = 'class nusoap_proxy_'.$r.' extends soapclient_nusoap {
 	'.$evalStr.'
 }';
 		return $evalStr;

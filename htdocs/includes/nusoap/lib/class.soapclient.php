@@ -23,7 +23,7 @@
 * @version  $Id$
 * @access   public
 */
-class nusoap_client extends nusoap_base  {
+class soapclient_nusoap extends nusoap_base  {
 
 	var $username = '';				// Username for HTTP authentication
 	var $password = '';				// Password for HTTP authentication
@@ -95,7 +95,7 @@ class nusoap_client extends nusoap_base  {
 	* @param	string $portName optional portName in WSDL document
 	* @access   public
 	*/
-	function nusoap_client($endpoint,$wsdl = false,$proxyhost = false,$proxyport = false,$proxyusername = false, $proxypassword = false, $timeout = 0, $response_timeout = 30, $portName = ''){
+	function soapclient_nusoap($endpoint,$wsdl = false,$proxyhost = false,$proxyport = false,$proxyusername = false, $proxypassword = false, $timeout = 0, $response_timeout = 30, $portName = ''){
 		parent::nusoap_base();
 		$this->endpoint = $endpoint;
 		$this->proxyhost = $proxyhost;
@@ -793,7 +793,7 @@ class nusoap_client extends nusoap_base  {
 				unset($paramCommentStr);
 			}
 		}
-		$evalStr = 'class nusoap_proxy_'.$r.' extends nusoap_client {
+		$evalStr = 'class nusoap_proxy_'.$r.' extends soapclient_nusoap {
 	'.$evalStr.'
 }';
 		return $evalStr;
@@ -985,7 +985,7 @@ if (!extension_loaded('soap')) {
 	/**
 	 *	For backwards compatiblity, define soapclient unless the PHP SOAP extension is loaded.
 	 */
-	class soapclient extends nusoap_client {
+	class soapclient extends soapclient_nusoap {
 	}
 }
 ?>
