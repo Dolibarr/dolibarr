@@ -1489,7 +1489,8 @@ class Societe extends CommonObject
 		require_once DOL_DOCUMENT_ROOT . "/societe/class/companybankaccount.class.php";
 
 		$bac = new CompanyBankAccount($this->db, $this->id);
-		$bac->fetch($this->id);
+		$bac->socid = $this->id;
+		$bac->fetch();
 
 		$this->bank_account = $bac;
 		return 1;

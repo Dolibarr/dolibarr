@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -322,7 +323,7 @@ class BonPrelevement extends CommonObject
             }
 
             /*
-             * Fin de la proc�dure
+             * Fin de la procedure
              *
              */
             if ($error == 0)
@@ -681,7 +682,7 @@ class BonPrelevement extends CommonObject
 
         dol_syslog("BonPrelevement::Create banque=$banque guichet=$guichet");
 
-        require_once (DOL_DOCUMENT_ROOT."/compta/prelevement/bon-prelevement.class.php");
+        //require_once (DOL_DOCUMENT_ROOT."/compta/prelevement/bon-prelevement.class.php");
         require_once (DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
         require_once (DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
         require_once (DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
@@ -842,7 +843,7 @@ class BonPrelevement extends CommonObject
 
                 // Create withdraw receipt in database
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
-                $sql.= ", ref";
+                $sql.= " ref";
                 $sql.= ", entity";
                 $sql.= ",datec";
                 $sql.= ") VALUES (";

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 if ($_GET["action"] == 'create')
 {
 	$bprev = new BonPrelevement($db);
-	$result=$bprev->create($_GET["banque"],$_GET["guichet"]);
+	$result=$bprev->create(PRELEVEMENT_CODE_BANQUE, PRELEVEMENT_CODE_GUICHET);
 	if ($result < 0)
 	{
 		$mesg='<div class="error">'.$bprev->error.'</div>';
@@ -179,7 +180,7 @@ else
 
 
 /*
- * Factures en attente de pr�l�vement
+ * Factures en attente de prelevement
  *
  */
 $sql = "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid";
