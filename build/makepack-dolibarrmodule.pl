@@ -78,7 +78,9 @@ chdir($DIR);
 if (! -f "makepack-".$PROJECT.".conf")
 {
     print "Error: can't open conf file makepack-".$PROJECT.".conf\n";
-	print "Check that current directory is 'build' directory\n";
+	print "\n";
+	print "For help on building a module package, see web page\n";
+	print "http://wiki.dolibarr.org/index.php/Module_development#Create_a_package_to_distribute_and_install_your_module\n";
 	print "makepack-dolibarrmodule.pl aborted.\n";
     sleep 2;
     exit 2;
