@@ -32,6 +32,7 @@ For users:
 - New: Add box "last contracts".
 - New: Works even if Web hosting provider has disabled glob function.
 - New: Can now send supplier order by mail.
+- New: task #10076 : Show content of message in notification module.
 - Fix: Format number was wrong for ar_AR language.
 - Fix: Can change password if has only permission change password.
 - Fix: Project PDF document show the tasks.
@@ -54,6 +55,7 @@ For developers:
 - Qual: Mutualize code of menu managers.
 - Better isolation of modules files and dolibarr core files. 
 - task #8682 : Remove functions unix_timestamp
+- The makepack tool nos make pack with UID 500.
 
 WARNING: 
 - A lot of class files (*.class.php) has moved into subdirectories. So If you use

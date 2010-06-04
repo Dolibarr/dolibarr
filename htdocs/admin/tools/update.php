@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,8 +36,10 @@ if ($_GET["msg"]) $message='<div class="error">'.$_GET["msg"].'</div>';
 
 
 $urldolibarr='http://www.dolibarr.org/downloads/cat_view/62-stable-versions';
-$urldolibarrmodules='http://www.dolibarr.org/downloads/cat_view/65-modulesaddon';
-$urldolibarrthemes='http://www.dolibarr.org/';
+//$urldolibarrmodules='http://www.dolibarr.org/downloads/cat_view/65-modulesaddon';
+$urldolibarrmodules='http://www.dolistore.com/';
+//$urldolibarrthemes='http://www.dolibarr.org/';
+$urldolibarrthemes='http://www.dolistore.com/';
 $dolibarrroot=preg_replace('/([\\/]+)$/i','',DOL_DOCUMENT_ROOT);
 $dolibarrroot=preg_replace('/([^\\/]+)$/i','',$dolibarrroot);
 
@@ -84,15 +86,17 @@ print $langs->trans("RestoreLock",$dolibarrroot.'install.lock').'<br>';
 print '<br>';
 print '<br>';
 
+$fullurl='<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
 print $langs->trans("AddExtensionThemeModuleOrOther").'<br>';
 print '<hr>';
 print $langs->trans("ThisIsProcessToFollow").'<br>';
 print '<b>'.$langs->trans("StepNb",1).'</b>: ';
-$fullurl='<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
-print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
+print $langs->trans("FindPackageFromWebSite",$fullurl).'<br>';
 print '<b>'.$langs->trans("StepNb",2).'</b>: ';
-print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
+print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
 print '<b>'.$langs->trans("StepNb",3).'</b>: ';
+print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
+print '<b>'.$langs->trans("StepNb",4).'</b>: ';
 print $langs->trans("SetupIsReadyForUse").'<br>';
 
 print '</form>';
