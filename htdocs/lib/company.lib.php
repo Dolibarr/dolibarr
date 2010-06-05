@@ -495,7 +495,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 
 	if ($conf->agenda->enabled)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 		$actionstatic=new ActionComm($db);
 		$userstatic=new User($db);
 		$contactstatic = new Contact($db);
@@ -716,7 +716,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 
 	if ($conf->agenda->enabled || ($conf->mailing->enabled && $objcon->email))
 	{
-		require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 		require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 		require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 		require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");

@@ -165,7 +165,7 @@ class FormActions
 	{
 		global $langs,$user;
 
-		require_once(DOL_DOCUMENT_ROOT."/comm/action/cactioncomm.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/comm/action/class/cactioncomm.class.php");
 		require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
 		$caction=new CActionComm($this->db);
 		$form=new Form($this->db);

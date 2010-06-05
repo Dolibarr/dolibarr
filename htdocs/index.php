@@ -127,7 +127,7 @@ if ($user->societe_id == 0)
 	! empty($conf->societe->enabled) && $user->rights->contrat->activer);
 	// Class file containing the method load_state_board for each line
 	$includes=array(DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
-	DOL_DOCUMENT_ROOT."/comm/prospect/prospect.class.php",
+	DOL_DOCUMENT_ROOT."/comm/prospect/class/prospect.class.php",
 	DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php",
 	DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
 	DOL_DOCUMENT_ROOT."/product/class/product.class.php",
@@ -135,7 +135,6 @@ if ($user->societe_id == 0)
 	DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php",
 	DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
 	DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
-	DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php",
 	DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 	// Name class containing the method load_state_board for each line
 	$classes=array('Client',
@@ -147,7 +146,6 @@ if ($user->societe_id == 0)
 				   'Propal',
 				   'Commande',
 				   'Facture',
-                   'LigneTel',
                    'Contrat');
 	// Cle array returned by the method load_state_board for each line
 	$keys=array('customers',
@@ -159,7 +157,6 @@ if ($user->societe_id == 0)
 				'proposals',
 				'orders',
 				'invoices',
-                'sign',
 				'Contracts');
 	// Dashboard Icon lines
 	$icons=array('company',
@@ -171,7 +168,6 @@ if ($user->societe_id == 0)
 				 'propal',
 				 'order',
 				 'bill',
-                 'phoning',
 				 'order');
 	// Translation keyword
 	$titres=array("Customers",
@@ -183,7 +179,6 @@ if ($user->societe_id == 0)
                   "CommercialProposals",
                   "CustomersOrders",
                   "BillsCustomers",
-                  "Lignes de telephonie suivis",
                   "Contracts");
 	// Dashboard Link lines
 	$links=array(DOL_URL_ROOT.'/comm/clients.php',
@@ -195,7 +190,6 @@ if ($user->societe_id == 0)
 	DOL_URL_ROOT.'/comm/propal.php?mainmenu=commercial',
 	DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
 	DOL_URL_ROOT.'/compta/facture.php?mainmenu=accountancy',
-	DOL_URL_ROOT.'/telephonie/ligne/index.php',
 	DOL_URL_ROOT.'/contrat/liste.php');
 	// Translation lang files
 	$langfile=array("bills",
@@ -207,7 +201,6 @@ if ($user->societe_id == 0)
                     "propal",
                     "orders",
                     "bills",
-                    "",
 					"Contracts");
 
 	//print memory_get_usage()."<br>";
@@ -269,7 +262,7 @@ $var=true;
 // Number actions to do (late)
 if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 {
-	include_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
+	include_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 	$board=new ActionComm($db);
 	$board->load_board($user);
 	$board->warning_delay=$conf->actions->warning_delay/60/60/24;

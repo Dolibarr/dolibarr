@@ -27,7 +27,7 @@
 
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
-include_once(DOL_DOCUMENT_ROOT."/comm/prospect/prospect.class.php");
+include_once(DOL_DOCUMENT_ROOT."/comm/prospect/class/prospect.class.php");
 
 
 class box_prospect extends ModeleBoxes {

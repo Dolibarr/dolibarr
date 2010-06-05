@@ -484,7 +484,7 @@ class InterfaceActionsAuto
 
 			// Insertion action
 			require_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
-			require_once(DOL_DOCUMENT_ROOT.'/comm/action/actioncomm.class.php');
+			require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
 			$actioncomm = new ActionComm($this->db);
 			$actioncomm->type_code   = $object->actiontypecode;
 			$actioncomm->label       = $object->actionmsg2;
