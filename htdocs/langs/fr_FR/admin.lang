@@ -1180,6 +1180,7 @@ FreeLegalTextOnChequeReceipts=Mention complémentaire sur les bordereaux de remi
 MultiCompanySetup=Configuration du module Multi-société
 ##### Suppliers #####
 SuppliersSetup=Configuration du module Fournisseurs
+SuppliersCommandModel=Modèle de commandes fournisseur complet (logo...)
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=Configuration du module GeoIP Maxmind
 PathToGeoIPMaxmindCountryDataFile=Chemin du fichier Maxmind contenant les conversions IP->Pays.<br>Exemple: /usr/local/share/GeoIP/GeoIP.dat

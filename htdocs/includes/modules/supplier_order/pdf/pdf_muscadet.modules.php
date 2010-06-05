@@ -52,7 +52,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$this->db = $db;
 		$this->name = "muscadet";
-		$this->description = "Modele de commandes fournisseur complet (logo...)";
+		$this->description = $langs->trans('SuppliersCommandModel');
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
