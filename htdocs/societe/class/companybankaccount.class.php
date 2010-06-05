@@ -133,15 +133,19 @@ class CompanyBankAccount
 		}
 	}
 
-	/*
-	 *
-	 *
+	/**
+	 * 	Load record from database
+	 *	@param		id			Id of record
+	 * 	@param		socid		Id of company
 	 */
-	function fetch()
+	function fetch($id,$socid)
 	{
+		if (empty($id) && empty($socid)) return -1;
 
-		$sql = "SELECT rowid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, adresse_proprio FROM ".MAIN_DB_PREFIX."societe_rib";
-		$sql.= " WHERE fk_soc  = ".$this->socid;
+		$sql = "SELECT rowid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, adresse_proprio";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
+		if ($id)    $sql.= " WHERE rowid = ".$id;
+		if ($socid) $sql.= " WHERE fk_soc  = ".$socid;
 
 		$result = $this->db->query($sql);
 
@@ -151,6 +155,7 @@ class CompanyBankAccount
 			{
 				$obj = $this->db->fetch_object($result);
 
+				$this->id				= $obj->rowid;
 				$this->bank            = $obj->bank;
 				$this->courant         = $obj->courant;
 				$this->clos            = $obj->clos;

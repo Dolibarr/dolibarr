@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2010      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -46,7 +47,7 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 if ($_GET["action"] == 'create')
 {
 	$bprev = new BonPrelevement($db);
-	$result=$bprev->create(PRELEVEMENT_CODE_BANQUE, PRELEVEMENT_CODE_GUICHET);
+	$result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET);
 	if ($result < 0)
 	{
 		$mesg='<div class="error">'.$bprev->error.'</div>';
