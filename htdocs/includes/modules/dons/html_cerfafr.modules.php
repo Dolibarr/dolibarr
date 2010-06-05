@@ -30,13 +30,13 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
 	    \class      html_cerfafr
-		\brief      Classe permettant de g�n�rer les propales au mod�le Azur
+		\brief      Classe permettant de generer les propales au modele Azur
 */
 class html_cerfafr extends ModeleDon
 {
     /**
 			\brief      Constructeur
-    		\param	    db		Handler acc�s base de donn�e
+    		\param	    db		Handler acces base de donnees
     */
     function html_cerfafr($db)
     {
