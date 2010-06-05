@@ -19,12 +19,12 @@
  */
 
 /**
- *       \file       htdocs/actioncomm.class.php
+ *       \file       htdocs/comm/action/class/actioncomm.class.php
  *       \ingroup    commercial
  *       \brief      Fichier de la classe des actions commerciales
  *       \version    $Id$
  */
-require_once(DOL_DOCUMENT_ROOT.'/comm/action/cactioncomm.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php');
 
 
 /**     \class      ActionComm

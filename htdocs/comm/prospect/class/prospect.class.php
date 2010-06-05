@@ -19,12 +19,11 @@
  */
 
 /**
- *   	\file       htdocs/prospect.class.php
+ *   	\file       htdocs/comm/prospect/class/prospect.class.php
  *		\ingroup    societe
  *		\brief      Fichier de la classe des prospects
  *		\version    $Id$
-*/
-
+ */
 include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 
 

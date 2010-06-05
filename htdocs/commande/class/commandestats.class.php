@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/commande/stats/commandestats.class.php
+ *       \file       htdocs/commande/class/commandestats.class.php
  *       \ingroup    commandes
  *       \brief      Fichier de la classe de gestion des stats des commandes
  *       \version    $Id$

@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/comm/propal/stats/propalestats.class.php
+ *	\file       htdocs/comm/propal/class/propalestats.class.php
  *	\ingroup    propales
  *	\brief      Fichier de la classe de gestion des stats des propales
  *	\version    $Id$
@@ -54,16 +54,16 @@ class PropaleStats extends Stats
 	function PropaleStats($DB, $socid=0)
 	{
 		global $user, $conf;
-		
+
 		$this->db = $DB;
 
 		$object=new Propal($this->db);
 
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
 		$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
-		
+
 		$this->field='total';
-		
+
 		$this->socid = $socid;
 		$this->where.= " fk_statut > 0";
 		$this->where.= " AND p.fk_soc = s.rowid AND s.entity = ".$conf->entity;
@@ -100,7 +100,7 @@ class PropaleStats extends Stats
 	function getNbByYear()
 	{
 		global $user;
-		 
+
 		$sql = "SELECT date_format(p.datep,'%Y') as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -116,7 +116,7 @@ class PropaleStats extends Stats
 	function getAmountByMonth($year)
 	{
 		global $user;
-		 
+
 		$sql = "SELECT date_format(p.datep,'%m') as dm, sum(p.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -133,7 +133,7 @@ class PropaleStats extends Stats
 	function getAverageByMonth($year)
 	{
 		global $user;
-		 
+
 		$sql = "SELECT date_format(p.datep,'%m') as dm, avg(p.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -152,7 +152,7 @@ class PropaleStats extends Stats
 	function getAllByYear()
 	{
 		global $user;
-		
+
 		$sql = "SELECT date_format(p.datep,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

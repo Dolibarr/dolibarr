@@ -18,14 +18,14 @@
  */
 
 /**
- *       \file       htdocs/cactioncomm.class.php
+ *       \file       htdocs/comm/action/class/cactioncomm.class.php
  *       \ingroup    commercial
  *       \brief      Fichier de la classe des types d'actions commerciales
  *       \version    $Id$
 */
 
 
-/**    
+/**
  *      \class      CActionComm
  *	    \brief      Class to manage different types of events
  */

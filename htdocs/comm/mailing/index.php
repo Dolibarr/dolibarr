@@ -26,7 +26,7 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT ."/comm/mailing/mailing.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/comm/mailing/class/mailing.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 $langs->load("commercial");

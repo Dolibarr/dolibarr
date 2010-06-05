@@ -26,7 +26,6 @@
  *  \brief      Fichier des classes de commandes
  *  \version    $Id$
  */
-
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 

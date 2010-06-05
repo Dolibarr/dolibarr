@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/comm/mailing/mailing.class.php
+ *	\file       htdocs/comm/mailing/class/mailing.class.php
  *	\ingroup    mailing
  *	\brief      Fichier de la classe de gestion des mailings
  *	\version    $Id$
