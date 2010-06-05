@@ -40,7 +40,7 @@ class pdf_edison extends ModelePDFCommandes
 
 	/**
 	 * 	\brief      Constructeur
-	 *	\param	    db	    handler acces base de donnee
+	 *	\param	    db	    handler acces base de donnees
 	 */
 	function pdf_edison($db=0)
 	{
@@ -51,7 +51,7 @@ class pdf_edison extends ModelePDFCommandes
 
         $this->db = $db;
 		$this->name = "edison";
-		$this->description = "Modele de commande simple";
+		$this->description = $langs->trans('PDFEdisonDescription');
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';

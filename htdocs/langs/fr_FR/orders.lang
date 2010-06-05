@@ -134,6 +134,7 @@ AddDeliveryCostLine=Ajouter une ligne de frais port indiquant le poids de la com
 
 # Document models
 PDFEinsteinDescription=Modèle de propositions commerciales complet (logo...)
+PDFEdisonDescription=Modèle de commande simple
 
 # NumRef Modules
 MarbreNumRefDesc=Renvoie le numéro sous la forme %syymm-nnnn ou yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
