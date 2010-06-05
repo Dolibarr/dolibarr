@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /*
- * 		\files		htdocs/companybankaccount.class.php
+ * 		\files		htdocs/societe/class/companybankaccount.class.php
  *		\ingroup    societe
  *		\brief      File of class to manage bank accounts description
  *   	\version	$Id$
@@ -59,8 +60,8 @@ class CompanyBankAccount
 	}
 
 
-	/*
-	 * Creation du compte bancaire
+	/**
+	 * Create bank information record
 	 *
 	 */
 	function create()
@@ -80,7 +81,7 @@ class CompanyBankAccount
 		}
 	}
 
-	/*
+	/**
 	 *
 	 *
 	 */
@@ -138,7 +139,7 @@ class CompanyBankAccount
 	 *	@param		id			Id of record
 	 * 	@param		socid		Id of company
 	 */
-	function fetch($id,$socid)
+	function fetch($id,$socid=0)
 	{
 		if (empty($id) && empty($socid)) return -1;
 
@@ -171,14 +172,17 @@ class CompanyBankAccount
 				$this->adresse_proprio = $obj->adresse_proprio;
 			}
 			$this->db->free();
+
+			return 1;
 		}
 		else
 		{
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
-	/*
+	/**
 	 *
 	 *
 	 */
@@ -242,6 +246,27 @@ class CompanyBankAccount
 		if ($this->getCountryCode() == 'FR') return true;
 		if ($this->getCountryCode() == 'ES') return true;
 		return false;
+	}
+
+	/**
+	 *
+	 *
+	 */
+	function initAsSpecimen()
+	{
+		$this->bank            = 'MyBank';
+		$this->courant         = 1;
+		$this->clos            = 0;
+		$this->code_banque     = '123';
+		$this->code_guichet    = '456';
+		$this->number          = 'ABC12345';
+		$this->cle_rib         = 50;
+		$this->bic             = 'AA12';
+		$this->iban		       = 'FR999999999';
+		$this->iban_prefix     = 'FR';	// deprecated
+		$this->domiciliation   = 'The bank addresse';
+		$this->proprio         = 'Owner';
+		$this->adresse_proprio = 'Owner address';
 	}
 
 }
