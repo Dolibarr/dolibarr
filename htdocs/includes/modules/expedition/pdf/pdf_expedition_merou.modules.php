@@ -50,7 +50,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		$this->db = $db;
 		$this->name = "merou";
-		$this->description = "Modele Merou A5";
+		//$this->description = "Modele Merou A5";
+		$this->description = $langs->trans("DocumentModelMerou");
 
 		$this->type = 'pdf';
 		$this->page_largeur = 148.5;

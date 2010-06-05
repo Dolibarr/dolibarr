@@ -44,6 +44,7 @@ ConfirmCancelSending=Êtes-vous sûr de vouloir annuler cette expédition ?
 GenericTransport=Transporteur générique
 Enlevement=Enlèvement sur place par le client
 DocumentModelSimple=Modèle simple
+DocumentModelMerou=Modèle Merou A5
 WarningNoQtyLeftToSend=Alerte, aucun produit en attente de livraison.
 StatsOnShipmentsOnlyValidated=Statistiques effectuées sur les expéditions validées uniquement
 DateDeliveryPlanned=Date livraison prévue

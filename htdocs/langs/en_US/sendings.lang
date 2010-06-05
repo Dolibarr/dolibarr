@@ -44,6 +44,7 @@ ConfirmCancelSending=Are you sure you want to cancel this shipment ?
 GenericTransport=Generic transport
 Enlevement=Gotten by customer
 DocumentModelSimple=Simple document model
+DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
 StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated
 DateDeliveryPlanned=Planed date of delivery

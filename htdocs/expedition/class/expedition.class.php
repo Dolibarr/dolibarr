@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/expedition/expedition.class.php
+ *  \file       htdocs/expedition/class/expedition.class.php
  *  \ingroup    expedition
  *  \brief      Fichier de la classe de gestion des expeditions
  *  \version    $Id$
