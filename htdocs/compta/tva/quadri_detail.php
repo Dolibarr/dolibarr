@@ -36,7 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/facture/paiementfourn.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/class/paiementfourn.class.php");
 
 $langs->load("bills");
 $langs->load("compta");

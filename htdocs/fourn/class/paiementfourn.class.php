@@ -20,7 +20,7 @@
  */
 
 /**
-		\file       htdocs/fourn/facture/paiementfourn.class.php
+		\file       htdocs/fourn/class/paiementfourn.class.php
 		\ingroup    fournisseur, facture
 		\brief      Classe paiement fournisseur
         \remarks	Cette classe est presque identique a paiement.class.php

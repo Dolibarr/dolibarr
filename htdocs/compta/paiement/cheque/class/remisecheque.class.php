@@ -19,12 +19,11 @@
  */
 
 /**
- *	\file       htdocs/compta/paiement/cheque/remisecheque.class.php
+ *	\file       htdocs/compta/paiement/cheque/class/remisecheque.class.php
  *	\ingroup    compta
  *	\brief      Fichier de la classe des bordereau de remise de cheque
  *	\version    $Id$
  */
-
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 

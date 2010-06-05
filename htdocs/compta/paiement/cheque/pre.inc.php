@@ -25,7 +25,7 @@
 */
 
 require("../../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/remisecheque.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php');
 
 $langs->load("bills");
 $langs->load("compta");

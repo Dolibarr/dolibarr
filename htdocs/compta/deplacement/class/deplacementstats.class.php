@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/compta/deplacement/stats/deplacementstats.class.php
+ *       \file       htdocs/compta/deplacement/class/deplacementstats.class.php
  *       \ingroup    factures
  *       \brief      Fichier de la classe de gestion des stats des deplacement et notes de frais
  *       \version    $Id$

@@ -495,7 +495,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
 {
 	$langs->load("banks");
 
-	include_once(DOL_DOCUMENT_ROOT."/compta/paiement/cheque/remisecheque.class.php");
+	include_once(DOL_DOCUMENT_ROOT."/compta/paiement/cheque/class/remisecheque.class.php");
 	$board=new RemiseCheque($db);
 	$board->load_board($user);
 
