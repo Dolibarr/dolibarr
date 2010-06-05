@@ -1040,6 +1040,7 @@ YouCanUseDOL_DATA_ROOT= Vous pouvez utiliser DOL_DATA_ROOT/dolibarr.log pour un 
 ErrorUnknownSyslogConstant= La constante %s n'est pas une constante syslog connue
 ##### Donations #####= undefined
 DonationsSetup= Configuration du module Dons
+DonationsReceiptModel= Modèle de reçu de dons
 ##### Barcode #####= undefined
 BarcodeSetup= Configuration des codes-barres
 PaperFormatModule= Modules de format d'impression

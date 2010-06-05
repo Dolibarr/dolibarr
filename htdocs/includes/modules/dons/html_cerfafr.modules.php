@@ -44,7 +44,7 @@ class html_cerfafr extends ModeleDon
 
         $this->db = $db;
         $this->name = "cerfafr";
-        $this->description = "Modele de recu de dons";
+        $this->description = $langs->trans('DonationsReceiptModel');
 
         // Dimension page pour format A4
         $this->type = 'html';
