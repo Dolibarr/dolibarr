@@ -67,14 +67,24 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs,1,1));
 			// Recipient properties
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->address);
-			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->cp) . " " . $outputlangs->convToOutputCharset($targetcontact->ville)."\n";
+			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->cp) . " " . $outputlangs->convToOutputCharset($targetcontact->ville);
+			if ($targetcompany->departement && in_array($targetcompany->pays_code,array('US')))
+			{
+				$stringaddress.=" - ".$outputlangs->convToOutputCharset($targetcompany->departement);
+			}
+			$stringaddress.="\n";
 			if ($targetcontact->pays_code && $targetcontact->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->pays_code))."\n";
 		}
 		else
 		{
 			// Recipient properties
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcompany->address);
-			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcompany->cp) . " " . $outputlangs->convToOutputCharset($targetcompany->ville)."\n";
+			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcompany->cp) . " " . $outputlangs->convToOutputCharset($targetcompany->ville);
+			if ($targetcompany->departement && in_array($targetcompany->pays_code,array('US')))
+			{
+				$stringaddress.=" - ".$outputlangs->convToOutputCharset($targetcompany->departement);
+			}
+			$stringaddress.="\n";
 			if ($targetcompany->pays_code && $targetcompany->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->pays_code))."\n";
 		}
 		// Intra VAT
