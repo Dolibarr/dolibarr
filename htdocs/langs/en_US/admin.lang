@@ -1029,6 +1029,7 @@ YouCanUseDOL_DATA_ROOT=You can use DOL_DATA_ROOT/dolibarr.log for a log file in 
 ErrorUnknownSyslogConstant=Constant %s is not a known syslog constant
 ##### Donations #####
 DonationsSetup=Donation module setup
+DonationsReceiptModel=Template of donation receipt
 ##### Barcode #####
 BarcodeSetup=Barcode setup
 PaperFormatModule=Print format module
@@ -1168,6 +1169,7 @@ FreeLegalTextOnChequeReceipts=Free text on cheque receipts
 MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####
 SuppliersSetup=Supplier module setup
+SuppliersCommandModel=Complete template of supplier order (logo...)
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=GeoIP Maxmind module setup
 PathToGeoIPMaxmindCountryDataFile=Path to file containing Maxmind ip to country translation.<br>Example: /usr/local/share/GeoIP/GeoIP.dat
