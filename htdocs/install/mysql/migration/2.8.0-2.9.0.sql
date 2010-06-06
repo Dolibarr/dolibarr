@@ -14,6 +14,8 @@
 
 ALTER TABLE llx_socpeople ADD COLUMN fk_departement integer        DEFAULT 0 after ville;
 
+ALTER TABLE llx_bookmark ADD COLUMN position integer        DEFAULT 0;
+
 -- rename llx_product_det
 ALTER TABLE llx_product_det RENAME TO llx_product_lang;
 ALTER TABLE llx_product_lang ADD UNIQUE INDEX uk_product_lang (fk_product, lang);

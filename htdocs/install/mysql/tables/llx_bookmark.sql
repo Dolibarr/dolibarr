@@ -27,5 +27,6 @@ create table llx_bookmark
   url         varchar(128) NOT NULL,
   target      varchar(16),
   title       varchar(64),
-  favicon     varchar(24)
+  favicon     varchar(24),
+  position    integer DEFAULT 0
 )type=innodb;
