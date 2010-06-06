@@ -735,7 +735,9 @@ else
 
 			// Ref
 			print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-			print '<td colspan="3">'.$expedition->ref.'</td></tr>';
+			print '<td colspan="3">';
+			print $html->showrefnav($expedition,'ref','',1,'ref','ref');
+			print '</td></tr>';
 
 			// Customer
 			print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';

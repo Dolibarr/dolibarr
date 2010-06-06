@@ -242,20 +242,24 @@ class Expedition extends CommonObject
 
 	/**
 	 *		\brief		Lit une expedition
-	 *		\param		id
+	 *		\param		id		Id of object
+	 * 		\param		ref		Ref of object
 	 */
-	function fetch($id)
+	function fetch($id,$ref='')
 	{
 		global $conf;
 
-		$sql = "SELECT e.rowid, e.fk_soc as socid, e.date_creation, e.ref, e.ref_customer, e.fk_user_author, e.fk_statut";
+		if (empty($id) && empty($ref)) return -1;
+
+		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.fk_user_author, e.fk_statut";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_adresse_livraison, e.date_delivery";
 		$sql.= ", e.fk_expedition_methode, e.tracking_number";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->element."'";
-		$sql.= " WHERE e.rowid = ".$id;
+		if ($id) $sql.= " WHERE e.rowid = ".$id;
+		if ($ref) $sql.= " WHERE e.ref = '".$ref."'";
 
 		dol_syslog("Expedition::fetch sql=".$sql);
 		$result = $this->db->query($sql) ;
