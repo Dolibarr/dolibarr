@@ -22,12 +22,11 @@
  */
 
 /**
- *	\file       htdocs/contact/contact.class.php
+ *	\file       htdocs/contact/class/contact.class.php
  *	\ingroup    societe
  *	\brief      File of contacts class
  *	\version    $Id$
  */
-
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 
@@ -49,8 +48,15 @@ class Contact extends CommonObject
 	var $address;
 	var $cp;
 	var $ville;
+
+	var $fk_departement;		// Id of department
+	var $departement_code;		// Code of department
+	var $departement;			// Label of department
+
 	var $fk_pays;				// Id of country
 	var $pays_code;				// Code of country
+	var $pays;					// Label of country
+
 	var $socid;					// fk_soc
 	var $status;				// 0=brouillon, 1=4=actif, 5=inactif
 
@@ -84,7 +90,7 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *      \brief      Add a contact in database
+	 *      \brief      Add a contact into database
 	 *      \param      user        Object user that create
 	 *      \return     int         <0 if KO, >0 if OK
 	 */
@@ -92,13 +98,15 @@ class Contact extends CommonObject
 	{
 		global $conf, $langs;
 
+		$now=dol_now();
+
 		// Clean parameters
 		$this->name=trim($this->name);
 		if (! $this->socid) $this->socid = 0;
 		if (! $this->priv) $this->priv = 0;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_creat, priv)";
-		$sql.= " VALUES (".$this->db->idate(mktime()).",";
+		$sql.= " VALUES ('".$this->db->idate($now)."',";
 		if ($this->socid > 0) $sql.= " ".$this->socid.",";
 		else $sql.= "null,";
 		$sql.= "'".addslashes($this->name)."',";
@@ -173,6 +181,7 @@ class Contact extends CommonObject
 		$sql .= ", cp='".addslashes($this->cp)."'";
 		$sql .= ", ville='".addslashes($this->ville)."'";
 		$sql .= ", fk_pays=".($this->fk_pays>0?$this->fk_pays:'NULL');
+		$sql .= ", fk_departement=".($this->fk_departement>0?$this->fk_departement:'NULL');
 		$sql .= ", poste='".addslashes($this->poste)."'";
 		$sql .= ", fax='".addslashes($this->fax)."'";
 		$sql .= ", email='".addslashes($this->email)."'";
@@ -390,6 +399,7 @@ class Contact extends CommonObject
 		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.name, c.firstname,";
 		$sql.= " c.address, c.cp, c.ville,";
 		$sql.= " c.fk_pays, p.libelle as pays, p.code as pays_code,";
+		$sql.= " c.fk_departement, d.nom as departement, d.code_departement as departement_code,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
 		$sql.= " c.priv, c.note, c.default_lang,";
@@ -397,6 +407,7 @@ class Contact extends CommonObject
 		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.ville as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		$sql.= " WHERE c.rowid = ". $id;
@@ -422,6 +433,11 @@ class Contact extends CommonObject
 				$this->cp             = $obj->cp?$obj->cp:$obj->soccp;
 				$this->ville          = $obj->ville?$obj->ville:$obj->soccity;
 				$this->fk_pays        = $obj->fk_pays;
+
+				$this->fk_departement = $obj->fk_departement;
+				$this->departement_code = $obj->fk_departement?$obj->departement_code:'';
+				$this->departement	  = $obj->fk_departement?$obj->departement:'';
+
 				$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
 				$this->pays           = ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
 

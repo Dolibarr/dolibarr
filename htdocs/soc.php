@@ -59,13 +59,13 @@ $soc = new Societe($db);
 if ($_POST["getcustomercode"])
 {
 	// We defined value code_client
-	$_POST["code_client"]="aa";
+	$_POST["code_client"]="Acompleter";
 }
 
 if ($_POST["getsuppliercode"])
 {
 	// We defined value code_fournisseur
-	$_POST["code_fournisseur"]="aa";
+	$_POST["code_fournisseur"]="Acompleter";
 }
 
 // Add new third party
@@ -426,11 +426,13 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$soc->commercial_id=$_POST["commercial_id"];
 		$soc->default_lang=$_POST["default_lang"];
 
-		// We set pays_id, pays_code and libel the selected country
+		// We set pays_id, pays_code and label for the selected country
 		$soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
 		if ($soc->pays_id)
 		{
-			$sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$soc->pays_id;
+			$sql = "SELECT code, libelle";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+			$sql.= " WHERE rowid = ".$soc->pays_id;
 			$resql=$db->query($sql);
 			if ($resql)
 			{
@@ -551,20 +553,24 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 			print '</textarea></td></tr>';
 		}
 
+		// Address
 		print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
 		print $soc->address;
 		print '</textarea></td></tr>';
 
+		// Zip / Town
 		print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">';
 		if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(\''.DOL_URL_ROOT.'\',cp.value,ville,pays_id,departement_id)">';
 		print '</td>';
 		print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
+		// Country
 		print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
 		$form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_create()"':'');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
+		// State
 		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
 		if ($soc->pays_id)
 		{
@@ -576,6 +582,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		}
 		print '</td></tr>';
 
+		// Phone / Fax
 		print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
 		print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
 
@@ -947,28 +954,33 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 			print '</td></tr>';
 		}
 
+		// Address
 		print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
 		print $soc->address;
 		print '</textarea></td></tr>';
 
+		// Zip / Town
 		print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">';
 		if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(\''.DOL_URL_ROOT.'\',cp.value,ville,pays_id,departement_id)">';
 		print '</td>';
-
 		print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
+		// Country
 		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
 		$form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_edit()"':'');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
+		// Department
 		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
 		$formcompany->select_departement($soc->departement_id,$soc->pays_code);
 		print '</td></tr>';
 
+		// Phone / Fax
 		print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
 		print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
 
+		// EMail / Web
 		print '<tr><td>'.$langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
 		print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
 
@@ -1186,6 +1198,7 @@ else
 	else print $soc->pays;
 	print '</td></tr>';
 
+	// Department
 	print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$soc->departement.'</td>';
 
 	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->pays_code,0,$soc->id,'AC_TEL').'</td>';

@@ -182,10 +182,11 @@ class FormCompany
 	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entree pour
 	 *                un code donnee mais dans ce cas, le champ pays differe).
 	 *                Ainsi les liens avec les departements se font sur un departement independemment de son nom.
-	 *    \param      selected        code forme juridique a preselectionne
-	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays a afficher
+	 *    \param      selected        	Code forme juridique a preselectionne
+	 *    \param      pays_code       	0=liste tous pays confondus, sinon code du pays a afficher
+	 *    \param      departement_id	Id of department
 	 */
-	function select_departement($selected='',$pays_code=0)
+	function select_departement($selected='',$pays_code=0, $htmlname='departement_id')
 	{
 		global $conf,$langs,$user;
 
@@ -193,9 +194,7 @@ class FormCompany
 
 		$langs->load("dict");
 
-		$htmlname='departement_id';
-
-		// On recherche les d�partements/cantons/province active d'une region et pays actif
+		// On recherche les departements/cantons/province active d'une region et pays actif
 		$sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM";
 		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";

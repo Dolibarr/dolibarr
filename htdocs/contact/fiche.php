@@ -37,7 +37,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 $langs->load("companies");
 $langs->load("users");
 
-$error = array();
+$errors = array();
 $socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
 
 // If socid provided by ajax company selector
@@ -98,6 +98,7 @@ if ($_POST["action"] == 'add' && $user->rights->societe->contact->creer)
     $contact->cp           = $_POST["cp"];
     $contact->ville        = $_POST["ville"];
     $contact->fk_pays      = $_POST["pays_id"];
+    $contact->fk_departement = $_POST["departement_id"];
     $contact->email        = $_POST["email"];
     $contact->phone_pro    = $_POST["phone_pro"];
     $contact->phone_perso  = $_POST["phone_perso"];
@@ -110,8 +111,10 @@ if ($_POST["action"] == 'add' && $user->rights->societe->contact->creer)
 
     if (! $_POST["name"])
     {
-        array_push($error,$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label")));
-        $_GET["action"]="create";
+        array_push($errors,$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label")));
+		$_GET["action"] = 'create';
+		$_POST["action"] = 'create';
+		$_REQUEST["action"] = 'create';
     }
 
     if ($_POST["name"])
@@ -124,8 +127,10 @@ if ($_POST["action"] == 'add' && $user->rights->societe->contact->creer)
         }
 		else
 		{
-			$error=array($contact->error);
+			$errors=array($contact->error);
 			$_GET["action"] = 'create';
+			$_POST["action"] = 'create';
+			$_REQUEST["action"] = 'create';
 		}
 	}
 }
@@ -152,45 +157,58 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 
 if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
 {
-	$contact = new Contact($db);
-	$contact->fetch($_POST["contactid"]);
-
-	$contact->oldcopy=dol_clone($contact);
-
-	$contact->old_name      = $_POST["old_name"];
-	$contact->old_firstname = $_POST["old_firstname"];
-
-	$contact->socid         = $_POST["socid"];
-	$contact->name          = $_POST["name"];
-	$contact->firstname     = $_POST["firstname"];
-	$contact->civilite_id   = $_POST["civilite_id"];
-	$contact->poste         = $_POST["poste"];
-
-	$contact->address       = $_POST["address"];
-	$contact->cp            = $_POST["cp"];
-	$contact->ville         = $_POST["ville"];
-	$contact->fk_pays       = $_POST["pays_id"];
-
-	$contact->email         = $_POST["email"];
-	$contact->phone_pro     = $_POST["phone_pro"];
-	$contact->phone_perso   = $_POST["phone_perso"];
-	$contact->phone_mobile  = $_POST["phone_mobile"];
-	$contact->fax           = $_POST["fax"];
-	$contact->jabberid      = $_POST["jabberid"];
-	$contact->priv          = $_POST["priv"];
-
-	$contact->note          = $_POST["note"];
-
-	$result = $contact->update($_POST["contactid"], $user);
-
-	if ($result > 0)
+	if (empty($_POST["name"]))
 	{
-		$contact->old_name='';
-		$contact->old_firstname='';
+		$errors=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
+		$error++;
+		$_GET["action"] = 'edit';
+		$_POST["action"] = 'edit';
+		$_REQUEST["action"] = 'edit';
 	}
-	else
+
+	if (! sizeof($errors))
 	{
-		$error = $contact->error;
+		$contact = new Contact($db);
+		$contact->fetch($_POST["contactid"]);
+
+		$contact->oldcopy=dol_clone($contact);
+
+		$contact->old_name      = $_POST["old_name"];
+		$contact->old_firstname = $_POST["old_firstname"];
+
+		$contact->socid         = $_POST["socid"];
+		$contact->name          = $_POST["name"];
+		$contact->firstname     = $_POST["firstname"];
+		$contact->civilite_id   = $_POST["civilite_id"];
+		$contact->poste         = $_POST["poste"];
+
+		$contact->address       = $_POST["address"];
+		$contact->cp            = $_POST["cp"];
+		$contact->ville         = $_POST["ville"];
+		$contact->fk_departement= $_POST["departement_id"];
+		$contact->fk_pays       = $_POST["pays_id"];
+
+		$contact->email         = $_POST["email"];
+		$contact->phone_pro     = $_POST["phone_pro"];
+		$contact->phone_perso   = $_POST["phone_perso"];
+		$contact->phone_mobile  = $_POST["phone_mobile"];
+		$contact->fax           = $_POST["fax"];
+		$contact->jabberid      = $_POST["jabberid"];
+		$contact->priv          = $_POST["priv"];
+
+		$contact->note          = $_POST["note"];
+
+		$result = $contact->update($_POST["contactid"], $user);
+
+		if ($result > 0)
+		{
+			$contact->old_name='';
+			$contact->old_firstname='';
+		}
+		else
+		{
+			$mesg=$contact->error;
+		}
 	}
 }
 
@@ -203,6 +221,8 @@ llxHeader('',$langs->trans("Contacts"),'EN:Module_Third_Parties|FR:Module_Tiers|
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
+
+$countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 if ($socid)
 {
@@ -248,23 +268,40 @@ if ($user->rights->societe->contact->supprimer)
 
 if ($user->rights->societe->contact->creer)
 {
-	if ($_GET["action"] == 'create')
+	if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 	{
 		/*
 		 * Fiche en mode creation
 		 */
+		$contact->fk_departement = $_POST["departement_id"];
+
+		// We set pays_id, pays_code and label for the selected country
+		$contact->fk_pays=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
+		if ($contact->fk_pays)
+		{
+			$sql = "SELECT code, libelle";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+			$sql.= " WHERE rowid = ".$contact->fk_pays;
+			$resql=$db->query($sql);
+			if ($resql)
+			{
+				$obj = $db->fetch_object($resql);
+			}
+			else
+			{
+				dol_print_error($db);
+			}
+			$contact->pays_code=$obj->code;
+			$contact->pays=$obj->libelle;
+		}
+
 		print_fiche_titre($langs->trans("AddContact"));
 
 		// Affiche les erreurs
-		if (sizeof($error))
-		{
-			print "<div class='error'>";
-			print join("<br>",$error);
-			print "</div>\n";
-		}
+		dol_htmloutput_errors($mesg,$errors);
 
 		print '<br>';
-		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<table class="border" width="100%">';
@@ -274,10 +311,10 @@ if ($user->rights->societe->contact->creer)
 		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="30" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
 
 		// Company
-		if ($socid)
+		if ($socid > 0)
 		{
 			print '<tr><td>'.$langs->trans("Company").'</td>';
-			print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$socid.'">'.$objsoc->nom.'</a></td>';
+			print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id.'">'.$objsoc->nom.'</a></td>';
 			print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
 			print '</td></tr>';
 		}
@@ -300,17 +337,32 @@ if ($user->rights->societe->contact->creer)
 		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->address)) == 0) $contact->address = $objsoc->address;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.$contact->address.'</textarea></td>';
 
+		// Zip / Town
 		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->cp)) == 0) $contact->cp = $objsoc->cp;			// Predefined with third party
 		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->ville)) == 0) $contact->ville = $objsoc->ville;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.$contact->cp.'">&nbsp;';
 		print '<input name="ville" type="text" size="20" value="'.$contact->ville.'" maxlength="80"></td></tr>';
 
+		// Country
 		if (strlen(trim($contact->fk_pays)) == 0) $contact->fk_pays = $objsoc->pays_id;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-		$form->select_pays($contact->fk_pays);
+		$form->select_pays($contact->fk_pays,'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_create()"':'');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
+		// State
+		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+		if ($contact->fk_pays)
+		{
+			$formcompany->select_departement($contact->fk_departement,$contact->pays_code);
+		}
+		else
+		{
+			print $countrynotdefined;
+		}
+		print '</td></tr>';
+
+		// Phone / Fax
 		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->phone_pro)) == 0) $contact->phone_pro = $objsoc->tel;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
 		print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
@@ -340,24 +392,35 @@ if ($user->rights->societe->contact->creer)
 
 		print "</form>";
 	}
-	elseif ($_GET["action"] == 'edit' && $_GET["id"])
+	elseif ($_REQUEST["action"] == 'edit' && $_REQUEST["id"])
 	{
 		/*
 		 * Fiche en mode edition
-		 *
 		 */
 
-		// Affiche les erreurs
-		if (sizeof($error))
+		// We set pays_id, and pays_code label of the chosen country
+		if ($contact->fk_pays)
 		{
-			print "<div class='error'>";
-			print join("<br>",$error);
-			print "</div>\n";
+			$sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$contact->fk_pays;
+			$resql=$db->query($sql);
+			if ($resql)
+			{
+				$obj = $db->fetch_object($resql);
+			}
+			else
+			{
+				dol_print_error($db);
+			}
+			$contact->pays_code=$obj->code;
+			$contact->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
 		}
 
-		print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
+		// Affiche les erreurs
+		dol_htmloutput_errors($mesg,$errors);
+
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$_REQUEST["id"].'" name="formsoc">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="contactid" value="'.$contact->id.'">';
 		print '<input type="hidden" name="old_name" value="'.$contact->name.'">';
@@ -370,7 +433,7 @@ if ($user->rights->societe->contact->creer)
 		print '</td></tr>';
 
 		// Name
-		print '<tr><td class="fieldrequired">'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
 		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="20" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
 
 		// Company
@@ -390,14 +453,22 @@ if ($user->rights->societe->contact->creer)
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.$contact->address.'</textarea></td>';
 
+		// Zip / Town
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.$contact->cp.'">&nbsp;';
 		print '<input name="ville" type="text" size="20" value="'.$contact->ville.'" maxlength="80"></td></tr>';
 
+		// Country
 		print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-		$form->select_pays($contact->fk_pays);
+		$form->select_pays($contact->fk_pays,'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_edit()"':'');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
+		// Department
+		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+		$formcompany->select_departement($contact->fk_departement,$contact->pays_code);
+		print '</td></tr>';
+
+		// Phone
 		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
 		print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
@@ -484,7 +555,7 @@ if ($user->rights->societe->contact->creer)
 	}
 }
 
-if ($_GET["id"] && $_GET["action"] != 'edit')
+if ($_REQUEST["id"] && $_REQUEST["action"] != 'edit')
 {
 	$objsoc = new Societe($db);
 
@@ -544,13 +615,19 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	// Address
 	print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($contact->address).'</td></tr>';
 
+	// Zip Town
 	print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$contact->cp.'&nbsp;';
 	print $contact->ville.'</td></tr>';
 
+	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
 	print $contact->pays;
 	print '</td></tr>';
 
+	// Department
+	print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$contact->departement.'</td>';
+
+	// Phone
 	print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dol_print_phone($contact->phone_pro,$contact->pays_code,$contact->id,$contact->socid,'AC_TEL').'</td>';
 	print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dol_print_phone($contact->phone_perso,$contact->pays_code,$contact->id,$contact->socid,'AC_TEL').'</td></tr>';
 

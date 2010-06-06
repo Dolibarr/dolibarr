@@ -11,6 +11,9 @@
 -- V4.1 UPDATE llx_projet_task set fk_user_creat=NULL WHERE fk_user_creat IS NOT NULL AND fk_user_creat NOT IN (SELECT rowid from llx_user);
 -- V4.1 UPDATE llx_projet_task set fk_user_valid=NULL WHERE fk_user_valid IS NOT NULL AND fk_user_valid NOT IN (SELECT rowid from llx_user);
 
+
+ALTER TABLE llx_socpeople ADD COLUMN fk_departement integer        DEFAULT 0 after ville;
+
 -- rename llx_product_det
 ALTER TABLE llx_product_det RENAME TO llx_product_lang;
 ALTER TABLE llx_product_lang ADD UNIQUE INDEX uk_product_lang (fk_product, lang);
