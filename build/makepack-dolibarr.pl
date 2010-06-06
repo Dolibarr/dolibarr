@@ -280,6 +280,7 @@ if ($nboftargetok) {
     	if ($target eq 'TGZ') {
     		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
+    		print "Remove target $FILENAMETGZ.tgz...\n";
     		unlink("$FILENAMETGZ.tgz");
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
    		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";

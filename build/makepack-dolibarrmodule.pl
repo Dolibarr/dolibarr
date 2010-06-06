@@ -199,15 +199,20 @@ if ($nboftargetok) {
         print "\nBuild package for target $target\n";
         
     	if ($target eq 'TGZ') {
-    		unlink $FILENAMETGZ.tgz;
+    		print "Remove target $FILENAMETGZ.tgz...\n";
+    		unlink("$DESTI/$FILENAMETGZ.tgz");
     		print "Compress $BUILDROOT/* into $FILENAMETGZ.tgz...\n";
-   		    $cmd="tar --exclude-vcs --directory \"$BUILDROOT\" --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" .";
+   		    $cmd="tar --exclude-vcs --exclude *.tgz --directory \"$BUILDROOT\" --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" .";
    		    $ret=`$cmd`;
             if ($OS =~ /windows/i) {
         		print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
         		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
             }
-    		next;
+            else
+            {
+        		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
+            }
+            next;
     	}
 
     	if ($target eq 'ZIP') {
