@@ -71,6 +71,8 @@ class MyTestSuite
         $suite->addTestSuite('UserTest');
 		require_once dirname(__FILE__).'/UserGroupTest.php';
         $suite->addTestSuite('UserGroupTest');
+		require_once dirname(__FILE__).'/CompanyBankAccountTest.php';
+        $suite->addTestSuite('CompanyBankAccountTest');
 
         return $suite;
     }
