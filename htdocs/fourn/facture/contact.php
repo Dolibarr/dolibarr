@@ -32,7 +32,8 @@ require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 
-$langs->load("facture");
+$langs->load("bills");
+$langs->load('other');
 $langs->load("companies");
 
 $facid = isset($_GET["facid"])?$_GET["facid"]:'';
