@@ -112,6 +112,8 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) 
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 42, 4,   '7','0','1','VAT reduced rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 43, 4,   '4','0','0.5','VAT super-reduced rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active)           values ( 44, 4,   '0','0','VAT Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 45, 4,  '18','0','4','VAT standard rate from July 2010',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 46, 4,   '8','0','1','VAT reduced rate from July 2010',1);
 
 -- UNITED OF KINGDOM (id 7)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 71, 7,  '17.5','0','VAT standard rate',1);

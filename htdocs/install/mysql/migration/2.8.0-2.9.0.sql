@@ -220,3 +220,6 @@ ALTER TABLE llx_societe_adresse_livraison RENAME TO llx_societe_address;
 ALTER TABLE llx_societe_address CHANGE nom name varchar(60);
 ALTER TABLE llx_societe_address CHANGE fk_societe fk_soc integer DEFAULT 0;
 
+-- Add new spanish VAT from July 2010
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 45, 4,  '18','0','4','VAT standard rate from July 2010',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 46, 4,   '8','0','1','VAT reduced rate from July 2010',1);
