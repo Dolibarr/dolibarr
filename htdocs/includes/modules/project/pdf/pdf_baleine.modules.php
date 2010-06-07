@@ -75,9 +75,11 @@ class pdf_baleine extends ModelePDFProjects
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
 
 		// Defini position des colonnes
-		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxcomm=120;
-
+		$this->posxref=$this->marge_gauche+1;
+		$this->posxlabel=$this->marge_gauche+25;
+		$this->posxprogress=$this->marge_gauche+140;
+		$this->posxdatestart=$this->marge_gauche+150;
+		$this->posxdateend=$this->marge_gauche+170;
 	}
 
 
@@ -186,7 +188,7 @@ class pdf_baleine extends ModelePDFProjects
 					$tab_top = 48;
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
-					$pdf->SetXY ($this->posxdesc-1, $tab_top);
+					$pdf->SetXY ($this->posxref-1, $tab_top);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
@@ -215,11 +217,24 @@ class pdf_baleine extends ModelePDFProjects
 					// Description of ligne
 					$ref=$object->lines[$i]->ref;
 					$libelleline=$object->lines[$i]->label;
+					$progress=$object->lines[$i]->progress.'%';
+					$datestart=dol_print_date($object->lines[$i]->date_start,'day');
+					$dateend=dol_print_date($object->lines[$i]->date_end,'day');
+
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
-					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($ref), 0, 1);
-					$pdf->writeHTMLCell(108, 3, $this->posxdesc+10, $curY, $outputlangs->convToOutputCharset($libelleline), 0, 1);
+					$pdf->SetXY($this->posxref, $curY);
+					$pdf->MultiCell(60, 3, $outputlangs->convToOutputCharset($ref), 0, 'L');
+					$pdf->SetXY($this->posxlabel, $curY);
+					$pdf->MultiCell(108, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+					$pdf->SetXY($this->posxprogress, $curY);
+					$pdf->MultiCell(16, 3, $progress, 0, 'L');
+					$pdf->SetXY($this->posxdatestart, $curY);
+					$pdf->MultiCell(20, 3, $datestart, 0, 'L');
+					$pdf->SetXY($this->posxdateend, $curY);
+					$pdf->MultiCell(20, 3, $dateend, 0, 'L');
+
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
@@ -310,7 +325,7 @@ class pdf_baleine extends ModelePDFProjects
 
 		$pdf->SetFont('Arial','',10);
 
-		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
+		$pdf->SetXY ($this->posxref-1, $tab_top+2);
 		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Tasks"),'','L');
 
 	}
