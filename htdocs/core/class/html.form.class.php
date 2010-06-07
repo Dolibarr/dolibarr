@@ -478,10 +478,13 @@ class Form
 			print '<option value="1"';
 			if (1 == $selected) print ' selected="true"';
 			print '>'.$langs->trans("Service");
-			
-			print '<option value="9"';
-			if (9 == $selected) print ' selected="true"';
-			print '>'.$langs->trans("Notes");
+
+			if ($conf->milestone->enabled)
+			{
+				print '<option value="9"';
+				if (9 == $selected) print ' selected="true"';
+				print '>'.$langs->trans("Notes");
+			}
 
 			print '</select>';
 			//if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
