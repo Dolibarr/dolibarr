@@ -275,13 +275,9 @@ else
 	print '<table width="100%"><tr><td align="right">';
 	if ($_REQUEST["mode"] == 'mine')
 	{
-		if ($user->rights->projet->all->lire)
-		{
-			print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
-			//print ' - ';
-			//print $langs->trans("ShowMyTaskOnly");
-		}
-		//else print '<a href="#">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
+		//print ' - ';
+		//print $langs->trans("ShowMyTaskOnly");
 	}
 	else
 	{
