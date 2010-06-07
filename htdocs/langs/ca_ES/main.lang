@@ -1,8 +1,8 @@
-# Dolibarr language file - ca_ES - main
+# Dolibarr language file - ca_ES - main 
 CHARSET=UTF-8
 DIRECTION=ltr
 SeparatorDecimal=,
-SeparatorThousand= 
+SeparatorThousand=
 FormatDateShort=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
 FormatHourShort=%H:%M
@@ -311,7 +311,7 @@ ActionRunningNotStarted=No començat
 ActionRunningShort=Començat
 ActionDoneShort=Acabat
 CompanyFoundation=Empresa o institució
-ContactsForCompany=Contactes d'aquest tercer
+ContactsForCompany=Contactes/adreces d'aquest tercer
 ActionsOnCompany=Accions front a aquest tercer
 NActions=%s accions
 NActionsLate=%s en retard
@@ -561,7 +561,8 @@ ValidateBefore=Per poder utilitzar aquesta funció ha de validar la fitxa
 Visibility=Visibilitat
 Private=Privat
 Hidden=Memòria cau
-# Week day
+Resources=Recursos
+# Week day=undefined
 Day1=Dillus
 Day2=Dimarts
 Day3=Dimecres

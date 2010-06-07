@@ -71,3 +71,4 @@ ErrorFileIsInfectedWithAVirus=L'antivirus no ha pogut validar aquest arxiu (és 
 ErrorSpecialCharNotAllowedForField=Els caràcters especials no són admesos pel camp "%s"
 WarningNoDocumentModelActivated=No hi ha cap model per a la generació del document activat. Es prendrà un model per defecte fins que es configuri el mòdul.
 ErrorDatabaseParameterWrong=El paràmetre de configuració de la base de dades '<b>%s</b>' té un valor no compatible per una instal lació de Dolibarr (ha de tenir el valor '<b>%s</b>').
+ErrorNumRefModel=Hi ha una referència a la base de dades (%s) i és incompatible amb aquesta numeració. Elimineu la línia o renomeneu la referència per activar aquest mòdul.

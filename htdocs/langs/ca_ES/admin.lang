@@ -234,6 +234,7 @@ MenuHandlers=Gestors de menú
 MenuAdmin=Editor de menú
 ThisIsProcessToFollow=Heus aquí el procediment a seguir:
 StepNb=Pas %s
+FindPackageFromWebSite=Cercar el paquet que respon a la seva necessitat (per exemple en el lloc web %s)
 DownloadPackageFromWebSite=Descarregar el paquet des del lloc %s.
 UnpackPackageInDolibarrRoot=Descomprimir el paquet a la carpeta arrel de Dolibarr <b>%s</b> sobre els arxius existents (sense desplaçar o esborrar els existents, sota pena de perdre la seva configuració o els mòduls no oficials instal·lats)
 SetupIsReadyForUse=La instal·lació ha finalitzat i Dolibarr està disponible amb el nou component.
@@ -561,6 +562,12 @@ Permission1234=Eliminar factures de proveïdors
 Permission1236=Exporta factures de proveïdors, atributs i pagaments
 Permission1251=Llançar les importacions en massa a la base de dades (càrrega de dades)
 Permission1321=Exporta factures a clients, atributs i cobraments
+Permission1401=Llegir el pla comptable
+Permission1402=Crear/Modificar un pla comptable
+Permission1403=Tancar un pla comptable
+Permission1411=
+Permission1412=Crear/modificar/anular moviments comptables
+Permission1415=Llegir Balanços, informes, diaris, llibres mestres
 Permission1421=Exporta comandes de clients i atributs
 Permission2401=Llegir accions (esdeveniments o tasques) vinculades al seu compte
 Permission2402=Crear/modificar accions (esdeveniments o tasques) vinculades al seu compte
@@ -571,6 +578,9 @@ Permission2413=Canviar accions (esdeveniments o tasques) d'altres
 Permission2500=Consultar documents
 Permission2501=Enviar o eliminar documents
 Permission2515=Configuració carpetes de documents
+Permission8555=Ús del mòdul
+Permission8556=Establir llocs ecommerce
+Permission8557=Importar dades
 DictionnaryCompanyType=Tipus d'empresa
 DictionnaryCompanyJuridicalType=Formes jurídiques
 DictionnaryProspectLevel=Perspectiva nivell client potencial
@@ -765,10 +775,13 @@ YouMustRunCommandFromCommandLineAfterLoginToUser=Ha d'executar la comanda des d'
 YourPHPDoesNotHaveSSLSupport=Funcions SSL no disponibles al vostre PHP
 DownloadMoreSkins=Més temes per descarregar
 SimpleNumRefModelDesc=Retorna el nombre sota el format %syymm-nnnn on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0
+ListOfEntities=Llistat d'entitats
+AddEntity=Afegir entitat
+EditEntity=Editar entitat
 ##### Module password generation= undefined==
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.
-##### Users setup #####
+##### Users setup #####= undefined==
 UserGroupSetup=Configuració mòdul usuaris i grups
 GeneratePassword=Proposar una contrasenya generada
 RuleForGeneratedPasswords=Norma per a la generació de les contrasenyes propostes
@@ -777,7 +790,7 @@ EncryptedPasswordInDatabase=Permetre encriptació de les contrasenyes en la base
 DisableForgetPasswordLinkOnLogonPage=No mostrar l'enllaç "Contrasenya oblidada" a la pàgina de login
 UsersSetup=Configuració del mòdul usuaris
 UserMailRequired=E-mail necessari per crear un usuari nou
-##### Company setup #####
+##### Company setup #####= undefined==
 CompanySetup=Configuració del mòdul empreses
 CompanyCodeChecker=Mòdul de generació i control dels codis de tercers (clients/proveïdors)
 AccountCodeManager=Mòdul de generació dels codis comptables (clients/proveïdors)
@@ -789,7 +802,7 @@ NotificationsDesc=La funció de les notificacions permet enviar automàticament 
 ModelModules=Models de documents
 DocumentModelOdt=Generació des dels documents amb format OpenDocument (Arxiu .ODT OpenOffice, KOffice, TextEdit,...)
 WatermarkOnDraft=Marca d'aigua en els documents esborrany
-##### Webcal setup #####
+##### Webcal setup #####= undefined==
 WebCalSetup=Configuració d'enllaç amb el calendari webcalendar
 WebCalSyncro=Integrar els esdeveniments Dolibarr a webcalendar
 WebCalAllways=Sempre, sense consultar
@@ -813,7 +826,7 @@ WebCalAddEventOnStatusBill=Afegir esdeveniment al calendari en el canvi d'estat 
 WebCalAddEventOnStatusMember=Afegir esdeveniment al calendari en el canvi d'estat dels membres
 WebCalUrlForVCalExport=Un vincle d'exportació del calendari en format <b>%s</b> estarà disponible a la url: %s
 WebCalCheckWebcalSetup=La configuració del mòdul webcal pot ser incorrecta
-##### Invoices #####
+##### Invoices #####= undefined==
 BillsSetup=Configuració del mòdul Factures
 BillsDate=Data de les factures
 BillsNumberingModule=Mòdul de numeració de factures i albarans
@@ -830,7 +843,7 @@ SuggestPaymentByRIBOnAccount=Sugerir el pagament per abonament en compte
 SuggestPaymentByChequeToAddress=Sugerir el pagament per xec a
 FreeLegalTextOnInvoices=Text lliure en factures
 WatermarkOnDraftInvoices=Marca d'aigua en les factures esborrany (en cas d'estar buit)
-##### Proposals #####
+##### Proposals #####= undefined==
 PropalSetup=Configuració del mòdul Pressupostos
 CreateForm=Creació formulari
 NumberOfProductLines=Nombre de línies de productes
@@ -846,7 +859,7 @@ AddDeliveryAddressAbility=Possibilitat de seleccionar una adreça d'enviament
 UseOptionLineIfNoQuantity=Una línia de producte/servei que té una quantitat nul·la es considera com una opció
 FreeLegalTextOnProposal=Text lliure en pressupostos
 WatermarkOnDraftProposal=Marca d'aigua en pressupostos esborrany (en cas d'estar buit)
-##### Orders #####
+##### Orders #####= undefined==
 OrdersSetup=Configuració del mòdul comandes
 OrdersNumberingModules=Mòduls de numeració de les comandes
 OrdersModelModule=Models de documents de comandes
@@ -854,25 +867,25 @@ HideTreadedOrders=Amaga les comandes processades o anul·lades del llistat
 ValidOrderAfterPropalClosed=Validar la comanda després del tancament del pressupost, permet no passar per la comanda provisional
 FreeLegalTextOnOrders=Text lliure en comandes
 WatermarkOnDraftOrders=Marca d'aigua en comandes esborrany (en cas d'estar buit)
-##### Fiche inter #####
+##### Fiche inter #####= undefined==
 FicheinterNumberingModules=Mòduls de numeració de les fitxes d'intervenció
 TemplatePDFInterventions=Model de documents de les fitxes d'intervenció
 WatermarkOnDraftInterventionCards=Marca d'aigua en fitxes d'intervenció (en cas d'estar buit)
-##### Clicktodial #####
+##### Clicktodial #####= undefined==
 ClickToDialSetup=Configuració del mòdul Click To Dial
 ClickToDialUrlDesc=Url de trucada fent clic en la icona telèfon. Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacé par le téléphone de l'appelé<br><b>%%2$s</b> qui sera remplacé par le téléphone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
-##### Bookmark4u #####
+##### Bookmark4u #####= undefined==
 Bookmark4uSetup=Configuració del mòdul Bookmark4u
-##### Interventions #####
+##### Interventions #####= undefined==
 InterventionsSetup=Configuració del mòdul intervencions
 FreeLegalTextOnInterventions=Text addicional en les fitxes d'intervenció
-##### Members #####
+##### Members #####= undefined==
 MembersSetup=Configuració del mòdulo Associacions
 MemberMainOptions=Opcions principals
 AddSubscriptionIntoAccount=Registrar cotitzacions en compte bancari o la caixa del mòdul bancari
 AdherentMailRequired=E-Mail obligatori per crear un membre nou
 MemberSendInformationByMailByDefault=Casella de verificació per enviar un missatge de confirmació (validació o nova cotització) als membres és per defecte "sí"
-##### LDAP setup #####
+##### LDAP setup #####= undefined==
 LDAPSetup=Configuracón del mòdul LDAP
 LDAPGlobalParameters=Paràmetres globals
 LDAPUsersSynchro=Usuaris
@@ -1004,7 +1017,7 @@ LDAPDescGroups=Aquesta pàgina permet definir el nom dels atributs de l'arbre LD
 LDAPDescMembers=Aquesta pàgina permet definir el nom dels atributs de l'arbre LDAP per a cada informació dels membres del mòdul Associacions Dolibarr.
 LDAPDescValues=Els valors d'exemples s'adapten a <b>OpenLDAP</b> amb els schemas carregats: <b>core.schema, cosine.schema, inetorgperson.schema </b>). Si vostè utilitza els a valors suggerits i OpenLDAP, modifiqui el seu fitxer de configuració LDAP <b>slapd.conf </b> per a tenir tots aquests schemas actius.
 ForANonAnonymousAccess=Per un accés autentificat
-##### Products #####
+##### Products #####= undefined==
 ProductSetup=Configuració del mòdul Productes
 NumberOfProductShowInSelect=Nº de productes màx a les llistes (0= sense límit)
 ConfirmDeleteProductLineAbility=Confirmació d'eliminació d'una línia de producte en els formularis
@@ -1014,7 +1027,7 @@ UseSearchToSelectProduct=Utilitzar un formulari de cerca per a la selecció d'un
 UseEcoTaxeAbility=Assumir ecotaxa (DEEE)
 SetDefaultBarcodeTypeProducts=Tipus de codi de barres utilitzat per defecte per als productes
 SetDefaultBarcodeTypeThirdParties=Tipus de codi de barres utilitzat per defecte per als tercers
-##### Syslog #####
+##### Syslog #####= undefined==
 SyslogSetup=Configuració del mòdul Syslog
 SyslogOutput=Sortida del log
 SyslogSyslog=Syslog
@@ -1024,9 +1037,10 @@ SyslogSimpleFile=Arxiu
 SyslogFilename=Nom i ruta de l'arxiu
 YouCanUseDOL_DATA_ROOT=Podeu utilitzar DOL_DATA_ROOT/dolibarr.log per a un registre a la carpeta  \"documents\" de Dolibarr. Tanmateix, pot establir una carpeta diferent per guardar aquest arxiu.
 ErrorUnknownSyslogConstant=La constant %s no és una constant syslog coneguda
-##### Donations #####
+##### Donations #####= undefined==
 DonationsSetup=Configuració del mòdul subvencions
-##### Barcode #####
+DonationsReceiptModel=Model recepció de subvencions
+##### Barcode #####= undefined==
 BarcodeSetup=Configuració dels codis de barra
 PaperFormatModule=Mòduls de formats d'impressió
 BarcodeEncodeModule=Mòduls de codificació dels codis de barra
@@ -1040,29 +1054,29 @@ BarcodeDescUPC=Codis de barra tipus UPC
 BarcodeDescISBN=Codis de barra tipus ISBN
 BarcodeDescC39=Codis de barra tipus C39
 BarcodeDescC128=Codis de barra tipus C128
-##### Prelevements #####
+##### Prelevements #####= undefined==
 WithdrawalsSetup=Configuració del mòdul domiciliacions
-##### ExternalRSS #####
+##### ExternalRSS #####= undefined==
 ExternalRSSSetup=Configuració de les importacions del flux RSS
 NewRSS=Sindicació de un nou flux RSS
-##### Mailing #####
+##### Mailing #####= undefined==
 MailingSetup=Configuració del mòdul E-Mailing
 MailingEMailFrom=E-Mail emissor (From) dels correus enviats per E-Mailing
 MailingEMailError=E-mail de resposta (Errors-to) per a les respostes sobre enviaments per e-mailing amb error.
-##### Notification #####
+##### Notification #####= undefined==
 NotificationSetup=Configuració del mòdul notificacions
 NotificationEMailFrom=E-Mail emissor (From) dels correus enviats a través de notificacions
-##### Sendings #####
+##### Sendings #####= undefined==
 SendingsSetup=Configuració del mòduls enviaments
 SendingsReceiptModel=Model de la fitxa d'expedició
 SendingsAbility=Ports pagats pel client
 NoNeedForDeliveryReceipts=En la majoria dels casos, els albarans s'utilitzen com a full de lliurament al client (llista de productes a enviar), es reben i signen pel client. Per tant, el full de lliurament de productes és una característica duplicada i poques vegades és activada.
 FreeLegalTextOnDeliveryReceipts=Text lliure en les notes de lliurament.
-##### Deliveries #####
+##### Deliveries #####= undefined==
 DeliveryOrderNumberingModules=Mòdul de numeració dels trameses a clients
 DeliveryOrderModel=Model d'ordre d'enviament
 DeliveriesOrderAbility=Ports pagats pel client
-##### FCKeditor #####
+##### FCKeditor #####= undefined==
 ActivateFCKeditor=Activar FCKeditor per a :
 FCKeditorForUsers=Creació/edició WYSIWIG de la descripció i notes dels usuaris
 FCKeditorForCompany=Creació/edició WYSIWIG de la descripció i notes dels tercers
@@ -1071,12 +1085,12 @@ FCKeditorForMembers=Creació/edició WYSIWIG de la descripció i notes dels memb
 FCKeditorForProductDetails=Creació/edició WYSIWIG de les línies de detall dels productes (en comandes, pressupostos, factures, etc.)
 FCKeditorForProductDetailsPerso=Creació/edició WYSIWIG de les línies de detall en els productes personalitzades (en comandes, pressupostos, factures, etc.)
 FCKeditorForMailing=Creació/edició WYSIWIG dels E-Mails
-##### OSCommerce 1 #####
+##### OSCommerce 1 #####= undefined==
 OSCommerceErrorConnectOkButWrongDatabase=La connexió s'ha establert, però la base de dades no sembla de OSCommerce.
 OSCommerceTestOk=La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' és correcta.
 OSCommerceTestKo1=La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' no s'ha pogut fer.
 OSCommerceTestKo2=La connexió al servidor '%s'  per l'usuari '%s' ha fallat.
-##### Mantis #####
+##### Mantis #####= undefined==
 MantisSetup=Configuració de l'enllaç amb el sistema de seguiment Mantis
 MantisURL=Adreça (URL) d'accés a Mantis
 MantisServer=Servidor de la base de dades Mantis
@@ -1087,10 +1101,10 @@ MantisTestOk=La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' 
 MantisTestKo1=La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' no s'ha pogut fer.
 MantisTestKo2=La connexió al servidor '%s'  per l'usuari '%s' ha fallat.
 MantisErrorConnectOkButWrongDatabase=La connexió és correcta però la base de dades no sembla ser una base de dades Mantis.
-##### Stock #####
+##### Stock #####= undefined==
 StockSetup=Configuració del mòdul Stock
 UserWarehouse=Utilitzar els stocks personals d'usuaris
-##### Menu #####
+##### Menu #####= undefined==
 MenuDeleted=Menú eliminat
 TreeMenu=Estructura dels menús
 Menus=Menús
@@ -1119,7 +1133,7 @@ DeleteMenu=Eliminar entrada de menú
 ConfirmDeleteMenu=Esteu segur que voleu eliminar l'entrada de menú <b>%s</b> ?
 DeleteLine=Eliminació de línea
 ConfirmDeleteLine=Esteu segur de voler eliminar aquesta línia?
-##### Tax #####
+##### Tax #####= undefined==
 TaxSetup=Configuració del mòdul d'impostos, càrregues socials i dividends
 OptionVatMode=Opció de càrrega d'IVA
 OptionVATDefault=Estandard
@@ -1135,11 +1149,11 @@ Buy=Compra
 Sell=Venda
 InvoiceValidateDateUsed=Data de validació usada
 YourCompanyDoesNotUseVAT=La seva empresa està configurada com no subjecta a l'IVA (Inici - Configuració - Empresa / Institució), per la qual cosa no hi ha opció per a la parametrització de l'IVA.
-##### Agenda #####
+##### Agenda #####= undefined==
 AgendaSetup=Mòdul configuració d'accions i agenda
 PasswordTogetVCalExport=Clau d'autorització vCal export link
 PastDelayVCalExport=No exportar els esdeveniments de més de
-##### ClickToDial #####
+##### ClickToDial #####= undefined==
 ClickToDialDesc=Aquest mòdul permet afegir una icona després del número de telèfon de contactes Dolibarr. Un clic en aquesta icona, Truca a un servidor amb un URL que s'indica a continuació. Això pot ser usat per anomenar al sistema centre de Dolibarr que pot trucar al número de telèfon en un sistema SIP, per exemple.
 ##### Point Of Sales (CashDesk) #####
 CashDesk=Caixa registradora
@@ -1149,7 +1163,7 @@ CashDeskBankAccountForSell=Compte a utilitzar per als cobraments en efectiu (cai
 CashDeskBankAccountForCheque=Compte a utilitzar per als cobraments amb xecs
 CashDeskBankAccountForCB=Compte a utilitzar per als cobraments amb targeta de crèdit
 CashDeskIdWareHouse=Magatzem a ultilitzar per a les vendes
-##### Bookmark #####
+##### Bookmark #####= undefined==
 BookmarkSetup=Configuració del mòdul Bookmark
 BookmarkDesc=Aquest mòdul li permet gestionar els enllaços i accessos directes. També permet afegir qualsevol pàgina de Dolibarr o enllaç web al menú d'accés ràpid de l'esquerra.
 NbOfBoomarkToShow=Nombre màxim de marcadors que es mostrarà en el menú
@@ -1165,6 +1179,7 @@ FreeLegalTextOnChequeReceipts=Menció complementària a les remeses de xecs
 MultiCompanySetup=Configuració del mòdul Multi-empresa
 ##### Suppliers #####
 SuppliersSetup=Configuració del mòdul Proveïdors
+SuppliersCommandModel=Model de comandes a proveïdors complet (logo...)
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=Configuració del mòdul GeoIP  Maxmind
 PathToGeoIPMaxmindCountryDataFile=Ruta de l'arxiu Maxmind que conté les conversions IP-> País.<br>Exemple: /usr/local/share/GeoIP/GeoIP.dat

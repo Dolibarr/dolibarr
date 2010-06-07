@@ -385,4 +385,3 @@ PDFOursinDescription=Model de factura complet (IVA, mètodes de pagament, lliura
 PDFTourteauDescription=Model de factura sense descompte
 # NumRef Modules
 TerreNumRefModelDesc1=Retorna el nombre sota el format %syymm-nnnn per a les factures i %syymm-nnnn per als abonaments on yy és l'any, mm. el mes i nnnn un comptador seqüencial sense ruptura i sense permanència a 0
-TerreNumRefModelError=Una factura que comença per $$syymm existeix en base i és incompatible amb aquesta numeració. Esborreu o renombreu-la per activar aquest mòdul.
