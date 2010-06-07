@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
+/* Copyright (C) 2004-2009 Laurent Destailleur          <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin                <regis@dolibarr.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,40 +250,43 @@ class pdf_propale_azur extends ModelePDFPropales
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
-
-					// TVA
-					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+					
+					if ($propale->lignes[$i]->product_type < 2)
 					{
-						$pdf->SetXY ($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, vatrate($propale->lignes[$i]->tva_tx,1,$propale->lignes[$i]->info_bits), 0, 'R');
-					}
-
-					// Prix unitaire HT avant remise
-					$pdf->SetXY ($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 4, price($propale->lignes[$i]->subprice), 0, 'R', 0);
-
-					// Quantity
-					$pdf->SetXY ($this->posxqty, $curY);
-					if ($propale->lignes[$i]->special_code != 3) $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $propale->lignes[$i]->qty, 0, 'R');
-
-					// Remise sur ligne
-					$pdf->SetXY ($this->posxdiscount, $curY);
-					if ($propale->lignes[$i]->remise_percent && $propale->lignes[$i]->special_code != 3)
-					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($propale->lignes[$i]->remise_percent,$outputlangs), 0, 'R');
-					}
-
-					// Total HT ligne
-					$pdf->SetXY ($this->postotalht, $curY);
-					if ($propale->lignes[$i]->special_code == 3)
-					{
-						// Ligne produit en option
-						$pdf->MultiCell(26, 4, $outputlangs->transnoentities("Option"), 0, 'R', 0);
-					}
-					else
-					{
-						$total = price($propale->lignes[$i]->total_ht);
-						$pdf->MultiCell(26, 4, $total, 0, 'R', 0);
+						// TVA
+						if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+						{
+							$pdf->SetXY ($this->posxtva, $curY);
+							$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, vatrate($propale->lignes[$i]->tva_tx,1,$propale->lignes[$i]->info_bits), 0, 'R');
+						}
+						
+						// Prix unitaire HT avant remise
+						$pdf->SetXY ($this->posxup, $curY);
+						$pdf->MultiCell($this->posxqty-$this->posxup-1, 4, price($propale->lignes[$i]->subprice), 0, 'R', 0);
+						
+						// Quantity
+						$pdf->SetXY ($this->posxqty, $curY);
+						if ($propale->lignes[$i]->special_code != 3) $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $propale->lignes[$i]->qty, 0, 'R');
+						
+						// Remise sur ligne
+						$pdf->SetXY ($this->posxdiscount, $curY);
+						if ($propale->lignes[$i]->remise_percent && $propale->lignes[$i]->special_code != 3)
+						{
+							$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($propale->lignes[$i]->remise_percent,$outputlangs), 0, 'R');
+						}
+						
+						// Total HT ligne
+						$pdf->SetXY ($this->postotalht, $curY);
+						if ($propale->lignes[$i]->special_code == 3)
+						{
+							// Ligne produit en option
+							$pdf->MultiCell(26, 4, $outputlangs->transnoentities("Option"), 0, 'R', 0);
+						}
+						else
+						{
+							$total = price($propale->lignes[$i]->total_ht);
+							$pdf->MultiCell(26, 4, $total, 0, 'R', 0);
+						}
 					}
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
