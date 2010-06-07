@@ -108,4 +108,4 @@ ConfirmCreateThirdParty=Are you sure you want to create a third party for this m
 LoginToCreate=Login to create
 NameToCreate=Name of third party to create
 YourRole=Your roles
-YourQuotaOfUsersIsReached=Your quota of users is reached !
+YourQuotaOfUsersIsReached=Your quota of active users is reached !

@@ -110,11 +110,26 @@ if ($_REQUEST["action"] == 'confirm_enable' && $_REQUEST["confirm"] == "yes")
 {
 	if ($_GET["id"] <> $user->id)
 	{
+		$message='';
+		
 		$edituser = new User($db);
 		$edituser->fetch($_GET["id"]);
-		$edituser->setstatus(1);
-		Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
-		exit;
+		
+		if (!empty($conf->file->main_limit_users))
+		{
+			$nb = $edituser->getNbOfUsers(1);
+			if ($nb >= $conf->file->main_limit_users)
+			{
+				$message='<div class="error">'.$langs->trans("YourQuotaOfUsersIsReached").'</div>';
+			}
+		}
+
+		if (! $message)
+		{
+			$edituser->setstatus(1);
+			Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
+			exit;
+		}
 	}
 }
 
@@ -815,7 +830,6 @@ else
 
 		$title = $langs->trans("User");
 		dol_fiche_head($head, 'user', $title, 0, 'user');
-
 
 		/*
 		 * Confirmation reinitialisation mot de passe
