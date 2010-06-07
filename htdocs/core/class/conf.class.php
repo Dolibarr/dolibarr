@@ -157,7 +157,7 @@ class Conf
 							}
 						}
 						// If this is constant for a smarty need by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_NEEDSMARTY$/i',$key))
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_NEEDSMARTY$/i',$key,$reg))
 						{
 							$module=strtolower($reg[1]);
 							// Add this module in list of modules that need smarty
