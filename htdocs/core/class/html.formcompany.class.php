@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/html.formcompany.class.php
+ *	\file       htdocs/core/class/html.formcompany.class.php
  *	\brief      File of class to build HTML component for third parties management
  *	\version	$Id$
  */

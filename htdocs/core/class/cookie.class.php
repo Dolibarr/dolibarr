@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/core/cookie.class.php
+ *	\file       htdocs/core/class/cookie.class.php
  *	\ingroup    core
  *	\version	$Id$
  *	\brief      File of class to manage cookies

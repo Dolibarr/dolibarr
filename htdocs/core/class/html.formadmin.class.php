@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/html.formadmin.class.php
+ *      \file       htdocs/core/class/html.formadmin.class.php
  *      \brief      File of class for html functions for admin pages
  *		\version	$Id$
  */

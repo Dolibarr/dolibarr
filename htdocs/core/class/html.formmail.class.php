@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/html.formmail.class.php
+ *       \file       htdocs/core/class/html.formmail.class.php
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
  *       \version    $Id$
  */

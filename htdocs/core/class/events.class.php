@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/core/events.class.php
+ *      \file       htdocs/core/class/events.class.php
  *      \ingroup    core
  *		\brief      Events class file.
  *		\version    $Id$

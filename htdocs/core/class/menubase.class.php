@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       htdocs/core/menubase.class.php
+ *  \file       htdocs/core/class/menubase.class.php
  *  \ingroup    core
  *  \version	$Id$
  *  \brief      File of class to manage dynamic menu entries

@@ -26,7 +26,7 @@
  */
 
 /**
- *	\file       htdocs/html.formother.class.php
+ *	\file       htdocs/core/class/html.formother.class.php
  *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
  *	\version	$Id$
  */

@@ -19,7 +19,7 @@
  */
 
 /**
- *   	\file       htdocs/translate.class.php
+ *   	\file       htdocs/core/class/translate.class.php
  *		\brief      File for Tanslate class
  *		\author	    Eric Seigne
  *		\author	    Laurent Destailleur

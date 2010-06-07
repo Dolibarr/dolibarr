@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/core/dolgraph.class.php
+ *	\file       htdocs/core/class/dolgraph.class.php
  *	\brief      Fichier de la classe mere de gestion des graph
  *	\version    $Id$
  *	\remarks    Usage:
@@ -55,14 +55,14 @@ class DolGraph
 	var $SetShading=0;
 
 	var $PrecisionY=-1;
-	
+
 	var $horizTickIncrement=-1;
 	var $SetNumXTicks=-1;
 	var $labelInterval=-1;
-	
+
 	var $hideXGrid=false;
 	var $hideYGrid=false;
-	
+
 	var $Legend=array();
 	var $LegendWidthMin=0;
 
@@ -154,7 +154,7 @@ class DolGraph
 		$this->labelInterval = $x;
 		return true;
 	}
-	
+
 	/**
 	 * 		\brief		Hide X grid
 	 */
@@ -172,7 +172,7 @@ class DolGraph
 		$this->hideYGrid = $bool;
 		return true;
 	}
-	
+
 	function SetYLabel($label)
 	{
 		$this->YLabel = $label;
@@ -250,7 +250,7 @@ class DolGraph
 		return $this->error;
 	}
 
-	
+
 	/**
 	 *	\brief		Definie la couleur de fond de l'image complete
 	 *	\param		bg_color		array(R,G,B) ou 'onglet' ou 'default'
@@ -384,7 +384,7 @@ class DolGraph
 		{
 			$factor*=10;
 		}
-		
+
 		$res=floor($min/$factor)*$factor;
 
 		//print "min=".$min." res=".$res;
@@ -433,7 +433,7 @@ class DolGraph
 		$colorsemitrans=new Color(255,255,255,60);
 		$colorgradient= new LinearGradient(new Color(235, 235, 235),new Color(255, 255, 255),0);
 		$colorwhite=new Color(255,255,255);
-		
+
 		// Graph
 		$graph = new Graph($this->width, $this->height);
 		$graph->border->hide();
@@ -465,7 +465,7 @@ class DolGraph
 
 		if ($this->hideXGrid)	$group->grid->hideVertical(true);
 		if ($this->hideYGrid)	$group->grid->hideHorizontal(true);
-		
+
 		// On boucle sur chaque lot de donnees
 		$legends=array();
 		$i=0;
@@ -499,7 +499,7 @@ class DolGraph
 
 				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
 				$colorbis=new Color(min($this->datacolor[$i][0]+50,255),min($this->datacolor[$i][1]+50,255),min($this->datacolor[$i][2]+50,255),50);
-				
+
 				$colorgrey=new Color(100,100,100);
 				$colorborder=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
 
@@ -509,7 +509,7 @@ class DolGraph
 				$plot->barBorder->setColor($colorgrey);
 				//$plot->setBarColor($color);
 				$plot->setBarGradient( new LinearGradient($colorbis, $color, 90) );
-				
+
 				if ($this->mode == 'side')  $plot->setBarPadding(0.1, 0.1);
 				if ($this->mode == 'depth') $plot->setBarPadding(0.1, 0.4);
 				if ($this->mode == 'side')  $plot->setBarSpace(5);
@@ -532,11 +532,11 @@ class DolGraph
 				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
 				$colorbis=new Color(min($this->datacolor[$i][0]+20,255),min($this->datacolor[$i][1]+20,255),min($this->datacolor[$i][2]+20,255),60);
 				$colorter=new Color(min($this->datacolor[$i][0]+50,255),min($this->datacolor[$i][1]+50,255),min($this->datacolor[$i][2]+50,255),90);
-				
+
 				$plot = new LinePlot($newvalues);
 				//$plot->setSize(1, 0.96);
 				//$plot->setCenter(0.5, 0.52);
-				
+
 				$plot->setColor($color);
 				$plot->setThickness(1);
 
@@ -544,14 +544,14 @@ class DolGraph
 				$plot->setFillGradient( new LinearGradient($colorter, $colorbis, 90) );
 
 				$plot->xAxis->setLabelText($legends);
-				
+
 				// Le mode automatique est plus efficace
 				$plot->SetYMax($this->MaxValue);
 				$plot->SetYMin($this->MinValue);
 				//$plot->setYAxis(0);
 				//$plot->hideLine(true);
 			}
-		
+
 			//$plot->reduce(80);		// Evite temps d'affichage trop long et nombre de ticks absisce satures
 
 			$group->legend->setTextFont(new Tuffy(10)); // This is to force Artichow to use awFileFontDriver to
@@ -571,7 +571,7 @@ class DolGraph
 
 		//print $group->axis->bottom->getLabelNumber();
 		if ($this->labelInterval > 0) $group->axis->bottom->setLabelInterval($this->labelInterval);
-		
+
 		$graph->add($group);
 
 		// Generate file

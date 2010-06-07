@@ -18,7 +18,7 @@
  */
 
 /**
-        \file       htdocs/notify.class.php
+        \file       htdocs/core/class/notify.class.php
         \brief      Fichier de la classe de gestion des notifications
         \version    $Id$
 */

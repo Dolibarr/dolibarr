@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/html.formorder.class.php
+ *	\file       htdocs/core/class/html.formorder.class.php
  *	\brief      File of predefined functions for HTML forms for order module
  *	\version	$Id$
  */
@@ -81,10 +81,10 @@ class FormOrder
 	{
 		global $conf,$langs;
 		$listemethodes=array();
-		
+
 		require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
 		$form=new Form($this->db);
-		
+
 		$sql = "SELECT rowid, libelle ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
 		$sql.= " WHERE active = 1";

@@ -18,7 +18,7 @@
  */
 
 /**
- *       \file       htdocs/stats.class.php
+ *       \file       htdocs/core/class/stats.class.php
  *       \ingroup    core
  *       \brief      Common class to manage statistics reports
  *       \version    $Id$
@@ -47,7 +47,7 @@ class Stats
 	function getNbByMonthWithPrevYear($endyear,$startyear)
 	{
 		$datay=array();
-			
+
 		$year=$startyear;
 		while($year <= $endyear)
 		{
@@ -67,8 +67,8 @@ class Stats
 				$year++;
 			}
 		}
-		
-		// return array(array('Month',val1,val2,val3),...)		
+
+		// return array(array('Month',val1,val2,val3),...)
 		return $data;
 	}
 
@@ -82,7 +82,7 @@ class Stats
 	function getAmountByMonthWithPrevYear($endyear,$startyear)
 	{
 		$datay=array();
-			
+
 		$year=$startyear;
 		while($year <= $endyear)
 		{
@@ -115,7 +115,7 @@ class Stats
 	function _getNbByYear($sql)
 	{
 		$result = array();
-		
+
 		dol_syslog("Stats::_getNbByYear sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -144,7 +144,7 @@ class Stats
 	function _getAllByYear($sql)
 	{
 		$result = array();
-		
+
 		dol_syslog("Stats::_getAllByYear sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -166,8 +166,8 @@ class Stats
 			dol_print_error($this->db);
 		}
 		return $result;
-	}	
-	
+	}
+
 	/**
 	 * \brief  Renvoie le nombre de proposition par mois pour une annee donnee
 	 *
@@ -195,7 +195,7 @@ class Stats
 		{
 			dol_print_error($this->db);
 		}
-		
+
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
 			$res[$i] = $result[$i] + 0;

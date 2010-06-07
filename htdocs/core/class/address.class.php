@@ -18,7 +18,7 @@
  */
 
 /**
-        \file       htdocs/core/address.class.php
+        \file       htdocs/core/class/address.class.php
         \brief      Fichier de la classe des adresses postales
         \version    $Id$
 */
@@ -39,7 +39,7 @@ class Address {
 
   function Address() {
 
-  }  
+  }
 
 }
 ?>

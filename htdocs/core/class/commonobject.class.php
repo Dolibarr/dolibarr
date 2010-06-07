@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/commonobject.class.php
+ *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      Fichier de la classe mere des classes metiers (facture, contrat, propal, commande, etc...)
  *	\version    $Id$

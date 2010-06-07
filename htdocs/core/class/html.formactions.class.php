@@ -17,7 +17,7 @@
  */
 
 /**
-        \file       htdocs/html.formactions.class.php
+        \file       htdocs/core/class/html.formactions.class.php
         \brief      Fichier de la classe des fonctions predefinie de composants html actions
 		\version	$Id$
 */
@@ -25,7 +25,7 @@
 
 /**
         \class      FormActions
-        \brief      Classe permettant la g�n�ration de composants html actions
+        \brief      Classe permettant la generation de composants html actions
 */
 class FormActions
 {
