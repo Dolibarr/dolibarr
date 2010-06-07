@@ -162,6 +162,8 @@ if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 $conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
 if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 $conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
+if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;
+$conf->file->main_limit_users = $dolibarr_main_limit_users;
 if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');	// For test purpose
 // Identifiant autres
 $conf->file->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;

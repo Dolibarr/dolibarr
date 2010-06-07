@@ -196,6 +196,14 @@ $dolibarr_main_force_https='0';
 # $dolibarr_main_prod='1';
 
 
+# dolibarr_main_limit_users
+# Can set a limit on the number of users it will be possible to create
+# (the superadmin not included), can be used for a restricted mode.
+# Default value: 0 (unlimited)
+# Examples:
+# $dolibarr_main_limit_users='0';
+
+
 # This is an development feature to allow external components to overwrite
 # some Dolibarr kernel files to be overwritten by versions provided by
 # third parties modules.

@@ -4,7 +4,7 @@
  * Copyright (c) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,16 +23,9 @@
  */
 
 /**
- \file       htdocs/user.class.php
- \brief      Fichier de la classe utilisateur
- \author     Rodolphe Quiedeville
- \author     Jean-Louis Bergamo
- \author     Laurent Destailleur
- \author     Sebastien Di Cintio
- \author     Benoit Mortier
- \author     Regis Houssin
- \author     Lionel Cousteix
- \version    $Id$
+ *  \file       htdocs/user.class.php
+ *  \brief      Fichier de la classe utilisateur
+ *  \version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -1784,6 +1777,36 @@ class User extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql.= " WHERE mc.email = '".addslashes($this->email)."'";
 		$sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$nb=$obj->nb;
+
+			$this->db->free($resql);
+			return $nb;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+	
+	/**
+	 *    \brief        Return number of existing users
+	 *    \param		limitToActive		limit to active users
+	 *    \return       int     			Number of users
+	 */
+	function getNbOfUsers($limitToActive=0)
+	{
+		global $conf;
+		
+		$sql = "SELECT count(rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE entity = ".$conf->entity;
+		if ($limitToActive) $sql.= " AND statut = 1";
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
