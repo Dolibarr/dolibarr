@@ -1,0 +1,31 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+Delivery=交货
+Deliveries=交付
+DeliveryCard=交付卡
+DeliveryOrder=交货单
+DeliveryOrders=发货单
+DeliveryDate=交货日期
+DeliveryDateShort=可交付。日期
+CreateDeliveryOrder=产生交货单
+QtyDelivered=交付数量
+SetDeliveryDate=出货日期设置
+ValidateDeliveryReceipt=验证送达回执
+ValidateDeliveryReceiptConfirm=你确定要验证这个交货收据吗？
+DeliveryMethod=送货方式
+TrackingNumber=追踪号码
+NameAndSignature=姓名及签署：
+ToAndDate=To___________________________________对____ / _____ / __________
+GoodStatusDeclaration=上述货物已收到良好的条件，
+Deliverer=发货人：
+Sender=寄件人
+Recipient=接受者
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).

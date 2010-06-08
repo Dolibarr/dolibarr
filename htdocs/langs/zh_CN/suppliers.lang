@@ -1,0 +1,46 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+Suppliers=供应商
+Supplier=供应商
+AddSupplier=新增供应商
+SupplierRemoved=供应商删除
+SuppliersInvoice=供应商发票
+SuppliersInvoices=供应商发票
+NewSupplier=新供应商
+History=历史
+ListOfSuppliers=供应商名单
+ShowSupplier=查看供应商
+OrderDate=订购日期
+BuyingPrice=买价
+AddSupplierPrice=新增供应商的价格
+ChangeSupplierPrice=供应商的价格变化
+ErrorQtyTooLowForThisSupplier=数量过低，供应商或供应商在这此产品没有价格定义
+ErrorSupplierCountryIsNotDefined=此供应商国是没有定义。正确的这第一。
+ProductHasAlreadyReferenceInThisSupplier=该产品已在该企业产品参考
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=该参考供应商已经与一参考：％s的
+NoRecordedSuppliers=没有供应商记录
+SupplierPayment=供应商付款
+SuppliersArea=供应商区
+RefSupplierShort=号。供应商
+ExportDataset_fournisseur_1=供应商发票清单和发票的路线
+ExportDataset_fournisseur_2=供应商发票和付款
+ApproveThisOrder=批准这一命令
+ConfirmApproveThisOrder=你确定要批准了这项命令？
+DenyingThisOrder=否认这种秩序
+ConfirmDenyingThisOrder=你确定要否认这个秩序？
+ConfirmCancelThisOrder=您确定要取消此订单？
+AddCustomerOrder=创建客户订单
+AddCustomerInvoice=创建客户发票
+AddSupplierOrder=建立供应商的订单
+AddSupplierInvoice=创建供应商发票
+ListOfSupplierProductForSupplier=<b>％</b>产品供应商名单和价格<b>的</b> S
+NoneOrBatchFileNeverRan=无或批处理<b>％不是</b>最近跑
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).

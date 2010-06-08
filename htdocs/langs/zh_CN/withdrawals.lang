@@ -1,0 +1,46 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+StandingOrdersArea=区人大常委会订单
+CustomersStandingOrdersArea=站在客户的订单面积
+StandingOrders=常年订单
+StandingOrder=常年订单
+NewStandingOrder=新的长期订单
+StandingOrderToProcess=要处理
+StandingOrderProcessed=加工
+Withdrawals=提款
+Withdrawal=提款
+WithdrawalsReceipts=提款收据
+WithdrawalReceipt=提款收据
+WithdrawalReceiptShort=收据
+LastWithdrawalReceipts=
+WithdrawedBills=
+WithdrawalsLines=
+RequestStandingOrderToTreat=
+RequestStandingOrderTreated=
+CustomersStandingOrders=
+CustomerStandingOrder=
+NbOfInvoiceToWithdraw=
+InvoiceWaitingWithdraw=
+AmountToWithdraw=
+WithdrawsRefused=
+NoInvoiceToWithdraw=
+ResponsibleUser=
+WithdrawalsSetup=
+WithdrawStatistics=
+WithdrawRejectStatistics=
+LastWithdrawalReceipt=
+MakeWithdrawRequest=
+ThirdPartyBankCode=
+ThirdPartyDeskCode=
+NoInvoiceCouldBeWithdrawed=
+ClassCredited=
+ClassCreditedConfirm=
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
