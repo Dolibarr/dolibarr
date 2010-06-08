@@ -27,6 +27,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
 $langs->load("products");
@@ -65,11 +66,17 @@ if (isset($_REQUEST['catid']))
 	$catid = $_REQUEST['catid'];
 }
 
+// Load sale and categ filters
+$search_sale = isset($_GET["search_sale"])?$_GET["search_sale"]:$_POST["search_sale"];
+$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
+
+
 
 /*
- * Affichage mode liste
- *
+ * View
  */
+
+$htmlother=new FormOther($db);
 
 $title=$langs->trans("ProductsAndServices");
 
@@ -78,7 +85,8 @@ $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte,';
 $sql.= ' SUM(s.reel) as stock_physique';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock as s,';
 $sql.= ' '.MAIN_DB_PREFIX.'product as p';
-
+// We'll need this table joined to the select in order to filter by categ
+if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 if ($_GET["fourn_id"] > 0)
 {
 	$fourn_id = $_GET["fourn_id"];
@@ -86,6 +94,7 @@ if ($_GET["fourn_id"] > 0)
 }
 $sql.= " WHERE p.rowid = s.fk_product";
 $sql.= " AND p.entity = ".$conf->entity;
+if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
 if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 if ($sall)
@@ -120,6 +129,11 @@ if ($fourn_id > 0)
 {
 	$sql.= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 }
+// Insert categ filter
+if ($search_categ)
+{
+	$sql .= " AND cp.fk_categorie = ".addslashes($search_categ);
+}
 $sql.= " GROUP BY p.rowid";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1 ,$offset);
@@ -143,6 +157,11 @@ if ($resql)
 		$envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
 	}
 
+
+
+	$helpurl='';
+	$helpurl='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+
 	if (isset($_GET["type"]) || isset($_POST["type"]))
 	{
 		if ($type==1) { $texte = $langs->trans("Services"); }
@@ -150,9 +169,10 @@ if ($resql)
 	} else {
 		$texte = $langs->trans("ProductsAndServices");
 	}
+	$texte.=' ('.$langs->trans("Stocks").')';
 
 
-	llxHeader("","",$texte);
+	llxHeader("",$title,$helpurl,$texte);
 
 	if ($sref || $snom || $sall || $_POST["search"])
 	{
@@ -180,14 +200,31 @@ if ($resql)
 
 	print '<table class="liste" width="100%">';
 
+	// Filter on categories
+ 	$moreforfilter='';
+	if ($conf->categorie->enabled)
+	{
+	 	$moreforfilter.=$langs->trans('Categories'). ': ';
+		$moreforfilter.=$htmlother->select_categories(0,$search_categ,'search_categ');
+	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+	}
+ 	if ($moreforfilter)
+	{
+		print '<tr class="liste_titre">';
+		print '<td class="liste_titre" colspan="9">';
+	    print $moreforfilter;
+	    print '</td></tr>';
+	}
+
 	// Lignes des titres
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),"reassort.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
-	//print_liste_field_titre($langs->trans("TheoreticalStock"),"reassort.php", "stock_theorique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
 	if ($conf->service->enabled && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("MininumStock"),"reassort.php", "p.seuil_stock_alerte","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock_physique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+	// TODO Add info of running suppliers/customers orders
+	//print_liste_field_titre($langs->trans("TheoreticalStock"),"reassort.php", "stock_theorique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';
 	print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
