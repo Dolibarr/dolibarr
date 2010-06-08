@@ -643,13 +643,13 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
 		$result = -1 ;
 	}
-	if ((empty($_POST['idprod']) && $_POST["type"] < 2) && (! isset($_POST["np_price"]) || $_POST["np_price"]==''))	// Unit price can be 0 but not ''
+	if (empty($_POST['idprod']) && (! isset($_POST["np_price"]) || $_POST["np_price"]==''))	// Unit price can be 0 but not ''
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")).'</div>';
 		$result = -1 ;
 	}
 
-	if ($result >= 0)
+	if ($result >= 0 && isset($_POST['qty']) && (($_POST['np_price']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
 		$ret=$propal->fetch($_POST['propalid']);
 		if ($ret < 0)
@@ -658,133 +658,110 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 			exit;
 		}
 		$ret=$propal->fetch_client();
-		
-		if ($_POST["type"] < 2 && isset($_POST['qty']) && (($_POST['np_price']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
+
+		$price_base_type = 'HT';
+
+		// Ecrase $pu par celui du produit
+		// Ecrase $desc par celui du produit
+		// Ecrase $txtva par celui du produit
+		if ($_POST['idprod'])
 		{
-			$price_base_type = 'HT';
-			
-			// Ecrase $pu par celui du produit
-			// Ecrase $desc par celui du produit
-			// Ecrase $txtva par celui du produit
-			if ($_POST['idprod'])
+			$prod = new Product($db, $_POST['idprod']);
+			$prod->fetch($_POST['idprod']);
+
+			$tva_tx = get_default_tva($mysoc,$propal->client,$prod->tva_tx);
+			$tva_npr = get_default_npr($mysoc,$propal->client,$prod->tva_tx);
+
+			// On defini prix unitaire
+			if ($conf->global->PRODUIT_MULTIPRICES && $propal->client->price_level)
 			{
-				$prod = new Product($db, $_POST['idprod']);
-				$prod->fetch($_POST['idprod']);
-				
-				$tva_tx = get_default_tva($mysoc,$propal->client,$prod->tva_tx);
-				$tva_npr = get_default_npr($mysoc,$propal->client,$prod->tva_tx);
-				
-				// On defini prix unitaire
-				if ($conf->global->PRODUIT_MULTIPRICES && $propal->client->price_level)
+				$pu_ht  = $prod->multiprices[$propal->client->price_level];
+				$pu_ttc = $prod->multiprices_ttc[$propal->client->price_level];
+				$price_base_type = $prod->multiprices_base_type[$propal->client->price_level];
+			}
+			else
+			{
+				$pu_ht = $prod->price;
+				$pu_ttc = $prod->price_ttc;
+				$price_base_type = $prod->price_base_type;
+			}
+
+			// On reevalue prix selon taux tva car taux tva transaction peut etre different
+			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+			if ($tva_tx != $prod->tva_tx)
+			{
+				if ($price_base_type != 'HT')
 				{
-					$pu_ht  = $prod->multiprices[$propal->client->price_level];
-					$pu_ttc = $prod->multiprices_ttc[$propal->client->price_level];
-					$price_base_type = $prod->multiprices_base_type[$propal->client->price_level];
+					$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
 				}
 				else
 				{
-					$pu_ht = $prod->price;
-					$pu_ttc = $prod->price_ttc;
-					$price_base_type = $prod->price_base_type;
+					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
 				}
-				
-				// On reevalue prix selon taux tva car taux tva transaction peut etre different
-				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-				if ($tva_tx != $prod->tva_tx)
-				{
-					if ($price_base_type != 'HT')
-					{
-						$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
-					}
-					else
-					{
-						$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
-					}
-				}
-				
-				$desc = $prod->description;
-				$desc.= ($prod->description && $_POST['np_desc']) ? "\n" : "";
-				$desc.= $_POST['np_desc'];
-				$type = $prod->type;
 			}
-			else
-			{
-				$pu_ht=$_POST['np_price'];
-				$tva_tx=str_replace('*','',$_POST['np_tva_tx']);
-				$tva_npr=preg_match('/\*/',$_POST['np_tva_tx'])?1:0;
-				$desc=$_POST['dp_desc'];
-				$type=$_POST["type"];
-			}
-			
-			$info_bits=0;
-			if ($tva_npr) $info_bits |= 0x01;
-			
-			if ($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
-			{
-				$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
-			}
-			else
-			{
-				// Insert line
-				$result=$propal->addline(
-				$_POST['propalid'],
-				$desc,
-				$pu_ht,
-				$_POST['qty'],
-				$tva_tx,
-				$_POST['idprod'],
-				$_POST['remise_percent'],
-				$price_base_type,
-				$pu_ttc,
-				$info_bits,
-				$type
-				);
-			}
+
+			$desc = $prod->description;
+			$desc.= ($prod->description && $_POST['np_desc']) ? "\n" : "";
+			$desc.= $_POST['np_desc'];
+			$type = $prod->type;
 		}
-		else if($_POST["type"] == 9 && $_POST['dp_desc'])
+		else
 		{
+			$pu_ht=$_POST['np_price'];
+			$tva_tx=str_replace('*','',$_POST['np_tva_tx']);
+			$tva_npr=preg_match('/\*/',$_POST['np_tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
 			$type=$_POST["type"];
-				
+		}
+
+		$info_bits=0;
+		if ($tva_npr) $info_bits |= 0x01;
+
+		if ($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
+		{
+			$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
+		}
+		else
+		{
 			// Insert line
 			$result=$propal->addline(
 			$_POST['propalid'],
 			$desc,
-			0,
-			0,
-			0,
-			0,
-			0,
-			'HT',
-			0,
-			0,
+			$pu_ht,
+			$_POST['qty'],
+			$tva_tx,
+			$_POST['idprod'],
+			$_POST['remise_percent'],
+			$price_base_type,
+			$pu_ttc,
+			$info_bits,
 			$type
 			);
-		}
-		
-		if ($result > 0)
-		{
-			// Define output language
-			$outputlangs = $langs;
-			$newlang='';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$propal->client->default_lang;
-			if (! empty($newlang))
+
+			if ($result > 0)
 			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($newlang);
+				// Define output language
+				$outputlangs = $langs;
+				$newlang='';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$propal->client->default_lang;
+				if (! empty($newlang))
+				{
+					$outputlangs = new Translate("",$conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+
+				unset($_POST['qty']);
+				unset($_POST['type']);
+				unset($_POST['np_price']);
+				unset($_POST['dp_desc']);
+				unset($_POST['np_tva_tx']);
 			}
-			propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
-			
-			unset($_POST['qty']);
-			unset($_POST['type']);
-			unset($_POST['np_price']);
-			unset($_POST['dp_desc']);
-			unset($_POST['np_tva_tx']);
-		}
-		else
-		{
-			$mesg='<div class="error">'.$propal->error.'</div>';
+			else
+			{
+				$mesg='<div class="error">'.$propal->error.'</div>';
+			}
 		}
 	}
 }
@@ -794,8 +771,6 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
-	$error=0;
-	
 	$propal = new Propal($db);
 	if (! $propal->fetch($_POST['propalid']) > 0)
 	{
@@ -803,53 +778,37 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 		exit;
 	}
 	$propal->fetch_client();
-	
-	if ($_POST['type'] < 2)
+
+	// Define info_bits
+	$info_bits=0;
+	if (preg_match('/\*/',$_POST['tva_tx'])) $info_bits |= 0x01;
+
+	// Define vat_rate
+	$vat_rate=$_POST['tva_tx'];
+	$vat_rate=str_replace('*','',$vat_rate);
+
+	// On verifie que le prix minimum est respecte
+	$productid = $_POST['productid'] ;
+	if ($productid)
 	{
-		// Define info_bits
-		$info_bits=0;
-		if (preg_match('/\*/',$_POST['tva_tx'])) $info_bits |= 0x01;
-		
-		// Define vat_rate
-		$vat_rate=$_POST['tva_tx'];
-		$vat_rate=str_replace('*','',$vat_rate);
-		
-		// On verifie que le prix minimum est respecte
-		$productid = $_POST['productid'] ;
-		if ($productid)
-		{
-			$product = new Product($db);
-			$res=$product->fetch($productid);
-		}
-		if ($productid && $product->price_min && ( price2num($_POST['subprice'])*(1-price2num($_POST['remise_percent'])/100) < price2num($product->price_min)))
-		{
-			$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($product->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
-			$error++;
-		}
-		else
-		{
-			$result = $propal->updateline($_POST['lineid'],
-			$_POST['subprice'],
-			$_POST['qty'],
-			$_POST['remise_percent'],
-			$vat_rate,
-			$_POST['desc'],
-			'HT',
-			$info_bits);
-		}
+		$product = new Product($db) ;
+		$res=$product->fetch($productid) ;
 	}
-	else if ($_POST['type'] == 9 && $_POST['desc'])
+	if ($productid && $product->price_min && ( price2num($_POST['subprice'])*(1-price2num($_POST['remise_percent'])/100) < price2num($product->price_min)))
+	{
+		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($product->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
+	}
+	else
 	{
 		$result = $propal->updateline($_POST['lineid'],
-		0,
-		0,
-		0,
-		0,
-		$_POST['desc']);
-	}
-	
-	if (!$error)
-	{
+		$_POST['subprice'],
+		$_POST['qty'],
+		$_POST['remise_percent'],
+		$vat_rate,
+		$_POST['desc'],
+			'HT',
+		$info_bits);
+
 		// Define output language
 		$outputlangs = $langs;
 		$newlang='';
@@ -1515,7 +1474,6 @@ if ($id > 0 || ! empty($ref))
 					else
 					{
 						if ($type==1) $text = img_object($langs->trans('Service'),'service');
-						else if ($type==9) $text = img_object($langs->trans('Notes'),'generic');
 						else $text = img_object($langs->trans('Product'),'product');
 						print $text.' '.nl2br($objp->description);
 
@@ -1578,48 +1536,41 @@ if ($id > 0 || ! empty($ref))
 					print '</tr></table>';
 					print '</td>';
 				}
-				
-				if ($objp->product_type < 2)
+
+				// VAT Rate
+				print '<td align="right" nowrap="nowrap">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
+
+				// U.P HT
+				print '<td align="right" nowrap="nowrap">'.price($objp->subprice)."</td>\n";
+
+				// Qty
+				print '<td align="right" nowrap="nowrap">';
+				if ((($objp->info_bits & 2) != 2) && $objp->special_code != 3)
 				{
-					// VAT Rate
-					print '<td align="right" nowrap="nowrap">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
-					
-					// U.P HT
-					print '<td align="right" nowrap="nowrap">'.price($objp->subprice)."</td>\n";
-					
-					// Qty
-					print '<td align="right" nowrap="nowrap">';
-					if ((($objp->info_bits & 2) != 2) && $objp->special_code != 3)
-					{
-						print $objp->qty;
-					}
-					else print '&nbsp;';
-					print '</td>';
-					
-					// Remise percent (negative or positive)
-					if (!empty($objp->remise_percent) && $objp->special_code != 3)
-					{
-						print '<td align="right">'.dol_print_reduction($objp->remise_percent,$langs)."</td>\n";
-					}
-					else
-					{
-						print '<td>&nbsp;</td>';
-					}
-					
-					// Montant total HT
-					if ($objp->special_code == 3)
-					{
-						// Si ligne en option
-						print '<td align="right" nowrap="nowrap">'.$langs->trans('Option').'</td>';
-					}
-					else
-					{
-						print '<td align="right" nowrap="nowrap">'.price($objp->total_ht)."</td>\n";
-					}
+					print $objp->qty;
+				}
+				else print '&nbsp;';
+				print '</td>';
+
+				// Remise percent (negative or positive)
+				if (!empty($objp->remise_percent) && $objp->special_code != 3)
+				{
+					print '<td align="right">'.dol_print_reduction($objp->remise_percent,$langs)."</td>\n";
 				}
 				else
 				{
-					print '<td align="right" colspan="5" nowrap="nowrap">&nbsp;</td>';
+					print '<td>&nbsp;</td>';
+				}
+
+				// Montant total HT
+				if ($objp->special_code == 3)
+				{
+					// Si ligne en option
+					print '<td align="right" nowrap="nowrap">'.$langs->trans('Option').'</td>';
+				}
+				else
+				{
+					print '<td align="right" nowrap="nowrap">'.price($objp->total_ht)."</td>\n";
 				}
 
 				// Icone d'edition et suppression
@@ -1675,7 +1626,6 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="action" value="updateligne">';
 				print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 				print '<input type="hidden" name="lineid" value="'.$_GET["lineid"].'">';
-				print '<input type="hidden" name="type" value="'.$objp->product_type.'">';
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
@@ -1683,56 +1633,51 @@ if ($id > 0 || ! empty($ref))
 				{
 					print '<input type="hidden" name="productid" value="'.$objp->fk_product.'">';
 					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-					if ($objp->product_type==1) print img_object($langs->trans('ShowService'),'service');
+					if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
 					else print img_object($langs->trans('ShowProduct'),'product');
 					print ' '.$objp->ref.'</a>';
 					print ' - '.nl2br($objp->product_label);
 					print '<br>';
 				}
-				// editeur wysiwyg
-				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
+				if ($_GET["action"] == 'editline')
 				{
-					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('desc',$objp->description,164,'dolibarr_details');
-					$doleditor->Create();
-				}
-				else
-				{
-					$nbrows=ROWS_2;
-					if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-					print '<textarea name="desc" cols="70" class="flat" rows="'.$nbrows.'">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
+					// editeur wysiwyg
+					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
+					{
+						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+						$doleditor=new DolEditor('desc',$objp->description,164,'dolibarr_details');
+						$doleditor->Create();
+					}
+					else
+					{
+						$nbrows=ROWS_2;
+						if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+						print '<textarea name="desc" cols="70" class="flat" rows="'.$nbrows.'">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
+					}
 				}
 				print '</td>';
-				if ($objp->product_type < 2)
+				if ($conf->global->PRODUIT_USE_MARKUP)
 				{
-					if ($conf->global->PRODUIT_USE_MARKUP)
-					{
-						print '<td align="right">'.vatrate($objp->marge_tx).'%</td>';
-					}
-					print '<td align="right">';
-					print $html->select_tva('tva_tx',$objp->tva_tx,$mysoc,$societe,'',$objp->info_bits);
-					print '</td>';
-					print '<td align="right"><input size="6" type="text" class="flat" name="subprice" value="'.price($objp->subprice,0,'',0).'"></td>';
-					print '<td align="right">';
-					if (($objp->info_bits & 2) != 2)
-					{
-						print '<input size="2" type="text" class="flat" name="qty" value="'.$objp->qty.'">';
-					}
-					else print '&nbsp;';
-					print '</td>';
-					print '<td align="right" nowrap>';
-					if (($objp->info_bits & 2) != 2)
-					{
-						print '<input size="1" type="text" class="flat" name="remise_percent" value="'.$objp->remise_percent.'">%';
-					}
-					else print '&nbsp;';
-					print '</td>';
+					print '<td align="right">'.vatrate($objp->marge_tx).'%</td>';
 				}
-				else
+				print '<td align="right">';
+				print $html->select_tva('tva_tx',$objp->tva_tx,$mysoc,$societe,'',$objp->info_bits);
+				print '</td>';
+				print '<td align="right"><input size="6" type="text" class="flat" name="subprice" value="'.price($objp->subprice,0,'',0).'"></td>';
+				print '<td align="right">';
+				if (($objp->info_bits & 2) != 2)
 				{
-					print '<td align="right" colspan="4">&nbsp;</td>';
+					print '<input size="2" type="text" class="flat" name="qty" value="'.$objp->qty.'">';
 				}
-				
+				else print '&nbsp;';
+				print '</td>';
+				print '<td align="right" nowrap>';
+				if (($objp->info_bits & 2) != 2)
+				{
+					print '<input size="1" type="text" class="flat" name="remise_percent" value="'.$objp->remise_percent.'">%';
+				}
+				else print '&nbsp;';
+				print '</td>';
 				print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 				print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 				print '</tr>' . "\n";
