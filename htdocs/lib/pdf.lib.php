@@ -68,7 +68,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			// Recipient properties
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->address);
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->cp) . " " . $outputlangs->convToOutputCharset($targetcontact->ville);
-			if ($targetcompany->departement && in_array($targetcompany->pays_code,array('US')))
+			if ($targetcompany->departement && in_array($targetcompany->pays_code,array('US','IN')))
 			{
 				$stringaddress.=" - ".$outputlangs->convToOutputCharset($targetcompany->departement);
 			}
@@ -80,7 +80,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			// Recipient properties
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcompany->address);
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcompany->cp) . " " . $outputlangs->convToOutputCharset($targetcompany->ville);
-			if ($targetcompany->departement && in_array($targetcompany->pays_code,array('US')))
+			if ($targetcompany->departement && in_array($targetcompany->pays_code,array('US','IN')))
 			{
 				$stringaddress.=" - ".$outputlangs->convToOutputCharset($targetcompany->departement);
 			}
