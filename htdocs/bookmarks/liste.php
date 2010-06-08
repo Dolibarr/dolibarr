@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur       <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ $sql.= " u.login, u.name, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql.= " WHERE 1=1";
 if (! $user->admin) $sql.= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL OR b.fk_user = 0)";
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield.", position",$sortorder);
 $sql.= $db->plimit( $limit, $offset);
 
 $resql=$db->query($sql);

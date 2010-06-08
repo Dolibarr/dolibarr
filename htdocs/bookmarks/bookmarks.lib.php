@@ -66,6 +66,7 @@ function printBookmarksList ($aDb, $aLangs)
 	{
 		$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
 		if (! $user->admin) $sql.= " WHERE (fk_user = ".$user->id." OR fk_user is NULL OR fk_user = 0)";
+		$sql.= " ORDER BY position";
 		if ($resql = $db->query($sql) )
 		{
 			$i=0;

@@ -78,8 +78,8 @@ class box_bookmarks extends ModeleBoxes {
 			$sql = "SELECT b.title, b.url, b.target, b.favicon";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 			$sql.= " WHERE fk_user = ".$user->id;
-			$sql .= " ORDER BY b.dateb DESC ";
-			$sql .= $db->plimit($max, 0);
+			$sql.= $db->order("position","ASC");
+			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
 
