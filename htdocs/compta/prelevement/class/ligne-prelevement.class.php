@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,9 +52,9 @@ class LignePrelevement
     $this->user = $user;
 
     // List of language codes for status
-    $this->statuts[0] = "Waiting";
+    /*$this->statuts[0] = "Waiting";
     $this->statuts[2] = "Credited";
-    $this->statuts[3] = "Refused";
+    $this->statuts[3] = "Refused";*/
   }
 
   /**

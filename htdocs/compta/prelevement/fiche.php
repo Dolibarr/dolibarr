@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Juanjo Menent <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@ accessforbidden();
 
 $langs->load("bills");
 $langs->load("withdrawals");
+$langs->load("main");
 
 
 // Security check
@@ -201,10 +203,10 @@ if ($_GET["id"])
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="infotrans">';
 			print '<table class="border" width="100%">';
-			print '<tr><td width="20%">Date Transmission</td><td>';
+			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
 			print $html->select_date('','','','','',"userfile");
 			print '</td></tr>';
-			print '<tr><td width="20%">Methode Transmission</td><td>';
+			print '<tr><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
 			print $html->select_array("methode",$bon->methodes_trans);
 			print '</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';

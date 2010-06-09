@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - main
+Dolibarr language file - es_ES - main
 CHARSET=UTF-8
 DIRECTION=ltr
 SeparatorDecimal=,
@@ -369,7 +369,7 @@ ByUsers=Por usuario
 Links=Links
 Link=Link
 Receipts=Recibos
-Rejects=Rechazado
+Rejects=Devoluciones
 Preview=Vista previa
 NextStep=Siguiente paso
 PreviousStep=Paso anterior
@@ -478,7 +478,7 @@ Undo=Anular
 Redo=Rehacer
 ExpandAll=Expandir todo
 UndoExpandAll=Anular expansión
-Reason=Razon
+Reason=Razón
 FeatureNotYetSupported=Funcionalidad aún no soportada
 CloseWindow=Cerrar ventana
 Question=Pregunta

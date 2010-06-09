@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,10 +88,10 @@ if ($db->query($sql))
 
   $var=True;
 
-  $st[0] = "Wainting";
-  $st[1] = "Wainting";
-  $st[2] = "Credited";
-  $st[3] = "Rejected";
+  $st[0]  = $langs->trans("StatusWaiting");
+  $st[1]  = $langs->trans("StatusWaiting");
+  $st[2] = $langs->trans("StatusCredited");
+  $st[3] = $langs->trans("StatusRefused");
 
   while ($i < $num)
     {

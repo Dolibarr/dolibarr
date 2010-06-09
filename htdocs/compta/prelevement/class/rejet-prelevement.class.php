@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ class RejetPrelevement
     $this->user = $user;
 
     $this->motifs = array();
-    $this->motifs[0] = "Non renseigne";
+   /* $this->motifs[0] = "Non renseigne";
     $this->motifs[1] = "Provision insuffisante";
     $this->motifs[2] = "Tirage conteste";
     $this->motifs[3] = "Pas de bon � payer";
@@ -57,7 +58,7 @@ class RejetPrelevement
     $this->motifs[5] = "RIB inexploitable";
     $this->motifs[6] = "Compte solde";
     $this->motifs[7] = "Decision judiciaire";
-    $this->motifs[8] = "Autre motif";
+    $this->motifs[8] = "Autre motif";*/
   }
 
   function create($user, $id, $motif, $date_rejet, $bonid, $facturation=0)

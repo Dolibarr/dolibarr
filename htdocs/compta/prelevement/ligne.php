@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,10 @@ require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();
+
+$langs->load("bills");
+$langs->load("withdrawals");
+$langs->load("main");
 
 
 if ($_POST["action"] == 'confirm_rejet')
@@ -87,6 +92,10 @@ $h++;
 if ($_GET["id"])
 {
 	$lipre = new LignePrelevement($db, $user);
+	
+	$lipre->statuts[0] = $langs->trans("StatusWaiting");
+    $lipre->statuts[2] = $langs->trans("StatusCredited");
+    $lipre->statuts[3] = $langs->trans("StatusRefused");
 
 	if ($lipre->fetch($_GET["id"]) == 0)
 	{
@@ -110,8 +119,8 @@ if ($_GET["id"])
 			$resf = $rej->fetch($lipre->id);
 			if ($resf == 0)
 			{
-				print '<tr><td width="20%">Motif du rejet</td><td>'.$rej->motif.'</td></tr>';
-				print '<tr><td width="20%">Date du rejet</td><td>';
+				print '<tr><td width="20%">M'.$langs->trans("RefusedReason").'</td><td>'.$rej->motif.'</td></tr>';
+				print '<tr><td width="20%">'.$langs->trans("RefusedData").'</td><td>';
 				if ($rej->date_rejet == 0)
 				{
 					/* Historique pour certaines install */
@@ -147,28 +156,38 @@ if ($_GET["id"])
 		$soc->fetch($lipre->socid);
 
 		$rej = new RejetPrelevement($db, $user);
+		
+		$rej->motifs[0] = $langs->trans("StatusMotif0");
+    	$rej->motifs[1] = $langs->trans("StatusMotif1");
+    	$rej->motifs[2] = $langs->trans("StatusMotif2");
+    	$rej->motifs[3] = $langs->trans("StatusMotif3");
+    	$rej->motifs[4] = $langs->trans("StatusMotif4");
+    	$rej->motifs[5] = $langs->trans("StatusMotif5");
+    	$rej->motifs[6] = $langs->trans("StatusMotif6");
+    	$rej->motifs[7] = $langs->trans("StatusMotif7");
+    	$rej->motifs[8] = $langs->trans("StatusMotif8");
 
 		print '<form name="confirm_rejet" method="post" action="ligne.php?id='.$_GET["id"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="confirm_rejet">';
 		print '<table class="border" width="100%">';
-		print '<tr><td colspan="3">Rejet de pr�l�vement</td></tr>';
-		print '<tr><td class="valid">Etes-vous s�r de vouloir saisir un rejet de pr�l�vement pour la soci�t� '.$soc->nom.' ?</td>';
+		print '<tr><td colspan="3">'.$langs->trans("WithdrawalRefused").'</td></tr>';
+		print '<tr><td class="valid">'.$langs->trans("WithdrawalRefusedConfirm").' '.$soc->nom.' ?</td>';
 		print '<td colspan="2" class="valid">';
 		print '<select name="confirm">';
-		print '<option value="yes">oui</option>';
-		print '<option value="no" selected="true">non</option>';
+		print '<option value="yes">'.$langs->trans("Yes").'</option>';
+		print '<option value="no" selected="true">'.$langs->trans("No").'</option>';
 		print '</select>';
 		print '</td></tr>';
 
-		print '<tr><td class="valid">Date du rejet</td>';
+		print '<tr><td class="valid">'.$langs->trans("RefusedData").'</td>';
 		print '<td colspan="2" class="valid">';
 		print $html->select_date('','','','','',"confirm_rejet");
 		print '</td></tr>';
-		print '<tr><td class="valid">Motif du rejet</td>';
+		print '<tr><td class="valid">'.$langs->trans("RefusedReason").'</td>';
 		print '<td class="valid">';
 		print '<select name="motif">';
-		print '<option value="0">(Motif du Rejet)</option>';
+		print '<option value="0">('.$langs->trans("RefusedReason").')</option>';
 
 		foreach($rej->motifs as $key => $value)
 		{
@@ -177,13 +196,13 @@ if ($_GET["id"])
 		print '</select>';
 		print '</td>';
 		print '<td class="valid" align="center">';
-		print '<input type="submit" value="Confirmer"></td></tr>';
+		print '<input type="submit" value='.$langs->trans("Confirm").'></td></tr>';
 
-		print '<tr><td class="valid">Facturation du rejet</td>';
+		print '<tr><td class="valid">'.$langs->trans("RefusedInvoicing").'</td>';
 		print '<td class="valid" colspan="2">';
 		print '<select name="facturer">';
-		print '<option value="0">Ne Pas Facturer le rejet</option>';
-		print '<option value="1">Facturer le rejet au client</option>';
+		print '<option value="0">'.$langs->trans("NoInvoiceRefused").'</option>';
+		print '<option value="1">'.$langs->trans("InvoiceRefused").'</option>';
 		print '</select>';
 		print '</td>';
 		print '</table></form>';
@@ -234,7 +253,7 @@ if ($_GET["id"])
 
 		$urladd = "&amp;id=".$_GET["id"];
 
-		print_barre_liste("Factures", $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num, 0, '');
+		print_barre_liste($langs->trans("Bills"), $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num, 0, '');
 
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -295,7 +314,7 @@ if ($_GET["id"])
 
 		if ($bon->credite == 1 && $lipre->statut == 2)
 		{
-	  		print "<a class=\"butAction\" href=\"ligne.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("Emmetre un rejet")."</a>";
+	  		print "<a class=\"butAction\" href=\"ligne.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("StandingOrderReject")."</a>";
 		}
 	}
 
