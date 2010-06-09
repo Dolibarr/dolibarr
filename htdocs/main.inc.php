@@ -969,7 +969,14 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	$htmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->fullname;
 	$htmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
 	$htmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
-	$htmltext.='<br><b>'.$langs->trans("Type").'</b>: '.($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
+	$type=($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
+	if ($user->societe_id)
+	{
+		$thirdpartystatic=new Societe($db);
+		$thirdpartystatic->fetch($user->societe_id);
+		$type.=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
+	}
+	$htmltext.='<br><b>'.$langs->trans("Type").'</b>: '.$type;
 	$htmltext.='<br>';
 	$htmltext.='<br><u>'.$langs->trans("Connection").'</u>';
 	if ($conf->global->MAIN_MODULE_MULTICOMPANY) $htmltext.='<br><b>'.$langs->trans("ConnectedOnMultiCompany").'</b>: '.$conf->entity.' (user entity '.$user->entity.')';

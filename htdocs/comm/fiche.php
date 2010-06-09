@@ -378,7 +378,7 @@ if ($socid > 0)
 	print '</table>';
 	print '<br>';
 
-	$now=gmmktime();
+	$now=dol_now();
 
 	/*
 	 * Last proposals

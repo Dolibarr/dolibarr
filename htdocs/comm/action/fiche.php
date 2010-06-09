@@ -638,7 +638,7 @@ if ($_GET["id"])
 	$head=actions_prepare_head();
 	dol_fiche_head($head, 'card', $langs->trans("Action"),0,'task');
 
-	$now=gmmktime();
+	$now=dol_now();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
 	// Confirmation suppression action
@@ -777,7 +777,9 @@ if ($_GET["id"])
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print $html->showrefnav($act,'id','',1,'id','ref','');
+		print '</td></tr>';
 
 		// Type
 		print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';

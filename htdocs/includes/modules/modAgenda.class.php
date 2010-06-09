@@ -152,6 +152,21 @@ class modAgenda extends DolibarrModules
 		$this->menu = array();			// List of menus to add
 		$r=0;
 
+		// Add here entries to declare new menus
+		// Example to declare the Top Menu entry:
+		// $this->menu[$r]=array(	'fk_menu'=>0,			// Put 0 if this is a top menu
+		//							'type'=>'top',			// This is a Top menu entry
+		//							'titre'=>'MyModule top menu',
+		//							'mainmenu'=>'mymodule',
+		//							'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor.
+		//							'url'=>'/mymodule/pagetop.php',
+		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+		//							'position'=>100,
+		//							'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+		//							'perms'=>'1',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+		//							'target'=>'',
+		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+		// $r++;
 		$this->menu[$r]=array('fk_menu'=>0,
 													'type'=>'top',
 													'titre'=>'Agenda',
@@ -163,7 +178,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->myactions->read',
 													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 
 		$this->menu[$r]=array('fk_menu'=>'r=0',
@@ -176,7 +191,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->myactions->read',
 													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		$this->menu[$r]=array('fk_menu'=>'r=1',
 													'type'=>'left',
@@ -188,7 +203,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'($user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create)',
 													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		// Calendar
 		$this->menu[$r]=array('fk_menu'=>'r=1',
@@ -201,7 +216,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->myactions->read',
 													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		$this->menu[$r]=array('fk_menu'=>'r=3',
 													'type'=>'left',
@@ -213,7 +228,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->myactions->read',
 													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		$this->menu[$r]=array('fk_menu'=>'r=3',
 													'type'=>'left',
@@ -225,7 +240,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->myactions->read',
 													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		$this->menu[$r]=array('fk_menu'=>'r=3',
 													'type'=>'left',
@@ -237,7 +252,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->allactions->read',
 													'enabled'=>'$user->rights->agenda->allactions->read',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		$this->menu[$r]=array('fk_menu'=>'r=3',
 													'type'=>'left',
@@ -249,7 +264,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->allactions->read',
 													'enabled'=>'$user->rights->agenda->allactions->read',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		// List
 		$this->menu[$r]=array('fk_menu'=>'r=1',
@@ -262,7 +277,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->myactions->read',
 													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		$this->menu[$r]=array('fk_menu'=>'r=8',
 													'type'=>'left',
@@ -274,7 +289,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->myactions->read',
 													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		$this->menu[$r]=array('fk_menu'=>'r=8',
 													'type'=>'left',
@@ -286,7 +301,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->myactions->read',
 													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		$this->menu[$r]=array('fk_menu'=>'r=8',
 													'type'=>'left',
@@ -298,7 +313,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->allactions->read',
 													'enabled'=>'$user->rights->agenda->allactions->read',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		$this->menu[$r]=array('fk_menu'=>'r=8',
 													'type'=>'left',
@@ -310,7 +325,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->allactions->read',
 													'enabled'=>'$user->rights->agenda->allactions->read',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 		// Reports
 		$this->menu[$r]=array('fk_menu'=>'r=1',
@@ -323,7 +338,7 @@ class modAgenda extends DolibarrModules
 													'perms'=>'$user->rights->agenda->allactions->read',
 													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
-													'user'=>0);
+													'user'=>2);
 		$r++;
 /*$newmenu->add(DOL_URL_ROOT."/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda", $langs->trans("Actions"), 0, $user->rights->agenda->myactions->read);
 				$newmenu->add(DOL_URL_ROOT."/comm/action/fiche.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create", $langs->trans("NewAction"), 1, ($user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create));

@@ -531,7 +531,7 @@ class CommonObject
 
 		if (! $this->table_element)
 		{
-			dol_syslog("CommonObject::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
+			dol_print_error("CommonObject::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -548,7 +548,7 @@ class CommonObject
 		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
 		if (isset($filter)) $sql.=" AND ".$filter;
 		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-		if ($this->ismultientitymanaged > 0) $sql.= ' AND te.entity IN (0,'.$conf->entity.')';
+		if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN (0,'.$conf->entity.')';
 
 		//print $sql."<br>";
 		$result = $this->db->query($sql) ;
@@ -569,7 +569,7 @@ class CommonObject
 		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
 		if (isset($filter)) $sql.=" AND ".$filter;
 		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-		if ($this->ismultientitymanaged > 0) $sql.= ' AND te.entity IN (0,'.$conf->entity.')';
+		if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN (0,'.$conf->entity.')';
 		// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
 		//print $sql."<br>";
