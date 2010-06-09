@@ -1083,7 +1083,7 @@ FCKeditorForCompany=Creación/edición WYSIWIG de la descripción y notas de los
 FCKeditorForProduct=Creación/edición WYSIWIG de la descripción y notas de los productos/servicios
 FCKeditorForMembers=Creación/edición WYSIWIG de la descripción y notas de los miembros
 FCKeditorForProductDetails=Creación/edición WYSIWIG de las líneas de detalle de los productos (en pedidos, presupuestos, facturas, etc.)
-FCKeditorForProductDetailsPerso=Creación/edición WYSIWIG de las líneas de detalle en los productos personalizadas (en pedidos, presupuestos, facturas, etc.)
+FCKeditorForProductDetailsPerso=Creación/edición WYSIWIG de las líneas de detalle en los productos personalizadas (en pedidos, presupuestos, facturas, etc.)<font class="warning">Advertencia: El uso para este caso no es aconsejable ya que puede causar problemas en la gestión de los caracteres y el diseño de los archivos PDF generados.</font>
 FCKeditorForMailing=Creación/edición WYSIWIG de los E-Mails
 ##### OSCommerce 1 #####= undefined=
 OSCommerceErrorConnectOkButWrongDatabase=La conexión se ha establecido, pero la base de datos no parece de OSCommerce.
