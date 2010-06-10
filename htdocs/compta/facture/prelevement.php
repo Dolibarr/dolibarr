@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,7 +224,7 @@ if ($_GET["facid"] > 0)
 
 				print "<tr $bc[$var]>";
 				print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
-				print '<td align="center">En attente de traitement</td>';
+				print '<td align="center">'.$langs->trans("OrderWaiting").'</td>';
 				print '<td align="center">'.price($obj->amount).'</td>';
 				print '<td align="center">-</td>';
 				print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
