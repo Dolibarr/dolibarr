@@ -215,11 +215,7 @@ class Translate {
 						$this->tab_translate=array_merge($this->tab_translate,$tmparray);
 						//print $newdomain."\n";
 						//var_dump($this->tab_translate);
-						if ($alt == 2)
-						{
-							$this->tab_loaded[$newdomain]=3;    // Set this file as loaded from cache
-							$fileread=1;
-						}
+						if ($alt == 2) $fileread=1;
 						$found=true;						// Found in dolibarr PHP cache
 					}
 				}
