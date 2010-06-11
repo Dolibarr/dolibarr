@@ -128,7 +128,7 @@ class Translate {
 	 *              If data for file already loaded, do nothing.
 	 * 				All data in translation array are stored in UTF-8 format.
 	 *  \param      domain      		File name to load (.lang file). Use file@module if file is in a module directory.
-	 *  \param      alt         		0,1,2
+	 *  \param      alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
 	 * 	\param		soptafterdirection	Stop when the DIRECTION tag is found (optimize)
 	 * 	\param		forcelangdir		To force a lang directory
 	 *	\return		int					<0 if KO, 0 if already loaded, >0 if OK
@@ -206,7 +206,7 @@ class Translate {
 					$usecachekey=$newdomain;
 				}
 
-				if ($alt == 2 && $usecachekey)
+				if ($usecachekey)
 				{
 					require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
 					$tmparray=dol_getcache($usecachekey);
@@ -215,8 +215,11 @@ class Translate {
 						$this->tab_translate=array_merge($this->tab_translate,$tmparray);
 						//print $newdomain."\n";
 						//var_dump($this->tab_translate);
-						$this->tab_loaded[$newdomain]=3;    // Set this file as loaded from cache
-						$fileread=1;
+						if ($alt == 2)
+						{
+							$this->tab_loaded[$newdomain]=3;    // Set this file as loaded from cache
+							$fileread=1;
+						}
 						$found=true;						// Found in dolibarr PHP cache
 					}
 				}
@@ -267,8 +270,8 @@ class Translate {
 						fclose($fp);
 						$fileread=1;
 
-						// To save lang content in cache
-						if ($alt == 2 && $usecachekey && sizeof($tabtranslatedomain))
+						// To save lang content for usecachekey into cache
+						if ($usecachekey && sizeof($tabtranslatedomain))
 						{
 							require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
 							$size=dol_setcache($usecachekey,$tabtranslatedomain);
@@ -280,7 +283,7 @@ class Translate {
 			}
 		}
 
-		// Now we load alternate file
+		// Now we complete with next file
 		if ($alt == 0)
 		{
 			// This function MUST NOT contains call to syslog
@@ -289,6 +292,7 @@ class Translate {
 			$this->load($domain,$alt+1,$stopafterdirection,$langofdir);
 		}
 
+		// Now we complete with reference en_US/fr_FR/es_ES file
 		if ($alt == 1)
 		{
 			// This function MUST NOT contains call to syslog
