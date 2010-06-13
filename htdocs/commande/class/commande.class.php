@@ -2196,7 +2196,7 @@ class Commande extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, date_creation as datec,';
+		$sql = 'SELECT c.rowid, date_creation as datec, tms as datem,';
 		$sql.= ' date_valid as datev,';
 		$sql.= ' date_cloture as datecloture,';
 		$sql.= ' fk_user_author, fk_user_valid, fk_user_cloture';
@@ -2231,6 +2231,7 @@ class Commande extends CommonObject
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
 				$this->date_validation   = $this->db->jdate($obj->datev);
 				$this->date_cloture      = $this->db->jdate($obj->datecloture);
 			}
