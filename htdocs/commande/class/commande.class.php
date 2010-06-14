@@ -1186,7 +1186,7 @@ class Commande extends CommonObject
 	/**
 	 *      \brief      Reinitialize array lignes
 	 *		\param		only_product	Return only physical products
-	 *		\return		array			Array of OrderLine
+	 *		\return		int				<0 if KO, >0 if OK
 	 */
 	function fetch_lines($only_product=0)
 	{
