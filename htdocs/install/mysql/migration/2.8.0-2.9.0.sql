@@ -223,3 +223,54 @@ ALTER TABLE llx_societe_address CHANGE fk_societe fk_soc integer DEFAULT 0;
 -- Add new spanish VAT from July 2010
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 45, 4,  '18','0','4','VAT standard rate from July 2010',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 46, 4,   '8','0','1','VAT reduced rate from July 2010',1);
+
+-- Add Argentina Data
+-- Regions Argentina (id pays=23)
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2301, 23, 2301, '', 0, 'Norte', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2302, 23, 2302, '', 0, 'Litoral', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2303, 23, 2303, '', 0, 'Cuyana', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2304, 23, 2304, '', 0, 'Central', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2305, 23, 2305, '', 0, 'Patagonia', 1);
+
+-- Provinces Argentina
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2301', 2301, '', 01, 'CATAMARCA', 'Catamarca', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2302', 2301, '', 02, 'YUJUY', 'Yujuy', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2303', 2301, '', 03, 'TUCAMAN', 'Tucamán', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2304', 2301, '', 04, 'SANTIAGO DEL ESTERO', 'Santiago del Estero', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2305', 2301, '', 05, 'SALTA', 'Salta', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2306', 2302, '', 06, 'CHACO', 'Chaco', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2307', 2302, '', 07, 'CORRIENTES', 'Corrientes', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2308', 2302, '', 08, 'ENTRE RIOS', 'Entre Ríos', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2309', 2302, '', 09, 'FORMOSA MISIONES', 'Formosa Misiones', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2310', 2302, '', 10, 'SANTA FE', 'Santa Fe', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2311', 2303, '', 11, 'LA RIOJA', 'La Rioja', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2312', 2303, '', 12, 'MENDOZA', 'Mendoza', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2313', 2303, '', 13, 'SAN JUAN', 'San Juan', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2314', 2303, '', 14, 'SAN LUIS', 'San Luis', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2315', 2304, '', 15, 'CORDOBA', 'Córdoba', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2316', 2304, '', 16, 'BUENOS AIRES', 'Buenos Aires', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2317', 2304, '', 17, 'CABA', 'Caba', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2318', 2305, '', 18, 'LA PAMPA', 'La Pampa', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2319', 2305, '', 19, 'NEUQUEN', 'Neuquén', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2320', 2305, '', 20, 'RIO NEGRO', 'Río Negro', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2321', 2305, '', 21, 'CHUBUT', 'Chubut', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2322', 2305, '', 22, 'SANTA CRUZ', 'Santa Cruz', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2323', 2305, '', 23, 'TIERRA DEL FUEGO', 'Tierra del Fuego', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2324', 2305, '', 24, 'ISLAS MALVINAS', 'Islas Malvinas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2325', 2305, '', 25, 'ANTARTIDA', 'Antártida', 1);
+
+-- forme juridique Argentina
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2301', 'Monotributista', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2302', 'Sociedad Civil', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2303', 'Sociedades Comerciales', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2304', 'Sociedades de Hecho', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2305', 'Sociedades Irregulares', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2306', 'Sociedad Colectiva', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2307', 'Sociedad en Comandita Simple', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2308', 'Sociedad de Capital e Industria', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2309', 'Sociedad Accidental o en participación', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2310', 'Sociedad de Responsabilidad Limitada', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2311', 'Sociedad Anónima', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2312', 'Sociedad Anónima con Participación Estatal Mayoritaria', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2313', 'Sociedad en Comandita por Acciones (arts. 315 a 324, LSC)', 1);
+

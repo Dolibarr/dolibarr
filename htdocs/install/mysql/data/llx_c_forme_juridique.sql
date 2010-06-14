@@ -5,6 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2010 	   Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -145,16 +146,16 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '4
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '403', 'Sociedad Civil', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '404', 'Sociedad Colectiva', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '405', 'Sociedad Limitada', 1);
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '406', 'Sociedad Anonima', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '406', 'Sociedad Anónima', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '407', 'Sociedad Comandataria por Acciones', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '408', 'Sociedad Comandataria Simple', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '409', 'Sociedad Laboral', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '410', 'Sociedad Cooperativa', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '411', 'Sociedad de Garantía Recíproca', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '412', 'Entidad de Capital-Riesgo', 1);
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '413', 'Agrupación de Interes Económico', 1);
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '414', 'Sociedad de Invarsión Mobiliaria', 1);
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '415', 'Agrupación sin Animo de Lucro', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '413', 'Agrupación de Interés Económico', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '414', 'Sociedad de Inversión Mobiliaria', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '415', 'Agrupación sin Ánimo de Lucro', 1);
 
 -- Mauritius
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15201', 'Mauritius Private Company Limited By Shares', 1);
@@ -167,3 +168,19 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15208', 'Mauritius Limited Partnership', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15209', 'Mauritius Sole Proprietorship', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15210', 'Mauritius Trusts', 1);
+
+-- Argentina
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2301', 'Monotributista', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2302', 'Sociedad Civil', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2303', 'Sociedades Comerciales', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2304', 'Sociedades de Hecho', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2305', 'Sociedades Irregulares', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2306', 'Sociedad Colectiva', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2307', 'Sociedad en Comandita Simple', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2308', 'Sociedad de Capital e Industria', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2309', 'Sociedad Accidental o en participación', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2310', 'Sociedad de Responsabilidad Limitada', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2311', 'Sociedad Anónima', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2312', 'Sociedad Anónima con Participación Estatal Mayoritaria', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2313', 'Sociedad en Comandita por Acciones (arts. 315 a 324, LSC)', 1);
+

@@ -5,6 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2010 	   Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -121,6 +122,13 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 -- Region US (id pays=11)
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (1101, 11, 1101, '', 0, 'United-States', 1);
 
+-- Regions Argentina (id pays=23)
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2301, 23, 2301, '', 0, 'Norte', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2302, 23, 2302, '', 0, 'Litoral', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2303, 23, 2303, '', 0, 'Cuyana', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2304, 23, 2304, '', 0, 'Central', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2305, 23, 2305, '', 0, 'Patagonia', 1);
+
 -- Regions Australia (id pays=28)
 insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (2801, 28, 2801, '', 0, 'Australia', 1);
 
@@ -145,3 +153,4 @@ INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, act
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (15210,  152, 15210, '', 0, 'Rodrigues', 1);
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (15211,  152, 15211, '', 0, 'Les îles Agaléga', 1);
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (15212,  152, 15212, '', 0, 'Les écueils des Cargados Carajos', 1);
+

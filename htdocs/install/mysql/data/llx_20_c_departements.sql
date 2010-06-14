@@ -5,6 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2010 	   Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -309,3 +310,31 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LP', 8601, NULL, NULL, NULL, 'La Paz', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SV', 8601, NULL, NULL, NULL, 'San Vicente', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CU', 8601, NULL, NULL, NULL, 'Cuscatlan', 1);
+
+-- Provinces Argentina
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2301', 2301, '', 01, 'CATAMARCA', 'Catamarca', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2302', 2301, '', 02, 'YUJUY', 'Yujuy', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2303', 2301, '', 03, 'TUCAMAN', 'Tucamán', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2304', 2301, '', 04, 'SANTIAGO DEL ESTERO', 'Santiago del Estero', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2305', 2301, '', 05, 'SALTA', 'Salta', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2306', 2302, '', 06, 'CHACO', 'Chaco', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2307', 2302, '', 07, 'CORRIENTES', 'Corrientes', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2308', 2302, '', 08, 'ENTRE RIOS', 'Entre Ríos', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2309', 2302, '', 09, 'FORMOSA MISIONES', 'Formosa Misiones', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2310', 2302, '', 10, 'SANTA FE', 'Santa Fe', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2311', 2303, '', 11, 'LA RIOJA', 'La Rioja', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2312', 2303, '', 12, 'MENDOZA', 'Mendoza', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2313', 2303, '', 13, 'SAN JUAN', 'San Juan', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2314', 2303, '', 14, 'SAN LUIS', 'San Luis', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2315', 2304, '', 15, 'CORDOBA', 'Córdoba', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2316', 2304, '', 16, 'BUENOS AIRES', 'Buenos Aires', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2317', 2304, '', 17, 'CABA', 'Caba', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2318', 2305, '', 18, 'LA PAMPA', 'La Pampa', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2319', 2305, '', 19, 'NEUQUEN', 'Neuquén', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2320', 2305, '', 20, 'RIO NEGRO', 'Río Negro', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2321', 2305, '', 21, 'CHUBUT', 'Chubut', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2322', 2305, '', 22, 'SANTA CRUZ', 'Santa Cruz', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2323', 2305, '', 23, 'TIERRA DEL FUEGO', 'Tierra del Fuego', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2324', 2305, '', 24, 'ISLAS MALVINAS', 'Islas Malvinas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2325', 2305, '', 25, 'ANTARTIDA', 'Antártida', 1);
+
