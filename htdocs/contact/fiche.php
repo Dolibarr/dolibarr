@@ -401,7 +401,7 @@ if ($user->rights->societe->contact->creer)
 		// We set pays_id, and pays_code label of the chosen country
 		if ($contact->fk_pays)
 		{
-			$sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$contact->fk_pays;
+			$sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["pays_id"])?$_POST["pays_id"]:$contact->fk_pays);
 			$resql=$db->query($sql);
 			if ($resql)
 			{
@@ -433,33 +433,33 @@ if ($user->rights->societe->contact->creer)
 		print '</td></tr>';
 
 		// Name
-		print '<tr><td class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
-		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="20" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.(isset($_POST["name"])?$_POST["name"]:$contact->name).'"></td>';
+		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="20" maxlength="80" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$contact->firstname).'"></td></tr>';
 
 		// Company
 		print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
 		print '<td colspan="3">';
-		print $form->select_societes($contact->socid?$contact->socid:-1,'socid','',1);
+		print $form->select_societes(isset($_POST["socid"])?$_POST["socid"]:($contact->socid?$contact->socid:-1),'socid','',1);
 		print '</td>';
 		print '</tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-		print $formcompany->select_civilite($contact->civilite_id);
+		print $formcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$contact->civilite_id);
 		print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td></tr>';
+		print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$contact->poste).'"></td></tr>';
 
 		// Address
-		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.$contact->address.'</textarea></td>';
+		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$contact->address).'</textarea></td>';
 
 		// Zip / Town
-		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.$contact->cp.'">&nbsp;';
-		print '<input name="ville" type="text" size="20" value="'.$contact->ville.'" maxlength="80"></td></tr>';
+		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.(isset($_POST["cp"])?$_POST["cp"]:$contact->cp).'">&nbsp;';
+		print '<input name="ville" type="text" size="20" value="'.(isset($_POST["ville"])?$_POST["ville"]:$contact->ville).'" maxlength="80"></td></tr>';
 
 		// Country
 		print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-		$form->select_pays($contact->fk_pays,'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_edit()"':'');
+		$form->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$contact->fk_pays,'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_edit()"':'');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
@@ -469,14 +469,14 @@ if ($user->rights->societe->contact->creer)
 		print '</td></tr>';
 
 		// Phone
-		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
-		print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
+		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_pro"])?$_POST["phone_pro"]:$contact->phone_pro).'"></td>';
+		print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$contact->phone_perso).'"></td></tr>';
 
-		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
-		print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
+		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$contact->phone_mobile).'"></td>';
+		print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.(isset($_POST["fax"])?$_POST["fax"]:$contact->fax).'"></td></tr>';
 
 		// EMail
-		print '<tr><td>'.$langs->trans("EMail").'</td><td><input name="email" type="text" size="40" maxlength="80" value="'.$contact->email.'"></td>';
+		print '<tr><td>'.$langs->trans("EMail").'</td><td><input name="email" type="text" size="40" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$contact->email).'"></td>';
 		if ($conf->mailing->enabled)
 		{
 			$langs->load("mails");
@@ -490,7 +490,7 @@ if ($user->rights->societe->contact->creer)
 		print '</tr>';
 
 		// Jabberid
-		print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="40" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
+		print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$contact->jabberid).'"></td></tr>';
 
 		// Visibility
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
@@ -500,7 +500,7 @@ if ($user->rights->societe->contact->creer)
 
 		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
 		print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
-		print $contact->note;
+		print isset($_POST["note"])?$_POST["note"]:$contact->note;
 		print '</textarea></td></tr>';
 
 		$contact->load_ref_elements();
