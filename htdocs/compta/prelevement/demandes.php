@@ -85,9 +85,10 @@ if (strlen(trim($_GET["search_societe"])))
 $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows();
+	$num = $db->num_rows($resql);
 	$i = 0;
 
 	if (!$statut)
@@ -119,7 +120,7 @@ if ( $db->query($sql) )
 
 	while ($i < min($num,$conf->liste_limit))
 	{
-		$obj = $db->fetch_object();
+		$obj = $db->fetch_object($resql);
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 
