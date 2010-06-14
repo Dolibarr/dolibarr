@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -82,28 +82,28 @@ class modPrelevement extends DolibarrModules
 		$this->rights_class = 'prelevement';
 
 		$this->rights[1][0] = 151;
-		$this->rights[1][1] = 'Consulter les prelevements';
+		$this->rights[1][1] = 'Read withdrawals';
 		$this->rights[1][2] = 'r';
 		$this->rights[1][3] = 1;
 		$this->rights[1][4] = 'bons';
 		$this->rights[1][5] = 'lire';
 
 		$this->rights[2][0] = 152;
-		$this->rights[2][1] = 'Configurer les prelevements';
+		$this->rights[2][1] = 'Create/modify a withdrawal request';
 		$this->rights[2][2] = 'w';
 		$this->rights[2][3] = 0;
 		$this->rights[2][4] = 'bons';
 		$this->rights[2][5] = 'configurer';
 
 		$this->rights[3][0] = 153;
-		$this->rights[3][1] = 'Consulter les bons de prelevements';
+		$this->rights[3][1] = 'Read a widthrawal receipt';
 		$this->rights[3][2] = 'r';
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'bons';
 		$this->rights[3][5] = 'lire';
 
 		$this->rights[4][0] = 154;
-		$this->rights[4][1] = 'Creer un bon de prelevement';
+		$this->rights[4][1] = 'Create/modify a withdrawal receipt';
 		$this->rights[4][2] = 'w';
 		$this->rights[4][3] = 0;
 		$this->rights[4][4] = 'bons';

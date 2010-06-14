@@ -74,7 +74,7 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php';
 $head[$h][1] = $langs->trans("NewStandingOrder");
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("StandingOrders"));
+dol_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
 
 
 $nb=$bprev->NbFactureAPrelever();
@@ -90,10 +90,10 @@ print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td align="right">';
 print $nb;
 print '</td></tr>';
-print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdraw").' '.$langs->trans("ThirdPartyBankCode").'='.PRELEVEMENT_CODE_BANQUE.'</td><td align="right">';
+print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdraw").' '.$langs->trans("ThirdPartyBankCode").'='.$conf->global->PRELEVEMENT_CODE_BANQUE.'</td><td align="right">';
 print $nb1;
 print '</td></tr>';
-print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdraw").' '.$langs->trans("ThirdPartyDeskCode").'='.PRELEVEMENT_CODE_GUICHET.'</td><td align="right">';
+print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdraw").' '.$langs->trans("ThirdPartyDeskCode").'='.$conf->global->PRELEVEMENT_CODE_GUICHET.'</td><td align="right">';
 print $nb11;
 print '</td></tr>';
 
@@ -116,7 +116,7 @@ if ($nb)
 	if ($nb) print '<a class="butAction" href="create.php?action=create">'.$langs->trans("CreateAll")."</a>\n";
 	if ($nb11) print '<a class="butAction" href="create.php?action=create&amp;banque=1">'.$langs->trans("CreateBanque")."</a>\n";
 	if ($nb1) print '<a class="butAction" href="create.php?action=create&amp;banque=1&amp;guichet=1">'.$langs->trans("CreateGuichet")."</a>\n";
-	
+
 	print "</div>\n";
 }
 else

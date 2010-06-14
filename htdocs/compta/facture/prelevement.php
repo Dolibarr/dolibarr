@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 
 if (!$user->rights->facture->lire)
 accessforbidden();
@@ -86,7 +87,7 @@ if ($_GET["action"] == "delete")
  * View
  */
 
-$now=gmmktime();
+$now=dol_now();
 
 llxHeader('',$langs->trans("Bill"));
 
@@ -98,10 +99,10 @@ $html = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($_GET["facid"] > 0)
+if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
 {
-	$fac = New Facture($db);
-	if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
+	$fac = new Facture($db);
+	if ($fac->fetch($_REQUEST["facid"], $_REQUEST["ref"]) > 0)
 	{
 		if ($mesg) print $mesg.'<br>';
 
@@ -115,22 +116,33 @@ if ($_GET["facid"] > 0)
 		}
 
 		$head = facture_prepare_head($fac);
-		dol_fiche_head($head, 'standingorders', $langs->trans('InvoiceCustomer'));
+		dol_fiche_head($head, 'standingorders', $langs->trans('InvoiceCustomer'),0,'bill');
 
 		/*
 		 *   Facture
 		 */
 		print '<table class="border" width="100%">';
 
-		// Reference du facture
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $fac->ref;
+		// Ref
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="5">';
+		$morehtmlref='';
+		$discount=new DiscountAbsolute($db);
+		$result=$discount->fetch(0,$fac->id);
+		if ($result > 0)
+		{
+			$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
+		}
+		if ($result < 0)
+		{
+			dol_print_error('',$discount->error);
+		}
+		print $html->showrefnav($fac,'ref','',1,'facnumber','ref',$morehtmlref);
 		print "</td></tr>";
 
 		// Societe
 		print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
-		print '<td colspan="5">';
-		print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+		print '<td colspan="5">'.$soc->getNomUrl(1,'compta');
+		print '</td>';
 		print '</tr>';
 
 		// Dates
@@ -164,8 +176,7 @@ if ($_GET["facid"] > 0)
 		print '</div>';
 
 		/*
-		 * Demande de pr�l�vement
-		 *
+		 * Withdrawal request
 		 */
 
 		$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
@@ -186,21 +197,29 @@ if ($_GET["facid"] > 0)
 		}
 
 
+		/*
+		 * Buttons
+		 */
 		print "<div class=\"tabsAction\">\n";
 
 		// Add a withdraw request
-		if ($fac->statut > 0 && $fac->paye == 0 && $fac->mode_reglement_code == 'PRE' && $num == 0)
+		if ($fac->statut > 0 && $fac->paye == 0 && $num == 0)
 		{
-			if ($user->rights->facture->creer)
+			if ($user->rights->prelevement->bons->configurer)
 			{
 				print '<a class="butAction" href="prelevement.php?facid='.$fac->id.'&amp;action=new">'.$langs->trans("MakeWithdrawRequest").'</a>';
 			}
+			else
+			{
+				print '<a class="butActionRefused" href="#">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			}
 		}
+
 		print "</div><br/>";
 
 
 		/*
-		 * Pr�l�vement
+		 * Withdrawals
 		 */
 		print '<table class="noborder" width="100%">';
 
@@ -299,7 +318,7 @@ if ($_GET["facid"] > 0)
 	}
 	else
 	{
-		/* Facture non trouv�e */
+		/* Invoice not found */
 		print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
 	}
 }

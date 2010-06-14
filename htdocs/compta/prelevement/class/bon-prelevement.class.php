@@ -1135,8 +1135,7 @@ class BonPrelevement extends CommonObject
     }
 
     /**
-     * Generation d'un bon de prelevement
-     *
+     * Generate a withdrawal file
      */
     function Generate()
     {
@@ -1144,8 +1143,9 @@ class BonPrelevement extends CommonObject
 
         $result = -1;
 
-        $this->file = fopen ($this->filename,"w");
+        dol_syslog("BonPrelevement::Generate build file ".$this->filename);
 
+        $this->file = fopen ($this->filename,"w");
 
         /*
          * En-tete Emetteur
@@ -1163,13 +1163,14 @@ class BonPrelevement extends CommonObject
 
         $i = 0;
 
-        if ($this->db->query($sql))
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
-            $num = $this->db->num_rows();
+            $num = $this->db->num_rows($resql);
 
             while ($i < $num)
             {
-                $row = $this->db->fetch_row();
+                $row = $this->db->fetch_row($resql);
 
                 $this->EnregDestinataire($row[0],
                 $row[1],

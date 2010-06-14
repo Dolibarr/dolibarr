@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       scripts/prelevement/prelevement.php
+ *      \file       scripts/withdrawals/build_withdrawal_file.php
  *      \ingroup    prelevement
  *      \brief      Script de prelevement
  * 		\version	$Id$
@@ -30,8 +30,8 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You ar usingr PH for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
 }
 
 // Recupere env dolibarr
@@ -51,12 +51,16 @@ $month = strftime("%m", $datetimeprev);
 $year = strftime("%Y", $datetimeprev);
 
 $user = new user($db);
-$user->fetch(PRELEVEMENT_USER);
+$user->fetch($conf->global->PRELEVEMENT_USER);
 
 
-/*
- *	View
- */
+print "***** ".$script_file." (".$version.") *****\n";
+if (! isset($argv[1])) {	// Check parameters
+    print "This script check invoices with a withdrawal request and\n";
+    print "then create payment and build a withdraw file.\n";
+	print "Usage: ".$script_file." simu|real\n";
+    exit;
+}
 
 $factures = array();
 $factures_prev = array();
@@ -80,21 +84,22 @@ if (!$error)
 	$sql.= " AND f.total_ttc > 0";
 	$sql.= " AND f.fk_mode_reglement = 3";
 
-	if ( $db->query($sql) )
+	$resql= $db->query($sql);
+	if ($resql)
 	{
-		$num = $db->num_rows();
+		$num = $db->num_rows($resql);
 		$i = 0;
 
 		while ($i < $num)
 		{
-	  $row = $db->fetch_row();
+			$row = $db->fetch_row($resql);
 
-	  $factures[$i] = $row;
+			$factures[$i] = $row;
 
-	  $i++;
+			$i++;
 		}
-		$db->free();
-		dol_syslog("$i factures a prelever");
+		$db->free($resql);
+		dol_syslog($i." invoices to withdraw.");
 	}
 	else
 	{
@@ -117,89 +122,100 @@ if (!$error)
 	 *
 	 */
 	$i = 0;
-	dol_syslog("Debut verification des RIB");
+	print "Start to check bank numbers RIB/IBAN.\n";
 
 	if (sizeof($factures) > 0)
 	{
 		foreach ($factures as $fac)
 		{
-	  $fact = new Facture($db);
+		  $fact = new Facture($db);
 
-	  if ($fact->fetch($fac[0]) == 1)
-	  {
-	  	$soc = new Societe($db);
-	  	if ($soc->fetch($fact->socid) == 1)
-	  	{
-	  		if ($soc->verif_rib() == 1)
-	  		{
-	  			$factures_prev[$i] = $fac;
-	  			/* second tableau necessaire pour bon-prelevement */
-	  			$factures_prev_id[$i] = $fac[0];
-	  			$i++;
-	  		}
-	  		else
-	  		{
-	  			dol_syslog("Erreur de RIB societe $fact->socid $soc->nom");
-	  		}
-	  	}
-	  	else
-	  	{
-	  		dol_syslog("Impossible de lire la societe");
-	  	}
-	  }
-	  else
-	  {
-	  	dol_syslog("Impossible de lire la facture");
-	  }
+		  if ($fact->fetch($fac[0]) == 1)
+		  {
+		  	$soc = new Societe($db);
+		  	if ($soc->fetch($fact->socid) == 1)
+		  	{
+		  		if ($soc->verif_rib() == 1)
+		  		{
+		  			$factures_prev[$i] = $fac;
+		  			/* second tableau necessaire pour bon-prelevement */
+		  			$factures_prev_id[$i] = $fac[0];
+		  			$i++;
+		  		}
+		  		else
+		  		{
+		  			print "Bad value for bank RIB/IBAN: Third party id=".$fact->socid.", name=".$soc->nom."\n";
+		  			dol_syslog("Bad value for bank RIB/IBAN ".$fact->socid." ".$soc->nom);
+		  		}
+		  	}
+		  	else
+		  	{
+		  		print "Failed to read third party\n";
+		  		dol_syslog("Failed to read third party");
+		  	}
+		  }
+		  else
+		  {
+
+		  	print "Failed to read invoice\n";
+		  	dol_syslog("Failed to read invoice");
+		  }
 		}
 	}
 	else
 	{
-		dol_syslog("Aucune factures a traiter");
+		print "No invoices to process\n";
+		dol_syslog("No invoice to process");
 	}
 }
 
+
+
+
 /*
- *
- *
- *
+ *	Run withdrawal
  */
 
-dol_syslog(sizeof($factures_prev)." factures seront prelevees");
-print 'eeee'.$factures_prev;
+$ok=0;
+
+$out=sizeof($factures_prev)." invoices will be withdrawn.";
+print $out."\n";
+dol_syslog($out);
+
 if (sizeof($factures_prev) > 0)
 {
-	/*
-	 * Ouverture de la transaction
-	 *
-	 */
-
-	if (!$db->query("BEGIN"))
+	if ($argv[1]==='real')
 	{
-		$error++;
+		$ok=1;
 	}
+	else
+	{
+		print "Option for real mode was not set, we stop after this simulation\n";
+	}
+}
 
+if ($ok)
+{
 	/*
-	 * Traitements
-	 *
+	 * We are in real mode.
+	 * We create withdraw receipt, payments and build withdraw into disk
 	 */
+
+	$db->begin();
 
 	if (!$error)
 	{
 		$ref = "T".substr($year,-2).$month;
 
-		/*
-		 *
-		 *
-		 */
 		$sql = "SELECT count(*)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
 		$sql.= " WHERE ref LIKE '".$ref."%'";
 		$sql.= " AND entity = ".$conf->entity;
 
-		if ($db->query($sql))
+		$resql=$db->query($sql);
+		if ($resql)
 		{
-			$row = $db->fetch_row();
+			$row = $db->fetch_row($resql);
 		}
 		else
 		{
@@ -213,7 +229,6 @@ if (sizeof($factures_prev) > 0)
 
 		/*
 		 * Creation du bon de prelevement
-		 *
 		 */
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
@@ -223,33 +238,30 @@ if (sizeof($factures_prev) > 0)
 		$sql.= ") VALUES (";
 		$sql.= "'".$ref."'";
 		$sql.= ", ".$conf->entity;
-		$sql.= ", ".$db->idate(mktime());
+		$sql.= ", '".$db->idate(mktime())."'";
 		$sql.= ")";
 
-		if ($db->query($sql))
+		$resql=$db->query($sql);
+		if ($resql)
 		{
 			$prev_id = $db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
 
-			$bonprev = new BonPrelevement($db, $this->prelevement."/receipts/".$filebonprev);
+			$bonprev = new BonPrelevement($db, $conf->prelevement->dir_output."/receipts/".$filebonprev);
 			$bonprev->id = $prev_id;
 		}
 		else
 		{
 			$error++;
-			dol_syslog("Erreur creation du bon de prelevement");
+			dol_syslog("Failed to create withdrawal ticket");
 		}
 
 	}
 
-	/*
-	 *
-	 *
-	 *
-	 */
+
 	if (!$error)
 	{
-		dol_syslog("Debut generation des paiements");
-		dol_syslog("Nombre de factures ".sizeof($factures_prev));
+		dol_syslog("Start generation of payments");
+		dol_syslog("Number of invoices: ".sizeof($factures_prev));
 
 		if (sizeof($factures_prev) > 0)
 		{
@@ -262,14 +274,16 @@ if (sizeof($factures_prev) > 0)
 
 				$pai->amounts = array();
 				$pai->amounts[$fac[0]] = $fact->total_ttc;
-				$pai->datepaye = $db->idate($datetimeprev);
+				$pai->datepaye = $datetimeprev;
 				$pai->paiementid = 3; // prelevement
 				$pai->num_paiement = $ref;
 
 				if ($pai->create($user, 1) == -1)  // on appelle en no_commit
 				{
 					$error++;
-					dol_syslog("Erreur creation paiement facture ".$fac[0]);
+					$out="Failed to create payments for invoice ".$fac[0];
+					print $out."\n";
+					dol_syslog($out);
 				}
 				else
 				{
@@ -304,7 +318,7 @@ if (sizeof($factures_prev) > 0)
 					 */
 					$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
 					$sql.= " SET traite = 1";
-					$sql.= ", date_traite = ".$db->idate(mktime());
+					$sql.= ", date_traite = '".$db->idate(mktime())."'";
 					$sql.= ", fk_prelevement_bons = ".$prev_id;
 					$sql.= " WHERE rowid = ".$fac[1];
 
@@ -315,27 +329,24 @@ if (sizeof($factures_prev) > 0)
 					else
 					{
 						$error++;
-						dol_syslog("Erreur mise a jour des demandes");
-						dol_syslog($db->error());
+						dol_syslog("Erreur mise a jour des demandes ".$db->error());
 					}
 
 				}
 			}
 		}
 
-		dol_syslog("Fin des paiements");
+		dol_syslog("End payments");
 	}
 
 	if (!$error)
 	{
 		/*
 		 * Bon de Prelevement
-		 *
-		 *
 		 */
 
-		dol_syslog("Debut prelevement");
-		dol_syslog("Nombre de factures ".sizeof($factures_prev));
+		dol_syslog("Start generation of widthdrawal");
+		dol_syslog("Number of invoices ".sizeof($factures_prev));
 
 		if (sizeof($factures_prev) > 0)
 		{
@@ -353,6 +364,7 @@ if (sizeof($factures_prev) > 0)
 
 			$bonprev->factures = $factures_prev_id;
 
+			// Build file
 			$bonprev->generate();
 		}
 		dol_syslog( $filebonprev ) ;
@@ -382,13 +394,12 @@ if (sizeof($factures_prev) > 0)
 	 */
 	if (!$error)
 	{
-		$db->query("COMMIT");
-		dol_syslog("COMMIT");
+		$db->commit();
 	}
 	else
 	{
-		$db->query("ROLLBAK");
-		dol_syslog("ROLLBACK");
+		$db->rollback();
+		dol_syslog("Error",LOG_ERROR);
 	}
 }
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,7 @@ print '<td align="right">';
 print $bprev->NbFactureAPrelever();
 print '</td></tr>';
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("AmountToWithdraw").'</td>';
+print '<tr class="liste_total"><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td align="right">';
 print price($bprev->SommeAPrelever());
 print '</td></tr></table><br>';
@@ -76,8 +76,8 @@ print '</td><td valign="top" width="70%">';
  * Factures
  */
 $sql = "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid";
-$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
+$sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql.= " WHERE s.rowid = f.fk_soc";
