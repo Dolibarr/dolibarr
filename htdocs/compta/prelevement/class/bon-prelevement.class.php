@@ -674,11 +674,12 @@ class BonPrelevement extends CommonObject
 
     /**
      *      \brief      Create a withdraw
+     * 		\param		mode	real=do action, simu=test only
      *      \return     int     <0 if KO, nbre of invoice withdrawed if OK
      */
-    function Create($banque=0, $guichet=0)
+    function Create($banque=0, $guichet=0, $mode='real')
     {
-        global $conf;
+        global $conf,$langs;
 
         dol_syslog("BonPrelevement::Create banque=$banque guichet=$guichet");
 
@@ -694,7 +695,7 @@ class BonPrelevement extends CommonObject
         $month = strftime("%m", $datetimeprev);
         $year = strftime("%Y", $datetimeprev);
 
-        $user = new User($this->db, $conf->global->PRELEVEMENT_USER);
+        $puser = new User($this->db, $conf->global->PRELEVEMENT_USER);
 
         /**
          * Lectures des factures
@@ -774,8 +775,8 @@ class BonPrelevement extends CommonObject
                             }
                             else
                             {
-                                dol_syslog("Erreur de RIB societe $fact->socid $soc->nom", LOG_ERR);
-                                $facture_errors[$fac[0]]="Erreur de RIB societe $fact->socid $soc->nom";
+                                dol_syslog("Error on third party bank number RIB/IBAN $fact->socid $soc->nom", LOG_ERR);
+                                $facture_errors[$fac[0]]="Error on third party bank number RIB/IBAN $fact->socid $soc->nom";
                             }
                         }
                         else
@@ -785,31 +786,44 @@ class BonPrelevement extends CommonObject
                     }
                     else
                     {
-                        dol_syslog("Impossible de lire la facture", LOG_ERR);
+                        dol_syslog("Failed to read invoice", LOG_ERR);
                     }
                 }
             }
             else
             {
-                dol_syslog("Aucune factures a traiter");
+                dol_syslog("No invoice to process");
             }
         }
 
+		$ok=0;
 
         // Withdraw invoices in factures_prev array
-        dol_syslog(sizeof($factures_prev)." invoices will be withdrawed");
+        $out=sizeof($factures_prev)." invoices will be withdrawn.";
+		//print $out."\n";
+		dol_syslog($out);
 
-        if (sizeof($factures_prev) > 0)
+
+		if (sizeof($factures_prev) > 0)
+		{
+			if ($mode=='real')
+			{
+				$ok=1;
+			}
+			else
+			{
+				print "Option for real mode was not set, we stop after this simulation\n";
+			}
+		}
+
+
+        if ($ok)
         {
-            /*
-             * Ouverture de la transaction
-             *
-             */
-            $result=$this->db->begin();
-            if ($result <= 0)
-            {
-                $error++;
-            }
+			/*
+			 * We are in real mode.
+			 * We create withdraw receipt, payments and build withdraw into disk
+			 */
+            $this->db->begin();
 
             /*
              * Traitements
@@ -843,13 +857,11 @@ class BonPrelevement extends CommonObject
 
                 // Create withdraw receipt in database
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
-                $sql.= " ref";
-                $sql.= ", entity";
-                $sql.= ",datec";
+                $sql.= " ref, entity, datec";
                 $sql.= ") VALUES (";
                 $sql.= "'".$ref."'";
                 $sql.= ", ".$conf->entity;
-                $sql.= ", ".$this->db->idate(mktime());
+                $sql.= ", '".$this->db->idate(mktime())."'";
                 $sql.= ")";
 
             	dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
@@ -898,7 +910,7 @@ class BonPrelevement extends CommonObject
                         $pai->paiementid = 3; // prelevement
                         $pai->num_paiement = $ref;
 
-                        if ($pai->create($user, 1) < 0)  // on appelle en no_commit
+                        if ($pai->create($puser, 1) < 0)  // on appelle en no_commit
                         {
                             $error++;
                             dol_syslog("Erreur creation paiement facture ".$fac[0]);
@@ -985,6 +997,7 @@ class BonPrelevement extends CommonObject
 
                     $bonprev->factures = $factures_prev_id;
 
+                    // Build file
                     $bonprev->generate();
                 }
                 dol_syslog( $filebonprev ) ;
@@ -1020,6 +1033,7 @@ class BonPrelevement extends CommonObject
             else
             {
                 $this->db->rollback();
+                dol_syslog("Error",LOG_ERROR);
             }
 
             return sizeof($factures_prev);

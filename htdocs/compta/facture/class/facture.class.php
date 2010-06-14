@@ -2577,9 +2577,9 @@ class Facture extends CommonObject
 
 
 	/**
-	 *   \brief      Cree une demande de prelevement
-	 *   \param      user        Utilisateur creant la demande
-	 *   \return     int         <0 si ko, >0 si ok
+	 *   \brief      Create a withdrawal request for a standing order
+	 *   \param      user        User asking standing order
+	 *   \return     int         <0 if KO, >0 if OK
 	 */
 	function demande_prelevement($user)
 	{
@@ -2589,7 +2589,7 @@ class Facture extends CommonObject
 		$soc->id = $this->socid;
 		$soc->load_ban();
 
-		if ($this->statut > 0 && $this->paye == 0 && $this->mode_reglement_id == 3)
+		if ($this->statut > 0 && $this->paye == 0)
 		{
 			$sql = 'SELECT count(*)';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
@@ -2623,7 +2623,7 @@ class Facture extends CommonObject
 				}
 				else
 				{
-					$this->error="Une demande existe deja";
+					$this->error="A request already exists";
 					dol_syslog('Facture::DemandePrelevement Impossible de creer une demande, demande deja en cours');
 				}
 			}
@@ -2636,8 +2636,8 @@ class Facture extends CommonObject
 		}
 		else
 		{
-			$this->error="Etat facture incompatible avec l'action";
-			dol_syslog("Facture::DemandePrelevement Etat facture incompatible $this->statut, $this->paye, $this->mode_reglement_id");
+			$this->error="Status of invoice does not allow this";
+			dol_syslog("Facture::DemandePrelevement ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
 			return -3;
 		}
 	}
