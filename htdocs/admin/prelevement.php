@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010 	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -75,6 +75,8 @@ if ($_GET["action"] == "deletenotif")
  *	View
  */
 
+$html=new Form($db);
+
 llxHeader('',$langs->trans("WithdrawalsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -117,39 +119,19 @@ print '<td>'.$conf->global->PRELEVEMENT_NUMERO_COMPTE.'</td></tr>';
 print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
-print '<select name="value6">';
-
-$sql = "SELECT u.rowid, u.name, u.firstname";
-$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
-
-if ($db->query($sql))
-{
-	$num = $db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object();
-		print '<option value="'.$obj->rowid.'">'.$obj->firstname." ".$obj->name;
-		$i++;
-	}
-	$db->free();
-}
-
-print '</select></td>';
+print $html->select_users($conf->global->PRELEVEMENT_USER,'value6',1);
+print '</td>';
 print '<td>';
-
-if (defined("PRELEVEMENT_USER") && $conf->global->PRELEVEMENT_USER > 0)
+if ($conf->global->PRELEVEMENT_USER > 0)
 {
 	$cuser = new User($db);
-	$cuser->fetch(PRELEVEMENT_USER);
+	$cuser->fetch($conf->global->PRELEVEMENT_USER);
 	print $cuser->fullname;
 }
 else
 {
-	print $conf->global->PRELEVEMENT_USER;
+	print '&nbsp;';
 }
-
 print '</td></tr>';
 print '<tr><td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 print '</table>';
@@ -224,7 +206,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
-		
+
 		print "<tr $bc[$var]>";
 		print '<td>'.$obj->firstname." ".$obj->name.'</td>';
 		print '<td>'.$obj->action.'</td>';

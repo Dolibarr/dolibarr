@@ -800,8 +800,8 @@ class Form
 		if (is_array($include))	$includeUsers = implode("','",$include);
 
 		// On recherche les utilisateurs
-		$sql = "SELECT u.rowid, u.name, u.firstname, u.login FROM";
-		$sql.= " ".MAIN_DB_PREFIX ."user as u";
+		$sql = "SELECT u.rowid, u.name, u.firstname, u.login, u.admin";
+		$sql.= " FROM ".MAIN_DB_PREFIX ."user as u";
 		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
 		if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
@@ -836,6 +836,7 @@ class Form
 						print '>';
 					}
 					print $obj->name.($obj->name && $obj->firstname?' ':'').$obj->firstname;
+					//if ($obj->admin) print ' *';
 					if ($conf->global->MAIN_SHOW_LOGIN) print ' ('.$obj->login.')';
 					print '</option>';
 					$i++;
