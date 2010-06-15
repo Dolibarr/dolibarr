@@ -63,3 +63,7 @@ CreateAll=Prélever tout
 CreateGuichet=Seulement guichet
 CreateBanque=Seulement banque
 OrderWaiting=En attente de traitement
+NotifyTransmision=Transmission du bon
+NotifyEmision=Emission du bon
+NotifyCredit=Credit du bon
+NumeroNationalEmetter= Numero National Emetter

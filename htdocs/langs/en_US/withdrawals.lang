@@ -63,3 +63,7 @@ CreateAll=Withdraw all
 CreateGuichet=Only office
 CreateBanque=Only bank
 OrderWaiting=Waiting for treatment
+NotifyTransmision=Withdrawal Transmission 
+NotifyEmision=Withdrawal Emission
+NotifyCredit=Withdrawal Credit
+NumeroNationalEmetter=National Transmitter Number

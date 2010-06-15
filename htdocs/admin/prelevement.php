@@ -32,7 +32,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
 $langs->load("withdrawals");
-$langs->load("banks");
 $langs->load("bills");
 
 // Security check
@@ -84,54 +83,37 @@ print_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'setup');
 
 print '<form method="post" action="prelevement.php?action=set">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
 print '<table class="nobordernopadding" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("Parameter").'</td>';
 print '<td width="40%">'.$langs->trans("Value").'</td>';
-
 print '<td width="30%">'.$langs->trans("CurrentValue").'</td>';
 print "</tr>\n";
-
 print '<tr class="pair"><td>'.$langs->trans("NumeroNationalEmetter").'</td>';
-
 print '<td align="left">';
 print '<input type="hidden" name="nom1" value="PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR">';
-print '<input type="text"   name="value1" value="'.PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'" size="9" ></td>';
-
-print '<td>'.PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'</td></tr>';
-
+print '<input type="text"   name="value1" value="'.$conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'" size="9" ></td>';
+print '<td>'.$conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'</td></tr>';
 print '<tr class="impair"><td>'.$langs->trans("Name").'</td>';
-
 print '<td align="left">';
 print '<input type="hidden" name="nom2" value="PRELEVEMENT_RAISON_SOCIALE">';
-print '<input type="text"   name="value2" value="'.PRELEVEMENT_RAISON_SOCIALE.'" size="14" ></td>';
-
-print '<td>'.PRELEVEMENT_RAISON_SOCIALE.'</td></tr>';
-
+print '<input type="text"   name="value2" value="'.$conf->global->PRELEVEMENT_RAISON_SOCIALE.'" size="14" ></td>';
+print '<td>'.$conf->global->PRELEVEMENT_RAISON_SOCIALE.'</td></tr>';
 print '<tr class="pair"><td>'.$langs->trans("BankCode").'</td>';
-
 print '<td align="left">';
 print '<input type="hidden" name="nom3" value="PRELEVEMENT_CODE_BANQUE">';
-print '<input type="text"   name="value3" value="'.PRELEVEMENT_CODE_BANQUE.'" size="6" ></td>';
-
-print '<td>'.PRELEVEMENT_CODE_BANQUE.'</td></tr>';
-
+print '<input type="text"   name="value3" value="'.$conf->global->PRELEVEMENT_CODE_BANQUE.'" size="6" ></td>';
+print '<td>'.$conf->global->PRELEVEMENT_CODE_BANQUE.'</td></tr>';
 print '<tr class="impair"><td>'.$langs->trans("DeskCode").'</td>';
-
 print '<td align="left">';
 print '<input type="hidden" name="nom4" value="PRELEVEMENT_CODE_GUICHET">';
-print '<input type="text"   name="value4" value="'.PRELEVEMENT_CODE_GUICHET.'" size="6" ></td>';
-
-print '<td>'.PRELEVEMENT_CODE_GUICHET.'</td></tr>';
-
+print '<input type="text"   name="value4" value="'.$conf->global->PRELEVEMENT_CODE_GUICHET.'" size="6" ></td>';
+print '<td>'.$conf->global->PRELEVEMENT_CODE_GUICHET.'</td></tr>';
 print '<tr class="pair"><td>'.$langs->trans("AccountNumber").'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom5" value="PRELEVEMENT_NUMERO_COMPTE">';
-print '<input type="text"   name="value5" value="'.PRELEVEMENT_NUMERO_COMPTE.'" size="11" ></td>';
-
-print '<td>'.PRELEVEMENT_NUMERO_COMPTE.'</td></tr>';
-
+print '<input type="text"   name="value5" value="'.$conf->global->PRELEVEMENT_NUMERO_COMPTE.'" size="11" ></td>';
+print '<td>'.$conf->global->PRELEVEMENT_NUMERO_COMPTE.'</td></tr>';
 print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
@@ -155,9 +137,9 @@ if ($db->query($sql))
 }
 
 print '</select></td>';
-
 print '<td>';
-if (defined("PRELEVEMENT_USER") && PRELEVEMENT_USER > 0)
+
+if (defined("PRELEVEMENT_USER") && $conf->global->PRELEVEMENT_USER > 0)
 {
 	$cuser = new User($db);
 	$cuser->fetch(PRELEVEMENT_USER);
@@ -165,19 +147,14 @@ if (defined("PRELEVEMENT_USER") && PRELEVEMENT_USER > 0)
 }
 else
 {
-	print PRELEVEMENT_USER;
+	print $conf->global->PRELEVEMENT_USER;
 }
 
 print '</td></tr>';
-
-print '<tr><<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-
+print '<tr><td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 print '</table>';
-
 print '</form>';
-
 print '<br>';
-
 
 /*
  * Notifications
@@ -191,18 +168,16 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("User").'</td>';
 	print '<td>'.$langs->trans("Value").'</td>';
-
 	print '<td align="right">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";
-
 	print '<tr class="impair"><td align="left">';
 	print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
 	print '<select name="user">';
+
 	$sql = "SELECT u.rowid, u.name, u.firstname";
 	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
@@ -222,18 +197,14 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 	}
 
 	print '</select></td>';
-
 	print '<td>';
 	print '<select name="action">';
-
-	print '<option value="tr">Transmission du bon</option>';
-	print '<option value="em">Emission du bon</option>';
-	print '<option value="cr">Credit du bon</option>';
+	print '<option value="tr">'.$langs->trans("NotifyTransmision").'</option>';
+	print '<option value="em">'.$langs->trans("NotifyEmision").'</option>';
+	print '<option value="cr">'.$langs->trans("NotifyCredit").'</option>';
 	print '</select></td>';
-
 	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 }
-
 
 $sql = "SELECT u.name, u.firstname";
 $sql.= ", pn.action, pn.rowid";
@@ -243,6 +214,7 @@ $sql.= " WHERE u.rowid = pn.fk_user";
 $sql.= " AND u.entity IN (0,".$conf->entity.")";
 
 $resql = $db->query($sql);
+
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -251,10 +223,9 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-
 		$var=!$var;
+		
 		print "<tr $bc[$var]>";
-
 		print '<td>'.$obj->firstname." ".$obj->name.'</td>';
 		print '<td>'.$obj->action.'</td>';
 
@@ -270,8 +241,8 @@ if ($resql)
 	}
 	$db->free($resql);
 }
-print '</table>';
 
+print '</table>';
 print '</form>';
 
 $db->close();

@@ -63,3 +63,7 @@ CreateAll=Domiciliar todas
 CreateGuichet=Sólo oficina
 CreateBanque=Sólo banco
 OrderWaiting=En espera de proceso
+NotifyTransmision=Envío de domiciliación
+NotifyEmision=Emisión de domiciliación
+NotifyCredit=Abono de domiciliación
+NumeroNationalEmetter=Número Nacional del Emisor
