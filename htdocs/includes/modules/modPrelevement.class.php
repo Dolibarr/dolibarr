@@ -70,6 +70,9 @@ class modPrelevement extends DolibarrModules
 		// Dependancies
 		$this->depends = array("modFacture");
 		$this->requiredby = array();
+		
+		// Config pages
+		$this->config_page_url = array("prelevement.php");
 
 		// Constantes
 		$this->const = array();

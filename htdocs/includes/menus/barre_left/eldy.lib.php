@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010 Juanjo Menent		   <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -523,7 +524,7 @@ function print_left_eldy_menu($db,$menu_array)
 				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"),1,$user->rights->prelevement->bons->lire);
 				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"),1,$user->rights->prelevement->bons->lire);
 
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Setup"),1,$user->rights->prelevement->bons->configurer);
+				//if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Setup"),1,$user->rights->prelevement->bons->configurer);
 			}
 
 			// Gestion cheques
