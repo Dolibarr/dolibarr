@@ -46,6 +46,7 @@ $dir = DOL_DOCUMENT_ROOT."/includes/modules/facture/";
 /*
  * Actions
  */
+
 if ($_POST["action"] == 'updateMask')
 {
 	$maskconstinvoice=$_POST['maskconstinvoice'];
@@ -89,6 +90,20 @@ if ($_GET["action"] == 'specimen')
 		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
+}
+
+// define constants for models generator that need parameters
+if ($_POST["action"] == 'setModuleOptions')
+{
+	for($i=0;$i < count($_POST);$i++)
+    {
+    	if (array_key_exists('param'.$i,$_POST))
+    	{
+    		$param=$_POST["param".$i];
+    		$value=$_POST["value".$i];
+    		if ($param) dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+    	}
+    }
 }
 
 if ($_GET["action"] == 'set')
@@ -395,19 +410,20 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		{
 			while (($file = readdir($handle))!==false)
 			{
-				if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
+				if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
 				{
 					$var = !$var;
 					$name = substr($file, 4, strlen($file) -16);
 					$classname = substr($file, 0, strlen($file) -12);
 
-					print '<tr '.$bc[$var].'><td width="100">';
-					echo "$name";
-					print "</td><td>\n";
-
 					require_once($dir.$file);
 					$module = new $classname($db);
-					print $module->description;
+
+					print '<tr '.$bc[$var].'><td width="100">';
+					print (empty($module->name)?$name:$module->name);
+					print "</td><td>\n";
+					if (method_exists($module,'info')) print $module->info($langs);
+					else print $module->description;
 					print '</td>';
 
 					// Active
@@ -489,9 +505,10 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 $var=True;
 
-print '<input type="hidden" name="action" value="setribchq">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("PaymentMode").'</td>';
+print '<td>';
+print '<input type="hidden" name="action" value="setribchq">';
+print $langs->trans("PaymentMode").'</td>';
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=!$var;
@@ -639,6 +656,7 @@ print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")
 print "</table>\n";
 
 
+dol_fiche_end();
 
 
 $db->close();

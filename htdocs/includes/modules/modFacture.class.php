@@ -235,6 +235,11 @@ class modFacture extends DolibarrModules
 	 */
 	function remove()
 	{
+		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/invoices';
+		create_exdir($dirodt);
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/doctemplates/invoices/template_invoice.odt',$dirodt.'/template_invoice.odt',0,0);
+
 		$sql = array();
 
 		return $this->_remove($sql);
