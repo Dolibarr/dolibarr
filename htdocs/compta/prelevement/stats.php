@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -42,7 +42,7 @@ $result = restrictedArea($user, 'prelevement','','','bons');
 
 llxHeader('',$langs->trans("WithdrawStatistics"));
 
-print_titre($langs->trans("WithdrawStatistics"));
+print_fiche_titre($langs->trans("WithdrawStatistics"));
 
 
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
