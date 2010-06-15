@@ -314,17 +314,18 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}')
 				);
-				//var_dump($odfHandler); exit;
 
 				// Make substitutions
 				$tmparray=$this->get_substitutionarray_mysoc($mysoc);
+				//var_dump($tmparray); exit;
 				foreach($tmparray as $key=>$value)
 				{
 					try {
 						if (preg_match('/logo$/',$key))	// Image
 						{
 							//var_dump($value);exit;
-							$odfHandler->setImage($key, $value);
+							if (file_exists($value)) $odfHandler->setImage($key, $value);
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 						}
 						else	// Text
 						{
@@ -341,7 +342,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					try {
 						if (preg_match('/logo$/',$key))	// Image
 						{
-							$odfHandler->setImage($key, $value);
+							if (file_exists($value)) $odfHandler->setImage($key, $value);
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 						}
 						else	// Text
 						{
