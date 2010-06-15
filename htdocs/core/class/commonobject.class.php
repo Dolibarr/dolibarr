@@ -387,8 +387,8 @@ class CommonObject
 		$i=0;
 
 		$sql = "SELECT ec.fk_socpeople";
-		$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
-		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec,";
+		$sql.= " ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE ec.element_id = ".$this->id;
 		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$this->element."'";
@@ -396,6 +396,7 @@ class CommonObject
 		$sql.= " AND tc.code = '".$code."'";
 		$sql.= " AND tc.active = 1";
 		if ($status) $sql.= " AND ec.statut = ".$status;
+		// FIXME Add filter on entity
 
 		dol_syslog("CommonObject::getIdContact sql=".$sql);
 		$resql=$this->db->query($sql);
