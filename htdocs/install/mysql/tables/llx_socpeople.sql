@@ -33,7 +33,7 @@ create table llx_socpeople
   address        varchar(255),
   cp             varchar(25),
   ville          varchar(255),
-  fk_departement integer        DEFAULT 0,
+  fk_departement integer,
   fk_pays        integer        DEFAULT 0,
   birthday       date,
   poste          varchar(80),

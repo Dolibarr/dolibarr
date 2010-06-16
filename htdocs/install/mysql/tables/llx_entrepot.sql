@@ -31,6 +31,7 @@ create table llx_entrepot
   address         varchar(255),
   cp              varchar(10),
   ville           varchar(50),
+  fk_departement  integer,
   fk_pays         integer DEFAULT 0,
   statut          tinyint DEFAULT 1,			-- 1 open, 0 close
   valo_pmp        float(12,4),					-- valoristaion du stock en PMP

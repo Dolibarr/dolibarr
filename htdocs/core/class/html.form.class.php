@@ -266,92 +266,40 @@ class Form
 		$sql = "SELECT rowid, code, libelle, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 		$sql.= " WHERE active = 1";
-		// \TODO A virer
-		if ($conf->use_javascript_ajax && $conf->global->CODE_DE_TEST)
-		{
-			if (is_numeric($selected))
-			{
-				$sql.= " AND rowid = ".$selected;
-			}
-			else
-			{
-				$sql.= " AND code = '".$selected."'";
-			}
-		}
 		$sql.= " ORDER BY code ASC";
 
 		dol_syslog("Form::select_pays sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			// \TODO A virer
-			if ($conf->use_javascript_ajax && $conf->global->CODE_DE_TEST)
+			print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num)
 			{
-				$langs->load("companies");
-				$obj = $this->db->fetch_object($resql);
-				$pays_id = $obj->rowid?$obj->rowid:'';
-
-				// On applique un delai d'execution pour le bon fonctionnement
-				$mode_create = substr($htmloption,-9,6);
-				$mode_edit = substr($htmloption,-7,4);
-				$mode_company = substr($htmloption,-10,7);
-				if ($mode_create == 'create')
+				$foundselected=false;
+				while ($i < $num)
 				{
-					$htmloption = 'onChange="ac_delay(\'company_save_refresh_create()\',\'500\')"';
-				}
-				else if ($mode_edit == 'edit')
-				{
-					$htmloption = 'onChange="ac_delay(\'company_save_refresh_edit()\',\'500\')"';
-				}
-				else if ($mode_company == 'refresh')
-				{
-					$htmloption = 'onChange="ac_delay(\'company_save_refresh()\',\'500\')"';
-				}
-
-				print '<div>';
-				if ($obj->rowid == 0)
-				{
-					print '<input type="text" size="45" id="pays" name="pays" value="'.$langs->trans("SelectCountry").'" '.$htmloption.' />';
-				}
-				else
-				{
-					print '<input type="text" size="45" id="pays" name="pays" value="'.$obj->libelle.'" '.$htmloption.' />';
-				}
-
-				print ajax_indicator($htmlname,'working');
-				print ajax_autocompleter($pays_id,'pays',DOL_URL_ROOT.'/societe/ajaxcountries.php','');
-			}
-			else
-			{
-				print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
-				$num = $this->db->num_rows($resql);
-				$i = 0;
-				if ($num)
-				{
-					$foundselected=false;
-					while ($i < $num)
+					$obj = $this->db->fetch_object($resql);
+					if ($selected && $selected != '-1' &&
+					($selected == $obj->rowid || $selected == $obj->code || $selected == $obj->libelle) )
 					{
-						$obj = $this->db->fetch_object($resql);
-						if ($selected && $selected != '-1' &&
-						($selected == $obj->rowid || $selected == $obj->code || $selected == $obj->libelle) )
-						{
-							$foundselected=true;
-							print '<option value="'.$obj->rowid.'" selected="true">';
-						}
-						else
-						{
-							print '<option value="'.$obj->rowid.'">';
-						}
-						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-						if ($obj->code) { print $obj->code . ' - '; }
-						print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
-						print '</option>';
-						$i++;
+						$foundselected=true;
+						print '<option value="'.$obj->rowid.'" selected="true">';
 					}
+					else
+					{
+						print '<option value="'.$obj->rowid.'">';
+					}
+					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+					if ($obj->code) { print $obj->code . ' - '; }
+					print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
+					print '</option>';
+					$i++;
 				}
-				print '</select>';
-				return 0;
 			}
+			print '</select>';
+			return 0;
 		}
 		else
 		{

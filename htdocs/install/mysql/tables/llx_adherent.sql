@@ -42,6 +42,7 @@ create table llx_adherent
   adresse          text,
   cp               varchar(30),
   ville            varchar(50),
+  fk_departement   integer,
   pays             integer,
   email            varchar(255),
   phone            varchar(30),

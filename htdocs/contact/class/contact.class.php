@@ -398,11 +398,13 @@ class Contact extends CommonObject
 		$langs->load("companies");
 		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.name, c.firstname,";
 		$sql.= " c.address, c.cp, c.ville,";
-		$sql.= " c.fk_pays, p.libelle as pays, p.code as pays_code,";
-		$sql.= " c.fk_departement, d.nom as departement, d.code_departement as departement_code,";
+		$sql.= " c.fk_pays,";
+		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
 		$sql.= " c.priv, c.note, c.default_lang,";
+		$sql.= " p.libelle as pays, p.code as pays_code,";
+		$sql.= " d.nom as departement, d.code_departement as departement_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
 		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.ville as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
@@ -432,12 +434,12 @@ class Contact extends CommonObject
 				$this->adresse        = $obj->address?$obj->address:$obj->socaddress; // TODO obsolete
 				$this->cp             = $obj->cp?$obj->cp:$obj->soccp;
 				$this->ville          = $obj->ville?$obj->ville:$obj->soccity;
-				$this->fk_pays        = $obj->fk_pays;
 
 				$this->fk_departement = $obj->fk_departement;
 				$this->departement_code = $obj->fk_departement?$obj->departement_code:'';
 				$this->departement	  = $obj->fk_departement?$obj->departement:'';
 
+				$this->fk_pays        = $obj->fk_pays;
 				$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
 				$this->pays           = ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
 

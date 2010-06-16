@@ -12,7 +12,9 @@
 -- V4.1 UPDATE llx_projet_task set fk_user_valid=NULL WHERE fk_user_valid IS NOT NULL AND fk_user_valid NOT IN (SELECT rowid from llx_user);
 
 
-ALTER TABLE llx_socpeople ADD COLUMN fk_departement integer        DEFAULT 0 after ville;
+ALTER TABLE llx_socpeople ADD COLUMN fk_departement integer        DEFAULT NULL after ville;
+ALTER TABLE llx_adherent  ADD COLUMN fk_departement integer        DEFAULT NULL after ville;
+ALTER TABLE llx_entrepot  ADD COLUMN fk_departement integer        DEFAULT NULL after ville;
 
 ALTER TABLE llx_bookmark ADD COLUMN position integer        DEFAULT 0;
 

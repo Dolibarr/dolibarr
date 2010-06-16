@@ -57,6 +57,11 @@ class Adherent extends CommonObject
 	var $adresse;
 	var $cp;
 	var $ville;
+
+	var $fk_departement;		// Id of department
+	var $departement_code;		// Code of department
+	var $departement;			// Label of department
+
 	var $pays_id;
 	var $pays_code;
 	var $pays;
@@ -401,7 +406,8 @@ class Adherent extends CommonObject
 		$sql.= ", adresse=" .($this->adresse?"'".addslashes($this->adresse)."'":"null");
 		$sql.= ", cp="      .($this->cp?"'".addslashes($this->cp)."'":"null");
 		$sql.= ", ville="   .($this->ville?"'".addslashes($this->ville)."'":"null");
-		$sql.= ", pays="    ."'".$this->pays_id."'";
+		$sql.= ", pays="          .($this->pays_id>0?"'".$this->pays_id."'":"null");
+		$sql.= ", fk_departement=".($this->fk_departement>0?"'".$this->fk_departement."'":"null");
 		$sql.= ", email="   ."'".$this->email."'";
 		$sql.= ", phone="   .($this->phone?"'".addslashes($this->phone)."'":"null");
 		$sql.= ", phone_perso="  .($this->phone_perso?"'".addslashes($this->phone_perso)."'":"null");
@@ -939,11 +945,14 @@ class Adherent extends CommonObject
 		$sql.= " d.naiss as datenaiss,";
 		$sql.= " d.datevalid as datev,";
 		$sql.= " d.pays,";
+		$sql.= " d.fk_departement,";
 		$sql.= " p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib,";
+		$sql.= " dep.nom as departement, dep.code_departement as departement_code,";
 		$sql.= " t.libelle as type, t.cotisation as cotisation,";
 		$sql.= " u.rowid as user_id, u.login as user_login";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.fk_departement = dep.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid";
 		$sql.= " AND d.entity = ".$conf->entity;
@@ -972,11 +981,17 @@ class Adherent extends CommonObject
 				$this->adresse        = $obj->adresse;
 				$this->cp             = $obj->cp;
 				$this->ville          = $obj->ville;
+
+				$this->fk_departement = $obj->fk_departement;
+				$this->departement_code = $obj->fk_departement?$obj->departement_code:'';
+				$this->departement	  = $obj->fk_departement?$obj->departement:'';
+
 				$this->pays_id        = $obj->pays_id;
 				$this->pays_code      = $obj->pays_code;
 				if ($langs->trans("Country".$obj->pays_code) != "Country".$obj->pays_code) $this->pays = $langs->trans("Country".$obj->pays_code);
 				elseif ($obj->pays_lib) $this->pays=$obj->pays_lib;
 				else $this->pays=$obj->pays;
+
 				$this->phone          = $obj->phone;
 				$this->phone_perso    = $obj->phone_perso;
 				$this->phone_mobile   = $obj->phone_mobile;
