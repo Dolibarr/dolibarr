@@ -399,7 +399,7 @@ if ($user->rights->societe->contact->creer)
 		 */
 
 		// We set pays_id, and pays_code label of the chosen country
-		if ($contact->fk_pays)
+		if (isset($_POST["pays_id"]) || $contact->fk_pays)
 		{
 			$sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["pays_id"])?$_POST["pays_id"]:$contact->fk_pays);
 			$resql=$db->query($sql);

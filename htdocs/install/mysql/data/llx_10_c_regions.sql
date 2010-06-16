@@ -138,7 +138,7 @@ INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, act
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (8603, 8603, 86, NULL, NULL, 'Occidental', 1);
 
 -- Regions India (id pays=117)
-insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (11701,   17, 11701, '', 0, 'India', 1);
+insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (11701,  117, 11701, '', 0, 'India', 1);
 
 -- Regions Mauritius (id pays=152)
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (15201,  152, 15201, '', 0, 'Rivière Noire', 1);

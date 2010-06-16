@@ -689,9 +689,9 @@ if ($action == 'edit')
 
 
 	// We set pays_id, and pays_code label of the chosen country
-	if ($adh->pays_id)
+	if (isset($_POST["pays"]) || $adh->pays_id)
 	{
-		$sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["pays"])?$_POST["pays"]:$adh->pays_id);
+		$sql = "SELECT rowid, code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["pays"])?$_POST["pays"]:$adh->pays_id);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -701,10 +701,10 @@ if ($action == 'edit')
 		{
 			dol_print_error($db);
 		}
+		$adh->pays_id=$obj->rowid;
 		$adh->pays_code=$obj->code;
 		$adh->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
 	}
-
 
 	$head = member_prepare_head($adh);
 
@@ -760,11 +760,11 @@ if ($action == 'edit')
 	print '</td>';
 	print '</tr>';
 
-	// Nom
+	// Name
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" size="40" value="'.(isset($_POST["nom"])?$_POST["nom"]:$adh->nom).'"></td>';
 	print '</tr>';
 
-	// Prenom
+	// Firstname
 	print '<tr><td width="20%"><span class="fieldrequired">'.$langs->trans("Firstname").'</span></td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
 	print '</tr>';
 
@@ -885,7 +885,7 @@ if ($action == 'create')
 	$adh->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
 	if ($adh->pays_id)
 	{
-		$sql = "SELECT code, libelle";
+		$sql = "SELECT rowid, code, libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 		$sql.= " WHERE rowid = ".$adh->pays_id;
 		$resql=$db->query($sql);
@@ -897,6 +897,7 @@ if ($action == 'create')
 		{
 			dol_print_error($db);
 		}
+		$adh->pays_id=$obj->rowid;
 		$adh->pays_code=$obj->code;
 		$adh->pays=$obj->libelle;
 	}
@@ -1176,7 +1177,7 @@ if ($rowid && $action != 'edit')
         if ($ret == 'html') print '<br>';
     }
 
-    $rowspan=14+sizeof($adho->attribute_label);
+    $rowspan=15+sizeof($adho->attribute_label);
     if ($conf->societe->enabled) $rowspan++;
 
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1198,11 +1199,11 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur" colspan="2">'.$adh->getCivilityLabel().'&nbsp;</td>';
 	print '</tr>';
 
-    // Nom
+    // Name
     print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="2">'.$adh->nom.'&nbsp;</td>';
 	print '</tr>';
 
-    // Prenom
+    // Firstname
     print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="2">'.$adh->prenom.'&nbsp;</td></tr>';
 
     // Login
@@ -1224,11 +1225,11 @@ if ($rowid && $action != 'edit')
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'</td></tr>';
 
-	// Pays
+	// Country
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.getCountryLabel($adh->pays_id).'</td></tr>';
 
 	// Department
-	print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$adh->departement.'</td>';
+	print '<tr><td>'.$langs->trans('State').'</td><td class="valeur">'.$adh->departement.'</td>';
 
     // Tel pro.
     print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.dol_print_phone($adh->phone,$adh->pays_code,0,$adh->fk_soc,1).'</td></tr>';
