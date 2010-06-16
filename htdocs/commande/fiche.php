@@ -2107,26 +2107,29 @@ else
 					}
 
 					// Ship
-					if ($commande->statut > 0 && $commande->statut < 3 && $commande->getNbOfProductsLines() > 0)
+					if ($conf->expedition->enabled)
 					{
-						if ($user->rights->expedition->creer)
+						if ($commande->statut > 0 && $commande->statut < 3 && $commande->getNbOfProductsLines() > 0)
 						{
-							// Chargement des permissions
-							$error = $user->load_entrepots();
-							if (sizeof($user->entrepots) === 1)
+							if ($user->rights->expedition->creer)
 							{
-								print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$_GET['id'].'&amp;action=create&amp;commande_id='.$_GET["id"].'&entrepot_id='.$user->entrepots[0]['id'].'">';
-								print $langs->trans('ShipProduct').'</a>';
+								// Chargement des permissions
+								$error = $user->load_entrepots();
+								if (sizeof($user->entrepots) === 1)
+								{
+									print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$_GET['id'].'&amp;action=create&amp;commande_id='.$_GET["id"].'&entrepot_id='.$user->entrepots[0]['id'].'">';
+									print $langs->trans('ShipProduct').'</a>';
 
+								}
+								else
+								{
+									print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
+								}
 							}
 							else
 							{
-								print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
+								print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ShipProduct').'</a>';
 							}
-						}
-						else
-						{
-							print '<a class="butActionRefused" href="#">'.$langs->trans('ShipProduct').'</a>';
 						}
 					}
 
