@@ -30,6 +30,7 @@ require_once("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
 $langs->load("banks");
+$langs->load("categories");
 
 function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {

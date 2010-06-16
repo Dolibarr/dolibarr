@@ -30,6 +30,7 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class
 $langs->load("bills");
 $langs->load("compta");
 $langs->load("banks");
+$langs->load("categories");
 
 function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
@@ -66,7 +67,6 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 		}
 		$db->free($resql);
 	}
-
 
 
 	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
