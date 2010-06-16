@@ -49,6 +49,10 @@ if ( $_SESSION['uid'] > 0 )
 }
 
 
+require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+
+$formproduct=new FormProduct($db);
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -94,7 +98,20 @@ if ( $_SESSION['uid'] > 0 )
 		<td class="label1"><?php echo $langs->trans("Password"); ?></td>
 		<td><input name="pwdPassword" class="texte_login" type="password"	value="" /></td>
 	</tr>
-
+<?php if ($conf->stock->enabled)
+{
+	$langs->load("stocks");
+	print "<tr>";
+	print '<td class="label1">'.$langs->trans("Warehouse").'</td>';
+	print '<td>';
+	$disabled=0;
+	if (! empty($conf->global->CASHDESK_ID_WAREHOUSE)) $disabled=1;	// If a particular stock is defined, we disable choice
+	print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'idwarehouse','',!$disabled,$disabled);
+	//print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
+	print '</td>';
+	print "</tr>";
+}
+?>
 </table>
 
 <span class="bouton_login"><input name="sbmtConnexion" type="submit" value="Connexion" /></span>

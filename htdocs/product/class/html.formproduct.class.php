@@ -90,13 +90,14 @@ class FormProduct
 	}
 
 	/**
-	 *      \brief      Retourne la liste des modes de paiements possibles
+	 *      \brief      Return list of possible payments modes
 	 *      \param      selected        Id du mode de paiement pre-selectionne
-	 *      \param      htmlname        Nom de la zone select
-	 *      \param      filtertype      Pour filtre
-	 *      \param      empty			1=peut etre vide, 0 sinon
+	 *      \param      htmlname        Name of html select html
+	 *      \param      filtertype      For filtre
+	 *      \param      empty			1=Can be empty, 0 if not
+	 * 		\param		disabled		1=Select is disabled
 	 */
-	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0)
+	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0)
 	{
 		global $langs,$user;
 
@@ -104,7 +105,7 @@ class FormProduct
 
 		$this->loadWarehouses();
 
-		print '<select class="flat" name="'.$htmlname.'">';
+		print '<select class="flat"'.($disabled?' disabled="true"':'').' name="'.($htmlname.($disabled?'_disabled':'')).'">';
 		if ($empty) print '<option value="">&nbsp;</option>';
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{
@@ -116,6 +117,7 @@ class FormProduct
 			print '</option>';
 		}
 		print '</select>';
+		if ($disabled) print '<input type="hidden" name="'.$htmlname.'" value="'.$selected.'">';
 	}
 
 	/**
