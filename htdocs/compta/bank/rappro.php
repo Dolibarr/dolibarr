@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/compta/bank/rappro.php
  *       \ingroup    banque
- *       \brief      Page de rapprochement bancaire
+ *       \brief      Page to reconciliate bank transactions
  *       \version    $Id$
  */
 
@@ -128,6 +128,8 @@ $paymentvatstatic=new TVA($db);
 $acct = new Account($db);
 $acct->fetch($_GET["account"]);
 
+$now=dol_now();
+
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= " WHERE rappro=0 AND fk_account=".$_GET["account"];
@@ -145,7 +147,7 @@ if ($resql)
 
     if ($mesg) print $mesg."<br>";
 
-    // Affiche nom des derniers relev�s
+    // Affiche nom des derniers releves
     $nbmax=5;
     $liste="";
 
@@ -327,12 +329,12 @@ if ($resql)
 
         if ($objp->rappro)
         {
-            // Si ligne d�j� rapproch�e, on affiche relev�.
+            // If line already reconciliated, we show receipt
             print "<td align=\"center\" nowrap=\"nowrap\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
         }
         else
         {
-            // Si pas encore rapproch�e
+            // If not already reconciliated
             if ($user->rights->banque->modifier)
             {
                 print '<td align="center" width="30" nowrap="nowrap">';
@@ -359,12 +361,12 @@ if ($resql)
 
 
         // Affiche zone saisie releve + bouton "Rapprocher"
-        if ($db->jdate($objp->do) <= gmmktime())
+        if ($db->jdate($objp->do) <= $now)
         {
             print '<td align="center" nowrap="nowrap">';
             print '<input class="flat" name="num_releve" type="text" value="'.$objp->num_releve.'" size="8">';
             print ' &nbsp; ';
-            print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Rapprocher")."\">";
+            print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Conciliate")."\">";
             if ($options)
             {
                 print "<br><select class=\"flat\" name=\"cat\">$options";
