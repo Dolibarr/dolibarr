@@ -31,6 +31,7 @@ if ( $_SESSION['uid'] <= 0 ) {
 	exit;
 }
 
+
 print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
 
 print '<html>'."\n";
@@ -58,7 +59,7 @@ print '</head>'."\n";
 
 print '<body>'."\n";
 
-if (!empty($error)) 
+if (!empty($error))
 {
 	print $error;
 	print '</body></html>';

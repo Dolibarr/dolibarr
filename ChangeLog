@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.9 compared to 2.8 *****
 
 For users:
+- New: POS module allow to choose which warehouse use.
 - New: Support "Department/State" field on contact and members card.
 - New: Can reopen a refused/canceled supplier order.
 - New: Add Gant diagramm on project module.

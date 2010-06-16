@@ -78,12 +78,14 @@ $formproduct=new FormProduct($db);
 <div class="conteneur_img_gauche">
 <div class="conteneur_img_droite">
 
-<h1 class="entete"><span>CAISSE : identification</span></h1>
+<h1 class="entete"></h1>
 
-<div class="menu_principal"></div>
+<div class="menu_principal">
+</div>
 
 <div class="contenu">
 <div class="principal_login">
+<?php if (! empty($_GET["err"])) print $_GET["err"]."<br><br>\n"; ?>
 <fieldset class="cadre_facturation"><legend class="titre1">Identification</legend>
 <form class="formulaire_login" id="frmLogin" method="post" action="index_verif.php">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -98,7 +100,8 @@ $formproduct=new FormProduct($db);
 		<td class="label1"><?php echo $langs->trans("Password"); ?></td>
 		<td><input name="pwdPassword" class="texte_login" type="password"	value="" /></td>
 	</tr>
-<?php if ($conf->stock->enabled)
+<?php
+if ($conf->stock->enabled)
 {
 	$langs->load("stocks");
 	print "<tr>";
@@ -106,7 +109,7 @@ $formproduct=new FormProduct($db);
 	print '<td>';
 	$disabled=0;
 	if (! empty($conf->global->CASHDESK_ID_WAREHOUSE)) $disabled=1;	// If a particular stock is defined, we disable choice
-	print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'idwarehouse','',!$disabled,$disabled);
+	print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'warehouseid','',!$disabled,$disabled);
 	//print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
 	print '</td>';
 	print "</tr>";
