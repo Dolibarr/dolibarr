@@ -267,16 +267,16 @@ if ($id > 0 || ! empty($ref))
 
 						// Warehouse
 						print '<td align="right">';
-						if (sizeof($user->entrepots) === 1)
+						/*if (sizeof($user->entrepots) === 1) deprecated
 						{
 							$uentrepot = array();
 							$uentrepot[$user->entrepots[0]['id']] = $user->entrepots[0]['label'];
 							print $html->selectarray("entrepot_".$i, $uentrepot, '', $disabled, 0, 0, 0, '', 0, 0, $disabled);
 						}
 						else
-						{
+						{*/
 							print $html->selectarray("entrepot_".$i, $entrepot->list_array(), '', $disabled, 0, 0, 0, '', 0, 0, $disabled);
-						}
+						//}
 						print "</td>\n";
 						print "</tr>\n";
 					}

@@ -1697,9 +1697,10 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    \brief      Charge la liste des entrepots pour l'utilisateur
+	 *    \brief      Charge la liste ->entrepots[] des entrepots pour l'utilisateur
 	 *    \return     int   0 si ok, <> 0 si erreur
 	 */
+	/* deprecated
 	function load_entrepots()
 	{
 		$err=0;
@@ -1729,7 +1730,7 @@ class User extends CommonObject
 		}
 		return $err;
 	}
-
+*/
 
 	/*
 	 *       \brief     Charge les informations d'ordre info dans l'objet user
@@ -1792,7 +1793,7 @@ class User extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *    \brief        Return number of existing users
 	 *    \param		limitToActive		limit to active users
@@ -1801,12 +1802,12 @@ class User extends CommonObject
 	function getNbOfUsers($limitToActive=0)
 	{
 		global $conf;
-		
+
 		$sql = "SELECT count(rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE entity = ".$conf->entity;
 		if ($limitToActive) $sql.= " AND statut = 1";
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

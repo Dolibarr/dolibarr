@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -20,10 +20,11 @@
  */
 
 /**
- *	\file       htdocs/product/stock/user.php
- *	\ingroup    stock
- *	\brief      Page to link dolibarr users with warehouses
- *	\version    $Id$
+ *	\file       	htdocs/product/stock/user.php
+ *	\ingroup    	stock
+ *	\brief      	Page to link dolibarr users with warehouses
+ *	\version    	$Id$
+ * 	\deprecated		This page is never called. Feature will never be developped.
  */
 
 require("../../main.inc.php");

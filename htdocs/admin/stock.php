@@ -38,19 +38,7 @@ accessforbidden();
 /*
  * Actions
  */
-/*if ($_POST["action"] == 'STOCK_USERSTOCK')
-{
-	dolibarr_set_const($db, "STOCK_USERSTOCK", $_POST["STOCK_USERSTOCK"],'chaine',0,'',$conf->entity);
-	//On desactive l'autocreation si l'option "stock personnel" est desactivee
-	if ($_POST["STOCK_USERSTOCK"] == 0)
-	{
-		dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", 0,'chaine',0,'',$conf->entity);
-	}
-	Header("Location: stock.php");
-	exit;
-}
-else
-*/
+
 if ($_POST["action"] == 'STOCK_USERSTOCK_AUTOCREATE')
 {
 	dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", $_POST["STOCK_USERSTOCK_AUTOCREATE"],'chaine',0,'',$conf->entity);

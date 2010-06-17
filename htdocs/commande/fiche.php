@@ -1057,7 +1057,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 			// Date
 			print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-			$html->select_date('','re','','','',"crea_commande");
+			$html->select_date('','re','','','',"crea_commande",1,1);
 			print '</td></tr>';
 
 			// Date de livraison
@@ -1070,7 +1070,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			{
 				$datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 			}
-			$html->select_date($datedelivery,'liv_','','','',"crea_commande");
+			$html->select_date($datedelivery,'liv_','','','',"crea_commande",1,1);
 			print "</td></tr>";
 
 			// Delivery address
@@ -2114,7 +2114,7 @@ else
 							if ($user->rights->expedition->creer)
 							{
 								// Chargement des permissions
-								$error = $user->load_entrepots();
+								/*$error = $user->load_entrepots();	deprecated
 								if (sizeof($user->entrepots) === 1)
 								{
 									print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$_GET['id'].'&amp;action=create&amp;commande_id='.$_GET["id"].'&entrepot_id='.$user->entrepots[0]['id'].'">';
@@ -2122,9 +2122,9 @@ else
 
 								}
 								else
-								{
+								{*/
 									print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
-								}
+								//}
 							}
 							else
 							{
@@ -2162,7 +2162,7 @@ else
 						if ($user->rights->commande->annuler && $nb_expedition == 0)
 						{
 							print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=cancel"';
-							print '>'.$langs->trans('CancelOrder').'</a>';
+							print '>'.$langs->trans('Cancel').'</a>';
 						}
 					}
 

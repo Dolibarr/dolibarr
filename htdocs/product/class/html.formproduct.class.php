@@ -96,6 +96,7 @@ class FormProduct
 	 *      \param      filtertype      For filtre
 	 *      \param      empty			1=Can be empty, 0 if not
 	 * 		\param		disabled		1=Select is disabled
+	 * 		\return		int				<0 if KO, Nb of product in list if OK
 	 */
 	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0)
 	{
@@ -118,6 +119,8 @@ class FormProduct
 		}
 		print '</select>';
 		if ($disabled) print '<input type="hidden" name="'.$htmlname.'" value="'.$selected.'">';
+
+		return sizeof($this->cache_warehouses);
 	}
 
 	/**

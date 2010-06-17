@@ -29,6 +29,7 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
 if ($conf->product->enabled || $conf->service->enabled)  require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -52,8 +53,6 @@ $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$id);
 
-// Chargement des permissions
-$error = $user->load_entrepots();
 
 /*
  * Actions
@@ -121,6 +120,7 @@ if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 
 
 $html = new Form($db);
+$formproduct = new FormProduct($db);
 $formfile = new FormFile($db);
 
 
@@ -392,7 +392,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= ' cd.date_start,';
 		$sql.= ' cd.date_end,';
 		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
-		$sql.= ' p.description as product_desc';
+		$sql.= ' p.description as product_desc, p.fk_product_type as product_type';
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql.= " WHERE cd.fk_commande = ".$commande->id;
@@ -476,8 +476,10 @@ if ($id > 0 || ! empty($ref))
 					print "</td>\n";
 				}
 
+				// Qty ordered
 				print '<td align="center">'.$objp->qty.'</td>';
 
+				// Qty already shipped
 				$qtyProdCom=$objp->qty;
 				print '<td align="center">';
 				// Nb of sending products for this line of order
@@ -485,10 +487,18 @@ if ($id > 0 || ! empty($ref))
 				print $quantite_livree;
 				print '</td>';
 
-				$reste_a_livrer[$objp->fk_product] = $objp->qty - $quantite_livree;
-				$reste_a_livrer_total += $reste_a_livrer[$objp->fk_product];
+				// Qty remaind to ship
 				print '<td align="center">';
-				print $reste_a_livrer[$objp->fk_product];
+				if ($objp->product_type == 0)
+				{
+					$reste_a_livrer[$objp->fk_product] = $objp->qty - $quantite_livree;
+					$reste_a_livrer_total += $reste_a_livrer[$objp->fk_product];
+					print $reste_a_livrer[$objp->fk_product];
+				}
+				else
+				{
+					print '0 ('.$langs->trans("Service").')';
+				}
 				print '</td>';
 
 				if ($objp->fk_product > 0)
@@ -610,21 +620,10 @@ if ($id > 0 || ! empty($ref))
 				$langs->load("stocks");
 
 				print '<tr>';
-				print '<td>'.$langs->trans("Warehouse").'</td>';
+				print '<td>'.$langs->trans("WarehouseSource").'</td>';
 				print '<td>';
-
-				if (sizeof($user->entrepots) === 1)
-				{
-					$uentrepot = array();
-					$uentrepot[$user->entrepots[0]['id']] = $user->entrepots[0]['label'];
-					$html->select_array("entrepot_id",$uentrepot);
-				}
-				else
-				{
-					$html->select_array("entrepot_id",$entrepot->list_array());
-				}
-
-				if (sizeof($entrepot->list_array()) <= 0)
+				$result=$formproduct->selectWarehouses(-1,'entrepot_id','',1);
+				if ($result <= 0)
 				{
 					print ' &nbsp; No warehouse defined, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">add one</a>';
 				}
