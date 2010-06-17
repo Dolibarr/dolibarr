@@ -824,6 +824,7 @@ class Account extends CommonObject
 	/**
 	 * 	\brief		Return account country code
 	 *	\return		String		country code
+	 * 	TODO	Add a field in bank_account table to store country
 	 */
 	function getCountryCode()
 	{
@@ -831,6 +832,8 @@ class Account extends CommonObject
 
 		if (! empty($this->iban))
 		{
+			if ($mysoc->pays_code === 'IN') return $mysoc->pays_code;	// Test before to use IBAN
+
 			// If IBAN defined, we can know country of account from it
 			if (preg_match("/^([a-zA-Z][a-zA-Z])/i",$this->iban,$reg)) return $reg[1];
 		}
