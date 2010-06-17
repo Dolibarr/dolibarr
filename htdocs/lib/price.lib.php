@@ -104,6 +104,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		$result[11] = price2num(($pu * ( 1 + ( $txlocaltax1 / 100))) - $pu, 'MT');
 		$result[5] = $result[5] + $result[11];
 	}
+	else
+	{
+		$result[14] = 0;
+		$result[9]  = 0;
+		$result[11] = 0;	
+	}
+	
 	if ($txlocaltax2>0)
 	{
 		$result[15] = price2num(($tot_sans_remise * ( 1 + ( $txlocaltax2 / 100))) - $tot_sans_remise, 'MT');
@@ -115,7 +122,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		$result[12] = price2num(($pu * ( 1 + ( $txlocaltax2 / 100))) - $pu, 'MT');
 		$result[5] = $result[5] + $result[12];
 	}
-
+	else
+	{
+		$result[15] = 0;
+		$result[10] = 0;
+		$result[12] = 0;
+	}
+	
 	// If rounding is not using base 10 (rare)
 	if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT))
 	{
