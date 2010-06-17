@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/compta/bank/account.class.php
+ *	\file       htdocs/compta/bank/class/account.class.php
  *	\ingroup    banque
  *	\brief      Fichier de la classe des comptes bancaires
  *	\version    $Id$
@@ -45,6 +45,7 @@ class Account extends CommonObject
 	var $ref;
 	var $label;
 	var $type;		// 'payment', 'company', 'member', 'banktransfert', 'payment_supplier', 'sc', 'payment_vat', ...
+	//! Name
 	var $bank;
 	var $clos;
 	var $rappro;

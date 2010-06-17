@@ -35,6 +35,7 @@ For users:
 - New: Works even if Web hosting provider has disabled glob function.
 - New: Can now send supplier order by mail.
 - New: task #10076 : Show content of message in notification module.
+- New: Bank name available on invoice.
 - Fix: Debug experimental module widthrawal.
 - Fix: Format number was wrong for ar_AR language.
 - Fix: Can change password if has only permission change password.
