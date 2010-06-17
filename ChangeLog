@@ -4,7 +4,8 @@ English Dolibarr ChangeLog
 
 For users:
 - New: POS module allow to choose which warehouse use.
-- New: Support "Department/State" field on contact and members card.
+- New: Support "Department/State" field on company setup, contact 
+       and members card.
 - New: Can reopen a refused/canceled supplier order.
 - New: Add Gant diagramm on project module.
 - New: Add a new mode for automatic stock increase: Can be increased

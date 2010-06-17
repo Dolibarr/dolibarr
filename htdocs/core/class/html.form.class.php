@@ -256,7 +256,7 @@ class Form
 	 *    \param     selected         Id ou Code pays ou Libelle pays pre-selectionne
 	 *    \param     htmlname         Nom de la liste deroulante
 	 *    \param     htmloption       Options html sur le select
-	 *    \todo      trier liste sur noms apres traduction plutot que avant
+	 *    \TODO      trier liste sur noms apres traduction plutot que avant
 	 */
 	function select_pays($selected='',$htmlname='pays_id',$htmloption='')
 	{

@@ -58,6 +58,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VILLE",$_POST["ville"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_CP",$_POST["cp"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_DEPARTEMENT",$_POST["departement_id"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL",$_POST["tel"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX",$_POST["fax"],'chaine',0,'',$conf->entity);
@@ -265,6 +266,12 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
 	$form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',($conf->use_javascript_ajax?' onChange="company_save_refresh()"':''));
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+	print '</td></tr>'."\n";
+
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("State").'</td><td>';
+	$pays_code=getCountryLabel($conf->global->MAIN_INFO_SOCIETE_PAYS,2);
+	$formcompany->select_departement($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT,$pays_code,'departement_id');
 	print '</td></tr>'."\n";
 
 	$var=!$var;
@@ -595,6 +602,25 @@ else
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCountry").'</td><td>';
 	print getCountryLabel($conf->global->MAIN_INFO_SOCIETE_PAYS,1);
+	print '</td></tr>';
+
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("State").'</td><td>';
+	if ($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT)
+	{
+		$sql = "SELECT code_departement as code, nom as label from ".MAIN_DB_PREFIX."c_departements where rowid = '".$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT."'";
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		$state=$obj->label;
+		print $state;
+	}
 	print '</td></tr>';
 
 	$var=!$var;

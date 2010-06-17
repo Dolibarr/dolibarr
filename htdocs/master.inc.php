@@ -349,18 +349,20 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->zip=$conf->global->MAIN_INFO_SOCIETE_CP;
 	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE; // TODO obsolete
 	$mysoc->town=$conf->global->MAIN_INFO_SOCIETE_VILLE;
+	$mysoc->departement_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
 	$mysoc->note=$conf->global->MAIN_INFO_SOCIETE_NOTE;
-	// Si dans MAIN_INFO_SOCIETE_PAYS on a un id de pays, on recupere code
+	// For backwar compatibility: Si dans MAIN_INFO_SOCIETE_PAYS on a un id de pays, on recupere code
 	if (is_numeric($conf->global->MAIN_INFO_SOCIETE_PAYS))
 	{
-		$mysoc->pays_id=$conf->global->MAIN_INFO_SOCIETE_PAYS;
-		$sql  = "SELECT code, libelle as label from ".MAIN_DB_PREFIX."c_pays";
+		$sql  = "SELECT rowid, code, libelle as label from ".MAIN_DB_PREFIX."c_pays";
 		$sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
 		$result=$db->query($sql);
 		if ($result)
 		{
 			$obj = $db->fetch_object();
+			$mysoc->pays_id=$conf->rowid;
 			$mysoc->pays_code=$obj->code;
+			$mysoc->pays=$obj->code?($langs->trans('Country'.$obj->code)!='Country'.$obj->code?$langs->trans('Country'.$obj->code):$obj->label):'';	// deprecated
 			$mysoc->country=$obj->code?($langs->trans('Country'.$obj->code)!='Country'.$obj->code?$langs->trans('Country'.$obj->code):$obj->label):'';
 		}
 		else {
@@ -371,6 +373,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	else
 	{
 		$mysoc->pays_code=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+		$mysoc->pays=$conf->global->MAIN_INFO_SOCIETE_PAYS?$langs->trans('Country'.$conf->global->MAIN_INFO_SOCIETE_PAYS):'';	// deprecated
 		$mysoc->country=$conf->global->MAIN_INFO_SOCIETE_PAYS?$langs->trans('Country'.$conf->global->MAIN_INFO_SOCIETE_PAYS):'';
 	}
 	$mysoc->tel=$conf->global->MAIN_INFO_SOCIETE_TEL; // TODO obsolete

@@ -54,9 +54,16 @@ class Societe extends CommonObject
 	var $adresse; // TODO obsolete
 	var $cp;
 	var $ville;
+
 	var $departement_id;
+	var $departement_code;
+	var $departement;
+
 	var $pays_id;
 	var $pays_code;
+	var $pays;	// TODO obsolete
+	var $country;
+
 	var $tel;
 	var $fax;
 	var $email;
@@ -1466,8 +1473,7 @@ class Societe extends CommonObject
 		require_once DOL_DOCUMENT_ROOT . "/societe/class/companybankaccount.class.php";
 
 		$bac = new CompanyBankAccount($this->db);
-		$bac->socid = $this->id;
-		$bac->fetch($this->id);
+		$bac->fetch(0,$this->id);
 
 		if ($bac->code_banque || $bac->code_guichet || $bac->number || $bac->cle_rib)
 		{

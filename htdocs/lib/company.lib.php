@@ -180,10 +180,10 @@ function societe_prepare_head2($objsoc)
 
 
 /**
- *    \brief      Retourne le nom traduit ou code+nom d'un pays
- *    \param      id          id du pays
- *    \param      withcode    1=affiche code + nom
- *    \return     string      Nom traduit du pays
+ *    \brief      Retourne le nom traduit ou code+nom d'un pays depuis id
+ *    \param      id          id of country
+ *    \param      withcode    0=Return label, 1=Return code + label, 2=Return code
+ *    \return     string      String with country code or translated country name
  */
 function getCountryLabel($id,$withcode=0)
 {
@@ -199,8 +199,9 @@ function getCountryLabel($id,$withcode=0)
 		$obj = $db->fetch_object($resql);
 		if ($obj)
 		{
-			$label=$obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'');
-			if ($withcode) return $label==$obj->code?"$obj->code":"$obj->code - $label";
+			$label=($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'');
+			if ($withcode == 1) return $label=$obj->code?"$obj->code":"$obj->code - $label";
+			else if ($withcode == 2) return $label=$obj->code;
 			else return $label;
 		}
 		else
