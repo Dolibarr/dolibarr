@@ -82,7 +82,10 @@ $line1=new FactureLigne($db);
 $line1->tva_tx=10.0;
 $line1->remise_percent=0;
 $line1->qty=1;
-$obj->lines[]=$line1;
+$line1->total_ht=100;
+$line1->total_tva=10;
+$line1->total_ttc=110;
+$obj->lignes[]=$line1;
 
 // Create order
 $idobject=$obj->create($user);
