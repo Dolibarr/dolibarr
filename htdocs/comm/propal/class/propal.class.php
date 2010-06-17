@@ -832,7 +832,7 @@ class Propal extends CommonObject
 		global $conf;
 
 		$sql = "SELECT p.rowid,ref,remise,remise_percent,remise_absolue,fk_soc";
-		$sql.= ", total, tva, total_ht";
+		$sql.= ", total, tva, localtax1, localtax2, total_ht";
 		$sql.= ", datec";
 		$sql.= ", date_valid as datev";
 		$sql.= ", datep as dp";
@@ -873,6 +873,8 @@ class Propal extends CommonObject
 				$this->total                = $obj->total; // TODO obsolete
 				$this->total_ht             = $obj->total_ht;
 				$this->total_tva            = $obj->tva;
+				$this->total_localtax1		= $obj->localtax1;
+				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc            = $obj->total;
 				$this->socid                = $obj->fk_soc;
 				$this->fk_project           = $obj->fk_projet;
