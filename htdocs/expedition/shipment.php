@@ -438,6 +438,8 @@ if ($id > 0 || ! empty($ref))
 				if (! empty($objp->date_end)) $type=1;
 
 				print "<tr ".$bc[$var].">";
+
+				// Product label
 				if ($objp->fk_product > 0)
 				{
 					print '<td>';
@@ -603,7 +605,7 @@ if ($id > 0 || ! empty($ref))
 
 
 		// Bouton expedier avec gestion des stocks
-		if ($conf->stock->enabled && $commande->statut > 0 && $commande->statut < 3)
+		if ($commande->statut > 0 && $commande->statut < 3)
 		{
 			if ($user->rights->expedition->creer)
 			{
@@ -616,18 +618,22 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="origin_id" value="'.$commande->id.'">';
 				print '<table class="border" width="100%">';
 
-				$entrepot = new Entrepot($db);
 				$langs->load("stocks");
 
 				print '<tr>';
-				print '<td>'.$langs->trans("WarehouseSource").'</td>';
-				print '<td>';
-				$result=$formproduct->selectWarehouses(-1,'entrepot_id','',1);
-				if ($result <= 0)
+
+				if ($conf->stock->enabled)
 				{
-					print ' &nbsp; No warehouse defined, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">add one</a>';
+					print '<td>'.$langs->trans("WarehouseSource").'</td>';
+					print '<td>';
+					$result=$formproduct->selectWarehouses(-1,'entrepot_id','',1);
+					if ($result <= 0)
+					{
+						print ' &nbsp; No warehouse defined, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">add one</a>';
+					}
+					print '</td>';
 				}
-				print '</td><td align="center">';
+				print '<td align="center">';
 				print '<input type="submit" class="button" named="save" value="'.$langs->trans("NewSending").'">';
 				if ($reste_a_livrer_total <= 0)
 				{

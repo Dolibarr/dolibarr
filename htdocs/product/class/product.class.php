@@ -2348,7 +2348,7 @@ class Product extends CommonObject
 			$i=0;
 			if ($num > 0)
 			{
-				while ($i < $num )
+				while ($i < $num)
 				{
 					$row = $this->db->fetch_row($result);
 					$this->stock_entrepot[$row[1]] = $row[0];

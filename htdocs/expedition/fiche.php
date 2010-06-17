@@ -98,12 +98,13 @@ if ($_POST["action"] == 'add')
 
 	for ($i = 0 ; $i < sizeof($object->lignes) ; $i++)
 	{
-		$ent = "entl".$i;
-		$idl = "idl".$i;
 		$qty = "qtyl".$i;
-		$entrepot_id = $_POST[$ent]?$_POST[$ent]:$_POST["entrepot_id"];
 		if ($_POST[$qty] > 0)
 		{
+			$ent = "entl".$i;
+			$idl = "idl".$i;
+			$entrepot_id = isset($_POST[$ent])?$_POST[$ent]:$_POST["entrepot_id"];
+
 			$expedition->addline($entrepot_id,$_POST[$idl],$_POST[$qty]);
 		}
 	}
@@ -326,8 +327,10 @@ if ($_GET["action"] == 'create')
 
 		$object = new $classname($db);
 
-		if ($object->fetch($origin_id))
+		if ($object->fetch($origin_id))	// This include the fetch_lines
 		{
+			//var_dump($object);
+
 			$soc = new Societe($db);
 			$soc->fetch($object->socid);
 
@@ -461,20 +464,15 @@ if ($_GET["action"] == 'create')
 				print '<td>'.$langs->trans("Description").'</td>';
 				print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-				print '<td align="center">'.$langs->trans("QtyToShip").'</td>';
+				print '<td align="left">'.$langs->trans("QtyToShip").'</td>';
 				if ($conf->stock->enabled)
 				{
-					if ($_GET["entrepot_id"])
-					{
-						print '<td align="right">'.$langs->trans("Stock").'</td>';
-					}
-					else
-					{
-						print '<td align="left">'.$langs->trans("Warehouse").'</td>';
-					}
+					print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Stock").'</td>';
 				}
 				print "</tr>\n";
 			}
+
+			$product_static = new Product($db);
 
 			$var=true;
 			$indiceAsked = 0;
@@ -484,37 +482,63 @@ if ($_GET["action"] == 'create')
 
 				$line = $object->lines[$indiceAsked];
 				$var=!$var;
+
+				// Show product and description
+				$type=$line->product_type?$line->product_type:$line->fk_product_type;
+				// Try to enhance type detection using date_start and date_end for free lines where type
+				// was not saved.
+				if (! empty($line->date_start)) $type=1;
+				if (! empty($line->date_end)) $type=1;
+
 				print "<tr ".$bc[$var].">\n";
 
-				// Desc
+				// Product label
 				if ($line->fk_product > 0)
 				{
 					$product->fetch($line->fk_product);
+					$product->load_stock();
 
 					print '<td>';
-					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product.'">';
-					if ($line->product_type == 1)
+					print '<a name="'.$line->rowid.'"></a>'; // ancre pour retourner sur la ligne
+
+					// Show product and description
+					$product_static->type=$line->fk_product_type;
+					$product_static->id=$line->fk_product;
+					$product_static->ref=$line->ref;
+					$product_static->libelle=$line->product_label;
+					$text=$product_static->getNomUrl(1);
+					$text.= ' - '.$line->product_label;
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->desc));
+					print $html->textwithtooltip($text,$description,3,'','',$i);
+
+					// Show range
+					print_date_range($db->jdate($line->date_start),$db->jdate($line->date_end));
+
+					// Add description in form
+					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
-						print img_object($langs->trans("ShowService"),"service");
+						print ($line->desc && $line->desc!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->desc):'';
 					}
-					else
-					{
-						print img_object($langs->trans("ShowProduct"),"product");
-					}
-					print ' '.$product->ref.'</a> - '.$product->libelle;
-					if ($line->desc) print '<br>'.dol_nl2br(dol_htmlcleanlastbr($line->desc),1);
+
 					print '</td>';
 				}
 				else
-				{	//var_dump($ligne);
-					print "<td>".nl2br($line->desc)."</td>\n";
+				{
+					print "<td>";
+					if ($type==1) $text = img_object($langs->trans('Service'),'service');
+					else $text = img_object($langs->trans('Product'),'product');
+					print $text.' '.nl2br($line->desc);
+
+					// Show range
+					print_date_range($db->jdate($line->date_start),$db->jdate($line->date_end));
+					print "</td>\n";
 				}
 
 				// Qty
 				print '<td align="center">'.$line->qty.'</td>';
 				$qtyProdCom=$line->qty;
 
-				// Sendings
+				// Qty already sent
 				print '<td align="center">';
 				$quantityDelivered = $object->expeditions[$line->id];
 				print $quantityDelivered;
@@ -523,81 +547,58 @@ if ($_GET["action"] == 'create')
 				$quantityAsked = $line->qty;
 				$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 
-				if ($conf->stock->enabled && $line->product_type == 0)
+				if ($conf->stock->enabled
+				 //&& $line->product_type == 0
+				 )
 				{
 					$defaultqty=0;
-					if ($_GET["entrepot_id"])
+					if ($_REQUEST["entrepot_id"])
 					{
-						$stock = $product->stock_entrepot[$_GET["entrepot_id"]];
+						//var_dump($product);
+						$stock = $product->stock_entrepot[$_REQUEST["entrepot_id"]];
 						$stock+=0;  // Convertit en numerique
 						$defaultqty=min($quantityToBeDelivered, $stock);
-						if ($defaultqty < 0) $defaultqty=0;
+						if ($line->product_type == 1 || $defaultqty < 0) $defaultqty=0;
 					}
 
 					// Quantity
-					print '<td align="center">';
+					print '<td align="left">';
 					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-					print '<input name="qtyl'.$indiceAsked.'" type="text" size="6" value="'.$defaultqty.'">';
+					print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
+					if ($line->product_type == 1) print ' ('.$langs->trans("Service").')';
 					print '</td>';
 
 					// Stock
-					if ($_GET["entrepot_id"])
+					if ($conf->stock->enabled)
 					{
-						print '<td align="right">';
-						print $stock;
-						if ($stock < $quantityToBeDelivered)
+						if ($_REQUEST["entrepot_id"])
 						{
-							print ' '.img_warning($langs->trans("StockTooLow"));
-						}
-						print '</td>';
-					}
-					else
-					{
-						$array=array();
-
-						$sql = "SELECT e.rowid, e.label, ps.reel";
-						$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-						$sql.= ", ".MAIN_DB_PREFIX."entrepot as e";
-						$sql.= " WHERE ps.fk_entrepot = e.rowid";
-						$sql.= " AND fk_product = '".$product->id."'";
-
-						$result = $db->query($sql) ;
-						if ($result)
-						{
-							$num = $db->num_rows($result);
-							$i=0;
-							if ($num > 0)
+							print '<td align="left">';
+							$formproduct->selectWarehouses($_REQUEST["entrepot_id"],'entl'.$indiceAsked,'',1,0,$line->fk_product);
+							//print $stock;
+							if ($stock < $quantityToBeDelivered)
 							{
-								while ($i < $num)
-								{
-									$obj = $db->fetch_object($result);
-									$array[$obj->rowid] = $obj->label.' ('.$obj->reel.')';
-									$i++;
-								}
+								print ' '.img_warning($langs->trans("StockTooLow"));
 							}
-							$db->free($result);
+							print '</td>';
 						}
 						else
 						{
-							$this->error=$db->error();
-							return -1;
+							print '<td align="left">';
+							$formproduct->selectWarehouses('','entl'.$indiceAsked,'',1,0,$line->fk_product);
+							print '</td>';
 						}
-
-						print '<td align="left">';
-						$html->select_array('entl'.$i,$array,'',1,0,0);
-						print '</td>';
 					}
-
 				}
-				else
+				/*else
 				{
 					// Quantity
 					print '<td align="center" '.$colspan.'>';
 					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-					print '<input name="qtyl'.$indiceAsked.'" type="text" size="6" value="'.$quantityToBeDelivered.'">';
+					print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$quantityToBeDelivered.'">';
 					print '</td>';
 					if ($line->product_type == 1) print '<td>&nbsp;</td>';
-				}
+				}*/
 
 				print "</tr>\n";
 

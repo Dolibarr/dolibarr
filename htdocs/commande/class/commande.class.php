@@ -1239,6 +1239,7 @@ class Commande extends CommonObject
 
 				$line->ref              = $objp->product_ref;
 				$line->libelle          = $objp->label;
+				$line->product_label    = $objp->label;
 				$line->product_desc     = $objp->product_desc; 		// Description produit
 				$line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 

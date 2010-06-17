@@ -54,17 +54,26 @@ class FormProduct
 
 	/**
 	 *      \brief      Load in cache array list of warehouses
-	 *      \return     int      	Nb of loaded lines, 0 if already loaded, <0 if KO
+	 * 		\param		fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
+	 *      \return     int      		Nb of loaded lines, 0 if already loaded, <0 if KO
+	 * 		\remarks	If fk_product is not 0, we do not use cache
 	 */
-	function loadWarehouses()
+	function loadWarehouses($fk_product=0)
 	{
 		global $langs;
 
-		if (sizeof($this->cache_warehouses)) return 0;    // Cache already loaded
+		if (empty($fk_product) && sizeof($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
 
-		$sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql .= " WHERE statut = 1";
-		$sql .= " ORDER BY e.label";
+		$sql = "SELECT e.rowid, e.label";
+		if ($fk_product) $sql.= ", ps.reel";
+		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+		if ($fk_product)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
+			$sql.= " AND ps.fk_product = '".$fk_product."'";
+		}
+		$sql.= " WHERE statut = 1";
+		$sql.= " ORDER BY e.label";
 
 		dol_syslog('FormProduct::loadWarehouses sql='.$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -78,6 +87,7 @@ class FormProduct
 
 				$this->cache_warehouses[$obj->rowid]['id'] =$obj->rowid;
 				$this->cache_warehouses[$obj->rowid]['label']=$obj->label;
+				if ($fk_product) $this->cache_warehouses[$obj->rowid]['stock']=$obj->reel;
 				$i++;
 			}
 			return $num;
@@ -96,15 +106,16 @@ class FormProduct
 	 *      \param      filtertype      For filtre
 	 *      \param      empty			1=Can be empty, 0 if not
 	 * 		\param		disabled		1=Select is disabled
+	 * 		\param		fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
 	 * 		\return		int				<0 if KO, Nb of product in list if OK
 	 */
-	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0)
+	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0)
 	{
 		global $langs,$user;
 
-		dol_syslog("Form::selectWarehouses $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
+		dol_syslog("Form::selectWarehouses $selected, $htmlname, $filtertype, $empty, $disabled, $fk_product",LOG_DEBUG);
 
-		$this->loadWarehouses();
+		$this->loadWarehouses($fk_product);
 
 		print '<select class="flat"'.($disabled?' disabled="true"':'').' name="'.($htmlname.($disabled?'_disabled':'')).'">';
 		if ($empty) print '<option value="">&nbsp;</option>';
@@ -115,6 +126,7 @@ class FormProduct
 			if ($selected == $id) print ' selected="true"';
 			print '>';
 			print $arraytypes['label'];
+			if ($fk_product) print ' ('.$langs->trans("Stock").': '.($arraytypes['stock']>0?$arraytypes['stock']:'?').')';
 			print '</option>';
 		}
 		print '</select>';

@@ -297,13 +297,15 @@ if ($_GET["action"] == 'create')
 		$var=true;
 		while ($i < $num)
 		{
+			$product = new Product($db);
+
 			$ligne = $commande->lignes[$i];
 			$var=!$var;
 			print "<tr $bc[$var]>\n";
 			if ($ligne->fk_product > 0)
 			{
-				$product = new Product($db);
 				$product->fetch($ligne->fk_product);
+				$product->load_stock();
 
 				print '<td>';
 				print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;

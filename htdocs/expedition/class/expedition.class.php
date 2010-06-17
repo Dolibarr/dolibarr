@@ -363,6 +363,8 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
+		$error = 0;
+
 		// Define new ref
 		$num = "EXP".$this->id;
 
@@ -385,51 +387,49 @@ class Expedition extends CommonObject
 			$error++;
 		}
 
-		if (! $error)
+		// If stock increment is done on sending (recommanded choice)
+		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 		{
-			// If stock increment is done on sending (recommanded choice)
-			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
+
+			// Loop on each product line to add a stock movement
+			// TODO possibilite d'expedier a partir d'une propale ou autre origine
+			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot";
+			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+			$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed";
+			$sql.= " WHERE ed.fk_expedition = ".$this->id;
+			$sql.= " AND cd.rowid = ed.fk_origin_line";
+
+			dol_syslog("Expedition::valid select details sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
 			{
-				require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
-
-				// Loop on each product line to add a stock movement
-				// TODO possibilite d'expedier a partir d'une propale ou autre origine
-				$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot";
-				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
-				$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed";
-				$sql.= " WHERE ed.fk_expedition = ".$this->id;
-				$sql.= " AND cd.rowid = ed.fk_origin_line";
-
-				dol_syslog("Expedition::valid select details sql=".$sql);
-				$resql=$this->db->query($sql);
-				if ($resql)
+				$num = $this->db->num_rows($resql);
+				$i=0;
+				while($i < $num)
 				{
-					$num = $this->db->num_rows($resql);
-					$i=0;
-					while($i < $num)
+					dol_syslog("Expedition::valid movment index ".$i);
+					$obj = $this->db->fetch_object($resql);
+
+					if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
 					{
-						dol_syslog("Expedition::valid movment index ".$i);
-						$obj = $this->db->fetch_object($resql);
-
-						if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
-						{
-							$mouvS = new MouvementStock($this->db);
-							// We decrement stock of product (and sub-products)
-							$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice);
-							if ($result < 0) { $error++; }
-						}
-
-						$i++;
+						//var_dump($this->lignes[$i]);
+						$mouvS = new MouvementStock($this->db);
+						// We decrement stock of product (and sub-products)
+						// We use warehouse selected for each line
+						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice);
+						if ($result < 0) { $error++; break; }
 					}
+
+					$i++;
 				}
-				else
-				{
-					$this->db->rollback();
-					$this->error=$this->db->error();
-					dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
-					return -2;
-				}
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->error();
+				dol_syslog("Expedition::valid ".$this->error, LOG_ERR);
+				return -2;
 			}
 		}
 
