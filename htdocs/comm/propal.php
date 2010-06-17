@@ -712,6 +712,8 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 			$tva_npr=preg_match('/\*/',$_POST['np_tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
 			$type=$_POST["type"];
+			$localtax1_tx=get_localtax($tva_tx,1,$propal->client);
+			$localtax2_tx=get_localtax($tva_tx,2,$propal->client);
 		}
 
 		$info_bits=0;
@@ -730,6 +732,8 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 			$pu_ht,
 			$_POST['qty'],
 			$tva_tx,
+			$localtax1_tx,
+			$localtax2_tx,
 			$_POST['idprod'],
 			$_POST['remise_percent'],
 			$price_base_type,
@@ -786,6 +790,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	// Define vat_rate
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=str_replace('*','',$vat_rate);
+	$localtax1_rate=get_localtax($vat_rate,1,$propal->client);
+	$localtax2_rate=get_localtax($vat_rate,2,$propal->client);
 
 	// On verifie que le prix minimum est respecte
 	$productid = $_POST['productid'] ;
@@ -805,6 +811,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 		$_POST['qty'],
 		$_POST['remise_percent'],
 		$vat_rate,
+		$localtax1_rate,
+		$localtax2_rate,
 		$_POST['desc'],
 			'HT',
 		$info_bits);

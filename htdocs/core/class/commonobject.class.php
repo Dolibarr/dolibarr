@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010 	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -895,7 +896,7 @@ class CommonObject
 		$fieldtva='total_tva';
 		if ($this->element == 'facture_fourn') $fieldtva='tva';
 
-		$sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, total_ttc';
+		$sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, total_localtax1, total_localtax2, total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 
@@ -905,6 +906,8 @@ class CommonObject
 		{
 			$this->total_ht  = 0;
 			$this->total_tva = 0;
+			$this->total_localtax1 = 0;
+			$this->total_localtax2 = 0;
 			$this->total_ttc = 0;
 
 			$num = $this->db->num_rows($resql);
@@ -915,6 +918,8 @@ class CommonObject
 
 				$this->total_ht       += $obj->total_ht;
 				$this->total_tva      += $obj->total_tva;
+				$this->total_localtax1 += $obj->total_localtax1;
+				$this->total_localtax2 += $obj->total_localtax2;
 				$this->total_ttc      += $obj->total_ttc;
 
 				$i++;
@@ -928,12 +933,22 @@ class CommonObject
 			if ($this->element == 'facturerec') $fieldht='total';
 			$fieldtva='tva';
 			if ($this->element == 'facture_fourn') $fieldtva='total_tva';
+			$fieldlocaltax1='total_localtax1';
+			$fieldlocaltax2='total_localtax2';
 			$fieldttc='total_ttc';
-			if ($this->element == 'propal') $fieldttc='total';
+			
+			if ($this->element == 'propal')
+			{
+				$fieldlocaltax1='localtax1';
+				$fieldlocaltax2='localtax2';
+				$fieldttc='total';
+			}
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 			$sql .= " ".$fieldht."='".price2num($this->total_ht)."',";
 			$sql .= " ".$fieldtva."='".price2num($this->total_tva)."',";
+			$sql .= " ".$fieldlocaltax1."='".price2num($this->total_localtax1)."',";
+			$sql .= " ".$fieldlocaltax2."='".price2num($this->total_localtax2)."',";
 			$sql .= " ".$fieldttc."='".price2num($this->total_ttc)."'";
 			$sql .= ' WHERE rowid = '.$this->id;
 
