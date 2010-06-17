@@ -36,6 +36,7 @@ For users:
 - New: Can now send supplier order by mail.
 - New: task #10076 : Show content of message in notification module.
 - New: Bank name available on invoice.
+- New: IBAN value is called IFSC if country is India
 - Fix: Debug experimental module widthrawal.
 - Fix: Format number was wrong for ar_AR language.
 - Fix: Can change password if has only permission change password.

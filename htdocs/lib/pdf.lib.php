@@ -122,6 +122,8 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
  */
 function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 {
+	global $mysoc;
+
 	$pdf->SetXY ($curx, $cury);
 	$pdf->SetFont('Arial','B',8);
 	$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
@@ -129,6 +131,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 
 	$outputlangs->load("banks");
 
+	// Get format of bank id according to country of $account
 	$usedetailedbban=$account->useDetailedBBAN();
 
 	if ($usedetailedbban)
@@ -176,13 +179,19 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 		$cury-=9;
 	}
 
+	// Use correct name of bank id according to country
+	$ibankey="IBANNumber";
+	$bickey="BICNumber";
+	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
+
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetXY ($curx, $cury+12);
 	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
 	$pdf->SetXY ($curx, $cury+22);
-	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("IBANNumber").': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
+	$pdf->MultiCell(90, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
 	$pdf->SetXY ($curx, $cury+25);
-	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BICNumber").': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+	$pdf->MultiCell(90, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 
 	return $pdf->getY();
 }

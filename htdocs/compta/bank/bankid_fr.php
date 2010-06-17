@@ -199,6 +199,10 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 		print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
 		print nl2br($account->adresse_proprio);
 		print "</td></tr>\n";
+
+		print '<tr><td valign="top">'.$langs->trans("CountryCode").'</td><td colspan="3">';
+		print $account->getCountryCode();
+		print "</td></tr>\n";
 	}
 
 	print '</table>';
@@ -232,7 +236,7 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 	$account = new Account($db, $_GET["id"]);
 	$account->fetch($_GET["id"]);
 
-	print_titre($langs->trans("EditFinancialAccount"));
+	print_fiche_titre($langs->trans("EditFinancialAccount"));
 	print "<br>";
 
 	if ($message) { print "$message<br>\n"; }

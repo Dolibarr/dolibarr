@@ -38,9 +38,10 @@ create table llx_bank_account
   cle_rib        varchar(5),
   bic            varchar(11),
   iban_prefix    varchar(34),                 -- 34 according to ISO 13616
-  country_iban   varchar(2),
+  country_iban   varchar(2),				-- deprecated
   cle_iban       varchar(2),
   domiciliation  varchar(255),
+  fk_pays        integer        DEFAULT 0,
   proprio        varchar(60),
   adresse_proprio varchar(255),
   courant        smallint DEFAULT 0 NOT NULL,

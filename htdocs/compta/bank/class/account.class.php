@@ -824,7 +824,7 @@ class Account extends CommonObject
 	/**
 	 * 	\brief		Return account country code
 	 *	\return		String		country code
-	 * 	TODO	Add a field in bank_account table to store country
+	 * 	TODO	Manage field with country in bank_account
 	 */
 	function getCountryCode()
 	{
