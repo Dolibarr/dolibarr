@@ -894,9 +894,15 @@ class CommonObject
 
 		// List lines to sum
 		$fieldtva='total_tva';
-		if ($this->element == 'facture_fourn') $fieldtva='tva';
-
-		$sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, total_localtax1, total_localtax2, total_ttc';
+		$fieldlocaltax1='total_localtax1';
+		$fieldlocaltax2='total_localtax2';
+		
+		if ($this->element == 'facture_fourn') 
+		{
+			$fieldtva='tva';
+		}
+		
+		$sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2, total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 
@@ -929,18 +935,26 @@ class CommonObject
 
 			// Now update field total_ht, total_ttc and tva
 			$fieldht='total_ht';
-			if ($this->element == 'facture') $fieldht='total';
-			if ($this->element == 'facturerec') $fieldht='total';
+			
 			$fieldtva='tva';
-			if ($this->element == 'facture_fourn') $fieldtva='total_tva';
-			$fieldlocaltax1='total_localtax1';
-			$fieldlocaltax2='total_localtax2';
+			
+			$fieldlocaltax1='localtax1';
+			$fieldlocaltax2='localtax2';
+			
 			$fieldttc='total_ttc';
+			
+			if ($this->element == 'facture' || $this->element == 'facturerec')
+			{
+				$fieldht='total';
+			}
+			
+			if ($this->element == 'facture_fourn') 
+			{
+				$fieldtva='total_tva';
+			}
 			
 			if ($this->element == 'propal')
 			{
-				$fieldlocaltax1='localtax1';
-				$fieldlocaltax2='localtax2';
 				$fieldttc='total';
 			}
 
