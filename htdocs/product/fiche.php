@@ -389,6 +389,8 @@ if ($_POST["action"] == 'addinpropal')
 
 	$desc = $prod->description;
 	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
+	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
 
 	$price_base_type = 'HT';
 
@@ -425,8 +427,8 @@ if ($_POST["action"] == 'addinpropal')
 	$pu_ht,
 	$_POST["qty"],
 	$tva_tx,
-	0, // localtax1
-	0, // localtax2
+	$localtax1_tx, // localtax1
+	$localtax2_tx, // localtax2
 	$prod->id,
 	$_POST["remise_percent"],
 	$price_base_type,
