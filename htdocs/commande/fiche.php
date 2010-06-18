@@ -395,7 +395,7 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 			$prod->fetch($_POST['idprod']);
 
 			$tva_tx = get_default_tva($mysoc,$commande->client,$prod->tva_tx);
-
+	
 			// multiprix
 			if ($conf->global->PRODUIT_MULTIPRICES && $commande->client->price_level)
 			{
@@ -437,6 +437,11 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 			$desc=$_POST['dp_desc'];
 			$type=$_POST["type"];
 		}
+		
+		// Local Taxes
+		$localtax1_tx= get_localtax($tva_tx, 1, $commande->client);
+	  	$localtax2_tx= get_localtax($tva_tx, 2, $commande->client);
+	  	    
 		$desc=dol_htmlcleanlastbr($desc);
 
 		$info_bits=0;
@@ -457,6 +462,8 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 				$pu_ht,
 				$_POST['qty'],
 				$tva_tx,
+				$localtax1_tx,
+				$localtax2_tx,
 				$_POST['idprod'],
 				$_POST['remise_percent'],
 				$info_bits,
@@ -523,6 +530,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	// Define vat_rate
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=str_replace('*','',$vat_rate);
+	$localtax1_rate=get_localtax($vat_rate,1,$commande->client);
+	$localtax2_rate=get_localtax($vat_rate,2,$commande->client);
 
 	// Check parameters
 	if (empty($_POST['productid']) && $_POST["type"] < 0)
@@ -562,6 +571,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 		$_POST['qty'],
 		$_POST['elremise_percent'],
 		$vat_rate,
+		$localtax1_rate,
+		$localtax2_rate,
 		'HT',
 		$info_bits,
 		$date_start,
@@ -1618,13 +1629,13 @@ else
 				if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 				{
 					print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
-					print '<td align="right">'.price($propal->total_localtax1).'</td>';
+					print '<td align="right">'.price($commande->total_localtax1).'</td>';
 					print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				}
 				if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 				{
 					print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
-					print '<td align="right">'.price($propal->total_localtax2).'</td>';
+					print '<td align="right">'.price($commande->total_localtax2).'</td>';
 					print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				}
 			}

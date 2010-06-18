@@ -2482,7 +2482,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  *	\brief		Return localtaxe rate for a particular tva
  * 	\param      tva			Vat taxe
  * 	\param      local		Local taxe to search and return
- * 	\return		int			<0 if KO, localtax if found
+ * 	\return		int			0 if not found, localtax if found
  */
 function get_localtax($tva, $local, $societe_acheteuse="")
 {
@@ -2510,7 +2510,7 @@ function get_localtax($tva, $local, $societe_acheteuse="")
 		elseif ($local==2) return $obj->localtax2;
 	}
 	
-	return -1;
+	return 0;
 }
 
 /**

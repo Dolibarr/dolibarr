@@ -70,6 +70,8 @@ class Commande extends CommonObject
 	var $total_ht;			// Total net of tax
 	var $total_ttc;			// Total with tax
 	var $total_tva;			// Total VAT
+	var $total_localtax1;   // Total Local tax 1
+	var $total_localtax2;   // Total Local tax 2
 	var $remise_absolue;
 	var $modelpdf;
 	var $info_bits;
@@ -131,6 +133,8 @@ class Commande extends CommonObject
 			$line->price             = $propal->lignes[$i]->price;
 			$line->subprice          = $propal->lignes[$i]->subprice;
 			$line->tva_tx            = $propal->lignes[$i]->tva_tx;
+			$line->localtax1_tx		 = $propal->lignes[$i]->localtax1_tx;
+			$line->localtax2_tx		 = $propal->lignes[$i]->localtax2_tx;
 			$line->qty               = $propal->lignes[$i]->qty;
 			$line->fk_remise_except  = $propal->lignes[$i]->fk_remise_except;
 			$line->remise_percent    = $propal->lignes[$i]->remise_percent;
@@ -652,6 +656,8 @@ class Commande extends CommonObject
 					$this->lines[$i]->subprice,
 					$this->lines[$i]->qty,
 					$this->lines[$i]->tva_tx,
+					$this->lines[$i]->localtax1,
+					$this->lines[$i]->localtax2,
 					$this->lines[$i]->fk_product,
 					$this->lines[$i]->remise_percent,
 					$this->lines[$i]->info_bits,
@@ -818,7 +824,7 @@ class Commande extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0)
+	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0)
 	{
 		dol_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
 
@@ -832,6 +838,8 @@ class Commande extends CommonObject
 		$pu_ht=price2num($pu_ht);
 		$pu_ttc=price2num($pu_ttc);
 		$txtva = price2num($txtva);
+		$txlocaltax1 = price2num($txlocaltax1);
+		$txlocaltax2 = price2num($txlocaltax2);
 		if ($price_base_type=='HT')
 		{
 			$pu=$pu_ht;
@@ -853,10 +861,12 @@ class Commande extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0 ,0, 0, $price_base_type, $info_bits);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1 ,$txlocaltax2, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
+			$total_localtax1 = $tabprice[9];
+			$total_localtax2 = $tabprice[10];
 
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
@@ -883,11 +893,13 @@ class Commande extends CommonObject
 			$line->info_bits=$info_bits;
 			$line->total_ht=$total_ht;
 			$line->total_tva=$total_tva;
+			$line->total_localtax1=$total_localtax1;
+			$line->total_localtax2=$total_localtax2;
 			$line->total_ttc=$total_ttc;
 			$line->product_type=$type;
 
 			// \TODO Ne plus utiliser
-			$line->price=$price;
+			$line->price=$price; 
 			$line->remise=$remise;
 
 			$line->date_start=$date_start;
@@ -1007,7 +1019,7 @@ class Commande extends CommonObject
 		if (empty($id) && empty($ref)) return -1;
 
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
-		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.fk_cond_reglement, c.fk_mode_reglement';
+		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement';
 		$sql.= ', c.date_commande';
 		$sql.= ', c.date_livraison';
 		$sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
@@ -1038,6 +1050,8 @@ class Commande extends CommonObject
 				$this->user_author_id         = $obj->fk_user_author;
 				$this->total_ht               = $obj->total_ht;
 				$this->total_tva              = $obj->total_tva;
+				$this->total_localtax1		  = $obj->total_localtax1;
+				$this->total_localtax2		  = $obj->total_localtax2;	
 				$this->total_ttc              = $obj->total_ttc;
 				$this->date                   = $this->db->jdate($obj->date_commande);
 				$this->date_commande          = $this->db->jdate($obj->date_commande);
@@ -1830,11 +1844,11 @@ class Commande extends CommonObject
 	 * 	\param		type				Type of line (0=product, 1=service)
 	 *  \return   	int              	< 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0)
 	{
         global $conf;
 
-		dol_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $date_start, $date_end, $type");
+		dol_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $date_start, $date_end, $type");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
@@ -1848,15 +1862,19 @@ class Commande extends CommonObject
 			if (! $info_bits) $info_bits=0;
 			$pu = price2num($pu);
 			$txtva=price2num($txtva);
+			$txlocaltax1=price2num($txtlocaltax1);
+			$txlocaltax2=price2num($txtlocaltax2);
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
+			$total_localtax1 = $tabprice[9];
+			$total_localtax2 = $tabprice[10];
 
 			// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
 			$price = $pu;
@@ -1883,11 +1901,15 @@ class Commande extends CommonObject
 			$sql.= ",remise='".price2num($remise)."'";
 			$sql.= ",remise_percent='".price2num($remise_percent)."'";
 			$sql.= ",tva_tx='".price2num($txtva)."'";
+			$sql.= ",localtax1_tx='".price2num($txlocaltax1)."'";
+			$sql.= ",localtax2_tx='".price2num($txlocaltax2)."'";
 			$sql.= ",qty='".price2num($qty)."'";
 			$sql.= ",product_type='".$type."'";
 			$sql.= ",info_bits='".$info_bits."'";
 			$sql.= ",total_ht='".price2num($total_ht)."'";
 			$sql.= ",total_tva='".price2num($total_tva)."'";
+			$sql.= ",total_localtax1='".price2num($total_localtax1)."'";
+			$sql.= ",total_localtax2='".price2num($total_localtax2)."'";
 			$sql.= ",total_ttc='".price2num($total_ttc)."'";
 			if ($date_start) { $sql.= ",date_start='".$this->db->idate($date_start)."'"; }
 			else { $sql.=',date_start=null'; }
@@ -2421,9 +2443,9 @@ class OrderLine
 	 */
 	function fetch($rowid)
 	{
-		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.price, cd.qty, cd.tva_tx,';
+		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.price, cd.qty, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx,';
 		$sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
-		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc, cd.marge_tx, cd.marque_tx, cd.rang,';
+		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.marge_tx, cd.marque_tx, cd.rang,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
 		$sql.= ' cd.date_start, cd.date_end';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
@@ -2440,6 +2462,8 @@ class OrderLine
 			$this->price            = $objp->price;
 			$this->subprice         = $objp->subprice;
 			$this->tva_tx           = $objp->tva_tx;
+			$this->localtax1_tx		= $objp->localtax1_tx;
+			$tish->localtax2_tx		= $objp->localtax2_tx;
 			$this->remise           = $objp->remise;
 			$this->remise_percent   = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
@@ -2448,6 +2472,8 @@ class OrderLine
 			$this->info_bits        = $objp->info_bits;
 			$this->total_ht         = $objp->total_ht;
 			$this->total_tva        = $objp->total_tva;
+			$this->total_localtax1  = $objp->total_localtax1;
+			$this->total_localtax2  = $objp->total_localtax2;
 			$this->total_ttc        = $objp->total_ttc;
 			$this->marge_tx         = $objp->marge_tx;
 			$this->marque_tx        = $objp->marque_tx;
@@ -2513,6 +2539,8 @@ class OrderLine
 
 		// Clean parameters
 		if (empty($this->tva_tx)) $this->tva_tx=0;
+		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
+		if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
 
 		$this->db->begin();
 
@@ -2538,16 +2566,18 @@ class OrderLine
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
-		$sql.= ' (fk_commande, description, qty, tva_tx,';
+		$sql.= ' (fk_commande, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
 		$sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
 		$sql.= ' rang, marge_tx, marque_tx,';
 		// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 		// Insert in the database the start and end dates
-		$sql.= ' info_bits, total_ht, total_tva, total_ttc, date_start, date_end)';
+		$sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end)';
 		$sql.= " VALUES (".$this->fk_commande.",";
 		$sql.= " '".addslashes($this->desc)."',";
 		$sql.= " '".price2num($this->qty)."',";
 		$sql.= " '".price2num($this->tva_tx)."',";
+		$sql.= " '".price2num($this->localtax1_tx)."',";
+		$sql.= " '".price2num($this->localtax2_tx)."',";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
 		else { $sql.='null,'; }
 		$sql.= " '".$this->product_type."',";
@@ -2565,6 +2595,8 @@ class OrderLine
 		$sql.= " '".$this->info_bits."',";
 		$sql.= " '".price2num($this->total_ht)."',";
 		$sql.= " '".price2num($this->total_tva)."',";
+		$sql.= " '".price2num($this->total_localtax1)."',";
+		$sql.= " '".price2num($this->total_localtax2)."',";
 		// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 		// Insert in the database the start and end dates
 		$sql.= " '".price2num($this->total_ttc)."',";
@@ -2615,6 +2647,8 @@ class OrderLine
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
 		$sql.= " total_ht='".price2num($this->total_ht)."'";
 		$sql.= ",total_tva='".price2num($this->total_tva)."'";
+		$sql.= ",total_localtax1='".price2num($this->total_localtax1)."'";
+		$sql.= ",total_localtax2='".price2num($this->total_localtax2)."'";
 		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
