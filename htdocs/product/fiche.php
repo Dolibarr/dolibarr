@@ -425,6 +425,8 @@ if ($_POST["action"] == 'addinpropal')
 	$pu_ht,
 	$_POST["qty"],
 	$tva_tx,
+	0, // localtax1
+	0, // localtax2
 	$prod->id,
 	$_POST["remise_percent"],
 	$price_base_type,
