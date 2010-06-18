@@ -489,9 +489,9 @@ if ($id > 0 || ! empty($ref))
 				print $quantite_livree;
 				print '</td>';
 
-				// Qty remaind to ship
+				// Qty remains to ship
 				print '<td align="center">';
-				if ($objp->product_type == 0)
+				if ($type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{
 					$reste_a_livrer[$objp->fk_product] = $objp->qty - $quantite_livree;
 					$reste_a_livrer_total += $reste_a_livrer[$objp->fk_product];

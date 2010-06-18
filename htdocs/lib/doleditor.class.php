@@ -19,7 +19,7 @@
 
 /**
  *       \file       htdocs/lib/doleditor.class.php
- *       \brief      Classe permettant de g�rer FCKEditor
+ *       \brief      Class to manage a WYSIWYG editor
  *       \version    $Id$
 */
 
@@ -38,13 +38,13 @@ class DolEditor
     /**
             \brief 	DolEditor
             \param 	htmlname		        Nom formulaire html WYSIWIG
-            \param 	content			        Contenu �dition WYSIWIG
-            \param 	height			        Hauteur en pixel de la zone �dition
-            \param 	toolbarname		        Nom barre de menu �diteur
+            \param 	content			        Contenu edition WYSIWIG
+            \param 	height			        Hauteur en pixel de la zone edition
+            \param 	toolbarname		        Nom barre de menu editeur
             \param  toolbarlocation       	Emplacement de la barre de menu :
-                                          	'In' chaque fen�tre d'�dition a �a propre barre d'outils
-                                          	'Out:nom' partage de la barre d'outils o� 'nom' est le nom du DIV qui affiche la barre
-            \param  toolbarstartexpanded  	visible ou non au d�marrage
+                                          	'In' chaque fenetre d'edition a la propre barre d'outils
+                                          	'Out:nom' partage de la barre d'outils ou 'nom' est le nom du DIV qui affiche la barre
+            \param  toolbarstartexpanded  	visible ou non au demarrage
 			\param	modulepart				modulepart pour protection wrapper download viewimage
 	*/
     function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true)

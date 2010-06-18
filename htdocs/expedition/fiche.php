@@ -96,6 +96,7 @@ if ($_POST["action"] == 'add')
 	$expedition->expedition_method_id	= $_POST["expedition_method_id"];
 	$expedition->tracking_number		= $_POST["tracking_number"];
 
+	//var_dump($_POST);exit;
 	for ($i = 0 ; $i < sizeof($object->lignes) ; $i++)
 	{
 		$qty = "qtyl".$i;
@@ -400,19 +401,10 @@ if ($_GET["action"] == 'create')
 				print '</td></tr>'."\n";
 			}
 
-			// Warehouse (id forced)
-			if ($conf->stock->enabled && $_GET["entrepot_id"])
-			{
-				print '<tr><td>'.$langs->trans("Warehouse").'</td>';
-				print '<td colspan="3">';
-				$ents = $entrepot->list_array();
-				print '<a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$_GET["entrepot_id"].'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$ents[$_GET["entrepot_id"]].'</a>';
-				print '</td></tr>';
-			}
-
 			if ($object->note && ! $user->societe_id)
 			{
-				print '<tr><td colspan="3">'.$langs->trans("NotePrivate").': '.nl2br($object->note)."</td></tr>";
+				print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
+				print '<td colspan="3">'.nl2br($object->note)."</td></tr>";
 			}
 
 			print '<tr><td>';
@@ -558,36 +550,46 @@ if ($_GET["action"] == 'create')
 						$stock = $product->stock_entrepot[$_REQUEST["entrepot_id"]];
 						$stock+=0;  // Convertit en numerique
 						$defaultqty=min($quantityToBeDelivered, $stock);
-						if ($line->product_type == 1 || $defaultqty < 0) $defaultqty=0;
+						if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
 					}
 
-					// Quantity
+					// Quantity to send
 					print '<td align="left">';
-					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-					print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
-					if ($line->product_type == 1) print ' ('.$langs->trans("Service").')';
+					if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+					{
+						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+						print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
+					}
+					else print '0';
 					print '</td>';
 
 					// Stock
 					if ($conf->stock->enabled)
 					{
-						if ($_REQUEST["entrepot_id"])
+						print '<td align="left">';
+						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
-							print '<td align="left">';
-							$formproduct->selectWarehouses($_REQUEST["entrepot_id"],'entl'.$indiceAsked,'',1,0,$line->fk_product);
-							//print $stock;
-							if ($stock < $quantityToBeDelivered)
+							// Show warehous
+							if ($_REQUEST["entrepot_id"])
 							{
-								print ' '.img_warning($langs->trans("StockTooLow"));
+								$formproduct->selectWarehouses($_REQUEST["entrepot_id"],'entl'.$indiceAsked,'',1,0,$line->fk_product);
+								//print $stock.' '.$quantityToBeDelivered;
+								//if ($stock >= 0 && $stock < $quantityToBeDelivered)
+								if ($stock < $quantityToBeDelivered)
+								{
+									print ' '.img_warning($langs->trans("StockTooLow"));
+								}
 							}
-							print '</td>';
+							else
+							{
+								$formproduct->selectWarehouses('','entl'.$indiceAsked,'',1,0,$line->fk_product);
+							}
 						}
 						else
 						{
-							print '<td align="left">';
-							$formproduct->selectWarehouses('','entl'.$indiceAsked,'',1,0,$line->fk_product);
-							print '</td>';
+							print $langs->trans("Service");
 						}
+						print '</td>';
 					}
 				}
 				/*else
