@@ -49,6 +49,11 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 	{
 		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($sourcecompany->address);
 		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($sourcecompany->cp).' '.$outputlangs->convToOutputCharset($sourcecompany->ville);
+		if (($sourcecompany->departement_id || $sourcecompany->departement) && in_array($sourcecompany->pays_code,array('US','IN')))
+		{
+			if ($sourcecompany->departement_id && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->departement_id);
+			$stringaddress.=" - ".$outputlangs->convToOutputCharset($sourcecompany->departement);
+		}
 		$stringaddress .= "\n";
 		// Tel
 		if ($sourcecompany->tel) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->tel);
@@ -68,8 +73,9 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			// Recipient properties
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->address);
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->cp) . " " . $outputlangs->convToOutputCharset($targetcontact->ville);
-			if ($targetcompany->departement && in_array($targetcompany->pays_code,array('US','IN')))
+			if (($targetcompany->departement_id || $targetcompany->departement) && in_array($targetcompany->pays_code,array('US','IN')))
 			{
+				if ($targetcompany->departement_id && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->departement_id);
 				$stringaddress.=" - ".$outputlangs->convToOutputCharset($targetcompany->departement);
 			}
 			$stringaddress.="\n";
@@ -80,8 +86,9 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			// Recipient properties
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcompany->address);
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcompany->cp) . " " . $outputlangs->convToOutputCharset($targetcompany->ville);
-			if ($targetcompany->departement && in_array($targetcompany->pays_code,array('US','IN')))
+			if (($targetcompany->departement_id || $targetcompany->departement) && in_array($targetcompany->pays_code,array('US','IN')))
 			{
+				if ($targetcompany->departement_id && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->departement_id);
 				$stringaddress.=" - ".$outputlangs->convToOutputCharset($targetcompany->departement);
 			}
 			$stringaddress.="\n";

@@ -180,19 +180,19 @@ function societe_prepare_head2($objsoc)
 
 
 /**
- *    \brief      Retourne le nom traduit ou code+nom d'un pays depuis id
+ *    \brief      Return country translated from an id
  *    \param      id          id of country
  *    \param      withcode    0=Return label, 1=Return code + label, 2=Return code
  *    \return     string      String with country code or translated country name
  */
-function getCountryLabel($id,$withcode=0)
+function getCountry($id,$withcode=0)
 {
 	global $db,$langs;
 
 	$sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
 	$sql.= " WHERE rowid=".$id;
 
-	dol_syslog("Company.lib::getCountryLabel sql=".$sql);
+	dol_syslog("Company.lib::getCountry sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -208,8 +208,41 @@ function getCountryLabel($id,$withcode=0)
 		{
 			return $langs->trans("NotDefined");
 		}
-		$db->free($resql);
 	}
+	else dol_print_error($db,'');
+}
+
+/**
+ *    \brief      Return state translated from an id
+ *    \param      id          id of state (province/departement)
+ *    \param      withcode    0=Return label, 1=Return code + label, 2=Return code
+ *    \return     string      String with state code or translated state name
+ */
+function getState($id,$withcode=0)
+{
+	global $db,$langs;
+
+	$sql = "SELECT rowid, code_departement as code, nom as label FROM ".MAIN_DB_PREFIX."c_departements";
+	$sql.= " WHERE rowid=".$id;
+
+	dol_syslog("Company.lib::getState sql=".$sql);
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj = $db->fetch_object($resql);
+		if ($obj)
+		{
+			$label=$obj->label;
+			if ($withcode == 1) return $label=$obj->code?"$obj->code":"$obj->code - $label";
+			else if ($withcode == 2) return $label=$obj->code;
+			else return $label;
+		}
+		else
+		{
+			return $langs->trans("NotDefined");
+		}
+	}
+	else dol_print_error($db,'');
 }
 
 /**

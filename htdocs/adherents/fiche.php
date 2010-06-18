@@ -1226,7 +1226,7 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'</td></tr>';
 
 	// Country
-    print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.getCountryLabel($adh->pays_id).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.getCountry($adh->pays_id).'</td></tr>';
 
 	// Department
 	print '<tr><td>'.$langs->trans('State').'</td><td class="valeur">'.$adh->departement.'</td>';

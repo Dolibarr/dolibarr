@@ -34,7 +34,7 @@ class Multicompany
 	var $error;
 	//! Numero de l'erreur
 	var $errno = 0;
-	
+
 	var $entities = array();
 
 	/**
@@ -45,7 +45,7 @@ class Multicompany
 	function Multicompany($DB)
 	{
 		$this->db = $DB;
-		
+
 		$this->canvas = "default";
 		$this->name = "admin";
 		$this->description = "";
@@ -56,9 +56,9 @@ class Multicompany
 	 */
 	function Create($user,$datas)
 	{
-		
+
 	}
-	
+
 	/**
 	 *    \brief      Supression
 	 */
@@ -66,35 +66,35 @@ class Multicompany
 	{
 
 	}
-	
+
     /**
 	 *    \brief      Fetch entity
 	 */
 	function fetch($id)
 	{
 		global $conf;
-		
+
 		$sql = "SELECT ";
 		$sql.= $this->db->decrypt('name')." as name";
 		$sql.= ", ".$this->db->decrypt('value')." as value";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE ".$this->db->decrypt('name')." LIKE 'MAIN_%'";
 		$sql.= " AND entity = ".$id;
-		
+
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
 			$entityDetails = array();
 			$i = 0;
-			
+
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($result);
 
 				if (preg_match('/^MAIN_INFO_SOCIETE_PAYS$/i',$obj->name))
 				{
-					$entityDetails[$obj->name] = getCountryLabel($obj->value);
+					$entityDetails[$obj->name] = getCountry($obj->value);
 				}
 				else if (preg_match('/^MAIN_MONNAIE$/i',$obj->name))
 				{
@@ -104,14 +104,14 @@ class Multicompany
 				{
 					$entityDetails[$obj->name] = $obj->value;
 				}
-				
+
 				$i++;
 			}
 			return $entityDetails;
 		}
-		
+
 	}
-	
+
     /**
 	 *    \brief      Enable/disable entity
 	 */
@@ -122,46 +122,46 @@ class Multicompany
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entity";
 		$sql.= " SET ".$type." = ".$value;
 		$sql.= " WHERE rowid = ".$id;
-		
+
 		dol_syslog("Multicompany::setEntity sql=".$sql, LOG_DEBUG);
-		
+
 		$result = $this->db->query($sql);
 	}
-	
+
 	/**
 	 *    \brief      List of entities
 	 */
 	function getEntities($details=0,$visible=0)
 	{
 		global $conf;
-		
+
 		$sql = "SELECT rowid, label, description, visible, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."entity";
 		if ($visible) $sql.= " WHERE visible = 1";
-		
+
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			
+
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($result);
-				
+
 				$this->entities[$i]['id']			= $obj->rowid;
 				$this->entities[$i]['label']		= $obj->label;
 				$this->entities[$i]['description'] 	= $obj->description;
 				$this->entities[$i]['visible'] 		= $obj->visible;
 				$this->entities[$i]['active']		= $obj->active;
 				if ($details) $this->entities[$i]['details'] = $this->fetch($obj->rowid);
-				
+
 				$i++;
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 *    \brief      Return combo list of entities.
 	 *    \param      entities    Entities array
@@ -170,9 +170,9 @@ class Multicompany
 	function select_entities($entities,$selected='',$option='')
 	{
 		$return = '<select class="flat" name="entity" '.$option.'>';
-				
+
 		if (is_array($entities))
-		{	
+		{
 			foreach ($entities as $entity)
 			{
 				if ($entity['active'] == 1)
@@ -186,7 +186,7 @@ class Multicompany
 			}
 		}
 		$return.= '</select>';
-		
+
 		return $return;
 	}
 
@@ -197,13 +197,13 @@ class Multicompany
 	function assign_smarty_values(&$smarty, $action='')
 	{
 		global $conf,$langs;
-		
+
 		$smarty->assign('langs', $langs);
-		
+
 		$picto='title.png';
 		if (empty($conf->browser->firefox)) $picto='title.gif';
 		$smarty->assign('title_picto', img_picto('',$picto));
-		
+
 		$smarty->assign('entities',$this->entities);
 		$smarty->assign('img_on',img_picto($langs->trans("Activated"),'on'));
 		$smarty->assign('img_off',img_picto($langs->trans("Disabled"),'off'));
