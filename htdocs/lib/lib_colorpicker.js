@@ -1,3 +1,7 @@
+// \file       htdocs/lib/lib_colorpicker.js
+// \brief      File with javascript function to output a color picker
+// \version    $Revision$
+
 StringBuilder = function()
 {
  this.arrStr = new Array();
@@ -122,7 +126,7 @@ fctShow = function(objForm)
   } else {
    fctReset();
   }
-  fctSelect('Name', 'Named');
+  fctSelect('Safe', 'Safety');
  }
  if (objCurrent) {
   var w = h = t = l = 0;
@@ -173,10 +177,10 @@ fctLoad = function()
 }
 
 objSB.Append('<table id="tblGlobal" class="tblGlobal" border="0" cellpadding="0" cellspacing="0"><tr><td class="tdContainer"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>');
-objSB.Append('<td width="24%" align="center"><input type="button" value="Named" class="btnPalette" onClick="fctSelect(\'Name\', \'Named\');"></td>');
-objSB.Append('<td width="23%" align="center"><input type="button" value="Safety" class="btnPalette" onClick="fctSelect(\'Safe\', \'Safety\');"></td>');
-objSB.Append('<td width="23%" align="center"><input type="button" value="System" class="btnPalette" onClick="fctSelect(\'Sys\', \'System\');"></td>');
-objSB.Append('<td width="30%" align="center"><input type="button" value="Grayscale" class="btnPalette" onClick="fctSelect(\'Gray\', \'Grayscale\');"></td>');
+//objSB.Append('<td width="24%" align="center"><input type="button" value="Named" class="btnPalette" onClick="fctSelect(\'Name\', \'Named\');"></td>');
+objSB.Append('<td width="33%" align="center"><input type="button" value="Safety" class="btnPalette" onClick="fctSelect(\'Safe\', \'Safety\');"></td>');
+objSB.Append('<td width="34%" align="center"><input type="button" value="System" class="btnPalette" onClick="fctSelect(\'Sys\', \'System\');"></td>');
+objSB.Append('<td width="33%" align="center"><input type="button" value="Grayscale" class="btnPalette" onClick="fctSelect(\'Gray\', \'Grayscale\');"></td>');
 objSB.Append('</tr></table></td></tr><tr><td class="tdContainer"><fieldset><legend align="top" id="objLegend"></legend><table id="tblContainer" class="tblContainer" border="0" cellpadding="0" cellspacing="0"><tr><td class="tdContainer">');
 
 objSB.Append('<table id="tblGray" class="tblColor" border="0" cellpadding="0" cellspacing="0"><tr>');
@@ -254,7 +258,7 @@ objSB.Append('<tr><td class="tdDisplay" id="objPreview">&nbsp;</td><td class="td
 objSB.Append('<tr><td class="tdDisplayTxt" id="objPreviewTxt" valign="top">&nbsp;</td><td class="tdDisplayTxt" id="objSelectedTxt" valign="top">&nbsp;</td></tr>');
 objSB.Append('</table></td></tr><tr><td class="tdContainer">');
 objSB.Append('<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>');
-objSB.Append('<td width="33%" align="center"><input type="button" value="Cancel" class="btnColor" onClick="fctHide();"></td>');
-objSB.Append('<td width="34%" align="center"><input type="button" value="Reset" class="btnColor" onClick="fctReset();"></td>');
-objSB.Append('<td width="33%" align="center"><input type="button" value="Ok" class="btnColor" onClick="fctOk();"></td>');
+objSB.Append('<td width="50%" align="center"><input type="button" value="Cancel" class="btnColor" onClick="fctHide();"></td>');
+//objSB.Append('<td width="34%" align="center"><input type="button" value="Reset" class="btnColor" onClick="fctReset();"></td>');
+objSB.Append('<td width="50%" align="center"><input type="button" value="Ok" class="btnColor" onClick="fctOk();"></td>');
 objSB.Append('</tr></table></td></tr></table>');

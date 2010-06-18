@@ -258,6 +258,7 @@ class FormAdmin
      *    \param      selected        Color pre-selected
      *    \param      htmlname        Name of html select zone
      */
+/*
     function select_colors($selected='', $htmlname, $arrayofcolors='', $showcolorbox=1)
     {
 		global $langs,$conf;
@@ -287,6 +288,7 @@ class FormAdmin
 			print '</td></tr></table>';
 		}
 	}
+*/
 }
 
 ?>

@@ -346,33 +346,76 @@ class FormOther
 
 
 	/**
-	 *		Affiche zone de selection de couleur
-	 *		@param	set_color		Couleur de pre-selection
-	 *		@param	prefix			Prefix pour nom champ
-	 *		@param	form_name		Nom du formulaire de provenance.
+	 *		Output a HTML code to select a color
+	 *		@param	set_color		Pre-selected color
+	 *		@param	prefix			Name of HTML field
+	 *		@param	form_name		Name of form
+	 * 		@param	showcolorbox	1=Show color code and color box, 0=Show only color code
+	 * 		@param 	arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 */
-	function select_color($set_color='', $prefix='f_color', $form_name='objForm')
+	function select_color($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
 	{
-		print "\n".'<table class="nobordernopadding"><tr><td valign="middle">';
-		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_colorpicker.js"></script>'."\n";
-		print '<script type="text/javascript">
-	           window.onload = function()
-	           {
-	             fctLoad();
-	           }
-	           window.onscroll = function()
-	           {
-	             fctShow();
-	           }
-	           window.onresize = function()
-	           {
-	             fctShow();
-	           }
-	         </script>'."\n";
-		print '<input type="text" size="10" name="'.$prefix.'" value="'.$set_color.'" maxlength="7" class="flat">'."\n";
-		print '</td><td valign="middle">';
-		print '<img src="'.DOL_URL_ROOT.'/theme/common/colorpicker.png" width="21" height="20" border="0" onClick="fctShow(document.'.$form_name.'.'.$prefix.');" style="cursor:pointer;">'."\n";
-		print '</td></tr></table>';
+		if (! is_array($arrayofcolors) || sizeof($arrayofcolors) < 1)
+		{
+			// No list of colors forced, we can suggest any color
+			print "\n".'<table class="nobordernopadding"><tr><td valign="middle">';
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_colorpicker.js"></script>'."\n";
+			print '<script type="text/javascript">
+		           window.onload = function()
+		           {
+		             fctLoad();
+		           }
+		           window.onscroll = function()
+		           {
+		             fctShow();
+		           }
+		           window.onresize = function()
+		           {
+		             fctShow();
+		           }
+		         </script>'."\n";
+			print '<input type="text" size="10" name="'.$prefix.'" value="'.$set_color.'" maxlength="7" class="flat">'."\n";
+			print '</td><td valign="middle">';
+			print '<img src="'.DOL_URL_ROOT.'/theme/common/colorpicker.png" width="21" height="18" border="0" onClick="fctShow(document.'.$form_name.'.'.$prefix.');" style="cursor:pointer;">'."\n";
+			print '</td>';
+
+			if ($showcolorbox)
+			{
+				print '<td style="padding-left: 4px" nowrap="nowrap">';
+				print '<!-- Box color '.$set_color.' -->';
+				print '<table style="border-collapse: collapse; margin:0px; padding: 0px; border: 1px solid #888888; background: #'.(preg_replace('/#/','',$set_color)).';" width="12" height="10">';
+				print '<tr class="nocellnopadd"><td></td></tr>';
+				print '</table>';
+				print '</td>';
+			}
+
+			print '</tr></table>';
+		}
+		else
+		{
+			// List of colors is forced
+			if ($showcolorbox) print '<table class="nobordernopadding"><tr valign="middle" class="nobordernopadding"><td class="nobordernopadding">';
+
+			print '<select class="flat" name="'.$prefix.'">';
+			print '<option value="-1">&nbsp;</option>';
+			foreach ($arrayofcolors as $val)
+			{
+				print '<option value="'.$val.'"';
+				if ($set_color == $val) print ' selected="true"';
+				print '>'.$val.'</option>';
+			}
+			print '</select>';
+
+			if ($showcolorbox)
+			{
+				print '</td><td style="padding-left: 4px" nowrap="nowrap">';
+				print '<!-- Box color '.$set_color.' -->';
+				print '<table style="border-collapse: collapse; margin:0px; padding: 0px; border: 1px solid #888888; background: #'.(preg_replace('/#/','',$set_color)).';" width="12" height="10">';
+				print '<tr class="nocellnopadd"><td></td></tr>';
+				print '</table>';
+				print '</td></tr></table>';
+			}
+		}
 	}
 
 	/**
