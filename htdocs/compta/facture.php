@@ -601,7 +601,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					$product->fetch($_POST['idprod'.$i]);
 					$startday=dol_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
 					$endday=dol_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-					$result=$facture->addline($facid,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+					$result=$facture->addline($facid,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 				}
 			}
 		}
@@ -717,6 +717,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							$lines[$i]->subprice,
 							$lines[$i]->qty,
 							$lines[$i]->tva_tx,
+							$lines[$i]->localtax1_tx,
+							$lines[$i]->localtax2_tx,
 							$lines[$i]->fk_product,
 							$lines[$i]->remise_percent,
 							$date_start,
@@ -760,7 +762,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 						$product->fetch($_POST['idprod'.$i]);
 						$startday=dol_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
 						$endday=dol_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-						$result=$facture->addline($facid,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+						$result=$facture->addline($facid,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 					}
 				}
 			}
@@ -879,6 +881,9 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 			$desc=$_POST['dp_desc'];
 			$type=$_POST["type"];
 		}
+		
+		$localtax1_tx=get_localtax($tva_tx,1,$fac->client);
+		$localtax2_tx=get_localtax($tva_tx,2,$fac->client);
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
@@ -899,6 +904,8 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 				$pu_ht,
 				$_POST['qty'],
 				$tva_tx,
+				$localtax1_tx,
+				$localtax2_tx,
 				$_POST['idprod'],
 				$_POST['remise_percent'],
 				$date_start,
@@ -965,6 +972,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	// Define vat_rate
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=str_replace('*','',$vat_rate);
+	$localtax1_rate=get_localtax($vat_rate,1,$fac->client);
+	$localtax2_rate=get_localtax($vat_rate,2,$fac->client);
 
 	// Check parameters
 	if (empty($_POST['productid']) && $_POST["type"] < 0)
@@ -1007,6 +1016,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$date_start,
 		$date_end,
 		$vat_rate,
+		$localtax1_rate,
+		$localtax2_rate,
 		'HT',
 		$info_bits,
 		$type
@@ -1669,6 +1680,18 @@ if ($_GET['action'] == 'create')
 		print '<tr><td>'.$langs->trans($classname).'</td><td colspan="2">'.$object->getNomUrl(1).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($object->total_ht).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($object->total_tva)."</td></tr>";
+		if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+		{
+			if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
+			{	
+				print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($object->total_localtax1)."</td></tr>";
+			}
+			
+			if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
+			{
+				print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($object->total_localtax2)."</td></tr>";
+			}			
+		}
 		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($object->total_ttc)."</td></tr>";
 	}
 	else
@@ -2621,13 +2644,13 @@ else
 				if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 				{
 					print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
-					print '<td align="right" colspan="2" nowrap>'.price($propal->total_localtax1).'</td>';
+					print '<td align="right" colspan="2" nowrap>'.price($fac->total_localtax1).'</td>';
 					print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				}
 				if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 				{
 					print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
-					print '<td align="right" colspan="2" nowrap>'.price($propal->total_localtax2).'</td>';
+					print '<td align="right" colspan="2" nowrap>'.price($fac->total_localtax2).'</td>';
 					print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				}
 			}

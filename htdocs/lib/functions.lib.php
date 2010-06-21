@@ -2487,13 +2487,15 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 function get_localtax($tva, $local, $societe_acheteuse="")
 {
 	global $db, $conf, $mysoc;
+	
+	$code_pays=$mysoc->pays_code;
+	
 	if (is_object($societe_acheteuse))
 	{
+		if ($code_pays!=$societe_acheteuse->pays_code) return 0;
 		if ($local==1 && !$societe_acheteuse->localtax1_assuj) return 0;
 		elseif ($local==2 && !$societe_acheteuse->localtax2_assuj) return 0;
 	}
-	
-	$code_pays=$mysoc->pays_code;
 	
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax2";

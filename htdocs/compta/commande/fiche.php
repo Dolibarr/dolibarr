@@ -365,13 +365,13 @@ if ($id > 0 || ! empty($ref))
 			if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 			{
 				print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
-				print '<td align="right">'.price($propal->total_localtax1).'</td>';
+				print '<td align="right">'.price($commande->total_localtax1).'</td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 			}
 			if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 			{
 				print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
-				print '<td align="right">'.price($propal->total_localtax2).'</td>';
+				print '<td align="right">'.price($commande->total_localtax2).'</td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 			}
 		}

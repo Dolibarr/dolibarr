@@ -298,13 +298,17 @@ class Facture extends CommonObject
 						$res=$prod->fetch($_facrec->lignes[$i]->fk_product);
 					}
 					$tva_tx = get_default_tva($mysoc,$soc,($prod->tva_tx?$prod->tva_tx:0));
-
+					$localtax1_tx=get_localtax($tva_tx,1,$soc);
+					$localtax2_tx=get_localtax($tva_tx,2,$soc);
+					
 					$result_insert = $this->addline(
 					$this->id,
 					$_facrec->lignes[$i]->desc,
 					$_facrec->lignes[$i]->subprice,
 					$_facrec->lignes[$i]->qty,
 					$tva_tx,
+					$localtax1_tx,
+					$localtax2_tx,
 					$_facrec->lignes[$i]->fk_product,
 					$_facrec->lignes[$i]->remise_percent,
 					'','',0,0,'','HT',0,
@@ -405,6 +409,8 @@ class Facture extends CommonObject
 				$facture->lignes[$i]->price     = -$facture->lignes[$i]->price;
 				$facture->lignes[$i]->total_ht  = -$facture->lignes[$i]->total_ht;
 				$facture->lignes[$i]->total_tva = -$facture->lignes[$i]->total_tva;
+				$facture->lignes[$i]->total_localtax1 = -$facture->lignes[$i]->total_localtax1;
+				$facture->lignes[$i]->total_localtax2 = -$facture->lignes[$i]->total_localtax2;
 				$facture->lignes[$i]->total_ttc = -$facture->lignes[$i]->total_ttc;
 			}
 		}
@@ -540,7 +546,7 @@ class Facture extends CommonObject
 	{
 		global $conf;
 
-		$sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
+		$sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva, f.localtax1, f.localtax2, f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ', f.datef as df';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.datec as datec';
@@ -582,6 +588,8 @@ class Facture extends CommonObject
 				$this->remise                 = $obj->remise;
 				$this->total_ht               = $obj->total;
 				$this->total_tva              = $obj->tva;
+				$this->total_localtax1		  = $obj->localtax1;
+				$this->total_localtax2		  = $obj->localtax2;
 				$this->total_ttc              = $obj->total_ttc;
 				$this->paye                   = $obj->paye;
 				$this->close_code             = $obj->close_code;
@@ -661,9 +669,9 @@ class Facture extends CommonObject
 	function fetch_lines()
 	{
 		$sql = 'SELECT l.rowid, l.fk_product, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
-		$sql.= ' l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
+		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.date_start as date_start, l.date_end as date_end,';
-		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
+		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -691,6 +699,8 @@ class Facture extends CommonObject
 				$faclig->qty              = $objp->qty;
 				$faclig->subprice         = $objp->subprice;
 				$faclig->tva_tx           = $objp->tva_tx;
+				$faclig->localtax1_tx     = $objp->localtax1_tx;
+				$faclig->localtax2_tx     = $objp->localtax2_tx;
 				$faclig->remise_percent   = $objp->remise_percent;
 				$faclig->fk_remise_except = $objp->fk_remise_except;
 				$faclig->fk_product       = $objp->fk_product;
@@ -701,6 +711,8 @@ class Facture extends CommonObject
 				$faclig->info_bits        = $objp->info_bits;
 				$faclig->total_ht         = $objp->total_ht;
 				$faclig->total_tva        = $objp->total_tva;
+				$faclig->total_localtax1  = $objp->total_localtax1;
+				$faclig->total_localtax2  = $objp->total_localtax2;
 				$faclig->total_ttc        = $objp->total_ttc;
 				$faclig->export_compta    = $objp->fk_export_compta;
 				$faclig->code_ventilation = $objp->fk_code_ventilation;
@@ -750,6 +762,8 @@ class Facture extends CommonObject
 		if (isset($this->close_code)) $this->close_code=trim($this->close_code);
 		if (isset($this->close_note)) $this->close_note=trim($this->close_note);
 		if (isset($this->total_tva)) $this->tva=trim($this->total_tva);
+		if (isset($this->total_localtax1)) $this->tva=trim($this->total_localtax1);
+		if (isset($this->total_localtax2)) $this->tva=trim($this->total_localtax2);
 		if (isset($this->total_ht)) $this->total_ht=trim($this->total_ht);
 		if (isset($this->total_ttc)) $this->total_ttc=trim($this->total_ttc);
 		if (isset($this->statut)) $this->statut=trim($this->statut);
@@ -786,6 +800,8 @@ class Facture extends CommonObject
 		$sql.= " close_code=".(isset($this->close_code)?"'".addslashes($this->close_code)."'":"null").",";
 		$sql.= " close_note=".(isset($this->close_note)?"'".addslashes($this->close_note)."'":"null").",";
 		$sql.= " tva=".(isset($this->total_tva)?$this->total_tva:"null").",";
+		$sql.= " localtax1=".(isset($this->total_localtax1)?$this->total_localtax1:"null").",";
+		$sql.= " localtax2=".(isset($this->total_localtax2)?$this->total_localtax2:"null").",";
 		$sql.= " total=".(isset($this->total_ht)?$this->total_ht:"null").",";
 		$sql.= " total_ttc=".(isset($this->total_ttc)?$this->total_ttc:"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
@@ -800,7 +816,6 @@ class Facture extends CommonObject
 		$sql.= " note_public=".(isset($this->note_public)?"'".addslashes($this->note_public)."'":"null").",";
 		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".addslashes($this->modelpdf)."'":"null").",";
 		$sql.= " import_key=".(isset($this->import_key)?"'".addslashes($this->import_key)."'":"null")."";
-
 
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -1571,9 +1586,9 @@ class Facture extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0)
+	function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0)
 	{
-		dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
+		dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		// Check parameters
@@ -1592,7 +1607,9 @@ class Facture extends CommonObject
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);
-
+			$txlocaltax1=price2num($txlocaltax1);
+			$txlocaltax2=price2num($txlocaltax2);
+			
 			if ($price_base_type=='HT')
 			{
 				$pu=$pu_ht;
@@ -1606,10 +1623,12 @@ class Facture extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
+			$total_localtax1 = $tabprice[9];
+			$total_localtax2 = $tabprice[10];
 
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
@@ -1635,6 +1654,8 @@ class Facture extends CommonObject
 			$ligne->desc=$desc;
 			$ligne->qty=$qty;
 			$ligne->tva_tx=$txtva;
+			$ligne->localtax1_tx=$txlocaltax1;
+			$ligne->localtax2_tx=$txlocaltax2;
 			$ligne->fk_product=$fk_product;
 			$ligne->product_type=$product_type;
 			$ligne->remise_percent=$remise_percent;
@@ -1647,6 +1668,8 @@ class Facture extends CommonObject
 			$ligne->fk_remise_except=$fk_remise_except;
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
+			$ligne->total_localtax1=$total_localtax1;
+			$ligne->total_localtax2=$total_localtax2;
 			$ligne->total_ttc=$total_ttc;
 
 			// \TODO Ne plus utiliser
@@ -1696,7 +1719,7 @@ class Facture extends CommonObject
 	 * 		\param		type			Type of line (0=product, 1=service)
 	 *      \return    	int             < 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $price_base_type='HT', $info_bits=0, $type=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1, $txlocaltax2,$price_base_type='HT', $info_bits=0, $type=0)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
@@ -1712,7 +1735,8 @@ class Facture extends CommonObject
 			if (! $qty) $qty=0;
 			$pu = price2num($pu);
 			$txtva=price2num($txtva);
-
+			$txlocaltax1=price2num($txlocaltax1);
+			$txlocaltax2=price2num($txlocaltax2);
 			// Check parameters
 			if ($type < 0) return -1;
 
@@ -1720,10 +1744,12 @@ class Facture extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $localtax1, $localtax2, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
+			$total_localtax1=$tabprice[9];
+			$total_localtax1=$tabprice[10];
 			$pu_ht  = $tabprice[3];
 			$pu_tva = $tabprice[4];
 			$pu_ttc = $tabprice[5];
@@ -1746,12 +1772,16 @@ class Facture extends CommonObject
 			$ligne->desc=$desc;
 			$ligne->qty=$qty;
 			$ligne->tva_tx=$txtva;
+			$ligne->localtax1_tx=$txlocaltax1;
+			$ligne->localtax2_tx=$txlocaltax2;
 			$ligne->remise_percent=$remise_percent;
 			$ligne->subprice=$pu;
 			$ligne->date_start=$date_start;
 			$ligne->date_end=$date_end;
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
+			$ligne->total_localtax1=$total_localtax1;
+			$ligne->total_localtax2=$total_localtax2;
 			$ligne->total_ttc=$total_ttc;
 			$ligne->info_bits=$info_bits;
 			$ligne->product_type=$type;
@@ -2861,6 +2891,8 @@ class FactureLigne
 
 	var $qty;				// Quantity (example 2)
 	var $tva_tx;			// Taux tva produit/service (example 19.6)
+	var $localtax1_tx;		// Local tax 1
+	var $localtax2_tx;		// Local tax 2
 	var $subprice;      	// P.U. HT (example 100)
 	var $remise_percent;	// % de la remise ligne (example 20%)
 	var $fk_remise_except;	// Link to line into llx_remise_except
@@ -2874,6 +2906,8 @@ class FactureLigne
 	var $total_ht;
 	//! Total TVA  de la ligne toute quantite et incluant la remise ligne
 	var $total_tva;
+	var $total_localtax1; //Total Local tax 1 de la ligne
+	var $total_localtax2; //Total Local tax 2 de la ligne
 	//! Total TTC de la ligne toute quantite et incluant la remise ligne
 	var $total_ttc;
 
@@ -2909,7 +2943,7 @@ class FactureLigne
 	function fetch($rowid)
 	{
 		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_product, fd.product_type, fd.description, fd.price, fd.qty, fd.tva_tx,';
-		$sql.= ' fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
+		$sql.= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
 		$sql.= ' fd.date_start as date_start, fd.date_end as date_end,';
 		$sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc, fd.rang,';
 		$sql.= ' fd.fk_code_ventilation, fd.fk_export_compta,';
@@ -2927,6 +2961,8 @@ class FactureLigne
 			$this->qty            = $objp->qty;
 			$this->subprice       = $objp->subprice;
 			$this->tva_tx         = $objp->tva_tx;
+			$this->localtax1_tx	  = $objp->localtax1_tx;
+			$this->localtax2_tx	  = $objp->localtax2_tx;
 			$this->remise_percent = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
 			$this->fk_product     = $objp->fk_product;
@@ -2936,6 +2972,8 @@ class FactureLigne
 			$this->info_bits      = $objp->info_bits;
 			$this->total_ht       = $objp->total_ht;
 			$this->total_tva      = $objp->total_tva;
+			$this->total_localtax1= $objp->total_localtax1;
+			$this->total_localtax2= $objp->total_localtax2;
 			$this->total_ttc      = $objp->total_ttc;
 			$this->fk_code_ventilation = $objp->fk_code_ventilation;
 			$this->fk_export_compta    = $objp->fk_export_compta;
@@ -3001,15 +3039,17 @@ class FactureLigne
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
-		$sql.= ' (fk_facture, description, qty, tva_tx,';
+		$sql.= ' (fk_facture, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
 		$sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
 		$sql.= ' date_start, date_end, fk_code_ventilation, fk_export_compta, ';
 		$sql.= ' rang,';
-		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
+		$sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc)';
 		$sql.= " VALUES (".$this->fk_facture.",";
 		$sql.= " '".addslashes($this->desc)."',";
 		$sql.= " ".price2num($this->qty).",";
 		$sql.= " ".price2num($this->tva_tx).",";
+		$sql.= " ".price2num($this->localtax1_tx).",";
+		$sql.= " ".price2num($this->localtax2_tx).",";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
 		else { $sql.='null,'; }
 		$sql.= " ".$this->product_type.",";
@@ -3029,6 +3069,8 @@ class FactureLigne
 		$sql.= " '".$this->info_bits."',";
 		$sql.= " ".price2num($this->total_ht).",";
 		$sql.= " ".price2num($this->total_tva).",";
+		$sql.= " ".price2num($this->total_localtax1).",";
+		$sql.= " ".price2num($this->total_localtax2).",";
 		$sql.= " ".price2num($this->total_ttc);
 		$sql.= ')';
 
@@ -3137,6 +3179,8 @@ class FactureLigne
 		if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
 		else $sql.= ",fk_remise_except=null";
 		$sql.= ",tva_tx=".price2num($this->tva_tx)."";
+		$sql.= ",localtax1_tx=".price2num($this->localtax1_tx)."";
+		$sql.= ",localtax2_tx=".price2num($this->localtax2_tx)."";
 		$sql.= ",qty=".price2num($this->qty)."";
 		if ($this->date_start) { $sql.= ",date_start='".$this->db->idate($this->date_start)."'"; }
 		else { $sql.=',date_start=null'; }
@@ -3147,6 +3191,8 @@ class FactureLigne
 		$sql.= ",info_bits='".$this->info_bits."'";
 		$sql.= ",total_ht=".price2num($this->total_ht)."";
 		$sql.= ",total_tva=".price2num($this->total_tva)."";
+		$sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
+		$sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
 		$sql.= ",total_ttc=".price2num($this->total_ttc)."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
@@ -3189,10 +3235,10 @@ class FactureLigne
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
 		$sql.= " total_ht=".price2num($this->total_ht)."";
 		$sql.= ",total_tva=".price2num($this->total_tva)."";
+		$sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
+		$sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
 		$sql.= ",total_ttc=".price2num($this->total_ttc)."";
 		$sql.= " WHERE rowid = ".$this->rowid;
-
-
 
 		$resql=$this->db->query($sql);
 		if ($resql)

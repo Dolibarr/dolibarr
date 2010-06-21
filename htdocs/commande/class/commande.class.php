@@ -885,6 +885,8 @@ class Commande extends CommonObject
 			$line->desc=$desc;
 			$line->qty=$qty;
 			$line->tva_tx=$txtva;
+			$line->localtax1_tx=$txlocaltax1;
+			$line->localtax2_tx=$txlocaltax2;
 			$line->fk_product=$fk_product;
 			$line->fk_remise_except=$fk_remise_except;
 			$line->remise_percent=$remise_percent;
@@ -957,6 +959,8 @@ class Commande extends CommonObject
 			$prod->fetch($idproduct);
 
 			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
+			$localtax1_tx=get_localtax($tva_tx,1,$this->client);
+			$localtax2_tx=get_localtax($tva_tx,2,$this->client);
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
 			$price = $prod->multiprices[$this->client->price_level];
@@ -971,6 +975,8 @@ class Commande extends CommonObject
 			$line->subprice=$price;
 			$line->remise_percent=$remise_percent;
 			$line->tva_tx=$tva_tx;
+			$line->localtax1_tx=$localtax1_tx;
+			$line->localtax2_tx=$localtax2_tx;
 			$line->ref=$prod->ref;
 			$line->libelle=$prod->libelle;
 			$line->product_desc=$prod->description;
@@ -1208,8 +1214,8 @@ class Commande extends CommonObject
 		$this->lines=array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
-		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
-		$sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.date_start, l.date_end,';
+		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
+		$sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
@@ -1238,9 +1244,13 @@ class Commande extends CommonObject
 				$line->product_type     = $objp->product_type;
 				$line->qty              = $objp->qty;
 				$line->tva_tx           = $objp->tva_tx;
+				$line->localtax1_tx     = $objp->localtax1_tx;
+				$line->localtax2_tx     = $objp->localtax2_tx;
 				$line->total_ht         = $objp->total_ht;
 				$line->total_ttc        = $objp->total_ttc;
 				$line->total_tva        = $objp->total_tva;
+				$line->total_localtax1  = $objp->total_localtax1;
+				$line->total_localtax2  = $objp->total_localtax2;
 				$line->subprice         = $objp->subprice;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->remise_percent   = $objp->remise_percent;
@@ -2402,6 +2412,8 @@ class OrderLine
 
 	var $qty;				// Quantity (example 2)
 	var $tva_tx;			// VAT Rate for product/service (example 19.6)
+	var $localtax1_tx; 		// Local tax 1
+	var $localtax2_tx; 		// Local tax 2
 	var $subprice;      	// U.P. HT (example 100)
 	var $remise_percent;	// % for line discount (example 20%)
 	var $rang = 0;
@@ -2411,6 +2423,8 @@ class OrderLine
 	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 	var $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
 	var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
+	var $total_localtax1;   // Total local tax 1 for the line
+	var $total_localtax2;   // Total local tax 2 for the line
 	var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
 	// Ne plus utiliser

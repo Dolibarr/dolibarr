@@ -380,6 +380,8 @@ class Contrat extends CommonObject
 				$ligne->desc           = $objp->description;  // Description ligne
 				$ligne->qty            = $objp->qty;
 				$ligne->tva_tx         = $objp->tva_tx;
+				$ligne->localtax1_tx   = 0; 
+				$ligne->localtax2_tx   = 0;
 				$ligne->subprice       = $objp->subprice;
 				$ligne->statut 		   = $objp->statut;
 				$ligne->remise_percent = $objp->remise_percent;
@@ -387,6 +389,8 @@ class Contrat extends CommonObject
 				$ligne->price          = $objp->price;	// For backward compatibility
 				$ligne->total_ht       = $objp->total_ht;
 				$ligne->total_tva      = $objp->total_tva;
+				$ligne->total_localtax1= 0;
+				$ligne->total_localtax2= 0;
 				$ligne->total_ttc      = $objp->total_ttc;
 				$ligne->fk_product     = $objp->fk_product;
 				$ligne->info_bits      = $objp->info_bits;
@@ -464,12 +468,16 @@ class Contrat extends CommonObject
 				$ligne->statut 		   = $objp->statut;
 				$ligne->ref            = $objp->ref;
 				$ligne->tva_tx         = $objp->tva_tx;
+				$ligne->localtax1_tx   =0;
+				$ligne->localtax2_tx   =0;
 				$ligne->subprice       = $objp->subprice;
 				$ligne->remise_percent = $objp->remise_percent;
 				$ligne->price_ht       = $objp->price_ht;
 				$ligne->price          = $objp->price;	// For backward compatibility
 				$ligne->total_ht       = $objp->total_ht;
 				$ligne->total_tva      = $objp->total_tva;
+				$ligne->total_localtax1= 0;
+				$ligne->total_localtax2= 0;
 				$ligne->total_ttc      = $objp->total_ttc;
 				$ligne->fk_product     = 0;
 				$ligne->info_bits      = $objp->info_bits;
@@ -1427,6 +1435,8 @@ class ContratLigne
 	var $date_fin_validite;			// date end planned
 	var $date_cloture;				// date end real
 	var $tva_tx;
+	var $localtax1_tx;
+	var $localtax2_tx;
 	var $qty;
 	var $remise_percent;
 	var $remise;
@@ -1437,6 +1447,8 @@ class ContratLigne
 
 	var $total_ht;
 	var $total_tva;
+	var $total_localtax1;
+	var $total_localtax2;
 	var $total_ttc;
 
 	var $info_bits;

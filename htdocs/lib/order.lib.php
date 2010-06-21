@@ -58,7 +58,7 @@ function commande_prepare_head($commande)
 	if ($conf->facture->enabled)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
-		$head[$h][1] = $langs->trans("Compta");
+		$head[$h][1] = $langs->trans("AccountancyCard");
 		$head[$h][2] = 'accountancy';
 		$h++;
 	}

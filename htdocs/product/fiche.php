@@ -558,6 +558,8 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 
 	$desc = $prod->description;
 	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
+	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
 
 	// multiprix
 	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
@@ -592,6 +594,8 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 	$pu_ht,
 	$_POST["qty"],
 	$tva_tx,
+	$localtax1_tx,
+	$localtax2_tx,
 	$prod->id,
 	$_POST["remise_percent"],
 		    '',
