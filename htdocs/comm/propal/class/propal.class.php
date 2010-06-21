@@ -913,8 +913,8 @@ class Propal extends CommonObject
 				/*
 				 * Lignes propales liees a un produit ou non
 				 */
-				$sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
-				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_ttc, d.marge_tx, d.marque_tx, d.special_code, d.rang, d.product_type,";
+				$sql = "SELECT d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
+				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.marge_tx, d.marque_tx, d.special_code, d.rang, d.product_type,";
 				$sql.= " p.ref, p.label, p.description as product_desc";
 				$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
@@ -937,6 +937,8 @@ class Propal extends CommonObject
 						$line->desc             = $objp->description;  // Description ligne
 						$line->qty              = $objp->qty;
 						$line->tva_tx           = $objp->tva_tx;
+						$line->localtax1_tx		= $objp->localtax1_tx;
+						$line->localtax2_tx		= $objp->localtax2_tx;
 						$line->subprice         = $objp->subprice;
 						$line->fk_remise_except = $objp->fk_remise_except;
 						$line->remise_percent   = $objp->remise_percent;
@@ -945,6 +947,8 @@ class Propal extends CommonObject
 						$line->info_bits        = $objp->info_bits;
 						$line->total_ht         = $objp->total_ht;
 						$line->total_tva        = $objp->total_tva;
+						$line->total_localtax1	= $objp->total_localtax1;
+						$line->total_localtax2	= $objp->total_localtax2;
 						$line->total_ttc        = $objp->total_ttc;
 						$line->marge_tx         = $objp->marge_tx;
 						$line->marque_tx        = $objp->marque_tx;
