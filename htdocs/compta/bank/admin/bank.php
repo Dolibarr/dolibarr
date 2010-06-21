@@ -65,7 +65,7 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td align="center" width="60">&nbsp;</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";

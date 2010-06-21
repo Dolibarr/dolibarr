@@ -391,7 +391,7 @@ PDFCrabeDescription=Modèle de facture complet (Gère l'option fiscale de factur
 PDFHuitreDescription=Modèle de facture avec remise et infos règlement
 
 # oursin PDF Model
-PDFOursinDescription=Modèle de facture complet (basé sur crabe, gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, les remises, le nom du projet, la référence propal, logo...)
+PDFOursinDescription=Modèle de facture complet (basé sur crabe, gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, les remises, le nom du projet, la référence propale, logo...)
 
 # tourteau PDF Model
 PDFTourteauDescription=Modèle de facture sans remise
