@@ -22,7 +22,7 @@
  */
 
 /**
- *	\file       htdocs/contrat/contrat.class.php
+ *	\file       htdocs/contrat/class/contrat.class.php
  *	\ingroup    contrat
  *	\brief      Fichier de la classe des contrats
  *	\version    $Id$
@@ -90,8 +90,8 @@ class Contrat extends CommonObject
 
 	/**
 	 *      \brief      Activate a contract line
-	 *      \param      user        Objet User qui avtice le contrat
-	 *      \param      line_id     Id de la ligne de detail � activer
+	 *      \param      user        Objet User qui active le contrat
+	 *      \param      line_id     Id de la ligne de detail a activer
 	 *      \param      date        Date d'ouverture
 	 *      \param      date_end    Date fin prevue
 	 * 		\param		comment		A comment typed by user
@@ -137,7 +137,7 @@ class Contrat extends CommonObject
 
 	/**
 	 *      \brief      Close a contract line
-	 *      \param      user        Objet User qui avtice le contrat
+	 *      \param      user        Objet User qui active le contrat
 	 *      \param      line_id     Id de la ligne de detail a activer
 	 *      \param      date_end	Date fin
 	 * 		\param		comment		A comment typed by user
@@ -312,7 +312,7 @@ class Contrat extends CommonObject
 
 				$this->socid             = $result["fk_soc"];
 				$this->fk_soc            = $result["fk_soc"];
-				$this->societe->fetch($result["fk_soc"]);	// TODO A virer car la societe doit etre charge par appel de fetch_client()
+				$this->societe->fetch($result["fk_soc"]);	// TODO A virer car la societe doit etre chargee par appel de fetch_client()
 
 				$this->db->free($resql);
 
@@ -745,14 +745,14 @@ class Contrat extends CommonObject
 	 *      \brief      Ajoute une ligne de contrat en base
 	 *      \param      desc            	Description de la ligne
 	 *      \param      pu_ht              	Prix unitaire HT
-	 *      \param      qty             	Quantit�
+	 *      \param      qty             	Quantite
 	 *      \param      txtva           	Taux tva
 	 *      \param      txlocaltax1         Local tax 1 rate
 	 *      \param      txlocaltax2         Local tax 2 rate
 	 *      \param      fk_product      	Id produit
 	 *      \param      remise_percent  	Pourcentage de remise de la ligne
-	 *      \param      date_start      	Date de debut pr�vue
-	 *      \param      date_end        	Date de fin pr�vue
+	 *      \param      date_start      	Date de debut prevue
+	 *      \param      date_end        	Date de fin prevue
 	 *		\param		price_base_type		HT ou TTC
 	 * 	    \param    	pu_ttc             	Prix unitaire TTC
 	 * 		\param    	info_bits			Bits de type de lignes
