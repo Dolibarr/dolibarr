@@ -348,9 +348,11 @@ class Contrat extends CommonObject
 
 		// Selectionne les lignes contrats liees a un produit
 		$sql = "SELECT p.label, p.description as product_desc, p.ref,";
-		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
+		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.remise_percent, d.subprice,";
 		$sql.= " d.total_ht,";
 		$sql.= " d.total_tva,";
+		$sql.= " d.total_localtax1,";
+		$sql.= " d.total_localtax2,";
 		$sql.= " d.total_ttc,";
 		$sql.= " d.info_bits, d.fk_product,";
 		$sql.= " d.date_ouverture_prevue, d.date_ouverture,";
@@ -380,8 +382,8 @@ class Contrat extends CommonObject
 				$ligne->desc           = $objp->description;  // Description ligne
 				$ligne->qty            = $objp->qty;
 				$ligne->tva_tx         = $objp->tva_tx;
-				$ligne->localtax1_tx   = 0; 
-				$ligne->localtax2_tx   = 0;
+				$ligne->localtax1_tx   = $objp->localtax1_tx; 
+				$ligne->localtax2_tx   = $objp->localtax2_tx;
 				$ligne->subprice       = $objp->subprice;
 				$ligne->statut 		   = $objp->statut;
 				$ligne->remise_percent = $objp->remise_percent;
@@ -389,8 +391,8 @@ class Contrat extends CommonObject
 				$ligne->price          = $objp->price;	// For backward compatibility
 				$ligne->total_ht       = $objp->total_ht;
 				$ligne->total_tva      = $objp->total_tva;
-				$ligne->total_localtax1= 0;
-				$ligne->total_localtax2= 0;
+				$ligne->total_localtax1= $objp->total_localtax1;
+				$ligne->total_localtax2= $objp->total_localtax2;
 				$ligne->total_ttc      = $objp->total_ttc;
 				$ligne->fk_product     = $objp->fk_product;
 				$ligne->info_bits      = $objp->info_bits;
@@ -435,9 +437,11 @@ class Contrat extends CommonObject
 		}
 
 		// Selectionne les lignes contrat liees a aucun produit
-		$sql = "SELECT d.rowid, d.fk_contrat, d.statut, d.qty, d.description, d.price_ht, d.tva_tx, d.rowid, d.remise_percent, d.subprice,";
+		$sql = "SELECT d.rowid, d.fk_contrat, d.statut, d.qty, d.description, d.price_ht, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.rowid, d.remise_percent, d.subprice,";
 		$sql.= " d.total_ht,";
 		$sql.= " d.total_tva,";
+		$sql.= " d.total_localtax1,";
+		$sql.= " d.total_localtax2,";
 		$sql.= " d.total_ttc,";
 		$sql.= " d.info_bits, d.fk_product,";
 		$sql.= " d.date_ouverture_prevue, d.date_ouverture,";
@@ -468,16 +472,16 @@ class Contrat extends CommonObject
 				$ligne->statut 		   = $objp->statut;
 				$ligne->ref            = $objp->ref;
 				$ligne->tva_tx         = $objp->tva_tx;
-				$ligne->localtax1_tx   =0;
-				$ligne->localtax2_tx   =0;
+				$ligne->localtax1_tx   = $objp->localtax1_tx;
+				$ligne->localtax2_tx   = $objp->localtax2_tx;
 				$ligne->subprice       = $objp->subprice;
 				$ligne->remise_percent = $objp->remise_percent;
 				$ligne->price_ht       = $objp->price_ht;
 				$ligne->price          = $objp->price;	// For backward compatibility
 				$ligne->total_ht       = $objp->total_ht;
 				$ligne->total_tva      = $objp->total_tva;
-				$ligne->total_localtax1= 0;
-				$ligne->total_localtax2= 0;
+				$ligne->total_localtax1= $objp->total_localtax1;
+				$ligne->total_localtax2= $objp->total_localtax2;
 				$ligne->total_ttc      = $objp->total_ttc;
 				$ligne->fk_product     = 0;
 				$ligne->info_bits      = $objp->info_bits;
@@ -743,6 +747,8 @@ class Contrat extends CommonObject
 	 *      \param      pu_ht              	Prix unitaire HT
 	 *      \param      qty             	Quantit�
 	 *      \param      txtva           	Taux tva
+	 *      \param      txlocaltax1         Local tax 1 rate
+	 *      \param      txlocaltax2         Local tax 2 rate
 	 *      \param      fk_product      	Id produit
 	 *      \param      remise_percent  	Pourcentage de remise de la ligne
 	 *      \param      date_start      	Date de debut pr�vue
@@ -752,11 +758,11 @@ class Contrat extends CommonObject
 	 * 		\param    	info_bits			Bits de type de lignes
 	 *      \return     int             	<0 si erreur, >0 si ok
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0)
 	{
 		global $user, $langs, $conf;
 
-		dol_syslog("Contrat::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
+		dol_syslog("Contrat::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
 
 		if ($this->statut >= 0)
 		{
@@ -773,6 +779,8 @@ class Contrat extends CommonObject
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);
+			$txlocaltax1=price2num($txlocaltax1);
+			$txlocaltax2=price2num($txlocaltax2);
 
 			if ($price_base_type=='HT')
 			{
@@ -787,11 +795,12 @@ class Contrat extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
-
+			$total_localtax1= $tabprice[9];
+			$total_localtax2= $tabprice[10];
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
@@ -805,8 +814,8 @@ class Contrat extends CommonObject
 			// Insertion dans la base
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx,";
-			$sql.= " remise_percent, subprice,";
-			$sql.= " total_ht, total_tva, total_ttc,";
+			$sql.= " localtax1_tx, localtax2_tx, remise_percent, subprice,";
+			$sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 			$sql.= " info_bits,";
 			$sql.= " price_ht, remise";								// \TODO A virer
 			if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
@@ -815,8 +824,10 @@ class Contrat extends CommonObject
 			$sql.= ($fk_product>0 ? $fk_product : "null").",";
 			$sql.= " '".$qty."',";
 			$sql.= " '".$txtva."',";
+			$sql.= " '".$txlocaltax1."',";
+			$sql.= " '".$txlocaltax2."',";
 			$sql.= " ".price2num($remise_percent).",".price2num($pu_ht).",";
-			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_ttc).",";
+			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql.= " '".$info_bits."',";
 			$sql.= " ".price2num($price).",".price2num( $remise);	// \TODO A virer
 			if ($date_start > 0) { $sql.= ",".$this->db->idate($date_start); }
@@ -866,12 +877,14 @@ class Contrat extends CommonObject
 	 *      \param     date_start       Date de debut prevue
 	 *      \param     date_end         Date de fin prevue
 	 *      \param     tvatx            Taux TVA
+	 *      \param     localtax1tx      Local tax 1 rate
+	 *      \param     localtax2tx      Local tax 2 rate
 	 *      \param     date_debut_reel  Date de debut reelle
 	 *      \param     date_fin_reel    Date de fin reelle
 	 *      \return    int              < 0 si erreur, > 0 si ok
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0,
-	$date_start='', $date_end='', $tvatx,
+	$date_start='', $date_end='', $tvatx, $localtax1tx=0, $localtax2tx=0, 
 	$date_debut_reel='', $date_fin_reel='')
 	{
 		global $user, $conf, $langs;
@@ -882,6 +895,8 @@ class Contrat extends CommonObject
 		$desc=trim($desc);
 		$price = price2num($pu);
 		$tvatx = price2num($tvatx);
+		$localtax1tx = price2num($localtax1tx);
+		$localtax2tx = price2num($localtax2tx);
 		$subprice = $price;
 		$remise = 0;
 		if (strlen($remise_percent) > 0)
@@ -894,7 +909,7 @@ class Contrat extends CommonObject
 			$remise_percent=0;
 		}
 
-		dol_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx");
+		dol_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx, $localtax1tx, $localtax2tx");
 
 		$this->db->begin();
 
@@ -905,7 +920,8 @@ class Contrat extends CommonObject
 		$sql .= ",remise_percent='".price2num($remise_percent)."'";
 		$sql .= ",qty='$qty'";
 		$sql .= ",tva_tx='".        price2num($tvatx)."'";
-
+		$sql .= ",localtax1_tx='".        price2num($localtax1tx)."'";
+		$sql .= ",localtax2_tx='".        price2num($localtax2tx)."'";
 		if ($date_start > 0) { $sql.= ",date_ouverture_prevue=".$this->db->idate($date_start); }
 		else { $sql.=",date_ouverture_prevue=null"; }
 		if ($date_end > 0) { $sql.= ",date_fin_validite=".$this->db->idate($date_end); }
@@ -1591,6 +1607,8 @@ class ContratLigne
 		$sql.= " t.date_fin_validite as date_fin_validite,";
 		$sql.= " t.date_cloture as date_cloture,";
 		$sql.= " t.tva_tx,";
+		$sql.= " t.localtax1_tx,";
+		$sql.= " t.localtax2_tx,";
 		$sql.= " t.qty,";
 		$sql.= " t.remise_percent,";
 		$sql.= " t.remise,";
@@ -1599,6 +1617,8 @@ class ContratLigne
 		$sql.= " t.price_ht,";
 		$sql.= " t.total_ht,";
 		$sql.= " t.total_tva,";
+		$sql.= " t.total_localtax1,";
+		$sql.= " t.total_localtax2,";
 		$sql.= " t.total_ttc,";
 		$sql.= " t.info_bits,";
 		$sql.= " t.fk_user_author,";
@@ -1632,6 +1652,8 @@ class ContratLigne
 				$this->date_fin_validite = $this->db->jdate($obj->date_fin_validite);
 				$this->date_cloture = $this->db->jdate($obj->date_cloture);
 				$this->tva_tx = $obj->tva_tx;
+				$this->localtax1_tx = $obj->localtax1_tx;
+				$this->localtax2_tx = $obj->localtax2_tx;
 				$this->qty = $obj->qty;
 				$this->remise_percent = $obj->remise_percent;
 				$this->remise = $obj->remise;
@@ -1640,6 +1662,8 @@ class ContratLigne
 				$this->price_ht = $obj->price_ht;
 				$this->total_ht = $obj->total_ht;
 				$this->total_tva = $obj->total_tva;
+				$this->total_localtax1 = $obj->total_localtax1;
+				$this->total_localtax2 = $obj->total_localtax2;
 				$this->total_ttc = $obj->total_ttc;
 				$this->info_bits = $obj->info_bits;
 				$this->fk_user_author = $obj->fk_user_author;
@@ -1670,7 +1694,7 @@ class ContratLigne
 	function update($user, $notrigger=0)
 	{
 		global $conf, $langs;
-
+		
 		// Clean parameters
 		$this->fk_contrat=trim($this->fk_contrat);
 		$this->fk_product=trim($this->fk_product);
@@ -1678,6 +1702,8 @@ class ContratLigne
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 		$this->tva_tx=trim($this->tva_tx);
+		$this->localtax1_tx=trim($this->localtax1_tx);
+		$this->localtax2_tx=trim($this->localtax2_tx);
 		$this->qty=trim($this->qty);
 		$this->remise_percent=trim($this->remise_percent);
 		$this->remise=trim($this->remise);
@@ -1686,6 +1712,8 @@ class ContratLigne
 		$this->price_ht=price2num($this->price_ht);
 		$this->total_ht=trim($this->total_ht);
 		$this->total_tva=trim($this->total_tva);
+		$this->total_localtax1=trim($this->total_localtax1);
+		$this->total_localtax2=trim($this->total_localtax2);
 		$this->total_ttc=trim($this->total_ttc);
 		$this->info_bits=trim($this->info_bits);
 		$this->fk_user_author=trim($this->fk_user_author);
@@ -1709,6 +1737,8 @@ class ContratLigne
 		$sql.= " date_fin_validite=".($this->date_fin_validite!=''?$this->db->idate($this->date_fin_validite):"null").",";
 		$sql.= " date_cloture=".($this->date_cloture!=''?$this->db->idate($this->date_cloture):"null").",";
 		$sql.= " tva_tx='".$this->tva_tx."',";
+		$sql.= " localtax1_tx='".$this->localtax1_tx."',";
+		$sql.= " localtax2_tx='".$this->localtax2_tx."',";
 		$sql.= " qty='".$this->qty."',";
 		$sql.= " remise_percent='".$this->remise_percent."',";
 		$sql.= " remise=".($this->remise?"'".$this->remise."'":"null").",";
@@ -1717,6 +1747,8 @@ class ContratLigne
 		$sql.= " price_ht='".$this->price_ht."',";
 		$sql.= " total_ht='".$this->total_ht."',";
 		$sql.= " total_tva='".$this->total_tva."',";
+		$sql.= " total_localtax1='".$this->total_localtax1."',";
+		$sql.= " total_localtax2='".$this->total_localtax2."',";
 		$sql.= " total_ttc='".$this->total_ttc."',";
 		$sql.= " info_bits='".$this->info_bits."',";
 		$sql.= " fk_user_author=".($this->fk_user_author >= 0?$this->fk_user_author:"NULL").",";
@@ -1767,6 +1799,8 @@ class ContratLigne
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
 		$sql.= " total_ht=".price2num($this->total_ht,'MT')."";
 		$sql.= ",total_tva=".price2num($this->total_tva,'MT')."";
+		$sql.= ",total_localtax1=".price2num($this->total_localtax1,'MT')."";
+		$sql.= ",total_localtax2=".price2num($this->total_localtax2,'MT')."";
 		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 

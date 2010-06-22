@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,6 +271,9 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 	        $desc=$_POST['desc'];
         }
 
+        $localtax1_tx=get_localtax($tva_tx,1,$contrat->client);
+        $localtax2_tx=get_localtax($tva_tx,2,$contrat->client);
+        
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
@@ -279,6 +283,8 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
                 $pu_ht,
                 $_POST["pqty"],
                 $tva_tx,
+                $localtax1_tx,
+                $localtax2_tx,
                 $_POST["p_idprod"],
                 $_POST["premise"],
                 $date_start,
@@ -320,6 +326,9 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
 
 		if ($date_start_real_update == '') $date_start_real_update=$contratline->date_ouverture;
 		if ($date_end_real_update == '')   $date_end_real_update=$contratline->date_cloture;
+		
+		$localtax1_tx=get_localtax($_POST["eltva_tx"],1,$contrat->client);
+        $localtax2_tx=get_localtax($_POST["eltva_tx"],2,$contrat->client);
 
 		$contratline->description=$_POST["eldesc"];
 		$contratline->price_ht=$_POST["elprice"];
@@ -327,7 +336,8 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
         $contratline->qty=$_POST["elqty"];
         $contratline->remise_percent=$_POST["elremise_percent"];
 		$contratline->tva_tx=$_POST["eltva_tx"];
-
+		$contratline->localtax1_tx=$localtax1_tx;
+		$contratline->localtax2_tx=$localtax2_tx;
 		$contratline->date_ouverture_prevue=$date_start_update;
 		$contratline->date_ouverture=$date_start_real_update;
 		$contratline->date_fin_validite=$date_end_update;
