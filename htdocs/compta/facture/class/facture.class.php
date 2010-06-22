@@ -1570,6 +1570,8 @@ class Facture extends CommonObject
 	 * 		\param    	pu_ht              	Prix unitaire HT
 	 * 		\param    	qty             	Quantite
 	 * 		\param    	txtva           	Taux de tva force, sinon -1
+	 * 		\param		txlocaltax1			Local tax 1 rate
+	 *  	\param		txlocaltax2			Local tax 2 rate
 	 *		\param    	fk_product      	Id du produit/service predefini
 	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
 	 * 		\param    	date_start      	Date de debut de validite du service
@@ -1714,16 +1716,18 @@ class Facture extends CommonObject
 	 *      \param     	date_start      Date de debut de validite du service
 	 *      \param     	date_end        Date de fin de validite du service
 	 *      \param     	tva_tx          VAT Rate
+	 * 		\param		txlocaltax1		Local tax 1 rate
+	 *  	\param		txlocaltax2		Local tax 2 rate
 	 * 	   	\param     	price_base_type HT or TTC
 	 * 	   	\param     	info_bits       Miscellanous informations
 	 * 		\param		type			Type of line (0=product, 1=service)
 	 *      \return    	int             < 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1, $txlocaltax2,$price_base_type='HT', $info_bits=0, $type=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0,$price_base_type='HT', $info_bits=0, $type=0)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
-		dol_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $price_base_type, $info_bits, $type", LOG_DEBUG);
+		dol_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $type", LOG_DEBUG);
 
 		if ($this->brouillon)
 		{
@@ -1744,12 +1748,12 @@ class Facture extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $localtax1, $localtax2, 0, $price_base_type, $info_bits);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 			$total_localtax1=$tabprice[9];
-			$total_localtax1=$tabprice[10];
+			$total_localtax2=$tabprice[10];
 			$pu_ht  = $tabprice[3];
 			$pu_tva = $tabprice[4];
 			$pu_ttc = $tabprice[5];

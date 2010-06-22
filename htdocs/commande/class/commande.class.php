@@ -808,6 +808,8 @@ class Commande extends CommonObject
 	 * 		\param    	pu_ht              	Prix unitaire HT
 	 * 		\param    	qty             	Quantite
 	 * 		\param    	txtva           	Taux de tva force, sinon -1
+	 * 		\param		txlocaltax1			Local tax 1 rate
+	 *  	\param		txlocaltax2			Local tax 2 rate
 	 *		\param    	fk_product      	Id du produit/service predefini
 	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
 	 * 		\param    	info_bits			Bits de type de lignes
@@ -1847,6 +1849,8 @@ class Commande extends CommonObject
 	 *  \param    	qty              	Quantity
 	 *  \param    	remise_percent   	Pourcentage de remise de la ligne
 	 *  \param    	tva_tx           	Taux TVA
+	 * 	\param		txlocaltax1			Local tax 1 rate
+	 *  \param		txlocaltax2			Local tax 2 rate
 	 *  \param    	price_base_type		HT or TTC
 	 *  \param    	info_bits        	Miscellanous informations on line
 	 *  \param    	date_start        	Start date of the line

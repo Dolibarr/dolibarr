@@ -272,6 +272,8 @@ class Propal extends CommonObject
 	 * 		\param    	pu_ht              	Prix unitaire
 	 * 		\param    	qty             	Quantite
 	 * 		\param    	txtva           	Taux de tva force, sinon -1
+	 * 		\param		txlocaltax1			Local tax 1 rate
+	 *  	\param		txlocaltax2			Local tax 2 rate
 	 *		\param    	fk_product      	Id du produit/service predefini
 	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
 	 * 		\param    	price_base_type		HT or TTC
@@ -399,6 +401,8 @@ class Propal extends CommonObject
 	 *    \param      qty             	Quantity
 	 *    \param      remise_percent  	Remise effectuee sur le produit
 	 *    \param      txtva	          	Taux de TVA
+	 * 	  \param	  txlocaltax1		Local tax 1 rate
+	 *    \param	  txlocaltax2		Local tax 2 rate
 	 *    \param      desc            	Description
 	 *	\param		price_base_type		HT ou TTC
 	 *	\param     	info_bits        	Miscellanous informations
