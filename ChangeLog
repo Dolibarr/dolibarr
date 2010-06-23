@@ -39,6 +39,7 @@ For users:
 - New: Bank name available on invoice.
 - New: IBAN value is called IFSC if country is India.
 - New: Add option to choose firstname-name or name-firstname.
+- New: Add company in fields exported by export of members tool.
 - Fix: Debug experimental module widthrawal.
 - Fix: Format number was wrong for ar_AR language.
 - Fix: Can change password if has only permission change password.
