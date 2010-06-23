@@ -50,12 +50,12 @@ class ModeleChequeReceipts
 	{
 		global $conf;
 
-		$type='chequereceipt';
+		$type='remisecheque';
 		$liste=array();
 
 		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
 		$liste=getListOfModels($db,$type,'');
-		// TODO Remove this to use getListOfModels only
+
 		$liste = array('blochet'=>'blochet');
 
 		return $liste;
