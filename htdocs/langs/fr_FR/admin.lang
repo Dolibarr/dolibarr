@@ -273,6 +273,8 @@ NumberOfModelFilesFound=Nombre de fichiers modèles ODT trouvés dans ce(s) rép
 ExampleOfDirectoriesForModelGen=Exemples de syntaxe:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=En plaçant les tags suivant dans le modèle, vous obtiendrez une subsitution avec la valeur personnalisée lors de la génération du document: 
 FullListOnOnlineDocumentation=Liste complète des tags disponibles sur la documentation utilisateur du module Tiers sur le wiki http://wiki.dolibarr.org
+FirstnameNamePosition=Ordre affichage prénom/nom
+
 # Modules= undefined
 Module0Name= Utilisateurs & groupes
 Module0Desc= Gestion des utilisateurs et groupes

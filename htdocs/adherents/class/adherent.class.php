@@ -1214,7 +1214,7 @@ class Adherent extends CommonObject
 					$insertid=$acct->addline($dateop, $operation, $label, $montant, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
 					if ($insertid > 0)
 					{
-						$inserturlid=$acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $this->getFullname(), 'member');
+						$inserturlid=$acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $this->getFullname($langs), 'member');
 						if ($inserturlid > 0)
 						{
 							// Met a jour la table cotisation
@@ -1709,12 +1709,18 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retourne le nom complet de l'adherent
-	 *    \return     string      	Nom complet
+	 *    \brief      Return full name of member
+	 *    \return     string      	Full name
 	 */
-	function getFullname()
+	function getFullname($outputlangs)
 	{
-		if ($this->nom && $this->prenom) return $this->nom.' '.$this->prenom;
+		global $conf;
+
+		if ($this->nom && $this->prenom)
+		{
+			if (! empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) return $this->nom.' '.$this->prenom;
+			else return $this->prenom.' '.$this->nom;
+		}
 		if ($this->nom)    return $this->nom;
 		if ($this->prenom) return $this->prenom;
 		return '';

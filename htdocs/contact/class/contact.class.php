@@ -791,7 +791,7 @@ class Contact extends CommonObject
 	 * 		\param		nameorder		0=Lastname+Firstname, 1=Firstname+Lastname
 	 * 		\return		string			String with full name
 	 */
-	function getFullName($langs,$option=0,$nameorder=0)
+	function getFullName($langs,$option=0,$nameorder=-1)
 	{
 		$ret='';
 		if ($option && $this->civilite_id)
@@ -799,6 +799,9 @@ class Contact extends CommonObject
 			if ($langs->transnoentitiesnoconv("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civilite_id).' ';
 			else $ret.=$this->civilite_id.' ';
 		}
+
+		// If order not defined, we use the setup
+		if ($nameorder < 0) $nameorder=(! $conf->global->MAIN_FIRSTNAME_NAME_POSITION);
 
 		if ($nameorder)
 		{

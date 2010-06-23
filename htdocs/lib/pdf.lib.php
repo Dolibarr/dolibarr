@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin <patrick.raguin@gmail.com>
  *
@@ -69,7 +69,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 	{
 		if ($usecontact)
 		{
-			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs,1,1));
+			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs,1));
 			// Recipient properties
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->address);
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->cp) . " " . $outputlangs->convToOutputCharset($targetcontact->ville);

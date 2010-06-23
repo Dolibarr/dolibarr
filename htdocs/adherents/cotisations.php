@@ -104,7 +104,7 @@ if ($allowinsertbankafter && $_POST["action"] == '2bank' && $_POST["rowid"] !=''
 				}
 				else
 				{
-        			$inserturlid=$acct->add_url_line($insertid, $adherent->rowid, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $adherent->getFullname(), 'member');
+        			$inserturlid=$acct->add_url_line($insertid, $adherent->rowid, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $adherent->getFullname($langs), 'member');
 
 					// Met a jour la table cotisation
 					$sql="UPDATE ".MAIN_DB_PREFIX."cotisation";

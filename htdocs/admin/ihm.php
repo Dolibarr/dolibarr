@@ -68,6 +68,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK",         $_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SHOW_LOGO",          $_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",          $_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME",              $_POST["main_theme"],'chaine',0,'',$conf->entity);
 
@@ -199,6 +200,15 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
     print $html->select_dayofweek((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'),'MAIN_START_WEEK',0);
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+    // Firstname/Name
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("FirstnameNamePosition").'</td><td>';
+	$array=array(0=>$langs->trans("Firstname").' '.$langs->trans("Name"),1=>$langs->trans("Name").' '.$langs->trans("Firstname"));
+    print $html->selectarray('MAIN_FIRSTNAME_NAME_POSITION',$array,(isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?$conf->global->MAIN_FIRSTNAME_NAME_POSITION:0));
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -371,7 +381,16 @@ else	// Show
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    print '</table><br>';
+	// Firstname / Name position
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("FirstnameNamePosition").'</td><td>';
+    if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) { print $langs->trans("Firstname").' '.$langs->trans("Name"); }
+    else { print $langs->trans("Name").' '.$langs->trans("Firstname"); }
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+	print '</table><br>';
 
 
     // Themes
