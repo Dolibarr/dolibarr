@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +65,12 @@ if ($db->type != 'mysql' && $db->type != 'mysqli')
 
 // Show parameters
 print 'Tablename='.$argv[1]."\n";
+
+
+
+//--------------------------------
+// Build skeleton_class.class.php
+//--------------------------------
 
 $table=$argv[1];
 $property=array();
@@ -355,8 +361,11 @@ if ($fp)
 else $error++;
 
 
+//--------------------------------
+// Build skeleton_script.php
+//--------------------------------
 
-// Read skeleton_class.class.php file
+// Read skeleton_script.php file
 $skeletonfile='skeleton_script.php';
 $sourcecontent=file_get_contents($skeletonfile);
 if (! $sourcecontent)
