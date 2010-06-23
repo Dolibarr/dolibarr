@@ -616,7 +616,9 @@ if ($_REQUEST["id"] && $_REQUEST["action"] != 'edit')
 	print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($contact->address).'</td></tr>';
 
 	// Zip Town
-	print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$contact->cp.'&nbsp;';
+	print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
+	print $contact->cp;
+	if ($contact->cp) print '&nbsp;';
 	print $contact->ville.'</td></tr>';
 
 	// Country

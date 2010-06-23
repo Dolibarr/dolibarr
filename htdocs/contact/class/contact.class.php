@@ -216,6 +216,8 @@ class Contact extends CommonObject
 			}
 			else
 			{
+				$this->error=join(',',$this->errors);
+				dol_syslog("Contact::update Error ".$this->error,LOG_ERR);
 				$this->db->rollback();
 				return -$error;
 			}
@@ -430,14 +432,14 @@ class Contact extends CommonObject
 				$this->nom            = $obj->name;
 				$this->prenom         = $obj->firstname;
 
-				$this->address        = $obj->address?$obj->address:$obj->socaddress;
-				$this->adresse        = $obj->address?$obj->address:$obj->socaddress; // TODO obsolete
-				$this->cp             = $obj->cp?$obj->cp:$obj->soccp;
-				$this->ville          = $obj->ville?$obj->ville:$obj->soccity;
+				$this->address        = $obj->address;
+				$this->adresse        = $obj->address; // TODO obsolete
+				$this->cp             = $obj->cp;
+				$this->ville          = $obj->ville;
 
 				$this->fk_departement = $obj->fk_departement;
-				$this->departement_code = $obj->fk_departement?$obj->departement_code:'';
-				$this->departement	  = $obj->fk_departement?$obj->departement:'';
+				$this->departement_code = $obj->fk_departement;
+				$this->departement	  = $obj->fk_departement;
 
 				$this->fk_pays        = $obj->fk_pays;
 				$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
