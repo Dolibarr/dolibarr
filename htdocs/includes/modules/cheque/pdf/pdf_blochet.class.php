@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/compta/paiement/cheque/pdf/pdf_blochet.class.php
+ *	\file       htdocs/includes/modules/cheque/pdf/pdf_blochet.class.php
  *	\ingroup    banque
  *	\brief      Fichier de la classe permettant de generer les bordereau de remise de cheque
  *	\version    $Id$
@@ -28,13 +28,14 @@
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/cheque/pdf/modules_chequereceipts.php");
 
 
 /**
  *	\class      BordereauChequeBlochet
  *	\brief      Classe permettant de generer les bordereau de remise de cheque
  */
-class BordereauChequeBlochet
+class BordereauChequeBlochet extends ModeleChequeReceipts
 {
     var $error='';
 
@@ -245,13 +246,14 @@ class BordereauChequeBlochet
 		// Tableau
 		$pdf->SetFont('Arial','',8);
 		$pdf->Text(11,$this->tab_top + 6,$outputlangs->transnoentities("Num"));
-		$pdf->line(30, $this->tab_top, 30, $this->tab_top + $this->tab_height + 10);
+		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
 
-		$pdf->Text(31,$this->tab_top + 6,$outputlangs->transnoentities("Bank"));
+		$pdf->Text(41,$this->tab_top + 6,$outputlangs->transnoentities("Bank"));
 		$pdf->line(100, $this->tab_top, 100, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(101, $this->tab_top + 6, $outputlangs->transnoentities("CheckTransmitter"));
 
+		$pdf->Text(101, $this->tab_top + 6, $outputlangs->transnoentities("CheckTransmitter"));
 		$pdf->line(180, $this->tab_top, 180, $this->tab_top + $this->tab_height + 10);
+
 		$pdf->SetXY (180, $this->tab_top);
 		$pdf->MultiCell(20, 10, $outputlangs->transnoentities("Amount"), 0, 'R');
 		$pdf->line(9, $this->tab_top + 10, 201, $this->tab_top + 10 );
@@ -272,6 +274,9 @@ class BordereauChequeBlochet
 	}
 
 
+	/**
+	 *	Output array
+	 */
 	function Body(&$pdf, $page, $outputlangs)
 	{
 		// x=10 - Num
@@ -287,9 +292,9 @@ class BordereauChequeBlochet
 			$pdf->MultiCell(8, $this->line_height, $j+1, 0, 'R', 0);
 
 			$pdf->SetXY (10, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(20, $this->line_height, $this->lines[$j]->num_chq?$this->lines[$j]->num_chq:'', 0, 'J', 0);
+			$pdf->MultiCell(30, $this->line_height, $this->lines[$j]->num_chq?$this->lines[$j]->num_chq:'', 0, 'J', 0);
 
-			$pdf->SetXY (30, $this->tab_top + 10 + $yp);
+			$pdf->SetXY (40, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(70, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->bank_chq),44), 0, 'J', 0);
 
 			$pdf->SetXY (100, $this->tab_top + 10 + $yp);

@@ -456,8 +456,7 @@ if ($_GET['action'] != 'new')
 	if ($remisecheque->statut == 1)
 	{
 		$dirchequereceipts = $dir.get_exdir($remisecheque->number,2,1).$remisecheque->ref;
-		$gen = array('blochet'=>'blochet');
-		$formfile->show_documents("remisecheque",$remisecheque->ref,$dirchequereceipts,$_SERVER["PHP_SELF"].'?id='.$remisecheque->id,$gen,1);
+		$formfile->show_documents("remisecheque",$remisecheque->ref,$dirchequereceipts,$_SERVER["PHP_SELF"].'?id='.$remisecheque->id,1,1);
 	}
 }
 

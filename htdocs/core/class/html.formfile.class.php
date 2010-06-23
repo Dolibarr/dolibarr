@@ -284,7 +284,9 @@ class FormFile
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
 				{
-					// ??
+					include_once(DOL_DOCUMENT_ROOT.'/includes/modules/cheque/pdf/modules_chequereceipts.php');
+					$model=new ModeleChequeReceipts();
+					$modellist=$model->liste_modeles($this->db);
 				}
 			}
 			elseif ($modulepart == 'donation')
