@@ -199,9 +199,10 @@ function getCountry($id,$withcode=0)
 		$obj = $db->fetch_object($resql);
 		if ($obj)
 		{
-			$label=($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'');
-			if ($withcode == 1) return $label=$obj->code?"$obj->code":"$obj->code - $label";
-			else if ($withcode == 2) return $label=$obj->code;
+			$langs->load("dict");
+			$label=($obj->code && ($langs->trans("Country".$obj->code)!="Country".$obj->code))?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'');
+			if ($withcode == 1) return $label?"$obj->code - $label":"$obj->code";
+			else if ($withcode == 2) return $obj->code;
 			else return $label;
 		}
 		else

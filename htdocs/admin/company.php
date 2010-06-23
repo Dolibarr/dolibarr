@@ -270,7 +270,8 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("State").'</td><td>';
-	$pays_code=getCountry($conf->global->MAIN_INFO_SOCIETE_PAYS,2);
+	$pays_code='';
+	if ($conf->global->MAIN_INFO_SOCIETE_PAYS) $pays_code=getCountry($conf->global->MAIN_INFO_SOCIETE_PAYS,2);
 	$formcompany->select_departement($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT,$pays_code,'departement_id');
 	print '</td></tr>'."\n";
 
@@ -601,7 +602,7 @@ else
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCountry").'</td><td>';
-	print getCountry($conf->global->MAIN_INFO_SOCIETE_PAYS,1);
+	if ($conf->global->MAIN_INFO_SOCIETE_PAYS) print getCountry($conf->global->MAIN_INFO_SOCIETE_PAYS,1);
 	print '</td></tr>';
 
 	$var=!$var;
