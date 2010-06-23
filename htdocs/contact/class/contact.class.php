@@ -793,6 +793,8 @@ class Contact extends CommonObject
 	 */
 	function getFullName($langs,$option=0,$nameorder=-1)
 	{
+		global $conf;
+
 		$ret='';
 		if ($option && $this->civilite_id)
 		{
