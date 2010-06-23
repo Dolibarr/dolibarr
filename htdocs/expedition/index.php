@@ -149,7 +149,9 @@ if ( $db->query($sql) )
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,20).'</a>';
+			$companystatic->nom=$obj->nom;
+			$companystatic->id=$obj->socid;
+			print $companystatic->getNomUrl(1,'customer');
 			print '</td></tr>';
 			$i++;
 		}
@@ -199,7 +201,11 @@ if ( $resql )
 			$orderstatic->ref=$obj->ref;
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td></tr>';
+			print '<td>';
+			$companystatic->nom=$obj->nom;
+			$companystatic->id=$obj->socid;
+			print $companystatic->getNomUrl(1,'customer');
+			print '</td></tr>';
 			$i++;
 		}
 		print "</table><br>";

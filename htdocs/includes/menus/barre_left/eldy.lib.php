@@ -641,7 +641,7 @@ function print_left_eldy_menu($db,$menu_array)
 			if ($conf->expedition->enabled)
 			{
 				$langs->load("sendings");
-				$newmenu->add(DOL_URL_ROOT."/expedition/index.php?leftmenu=sendings", $langs->trans("Sendings"), 0, $user->rights->expedition->lire);
+				$newmenu->add(DOL_URL_ROOT."/expedition/index.php?leftmenu=sendings", $langs->trans("Shipments"), 0, $user->rights->expedition->lire);
 				if ($leftmenu=="sendings") $newmenu->add(DOL_URL_ROOT."/expedition/liste.php?leftmenu=sendings", $langs->trans("List"), 1 ,$user->rights->expedition->lire);
 				if ($leftmenu=="sendings") $newmenu->add(DOL_URL_ROOT."/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1 ,$user->rights->expedition->lire);
 			}
