@@ -36,22 +36,22 @@ class DolEditor
 
 
     /**
-            \brief 	DolEditor
-            \param 	htmlname		        Nom formulaire html WYSIWIG
-            \param 	content			        Contenu edition WYSIWIG
-            \param 	height			        Hauteur en pixel de la zone edition
-            \param 	toolbarname		        Nom barre de menu editeur
-            \param  toolbarlocation       	Emplacement de la barre de menu :
-                                          	'In' chaque fenetre d'edition a la propre barre d'outils
-                                          	'Out:nom' partage de la barre d'outils ou 'nom' est le nom du DIV qui affiche la barre
-            \param  toolbarstartexpanded  	visible ou non au demarrage
-			\param	modulepart				modulepart pour protection wrapper download viewimage
-	*/
+     *      \brief 	DolEditor
+     *      \param 	htmlname		        Nom formulaire html WYSIWIG
+     *      \param 	content			        Contenu edition WYSIWIG
+     *      \param 	height			        Hauteur en pixel de la zone edition
+     *      \param 	toolbarname		        Nom barre de menu editeur
+     *      \param  toolbarlocation       	Emplacement de la barre de menu :
+     *                                    	'In' chaque fenetre d'edition a la propre barre d'outils
+     *                                    	'Out:nom' partage de la barre d'outils ou 'nom' est le nom du DIV qui affiche la barre
+     *      \param  toolbarstartexpanded  	visible ou non au demarrage
+	 *		\param	uselocalbrowser			Enabled to add links to local object with local browsers. If false, only external images can be added in content.
+	 */
     function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true)
     {
     	global $conf,$langs;
 
-    	dol_syslog("DolEditor::DolEditor modulepart=".$modulepart);
+    	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname);
 
     	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
 

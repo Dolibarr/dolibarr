@@ -48,7 +48,7 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 
 	$const=$_POST["constname"];
 	$value=$_POST["constvalue"];
-	if (in_array($const,array('ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $value=$_POST["constvalue".$const];
+	if (in_array($const,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $value=$_POST["constvalue".$const];
 	$type=$_POST["consttype"];
 	$constnote=isset($_POST["constnote"])?$_POST["constnote"]:'';
 
@@ -374,7 +374,7 @@ function form_constantes($tableau)
 					print '</td><td>';
 					print '<input type="hidden" name="consttype" value="texte">';
 				}
-				else if (in_array($const,array('ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
+				else if (in_array($const,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
 				{
 				    // Editor wysiwyg
 					if ($conf->fckeditor->enabled)

@@ -99,14 +99,14 @@ insert into llx_const (name, value, type, note, visible) values('SOCIETE_CODECOM
 --
 -- Mail Adherent
 --
-insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_REQUIRED','1','yesno','Le mail est obligatoire pour créer un adhérent',0);
-insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_FROM','adherents@domain.com','chaine','From des mails adherents',0);
-insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_RESIL','Votre adhesion vient d\'etre resiliee.\r\nNous esperons vous revoir tres bientot','texte','Mail de Resiliation',0);
-insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_VALID','Votre adhesion vient d\'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\n','texte','Mail de validation',0);
-insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_COTIS','Bonjour %PRENOM%,\r\nMerci de votre inscription.\r\nCet email confirme que votre cotisation a ete recue et enregistree.\r\n\r\n','texte','Mail de validation de cotisation',0);
-insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_VALID_SUBJECT','Votre adhésion a ete validée','chaine','Sujet du mail de validation',0);
-insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_RESIL_SUBJECT','Resiliation de votre adhesion','chaine','Sujet du mail de resiliation',0);
-insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_COTIS_SUBJECT','Recu de votre cotisation','chaine','Sujet du mail de validation de cotisation',0);
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_REQUIRED','1','yesno','EMail required to create a new member',0);
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_FROM','adherents@domain.com','chaine','Sender EMail for automatic emails',0);
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_RESIL','Your subscription has been resiliated.\r\nWe hope to see you soon again','texte','Mail resiliation',0);
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_VALID','Your subscription has been validated.\r\nThis is a remind of your personal information :\r\n\r\n%INFOS%\r\n\r\n','texte','Mail de validation',0);
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_COTIS','Hello %PRENOM%,\r\nThanks for your subscription.\r\nThis email confirms that your subscription has been received and processed.\r\n\r\n','texte','Mail de validation de cotisation',0);
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_VALID_SUBJECT','Your subscription has been validated','chaine','Sujet du mail de validation',0);
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_RESIL_SUBJECT','Resiliating your subscription','chaine','Sujet du mail de resiliation',0);
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_COTIS_SUBJECT','Receipt of your subscription','chaine','Sujet du mail de validation de cotisation',0);
 
 
 --

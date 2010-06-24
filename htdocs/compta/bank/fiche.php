@@ -225,8 +225,8 @@ if ($_GET["action"] == 'create')
 	// Comment
 	print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 	print '<td colspan="3">';
-    // Editeur wysiwyg
-	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+    // Editor wysiwyg
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 		$doleditor=new DolEditor('account_comment',$account->comment,200,'dolibarr_notes','',false);
@@ -235,7 +235,8 @@ if ($_GET["action"] == 'create')
 	else
 	{
 		print '<textarea class="flat" name="account_comment" cols="70" rows="10">';
-		print dol_htmlentitiesbr_decode($account->comment).'</textarea>';
+		print dol_htmlentitiesbr_decode($account->comment);
+		print '</textarea>';
 	}
 	print '</td></tr>';
 
@@ -463,8 +464,8 @@ else
 		// Comment
 		print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 		print '<td colspan="3">';
-	   // �diteur wysiwyg
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+	   // Editor wysiwyg
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 			$doleditor=new DolEditor('account_comment',$account->comment,200,'dolibarr_notes','',false);
