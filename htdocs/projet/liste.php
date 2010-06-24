@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -72,7 +72,7 @@ $projectstatic = new Project($db);
 $socstatic = new Societe($db);
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
 
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
@@ -81,8 +81,8 @@ $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($mine) $sql.= " AND p.rowid IN (".$projectsListId.")";
-if ($socid)	$sql.= " AND s.rowid = ".$socid;
-
+//var_dump($user->rights->societe);
+if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($_GET["search_ref"])
 {
 	$sql.= " AND p.ref LIKE '%".addslashes($_GET["search_ref"])."%'";
@@ -98,6 +98,7 @@ if ($_GET["search_societe"])
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
+//print $sql;
 $var=true;
 $resql = $db->query($sql);
 if ($resql)

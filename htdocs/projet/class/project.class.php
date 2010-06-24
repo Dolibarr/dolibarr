@@ -761,9 +761,10 @@ class Project extends CommonObject
 	 * @param 	user		User object
 	 * @param 	mode		0=All project I have permission on, 1=Affected to me only, 2=Will return list of all projects
 	 * @param 	list		0=Return array,1=Return string list
+	 * @param	socid		0=No filter on third party, id of third party
 	 * @return 	array or string
 	 */
-	function getProjectsAuthorizedForUser($user,$mode=0,$list=0)
+	function getProjectsAuthorizedForUser($user,$mode=0,$list=0,$socid=0)
 	{
 		global $conf;
 
@@ -775,6 +776,7 @@ class Project extends CommonObject
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
 		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 		$sql.= " WHERE p.entity = ".$conf->entity;
+		if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 
 		if ($mode == 2)
 		{

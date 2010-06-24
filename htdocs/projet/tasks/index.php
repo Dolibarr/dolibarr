@@ -78,7 +78,7 @@ else
 }
 
 // Get list of project id allowed to user
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).

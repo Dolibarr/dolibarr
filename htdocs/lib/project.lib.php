@@ -190,9 +190,11 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 	$sql.= " WHERE p.entity = ".$conf->entity;
 	if ($projectsListId) $sql.= " AND p.rowid in (".$projectsListId.")";
 	if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
-	if ($socid > 0) $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc='0' OR p.fk_soc IS NULL)";
+	//if ($socid > 0) $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc='0' OR p.fk_soc IS NULL)";	// We will filter later
 	$sql.= " ORDER BY p.title ASC";
 
+	//print $sql;
+	//var_dump($user->rights);
 	dol_syslog("project.lib::select_projects sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
@@ -206,24 +208,40 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$labeltoshow=dol_trunc($obj->ref,12).' - '.dol_trunc($obj->title,12);
-				//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
-				//else $labeltoshow.=' ('.$langs->trans("Private").')';
-				if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
+				// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
+				if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && ! $user->rights->societe->lire)
 				{
-					print '<option value="'.$obj->rowid.'" selected="true">'.$labeltoshow.'</option>';
+					// Do nothing
 				}
 				else
 				{
-					print '<option value="'.$obj->rowid.'"';
-					if (! $obj->fk_statut > 0)
-					{
-						print ' disabled="true"';
-						$labeltoshow.=' - '.$langs->trans("Draft");
-					}
-					//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
+					$labeltoshow=dol_trunc($obj->ref,16);
+					//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 					//else $labeltoshow.=' ('.$langs->trans("Private").')';
-					print '>'.$labeltoshow.'</option>';
+					if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
+					{
+						print '<option value="'.$obj->rowid.'" selected="true">'.$labeltoshow.'</option>';
+					}
+					else
+					{
+						$disabled=0;
+						print '<option value="'.$obj->rowid.'"';
+						if (! $obj->fk_statut > 0)
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("Draft");
+						}
+						if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+						}
+						if ($disabled==1) print ' disabled="true"';
+						else $labeltoshow.=' - '.dol_trunc($obj->title,12);
+						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
+						//else $labeltoshow.=' ('.$langs->trans("Private").')';
+						print '>'.$labeltoshow.'</option>';
+					}
 				}
 				$i++;
 			}

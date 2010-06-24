@@ -79,6 +79,7 @@ ShowMyTasksOnly=View only tasks i am affected to
 TaskRessourceLinks=Ressources
 ProjectsDedicatedToThisThirdParty=Projects dedicated to this third party
 NoTasks=No tasks for this project
+LinkedToAnotherCompany=Linked to other third party
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leader
 TypeContact_project_external_PROJECTLEADER=Project leader
