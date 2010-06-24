@@ -114,13 +114,22 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 	if ($txlocaltax2>0)
 	{
 		$result[15] = price2num(($tot_sans_remise * ( 1 + ( $txlocaltax2 / 100))) - $tot_sans_remise, 'MT');
-		$result[8] = $result[8] + $result[15];
-
 		$result[10] = price2num(($tot_avec_remise * ( 1 + ( $txlocaltax2 / 100))) - $tot_avec_remise, 'MT');
-		$result[2] = $result[2] + $result[10];
-
 		$result[12] = price2num(($pu * ( 1 + ( $txlocaltax2 / 100))) - $pu, 'MT');
-		$result[5] = $result[5] + $result[12];
+		
+		//If Country is Spain, localtax2 (IRPF) will be subtracted
+		if ($conf->global->MAIN_INFO_SOCIETE_PAYS='4')
+		{
+			$result[8] = $result[8] - $result[15];
+			$result[2] = $result[2] - $result[10];
+			$result[5] = $result[5] - $result[12];
+		}
+		else
+		{
+			$result[8] = $result[8] + $result[15];
+			$result[2] = $result[2] + $result[10];
+			$result[5] = $result[5] + $result[12];
+		}
 	}
 	else
 	{
