@@ -273,7 +273,9 @@ NumberOfModelFilesFound=Número de archivos de plantillas ODT encontrados en est
 ExampleOfDirectoriesForModelGen=Ejemplos de sintaxis:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=Colocando los siguientes tags en la plantilla, obtendrá una sustitución con el valor personalizado al generar el documento:
 FullListOnOnlineDocumentation=Listado completo de tags disponibles en la documentación de usuario del módulo Terceros del wiki http://wiki.dolibarr.org
-# Modules= undefined=
+FirstnameNamePosition=Orden visualización nombre/apellidos
+
+# Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
