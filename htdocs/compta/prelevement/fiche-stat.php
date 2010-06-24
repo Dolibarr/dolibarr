@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,8 @@ require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.
 // Security check
 if ($user->societe_id > 0) accessforbidden();
 
+$langs->load("withdrawals");
+$langs->load("main");
 
 /*
  * View
@@ -105,7 +108,7 @@ if ($prev_id)
       print"\n<!-- debut table -->\n";
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre">';
-      print '<td>Statut</td><td align="right">Montant</td><td align="right">%</td></tr>';
+      print '<td>'.$langs->trans("Status").'</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
 
       $var=false;
 
@@ -117,17 +120,17 @@ if ($prev_id)
 
 	  if ($row[1] == 2)
 	    {
-	      print 'Credite';
+	      print $langs->trans("StatusCredited");
 	    }
 	  elseif ($row[1] == 3)
 	    {
-	      print 'Rejete';
+	      print $langs->trans("StatusRefused");
 	    }
 	  elseif ($row[1] == 1)
 	    {
-	      print 'En attente';
+	      print $langs->trans("StatusWaiting");
 	    }
-	    else print 'Unknown';
+	    else print $langs->trans("StatusUnknown");
 
 	  print '</td><td align="right">';
 	  print price($row[0]);
