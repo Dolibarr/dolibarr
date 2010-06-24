@@ -23,7 +23,7 @@
 /**
  *   	\file       htdocs/adherents/admin/adherent.php
  *		\ingroup    adherent
- *		\brief      Page d'administration/configuration du module Adherent
+ *		\brief      Page to setup the module Foundation
  *		\version    $Id$
  */
 
@@ -45,7 +45,14 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
 	if (($_POST["constname"]=='ADHERENT_CARD_TYPE' || $_POST["constname"]=='ADHERENT_ETIQUETTE_TYPE')
 		&& $_POST["constvalue"] == -1) $_POST["constvalue"]='';
-	$result=dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:'',$conf->entity);
+
+	$const=$_POST["constname"];
+	$value=$_POST["constvalue"];
+	if (in_array($const,array('ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $value=$_POST["constvalue".$const];
+	$type=$_POST["consttype"];
+	$constnote=isset($_POST["constnote"])?$_POST["constnote"]:'';
+
+	$result=dolibarr_set_const($db,$const,$value,$typeconst[$type],0,$constnote,$conf->entity);
 	if ($result < 0)
 	{
 		print $db->error();
@@ -126,9 +133,6 @@ print '<input type="submit" class="button" value="'.$langs->trans("Update").'" n
 print "</td></tr>\n";
 print '</form>';
 
-
-
-
 // Insertion cotisations dans compte financier
 $var=!$var;
 print '<form action="adherent.php" method="POST">';
@@ -156,6 +160,8 @@ print '</form>';
 print '</table>';
 print '<br>';
 
+
+
 /*
  * Mailman
  */
@@ -179,7 +185,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 	}
 	else
 	{
-		$lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
+		$lien='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
 		print_fiche_titre("Mailman mailing list system",$lien,'');
 	}
 
@@ -193,7 +199,7 @@ $var=!$var;
 if ($conf->global->ADHERENT_USE_SPIP)
 {
 	$lien=img_tick().' ';
-	$lien.='<a href="'.DOL_URL_ROOT.'/admin/adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
+	$lien.='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
 	// Edition des varibales globales rattache au theme Mailman
 	$constantes=array('ADHERENT_USE_SPIP_AUTO',
 		    'ADHERENT_SPIP_SERVEUR',
@@ -206,7 +212,7 @@ if ($conf->global->ADHERENT_USE_SPIP)
 }
 else
 {
-	$lien='<a href="'.DOL_URL_ROOT.'/admin/adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
+	$lien='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
 	print_fiche_titre("SPIP - CMS",$lien,'');
 }
 
@@ -300,7 +306,7 @@ function form_constantes($tableau)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Description").'</td>';
 	print '<td>'.$langs->trans("Value").'*</td>';
-	print '<td>'.$langs->trans("Type").'</td>';
+	print '<td>&nbsp;</td>';
 	print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";
 	$var=true;
@@ -320,23 +326,24 @@ function form_constantes($tableau)
 		$sql.= " ORDER BY name ASC, entity DESC";
 		$result = $db->query($sql);
 
-		dol_syslog("list params sql=".$sql);
+		dol_syslog("List params sql=".$sql);
 		if ($result)
 		{
 			$obj = $db->fetch_object($result);	// Take first result of select
 			$var=!$var;
 
-			print '<form action="adherent.php" method="POST">';
+			print "\n".'<form action="adherent.php" method="POST">';
+
+			print "<tr ".$bc[$var].">";
+
+			// Affiche nom constante
+			print '<td>';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 			print '<input type="hidden" name="constname" value="'.$const.'">';
 			print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
 
-			print "<tr $bc[$var]>";
-
-			// Affiche nom constante
-			print '<td>';
 			print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : ($obj->note?$obj->note:$const);
 			print "</td>\n";
 
@@ -352,38 +359,60 @@ function form_constantes($tableau)
 				}
 				print $form->selectarray('constvalue',$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
 				print '</td><td>';
-				print $form->selectarray('consttype',array('yesno','texte','chaine'),1);
+				print '<input type="hidden" name="consttype" value="yesno">';
+				print '</td>';
 			}
 			else
 			{
 				print '<td>';
-				if ($obj->type == 'yesno')
-				{
-					print $form->selectyesno('constvalue',$obj->value,1);
-					print '</td><td>';
-					print $form->selectarray('consttype',array('yesno','texte','chaine'),0);
-				}
-				else if ($obj->type == 'texte')
+				//print 'aa'.$const;
+				if (in_array($const,array('ADHERENT_CARD_TEXT','ADHERENT_CARD_TEXT_RIGHT')))
 				{
 					print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">'."\n";
 					print $obj->value;
 					print "</textarea>\n";
 					print '</td><td>';
-					print $form->selectarray('consttype',array('yesno','texte','chaine'),1);
+					print '<input type="hidden" name="consttype" value="texte">';
+				}
+				else if (in_array($const,array('ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
+				{
+				    // Editor wysiwyg
+					if ($conf->fckeditor->enabled)
+					{
+						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+						$doleditor=new DolEditor('constvalue'.$const,$obj->value,160,'dolibarr_notes','',false,false);
+						$doleditor->Create();
+					}
+					else
+					{
+						print '<textarea class="flat" name="constvalue'.$const.'" cols="60" rows="5" wrap="soft">';
+						print dol_htmlentitiesbr_decode($obj->value);
+						print '</textarea>';
+					}
+
+					print '</td><td>';
+					print '<input type="hidden" name="consttype" value="texte">';
+				}
+				else if ($obj->type == 'yesno')
+				{
+					print $form->selectyesno('constvalue',$obj->value,1);
+					print '</td><td>';
+					print '<input type="hidden" name="consttype" value="yesno">';
 				}
 				else
 				{
 					print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
 					print '</td><td>';
-					print $form->selectarray('consttype',array('yesno','texte','chaine'),2);
+					print '<input type="hidden" name="consttype" value="chaine">';
 				}
 				print '</td>';
 			}
 			print '<td align="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
 			// print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
-			print "</td></tr>\n";
-			print '</form>';
+			print "</td>";
+			print "</tr>\n";
+			print "</form>\n";
 			$i++;
 		}
 	}
