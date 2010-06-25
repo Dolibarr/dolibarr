@@ -79,6 +79,7 @@ ShowMyTasksOnly=Només veure les tasques que m'afecten
 TaskRessourceLinks=Recursos afectats
 ProjectsDedicatedToThisThirdParty=Projectes dedicats a aquest tercer
 NoTasks=Cap tasca per a aquest projecte
+LinkedToAnotherCompany=Enllaçat a una altra empresa
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Cap de projecte
 TypeContact_project_external_PROJECTLEADER=Cap de projecte
