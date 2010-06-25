@@ -42,6 +42,7 @@ LastAccountStatements=Últims extractes bancaris
 Rapprochement=Conciliació
 IOMonthlyReporting=Informe mensual E/S
 BankAccountDomiciliation=Domiciliació de compte
+BankAccountCountry=País del compte
 BankAccountOwner=Nom del propietari del compte
 BankAccountOwnerAddress=Direcció del propietari del compte
 RIBControlError=El control de clau indica que la informació d'aquest compte bancari és incompleta o incorrecta.

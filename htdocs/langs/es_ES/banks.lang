@@ -42,6 +42,7 @@ LastAccountStatements=Últimos extractos bancarios
 Rapprochement=Conciliación
 IOMonthlyReporting=Informe mensual E/S
 BankAccountDomiciliation=Domiciliación de cuenta
+BankAccountCountry=País de la cuenta
 BankAccountOwner=Nombre del propietario de la cuenta
 BankAccountOwnerAddress=Dirección del propietario de la cuenta
 RIBControlError=El control de clave indica que la información de esta cuenta bancaria es incompleta o incorrecta.
