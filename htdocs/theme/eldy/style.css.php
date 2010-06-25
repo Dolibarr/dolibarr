@@ -394,7 +394,7 @@ foreach($mainmenuusedarray as $key => $val)
 		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
 		print "div.mainmenu.".$val." {\n";
 		print "	background-image: url(".$url.");\n";
-		print "	height:26px;\n";
+		print "	height:28px;\n";
 		print "}\n";
 	}
 }
