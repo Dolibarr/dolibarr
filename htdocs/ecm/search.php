@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -133,8 +133,6 @@ dol_fiche_head($head, 'search_form', '', 1);
 print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
 
 // Left area
-print '<table class="nobordernopadding" width="100%"><tr><td valign="top">';
-
 
 
 //print_fiche_titre($langs->trans("ECMSectionsManual"));
@@ -155,7 +153,7 @@ print "</table></form>";
 
 print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder" width="100%">';
+print '<table class="nobordernopadding" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="4">'.$langs->trans("ECMSearchByEntity").'</td></tr>';
 
@@ -185,8 +183,6 @@ print "</table></form>";
 //print $langs->trans("ECMSectionAutoDesc");
 
 
-
-print '</td></tr></table>';
 
 print '</td><td valign="top">';
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -234,7 +234,6 @@ dol_fiche_head($head, 'file_manager', '', 1);
 print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
 
 // Left area
-print '<table class="nobordernopadding" width="100%"><tr><td valign="top">';
 
 
 if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
@@ -253,7 +252,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	print '<table width="100%" class="nobordernopadding">';
 
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" align="left">'.$langs->trans("ECMSections").'</td>';
+	print '<td align="left">'.$langs->trans("ECMSections").'</td>';
 	print '<td class="liste_titre" colspan="5" align="right">';
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
 	print '</td>';
@@ -578,7 +577,6 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 }
 
-print '</td></tr></table>';
 
 print '</td><td valign="top">';
 
