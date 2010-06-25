@@ -46,7 +46,7 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 	$menuArbo = new Menubase($db,'auguria','top');
 	$tabMenu = $menuArbo->menuTopCharger($hideifnotallowed,$_SESSION['mainmenu'], 'auguria');
 
-	print '<table class="tmenu" summary="topmenu"><tr class="tmenu">'."\n";
+	print_start_menu_array();
 
 	for($i=0; $i<count($tabMenu); $i++)
 	{
@@ -77,29 +77,71 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 				else if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $classname='class="tmenusel"';
 				else $classname='class="tmenu"';
 
-				print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
-
+				print_start_menu_entry($idsel);
 				print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
-				print $tabMenu[$i]['titre'];
+				print_text_menu_entry($tabMenu[$i]['titre']);
 				print '</a>';
-
-				print '</td>'."\n";
+				print_end_menu_entry();
 			}
 			else
 			{
 				if (! $hideifnotallowed)
 				{
-					print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+					print_start_menu_entry($idsel);
 					print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">'.$tabMenu[$i]['titre'].'</a>';
-					print '</td>'."\n";
+					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+					print_text_menu_entry($tabMenu[$i]['titre']);
+					print '</a>';
+					print_end_menu_entry();
 				}
 			}
 		}
 	}
-	
-	print '</tr></table>'."\n";
+
+	print_end_menu_array();
+
+	print "\n";
+}
+
+
+
+function print_start_menu_array()
+{
+	global $conf;
+	if (preg_match('/auguria/',$conf->top_menu)) print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
+	else print '<ul class="tmenu">';
+}
+
+function print_start_menu_entry($idsel)
+{
+	global $conf;
+	if (preg_match('/auguria/',$conf->top_menu)) print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+	else print '<li class="tmenu" id="mainmenutd_'.$idsel.'">';
+}
+
+function print_text_menu_entry($text)
+{
+	global $conf;
+	print '<span class="mainmenuaspan">';
+	print $text;
+	print '</span>';
+}
+
+function print_end_menu_entry()
+{
+	global $conf;
+	if (preg_match('/auguria/',$conf->top_menu)) print '</td>';
+	else print '</li>';
+	print "\n";
+}
+
+function print_end_menu_array()
+{
+	global $conf;
+	if (preg_match('/eldy/',$conf->top_menu)) print '</tr></table>';
+	else print '</ul>';
+	print "\n";
 }
 
 ?>

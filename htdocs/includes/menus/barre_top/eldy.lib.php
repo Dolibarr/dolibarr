@@ -39,10 +39,10 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
 	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
 	$_SESSION["leftmenuopened"]="";
-	
+
 	$id='mainmenu';
 
-	print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
+	print_start_menu_array();
 
 	// Home
 	$classname="";
@@ -55,10 +55,12 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		$classname = 'class="tmenu"';
 	}
 	$idsel='home';
-	print '<td class="tmenu" align="center" id="mainmenutd_'.$idsel.'">';
+	print_start_menu_entry($idsel);
 	print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-	print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu="'.($atarget?" target=$atarget":"").'>'.$langs->trans("Home").'</a>';
-	print '</td>';
+	print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+	print_text_menu_entry($langs->trans("Home"));
+	print '</a>';
+	print_end_menu_entry();
 
 
 	// Third parties
@@ -81,19 +83,23 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		if (($conf->societe->enabled && $user->rights->societe->lire)
 		|| ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
 		{
-			print '<td class="tmenu" align="center" id="mainmenutd_'.$idsel.'">';
+			print_start_menu_entry($idsel);
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/index.php?mainmenu=companies&amp;leftmenu="'.($atarget?" target=$atarget":"").'>'.$langs->trans("ThirdParties").'</a>';
-			print '</td>';
+			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/index.php?mainmenu=companies&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+			print_text_menu_entry($langs->trans("ThirdParties"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 		else
 		{
 			if (! $hideifnotallowed)
 			{
-				print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">'.$langs->trans("ThirdParties").'</a>';
-				print '</td>';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print_text_menu_entry($langs->trans("ThirdParties"));
+				print '</a>';
+				print_end_menu_entry();
 			}
 		}
 	}
@@ -121,19 +127,23 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		$idsel='products';
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
-			print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+			print_start_menu_entry($idsel);
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'"  id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&amp;leftmenu="'.($atarget?" target=$atarget":"").'>'.$chaine.'</a>';
-			print '</td>';
+			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+			print_text_menu_entry($chaine);
+			print '</a>';
+			print_end_menu_entry();
 		}
 		else
 		{
 			if (! $hideifnotallowed)
 			{
-				print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">'.$chaine.'</a>';
-				print '</td>';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print_text_menu_entry($chaine);
+				print '</a>';
+				print_end_menu_entry();
 			}
 		}
 	}
@@ -156,19 +166,23 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		$idsel='commercial';
 		if($user->rights->societe->lire || $user->rights->societe->contact->lire)
 		{
-			print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+			print_start_menu_entry($idsel);
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="'.$id.'"></span></div>';
-			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($atarget?" target=$atarget":"").'>'.$langs->trans("Commercial").'</a>';
-			print '</td>';
+			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+			print_text_menu_entry($langs->trans("Commercial"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 		else
 		{
 			if (! $hideifnotallowed)
 			{
-				print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">'.$langs->trans("Commercial").'</a>';
-				print '</td>';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print print_text_menu_entry($langs->trans("Commercial"));
+				print '</a>';
+				print_end_menu_entry();
 			}
 		}
 	}
@@ -193,19 +207,23 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		if ($user->rights->compta->resultat->lire || $user->rights->accounting->plancompte->lire
 		|| $user->rights->facture->lire || $user->rights->banque->lire)
 		{
-			print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+			print_start_menu_entry($idsel);
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($atarget?" target=$atarget":"").'>'.$langs->trans("MenuFinancial").'</a>';
-			print '</td>';
+			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+			print_text_menu_entry($langs->trans("MenuFinancial"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 		else
 		{
 			if (! $hideifnotallowed)
 			{
-				print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">'.$langs->trans("MenuFinancial").'</a>';
-				print '</td>';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print_text_menu_entry($langs->trans("MenuFinancial"));
+				print '</a>';
+				print_end_menu_entry();
 			}
 		}
 	}
@@ -228,19 +246,23 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		$idsel='project';
 		if ($user->rights->projet->lire)
 		{
-			print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+			print_start_menu_entry($idsel);
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu="'.($atarget?" target=$atarget":"").'>'.$langs->trans("Projects").'</a>';
-			print '</td>';
+			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+			print_text_menu_entry($langs->trans("Projects"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 		else
 		{
 			if (! $hideifnotallowed)
 			{
-				print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">'.$langs->trans("Projects").'</a>';
-				print '</td>';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print_text_menu_entry($langs->trans("Projects"));
+				print '</a>';
+				print_end_menu_entry();
 			}
 		}
 	}
@@ -263,19 +285,23 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		$idsel='tools';
 		if ($user->rights->mailing->lire || $user->rights->bookmark->lire || $user->rights->export->lire || $user->rights->import->run)
 		{
-			print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+			print_start_menu_entry($idsel);
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&amp;leftmenu="'.($atarget?" target=$atarget":"").'>'.$langs->trans("Tools").'</a>';
-			print '</td>';
+			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+			print_text_menu_entry($langs->trans("Tools"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 		else
 		{
 			if (! $hideifnotallowed)
 			{
-				print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled"  id="mainmenua_'.$idsel.'" href="#">'.$langs->trans("Tools").'</a>';
-				print '</td>';
+				print '<a class="tmenudisabled"  id="mainmenua_'.$idsel.'" href="#">';
+				print_text_menu_entry($langs->trans("Tools"));
+				print '</a>';
+				print_end_menu_entry();
 			}
 		}
 	}
@@ -296,10 +322,12 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		}
 
 		$idsel='shop';
-		print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+		print_start_menu_entry($idsel);
 		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&amp;leftmenu="'.($atarget?" target=$atarget":"").'>'.$langs->trans("OSCommerce").'</a>';
-		print '</td>';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+		print_text_menu_entry($langs->trans("OSCommerce"));
+		print '</a>';
+		print_end_menu_entry();
 	}
 
 	// OSCommerce WS
@@ -318,10 +346,12 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		}
 
 		$idsel='shop';
-		print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+		print_start_menu_entry($idsel);
 		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu="'.($atarget?" target=$atarget":"").'>'.$langs->trans("OSCommerce").'</a>';
-		print '</td>';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+		print_text_menu_entry($langs->trans("OSCommerce"));
+		print '</a>';
+		print_end_menu_entry();
 	}
 
 	// Members
@@ -342,19 +372,23 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		$idsel='members';
 		if ($user->rights->adherent->lire)
 		{
-			print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+			print_start_menu_entry($idsel);
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a '.$classname.'  id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($atarget?" target=$atarget":"").'>'.$langs->trans("MenuMembers").'</a>';
-			print '</td>';
+			print '<a '.$classname.'  id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+			print_text_menu_entry($langs->trans("MenuMembers"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 		else
 		{
 			if (! $hideifnotallowed)
 			{
-				print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">'.$langs->trans("MenuMembers").'</a>';
-				print '</td>';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print_text_menu_entry($langs->trans("MenuMembers"));
+				print '</a>';
+				print_end_menu_entry();
 			}
 		}
 	}
@@ -397,27 +431,68 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 				else if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $classname='class="tmenusel"';
 				else $classname='class="tmenu"';
 
-				print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
-				print $tabMenu[$i]['titre'];
+				print_text_menu_entry($tabMenu[$i]['titre']);
 				print '</a>';
-				print '</td>';
+				print_end_menu_entry();
 			}
 			else
 			{
 				if (! $hideifnotallowed)
 				{
-					print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+					print_start_menu_entry($idsel);
 					print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">'.$tabMenu[$i]['titre'].'</a>';
-					print '</td>';
+					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+					print_text_menu_entry($tabMenu[$i]['titre']);
+					print '</a>';
+					print_end_menu_entry();
 				}
 			}
 		}
 	}
 
-	print '</tr></table>';
+	print_end_menu_array();
+}
+
+
+
+function print_start_menu_array()
+{
+	global $conf;
+	if (preg_match('/eldy/',$conf->top_menu)) print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
+	else print '<ul class="tmenu">';
+}
+
+function print_start_menu_entry($idsel)
+{
+	global $conf;
+	if (preg_match('/eldy/',$conf->top_menu)) print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+	else print '<li class="tmenu" id="mainmenutd_'.$idsel.'">';
+}
+
+function print_text_menu_entry($text)
+{
+	global $conf;
+	print '<span class="mainmenuaspan">';
+	print $text;
+	print '</span>';
+}
+
+function print_end_menu_entry()
+{
+	global $conf;
+	if (preg_match('/eldy/',$conf->top_menu)) print '</td>';
+	else print '</li>';
+	print "\n";
+}
+
+function print_end_menu_array()
+{
+	global $conf;
+	if (preg_match('/eldy/',$conf->top_menu)) print '</tr></table>';
+	else print '</ul>';
 	print "\n";
 }
 
