@@ -129,7 +129,8 @@ OrderSource6=Revistas
 QtyOrdered=Cant. pedida
 AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del pedido
 # Document models
-PDFEinsteinDescription=Modelo de presupuesto completo (logo...)
+PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=Modelo de pedido simple
+PDFQuevedoDescription=Modelo de pedido completo con RE e IRPF
 # NumRef Modules
 MarbreNumRefDesc=Devuelve el número bajo el formato %syymm-nnnn onde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0

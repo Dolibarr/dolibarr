@@ -129,7 +129,8 @@ OrderSource6=Revistes
 QtyOrdered=Qt. demanda
 AddDeliveryCostLine=Afegir una línia de despeses de ports indicant el pes de la comanda
 # Document models
-PDFEinsteinDescription=Model de pressupost complet (logo...)
-PDFEdisonDescription=Model  de comanda simple
+PDFEinsteinDescription=Model de comanda complet (logo...)
+PDFEdisonDescription=Model de comanda simple
+PDFQuevedoDescription=Modelo de comanda complet amb RE i IRPF
 # NumRef Modules
 MarbreNumRefDesc=Retorna el número sota el format %syymm-nnnn on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0

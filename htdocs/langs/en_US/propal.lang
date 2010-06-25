@@ -86,3 +86,4 @@ TypeContact_propal_external_CUSTOMER=Customer contact following-up proposal
 # Document models
 DocModelAzurDescription=A complete proposal model (logo...)
 DocModelJauneDescription=Jaune proposal model
+DocModelRoigDescription=A complete proposal model with Spanish tax RE and IRPF

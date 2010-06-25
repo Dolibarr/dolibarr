@@ -384,6 +384,9 @@ PDFBulotDescription=Invoice model Bulot
 # crabe PDF Model
 PDFCrabeDescription=Invoice model Crabe. A complete invoice model (Support VAT option, discounts, payments conditions, logo, etc...)
 
+# lince PDF Model
+PDFLinceDescription=A complete invoice model with Spanish RE and IRPF
+
 # huitre PDF Model
 PDFHuitreDescription=Invoice model Huitre
 
