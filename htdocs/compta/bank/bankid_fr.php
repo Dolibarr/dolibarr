@@ -63,7 +63,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	$account->proprio 	      = trim($_POST["proprio"]);
 	$account->adresse_proprio = trim($_POST["adresse_proprio"]);
 	$account->fk_departement  = trim($_POST["fk_departement"]);
-	//$account->fk_pays         = trim($_POST["fk_pays"]);		// We do not change this.
+	$account->fk_pays         = trim($_POST["fk_pays"]);
 
 	if ($account->id)
 	{
@@ -273,25 +273,14 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 	print '<td colspan="3">'.$account->ref;
 	print '</td></tr>';
 
-	// Label
 	print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
 	print '<td colspan="3">'.$account->label;
 	print '</td></tr>';
 
-	// Type
 	print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
 	print '<td colspan="3">'.$account->type_lib[$account->type];
 	print '</td></tr>';
 
-	// Currency
-	print '<tr><td valign="top">'.$langs->trans("Currency").'</td>';
-	print '<td colspan="3">';
-	$selectedcode=$account->account_currency_code;
-	if (! $selectedcode) $selectedcode=$conf->monnaie;
-	print $langs->trans("Currency".$selectedcode);
-	print '</td></tr>';
-
-	// Status
 	print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
 	print '<td colspan="3">'.$account->getLibStatut(4);
 	print '</td></tr>';
@@ -299,7 +288,7 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 	if ($account->type == 0 || $account->type == 1)
 	{
 		// If bank account
-		print '<tr><td valign="top">'.$langs->trans("BankName").'</td>';
+		print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
 		print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td>';
 		print '</tr>';
 
