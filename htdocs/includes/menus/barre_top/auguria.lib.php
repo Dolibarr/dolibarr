@@ -109,14 +109,14 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 function print_start_menu_array()
 {
 	global $conf;
-	if (preg_match('/auguria/',$conf->top_menu)) print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
+	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
 	else print '<ul class="tmenu">';
 }
 
 function print_start_menu_entry($idsel)
 {
 	global $conf;
-	if (preg_match('/auguria/',$conf->top_menu)) print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
 	else print '<li class="tmenu" id="mainmenutd_'.$idsel.'">';
 }
 
@@ -131,7 +131,7 @@ function print_text_menu_entry($text)
 function print_end_menu_entry()
 {
 	global $conf;
-	if (preg_match('/auguria/',$conf->top_menu)) print '</td>';
+	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</td>';
 	else print '</li>';
 	print "\n";
 }
@@ -139,7 +139,7 @@ function print_end_menu_entry()
 function print_end_menu_array()
 {
 	global $conf;
-	if (preg_match('/eldy/',$conf->top_menu)) print '</tr></table>';
+	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</tr></table>';
 	else print '</ul>';
 	print "\n";
 }
