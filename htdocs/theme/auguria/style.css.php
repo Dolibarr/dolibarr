@@ -18,7 +18,7 @@
  */
 
 /**
- *		\file       htdocs/theme/auguria/auguria.css.php
+ *		\file       htdocs/theme/auguria/style.css.php
  *		\brief      Fichier de style CSS du theme Auguria
  *		\version    $Id$
  */

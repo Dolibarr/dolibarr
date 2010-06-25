@@ -18,7 +18,7 @@
  */
 
 /**
- *		\file       htdocs/theme/yellow/yellow.css
+ *		\file       htdocs/theme/yellow/style.css
  *		\brief      Fichier de style CSS du theme Yellow
  *		\version    $Id$
  */

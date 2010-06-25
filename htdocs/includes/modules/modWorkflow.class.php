@@ -43,9 +43,9 @@ class modWorkflow extends DolibarrModules
 	 *   \param      DB      handler d'acces base
 	 */
 	function modWorkflow($DB)
-	{	
+	{
 		$this->db = $DB ;
-		
+
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 6000 ;
@@ -67,16 +67,16 @@ class modWorkflow extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='workflow@workflow';
-		
+
 		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
 		$this->triggers = 1;
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/workflow/temp");
-		
+
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
-		//$this->style_sheet = '/workflow/css/workflow.css.php';
-		
+		$this->style_sheet = '';
+
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
 		$this->config_page_url = 'workflow.php@workflow';
 
@@ -109,7 +109,7 @@ class modWorkflow extends DolibarrModules
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'read';
 		*/
-		
+
 		// Main menu entries
 		$this->menus = array();			// List of menus to add
 		$r=0;
@@ -127,7 +127,7 @@ class modWorkflow extends DolibarrModules
 								'target'=>'',
 								'user'=>0);
 		$r++;
-		
+
 		$this->menu[$r]=array(	'fk_menu'=>'r=0',
 								'type'=>'left',
 								'titre'=>'Workflow',
@@ -149,7 +149,7 @@ class modWorkflow extends DolibarrModules
 	 *               Definit egalement les repertoires de donnees a creer pour ce module.
 	 */
 	function init()
-	{		
+	{
 		//$result=$this->load_tables();
 
 		return $this->_init($sql);
@@ -165,7 +165,7 @@ class modWorkflow extends DolibarrModules
 
 		return $this->_remove($sql);
 	}
-	
+
 	/**
 	 *		\brief		Create tables and keys required by module
 	 *					This function is called by this->init.

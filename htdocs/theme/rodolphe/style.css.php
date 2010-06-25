@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C)      2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +19,8 @@
  */
 
 /**
- *		\file       htdocs/theme/freelug/freelug.css.php
- *		\brief      Fichier de style CSS du theme Freelug
+ *		\file       htdocs/theme/rodolphe/style.css.php
+ *		\brief      Fichier de style CSS du theme Rodolphe
  *		\version    $Id$
  */
 
@@ -52,102 +53,73 @@ $right=($langs->direction=='rtl'?'left':'right');
 $left=($langs->direction=='rtl'?'right':'left');
 ?>
 
-/* ============================================================================== */
-/* Styles par d�faut                                                              */
-/* ============================================================================== */
 
+/***** Style du fond *****/
 body {
 <?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
-	background: #F8F8F8 url(<?php echo DOL_URL_ROOT.'/theme/freelug/img/background.png' ?>);
+	background-color: #AAA5A0;
 <?php } ?>
-	text-decoration: none ;
-	color: #101010;
-	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
-	font-family: helvetica, verdana, arial, sans-serif;
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-right: 0;
-    margin-left: 0;
+  font-size: 12px;
+  font-family: helvetica, verdana, arial, sans-serif;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: 0;
+  margin-left: 0;
 }
 
+
+/***** Styles par defaut *****/
 a:link    { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:visited { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
 input
 {
-	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+	font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
-    background: #FFFFFF;
-    border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 input.flat
 {
-	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+	font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
-    background: #FFFFFF;
-    border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
+    border: 0px;
 }
 textarea  {
-	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+	font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
-    background: #FFFFFF;
-    border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea.flat
 {
-	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+	font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
-    background: #FFFFFF;
-    border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
+    border: 0px;
 }
 select.flat
 {
-    font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
-	font-family: helvetica, verdana, arial, sans-serif;
-	font-weight: normal;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
+	font-size: 12px;
+    font-family: helvetica, verdana, arial, sans-serif;
 }
 .button  {
-	font-family: arial,verdana,heletica, sans-serif;
-    padding: 0px 2px 0px 2px;
-    margin: 0px 0px 0px 0px;
-	border-left: 1px solid #cccccc;
-	border-right: 1px solid #aaaaaa;
-	border-top: 1px solid #dddddd;
-	border-bottom: 1px solid #aaaaaa;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/freelug/img/button_bg.png' ?>);
-	background-position: bottom;
-	background-repeat: repeat-x;
-}
-.buttonajax  {
-	font-family: arial,verdana,heletica, sans-serif;
-    padding: 0px 2px 0px 2px;
-    margin: 0px 0px 0px 0px;
-	border-left: 1px solid #cccccc;
-	border-right: 1px solid #aaaaaa;
-	border-top: 1px solid #dddddd;
-	border-bottom: 1px solid #aaaaaa;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/freelug/img/button_bg.png' ?>);
-	background-position: bottom;
-	background-repeat: repeat-x;
+	font-family: arial,verdana,helvetica, sans-serif;
+	font-size: 100%;
+	font-weight: normal;
+	border: 1px solid #bbbb99;
+	background-position : bottom;
 }
 form
 {
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
+    padding: 0em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;
 }
 
 
@@ -157,11 +129,12 @@ form
 
 div.fiche
 {
-	margin-left: 5px;
+	margin-left: 4px;
+	margin-right: 2px;
 }
 
 /* ============================================================================== */
-/* Menu superieur et 1ere ligne tableau                                           */
+/* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
 div.tmenu
@@ -169,93 +142,56 @@ div.tmenu
 <?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-    position: relative;
-    display: block;
+    display:block;
     white-space: nowrap;
-    border-top: 1px solid #D3E5EC;
-    border-left: 0px;
-    border-right: 0px solid #555555;
-    border-bottom: 1px solid #8B9999;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 2px 0px;
-    font-weight: bold;
-    height: 20px;
-    background: #dddddd;
+    border:0;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    padding: 2px 1em 0em;
+    margin: 0em 0em 0.2em 0em;
+    font-weight:bold;
+    font-size:12px;
+    height: 19px;
+    background: #ded8d2;
     color: #000000;
     text-decoration: none;
 <?php } ?>
 }
 
-a.tmenudisabled
-{
-	color: #757575;
-    padding: 0px 8px;
-    margin: 0px 0px 6px 0px;
-	cursor: not-allowed;
-}
-a.tmenudisabled:link
-{
-	color: #757575;
-    font-weight: normal;
-}
-a.tmenudisabled:visited
-{
-	color: #757575;
-    font-weight: normal;
-}
-a.tmenudisabled:hover
-{
-	color: #757575;
-    font-weight: normal;
-}
-a.tmenudisabled:active
-{
-	color: #757575;
-    font-weight: normal;
-}
-
 a.tmenu:link
 {
   color: #234046;
-  padding: 0px 8px;
-  margin: 0px 0px 6px 0px;
-  border: 1px solid #dddddd;
-  font-weight: bold;
+  padding: 0em 1em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #ded8d2;
+  font-weight:bold;
+  font-size:12px;
 }
 a.tmenu:visited
 {
   color: #234046;
-  padding: 0px 8px;
-  margin: 0px 0px 6px 0px;
-  border: 1px solid #dddddd;
-  font-weight: bold;
+  padding: 0em 1em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #ded8d2;
+  font-weight:bold;
+  font-size:12px;
+}
+a.tmenusel
+{
+  color: #ffffff;
+  background: #78746d;
+  padding: 0em 1em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #78746d;
 }
 a.tmenu:hover
 {
-  color: #202020;
-  background: #bbbbcc;
-  padding: 0px 8px;
-  margin: 0px 0px 6px 0px;
-  border: 1px solid #eeeedd;
+  color: #234046;
+  background: #78746d;
+  padding: 0em 1em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #78746d;
   text-decoration: none;
-}
-a.tmenu:active
-{
-  color: #202020;
-  background: #bbbbcc;
-  padding: 0px 8px;
-  margin: 0px 0px 6px 0px;
-  border: 1px solid #eeeedd;
-  text-decoration: none;
-}
-
-a.tmenusel
-{
-  color: #202020;
-  background: #bbbbcc;
-  padding: 0px 8px;
-  margin: 0px 0px 6px 0px;
-  border: 1px solid #eeeeff;
 }
 
 
@@ -267,16 +203,9 @@ table.tmenu
     margin: 0px 0px 0px 6px;
 }
 
-* html li.tmenu a
-{
-	width:40px;
-}
-
 ul.tmenu {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
-	list-style: none;
-
 }
 li.tmenu {
 	float: left;
@@ -287,7 +216,8 @@ li.tmenu {
 	margin:0;
 	padding:0;
 }
-li.tmenu a{
+li.tmenu a
+{
   	font-size: 13px;
 	color:#000000;
 	text-decoration:none;
@@ -297,6 +227,9 @@ li.tmenu a{
 	height: 18px;
 	display: block;
 	font-weight: normal;
+}
+* html li.tmenu a{
+	width:40px;
 }
 li.tmenu a.tmenusel
 {
@@ -322,7 +255,6 @@ li.tmenu a:active
 }
 li.tmenu a:link
 {
-
 	font-weight: normal;
 }
 
@@ -333,14 +265,15 @@ li.tmenu a:link
 a.login
 {
   position: absolute;
-  <?php print $right; ?>: 30px;
-  top: 3px;
+  <?php print $right; ?>: 32px;
+  top: 4px;
 
   color: #234046;
-  padding: 0px 8px;
-  margin: 0px 0px 6px 0px;
-  border: 1px solid #dcdcd0;
+  padding: 0px 4px;
+  margin: 0px 0px 1px 0px;
+  border: 1px solid #ded8d2;
   font-weight:bold;
+  font-size:12px;
 }
 a.login:hover
 {
@@ -351,7 +284,7 @@ img.login
 {
   position: absolute;
   <?php print $right; ?>: 20px;
-  top: 3px;
+  top: 5px;
 
   text-decoration:none;
   color:white;
@@ -384,52 +317,50 @@ td.vmenu
     padding-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
-    width: 180px;
+    width: 164px;
 }
 
 a.vmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-font.vmenudisabled { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; }
 
-a.vsmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-font.vsmenudisabled { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; margin: 1px 1px 1px 6px; }
+a.vsmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #aaa593; margin: 1em 1em 1em 1em; }
 
 a.help:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 a.help:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 a.help:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 a.help:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 
-
 div.blockvmenupair
 {
-	border-right: 1px solid #555555;
-	border-bottom: 1px solid #555555;
-	background: #dddddd;
-	font-family: helvetica, verdana, arial, sans-serif;
-	color: #202020;
-	text-align:left;
-	text-decoration: none;
-    padding: 3px;
-    margin: 1px 0px 0px 0px;
-}
+
+  border-bottom: 1px solid #000000;
+  background: #ded8d2;
+  font-family: helvetica, verdana, arial, sans-serif;
+  color: #000000;
+  text-align:left;
+  text-decoration: none;
+  padding: 3px;
+  margin: 0px 0px 0px 0px;
+  }
 
 div.blockvmenuimpair
 {
-	border-right: 1px solid #555555;
-	border-bottom: 1px solid #555555;
-	background: #dddddd;
-	font-family: helvetica, verdana, arial, sans-serif;
-	color: #202020;
-	text-align:left;
-	text-decoration: none;
-    padding: 3px;
-    margin: 1px 0px 0px 0px;
-}
+
+  border-bottom: 1px solid #000000;
+  background: #ded8d2;
+  font-family: helvetica, verdana, arial, sans-serif;
+  color: #000000;
+  text-align:left;
+  text-decoration: none;
+  padding: 3px;
+  margin: 0px 0px 0px 0px;
+  }
 
 div.help
 {
@@ -444,60 +375,59 @@ div.help
     margin: 1px 0px 0px 0px;
 }
 
+
 td.barre {
-    border-right: 1px solid #000000;
-    border-bottom: 1px solid #000000;
-    background: #DDDDDD;
-    font-family: helvetica, verdana;
-    color: #000000;
-    text-align:left;
-    text-decoration: none
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	background: #b3c5cc;
+	font-family: helvetica, verdana, arial, sans-serif;
+	color: #000000;
+	text-align:left;
+	text-decoration: none
 }
 
 td.barre_select {
-           background: #b3cccc;
-           color: #000000
+                  background: #b3c5cc;
+                  color: #ffffff
 }
-
 td.photo {
-	background: #FCFCFC;
-	color: #000000;
-    border: 1px solid #b3c5cc;
-}
+           background: #FFFFFF;
+           color: #000000
+           }
 
 
-/* ============================================================================== */
-/* Onglets                                                                        */
-/* ============================================================================== */
 
-div.tabs {
-    top: 20px;
-    margin: 1px 0px 0px 0px;
-    padding: 0px 6px 0px 0px;
-    text-align: left;
-}
-
+/*
+ *   Barre onglets
+ */
 div.tabBar {
-    background: #dcdcd0;
+    background: #dcdcd3;
     padding-top: 14px;
     padding-left: 14px;
     padding-right: 14px;
     padding-bottom: 14px;
     margin: 0px 0px 10px 0px;
-    border: 1px solid #9999BB;
-    border-top: 1px solid #9999BB;
+    border: 1px solid #999999;
+    border-top: 1px solid #999999;
+}
+
+div.tabs {
+    top: 20px;
+    margin: 1px 0em 0em 0em;
+    padding: 0em 0.5em;
+    text-align: left;
 }
 
 div.tabsAction {
-    margin: 20px 0em 1px 0em;
-    padding: 0em 0em;
-    text-align: right;
+    margin: 24px 0em 1px 0em;
+  padding: 0em 0em;
+  text-align: right;
 }
 
 a.tabTitle {
-    background: #bbbbcc;
-    border: 1px solid #9999BB;
-    color: #000000;
+    background: #436976;
+    border: 1px solid #8CACBB;
+    color: white;
     font-weight: normal;
     padding: 0em 0.5em;
     margin: 0em 1em;
@@ -507,29 +437,29 @@ a.tabTitle {
 
 a.tab:link {
   background: white;
-  border: 1px solid #9999BB;
+  border: 1px solid #999999;
   color: #436976;
-  padding: 0px 6px;
+  padding: 0em 1em;
   margin: 0em 0.2em;
   text-decoration: none;
   white-space: nowrap;
 }
 a.tab:visited {
   background: white;
-  border: 1px solid #9999BB;
+  border: 1px solid #999999;
   color: #436976;
-  padding: 0px 6px;
+  padding: 0em 1em;
   margin: 0em 0.2em;
   text-decoration: none;
   white-space: nowrap;
 }
 a.tab#active {
-  background: #dcdcd0;
-  border-bottom: #dcdcd0 1px solid;
+  background: #dcdcd3;
+  border-bottom: #dcdcd3 1px solid;
   text-decoration: none;
 }
 a.tab:hover {
-  background: #ebebe0;
+  background: #78746d;
   text-decoration: none;
 }
 
@@ -540,54 +470,21 @@ a.tabimage {
 }
 
 
-/* ============================================================================== */
-/* Boutons actions                                                                */
-/* ============================================================================== */
-
-/* Nouvelle syntaxe � utiliser */
+/*
+ *   Boutons actions
+ */
 
 a.butAction:link    { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butAction:visited { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butAction:active  { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butAction:hover   { font-family: helvetica, verdana, arial, sans-serif; background: #eeeedd; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butAction:hover   { font-family: helvetica, verdana, arial, sans-serif; background: #78746d; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
-.butActionRefused         { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #AAAAAA; color: #AAAAAA !important; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none !important; white-space: nowrap; cursor: not-allowed; }
+.butActionRefused         { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #AAAAAA; color: #AAAAAA !important; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; cursor: not-allowed; }
 
-a.butActionDelete:link    { font-family: helvetica, verdana, arial, sans-serif;
-                      background: white;
-                      border: 1px solid #997777;
-                      color: #436976;
-                      padding: 0em 0.7em;
-                      margin: 0em 0.5em;
-                      text-decoration: none;
-                      white-space: nowrap; }
-
-a.butActionDelete:active    { font-family: helvetica, verdana, arial, sans-serif;
-                      background: white;
-                      border: 1px solid #997777;
-                      color: #436976;
-                      padding: 0em 0.7em;
-                      margin: 0em 0.5em;
-                      text-decoration: none;
-                      white-space: nowrap; }
-
-a.butActionDelete:visited    { font-family: helvetica, verdana, arial, sans-serif;
-                      background: white;
-                      border: 1px solid #997777;
-                      color: #436976;
-                      padding: 0em 0.7em;
-                      margin: 0em 0.5em;
-                      text-decoration: none;
-                      white-space: nowrap; }
-
-a.butActionDelete:hover    { font-family: helvetica, verdana, arial, sans-serif;
-                      background: #FFe7ec;
-                      border: 1px solid #997777;
-                      color: #436976;
-                      padding: 0em 0.7em;
-                      margin: 0em 0.5em;
-                      text-decoration: none;
-                      white-space: nowrap; }
+a.butActionDelete:link    { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:active  { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:visited { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:hover   { font-family: helvetica, verdana, arial, sans-serif; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
 
 /* ============================================================================== */
@@ -598,6 +495,7 @@ a.butActionDelete:hover    { font-family: helvetica, verdana, arial, sans-serif;
 list-style-type:none;
 margin:0px;
 padding:0px;
+cursor:move;
 }
 
 .notopnoleft {
@@ -620,13 +518,13 @@ margin: 0px 0px;
 }
 
 table.border {
+font-family: helvetica, verdana, arial, sans-serif;
 border-collapse: collapse;
 border: 1px white ridge;
 }
 table.border td {
 border: 1px solid #6C7C8B;
 padding: 1px 2px;
-border-collapse: collapse;
 }
 
 table.noborder {
@@ -641,6 +539,7 @@ padding: 1px 2px;
 table.nobordernopadding {
 border-collapse: collapse;
 border: 0px;
+padding: 0px 0px;
 }
 table.nobordernopadding tr {
 border: 0px;
@@ -655,17 +554,13 @@ table.liste {
 border-collapse: collapse;
 border: 0px;
 width: 100%;
+background: #ddddcc;
 }
 
 
 /*
  *  Tableaux
  */
-
-
-
-
-
 
 td.border {
             border-top: 1px solid #000000;
@@ -674,13 +569,51 @@ td.border {
             border-left: 1px solid #000000;
             }
 
+div.menus {
+            background: #78746d;
+            color: #bbbb88;
+            font-size: 0.95em;
+            border-top:    1px dashed #ccccb3;
+            border-right:  1px dashed #ccccb3;
+            border-bottom: 1px dashed #ccccb3;
+            border-left:   1px dashed #ccccb3;
+            }
+
+
+a.leftmenu {
+             font-weight: bold;
+             color: #202020;
+             }
+
+
+
+div.leftmenu {
+               background: #ccccb3;
+               text-align: left;
+               border-right: 1px solid #000000;
+               border-bottom: 1px solid #000000;
+               margin: 1px 0em 0em 0em;
+               padding: 2px;
+               }
+
+
+
 
 /*
- *   Ok, Warning, Error
+ *   Normal, warning, erreurs
  */
 .ok      { color: #114466; }
 .warning { color: #777711; }
-.error   { color: #550000; font-weight: bold; }
+.error   { color: #550000; }
+
+td.warning
+{
+  background: #FF9988;
+  font-weight: bold;
+  font-size: 0.95em;
+  color: #000000;
+  text-decoration: none
+}
 
 div.ok {
   color: #114466;
@@ -688,24 +621,13 @@ div.ok {
 
 div.warning {
   color: #777711;
-  padding: 0.2em 0.2em 0.2em 0.2em;
-  border: 1px solid #ebebd4;
-  -moz-border-radius:6px;
-  background: #efefd4;
 }
 
 div.error {
   color: #550000; font-weight: bold;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #969090;
-}
-
-div.info {
-  color: #555555;
-  padding: 0.2em 0.2em 0.2em 0.2em;
-  margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #ACACAB;
+  border: 1px solid #000000;
 }
 
 
@@ -744,33 +666,40 @@ border: 0px;
 }
 
 div.titre {
-    font-family: helvetica, verdana, arial, sans-serif;
+	font-family: helvetica, verdana, arial, sans-serif;
     font-weight: normal;
-    color: #777799;
+    color: #333333;
     text-decoration: none;
 }
 
 
+/*
+ *  Tableaux
+ */
 
 input.liste_titre {
-    background: #777799;
-    border: 0px;
+    background: #cc9966;
 }
 
 tr.liste_titre {
-    color: #FFFFFF;
-    background: #777799;
+    background: #cc9966;
     font-family: helvetica, verdana, arial, sans-serif;
-    border-left: 1px solid #FFFFFF;
-    border-right: 1px solid #FFFFFF;
-    border-top: 1px solid #FFFFFF;
-    border-bottom: 1px solid #FFFFFF;
+    border-top: 1px solid #78746d;
+    border-left: 1px solid #78746d;
+    border-right: 1px solid #78746d;
+    white-space: nowrap;
+}
+
+tr.liste_search {
+    background: #cc9966;
+    font-family: helvetica, verdana, arial, sans-serif;
+    border-left: 1px solid #78746d;
+    border-right: 1px solid #78746d;
     white-space: nowrap;
 }
 
 td.liste_titre {
-    color: #FFFFFF;
-    background: #777799;
+    background: #cc9966;
     font-family: helvetica, verdana, arial, sans-serif;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
@@ -779,69 +708,70 @@ td.liste_titre {
 
 .liste_titre_sel
 {
-    color: #DCCCBB;
-    background: #777799;
+    color: #fcfffc;
+    background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
 }
 
-tr.liste_total td {
+tr.liste_total {
     background: #F0F0F0;
-    font-weight: bold;
     white-space: nowrap;
-    border-top: 1px solid #888888;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #78746d;
+    font-weight: bold;
 }
 
 th {
-    color: #FFFFFF;
-    background: #777799;
+    background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
     border-left: 1px solid #FFFFFF;
     border-right: 1px solid #FFFFFF;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
+    font-size: 1.0em;
 }
 
+tr.pair {
+          background: #ded8d2;
+          font-size: 1.0em;
+          border: 1px solid #78746d;
+          }
 
-.pair {
-    background: #dcdcd0;
-    }
-
-.impair {
-    background: #eeeedd;
-    }
+tr.impair {
+            background: #ded8d2;
+            font-size: 1.0em;
+            border: 1px solid #78746d;
+            }
 
 /*
- *  Boxes
+ *
  */
-
-.box {
-	padding-right: 4px;
-	padding-bottom: 4px;
-}
-
 tr.box_titre {
-    color: #FFFFFF;
-    background: #777799;
-    font-family: Helvetica, Verdana;
+               background: #cc9966;
+               font-family: Helvetica, Verdana;
+    border-top: 1px solid #78746d;
+    border-left: 1px solid #78746d;
+    border-right: 1px solid #78746d;
+    white-space: nowrap;
 }
 
 tr.box_pair {
-    background: #dcdcd0;
+              background: #ded8d2;
+         border: 1px solid #78746d;
 }
 
 tr.box_impair {
-    background: #eeeedd;
-    font-family: Helvetica, Verdana;
+              background: #ded8d2;
+         border: 1px solid #78746d;
 }
 
 tr.fiche {
-    font-family: Helvetica, Verdana;
+           font-family: Helvetica, Verdana;
 }
-
 
 
 /* ============================================================================== */
@@ -875,7 +805,7 @@ table.valid {
 
 .overlay_alert {
 	background-color: #DDDDDD;
-	filter: alpha(opacity=50); /*Does not respect CSS standard */
+	filter: alpha(opacity=50); /* Does not respect CSS standard, but required to avoid IE bug */
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
@@ -1025,12 +955,9 @@ table.valid {
 {
 position: absolute;
 width: <?php print dol_size(450,'width'); ?>px;
-border-top: solid 1px #BBBBBB;
-border-left: solid 1px #BBBBBB;
-border-right: solid 1px #444444;
-border-bottom: solid 1px #444444;
+border: 1px solid #444444;
 padding: 2px;
-background-color: #FFFFE0;
+background-color: lightyellow;
 visibility: hidden;
 z-index: 100;
 }
@@ -1057,7 +984,7 @@ table.dp {
 /* Barre titre */
 .dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
-	background-color:#777799;
+	background-color:#b3c5cc;
 	color:white;
 	font-size:11px;
 	cursor:auto;
@@ -1065,7 +992,7 @@ table.dp {
 /* Barre navigation */
 .dpButtons,.tpButtons {
 	text-align:center;
-	background-color:#bbbbcc;
+	background-color:#617389;
 	color:#FFFFFF;
 	font-weight:bold;
 	border: 1px outset black;
@@ -1083,7 +1010,7 @@ table.dp {
 .dpReg:Hover,.dpToday:Hover{background-color:black;color:white}
 
 /* Jour courant */
-.dpSelected{background-color:#777799;color:white;font-weight:bold; }
+.dpSelected{background-color:#0B63A2;color:white;font-weight:bold; }
 
 .tpHour{border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
 .tpHour td {border-left:1px solid #DDDDDD; border-bottom:1px solid #DDDDDD; cursor:pointer;}
@@ -1101,161 +1028,9 @@ background-color:transparent;
 padding:0px;
 font-size:9px;
 border-width:0px;
-color:#062342;
+color:#0B63A2;
 vertical-align:middle;
 cursor: pointer;
-}
-
-
-/* ============================================================================== */
-/*  Afficher/cacher                                                               */
-/* ============================================================================== */
-
-div.visible {
-    display: block;
-}
-
-div.hidden {
-    display: none;
-}
-
-tr.visible {
-    display: block;
-}
-
-td.hidden {
-    display: none;
-}
-
-
-
-/* ============================================================================== */
-/*  Module agenda                                                                 */
-/* ============================================================================== */
-
-.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
-table.cal_event    { border-collapse: collapse; margin-bottom: 1px; }
-table.cal_event td { border: 0px; padding-left: 0px; padding-right: 2px; padding-top: 0px; padding-bottom: 0px; } */
-.cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; }
-
-
-
-/* ============================================================================== */
-/* Admin Menu                                                                     */
-/* ============================================================================== */
-
-/* CSS a  appliquer a  l'arbre hierarchique */
-
-/* Lien plier /deplier tout */
-.arbre-switch {
-    text-align: right;
-    padding: 0 5px;
-    margin: 0 0 -18px 0;
-}
-
-/* Arbre */
-ul.arbre {
-    padding: 5px 10px;
-}
-/* strong : A modifier en fonction de la balise choisie */
-ul.arbre strong {
-    font-weight: normal;
-    padding: 0 0 0 20px;
-    margin: 0 0 0 -7px;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/branch.gif' ?>);
-    background-repeat: no-repeat;
-    background-position: 1px 50%;
-}
-ul.arbre strong.arbre-plier {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/plus.gif' ?>);
-    cursor: pointer;
-}
-ul.arbre strong.arbre-deplier {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/minus.gif' ?>);
-    cursor: pointer;
-}
-ul.arbre ul {
-    padding: 0;
-    margin: 0;
-}
-ul.arbre li {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-ul.arbre li li {
-    margin: 0 0 0 16px;
-}
-/* Classe pour masquer */
-.hide {
-    display: none;
-}
-
-img.menuNew
-{
-	display:block;
-	border:0px;
-}
-
-img.menuEdit
-{
-	border: 0px;
-	display: block;
-}
-
-img.menuDel
-{
-	display:none;
-	border: 0px;
-}
-
-div.menuNew
-{
-	margin-top:-20px;
-	margin-left:270px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-}
-
-div.menuEdit
-{
-	margin-top:-15px;
-	margin-left:250px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-
-}
-
-div.menuDel
-{
-	margin-top:-20px;
-	margin-left:290px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-
-}
-
-div.menuFleche
-{
-	margin-top:-16px;
-	margin-left:320px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-
 }
 
 
@@ -1297,14 +1072,14 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  padding : 1px;
 }
 .tblContainer {
- background-color : #DDDDDD;
+ background-color : #DED8D2;
 }
 .tblGlobal {
  position : absolute;
  top : 0px;
  left : 0px;
  display : none;
- background-color : #DDDDDD;
+ background-color : #DED8D2;
  border : 2px outset;
 }
 .tdContainer {

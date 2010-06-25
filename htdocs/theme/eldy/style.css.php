@@ -19,7 +19,7 @@
  */
 
 /**
- *		\file       htdocs/theme/eldy/eldy.css.php
+ *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
  *		\version    $Id$
  */
@@ -316,12 +316,10 @@ div.mainmenu.commercial {
 
 div.mainmenu.accountancy {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/money.png' ?>);
-	height:24px;
 }
 
 div.mainmenu.project {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/project.png' ?>);
-	height:27px;
 }
 
 div.mainmenu.tools {

@@ -583,7 +583,7 @@ if (! defined('NOLOGIN'))
 	if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
 	{
 		$conf->theme=$user->conf->MAIN_THEME;
-		$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php";
+		$conf->css  = "/theme/".$conf->theme."/style.css.php";
 	}
 	// Set javascript option
 	if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
@@ -618,7 +618,7 @@ if (! defined('NOREQUIRETRAN'))
 if (! empty($_GET["theme"]))
 {
 	$conf->theme=$_GET["theme"];
-	$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php";
+	$conf->css  = "/theme/".$conf->theme."/style.css.php";
 }
 
 // Define menu manager to use
@@ -745,7 +745,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 {
 	global $user, $conf, $langs, $db;
 
-	if (empty($conf->css)) $conf->css = '/theme/eldy/eldy.css.php';
+	if (empty($conf->css)) $conf->css = '/theme/eldy/style.css.php';	// If not defined, eldy by default
 
 	//header("Content-type: text/html; charset=UTF-8");
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);

@@ -76,7 +76,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		}
 	}
 
-	$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
+	$conf->css  = "/theme/".$conf->theme."/style.css.php?lang=".$langs->defaultlang;
 	$conf_css = DOL_URL_ROOT.$conf->css;
 
 	// Set cookie for timeout management

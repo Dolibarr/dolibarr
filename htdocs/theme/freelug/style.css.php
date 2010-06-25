@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C)      2007 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +18,8 @@
  */
 
 /**
- *		\file       htdocs/theme/bluelagoon/bluelagoon.css.php
- *		\brief      Fichier de style CSS du theme Blue lagoon
+ *		\file       htdocs/theme/freelug/style.css.php
+ *		\brief      Fichier de style CSS du theme Freelug
  *		\version    $Id$
  */
 
@@ -53,50 +52,102 @@ $right=($langs->direction=='rtl'?'left':'right');
 $left=($langs->direction=='rtl'?'right':'left');
 ?>
 
+/* ============================================================================== */
+/* Styles par d�faut                                                              */
+/* ============================================================================== */
 
-/***** Style du fond *****/
 body {
 <?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
-	background-color: #e0ebeb;
+	background: #F8F8F8 url(<?php echo DOL_URL_ROOT.'/theme/freelug/img/background.png' ?>);
 <?php } ?>
-	margin: 0px;
-	font: 12px helvetica, verdana, arial, sans-serif;
+	text-decoration: none ;
+	color: #101010;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+	font-family: helvetica, verdana, arial, sans-serif;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 0;
+    margin-left: 0;
 }
 
-/***** Styles par defaut *****/
+a:link    { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:visited { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
 input
 {
-    font: 12px helvetica, verdana, arial, sans-serif;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+    font-family: helvetica, verdana, arial, sans-serif;
+    background: #FFFFFF;
+    border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 input.flat
 {
-    font: 12px helvetica, verdana, arial, sans-serif;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+    font-family: helvetica, verdana, arial, sans-serif;
+    background: #FFFFFF;
+    border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea  {
-    font: 12px helvetica, verdana, arial, sans-serif;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+    font-family: helvetica, verdana, arial, sans-serif;
+    background: #FFFFFF;
+    border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea.flat
 {
-    font: 12px helvetica, verdana, arial, sans-serif;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+    font-family: helvetica, verdana, arial, sans-serif;
+    background: #FFFFFF;
+    border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 select.flat
 {
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+	font-family: helvetica, verdana, arial, sans-serif;
+	font-weight: normal;
+    border: 1px solid #ACBCBB;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+.button  {
+	font-family: arial,verdana,heletica, sans-serif;
+    padding: 0px 2px 0px 2px;
+    margin: 0px 0px 0px 0px;
+	border-left: 1px solid #cccccc;
+	border-right: 1px solid #aaaaaa;
+	border-top: 1px solid #dddddd;
+	border-bottom: 1px solid #aaaaaa;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/freelug/img/button_bg.png' ?>);
+	background-position: bottom;
+	background-repeat: repeat-x;
+}
+.buttonajax  {
+	font-family: arial,verdana,heletica, sans-serif;
+    padding: 0px 2px 0px 2px;
+    margin: 0px 0px 0px 0px;
+	border-left: 1px solid #cccccc;
+	border-right: 1px solid #aaaaaa;
+	border-top: 1px solid #dddddd;
+	border-bottom: 1px solid #aaaaaa;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/freelug/img/button_bg.png' ?>);
+	background-position: bottom;
+	background-repeat: repeat-x;
 }
 form
 {
-    padding: 0em 0em 0em 0em;
-    margin: 0em 0em 0em 0em;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 
 
@@ -106,13 +157,11 @@ form
 
 div.fiche
 {
-	margin-left: 4px;
-	margin-right: 2px;
+	margin-left: 5px;
 }
 
-
 /* ============================================================================== */
-/* Menu top et 1ere ligne tableau                                                 */
+/* Menu superieur et 1ere ligne tableau                                           */
 /* ============================================================================== */
 
 div.tmenu
@@ -120,48 +169,93 @@ div.tmenu
 <?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-    float: top;
-    display:block;
+    position: relative;
+    display: block;
     white-space: nowrap;
-    border:0;
-    border-right: 1px solid #000000;
-    border-bottom: 1px solid #000000;
+    border-top: 1px solid #D3E5EC;
+    border-left: 0px;
+    border-right: 0px solid #555555;
+    border-bottom: 1px solid #8B9999;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 2px 0px;
     font-weight: bold;
-    font-size: 12px;
-    height: 18px;
+    height: 20px;
+    background: #dddddd;
     color: #000000;
     text-decoration: none;
 <?php } ?>
 }
 
+a.tmenudisabled
+{
+	color: #757575;
+    padding: 0px 8px;
+    margin: 0px 0px 6px 0px;
+	cursor: not-allowed;
+}
+a.tmenudisabled:link
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:visited
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:hover
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:active
+{
+	color: #757575;
+    font-weight: normal;
+}
+
 a.tmenu:link
 {
-  padding: 0em 1em;
-  margin: 0em 0em 1em 0em;
-  font-weight:bold;
-  font-size:12px;
+  color: #234046;
+  padding: 0px 8px;
+  margin: 0px 0px 6px 0px;
+  border: 1px solid #dddddd;
+  font-weight: bold;
 }
 a.tmenu:visited
 {
-  padding: 0em 1em;
-  margin: 0em 0em 1em 0em;
-  font-weight:bold;
-  font-size:12px;
-}
-a.tmenusel
-{
-  padding: 0em 1em;
-  margin: 0em 0em 1em 0em;
-  font-size:12px;
+  color: #234046;
+  padding: 0px 8px;
+  margin: 0px 0px 6px 0px;
+  border: 1px solid #dddddd;
+  font-weight: bold;
 }
 a.tmenu:hover
 {
-  padding: 0em 1em;
-  margin: 0em 0em 1em 0em;
+  color: #202020;
+  background: #bbbbcc;
+  padding: 0px 8px;
+  margin: 0px 0px 6px 0px;
+  border: 1px solid #eeeedd;
   text-decoration: none;
-  font-size:12px;
+}
+a.tmenu:active
+{
+  color: #202020;
+  background: #bbbbcc;
+  padding: 0px 8px;
+  margin: 0px 0px 6px 0px;
+  border: 1px solid #eeeedd;
+  text-decoration: none;
+}
+
+a.tmenusel
+{
+  color: #202020;
+  background: #bbbbcc;
+  padding: 0px 8px;
+  margin: 0px 0px 6px 0px;
+  border: 1px solid #eeeeff;
 }
 
 
@@ -170,10 +264,10 @@ a.tmenu:hover
 table.tmenu
 {
     padding: 0px 0px 10px 0px;
-    margin: 0px 0px 0px 10px;
+    margin: 0px 0px 0px 6px;
 }
 
-* html div.tmenu li a
+* html li.tmenu a
 {
 	width:40px;
 }
@@ -182,6 +276,7 @@ ul.tmenu {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
+
 }
 li.tmenu {
 	float: left;
@@ -192,8 +287,7 @@ li.tmenu {
 	margin:0;
 	padding:0;
 }
-li.tmenu a
-{
+li.tmenu a{
   	font-size: 13px;
 	color:#000000;
 	text-decoration:none;
@@ -228,6 +322,7 @@ li.tmenu a:active
 }
 li.tmenu a:link
 {
+
 	font-weight: normal;
 }
 
@@ -240,21 +335,22 @@ a.login
   position: absolute;
   <?php print $right; ?>: 30px;
   top: 3px;
+
+  color: #234046;
   padding: 0px 8px;
-  margin: 0px 0px 1px 0px;
-  font-weight: bold;
-  font-size: 12px;
+  margin: 0px 0px 6px 0px;
+  border: 1px solid #dcdcd0;
+  font-weight:bold;
 }
 a.login:hover
 {
   color:black;
-  text-decoration: underline;
 }
 
 img.login
 {
   position: absolute;
-  <?php print $right; ?>: 22px;
+  <?php print $right; ?>: 20px;
   top: 3px;
 
   text-decoration:none;
@@ -265,7 +361,7 @@ img.printer
 {
   position: absolute;
   <?php print $right; ?>: 4px;
-  top: 3px;
+  top: 4px;
 
   text-decoration: none;
   color: white;
@@ -285,34 +381,36 @@ img.printer
 
 td.vmenu
 {
-    margin-right: 2px;
+    padding-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
-    width: 164px;
+    width: 180px;
 }
 
-a.vmenu:link    { font-size: 12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:visited { font-size: 12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:active  { font-size: 12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:hover   { font-size: 12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; text-decoration: underline; }
-font.vmenudisabled { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; margin: 1px 1px 1px 6px; }
+a.vmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+font.vmenudisabled { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; }
 
-a.vsmenu:link    { font-size: 12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:visited { font-size: 12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:active  { font-size: 12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:hover   { font-size: 12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; text-decoration: underline; }
-font.vsmenudisabled { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; margin: 1px 1px 1px 6px; }
+a.vsmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+font.vsmenudisabled { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; margin: 1px 1px 1px 6px; }
 
-a.help:link         { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:visited      { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:active       { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:hover        { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+
 
 div.blockvmenupair
 {
-	border-right: 1px solid #000000;
-	border-bottom: 1px solid #000000;
-	font: helvetica, verdana, arial, sans-serif;
+	border-right: 1px solid #555555;
+	border-bottom: 1px solid #555555;
+	background: #dddddd;
+	font-family: helvetica, verdana, arial, sans-serif;
 	color: #202020;
 	text-align:left;
 	text-decoration: none;
@@ -322,9 +420,10 @@ div.blockvmenupair
 
 div.blockvmenuimpair
 {
-	border-right: 1px solid #000000;
-	border-bottom: 1px solid #000000;
-	font: helvetica, verdana, arial, sans-serif;
+	border-right: 1px solid #555555;
+	border-bottom: 1px solid #555555;
+	background: #dddddd;
+	font-family: helvetica, verdana, arial, sans-serif;
 	color: #202020;
 	text-align:left;
 	text-decoration: none;
@@ -332,72 +431,84 @@ div.blockvmenuimpair
     margin: 1px 0px 0px 0px;
 }
 
-a.leftmenu {
-             font-weight: bold;
-             color: #202020;
-             }
+div.help
+{
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	background: #f0f0f0;
+	font-family: helvetica, verdana, arial, sans-serif;
+	color: #000000;
+	text-align:left;
+	text-decoration: none;
+    padding: 3px;
+    margin: 1px 0px 0px 0px;
+}
 
 td.barre {
-           border-right: 1px solid #000000;
-           border-bottom: 1px solid #000000;
-           background: #b3cccc;
-           font-family: Helvetica, Verdana;
-           color: #000000;
-           text-decoration: none;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    background: #DDDDDD;
+    font-family: helvetica, verdana;
+    color: #000000;
+    text-align:left;
+    text-decoration: none
 }
 
 td.barre_select {
-                  background: #b3cccc;
-                  color: #000000;
-                  }
+           background: #b3cccc;
+           color: #000000
+}
+
+td.photo {
+	background: #FCFCFC;
+	color: #000000;
+    border: 1px solid #b3c5cc;
+}
 
 
-/*
- *   Barre onglets
- */
+/* ============================================================================== */
+/* Onglets                                                                        */
+/* ============================================================================== */
+
 div.tabs {
     top: 20px;
     margin: 1px 0px 0px 0px;
-    padding: 0px 6px;
+    padding: 0px 6px 0px 0px;
     text-align: left;
 }
+
 div.tabBar {
-  color: #436976;
-  background: #dee7ec;
-  padding-top: 12px;
-  padding-left: 12px;
-  padding-right: 12px;
-  padding-bottom: 14px;
-  margin: 0px 0px 10px 0px;
-  border: 1px solid #8CACBB;
+    background: #dcdcd0;
+    padding-top: 14px;
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-bottom: 14px;
+    margin: 0px 0px 10px 0px;
+    border: 1px solid #9999BB;
+    border-top: 1px solid #9999BB;
 }
 
 div.tabsAction {
-  margin: 24px 0em 1px 0em;
-  padding: 0em 0em;
-  text-align: right;
+    margin: 20px 0em 1px 0em;
+    padding: 0em 0em;
+    text-align: right;
 }
 
-
 a.tabTitle {
-    background: #436976;
-    color: white;
+    background: #bbbbcc;
+    border: 1px solid #9999BB;
+    color: #000000;
     font-weight: normal;
-    padding: 0px 6px;
-    margin: 0em 0.5em;
+    padding: 0em 0.5em;
+    margin: 0em 1em;
     text-decoration: none;
     white-space: nowrap;
-
-    border-right: 1px solid #555555;
-    border-left: 1px solid #D8D8D8;
-    border-top: 1px solid #D8D8D8;
 }
 
 a.tab:link {
   background: white;
-  border: 1px solid #8CACBB;
+  border: 1px solid #9999BB;
   color: #436976;
-  font-weight: normal;
   padding: 0px 6px;
   margin: 0em 0.2em;
   text-decoration: none;
@@ -405,40 +516,78 @@ a.tab:link {
 }
 a.tab:visited {
   background: white;
-  border: 1px solid #8CACBB;
+  border: 1px solid #9999BB;
   color: #436976;
-  font-weight: normal;
   padding: 0px 6px;
   margin: 0em 0.2em;
   text-decoration: none;
   white-space: nowrap;
 }
 a.tab#active {
-  background: #dee7ec;
-  border-bottom: #dee7ec 1px solid;
+  background: #dcdcd0;
+  border-bottom: #dcdcd0 1px solid;
+  text-decoration: none;
 }
 a.tab:hover {
-  background: #dee7ec;
+  background: #ebebe0;
   text-decoration: none;
 }
 
+a.tabimage {
+    color: #436976;
+    text-decoration: none;
+    white-space: nowrap;
+}
 
-/*
- *   Boutons actions
- *   Nouvelle syntaxe a utiliser
- */
 
-a.butAction:link { font-weight: normal; font: verdana,arial,helvetica; font-size: 12px; background: white; border: 1px solid #8CACBB; color: #436976; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }
-a.butAction:visited { font-weight: normal; font: verdana,arial,helvetica; font-size: 12px; background: white; border: 1px solid #8CACBB; color: #436976; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }
-a.butAction:active { font-weight: normal; font: verdana,arial,helvetica; font-size: 12px; background: white; border: 1px solid #8CACBB; color: #436976; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }
-a.butAction:hover { font-weight: normal; font: verdana,arial,helvetica; font-size: 12px; background: #dee7ec; }
+/* ============================================================================== */
+/* Boutons actions                                                                */
+/* ============================================================================== */
 
-.butActionRefused { background: white; border: 1px solid #AAAAAA; color: #AAAAAA !important; font: 100% Bold; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; cursor: not-allowed; }
+/* Nouvelle syntaxe � utiliser */
 
-a.butActionDelete:link { background: white; border: 1px solid #8CACBB; color: #436976; font: 100% Bold; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:visited { background: white; border: 1px solid #8CACBB; color: #436976; font: 100% Bold; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:active { background: white; border: 1px solid #8CACBB; color: #436976; font: 100% Bold; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:hover { background: #dee7ec; }
+a.butAction:link    { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butAction:visited { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butAction:active  { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butAction:hover   { font-family: helvetica, verdana, arial, sans-serif; background: #eeeedd; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+
+.butActionRefused         { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #AAAAAA; color: #AAAAAA !important; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none !important; white-space: nowrap; cursor: not-allowed; }
+
+a.butActionDelete:link    { font-family: helvetica, verdana, arial, sans-serif;
+                      background: white;
+                      border: 1px solid #997777;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
+                      white-space: nowrap; }
+
+a.butActionDelete:active    { font-family: helvetica, verdana, arial, sans-serif;
+                      background: white;
+                      border: 1px solid #997777;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
+                      white-space: nowrap; }
+
+a.butActionDelete:visited    { font-family: helvetica, verdana, arial, sans-serif;
+                      background: white;
+                      border: 1px solid #997777;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
+                      white-space: nowrap; }
+
+a.butActionDelete:hover    { font-family: helvetica, verdana, arial, sans-serif;
+                      background: #FFe7ec;
+                      border: 1px solid #997777;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
+                      white-space: nowrap; }
 
 
 /* ============================================================================== */
@@ -449,7 +598,6 @@ a.butActionDelete:hover { background: #dee7ec; }
 list-style-type:none;
 margin:0px;
 padding:0px;
-cursor:move;
 }
 
 .notopnoleft {
@@ -476,7 +624,9 @@ border-collapse: collapse;
 border: 1px white ridge;
 }
 table.border td {
-border: 1px white ridge;
+border: 1px solid #6C7C8B;
+padding: 1px 2px;
+border-collapse: collapse;
 }
 
 table.noborder {
@@ -485,12 +635,12 @@ border: 0px;
 }
 table.noborder td {
 border: 0px;
+padding: 1px 2px;
 }
 
 table.nobordernopadding {
 border-collapse: collapse;
 border: 0px;
-padding: 0px 0px;
 }
 table.nobordernopadding tr {
 border: 0px;
@@ -501,87 +651,35 @@ border: 0px;
 padding: 0px 0px;
 }
 
+table.liste {
+border-collapse: collapse;
+border: 0px;
+width: 100%;
+}
+
 
 /*
  *  Tableaux
  */
 
-a {
-    text-decoration: none;
-    font-weight: bold;
-    color: #000000;
-    }
 
 
-td.menu {
-          border: 1px solid #000000;
-          }
+
+
 
 td.border {
-            border: 1px solid #000000;
+            border-top: 1px solid #000000;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            border-left: 1px solid #000000;
             }
-
-div.menus {
-            background: #eeeecc;
-            color: #bbbb88;
-            border-top:    1px dashed #ccccb3;
-            border-right:  1px dashed #ccccb3;
-            border-bottom: 1px dashed #ccccb3;
-            border-left:   1px dashed #ccccb3;
-            }
-
-
-.menu {
-        background: #b3cccc;
-        font-weight: bold;
-        color: #000000;
-        text-decoration: none }
-
-.submenu {
-           background: #b3cccc;
-           color: #000000;
-           text-decoration: none }
-
-a.normal{ font-weight: normal }
-a.impayee { font-weight: bold }
-
-/*
- *  Boxes
- */
-
-.box {
-	padding-right: 6px;
-	padding-bottom: 8px;
-}
-
-tr.box_titre {
-    background: #b3cccc;
-    font-family: Helvetica, Verdana;
-    font-weight: bold;
-    border-top: 1px solid #8CACBB;
-    white-space: nowrap;
-}
-
-tr.box_impair {
-    background: #b3cccc;
-    font-size: 0.8em;
-}
-
-tr.box_pair {
-    background: #cceeee;
-    font-size: 0.8em;
-}
-
-tr.fiche {
-font-size: 0.6em;
-}
 
 
 /*
  *   Ok, Warning, Error
  */
 .ok      { color: #114466; }
-.warning { color: #887711; }
+.warning { color: #777711; }
 .error   { color: #550000; font-weight: bold; }
 
 div.ok {
@@ -589,7 +687,7 @@ div.ok {
 }
 
 div.warning {
-  color: #997711;
+  color: #777711;
   padding: 0.2em 0.2em 0.2em 0.2em;
   border: 1px solid #ebebd4;
   -moz-border-radius:6px;
@@ -600,11 +698,11 @@ div.error {
   color: #550000; font-weight: bold;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #8C9CAB;
+  border: 1px solid #969090;
 }
 
 div.info {
-  color: #888888;
+  color: #555555;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #ACACAB;
@@ -628,6 +726,7 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 
 
+
 /*
  *  Other
  */
@@ -645,48 +744,46 @@ border: 0px;
 }
 
 div.titre {
-            font-family: Helvetica, Verdana;
-            font-weight: normal;
-            color: #336666;
-            text-decoration: none;
+    font-family: helvetica, verdana, arial, sans-serif;
+    font-weight: normal;
+    color: #777799;
+    text-decoration: none;
 }
 
 
-/*
- *  Tableaux
- */
 
 input.liste_titre {
-    background: #b3cccc;
+    background: #777799;
     border: 0px;
 }
 
 tr.liste_titre {
-    background: #b3cccc;
-    font-family: Helvetica, Verdana;
-    font-weight: bold;
-    border-top: 1px solid #8CACBB;
+    color: #FFFFFF;
+    background: #777799;
+    font-family: helvetica, verdana, arial, sans-serif;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #FFFFFF;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
 }
 
 td.liste_titre {
-    background: #b3cccc;
-    font-family: Helvetica, Verdana;
-    font-weight: bold;
-    border-top: 1px solid #8CACBB;
-    border-right: 0px;
-    border-right: 0px;
+    color: #FFFFFF;
+    background: #777799;
+    font-family: helvetica, verdana, arial, sans-serif;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
 }
 
-.liste_titre_sel {
-    color: #000000;
-    background: #cceeee;
-    font-family: Helvetica, Verdana;
-    font-weight: bold;
-    border-top: 1px solid #8CACBB;
-    border-right: 0px;
-    border-right: 0px;
+.liste_titre_sel
+{
+    color: #DCCCBB;
+    background: #777799;
+    font-family: helvetica, verdana, arial, sans-serif;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
 }
 
@@ -697,17 +794,80 @@ tr.liste_total td {
     border-top: 1px solid #888888;
 }
 
-.pair	{
-    background: #b3cccc;
-    font-family: Helvetica, Verdana;
+th {
+    color: #FFFFFF;
+    background: #777799;
+    font-family: helvetica, verdana, arial, sans-serif;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #FFFFFF;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    white-space: nowrap;
 }
+
+
+.pair {
+    background: #dcdcd0;
+    }
 
 .impair {
-    background: #cceeee;
+    background: #eeeedd;
+    }
+
+/*
+ *  Boxes
+ */
+
+.box {
+	padding-right: 4px;
+	padding-bottom: 4px;
+}
+
+tr.box_titre {
+    color: #FFFFFF;
+    background: #777799;
+    font-family: Helvetica, Verdana;
+}
+
+tr.box_pair {
+    background: #dcdcd0;
+}
+
+tr.box_impair {
+    background: #eeeedd;
+    font-family: Helvetica, Verdana;
+}
+
+tr.fiche {
     font-family: Helvetica, Verdana;
 }
 
 
+
+/* ============================================================================== */
+/* Formulaire confirmation (HTML)                                                 */
+/* ============================================================================== */
+
+table.valid {
+    border-top: solid 1px #E6E6E6;
+    border-left: solid 1px #E6E6E6;
+    border-right: solid 1px #444444;
+    border-bottom: solid 1px #555555;
+	padding-top: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	margin: 0px 0px;
+    background: #DC9999;
+}
+
+.validtitre {
+    background: #DC9999;
+	font-weight: bold;
+}
+
+.valid {
+}
 
 /* ============================================================================== */
 /* Formulaire confirmation (AJAX)                                                 */
@@ -865,7 +1025,10 @@ tr.liste_total td {
 {
 position: absolute;
 width: <?php print dol_size(450,'width'); ?>px;
-border: 1px solid #444444;
+border-top: solid 1px #BBBBBB;
+border-left: solid 1px #BBBBBB;
+border-right: solid 1px #444444;
+border-bottom: solid 1px #444444;
 padding: 2px;
 background-color: #FFFFE0;
 visibility: hidden;
@@ -894,7 +1057,7 @@ table.dp {
 /* Barre titre */
 .dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
-	background-color:#b3c5cc;
+	background-color:#777799;
 	color:white;
 	font-size:11px;
 	cursor:auto;
@@ -902,7 +1065,7 @@ table.dp {
 /* Barre navigation */
 .dpButtons,.tpButtons {
 	text-align:center;
-	background-color:#617389;
+	background-color:#bbbbcc;
 	color:#FFFFFF;
 	font-weight:bold;
 	border: 1px outset black;
@@ -920,7 +1083,7 @@ table.dp {
 .dpReg:Hover,.dpToday:Hover{background-color:black;color:white}
 
 /* Jour courant */
-.dpSelected{background-color:#0B63A2;color:white;font-weight:bold; }
+.dpSelected{background-color:#777799;color:white;font-weight:bold; }
 
 .tpHour{border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
 .tpHour td {border-left:1px solid #DDDDDD; border-bottom:1px solid #DDDDDD; cursor:pointer;}
@@ -938,9 +1101,30 @@ background-color:transparent;
 padding:0px;
 font-size:9px;
 border-width:0px;
-color:#0B63A2;
+color:#062342;
 vertical-align:middle;
 cursor: pointer;
+}
+
+
+/* ============================================================================== */
+/*  Afficher/cacher                                                               */
+/* ============================================================================== */
+
+div.visible {
+    display: block;
+}
+
+div.hidden {
+    display: none;
+}
+
+tr.visible {
+    display: block;
+}
+
+td.hidden {
+    display: none;
 }
 
 
@@ -955,10 +1139,10 @@ cursor: pointer;
 .cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event    { border-collapse: collapse; margin-bottom: 1px; }
 table.cal_event td { border: 0px; padding-left: 0px; padding-right: 2px; padding-top: 0px; padding-bottom: 0px; } */
-.cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal; !important }
-.cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal; !important }
-.cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal; !important }
-.cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal; !important }
+.cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
+.cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
+.cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
+.cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; }
 
 
 
@@ -1113,14 +1297,14 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  padding : 1px;
 }
 .tblContainer {
- background-color : #EFEFDE;
+ background-color : #DDDDDD;
 }
 .tblGlobal {
  position : absolute;
  top : 0px;
  left : 0px;
  display : none;
- background-color : #EFEFDE;
+ background-color : #DDDDDD;
  border : 2px outset;
 }
 .tdContainer {
@@ -1155,3 +1339,4 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  padding : 0px;
  margin : 0px;
 }
+
