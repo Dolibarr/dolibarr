@@ -42,6 +42,7 @@ LastAccountStatements=Last account statements
 Rapprochement=Reconciliate
 IOMonthlyReporting=Monthly reporting
 BankAccountDomiciliation=Account address
+BankAccountCountry=Account country
 BankAccountOwner=Account owner name
 BankAccountOwnerAddress=Account owner address
 RIBControlError=Inetgrity checks of values fails. This means information for this account number are not complete or wrong (check country, numbers and IBAN).

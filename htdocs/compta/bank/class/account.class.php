@@ -64,6 +64,15 @@ class Account extends CommonObject
 	var $iban_prefix;
 	var $proprio;
 	var $adresse_proprio;
+
+	var $fk_departement;
+	var $departement_code;
+	var $departement;
+
+	var $fk_pays;
+	var $pays_code;
+	var $pays;
+
 	var $type_lib=array();
 
 	var $account_number;
@@ -309,15 +318,23 @@ class Account extends CommonObject
 		// Check parameters
 		if (! $this->min_allowed) $this->min_allowed=0;
 		if (! $this->min_desired) $this->min_desired=0;
+		if (empty($this->fk_pays))
+		{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Country"));
+			dol_syslog("Account::update ".$this->error, LOG_ERR);
+			return -1;
+		}
+		if (empty($this->ref))
+		{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
+			dol_syslog("Account::update ".$this->error, LOG_ERR);
+			return -1;
+		}
 
 		// Chargement librairie pour acces fonction controle RIB
 		require_once DOL_DOCUMENT_ROOT.'/lib/bank.lib.php';
 
-		if (! $this->ref)
-		{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
-			return -1;
-		}
+		$now=dol_now();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (";
 		$sql.= "datec";
@@ -330,8 +347,10 @@ class Account extends CommonObject
 		$sql.= ", min_allowed";
 		$sql.= ", min_desired";
 		$sql.= ", comment";
+		$sql.= ", fk_departement";
+		$sql.= ", fk_pays";
 		$sql.= ") VALUES (";
-		$sql.= $this->db->idate(mktime());
+		$sql.= "'".$this->db->idate($now)."'";
 		$sql.= ", '".addslashes($this->ref)."'";
 		$sql.= ", '".addslashes($this->label)."'";
 		$sql.= ", ".$conf->entity;
@@ -341,6 +360,8 @@ class Account extends CommonObject
 		$sql.= ", ".price2num($this->min_allowed);
 		$sql.= ", ".price2num($this->min_desired);
 		$sql.= ", '".addslashes($this->comment)."'";
+		$sql.= ", ".($this->fk_departement>0?"'".$this->fk_departement."'":"null");
+		$sql.= ", ".$this->fk_pays;
 		$sql.= ")";
 
 		dol_syslog("Account::create sql=".$sql);
@@ -362,7 +383,7 @@ class Account extends CommonObject
 					$sql.= ", fk_type";
 					$sql.= ", rappro";
 					$sql.= ") VALUES (";
-					$sql.= $this->db->idate(mktime());
+					$sql.= $this->db->idate($now);
 					$sql.= ", '(".$langs->trans("InitialBankBalance").")'";
 					$sql.= ", ".price2num($this->solde);
 					$sql.= ", '".$this->id."'";
@@ -405,10 +426,15 @@ class Account extends CommonObject
 		// Check parameters
 		if (! $this->min_allowed) $this->min_allowed=0;
 		if (! $this->min_desired) $this->min_desired=0;
-
-		if (! $this->ref)
+		if (empty($this->fk_pays))
 		{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Country"));
+			dol_syslog("Account::update ".$this->error, LOG_ERR);
+			return -1;
+		}
+		if (empty($this->ref))
+		{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
 			dol_syslog("Account::update ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -430,6 +456,9 @@ class Account extends CommonObject
 		$sql.= ",min_allowed = '".price2num($this->min_allowed)."'";
 		$sql.= ",min_desired = '".price2num($this->min_desired)."'";
 		$sql.= ",comment     = '".addslashes($this->comment)."'";
+
+		$sql.= ",fk_departement = ".($this->fk_departement>0?"'".$this->fk_departement."'":"null");
+		$sql.= ",fk_pays = ".$this->fk_pays;
 
 		$sql.= " WHERE rowid = ".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
@@ -481,6 +510,8 @@ class Account extends CommonObject
 		$sql.= ",domiciliation='".addslashes($this->domiciliation)."'";
 		$sql.= ",proprio = '".addslashes($this->proprio)."'";
 		$sql.= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
+		$sql.= ",fk_departement = ".($this->fk_departement>0?"'".$this->fk_departement."'":"null");
+		$sql.= ",fk_pays = ".$this->fk_pays;
 		$sql.= " WHERE rowid = ".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -509,15 +540,19 @@ class Account extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
-		$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
-		$sql.= " domiciliation, proprio, adresse_proprio,";
-		$sql.= " account_number, currency_code,";
-		$sql.= " min_allowed, min_desired, comment";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+		$sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
+		$sql.= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
+		$sql.= " ba.domiciliation, ba.proprio, ba.adresse_proprio, ba.fk_departement, ba.fk_pays,";
+		$sql.= " ba.account_number, ba.currency_code,";
+		$sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
+		$sql.= ' p.code as pays_code, p.libelle as pays,';
+		$sql.= ' d.code_departement as departement_code, d.nom as departement';
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON ba.fk_pays = p.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON ba.fk_departement = d.rowid';
 		$sql.= " WHERE entity = ".$conf->entity;
-		if ($id)  $sql.= " AND rowid  = ".$id;
-		if ($ref) $sql.= " AND ref = '".addslashes($ref)."'";
+		if ($id)  $sql.= " AND ba.rowid  = ".$id;
+		if ($ref) $sql.= " AND ba.ref = '".addslashes($ref)."'";
 
 		dol_syslog("Account::fetch sql=".$sql);
 		$result = $this->db->query($sql);
@@ -548,6 +583,14 @@ class Account extends CommonObject
 				$this->domiciliation = $obj->domiciliation;
 				$this->proprio       = $obj->proprio;
 				$this->adresse_proprio = $obj->adresse_proprio;
+
+				$this->fk_departement  = $obj->fk_departement;
+				$this->departement_code= $obj->departement_code;
+				$this->departement     = $obj->departement;
+
+				$this->fk_pays       = $obj->fk_pays;
+				$this->pays_code     = $obj->pays_code;
+				$this->pays          = $obj->pays;
 
 				$this->account_number = $obj->account_number;
 
@@ -824,21 +867,24 @@ class Account extends CommonObject
 	/**
 	 * 	\brief		Return account country code
 	 *	\return		String		country code
-	 * 	TODO	Manage field with country in bank_account
 	 */
 	function getCountryCode()
 	{
 		global $mysoc;
 
+		// We return country code of bank account
+		if (! empty($this->pays_code)) return $this->pays_code;
+
+		// For backward compatibility, we try to guess country from other information
 		if (! empty($this->iban))
 		{
-			if ($mysoc->pays_code === 'IN') return $mysoc->pays_code;	// Test before to use IBAN
+			if ($mysoc->pays_code === 'IN') return $mysoc->pays_code;	// Test to know if we can trust IBAN
 
 			// If IBAN defined, we can know country of account from it
 			if (preg_match("/^([a-zA-Z][a-zA-Z])/i",$this->iban,$reg)) return $reg[1];
 		}
 
-		// We return country code
+		// We return country code of company
 		if (! empty($mysoc->pays_code)) return $mysoc->pays_code;
 
 		return '';

@@ -182,15 +182,15 @@ class FormCompany
 	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entree pour
 	 *                un code donnee mais dans ce cas, le champ pays differe).
 	 *                Ainsi les liens avec les departements se font sur un departement independemment de son nom.
-	 *    \param      selected        	Code forme juridique a preselectionne
-	 *    \param      pays_code       	0=liste tous pays confondus, sinon code du pays a afficher
+	 *    \param      selected        	Code state preselected
+	 *    \param      pays_code       	0=list for all countries, otherwise country code or country rowid to show
 	 *    \param      departement_id	Id of department
 	 */
 	function select_departement($selected='',$pays_code=0, $htmlname='departement_id')
 	{
 		global $conf,$langs,$user;
 
-		dol_syslog("Form::select_departement selected=$selected, pays_code=$pays_code",LOG_DEBUG);
+		dol_syslog("FormCompany::select_departement selected=$selected, pays_code=$pays_code",LOG_DEBUG);
 
 		$langs->load("dict");
 
@@ -199,10 +199,11 @@ class FormCompany
 		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND p.active = 1";
-		if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
+		if ($pays_code && is_numeric($pays_code)) $sql .= " AND p.rowid = '".$pays_code."'";
+		if ($pays_code && ! is_numeric($pays_code)) $sql .= " AND p.code = '".$pays_code."'";
 		$sql .= " ORDER BY p.code, d.code_departement";
 
-		dol_syslog("Form::select_departement sql=".$sql);
+		dol_syslog("FormCompany::select_departement sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -210,7 +211,7 @@ class FormCompany
 			if ($pays_code) print '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			dol_syslog("Form::select_departement num=$num",LOG_DEBUG);
+			dol_syslog("FormCompany::select_departement num=$num",LOG_DEBUG);
 			if ($num)
 			{
 				$pays='';

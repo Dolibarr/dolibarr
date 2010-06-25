@@ -28,6 +28,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("banks");
 
@@ -61,6 +62,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	$account->domiciliation   = trim($_POST["domiciliation"]);
 	$account->proprio 	      = trim($_POST["proprio"]);
 	$account->adresse_proprio = trim($_POST["adresse_proprio"]);
+	$account->fk_departement  = trim($_POST["fk_departement"]);
+	//$account->fk_pays         = trim($_POST["fk_pays"]);		// We do not change this.
 
 	if ($account->id)
 	{
@@ -146,12 +149,23 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 	print $form->showrefnav($account,'ref','',1,'ref');
 	print '</td></tr>';
 
+	// Label
 	print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
 	print '<td colspan="3">'.$account->label.'</td></tr>';
 
+	// Type
 	print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
 	print '<td colspan="3">'.$account->type_lib[$account->type].'</td></tr>';
 
+	// Currency
+	print '<tr><td valign="top">'.$langs->trans("Currency").'</td>';
+	print '<td colspan="3">';
+	$selectedcode=$account->account_currency_code;
+	if (! $selectedcode) $selectedcode=$conf->monnaie;
+	print $langs->trans("Currency".$selectedcode);
+	print '</td></tr>';
+
+	// Status
 	print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
 	print '<td colspan="3">'.$account->getLibStatut(4).'</td></tr>';
 
@@ -182,14 +196,23 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 			print '</tr>';
 		}
 
-		print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
+		$ibankey="IBANNumber";
+		$bickey="BICNumber";
+		if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+		if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
+
+		print '<tr><td valign="top">'.$langs->trans($ibankey).'</td>';
 		print '<td colspan="3">'.$account->iban_prefix.'</td></tr>';
 
-		print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
+		print '<tr><td valign="top">'.$langs->trans($bickey).'</td>';
 		print '<td colspan="3">'.$account->bic.'</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
 		print nl2br($account->domiciliation);
+		print "</td></tr>\n";
+
+		print '<tr><td valign="top">'.$langs->trans("BankAccountCountry").'</td><td colspan="3">';
+		print getCountry($account->getCountryCode());
 		print "</td></tr>\n";
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td><td colspan="3">';
@@ -200,9 +223,6 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 		print nl2br($account->adresse_proprio);
 		print "</td></tr>\n";
 
-		print '<tr><td valign="top">'.$langs->trans("CountryCode").'</td><td colspan="3">';
-		print $account->getCountryCode();
-		print "</td></tr>\n";
 	}
 
 	print '</table>';
@@ -253,14 +273,25 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 	print '<td colspan="3">'.$account->ref;
 	print '</td></tr>';
 
+	// Label
 	print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
 	print '<td colspan="3">'.$account->label;
 	print '</td></tr>';
 
+	// Type
 	print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
 	print '<td colspan="3">'.$account->type_lib[$account->type];
 	print '</td></tr>';
 
+	// Currency
+	print '<tr><td valign="top">'.$langs->trans("Currency").'</td>';
+	print '<td colspan="3">';
+	$selectedcode=$account->account_currency_code;
+	if (! $selectedcode) $selectedcode=$conf->monnaie;
+	print $langs->trans("Currency".$selectedcode);
+	print '</td></tr>';
+
+	// Status
 	print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
 	print '<td colspan="3">'.$account->getLibStatut(4);
 	print '</td></tr>';
@@ -268,7 +299,7 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 	if ($account->type == 0 || $account->type == 1)
 	{
 		// If bank account
-		print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
+		print '<tr><td valign="top">'.$langs->trans("BankName").'</td>';
 		print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td>';
 		print '</tr>';
 
@@ -295,17 +326,26 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 			print '</tr>';
 		}
 
+		$ibankey="IBANNumber";
+		$bickey="BICNumber";
+		if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+		if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
+
 		// IBAN
-		print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
+		print '<tr><td valign="top">'.$langs->trans($ibankey).'</td>';
 		print '<td colspan="3"><input size="26" type="text" class="flat" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
 
-		print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
+		print '<tr><td valign="top">'.$langs->trans($bickey).'</td>';
 		print '<td colspan="3"><input size="12" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
 		print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
 		print $account->domiciliation;
 		print "</textarea></td></tr>";
+
+		print '<tr><td valign="top">'.$langs->trans("BankAccountCountry").'</td><td colspan="3">';
+		print getCountry($account->getCountryCode());
+		print "</td></tr>\n";
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
 		print '<td colspan="3"><input size="30" type="text" class="flat" name="proprio" value="'.$account->proprio.'">';

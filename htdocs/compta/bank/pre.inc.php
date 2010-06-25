@@ -40,33 +40,6 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 	top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 
 	$menu = new Menu();
-	if ($user->rights->banque->lire)
-	{
-		$sql = "SELECT rowid, label, courant";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " AND clos = 0";
-
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$numr = $db->num_rows($resql);
-			$i = 0;
-
-			while ($i < $numr)
-			{
-				$objp = $db->fetch_object($resql);
-				$menu->add(DOL_URL_ROOT."/compta/bank/fiche.php?id=".$objp->rowid,$objp->label,0,$user->rights->banque->lire);
-/*
-				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=".$objp->rowid ,$langs->trans("IOMonthlyReporting"));
-				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/graph.php?account=".$objp->rowid ,$langs->trans("Graph"));
-				if ($objp->courant != 2) $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=".$objp->rowid ,$langs->trans("AccountStatements"));
-*/
-				$i++;
-			}
-		}
-		$db->free($resql);
-	}
 
 
 	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
@@ -90,6 +63,37 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
 		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=bank&amp;mainmenu=bank&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
 		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
+	}
+
+	// Entry for each bank account
+	if ($user->rights->banque->lire)
+	{
+		$sql = "SELECT rowid, label, courant";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " AND clos = 0";
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$numr = $db->num_rows($resql);
+			$i = 0;
+
+			if ($numr > 0) 	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
+
+			while ($i < $numr)
+			{
+				$objp = $db->fetch_object($resql);
+				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?id=".$objp->rowid,$objp->label,1,$user->rights->banque->lire);
+/*
+				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=".$objp->rowid ,$langs->trans("IOMonthlyReporting"));
+				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/graph.php?account=".$objp->rowid ,$langs->trans("Graph"));
+				if ($objp->courant != 2) $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=".$objp->rowid ,$langs->trans("AccountStatements"));
+*/
+				$i++;
+			}
+		}
+		$db->free($resql);
 	}
 
 	left_menu($menu->liste);

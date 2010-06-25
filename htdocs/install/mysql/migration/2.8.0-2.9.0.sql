@@ -11,8 +11,8 @@
 -- V4.1 UPDATE llx_projet_task set fk_user_creat=NULL WHERE fk_user_creat IS NOT NULL AND fk_user_creat NOT IN (SELECT rowid from llx_user);
 -- V4.1 UPDATE llx_projet_task set fk_user_valid=NULL WHERE fk_user_valid IS NOT NULL AND fk_user_valid NOT IN (SELECT rowid from llx_user);
 
-ALTER table llx_bank_account ADD COLUMN fk_pays        integer        DEFAULT 0 after domiciliation;
-
+ALTER table llx_bank_account ADD COLUMN fk_pays        integer        DEFAULT 0 NOT NULL after domiciliation;
+ALTER TABLE llx_bank_account ADD COLUMN fk_departement integer        DEFAULT NULL after domiciliation;
 ALTER TABLE llx_socpeople ADD COLUMN fk_departement integer        DEFAULT NULL after ville;
 ALTER TABLE llx_adherent  ADD COLUMN fk_departement integer        DEFAULT NULL after ville;
 ALTER TABLE llx_entrepot  ADD COLUMN fk_departement integer        DEFAULT NULL after ville;

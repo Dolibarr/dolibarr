@@ -180,8 +180,8 @@ function societe_prepare_head2($objsoc)
 
 
 /**
- *    \brief      Return country translated from an id
- *    \param      id          id of country
+ *    \brief      Return country translated from an id or a code
+ *    \param      id          id or code of country
  *    \param      withcode    0=Return label, 1=Return code + label, 2=Return code
  *    \return     string      String with country code or translated country name
  */
@@ -190,7 +190,8 @@ function getCountry($id,$withcode=0)
 	global $db,$langs;
 
 	$sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
-	$sql.= " WHERE rowid=".$id;
+	if (is_numeric($id)) $sql.= " WHERE rowid=".$id;
+	else $sql.= " WHERE code='".$id."'";
 
 	dol_syslog("Company.lib::getCountry sql=".$sql);
 	$resql=$db->query($sql);

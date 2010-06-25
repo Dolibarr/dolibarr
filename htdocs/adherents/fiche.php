@@ -800,7 +800,7 @@ if ($action == 'edit')
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	print '</td></tr>';
 
-	// Department
+	// State
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	$htmlcompany->select_departement($adh->fk_departement,$adh->pays_code);
 	print '</td></tr>';
@@ -1228,7 +1228,7 @@ if ($rowid && $action != 'edit')
 	// Country
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.getCountry($adh->pays_id).'</td></tr>';
 
-	// Department
+	// State
 	print '<tr><td>'.$langs->trans('State').'</td><td class="valeur">'.$adh->departement.'</td>';
 
     // Tel pro.
