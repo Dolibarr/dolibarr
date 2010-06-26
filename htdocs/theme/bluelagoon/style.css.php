@@ -308,7 +308,7 @@ a.help:visited      { font-size:11px; font-family: helvetica, verdana, arial, sa
 a.help:active       { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 a.help:hover        { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 
-div.blockvmenupair
+div.blockvmenupair, div.blockvmenuimpair
 {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
@@ -320,7 +320,7 @@ div.blockvmenupair
     margin: 1px 0px 0px 0px;
 }
 
-div.blockvmenuimpair
+div.blockvmenusearch, div.blockvmenubookmarks
 {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;

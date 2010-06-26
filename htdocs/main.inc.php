@@ -1092,7 +1092,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	{
 		print "\n";
 		print "<!-- Begin SearchForm -->\n";
-		print '<div class="blockvmenupair">'."\n";
+		print '<div id="blockvmenusearch" class="blockvmenusearch">'."\n";
 		print $searchform;
 		print '</div>'."\n";
 		print "<!-- End SearchForm -->\n";
@@ -1107,7 +1107,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	{
 		print "\n";
 		print "<!-- Begin Bookmarks -->\n";
-		print '<div class="blockvmenupair">'."\n";
+		print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
 		print $bookmarks;
 		print '</div>'."\n";
 		print "<!-- End Bookmarks -->\n";
@@ -1131,7 +1131,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		// Link to help pages
 		if ($helpbaseurl && $helppage)
 		{
-			print '<div class="help">';
+			print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
 			print '<a class="help" target="_blank" title="'.$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 			if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
 			print '" href="';

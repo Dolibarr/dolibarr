@@ -919,9 +919,10 @@ function print_left_eldy_menu($db,$menu_array)
 				if ($menu_array[$i]['enabled'])
 				{
 					print '<div class="menu_contenu">';
-					print $tabstring.'<a class="vsmenu" href="'.$menu_array[$i]['url'].'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					print $tabstring;
+					if ($menu_array[$i]['url']) print '<a class="vsmenu" href="'.$menu_array[$i]['url'].'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
 					print $menu_array[$i]['titre'];
-					print '</a>';
+					if ($menu_array[$i]['url']) print '</a>';
 					// If title is not pure text and contains a table, no carriage return added
 					if (! strstr($menu_array[$i]['titre'],'<table')) print '<br>';
 					print '</div>'."\n";

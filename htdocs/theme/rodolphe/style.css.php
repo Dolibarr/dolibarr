@@ -347,7 +347,7 @@ div.blockvmenupair
   text-decoration: none;
   padding: 3px;
   margin: 0px 0px 0px 0px;
-  }
+}
 
 div.blockvmenuimpair
 {
@@ -360,9 +360,21 @@ div.blockvmenuimpair
   text-decoration: none;
   padding: 3px;
   margin: 0px 0px 0px 0px;
-  }
+}
 
-div.help
+div.blockvmenusearch, div.blockvmenubookmarks
+{
+  border-bottom: 1px solid #000000;
+  background: #ded8d2;
+  font-family: helvetica, verdana, arial, sans-serif;
+  color: #000000;
+  text-align:left;
+  text-decoration: none;
+  padding: 3px;
+  margin: 0px 0px 0px 0px;
+}
+
+div.blockvmenuhelp
 {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;

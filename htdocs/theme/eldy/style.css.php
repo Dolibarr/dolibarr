@@ -474,7 +474,26 @@ div.blockvmenupair, div.blockvmenuimpair {
     background-repeat:repeat-x;
 }
 
-div.help {
+div.blockvmenusearch, div.blockvmenubookmarks {
+    width:164px;
+    border-right: 1px solid #555555;
+    border-bottom: 1px solid #555555;
+	font-family: <?php print $fontlist ?>;
+	color: #000000;
+	text-align: <?php print $left; ?>;
+	text-decoration: none;
+    padding-left: 3px;
+    padding-right: 1px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin: 1px 0px 0px 0px;
+	background: #A3BCC6;
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
+    background-position:top;
+    background-repeat:repeat-x;
+}
+
+div.blockvmenuhelp {
     width:164px;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;

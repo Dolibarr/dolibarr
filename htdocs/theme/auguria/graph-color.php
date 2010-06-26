@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
  */
 
 /**
-		\file       htdocs/theme/auguria/graph-color.php
-		\brief      Fichier de dï¿½claration des couleurs pour les graphiques
+		\file       htdocs/theme/eldy/graph-color.php
+		\brief      Fichier de déclaration des couleurs pour les graphiques
         \ingroup    core
 		\version    $Id$
 */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235,235,224);
-$theme_datacolor = array(array(120,130,150), array(160,160,180), array(190,190,220));
+$theme_datacolor = array(array(120,130,150), array(200,160,180), array(190,190,220));
 $theme_bgcolor = array(hexdec('F4'),hexdec('F4'),hexdec('F4'));
 $theme_bgcoloronglet = array(hexdec('DE'),hexdec('E7'),hexdec('EC'));
 
