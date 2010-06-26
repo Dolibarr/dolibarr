@@ -113,6 +113,7 @@ textarea.flat {
     margin: 0px 0px 0px 0px;
 }
 select.flat {
+	background: #FDFDFD;
     font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;

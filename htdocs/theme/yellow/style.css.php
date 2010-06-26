@@ -107,6 +107,7 @@ textarea.flat
 }
 select.flat
 {
+	background: #FDFDFD;
 	font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
 	font-weight: normal;

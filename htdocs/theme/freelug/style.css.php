@@ -113,6 +113,7 @@ textarea.flat
 }
 select.flat
 {
+	background: #FDFDFD;
     font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
 	font-weight: normal;
