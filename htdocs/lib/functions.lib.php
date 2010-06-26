@@ -2487,23 +2487,23 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 function get_localtax($tva, $local, $societe_acheteuse="")
 {
 	global $db, $conf, $mysoc;
-	
+
 	$code_pays=$mysoc->pays_code;
-	
+
 	if (is_object($societe_acheteuse))
 	{
 		if ($code_pays!=$societe_acheteuse->pays_code) return 0;
 		if ($local==1 && !$societe_acheteuse->localtax1_assuj) return 0;
 		elseif ($local==2 && !$societe_acheteuse->localtax2_assuj) return 0;
 	}
-	
+
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax2";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
 	$sql .= " AND t.taux =".$tva." AND t.active = 1";
 	$sql .= " ORDER BY t.localtax1 ASC, t.localtax2 ASC";
-	
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -2511,7 +2511,7 @@ function get_localtax($tva, $local, $societe_acheteuse="")
 		if ($local==1) return $obj->localtax1;
 		elseif ($local==2) return $obj->localtax2;
 	}
-	
+
 	return 0;
 }
 
@@ -3422,6 +3422,33 @@ function pattern_match($pattern,$string)
 			return false;
 		}
 	}
+}
+
+/**
+ * 	\brief		Show picto of country for a language code
+ * 	\param		codelang	Language code to get picto
+ * 	\return		string
+ */
+function picto_from_langcode($codelang)
+{
+	$ret='';
+    if (! empty($codelang))
+    {
+    	if ($codelang == 'auto') $ret=img_picto('',DOL_URL_ROOT.'/theme/common/flags/int.png','',1);
+    	else {
+    		//print $codelang;
+    		$langtocountryflag=array('da_DA'=>'dk','fr_CA'=>'mq','ca_ES'=>'catalonia','ar_AR'=>'');
+    		$tmpcode='';
+    		if (isset($langtocountryflag[$codelang])) $tmpcode=$langtocountryflag[$codelang];
+    		else
+    		{
+    			$tmparray=explode('_',$codelang);
+    			$tmpcode=$tmparray[1];
+    		}
+    		if ($tmpcode) $ret.=img_picto($codelang,DOL_URL_ROOT.'/theme/common/flags/'.strtolower($tmpcode).'.png','',1);
+    	}
+    }
+    return $ret;
 }
 
 ?>

@@ -980,33 +980,6 @@ function version_webserver()
 
 
 /**
- * 	\brief		Show picto of country for a language code
- * 	\return		string
- */
-function picto_from_langcode($codelang)
-{
-	$ret='';
-    if (! empty($codelang))
-    {
-    	if ($codelang == 'auto') $ret=img_picto('',DOL_URL_ROOT.'/theme/common/flags/int.png','',1);
-    	else {
-    		//print $codelang;
-    		$langtocountryflag=array('da_DA'=>'dk','fr_CA'=>'mq','ca_ES'=>'catalonia','ar_AR'=>'');
-    		$tmpcode='';
-    		if (isset($langtocountryflag[$codelang])) $tmpcode=$langtocountryflag[$codelang];
-    		else
-    		{
-    			$tmparray=explode('_',$codelang);
-    			$tmpcode=$tmparray[1];
-    		}
-    		if ($tmpcode) $ret.=img_picto($codelang,DOL_URL_ROOT.'/theme/common/flags/'.strtolower($tmpcode).'.png','',1);
-    	}
-    }
-    return $ret;
-}
-
-
-/**
  * 	\brief		Return list of activated modules usable for document generation.
  * 	\param		$db				Database handler
  * 	\param		$type			Type of models (company, invoice, ...)
