@@ -875,7 +875,7 @@ padding-right: 2px;
 }
 
 tr.liste_titre {
-height: 28px;
+height: 27px;
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/menus/trtitle.png' ?>);
 background-repeat: repeat-x;
