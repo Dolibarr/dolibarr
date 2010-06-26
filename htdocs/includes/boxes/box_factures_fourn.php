@@ -133,7 +133,7 @@ class box_factures_fourn extends ModeleBoxes {
 					$i++;
 				}
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
+				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoModifiedSupplierBills"));
 			}
 			else {
 				dol_print_error($db);
