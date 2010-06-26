@@ -984,7 +984,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	$htmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dol_print_date($user->datepreviouslogin,"dayhour");
 	$htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
 	$htmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
-	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.$langs->getDefaultLang();
+	$s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
+	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.($s?$s.' ':'').$langs->getDefaultLang();
 	$htmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.' ('.$_SERVER['HTTP_USER_AGENT'].')';
 	if (! empty($conf->browser->phone)) $htmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
 
