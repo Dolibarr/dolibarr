@@ -907,8 +907,7 @@ font-weight: normal;
 white-space: nowrap;
 }
 input.liste_titre {
-background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/menus/trtitle.png' ?>);
+background: transparent;
 background-repeat: repeat-x;
 border: 0px;
 }
