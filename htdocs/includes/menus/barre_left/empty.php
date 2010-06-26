@@ -79,7 +79,8 @@ class MenuLeft {
         for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++)
         {
             $alt++;
-            if ($this->menu_array[$i]['level']==0) {
+            if (empty($menu_array[$i]['level']))
+            {
                 if (($alt%2==0))
                 {
                     print '<div class="blockvmenuimpair">'."\n";
@@ -115,11 +116,13 @@ class MenuLeft {
                     print '&nbsp; &nbsp; &nbsp; &nbsp; <font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
             }
 
-            if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)  {
-                print "</div>\n";
-            }
-        }
-
+			// If next is a new block or end
+			if (empty($menu_array[$i+1]['level']))
+			{
+				print '<div class="menu_fin"></div>'."\n";
+				print "</div>\n";
+			}
+		}
     }
 
 }

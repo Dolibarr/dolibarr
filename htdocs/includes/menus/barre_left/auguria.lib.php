@@ -119,7 +119,7 @@ function print_left_auguria_menu($db,$menu_array)
 		for ($i = 0 ; $i < sizeof($menu_array) ; $i++)
 		{
 			$alt++;
-			if ($menu_array[$i]['level']==0)
+			if (empty($menu_array[$i]['level']))
 			{
 				if (($alt%2==0))
 				{
@@ -181,12 +181,13 @@ function print_left_auguria_menu($db,$menu_array)
 				}
 			}
 
-			if ($i == (sizeof($menu_array)-1) || $menu_array[$i+1]['level']==0)  {
+			// If next is a new block or end
+			if (empty($menu_array[$i+1]['level']))
+			{
+				print '<div class="menu_fin"></div>'."\n";
 				print "</div>\n";
 			}
-
 		}
-		if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
 	}
 
 	return sizeof($menu_array);

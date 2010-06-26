@@ -876,7 +876,7 @@ function print_left_eldy_menu($db,$menu_array)
 		for ($i = 0 ; $i < sizeof($menu_array) ; $i++)
 		{
 			$alt++;
-			if ($menu_array[$i]['level']==0)
+			if (empty($menu_array[$i]['level']))
 			{
 				if (($alt%2==0))
 				{
@@ -902,7 +902,6 @@ function print_left_eldy_menu($db,$menu_array)
 			// Menu niveau 0
 			if ($menu_array[$i]['level'] == 0)
 			{
-				if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
 				if ($menu_array[$i]['enabled'])
 				{
 					print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$menu_array[$i]['url'].'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>'."\n";
@@ -915,7 +914,6 @@ function print_left_eldy_menu($db,$menu_array)
 			// Menu niveau > 0
 			if ($menu_array[$i]['level'] > 0)
 			{
-				if ($menu_array[$i]['level']==1) $contenu = 1;
 				if ($menu_array[$i]['enabled'])
 				{
 					print '<div class="menu_contenu">';
@@ -935,13 +933,13 @@ function print_left_eldy_menu($db,$menu_array)
 				}
 			}
 
-
-			if ($i == (sizeof($menu_array)-1) || $menu_array[$i+1]['level']==0)
+			// If next is a new block or end
+			if (empty($menu_array[$i+1]['level']))
 			{
+				print '<div class="menu_fin"></div>'."\n";
 				print "</div>\n";
 			}
 		}
-		if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
 	}
 
 	return sizeof($menu_array);
