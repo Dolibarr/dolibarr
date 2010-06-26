@@ -18,7 +18,7 @@
 
 /**
  *       \file       htdocs/bookmarks/liste.php
- *       \brief      Page display bookmarks
+ *       \brief      Page to display list of bookmarks
  *       \ingroup    bookmark
  *       \version    $Id$
  */
@@ -30,8 +30,8 @@ require_once(DOL_DOCUMENT_ROOT."/bookmarks/class/bookmark.class.php");
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="bid";
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="position";
 
 if ($page == -1) { $page = 0 ; }
 $limit = 26;
@@ -72,7 +72,7 @@ print_fiche_titre($langs->trans("Bookmarks"));
 
 if ($mesg) print $mesg;
 
-$sql = "SELECT b.fk_soc as rowid, b.dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon,";
+$sql = "SELECT b.fk_soc as rowid, b.dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql.= " u.login, u.name, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql.= " WHERE 1=1";
@@ -96,6 +96,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Target"),'','','','','align="center"')."</td>";
     print_liste_field_titre($langs->trans("Owner"),$_SERVER["PHP_SELF"],"u.name","","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","","",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Position"),$_SERVER["PHP_SELF"],"b.position","","",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('','','');
     print "</tr>\n";
 
@@ -166,10 +167,13 @@ if ($resql)
         print "</td>\n";
 
         // Date creation
-        print '<td align="center">'.dol_print_date($db->jdate($obj->dateb),'day') ."</td>";
+        print '<td align="center">'.dol_print_date($db->jdate($obj->dateb),'day')."</td>";
+
+        // Position
+        print '<td align="right">'.$obj->position."</td>";
 
         // Actions
-        print "<td>";
+        print '<td align="right">';
         if ($user->rights->bookmark->supprimer)
         {
             print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&bid=$obj->bid\">".img_delete()."</a>";

@@ -41,6 +41,7 @@ For users:
 - New: Add option to choose firstname-name or name-firstname.
 - New: Add company in fields exported by export of members tool.
 - New: Reorganise bank menu.
+- New: Bookmarks can be sorted on a particular order.
 - Fix: Debug experimental module widthrawal.
 - Fix: Format number was wrong for ar_AR language.
 - Fix: Can change password if has only permission change password.

@@ -39,6 +39,7 @@ class Bookmark
     var $url;
     var $target;	// 0=replace, 1=new window
     var $title;
+    var $position;
     var $favicon;
 
 
@@ -60,7 +61,7 @@ class Bookmark
     function fetch($id)
     {
         $sql = "SELECT rowid, fk_user, dateb as datec, url, target,";
-        $sql.= " title, favicon";
+        $sql.= " title, position, favicon";
         $sql.= " FROM ".MAIN_DB_PREFIX."bookmark";
         $sql.= " WHERE rowid = ".$id;
 
@@ -78,6 +79,7 @@ class Bookmark
             $this->url     = $obj->url;
             $this->target  = $obj->target;
             $this->title   = $obj->title;
+            $this->position= $obj->position;
             $this->favicon = $obj->favicon;
 
             $this->db->free($resql);
@@ -92,24 +94,25 @@ class Bookmark
 
     /**
      *      \brief      Insere bookmark en base
-     *      \return     int     <0 si ko, rowid du bookmark cr�� si ok
+     *      \return     int     <0 si ko, rowid du bookmark cree si ok
      */
     function create()
     {
     	// Clean parameters
     	$this->url=trim($this->url);
     	$this->title=trim($this->title);
+		if (empty($this->position)) $this->position=0;
 
     	$this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_user,dateb,url,target";
-        $sql.= " ,title,favicon";
+        $sql.= " ,title,favicon,position";
         if ($this->fk_soc) $sql.=",fk_soc";
         $sql.= ") VALUES (";
         $sql.= ($this->fk_user > 0?"'".$this->fk_user."'":"0").",";
         $sql.= " ".$this->db->idate(gmmktime()).",";
         $sql.= " '".$this->url."', '".$this->target."',";
-        $sql.= " '".addslashes($this->title)."', '".$this->favicon."'";
+        $sql.= " '".addslashes($this->title)."', '".$this->favicon."', '".$this->position."'";
         if ($this->fk_soc) $sql.=",".$this->fk_soc;
         $sql.= ")";
 
@@ -142,7 +145,7 @@ class Bookmark
     }
 
     /**
-     *      \brief      Mise � jour du bookmark
+     *      \brief      Update bookmark record
      *      \return     int         <0 si ko, >0 si ok
      */
     function update()
@@ -150,6 +153,7 @@ class Bookmark
     	// Clean parameters
     	$this->url=trim($this->url);
     	$this->title=trim($this->title);
+		if (empty($this->position)) $this->position=0;
 
     	$sql = "UPDATE ".MAIN_DB_PREFIX."bookmark";
         $sql.= " SET fk_user = ".($this->fk_user > 0?"'".$this->fk_user."'":"0");
@@ -158,6 +162,7 @@ class Bookmark
         $sql.= " ,target = '".$this->target."'";
         $sql.= " ,title = '".addslashes($this->title)."'";
         $sql.= " ,favicon = '".$this->favicon."'";
+        $sql.= " ,position = '".$this->position."'";
         $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog("Bookmark::update sql=".$sql, LOG_DEBUG);

@@ -35,6 +35,7 @@ $title=isset($_GET["title"])?$_GET["title"]:$_POST["title"];
 $url=isset($_GET["url"])?$_GET["url"]:$_POST["url"];
 $target=isset($_GET["target"])?$_GET["target"]:$_POST["target"];
 $userid=isset($_GET["userid"])?$_GET["userid"]:$_POST["userid"];
+$position=isset($_GET["position"])?$_GET["position"]:$_POST["position"];
 
 
 /*
@@ -58,6 +59,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
     $bookmark->title=$title;
     $bookmark->url=$url;
     $bookmark->target=$target;
+    $bookmark->position=$position;
 
     if (! $title) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("BookmarkTitle"));
     if (! $url)   $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink"));
@@ -156,6 +158,11 @@ if ($action == 'create')
     $html->select_users(isset($_POST['userid'])?$_POST['userid']:$user->id,'userid',1);
     print '</td><td>&nbsp;</td></tr>';
 
+    // Position
+    print '<tr><td>'.$langs->trans("Position").'</td><td>';
+    print '<input class="flat" name="position" size="5" value="'.(isset($_POST["position"])?$_POST["position"]:$bookmark->position).'">';
+    print '</td></tr>';
+
     print '<tr><td colspan="3" align="center">';
     print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
     print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';
@@ -176,7 +183,7 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
     $bookmark->fetch($_GET["id"]);
 
 
-    dol_fiche_head($head, $hselected, $langs->trans("Bookmark"));
+    dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
 
     if ($_GET["action"] == 'edit')
     {
@@ -235,6 +242,13 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
     }
     print '</td></tr>';
 
+    // Position
+    print '<tr><td>'.$langs->trans("Position").'</td><td>';
+    if ($_GET["action"] == 'edit') print '<input class="flat" name="position" size="5" value="'.(isset($_POST["position"])?$_POST["position"]:$bookmark->position).'">';
+    else print $bookmark->position;
+    print '</td></tr>';
+
+    // Date creation
     print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.dol_print_date($bookmark->datec,'dayhour').'</td></tr>';
 
     if ($_GET["action"] == 'edit') print '<tr><td colspan="2" align="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
@@ -243,6 +257,8 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
     print '</table>';
 
     if ($_GET["action"] == 'edit') print '</form>';
+
+
 
     print "</div>\n";
 
