@@ -187,20 +187,20 @@ if (sizeof($tasksarray)>0)
 	$tasks=array();
 	$project_dependencies=array();
 	$project_id=$project->id;
-	$i=0;
+	$taskcursor=0;
 	foreach($tasksarray as $key => $val)
 	{
 		$task->fetch($val->id);
-		$tasks[$i]['task_id']=$val->id;
-		$tasks[$i]['task_parent']=$val->fk_parent;
-		$tasks[$i]['task_is_group']=0;
-		$tasks[$i]['task_milestone']=0;
-		$tasks[$i]['task_percent_complete']=$val->progress;
-		//$tasks[$i]['task_name']=$task->getNomUrl(1);
-		$tasks[$i]['task_name']=$val->label;
-		$tasks[$i]['task_start_date']=$val->date_start;
-		$tasks[$i]['task_end_date']=$val->date_end;
-		$tasks[$i]['task_color']='b4d1ea';
+		$tasks[$taskcursor]['task_id']=$val->id;
+		$tasks[$taskcursor]['task_parent']=$val->fk_parent;
+		$tasks[$taskcursor]['task_is_group']=0;
+		$tasks[$taskcursor]['task_milestone']=0;
+		$tasks[$taskcursor]['task_percent_complete']=$val->progress;
+		//$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
+		$tasks[$taskcursor]['task_name']=$val->label;
+		$tasks[$taskcursor]['task_start_date']=$val->date_start;
+		$tasks[$taskcursor]['task_end_date']=$val->date_end;
+		$tasks[$taskcursor]['task_color']='b4d1ea';
 		$idofusers=$task->getListContactId('internal');
 		$idofthirdparty=$task->getListContactId('external');
 		$s='';
@@ -229,9 +229,9 @@ if (sizeof($tasksarray)>0)
 				$i++;
 			}
 		}
-		if ($s) $tasks[$i]['task_resources']='<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
-		//print "xxx".$val->id.$tasks[$i]['task_resources'];
-		$i++;
+		if ($s) $tasks[$taskcursor]['task_resources']='<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
+		//print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
+		$taskcursor++;
 	}
 	//var_dump($tasks);
 
