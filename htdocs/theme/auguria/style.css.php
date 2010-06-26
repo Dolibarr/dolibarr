@@ -610,7 +610,7 @@ div.tabsAction {
 
 
 a.tabTitle {
-    background: #436976;
+    background: #5088A9;
     color: white;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;

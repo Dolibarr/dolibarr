@@ -1267,17 +1267,17 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 
 		$langs->load("propal");
 
-		print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
+		print '<tr class="liste_titre"><td width="50%" class="liste_titre">';
 		print $langs->trans("AddToMyProposals") . '</td>';
 
 		if ($user->rights->societe->client->voir)
 		{
-			print '<td width="50%" valign="top" class="liste_titre">';
+			print '<td width="50%" class="liste_titre">';
 			print $langs->trans("AddToOtherProposals").'</td>';
 		}
 		else
 		{
-			print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
+			print '<td width="50%" class="liste_titre">&nbsp;</td>';
 		}
 
 		print '</tr>';
@@ -1384,17 +1384,17 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 
 		$langs->load("orders");
 
-		print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
+		print '<tr class="liste_titre"><td width="50%" class="liste_titre">';
 		print $langs->trans("AddToMyOrders").'</td>';
 
 		if ($user->rights->societe->client->voir)
 		{
-			print '<td width="50%" valign="top" class="liste_titre">';
+			print '<td width="50%" class="liste_titre">';
 			print $langs->trans("AddToOtherOrders").'</td>';
 		}
 		else
 		{
-			print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
+			print '<td width="50%" class="liste_titre">&nbsp;</td>';
 		}
 
 		print '</tr>';
@@ -1497,17 +1497,17 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 	// Factures
 	if($conf->facture->enabled && $user->rights->facture->creer)
 	{
-		print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
+		print '<tr class="liste_titre"><td width="50%" class="liste_titre">';
 		print $langs->trans("AddToMyBills").'</td>';
 
 		if ($user->rights->societe->client->voir)
 		{
-			print '<td width="50%" valign="top" class="liste_titre">';
+			print '<td width="50%" class="liste_titre">';
 			print $langs->trans("AddToOtherBills").'</td>';
 		}
 		else
 		{
-			print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
+			print '<td width="50%" class="liste_titre">&nbsp;</td>';
 		}
 
 		print '</tr>';
