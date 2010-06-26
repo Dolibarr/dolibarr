@@ -15,13 +15,13 @@ PHPSupportPOSTGETKo=Es posible que este PHP no soporte las variables POST y/o GE
 PHPSupportGD=Este PHP soporta las funciones gráficas GD.
 PHPSupportUTF8=Este PHP soporta las funciones UTFB.
 PHPMemoryOK=Su memoria máxima de sesión PHP esta definida a <b>%s</b>.  Esto debería ser suficiente.
-PHPMemoryTooLow=Su memoria máxima de sesión PHP está definida en <b>%s</b> octetos. Esto es muy poco. Se recomienda modificar el parámetro <b>memory_limit</b> de su archivo <b>php.ini</b> a al menos <b>%s</b> octetos.
+PHPMemoryTooLow=Su memoria máxima de sesión PHP está definida en <b>%s</b> bytes. Esto es muy poco. Se recomienda modificar el parámetro <b>memory_limit</b> de su archivo <b>php.ini</b> a al menos <b>%s</b> octetos.
 Recheck=Haga click aquí para realizar un test más exaustivo
 ErrorPHPDoesNotSupportSessions=Su instalación PHP no soporta las sesiones. Esta funcionalidad es necesaria para hacer funcionar a Dolibarr. Compruebe su configuración de PHP.
 ErrorPHPDoesNotSupportGD=Este PHP no soporta las funciones gráficas GD. Ningún gráficoc estará disponible.
 ErrorPHPDoesNotSupportUTF8=Este PHP no soporta las funciones UTF8. Resuelva el problema antes de instalar Dolibarr ya que no podrá funcionar correctamete.
 ErrorDirDoesNotExists=El directorio <b>%s</b> no existe o no es accesible.
-ErrorGoBackAndCorrectParameters=Vuelva atrás y corriga los parámetros inválidos..
+ErrorGoBackAndCorrectParameters=Vuelva atrás y corriga los parámetros inválidos...
 ErrorWrongValueForParameter=Indicó quizá un valor incorrecto para el parámetro '%s'.
 ErrorFailedToCreateDatabase=Error al crear la base de datos '%s'.
 ErrorFailedToConnectToDatabase=Error de conexión a la base de datos '%s'.
@@ -146,8 +146,8 @@ NextStepMightLastALongTime=El siguiente paso puede tardar varios minutos. Despu�
 MigrationCustomerOrderShipping=Actualización de los datos de expediciones de pedidos de clientes
 MigrationShippingDelivery=Actualización de los datos de expediciones
 MigrationShippingDelivery2=Actualización de los datos de expediciones 2
-#########=undefined
-# upgrade=undefined
+#########
+# upgrade
 MigrationFixData=Corrección de datos desnormalizados
 MigrationOrder=Migración de datos de los pedidos clientes
 MigrationSupplierOrder=Migración de datos de los pedidos a proveedores

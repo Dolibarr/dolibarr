@@ -562,6 +562,8 @@ Visibility=Visibilité
 Private=Privé
 Hidden=Caché
 Resources=Ressources
+Source=Origine
+Prefix=Préfixe
 # Week day
 Day1=Lundi
 Day2=Mardi

@@ -563,6 +563,8 @@ Visibility=Visibility
 Private=Private
 Hidden=Hidden
 Resources=Resources
+Source=Source
+Prefix=Prefix
 # Week day
 Day1=Monday
 Day2=Tuesday

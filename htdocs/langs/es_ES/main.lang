@@ -237,7 +237,7 @@ Quadri=Trimistre
 MonthOfDay=Mes del día
 HourShort=H
 Rate=Tipo
-Bytes=Octetos
+Bytes=Bytes
 KiloBytes=Kilobytes
 MegaBytes=Megabytes
 GigaBytes=Gigabytes
@@ -562,6 +562,8 @@ Visibility=Visibilidad
 Private=Privado
 Hidden=Caché
 Resources=Recursos
+Source=Origen
+Prefix=Prefijo
 # Week day
 Day1=Lunes
 Day2=Martes
