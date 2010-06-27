@@ -103,7 +103,7 @@ print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libell
 
 // Barcode image
 $url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($product->barcode_type_coder).'&code='.urlencode($product->barcode).'&encoding='.urlencode($product->barcode_type_code);
-print '<td width="300" align="center" rowspan="5">';
+print '<td width="300" align="center" rowspan="4">';
 print '<!-- url barcode = '.$url.' -->';
 print '<img src="'.$url.'">';
 print '</td>';
