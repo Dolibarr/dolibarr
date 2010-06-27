@@ -872,7 +872,6 @@ function print_left_eldy_menu($db,$menu_array)
 	$alt=0;
 	if (is_array($menu_array))
 	{
-		$contenu = 0;
 		for ($i = 0 ; $i < sizeof($menu_array) ; $i++)
 		{
 			$alt++;
@@ -910,27 +909,26 @@ function print_left_eldy_menu($db,$menu_array)
 				{
 					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
 				}
+				print '<div class="menu_top"></div>'."\n";
 			}
 			// Menu niveau > 0
 			if ($menu_array[$i]['level'] > 0)
 			{
+				print '<div class="menu_contenu">';
 				if ($menu_array[$i]['enabled'])
 				{
-					print '<div class="menu_contenu">';
 					print $tabstring;
 					if ($menu_array[$i]['url']) print '<a class="vsmenu" href="'.$menu_array[$i]['url'].'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
 					print $menu_array[$i]['titre'];
 					if ($menu_array[$i]['url']) print '</a>';
 					// If title is not pure text and contains a table, no carriage return added
 					if (! strstr($menu_array[$i]['titre'],'<table')) print '<br>';
-					print '</div>'."\n";
 				}
 				else
 				{
-					print '<div class="menu_contenu">';
 					print $tabstring.'<font class="vsmenudisabled">'.$menu_array[$i]['titre'].'</font><br>';
-					print '</div>'."\n";
 				}
+				print '</div>'."\n";
 			}
 
 			// If next is a new block or end

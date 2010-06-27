@@ -51,69 +51,60 @@ class MenuTop {
     {
         global $user,$conf,$langs,$dolibarr_main_db_name;;
 
-        print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
+        print_start_menu_array();
 
-		// Menu Home
-	    print '<td class="tmenu">';
-	    print '<a href="'.DOL_URL_ROOT.'/index.php?mainmenu=home"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a>';
-	    print '</td>';
+		$idsel='none';
+        $classname='class="tmenu"';
 
-	    // Put here top menu entries
-	    // ***** START *****
+		print_start_menu_entry($idsel);
+		print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
+		print_text_menu_entry($langs->trans("Home"));
+		print '</a>';
+		print_end_menu_entry();
 
-		// print '<td class="tmenu">';
-		// print '<a '.$classname.' href="'.DOL_URL_ROOT.'/thepage1.php>My menu entry 1</a>';
-		// print '</td>';
-		// print '<td class="tmenu">';
-		// print '<a '.$classname.' href="'.DOL_URL_ROOT.'/thepage2.php>My menu entry 2</a>';
-		// print '</td>';
-	    // ...
-
-	    // ***** END *****
-
-	    /*
-		// Code to show personalized menus
-       	require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
-
-        $menuArbo = new Menubase($this->db,'empty','top');
- 		$tabMenu = $menuArbo->menuTopCharger(2,$_SESSION['mainmenu'],'empty');
-
-        for($i=0; $i<count($tabMenu); $i++)
-        {
-        	if ($tabMenu[$i]['enabled'] == true)
-        	{
-        		$idsel=(empty($tabMenu[$i]['mainmenu'])?'id="none" ':'id="'.$tabMenu[$i]['mainmenu'].'" ');
-	        	if ($tabMenu[$i]['right'] == true)
-	        	{
-					$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-					if (! preg_match('/\?/',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
-					else $url.='&';
-					$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
-					$url.="&idmenu=".$tabMenu[$i]['rowid'];
-					if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
-					else $classname='class="tmenu"';
-					print '<td class="tmenu">';
-					print '<a '.$classname.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":($this->atarget?" target=$this->atarget":"")).'>';
-					print $tabMenu[$i]['titre'];
-					print '</a>';
-					print '</td>';
-	        	}
-	        	else
-	        	{
-	        		if (! $this->hideifnotallowed)
-					{
-						print '<td class="tmenu">';
-						print '<a class="tmenudisabled" '.$idsel.'href="#">'.$tabMenu[$i]['titre'].'</a>';
-						print '</td>';
-					}
-	        	}
-			}
-        }
-        */
-
-        print '</tr></table>';
+		print_end_menu_array();
     }
 
+}
+
+
+function print_start_menu_array()
+{
+	global $conf;
+	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
+	else print '<ul class="tmenu">';
+}
+
+function print_start_menu_entry($idsel)
+{
+	global $conf;
+	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
+	else print '<li class="tmenu" id="mainmenutd_'.$idsel.'">';
+}
+
+function print_text_menu_entry($text)
+{
+	global $conf;
+	print '<span class="mainmenuaspan">';
+	print $text;
+	print '</span>';
+}
+
+function print_end_menu_entry()
+{
+	global $conf;
+	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</td>';
+	else print '</li>';
+	print "\n";
+}
+
+function print_end_menu_array()
+{
+	global $conf;
+	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</tr></table>';
+	else print '</ul>';
+	print "\n";
 }
 
 ?>

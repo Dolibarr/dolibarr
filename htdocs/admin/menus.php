@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 $langs->load("companies");
 $langs->load("products");
 $langs->load("admin");
+$langs->load("users");
 
 // Security check
 if (!$user->admin) accessforbidden();

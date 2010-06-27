@@ -61,6 +61,9 @@ function printBookmarksList ($aDb, $aLangs)
 	}
 	$ret.= '</td></tr></table>';
 	$ret.= '</div>';
+
+	$ret.= '<div class="menu_top"></div>'."\n";
+
 	// Menu with all bookmarks
 	if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
 	{

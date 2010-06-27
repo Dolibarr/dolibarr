@@ -115,7 +115,6 @@ function print_left_auguria_menu($db,$menu_array)
 	$alt=0;
 	if (is_array($menu_array))
 	{
-		$contenu = 0;
 		for ($i = 0 ; $i < sizeof($menu_array) ; $i++)
 		{
 			$alt++;
@@ -152,9 +151,8 @@ function print_left_auguria_menu($db,$menu_array)
 			}
 
 			// Menu niveau 0
-			if ($menu_array[$i]['level']==0)
+			if ($menu_array[$i]['level'] == 0)
 			{
-				if ($contenu == 1) print '<div class="menu_end"></div>'."\n";
 				if ($menu_array[$i]['enabled'])
 				{
 
@@ -164,13 +162,11 @@ function print_left_auguria_menu($db,$menu_array)
 				{
 					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>';
 				}
-				$contenu = 0;
+				print '<div class="menu_top"></div>'."\n";
 			}
 			// Menu niveau > 0
 			if ($menu_array[$i]['level'] > 0)
 			{
-				if ($menu_array[$i]['level']==1) $contenu = 1;
-
 				if ($menu_array[$i]['enabled'])
 				{
 					print '<div class="menu_contenu">'.$tabstring.'<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
