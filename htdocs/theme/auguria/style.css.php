@@ -479,8 +479,33 @@ div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
 	margin-bottom: -12px;
 }
 
+div.menu_titre {
+	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/bg-titre-rubrique.png' ?>);
+	padding: 0px;
+	padding-top:7px;
+	padding-left:0px;
+	margin-top: 8px;
+	margin: 0px;
+	height: 21px;
+    text-align: left;
+    font-size : 12px;
+    color : #FFFFFF;
+    font-weight: bold;
+}
+
 div.blockvmenusearch {
-	padding: 3px 0px 3px 0px;
+	margin: 3px 0px 2px 0px;
+	padding: 0px 0px 2px 2px;
+	border: 1px solid #c0c0d0;
+	width: 161px;
+	background: #DDDDDD !important;
+}
+
+#blockvmenusearch div.menu_titre, #blockvmenusearch form {
+	padding-top: 1px;
+	padding-bottom: 1px;
+	height: 16px;
+	background: #DDDDDD !important;
 }
 
 div.blockvmenubookmarks
@@ -505,28 +530,6 @@ div.blockvmenuhelp {
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
-}
-
-div.menu_titre {
-	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/bg-titre-rubrique.png' ?>);
-	padding: 0px;
-	padding-top:7px;
-	padding-left:0px;
-	margin-top: 8px;
-	margin: 0px;
-	height: 21px;
-    text-align: left;
-    font-size : 12px;
-    color : #FFFFFF;
-    font-weight: bold;
-}
-
-#blockvmenusearch div.menu_titre, #blockvmenusearch form {
-	width:166px;
-	padding-top: 1px;
-	padding-bottom: 1px;
-	height: 16px;
-	background: #DDDDDD !important;
 }
 
 div.menu_contenu {
@@ -1008,6 +1011,7 @@ font-family: <?php print $fontlist ?>;
 /*
  *   Ok, Warning, Error
  */
+
 .ok      { color: #114466; }
 .warning { color: #887711; }
 .error   { color: #550000; font-weight: bold; }
@@ -1024,7 +1028,7 @@ div.warning {
   color: #997711;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #e0e0d0;
+  border: 1px solid #c0c0d0;
   -moz-border-radius:6px;
   background: #efefd4;
 }
@@ -1042,7 +1046,7 @@ div.info {
   color: #707070;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #e0e0d0;
+  border: 1px solid #c0c0d0;
   -moz-border-radius:6px;
   background: #efefd4;
 }
