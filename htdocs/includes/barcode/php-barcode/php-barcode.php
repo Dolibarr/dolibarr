@@ -444,7 +444,13 @@ function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png" ){
 	dol_syslog("php-barcode.php:barcode_print $code $encoding $scale $mode");
 
 	$bars=barcode_encode($code,$encoding);
-    if (!$bars) return;
+	if (!$bars)
+	{
+		// DOLCHANGE LDR Return error message instead of array
+		$error='Bad Value '.$code.' for encoding '.$encoding;
+		dol_syslog('php-barcode.php:barcode_print '.$error, LOG_ERR);
+		return $error;
+	}
     if (!$mode) $mode="png";
     if (preg_match("/^(text|txt|plain)$/i",$mode)) print barcode_outtext($bars['text'],$bars['bars']);
     elseif (preg_match("/^(html|htm)$/i",$mode)) print barcode_outhtml($bars['text'],$bars['bars'], $scale,0, 0);

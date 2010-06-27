@@ -45,7 +45,7 @@ class modPhpbarcode extends ModeleBarCode
 	}
 
 
-	/**     \brief      Renvoi la description du modele de num�rotation
+	/**     \brief      Return description
 	 *      \return     string      Texte descripif
 	 */
 	function info()
@@ -111,7 +111,14 @@ class modPhpbarcode extends ModeleBarCode
 
 		require_once(DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/php-barcode.php');
 		dol_syslog("modPhpbarcode::buildBarCode $code,$encoding,$scale,$mode");
-		if ($code) barcode_print($code,$encoding,$scale,$mode);
+		if ($code) $result=barcode_print($code,$encoding,$scale,$mode);
+
+		if (! is_array($result))
+		{
+			$this->error=$result;
+			print $this->error;exit;
+			return -1;
+		}
 
 		return 1;
 	}
