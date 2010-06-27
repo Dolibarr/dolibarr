@@ -146,8 +146,8 @@ if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted
 /*
  REM: Regle sur droits "Voir tous les clients"
  REM: Exemple, voir la page societe.php dans le mode liste.
- Utilisateur interne socid=0 + Droits voir tous clients        => Voit toute soci�t�
- Utilisateur interne socid=0 + Pas de droits voir tous clients => Ne voit que les soci�t�s li�es comme commercial
+ Utilisateur interne socid=0 + Droits voir tous clients        => Voit toute societe
+ Utilisateur interne socid=0 + Pas de droits voir tous clients => Ne voit que les societes liees comme commercial
  Utilisateur externe socid=x + Droits voir tous clients        => Ne voit que lui meme
  Utilisateur externe socid=x + Pas de droits voir tous clients => Ne voit que lui meme
  */
@@ -225,7 +225,7 @@ if ($resql)
 	$params.= '&amp;search_idprof3='.$search_idprof3;
 	$params.= '&amp;search_idprof4='.$search_idprof4;
 
-	print_barre_liste($title, $page, "societe.php",$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	$langs->load("other");
 	$textprofid=array();
@@ -240,18 +240,18 @@ if ($resql)
 		}
 	}
 
-	print '<form method="post" action="societe.php" name="formfilter">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	// Lignes des titres
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom","",$params,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville","",$params,'',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"),$textprofid[1],1,0),"societe.php","s.siren","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"),$textprofid[2],1,0),"societe.php","s.siret","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"),$textprofid[3],1,0),"societe.php","s.ape","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"),$textprofid[4],1,0),"societe.php","s.idprof4","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$params,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$params,'',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"),$textprofid[1],1,0),$_SERVER["PHP_SELF"],"s.siren","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"),$textprofid[2],1,0),$_SERVER["PHP_SELF"],"s.siret","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"),$textprofid[3],1,0),$_SERVER["PHP_SELF"],"s.ape","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof4","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
 	print '<td class="liste_titre" colspan="2" align="center">&nbsp;</td>';
 	print "</tr>\n";
 

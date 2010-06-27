@@ -1,6 +1,6 @@
-// Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 //
-// Script javascript mis en bas de page (avant fin de body)
+// Javascript code to put at bottom of pages (avant fin de body)
 //
 // \file       htdocs/lib/lib_foot.js
 // \brief      File that include javascript functions (included if option use_javascript activated)
@@ -8,13 +8,13 @@
 
 
 /***********************************************
-* Cool DHTML tooltip script- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
+* Cool DHTML tooltip script- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
 * This notice MUST stay intact for legal use
 * Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
 ***********************************************/
 
-var offsetxpoint=-60 //Customize x offset of tooltip
-var offsetypoint=18 //Customize y offset of tooltip
+var offsetxpoint=-40 //Customize x offset of tooltip
+var offsetypoint=12 //Customize y offset of tooltip
 var ie=document.all
 var ns6=document.getElementById && !document.all
 var enabletip=false

@@ -909,6 +909,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 {
 	global $user, $conf, $langs, $db, $dolibarr_main_authentication;
 
+	$html=new Form($db);
+
 	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
 
@@ -939,36 +941,14 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	$menutop->showmenu();
 
 	// Link to login card
-	print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
-	print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-	print '>'.$user->login.'</a>';
-
-	// Link info
-	$htmltext=''; $text='';
-	if ($_SESSION["dol_authmode"] != 'forceuser'
-	&& $_SESSION["dol_authmode"] != 'http')
-	{
-		$htmltext=$langs->trans("Logout").'<br>';
-		$htmltext.="<br>";
-
-		$text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-		$text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-		$text.='>';
-		$text.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-		$text.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
-		$text.='>';
-		$text.='</a>';
-	}
-	else
-	{
-		$text.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-		$text.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
-		$text.='>';
-	}
-	$htmltext.='<u>'.$langs->trans("User").'</u>';
-	$htmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->fullname;
-	$htmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
-	$htmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
+	$loginhtmltext=''; $logintext='';
+	$logintext='<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
+	$logintext.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+	$logintext.='>'.$user->login.'</a>';
+	$loginhtmltext.='<u>'.$langs->trans("User").'</u>';
+	$loginhtmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->fullname;
+	$loginhtmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
+	$loginhtmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
 	$type=($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
 	if ($user->societe_id)
 	{
@@ -976,35 +956,54 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$thirdpartystatic->fetch($user->societe_id);
 		$type.=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 	}
-	$htmltext.='<br><b>'.$langs->trans("Type").'</b>: '.$type;
-	$htmltext.='<br>';
-	$htmltext.='<br><u>'.$langs->trans("Connection").'</u>';
-	if ($conf->global->MAIN_MODULE_MULTICOMPANY) $htmltext.='<br><b>'.$langs->trans("ConnectedOnMultiCompany").'</b>: '.$conf->entity.' (user entity '.$user->entity.')';
-	$htmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dol_print_date($user->datelastlogin,"dayhour");
-	$htmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dol_print_date($user->datepreviouslogin,"dayhour");
-	$htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
-	$htmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
-	$s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
-	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.($s?$s.' ':'').$langs->getDefaultLang();
-	$htmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.' ('.$_SERVER['HTTP_USER_AGENT'].')';
-	if (! empty($conf->browser->phone)) $htmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
+	$loginhtmltext.='<br><b>'.$langs->trans("Type").'</b>: '.$type;
+	$loginhtmltext.='<br>';
+	$loginhtmltext.='<br><u>'.$langs->trans("Connection").'</u>';
+	if ($conf->global->MAIN_MODULE_MULTICOMPANY) $loginhtmltext.='<br><b>'.$langs->trans("ConnectedOnMultiCompany").'</b>: '.$conf->entity.' (user entity '.$user->entity.')';
+	$loginhtmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dol_print_date($user->datelastlogin,"dayhour");
+	$loginhtmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dol_print_date($user->datepreviouslogin,"dayhour");
+	$loginhtmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
+	$loginhtmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
+	$s=picto_from_langcode($langs->getDefaultLang());
+	$loginhtmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.($s?$s.' ':'').$langs->getDefaultLang();
+	$loginhtmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.' ('.$_SERVER['HTTP_USER_AGENT'].')';
+	if (! empty($conf->browser->phone)) $loginhtmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
+	if (! empty($_SESSION["disablemodules"])) $loginhtmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',explode(',',$_SESSION["disablemodules"]));
 
-	if (! empty($_SESSION["disablemodules"])) $htmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',explode(',',$_SESSION["disablemodules"]));
+	// Link info
+	$logouthtmltext=''; $logouttext='';
+	$logouthtmltext=$langs->trans("Logout").'<br>';
+	//$logouthtmltext.="<br>";
+	if ($_SESSION["dol_authmode"] != 'forceuser'
+	&& $_SESSION["dol_authmode"] != 'http')
+	{
+		$logouttext.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
+		$logouttext.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+		$logouttext.='>';
+		$logouttext.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+		$logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
+		$logouttext.='>';
+		$logouttext.='</a>';
+	}
+	else
+	{
+		$logouttext.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+		$logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
+		$logouttext.='>';
+	}
 
-	//        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-	//        print ' alt="'.$title.'" title="'.$title.'"';
-	//        print '>';
-	$html=new Form($db);
-	print $html->textwithtooltip('',$htmltext,2,1,$text);
+	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext);
+
+	print $html->textwithtooltip('',$logouthtmltext,2,1,$logouttext);
 
 	// Link to print main content area
 	if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
 	{
 		$text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'&optioncss=print" target="_blank">';
 		$text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
-		$text.=' title="'.dol_escape_htmltag($langs->trans("PrintContentArea")).'" alt="'.dol_escape_htmltag($langs->trans("PrintContentArea")).'">';
+		$text.=' title="" alt="">';
 		$text.='</a>';
-		print $text;
+		print $html->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text);
 	}
 
 	print "\n</div>\n<!-- End top horizontal menu -->\n";

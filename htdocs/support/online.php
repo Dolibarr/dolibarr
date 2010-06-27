@@ -65,6 +65,12 @@ array('name'=>'R&eacute;gis Houssin',
 		'sort'=>2,
 		'logo'=>'logoUrl='.urlencode('http://www.cap-networks.com/images/logo_small.jpg'),
 		'id'=>'5391',
+		'lang'=>'fr'),
+// Widget for Auguria
+array('name'=>'Auguria',
+		'sort'=>2,
+		//'logo'=>'logoUrl='.urlencode('http://www.cap-networks.com/images/logo_small.jpg'),
+		'id'=>'7196',
 		'lang'=>'fr')
 );
 $arrayofwidgets=dol_sort_array($arrayofwidgets,'sort','asc',0,0);
@@ -97,7 +103,7 @@ foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
 
 			// Only first language found is used for widget
 			$widgetid=$listofwidgets[$pos-1];
-			
+
 			// Widget V3
 			print '<iframe src="http://www.spark-angels.com/static/widget/template-pro3/widgetpro3-iframe.html?widgetId='.$widgetid.'&lgCode='.$langcode.'&'.$arraywidget['logo'].'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
 

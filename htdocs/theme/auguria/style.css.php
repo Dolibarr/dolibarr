@@ -1269,6 +1269,7 @@ table.valid {
 
 #dhtmltooltip
 {
+-moz-border-radius:4px;
 position: absolute;
 width: <?php print dol_size(450,'width'); ?>px;
 border-top: solid 1px #BBBBBB;
