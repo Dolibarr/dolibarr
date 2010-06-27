@@ -185,6 +185,8 @@ $dest_lang){
 		// sendRequest
 		// note how referer is set manually
 
+		//print "Url to translate: ".$url."\n";
+
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -196,6 +198,7 @@ $dest_lang){
 		$json = json_decode($body, true);
 
 		if ($json['responseStatus'] != 200){
+			print "Error: ".$json['responseStatus']."\n";
 			return false;
 		}
 
