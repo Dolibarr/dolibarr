@@ -936,7 +936,7 @@ function print_left_eldy_menu($db,$menu_array)
 			// If next is a new block or end
 			if (empty($menu_array[$i+1]['level']))
 			{
-				print '<div class="menu_fin"></div>'."\n";
+				print '<div class="menu_end"></div>'."\n";
 				print "</div>\n";
 			}
 		}

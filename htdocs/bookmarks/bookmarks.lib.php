@@ -84,7 +84,7 @@ function printBookmarksList ($aDb, $aLangs)
 		}
 	}
 
-	$ret .= '<div class="menu_fin"></div>';
+	$ret .= '<div class="menu_end"></div>';
 
 	return $ret;
 }

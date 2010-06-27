@@ -154,7 +154,7 @@ function print_left_auguria_menu($db,$menu_array)
 			// Menu niveau 0
 			if ($menu_array[$i]['level']==0)
 			{
-				if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
+				if ($contenu == 1) print '<div class="menu_end"></div>'."\n";
 				if ($menu_array[$i]['enabled'])
 				{
 
@@ -184,7 +184,7 @@ function print_left_auguria_menu($db,$menu_array)
 			// If next is a new block or end
 			if (empty($menu_array[$i+1]['level']))
 			{
-				print '<div class="menu_fin"></div>'."\n";
+				print '<div class="menu_end"></div>'."\n";
 				print "</div>\n";
 			}
 		}

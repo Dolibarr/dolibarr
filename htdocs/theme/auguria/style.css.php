@@ -544,12 +544,13 @@ div.menu_contenu {
     text-align: left;
 }
 
-div.menu_fin {
+div.menu_end {
 	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/bg-bas-rubrique.png' ?>);
+/*	border-top: 1px solid #436981; */
 	margin: 0px;
 	padding: 0px;
-	height:6px;
-    width:165px;
+	height: 6px;
+    width: 165px;
     background-repeat:no-repeat;
 }
 
