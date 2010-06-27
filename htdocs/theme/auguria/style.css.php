@@ -904,9 +904,10 @@ td.liste_titre_sel
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/menus/trtitle.png' ?>);
 background-repeat: repeat-x;
-color: #FFCCAA;
+color: #FFFFFF;
 font-family: <?php print $fontlist ?>;
 font-weight: normal;
+/* text-decoration: underline; */
 /* border-bottom: 1px solid #FDFFFF; */
 white-space: nowrap;
 }
