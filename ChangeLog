@@ -66,6 +66,7 @@ For developers:
 - Better isolation of modules files and dolibarr core files. 
 - task #8682 : Remove functions unix_timestamp
 - The makepack tool nos make pack with UID 500.
+- More css class and div to ouput menu to allow more skins.
 
 WARNING: 
 - A lot of class files (*.class.php) has moved into subdirectories. So If you use
