@@ -125,7 +125,7 @@ FILE_SKIP_EMPTY_LINES);
 			// If translated return
 			//print "destKey=".$destKey."\n";
 			if ( trim($destKey) == trim($key) )
-			{	// Found already existing translation
+			{	// Found already existing translation (key already exits in dest file)
 				 return 0;
 			}
 		}
@@ -135,6 +135,8 @@ FILE_SKIP_EMPTY_LINES);
 		else $val=utf8_decode($this->translateTexts(array($value),substr($this->refLang,0,2),substr($this->destLang,0,2)));
 
 		if ($key == 'CHARSET') $val=$this->outputpagecode;
+
+		if (empty(trim($val))) return 0;
 
 		$this->translatedFiles[$file][] = $key . '=' . $val ;
 		return 1;
