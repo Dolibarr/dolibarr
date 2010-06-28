@@ -395,7 +395,7 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 			$prod->fetch($_POST['idprod']);
 
 			$tva_tx = get_default_tva($mysoc,$commande->client,$prod->tva_tx);
-	
+
 			// multiprix
 			if ($conf->global->PRODUIT_MULTIPRICES && $commande->client->price_level)
 			{
@@ -437,11 +437,11 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 			$desc=$_POST['dp_desc'];
 			$type=$_POST["type"];
 		}
-		
+
 		// Local Taxes
 		$localtax1_tx= get_localtax($tva_tx, 1, $commande->client);
 	  	$localtax2_tx= get_localtax($tva_tx, 2, $commande->client);
-	  	    
+
 		$desc=dol_htmlcleanlastbr($desc);
 
 		$info_bits=0;
@@ -1038,7 +1038,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<table class="border" width="100%">';
 
 			// Reference
-			print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
 
 			// Reference client
 			print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
@@ -1046,7 +1046,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '</tr>';
 
 			// Client
-			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
 
 			/*
 			 * Contact de la commande
@@ -1601,6 +1601,7 @@ else
 				if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 				print '</tr></table>';
 				print '</td><td colspan="2">';
+				//print "$commande->id, $commande->socid, $commande->fk_project";
 				if ($_GET['action'] == 'classer')
 				{
 					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'projectid');

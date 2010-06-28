@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -118,7 +118,7 @@ print '</div>';
 
 
 /*
- * Factures
+ * Referers types
  */
 
 $listofreferent=array(
@@ -180,8 +180,9 @@ foreach ($listofreferent as $key => $value)
 		print '<table class="noborder" width="100%">';
 
 		print '<tr class="liste_titre">';
-		print '<td width="150">'.$langs->trans("Ref").'</td>';
-		print '<td>'.$langs->trans("Date").'</td>';
+		print '<td width="100">'.$langs->trans("Ref").'</td>';
+		print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
+		print '<td>'.$langs->trans("ThirdParty").'</td>';
 		if (empty($value['disableamount'])) print '<td align="right">'.$langs->trans("Amount").'</td>';
 		print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
@@ -194,12 +195,14 @@ foreach ($listofreferent as $key => $value)
 			{
 				$element = new $classname($db);
 				$element->fetch($elementarray[$i]);
+				$element->fetch_client();
+				//print $classname;
 
 				$var=!$var;
 				print "<tr $bc[$var]>";
 
 				// Ref
-				print "<td>";
+				print '<td align="left">';
 				print $element->getNomUrl(1);
 				print "</td>\n";
 
@@ -207,9 +210,14 @@ foreach ($listofreferent as $key => $value)
 				$date=$element->date;
 				if (empty($date)) $date=$element->datep;
 				if (empty($date)) $date=$element->date_contrat;
-				print '<td>'.dol_print_date($date,'day').'</td>';
+				print '<td align="center">'.dol_print_date($date,'day').'</td>';
 
-				// Amount
+				// Third party
+                print '<td align="left">';
+                if (is_object($element->client)) print $element->client->getNomUrl(1);
+				print '</td>';
+
+                // Amount
 				if (empty($value['disableamount'])) print '<td align="right">'.(isset($element->total_ht)?price($element->total_ht):'&nbsp;').'</td>';
 
 				// Status
@@ -220,7 +228,7 @@ foreach ($listofreferent as $key => $value)
 				$total = $total + $element->total_ht;
 			}
 
-			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Number").': '.$i.'</td>';
+			print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Number").': '.$i.'</td>';
 			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';

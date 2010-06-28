@@ -505,10 +505,10 @@ if ($_GET['action'] == 'create')
 	print '<table class="border" width="100%">';
 
 	// Third party
-	print '<tr><td>'.$langs->trans('Company').'</td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td>';
 	print '<td>';
 
-	if ($_GET['socid'])
+	if ($_REQUEST['socid'] > 0)
 	{
 		print $societe->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$_GET['socid'].'">';
@@ -520,13 +520,15 @@ if ($_GET['action'] == 'create')
 	print '</td>';
 	print '<td width="50%">'.$langs->trans('NotePublic').'</td></tr>';
 
-	print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="facnumber" value="'.(isset($_POST['facnumber'])?$_POST['facnumber']:$fac_ori->ref).'" type="text"></td>';
+	// Ref supplier
+	print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="facnumber" value="'.(isset($_POST['facnumber'])?$_POST['facnumber']:$fac_ori->ref).'" type="text"></td>';
 	print '<td width="50%" rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td></tr>';
 
+	// Label
 	print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:$fac_ori->libelle).'" type="text"></td></tr>';
 
 	// Date invoice
-	print '<tr><td>'.$langs->trans('DateInvoice').'</td><td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
 	$html->select_date($dateinvoice,'','','','',"add",1,1);
 	print '</td></tr>';
 
@@ -598,7 +600,7 @@ else
 
 			print '<table class="border" width="100%">';
 
-			print '<tr><td>'.$langs->trans('Company').'</td>';
+			print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td>';
 			print '<td>'.$societe->getNomUrl(1).'</td>';
 			print '<td width="50%" valign="top">'.$langs->trans('NotePublic').'</td>';
 			print '</tr>';
@@ -612,14 +614,17 @@ else
 			print $fac->note;
 			print '</textarea></td></tr>';
 
-			print '<tr><td valign="top">'.$langs->trans('RefSupplier').'</td><td valign="top">';
+			// Ref supplier
+			print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td valign="top">';
 			print '<input name="facnumber" type="text" value="'.$fac->ref_supplier.'"></td>';
 			print '</tr>';
 
+			// Label
 			print '<tr><td valign="top">'.$langs->trans('Label').'</td><td>';
 			print '<input size="30" name="libelle" type="text" value="'.$fac->libelle.'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans('DateInvoice').'</td><td nowrap="nowrap">';
+			// Date invoice
+			print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td nowrap="nowrap">';
 			$html->select_date($fac->datep,'','','','',"update",1,1);
 			print '</td></tr>';
 

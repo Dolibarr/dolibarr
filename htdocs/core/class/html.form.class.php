@@ -1802,6 +1802,7 @@ class Form
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
+			//print "$socid,$selected,$htmlname";
 			select_projects($socid,$selected,$htmlname);
 			print '</td>';
 			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';

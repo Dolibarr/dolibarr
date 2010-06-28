@@ -305,7 +305,7 @@ class Deplacement extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/deplacement/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='trip';

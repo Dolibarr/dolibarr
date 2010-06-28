@@ -816,7 +816,6 @@ if ($id > 0 || ! empty($ref))
 		}
 		/*
 		 * Confirmation de la desapprobation
-		 *
 		 */
 		if ($_GET['action']	== 'refuse')
 		{
@@ -907,12 +906,12 @@ if ($id > 0 || ! empty($ref))
 			}
 		}
 
-		// Auteur
+		// Author
 		print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
 		print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
 		print '</tr>';
 
-		// Projet
+		// Project
 		if ($conf->projet->enabled)
 		{
 			$langs->load('projects');
@@ -923,6 +922,7 @@ if ($id > 0 || ! empty($ref))
 			if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
+			//print "$commande->id, $commande->socid, $commande->fk_project";
 			if ($_GET['action'] == 'classer')
 			{
 				$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'projectid');

@@ -319,6 +319,7 @@ class Project extends CommonObject
 		if ($type == 'agenda')             $sql = "SELECT id as rowid FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project=".$this->id;
 		if (! $sql) return -1;
 
+		//print $sql;
 		dol_syslog("Project::get_element_list sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)

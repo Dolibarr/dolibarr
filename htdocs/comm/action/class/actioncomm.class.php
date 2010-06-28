@@ -277,6 +277,7 @@ class ActionComm extends CommonObject
 				$this->priority = $obj->priority;
 				$this->location = $obj->location;
 
+				$this->socid       = $obj->fk_soc;	// To have fetch_thirdparty method working
 				$this->societe->id = $obj->fk_soc;
 				$this->contact->id = $obj->fk_contact;
 				$this->fk_project = $obj->fk_project;
