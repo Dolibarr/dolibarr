@@ -478,7 +478,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				// Time spent
 				print '<td align="right">';
 				if ($showlineingray) print '<i>';
-				else print '<a href="time.php?id='.$lines[$i]->id.'">';
+				else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 				if ($lines[$i]->duration) print ConvertSecondToTime($lines[$i]->duration,'all');
 				else print '--:--';
 				if ($showlineingray) print '</i>';
