@@ -107,9 +107,9 @@ CompanyTZ=Zona Horària empresa (casa mare)
 CompanyHour=Hora empresa (casa mare)
 CurrentSessionTimeOut=Time out sessió actual
 OSEnv=Entorn SO
-Box=Caixa
-Boxes=Caixes
-MaxNbOfLinesForBoxes=Nº de línies màxim per a les caixes
+Box=Panell
+Boxes=Panells
+MaxNbOfLinesForBoxes=Nº de línies màxim per als panells
 PositionByDefault=Posició per defecte
 Position=Ordre
 MenusDesc=Els gestors de menú defineixen el contingut de les 2 barres de menús (la barra horitzontal i la barra vertical). És possible assignar gestors diferents segons l'usuari sigui intern o extern.
@@ -164,16 +164,16 @@ No=No
 AutoDetectLang=Autodetecció (navegador)
 FeatureDisabledInDemo=Opció deshabilitada en demo
 Rights=Permisos
-BoxesDesc=Les caixes són zones d'informació reduïdes que hi ha en algunes pàgines. Pot triar activar o desactivar una caixa fent clic a 'Activar', o fent click al cubell d'escombraries per desactivar. Només es mostren les caixes relacionades amb un <a href="modules.php"> mòdul </a> actiu.
+BoxesDesc=Els panells són petites zones d'informació que hi ha en algunes pàgines. Pot triar activar o desactivar un panell fent clic a 'Activar', o fent click al cubell d'escombraries per desactivar. Només es mostren els panells relacionades amb un <a href="modules.php"> mòdul </a> actiu.
 OnlyActiveElementsAreShown=Només els elements de <a href="modules.php"> mòduls activats</a> són mostrats
 ModulesDesc=Els mòduls Dolibarr defineixen les funcionalitats disponibles en l'aplicació. Alguns mòduls requereixen drets que hauran d'indicar als usuaris perquè puguin accedir a les seves funcionalitats.
 ModulesInterfaceDesc=Els mòduls de interface són mòduls que permeten vincular Dolibarr amb sistemes, aplicacions o serveis externs.
 ModulesSpecialDesc=Els mòduls complementaris són mòduls d'ús molt específic o menys corrent que els mòduls normals.
 ModulesJobDesc=Els mòduls específics permeten una preconfiguració simplificada de Dolibarr per a un negoci en concret.
-BoxesAvailable=Caixes disponibles
-BoxesActivated=Caixes activades
-ActivateOn=Activar sobre
-ActiveOn=Activa sobre
+BoxesAvailable=Panells disponibles
+BoxesActivated=Panells activats
+ActivateOn=Activar a
+ActiveOn=Actiu a
 SourceFile=Fitxer d'origen
 AutomaticIfJavascriptDisabled=Automàtic si el JavaScript està desactivat
 AvailableOnlyIfJavascriptNotDisabled=Disponible només si Javascript està activat

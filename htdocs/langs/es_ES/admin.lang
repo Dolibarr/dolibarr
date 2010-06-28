@@ -107,9 +107,9 @@ CompanyTZ=Zona Horaria empresa (casa madre)
 CompanyHour=Hora empresa (casa madre)
 CurrentSessionTimeOut=Time out sesión actual
 OSEnv=Entorno SO
-Box=Caja
-Boxes=Cajas
-MaxNbOfLinesForBoxes=Nº de líneas máximo para las cajas
+Box=Panel
+Boxes=Paneles
+MaxNbOfLinesForBoxes=Nº de líneas máximo para los paneles
 PositionByDefault=Posición por defecto
 Position=Orden
 MenusDesc=Los gestores de menú definen el contenido de las 2 barras de menús (la barra horizontal y la barra vertical). Es posible asignar gestores diferentes según el usuario sea interno o externo.
@@ -164,16 +164,16 @@ No=No
 AutoDetectLang=Autodetección (navegador)
 FeatureDisabledInDemo=Opción deshabilitada en demo
 Rights=Permisos
-BoxesDesc=Las cajas son zonas de información reducidas que se muestran en algunas páginas. Puede elegir activar o desactivar una caja haciendo click en 'Activar', o haciendo click en el cubo de basura para desactivarla. Solo se muestran las cajas relacionadas con un <a href="modules.php">módulo</a> activo.
+BoxesDesc=Los paneles son pequeñas zonas de información que se muestran en algunas páginas. Puede elegir activar o desactivar un panel haciendo clic en 'Activar', o haciendo click en el cubo de basura para desactivarlo. Solo se muestran los paneles relacionados con un <a href="modules.php">módulo</a> activo.
 OnlyActiveElementsAreShown=Sólo los elementos de <a href="modules.php">módulos activados</a> son mostrados
 ModulesDesc=Los módulos Dolibarr definen las funcionalidades disponibles en la aplicación. Algunos módulos requieren derechos que deberán indicarse a los usuarios para que puedan acceder a sus funcionalidades.
 ModulesInterfaceDesc=Los módulos de interface son módulos que permiten vincular a Dolibarr con sistemas, aplicaciones o servicios externos.
 ModulesSpecialDesc=Los módulos complementarios son módulos de uso muy específico o menos corriente que los módulos normales.
 ModulesJobDesc=Los módulos específicos permiten una preconfiguración simplificada de Dolibarr para un negocio en concreto.
-BoxesAvailable=Cajas disponibles
-BoxesActivated=Cajas activadas
-ActivateOn=Activar sobre
-ActiveOn=Activa sobre
+BoxesAvailable=Paneles disponibles
+BoxesActivated=Paneles activados
+ActivateOn=Activar en
+ActiveOn=Activo en
 SourceFile=Archivo origen
 AutomaticIfJavascriptDisabled=Automático si Javascript está desactivado
 AvailableOnlyIfJavascriptNotDisabled=Disponible solamente si Javascript esta activado
