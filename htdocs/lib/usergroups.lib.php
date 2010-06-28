@@ -137,7 +137,9 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     {
     	print '<tr class="liste_titre"><td>'.$langs->trans("DefaultSkin").'</td>';
     	print '<td align="right">';
-    	print '<a href="http://www.dolistore.com/4-themes" target="_blank">';
+    	$url='http://www.dolistore.com/lang-en/4-skins';
+    	if (preg_match('/fr/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-fr/4-themes';
+    	print '<a href="'.$url.'" target="_blank">';
     	print $langs->trans('DownloadMoreSkins');
     	print '</a>';
     	print '</td></tr>';
