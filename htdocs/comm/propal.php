@@ -37,6 +37,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
+if ($conf->milestone->enabled) require_once(DOL_DOCUMENT_ROOT.'/milestone/lib/milestone.lib.php');
 
 $langs->load('companies');
 $langs->load('propal');
@@ -1714,53 +1715,7 @@ if ($id > 0 || ! empty($ref))
 		
 		if ($conf->milestone->enabled)
 		{
-			$langs->load('@milestone');
-			
-			print '<tr class="liste_titre">';
-			print '<td>';
-			print $langs->trans('AddMilestone').'</td>';
-			print '<td colspan="10">&nbsp;</td>';
-			print "</tr>\n";
-			
-			// Add milestone form
-			print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
-			print '<input type="hidden" name="action" value="addmilestone">';
-			
-			// Label
-			print '<tr '.$bc[$var].'>';
-			print '<td colspan="5">';
-			print '<input size="30" type="text" id="milestone_label" name="milestone_label" value="'.(!empty($milestone_error)?$_POST["milestone_label"]:$langs->trans('Label')).'" '.addHelpMessage("milestone_label",$langs->trans('Label')).'>';
-			print '</td>';
-			
-			print '<td align="center" valign="middle" rowspan="2" colspan="4">';
-			print '<input type="submit" class="button" value="'.$langs->trans('Add').'" name="addmilestone">';
-			print '</td>';
-			
-			print '</tr>';
-			
-			// Description
-			print '<tr '.$bc[$var].'>';
-			print '<td colspan="5">';
-			
-			// Editor wysiwyg
-			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-			{
-				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('milestone_desc',(!empty($milestone_error)?$_POST["milestone_desc"]:''),100,'dolibarr_details');
-				$doleditor->Create();
-			}
-			else
-			{
-				$nbrows=ROWS_2;
-				if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-				print '<textarea cols="70" id="milestone_desc" name="milestone_desc" rows="'.$nbrows.'" class="flat" '.addHelpMessage("milestone_desc",$langs->trans('Description')).'>';
-				print (!empty($milestone_error)?$_POST["milestone_desc"]:$langs->trans('Description'));
-				print '</textarea>';
-			}
-			print '</td></tr>';
-			print '</form>';
+			formAddMilestone($propal);
 			
 			$var=!$var;
 		}
