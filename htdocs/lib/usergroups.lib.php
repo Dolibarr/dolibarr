@@ -137,7 +137,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     {
     	print '<tr class="liste_titre"><td>'.$langs->trans("DefaultSkin").'</td>';
     	print '<td align="right">';
-    	print '<a href="http://www.dolibarr.org/downloads/cat_view/65-modulesaddon/70-skins" target="_blank">';
+    	print '<a href="http://www.dolistore.com/4-themes" target="_blank">';
     	print $langs->trans('DownloadMoreSkins');
     	print '</a>';
     	print '</td></tr>';
