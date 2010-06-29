@@ -2586,7 +2586,15 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
 	// Non gere
-
+	
+    // LVM modif car BUG de non prise en compte 'naturel' de "Affilié à la TVA" et prise en compte 'trop forte' de Num TVA vide...
+    // Explication plus fine : l'information "Affilié à la TVA" n'est à utiliser que pour les tiers 'vendeur' (nous ou fournisseur)
+    //                         et non 'acheteur' (les 'prospects') comme on pourrait le penser. 
+    //                         Il ne faut pas non plus que le non remplissage
+    //                         du champ du numéro de TVA Intra empêche la mise de la TVA à 0 lorsque l'on
+    //                         vend dans l'union européenne (en étant soi même dans l'union). En effet lorsque l'on
+    //                         crée la proposition on ne connait pas forcément cette information du prospect.
+	/*
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
 	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && ! $societe_acheteuse->tva_intra)
 	{
@@ -2600,7 +2608,13 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
 	{
 		return 0;
 	}
-
+	*/
+	if ($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC())
+	{
+		return 0;
+	}
+	// Fin LVM Modif
+	
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
 	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
 	return 0;
