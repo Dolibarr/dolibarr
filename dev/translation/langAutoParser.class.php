@@ -51,7 +51,7 @@ class langAutoParser {
 			$destPath = $this->langDir.$this->destLang.self::DIR_SEPARATOR.$file;
 			$fileContent = file($refPath,FILE_IGNORE_NEW_LINES |
 FILE_SKIP_EMPTY_LINES);
-			print "Processing file " . $file . ", found ".sizeof($fileContent)." records<br>\n";
+			print "Processing file " . $file . ", with ".sizeof($fileContent)." lines<br>\n";
 			// Check destination file presence
 			if ( ! file_exists( $destPath ) ){
 				// No file presente generate file
@@ -135,8 +135,9 @@ FILE_SKIP_EMPTY_LINES);
 		else $val=utf8_decode($this->translateTexts(array($value),substr($this->refLang,0,2),substr($this->destLang,0,2)));
 
 		if ($key == 'CHARSET') $val=$this->outputpagecode;
+		$val=trim($val);
 
-		if (empty(trim($val))) return 0;
+		if (empty($val)) return 0;
 
 		$this->translatedFiles[$file][] = $key . '=' . $val ;
 		return 1;
