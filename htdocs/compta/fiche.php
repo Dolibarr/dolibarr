@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");
 if ($conf->projet->enabled)  $langs->load("projects");
+if ($conf->notification->enabled) $langs->load("mails");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';

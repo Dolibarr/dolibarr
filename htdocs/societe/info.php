@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 
 $langs->load("companies");
 $langs->load("other");
+if ($conf->notification->enabled) $langs->load("mails");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';

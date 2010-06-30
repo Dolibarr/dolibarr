@@ -42,6 +42,7 @@ $langs->load("commercial");
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("users");
+if ($conf->notification->enabled) $langs->load("mails");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';

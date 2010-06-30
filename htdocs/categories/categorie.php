@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,6 +183,7 @@ if ($_GET["socid"])
 	require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 
 	$langs->load("companies");
+	if ($conf->notification->enabled) $langs->load("mails");
 
 	/*
 	 * Creation de l'objet client/fournisseur correspondant au socid

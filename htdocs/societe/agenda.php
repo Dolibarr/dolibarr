@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +73,7 @@ if ($_GET["socid"])
 	$result = $soc->fetch($_GET["socid"]);
 	llxHeader("","",$langs->trans("Category"));
 
-
+	if ($conf->notification->enabled) $langs->load("mails");
 	$head = societe_prepare_head($soc);
 
 	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"),0,'company');

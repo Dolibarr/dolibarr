@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +68,8 @@ if ($socid > 0)
 	/*
 	 * Affichage onglets
 	 */
+    if ($conf->notification->enabled) $langs->load("mails");
+    
 	$head = societe_prepare_head($societe);
 
 	dol_fiche_head($head, 'note', $langs->trans("ThirdParty"),0,'company');
