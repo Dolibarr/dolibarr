@@ -89,7 +89,7 @@ function propals ($db, $year, $month)
 
 		print "<td><a href=\"comp.php?socid=".$objp->socid."\">".$objp->nom."</a></td>\n";
 
-		print "<td><a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->propalid."\">".$objp->ref."</a></td>\n";
+		print "<td><a href=\"".DOL_URL_ROOT."/comm/propal.php?id=".$objp->propalid."\">".$objp->ref."</a></td>\n";
 
 		print "<td align=\"right\">".dol_print_date($db->jdate($objp->dp))."</td>\n";
 

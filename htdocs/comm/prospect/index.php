@@ -140,7 +140,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
                 print '<tr '.$bc[$var].'><td>';
-                print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->rowid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a>';
+                print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a>';
                 print '</td><td align="right">';
                 print price($obj->price);
                 print "</td></tr>";
@@ -202,7 +202,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
             {
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
-                print "<tr $bc[$var]><td><a href=\"../propal.php?propalid=".$obj->propalid."\">";
+                print "<tr $bc[$var]><td><a href=\"../propal.php?id=".$obj->propalid."\">";
                 print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
 
                 print "<td><a href=\"fiche.php?id=".$obj->socid."\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";

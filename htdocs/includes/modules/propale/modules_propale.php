@@ -212,7 +212,7 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
 
 /**
  \brief      Supprime l'image de previsualitation, pour le cas de regeneration de propal
- \param	    db  		objet base de donn�e
+ \param	    db  		objet base de donnee
  \param	    propalid	id de la propal a effacer
  \param     propalref reference de la propal si besoin
  */

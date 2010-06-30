@@ -436,7 +436,7 @@ if ($_POST["action"] == 'addinpropal')
 	);
 	if ($result > 0)
 	{
-		Header("Location: ".DOL_URL_ROOT."/comm/propal.php?propalid=".$propal->id);
+		Header("Location: ".DOL_URL_ROOT."/comm/propal.php?id=".$propal->id);
 		return;
 	}
 
@@ -1311,7 +1311,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 					print '<input type="hidden" name="action" value="addinpropal">';
 					print "<tr $bc[$var]>";
 					print "<td nowrap>";
-					print "<a href=\"../comm/propal.php?propalid=".$objp->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
+					print "<a href=\"../comm/propal.php?id=".$objp->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
 					print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
 					print "<td nowrap=\"nowrap\">".dol_print_date($objp->dp,"%d %b")."</td>\n";
 					print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';

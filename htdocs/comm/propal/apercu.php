@@ -35,11 +35,11 @@ $langs->load('propal');
 $langs->load("bills");
 $langs->load('compta');
 
-$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
+$id = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'propale', $propalid, 'propal');
+$result = restrictedArea($user, 'propale', $id, 'propal');
 
 
 /*
@@ -56,11 +56,11 @@ $html = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($_GET["propalid"] > 0)
+if ($_GET["id"] > 0)
 {
 	$propal = new Propal($db);
 
-	if ( $propal->fetch($_GET["propalid"], $user->societe_id) > 0)
+	if ( $propal->fetch($_GET["id"], $user->societe_id) > 0)
 	{
 		$soc = new Societe($db, $propal->socid);
 		$soc->fetch($propal->socid);
@@ -214,7 +214,7 @@ if ($_GET["propalid"] > 0)
 		}
 	} else {
 		// Propal non trouvee
-		print $langs->trans("ErrorPropalNotFound",$_GET["propalid"]);
+		print $langs->trans("ErrorPropalNotFound",$_GET["id"]);
 	}
 }
 

@@ -58,9 +58,9 @@ if (! empty($_GET["socid"]))
 	$module='societe';
 	$dbtable='';
 }
-else if (! empty($_GET["propalid"]))
+else if (! empty($_GET["id"]))
 {
-	$objectid=$_GET["propalid"];
+	$objectid=$_GET["id"];
 	$module='propale';
 	$dbtable='propal';
 }
@@ -79,40 +79,16 @@ if ($_GET["action"] == 'setstatut')
 {
 	// Close proposal
 	$propal = new Propal($db);
-	$propal->id = $_GET["propalid"];
+	$propal->id = $_GET["id"];
 	$propal->cloture($user, $_GET["statut"], $note);
 
-}
-
-if ( $action == 'delete' )
-{
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = $propalid;";
-	if ( $db->query($sql) )
-	{
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $propalid ;";
-		if ( $db->query($sql) )
-		{
-			print '<div class="ok">'.$langs->trans("Deleted").'</div>';
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-	$propalid = 0;
-	$brouillon = 1;
 }
 
 // Set project
 if ($_POST['action'] == 'classin')
 {
 	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid']);
+	$propal->fetch($_GET["id"]);
 	$propal->setProject($_POST['projectid']);
 }
 
@@ -133,8 +109,8 @@ $propalstatic=new Propal($db);
 
 $now=gmmktime();
 
-$id = $_GET['propalid'];
-$ref= $_GET['ref'];
+$id = $_GET["id"];
+$ref= $_GET["ref"];
 if ($id > 0 || ! empty($ref))
 {
 	if ($mesg) print "$mesg<br>";
@@ -142,7 +118,7 @@ if ($id > 0 || ! empty($ref))
 	$product_static=new Product($db);
 
 	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid'],$_GET["ref"]);
+	$propal->fetch($_GET["id"],$_GET["ref"]);
 
 	$societe = new Societe($db);
 	$societe->fetch($propal->socid);
@@ -168,7 +144,7 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
 	print $langs->trans('RefCustomer').'</td><td align="left">';
 	print '</td>';
-	if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+	if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$propal->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="5">';
 	print $propal->ref_client;
@@ -229,16 +205,16 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($_GET['action'] != 'editconditions' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	if ($_GET['action'] != 'editconditions' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$propal->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editconditions')
 	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
+		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
 	}
 	else
 	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->cond_reglement_id,'none');
+		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->cond_reglement_id,'none');
 	}
 	print '</td>';
 
@@ -248,16 +224,16 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($_GET['action'] != 'editmode' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	if ($_GET['action'] != 'editmode' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$propal->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editmode')
 	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'mode_reglement_id');
+		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->mode_reglement_id,'mode_reglement_id');
 	}
 	else
 	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->mode_reglement_id,'none');
+		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->mode_reglement_id,'none');
 	}
 	print '</td></tr>';
 
@@ -270,16 +246,16 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('Project').'</td>';
 		if (1 == 2 && $user->rights->propale->creer)
 		{
-			if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$propal->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'classer')
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->fk_project, 'projectid');
+				$html->form_project($_SERVER['PHP_SELF'].'?id='.$propal->id, $propal->socid, $propal->fk_project, 'projectid');
 			}
 			else
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->fk_project, 'none');
+				$html->form_project($_SERVER['PHP_SELF'].'?id='.$propal->id, $propal->socid, $propal->fk_project, 'none');
 			}
 			print '</td></tr>';
 		}
@@ -506,7 +482,7 @@ if ($id > 0 || ! empty($ref))
 		$arraypropal=$propal->getInvoiceArrayList();
 		if ($propal->statut == 2 && is_array($arraypropal) && sizeof($arraypropal) > 0)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=setstatut&statut=4&socid='.$propal->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&action=setstatut&statut=4&socid='.$propal->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
 		}
 	}
 	print "</div>";
@@ -521,7 +497,7 @@ if ($id > 0 || ! empty($ref))
 	 */
 	$filename=dol_sanitizeFileName($propal->ref);
 	$filedir=$conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
-	$urlsource=$_SERVER["PHP_SELF"]."?propalid=".$propal->id;
+	$urlsource=$_SERVER["PHP_SELF"]."?id=".$propal->id;
 	$genallowed=0;
 	$delallowed=0;
 
@@ -683,7 +659,7 @@ else
 
 			$filename=dol_sanitizeFileName($objp->ref);
 			$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($objp->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
+			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->propalid;
 			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
 
 			print '</td></tr></table>';

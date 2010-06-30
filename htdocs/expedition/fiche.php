@@ -363,7 +363,7 @@ if ($_GET["action"] == 'create')
 			}
 			if ($origin == 'propal' && $conf->propal->enabled)
 			{
-				print $langs->trans("RefProposal").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/comm/fiche.php?propalid='.$object->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$object->ref;
+				print $langs->trans("RefProposal").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/comm/fiche.php?id='.$object->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$object->ref;
 			}
 			print '</a></td>';
 			print "</tr>\n";

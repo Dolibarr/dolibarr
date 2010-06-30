@@ -103,12 +103,12 @@ class box_propales extends ModeleBoxes {
 
         		$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
         		'logo' => $this->boximg,
-        		'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
+        		'url' => DOL_URL_ROOT."/comm/propal.php?id=".$objp->rowid);
 
         		$this->info_box_contents[$i][1] = array('td' => 'align="left"',
         		'text' => $objp->ref,
         		'text2'=> $late,
-        		'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
+        		'url' => DOL_URL_ROOT."/comm/propal.php?id=".$objp->rowid);
 
 				$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
                 'logo' => 'company',

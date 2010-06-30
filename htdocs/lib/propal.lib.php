@@ -35,7 +35,7 @@ function propal_prepare_head($propal)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?id='.$propal->id;
 	$head[$h][1] = $langs->trans('CommercialCard');
 	$head[$h][2] = 'comm';
 	$h++;
@@ -45,7 +45,7 @@ function propal_prepare_head($propal)
 	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))))
 	{
 		$langs->load("sendings");
-		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?propalid='.$propal->id;
+		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$propal->id;
 		if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
 		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
 		$head[$h][1] = $text;
@@ -53,30 +53,30 @@ function propal_prepare_head($propal)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?id='.$propal->id;
 	$head[$h][1] = $langs->trans('AccountancyCard');
 	$head[$h][2] = 'compta';
 	$h++;
 
 	if ($conf->use_preview_tabs)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
+		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?id='.$propal->id;
 		$head[$h][1] = $langs->trans("Preview");
 		$head[$h][2] = 'preview';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?propalid='.$propal->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$propal->id;
 	$head[$h][1] = $langs->trans('ProposalContact');
 	$head[$h][2] = 'contact';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?id='.$propal->id;
 	$head[$h][1] = $langs->trans('Notes');
 	$head[$h][2] = 'note';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$propal->id;
 	/*$filesdir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
 	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 	$listoffiles=dol_dir_list($filesdir,'files',1);
@@ -85,7 +85,7 @@ function propal_prepare_head($propal)
 	$head[$h][2] = 'document';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?id='.$propal->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;

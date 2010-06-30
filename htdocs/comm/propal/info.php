@@ -33,11 +33,11 @@ require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 $langs->load('propal');
 $langs->load('compta');
 
-$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
+$id = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'propale', $propalid, 'propal');
+$result = restrictedArea($user, 'propale', $id, 'propal');
 
 
 /*
@@ -47,7 +47,7 @@ $result = restrictedArea($user, 'propale', $propalid, 'propal');
 llxHeader();
 
 $propal = new Propal($db);
-$propal->fetch($_GET['propalid']);
+$propal->fetch($_GET["id"]);
 
 $societe = new Societe($db);
 $societe->fetch($propal->socid);

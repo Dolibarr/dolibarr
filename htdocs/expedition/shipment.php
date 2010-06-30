@@ -242,7 +242,7 @@ if ($id > 0 || ! empty($ref))
 			// Si source = propal
 			$propal = new Propal($db);
 			$propal->fetch($commande->propale_id);
-			print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+			print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$propal->id.'">'.$propal->ref.'</a>';
 		}
 		print '</td>';
 		print '</tr>';

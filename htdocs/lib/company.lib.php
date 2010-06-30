@@ -590,7 +590,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 
 					if ($obj->propalrowid)
 					{
-						print '<td width="140"><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
+						print '<td width="140"><a href="propal.php?id='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
 						$transcode=$langs->trans("Action".$obj->acode);
 						$libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
 						print $libelle;

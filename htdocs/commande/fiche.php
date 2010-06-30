@@ -1022,7 +1022,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 			$nbrow=10;
 
-			print '<form name="crea_commande" action="fiche.php" method="post">';
+			print '<form name="crea_commande" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
@@ -1495,7 +1495,7 @@ else
 				// Si source = propal
 				$propal = new Propal($db);
 				$propal->fetch($commande->propale_id);
-				print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+				print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$propal->id.'">'.$propal->ref.'</a>';
 			}
 			print '</td>';
 			print '</tr>';

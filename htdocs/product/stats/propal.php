@@ -151,7 +151,7 @@ if ($_GET["id"] || $_GET["ref"])
 					$var=!$var;
 
 					print "<tr $bc[$var]>";
-					print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
+					print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
 					print $objp->ref;
 					print "</a></td>\n";
 					print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';

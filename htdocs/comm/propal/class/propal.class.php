@@ -2127,15 +2127,15 @@ class Propal extends CommonObject
 		$result='';
 		if($option == '')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$this->id. $get_params .'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .'">';
 		}
 		if($option == 'compta')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/compta/propal.php?propalid='.$this->id. $get_params .'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/compta/propal.php?id='.$this->id. $get_params .'">';
 		}
 		if($option == 'expedition')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?propalid='.$this->id. $get_params .'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .'">';
 		}
 		$lienfin='</a>';
 

@@ -78,7 +78,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         	}
         	elseif ($origin == propal)
         	{
-        		Header("Location: ../comm/propal.php?action=editdelivery_adress&socid=".$socid."&propalid=".$originid);
+        		Header("Location: ../comm/propal.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
         		exit;
         	}
         	else
@@ -110,7 +110,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         	}
         	elseif ($origin == propal)
         	{
-        		Header("Location: ../comm/propal.php?propalid=".$originid);
+        		Header("Location: ../comm/propal.php?id=".$originid);
         		exit;
         	}
         	elseif ($origin == shipment)

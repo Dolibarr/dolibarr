@@ -34,11 +34,11 @@ $langs->load('propal');
 $langs->load('compta');
 $langs->load('bills');
 
-$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
+$id = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'propale', $propalid, 'propal');
+$result = restrictedArea($user, 'propale', $id, 'propal');
 
 
 
@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'propale', $propalid, 'propal');
 if ($_POST["action"] == 'update_public' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid']);
+	$propal->fetch($_GET["id"]);
 
 	$db->begin();
 
@@ -68,7 +68,7 @@ if ($_POST["action"] == 'update_public' && $user->rights->propale->creer)
 if ($_POST['action'] == 'update' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid']);
+	$propal->fetch($_GET["id"]);
 
 	$db->begin();
 
@@ -94,8 +94,8 @@ llxHeader();
 
 $html = new Form($db);
 
-$id = $_GET['propalid'];
-$ref= $_GET['ref'];
+$id = $_GET["id"];
+$ref= $_GET["ref"];
 if ($id > 0 || ! empty($ref))
 {
 	if ($mesg) print $mesg;
@@ -174,7 +174,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td valign="top" colspan="3">';
 			if ($_GET["action"] == 'edit')
 			{
-				print '<form method="post" action="note.php?propalid='.$propal->id.'">';
+				print '<form method="post" action="note.php?id='.$propal->id.'">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="update_public">';
 				print '<textarea name="note_public" cols="80" rows="8">'.$propal->note_public."</textarea><br>";
@@ -194,7 +194,7 @@ if ($id > 0 || ! empty($ref))
 				print '<td valign="top" colspan="3">';
 				if ($_GET["action"] == 'edit')
 				{
-					print '<form method="post" action="note.php?propalid='.$propal->id.'">';
+					print '<form method="post" action="note.php?id='.$propal->id.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="update">';
 					print '<textarea name="note" cols="80" rows="8">'.$propal->note."</textarea><br>";
@@ -219,7 +219,7 @@ if ($id > 0 || ! empty($ref))
 			print '<div class="tabsAction">';
 			if ($user->rights->propale->creer && $_GET['action'] <> 'edit')
 			{
-				print '<a class="butAction" href="note.php?propalid='.$propal->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="note.php?id='.$propal->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 			}
 			print '</div>';
 		}

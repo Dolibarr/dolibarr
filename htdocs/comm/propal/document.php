@@ -37,7 +37,7 @@ $langs->load('other');
 
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
-$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
+$id = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
 if ($user->societe_id)
@@ -46,7 +46,7 @@ if ($user->societe_id)
 	$action='';
 	$socid = $user->societe_id;
 }
-$result = restrictedArea($user, 'propale', $propalid, 'propal');
+$result = restrictedArea($user, 'propale', $id, 'propal');
 
 // Get parameters
 $page=$_GET["page"];
@@ -72,7 +72,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	$propal = new Propal($db);
 
-	if ($propal->fetch($propalid))
+	if ($propal->fetch($id))
     {
         $upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
 
@@ -108,8 +108,8 @@ if ($action=='delete')
 {
 	$propal = new Propal($db);
 
-	$propalid=$_GET["id"];
-	if ($propal->fetch($propalid))
+	$id=$_GET["id"];
+	if ($propal->fetch($id))
     {
         $upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
     	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
@@ -127,8 +127,8 @@ llxHeader();
 
 $html = new Form($db);
 
-$id = $_GET['propalid']?$_GET['propalid']:$_GET['id'];
-$ref= $_GET['ref'];
+$id = $_GET["id"];
+$ref= $_GET["ref"];
 if ($id > 0 || ! empty($ref))
 {
 	$propal = new Propal($db);
@@ -189,11 +189,11 @@ if ($id > 0 || ! empty($ref))
 
         // Affiche formulaire upload
        	$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id,'',0,0,$user->rights->propale->creer);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/propal/document.php?id='.$propal->id,'',0,0,$user->rights->propale->creer);
 
 
 		// List of document
-		$param='&propalid='.$propal->id;
+		$param='&id='.$propal->id;
 		$formfile->list_of_documents($filearray,$propal,'propal',$param);
 
 	}

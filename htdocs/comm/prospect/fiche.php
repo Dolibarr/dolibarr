@@ -223,7 +223,7 @@ if ($socid > 0)
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr $bc[$var]>";
-				print "<td><a href=\"../propal.php?propalid=$objp->propalid\">";
+				print "<td><a href=\"../propal.php?id=$objp->propalid\">";
 				print img_object($langs->trans("ShowPropal"),"propal");
 				print " ".$objp->ref."</a>\n";
 				if ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay) && $objp->fk_statut == 1)

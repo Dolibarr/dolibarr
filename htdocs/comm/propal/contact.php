@@ -35,11 +35,11 @@ $langs->load("orders");
 $langs->load("sendings");
 $langs->load("companies");
 
-$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
+$id = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'propale', $propalid, 'propal');
+$result = restrictedArea($user, 'propale', $id, 'propal');
 
 
 /*
@@ -51,16 +51,16 @@ if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
 
 	$result = 0;
 	$propal = new Propal($db);
-	$result = $propal->fetch($_GET["propalid"]);
+	$result = $propal->fetch($_GET["id"]);
 
-    if ($result > 0 && $_GET["propalid"] > 0)
+    if ($result > 0 && $_GET["id"] > 0)
     {
   		$result = $propal->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?propalid=".$propal->id);
+		Header("Location: contact.php?id=".$propal->id);
 		exit;
 	}
 	else
@@ -80,7 +80,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
 if ($_POST["action"] == 'updateligne' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
-	if ($propal->fetch($_GET["propalid"]))
+	if ($propal->fetch($_GET["id"]))
 	{
 		$contact = $propal->detail_contact($_POST["elrowid"]);
 		$type = $_POST["type"];
@@ -105,7 +105,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->propale->creer)
 if ($_GET["action"] == 'swapstatut' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
-	if ($propal->fetch($_GET["propalid"]))
+	if ($propal->fetch($_GET["id"]))
 	{
 		$contact = $propal->detail_contact($_GET["ligne"]);
 		$id_type_contact = $contact->fk_c_type_contact;
@@ -130,12 +130,12 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->propale->creer)
 if ($_GET["action"] == 'deleteline' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
-	$propal->fetch($_GET["propalid"]);
+	$propal->fetch($_GET["id"]);
 	$result = $propal->delete_contact($_GET["lineid"]);
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?propalid=".$propal->id);
+		Header("Location: contact.php?id=".$propal->id);
 		exit;
 	}
 	else {
@@ -162,8 +162,8 @@ $contactstatic=new Contact($db);
 /* *************************************************************************** */
 if (isset($mesg)) print $mesg;
 
-$id = $_GET['propalid'];
-$ref= $_GET['ref'];
+$id = $_GET["id"];
+$ref= $_GET["ref"];
 if ($id > 0 || ! empty($ref))
 {
 	$propal = New Propal($db);
@@ -233,11 +233,10 @@ if ($id > 0 || ! empty($ref))
 
 			$var = false;
 
-			print '<form action="contact.php?propalid='.$id.'" method="post">';
+			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
-			print '<input type="hidden" name="propalid" value="'.$id.'">';
 
 			// Ligne ajout pour contact interne
 			print "<tr $bc[$var]>";
@@ -251,7 +250,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On r�cup�re les id des users d�j� s�lectionn�s
+			// On recupere les id des users deja selectionnes
 			//$userAlreadySelected = $propal->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
@@ -263,11 +262,10 @@ if ($id > 0 || ! empty($ref))
 
 			print '</form>';
 
-			print '<form action="contact.php?propalid='.$id.'" method="post">';
+			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="external">';
-			print '<input type="hidden" name="propalid" value="'.$id.'">';
 
 			// Ligne ajout pour contact externe
 			$var=!$var;
@@ -279,7 +277,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$propal->client->id;
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($propal, 'propalid', $selectedCompany, 'newcompany');
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($propal, 'id', $selectedCompany, 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -368,7 +366,7 @@ if ($id > 0 || ! empty($ref))
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($propal->statut >= 0) print '<a href="contact.php?propalid='.$propal->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				if ($propal->statut >= 0) print '<a href="contact.php?id='.$propal->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
 				print $contactstatic->LibStatut($tab[$i]['status'],3);
 				if ($propal->statut >= 0) print '</a>';
 				print '</td>';
@@ -378,7 +376,7 @@ if ($id > 0 || ! empty($ref))
 				if ($user->rights->propale->creer)
 				{
 					print '&nbsp;';
-					print '<a href="contact.php?propalid='.$propal->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
+					print '<a href="contact.php?id='.$propal->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
 					print img_delete();
 					print '</a>';
 				}
