@@ -1,7 +1,0 @@
-# Dolibarr language file - es_ES - google
-CHARSET= UTF-8
-GoogleSetup=Configuración integración con Google tools
-GoogleSetupHelp=Ayuda a definir los parámetros que se encuentran con la URL de configuración de google %s 
-GoogleAgendaNb=Agenda nº %s 
-GoogleIDAgenda=ID Agenda
-GoogleNbOfAgenda=Número de agendas
