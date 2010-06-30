@@ -234,6 +234,7 @@ if ($id > 0 || ! empty($ref))
 			$var = false;
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
+ 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
@@ -265,6 +266,7 @@ if ($id > 0 || ! empty($ref))
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
+ 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="source" value="external">';
 
 			// Ligne ajout pour contact externe

@@ -159,12 +159,14 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$select_entity='';
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/multicompany/class/multicompany.class.php');
+		$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/multicompany.class.php');
+		if ($res)
+		{
+			$mc = new Multicompany($db);
+			$mc->getEntities(0,1);
 
-		$mc = new Multicompany($db);
-		$mc->getEntities(0,1);
-
-		$select_entity=$mc->select_entities($mc->entities,$lastentity,'tabindex="3"');
+			$select_entity=$mc->select_entities($mc->entities,$lastentity,'tabindex="3"');
+		}
 	}
 
 	// Security graphical code

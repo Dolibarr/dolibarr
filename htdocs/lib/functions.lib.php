@@ -2586,35 +2586,29 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
 	// Non gere
-	
-    // LVM modif car BUG de non prise en compte 'naturel' de "Affilié à la TVA" et prise en compte 'trop forte' de Num TVA vide...
-    // Explication plus fine : l'information "Affilié à la TVA" n'est à utiliser que pour les tiers 'vendeur' (nous ou fournisseur)
-    //                         et non 'acheteur' (les 'prospects') comme on pourrait le penser. 
-    //                         Il ne faut pas non plus que le non remplissage
-    //                         du champ du numéro de TVA Intra empêche la mise de la TVA à 0 lorsque l'on
-    //                         vend dans l'union européenne (en étant soi même dans l'union). En effet lorsque l'on
-    //                         crée la proposition on ne connait pas forcément cette information du prospect.
-	/*
-	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
-	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && ! $societe_acheteuse->tva_intra)
+
+	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
+	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()))
 	{
-		if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
-		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut determiner taux tva
-		return $taux_produit;
+		// Define if third party is treated as company of not when nature is unknown
+		$isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1;	// 0 by default
+		if (! empty($societe_acheteuse->tva_intra)) $isacompany=1;
+		else if (! empty($societe_acheteuse->typent_code) && in_array($societe_acheteuse->typent_code,array('TE_PRIVATE'))) $isacompany=0;
+		else if (! empty($societe_acheteuse->typent_code) && in_array($societe_acheteuse->typent_code,array('TE_SMALL','TE_MEDIUM','TE_LARGE'))) $isacompany=1;
+
+		if ($isacompany)
+		{
+			return 0;
+		}
+		else
+		{
+			if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
+			if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut determiner taux tva
+			return $taux_produit;
+		}
 	}
 
-	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA intra) alors TVA par defaut=0. Fin de regle
-	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_intra)
-	{
-		return 0;
-	}
-	*/
-	if ($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC())
-	{
-		return 0;
-	}
-	// Fin LVM Modif
-	
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
 	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
 	return 0;

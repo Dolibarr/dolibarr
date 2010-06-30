@@ -231,18 +231,18 @@ if ($_POST['action'] == 'addmilestone')
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
-	
+
 	$milestone_error=0;
-	
+
 	if ($_POST['milestone_label'] == $langs->trans('Label') || $_POST['milestone_desc'] == $langs->trans('Description'))
 	{
 		$milestone_error++;
 		$mesg = '<div class="error">'.$langs->trans("ErrorMilestone").'</div>';
 	}
-	else 
+	else
 	{
 		$milestone = new Milestone($db);
-		
+
 		$milestone->label = $_POST['milestone_label'];
 		$milestone->description = $_POST['milestone_desc'];
 		$milestone->elementtype = $propal->element;
@@ -1651,7 +1651,8 @@ if ($id > 0 || ! empty($ref))
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'#'.$objp->rowid.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateligne">';
-				print '<input type="hidden" name="lineid" value="'.$_GET["lineid"].'">';
+ 				print '<input type="hidden" name="id" value="'.$propal->id.'">';
+ 				print '<input type="hidden" name="lineid" value="'.$_GET["lineid"].'">';
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
@@ -1727,14 +1728,14 @@ if ($id > 0 || ! empty($ref))
 	if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] <> 'editline')
 	{
 		$var=true;
-		
+
 		if ($conf->milestone->enabled)
 		{
 			formAddMilestone($propal);
-			
+
 			$var=!$var;
 		}
-		
+
 		if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 		print '<tr class="liste_titre">';
 		print '<td '.$colspan.'>';
@@ -1748,9 +1749,10 @@ if ($id > 0 || ! empty($ref))
 		print "</tr>\n";
 
 		// Add free products/services form
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'#add" method="POST">';
+		print "\n".'<form action="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'#add" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="addline">';
+		print '<input type="hidden" name="id" value="'.$propal->id.'">';
 
 		print '<tr '.$bc[$var].">\n";
 		print '<td '.$colspan.'>';
@@ -1772,7 +1774,7 @@ if ($id > 0 || ! empty($ref))
 			print '<textarea class="flat" cols="70" name="dp_desc" rows="'.$nbrows.'">'.$_POST["dp_desc"].'</textarea>';
 		}
 		print '</td>';
-		
+
 		print '<td align="right">';
 		if ($societe->tva_assuj == "0")
 		print '<input type="hidden" name="np_tva_tx" value="0">0';
@@ -1785,7 +1787,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
 		print '</tr>';
 
-		print '</form>';
+		print '</form>'."\n";
 
 		// Ajout de produits/services predefinis
 		if ($conf->product->enabled || $conf->service->enabled)
@@ -1814,9 +1816,10 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
 			print '<td colspan="4">&nbsp;</td>';
 			print '</tr>';
-			print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'#add" method="POST">';
+			print "\n".'<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'#add" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addline">';
+			print '<input type="hidden" name="id" value="'.$propal->id.'">';
 
 			$var=!$var;
 
