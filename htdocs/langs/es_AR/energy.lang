@@ -1,0 +1,12 @@
+# Dolibarr language file - es_AR - energy 
+CHARSET= UTF-8
+Energy= Energía
+Compteur= Contador
+Compteurs= Contadores
+NewCounter= Nuevo contador
+NewGroup= Nuevo grupo
+Group= Grupo
+Electricity= Electricidad
+Water= Agua
+NaturalGaz= Gas natural
+Releves= Transcripciones
