@@ -43,6 +43,7 @@ $langs->load("orders");
 $langs->load("bills");
 $langs->load("contracts");
 if ($conf->ficheinter->enabled) $langs->load("interventions");
+if ($conf->notification->enabled) $langs->load("mails");
 if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) $langs->load("chronodocs");
 
 // Security check
