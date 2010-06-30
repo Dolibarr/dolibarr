@@ -3,6 +3,7 @@ CHARSET=UTF-8
 Bill=Factura
 Bills=Facturas
 BillsCustomers=Facturas a clientes
+BillsCustomer=Facturas al cliente
 BillsSuppliers=Facturas de proveedores
 BillsCustomersUnpaid=Facturas a clientes pendientes de cobro
 BillsCustomersUnpaidForCompany=Facturas a clientes pendientes de cobro de %s
