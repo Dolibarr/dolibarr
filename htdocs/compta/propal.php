@@ -38,6 +38,7 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/class/co
 $langs->load('companies');
 $langs->load('compta');
 $langs->load('orders');
+$langs->load('bills');
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
