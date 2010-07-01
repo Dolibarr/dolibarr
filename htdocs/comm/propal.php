@@ -1890,8 +1890,8 @@ else
 		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
 		print '</td>';
-		print '<td>&nbsp;</td>';
-		print '<td align="right">';
+		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre" align="right">';
 		$html->select_propal_statut($viewstatut);
 		print '</td>';
 		print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
