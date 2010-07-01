@@ -882,7 +882,15 @@ class Form
 			$sql.= " AND p.envente = ".$status;
 		}
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
-		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
+		// Add criteria on ref/label
+		if (empty($conf->global->PRODUCT_SEARCH_ANYWHERE))
+		{
+			if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (p.ref like '".$ajaxkeysearch."%' OR p.label like '".$ajaxkeysearch."%')";
+		}
+		else
+		{
+			if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
+		}
 		$sql.= $db->order("p.ref");
 		$sql.= $db->plimit($limit);
 
@@ -1089,7 +1097,15 @@ class Form
 		if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if (! empty($filtre)) $sql.=" ".$filtre;
-		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
+		// Add criteria on ref/label
+		if (empty($conf->global->PRODUCT_SEARCH_ANYWHERE))
+		{
+			if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
+		}
+		else
+		{
+			if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '".$ajaxkeysearch."%' OR p.ref like '".$ajaxkeysearch."%' OR p.label like '".$ajaxkeysearch."%')";
+		}
 		$sql.= " ORDER BY pf.ref_fourn DESC";
 
 		dol_syslog("Form::select_produits_fournisseurs_do sql=".$sql,LOG_DEBUG);

@@ -23,5 +23,6 @@
 
 ALTER TABLE llx_product ADD UNIQUE INDEX uk_product_ref (ref, entity);
 
+ALTER TABLE llx_product ADD INDEX idx_product_label (label);
 ALTER TABLE llx_product ADD INDEX idx_product_barcode (barcode);
 ALTER TABLE llx_product ADD INDEX idx_product_import_key (import_key);

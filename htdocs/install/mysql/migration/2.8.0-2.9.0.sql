@@ -7,6 +7,8 @@
 --
 
 
+ALTER TABLE llx_product ADD INDEX idx_product_label (label);
+
 -- V4.1 DELETE FROM llx_projet_task WHERE fk_projet NOT IN (SELECT rowid from llx_projet);
 -- V4.1 UPDATE llx_projet_task set fk_user_creat=NULL WHERE fk_user_creat IS NOT NULL AND fk_user_creat NOT IN (SELECT rowid from llx_user);
 -- V4.1 UPDATE llx_projet_task set fk_user_valid=NULL WHERE fk_user_valid IS NOT NULL AND fk_user_valid NOT IN (SELECT rowid from llx_user);
@@ -116,6 +118,8 @@ ALTER TABLE llx_expedition ADD COLUMN date_delivery date DEFAULT NULL AFTER date
 
 ALTER TABLE llx_livraison change ref_client ref_customer varchar(30);
 ALTER TABLE llx_livraison change date_livraison date_delivery date		DEFAULT NULL;
+
+ALTER TABLE llx_c_actioncomm MODIFY libelle    varchar(48) NOT NULL;
 
 ALTER TABLE llx_facture MODIFY tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_facture MODIFY total double(24,8) DEFAULT 0;
