@@ -1418,8 +1418,16 @@ if ($id > 0 || ! empty($ref))
 		if ($conf->milestone->enabled)
 		{
 			$milestone = new Milestone($db);
-			$milestonesList = $milestone->getObjectMilestones($propal);
-			print_milestone_list($propal, $lines, $milestonesList);
+			$milestone->getObjectMilestones($propal);
+			
+			if (! empty($milestone->lines))
+			{
+				print_milestone_list($milestone, $propal, $lines);
+			}
+			else
+			{
+				print_lines_list($propal, $lines);
+			}
 		}
 		else
 		{
