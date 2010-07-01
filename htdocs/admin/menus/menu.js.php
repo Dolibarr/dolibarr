@@ -1,6 +1,49 @@
-/* -----------------------------------------------------
+<?php
+/* Copyright (C) 20010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
--------------------------------------------------------- */
+/**
+ *		\file       htdocs/admin/menus/menus.js.php
+ *		\brief      File for js menu
+ *		\version    $Id$
+ */
+
+
+//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled cause need to do translations
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
+if (! defined('NOLOGIN'))         define('NOLOGIN',1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+
+
+require_once("../../master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
+
+if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
+$langs->load("main",0,1);
+
+?>
+
+
 // Tests pour navigateurs
 var OPE = (window.opera) ? true : false;
 var IE  = (document.all && !OPE) ? true : false;
@@ -13,9 +56,9 @@ function arbre() {
     // Presentation de l'arbre au depart : deployee ('yes') ou fermee ('no')
     extend = "no";
     // Textes du lien plier / deplier
-    plier_text = 'Replier tout';
+    plier_text = '<?php echo $langs->transnoentities("UndoExpandAll"); ?>';
     plier_title = 'Replier tous les noeuds de l\'arbre'
-    deplier_text = 'Deplier tout';
+    deplier_text = '<?php echo $langs->transnoentities("ExpandAll"); ?>';
     deplier_title = 'Deplier tous les noeuds de l\'arbre'
     // Recuperation de tous les arbres de la page
     uls = getElBy('ul','class','arbre');
@@ -25,7 +68,7 @@ function arbre() {
         processULEL(ul);
         plier(ul,'replier');
     }
-    
+
 }
 
 // -------------------------------------------------------
@@ -151,7 +194,7 @@ function getElBy(tag,attr,val) {
 	var dbEl = document.getElementsByTagName(tag);
 	for (e=0; e<dbEl.length; e++) {
 		if (attr == 'class') {if (dbEl[e].className==val) {dbRes.push(dbEl[e]);}}
-		else {if (dbEl[e].getAttribute(attr)==val) {dbRes.push(dbEl[e]);}}	
+		else {if (dbEl[e].getAttribute(attr)==val) {dbRes.push(dbEl[e]);}}
 	}
 	return dbRes;
 }

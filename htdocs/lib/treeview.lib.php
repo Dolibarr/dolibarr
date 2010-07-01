@@ -41,7 +41,7 @@
  */
 function is_in_subtree($fulltree,$parentid,$childid)
 {
-	if ($parentid == $childid) return 1;	
+	if ($parentid == $childid) return 1;
 
 	// Get fullpath of parent
 	$fullpathparent='';
@@ -54,21 +54,21 @@ function is_in_subtree($fulltree,$parentid,$childid)
 			break;
 		}
 	}
-	//print '> parent='.$parentid.' - child='.$childid.' - '.$fullpathparent.'<br>';	
-	
+	//print '> parent='.$parentid.' - child='.$childid.' - '.$fullpathparent.'<br>';
+
 	foreach($fulltree as $record)
 	{
 		if ($record['id'] == $childid)
 		{
 			//print $record['fullpath'].'_'.' - '.$fullpathparent.'_';
-			if (preg_match('/'.$fullpathparent.'_/i',$record['fullpath'].'_')) 
+			if (preg_match('/'.$fullpathparent.'_/i',$record['fullpath'].'_'))
 			{
 				//print 'DEL='.$childid;
 				return 1;
 			}
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -83,7 +83,7 @@ function is_in_subtree($fulltree,$parentid,$childid)
 function tree_showpad(&$fulltree,$key,$selected=0)
 {
 	$pos=1;
-	
+
 	// Loop on each pos, because we will output an img for each pos
 	while ($pos <= $fulltree[$key]['level'] && $fulltree[$key]['level'] > 0)
 	{
@@ -104,23 +104,23 @@ function tree_showpad(&$fulltree,$key,$selected=0)
 					$nbofdirinsub++;
 					$nbofdocinsub+=$fulltree[$key2]['cachenbofdoc'];
 					$nbofhigherlevelafter++;
-				} 
+				}
 				if ($fulltree[$key2]['level'] == $pos)
 				{
 					$atleastonofthislevelafter=1;
-				} 
+				}
 				if ($fulltree[$key2]['level'] <= $pos)
 				{
 					break;
-				} 
+				}
 			}
-			if ($key2 == $key) 
+			if ($key2 == $key)
 			{
 				$found=1;
 			}
 		}
 		//print $atleastonofthislevelafter;
-		
+
 		if ($atleastonofthislevelafter)
 		{
 			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branch.gif');
@@ -133,7 +133,7 @@ function tree_showpad(&$fulltree,$key,$selected=0)
 		}
 		$pos++;
 	}
-	
+
 	return array($atleastonofthislevelafter,$nbofhigherlevelafter,$nbofdirinsub,$nbofdocinsub);
 }
 
@@ -146,11 +146,12 @@ function tree_showpad(&$fulltree,$key,$selected=0)
  */
 function tree_addjs()
 {
-	print '<script src="'.DOL_URL_ROOT.'/admin/menus/menu.js" type="text/javascript"></script>';
+	global $langs;
+	print '<script src="'.DOL_URL_ROOT.'/admin/menus/menu.js.php?lang='.$langs->defaultlang.'" type="text/javascript"></script>';
 }
 
 
-/* cette fonction g�re le d�callage des �l�ments
+/* cette fonction gere le decallage des elements
  suivant leur position dans l'arborescence
  */
 function tree_showline($tab,$rang)
@@ -166,14 +167,14 @@ function tree_showline($tab,$rang)
 		}
 		elseif($rang > $rangLast)
 		{
-				
+
 			print '<li><ul>';
 
 		}
 		elseif($rang < $rangLast)
 		{
 			print '<script type="text/javascript">imgDel('.$idLast.')</script>';
-				
+
 			for($i=$rang; $i < $rangLast; $i++)
 			{
 				print '</ul></li>';
@@ -186,13 +187,13 @@ function tree_showline($tab,$rang)
 	{
 		if($rang > $rangLast)
 		{
-				
+
 			print '<li><ul>';
 
 		}
 		elseif($rang < $rangLast)
 		{
-				
+
 			for($i=$rang; $i < $rangLast; $i++)
 			{
 				print '</ul></li>';
@@ -224,7 +225,7 @@ function tree_showline($tab,$rang)
  $pere :index de l'�l�ment courant
  $rang :d�callage de l'�l�ment
  */
-function tree_recur($tab,$pere,$rang) 
+function tree_recur($tab,$pere,$rang)
 {
 	if ($pere == 0) print '<ul class="arbre">';
 
@@ -238,14 +239,14 @@ function tree_recur($tab,$pere,$rang)
 		{
 			//on l'affiche avec le d�callage courrant
 			tree_showline($tab[$x],$rang);
-				
+
 			/*et on recherche ses fils
 			 en rappelant la fonction recur()
 			 (+ incr�mentation du d�callage)*/
 			tree_recur($tab,$tab[$x][0],$rang+1);
 		}
 	}
-	
+
 	if ($pere == 0) print '</ul>';
 }
 
