@@ -1407,19 +1407,24 @@ if ($id > 0 || ! empty($ref))
 	 */
 	print '<table class="noborder" width="100%">';
 	
-	// Milestone module
-	if ($conf->milestone->enabled)
-	{
-		$milestone = new Milestone($db);
-		$milestoneListArray = $milestone->getObjectMilestonesArray($propal);
-	}
+	$lines = $propal->getLinesArray();
 	
 	// Show lines
-	$lines = $propal->getLinesArray();
 	if (! empty($lines) )
 	{
 		print_title_list();
-		print_lines_list($propal, $lines);
+		
+		// Milestone module
+		if ($conf->milestone->enabled)
+		{
+			$milestone = new Milestone($db);
+			$milestonesList = $milestone->getObjectMilestones($propal);
+			print_milestone_list($propal, $lines, $milestonesList);
+		}
+		else
+		{
+			print_lines_list($propal, $lines);
+		}
 	}
 
 	/*
