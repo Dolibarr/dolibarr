@@ -1407,9 +1407,20 @@ if ($id > 0 || ! empty($ref))
 	 */
 	print '<table class="noborder" width="100%">';
 	
+	// Milestone module
+	if ($conf->milestone->enabled)
+	{
+		$milestone = new Milestone($db);
+		$milestoneListArray = $milestone->getObjectMilestonesArray($propal);
+	}
+	
 	// Show lines
 	$lines = $propal->getLinesArray();
-	if (! empty($lines) ) print_lines($propal, $lines);
+	if (! empty($lines) )
+	{
+		print_title_list();
+		print_lines_list($propal, $lines);
+	}
 
 	/*
 	 * Form to add new line
