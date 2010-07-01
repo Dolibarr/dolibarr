@@ -2114,12 +2114,12 @@ class Propal extends CommonObject
 	}
 
 	/**
-		\brief    	Renvoie nom clicable (avec eventuellement le picto)
-		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-		\param		option			Sur quoi pointe le lien
-		\param      get_params		Parametres added to url
-		\return		string			Chaine avec URL
-		*/
+	 * 		\brief    	Renvoie nom clicable (avec eventuellement le picto)
+	 * 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 * 		\param		option			Sur quoi pointe le lien
+	 * 		\param      get_params		Parametres added to url
+	 * 		\return		string			Chaine avec URL
+	 */
 	function getNomUrl($withpicto=0,$option='', $get_params='')
 	{
 		global $langs;
@@ -2146,6 +2146,72 @@ class Propal extends CommonObject
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$lien.$this->ref.$lienfin;
 		return $result;
+	}
+	
+	/**
+	 * 	\brief		Return an array of propal lines
+	 */
+	function getLinesArray()
+	{	
+		$lines = array();
+		
+		$sql = 'SELECT pt.rowid, pt.description, pt.fk_product, pt.fk_remise_except,';
+		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
+		$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.marge_tx, pt.marque_tx, pt.pa_ht, pt.special_code,';
+		$sql.= ' pt.date_start,';
+		$sql.= ' pt.date_end,';
+		$sql.= ' pt.product_type,';
+		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
+		$sql.= ' p.description as product_desc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
+		$sql.= ' WHERE pt.fk_propal = '.$this->id;
+		$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
+		
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				
+				$lines[$i]->id					= $obj->rowid;
+				$lines[$i]->description 		= $obj->description;
+				$lines[$i]->fk_product			= $obj->fk_product;
+				$lines[$i]->ref					= $obj->ref;
+				$lines[$i]->product_label		= $obj->product_label;
+				$lines[$i]->product_desc		= $obj->product_desc;
+				$lines[$i]->fk_product_type		= $obj->fk_product_type;
+				$lines[$i]->product_type		= $obj->product_type;
+				$lines[$i]->qty					= $obj->qty;
+				$lines[$i]->subprice			= $obj->subprice;
+				$lines[$i]->pa_ht				= $obj->pa_ht;
+				$lines[$i]->fk_remise_except 	= $obj->fk_remise_except;
+				$lines[$i]->remise_percent		= $obj->remise_percent;
+				$lines[$i]->tva_tx				= $obj->tva_tx;
+				$lines[$i]->info_bits			= $obj->info_bits;
+				$lines[$i]->total_ht			= $obj->total_ht;
+				$lines[$i]->total_tva			= $obj->total_tva;
+				$lines[$i]->total_ttc			= $obj->total_ttc;
+				$lines[$i]->marge_tx			= $obj->marge_tx;
+				$lines[$i]->marque_tx			= $obj->marque_tx;
+				$lines[$i]->special_code		= $obj->special_code;
+				$lines[$i]->date_start			= $this->db->jdate($obj->date_start);
+				$lines[$i]->date_end			= $this->db->jdate($obj->date_end);
+				
+				$i++;
+			}
+			$this->db->free($resql);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+		
+		return $lines;
 	}
 
 }

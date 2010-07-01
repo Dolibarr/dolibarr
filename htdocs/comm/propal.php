@@ -237,7 +237,7 @@ if ($_POST['action'] == 'addmilestone')
 	if ($_POST['milestone_label'] == $langs->trans('Label') || $_POST['milestone_desc'] == $langs->trans('Description'))
 	{
 		$milestone_error++;
-		$mesg = '<div class="error">'.$langs->trans("ErrorMilestone").'</div>';
+		$mesg = '<div class="error">'.$langs->trans("MilestoneFieldsIsRequired").'</div>';
 	}
 	else
 	{
@@ -247,6 +247,19 @@ if ($_POST['action'] == 'addmilestone')
 		$milestone->description = $_POST['milestone_desc'];
 		$milestone->elementtype = $propal->element;
 		$milestone->fk_element = $propal->id;
+		
+		$ret = $milestone->create($user);
+		
+		if ($ret < 0)
+		{
+			$milestone_error++;
+			$mesg = '<div class="error">'.$milestone->error.'</div>';
+		}
+		else
+		{
+			Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$propal->id);
+			exit;
+		}
 	}
 }
 
@@ -1003,8 +1016,6 @@ if ($id > 0 || ! empty($ref))
 
 	if ($mesg) print $mesg."<br>";
 
-	$product_static=new Product($db);
-
 	$propal = new Propal($db);
 	$propal->fetch($id,$ref);
 
@@ -1395,332 +1406,10 @@ if ($id > 0 || ! empty($ref))
 	 * Lines
 	 */
 	print '<table class="noborder" width="100%">';
-
-	$sql = 'SELECT pt.rowid, pt.description, pt.fk_product, pt.fk_remise_except,';
-	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
-	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.marge_tx, pt.marque_tx, pt.pa_ht, pt.special_code,';
-	$sql.= ' pt.date_start,';
-	$sql.= ' pt.date_end,';
-	$sql.= ' pt.product_type,';
-	$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
-	$sql.= ' p.description as product_desc';
-	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
-	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
-	$sql.= ' WHERE pt.fk_propal = '.$propal->id;
-	$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i = 0;
-
-		if ($num)
-		{
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans('Description').'</td>';
-			if ($conf->global->PRODUIT_USE_MARKUP)
-			{
-				print '<td align="right" width="80">'.$langs->trans('Markup').'</td>';
-			}
-			print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
-			print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-			print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-			print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-			print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
-			print '<td width="48" colspan="3">&nbsp;</td>';
-			print "</tr>\n";
-		}
-		$var=true;
-		while ($i < $num)
-		{
-			$objp = $db->fetch_object($resql);
-			$var=!$var;
-
-			// Show product and description
-			$type=$objp->product_type?$objp->product_type:$objp->fk_product_type;
-			// Try to enhance type detection using date_start and date_end for free lines where type
-			// was not saved.
-			if (! empty($objp->date_start)) $type=1;
-			if (! empty($objp->date_end)) $type=1;
-
-			// Ligne en mode visu
-			if ($_GET['action'] != 'editline' || $_GET['lineid'] != $objp->rowid)
-			{
-				print '<tr '.$bc[$var].'>';
-
-				// Produit
-				if ($objp->fk_product > 0)
-				{
-					print '<td>';
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne;
-
-					// Show product and description
-					$product_static->type=$objp->fk_product_type;
-					$product_static->id=$objp->fk_product;
-					$product_static->ref=$objp->ref;
-					$product_static->libelle=$objp->product_label;
-					$text=$product_static->getNomUrl(1);
-					$text.= ' - '.$objp->product_label;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
-					print $html->textwithtooltip($text,$description,3,'','',$i);
-
-					// Show range
-					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
-
-					// Add description in form
-					if ($conf->global->PRODUIT_DESC_IN_FORM)
-					{
-						print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-					}
-
-					print '</td>';
-				}
-				else
-				{
-					print '<td>';
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-					if (($objp->info_bits & 2) == 2)
-					{
-						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socid.'">';
-						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
-						print '</a>';
-						if ($objp->description)
-						{
-							if ($objp->description == '(CREDIT_NOTE)')
-							{
-								$discount=new DiscountAbsolute($db);
-								$discount->fetch($objp->fk_remise_except);
-								print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
-							}
-							else
-							{
-								print ' - '.nl2br($objp->description);
-							}
-						}
-					}
-					else
-					{
-						if ($type==1) $text = img_object($langs->trans('Service'),'service');
-						else $text = img_object($langs->trans('Product'),'product');
-						print $text.' '.nl2br($objp->description);
-
-						// Show range
-						print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
-					}
-					print "</td>\n";
-				}
-
-				if ($conf->global->PRODUIT_USE_MARKUP && $conf->use_javascript_ajax)
-				{
-					$formMarkup = '<form id="formMarkup" action="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'" method="post">'."\n";
-					$formMarkup.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
-					$formMarkup.= '<table class="border" width="100%">'."\n";
-					if ($objp->fk_product > 0)
-					{
-						$formMarkup.= '<tr><td align="left" colspan="2">&nbsp;</td></tr>'."\n";
-						$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('SupplierPrice').'</td>'."\n";
-						$formMarkup.= '<td align="left">'.$html->select_product_fourn_price($objp->fk_product,'productfournpriceid').'</td></tr>'."\n";
-					}
-					$formMarkup.= '<tr><td align="left" colspan="2">&nbsp;</td></tr>'."\n";
-					$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('PurchasePrice').' '.$langs->trans('HT').'</td>'."\n";
-					$formMarkup.= '<td align="left"><input size="10" type="text" class="flat" name="purchaseprice_ht" value=""></td></tr>'."\n";
-					$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('MarkupRate').'</td>'."\n";
-					$formMarkup.= '<td><input size="10" type="text" class="flat" id="markuprate'.$i.'" name="markuprate'.$i.'" value=""></td></tr>'."\n";
-					$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('SellingPrice').' '.$langs->trans('HT').'</td>'."\n";
-					//$formMarkup.= '<td><div id="sellingprice_ht'.$i.'"><input size="10" type="text" class="flat" id="sellingdata_ht'.$i.'" name="sellingdata_ht'.$i.'" value=""></div></td></tr>'."\n";
-					$formMarkup.= '<td nowrap="nowrap"><div id="sellingprice_ht'.$i.'"><div></td></tr>'."\n";
-					$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('CashFlow').' '.$langs->trans('HT').'</td>'."\n";
-					$formMarkup.= '<td nowrap="nowrap"><div id="cashflow'.$i.'"></div></td></tr>'."\n";
-					$formMarkup.= '<tr><td align="center" colspan="2">'."\n";
-					$formMarkup.= '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">'."\n";
-					//$formMarkup.= ' &nbsp; <input onClick="Dialog.closeInfo()" type="button" class="button" name="cancel" value="'.$langs->trans('Cancel').'">'."\n";
-					$formMarkup.= '</td></tr></table></form>'."\n";
-					$formMarkup.= ajax_updaterWithID("rate".$i,"markup","sellingprice_ht".$i,DOL_URL_ROOT."/product/ajaxproducts.php","&count=".$i,"working")."\n";
-
-
-					print '<td align="right">'."\n";
-
-					print '<div id="calc_markup'.$i.'" style="display:none">'."\n";
-					print $formMarkup."\n";
-					print '</div>'."\n";
-
-
-					print '<table class="nobordernopadding" width="100%"><tr class="nocellnopadd">';
-					print '<td class="nobordernopadding" nowrap="nowrap" align="left">';
-					if (($objp->info_bits & 2) == 2)
-					{
-						// Ligne remise predefinie, on ne permet pas modif
-					}
-					else
-					{
-						$picto = '<a href="#" onClick="dialogWindow($(\'calc_markup'.$i.'\').innerHTML,\''.$langs->trans('ToCalculateMarkup').'\')">';
-						$picto.= img_picto($langs->trans("Calculate"),'calc.png');
-						$picto.= '</a>';
-						print $html->textwithtooltip($picto,$langs->trans("ToCalculateMarkup"),3,'','',$i);
-					}
-					print '</td>';
-					print '<td class="nobordernopadding" nowrap="nowrap" align="right">'.vatrate($objp->marge_tx).'% </td>';
-					print '</tr></table>';
-					print '</td>';
-				}
-
-				// VAT Rate
-				print '<td align="right" nowrap="nowrap">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
-
-				// U.P HT
-				print '<td align="right" nowrap="nowrap">'.price($objp->subprice)."</td>\n";
-
-				// Qty
-				print '<td align="right" nowrap="nowrap">';
-				if ((($objp->info_bits & 2) != 2) && $objp->special_code != 3)
-				{
-					print $objp->qty;
-				}
-				else print '&nbsp;';
-				print '</td>';
-
-				// Remise percent (negative or positive)
-				if (!empty($objp->remise_percent) && $objp->special_code != 3)
-				{
-					print '<td align="right">'.dol_print_reduction($objp->remise_percent,$langs)."</td>\n";
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
-				}
-
-				// Montant total HT
-				if ($objp->special_code == 3)
-				{
-					// Si ligne en option
-					print '<td align="right" nowrap="nowrap">'.$langs->trans('Option').'</td>';
-				}
-				else
-				{
-					print '<td align="right" nowrap="nowrap">'.price($objp->total_ht)."</td>\n";
-				}
-
-				// Icone d'edition et suppression
-				if ($propal->statut == 0  && $user->rights->propale->creer)
-				{
-					print '<td align="center">';
-					if (($objp->info_bits & 2) == 2)
-					{
-						// Ligne remise predefinie, on permet pas modif
-					}
-					else
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=editline&amp;lineid='.$objp->rowid.'#'.$objp->rowid.'">';
-						print img_edit();
-						print '</a>';
-					}
-					print '</td>';
-					print '<td align="center">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=ask_deleteline&amp;lineid='.$objp->rowid.'">';
-					print img_delete();
-					print '</a></td>';
-					if ($num > 1)
-					{
-						print '<td align="center">';
-						if ($i > 0)
-						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
-							print img_up();
-							print '</a>';
-						}
-						if ($i < $num-1)
-						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
-							print img_down();
-							print '</a>';
-						}
-						print '</td>';
-					}
-				}
-				else
-				{
-					print '<td colspan="3">&nbsp;</td>';
-				}
-
-				print '</tr>';
-			}
-
-			// Ligne en mode update
-			if ($propal->statut == 0 && $_GET["action"] == 'editline' && $user->rights->propale->creer && $_GET["lineid"] == $objp->rowid)
-			{
-				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'#'.$objp->rowid.'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="updateligne">';
- 				print '<input type="hidden" name="id" value="'.$propal->id.'">';
- 				print '<input type="hidden" name="lineid" value="'.$_GET["lineid"].'">';
-				print '<tr '.$bc[$var].'>';
-				print '<td>';
-				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-				if ($objp->fk_product > 0)
-				{
-					print '<input type="hidden" name="productid" value="'.$objp->fk_product.'">';
-					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-					if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
-					else print img_object($langs->trans('ShowProduct'),'product');
-					print ' '.$objp->ref.'</a>';
-					print ' - '.nl2br($objp->product_label);
-					print '<br>';
-				}
-				if ($_GET["action"] == 'editline')
-				{
-					// editeur wysiwyg
-					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-					{
-						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-						$doleditor=new DolEditor('desc',$objp->description,164,'dolibarr_details');
-						$doleditor->Create();
-					}
-					else
-					{
-						$nbrows=ROWS_2;
-						if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-						print '<textarea name="desc" cols="70" class="flat" rows="'.$nbrows.'">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
-					}
-				}
-				print '</td>';
-				if ($conf->global->PRODUIT_USE_MARKUP)
-				{
-					print '<td align="right">'.vatrate($objp->marge_tx).'%</td>';
-				}
-				print '<td align="right">';
-				print $html->select_tva('tva_tx',$objp->tva_tx,$mysoc,$societe,'',$objp->info_bits);
-				print '</td>';
-				print '<td align="right"><input size="6" type="text" class="flat" name="subprice" value="'.price($objp->subprice,0,'',0).'"></td>';
-				print '<td align="right">';
-				if (($objp->info_bits & 2) != 2)
-				{
-					print '<input size="2" type="text" class="flat" name="qty" value="'.$objp->qty.'">';
-				}
-				else print '&nbsp;';
-				print '</td>';
-				print '<td align="right" nowrap>';
-				if (($objp->info_bits & 2) != 2)
-				{
-					print '<input size="1" type="text" class="flat" name="remise_percent" value="'.$objp->remise_percent.'">%';
-				}
-				else print '&nbsp;';
-				print '</td>';
-				print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-				print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
-				print '</tr>' . "\n";
-
-				print "</form>\n";
-			}
-
-			$i++;
-		}
-
-		$db->free($resql);
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+	
+	// Show lines
+	$lines = $propal->getLinesArray();
+	if (! empty($lines) ) print_lines($propal, $lines);
 
 	/*
 	 * Form to add new line
@@ -1730,7 +1419,7 @@ if ($id > 0 || ! empty($ref))
 		$var=true;
 
 		if ($conf->milestone->enabled)
-		{
+		{	
 			formAddMilestone($propal);
 
 			$var=!$var;
