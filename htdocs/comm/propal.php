@@ -141,6 +141,8 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 		$propal->fetch($_GET["id"]);
 		$propal->fetch_client();
 		$result = $propal->delete_product($_GET['lineid']);
+		// reorder lines
+		if ($result) $propal->line_order(true);
 
 		// Define output language
 		$outputlangs = $langs;
@@ -1409,30 +1411,28 @@ if ($id > 0 || ! empty($ref))
 	
 	$lines = $propal->getLinesArray();
 	
-	// Show lines
-	if (! empty($lines) )
+	// Milestone module
+	if ($conf->milestone->enabled)
 	{
-		print_title_list();
-		
-		// Milestone module
-		if ($conf->milestone->enabled)
-		{
-			$milestone = new Milestone($db);
-			$milestone->getObjectMilestones($propal);
+		$milestone = new Milestone($db);
+		$milestone->getObjectMilestones($propal);
+		$sublines = $propal->getLinesArray(false);
 			
-			if (! empty($milestone->lines))
-			{
-				print_milestone_list($milestone, $propal, $lines);
-			}
-			else
-			{
-				print_lines_list($propal, $lines);
-			}
-		}
-		else
+		if (! empty($milestone->lines))
 		{
+			print_title_list();
+			print_milestone_list($milestone, $sublines, $propal, $lines);
+		}
+		else if (! empty($lines) )
+		{
+			print_title_list();
 			print_lines_list($propal, $lines);
 		}
+	}
+	else if (! empty($lines) )
+	{
+		print_title_list();
+		print_lines_list($propal, $lines);
 	}
 
 	/*

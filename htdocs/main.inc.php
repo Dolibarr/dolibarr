@@ -675,8 +675,7 @@ if (! defined('NOREQUIRETRAN'))
 }
 
 // Define some constants used for style of arrays
-$bc[0]="class=\"impair\"";
-$bc[1]="class=\"pair\"";
+$bc = bcStyle();
 
 // Constants used to defined number of lines in textarea
 if (empty($conf->browser->firefox))

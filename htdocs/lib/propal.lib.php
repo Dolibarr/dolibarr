@@ -162,7 +162,7 @@ function print_line($propal,$line,$var=true,$num=0,$i=0)
 	global $db;
 	global $conf,$langs,$user;
 	global $html,$bc;
-	
+
 	// Show product and description
 	$type=$line->product_type?$line->product_type:$line->fk_product_type;
 	// Try to enhance type detection using date_start and date_end for free lines where type

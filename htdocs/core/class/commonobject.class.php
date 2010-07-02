@@ -698,6 +698,7 @@ class CommonObject
 		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql.= ' WHERE '.$this->fk_element.'='.$this->id;
 		if (! $renum) $sql.= ' AND rang = 0';
+		if ($renum) $sql.= ' AND rang <> 0';
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

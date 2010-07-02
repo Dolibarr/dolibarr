@@ -3459,4 +3459,17 @@ function picto_from_langcode($codelang)
     return $ret;
 }
 
+/**
+ * 	\brief		Define the style of background color of line
+ */
+function bcStyle($impair='impair', $pair='pair')
+{
+	$bc=array();
+	
+	$bc[0]='class="'.$impair.'"';
+	$bc[1]='class="'.$pair.'"';
+	
+	return $bc;
+}
+
 ?>
