@@ -783,15 +783,8 @@ class CommonObject
 			$rang = $row[0];
 		}
 
-		/* Lecture du rang max de la facture */
-		$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$row = $this->db->fetch_row($resql);
-			$max = $row[0];
-		}
+		// Get max value for rang
+		$max = $this->line_max();
 
 		if ($rang < $max)
 		{
@@ -811,6 +804,21 @@ class CommonObject
 			{
 				dol_print_error($this->db);
 			}
+		}
+	}
+	
+	/**
+	 * 	\brief		Get max value for rang
+	 */
+	function line_max()
+	{
+		$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			return $row[0];
 		}
 	}
 

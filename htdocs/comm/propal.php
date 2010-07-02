@@ -245,10 +245,10 @@ if ($_POST['action'] == 'addmilestone')
 	{
 		$milestone = new Milestone($db);
 
-		$milestone->label = $_POST['milestone_label'];
+		$milestone->label 		= $_POST['milestone_label'];
 		$milestone->description = $_POST['milestone_desc'];
 		$milestone->elementtype = $propal->element;
-		$milestone->fk_element = $propal->id;
+		$milestone->elementid	= $propal->id;
 		
 		$ret = $milestone->create($user);
 		
