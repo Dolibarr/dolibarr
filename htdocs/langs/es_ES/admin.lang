@@ -274,8 +274,7 @@ ExampleOfDirectoriesForModelGen=Ejemplos de sintaxis:<br>c:\mydir<br>/home/mydir
 FollowingSubstitutionKeysCanBeUsed=Colocando los siguientes tags en la plantilla, obtendrá una sustitución con el valor personalizado al generar el documento:
 FullListOnOnlineDocumentation=Listado completo de tags disponibles en la documentación de usuario del módulo Terceros del wiki http://wiki.dolibarr.org
 FirstnameNamePosition=Orden visualización nombre/apellidos
-
-# Modules
+# Modules= undefined=
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -405,6 +404,7 @@ Permission28=Exportar los presupuestos
 Permission31=Consultar productos
 Permission32=Crear/modificar productos
 Permission34=Eliminar productos
+Permission36=Ver/gestionar los productos ocultos
 Permission38=Exportar productos
 Permission41=Consultar proyectos y tareas (compartidos o soy contacto)
 Permission42=Crear/modificar proyectos y tareas (compartidos o soy contacto)
@@ -536,6 +536,7 @@ Permission404=Eliminar haberes
 Permission531=Consultar servicios
 Permission532=Crear/modificar servicios
 Permission534=Eliminar servicios
+Permission536=Ver/gestionar los servicios ocultos
 Permission538=Exportar servicios
 Permission700=Consultar subvenciones
 Permission701=Crear/modificar subvenciones
@@ -569,7 +570,7 @@ Permission1321=Exportar facturas a clientes, atributos y cobros
 Permission1401=Leer el plan contable
 Permission1402=Crear/Modificar un plan contable
 Permission1403=Cerrar un plan contable
-Permission1411=
+Permission1411=Leer los movimientos contables
 Permission1412=Crear/modificar/anular movimientos contables
 Permission1415=Leer Balances, informes, diarios, libros maestros
 Permission1421=Exportar pedidos de clientes y atributos
@@ -1200,5 +1201,5 @@ ProjectsSetup=Configuración del módulo Proyectos
 ProjectsModelModule=Modelo de documento para informes de proyectos
 ##### Externalsite #####
 ExternalSiteSetup=Configuración del enlace hacia el sitio externo
-##### Ecommerce #####
+##### Ecommerce #####=undefined
 EcommerceSiteSetup=Configuración del módulo Ecommerce

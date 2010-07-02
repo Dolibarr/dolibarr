@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - admin 
+# Dolibarr language file - ca_ES - admin
 CHARSET=UTF-8
 Version=Versió
 VersionProgram=Versió programa
@@ -274,8 +274,7 @@ ExampleOfDirectoriesForModelGen=Exemples de sintaxi:<br>c:\mydir<br>/home/mydir<
 FollowingSubstitutionKeysCanBeUsed=Posant les següents etiquetes a la plantilla, obtindrà una substitució amb el valor personalitzat en generar el document:
 FullListOnOnlineDocumentation=Llista completa de tags disponibles a la documentació d'usuari del mòdul Tercers del wiki http://wiki.dolibarr.org
 FirstnameNamePosition=Ordre visualització nom/cognoms
-
-# Modules
+# Modules= undefined==
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
 Module1Name=Tercers
@@ -405,6 +404,7 @@ Permission28=Exportar els pressupostos
 Permission31=Consultar productes
 Permission32=Crear/modificar productes
 Permission34=Eliminar productes
+Permission36=Veure/gestionar els productes ocults
 Permission38=Exportar productes
 Permission41=Consultar projectes i tasques (compartits o és contacte)
 Permission42=Crear/modificar projectes i tasques (compartits o és contacte)
@@ -536,6 +536,7 @@ Permission404=Eliminar havers
 Permission531=Consultar serveis
 Permission532=Crear/modificar serveis
 Permission534=Eliminar serveis
+Permission536=Veure / gestionar els serveis ocults
 Permission538=Exportar serveis
 Permission700=Consultar subvencions
 Permission701=Crear/modificar subvencions
@@ -569,7 +570,7 @@ Permission1321=Exporta factures a clients, atributs i cobraments
 Permission1401=Llegir el pla comptable
 Permission1402=Crear/Modificar un pla comptable
 Permission1403=Tancar un pla comptable
-Permission1411=
+Permission1411=Llegir els moviments comptables
 Permission1412=Crear/modificar/anular moviments comptables
 Permission1415=Llegir Balanços, informes, diaris, llibres mestres
 Permission1421=Exporta comandes de clients i atributs
@@ -1200,5 +1201,5 @@ ProjectsSetup=Configuració del mòdul Projectes
 ProjectsModelModule=Model de document per a informes de projectes
 ##### Externalsite #####
 ExternalSiteSetup=Configuració de l'enllaç cap al lloc extern
-##### Ecommerce #####
+##### Ecommerce #####=undefined=
 EcommerceSiteSetup=Configuració del mòdul Ecommerce
