@@ -30,6 +30,7 @@ require_once("./class/facture-rec.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
+$langs->load('bills');
 
 // Security check
 $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
@@ -178,7 +179,7 @@ if ($_GET["action"] == 'create')
 		$sql.= ' l.date_start,';
 		$sql.= ' l.date_end,';
 		$sql.= ' l.product_type,';
-		$sql.= ' p.ref, p.fk_product_type, p.label as product,';
+		$sql.= ' p.ref, p.fk_product_type, p.label as product_label,';
 		$sql.= ' p.description as product_desc';
 		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as l";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
