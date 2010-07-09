@@ -45,14 +45,14 @@ require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 define (GEN_NUMBER_FACTURE, 5);
 
 
-$sql = "SELECT min(rowid) FROM ".MAIN_DB_PREFIX."user";
-$resql = $db->query($sql);
-if ($resql)
+$ret=$user->fetch('','admin');
+if (! $ret > 0)
 {
-	$row = $db->fetch_row($resql);
-	$user = new User($db);
-	$user->fetch($row[0]);
+	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+	exit;
 }
+$user->getrights();
+
 
 $socids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
@@ -112,12 +112,12 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 			{
 				$prodid = rand(1, $num_prods);
 				$product=new Product($db);
-				$product->fetch($prodids[$prodid]);
-				$result=$facture->addline($facid,$product->description,$product->price, rand(1,5), 0, 0, $product->localtax2_tx, $prodids[$prodid], 0, '', '', 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+				$result=$product->fetch($prodids[$prodid]);
+				$result=$facture->addline($facture->id,$product->description,$product->price, rand(1,5), 0, 0, $product->localtax2_tx, $prodids[$prodid], 0, '', '', 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 				$xnbp++;
 			}
 
-			print " OK";
+			print " OK with ref ".$facture->ref."\n";;
 		}
 		else
 		{
@@ -129,7 +129,6 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 		dol_print_error($db,$facture->error);
 	}
 
-	print "\n";
 }
 
 

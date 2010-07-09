@@ -53,6 +53,15 @@ $prenoms = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Sa
 define (GEN_NUMBER_SOCIETE, 10);
 
 
+$ret=$user->fetch('','admin');
+if (! $ret > 0)
+{
+	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+	exit;
+}
+$user->getrights();
+
+
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 if ($db->query($sql)) {
   $num = $db->num_rows(); $i = 0;
@@ -77,30 +86,34 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
     $soc->ville = $villes[rand(0,sizeof($villes)-1)];
     $soc->client = rand(1,2);		// Une societe sur 2 est prospect, l'autre client
     $soc->fournisseur = rand(0,1);	// Une societe sur 2 est fournisseur
+    $soc->code_client='CU'.time()."$s";
+    $soc->code_fournisseur='SU'.time()."$s";
     $soc->tva_assuj=1;
     $soc->pays_id=1;
     $soc->pays_code='FR';
-	// Un client sur 10 a une remise de 5%
-    $user_remise=rand(1,10); if ($user_remise==10) $soc->remise_client=5;
+	// Un client sur 3 a une remise de 5%
+    $user_remise=rand(1,3); if ($user_remise==3) $soc->remise_client=5;
 	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_client."\n";
-	$soc->note='Fictional company created by the script generate-societe.php';
+	$soc->note='Company created by the script generate-societe.php';
     $socid = $soc->create();
 
     if ($socid >= 0)
     {
         $rand = rand(1,4);
-        print "> Generates $rand contact\n";
+        print "> Generates $rand contact(s)\n";
         for ($c = 0 ; $c < $rand ; $c++)
         {
             $contact = new Contact($db);
             $contact->socid = $soc->id;
-            $contact->name = "NomFamille".$c;
+            $contact->name = "Lastname".$c;
             $contact->firstname = $prenoms[rand(0,sizeof($prenoms)-1)];
             if ( $contact->create($user) )
             {
 
             }
         }
+
+        print "Company ".$s." created nom=".$soc->nom."\n";
     }
     else
     {

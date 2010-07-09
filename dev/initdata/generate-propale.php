@@ -47,14 +47,14 @@ require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 define (GEN_NUMBER_PROPAL, 5);
 
 
-$sql = "SELECT min(rowid) FROM ".MAIN_DB_PREFIX."user";
-$resql = $db->query($sql);
-if ($resql)
+$ret=$user->fetch('','admin');
+if (! $ret > 0)
 {
-	$row = $db->fetch_row($resql);
-	$user = new User($db);
-	$user->fetch($row[0]);
+	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+	exit;
 }
+$user->getrights();
+
 
 $socids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
@@ -123,11 +123,11 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 	$soc = new Societe($db);
 
 
+	$propal = new Propal($db, $socids[$socid]);
+
 	$obj = $conf->global->PROPALE_ADDON;
 	$modPropale = new $obj;
-	$numpr = $modPropale->getNextValue($soc);
-
-	$propal = new Propal($db, $socids[$socid]);
+	$numpr = $modPropale->getNextValue($soc,$propal);
 
 	$propal->ref = $numpr;
 	$propal->contactid = $contids[$socids[$socid]][0];
@@ -151,15 +151,13 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 			}
 			$xnbp++;
 		}
-		print " OK";
+		print " OK with ref ".$propal->ref."\n";
 	}
 	else
 	{
 		dol_print_error($db,$propal->error);
 	}
 
-	print "\n";
 }
-
 
 ?>

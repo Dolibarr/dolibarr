@@ -47,7 +47,16 @@ include_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
  * Parameters
  */
 
-define (GEN_NUMBER_PRODUIT, 5);
+define (GEN_NUMBER_PRODUIT, 100000);
+
+
+$ret=$user->fetch('','admin');
+if (! $ret > 0)
+{
+	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+	exit;
+}
+$user->getrights();
 
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
@@ -71,15 +80,14 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
     $produit = new Product($db);
     $produit->type = rand(0,1);
     $produit->status = 1;
-    $produit->ref = 'P'.time().$s;
+    $produit->ref = ($produit->type?'S':'P').time().$s;
     $produit->libelle = 'Label '.time().$s;
     $produit->description = 'Description '.time().$s;
     $produit->price = rand(1,1000);
     $produit->tva_tx = "19.6";
     $ret=$produit->create($user);
-    if ($ret < 0) print "Error $ret - ".$produit->error;
-	else print " OK";
-	print "\n";
+    if ($ret < 0) print "Error $ret - ".$produit->error."\n";
+	else print " OK with ref ".$produit->ref."\n";
 }
 
 
