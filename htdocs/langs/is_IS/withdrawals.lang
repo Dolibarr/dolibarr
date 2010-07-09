@@ -1,0 +1,85 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+ThirdPartyDeskCode=Í þriðja aðila skrifborðið kóða
+NoInvoiceCouldBeWithdrawed=Engin reikningur withdrawed með góðum árangri. Athugaðu að Reikningar eru fyrirtæki með gilt bann.
+ClassCredited=Flokka fært
+ClassCreditedConfirm=Ertu viss um að þú viljir að flokka þessa afturköllun berst sem lögð á bankareikning þinn?
+TransData=Date Sending
+TransMetod=Aðferð Sending
+Send=Senda
+Lines=Línur
+StandingOrderReject=Útgáfudagur a hafna
+WithdrawalRefused=Útborganir Refuseds
+WithdrawalRefusedConfirm=Ertu viss um að þú viljir að slá inn uppsögn höfnun fyrir samfélagið
+RefusedData=Dagsetning synjunar
+RefusedReason=Ástæða fyrir höfnun
+RefusedInvoicing=Innheimta höfnun
+NoInvoiceRefused=Ekki hlaða höfnun
+InvoiceRefused=Hleðsla höfnun til viðskiptavina
+Status=Status
+StatusUnknown=Óþekkt
+StatusWaiting=Bíð
+StatusCredited=Trúnaður
+StatusRefused=Neitaði
+StatusMotif0=Ótilgreint
+StatusMotif1=Kveða insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=Nei Uppsögn röð
+StatusMotif4=Customer Order
+StatusMotif5=RIB inexploitable
+StatusMotif6=Reikningur án jafnvægi
+StatusMotif7=Dómstóla ákvörðun
+StatusMotif8=Aðrar ástæður
+CreateAll=Dragið alla
+CreateGuichet=Aðeins skrifstofa
+CreateBanque=Eini bankinn
+OrderWaiting=Beðið eftir meðferð
+NotifyTransmision=Uppsögn Sending
+NotifyEmision=Uppsögn Útsending
+NotifyCredit=Uppsögn Credit
+NumeroNationalEmetter=National Sendandi Fjöldi
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
+// Reference language: en_US
+StandingOrdersArea=Standandi fyrirmæli area
+CustomersStandingOrdersArea=Viðskiptavinir standandi fyrirmæli area
+StandingOrders=Standandi pantanir
+StandingOrder=Standandi pantanir
+NewStandingOrder=Ný staða þess
+StandingOrderToProcess=Til að ganga frá
+StandingOrderProcessed=Afgreitt
+Withdrawals=Útborganir
+Withdrawal=Uppsögn
+WithdrawalsReceipts=Uppsögn kvittunum
+WithdrawalReceipt=Uppsögn barst
+WithdrawalReceiptShort=Kvittun
+LastWithdrawalReceipts=Last% s afturköllun kvittunum
+WithdrawedBills=Afturkallað reikningum
+WithdrawalsLines=Uppsögn línur
+RequestStandingOrderToTreat=Beiðni fyrir standandi fyrirmæli til meðferðar
+RequestStandingOrderTreated=Beiðni um stöðu pantana sem fengu
+CustomersStandingOrders=Viðskiptavinur standa pantanir
+CustomerStandingOrder=Viðskiptavinur standandi röð
+NbOfInvoiceToWithdraw=ATH reiknings með afturkalla beiðni
+InvoiceWaitingWithdraw=Invoice að bíða eftir að afturkalla
+AmountToWithdraw=Upphæð til baka
+WithdrawsRefused=Segir upp neitaði
+NoInvoiceToWithdraw=Enginn viðskiptavinur reikning í ham greiðslu &quot;afturkalla&quot; er í bið. Fara á flipanum &#39;Dragið&#39; reikning kort til að leggja fram beiðni.
+ResponsibleUser=Ábyrg notanda
+WithdrawalsSetup=Uppsögn skipulag
+WithdrawStatistics=tölfræði Dragið&#39;s
+WithdrawRejectStatistics=Dragið hafna&#39;s tölfræði
+LastWithdrawalReceipt=Last% s afturkalla kvittunum
+MakeWithdrawRequest=Gerðu afturkalla beiðni
+ThirdPartyBankCode=Í þriðja aðila bankakóði
+// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:20:00).

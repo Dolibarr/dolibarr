@@ -1,0 +1,31 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+Delivery=Afhending
+Deliveries=Sendingar
+DeliveryCard=Afhending kort
+DeliveryOrder=Sending röð
+DeliveryOrders=Sending pantana
+DeliveryDate=Fæðingardag
+DeliveryDateShort=Skila. dagsetning
+CreateDeliveryOrder=Búa til afhendingar til
+QtyDelivered=Magn afhentir
+SetDeliveryDate=Setja skipum dagsetningu
+ValidateDeliveryReceipt=Staðfesta sending berst
+ValidateDeliveryReceiptConfirm=Ertu viss um að þú viljir að sannprófa þetta sending berst?
+DeliveryMethod=Birtingarmáti
+TrackingNumber=Rekja spor númer
+NameAndSignature=Nafn og Undirskrift:
+ToAndDate=To___________________________________ á ____ / _____ / __________
+GoodStatusDeclaration=Hafa fengið vöruna hér að ofan í góðu ásigkomulagi,
+Deliverer=Frelsari:
+Sender=Sendandi
+Recipient=Viðtakandi
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

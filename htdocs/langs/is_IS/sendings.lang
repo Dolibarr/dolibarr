@@ -1,0 +1,66 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+RefSending=Tilv. sendingunni
+Sending=Sendingunni
+Sendings=Sendingar
+Receivings=Receivings
+SendingsArea=Sendingar area
+ListOfSendings=Listi yfir sendings
+SendingMethod=Shipping aðferð
+SendingReceipt=Shipping kvittun
+LastSendings=Last% s sendingar
+SearchASending=Leita að sendingunni
+StatisticsOfSendings=Tölfræði fyrir sendingar
+NbOfSendings=Fjöldi sendinga
+SendingCard=Shipping kort
+NewSending=New sendingunni
+CreateASending=Búa til sendingu
+CreateSending=Búa til sendinga
+QtyOrdered=Magn röð
+QtyShipped=Magn flutt
+QtyToShip=Magn til skip
+QtyReceived=Magn móttekin
+KeepToShip=Halda til skip
+OtherSendingsForSameOrder=Aðrar sendingar fyrir þessari röð
+DateSending=Date senda til
+DateSendingShort=Date senda til
+SendingsForSameOrder=Sendingum fyrir í þessari röð
+SendingsAndReceivingForSameOrder=Sendingar og receivings fyrir þessari röð
+SendingsToValidate=Sendi til að sannreyna
+StatusSendingCanceled=Hætt við
+StatusSendingDraft=Víxill
+StatusSendingValidated=Staðfestar (vörur til skip eða þegar flutt)
+StatusSendingCanceledShort=Hætt við
+StatusSendingDraftShort=Víxill
+StatusSendingValidatedShort=Staðfestar
+SendingSheet=Senda athugasemd
+Carriers=Flutningsaðili
+Carrier=Flutningsaðili
+CarriersArea=Flutningsaðili area
+NewCarrier=Nýr flytjandi
+ConfirmDeleteSending=Ertu viss um að þú viljir eyða þessari sendingu?
+ConfirmValidateSending=Ertu viss um að þú viljir að sannprófa þessari sendingu?
+ConfirmCancelSending=Ertu viss um að þú viljir hætta við þessari sendingu?
+GenericTransport=Generic samgöngur
+Enlevement=Fengið við viðskiptavini
+DocumentModelSimple=Einföld skjal líkan
+DocumentModelMerou=Merou A5 líkan
+WarningNoQtyLeftToSend=Aðvörun, að engar vörur sem bíður sendar.
+StatsOnShipmentsOnlyValidated=Tölfræði fram á sendingar aðeins staðfestar
+DateDeliveryPlanned=Flugvél fæðingardag
+DateReceived=Date sending berast
+SendingMethodCATCH=Afli eftir viðskiptavina
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+NumRefModelJade=Return tilvísunarnúmer með snið BLYY00001, ... þar sem YY er ári. Fjöldi í árslok er aldrei endurstilla á núll.
+DocumentModelSirocco=Einföld skjal líkan fyrir kvittunum sending
+DocumentModelTyphon=Meira heill skjal líkan fyrir kvittunum sending (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

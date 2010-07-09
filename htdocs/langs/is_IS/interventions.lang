@@ -1,0 +1,42 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+Intervention=Intervention
+Interventions=Íhlutun
+InterventionCard=Intervention kort
+NewIntervention=Nýrri aðferð
+AddIntervention=Bæta við íhlutun
+ListOfInterventions=Listi yfir inngrip
+EditIntervention=Breyta afskipti
+LastInterventions=Last% s inngrip
+AllInterventions=Öll inngrip
+CreateDraftIntervention=Búa til drög
+CustomerDoesNotHavePrefix=Viðskiptavinur hefur ekki forskeyti
+InterventionContact=Intervention samband
+DeleteIntervention=Eyða afskipti
+ValidateIntervention=Staðfesta afskipti
+ModifyIntervention=Breyta afskipti
+DeleteInterventionLine=Eyða afskipti línu
+ConfirmDeleteIntervention=Ertu viss um að þú viljir eyða þessari íhlutun?
+ConfirmValidateIntervention=Ertu viss um að þú viljir að sannreyna þessi úrræði?
+ConfirmModifyIntervention=Ertu viss um að þú viljir breyta þessari íhlutun?
+ConfirmDeleteInterventionLine=Ertu viss um að þú viljir eyða þessari íhlutun línu?
+NameAndSignatureOfInternalContact=Nafn og undirritun íhlutun:
+NameAndSignatureOfExternalContact=Nafn og undirritun viðskiptavinar:
+DocumentModelStandard=Staðlað skjal líkan fyrir afskipti
+TypeContact_fichinter_internal_INTERREPFOLL=Fulltrúi eftirfarandi upp afskipti
+TypeContact_fichinter_internal_INTERVENING=Íhlutun
+TypeContact_fichinter_external_BILLING=Innheimta viðskiptavina samband
+TypeContact_fichinter_external_CUSTOMER=Eftir upp viðskiptavina samband
+ArcticNumRefModelDesc1=Generic tala líkan
+ArcticNumRefModelError=Ekki tókst að virkja
+PacificNumRefModelDesc1=Fara aftur numero með snið% syymm-NNNN þar YY er ári, mm er mánuður og NNNN er röð án brot og ekki aftur snúið til 0
+PacificNumRefModelError=Íhlutun kort sem byrjar á $ syymm er til nú þegar og er ekki með þessari tegund af röð. Fjarlægja hana eða gefa henni nýtt heiti þess að virkja þessa einingu.
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

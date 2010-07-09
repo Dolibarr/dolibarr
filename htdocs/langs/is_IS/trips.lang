@@ -1,0 +1,29 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+Trip=Ferðalag
+Trips=Ferðir
+TripsAndExpenses=Ferðir og kostnaður
+TripsAndExpensesStatistics=Ferðir og kostnaður tölfræði
+TripCard=Trip kort
+AddTrip=Bæta ferð
+ListOfTrips=Listi ferða
+ListOfFees=Listi yfir gjöld
+NewTrip=New ferð
+CompanyVisited=Fyrirtæki / stofnun heimsótt
+Kilometers=Kílómetrar
+FeesKilometersOrAmout=Magn eða kílómetrar
+DeleteTrip=Eyða ferð
+ConfirmDeleteTrip=Ertu viss um að þú viljir eyða þessari ferð?
+TF_OTHER=Önnur
+TF_LUNCH=Hádegisverður
+TF_TRIP=Ferðalag
+ListTripsAndExpenses=Listi yfir ferðir og gjöld
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

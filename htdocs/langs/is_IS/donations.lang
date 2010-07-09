@@ -1,0 +1,40 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+Donation=Framlög
+Donations=Fjárframlög
+Donor=Gjafa
+Donors=Styrktaraðila
+AddDonation=Bæta við framlag
+NewDonation=New málefnið
+DonationPromise=Gjöf loforð
+PromisesNotValid=Ekki staðfest loforð
+PromisesValid=Staðfestar loforð
+DonationsPaid=Fjárframlög greitt
+DonationsReceived=Fjárframlög móttekin
+PublicDonation=Almenn framlög
+DonationsNumber=Safnast númer
+DonationsArea=Fjárframlög area
+DonationStatusPromiseNotValidated=Drög að lofa
+DonationStatusPromiseValidated=Staðfestar loforð
+DonationStatusPaid=Framlag borist
+DonationStatusPromiseNotValidatedShort=Víxill
+DonationStatusPromiseValidatedShort=Staðfestar
+DonationStatusPaidShort=Móttekin
+ValidPromise=Staðfesta loforð
+BuildDonationReceipt=Byggja kvittun
+DonationsModels=Skjöl líkan fyrir kvittunum framlag
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
+// Reference language: en_US
+ValidPromess=Staðfesta loforð
+// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:17:17).

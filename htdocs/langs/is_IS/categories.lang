@@ -1,0 +1,102 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+Category=Flokkur
+Categories=Flokkar
+Rubrique=Flokkur
+Rubriques=Flokkar
+categories=Flokkur
+TheCategorie=Flokki
+NoCategoryYet=Engin flokkur af þessu tagi skapaði
+In=Í
+AddIn=Bæta við í
+modify=breyta
+Classify=Flokka
+CategoriesArea=Flokkar area
+ProductsCategoriesArea=Vörur / Þjónusta flokka svæði
+SuppliersCategoriesArea=Birgjar flokkar area
+CustomersCategoriesArea=Viðskiptavinir flokkar area
+ThirdPartyCategoriesArea=Í þriðja aðila flokkar area
+MembersCategoriesArea=Members flokkar area
+MainCats=Helstu flokkar
+SubCats=Undirflokkar
+CatStatistics=Tölfræði
+CatList=Listi yfir flokka
+AllCats=Allir flokkar
+ViewCat=Skoða flokk
+NewCat=Bæta við flokk
+NewCategory=Nýr flokkur
+ModifCat=Breyta flokki
+CatCreated=Flokkur búið
+CreateCat=Búa til flokkur
+CreateThisCat=Búa þessum flokki
+ValidateFields=Staðfesta reitina
+NoSubCat=Nei undirflokk.
+SubCatOf=Undirflokkur
+FoundCats=Stofna flokkar
+FoundCatsForName=Flokkar fundust fyrir Notendanafn:
+FoundSubCatsIn=Undirflokkar fundust í flokknum
+ErrSameCatSelected=Þú valdir sama flokki nokkrum sinnum
+ErrForgotCat=Þú hefur gleymt að velja þann flokk
+ErrForgotField=Þú gleymdi að tilkynna þeim sviðum
+ErrCatAlreadyExists=Þetta heiti er þegar í notkun
+AddProductToCat=Bæta þessari vöru flokk?
+ImpossibleAddCat=Ómögulegt að bæta við flokki
+ImpossibleAssociateCategory=Ómögulegt að tengja flokk
+WasAddedSuccessfully=<b>% S</b> var bætt við.
+ObjectAlreadyLinkedToCategory=Frumefni er nú þegar tengdur þessum flokki.
+CategorySuccessfullyCreated=Þetta% flokki s hefur verið bætt við að ná árangri.
+ProductIsInCategories=Vöru / þjónustu er eigandi að eftirtöldum flokkum
+SupplierIsInCategories=Þriðji aðili er eigandi að eftirtöldum birgjum flokkar
+CompanyIsInCustomersCategories=Þessi þriðji aðili er eigandi að fylgja viðskiptavinum / horfur flokkar
+CompanyIsInSuppliersCategories=Þessi þriðji aðili er eigandi að eftirtöldum birgjum flokkar
+MemberIsInCategories=Þessi aðili er eigandi að eftirfarandi aðilar flokkar
+ProductHasNoCategory=Þessi vara / þjónusta er ekki í neinum flokkum
+SupplierHasNoCategory=Þetta birgir ekki í neinum flokkum
+CompanyHasNoCategory=Þetta fyrirtæki er ekki í neinum flokkum
+MemberHasNoCategory=Þessi aðili er ekki í neinum flokkum
+ClassifyInCategory=Flokka í flokki
+NoneCategory=None
+CategoryExistsAtSameLevel=Þessi flokkur er þegar til með þessu tilv
+ReturnInProduct=Til baka vöru / þjónustu kort
+ReturnInSupplier=Til baka birgir kort
+ReturnInCompany=Til baka viðskiptavina / horfur kort
+ContentsVisibleByAll=Inntak verður sýnilegt af öllum
+ContentsVisibleByAllShort=Efnisyfirlit sýnileg um alla
+ContentsNotVisibleByAllShort=Efnisyfirlit ekki sýnileg um alla
+CategoriesTree=Flokkar tré
+DeleteCategory=Eyða flokki
+ConfirmDeleteCategory=Ertu viss um að þú viljir eyða þessum flokki?
+RemoveFromCategory=Fjarlægja hlekk með Flokkur
+RemoveFromCategoryConfirm=Ertu viss um að þú viljir fjarlægja tengilinn á milli viðskipta og flokk?
+NoCategoriesDefined=Engin flokkur er skilgreind
+SuppliersCategoryShort=Birgjar flokkur
+CustomersCategoryShort=Viðskiptavinir flokkur
+ProductsCategoryShort=Vörur flokkur
+MembersCategoryShort=Members flokkur
+SuppliersCategoriesShort=Birgjar flokkar
+CustomersCategoriesShort=Viðskiptavinir flokkar
+CustomersProspectsCategoriesShort=Custo. / Prosp. Flokkur
+ProductsCategoriesShort=Vörur flokkar
+MembersCategoriesShort=Members flokkar
+ThisCategoryHasNoProduct=Þessi flokkur inniheldur ekki vöruna.
+ThisCategoryHasNoSupplier=Þessi flokkur inniheldur ekki birgir.
+ThisCategoryHasNoCustomer=Þessi flokkur inniheldur ekki allir viðskiptavinur.
+ThisCategoryHasNoMember=Þessi flokkur inniheldur ekki meðlimur.
+AssignedToCustomer=Úthlutað til viðskiptavinar
+AssignedToTheCustomer=Úthlutað til viðskiptavinar
+InternalCategory=Innri flokkur
+CategoryContents=Flokkur innihald
+CategId=Auðkenni
+CatSupList=Listi yfir flokka birgir
+CatCusList=Listi yfir viðskiptavini / horfur flokkar
+CatProdList=Listi yfir vörur flokkar
+CatMemberList=Listi yfir meðlimi flokkar
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

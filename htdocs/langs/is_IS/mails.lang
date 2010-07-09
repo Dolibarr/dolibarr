@@ -1,0 +1,116 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+Mailing=Emailing
+EMailing=Emailing
+Mailings=EMailings
+EMailings=EMailings
+AllEMailings=Allar eMailings
+MailCard=Emailing kort
+MailTargets=Markmið
+MailRecipients=Viðtakendur
+MailRecipient=Viðtakandi
+MailTitle=Lýsing
+MailFrom=Sendandi
+MailErrorsTo=Villur við
+MailReply=Svara
+MailTo=Receiver (s)
+MailCC=Afrita á
+MailCCC=Geymd afrit til
+MailTopic=Netfang þráð
+MailText=Message
+MailFile=Meðfylgjandi skrá
+MailMessage=Netfang líkami
+ShowEMailing=Sýna póst
+ListOfEMailings=Listi yfir emailings
+NewMailing=New póst
+EditMailing=Breyta póst
+ResetMailing=Endursenda póst
+DeleteMailing=Eyða póst
+DeleteAMailing=Eyða póst
+PreviewMailing=Forskoða póst
+PrepareMailing=Undirbúa póst
+CreateMailing=Búa til póst
+MailingDesc=Þessi síða leyfir þér að senda emailings við hóp af fólki.
+MailingResult=Senda tölvupóst vegna
+TestMailing=Próf tölvupósti
+ValidMailing=Valid póst
+ApproveMailing=Samþykkja póst
+MailingStatusDraft=Víxill
+MailingStatusValidated=Staðfestar
+MailingStatusApproved=Samþykkt
+MailingStatusSent=Sendir
+MailingStatusSentPartialy=Send hluta
+MailingStatusSentCompletely=Send fullkomlega
+MailingStatusError=Villa
+MailingStatusNotSent=Ekki send
+MailSuccessfulySent=Tölvupóstur hefur verið sendur (frá% s á% s)
+ErrorMailRecipientIsEmpty=Netfang móttakanda er tóm
+WarningNoEMailsAdded=Engin ný Email að bæta við listann viðtakanda.
+ConfirmValidMailing=Ertu viss um að þú viljir að sannprófa þetta póst?
+ConfirmResetMailing=Aðvörun, eftir reinitializing <b>póst% s,</b> leyfa þér að gera massa sendingu af þessum tölvupósti í annað sinn. Ertu viss um að þú þetta er það sem þú vilt gera?
+ConfirmDeleteMailing=Ertu viss um að þú viljir eyða þessum emailling?
+NbOfRecipients=Fjöldi lífeyrisþega
+NbOfUniqueEMails=ATH einstaka tölvupósti
+NbOfEMails=ATH bréfa
+TotalNbOfDistinctRecipients=Fjöldi mismunandi viðtakanda
+NoTargetYet=Nei viðtakenda skilgreint enn (Far á flipann &#39;Viðtakendur&#39;)
+AddRecipients=Bæta viðtakanda
+RemoveRecipient=Fjarlægja viðtakanda
+CommonSubstitutions=Common substitutions
+YouCanAddYourOwnPredefindedListHere=Til að búa til email Velja eininguna þína, sjá htdocs / fela / modules / pósti / README.
+EMailTestSubstitutionReplacedByGenericValues=Þegar þú notar prófun háttur, eru substitutions breytur komi almenn gildi
+MailingAddFile=Hengja þessa skrá
+NoAttachedFiles=Nei Viðhengdar skrár
+BadEMail=Bad gildi fyrir tölvupóst
+CloneEMailing=Klóna Emailing
+ConfirmCloneEMailing=Ertu viss um að þú viljir klón þessum póst?
+CloneContent=Klóna skilaboð
+CloneReceivers=Cloner viðtakendur
+DateLastSend=Dagsetning síðustu sendingu
+DateSending=Date sendingu
+SentTo=Send <b>til% s</b>
+MailingModuleDescContactCompanies=Tengiliðir allra þriðja aðila (viðskiptavinur, horfur, birgir, ...)
+MailingModuleDescDolibarrUsers=Allar Dolibarr notandi með tölvupósti
+MailingModuleDescFundationMembers=Stofnun meðlimir með tölvupósti
+MailingModuleDescEmailsFromFile=Tölvupóst frá textaskrá (email; nafn; ættarnafn; athugasemdir)
+MailingModuleDescContactsCategories=Í þriðja aðila með tölvupósti (eftir flokkum)
+MailingModuleDescDolibarrContractsLinesExpired=Í þriðja aðila með línum rann samningur er
+LineInFile=Lína% s í skrá
+RecipientSelectionModules=Skilgreint beiðnir um val viðtakanda
+MailSelectedRecipients=Valdar viðtakendur
+MailingArea=EMailings area
+LastMailings=Last% s emailings
+TargetsStatistics=Markmið tölfræði
+NbOfCompaniesContacts=Einstök tengiliðum fyrirtækja
+MailNoChangePossible=Viðtakendur fyrir staðfestar póst getur ekki breytt
+SearchAMailing=Leita póstlista
+SendMailing=Senda póst
+SendMail=Senda tölvupóst
+SentBy=Sendur
+MailingNeedCommand=Fyrir verðbréf ástæðu að senda póst skal fara fram úr skipuninni. Spyrja þinn stjórnandi að ráðast í eftirfarandi skipun til að senda póst til allra viðtakenda:
+MailingNeedCommand2=Þú getur hins vegar sent þær á netinu með því að bæta breytu MAILING_LIMIT_SENDBYWEB við gildi frá fjölda max tölvupóst þú vilt senda við setu.
+ConfirmSendingEmailing=Ertu viss um að þú viljir senda póst?
+LimitSendingEmailing=Á línu sendingu emailings eru takmarkaður fyrir öryggi og tími ástæða <b>til% s</b> viðtakenda með því að senda fundur.
+TargetsReset=Hreinsa lista
+ToClearAllRecipientsClickHere=Smelltu hér til að hreinsa viðtakanda lista fyrir þennan póst
+ToAddRecipientsChooseHere=Bæta við viðtakendur með því að velja úr listanum
+NbOfEMailingsReceived=Mass emailings móttekin
+IdRecord=Auðkenni færslu
+DeliveryReceipt=Sending kvittun
+YouCanUseCommaSeparatorForSeveralRecipients=Þú getur notað <b>kommu</b> skiltákn að tilgreina nokkra viðtakendur.
+Notifications=Tilkynningar
+NoNotificationsWillBeSent=Engar tilkynningar í tölvupósti er mjög spennandi fyrir þennan atburð og fyrirtæki
+ANotificationsWillBeSent=1 tilkynning verður send með tölvupósti
+SomeNotificationsWillBeSent=% S tilkynningar verða sendar í tölvupósti
+AddNewNotification=Virkja nýja tilkynningu í tölvupósti beiðni
+ListOfActiveNotifications=Listi alla virka tilkynningu í tölvupósti beiðnir
+ListOfNotificationsDone=Sýna allar tilkynningar í tölvupósti sendi
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

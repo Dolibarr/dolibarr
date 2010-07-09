@@ -1,0 +1,96 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+Proposals=Auglýsing tillögur
+Proposal=Auglýsing tillögu
+ProposalShort=Tillaga
+ProposalsDraft=Drög að auglýsing tillögur
+ProposalDraft=Drög að auglýsing tillögu
+ProposalsOpened=Opnaður auglýsing tillögur
+Prop=Auglýsing tillögur
+CommercialProposal=Auglýsing tillögu
+CommercialProposals=Auglýsing tillögur
+ProposalContact=Tillaga samband
+NewProp=Ný auglýsing tillögu
+NewProposal=Ný auglýsing tillögu
+NewPropal=Ný tillaga
+Prospect=Prospect
+ProspectList=Prospect lista
+DeleteProp=Eyða auglýsing tillögu
+ValidateProp=Staðfesta auglýsing tillögu
+AddProp=Bæta við tillögu
+ConfirmDeleteProp=Ertu viss um að þú viljir eyða þessum viðskiptum tillögur?
+ConfirmValidateProp=Ertu viss um að þú viljir að sannprófa þetta auglýsing tillögur?
+LastPropals=Last% s tillögur
+LastClosedProposals=Last% s lokað tillögur
+LastModifiedProposals=Last% s breytt tillögum
+AllPropals=Allar tillögur
+LastProposals=Síðasta tillögur
+SearchAProposal=Leita að tillögu
+ProposalsStatistics=tölfræði Auglýsing tillögunnar
+NumberOfProposalsByMonth=Fjöldi eftir mánuði
+AmountOfProposalsByMonthHT=Upphæð eftir mánuði (að frádregnum skatti)
+NbOfProposals=Fjöldi viðskipta tillögur
+ShowPropal=Sýna tillögu
+PropalsDraft=Drög
+PropalsOpened=Opnaður
+PropalsNotBilled=Lokað billed ekki
+PropalStatusDraft=Víxill (þarf staðfestingu)
+PropalStatusValidated=Staðfestar (Tillagan er opið)
+PropalStatusOpened=Staðfestar (Tillagan er opið)
+PropalStatusClosed=Loka
+PropalStatusSigned=Undirritað (þarf greiðanda)
+PropalStatusNotSigned=Ekki skráð (lokað)
+PropalStatusBilled=Billed
+PropalStatusDraftShort=Víxill
+PropalStatusValidatedShort=Staðfestar
+PropalStatusOpenedShort=Opnaður
+PropalStatusClosedShort=Loka
+PropalStatusSignedShort=Innsigli
+PropalStatusNotSignedShort=Ekki skráð
+PropalStatusBilledShort=Billed
+PropalsToClose=Auglýsing um tillögur um að loka
+PropalsToBill=Undirritað auglýsing tillögur að frumvarpi
+ListOfProposals=Listi yfir auglýsing tillögur
+ActionsOnPropal=Aðgerðir á tillögu
+NoOpenedPropals=Nei opnaði auglýsing tillögur
+NoOtherOpenedPropals=Engin önnur opnaði auglýsing tillögur
+RefProposal=Auglýsing tillögu dómari
+SendPropalByMail=Senda auglýsing tillögu með tölvupósti
+FileNotUploaded=Skráin var ekki birt
+FileUploaded=Skráin tókst að hlaða inn
+AssociatedDocuments=Skjöl sem tengd er við tillögu:
+ErrorCantOpenDir=Get ekki opnað skrá
+DatePropal=Dagsetning tillögu
+DateEndPropal=Date lok gildistíma
+DateEndPropalShort=Lokadagsetning
+ValidityDuration=Gildistími Lengd
+CloseAs=Loka með stöðu
+ClassifyBilled=Flokka billed
+BuildBill=Byggja Reikningar
+ErrorPropalNotFound=Propal% s fannst ekki
+Estimate=Áætlun:
+EstimateShort=Áætlun
+OtherPropals=Aðrar tillögur
+CopyPropalFrom=Búa auglýsing tillögu með því að afrita það sem tillaga
+CreateEmptyPropal=Búa til tóm auglýsing tillögur vierge eða lista yfir vörur / þjónustu
+DefaultProposalDurationValidity=Default auglýsing tillögu Gildistími Lengd (í dögum)
+UseCustomerContactAsPropalRecipientIfExist=Nota viðskiptavina samband netfang ef skilgreint í stað þriðja aðila netfang sem tillaga viðtakanda heimilisfang
+ClonePropal=Klóna auglýsing tillögu
+ConfirmClonePropal=Ertu viss um að þú viljir klón þetta auglýsing <b>tillögu% s?</b>
+ProposalsAndProposalsLines=Auglýsing tillögunnar og línur
+ProposalLine=Tillaga línu
+TypeContact_propal_internal_SALESREPFOLL=Fulltrúi eftirfarandi upp tillögu
+TypeContact_propal_external_BILLING=Viðskiptavinur Reikningar samband
+TypeContact_propal_external_CUSTOMER=Viðskiptavinur samband eftirfarandi upp tillögu
+DocModelAzurDescription=A heill tillögu líkan (logo. ..)
+DocModelJauneDescription=Jaune tillögu líkan
+DocModelRoigDescription=A heill tillögu líkan með spænsku skatt RE og IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

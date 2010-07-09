@@ -1,0 +1,82 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+MenuManager=Valmynd framkvæmdastjóri
+Error=Villa
+Errors=Villur
+ErrorBadEMail=Netfang% s er rangt
+ErrorBadUrl=Url% s er rangt
+ErrorLoginAlreadyExists=Innskráning% s er þegar til.
+ErrorGroupAlreadyExists=Group% s er þegar til.
+ErrorRecordNotFound=Upptaka fannst ekki.
+ErrorFailToDeleteFile=Ekki tókst að fjarlægja skrána <b>&#39;% s&#39;.</b>
+ErrorFailToCreateFile=Ekki tókst að búa til skrána <b>&#39;% s&#39;.</b>
+ErrorFailToRenameDir=Ekki tókst að endurnefna <b>&#39;Mappan% s&#39;</b> í <b>&#39;% s&#39;.</b>
+ErrorFailToCreateDir=Ekki tókst að búa til möppu <b>&#39;% s&#39;.</b>
+ErrorFailToDeleteDir=Tókst ekki að eyða <b>&#39;%</b> möppu <b>s&#39;.</b>
+ErrorFailedToDeleteJoinedFiles=Get ekki eytt aðila vegna þess að það er einhver gekk til liðs við skrá. Fjarlægja tengja skrá fyrst.
+ErrorThisContactIsAlreadyDefinedAsThisType=Þessi tengiliður er nú þegar skilgreint og tengiliður fyrir þessa tegund.
+ErrorCashAccountAcceptsOnlyCashMoney=Þessi bankareikningur er reiðufé reikning, svo tekur það greiðslur af gerðinni reiðufé eingöngu.
+ErrorFromToAccountsMustDiffers=Heimild og markmið bankareikninga verður að vera annað.
+ErrorBadThirdPartyName=Bad gildi fyrir þriðja aðila Nafn
+ErrorBadCustomerCodeSyntax=Bad setningafræði fyrir kóða viðskiptavina
+ErrorCustomerCodeRequired=Viðskiptavinur númer sem þarf
+ErrorCustomerCodeAlreadyUsed=Viðskiptavinur sem notaður er þegar
+ErrorPrefixRequired=Forskeyti krafist
+ErrorUrlNotValid=The website netfang er rangt
+ErrorBadSupplierCodeSyntax=Bad setningafræði fyrir birgi kóða
+ErrorSupplierCodeRequired=Birgir merkjamál þurfa
+ErrorSupplierCodeAlreadyUsed=Birgir sem notaður er þegar
+ErrorBadParameters=Bad breytur
+ErrorFailedToWriteInDir=Tókst ekki að skrifa í möppunni% s
+ErrorFoundBadEmailInFile=Stofna rangt netfang setningafræði fyrir% s línur í skrá (td línu% s með email =% s)
+ErrorUserCannotBeDelete=Notandi getur ekki verið eytt. Mega vera það er tengt á Dolibarr aðila.
+ErrorFieldsRequired=Sumir Nauðsynlegir reitir voru ekki fylltir.
+ErrorFailedToCreateDir=Ekki tókst að búa til möppu. Athugaðu að vefþjóninn notandi hefur réttindi til að skrifa inn Dolibarr skjöl skrá. Ef viðfang <b>safe_mode</b> er virkt á þessu PHP, athuga hvort Dolibarr PHP skrár á nú á netþjóninn notandi (eða hóp).
+ErrorNoMailDefinedForThisUser=Nei póstur er skilgreind fyrir þennan notanda
+ErrorFeatureNeedJavascript=Þessi aðgerð þarfnast javascript til að virkja til vinnu. Breyting þessi hefur skipulag - sýna.
+ErrorTopMenuMustHaveAParentWithId0=A valmynd af gerðinni &#39;Efst&#39; má ekki hafa foreldri valmyndinni. Put 0 í valmyndinni foreldri eða veldu Valmynd af gerðinni &#39;Vinstri&#39;.
+ErrorLeftMenuMustHaveAParentId=A valmynd af gerðinni &#39;Vinstri&#39; verða að hafa foreldri kt.
+ErrorFileNotFound=<b>File% s</b> fannst ekki (Bad slóð, rangt leyfi eða aðgangi hafnað af PHP openbasedir eða safe_mode viðföng)
+ErrorDirNotFound=<b>Listinn% s</b> fannst ekki (Bad slóð, rangt leyfi eða aðgangi hafnað af PHP openbasedir eða safe_mode viðföng)
+ErrorFunctionNotAvailableInPHP=<b>Virka% s</b> er krafist fyrir þessa aðgerð, en er ekki til staðar í þessari útgáfu / skipulag af PHP.
+ErrorDirAlreadyExists=A möppu með þessu nafni er þegar til.
+ErrorFileAlreadyExists=Skrá með þessu nafni er þegar til.
+ErrorPartialFile=Skrá fékk ekki alveg við þjóninn.
+ErrorNoTmpDir=Tímabundin directy% s er ekki til.
+ErrorUploadBlockedByAddon=Hlaða læst með PHP / Apache tappi.
+ErrorFileSizeTooLarge=Skráarstærð er of stór.
+ErrorFieldCanNotContainSpecialCharacters=<b>Akur% s</b> verður ekki innihalda sértákn.
+WarningSafeModeOnCheckExecDir=Aðvörun, PHP valkostur <b>safe_mode</b> er á svo stjórn verður að vera geymd inni í möppu gefur PHP breytu <b>safe_mode_exec_dir.</b>
+WarningAllowUrlFopenMustBeOn=Viðfang <b>allow_url_fopen</b> verður að vera stillt <b>á Virkt</b> í <b>php.ini</b> Filer fyrir að hafa þessa einingu vinna algjörlega. Þú verður að breyta þessari skrá handvirkt.
+WarningBuildScriptNotRunned=<b>Script% s</b> var ekki enn rann til að byggja upp grafík, eða það er engin gögn til að sýna.
+WarningBookmarkAlreadyExists=A bókamerki með þessum titli eða þessa miða (URL) er þegar til.
+WarningPassIsEmpty=Viðvörun Skráð lykilorð er tóm. Þetta er öryggis gat. Þú ættir að setja inn lykilorð til að gagnasafninu og breyta conf.php þinni til að endurspegla þessa.
+ErrorNoAccountancyModuleLoaded=Nei bókhalds mát virkja
+ErrorExportDuplicateProfil=Þetta profil heiti er þegar til fyrir þennan útflutning setja.
+ErrorLDAPSetupNotComplete=Dolibarr-LDAP samsvörun er ekki lokið.
+ErrorLDAPMakeManualTest=A. LDIF skrá hefur verið búin til í% s. Prófaðu að hlaða það handvirkt úr stjórn lína að hafa meiri upplýsingar um villur.
+ErrorCantSaveADoneUserWithZeroPercentage=Get ekki vistað aðgerð með &quot;statut ekki farinn að&quot; ef reitinn &quot;gert með því að&quot; er einnig fyllt.
+ErrorRefAlreadyExists=Ref notað sköpun er þegar til.
+ErrorPleaseTypeBankTransactionReportName=Vinsamlega sláðu banki berst nafn þar sem framkvæmd er greint (Format ÁÁÁÁMM eða YYYYMMDD)
+ErrorRecordHasChildren=Ekki tókst að eyða gögnum þar sem það hefur einhverja barnsins.
+WarningConfFileMustBeReadOnly=Aðvörun, skrá samsk <b>(htdocs / conf / conf.php)</b> er hægt að skrifa of mikið af vefþjóni. Þetta er alvarlegur öryggi gat. Breyta leyfi á skrá til að vera í lesa aðeins ham fyrir stýrikerfi notandi notar netþjóninn. Ef þú notar Windows og FAT snið fyrir diskinn þinn, þú verður að vita að þetta skráarkerfi leyfir ekki að bæta við heimildum á skrá, svo má ekki vera fullkomlega öruggur.
+ErrorModuleRequireJavascript=Javascript þarf ekki að vera óvirkur til að hafa þennan möguleika að vinna. Til að virkja / slökkva Javascript, fara í valmynd Heim-&gt; Uppsetning-&gt; Skjár.
+ErrorPasswordsMustMatch=Bæði tegund lykilorð verður að samsvara hvor öðrum
+ErrorContactEMail=Tæknilegt villa kom upp. Vinsamlegast hafðu samband við kerfisstjóra til folowwing <b>tölvupósti%</b> en veita <b>villa% s</b> í skilaboðin, eða jafnvel betra með því að bæta skjá afrit af þessari síðu.
+ErrorWrongValueForField=Wrong gildi fyrir reitinn <b>númer% s</b> (gildi <b>&#39;% s&#39;</b> er ekki það sama ríkisstjóratíð <b>reglu% s)</b>
+ErrorsOnXLines=Villur <b>á% s</b> uppspretta línur
+WarningsOnXLines=Viðvaranir <b>á% s</b> uppspretta línur
+ErrorFileIsInfectedWithAVirus=The antivirus program was not &#39;fær til setja í gildi the skrá (skrá gæti verið sýkt af veiru)
+ErrorSpecialCharNotAllowedForField=Sérstafir eru ekki leyfðar í reitinn &quot;% s&quot;
+WarningNoDocumentModelActivated=Engin fyrirmynd fyrir kynslóð skjal hefur verið virkjuð. A líkan vilja vera choosed sjálfgefið þar til þú skoðar einingin uppsetningu þína.
+ErrorDatabaseParameterWrong=viðfang <b>&#39;% s</b> Gagnasafn skipulag hefur a gildi ekki samhæft við notkun Dolibarr (verður að hafa <b>gildi&#39;% s</b> &#39;).
+ErrorNumRefModel=Vísun til staðar í gagnagrunninum (% s) og er ekki með þessari tala reglu. Fjarlægja færslu eða endurnefna þær tilvísun til að virkja þessa einingu.
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

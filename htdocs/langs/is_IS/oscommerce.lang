@@ -1,0 +1,18 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+OSCommerce=OS Commerce
+OSCommerceSetup=OS Commerce mát skipulag
+OSCommerceSetupSaved=OS Commerce skipulag vistuð
+OSCommerceServer=OS Commerce miðlara gestgjafi / ip
+OSCommerceDatabaseName=OS Commerce gagnasafn nafn
+OSCommercePrefix=OS Commerce matskeið forskeyti
+OSCommerceUser=OS Commerce gagnasafn Innskráning
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

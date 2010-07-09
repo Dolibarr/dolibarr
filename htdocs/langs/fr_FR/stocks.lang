@@ -3,6 +3,7 @@ CHARSET=UTF-8
 WarehouseCard=Fiche entrepôt
 Warehouse=Entrepôt
 NewWarehouse=Nouvel entrepôt ou zone de stockage
+WarehouseEdit=Edition entrepôt
 MenuNewWarehouse=Nouvel entrepôt
 WarehouseOpened=Entrepôt ouvert
 WarehouseClosed=Entrepôt fermé

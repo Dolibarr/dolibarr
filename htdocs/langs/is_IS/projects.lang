@@ -1,0 +1,100 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+Project=Project
+Projects=Verkefni
+SharedProject=Allir
+PrivateProject=Tengiliðir verkefnisins
+MyProjectsDesc=Þessi skoðun er takmörkuð við verkefni sem þú ert að hafa samband við (hvað sem er gerð).
+ProjectsPublicDesc=Þetta sýnir öll verkefni sem þú ert að fá að lesa.
+ProjectsDesc=Þetta sýnir öll verkefni (notandi heimildir veita þér leyfi til að skoða allt).
+MyTasksDesc=Þessi skoðun er takmörkuð við verkefni eða verkefni sem þú ert að hafa samband við (hvað sem er gerð).
+TasksPublicDesc=Þetta sýnir öll verkefni og verkefni sem þú ert að fá að lesa.
+TasksDesc=Þetta sýnir öll verkefni og verkefni (notandi heimildir veita þér leyfi til að skoða allt).
+Myprojects=Verkefnin mín
+ProjectsArea=Verkefni area
+NewProject=Ný verkefni
+AddProject=Bæta við verkefnið
+DeleteAProject=Eyða verkefni
+DeleteATask=Eyða verkefni
+ConfirmDeleteAProject=Ertu viss um að þú viljir eyða þessu verkefni?
+ConfirmDeleteATask=Ertu viss um að þú viljir eyða þessu verkefni?
+OfficerProject=Officer verkefni
+LastProjects=Last% s verkefni
+AllProjects=Öll verkefni
+ProjectsList=Listi yfir verkefni
+ShowProject=Sýna verkefni
+SetProject=Setja verkefni
+NoProject=Engin verkefni skilgreind eða í eigu
+NbOpenTasks=ATH að opna verkefni
+NbOfProjects=ATH verkefna
+TimeSpent=Tíma sem fer
+RefTask=Tilv. verkefni
+LabelTask=Merki verkefni
+NewTimeSpent=Nýr tími
+MyTimeSpent=Minn tími var
+MyTasks=verkefni mitt
+Tasks=Verkefni
+Task=Verkefni
+NewTask=Ný verkefni
+AddTask=Bæta við verkefni
+AddDuration=Bæta við lengd
+Activity=Afþreying
+Activities=Verkefni / starfsemi
+MyActivity=Afþreying minn
+MyActivities=verkefni mín / starfsemi
+MyProjects=Verkefnin mín
+DurationEffective=Árangursrík Lengd
+Progress=Framfarir
+Time=Tími
+ListProposalsAssociatedProject=Listi yfir auglýsing tillögum í tengslum við verkefnið
+ListOrdersAssociatedProject=Listi yfir pantanir viðskiptavina í tengslum við verkefnið
+ListInvoicesAssociatedProject=Listi yfir reikninga viðskiptavinar í tengslum við verkefnið
+ListPredefinedInvoicesAssociatedProject=Listi yfir fyrirfram reikningur viðskiptavinar í tengslum við verkefnið
+ListSupplierOrdersAssociatedProject=Listi yfir pantanir birgis í tengslum við verkefnið
+ListSupplierInvoicesAssociatedProject=Listi yfir reikninga birgis í tengslum við verkefnið
+ListContractAssociatedProject=Listi yfir samninga í tengslum við verkefnið
+ListFichinterAssociatedProject=Listi yfir inngrip í tengslum við verkefnið
+ListTripAssociatedProject=Listi ferða og kostnaði í tengslum við verkefnið
+ListActionsAssociatedProject=Listi yfir aðgerðir í tengslum við verkefnið
+ActivityOnProjectThisWeek=Afþreying á verkefni í þessari viku
+ActivityOnProjectThisMonth=Afþreying á verkefni í þessum mánuði
+ActivityOnProjectThisYear=Afþreying á verkefni á þessu ári
+ChildOfTask=Barn verkefni / hlutverk
+NotOwnerOfProject=Ekki eigandi þessa einka verkefni
+AffectedTo=Áhrifum á
+CantRemoveProject=Þetta verkefni er ekki hægt að fjarlægja eins og það er vísað af einhverjum öðrum hlutum (Reikningar, pantanir eða annað). Sjá Referers flipann.
+ValidateProject=Staðfesta projet
+ConfirmValidateProject=Ertu viss um að þú viljir að sannprófa þetta verkefni?
+CloseAProject=Loka verkefni
+ConfirmCloseAProject=Ertu viss um að þú viljir loka þessum verkefni?
+ReOpenAProject=Opna verkefni
+ConfirmReOpenAProject=Ertu viss um að þú viljir gera það aftur að opna þetta verkefni?
+ProjectContact=Project tengiliðir
+ActionsOnProject=Aðgerðir á verkefninu
+YouAreNotContactOfProject=Þú ert ekki samband við þessa einka verkefni
+DeleteATimeSpent=Eyða tíma
+ConfirmDeleteATimeSpent=Ertu viss um að þú viljir eyða þessum tíma varið?
+DoNotShowMyTasksOnly=Sjá einnig verkefni ég er ekki áhrif á
+ShowMyTasksOnly=Skoða aðeins verkefni ég er hrærður til
+TaskRessourceLinks=Ressources
+ProjectsDedicatedToThisThirdParty=Verkefni hollur til þessa þriðja aðila
+NoTasks=Engin verkefni fyrir þetta verkefni
+LinkedToAnotherCompany=Tengjast öðrum þriðja aðila
+TypeContact_project_internal_PROJECTLEADER=Project leiðtogi
+TypeContact_project_external_PROJECTLEADER=Project leiðtogi
+TypeContact_project_internal_CONTRIBUTOR=Framlög
+TypeContact_project_external_CONTRIBUTOR=Framlög
+TypeContact_project_task_internal_TASKEXECUTIVE=Verkefni framkvæmdastjóri
+TypeContact_project_task_external_TASKEXECUTIVE=Verkefni framkvæmdastjóri
+TypeContact_project_task_internal_CONTRIBUTOR=Framlög
+TypeContact_project_task_external_CONTRIBUTOR=Framlög
+DocumentModelBaleine=skýrslu lýkur verkefninu er líkan (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

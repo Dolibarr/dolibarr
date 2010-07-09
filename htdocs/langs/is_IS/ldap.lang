@@ -1,0 +1,44 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+LDAPInformationsForThisGroup=Upplýsingar í LDAP gagnagrunninn fyrir þennan hóp
+LDAPInformationsForThisMember=Upplýsingar í LDAP gagnagrunninn fyrir þennan notanda
+LDAPAttribute=LDAP eigindi
+LDAPAttributes=LDAP eiginleiki
+LDAPCard=LDAP kort
+LDAPRecordNotFound=Upptaka fannst ekki í LDAP gagnagrunninn
+LDAPUsers=Notendur í LDAP gagnagrunninn
+LDAPGroups=Hópar í LDAP gagnagrunninn
+LDAPFieldStatus=Status
+LDAPFieldFirstSubscriptionDate=First áskrift dagsetningu
+LDAPFieldFirstSubscriptionAmount=Fist áskrift upphæð
+LDAPFieldLastSubscriptionDate=Síðasta áskrift dagsetningu
+LDAPFieldLastSubscriptionAmount=Síðasta áskrift upphæð
+SynchronizeDolibarr2Ldap=Samstilling notandi (Dolibarr -&gt; LDAP)
+UserSynchronized=Notandi samstilla
+GroupSynchronized=Group samstilla
+MemberSynchronized=Aðildarríkin samstilla
+ContactSynchronized=Hafðu samstilla
+ForceSynchronize=Force synchronizing Dolibarr -&gt; LDAP
+ErrorFailedToReadLDAP=Ekki tókst að lesa LDAP gagnagrunninn. Athugaðu LDAP mát skipulag og gagnasafn aðgengi.
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
+// Reference language: en_US
+DomainPassword=Lykilorð fyrir lén
+YouMustChangePassNextLogon=Lykilorð fyrir <b>notandann% s í%</b> léni <b>s</b> verður að vera breytt.
+UserMustChangePassNextLogon=Notandi verður að breyta lykilorðinu á vefnum% s
+LdapUacf_NORMAL_ACCOUNT=Aðgangi
+LdapUacf_DONT_EXPIRE_PASSWORD=Lykilorð rennur aldrei
+LdapUacf_ACCOUNTDISABLE=Reikningurinn er fatlaður í the ríki% s
+LDAPInformationsForThisContact=Upplýsingar í LDAP gagnagrunninn fyrir þennan tengilið
+LDAPInformationsForThisUser=Upplýsingar í LDAP gagnagrunninn fyrir þennan notanda
+// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:18:15).
