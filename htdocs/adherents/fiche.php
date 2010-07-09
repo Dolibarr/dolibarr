@@ -919,8 +919,8 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
 	// Moral-Physique
-    $morphys["phy"] = "Physique";
-    $morphys["mor"] = "Morale";
+    $morphys["phy"] = $langs->trans("Physical");
+    $morphys["mor"] = $langs->trans("Moral");
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Person")."</span></td><td>\n";
     $html->select_array("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$adh->morphy, 1);
     print "</td>\n";
@@ -1226,7 +1226,11 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'</td></tr>';
 
 	// Country
-    print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.getCountry($adh->pays_id).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">';
+	$img=picto_from_langcode($adh->pays_code);
+	if ($img) print $img.' ';
+    print getCountry($adh->pays_code);
+    print '</td></tr>';
 
 	// State
 	print '<tr><td>'.$langs->trans('State').'</td><td class="valeur">'.$adh->departement.'</td>';
