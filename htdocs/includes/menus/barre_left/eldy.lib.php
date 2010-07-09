@@ -63,7 +63,7 @@ function print_left_eldy_menu($db,$menu_array)
 			$_SESSION["leftmenuopened"]=$leftmenu;
 		}
 	} else {
-		// On va le chercher en session si non d�fini par le lien
+		// On va le chercher en session si non defini par le lien
 		$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
 	}
 
@@ -790,11 +790,11 @@ function print_left_eldy_menu($db,$menu_array)
 				$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&amp;mainmenu=members",$langs->trans("Members"),0,$user->rights->adherent->lire);
 				$newmenu->add(DOL_URL_ROOT."/adherents/fiche.php?leftmenu=members&amp;action=create",$langs->trans("NewMember"),1,$user->rights->adherent->creer);
 				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members",$langs->trans("List"),1,$user->rights->adherent->lire);
-				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=-1",$langs->trans("MenuMembersToValidate"),1,$user->rights->adherent->lire);
-				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1",$langs->trans("MenuMembersValidated"),1,$user->rights->adherent->lire);
-				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"),1,$user->rights->adherent->lire);
-				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=outofdate",$langs->trans("MenuMembersNotUpToDate"),1,$user->rights->adherent->lire);
-				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=0",$langs->trans("MenuMembersResiliated"),1,$user->rights->adherent->lire);
+				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=-1",$langs->trans("MenuMembersToValidate"),2,$user->rights->adherent->lire);
+				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1",$langs->trans("MenuMembersValidated"),2,$user->rights->adherent->lire);
+				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"),2,$user->rights->adherent->lire);
+				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=outofdate",$langs->trans("MenuMembersNotUpToDate"),2,$user->rights->adherent->lire);
+				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=0",$langs->trans("MenuMembersResiliated"),2,$user->rights->adherent->lire);
 
 				$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&amp;mainmenu=members",$langs->trans("Subscriptions"),0,$user->rights->adherent->cotisation->lire);
 				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=-1,1&amp;mainmenu=members",$langs->trans("NewSubscription"),1,$user->rights->adherent->cotisation->creer);
