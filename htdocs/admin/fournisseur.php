@@ -340,7 +340,7 @@ while (($file = readdir($handle))!==false)
 		else
 		{
 			print "<td align=\"center\">\n";
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 			print "</td>";
 		}
 

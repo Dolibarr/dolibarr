@@ -80,6 +80,7 @@ if ($_GET["action"] == 'specimen')
 	}
 }
 
+// Activate a model
 if ($_GET["action"] == 'set')
 {
 	$type='shipping';
@@ -104,6 +105,7 @@ if ($_GET["action"] == 'del')
 	}
 }
 
+// Set default model
 if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
@@ -132,7 +134,7 @@ if ($_GET["action"] == 'setdoc')
 	}
 }
 
-// \todo A quoi servent les methode d'expedition ?
+// TODO A quoi servent les methode d'expedition ?
 if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 {
 	$module=$_GET["module"];
@@ -205,7 +207,7 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 
 if ($_GET["action"] == 'setmod')
 {
-	// \todo Verifier si module numerotation choisi peut etre active
+	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "EXPEDITION_ADDON",$_GET["module"],'chaine',0,'',$conf->entity);
@@ -342,7 +344,7 @@ if(is_dir($dir))
 				print "</td>";
 			}
 
-			// Defaut
+			// Default
 			print "<td align=\"center\">";
 			if ($conf->global->EXPEDITION_ADDON_PDF == $name)
 			{

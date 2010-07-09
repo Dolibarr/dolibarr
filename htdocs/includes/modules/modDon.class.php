@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,9 @@
  */
 
 /**
- \defgroup   don     Module donation
- \brief      Module pour gerer le suivi des dons
- \version	$Id$
+ *	\defgroup   don     Module donation
+ *	\brief      Module pour gerer le suivi des dons
+ *	\version	$Id$
  */
 
 /**
@@ -72,11 +72,14 @@ class modDon  extends DolibarrModules
 
 		// Constants
 		$this->const = array();
-		$this->const[0][0] = "DON_FORM";
-		$this->const[0][1] = "chaine";
-		$this->const[0][2] = "fsfe.fr.php";
-		$this->const[0][3] = 'Nom du gestionnaire de formulaire de dons';
-		$this->const[0][4] = 0;
+		$r=0;
+
+		$this->const[$r][0] = "DON_ADDON_MODEL";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "html_cerfafr";
+		$this->const[$r][3] = 'Nom du gestionnaire de generation de recu de dons';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		// Boxes
 		$this->boxes = array();
@@ -112,7 +115,12 @@ class modDon  extends DolibarrModules
 	 */
 	function init()
 	{
-		$sql = array();
+		global $conf;
+
+		$sql = array(
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','donation',".$conf->entity.")",
+		);
 
 		return $this->_init($sql);
 	}

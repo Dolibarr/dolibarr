@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,17 +76,36 @@ class modExpedition extends DolibarrModules
 
 		// Constantes
 		$this->const = array();
-		$this->const[0][0] = "LIVRAISON_ADDON_PDF";
-		$this->const[0][1] = "chaine";
-		$this->const[0][2] = "typhon";
-		$this->const[0][3] = 'Nom du gestionnaire de generation des commandes en PDF';
-		$this->const[0][4] = 0;
+		$r=0;
 
-		$this->const[1][0] = "LIVRAISON_ADDON";
-		$this->const[1][1] = "chaine";
-		$this->const[1][2] = "mod_livraison_jade";
-		$this->const[1][3] = 'Nom du gestionnaire de numerotation des bons de livraison';
-		$this->const[1][4] = 0;
+		$this->const[$r][0] = "EXPEDITION_ADDON_PDF";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "rouget";
+		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons expeditions en PDF';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		/*$this->const[$r][0] = "EXPEDITION_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "xxx";
+		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons expeditions en PDF';
+		$this->const[$r][4] = 0;
+		$r++;
+		*/
+
+		$this->const[$r][0] = "LIVRAISON_ADDON_PDF";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "typhon";
+		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de reception en PDF';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "LIVRAISON_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_livraison_jade";
+		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des bons de reception';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		// Boxes
 		$this->boxes = array();
@@ -165,10 +184,19 @@ class modExpedition extends DolibarrModules
 	 */
 	function init()
 	{
+		global $conf;
+
 		// Permissions
 		$this->remove();
 
 		$sql = array();
+
+		$sql = array(
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','shipping',".$conf->entity.")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[1][2]."' AND entity = ".$conf->entity,
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[1][2]."','delivery',".$conf->entity.")",
+		);
 
 		return $this->_init($sql);
 	}

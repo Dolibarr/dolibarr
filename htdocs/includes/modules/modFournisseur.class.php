@@ -78,14 +78,17 @@ class modFournisseur extends DolibarrModules
 
 		                    // Constantes
 		                    $this->const = array();
+							$r=0;
 
-		                    $this->const[0][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
-		                    $this->const[0][1] = "chaine";
-		                    $this->const[0][2] = "muscadet";
+		                    $this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
+		                    $this->const[$r][1] = "chaine";
+		                    $this->const[$r][2] = "muscadet";
+							$r++;
 
-		                    $this->const[1][0] = "COMMANDE_SUPPLIER_ADDON";
-		                    $this->const[1][1] = "chaine";
-		                    $this->const[1][2] = "mod_commande_fournisseur_muguet";
+		                    $this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON";
+		                    $this->const[$r][1] = "chaine";
+		                    $this->const[$r][2] = "mod_commande_fournisseur_muguet";
+							$r++;
 
 		                    // Boxes
 		                    $this->boxes = array();
@@ -252,9 +255,14 @@ class modFournisseur extends DolibarrModules
 	 */
 	function init()
 	{
+		global $conf;
+
 		$this->remove();
 
-		$sql = array();
+		$sql = array(
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','supplier_order',".$conf->entity.")",
+		);
 
 		$this->load_datas();
 
