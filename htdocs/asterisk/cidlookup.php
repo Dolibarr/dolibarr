@@ -29,16 +29,40 @@
  *
  */
 
-// TODO Use dolibarr database driver instead of hard coded mysql functions
 $phone = $_GET['phone'];
-include("../conf/conf.php");
-$link = mysql_connect($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass);
-$base = mysql_select_db($dolibarr_main_db_name,$link);
-$sql = "select nom from llx_societe s left join llx_socpeople sp on sp.fk_soc=s.rowid where s.tel='$phone' or phone='$phone' or phone_perso='$phone' or phone_mobile='$phone' limit 1";
-$result = mysql_query($sql);
-$row = mysql_fetch_assoc($result);
-$found = $row['nom'];
-mysql_free_result($result);
+
+include("../master.inc.php");
+
+
+// Check parameters
+if (empty($phone))
+{
+	print "Error: Url must be called with parameter phone=phone to search\n";
+	exit;
+}
+
+$sql = "select nom from llx_societe s ";
+$sql.= "left join llx_socpeople sp on sp.fk_soc=s.rowid";
+$sql.= " where s.tel='".addslashes($phone)."' or sp.phone='".addslashes($phone)."' or sp.phone_perso='".addslashes($phone)."' or sp.phone_mobile='".addslashes($phone)."'";
+//$sql.= " AND entity=".$conf->entity;
+$sql.= $db->plimit(1);
+
+dol_syslog('cidlookup search information with phone '.$phone, LOG_DEBUG);
+$resql = $db->query($sql);
+if ($resql)
+{
+	$row = $db->fetch_object($resql);
+	if ($row)
+	{
+		$found = $row->nom;
+	}
+	$db->free($resql);
+}
+else
+{
+	dol_print_error($db,'Error');
+}
+
 echo $found;
 
 ?>
