@@ -187,8 +187,9 @@ if ($socid > 0)
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	if ($objsoc->isInEEC()) print $form->textwithpicto($objsoc->pays,$langs->trans("CountryIsInEEC"),1,0);
-	else print $objsoc->pays;
+	$img=picto_from_langcode($objsoc->pays_code);
+	if ($objsoc->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$objsoc->pays,$langs->trans("CountryIsInEEC"),1,0);
+	else print ($img?$img.' ':'').$objsoc->pays;
 	print '</td></tr>';
 
 	// Phone

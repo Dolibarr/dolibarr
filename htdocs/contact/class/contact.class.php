@@ -438,8 +438,8 @@ class Contact extends CommonObject
 				$this->ville          = $obj->ville;
 
 				$this->fk_departement = $obj->fk_departement;
-				$this->departement_code = $obj->fk_departement;
-				$this->departement	  = $obj->fk_departement;
+				$this->departement_code = $obj->departement_code;
+				$this->departement	  = $obj->departement;
 
 				$this->fk_pays        = $obj->fk_pays;
 				$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';

@@ -30,7 +30,7 @@ $user->getrights('ecm');
 function llxHeader($head = '', $title='', $help_url='', $morehtml='')
 {
 	global $conf,$langs,$user;
-	$langs->load("@ftp");
+	$langs->load("ftp");
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 	top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers

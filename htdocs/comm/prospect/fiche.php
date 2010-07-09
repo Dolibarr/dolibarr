@@ -108,11 +108,18 @@ if ($socid > 0)
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	if ($societe->isInEEC()) print $form->textwithpicto($societe->pays,$langs->trans("CountryIsInEEC"),1,0);
-	else print $societe->pays;
+	$img=picto_from_langcode($societe->pays_code);
+	if ($societe->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$societe->pays,$langs->trans("CountryIsInEEC"),1,0);
+	else print ($img?$img.' ':'').$societe->pays;
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td><td>Fax</td><td>'.dol_print_phone($societe->fax,$societe->pays_code).'</td></tr>';
+	// Phone
+	print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td><td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($societe->fax,$societe->pays_code).'</td></tr>';
+
+	// EMail
+	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';
+
+	// Web
 	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a></td></tr>";
 
 	print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>';

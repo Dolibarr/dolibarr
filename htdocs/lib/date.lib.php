@@ -54,6 +54,8 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 
 	if ($format == 'all')
 	{
+		if ($iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
+
 		$sDay=0;
 		if ($iSecond >= $lengthOfDay)
 		{
@@ -69,7 +71,7 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 		if ($sDay) $sTime.=$sDay.' '.$dayTranslate.' ';
 		if ($iSecond || empty($sDay))
 		{
-			$sTime.= dol_print_date($iSecond,'hour',true);
+			$sTime.= dol_print_date($iSecond,'hourduration',true);
 		}
 	}
 	else if ($format == 'hour')

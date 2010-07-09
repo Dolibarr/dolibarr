@@ -623,6 +623,8 @@ if ($_REQUEST["id"] && $_REQUEST["action"] != 'edit')
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
+	$img=picto_from_langcode($contact->pays_code);
+	if ($img) print $img.' ';
 	print $contact->pays;
 	print '</td></tr>';
 

@@ -166,7 +166,7 @@ class Propal extends CommonObject
 			// local taxes
 			$localtax1_tx = get_default_localtax($mysoc,$this->client,1,$prod->tva_tx);
 			$localtax2_tx = get_default_localtax($mysoc,$this->client,2,$prod->tva_tx);
-			
+
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
 			{
@@ -448,7 +448,7 @@ class Propal extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
-			
+
 
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
@@ -1633,7 +1633,7 @@ class Propal extends CommonObject
 	function delete($user, $notrigger=0)
 	{
 		global $conf,$langs;
-		
+
 		$error=0;
 
 		$this->db->begin();
@@ -1691,7 +1691,7 @@ class Propal extends CommonObject
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// End call triggers
 				}
-				
+
 				if (!$error)
 				{
 					dol_syslog("Suppression de la proposition $this->id par $user->id", LOG_DEBUG);
@@ -2147,14 +2147,15 @@ class Propal extends CommonObject
 		$result.=$lien.$this->ref.$lienfin;
 		return $result;
 	}
-	
+
 	/**
 	 * 	\brief		Return an array of propal lines
+	 * 	\param		option		0=No filter on rang, 1=filter on rang <> 0, 2=filter on rang=0
 	 */
-	function getLinesArray($order=true)
-	{	
+	function getLinesArray($option=0)
+	{
 		$lines = array();
-		
+
 		$sql = 'SELECT pt.rowid, pt.description, pt.fk_product, pt.fk_remise_except,';
 		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
 		$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.marge_tx, pt.marque_tx, pt.pa_ht, pt.special_code,';
@@ -2164,20 +2165,20 @@ class Propal extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
 		$sql.= ' WHERE pt.fk_propal = '.$this->id;
-		if ($order) $sql.= ' AND pt.rang <> 0';
-		if (! $order) $sql.= ' AND pt.rang = 0';
+		if ($option == 1) $sql.= ' AND pt.rang <> 0';
+		if ($option == 2) $sql.= ' AND pt.rang = 0';
 		$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			
+
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				
+
 				$lines[$i]->id					= $obj->rowid;
 				$lines[$i]->description 		= $obj->description;
 				$lines[$i]->fk_product			= $obj->fk_product;
@@ -2202,7 +2203,7 @@ class Propal extends CommonObject
 				$lines[$i]->rang				= $obj->rang;
 				$lines[$i]->date_start			= $this->db->jdate($obj->date_start);
 				$lines[$i]->date_end			= $this->db->jdate($obj->date_end);
-				
+
 				$i++;
 			}
 			$this->db->free($resql);
@@ -2211,7 +2212,7 @@ class Propal extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
-		
+
 		return $lines;
 	}
 

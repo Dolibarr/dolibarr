@@ -1194,9 +1194,10 @@ else
 	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$soc->ville."</td></tr>";
 
 	// Country
-	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	if ($soc->isInEEC()) print $form->textwithpicto($soc->pays,$langs->trans("CountryIsInEEC"),1,0);
-	else print $soc->pays;
+	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3" nowrap="nowrap">';
+	$img=picto_from_langcode($soc->pays_code);
+	if ($soc->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$soc->pays,$langs->trans("CountryIsInEEC"),1,0);
+	else print ($img?$img.' ':'').$soc->pays;
 	print '</td></tr>';
 
 	// Department
@@ -1362,8 +1363,8 @@ else
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 		print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">';
-		$s=picto_from_langcode($soc->default_lang);
-		print ($s?$s.' ':'');
+		//$s=picto_from_langcode($soc->default_lang);
+		//print ($s?$s.' ':'');
 		$langs->load("languages");
 		$labellang = ($soc->default_lang?$langs->trans('Language_'.$soc->default_lang):'');
 		print $labellang;

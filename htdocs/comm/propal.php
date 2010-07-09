@@ -249,9 +249,9 @@ if ($_POST['action'] == 'addmilestone')
 		$milestone->description = $_POST['milestone_desc'];
 		$milestone->elementtype = $propal->element;
 		$milestone->elementid	= $propal->id;
-		
+
 		$ret = $milestone->create($user);
-		
+
 		if ($ret < 0)
 		{
 			$milestone_error++;
@@ -1408,16 +1408,16 @@ if ($id > 0 || ! empty($ref))
 	 * Lines
 	 */
 	print '<table class="noborder" width="100%">';
-	
-	$lines = $propal->getLinesArray();
-	
+
 	// Milestone module
 	if ($conf->milestone->enabled)
 	{
+		$lines = $propal->getLinesArray(1);
+
 		$milestone = new Milestone($db);
 		$milestone->getObjectMilestones($propal);
-		$sublines = $propal->getLinesArray(false);
-			
+		$sublines = $propal->getLinesArray(2);
+
 		if (! empty($milestone->lines))
 		{
 			print_title_list();
@@ -1429,10 +1429,15 @@ if ($id > 0 || ! empty($ref))
 			print_lines_list($propal, $lines);
 		}
 	}
-	else if (! empty($lines) )
+	else
 	{
-		print_title_list();
-		print_lines_list($propal, $lines);
+		$lines = $propal->getLinesArray(0);
+
+		if (! empty($lines) )
+		{
+			print_title_list();
+			print_lines_list($propal, $lines);
+		}
 	}
 
 	/*
@@ -1443,7 +1448,7 @@ if ($id > 0 || ! empty($ref))
 		$var=true;
 
 		if ($conf->milestone->enabled)
-		{	
+		{
 			formAddMilestone($propal);
 
 			$var=!$var;

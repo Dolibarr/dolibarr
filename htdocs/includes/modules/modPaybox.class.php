@@ -81,7 +81,7 @@ class modPayBox extends DolibarrModules
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2,6);	// Minimum version of Dolibarr required by module
-		$this->langfiles = array("@paybox");
+		$this->langfiles = array("paybox");
 
 		// Constants
 		$this->const = array();			// List of particular constants to add when module is enabled

@@ -190,7 +190,7 @@ if ($_REQUEST["action"] == 'create')
 
 	// Ref
 	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.$account->ref.'"></td></tr>';
+	print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$account->ref).'"></td></tr>';
 
 	// Label
 	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
@@ -280,7 +280,7 @@ if ($_REQUEST["action"] == 'create')
 	print '<tr><td colspan="4"><b>'.$langs->trans("InitialBankBalance").'...</b></td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("InitialBankBalance").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="solde" value="'.price2num($account->solde).'"></td></tr>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="solde" value="'.($_POST["solde"]?$_POST["solde"]:price2num($account->solde)).'"></td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("Date").'</td>';
 	print '<td colspan="3">';
@@ -288,10 +288,10 @@ if ($_REQUEST["action"] == 'create')
 	print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.$account->account_min_allowed.'"></td></tr>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.($_POST["account_min_allowed"]?$_POST["account_min_allowed"]:$account->account_min_allowed).'"></td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BalanceMinimalDesired").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.$account->account_min_desired.'"></td></tr>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.($_POST["account_min_desired"]?$_POST["account_min_desired"]:$account->account_min_desired).'"></td></tr>';
 
 	print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></td></tr>';
 	print '</form>';
@@ -364,7 +364,12 @@ else
 
 		// Country
 		print '<tr><td>'.$langs->trans("Country").'</td><td>';
-		if ($account->fk_pays > 0) print getCountry($account->fk_pays);
+		if ($account->fk_pays > 0)
+		{
+			$img=picto_from_langcode($account->pays_code);
+			print $img?$img.' ':'';
+			print getCountry($account->getCountryCode());
+		}
 		print '</td></tr>';
 
 		// State

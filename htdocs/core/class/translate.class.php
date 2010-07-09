@@ -309,6 +309,7 @@ class Translate {
 				$conf->format_date_short=empty($this->tab_translate['FormatDateShort'])?"%d/%m/%Y":$this->tab_translate['FormatDateShort'];					# Format of day with PHP/C tags (strftime functions)
 				$conf->format_date_short_java=empty($this->tab_translate['FormatDateShortJava'])?"dd/MM/yyyy":$this->tab_translate['FormatDateShortJava'];	# Format of day with Java tags
 				$conf->format_hour_short=empty($this->tab_translate['FormatHourShort'])?"%H:%M":$this->tab_translate['FormatHourShort'];
+				$conf->format_hour_short_duration=empty($this->tab_translate['FormatHourShortDuration'])?"%H:%M":$this->tab_translate['FormatHourShortDuration'];
 				$conf->format_date_text_short=empty($this->tab_translate['FormatDateTextShort'])?"%d %b %Y":$this->tab_translate['FormatDateTextShort'];
 				$conf->format_date_text=empty($this->tab_translate['FormatDateText'])?"%d %B %Y":$this->tab_translate['FormatDateText'];
 				$conf->format_date_hour_short=empty($this->tab_translate['FormatDateHourShort'])?"%d/%m/%Y %H:%M":$this->tab_translate['FormatDateHourShort'];
@@ -664,14 +665,6 @@ class Translate {
 			dol_syslog("Translate::getLabelFromKey error=".$this->error,LOG_ERR);
 			return -1;
 		}
-	}
-
-	/**
-	 * @deprecated
-	 */
-	function setPhpLang()
-	{
-		return;
 	}
 
 }

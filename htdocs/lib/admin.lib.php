@@ -466,32 +466,35 @@ function listOfSessions()
 	dol_syslog('admin.lib:listOfSessions sessPath='.$sessPath);
 
 	$dh = @opendir($sessPath);
-	while(($file = @readdir($dh)) !== false)
+	if ($dh)
 	{
-		if (preg_match('/^sess_/i',$file) && $file != "." && $file != "..")
+		while(($file = @readdir($dh)) !== false)
 		{
-			$fullpath = $sessPath.$file;
-			if(! @is_dir($fullpath) && is_readable($fullpath))
+			if (preg_match('/^sess_/i',$file) && $file != "." && $file != "..")
 			{
-				$sessValues = file_get_contents($fullpath);	// get raw session data
-
-				if (preg_match('/dol_login/i',$sessValues) && // limit to dolibarr session
-					preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i',$sessValues) && // limit to current entity
-					preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i',$sessValues)) // limit to company name
+				$fullpath = $sessPath.$file;
+				if(! @is_dir($fullpath) && is_readable($fullpath))
 				{
-					$tmp=explode('_', $file);
-					$idsess=$tmp[1];
-					$login = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i',$sessValues,$regs);
-					$arrayofSessions[$idsess]["login"] = $regs[1];
-					$arrayofSessions[$idsess]["age"] = time()-filectime( $fullpath );
-					$arrayofSessions[$idsess]["creation"] = filectime( $fullpath );
-					$arrayofSessions[$idsess]["modification"] = filemtime( $fullpath );
-					$arrayofSessions[$idsess]["raw"] = $sessValues;
+					$sessValues = file_get_contents($fullpath);	// get raw session data
+
+					if (preg_match('/dol_login/i',$sessValues) && // limit to dolibarr session
+						preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i',$sessValues) && // limit to current entity
+						preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i',$sessValues)) // limit to company name
+					{
+						$tmp=explode('_', $file);
+						$idsess=$tmp[1];
+						$login = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i',$sessValues,$regs);
+						$arrayofSessions[$idsess]["login"] = $regs[1];
+						$arrayofSessions[$idsess]["age"] = time()-filectime( $fullpath );
+						$arrayofSessions[$idsess]["creation"] = filectime( $fullpath );
+						$arrayofSessions[$idsess]["modification"] = filemtime( $fullpath );
+						$arrayofSessions[$idsess]["raw"] = $sessValues;
+					}
 				}
 			}
 		}
+		@closedir($dh);
 	}
-	@closedir($dh);
 
 	return $arrayofSessions;
 }

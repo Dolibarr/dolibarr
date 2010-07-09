@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 $servicename='PayBox';
 
 $langs->load("admin");
-$langs->load("@paybox");
+$langs->load("paybox");
 
 if (!$user->admin)
   accessforbidden();

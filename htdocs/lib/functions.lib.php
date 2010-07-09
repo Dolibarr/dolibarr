@@ -439,6 +439,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 
 	if ($format == 'day')               $format=$conf->format_date_short;
 	if ($format == 'hour')              $format=$conf->format_hour_short;
+	if ($format == 'hourduration')      $format=$conf->format_hour_short_duration;
 	if ($format == 'daytext')           $format=$conf->format_date_text;
 	if ($format == 'daytextshort')      $format=$conf->format_date_text_short;
 	if ($format == 'dayhour')           $format=$conf->format_date_hour_short;
@@ -3433,9 +3434,9 @@ function pattern_match($pattern,$string)
 }
 
 /**
- * 	\brief		Show picto of country for a language code
- * 	\param		codelang	Language code to get picto
- * 	\return		string
+ * 	\brief		Return img flag of country for a language code or country code
+ * 	\param		codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
+ * 	\return		string		HTML img string with flag.
  */
 function picto_from_langcode($codelang)
 {
@@ -3451,7 +3452,7 @@ function picto_from_langcode($codelang)
     		else
     		{
     			$tmparray=explode('_',$codelang);
-    			$tmpcode=$tmparray[1];
+    			$tmpcode=empty($tmparray[1])?$tmparray[0]:$tmparray[1];
     		}
     		if ($tmpcode) $ret.=img_picto($codelang,DOL_URL_ROOT.'/theme/common/flags/'.strtolower($tmpcode).'.png','',1);
     	}

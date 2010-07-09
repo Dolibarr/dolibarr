@@ -24,11 +24,17 @@
  *       \version    $Id$
  */
 
+if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
+//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
+
 
 require('../main.inc.php');
 
@@ -70,6 +76,8 @@ else if (! empty($_GET['selling']))
 	//print $_GET['count'];
 	print '<input size="10" type="text" class="flat" name="cashflow'.$_GET['count'].'" value="'.$_GET['selling'].'">';
 }
+
+$db->close();
 
 print "</body>";
 print "</html>";

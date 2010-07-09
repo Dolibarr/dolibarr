@@ -226,7 +226,7 @@ if ($result)
 			print "</td>\n";
 			print '<td>'.dol_trunc($objp->label,32).'</td>';
 			print "<td>";
-			print dol_print_date($objp->datem,'day');
+			print dol_print_date($db->jdate($objp->datem),'day');
 			print "</td>";
 			print '<td align="right" nowrap="nowrap">';
 			print $product_static->LibStatut($objp->envente,5);

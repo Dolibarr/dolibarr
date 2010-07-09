@@ -246,7 +246,7 @@ class Entrepot extends CommonObject
 
 			if ($this->pays_id)
 			{
-				$sqlp = "SELECT libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->pays_id;
+				$sqlp = "SELECT code,libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->pays_id;
 				$resql=$this->db->query($sqlp);
 				if ($resql)
 				{
@@ -257,6 +257,7 @@ class Entrepot extends CommonObject
 					dol_print_error($db);
 				}
 				$this->pays=$objp->libelle;
+				$this->pays_code=$objp->code;
 			}
 
 			$this->db->free($result);

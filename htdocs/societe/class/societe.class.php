@@ -235,7 +235,7 @@ class Societe extends CommonObject
 				}
 				else
 				{
-					dol_syslog("Societe::Create echec update");
+					dol_syslog("Societe::Create echec update ".$this->error);
 					$this->db->rollback();
 					return -3;
 				}
@@ -259,7 +259,7 @@ class Societe extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			dol_syslog("Societe::Create echec verify sql=".$sql);
+			dol_syslog("Societe::Create echec verify ".join(',',$this->errors));
 			return -1;
 		}
 	}

@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/treeview.lib.php");
 
 // Load traductions files
-$langs->load("@ftp");
+$langs->load("ftp");
 $langs->load("companies");
 $langs->load("other");
 

@@ -8,7 +8,7 @@
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Ocebo   <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
- * Copyright (C) 2007      Patrick Raguin 		   <patrick.raguin@gmail.com>
+ * Copyright (C) 2007      Patrick Raguin        <patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 /**
  *	\file       htdocs/core/class/html.form.class.php
- *	\brief      Fichier de la classe des fonctions predefinie de composants html
+ *	\brief      File of class with all html predefined components
  *	\version	$Id$
  */
 
@@ -252,10 +252,10 @@ class Form
 
 
 	/**
-	 *    \brief     Retourne la liste deroulante des pays actifs, dans la langue de l'utilisateur
-	 *    \param     selected         Id ou Code pays ou Libelle pays pre-selectionne
-	 *    \param     htmlname         Nom de la liste deroulante
-	 *    \param     htmloption       Options html sur le select
+	 *    \brief     Return combo list of activated countries, into language of user
+	 *    \param     selected         Id or Code or Label of preselected country
+	 *    \param     htmlname         Name of html select object
+	 *    \param     htmloption       Options html on select object
 	 *    \TODO      trier liste sur noms apres traduction plutot que avant
 	 */
 	function select_pays($selected='',$htmlname='pays_id',$htmloption='')
@@ -344,7 +344,8 @@ class Form
 
 
 	/**
-	 *		\brief      Return list of social contributions
+	 *		\brief      Return list of social contributions.
+	 * 		\remarks	Use mysoc->pays_id or mysoc->pays_code
 	 *		\param      selected        Preselected type
 	 *		\param      htmlname        Name of field in form
 	 * 		\param		useempty		Set to 1 if we want an empty value
@@ -355,11 +356,24 @@ class Form
 	{
 		global $db,$langs,$user,$mysoc;
 
-		$sql = "SELECT c.id, c.libelle as type";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-		$sql.= " WHERE active = 1";
-		$sql.= " AND fk_pays = ".$mysoc->pays_id;
-		$sql.= " ORDER BY c.libelle ASC";
+		if (empty($mysoc->pays_id) && empty($mysoc->pays_code)) dol_print_error('','ErrorBadParameter');
+
+		if (! empty($mysoc->pays_id))
+		{
+			$sql = "SELECT c.id, c.libelle as type";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+			$sql.= " WHERE c.active = 1";
+			$sql.= " AND c.fk_pays = ".$mysoc->pays_id;
+			$sql.= " ORDER BY c.libelle ASC";
+		}
+		else
+		{
+			$sql = "SELECT c.id, c.libelle as type";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."c_pays as p";
+			$sql.= " WHERE c.active = 1 AND c.fk_pays = p.rowid";
+			$sql.= " AND p.code = '".$mysoc->pays_code."'";
+			$sql.= " ORDER BY c.libelle ASC";
+		}
 
 		dol_syslog("Form::select_type_socialcontrib sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
@@ -863,11 +877,24 @@ class Form
 
 		$sql = "SELECT ";
 		$sql.= " p.rowid, p.label, p.ref, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.duration, p.stock";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
+		// Multilang : we add translation
+		if ($conf->global->MAIN_MULTILANGS)
+		{
+			$sql.= ", pl.label as label_translated";
+		}
+		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+		// Multilang : we add translation
+		if ($conf->global->MAIN_MULTILANGS)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $langs->getDefaultLang() ."'";
+		}
 		$sql.= " WHERE p.entity = ".$conf->entity;
-		if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-		if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
-
+		if (empty($user->rights->produit->hidden) && empty($user->rights->service->hidden)) $sql.=' AND p.hidden=0';
+		else
+		{
+			if (empty($user->rights->produit->hidden)) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+			if (empty($user->rights->service->hidden)) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+		}
 		if($finished == 0)
 		{
 			$sql.= " AND p.finished = ".$finished;
@@ -885,34 +912,28 @@ class Form
 		// Add criteria on ref/label
 		if (empty($conf->global->PRODUCT_SEARCH_ANYWHERE))
 		{
-			if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (p.ref like '".$ajaxkeysearch."%' OR p.label like '".$ajaxkeysearch."%')";
+			if ($ajaxkeysearch && $ajaxkeysearch != '')
+			{
+				$sql.=" AND (p.ref like '".$ajaxkeysearch."%' OR p.label like '".$ajaxkeysearch."%'";
+				if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label like '".$ajaxkeysearch."%'";
+				$sql.=")";
+			}
 		}
 		else
 		{
-			if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
+			if ($ajaxkeysearch && $ajaxkeysearch != '')
+			{
+				$sql.=" AND (p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%'";
+				if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label like '%".$ajaxkeysearch."%'";
+				$sql.=")";
+			}
 		}
 		$sql.= $db->order("p.ref");
 		$sql.= $db->plimit($limit);
 
-		dol_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
+		dol_syslog("Form::select_produits_do search product sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if (! $result) dol_print_error($this->db);
-
-		// Multilang : on construit une liste des traductions des produits listes
-		if ($conf->global->MAIN_MULTILANGS)
-		{
-			$sqld = "SELECT d.fk_product, d.label";
-			$sqld.= " FROM ".MAIN_DB_PREFIX."product as p";
-			$sqld.= ", ".MAIN_DB_PREFIX."product_lang as d";
-			$sqld.= " WHERE d.fk_product = p.rowid";
-			$sqld.= " AND p.entity = ".$conf->entity;
-			$sqld.= " AND p.envente = 1";
-			$sqld.= " AND d.lang='". $langs->getDefaultLang() ."'";
-			$sqld.= " ORDER BY p.ref";
-
-			dol_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
-			$resultd = $this->db->query($sqld);
-		}
 
 		if ($result)
 		{
@@ -944,15 +965,9 @@ class Form
 			{
 				$objp = $this->db->fetch_object($result);
 
-				// Multilangs : modification des donnees si une traduction existe
-				if ($conf->global->MAIN_MULTILANGS)
-				{
-					if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
-					if ( $objp->rowid == $objtp->fk_product ) // si on a une traduction
-					{
-						if ( $objtp->label != '') $objp->label = $objtp->label;
-					}
-				}
+				$label=$objp->label;
+				if (! empty($objp->label_translated)) $label=$objp->label_translated;
+
 				$opt = '<option value="'.$objp->rowid.'"';
 				$opt.= ($objp->rowid == $selected)?' selected="true"':'';
 				if ($conf->stock->enabled && $objp->fk_product_type == 0 && isset($objp->stock))
@@ -967,7 +982,7 @@ class Form
 					}
 				}
 				$opt.= '>'.$objp->ref.' - ';
-				$opt.= dol_trunc($objp->label,32).' - ';
+				$opt.= dol_trunc($label,32).' - ';
 
 				$found=0;
 				$currencytext=$langs->trans("Currency".$conf->monnaie);
@@ -983,7 +998,7 @@ class Form
 					$sql.= " ORDER BY date_price";
 					$sql.= " DESC limit 1";
 
-					dol_syslog("Form::select_produits_do sql=".$sql);
+					dol_syslog("Form::select_produits_do search price for level '.$price_level.' sql=".$sql);
 					$result2 = $this->db->query($sql);
 					if ($result2)
 					{
@@ -1189,9 +1204,9 @@ class Form
 	}
 
 	/**
-		\brief		Retourne la liste des tarifs fournisseurs pour un produit
-		\param		productid   		    Id product
-		*/
+	 *	\brief		Retourn list of suppliers prices for a product
+	 *	\param		productid   		    Id of product
+	 */
 	function select_product_fourn_price($productid,$htmlname='productfournpriceid')
 	{
 		global $langs,$conf;

@@ -231,14 +231,23 @@ if ($_GET["socid"])
 		print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$soc->gencod.'</td></tr>';
 	}
 
+	// Address
 	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
 
+	// Zip / Town
 	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->cp."</td>";
 	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$soc->ville."</td></tr>";
+
+	// Country
 	if ($soc->pays) {
-		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td></tr>';
+		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+		$img=picto_from_langcode($soc->pays_code);
+		print ($img?$img.' ':'');
+		print $soc->pays;
+		print '</td></tr>';
 	}
 
+	// Phone
 	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->pays_code,0,$soc->id,'AC_TEL').'</td>';
 	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->pays_code,0,$soc->id,'AC_FAX').'</td></tr>';
 
