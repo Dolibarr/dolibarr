@@ -14,10 +14,12 @@
 class langAutoParser {
 
 	private $translatedFiles = array();
-	private $destLang = string;
-	private $refLang = string;
-	private $langDir = string;
-	private $limittofile = string;
+	private $destLang = '';
+	private $refLang = '';
+	private $langDir = '';
+	private $limittofile = '';
+	private $time;
+	private $time_end;
 	private $outputpagecode = 'UTF-8';
 	//private $outputpagecode = 'ISO-8859-1';
 	const DIR_SEPARATOR = '/';
@@ -74,6 +76,7 @@ FILE_SKIP_EMPTY_LINES);
 
 			$this->updateTranslationFile($destPath,$file);
 			echo "New translated lines: " . $newlines . "<br>\n";
+			$this->time_end = date('Y-m-d H:i:s');
 			#if ($counter ==3) die('fim');
 		}
 	}
@@ -90,7 +93,7 @@ FILE_SKIP_EMPTY_LINES);
 			foreach( $this->translatedFiles[$file] as $line) {
 				fwrite($fp, $line . "\r\n");
 			}
-			fwrite($fp, "// STOP - Lines generated via autotranslator.php tool (".$this->time.").\r\n");
+			fwrite($fp, "// STOP - Lines generated via autotranslator.php tool (".$this->time_end.").\r\n");
 			fclose($fp);
 		}
 		return;
@@ -113,10 +116,11 @@ FILE_SKIP_EMPTY_LINES);
 	 * @param unknown_type $content		Existing content of dest file
 	 * @param unknown_type $file		File name translated (xxxx.lang)
 	 * @param unknown_type $key			Key to translate
-	 * @param unknown_type $value		Existing key in source file
+	 * @param unknown_type $value		Existing value in source file
 	 * @return	int						0=Nothing translated, 1=Record translated
 	 */
-	private function translateFileLine($content,$file,$key,$value){
+	private function translateFileLine($content,$file,$key,$value)
+	{
 
 		//print "key    =".$key."\n";
 		foreach( $content as $line ) {
@@ -130,11 +134,15 @@ FILE_SKIP_EMPTY_LINES);
 			}
 		}
 
-		// If not translated then translate
-		if ($this->outputpagecode == 'UTF-8') $val=$this->translateTexts(array($value),substr($this->refLang,0,2),substr($this->destLang,0,2));
-		else $val=utf8_decode($this->translateTexts(array($value),substr($this->refLang,0,2),substr($this->destLang,0,2)));
-
 		if ($key == 'CHARSET') $val=$this->outputpagecode;
+		else if (preg_match('/^Format/',$key)) $val=$value;
+		else
+		{
+			// If not translated then translate
+			if ($this->outputpagecode == 'UTF-8') $val=$this->translateTexts(array($value),substr($this->refLang,0,2),substr($this->destLang,0,2));
+			else $val=utf8_decode($this->translateTexts(array($value),substr($this->refLang,0,2),substr($this->destLang,0,2)));
+		}
+
 		$val=trim($val);
 
 		if (empty($val)) return 0;
