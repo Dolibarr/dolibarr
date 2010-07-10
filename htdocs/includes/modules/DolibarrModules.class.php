@@ -846,7 +846,7 @@ class DolibarrModules
 	 */
 	function insert_permissions()
 	{
-		global $conf;
+		global $conf,$user;
 
 		$err=0;
 
@@ -914,6 +914,15 @@ class DolibarrModules
 							break;
 						}
 						else dol_syslog("DolibarrModules::insert_permissions record already exists", LOG_INFO);
+					}
+
+					// If we are an admin user, we take permission of new module
+					if ($user->admin)
+					{
+						$user->addrights($r_id);
+						// We reload permissions
+						$user->clearrights();
+						$user->getrights();
 					}
 				}
 			}
