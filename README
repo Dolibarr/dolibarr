@@ -27,7 +27,7 @@ install this version like this:
   as root for a new web server virtual host (second choice need to be web 
   server administrator).
   
-- Create an empty file "htdocs/conf/config.php" and set permissions for your web
+- Create an empty file "htdocs/conf/conf.php" and set permissions for your web
   server user (write permissions will be removed once install is finished).
   
 - From your browser, call the dolibarr "install/" page. Url depends on choice
