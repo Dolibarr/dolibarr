@@ -1657,9 +1657,11 @@ class Product extends CommonObject
 		}
 	}
 
+
 	/**
-	 *    \brief      Remplit le tableau des sous-produits
-	 *    \return     int        < 0 si erreur, > 0 si ok
+	 *    	\brief      Remplit le tableau des sous-produits
+	 *    	\return     int        < 0 si erreur, > 0 si ok
+	 * 		\remark		Not used. Used by module droitpret only.
 	 */
 	function load_subproduct()
 	{
@@ -1688,9 +1690,10 @@ class Product extends CommonObject
 
 
 	/**
-	 *    \brief      Lie un sous produit au produit/service
-	 *    \param      id_sub     Id du produit a lier
-	 *    \return     int        < 0 si erreur, > 0 si ok
+	 *    	\brief      Lie un sous produit au produit/service
+	 *    	\param      id_sub     Id du produit a lier
+	 *    	\return     int        < 0 si erreur, > 0 si ok
+	 * 		\remark		Not used. Used by module droitpret only.
 	 */
 	function add_subproduct($id_sub)
 	{

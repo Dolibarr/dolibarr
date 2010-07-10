@@ -167,11 +167,15 @@ $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.envente,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk_product_subproduct";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk_product_subproduct";	// Exclude record that are subproduct for module ???
 $sql.= " WHERE sp.fk_product_subproduct IS NULL";
 $sql.= " AND p.entity = ".$conf->entity;
-if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+if (empty($user->rights->produit->hidden) && empty($user->rights->service->hidden)) $sql.=' AND p.hidden=0';
+else
+{
+	if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+	if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+}
 if ($type != '') $sql.= " AND p.fk_product_type = ".$type;
 $sql.= $db->order("p.tms","DESC");
 $sql.= $db->plimit($max,0);
