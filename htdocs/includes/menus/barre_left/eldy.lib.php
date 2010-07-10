@@ -812,20 +812,6 @@ function print_left_eldy_menu($db,$menu_array)
 					//if ($leftmenu=="cat") $newmenu->add(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 				}
 
-				if ($conf->banque->enabled)
-				{
-					$langs->load("bills");
-					$newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=members_checks",$langs->trans("MenuChequeDeposits"),0,$user->rights->adherent->cotisation->lire);
-					if (preg_match("/members_checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=members_checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->adherent->cotisation->creer);
-					if (preg_match("/members_checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=members_checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->adherent->cotisation->lire);
-				}
-
-				if ($conf->banque->enabled)
-				{
-					$langs->load("banks");
-					$newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=members",$langs->trans("Banks"),0,$user->rights->adherent->lire);
-				}
-
 				$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&amp;mainmenu=members",$langs->trans("Exports"),0,$user->rights->adherent->export);
 				if ($conf->export->enabled && $leftmenu=="export") $newmenu->add(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->adherent->export);
 				if ($leftmenu=="export") $newmenu->add(DOL_URL_ROOT."/adherents/htpasswd.php?leftmenu=export",$langs->trans("Filehtpasswd"),1,$user->rights->adherent->export);
