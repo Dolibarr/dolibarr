@@ -160,7 +160,7 @@ td.vmenu {
     margin-<?php print $right; ?>: 2px;
     padding: 0px;
     padding-bottom: 0px;
-    width: 164px;
+    width: 168px;
 }
 
 div.fiche {
@@ -457,7 +457,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
 
 
 div.blockvmenupair, div.blockvmenuimpair {
-    width:164px;
+    width:168px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
 	font-family: <?php print $fontlist ?>;
@@ -476,7 +476,7 @@ div.blockvmenupair, div.blockvmenuimpair {
 }
 
 div.blockvmenusearch, div.blockvmenubookmarks {
-    width:164px;
+    width:168px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
 	font-family: <?php print $fontlist ?>;
@@ -488,14 +488,19 @@ div.blockvmenusearch, div.blockvmenubookmarks {
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
-	background: #A3BCC6;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
+	background: #E3E6E8;
+/*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>); */
     background-position:top;
     background-repeat:repeat-x;
 }
 
+div.blockvmenusearch
+{
+	margin-top: 4px;
+}
+
 div.blockvmenuhelp {
-    width:164px;
+    width:168px;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;
