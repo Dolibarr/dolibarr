@@ -61,5 +61,5 @@ ErrorWrongValueForField=Slecht voor het aantal <b>%s</b> (waarde <b>%s</b> voldo
 ErrorsOnXLines=Fouten op bronregel <b>%s</b>
 WarningsOnXLines=Waarschuwing op bronregel <b>%s</b>
 ErrorFileIsInfectedWithAVirus=Het antivirus kon dit bestand niet valideren (het waarschijnlijk is geÃ¯nfecteerd door een virus)!
-ErrorSpecialCharNotAllowedForField=Speciale tekens zijn niet teogestaan voor het "% s" gebied 
+ErrorSpecialCharNotAllowedForField=Speciale tekens zijn niet teogestaan voor het " %s " gebied 
 WarningNoDocumentModelActivated=Geen model, voor het maken van het document, is geactiveerd. Een model wordt gekozen tot standaard worden, totdat de module configuratie is gecontroleert.

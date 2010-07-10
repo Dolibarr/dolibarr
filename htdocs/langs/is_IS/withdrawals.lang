@@ -63,7 +63,7 @@ Withdrawal=Uppsögn
 WithdrawalsReceipts=Uppsögn kvittunum
 WithdrawalReceipt=Uppsögn barst
 WithdrawalReceiptShort=Kvittun
-LastWithdrawalReceipts=Last% s afturköllun kvittunum
+LastWithdrawalReceipts=Last %s  afturköllun kvittunum
 WithdrawedBills=Afturkallað reikningum
 WithdrawalsLines=Uppsögn línur
 RequestStandingOrderToTreat=Beiðni fyrir standandi fyrirmæli til meðferðar
@@ -79,7 +79,7 @@ ResponsibleUser=Ábyrg notanda
 WithdrawalsSetup=Uppsögn skipulag
 WithdrawStatistics=tölfræði Dragið&#39;s
 WithdrawRejectStatistics=Dragið hafna&#39;s tölfræði
-LastWithdrawalReceipt=Last% s afturkalla kvittunum
+LastWithdrawalReceipt=Last %s  afturkalla kvittunum
 MakeWithdrawRequest=Gerðu afturkalla beiðni
 ThirdPartyBankCode=Í þriðja aðila bankakóði
 // STOP - Lines generated via autotranslator.php tool (2010-07-10 01:20:00).

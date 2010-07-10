@@ -25,7 +25,7 @@ ChangeSupplierPrice=Breyta birgir verð
 ErrorQtyTooLowForThisSupplier=Magn of lágt fyrir þetta birgis eða ekkert verði skilgreind á þessa vöru fyrir þennan birgir
 ErrorSupplierCountryIsNotDefined=Land fyrir þessa birgja er ekki skilgreind. Rétt þetta fyrst.
 ProductHasAlreadyReferenceInThisSupplier=Þessi vara er þegar með tilvísun í þessi birgi
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Þessi tilvísun birgir er nú þegar tengt með tilvísun:% s
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Þessi tilvísun birgir er nú þegar tengt með tilvísun: %s 
 NoRecordedSuppliers=Nei birgja skráð
 SupplierPayment=Birgir greiðslu
 SuppliersArea=Birgjar area
@@ -42,5 +42,5 @@ AddCustomerInvoice=Búa til viðskiptavina Reikningar
 AddSupplierOrder=Búa til birgja þess
 AddSupplierInvoice=Búa til birgja Reikningar
 ListOfSupplierProductForSupplier=Listi yfir vörur og verð <b>fyrir%</b> söluaðila <b>s</b>
-NoneOrBatchFileNeverRan=Enginn eða <b>hópur% s</b> er ekki hljóp nýlega
+NoneOrBatchFileNeverRan=Enginn eða <b>hópur %s </b> er ekki hljóp nýlega
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

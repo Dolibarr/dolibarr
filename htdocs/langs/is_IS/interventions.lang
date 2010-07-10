@@ -15,7 +15,7 @@ NewIntervention=Nýrri aðferð
 AddIntervention=Bæta við íhlutun
 ListOfInterventions=Listi yfir inngrip
 EditIntervention=Breyta afskipti
-LastInterventions=Last% s inngrip
+LastInterventions=Last %s  inngrip
 AllInterventions=Öll inngrip
 CreateDraftIntervention=Búa til drög
 CustomerDoesNotHavePrefix=Viðskiptavinur hefur ekki forskeyti
@@ -37,6 +37,6 @@ TypeContact_fichinter_external_BILLING=Innheimta viðskiptavina samband
 TypeContact_fichinter_external_CUSTOMER=Eftir upp viðskiptavina samband
 ArcticNumRefModelDesc1=Generic tala líkan
 ArcticNumRefModelError=Ekki tókst að virkja
-PacificNumRefModelDesc1=Fara aftur numero með snið% syymm-NNNN þar YY er ári, mm er mánuður og NNNN er röð án brot og ekki aftur snúið til 0
+PacificNumRefModelDesc1=Fara aftur numero með snið %s yymm-NNNN þar YY er ári, mm er mánuður og NNNN er röð án brot og ekki aftur snúið til 0
 PacificNumRefModelError=Íhlutun kort sem byrjar á $ syymm er til nú þegar og er ekki með þessari tegund af röð. Fjarlægja hana eða gefa henni nýtt heiti þess að virkja þessa einingu.
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

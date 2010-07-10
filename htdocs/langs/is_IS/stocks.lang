@@ -80,9 +80,9 @@ AverageUnitPricePMP=Meðaltal inntak verð
 EstimatedStockValueShort=Áætlað virði hlutabréfa
 EstimatedStockValue=Áætlað virði hlutabréfa
 DeleteAWarehouse=Eyða vörugeymsla
-ConfirmDeleteWarehouse=Ertu viss um að þú viljir eyða <b>lager% s?</b>
-PersonalStock=Starfsfólk lager% s
-ThisWarehouseIsPersonalStock=Þetta vöruhús táknar persónulegt birgðir af% s% s
+ConfirmDeleteWarehouse=Ertu viss um að þú viljir eyða <b>lager %s ?</b>
+PersonalStock=Starfsfólk lager %s 
+ThisWarehouseIsPersonalStock=Þetta vöruhús táknar persónulegt birgðir af %s  %s 
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
 
 

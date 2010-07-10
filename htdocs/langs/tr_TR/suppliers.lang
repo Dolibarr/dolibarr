@@ -40,6 +40,6 @@ AddCustomerOrder=Müşteri siparişi yarat
 AddCustomerInvoice=Müşteri fatura oluşturma
 AddSupplierOrder=Ticaret düzeni oluşturun
 AddSupplierInvoice=Tedarikçi faturası oluşturun
-ListOfSupplierProductForSupplier=Ürünler ve fiyatlar tedarikçi listesi <b>için% s</b>
+ListOfSupplierProductForSupplier=Ürünler ve fiyatlar tedarikçi listesi <b>için %s </b>
 NoneOrBatchFileNeverRan=Hiçbiri veya toplu <b>iş%</b> son koştu <b>değil</b>
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
