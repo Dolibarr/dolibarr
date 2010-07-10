@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/fourn/liste.php
  *       \ingroup    fournisseur
- *       \brief      Page accueil de la zone fournisseurs
+ *       \brief      Home page of supplier area
  *       \version    $Id$
  */
 
@@ -95,7 +95,6 @@ if ($search_categ)
 {
 	$sql .= " AND cf.fk_categorie = ".addslashes($search_categ);
 }
-
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -103,7 +102,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
@@ -118,7 +116,7 @@ if ($resql)
 
 	print_barre_liste($langs->trans("ListOfSuppliers"), $page, "liste.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
-	print '<form action="liste.php?cat='.$_GET["cat"].'" method="GET">';
+	print '<form action="liste.php" method="GET">';
 	print '<table class="liste" width="100%">';
 
 	// Filter on categories
@@ -132,7 +130,7 @@ if ($resql)
 	if ($moreforfilter)
 	{
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="9">';
+		print '<td class="liste_titre" colspan="6">';
 		print $moreforfilter;
 		print '</td></tr>';
 	}
@@ -158,7 +156,6 @@ if ($resql)
 	print '<td align="left" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
 	print '</td>';
-
 
 	print '<td class="liste_titre" colspan="2" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
 
