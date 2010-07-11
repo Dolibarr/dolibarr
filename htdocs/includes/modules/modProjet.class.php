@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
@@ -21,8 +21,8 @@
  */
 
 /**
- *  \defgroup   projet     Module projet
- *	\brief      Module pour inclure le detail par projets dans les autres modules
+ *  \defgroup   projet     Module project
+ *	\brief      Module to create projects/tasks/gantt diagram. Projects can them be affected to tasks.
  * 	\version	$Id$
  */
 
@@ -149,8 +149,15 @@ class modProjet extends DolibarrModules
 	 */
 	function init()
 	{
+		global $conf;
+
 		// Permissions
 		$this->remove();
+
+		$sql = array(
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','project',".$conf->entity.")",
+		);
 
 		return $this->_init($sql);
 	}
