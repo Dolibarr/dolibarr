@@ -3,6 +3,7 @@ CHARSET=UTF-8
 RefSending=Réf. expédition
 Sending=Expédition
 Sendings=Expéditions
+Shipments=Expéditions
 Receivings=Réceptions
 SendingsArea=Espace expéditions
 ListOfSendings=Liste des expéditions
