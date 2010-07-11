@@ -217,8 +217,9 @@ if (sizeof($tasksarray)>0)
 			}
 		}
 		if (sizeof($idofusers)>0 && (sizeof($idofthirdparty)>0)) $s.=' - ';
-		if (sizeof($idofusers)>0)
+		if (sizeof($idofthirdparty)>0)
 		{
+			if ($s) $s.=' - ';
 			$s.=$langs->trans("Externals").': ';
 			$i=0;
 			foreach($idofthirdparty as $key => $valid)
