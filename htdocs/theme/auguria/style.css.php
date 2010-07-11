@@ -482,11 +482,11 @@ div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
 div.menu_titre {
 	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/bg-titre-rubrique.png' ?>);
 	padding: 0px;
-	padding-top:7px;
+	padding-top:5px;
 	padding-left:0px;
 	margin-top: 8px;
 	margin: 0px;
-	height: 21px;
+	height: 16px;
     text-align: left;
     font-size : 12px;
     color : #FFFFFF;
@@ -880,7 +880,7 @@ padding-right: 2px;
 }
 
 tr.liste_titre {
-height: 27px;
+height: 24px;
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/menus/trtitle.png' ?>);
 background-repeat: repeat-x;
@@ -978,7 +978,7 @@ padding-bottom: 4px;
 }
 
 tr.box_titre {
-height: 28px;
+height: 24px;
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/menus/trtitle.png' ?>);
 background-repeat: repeat-x;
