@@ -490,14 +490,14 @@ if ($_POST["action"] == 'update' && empty($_POST["removedfile"]) && empty($_POST
 }
 
 // Action confirmation validation
-if ($_POST["action"] == 'confirm_valide')
+if ($_REQUEST["action"] == 'confirm_valide')
 {
 
-	if ($_POST["confirm"] == 'yes')
+	if ($_REQUEST["confirm"] == 'yes')
 	{
 		$mil = new Mailing($db);
 
-		if ($mil->fetch($_GET["id"]) >= 0)
+		if ($mil->fetch($_REQUEST["id"]) >= 0)
 		{
 			$mil->valid($user);
 
@@ -511,19 +511,19 @@ if ($_POST["action"] == 'confirm_valide')
 	}
 	else
 	{
-		Header("Location: fiche.php?id=".$_GET["id"]);
+		Header("Location: fiche.php?id=".$_REQUEST["id"]);
 		exit;
 	}
 }
 
 // Resend
-if ($_POST["action"] == 'confirm_reset')
+if ($_REQUEST["action"] == 'confirm_reset')
 {
-	if ($_POST["confirm"] == 'yes')
+	if ($_REQUEST["confirm"] == 'yes')
 	{
 		$mil = new Mailing($db);
 
-		if ($mil->fetch($_GET["id"]) >= 0)
+		if ($mil->fetch($_REQUEST["id"]) >= 0)
 		{
 			$db->begin();
 
@@ -552,22 +552,23 @@ if ($_POST["action"] == 'confirm_reset')
 	}
 	else
 	{
-		Header("Location: fiche.php?id=".$_GET["id"]);
+		Header("Location: fiche.php?id=".$_REQUEST["id"]);
 		exit;
 	}
 }
 
 // Action confirmation suppression
-if ($_POST["action"] == 'confirm_delete')
+if ($_REQUEST["action"] == 'confirm_delete')
 {
-	if ($_POST["confirm"] == 'yes')
+	if ($_REQUEST["confirm"] == 'yes')
 	{
 		$mil = new Mailing($db);
-		$mil->id = $_GET["id"];
+		$mil->id = $_REQUEST["id"];
 
 		if ($mil->delete($mil->id))
 		{
-			Header("Location: index.php");
+			Header("Location: ".DOL_URL_ROOT."/comm/mailing/liste.php");
+			exit;
 		}
 	}
 }
@@ -654,21 +655,21 @@ else
 		// Confirmation de la validation du mailing
 		if ($_GET["action"] == 'valide')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valide");
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valide",'','',2);
 			if ($ret == 'html') print '<br>';
 		}
 
 		// Confirm reset
 		if ($_GET["action"] == 'reset')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("ResetMailing"),$langs->trans("ConfirmResetMailing",$mil->ref),"confirm_reset");
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("ResetMailing"),$langs->trans("ConfirmResetMailing",$mil->ref),"confirm_reset",'','',2);
 			if ($ret == 'html') print '<br>';
 		}
 
 		// Confirm delete
 		if ($_GET["action"] == 'delete')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete");
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',2);
 			if ($ret == 'html') print '<br>';
 		}
 
