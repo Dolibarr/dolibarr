@@ -107,3 +107,4 @@ DataIsInsertedInto=La donnée issue du fichier source sera insérée dans le cha
 DataIDSourceIsInsertedInto=L'id de l'objet père retrouvé à partir de la donnée source, sera insérée dans le champ suivant:
 SourceRequired=Donnée source obligatoire
 SourceExample=Exemple de donnée source possible
+CSVFormatDesc=Fichier au format <b>Comma Separated Value</b> (.csv).<br>C'est un fichier au format texte dans lequel les champs sont séparés par le caractère [ %s ]. Si le séparateur est trouvé dans le contenu d'un champ, le champ doit être entouré du caractère [ %s ]. Le caractère d'échappement pour inclure un caractère de contour dans une donnée est [ %s ].

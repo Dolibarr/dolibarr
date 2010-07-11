@@ -106,3 +106,4 @@ DataIsInsertedInto=Data coming from source file will be inserted into the follow
 DataIDSourceIsInsertedInto=The id of parent object found using the data in source file, will be inserted into the following field:
 SourceRequired=Data value is mandatory
 SourceExample=Example of possible data value
+CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text file format where fields are separated by separator [ %s ]. If separator is found inside a field content, field is rounded by round character [ %s ]. Escape character to escape round character is [ %s ].
