@@ -120,36 +120,21 @@ print '</tr>'."\n";
 /*
  * Formulaire parametres divers
  */
-// sousproduits activation/desactivation
+
 $var=!$var;
 
-/*print "<tr ".$bc[$var].">";
-print '<td width="60%">'.$langs->trans("UserWarehouse").'</td>';
+print "<tr ".$bc[$var].">";
+print '<td width="60%">'.$langs->trans("UserWarehouseAutoCreate").'</td>';
+
 print '<td width="160" align="right">';
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print "<form method=\"post\" action=\"stock.php\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK\">";
-print $html->selectyesno("STOCK_USERSTOCK",$conf->global->STOCK_USERSTOCK,1);
+print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK_AUTOCREATE\">";
+print $html->selectyesno("STOCK_USERSTOCK_AUTOCREATE",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</form>\n</td>\n</tr>\n";
-
-if ($conf->global->STOCK_USERSTOCK == 1)
-{
-	$var=!$var;
-*/
-	print "<tr ".$bc[$var].">";
-	print '<td width="60%">'.$langs->trans("UserWarehouseAutoCreate").'</td>';
-
-	print '<td width="160" align="right">';
-	print "<form method=\"post\" action=\"stock.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK_AUTOCREATE\">";
-	print $html->selectyesno("STOCK_USERSTOCK_AUTOCREATE",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print '</form>';
-	print "</td>\n";
-	print "</tr>\n";
-/*} */
+print '</form>';
+print "</td>\n";
+print "</tr>\n";
 
 
 // Title rule for stock decrease
@@ -223,7 +208,7 @@ if ($conf->fournisseur->enabled)
 	print "</form>\n</td>\n</tr>\n";
 }
 
-if ($conf->commande->enabled)
+if ($conf->fournisseur->enabled)
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
@@ -235,7 +220,9 @@ if ($conf->commande->enabled)
 	print $html->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
-
+}
+if ($conf->fournisseur->enabled)
+{
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
 	print '<td width="60%">'.$langs->trans("ReStockOnDispatchOrder").'</td>';

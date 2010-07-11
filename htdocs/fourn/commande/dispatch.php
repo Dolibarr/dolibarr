@@ -92,6 +92,7 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
 $html =	new Form($db);
+$warehouse_static = new Entrepot($db);
 
 $now=dol_now();
 
@@ -305,7 +306,8 @@ if ($id > 0 || ! empty($ref))
 		}
 
 		// List of already dispatching
-		$sql = "SELECT p.ref, p.label, e.label as entrepot,";
+		$sql = "SELECT p.ref, p.label,";
+		$sql.= " e.rowid as warehouse_id, e.label as entrepot,";
 		$sql.= " cfd.fk_product, cfd.qty, cfd.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p,";
 		$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
@@ -344,7 +346,11 @@ if ($id > 0 || ! empty($ref))
 					print "</td>\n";
 
 					print '<td align="right">'.$objp->qty.'</td>';
-					print '<td align="right">'.$objp->entrepot.'</td>';
+					print '<td align="right">';
+					$warehouse_static->id=$objp->warehouse_id;
+					$warehouse_static->libelle=$objp->entrepot;
+					print $warehouse_static->getNomUrl(1);
+					print '</td>';
 					print "</tr>\n";
 
 					$i++;

@@ -1,4 +1,4 @@
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */ /* ------------------- Initialisations ------------------- */
+ */ 
+ 
+/*	\version   $Id$ */
+
 body {
 	background: #eee;
 	color: #333;
@@ -42,7 +45,7 @@ p {
 	background: url("img/bg_conteneur_droite.png") top right repeat-y;
 }
 
-/* ------------------- En-tête ------------------- */
+/* ------------------- En-tï¿½te ------------------- */
 .entete {
 	height: 15px;
 	margin: 0;
@@ -66,7 +69,7 @@ p {
 }
 
 .menu_bloc {
-	margin-left: 20px;
+	margin-left: 12px;
 }
 
 .menu {
@@ -79,12 +82,12 @@ p {
 .menu li {
 	float: left;
 	font-weight: bold;
-	width: 230px;
 }
 
 .menu_choix1,.menu_choix2 {
 	font-size: 1.4em;
 	text-align: left;
+	width: 180px;
 }
 
 .menu_choix1 a,.menu_choix2 a {
@@ -92,7 +95,7 @@ p {
 	color: #fff;
 	text-decoration: none;
 	width: 100px;
-	padding-left: 60px;
+	padding-left: 54px;
 	height: 48px;
 	background: url('img/new.png') top left no-repeat;
 }
@@ -113,7 +116,7 @@ p {
 	font-size: 0.9em;
 	text-align: right;
 	font-style: italic;
-	width: 280px;
+	width: 340px;
 	display: block;
 	color: #333;
 	text-decoration: none;
@@ -125,10 +128,11 @@ p {
 }
 
 
-/* ------------------- Récapitulatif des articles ------------------- */
+/* ------------------- Rï¿½capitulatif des articles ------------------- */
 .liste_articles {
 	width: 215px;
 	float: right;
+	margin-top: 8px;
 	margin-right: 20px;
 	border: 1px dotted #5ca64d;
 	padding-bottom: 10px;
@@ -269,7 +273,7 @@ p.titre {
 	position: absolute;
 }
 
-/* --------------------- Listes déroulantes ------------------- */
+/* --------------------- Listes dï¿½roulantes ------------------- */
 .select_design {
 	width: 370px;
 	overflow: auto;
@@ -390,7 +394,7 @@ p.titre {
 	background: url('img/bg_pied.png') no-repeat bottom left;
 }
 
-/* ------------------- Paramètres communs (messages d'erreur, informations, etc...) ------------------- */
+/* ------------------- Paramï¿½tres communs (messages d'erreur, informations, etc...) ------------------- */
 .msg_err1 {
 	color: #c00;
 }
@@ -443,7 +447,7 @@ p.titre {
 	padding: 0;
 }
 
-/* Affichage de la liste des résultats */
+/* Affichage de la liste des rï¿½sultats */
 .dhtml_bloc {
 	margin: 0;
 	padding: 3px;
