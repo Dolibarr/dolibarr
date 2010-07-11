@@ -223,7 +223,7 @@ if ($socid > 0)
 				print '</tr>';
 			}
 
-			$now = gmmktime();
+			$now = dol_now();
 
 			while ($i < $num && $i < $MAXLIST)
 			{
