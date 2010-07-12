@@ -3,6 +3,7 @@ CHARSET=UTF-8
 RefSending=Ref. envío
 Sending=Envío
 Sendings=Envíos
+Shipments=Envíos
 Receivings=Recepciones
 SendingsArea=Área envíos
 ListOfSendings=Listado de envíos

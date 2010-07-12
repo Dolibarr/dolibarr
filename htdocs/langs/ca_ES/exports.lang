@@ -107,3 +107,4 @@ DataIsInsertedInto= Les dades de l'arxiu d'origen s'inseriran en el següent cam
 DataIDSourceIsInsertedInto= L'ID de l'objecte pare trobat a partir de la dada origen, s'inserirà en el següent camp:
 SourceRequired= Dades d'origen obligatòries
 SourceExample= Exemple de dades d'origen possibles
+CSVFormatDesc=Arxiu amb format <b>Valors separats per coma</b> (.csv).<br>És un fitxer amb format de text en què els camps són separats pel caràcter [ %s ]. Si el separador es troba en el contingut d'un camp, el camp ha d'estar tancat per el caràcter [ %s ]. El caràcter d'escapament per a incloure un caràcter d'entorn en una dada és [ %s ].

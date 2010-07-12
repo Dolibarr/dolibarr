@@ -107,3 +107,5 @@ DataIsInsertedInto= Los datos del archivo de origen se insertarán en el siguien
 DataIDSourceIsInsertedInto= El ID del objeto padre encontrado a partir del dato origen, se insertará en el siguiente campo:
 SourceRequired= Datos de origen obligatorios
 SourceExample= Ejemplo de datos de origen posibles
+CSVFormatDesc=Archivo con formato <b>Valores separados por comae</b> (.csv).<br>Es un fichero con formato de texto en el que los campos son separados por el caracter [ %s ]. Si el separador se encuentra en el contenido de un campo, El campo debe de estar acotado por el caracter [ %s ]. El caracter de escape para incluir un caracter de entorno en un dato es [ %s ].
+
