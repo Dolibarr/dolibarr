@@ -916,8 +916,8 @@ class DolibarrModules
 						else dol_syslog("DolibarrModules::insert_permissions record already exists", LOG_INFO);
 					}
 
-					// If we are an admin user, we take permission of new module
-					if ($user->admin)
+					// If we are into a logged session and we are an admin user, we take permission of new activated module
+					if (! empty($user->admin))
 					{
 						$user->addrights($r_id);
 						// We reload permissions
