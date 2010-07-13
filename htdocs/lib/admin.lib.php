@@ -230,6 +230,8 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 			$result=$db->query($newsql,$usesavepoint);
 			if ($result)
 			{
+				print '<!-- Result = OK -->'."\n";
+
 				if (preg_replace('/insert into ([^\s]+)/i',$newsql,$reg))
 				{
 					$cursorinsert++;
@@ -245,6 +247,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 			else
 			{
 				$errno=$db->errno();
+				print '<!-- Result = '.$errno.' -->'."\n";
 
 				$okerror=array( 'DB_ERROR_TABLE_ALREADY_EXISTS',
 				'DB_ERROR_COLUMN_ALREADY_EXISTS',
@@ -266,26 +269,26 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 				{
 					if (! $silent) print '<tr><td valign="top" colspan="2">';
 					if (! $silent) print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div></td>";
-					if (! $silent) print '</tr>';
+					if (! $silent) print '</tr>'."\n";
 					dol_syslog('Admin.lib::run_sql Request '.($i+1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);
 					$error++;
 				}
 			}
 
-			if (! $silent) print '</tr>';
+			if (! $silent) print '</tr>'."\n";
 		}
 	}
 
 	if ($error == 0)
 	{
 		if (! $silent) print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-		if (! $silent) print '<td align="right">'.$langs->trans("OK").'</td></tr>';
+		if (! $silent) print '<td align="right">'.$langs->trans("OK").'</td></tr>'."\n";
 		$ok = 1;
 	}
 	else
 	{
 		if (! $silent) print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-		if (! $silent) print '<td align="right"><font class="error">'.$langs->trans("KO").'</font></td></tr>';
+		if (! $silent) print '<td align="right"><font class="error">'.$langs->trans("KO").'</font></td></tr>'."\n";
 		$ok = 0;
 	}
 

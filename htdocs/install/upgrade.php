@@ -112,13 +112,13 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 	if ($db->connected == 1)
 	{
 		print '<tr><td nowrap="nowrap">';
-		print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+		print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
 		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
 		$ok = 1;
 	}
 	else
 	{
-		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>\n";
 		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
 		$ok = 0;
 	}
@@ -128,13 +128,13 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 		if($db->database_selected == 1)
 		{
 			print '<tr><td nowrap="nowrap">';
-			print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+			print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
 			dolibarr_install_syslog("upgrade: Database connection successfull : $dolibarr_main_db_name");
 			$ok=1;
 		}
 		else
 		{
-			print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
+			print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
 			dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
 			$ok=0;
 		}
@@ -320,7 +320,7 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 		foreach($filelist as $file)
 		{
 			print '<tr><td nowrap>';
-			print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>';
+			print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>'."\n";
 
 			$name = substr($file, 0, strlen($file) - 4);
 
