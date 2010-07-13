@@ -820,13 +820,13 @@ else
 			}
 
 			// Weight
-			print '<tr><td>'.$html->editfieldkey("TotalWeight",'trueWeight',$expedition->trueWeight,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $html->editfieldval("TotalWeight",'trueWeight',$expedition->trueWeight,'id',$expedition->id,$user->rights->expedition->creer);
+			print '<tr><td>'.$html->editfieldkey("Weight",'trueWeight',$expedition->trueWeight,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
+			print $html->editfieldval("Weight",'trueWeight',$expedition->trueWeight,'id',$expedition->id,$user->rights->expedition->creer);
 			print $expedition->weight_units?measuring_units_string($expedition->weight_units,"weight"):'';
 			print '</td></tr>';
 
 			// Volume Total
-			print '<tr><td>'.$langs->trans("TotalVolume").'</td>';
+			print '<tr><td>'.$langs->trans("Volume").'</td>';
 			print '<td colspan="3">';
 			if ($expedition->trueVolume)
 			{
@@ -927,8 +927,9 @@ else
 				print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
 			}
 
-			print '<td align="center">'.$langs->trans("Weight").'</td>';
-			print '<td align="center">'.$langs->trans("Volume").'</td>';
+			print '<td align="center">'.$langs->trans("CalculatedWeight").'</td>';
+			print '<td align="center">'.$langs->trans("CalculatedVolume").'</td>';
+			//print '<td align="center">'.$langs->trans("Size").'</td>';
 
 			if ($conf->stock->enabled)
 			{
@@ -942,7 +943,7 @@ else
 			{
 				print "<tr ".$bc[$var].">";
 
-				// Product
+				// Predefined product or service
 				if ($lignes[$i]->fk_product > 0)
 				{
 					print '<td>';
@@ -978,11 +979,20 @@ else
 				// Qte a expedier ou expedier
 				print '<td align="center">'.$lignes[$i]->qty_shipped.'</td>';
 
-				// Poids
-				print '<td align="center">'.$lignes[$i]->weight*$lignes[$i]->qty_shipped.' '.measuring_units_string($lignes[$i]->weight_units,"weight").'</td>';
+				// Weight
+				print '<td align="center">';
+				if ($lignes[$i]->fk_product_type == 0) print $lignes[$i]->weight*$lignes[$i]->qty_shipped.' '.measuring_units_string($lignes[$i]->weight_units,"weight");
+				else print '&nbsp;';
+				print '</td>';
 
 				// Volume
-				print '<td align="center">'.$lignes[$i]->volume*$lignes[$i]->qty_shipped.' '.measuring_units_string($lignes[$i]->volume_units,"volume").'</td>';
+				print '<td align="center">';
+				if ($lignes[$i]->fk_product_type == 0) print $lignes[$i]->volume*$lignes[$i]->qty_shipped.' '.measuring_units_string($lignes[$i]->volume_units,"volume");
+				else print '&nbsp;';
+				print '</td>';
+
+				// Size
+				//print '<td align="center">'.$lignes[$i]->volume*$lignes[$i]->qty_shipped.' '.measuring_units_string($lignes[$i]->volume_units,"volume").'</td>';
 
 				// Entrepot source
 				if ($conf->stock->enabled)
