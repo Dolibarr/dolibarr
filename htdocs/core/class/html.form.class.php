@@ -910,7 +910,7 @@ class Form
 		}
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		// Add criteria on ref/label
-		if (empty($conf->global->PRODUCT_SEARCH_ANYWHERE))
+		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 		{
 			if ($ajaxkeysearch && $ajaxkeysearch != '')
 			{
@@ -1113,7 +1113,7 @@ class Form
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if (! empty($filtre)) $sql.=" ".$filtre;
 		// Add criteria on ref/label
-		if (empty($conf->global->PRODUCT_SEARCH_ANYWHERE))
+		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 		{
 			if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
 		}
