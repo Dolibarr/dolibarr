@@ -216,21 +216,6 @@ print '</form>';
  print '</form>';
  */
 
-// Utilisation de l'ecotaxe
-$var=!$var;
-print "<form method=\"post\" action=\"produit.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"useecotaxe\">";
-print "<tr ".$bc[$var].">";
-print '<td>'.$langs->trans("UseEcoTaxeAbility").'</td>';
-print '<td width="60" align="right">';
-print $html->selectyesno("activate_useecotaxe",$conf->global->PRODUIT_USE_ECOTAXE,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td>";
-print '</tr>';
-print '</form>';
-
 if ($conf->global->PRODUCT_CANVAS_ABILITY)
 {
 	// Add canvas feature

@@ -202,6 +202,14 @@ class InterfaceDemo
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
+        elseif ($action == 'LINEORDER_INSERT')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'LINEORDER_DELETE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
 
 		// Supplier orders
         elseif ($action == 'ORDER_SUPPLIER_CREATE')
@@ -243,6 +251,14 @@ class InterfaceDemo
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'PROPAL_DELETE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'LINEPROPAL_INSERT')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'LINEPROPAL_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
@@ -299,6 +315,10 @@ class InterfaceDemo
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
 		elseif ($action == 'LINEBILL_INSERT')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+		elseif ($action == 'LINEBILL_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }

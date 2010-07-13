@@ -41,6 +41,7 @@ class Commande extends CommonObject
 	var $element='commande';
 	var $table_element='commande';
 	var $table_element_line = 'commandedet';
+	var $class_element_line = 'OrderLine';
 	var $fk_element = 'fk_commande';
 	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -903,7 +904,7 @@ class Commande extends CommonObject
 			$line->product_type=$type;
 
 			// \TODO Ne plus utiliser
-			$line->price=$price; 
+			$line->price=$price;
 			$line->remise=$remise;
 
 			$line->date_start=$date_start;
@@ -1059,7 +1060,7 @@ class Commande extends CommonObject
 				$this->total_ht               = $obj->total_ht;
 				$this->total_tva              = $obj->total_tva;
 				$this->total_localtax1		  = $obj->total_localtax1;
-				$this->total_localtax2		  = $obj->total_localtax2;	
+				$this->total_localtax2		  = $obj->total_localtax2;
 				$this->total_ttc              = $obj->total_ttc;
 				$this->date                   = $this->db->jdate($obj->date_commande);
 				$this->date_commande          = $this->db->jdate($obj->date_commande);

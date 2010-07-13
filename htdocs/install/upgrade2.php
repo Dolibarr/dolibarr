@@ -1730,6 +1730,7 @@ function migrate_delete_old_files($db,$langs,$conf)
 	DOL_DOCUMENT_ROOT.'/includes/modules/modComptabiliteExpert.class.php',
 	DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modPhenix_Phenixsynchro.class.php',
 	DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modWebcalendar_webcalsynchro.class.php',
+	DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_Ecotax.class.php',
 	);
 
 	foreach ($filetodeletearray as $filetodelete)
