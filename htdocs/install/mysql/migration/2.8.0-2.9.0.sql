@@ -7,6 +7,22 @@
 --
 
 
+-- Add missing table llx_product_association
+create table llx_product_association
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  fk_product_pere       integer NOT NULL DEFAULT 0, -- id du produit maitre
+  fk_product_fils       integer NOT NULL DEFAULT 0, -- id du sous-produit
+  qty                   double NULL
+)type=innodb;
+
+
+ALTER TABLE llx_product_association ADD UNIQUE INDEX uk_product_association (fk_product_pere, fk_product_fils);
+
+ALTER TABLE llx_product_association ADD INDEX idx_product_association_fils (fk_product_fils);
+
+
+
 ALTER TABLE llx_product ADD INDEX idx_product_label (label);
 
 -- V4.1 DELETE FROM llx_projet_task WHERE fk_projet NOT IN (SELECT rowid from llx_projet);
