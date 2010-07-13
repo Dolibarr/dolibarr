@@ -101,7 +101,7 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 
 	if ($totalpaiement == 0)
 	{
-		$fiche_erreur_message = '<div class="error">'.$langs->transnoentities('ErrorFieldRequired',$langs->trans('Amount')).'</div>';
+		$fiche_erreur_message = '<div class="error">'.$langs->transnoentities('ErrorFieldRequired',$langs->trans('PaymentAmount')).'</div>';
 		$error++;
 	}
 

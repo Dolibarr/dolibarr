@@ -168,9 +168,8 @@ Model=Model
 DefaultModel=Implicit model
 Action=Acţiune
 About=Despre
-WelcomeString=<font class="body">We are </font>%s<font class=<font class="body">Suntem %s, şi sunteţi conectat ca utilizator%</font> s
 Number=Numărul
-Numero=NUMERO
+Numero=Numero
 Limit=Limita de
 Limits=Limite
 DevelopmentTeam=Development Team

@@ -172,7 +172,6 @@ Action=Acció
 Model=Model
 DefaultModel=Model per defecte
 About=Sobre
-WelcomeString=<font class="body">Som</font> %s<font class="body">, i es connecta com</font> %s
 Number=Número
 NumberByMonth=Nombre per mes
 Numero=Número

@@ -170,7 +170,6 @@ Model=Model
 DefaultModel=Standard model
 Action=Action
 About=Om
-WelcomeString=<font class="body">We are </font>%s<font class=<font class="body">Vi er %s, og du er tilsluttet som bruger%</font> s
 Number=Antal
 Numero=Numero
 Limit=Limit

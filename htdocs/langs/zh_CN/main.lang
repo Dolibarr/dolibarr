@@ -181,10 +181,9 @@ Model=模型
 DefaultModel=默认模式
 Action=行动
 About=关于
-WelcomeString=<font class="body">我们是％s和你是</font> ％ <font class="body">作为连接用户与</font>
 Number=数
 NumberByMonth=按月份数
-Numero=Numero
+Numero=数
 Limit=限制
 Limits=范围
 DevelopmentTeam=开发团队

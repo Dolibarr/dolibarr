@@ -170,9 +170,8 @@ Model=النموذج
 DefaultModel=النموذج الافتراضي
 Action=العمل
 About=حول
-WelcomeString=<font class="body">We are </font>%s<font class=<font class="body">نحن</font> ق ٪ <font class="body">، وكنت مرتبطة المستعمل</font> ٪ ق
 Number=عدد
-Numero=numéro
+Numero=عدد
 Limit=الحد
 Limits=حدود
 DevelopmentTeam=فريق التطوير

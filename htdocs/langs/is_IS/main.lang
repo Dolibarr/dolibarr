@@ -387,10 +387,9 @@ Model=Model
 DefaultModel=Sjálfgefin tegund
 Action=Action
 About=Um
-WelcomeString=<font class="body">Við erum %s , og þú ert tengdur sem notanda%</font> s
 Number=Fjöldi
 NumberByMonth=Fjöldi eftir mánuði
-Numero=Numero
+Numero=Fjöldi
 Limit=Takmörk
 Limits=Mörk
 DevelopmentTeam=Development Team

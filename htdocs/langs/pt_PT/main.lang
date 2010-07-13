@@ -160,7 +160,6 @@ Action=Acção
 Model=Modelo
 DefaultModel=Modelo por defeito
 About=Acerca de
-WelcomeString=<font class="body">Somos</font> %s<font class="body">, e liga-se como</font> %s
 Number=Número
 Numero=Número
 Limit=Límite

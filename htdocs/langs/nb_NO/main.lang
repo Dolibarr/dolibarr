@@ -160,7 +160,6 @@ Model=Modell
 DefaultModel=Gjeldende modell
 Action=Handling
 About=Om
-WelcomeString=<font class="body">Vi er </font>%s<font class="body">, og du er koblet til som bruker</font> %s
 Number=Antall
 Numero=Nummer
 Limit=Grense

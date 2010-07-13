@@ -168,9 +168,8 @@ Model=Типовой
 DefaultModel=По умолчанию модели
 Action=Действий
 About=О
-WelcomeString=<font class="body">We are </font>%s<font class=<font class="body">Мы %s, и при подключении пользователя%</font> S
 Number=Количество
-Numero=Numero
+Numero=Количество
 Limit=Предельные
 Limits=Пределы
 DevelopmentTeam=Development Team

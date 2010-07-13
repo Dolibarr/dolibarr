@@ -170,7 +170,6 @@ Model=Modell
 DefaultModel=Standard-Modell
 Action=Aktion
 About=Über
-WelcomeString=<font class="body">We are </font>%s<font class=<font class="body">Wir sind %s, und Sie sind als Benutzer%</font> s
 Number=Anzahl
 Numero=Numero
 Limit=Limit

@@ -167,7 +167,6 @@ Model=Vzorec
 DefaultModel=Privzet vzorec
 Action=Aktivnost
 About=O programu
-WelcomeString=<font class="body"> Mi smo </font>%s<font class="body">, vi pa ste prijavljeni kot uporabnik</font> %s
 Number=Številka
 Numero=Številka
 Limit=Omejitev

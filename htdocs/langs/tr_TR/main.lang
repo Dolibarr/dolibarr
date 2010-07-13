@@ -175,7 +175,6 @@ Model=Model
 DefaultModel=Varsayılan modeli
 Action=Eylem
 About=Ile ilgili
-WelcomeString=% <font class="body">Vardır ve biz</font> ler <font class="body">kullanıcı bağlı olarak%</font> s
 Number=Numarası
 Numero=Numero
 Limit=Limit

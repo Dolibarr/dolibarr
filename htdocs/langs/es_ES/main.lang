@@ -172,7 +172,6 @@ Action=Acción
 Model=Modelo
 DefaultModel=Modelo por defecto
 About=Acerca de
-WelcomeString=<font class="body">Somos</font> %s<font class="body">, y se conecta como</font> %s
 Number=Número
 NumberByMonth=Número por mes
 Numero=Número

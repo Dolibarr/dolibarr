@@ -151,7 +151,6 @@ Model							   =Modello
 DefaultModel						   =Modello predefinito
 Action							   =Azione
 About							   =About
-WelcomeString						   =<font classe="body"> Siamo </font>%s <font class="body"> , e sei connesso come utente </font>%s
 Number							   =Numero
 Numero							   =Numero
 Limit							   =Limite
@@ -479,7 +478,6 @@ ConfirmClone=Scegli i dati che si desidera clonare:
 ConfirmCloneEMailing=Sei sicuro di voler clonare questa email?
 NoCloneOptionsSpecified=Non sono definiti dati per clonare.
 CopyOf=Copia del
-WelcomeString=<font class="body">We are </font>%s<font class=<font class="body">Ci sono %s, e si è connessi come utente%</font> s
 Now=Adesso
 ActionsRunningshort=Started
 ActionRunningNotStarted=Non avviato

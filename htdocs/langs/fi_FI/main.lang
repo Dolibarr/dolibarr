@@ -168,7 +168,6 @@ Model=Malli
 DefaultModel=Oletus malli
 Action=Toimi
 About=Noin
-WelcomeString=<font class="body">We are </font>%s<font class=<font class="body">Olemme %s, ja olet yhteydessä käyttäjän%</font> s
 Number=Numero
 Numero=Numero
 Limit=Limit

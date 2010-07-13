@@ -173,7 +173,6 @@ Action=Actie
 Model=Model
 DefaultModel=Standaard model
 About=Over
-WelcomeString=<font class="body">Wij zijn</font> %s<font class="body">, en u bent verbonden als gebruiker</font> %s
 Number=Aantal
 Numero=Nummer
 Limit=Limiet
