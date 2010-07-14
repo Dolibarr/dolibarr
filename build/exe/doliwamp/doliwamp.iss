@@ -74,8 +74,8 @@ Name: "sv"; MessagesFile: "compiler:Languages\Slovenian.isl,build\exe\doliwamp\L
 
 [Tasks]
 ;Name: "autostart"; Description: "Automatically launch DoliWamp server on startup. If you check this option, Services will be installed as automatic. Otherwise, services will be installed as manual and will start and stop with the service manager."; GroupDescription: "Auto Start:" ;Flags: unchecked;
-Name: quicklaunchicon; Description: CustomMessage('CreateQuickLaunchIcon'); GroupDescription: CustomMessage('AdditionalIcons'); Flags: unchecked
-Name: "desktopicon"; Description: CustomMessage('CreateDesktopIcon'); GroupDescription: CustomMessage('AdditionalIcons'); Flags: unchecked
+Name: "quicklaunchicon"; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
+Name: "desktopicon"; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Dirs]
 Name: "{app}\logs"
@@ -954,7 +954,7 @@ end;
 
 [Run]
 ; Launch Dolibarr in browser. This is run after Wizard because of postinstall flag
-Filename: "{app}\rundoliwamp.bat"; Description: CustomMessage('LaunchNow'); Flags: shellexec postinstall skipifsilent runhidden
+Filename: "{app}\rundoliwamp.bat"; Description: {cm:LaunchNow}; Flags: shellexec postinstall skipifsilent runhidden
 
 
 [UninstallDelete]
