@@ -22,9 +22,9 @@ For users:
 - New: Can filter third parties lists on categories.
 - New: Can filter products and services lists on categories.
 - New: task #10202 : Support categories for members.
-- New: Can build documents for third parties (Use ODT templates, need PHP 5.2+). 
-- New: Support products property length and area.
-- New: Add "payment due before" field in invoice exports
+- New: Can build documents for third parties (Using ODT templates, need PHP 5.2+). 
+- New: Support new products properties: length and area.
+- New: Add the "payment due before" field in invoice exports.
 - New: Add feature to resize or crop image files (for products photos)
 - New: task #10113 : Show list of emailing on clicking on "number of mass emailing received"
 - New: Add default language for third parties and use it when multilang is enabled
@@ -34,26 +34,31 @@ For users:
 - New: Can delete several files at once in FTP module.
 - New: Add box "last contracts".
 - New: Works even if Web hosting provider has disabled PHP "glob" function.
-- New: Can now send supplier order by mail.
+- New: Can now send supplier orders by email.
 - New: task #10076 : Show content of message in notification module.
 - New: Bank name is shown on invoice.
 - New: IBAN value is called IFSC if country is India.
 - New: Add option to choose to show firstname then name or name then firstname on PDF.
 - New: Add company in fields exported by export of members tool.
-- New: Reorganise bank menu.
+- New: Reorganise bank menus.
 - New: Bookmarks can be sorted on a particular order.
 - New: Support spanish RE and IRPF taxes on invoices.
-- New: Module category offers category for foundation module.
-- New: Can filter on category on third aprties, products and members listings.
-- New: A flag is visible before countries labels.
-- New: When activating a new module, admin users has permission. This save
+- New: Module category offers categories for foundation module.
+- New: Can filter on category on third parties, products and members listings.
+- New: A flag is visible before country labels.
+- New: When activating a new module, permissions for admin user are set. This save
        time when configuring Dolibarr.
-- New: A lot of speed improvements added.
+- New: Dolibarr 2.9 is faster than 2.8.
 - New: A lot of more predefined VAT values, states, regions for 
        miscelaneous contries.
 - New: Enhance skin engine to make themes easier.
 - New: Add images into menu "eldy".
-- New: Auguria theme is now more modern. 
+- New: Auguria theme is now more modern.
+- New: Update tools refers to www.dolibarr.org but also www.dolistore.com web site.
+- New: Postgresql experimental support seems to work completely. 
+- New: Changes in Dolibarr core to allow to use cache servers (see Memcached module on
+       dolistore.com).
+- Fix: Durations are correctly shown for languages using PM/AM dates.
 - Fix: A lot of fixes in Point of Sale module.
 - Fix: Debug experimental module widthrawal.
 - Fix: Format number was wrong for ar_AR language.
@@ -67,6 +72,7 @@ For users:
 - Fix: Stock value is not reset when product is transfered into other warehouse. 
 - Fix: A lot of not tracked bugs fixed.
 - Fix: Some fixes in barcode management.
+- Fix: Access to phpMyAdmin is now ok on new DoliWamp installation.
 
 For tranlators:
 - Fix: Major update of italian translation (it_IT).
