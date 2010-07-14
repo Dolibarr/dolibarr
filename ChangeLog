@@ -58,6 +58,9 @@ For users:
 - New: Postgresql experimental support seems to work completely. 
 - New: Changes in Dolibarr core to allow to use cache servers (see Memcached module on
        dolistore.com).
+- New: Default choice for interactive confirm box is yes by default, and no only for
+       delete actions. This reduce number of clicks required to validate actions and 
+       is still safe to dangerous actions.
 - Fix: Durations are correctly shown for languages using PM/AM dates.
 - Fix: A lot of fixes in Point of Sale module.
 - Fix: Debug experimental module widthrawal.

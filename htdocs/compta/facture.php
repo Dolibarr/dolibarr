@@ -881,7 +881,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 			$desc=$_POST['dp_desc'];
 			$type=$_POST["type"];
 		}
-		
+
 		$localtax1_tx=get_localtax($tva_tx,1,$fac->client);
 		$localtax2_tx=get_localtax($tva_tx,2,$fac->client);
 
@@ -1683,14 +1683,14 @@ if ($_GET['action'] == 'create')
 		if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 		{
 			if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
-			{	
+			{
 				print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($object->total_localtax1)."</td></tr>";
 			}
-			
+
 			if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 			{
 				print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($object->total_localtax2)."</td></tr>";
-			}			
+			}
 		}
 		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($object->total_ttc)."</td></tr>";
 	}
@@ -1968,7 +1968,7 @@ else
 			if ($_GET['action'] == 'converttoreduc')
 			{
 				$text=$langs->trans('ConfirmConvertToReduc');
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('ConvertToReduc'),$text,'confirm_converttoreduc','',0,2);
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('ConvertToReduc'),$text,'confirm_converttoreduc','',"yes",2);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -2010,14 +2010,14 @@ else
 					$text.=$notify->confirmMessage('NOTIFY_VAL_FAC',$fac->socid);
 				}
 
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ValidateBill'),$text,'confirm_valid','',0,($conf->notification->enabled?0:2));
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ValidateBill'),$text,'confirm_valid','',"yes",($conf->notification->enabled?0:2));
 				if ($ret == 'html') print '<br>';
 			}
 
 			// Confirmation du classement paye
 			if ($_GET['action'] == 'paid' && $resteapayer <= 0)
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidBill',$fac->ref),'confirm_paid','',0,1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidBill',$fac->ref),'confirm_paid','',"yes",1);
 				if ($ret == 'html') print '<br>';
 			}
 			if ($_GET['action'] == 'paid' && $resteapayer > 0)
@@ -2047,7 +2047,7 @@ else
 				array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '100')
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidPartially',$fac->ref),'confirm_paid_partially',$formquestion);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidPartially',$fac->ref),'confirm_paid_partially',$formquestion,"yes");
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -2088,7 +2088,7 @@ else
 					array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '100')
 					);
 
-					$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$fac->ref),'confirm_canceled',$formquestion);
+					$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$fac->ref),'confirm_canceled',$formquestion,"yes");
 					if ($ret == 'html') print '<br>';
 				}
 			}
