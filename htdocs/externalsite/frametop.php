@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2010      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +18,11 @@
  */
 
 /**
-		\file 		htdocs/externalsite/frametop.php
-        \ingroup    externalsite
-		\brief      Top frame to show external web application
-		\version    $Id$
-*/
+ *		\file 		htdocs/externalsite/frametop.php
+ *      \ingroup    externalsite
+ *		\brief      Top frame to show external web application
+ *		\version    $Id$
+ */
 
 require ("../main.inc.php");
 

@@ -27,7 +27,7 @@
 
 require("../main.inc.php");
 
-$langs->load("@externalsite");
+$langs->load("externalsite@externalsite");
 
 if (empty($conf->global->EXTERNALSITE_URL))
 {
@@ -39,6 +39,8 @@ if (empty($conf->global->EXTERNALSITE_URL))
 $mainmenu=isset($_GET["mainmenu"])?$_GET["mainmenu"]:"";
 $leftmenu=isset($_GET["leftmenu"])?$_GET["leftmenu"]:"";
 $idmenu=isset($_GET["idmenu"])?$_GET["idmenu"]:"";
+$theme=isset($_GET["theme"])?$_GET["theme"]:"";
+$codelang=isset($_GET["lang"])?$_GET["lang"]:"";
 
 print "
 <html>
@@ -47,7 +49,7 @@ print "
 </head>
 
 <frameset rows=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
-    <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu."&nobackground=1\" noresize scrolling=\"NO\" noborder>
+    <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme?'&theme='.$theme:'').($codelang?'&langs='.$codelang:'')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
     <frame name=\"main\" src=\"".$conf->global->EXTERNALSITE_URL."\">
     <noframes>
     <body>

@@ -337,14 +337,13 @@ foreach($mainmenuusedarray as $key => $val)
 	font-family:Tahoma,sans-serif;
 	text-transform:uppercase;
 	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria' ?>/img/menus/topmenu_bg.gif) repeat-x bottom left;
-	padding:0 0 0 10px;
 }
 
 .tmenu ul{
-	margin:0;
+	margin:0 60px 0 0;	/* t r b l */
 	padding:0;
 	list-style-type:none;
-	width:auto;
+	width:auto;	/* Having 100% instead of auto works on IE but IE fails to down main content, so we forget IE and use best value for Firefox */
 	float:left;
 }
 
