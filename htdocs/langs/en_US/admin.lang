@@ -159,6 +159,7 @@ NameColumn=Name columns
 ExtendedInsert=Extended INSERT
 DelayedInsert=Delayed insert
 EncodeBinariesInHexa=Encode binary data in hexadecimal
+IgnoreDuplicateRecords=Ignore errors of duplicate records (INSERT IGNORE)
 Yes=Yes
 No=No
 AutoDetectLang=Autodetect (browser language)

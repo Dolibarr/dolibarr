@@ -278,7 +278,7 @@ if ($db->label == 'MySQL')
             id="checkbox_dump_ignore"
              />
         <label for="checkbox_dump_ignore">
-            Ignorer les erreurs de doublons (INSERT IGNORE)</label><br>
+            <?php echo $langs->trans("IgnoreDuplicateRecords"); ?></label><br>
 
         <input type="checkbox" name="hexforbinary" value="yes"
             id="checkbox_hexforbinary"
