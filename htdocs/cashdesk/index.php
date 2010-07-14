@@ -70,7 +70,7 @@ $formproduct=new FormProduct($db);
 <meta http-equiv="Content-Language" content="fr" />
 
 <meta http-equiv="Content-Style-Type" content="text/css" />
-<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="<?php echo DOL_URL_ROOT.'/cashdesk/css/style.css'; ?>" rel="stylesheet" type="text/css" media="screen" />
 </head>
 
 <body>

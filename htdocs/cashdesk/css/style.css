@@ -38,18 +38,18 @@ p {
 }
 
 .conteneur_img_gauche {
-	background: url("img/bg_conteneur_gauche.png") top left repeat-y;
+	background: url("../img/bg_conteneur_gauche.png") top left repeat-y;
 }
 
 .conteneur_img_droite {
-	background: url("img/bg_conteneur_droite.png") top right repeat-y;
+	background: url("../img/bg_conteneur_droite.png") top right repeat-y;
 }
 
-/* ------------------- En-t�te ------------------- */
+/* ------------------- Header ------------------- */
 .entete {
 	height: 15px;
 	margin: 0;
-	background: url('img/bg_entete.png') no-repeat left top;
+	background: url('../img/bg_entete.png') no-repeat left top;
 }
 
 .entete span {
@@ -65,7 +65,7 @@ p {
 	font-size: 14px;
 	width: 735px;
 	height: 84px;
-	background: url('img/bg_menu.png') no-repeat left top;
+	background: url('../img/bg_menu.png') no-repeat left top;
 }
 
 .menu_bloc {
@@ -81,7 +81,6 @@ p {
 
 .menu li {
 	float: left;
-	font-weight: bold;
 }
 
 .menu_choix1,.menu_choix2 {
@@ -97,15 +96,15 @@ p {
 	width: 100px;
 	padding-left: 54px;
 	height: 48px;
-	background: url('img/new.png') top left no-repeat;
+	background: url('../img/new.png') top left no-repeat;
 }
 
 .menu_choix1 a {
-	background: url('img/new.png') top left no-repeat;
+	background: url('../img/new.png') top left no-repeat;
 }
 
 .menu_choix2 a {
-	background: url('img/gescom.png') top left no-repeat;
+	background: url('../img/gescom.png') top left no-repeat;
 }
 
 .menu_choix1 a:hover,.menu_choix2 a:hover {
@@ -113,9 +112,10 @@ p {
 }
 
 .menu_choix0 {
-	font-size: 0.9em;
+	font-size: 10px;
 	text-align: right;
 	font-style: italic;
+	font-weight: normal;
 	width: 340px;
 	display: block;
 	color: #333;
@@ -124,6 +124,7 @@ p {
 }
 
 .menu_choix0 a {
+	font-weight: normal;
 	text-decoration: none;
 }
 
@@ -166,7 +167,7 @@ p.titre {
 	font-size: 1.1em;
 	text-decoration: none;
 	padding-right: 25px;
-	background: url('img/basket_delete.png') top right no-repeat;
+	background: url('../img/basket_delete.png') top right no-repeat;
 }
 
 .cadre_article p a:hover {
@@ -204,7 +205,7 @@ p.titre {
 	margin: 0 auto;
 	padding-left: 60px;
 	margin-bottom: 20px;
-	background: url('img/login.png') bottom left no-repeat;
+	background: url('../img/login.png') bottom left no-repeat;
 }
 
 .formulaire_login table tr {
@@ -391,7 +392,7 @@ p.titre {
 .pied {
 	clear: both;
 	height: 15px;
-	background: url('img/bg_pied.png') no-repeat bottom left;
+	background: url('../img/bg_pied.png') no-repeat bottom left;
 }
 
 /* ------------------- Param�tres communs (messages d'erreur, informations, etc...) ------------------- */
@@ -447,7 +448,7 @@ p.titre {
 	padding: 0;
 }
 
-/* Affichage de la liste des r�sultats */
+/* Affichage de la liste des resultats */
 .dhtml_bloc {
 	margin: 0;
 	padding: 3px;

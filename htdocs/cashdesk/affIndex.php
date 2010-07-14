@@ -46,7 +46,7 @@ print '<meta name="Generator" content="Kwrite, Gimp, Inkscape" />'."\n";
 print '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />'."\n";
 
 print '<meta http-equiv="Content-Style-Type" content="text/css" />'."\n";
-print '<link href="style.css" rel="stylesheet" type="text/css" media="screen" />'."\n";
+print '<link href="'.DOL_URL_ROOT.'/cashdesk/css/style.css" rel="stylesheet" type="text/css" media="screen" />'."\n";
 
 print '<!-- Import des fichiers necessaires a JsCalendar -->'."\n";
 print '<style type="text/css">'."\n";
