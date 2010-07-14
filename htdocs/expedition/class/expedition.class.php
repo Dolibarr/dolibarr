@@ -408,7 +408,7 @@ class Expedition extends CommonObject
 				$i=0;
 				while($i < $num)
 				{
-					dol_syslog("Expedition::valid movment index ".$i);
+					dol_syslog("Expedition::valid movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
 
 					if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)

@@ -547,7 +547,7 @@ if ($_GET["action"] == 'create')
 					if ($_REQUEST["entrepot_id"])
 					{
 						//var_dump($product);
-						$stock = $product->stock_entrepot[$_REQUEST["entrepot_id"]];
+						$stock = $product->stock_warehouse[$_REQUEST["entrepot_id"]]->real;
 						$stock+=0;  // Convertit en numerique
 						$defaultqty=min($quantityToBeDelivered, $stock);
 						if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
