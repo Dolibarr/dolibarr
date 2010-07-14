@@ -3,15 +3,15 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.9 compared to 2.8 *****
 
 For users:
-- New: POS module allow to choose which warehouse use.
+- New: POS module allow to choose which warehouse to use.
 - New: Support "Department/State" field on company setup, contact, 
        bank account and members card.
 - New: Can reopen a refused/canceled supplier order.
 - New: Add Gant diagramm on project module.
 - New: Add a new mode for automatic stock increase: Can be increased
-  on supplier order dispatching of products.
+  on dispatching of products from a supplier order receipt.
 - New: Can set a past delay to limit calendar export.
-- New: Can join files on emailing campaigns.
+- New: Can attach files on emailing campaigns.
 - New: Add statistics on trips and expenses module.
 - New: Can reopen a closed customer order.
 - New: Add module externalsite to add a web site/tools inside 
@@ -33,29 +33,46 @@ For users:
 - New: Move permission "see hidden categories" into "see hidden products/services".
 - New: Can delete several files at once in FTP module.
 - New: Add box "last contracts".
-- New: Works even if Web hosting provider has disabled glob function.
+- New: Works even if Web hosting provider has disabled PHP "glob" function.
 - New: Can now send supplier order by mail.
 - New: task #10076 : Show content of message in notification module.
-- New: Bank name available on invoice.
+- New: Bank name is shown on invoice.
 - New: IBAN value is called IFSC if country is India.
-- New: Add option to choose firstname-name or name-firstname.
+- New: Add option to choose to show firstname then name or name then firstname on PDF.
 - New: Add company in fields exported by export of members tool.
 - New: Reorganise bank menu.
 - New: Bookmarks can be sorted on a particular order.
+- New: Support spanish RE and IRPF taxes on invoices.
+- New: Module category offers category for foundation module.
+- New: Can filter on category on third aprties, products and members listings.
+- New: A flag is visible before countries labels.
+- New: When activating a new module, admin users has permission. This save
+       time when configuring Dolibarr.
+- New: A lot of speed improvements added.
+- New: A lot of more predefined VAT values, states, regions for 
+       miscelaneous contries.
+- New: Enhance skin engine to make themes easier.
+- New: Add images into menu "eldy".
+- New: Auguria theme is now more modern. 
+- Fix: A lot of fixes in Point of Sale module.
 - Fix: Debug experimental module widthrawal.
 - Fix: Format number was wrong for ar_AR language.
-- Fix: Can change password if has only permission change password.
-- Fix: Project PDF document show the tasks.
-- Fix: bug #29278 : SMTP fails with IP
-- Fix: Default language on login page.
+- Fix: Can change password if user has only permission "change password".
+- Fix: Project PDF document shows all tasks.
+- Fix: bug #29278 : SMTP fails with IP instead of hostname.
+- Fix: Default language on login page was wrong.
 - Fix: Complete support of euros sign (even in PDF).
 - Fix: Bad setup of phpMyAdmin for DoliWamp installer.
 - Fix: Tracking number should be available on sending sheets.
+- Fix: Stock value is not reset when product is transfered into other warehouse. 
+- Fix: A lot of not tracked bugs fixed.
+- Fix: Some fixes in barcode management.
 
 For tranlators:
 - Fix: Major update of italian translation (it_IT).
-- New: Added slovenian translation (sl_SL).
-- New: Add translation of DoliWamp installer.
+- Fix: A lot of translation fixes in all languages.
+- New: Added translations (sl_SL, is_IS).
+- New: Add translations for the DoliWamp installer.
 
 For developers:
 - More comments in code.
@@ -74,8 +91,9 @@ WARNING:
   path to thoose classes into the include function.
 - Also, parameters of the "fetch()" method for class "User" has changed to reflect
   other fetch methods.   
-- This version is also the last one to support PHP 4.*. Dolibarr 3.* will be supported
-  with PHP 5.* and higher only.
+- If you build a personalised themes, you must rename the style sheet into style.css.php.   
+- This version is also the last one to support PHP 4.*, Mysql 3.1, IE6.
+  Dolibarr 3.* will be supported with PHP 5+ and MySql 4.1+ only.
 
 
 ***** ChangeLog for 2.8.1 compared to 2.8 *****
@@ -107,9 +125,9 @@ For users:
 - New: Add a default errors-to email for emailing module.
 - New: Can filter on user on stock movement list.
 - New: When creating a third party from a member, it is set as a new
-  customer.
+       customer.
 - New: Can use {tttt} in numbering mask setup. It will be replaced
-  with third party type.
+       with third party type.
 - New: VAT number is stored in one field. This is more "international".
 - New: task #9782 : Add possibility to delete a warehouse.
 - New: task #9640 : Add label for stock movements.
