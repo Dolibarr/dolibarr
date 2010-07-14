@@ -438,7 +438,9 @@ if ($resql)
 }
 print '<tr class="liste_total"><td align="right" class="liste_total">'.$langs->trans("Total").':</td>';
 print '<td class="liste_total" align="right">'.$total.'</td>';
-print '<td class="liste_total" align="right">'.price($totalvalue/$total).'</td>';
+print '<td class="liste_total" align="right">';
+print ($total?price($totalvalue/$total):'&nbsp;');
+print '</td>';
 print '<td class="liste_total" align="right">'.price($totalvalue).'</td>';
 print "</tr>";
 print "</table>";
