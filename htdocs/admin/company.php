@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/admin/company.php
  *	\ingroup    company
- *	\brief      Page d'accueil de l'espace administration/configuration
+ *	\brief      Setup page to configure company/foundation
  *	\version    $Id$
  */
 
@@ -506,7 +506,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 	/*
 	 *  Local Taxes
 	 */
-	if ($obj->code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	if ($code_pays=='ES')
 	{
 		// Local Tax 1
 		print '<br>';
@@ -602,7 +602,12 @@ else
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCountry").'</td><td>';
-	if ($conf->global->MAIN_INFO_SOCIETE_PAYS) print getCountry($conf->global->MAIN_INFO_SOCIETE_PAYS,1);
+	if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+	{
+		$img=picto_from_langcode(getCountry($conf->global->MAIN_INFO_SOCIETE_PAYS,2));
+		print $img?$img.' ':'';
+		print getCountry($conf->global->MAIN_INFO_SOCIETE_PAYS,1);
+	}
 	print '</td></tr>';
 
 	$var=!$var;
