@@ -545,7 +545,7 @@ function dol_stringtotime($string)
 	if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$string,$reg))
 	{
 		// This part of code should not be used.
-		dol_syslog("Functions.lib::dol_stringtotime call to function with deprecated parameter", LOG_WARN);
+		dol_syslog("Functions.lib::dol_stringtotime call to function with deprecated parameter", LOG_WARNING);
 		// Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
 		// Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
 		$sday = $reg[1];
@@ -3466,10 +3466,10 @@ function picto_from_langcode($codelang)
 function bcStyle($impair='impair', $pair='pair')
 {
 	$bc=array();
-	
+
 	$bc[0]='class="'.$impair.'"';
 	$bc[1]='class="'.$pair.'"';
-	
+
 	return $bc;
 }
 

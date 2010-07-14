@@ -429,7 +429,7 @@ class CMailFile
 		else
 		{
 			$this->error='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
-			dol_syslog("CMailFile::sendfile: ".$this->error, LOG_WARN);
+			dol_syslog("CMailFile::sendfile: ".$this->error, LOG_WARNING);
 		}
 
 		error_reporting($errorlevel);              // Reactive niveau erreur origine
