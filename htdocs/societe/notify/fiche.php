@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@ require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 
 $langs->load("companies");
 $langs->load("mails");
+$langs->load("admin");
+$langs->load("other");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -137,7 +139,6 @@ if ( $soc->fetch($soc->id) )
 
 
 	// Help
-	$langs->load("admin");
 	print $langs->trans("NotificationsDesc").'<br><br>';
 
 
@@ -220,7 +221,7 @@ if ( $soc->fetch($soc->id) )
 	print '</tr>';
 
 	// Liste
-	$sql = "SELECT c.rowid as id, c.name, c.firstname, c.email, a.titre, n.rowid";
+	$sql = "SELECT c.rowid as id, c.name, c.firstname, c.email, a.code, a.titre, n.rowid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n";
 	$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action AND n.fk_soc = ".$soc->id;
 
@@ -244,7 +245,10 @@ if ( $soc->fetch($soc->id) )
 			print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
 			print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
 			print '</td>';
-			print '<td>'.$obj->titre.'</td>';
+			print '<td>';
+			$libelle=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
+			print $libelle;
+			print '</td>';
 			print '<td align="right"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
 			print '</tr>';
 			$i++;
@@ -273,7 +277,9 @@ if ( $soc->fetch($soc->id) )
 	print '</tr>';
 
 	// Liste
-	$sql = "SELECT c.rowid as id, c.name, c.firstname, c.email, a.titre, n.rowid, n.daten, n.email";
+	$sql = "SELECT n.rowid, n.daten, n.email, n.objet_type, n.objet_id,";
+	$sql.= " c.rowid as id, c.name, c.firstname, c.email,";
+	$sql.= " a.code, a.titre";
 	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify as n";
 	$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
 
@@ -297,8 +303,13 @@ if ( $soc->fetch($soc->id) )
 			print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
 			print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
 			print '</td>';
-			print '<td>'.$obj->titre.'</td>';
-			print'<td align="right">'.dol_print_date($db->jdate($obj->daten)).'</td>';
+			print '<td>';
+			$libelle=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
+			print $libelle;
+			print '</td>';
+			// TODO Add link to object here
+			// print
+			print'<td align="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
 			print '</tr>';
 			$i++;
 		}

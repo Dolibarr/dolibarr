@@ -2959,16 +2959,17 @@ class Form
 	}
 
 	/**
-	 *    \brief      Affiche tableau avec ref et bouton navigation pour un objet metier
+	 *    \brief      Return a HTML area with the reference of object and a naviagation bar for a business object
 	 *    \param      object		Object to show
-	 *    \param      paramid   	Nom du parametre a utiliser pour nommer id dans liens URL
-	 *    \param      morehtml  	Code html supplementaire a afficher avant barre nav
-	 *    \param	  shownav	  	Show Condition (navigation is show if value is 1)
+	 *    \param      paramid   	Name of parameter to use to name the id into the URL link
+	 *    \param      morehtml  	More html content to output just before the nav bar
+	 *    \param	  shownav	  	Show Condition (navigation is shown if value is 1)
 	 *    \param      fieldid   	Nom du champ en base a utiliser pour select next et previous
 	 *    \param      fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
 	 *    \param      morehtmlref  	Code html supplementaire a afficher apres ref
-	 *    \param      moreparam  	More param to ad in nav link url.
+	 *    \param      moreparam  	More param to add in nav link url.
 	 * 	  \return     string    	Portion HTML avec ref + boutons nav
+	 * 	  \remarks	  To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
 	 */
 	function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='')
 	{

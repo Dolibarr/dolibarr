@@ -99,7 +99,11 @@ if ($socid > 0)
 	print '<tr><td valign="top" width="50%" class="notopnoleft">';
 
 	print '<table class="border" width="100%">';
-	print '<tr><td width="25%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">';
+	$societe->next_prev_filter="te.client in (2,3)";
+	print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom','','');
+	print '</td></tr>';
+
 	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->address)."</td></tr>";
 
 	// Zip / Town

@@ -165,7 +165,8 @@ if ($socid > 0)
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="30%">'.$langs->trans("Name").'</td><td width="70%" colspan="3">';
-	print $objsoc->nom;
+	$objsoc->next_prev_filter="te.client in (1,3)";
+	print $form->showrefnav($objsoc,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$objsoc->prefix_comm.'</td></tr>';

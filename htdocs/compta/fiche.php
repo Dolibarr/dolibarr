@@ -135,7 +135,10 @@ if ($socid > 0)
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="100">'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
+	print '<tr><td width="100">'.$langs->trans("Name").'</td><td colspan="3">';
+	$societe->next_prev_filter="te.client in (1,3)";
+	print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom','','');
+	print '</td></tr>';
 
 	// Prefix
 	print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
