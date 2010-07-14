@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
+ * Copyright (C) 2008-2010 Laurent Destailleur <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 require ('../master.inc.php');
-require ('include/environnement.php');
-require ('class/Facturation.class.php');
+require (DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
+require (DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php');
 
 $obj_facturation = unserialize ($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
@@ -34,7 +34,7 @@ switch ( $_GET['action'] )
 			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = ".$conf_fkentrepot;
-			
+
 			// Recuperation des donnees en fonction de la source (liste deroulante ou champ texte) ...
 			if ( $_POST['hdnSource'] == 'LISTE' )
 			{
@@ -44,9 +44,9 @@ switch ( $_GET['action'] )
 			{
 				$sql.= " WHERE p.ref = '".$_POST['txtRef']."'";
 			}
-			
+
 			$result = $db->query($sql);
-			
+
 			if ($result)
 			{
 				// ... et enregistrement dans l'objet
@@ -58,13 +58,13 @@ switch ( $_GET['action'] )
 					{
 						$ret[$key] = $value;
 					}
-					
+
 					$obj_facturation->id( $ret['rowid'] );
 					$obj_facturation->ref( $ret['ref'] );
 					$obj_facturation->stock( $ret['reel'] );
 					$obj_facturation->prix( $ret['price'] );
 					$obj_facturation->tva( $ret['tva_tx'] );
-					
+
 					// Definition du filtre pour n'afficher que le produit concerne
 					if ( $_POST['hdnSource'] == 'LISTE' )
 					{
@@ -74,13 +74,13 @@ switch ( $_GET['action'] )
 					{
 						$filtre = $_POST['txtRef'];
 					}
-					
+
 					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&filtre='.$filtre;
 				}
 				else
 				{
 					$obj_facturation->raz();
-					
+
 					if ( $_POST['hdnSource'] == 'REF' )
 					{
 						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&filtre='.$_POST['txtRef'];
@@ -101,22 +101,30 @@ switch ( $_GET['action'] )
 			$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
 		}
 
-	break;
+		break;
 
-	case 'ajout_article':
-	$obj_facturation->qte($_POST['txtQte']);
-	$obj_facturation->tva($_POST['selTva']);
-	$obj_facturation->remise_percent($_POST['txtRemise']);
-	$obj_facturation->ajoutArticle();
+	case 'ajout_article':	// We have clicked on button "Add product"
 
-	$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
-	break;
+		//var_dump($obj_facturation);
+		//exit;
+
+		if (! empty($obj_facturation->id))	// A product has been selected and stored in session
+		{
+			$obj_facturation->qte($_POST['txtQte']);
+			$obj_facturation->tva($_POST['selTva']);
+			$obj_facturation->remise_percent($_POST['txtRemise']);
+			$obj_facturation->ajoutArticle();
+
+		}
+
+		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
+		break;
 
 	case 'suppr_article':
-	$obj_facturation->supprArticle($_GET['suppr_id']);
+		$obj_facturation->supprArticle($_GET['suppr_id']);
 
-	$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
-	break;
+		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
+		break;
 
 }
 

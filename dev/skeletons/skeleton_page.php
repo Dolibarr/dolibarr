@@ -32,10 +32,10 @@
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 //if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 //if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no menu to show
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');	// If we don't need to load the html.form.class.php
 //if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
+//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');		// If this page is public (can be called outside logged session)
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 require("../main.inc.php");

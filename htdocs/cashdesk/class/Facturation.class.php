@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
  * Copyright (C) 2010      Juanjo Menent    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,18 +28,18 @@ include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 class Facturation {
 
 	/**
-		* Attributs "volatiles" : r�initialis�s apr�s chaque traitement d'un article
-		* <p>Attributs "volatiles" : r�initialis�s apr�s chaque traitement d'un article</p>
+		* Attributs "volatiles" : reinitialises apres chaque traitement d'un article
+		* <p>Attributs "volatiles" : reinitialises apres chaque traitement d'un article</p>
 		* @var int $id			=> 'rowid' du produit dans llx_product
 		* @var string $ref		=> 'ref' du produit dans llx_product
-		* @var int $qte			=> Quantit� pour le produit en cours de traitement
-		* @var int $stock		=> Stock th�orique pour le produit en cours de traitement
+		* @var int $qte			=> Quantite pour le produit en cours de traitement
+		* @var int $stock		=> Stock theorique pour le produit en cours de traitement
 		* @var int $remise_percent	=> Remise en pourcent sur le produit en cours
 		* @var int $montant_remise	=> Remise en pourcent sur le produit en cours
 		* @var int $prix		=> Prix HT du produit en cours
 		* @var int $tva			=> 'rowid' du taux de tva dans llx_c_tva
 		*/
-	protected $id;
+	var $id;
 	protected $ref;
 	protected $qte;
 	protected $stock;
@@ -86,11 +86,11 @@ class Facturation {
 	public function ajoutArticle()
 	{
 		global $db;
-		
+
 		$sql = "SELECT taux";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_tva";
 		$sql.= " WHERE rowid = ".$this->tva();
-		
+
 		dol_syslog("ajoutArticle sql=".$sql);
 		$resql = $db->query($sql);
 
@@ -104,7 +104,7 @@ class Facturation {
 		{
 			dol_print_error($db);
 		}
-		
+
 
 		// Define part of HT, VAT, TTC
 		$resultarray=calcul_price_total($this->qte,$this->prix(),$this->remise_percent(),$vat_rate,0,0,0,'HT',0);
@@ -113,7 +113,7 @@ class Facturation {
 		$total_ht = $resultarray[0];
 		$total_vat = $resultarray[1];
 		$total_ttc = $resultarray[2];
-		
+
 		// Calcul du montant de la remise
 		if ($this->remise_percent())
 		{
@@ -141,10 +141,10 @@ class Facturation {
 		$sql.= ", ".price2num($total_ht,'MT');
 		$sql.= ", ".price2num($total_ttc,'MT');
 		$sql.= ")";
-		
+
 		dol_syslog("ajoutArticle sql=".$sql);
 		$result = $db->query($sql);
-		
+
 		if (!$result)
 		{
 			dol_print_error($db);
@@ -160,11 +160,11 @@ class Facturation {
 	public function supprArticle($aArticle)
 	{
 		global $db;
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tmp_caisse";
 		$sql.= " WHERE id = ".$aArticle;
 		$sql.= " LIMIT 1";
-		
+
 		$db->query($sql);
 
 	}
@@ -175,7 +175,7 @@ class Facturation {
 	public function calculTotaux()
 	{
 		global $db;
-		
+
 		$res = $db->query ('SELECT remise, total_ht, total_ttc, taux FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
 				LEFT JOIN '.MAIN_DB_PREFIX.'c_tva as t ON c.fk_tva = t.rowid
 				ORDER BY id');

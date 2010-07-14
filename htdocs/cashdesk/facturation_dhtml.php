@@ -19,15 +19,30 @@
 
 /**
  * This page is called each time we press a key in the code or description
- * search form to show product combo list
+ * search form to show product combo list.
  */
-include('../master.inc.php');
-require ('include/environnement.php');
 
-$langs->load("@cashdesk");
 
-// Verification
-if ( strlen ($_GET["code"]) >= 0 )	// If at least one key
+//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
+//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
+
+// Change this following line to use the correct relative path (../, ../../, etc)
+require("../main.inc.php");
+require(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
+
+//header("Content-type: text/html; charset=UTF-8");
+header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+// Search from criteria
+if ( strlen ($_GET["code"]) >= 0 )	// If search criteria is on char length at least
 {
 	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
 	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
@@ -37,7 +52,7 @@ if ( strlen ($_GET["code"]) >= 0 )	// If at least one key
 	$sql.= " AND p.fk_product_type = 0";
 	$sql.= " AND (p.ref LIKE '%".$_GET['code']."%' OR p.label LIKE '%".$_GET['code']."%')";
 	$sql.= " ORDER BY label";
-	
+
 	dol_syslog("facturation_dhtml.php sql=".$sql);
 	$result = $db->query($sql);
 
@@ -46,7 +61,7 @@ if ( strlen ($_GET["code"]) >= 0 )	// If at least one key
 		if ( $nbr = $db->num_rows($result) )
 		{
 			$resultat = '<ul class="dhtml_bloc">';
-			
+
 			$ret=array(); $i=0;
 			while ( $tab = $db->fetch_array($result) )
 			{
@@ -57,23 +72,25 @@ if ( strlen ($_GET["code"]) >= 0 )	// If at least one key
 				$i++;
 			}
 			$tab=$ret;
-			
+
 			for ( $i = 0; $i < count ($tab); $i++ )
 			{
 				$resultat .= '
 					<li class="dhtml_defaut" title="'.$tab[$i]['ref'].'"
 						onMouseOver="javascript: this.className = \'dhtml_selection\';"
 						onMouseOut="javascript: this.className = \'dhtml_defaut\';"
-					">'.htmlentities($tab[$i]['ref'].' - '.$tab[$i]['label']).'</li>
+					>'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</li>
 				';
 			}
-			
+
 			$resultat .= '</ul>';
-			
+
 			print $resultat;
 		}
 		else
 		{
+			$langs->load("cashdesk@cashdesk");
+
 			print '<ul class="dhtml_bloc">';
 			print '<li class="dhtml_defaut">'.$langs->trans("NoResults").'</li>';
 			print '</ul>';
