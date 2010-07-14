@@ -3,7 +3,7 @@ $langs->load("main");
 $langs->load("bills");
 $langs->load("@cashdesk");
 ?>
-<!-- 
+<!--
 Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
 This program is free software; you can redistribute it and/or modify
@@ -59,19 +59,9 @@ $Id$
 								else
 									$selected = '';
 
-								// On coupe la ligne si elle contient plus de $conf_nbr_car_listes caracteres
-								if ( strlen ($tab_designations[$i]['label']) > $conf_nbr_car_listes ) {
+								$label = $tab_designations[$i]['label'];
 
-									$label = substr ($tab_designations[$i]['label'], 0, $conf_nbr_car_listes - 3);
-									$label .= '...';
-
-								} else {
-
-									$label = $tab_designations[$i]['label'];
-
-								}
-
-								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.$label;
+								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.dol_trunc($label,28,'middle');
 								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("Warehouse").': '.$tab_designations[$i]['reel'].')';
 								print '</option>'."\n				";
 
@@ -87,19 +77,9 @@ $Id$
 								else
 									$selected = '';
 
-								// On coupe la ligne si elle contient plus de $conf_nbr_car_listes caracteres
-								if ( strlen ($tab_designations[$i]['label']) > $conf_nbr_car_listes ) {
+								$label = $tab_designations[$i]['label'];
 
-									$label = substr ($tab_designations[$i]['label'], 0, $conf_nbr_car_listes - 3);
-									$label .= '...';
-
-								} else {
-
-									$label = $tab_designations[$i]['label'];
-
-								}
-
-								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.$label;
+								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.dol_trunc($label,28,'middle');
 								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("Warehouse").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
 								print '</option>'."\n				";
 
