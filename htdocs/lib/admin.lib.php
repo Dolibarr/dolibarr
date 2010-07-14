@@ -230,7 +230,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 			$result=$db->query($newsql,$usesavepoint);
 			if ($result)
 			{
-				print '<!-- Result = OK -->'."\n";
+				if (! $silent) print '<!-- Result = OK -->'."\n";
 
 				if (preg_replace('/insert into ([^\s]+)/i',$newsql,$reg))
 				{
@@ -247,7 +247,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 			else
 			{
 				$errno=$db->errno();
-				print '<!-- Result = '.$errno.' -->'."\n";
+				if (! $silent) print '<!-- Result = '.$errno.' -->'."\n";
 
 				$okerror=array( 'DB_ERROR_TABLE_ALREADY_EXISTS',
 				'DB_ERROR_COLUMN_ALREADY_EXISTS',

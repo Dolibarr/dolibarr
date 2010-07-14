@@ -18,7 +18,7 @@
  */
 
 /**
- * This page is called each time we press a key in the code or description
+ * This page is called each time we press a key in the code
  * search form to show product combo list.
  */
 
@@ -50,7 +50,15 @@ if ( strlen ($_GET["code"]) >= 0 )	// If search criteria is on char length at le
 	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
 	$sql.= " WHERE p.envente = 1";
 	$sql.= " AND p.fk_product_type = 0";
-	$sql.= " AND (p.ref LIKE '%".$_GET['code']."%' OR p.label LIKE '%".$_GET['code']."%')";
+	// Add criteria on ref/label
+	if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
+	{
+		$sql.= " AND (p.ref LIKE '".$_GET['code']."%' OR p.label LIKE '".$_GET['code']."%')";
+	}
+	else
+	{
+		$sql.= " AND (p.ref LIKE '%".$_GET['code']."%' OR p.label LIKE '%".$_GET['code']."%')";
+	}
 	$sql.= " ORDER BY label";
 
 	dol_syslog("facturation_dhtml.php sql=".$sql);
