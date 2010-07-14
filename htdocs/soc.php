@@ -86,7 +86,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	{
 		$soc->particulier           = $_REQUEST["private"];
 
-		$soc->nom                   = $_POST["nom"].' '.$_POST["prenom"];
+		$soc->nom                   = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
 		$soc->nom_particulier       = $_POST["nom"];
 		$soc->prenom                = $_POST["prenom"];
 		$soc->civilite_id           = $_POST["civilite_id"];
