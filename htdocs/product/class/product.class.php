@@ -130,6 +130,10 @@ class Product extends CommonObject
 
 	var $nbphoto;
 
+	//! Contains detail of stock of product into each warehouse
+	var $stock_warehouse=array();
+
+
 	/**
 	 *    \brief      Constructeur de la classe
 	 *    \param      DB          Handler acces base de donnees
@@ -1933,7 +1937,7 @@ class Product extends CommonObject
 					$img="";
 					$this->fetch($desc_pere[0]);
 					$this->load_stock();
-					if ($this->stock_entrepot[1] < $this->seuil_stock_alerte)
+					if ($this->stock_warehouse[1]->real < $this->seuil_stock_alerte)
 					{
 						$img=img_warning($langs->trans("StockTooLow"));
 					}
@@ -1946,7 +1950,7 @@ class Product extends CommonObject
 */								'id'=>$desc_pere[0],					// Id product
 								'nb'=>$desc_pere[1],					// Nb of units that compose parent product
 								'nb_total'=>$desc_pere[1]*$multiply,	// Nb of units for all nb of product
-								'stock'=>$this->stock_entrepot[1],		// Stock
+								'stock'=>$this->stock_warehouse[1]->real,		// Stock
 								'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
 								'fullpath' => $compl_path.$nom_pere,	// Label
 								'type'=>$desc_pere[2]					// Nb of units that compose parent product
@@ -1962,7 +1966,7 @@ class Product extends CommonObject
 */					'id'=>$desc_pere[0],					// Id product
 					'nb'=>$desc_pere[1],					// Nb of units that compose parent product
 					'nb_total'=>$desc_pere[1],				// Nb of units for all nb of product
-					'stock'=>$this->stock_entrepot[1],		// Stock
+					'stock'=>$this->stock_warehouse[1]->real,		// Stock
 					'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
 					'fullpath' => $compl_path.$nom_pere,	// Label
 					'type'=>$desc_pere[2]					// Nb of units that compose parent product
@@ -2235,41 +2239,28 @@ class Product extends CommonObject
 
 
 	/**
-	 *  \brief  	Ajuste le stock d'un entrepot pour le produit d'un delta donne
-	 *  \param  	user            utilisateur qui demande l'ajustement
+	 *  \brief  	Adjust stock in a warehouse for product
+	 *  \param  	user            user asking change
 	 *  \param  	id_entrepot     id of warehouse
 	 *  \param  	nbpiece         nb of units
-	 *  \param  	mouvement       0 = add, 1 = remove
-	 * 	\param		label			Label of stock movment
+	 *  \param  	movement       	0 = add, 1 = remove
+	 * 	\param		label			Label of stock movement
+	 * 	\param		price			Price to use for stock eval
 	 * 	\return     int     		<0 if KO, >0 if OK
 	 */
-	function correct_stock($user, $id_entrepot, $nbpiece, $mouvement, $label='')
+	function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0)
 	{
 		if ($id_entrepot)
 		{
 			$this->db->begin();
 
-			$sql = "SELECT count(*) as nb";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock";
-			$sql.= " WHERE fk_product = ".$this->id;
-			$sql.= " AND fk_entrepot = ".$id_entrepot;
+			require_once(DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php");
 
-			dol_syslog("Product::correct_stock sql=".$sql, LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$row = $this->db->fetch_object($resql);
-				if ($row->nb > 0)
-				{
-					// Record already exists, we make an update
-					$result=$this->ajust_stock($user, $id_entrepot, $nbpiece, $mouvement, $label);
-				}
-				else
-				{
-					// Record not yet available, we make an insert
-					$result=$this->create_stock($user, $id_entrepot, $nbpiece, $mouvement, $label);
-				}
-			}
+			$op[0] = "+".trim($nbpiece);
+			$op[1] = "-".trim($nbpiece);
+
+			$movementstock=new MouvementStock($this->db);
+			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label);
 
 			if ($result >= 0)
 			{
@@ -2286,60 +2277,14 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  \brief  	Augmente ou reduit la valeur de stock pour le produit
-	 *  \param  	user            user that make change
-	 *  \param  	id_entrepot     id of warehouse
-	 *  \param  	nbpiece         nb of units
-	 *  \param  	movement        0 = add, 1 = remove
-	 * 	\param		label			Label of stock movment
-	 *  \return     int     		<0 if KO, >0 if OK
-	 * 	\remarks	Called by correct_stock
-	 */
-	function ajust_stock($user, $id_entrepot, $nbpiece, $movement, $label='')
-	{
-		require_once(DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php");
-
-		$op[0] = "+".trim($nbpiece);
-		$op[1] = "-".trim($nbpiece);
-
-		$movementstock=new MouvementStock($this->db);
-		$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],0,0,$label);
-
-		return $result;
-	}
-
-	/**
-	 *  \brief  	Entre un nombre de piece du produit en stock dans un entrepot
-	 *  \param  	user            user that make change
-	 *  \param  	id_entrepot     id of warehouse
-	 *  \param  	nbpiece         nb of units
-	 *  \param  	movement        0 = add, 1 = remove
-	 * 	\param		label			Label of stock movment
-	 *  \return     int     		<0 if KO, >0 if OK
-	 * 	\remarks	Called by correct_stock
-	 */
-	function create_stock($user, $id_entrepot, $nbpiece, $movement=0, $label='')
-	{
-		require_once(DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php");
-
-		$op[0] = "+".trim($nbpiece);
-		$op[1] = "-".trim($nbpiece);
-
-		$movementstock=new MouvementStock($this->db);
-		$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],0,0,$label);
-
-		return $result;
-	}
-
-	/**
-	 *    \brief      Charge les informations en stock du produit dans stock_entrepot[] et stock_reel
+	 *    \brief      Load information about stock of a product into stock_warehouse[] and stock_reel
 	 *    \return     int             < 0 si erreur, > 0 si ok
 	 */
 	function load_stock()
 	{
 		$this->stock_reel = 0;
 
-		$sql = "SELECT reel, fk_entrepot";
+		$sql = "SELECT reel, fk_entrepot, pmp";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock";
 		$sql.= " WHERE fk_product = '".$this->id."'";
 
@@ -2353,9 +2298,10 @@ class Product extends CommonObject
 			{
 				while ($i < $num)
 				{
-					$row = $this->db->fetch_row($result);
-					$this->stock_entrepot[$row[1]] = $row[0];
-					$this->stock_reel = $this->stock_reel + $row[0];
+					$row = $this->db->fetch_object($result);
+					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
+					$this->stock_warehouse[$row->fk_entrepot]->pmp = $row->pmp;
+					$this->stock_reel+=$row->reel;
 					$i++;
 				}
 

@@ -40,7 +40,7 @@ if (!$user->rights->produit->lire) accessforbidden();
 $idproduct = isset($_GET["idproduct"])?$_GET["idproduct"]:$_PRODUCT["idproduct"];
 $year = isset($_GET["year"])?$_GET["year"]:$_POST["year"];
 $month = isset($_GET["month"])?$_GET["month"]:$_POST["month"];
-$search_movment = isset($_REQUEST["search_movment"])?$_REQUEST["search_movment"]:'';
+$search_movement = isset($_REQUEST["search_movement"])?$_REQUEST["search_movement"]:'';
 $search_product = isset($_REQUEST["search_product"])?$_REQUEST["search_product"]:'';
 $search_warehouse = isset($_REQUEST["search_warehouse"])?$_REQUEST["search_warehouse"]:'';
 $search_user = isset($_REQUEST["search_user"])?$_REQUEST["search_user"]:'';
@@ -57,7 +57,7 @@ if ($_REQUEST["button_removefilter"])
 {
     $year='';
     $month='';
-    $search_movment="";
+    $search_movement="";
     $search_product="";
     $search_warehouse="";
     $search_user="";
@@ -103,9 +103,9 @@ else if ($year > 0)
 {
 	$sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if (! empty($search_movment))
+if (! empty($search_movement))
 {
-	$sql.= " AND m.label LIKE '%".addslashes($search_movment)."%'";
+	$sql.= " AND m.label LIKE '%".addslashes($search_movement)."%'";
 }
 if (! empty($search_product))
 {
@@ -234,7 +234,7 @@ if ($resql)
 
 	$param='';
 	if ($_GET["id"]) $param.='&id='.$_GET["id"];
-	if ($search_movment)   $param.='&search_movment='.urlencode($search_movment);
+	if ($search_movement)   $param.='&search_movement='.urlencode($search_movement);
 	if ($search_product)   $param.='&search_product='.urlencode($search_product);
 	if ($search_warehouse) $param.='&search_warehouse='.urlencode($search_warehouse);
 	if ($sref) $param.='&sref='.urlencode($sref);
@@ -266,9 +266,9 @@ if ($resql)
 	$syear = $year;
 	$form->select_year($syear,'year',1, '', $max_year);
 	print '</td>';
-	// Label of movment
+	// Label of movement
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="12" name="search_movment" value="'.$search_movment.'">';
+	print '<input class="flat" type="text" size="12" name="search_movement" value="'.$search_movement.'">';
 	print '</td>';
 	// Product
 	print '<td class="liste_titre" align="left">';
@@ -296,7 +296,7 @@ if ($resql)
 		//print '<td>'.$objp->mid.'</td>';	// This is primary not movement id
 		// Date
 		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
-		// Lbale of movment
+		// Label of movement
 		print '<td>'.$objp->label.'</td>';
 		// Product
 		print '<td>';

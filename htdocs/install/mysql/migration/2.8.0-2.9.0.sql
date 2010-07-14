@@ -6,6 +6,9 @@
 -- when current version is 2.8.0 or higher. 
 --
 
+-- Add unique key
+ALTER TABLE llx_product_stock ADD UNIQUE INDEX uk_product_stock (fk_product,fk_entrepot);
+
 
 -- Add missing table llx_product_association
 create table llx_product_association

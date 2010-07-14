@@ -38,14 +38,16 @@ class MouvementStock
 	}
 
 	/**
-	 *      \brief      Add a movement in stock (in one direction only)
+	 *      \brief      Add a movement of stock (in one direction only)
 	 * 		\param		user		User object
 	 * 		\param		fk_product	Id of product
 	 * 		\param		entrepot_id	Id of warehouse
 	 * 		\param		qty			Qty of movement (can be <0 or >0)
-	 * 		\param		type		Direction of movement: 2=output (stock decrease), 3=input (stock increase)
-	 * 		\param		type		Unit price HT of product
-	 * 		\pamam		label		Label of stock movment
+	 * 		\param		type		Direction of movement:
+	 * 								0=input (stock increase after stock transfert), 1=output (stock decrease after stock transfer),
+	 * 								2=output (stock decrease), 3=input (stock increase)
+	 * 		\param		price		Unit price HT of product
+	 * 		\pamam		label		Label of stock movement
 	 *      \return     int     	<0 if KO, >0 if OK
 	 */
 	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='')
@@ -126,17 +128,21 @@ class MouvementStock
 			{
 				$newpmp=0;
 				$newpmpwarehouse=0;
-				// Note: PMP is calculated on stock input only (type = 3). If type == 3, qty should be > 0.
+				// Note: PMP is calculated on stock input only (type = 0 or 3). If type == 0 or 3, qty should be > 0.
 				// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
-				if ($type == 3 && $price > 0)
+				if (($type == 0 || $type == 3) && $price > 0)
 				{
 					$oldqtytouse=($oldqty >= 0?$oldqty:0);
 					// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
 					if ($oldpmp > 0) $newpmp=price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
 					else $newpmp=$price;
-					$oldqtywarehousetouse=($oldqtywarehouse >= 0?$oldqty:0);
+					$oldqtywarehousetouse=($oldqtywarehouse >= 0?$oldqtywarehouse:0);
 					if ($oldpmpwarehouse > 0) $newpmpwarehouse=price2num((($oldqtywarehousetouse * $oldpmpwarehouse) + ($qty * $price)) / ($oldqtywarehousetouse + $qty), 'MU');
 					else $newpmpwarehouse=$price;
+
+					//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." oldpmpwarehouse=".$oldpmpwarehouse." ";
+					//print "qty=".$qty." newpmp=".$newpmp." newpmpwarehouse=".$newpmpwarehouse;
+					//exit;
 				}
 				else
 				{
@@ -192,7 +198,7 @@ class MouvementStock
 			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0);	// pmp is not change for subproduct
 		}
 
-		// composition module
+		// composition module (this is a non official external module)
 		if (! $error && $qty < 0 && $conf->global->MAIN_MODULE_COMPOSITION)
 		{
 			$error = $this->_createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, 0);	// pmp is not change for subproduct

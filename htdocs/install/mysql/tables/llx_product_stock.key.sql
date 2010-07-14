@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,5 +21,6 @@
 
 
 ALTER TABLE llx_product_stock ADD INDEX idx_product_stock_fk_product (fk_product);
-
 ALTER TABLE llx_product_stock ADD INDEX idx_product_stock_fk_entrepot (fk_entrepot);
+
+ALTER TABLE llx_product_stock ADD UNIQUE INDEX uk_product_stock (fk_product,fk_entrepot);

@@ -331,7 +331,7 @@ if ($_GET["action"] == 'create')
 
 			if ($conf->stock->enabled)
 			{
-				$stock = $product->stock_entrepot[$_GET["entrepot_id"]];
+				$stock = $product->stock_warehouse[$_GET["entrepot_id"]]->real;
 				$stock+=0;  // Convertit en numerique
 
 				// Quantite a livrer

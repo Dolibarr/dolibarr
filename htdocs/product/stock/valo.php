@@ -56,7 +56,8 @@ $year = strftime("%Y",time());
 // Affichage valorisation par entrepot
 $sql = "SELECT e.rowid as ref, e.label, e.statut, e.lieu,";
 $sql.= " SUM(ps.pmp * ps.reel) as estimatedvalue";
-$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " WHERE e.entity = ".$conf->entity;
 if ($sref)
 {

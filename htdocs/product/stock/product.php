@@ -54,29 +54,24 @@ $mesg = '';
  *	Actions
  */
 
-if ($_POST["action"] == "create_stock" && ! $_POST["cancel"])
-{
-	$product = new Product($db);
-	$product->id = $_GET["id"];
-	$product->create_stock($user, $_POST["id_entrepot"], $_POST["nbpiece"]);
-}
-
-// Transfer stock
+// Correct stock
 if ($_POST["action"] == "correct_stock" && ! $_POST["cancel"])
 {
 	if (is_numeric($_POST["nbpiece"]))
 	{
 		$product = new Product($db);
-		$product->id = $_GET["id"];
+		$result=$product->fetch($_GET["id"]);
+
 		$product->correct_stock($user,
 		$_POST["id_entrepot"],
 		$_POST["nbpiece"],
 		$_POST["mouvement"],
-		$_POST["label"]);
+		$_POST["label"],
+		0);		// We do not change value of stock for a correction
 	}
 }
 
-// Correct stock
+// Transfer stock from a warehouse to another warehouse
 if ($_POST["action"] == "transfert_stock" && ! $_POST["cancel"])
 {
 	if ($_POST["id_entrepot_source"] <> $_POST["id_entrepot_destination"])
@@ -84,21 +79,34 @@ if ($_POST["action"] == "transfert_stock" && ! $_POST["cancel"])
 		if (is_numeric($_POST["nbpiece"]))
 		{
 			$product = new Product($db);
-			$product->id = $_GET["id"];
+			$result=$product->fetch($_GET["id"]);
 
 			$db->begin();
 
+			$product->load_stock();	// Load array product->stock_warehouse
+
+			// Define value of products moved
+			$pricesrc=0;
+			if (isset($product->stock_warehouse[$_POST["id_entrepot_source"]]->pmp)) $pricesrc=$product->stock_warehouse[$_POST["id_entrepot_source"]]->pmp;
+			$pricedest=$pricesrc;
+
+			//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
+
+			// Remove stock
 			$result1=$product->correct_stock($user,
 			$_POST["id_entrepot_source"],
 			$_POST["nbpiece"],
 			1,
-			$_POST["label"]);
+			$_POST["label"],
+			$pricesrc);
 
+			// Add stock
 			$result2=$product->correct_stock($user,
 			$_POST["id_entrepot_destination"],
 			$_POST["nbpiece"],
 			0,
-			$_POST["label"]);
+			$_POST["label"],
+			$pricedest);
 
 			if ($result1 >= 0 && $result2 >= 0)
 			{
@@ -334,6 +342,7 @@ if ($_GET["id"] || $_GET["ref"])
 	/*
 	 * Set initial stock
 	 */
+	/*
 	if ($_GET["action"] == "definir")
 	{
 		print_titre($langs->trans("SetStock"));
@@ -349,6 +358,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print '</table>';
 		print '</form>';
 	}
+	*/
 }
 else
 {
@@ -416,7 +426,7 @@ if ($resql)
 		$entrepotstatic->libelle=$obj->label;
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.$entrepotstatic->getNomUrl(1).'</td>';
-		print '<td align="right">'.$obj->reel.'</td>';
+		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
 		print '<td align="right">'.price2num($obj->pmp,'MU').'</td>';
 		print '<td align="right">'.price(price2num($obj->pmp*$obj->reel,'MT')).'</td>';
 		print '</tr>'; ;
@@ -428,7 +438,7 @@ if ($resql)
 }
 print '<tr class="liste_total"><td align="right" class="liste_total">'.$langs->trans("Total").':</td>';
 print '<td class="liste_total" align="right">'.$total.'</td>';
-print '<td class="liste_total" align="right">&nbsp;</td>';
+print '<td class="liste_total" align="right">'.price($totalvalue/$total).'</td>';
 print '<td class="liste_total" align="right">'.price($totalvalue).'</td>';
 print "</tr>";
 print "</table>";

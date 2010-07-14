@@ -394,7 +394,7 @@ class Livraison extends CommonObject
 								$i=0;
 								while($i < $num)
 								{
-									dol_syslog("livraison.class.php::valid movment $i");
+									dol_syslog("livraison.class.php::valid movement $i");
 
 									$obj = $this->db->fetch_object($resql);
 
