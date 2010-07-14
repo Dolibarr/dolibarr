@@ -165,6 +165,7 @@ class Facture extends CommonObject
 			return -2;
 		}
 
+		$now=dol_now();
 
 		$this->db->begin();
 
@@ -226,7 +227,7 @@ class Facture extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ", '".$this->type."'";
 		$sql.= ", '".$socid."'";
-		$sql.= ", ".$this->db->idate(gmmktime());
+		$sql.= ", ".$this->db->idate($now);
 		$sql.= ", '".$totalht."'";
 		$sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
 		$sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
@@ -300,7 +301,7 @@ class Facture extends CommonObject
 					$tva_tx = get_default_tva($mysoc,$soc,($prod->tva_tx?$prod->tva_tx:0));
 					$localtax1_tx=get_localtax($tva_tx,1,$soc);
 					$localtax2_tx=get_localtax($tva_tx,2,$soc);
-					
+
 					$result_insert = $this->addline(
 					$this->id,
 					$_facrec->lignes[$i]->desc,
@@ -1611,7 +1612,7 @@ class Facture extends CommonObject
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txlocaltax1);
 			$txlocaltax2=price2num($txlocaltax2);
-			
+
 			if ($price_base_type=='HT')
 			{
 				$pu=$pu_ht;
@@ -2814,6 +2815,8 @@ class Facture extends CommonObject
 			$ligne->subprice=100;
 			$ligne->price=100;
 			$ligne->tva_tx=19.6;
+			$ligne->localtax1_tx=0;
+			$ligne->localtax2_tx=0;
 			$ligne->remise_percent=10;
 			$ligne->total_ht=90;
 			$ligne->total_ttc=107.64;	// 90 * 1.196
@@ -2910,8 +2913,8 @@ class FactureLigne
 	var $total_ht;
 	//! Total TVA  de la ligne toute quantite et incluant la remise ligne
 	var $total_tva;
-	var $total_localtax1; //Total Local tax 1 de la ligne
-	var $total_localtax2; //Total Local tax 2 de la ligne
+	var $total_localtax1=0; //Total Local tax 1 de la ligne
+	var $total_localtax2=0; //Total Local tax 2 de la ligne
 	//! Total TTC de la ligne toute quantite et incluant la remise ligne
 	var $total_ttc;
 

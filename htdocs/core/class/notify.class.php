@@ -87,7 +87,7 @@ class Notify
 	{
         $num=-1;
 
-        $sql = "SELECT n.rowid, c.email, c.rowid, c.name, c.firstname, a.titre, s.nom";
+        $sql = "SELECT n.rowid, c.email, c.rowid, c.name, c.firstname, a.code, a.titre, s.nom";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
         $sql.= " AND n.fk_soc = s.rowid";
@@ -218,6 +218,7 @@ class Notify
                     else
                     {
                         $this->error=$mailfile->error;
+                        //dol_syslog("Notify::send ".$this->error, LOG_ERR);
                     }
                 }
                 $i++;

@@ -36,6 +36,7 @@ if (empty($user->id))
 	$user->fetch(1);
 	$user->getrights();
 }
+$conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
@@ -134,7 +135,7 @@ class DateLibTest extends PHPUnit_Framework_TestCase
 
 		$result=ConvertSecondToTime(0,'all',86400);
     	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('00:00',$result);
+		$this->assertEquals('0',$result);
 
 		$result=ConvertSecondToTime(86400,'all',86400);
     	print __METHOD__." result=".$result."\n";
