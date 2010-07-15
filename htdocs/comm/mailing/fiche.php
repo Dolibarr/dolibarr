@@ -790,9 +790,14 @@ else
 
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=test&amp;id='.$mil->id.'">'.$langs->trans("TestMailing").'</a>';
 
-				if ($mil->statut == 0 && $user->rights->mailing->valider)
+				if ($mil->statut == 0)
 				{
-					if ($mil->nbemail > 0)
+					print $user->rights->mailing->valider;
+					if (empty($user->rights->mailing->valider))
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoPermission")).'">'.$langs->trans("ValidMailing").'</a>';
+					}
+					else if ($mil->nbemail > 0)
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=valide&amp;id='.$mil->id.'">'.$langs->trans("ValidMailing").'</a>';
 					}

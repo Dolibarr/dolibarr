@@ -113,7 +113,7 @@ dol_fiche_head($head, 'rights', $title, 0, 'user');
 
 $db->begin();
 
-// Charge les modules soumis a permissions
+// Search all modules with permission and reload permissions def.
 $modules = array();
 
 $listdir=$conf->file->dol_document_root;
@@ -134,7 +134,7 @@ foreach($listdir as $dirroot)
 	            $objMod = new $modName($db);
 	            if ($objMod->rights_class) {
 
-	                $ret=$objMod->insert_permissions();
+	                $ret=$objMod->insert_permissions(0);
 
 	                $modules[$objMod->rights_class]=$objMod;
 	                //print "modules[".$objMod->rights_class."]=$objMod;";

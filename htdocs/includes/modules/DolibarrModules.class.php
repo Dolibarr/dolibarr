@@ -99,8 +99,8 @@ class DolibarrModules
 		// Insere les boites dans llx_boxes_def
 		if (! $err && $options != 'noboxes') $err+=$this->insert_boxes();
 
-		// Insere les permissions associees au module actif dans llx_rights_def
-		if (! $err) $err+=$this->insert_permissions();
+		// Insert permission definitions of module into llx_rights_def. If user is admin, grant this permission to user.
+		if (! $err) $err+=$this->insert_permissions(1);
 
 		// Insere les constantes associees au module dans llx_const
 		if (! $err) $err+=$this->insert_menus();

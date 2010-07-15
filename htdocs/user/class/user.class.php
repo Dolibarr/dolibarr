@@ -443,10 +443,11 @@ class User extends CommonObject
 
 
 	/**
-	 *    \brief      Vide la tableau des droits de l'utilisateur
+	 *    \brief      Clear all permissions array of user
 	 */
 	function clearrights()
 	{
+		dol_syslog("User::clearrights reset user->rights");
 		$this->rights='';
 		$this->all_permissions_are_loaded=false;
 		$this->tab_loaded=array();

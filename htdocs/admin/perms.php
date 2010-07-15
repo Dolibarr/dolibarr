@@ -98,7 +98,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		            $objMod = new $modName($db);
 		            if ($objMod->rights_class) {
 
-		                $ret=$objMod->insert_permissions();
+		                $ret=$objMod->insert_permissions(0);
 
 		                $modules[$objMod->rights_class]=$objMod;
 		                //print "modules[".$objMod->rights_class."]=$objMod;";
