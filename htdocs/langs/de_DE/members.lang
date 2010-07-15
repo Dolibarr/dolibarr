@@ -141,7 +141,7 @@ DescADHERENT_ETIQUETTE_TYPE=Etiketten-Format
 DescADHERENT_CARD_HEADER_TEXT=Text oben auf der Mitglied-Karten
 DescADHERENT_CARD_TEXT=Text auf Karten Mitglied
 DescADHERENT_CARD_FOOTER_TEXT=Text unten auf der Mitglied-Karten
-ShowTypeCard=Show Typ &#39; %s&#39;
+ShowTypeCard=Show Typ ' %s'
 HTPasswordExport=htpassword Datei Generation
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

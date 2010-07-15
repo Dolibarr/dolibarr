@@ -38,15 +38,15 @@ ErrorFieldCanNotContainSpecialCharacters	   =Campo <b> %s </b> non può contener
 // Date 2009-01-18 19:41:54
 // START - Lines generated via parser
 // Reference language: en_US
-ErrorFailToDeleteDir=Impossibile eliminare directory <b>&#39; %s&#39;.</b>
+ErrorFailToDeleteDir=Impossibile eliminare directory <b>'%s'.</b>
 ErrorFailedToDeleteJoinedFiles=Impossibile eliminare file collegati. Rimuovere i collegamenti file prima di rimuovere.
-ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Trovato sintassi email errata nelle righe %s del file (ad esempio linea con l&#39;e-mail %s = %s)
-ErrorUserCannotBeDelete=L&#39;utente non può essere eliminato. Probabilmente è necessario al funzionamento di Dolibarr.
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Trovato sintassi email errata nelle righe %s del file (ad esempio linea con l'e-mail %s = %s)
+ErrorUserCannotBeDelete=L'utente non può essere eliminato. Probabilmente è necessario al funzionamento di Dolibarr.
 WarningBuildScriptNotRunned=<b>Lo script %s</b> per costruire il grafico non è stato eseguito, o non ci sono dati da visualizzare.
 WarningBookmarkAlreadyExists=Un segnalibro con questo titolo o questo link (URL) è già esistente.
 WarningPassIsEmpty=Attenzione, non risulta assegnata la password del database. Si tratta di un buco di sicurezza. Si dovrebbe aggiungere una password per il database e cambiare il conf.php file per riflettere il cambiamento.
 ErrorNoAccountancyModuleLoaded=Modulo contabilità non attivato
-ErrorExportDuplicateProfil=Questo nome di profilo esiste già l&#39;esportazione.
+ErrorExportDuplicateProfil=Questo nome di profilo esiste già l'esportazione.
 ErrorLDAPSetupNotComplete=la configurazione per l'uso di LDAP non è completa.
 ErrorLDAPMakeManualTest=Un file Ldif è stato generato nella directory %s. Prova a caricare manualmente dalla riga di comando per avere maggiori informazioni sugli errori.
 ErrorCantSaveADoneUserWithZeroPercentage=Impossibile salvare un azione con &quot;stato non iniziato&quot; se il campo &quot;da fare&quot; non è vuoto.
@@ -61,5 +61,5 @@ ErrorRecordHasChildren=Impossibile eliminare i record in quanto ha altri record 
 // Reference language: en_US
 CHARSET=UTF-8
 MenuManager=Gestore menu
-ErrorUrlNotValid=L&#39;indirizzo del sito Internet non è corretto
+ErrorUrlNotValid=L'indirizzo del sito Internet non è corretto
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

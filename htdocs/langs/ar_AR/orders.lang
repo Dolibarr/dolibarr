@@ -103,7 +103,7 @@ CustomerOrder=عملاء النظام
 RefCustomerOrderShort=المرجع. العملاء. ترتيب
 SendOrderByMail=لكي ترسل عن طريق البريد
 ActionsOnOrder=إجراءات من أجل
-NoArticleOfTypeProduct=أي مادة من نوع &#39;منتج&#39; حتى لا مادة للشحن لهذا النظام
+NoArticleOfTypeProduct=أي مادة من نوع 'منتج' حتى لا مادة للشحن لهذا النظام
 OrderMode=طريقة أوامر
 AuthorRequest=طلب مقدم البلاغ
 UseCustomerContactAsOrderRecipientIfExist=استخدام العميل عنوان الاتصال إذا حددت بدلا من التصدي لطرف ثالث من أجل التصدي للمتلقي
@@ -114,8 +114,8 @@ CloneOrder=استنساخ النظام
 ConfirmCloneOrder=هل أنت متأكد من أن هذا الأمر استنساخ <b>٪ ق؟</b>
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=لم تعرف COMMANDE_SUPPLIER_ADDON مستمر
 Error_COMMANDE_ADDON_NotDefined=لم تعرف COMMANDE_ADDON مستمر
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=لم يتم تحميل الملف وحدة &#39;٪ ق&#39;
-Error_FailedToLoad_COMMANDE_ADDON_File=لم يتم تحميل الملف وحدة &#39;٪ ق&#39;
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=لم يتم تحميل الملف وحدة '٪ ق'
+Error_FailedToLoad_COMMANDE_ADDON_File=لم يتم تحميل الملف وحدة '٪ ق'
 OrderSource0=اقتراح التجارية
 OrderSource1=الإنترنت
 OrderSource2=حملة بريدية
@@ -126,6 +126,6 @@ OrderSource6=مخزن
 QtyOrdered=الكمية أمرت
 AddDeliveryCostLine=تضاف تكلفة توصيل خط يبين الوزن من أجل
 PDFEinsteinDescription=من أجل نموذج كامل (logo...)
-MarbreNumRefDesc=Renvoie جنيه numéro sous لوس انجليس في شكل syymm ٪ nnnn - où l&#39; année السنة بتوقيت شرق الولايات المتحدة ، مم جنيه mois ét nnnn الامم المتحدة compteur sequentiel بلا انقطاع ét بلا remise ه 0
+MarbreNumRefDesc=Renvoie جنيه numéro sous لوس انجليس في شكل syymm ٪ nnnn - où l' année السنة بتوقيت شرق الولايات المتحدة ، مم جنيه mois ét nnnn الامم المتحدة compteur sequentiel بلا انقطاع ét بلا remise ه 0
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser

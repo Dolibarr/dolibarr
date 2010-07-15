@@ -172,7 +172,7 @@ No=没有
 AutoDetectLang=自动检测（浏览器的语言）
 FeatureDisabledInDemo=在演示功能禁用
 Rights=权限
-BoxesDesc=框屏幕区域，显示了在一些网页上的资料。您可以选择显示选择目标页，然后点击&#39;的方块，或不激活&#39;，或按一下垃圾桶中禁用它。
+BoxesDesc=框屏幕区域，显示了在一些网页上的资料。您可以选择显示选择目标页，然后点击'的方块，或不激活'，或按一下垃圾桶中禁用它。
 OnlyActiveElementsAreShown=分子只有<a href="modules.php">启用的模块</a>显示。
 ModulesDesc=Dolibarr模块定义哪些功能是在软件中启用。有些模块需要您必须授予权限给用户，在启用模块。
 ModulesInterfaceDesc=该Dolibarr模块接口允许你添加取决于外部软件，系统或服务功能。
@@ -391,7 +391,6 @@ Module50100Name=销售点
 Module50100Desc=销售点模块
 Permission11=阅读发票
 Permission12=创建发票
-Permission13=修改发票
 Permission14=验证发票
 Permission15=通过电子邮件发送发票
 Permission16=创建发票付款
@@ -805,9 +804,9 @@ WebCalServer=服务器托管日历数据库
 WebCalDatabaseName=数据库名称
 WebCalUser=用户访问数据库
 WebCalSetupSaved=Webcalendar设置保存成功。
-WebCalTestOk=连接到服务器&#39;％s&#39;于资料库&#39;用户&#39;％s&#39;的％s&#39;的成功。
-WebCalTestKo1=连接到服务器&#39;％s&#39;的成功，但是数据库&#39;％s&#39;的无法达成。
-WebCalTestKo2=连接到服务器&#39;％s的与用户&#39;％s&#39;的失败。
+WebCalTestOk=连接到服务器'％s'于资料库'用户'％s'的％s'的成功。
+WebCalTestKo1=连接到服务器'％s'的成功，但是数据库'％s'的无法达成。
+WebCalTestKo2=连接到服务器'％s的与用户'％s'的失败。
 WebCalErrorConnectOkButWrongDatabase=数据库连接成功，但并不指望成为Webcalendar数据库。
 WebCalAddEventOnCreateActions=添加创建行动日历事件
 WebCalAddEventOnCreateCompany=添加公司创建日历事件
@@ -859,7 +858,7 @@ FicheinterNumberingModules=干预编号模块
 TemplatePDFInterventions=干预卡文件模式
 WatermarkOnDraftInterventionCards=卡文件的任何干预，如果空（水印）
 ClickToDialSetup=点击拨号模块设置
-ClickToDialUrlDesc=链接时调用一个电话象形点击完成。丹斯l&#39;网址，vous pouvez utiliser莱balises <br> <b>％％1 $ s的</b>夸血清remplacé电话杆乐德l&#39; appelé <br> <b>％％2 $ s的</b>夸血清remplacé电话杆乐德l&#39; appelant（乐votre） <br> <b>％％3 $ s的</b>夸血清remplacé杆votre登录clicktodial（定义所涵盖河畔votre胶片utilisateur） <br> <b>％％4 $ s的</b>夸血清remplacé杆votre摩托罗拉德过时clicktodial（定义所涵盖河畔votre胶片utilisateur）。
+ClickToDialUrlDesc=链接时调用一个电话象形点击完成。丹斯l'网址，vous pouvez utiliser莱balises <br> <b>％％1 $ s的</b>夸血清remplacé电话杆乐德l' appelé <br> <b>％％2 $ s的</b>夸血清remplacé电话杆乐德l' appelant（乐votre） <br> <b>％％3 $ s的</b>夸血清remplacé杆votre登录clicktodial（定义所涵盖河畔votre胶片utilisateur） <br> <b>％％4 $ s的</b>夸血清remplacé杆votre摩托罗拉德过时clicktodial（定义所涵盖河畔votre胶片utilisateur）。
 Bookmark4uSetup=Bookmark4u模块设置
 InterventionsSetup=干预模块设置
 MembersSetup=委员模块设置
@@ -896,7 +895,7 @@ LDAPAdminDnExample=完整的DN（例如：架CN = adminldap，直流=社会，�
 LDAPPassword=管理员密码
 LDAPUserDn=用户的DN
 LDAPUserDnExample=完整的DN（例如：欧=用户，直流=社会，直流= com）上
-LDAPGroupDn=组&#39;的DN
+LDAPGroupDn=组'的DN
 LDAPGroupDnExample=完整的DN（例如：欧=组，直流=社会，直流= com）上
 LDAPServerExample=服务器地址（例如：本地主机，192.168.0.2，ldaps：/ / ldap.example.com /）
 LDAPServerDnExample=完整的DN（例如：直流=公司，直流= com）上
@@ -908,7 +907,7 @@ LDAPDnContactActiveYes=活性炭同步
 LDAPDnContactActiveExample=激活/未活化同步
 LDAPDnMemberActive=议员的同步
 LDAPDnMemberActiveExample=激活/未活化同步
-LDAPContactDn=Dolibarr接触&#39;的DN
+LDAPContactDn=Dolibarr接触'的DN
 LDAPContactDnExample=完整的DN（例如：欧=接触，直流=社会，直流= com）上
 LDAPMemberDn=Dolibarr成员的DN
 LDAPMemberDnExample=完整的DN（例如：欧=成员，直流=社会，直流= com）上
@@ -1056,18 +1055,18 @@ FCKeditorForProductDetails=所见即所得创作<font class="warning">/</font>�
 FCKeditorForProductDetailsPerso=所见即所得创建/编辑个性化的产品为所有实体（建议，订单细节线条，发票等..）
 FCKeditorForMailing=所见即所得创建/编辑的邮件
 OSCommerceErrorConnectOkButWrongDatabase=数据库连接成功，但并不指望成为oscommerce的数据库（关键％不是％s的表中找到）。
-OSCommerceTestOk=连接到服务器&#39;％s&#39;于资料库&#39;用户&#39;％s&#39;的％s&#39;的成功。
-OSCommerceTestKo1=连接到服务器&#39;％s&#39;的成功，但是数据库&#39;％s&#39;的无法达成。
-OSCommerceTestKo2=连接到服务器&#39;％s的与用户&#39;％s&#39;的失败。
+OSCommerceTestOk=连接到服务器'％s'于资料库'用户'％s'的％s'的成功。
+OSCommerceTestKo1=连接到服务器'％s'的成功，但是数据库'％s'的无法达成。
+OSCommerceTestKo2=连接到服务器'％s的与用户'％s'的失败。
 MantisSetup=螳螂链接设置
 MantisURL=URL访问的螳螂
 MantisServer=螳螂数据库服务器托管
 MantisDatabaseName=数据库名称
 MantisUser=用户访问数据库
 MantisSetupSaved=螳螂设置保存成功。
-MantisTestOk=连接到服务器&#39;％s&#39;于资料库&#39;用户&#39;％s&#39;的％s&#39;的成功。
-MantisTestKo1=连接到服务器&#39;％s&#39;的成功，但是数据库&#39;％s&#39;的无法达成。
-MantisTestKo2=连接到服务器&#39;％s的与用户&#39;％s&#39;的失败。
+MantisTestOk=连接到服务器'％s'于资料库'用户'％s'的％s'的成功。
+MantisTestKo1=连接到服务器'％s'的成功，但是数据库'％s'的无法达成。
+MantisTestKo2=连接到服务器'％s的与用户'％s'的失败。
 MantisErrorConnectOkButWrongDatabase=连接成功了，但是数据库不看是螳螂数据库。
 StockSetup=股票配置模块
 UserWarehouse=使用用户的个人股票

@@ -53,6 +53,6 @@ AgendaUrlOptions2=<b>login = %s </b> til að takmarka framleiðsla til aðgerða
 AgendaUrlOptions3=<b>logina = %s </b> til að takmarka framleiðsla til aðgerða skapa við <b>notandann %s .</b>
 AgendaUrlOptions4=<b>logint = %s </b> til að takmarka framleiðsla til aðgerða áhrif til <b>notandi %s .</b>
 AgendaUrlOptions5=<b>logind = %s </b> til að takmarka framleiðsla til aðgerða gert með <b>notandann %s .</b>
-AgendaShowBirthdayEvents=tengiliði Sýna afmæli&#39;s
-AgendaHideBirthdayEvents=tengiliðir Fela afmæli&#39;s
+AgendaShowBirthdayEvents=tengiliði Sýna afmæli's
+AgendaHideBirthdayEvents=tengiliðir Fela afmæli's
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

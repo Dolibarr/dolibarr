@@ -11,11 +11,11 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Kirjaudu %s on jo olemassa.
 ErrorGroupAlreadyExists=Ryhmän %s on jo olemassa.
-ErrorFailToDeleteFile=Epäonnistui poistaa tiedoston <b>&#39; %s&#39;.</b>
-ErrorFailToCreateFile=Luominen epäonnistui file <b>&#39; %s&#39;.</b>
-ErrorFailToRenameDir=Epäonnistui nimetä directory <b>&#39; %s&#39; osaksi&#39; %s&#39;.</b>
-ErrorFailToCreateDir=Luominen epäonnistui directory <b>&#39; %s&#39;.</b>
-ErrorFailToDeleteDir=Poistaminen ei onnistunut directory <b>&#39; %s&#39;.</b>
+ErrorFailToDeleteFile=Epäonnistui poistaa tiedoston <b>' %s'.</b>
+ErrorFailToCreateFile=Luominen epäonnistui file <b>' %s'.</b>
+ErrorFailToRenameDir=Epäonnistui nimetä directory <b>' %s' osaksi' %s'.</b>
+ErrorFailToCreateDir=Luominen epäonnistui directory <b>' %s'.</b>
+ErrorFailToDeleteDir=Poistaminen ei onnistunut directory <b>' %s'.</b>
 ErrorFailedToDeleteJoinedFiles=Ei voi poistaa yksikkö, koska siellä on noin liittyi tiedostoja. Poista liittyä tiedostot ensin.
 ErrorThisContactIsAlreadyDefinedAsThisType=Tämä yhteys on jo määritelty yhteyttä tämän tyypin osalta.
 ErrorCashAccountAcceptsOnlyCashMoney=Tämä pankkitili on käteistä huomioon, joten se hyväksyy maksujen tyypin käteisellä vain.

@@ -141,7 +141,7 @@ DescADHERENT_ETIQUETTE_TYPE=Этикетки формате
 DescADHERENT_CARD_HEADER_TEXT=Текст печатается на верхней части членов карты
 DescADHERENT_CARD_TEXT=Текст печатается на члена карты
 DescADHERENT_CARD_FOOTER_TEXT=Текст печатается на нижней части члена карты
-ShowTypeCard=Показать типу &#39; %s&#39;
+ShowTypeCard=Показать типу ' %s'
 HTPasswordExport=htpassword файл поколения
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser

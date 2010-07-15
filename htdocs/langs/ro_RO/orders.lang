@@ -78,7 +78,7 @@ LastModifiedOrders=Ultima modificare %s ordinele
 LastClosedOrders=Ultima %s ordinele închise
 AllOrders=Toate comenzile
 NbOfOrders=Numar de comenzi
-OrdersStatistics=Comenzi &#39;statistici
+OrdersStatistics=Comenzi 'statistici
 OrdersStatisticsSuppliers=Furnizor ordinele &quot;statistici
 NumberOfOrdersByMonth=Numarul de comenzi de luni
 AmountOfOrdersByMonthHT=valoarea ordinelor de luna (net de impozite)
@@ -122,7 +122,7 @@ OrderSource6=Magazin
 QtyOrdered=Cantitate ordonat
 AddDeliveryCostLine=
 PDFEinsteinDescription=Un model complet pentru (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la Forme %syymm-NNNN ou aa est l&#39;année, le mois et mm NNNN un compteur sequentiel sans ruptură et sans remiză e 0
+MarbreNumRefDesc=Renvoie le numro sous la Forme %syymm-NNNN ou aa est l'année, le mois et mm NNNN un compteur sequentiel sans ruptură et sans remiză e 0
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
 

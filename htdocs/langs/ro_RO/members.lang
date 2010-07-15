@@ -141,7 +141,7 @@ DescADHERENT_ETIQUETTE_TYPE=Etichete format
 DescADHERENT_CARD_HEADER_TEXT=Text imprimat pe sus de carduri de membru
 DescADHERENT_CARD_TEXT=Text imprimat pe carduri de membru
 DescADHERENT_CARD_FOOTER_TEXT=Text imprimat pe jos de carduri de membru
-ShowTypeCard=Arată tipul &#39; %s&#39;
+ShowTypeCard=Arată tipul ' %s'
 HTPasswordExport=htpassword fişier generaţie
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser

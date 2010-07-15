@@ -9,8 +9,8 @@
 // Reference language: en_US
 CHARSET=UTF-8
 PayBoxSetup=PayBox module setup
-PayBoxDesc=Deze module biedt pagina&#39;s om betaling op <a href="http://www.paybox.com" target="_blank">Paybox</a> door de klanten. Dit kan gebruikt worden voor een gratis betaling of een betaling op een bepaalde Dolibarr object (factuur, bestelling, ...)
-FollowingUrlAreAvailableToMakePayments=Volgende URL&#39;s beschikbaar om een pagina naar een klant om een betaling op Dolibarr voorwerpen
+PayBoxDesc=Deze module biedt pagina's om betaling op <a href="http://www.paybox.com" target="_blank">Paybox</a> door de klanten. Dit kan gebruikt worden voor een gratis betaling of een betaling op een bepaalde Dolibarr object (factuur, bestelling, ...)
+FollowingUrlAreAvailableToMakePayments=Volgende URL's beschikbaar om een pagina naar een klant om een betaling op Dolibarr voorwerpen
 PaymentForm=Betaling vorm
 WelcomeOnPaymentPage=Welkom op onze online betalingsdienstaanbieders
 ThisScreenAllowsYouToPay=Dit scherm kunt u bij het maken van een online betaling aan %s.

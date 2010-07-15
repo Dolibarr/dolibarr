@@ -101,7 +101,7 @@ SeeVATReportInDueDebtMode			 =Vedere il rapporto <b>%sTVA sur addebito%s </b> pe
 RulesVATIn					 =- Per i servizi, il rapporto include l'IVA effettivamente riscossa o da riscuotere se basata sul debito/credito. <br> - Per i beni materiali, include l'IVA basandosi sulla data di convalida della fattura.
 RulesVATDue					 =- Per i servizi, il rapporto include l'IVA effettivamente riscossa o da riscuotere se basata sul debito/credito. <br> - Per i beni materiali, include l'IVA basandosi sulla data di convalida della fattura.
 OptionVatInfoModuleComptabilite			 =Osservazione: Per i prodotti sarebbe più giusto usare la data di consegna.
-PercentOfInvoice				 =%% / fattura
+PercentOfInvoice				 =%%/fattura
 Compta					 =Contabilità
 Warehouse				=Magazzino
 

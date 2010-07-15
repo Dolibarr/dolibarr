@@ -142,7 +142,7 @@ DescADHERENT_ETIQUETTE_TYPE=Etiketter format
 DescADHERENT_CARD_HEADER_TEXT=Tekst trykt på toppen af medlem-kort
 DescADHERENT_CARD_TEXT=Tekst påtrykt medlem kort
 DescADHERENT_CARD_FOOTER_TEXT=Tekst trykt på bunden af medlem-kort
-ShowTypeCard=Vis type &#39; %s&#39;
+ShowTypeCard=Vis type ' %s'
 HTPasswordExport=htpassword fil generation
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser

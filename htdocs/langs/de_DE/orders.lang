@@ -78,7 +78,7 @@ LastModifiedOrders=Letzte %s geändert Bestellungen
 LastClosedOrders=Letzte %s geschlossen Bestellungen
 AllOrders=Alle Bestellungen
 NbOfOrders=Anzahl der Bestellungen
-OrdersStatistics=Bestellungen &#39;Statistik
+OrdersStatistics=Bestellungen 'Statistik
 OrdersStatisticsSuppliers=Lieferanten Bestellungen &quot;Statistiken
 NumberOfOrdersByMonth=Anzahl der Bestellungen pro Monat
 AmountOfOrdersByMonthHT=Anzahl der Aufträge pro Monat (nach Steuern)
@@ -110,8 +110,8 @@ RunningOrders=Bestellungen über Prozess
 UserWithApproveOrderGrant=Useres, die mit &quot;billigen Bestellungen&quot; Erlaubnis.
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON nicht definiert
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON nicht definiert
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load-Modul-Datei &#39; %s&#39;
-Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load-Modul-Datei &#39; %s&#39;
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load-Modul-Datei ' %s'
+Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load-Modul-Datei ' %s'
 OrderSource0=Kommerzielle Vorschlag
 OrderSource1=Internet
 OrderSource2=E-Mail-Kampagne
@@ -122,7 +122,7 @@ OrderSource6=Lagern
 QtyOrdered=Anzahl bestellt
 AddDeliveryCostLine=Fügen Sie eine Lieferung Kosten Linie zeigt das Gewicht der Bestellung
 PDFEinsteinDescription=Eine vollständige Um-Modell (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme %syymm-nnnn oder yy est l&#39;année, le mois et mm nnnn un compteur sequentiel ohne Bruch et sans remise e 0
+MarbreNumRefDesc=Renvoie le numro sous la forme %syymm-nnnn oder yy est l'année, le mois et mm nnnn un compteur sequentiel ohne Bruch et sans remise e 0
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
 

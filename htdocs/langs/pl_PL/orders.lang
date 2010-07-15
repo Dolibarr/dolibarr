@@ -112,8 +112,8 @@ RunningOrders=Zamówienia na proces
 UserWithApproveOrderGrant=Useres przyznane z &quot;zatwierdza zamówienia zgody.
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Stała COMMANDE_SUPPLIER_ADDON nie zdefiniowane
 Error_COMMANDE_ADDON_NotDefined=Stała COMMANDE_ADDON nie zdefiniowane
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Nie można załadować modułu pliku &#39; %s&#39;
-Error_FailedToLoad_COMMANDE_ADDON_File=Nie można załadować modułu pliku &#39; %s&#39;
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Nie można załadować modułu pliku ' %s'
+Error_FailedToLoad_COMMANDE_ADDON_File=Nie można załadować modułu pliku ' %s'
 OrderSource0=Commercial wniosku
 OrderSource1=Internet
 OrderSource2=Poczta kampanii
@@ -124,7 +124,7 @@ OrderSource6=Przechowywać
 QtyOrdered=Ilosc sortowane
 AddDeliveryCostLine=Dodaj dostawy koszt linii wskazujące wagi zamówienia
 PDFEinsteinDescription=Pełna kolejność modelu (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme syymm% rr-nnnn ou est l&#39;année, le mois mm et un nnnn compteur sequentiel bez pęknięcia et sans zrzekanie e 0
+MarbreNumRefDesc=Renvoie le numro sous la forme syymm% rr-nnnn ou est l'année, le mois mm et un nnnn compteur sequentiel bez pęknięcia et sans zrzekanie e 0
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
 

@@ -23,8 +23,8 @@ FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Database forbindelse
 Error=Fejl
-ErrorFieldRequired=Felt &#39; %s&#39; er påkrævet
-ErrorFieldFormat=Felt &#39; %s&#39; har en dårlig værdi
+ErrorFieldRequired=Felt ' %s' er påkrævet
+ErrorFieldFormat=Felt ' %s' har en dårlig værdi
 ErrorFileDoesNotExists=Fil %s ikke eksisterer
 ErrorFailedToOpenFile=Kunne ikke åbne filen %s
 ErrorCanNotCreateDir=Kan ikke oprette dir %s
@@ -32,7 +32,7 @@ ErrorCanNotReadDir=Ikke kan læse dir %s
 ErrorConstantNotDefined=Parameter %s ikke defineret
 ErrorUnknown=Ukendt fejl
 ErrorSQL=SQL Fejl
-ErrorLogoFileNotFound=Logo fil &#39; %s&#39; blev ikke fundet
+ErrorLogoFileNotFound=Logo fil ' %s' blev ikke fundet
 ErrorGoToModuleSetup=Gå til Modul setup at rette dette
 ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Det lykkedes ikke at sende e-mails (afsender= %s, receiver= %s)
 ErrorAttachedFilesDisabled=Vedhæftning af filer funktionen er slået fra på denne serveur
@@ -50,7 +50,7 @@ ErrorDuplicateField=Dobbelt værdi i et unikt område
 ErrorSomeErrorWereFoundRollbackIsDone=Nogle fejl blev fundet. Vi rollback ændringer.
 ErrorConfigParameterNotDefined=<b>Parameter %s</b> er ikke defineret inde Dolibarr konfigurationsfil <b>conf.php.</b>
 ErrorCantLoadUserFromDolibarrDatabase=Kunne ikke finde <b>bruger %s</b> i Dolibarr database.
-ErrorNoVATRateDefinedForSellerCountry=Fejl, der ikke momssatser defineret for land &#39; %s&#39;.
+ErrorNoVATRateDefinedForSellerCountry=Fejl, der ikke momssatser defineret for land ' %s'.
 ErrorFailedToSaveFile=Fejl, kunne ikke gemme filen.
 ErrorOnlyPngJpgSupported=Fejl, kun. Png og. Jpg billedformat filen understøttes.
 ErrorImageFormatNotSupported=Din PHP understøtter ikke funktioner til at konvertere billeder af dette format.
@@ -425,7 +425,6 @@ Undo=Fortryd
 Redo=Redo
 ExpandAll=Udvid alle
 UndoExpandAll=Fortryd udvide
-Reason=Raison
 FeatureNotYetSupported=Feature endnu ikke understøttet
 CloseWindow=Luk vindue
 Question=Spørgsmål
@@ -570,5 +569,5 @@ Day0=Søndag
 
 // START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
 // Reference language: en_US
-ErrorGoToGlobalSetup=Gå til &#39;Company / Foundation &quot;-opsætningen til at løse dette
+ErrorGoToGlobalSetup=Gå til 'Company / Foundation &quot;-opsætningen til at løse dette
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

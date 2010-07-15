@@ -104,7 +104,7 @@ TooMuchErrors=还有<b>％的台词</b> ，但有错误的其他来源，但产�
 TooMuchWarnings=还有<b>％s的</b>线，警告其他来源，但产量一直有限。
 EmptyLine=空行（将被丢弃）
 CorrectErrorBeforeRunningImport=您必须先输入正确运行前确定的所有错误。
-YouCanUseImportIdToFindRecord=你可以找到所有进口领域<b>import_key</b>记录过滤您的数据库<b>=&#39;％s&#39;的</b> 。
+YouCanUseImportIdToFindRecord=你可以找到所有进口领域<b>import_key</b>记录过滤您的数据库<b>='％s'的</b> 。
 NbOfLinesOK=行数没有错误，也没有警告<b>：％s的</b> 。
 NbOfLinesImported=线成功导入数<b>：％s的</b> 。
 DataComeFromNoWhere=值插入来自无处源文件。

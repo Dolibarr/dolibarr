@@ -61,7 +61,7 @@ NbOfRecipients=Antal modtagere
 NbOfUniqueEMails=Nb af unikke e-mails
 NbOfEMails=Nb af e-mails
 TotalNbOfDistinctRecipients=Antal forskellige modtagere
-NoTargetYet=Nr. modtagere er endnu ikke fastlagt (Gå på fanen &#39;modtagernes)
+NoTargetYet=Nr. modtagere er endnu ikke fastlagt (Gå på fanen 'modtagernes)
 AddRecipients=Tilføj modtagere
 RemoveRecipient=Fjern modtageren
 CommonSubstitutions=Fælles substitutioner
@@ -115,7 +115,7 @@ ConfirmCloneEMailing=Er du sikker på at du vil klone denne e-mail?
 CloneContent=Klon besked
 CloneReceivers=Cloner modtagere
 DateLastSend=Dato for sidste afsendelse
-MailingModuleDescDolibarrContractsLinesExpired=Tredjemand med udløb kontrakten&#39;s linjer
+MailingModuleDescDolibarrContractsLinesExpired=Tredjemand med udløb kontrakten's linjer
 YouCanUseCommaSeparatorForSeveralRecipients=Du kan bruge <b>comma</b> separator til at angive flere modtagere.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
 

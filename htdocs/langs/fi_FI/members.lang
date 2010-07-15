@@ -140,7 +140,7 @@ DescADHERENT_ETIQUETTE_TYPE=Etiketit muodossa
 DescADHERENT_CARD_HEADER_TEXT=Teksti painettu päälle jäsen kortit
 DescADHERENT_CARD_TEXT=Teksti painettu jäsen kortit
 DescADHERENT_CARD_FOOTER_TEXT=Teksti painettu pohjaan jäsen kortit
-ShowTypeCard=Näytä tyyppi &#39; %s&#39;
+ShowTypeCard=Näytä tyyppi ' %s'
 HTPasswordExport=htpassword tiedosto sukupolven
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser

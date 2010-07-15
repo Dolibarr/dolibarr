@@ -187,7 +187,7 @@ MigrationDeliveryDetail						     =Migrazione dettagli ordini di spedizione
 PHPSupportUTF8=Questo supporto PHP UTF8 funzioni.
 ErrorPHPDoesNotSupportGD=La tua installazione di PHP non supporta la funzione grafica GD. Nessun grafico sarà disponibile.
 ErrorPHPDoesNotSupportUTF8=La tua installazione di PHP non supporta la codifica UTF8 funzioni. Dolibarr non può funzionare correttamente. Risolvere questo problema prima di installare Dolibarr.
-IfLoginDoesNotExistsCheckCreateUser=Se il login non esiste ancora, è necessario verificare l&#39;opzione &quot;Crea utente&quot;
+IfLoginDoesNotExistsCheckCreateUser=Se il login non esiste ancora, è necessario verificare l'opzione &quot;Crea utente&quot;
 ErrorConnection=Server <b>&quot; %s&quot;,</b> nome del database <b>&quot; %s&quot;,</b> di accesso <b>&quot; %s&quot;,</b> o la password di database può essere sbagliato o PHP versione client può essere troppo vecchio rispetto alla versione del database.
 MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Correggere contratto %s (data del contratto = %s, data di inizio del servizio min = %s)
 // Date 2009-01-18 19:41:54

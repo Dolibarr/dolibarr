@@ -21,7 +21,7 @@ TooMuchErrors=Það er <b>enn %s </b> aðrar línur fengið með villur en framl
 TooMuchWarnings=Það er <b>enn %s </b> aðrar línur fengið með varnaðarorð en framleiðsla hefur verið takmarkaður.
 EmptyLine=Tóm línu (verður fleygt)
 CorrectErrorBeforeRunningImport=Þú verður fyrst að leiðrétta allar villur áður en þú endanlega flutt.
-YouCanUseImportIdToFindRecord=Þú getur fundið allar innfluttar færslur í gagnagrunninum með því að sía á <b>import_key sviði %s  = &#39;.</b>
+YouCanUseImportIdToFindRecord=Þú getur fundið allar innfluttar færslur í gagnagrunninum með því að sía á <b>import_key sviði %s  = '.</b>
 NbOfLinesOK=Fjöldi lína með engar villur og engar <b>viðvaranir: %s .</b>
 NbOfLinesImported=Fjöldi lína flutt með góðum <b>árangri: %s .</b>
 DataComeFromNoWhere=Gildi til að setja inn koma frá hvergi í skrá uppspretta.
