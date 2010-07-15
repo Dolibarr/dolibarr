@@ -858,7 +858,7 @@ if ($id > 0 || ! empty($ref))
 		if ($conf->projet->enabled)	$nbrow++;
 
 		//Local taxes
-		if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+		if ($mysoc->pays_code=='ES')
 		{
 			if($mysoc->localtax1_assuj=="1") $nbrow++;
 			if($mysoc->localtax2_assuj=="1") $nbrow++;
@@ -944,7 +944,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 		// Amount Local Taxes
-		if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+		if ($mysoc->pays_code=='ES')
 		{
 			if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 			{

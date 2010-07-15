@@ -213,7 +213,7 @@ if ($socid > 0)
 	print '</tr>';
 
 	// Local Taxes
-	if($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	if($mysoc->pays_code=='ES')
 	{
 		if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
 		{

@@ -1680,7 +1680,7 @@ if ($_GET['action'] == 'create')
 		print '<tr><td>'.$langs->trans($classname).'</td><td colspan="2">'.$object->getNomUrl(1).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($object->total_ht).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($object->total_tva)."</td></tr>";
-		if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+		if ($mysoc->pays_code=='ES')
 		{
 			if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 			{
@@ -2308,7 +2308,7 @@ else
 			if ($conf->projet->enabled) $nbrows++;
 
 			//Local taxes
-			if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+			if ($mysoc->pays_code=='ES')
 			{
 				if($mysoc->localtax1_assuj=="1") $nbrows++;
 				if($mysoc->localtax2_assuj=="1") $nbrows++;
@@ -2639,7 +2639,7 @@ else
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Amount Local Taxes
-			if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+			if ($mysoc->pays_code=='ES')
 			{
 				if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 				{

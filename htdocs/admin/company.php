@@ -863,7 +863,7 @@ else
 	/*
 	 *  Local Taxes
 	 */
-	if ($obj->code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	if ($code_pays=='ES')
 	{
 		// Local Tax 1
 		print '<br>';
