@@ -71,7 +71,7 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_BARRELEFT','eldy_backoffice.php','chaine','Module de gestion de la barre de menu gauche pour utilisateurs internes',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_BARRELEFT','eldy_frontoffice.php','chaine','Module de gestion de la barre de menu gauche pour utilisateurs externes',0);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_THEME','auguria','chaine','Default theme',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_THEME','eldy','chaine','Default theme',0);
 
 --
 -- Delai tolerance

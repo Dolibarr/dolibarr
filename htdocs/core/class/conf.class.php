@@ -346,7 +346,7 @@ class Conf
 		$this->product->limit_size=$this->global->PRODUIT_LIMIT_SIZE;
 
 		// $this->theme et $this->css
-		if (empty($this->global->MAIN_THEME)) $this->global->MAIN_THEME="auguria";
+		if (empty($this->global->MAIN_THEME)) $this->global->MAIN_THEME="eldy";
 		$this->theme=$this->global->MAIN_THEME;
 		$this->css  = "/theme/".$this->theme."/style.css.php";
 
