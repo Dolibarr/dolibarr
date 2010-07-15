@@ -119,17 +119,18 @@ class modFacture extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 12;
-		$this->rights[$r][1] = 'Creer les factures';
+		$this->rights[$r][1] = 'Creer/modifier les factures';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
 
+		// There is a particular permission for unvalidate because this may be not forbidden by some laws
 		$r++;
 		$this->rights[$r][0] = 13;
-		$this->rights[$r][1] = 'Modifier les factures';
+		$this->rights[$r][1] = 'Dévalider les factures';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'modifier';
+		$this->rights[$r][4] = 'unvalidate';
 
 		$r++;
 		$this->rights[$r][0] = 14;

@@ -632,7 +632,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 	}
 }
 
-if ($_REQUEST['action'] == 'confirm_close' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->creer)
+if ($_REQUEST['action'] == 'confirm_close' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->cloturer)
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);		// Load order and lines
@@ -2167,7 +2167,7 @@ else
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$commande->id.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
 					}
 
-					// Annuler commande
+					// Cancel order
 					if ($commande->statut == 1)
 					{
 						$nb_expedition = $commande->nb_expedition();

@@ -55,6 +55,7 @@ class Commande extends CommonObject
 	var $contactid;
 	var $fk_project;
 	var $statut;		// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted, 3=Closed (Envoyee/Recue facturee ou non)
+
 	var $facturee;		// Facturee ou non
 	var $brouillon;
 	var $cond_reglement_id;

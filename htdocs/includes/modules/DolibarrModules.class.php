@@ -788,8 +788,8 @@ class DolibarrModules
 			$name      = $this->const[$key][0];
 			$type      = $this->const[$key][1];
 			$val       = $this->const[$key][2];
-			$note      = $this->const[$key][3];
-			$visible   = $this->const[$key][4];
+			$note      = isset($this->const[$key][3])?$this->const[$key][3]:'';
+			$visible   = isset($this->const[$key][4])?$this->const[$key][4]:0;
 			$entity    = ! empty($this->const[$key][5])?0:$conf->entity;
 
 			// Clean
@@ -905,6 +905,7 @@ class DolibarrModules
 
 					dol_syslog("DolibarrModules::insert_permissions sql=".$sql, LOG_DEBUG);
 					$resql=$this->db->query($sql,1);
+
 					if (! $resql)
 					{
 						if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")

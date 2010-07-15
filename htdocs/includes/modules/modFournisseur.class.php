@@ -141,7 +141,7 @@ class modFournisseur extends DolibarrModules
 
 		                    $r++;
 		                    $this->rights[$r][0] = 1185;
-		                    $this->rights[$r][1] = 'Approuver les commandes fournisseur';
+		                    $this->rights[$r][1] = 'Approuver une commande fournisseur';
 		                    $this->rights[$r][2] = 'w';
 		                    $this->rights[$r][3] = 0;
 		                    $this->rights[$r][4] = 'commande';
@@ -149,7 +149,7 @@ class modFournisseur extends DolibarrModules
 
 		                    $r++;
 		                    $this->rights[$r][0] = 1186;
-		                    $this->rights[$r][1] = 'Commander/Annuler une commande fournisseur';
+		                    $this->rights[$r][1] = 'Commander une commande fournisseur';
 		                    $this->rights[$r][2] = 'w';
 		                    $this->rights[$r][3] = 0;
 		                    $this->rights[$r][4] = 'commande';
@@ -157,7 +157,7 @@ class modFournisseur extends DolibarrModules
 
 		                    $r++;
 		                    $this->rights[$r][0] = 1187;
-		                    $this->rights[$r][1] = 'Receptionner les commandes fournisseur';
+		                    $this->rights[$r][1] = 'Receptionner une commande fournisseur';
 		                    $this->rights[$r][2] = 'd';
 		                    $this->rights[$r][3] = 0;
 		                    $this->rights[$r][4] = 'commande';
@@ -165,11 +165,11 @@ class modFournisseur extends DolibarrModules
 
 		                    $r++;
 		                    $this->rights[$r][0] = 1188;
-		                    $this->rights[$r][1] = 'Cloturer les commandes fournisseur';
+		                    $this->rights[$r][1] = 'Supprimer une commande fournisseur';
 		                    $this->rights[$r][2] = 'd';
 		                    $this->rights[$r][3] = 0;
 		                    $this->rights[$r][4] = 'commande';
-		                    $this->rights[$r][5] = 'cloturer';
+		                    $this->rights[$r][5] = 'supprimer';
 
 		                    $r++;
 		                    $this->rights[$r][0] = 1231;

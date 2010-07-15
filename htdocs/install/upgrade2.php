@@ -278,11 +278,11 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 			migrate_shipping_delivery($db,$langs,$conf);
 
 			migrate_shipping_delivery2($db,$langs,$conf);
-
-			migrate_reload_modules($db,$langs,$conf);
-
-			migrate_reload_menu($db,$langs,$conf);
 		}
+
+		migrate_reload_modules($db,$langs,$conf);
+
+		migrate_reload_menu($db,$langs,$conf);
 
 		// On commit dans tous les cas.
 		// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
@@ -1843,6 +1843,27 @@ function migrate_reload_modules($db,$langs,$conf)
 		$mod=new modService($db);
 		$mod->init();
 	}
+	if (! empty($conf->global->MAIN_MODULE_COMMANDE))	// Permission has changed into 2.9
+	{
+		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Commande");
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modCommande.class.php');
+		$mod=new modCommande($db);
+		$mod->init();
+	}
+	if (! empty($conf->global->MAIN_MODULE_FACTURE))	// Permission has changed into 2.9
+	{
+		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Facture");
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modFacture.class.php');
+		$mod=new modFacture($db);
+		$mod->init();
+	}
+	if (! empty($conf->global->MAIN_MODULE_FOURNISSEUR))	// Permission has changed into 2.9
+	{
+		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Fournisseur");
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modFournisseur.class.php');
+		$mod=new modFournisseur($db);
+		$mod->init();
+	}
 }
 
 /*
@@ -2847,15 +2868,6 @@ function migrate_project_task_time($db,$langs,$conf)
 							dol_print_error($db);
 						}
 					}
-
-					if ($error == 0)
-					{
-						$db->commit();
-					}
-					else
-					{
-						$db->rollback();
-					}
 				}
 				else
 				{
@@ -2865,7 +2877,6 @@ function migrate_project_task_time($db,$langs,$conf)
 			else
 			{
 				dol_print_error($db);
-				$db->rollback();
 			}
 		}
 		else
@@ -2876,6 +2887,15 @@ function migrate_project_task_time($db,$langs,$conf)
 	else
 	{
 		dol_print_error($db);
+	}
+
+	if ($error == 0)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
 	}
 
 	print '</td></tr>';

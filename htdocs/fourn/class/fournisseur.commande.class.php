@@ -49,10 +49,10 @@ class CommandeFournisseur extends Commande
 
 	var $ref;
 	var $brouillon;
-	var $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally
-	 						//                                                          -> 7=Canceled/Never received -> 3=Process
-							//										-> 6=Canceled -> 2=Approved
-							//  		              -> 9=Refused  -> 1=Validated
+	var $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
+	 						//                                                          -> 7=Canceled/Never received -> (reopen) 3=Process runing
+							//										-> 6=Canceled -> (reopen) 2=Approved
+							//  		              -> 9=Refused  -> (reopen) 1=Validated
 
 
 	/**   \brief      Constructeur

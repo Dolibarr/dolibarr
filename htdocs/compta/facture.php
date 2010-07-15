@@ -329,8 +329,8 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 	}
 }
 
-// Repasse la facture en mode brouillon
-if ($_GET['action'] == 'modif' && $user->rights->facture->modifier)
+// Repasse la facture en mode brouillon (unvalidate)
+if ($_GET['action'] == 'modif' && $user->rights->facture->unvalidate)
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
@@ -3150,12 +3150,18 @@ else
 						// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
 						$ventilExportCompta = $fac->getVentilExportCompta();
 
-						if ($user->rights->facture->modifier
-						&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0))
+						if ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0)
 						{
 							if (! $facidnext)
 							{
-								print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
+								if ($user->rights->facture->unvalidate)
+								{
+									print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
+								}
+								else
+								{
+									print '<span class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('Modify').'</span>';
+								}
 							}
 							else
 							{

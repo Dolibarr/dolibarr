@@ -355,11 +355,11 @@ if ($_REQUEST['action'] ==	'confirm_commande' && $_REQUEST['confirm']	== 'yes' &
 }
 
 
-if ($_REQUEST['action'] ==	'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->creer)
+if ($_REQUEST['action'] ==	'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->supprimer)
 {
 	$commande = new CommandeFournisseur($db);
-	$commande->id = $id;
-	$result=$commande->delete();
+	$commande->fetch($id);
+	$result=$commande->delete($user);
 	if ($result > 0)
 	{
 		Header("Location: ".DOL_URL_ROOT.'/fourn/commande/liste.php');
@@ -1308,6 +1308,7 @@ if ($id > 0 || ! empty($ref))
 					}
 				}
 
+				// Delete
 				if ($user->rights->fournisseur->commande->supprimer)
 				{
 					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
