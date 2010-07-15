@@ -121,7 +121,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // Langue par defaut
+    // Default language
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
     $formadmin->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default',1);
@@ -319,7 +319,9 @@ else	// Show
     print ($s?$s.' ':'');
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
-	print '<td width="20">&nbsp;</td>';
+	print '<td width="20">';
+    if ($user->admin) print info_admin($langs->trans("SubmitTranslation",$conf->global->MAIN_LANG_DEFAULT),1);
+	print '</td>';
 	print "</tr>";
 
     $var=!$var;
@@ -349,9 +351,7 @@ else	// Show
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
     if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
     else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td>";
-	print '<td width="20">';
-	//print $html->textwithpicto('',$langs->trans("FeatureDevelopment"));
-	print '&nbsp;</td>';
+	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
     // Calendrier en popup

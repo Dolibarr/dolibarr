@@ -219,6 +219,7 @@ MAIN_MAIL_SMTPS_ID= SMTP Authentification ID si authentification SMTP requise
 MAIN_MAIL_SMTPS_PW= SMTP Authentification Password si authentification SMTP requise 
 MAIN_MAIL_EMAIL_TLS= Utilisation du cryptage TLS (SSL) 
 FeatureNotAvailableOnLinux= Fonctionnalité non disponible sous systèmes Unix. Tester votre sendmail localement. 
+SubmitTranslation=Si la traduction pour cette langue est incomplète ou si vous trouvez des erreurs, vous pouvez les corriger en éditant les fichiers dans le répertoire <b>langs/%s</b> et soumettre les modifications sur le forum www.dolibarr.fr.
 ModuleSetup= Configuration du module
 ModulesSetup= Configuration des modules
 ModuleFamilyBase= Système
