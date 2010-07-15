@@ -158,6 +158,8 @@ class mailing_kiwi extends MailingTargets
 	{
 		global $conf, $langs;
 
+		$langs->load("companies");
+
 		$s='';
 		$s.='<select name="filter" class="flat">';
 		$s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
