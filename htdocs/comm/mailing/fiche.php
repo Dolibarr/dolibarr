@@ -792,18 +792,17 @@ else
 
 				if ($mil->statut == 0)
 				{
-					print $user->rights->mailing->valider;
-					if (empty($user->rights->mailing->valider))
+					if ($mil->nbemail <= 0)
 					{
-						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoPermission")).'">'.$langs->trans("ValidMailing").'</a>';
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoTargetYet")).'">'.$langs->trans("ValidMailing").'</a>';
 					}
-					else if ($mil->nbemail > 0)
+					else if (empty($user->rights->mailing->valider))
 					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=valide&amp;id='.$mil->id.'">'.$langs->trans("ValidMailing").'</a>';
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("ValidMailing").'</a>';
 					}
 					else
 					{
-						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoTargetYet")).'">'.$langs->trans("ValidMailing").'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=valide&amp;id='.$mil->id.'">'.$langs->trans("ValidMailing").'</a>';
 					}
 				}
 
