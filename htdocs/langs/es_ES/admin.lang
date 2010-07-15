@@ -159,6 +159,7 @@ NameColumn=Nombre las columnas
 ExtendedInsert=Instrucciones INSERT extendidas
 DelayedInsert=Inserciones con retraso
 EncodeBinariesInHexa=Codificar los campos binarios en hexacesimal
+IgnoreDuplicateRecords=Ignorar los errores de duplicación (INSERT IGNORE)
 Yes=Sí
 No=No
 AutoDetectLang=Autodetección (navegador)
