@@ -841,10 +841,11 @@ class DolibarrModules
 	}
 
 	/**
-	 *	\brief      Insert permissions related to module to activate into llx_rights_def
-	 *	\return     int     Number of error (0 if OK)
+	 *	\brief      Insert permissions definitions related to the module into llx_rights_def
+	 * 	\param		$reinitadminperms	If 1, we also grant them to admin user
+	 *	\return     int     			Number of error (0 if OK)
 	 */
-	function insert_permissions()
+	function insert_permissions($reinitadminperms=0)
 	{
 		global $conf,$user;
 
@@ -917,7 +918,7 @@ class DolibarrModules
 					}
 
 					// If we are into a logged session and we are an admin user, we take permission of new activated module
-					if (! empty($user->admin))
+					if ($reinitadminperms && ! empty($user->admin))
 					{
 						$user->addrights($r_id);
 						// We reload permissions
