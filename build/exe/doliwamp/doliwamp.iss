@@ -367,7 +367,7 @@ begin
     if FileExists (lockfile) and not DeleteFile(lockfile) then
     begin
       themessage := FmtMessage(CustomMessage('FailedToDeleteLock'),[pathWithSlashes]);
- 		  MsgBox(themessage,mbInformation,MB_OK)
+ 		  MsgBox(themessage,mbInformation,MB_OK);
     end
 
 
@@ -502,21 +502,21 @@ begin
 	      end;
 	
 	      LoadStringFromFile (srcFile, srcContents);
-	      StringChange (srcContents, 'WAMPBROWSER', browser);
-	      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-	      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+	      StringChangeEx (srcContents, 'WAMPBROWSER', browser, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 	      SaveStringToFile(destFile,srcContents, False);
 	
 	      LoadStringFromFile (srcFileH, srcContents);
-	      StringChange (srcContents, 'WAMPBROWSER', browser);
-	      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-	      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+	      StringChangeEx (srcContents, 'WAMPBROWSER', browser, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 	      SaveStringToFile(destFileH,srcContents, False);
 	
 	      LoadStringFromFile (srcFileA, srcContents);
-	      StringChange (srcContents, 'WAMPBROWSER', browser);
-	      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-	      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+	      StringChangeEx (srcContents, 'WAMPBROWSER', browser, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 	      SaveStringToFile(destFileA,srcContents, False);
 	    end
 
@@ -537,8 +537,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //installDir et version de phpmyadmin
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPPHPMYADMINVERSION', phpmyadminVersion);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPPHPMYADMINVERSION', phpmyadminVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -557,8 +557,8 @@ begin
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
 		
 		      SaveStringToFile(destFile, srcContents, False);
 		    end
@@ -578,8 +578,8 @@ begin
 		    begin
 	        // sinon on prends le fichier par defaut
 	        LoadStringFromFile (srcFile, srcContents);
-	        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
-	        StringChange (srcContents, 'WAMPMYSQLPORT', myport);
+	        StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
+	        StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
 	        SaveStringToFile(destFile,srcContents, False);
 		    end
 		
@@ -597,10 +597,10 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //installDir et version de php
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
-		      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-		      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPPHPVERSION', phpVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -620,8 +620,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //installDir et version de php
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -639,22 +639,22 @@ begin
 		    if not FileExists (destFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
-		      StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-		      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-		      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+		      StringChangeEx (srcContents, 'WAMPPHPVERSION', phpVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 		      SaveStringToFile(destFile, srcContents, False);
 		    end
 		    else
 		    begin
 		      RenameFile(destFile, destFile+'.old');
 		      LoadStringFromFile (srcFile, srcContents);
-		      StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-		      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-		      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+		      StringChangeEx (srcContents, 'WAMPPHPVERSION', phpVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 		      SaveStringToFile(destFile, srcContents, False);
 		    end
 		
@@ -673,10 +673,10 @@ begin
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
-		      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -695,8 +695,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -715,8 +715,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -736,8 +736,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -756,9 +756,9 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
-		      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -776,10 +776,10 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -797,10 +797,10 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -818,8 +818,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -835,8 +835,8 @@ begin
 		    if not FileExists (destFile) and FileExists(srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPSMTP', mysmtp);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPSMTP', mysmtp, True);
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
 		
@@ -850,8 +850,8 @@ begin
 		    if not FileExists (destFile) and FileExists(srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPSMTP', mysmtp);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPSMTP', mysmtp, True);
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
 		
