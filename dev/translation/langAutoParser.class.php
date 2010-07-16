@@ -50,34 +50,64 @@ class langAutoParser {
 			$fileContent = null;
 			$this->translatedFiles = array();
 			$refPath = $this->langDir.$this->refLang.self::DIR_SEPARATOR.$file;
-			$destPath = $this->langDir.$this->destLang.self::DIR_SEPARATOR.$file;
-			$fileContent = file($refPath,FILE_IGNORE_NEW_LINES |
-FILE_SKIP_EMPTY_LINES);
+			$fileContent = file($refPath,FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
 			print "Processing file " . $file . ", with ".sizeof($fileContent)." lines<br>\n";
-			// Check destination file presence
-			if ( ! file_exists( $destPath ) ){
-				// No file presente generate file
-				echo "File not found: " . $file . "<br>\n";
-				echo "Generating file " . $file . "<br>\n";
-				$this->createTranslationFile($destPath);
-			}
-			// Translate lines
-			$fileContentDest = file($destPath,FILE_IGNORE_NEW_LINES |
-FILE_SKIP_EMPTY_LINES);
-			$newlines=0;
-			foreach($fileContent as $line){
-				$key = $this->getLineKey($line);
-				$value = $this->getLineValue($line);
-				if ($key && $value)
+
+			// Define target dirs
+			$targetlangs=array($this->destLang);
+			if ($this->destLang == 'all')
+			{
+				$targetlangs=array();
+
+				// If we must process all languages
+				$arraytmp=dol_dir_list($this->langDir,'directories',0);
+				foreach($arraytmp as $dirtmp)
 				{
-					$newlines+=$this->translateFileLine($fileContentDest,$file,$key,$value);
+					if ($dirtmp['name'] === $this->refLang) continue;	// We discard source language
+					if (preg_match('/^en/i',$dirtmp['name']))  continue;	// We discard en_* languages
+					if (preg_match('/^fr/i',$dirtmp['name']))  continue;	// We discard fr_* languages
+					if (preg_match('/^es/i',$dirtmp['name']))  continue;	// We discard es_* languages
+					if (preg_match('/es_CA/i',$dirtmp['name']))  continue;	// We discard es_CA language
+					if (preg_match('/^\./i',$dirtmp['name']))  continue;	// We discard files .*
+					if (preg_match('/^CVS/i',$dirtmp['name']))  continue;	// We discard CVS
+					$targetlangs[]=$dirtmp['name'];
 				}
+				//var_dump($targetlangs);
 			}
 
-			$this->updateTranslationFile($destPath,$file);
-			echo "New translated lines: " . $newlines . "<br>\n";
-			$this->time_end = date('Y-m-d H:i:s');
-			#if ($counter ==3) die('fim');
+			// Process translation of source file for each target languages
+			foreach($targetlangs as $mydestLang)
+			{
+
+				$destPath = $this->langDir.$mydestLang.self::DIR_SEPARATOR.$file;
+				// Check destination file presence
+				if ( ! file_exists( $destPath ) ){
+					// No file present, we generate file
+					echo "File not found: " . $destPath . ". We generate it.<br>\n";
+					$this->createTranslationFile($destPath,$mydestLang);
+				}
+				else
+				{
+					echo "Updating file: " . $destPath . "<br>\n";
+				}
+
+				// Translate lines
+				$fileContentDest = file($destPath,FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
+				$newlines=0;
+				foreach($fileContent as $line){
+					$key = $this->getLineKey($line);
+					$value = $this->getLineValue($line);
+					if ($key && $value)
+					{
+						$newlines+=$this->translateFileLine($fileContentDest,$file,$key,$value);
+					}
+				}
+
+				$this->updateTranslationFile($destPath,$file);
+				echo "New translated lines: " . $newlines . "<br>\n";
+				$this->time_end = date('Y-m-d H:i:s');
+				#if ($counter ==3) die('fim');
+			}
 		}
 	}
 
@@ -99,10 +129,10 @@ FILE_SKIP_EMPTY_LINES);
 		return;
 	}
 
-	private function createTranslationFile($path){
+	private function createTranslationFile($path,$mydestlang){
 		$fp = fopen($path, 'w+');
 		fwrite($fp, "/*\r\n");
-		fwrite($fp, " * Language code: {$this->destLang}\r\n");
+		fwrite($fp, " * Language code: {$mydestlang}\r\n");
 		fwrite($fp, " * Automatic generated via autotranslator.php tool\r\n");
 		fwrite($fp, " * Generation date " . $this->time. "\r\n");
 		fwrite($fp, " */\r\n");
