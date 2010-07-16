@@ -218,6 +218,7 @@ MAIN_MAIL_SENDMODE=Método de envío de e-mails
 MAIN_MAIL_SMTPS_ID=ID de autentificación SMTP  si se requiere autenticación SMTP
 MAIN_MAIL_SMTPS_PW=Contraseña autentificación SMTP si se requiere autenticación SMTP
 MAIN_MAIL_EMAIL_TLS=Uso de encriptación TLS (SSL)
+	 SubmitTranslation=Si la traducción de este idioma no está completa o encuentra errores, puede corregirlos editando los archivos del directorio <b>langs/%s</b> y enviando los archivos modificados al foro de www.dolibarr.es.
 FeatureNotAvailableOnLinux=Funcionalidad no disponible en sistemas  Unix. Pruebe su sendmail localmente.
 ModuleSetup=Configuración del módulo
 ModulesSetup=configuración de los módulos
