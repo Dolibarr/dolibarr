@@ -10,3 +10,31 @@ UninstallProgram=Desinstal·la %1
 LaunchProgram=Obre %1
 AssocFileExtension=&Associa %1 amb l'extensió de fitxer %2
 AssocingFileExtension=Associant %1 amb l'extensió de fitxer %2...
+
+YouWillInstallDoliWamp=Va a instal·lar o actualitzar (Apache + Mysql + PHP + Dolibarr) al seu ordinador.
+ThisAssistantInstallOrUpgrade=Aquest assistent instal·la o actualitza Dolibarr ERP-CRM i tots els seus requisits (Apache, Mysql i PHP) optimitzats per a l'ús de Dolibarr.
+IfYouHaveTechnicalKnowledge=Si teniu coneixements tècnics i necessita usar la seva Apache, Mysql i PHP amb altres aplicacions a part de Dolibarr, no utilitzeu aquest assistent, hauria lació manual d'Dolibarr sobre un Apache, Mysql i PHP existent.
+ButIfYouLook=Però si busca una instal·lació automàtica, es troba en el bon camí...
+DoYouWantToStart=Vol iniciar el procés d'instal·lació/actualització?
+
+TechnicalParameters=Paràmetres tècnics
+IfFirstInstall=Si es tracta de la primera instal lació, haurà d'especificar alguns paràmetres tècnics. Si no els entén, no sabeu o va a procedir a una actualització, deixi els camps amb els valors proposats per defecte.
+
+; WARNING !!! STRINGS HERE MUST BE LOWER THAN 60 CHARACTERS
+SMTPServer=Servidor SMTP (El seu o el del seu ISP, únicament primera instal.lació) :
+ApachePort=Puerto Apache (únicament primera instal.lació, normalment és el 80) :
+MySqlPort=Puerto Mysql (únicament primera instal.lació, normalment és el 3306) :
+MySqlPassword=Contrasenya del servidor i la base de dades MySQL de root (únicament primera instal.lació):
+
+PortAlreadyInUse=Sembla que el port %1 ja està sent utilitzat. Es recomana cancel·lar, tornar enrere i especificar un altre valor per al port% 2. ¿Cancel i escollir un altre valor?
+
+FirefoxDetected=S'ha detectat Firefox al seu ordinador. Voleu activar per defecte com a navegador per Dolibarr?
+ChooseDefaultBrowser=Esculli el seu navegador per defecte. Si no està segur, simplement feu clic a Obrir:
+
+LaunchNow=Llançar ara Dolibarr
+
+ProgramHasBeenRemoved=Els arxius del programa Dolibarr han estat eliminats. No obstant això tots els seus arxius de dades es troben encara al directori $1. Haurà eliminar aquest directori manualment per a una desinstal completa.
+
+
+
+
