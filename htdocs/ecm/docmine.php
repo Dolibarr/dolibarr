@@ -321,6 +321,15 @@ if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete_dir' && $_GET['actio
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.$section.'">'.$langs->trans('Edit').'</a>';
 	}
 
+	if ($user->rights->ecm->setup)
+	{
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
+	}
+	else
+	{
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
+	}
+
 	if (sizeof($filearray) == 0)
 	{
 		if ($user->rights->ecm->setup)

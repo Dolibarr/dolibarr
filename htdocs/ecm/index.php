@@ -231,7 +231,7 @@ $head = ecm_prepare_head_fm($fac);
 dol_fiche_head($head, 'file_manager', '', 1);
 
 
-print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
+print '<table class="border" width="100%"><tr><td width="40%" valign="top" style="background: #FFFFFF">';
 
 // Left area
 
@@ -251,8 +251,9 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	// Construit liste des repertoires
 	print '<table width="100%" class="nobordernopadding">';
 
+	//print '<tr class="liste_titre" style="height: 30px !important">';
 	print '<tr class="liste_titre">';
-	print '<td align="left">'.$langs->trans("ECMSections").'</td>';
+	print '<td class="liste_titre" align="left">'.$langs->trans("ECMSections").'</td>';
 	print '<td class="liste_titre" colspan="5" align="right">';
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
 	print '</td>';
@@ -578,7 +579,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 }
 
 
-print '</td><td valign="top">';
+print '</td><td valign="top" style="background: #FFFFFF">';
 
 // Right area
 $relativepath=$ecmdir->getRelativePath();
