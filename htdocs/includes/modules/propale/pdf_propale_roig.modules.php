@@ -640,7 +640,7 @@ class pdf_propale_roig extends ModelePDFPropales
 				{
 					$index++;
 					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("Total RE"), $useborder, 'L', 1);
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1ES"), $useborder, 'L', 1);
 					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
 				}
@@ -650,7 +650,7 @@ class pdf_propale_roig extends ModelePDFPropales
 				{
 					$index++;
 					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("Total IRPF"), $useborder, 'L', 1);
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2ES"), $useborder, 'L', 1);
 					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), $useborder, 'R', 1);
 				}
@@ -673,7 +673,7 @@ class pdf_propale_roig extends ModelePDFPropales
 							$tvakey=str_replace('*','',$tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat =$outputlangs->transnoentities("Total RE").' ';
+						$totalvat =$outputlangs->transnoentities("TotalLT1ES").' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 	
@@ -698,7 +698,7 @@ class pdf_propale_roig extends ModelePDFPropales
 							$tvakey=str_replace('*','',$tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat =$outputlangs->transnoentities("Total IRPF").' ';
+						$totalvat =$outputlangs->transnoentities("TotalLT2ES").' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 	
