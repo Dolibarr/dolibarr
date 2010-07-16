@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis@dolibarr.fr>
  *
  * This file is an example to follow to add your own email selector inside
@@ -165,12 +165,14 @@ class mailing_kiwi extends MailingTargets
 		$s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
 
 		# Show categories
-		$sql = "SELECT rowid, label, type";
+		$sql = "SELECT rowid, label, type, visible";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE visible > 0 AND type > 0";
+		$sql.= " WHERE type in (1,2)";	// We keep only categories for suppliers and customers/prospects
+		// $sql.= " AND visible > 0";	// We ignore the property visible because third party's categories does not use this property (only products categories use it).
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " ORDER BY label";
 
+		//print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -188,6 +190,10 @@ class mailing_kiwi extends MailingTargets
 				$s.='</option>';
 				$i++;
 			}
+		}
+		else
+		{
+			dol_print_error($db);
 		}
 
 		$s.='</select>';
