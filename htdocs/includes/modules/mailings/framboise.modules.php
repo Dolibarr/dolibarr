@@ -20,26 +20,26 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 
 
 /**
- *	    \class      mailing_kiwi
+ *	    \class      mailing_framboise
  *		\brief      Class to manage a list of personalised recipients for mailing feature
  */
-class mailing_kiwi extends MailingTargets
+class mailing_framboise extends MailingTargets
 {
 	// CHANGE THIS: Put here a name not already used
-	var $name='ContactsCategories';
+	var $name='MembersCategories';
 	// CHANGE THIS: Put here a description of your selector module.
 	// This label is used if no translation found for key MailingModuleDescXXX where XXX=name is found
-	var $desc="Third parties (by categories)";
+	var $desc="Foundation members with emails (by categories)";
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
 	var $require_admin=0;
 
-	var $require_module=array("categorie","societe");
-	var $picto='company';
+	var $require_module=array("adherent","categorie");
+	var $picto='user';
 	var $db;
 
 
 	// CHANGE THIS: Constructor name must be called mailing_xxx with xxx=name of your selector
-	function mailing_categories($DB)
+	function mailing_framboise($DB)
 	{
 		$this->db=$DB;
 	}
@@ -58,13 +58,13 @@ class mailing_kiwi extends MailingTargets
 		$cibles = array();
 
 		// CHANGE THIS
-		// Select the third parties from category
+		// Select the members from category
 		$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname,";
 		if ($_POST['filter']) $sql.= " llx_categorie.label as label";
 		else $sql.=" null as label";
-		$sql.= " FROM llx_societe as s";
-		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie_societe ON llx_categorie_societe.fk_societe=s.rowid";
-		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie ON llx_categorie.rowid = llx_categorie_societe.fk_categorie";
+		$sql.= " FROM llx_adherent as s";
+		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie_member ON llx_categorie_member.fk_member=s.rowid";
+		if ($_POST['filter']) $sql.= " LEFT JOIN llx_categorie ON llx_categorie.rowid = llx_categorie_member.fk_categorie";
 		$sql.= " WHERE s.email != ''";
 		$sql.= " AND s.entity = ".$conf->entity;
 		if ($_POST['filter']) $sql.= " AND llx_categorie.rowid='".$_POST['filter']."'";
@@ -140,7 +140,7 @@ class mailing_kiwi extends MailingTargets
 		global $conf;
 
 		$sql = "SELECT count(distinct(s.email)) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as s";
 		$sql.= " WHERE s.email != ''";
 		$sql.= " AND s.entity = ".$conf->entity;
 
@@ -167,8 +167,8 @@ class mailing_kiwi extends MailingTargets
 		# Show categories
 		$sql = "SELECT rowid, label, type, visible";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE type in (1,2)";	// We keep only categories for suppliers and customers/prospects
-		// $sql.= " AND visible > 0";	// We ignore the property visible because third party's categories does not use this property (only products categories use it).
+		$sql.= " WHERE type = 3";	// We keep only categories for members
+		// $sql.= " AND visible > 0";	// We ignore the property visible because member's categories does not use this property (only products categories use it).
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " ORDER BY label";
 
@@ -182,11 +182,7 @@ class mailing_kiwi extends MailingTargets
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$type='';
-				if ($obj->type == 1) $type=$langs->trans("Supplier");
-				if ($obj->type == 2) $type=$langs->trans("Customer");
 				$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label,38,'middle');
-				if ($type) $s.=' ('.$type.')';
 				$s.='</option>';
 				$i++;
 			}
@@ -213,7 +209,7 @@ class mailing_kiwi extends MailingTargets
 		//$companystatic->id=$id;
 		//$companystatic->nom='';
 		//return $companystatic->getNomUrl(1);	// Url too long
-		return '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$id.'">'.img_object('',"company").'</a>';
+		return '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$id.'">'.img_object('',"user").'</a>';
 	}
 
 }

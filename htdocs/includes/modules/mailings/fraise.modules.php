@@ -21,7 +21,7 @@
 /**
        	\file       htdocs/includes/modules/mailings/fraise.modules.php
 		\ingroup    mailing
-		\brief      Fichier de la classe permettant de générer la liste de destinataires Fraise
+		\brief      Fichier de la classe permettant de gï¿½nï¿½rer la liste de destinataires Fraise
 		\version    $Id$
 */
 
@@ -29,16 +29,20 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 
 
 /**
-	    \class      mailing_fraise
-		\brief      Classe permettant de générer la liste des destinataires Fraise
-*/
-
+ *	    \class      mailing_fraise
+ *		\brief      Classe permettant de generer la liste des destinataires Fraise
+ */
 class mailing_fraise extends MailingTargets
 {
-    var $name='FundationMembers';                    // Identifiant du module mailing
-    var $desc='Membres de l\'association';           // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
-    var $require_module=array('adherent');  // Module mailing actif si modules require_module actifs
-    var $require_admin=0;                   // Module mailing actif pour user admin ou non
+	// CHANGE THIS: Put here a name not already used
+	var $name='FundationMembers';                    // Identifiant du module mailing
+	// CHANGE THIS: Put here a description of your selector module.
+	// This label is used if no translation found for key MailingModuleDescXXX where XXX=name is found
+    var $desc='Foundation members with emails (by status)';
+	// CHANGE THIS: Set to 1 if selector is available for admin users only
+    var $require_admin=0;
+
+    var $require_module=array('adherent');
     var $picto='user';
 
     var $db;
@@ -116,7 +120,7 @@ class mailing_fraise extends MailingTargets
 
     /**
      *    \brief      Ajoute destinataires dans table des cibles
-     *    \param      mailing_id    Id du mailing concerné
+     *    \param      mailing_id    Id du mailing concernï¿½
      *    \param      filterarray   Requete sql de selection des destinataires
      *    \return     int           < 0 si erreur, nb ajout si ok
      */
