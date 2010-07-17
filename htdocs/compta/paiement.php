@@ -50,7 +50,7 @@ $addwarning=0;
 /*
  * Action add_paiement et confirm_paiement
  */
-if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement')
+if ($_POST['action'] == 'add_paiement' || ($_POST['action'] == 'confirm_paiement' && $_POST['confirm']=='yes'))
 {
 	$error = 0;
 
@@ -81,7 +81,7 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 		}
 	}
 
-	// Effectue les verifications des parametres
+	// Check parameters
 	if ($_POST['paiementid'] <= 0)
 	{
 		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')).'</div>';
@@ -400,13 +400,21 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					if ($deposits) print '+'.price($deposits);
 					print '</td>';
 
-					// Reste a payer
+					// Remain to pay
 					print '<td align="right">'.price(price2num($objp->total_ttc - $paiement - $creditnotes - $deposits,'MT')).'</td>';
 
-					// Montant
+					// Amount
 					print '<td align="right">';
 					$namef = 'amount_'.$objp->facid;
-					print '<input type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
+					if ($_POST["action"] != 'add_paiement')
+					{
+						print '<input type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
+					}
+					else
+					{
+						print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled="true">';
+						print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+					}
 					print "</td>";
 
 					// Warning
@@ -469,12 +477,14 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 			print $fiche_erreur_message;
 		}
 
-		// Formulaire confirmation
+		// Form to confirm payment
 		if ($_POST["action"] == 'add_paiement')
 		{
+			$preselectedchoice=$addwarning?'no':'yes';
+
 			print '<br>';
 			$text=$langs->trans('ConfirmCustomerPayment',$totalpaiement,$langs->trans("Currency".$conf->monnaie));
-			$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion);
+			$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
 		}
 
 		print "</form>\n";
