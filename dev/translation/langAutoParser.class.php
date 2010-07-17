@@ -64,10 +64,12 @@ class langAutoParser {
 				foreach($arraytmp as $dirtmp)
 				{
 					if ($dirtmp['name'] === $this->refLang) continue;	// We discard source language
+					$tmppart=explode('_',$dirtmp['name']);
 					if (preg_match('/^en/i',$dirtmp['name']))  continue;	// We discard en_* languages
 					if (preg_match('/^fr/i',$dirtmp['name']))  continue;	// We discard fr_* languages
 					if (preg_match('/^es/i',$dirtmp['name']))  continue;	// We discard es_* languages
 					if (preg_match('/es_CA/i',$dirtmp['name']))  continue;	// We discard es_CA language
+					if (preg_match('/pt_BR/i',$dirtmp['name']))  continue;	// We discard pt_BR language
 					if (preg_match('/^\./i',$dirtmp['name']))  continue;	// We discard files .*
 					if (preg_match('/^CVS/i',$dirtmp['name']))  continue;	// We discard CVS
 					$targetlangs[]=$dirtmp['name'];
@@ -99,22 +101,24 @@ class langAutoParser {
 					$value = $this->getLineValue($line);
 					if ($key && $value)
 					{
-						$newlines+=$this->translateFileLine($fileContentDest,$file,$key,$value);
+						$newlines+=$this->translateFileLine($fileContentDest,$file,$key,$value,$mydestLang);
 					}
 				}
 
 				$this->updateTranslationFile($destPath,$file);
 				echo "New translated lines: " . $newlines . "<br>\n";
-				$this->time_end = date('Y-m-d H:i:s');
 				#if ($counter ==3) die('fim');
 			}
 		}
 	}
 
 
-	private function updateTranslationFile($destPath,$file){
+	private function updateTranslationFile($destPath,$file)
+	{
+		$this->time_end = date('Y-m-d H:i:s');
 
-		if (count($this->translatedFiles[$file])>0){
+		if (count($this->translatedFiles[$file])>0)
+		{
 			$fp = fopen($destPath, 'a');
 			fwrite($fp, "\r\n");
 			fwrite($fp, "\r\n");
@@ -141,15 +145,16 @@ class langAutoParser {
 	}
 
 	/**
-	 * Put in array translation of a key
+	 * Put in array translatedFiles[$file], line of a new tranlated pair
 	 *
 	 * @param unknown_type $content		Existing content of dest file
-	 * @param unknown_type $file		File name translated (xxxx.lang)
+	 * @param unknown_type $file		Target file name translated (xxxx.lang)
 	 * @param unknown_type $key			Key to translate
 	 * @param unknown_type $value		Existing value in source file
+	 * @param	string					Language code (ie: fr_FR)
 	 * @return	int						0=Nothing translated, 1=Record translated
 	 */
-	private function translateFileLine($content,$file,$key,$value)
+	private function translateFileLine($content,$file,$key,$value,$mydestLang)
 	{
 
 		//print "key    =".$key."\n";
@@ -160,17 +165,18 @@ class langAutoParser {
 			//print "destKey=".$destKey."\n";
 			if ( trim($destKey) == trim($key) )
 			{	// Found already existing translation (key already exits in dest file)
-				 return 0;
+				return 0;
 			}
 		}
 
 		if ($key == 'CHARSET') $val=$this->outputpagecode;
 		else if (preg_match('/^Format/',$key)) $val=$value;
+		else if ($value=='-') $val=$value;
 		else
 		{
 			// If not translated then translate
-			if ($this->outputpagecode == 'UTF-8') $val=$this->translateTexts(array($value),substr($this->refLang,0,2),substr($this->destLang,0,2));
-			else $val=utf8_decode($this->translateTexts(array($value),substr($this->refLang,0,2),substr($this->destLang,0,2)));
+			if ($this->outputpagecode == 'UTF-8') $val=$this->translateTexts(array($value),substr($this->refLang,0,2),substr($mydestLang,0,2));
+			else $val=utf8_decode($this->translateTexts(array($value),substr($this->refLang,0,2),substr($mydestLang,0,2)));
 		}
 
 		$val=trim($val);
@@ -203,8 +209,15 @@ class langAutoParser {
 		return $files;
 	}
 
-	private function translateTexts($src_texts = array(), $src_lang,
-$dest_lang){
+	/**
+	 * Return translation of a value
+	 *
+	 * @param 	$src_texts		Array with one value
+	 * @param 	unknown_type $src_lang
+	 * @param 	unknown_type $dest_lang
+	 * @return 	string			Value translated
+	 */
+	private function translateTexts($src_texts = array(), $src_lang, $dest_lang){
 
 		$tmp=explode('_',$src_lang);
 		if ($tmp[0] == $tmp[1]) $src_lang=$tmp[0];
@@ -216,9 +229,9 @@ $dest_lang){
 		$lang_pair = $src_lang.'|'.$dest_lang;
 
 		$src_texts_query = "";
-		foreach ($src_texts as $src_text){
-			$src_texts_query .= "&q=".urlencode($src_text);
-		}
+		$src_text_to_translate=preg_replace('/%s/','SSSSS',join('',$src_texts));
+
+		$src_texts_query .= "&q=".urlencode($src_text_to_translate);
 
 		$url =
 "http://ajax.googleapis.com/ajax/services/language/translate?v=1.0".$src_texts_query."&langpair=".urlencode($lang_pair);
@@ -239,25 +252,16 @@ $dest_lang){
 		$json = json_decode($body, true);
 
 		if ($json['responseStatus'] != 200){
-			print "Error: ".$json['responseStatus']."\n";
+			print "Error: ".$json['responseStatus']." ".$url."\n";
 			return false;
 		}
 
-		$results = $json['responseData'];
+		$rep=$json['responseData']['translatedText'];
+		$rep=preg_replace('/SSSSS/','%s',$rep);
 
-		$return_array = array();
+		//print "OK ".join('',$src_texts).' => '.$rep."\n";
 
-		foreach ($results as $result){
-			if ($result['responseStatus'] == 200){
-				$return_array[] = $result['responseData']['translatedText'];
-			} else {
-				$return_array[] = false;
-			}
-		}
-
-		//return translated text
-		#return $return_array;
-		return $json['responseData']['translatedText'];
+		return $rep;
 	}
 
 }
