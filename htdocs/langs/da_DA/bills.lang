@@ -387,3 +387,31 @@ ConfirmClassifyPaidPartiallyReasonOther=Beløb opgives for andre grunde
 NoSupplierBillsUnpaid=Nr. leverandører fakturaer vederlagsfri
 CustomerBillsUnpaid=Vederlagsfri kunder fakturaer
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+ClassifyCanceled=Klassificere &#39;Abandoned &quot;
+BillStatusCanceled=Abandoned
+BillShortStatusCanceled=Abandoned
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Dette valg er muligt, hvis din faktura er blevet forsynet med passende kommentar. (Eksempel «Kun den afgift, der svarer til den pris, der rent faktisk var blevet betalt giver ret til fradrag»)
+AlreadyPaidNoCreditNotesNoDeposits=Allerede betalt (uden kreditter og indlån)
+RelatedBill=Relaterede faktura
+RelatedBills=Relaterede fakturaer
+ValidateInvoice=Validér faktura
+Cash=Kontanter
+Reported=Forsinket
+DisabledBecausePayments=Ikke muligt da der er nogle betalinger
+CantRemovePaymentWithOneInvoicePaid=Kan ikke fjerne betaling, da der er mindst på faktura, der er klassificeret betales
+ExpectedToPay=Forventet betaling
+PayedByThisPayment=Betales af denne betaling
+TypeContact_facture_internal_SALESREPFOLL=Repræsentant opfølgning kundefaktura
+TypeContact_facture_external_BILLING=Kundefaktura kontakt
+TypeContact_facture_external_SHIPPING=Kunde shipping kontakt
+TypeContact_facture_external_SERVICE=Kundeservice kontakt
+TypeContact_facture_fourn_internal_SALESREPFOLL=Repræsentant opfølgning leverandør faktura
+TypeContact_facture_fourn_external_BILLING=Leverandør faktura kontakt
+TypeContact_facture_fourn_external_SHIPPING=Leverandør shipping kontakt
+TypeContact_facture_fourn_external_SERVICE=Leverandør service kontakt
+PDFLinceDescription=En komplet faktura model med spanske RE og IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:16).

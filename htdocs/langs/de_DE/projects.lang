@@ -68,3 +68,45 @@ AffectedTo=Betroffene zu
 ListPredefinedInvoicesAssociatedProject=Liste der Kunden vordefinierten Rechnungen im Zusammenhang mit der Projekt
 CantRemoveProject=Dieses Projekt kann nicht entfernt werden, da sie auf die andere Objekte (Rechnungen, Bestellungen oder andere). Siehe referers Registerkarte.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+PrivateProject=Ansprechpartner des Projekts
+MyProjectsDesc=Diese Ansicht wird auf Projekte beschränkt sind Sie Ansprechpartner für (was auch immer der Typ ist).
+ProjectsPublicDesc=Diese Ansicht zeigt alle Projekte dürfen Sie zu lesen sind.
+ProjectsDesc=Diese Ansicht zeigt alle Projekte (Ihrem Benutzer-Berechtigungen erteilen Sie die Erlaubnis, alles sehen können).
+MyTasksDesc=Diese Ansicht wird um Projekte oder Aufgaben beschränkt sind Sie Ansprechpartner für (was auch immer der Typ ist).
+TasksPublicDesc=Diese Ansicht zeigt alle Projekte und Aufgaben, die Sie erlaubt zu lesen sind.
+TasksDesc=Diese Ansicht zeigt alle Projekte und Aufgaben (Ihrem Benutzer-Berechtigungen erteilen Sie die Erlaubnis, alles sehen können).
+Progress=Fortschritt
+ListFichinterAssociatedProject=Liste der Eingriffe mit dem Projekt verbundenen
+ListTripAssociatedProject=Liste der Fahrten und Kosten im Zusammenhang mit dem Projekt verbundenen
+ListActionsAssociatedProject=Liste der Maßnahmen mit dem Projekt verbundenen
+ValidateProject=Validate projet
+ConfirmValidateProject=Sind Sie sicher, dass Sie dieses Projekt zu validieren?
+CloseAProject=Close-Projekt
+ConfirmCloseAProject=Sind Sie sicher, dass Sie dieses Projekt in der Nähe?
+ReOpenAProject=Projekt öffnen
+ConfirmReOpenAProject=Sind Sie sicher, dass Sie wieder zu öffnen, zu diesem Projekt?
+ProjectContact=Projekt-Kontakte
+ActionsOnProject=Aktionen am Projekt
+YouAreNotContactOfProject=Sie sind nicht ein Kontakt von diesem privaten Projekt
+DeleteATimeSpent=Löschen verbrachte Zeit
+ConfirmDeleteATimeSpent=Sind Sie sicher, dass Sie diese Zeit verbracht zu löschen?
+DoNotShowMyTasksOnly=Siehe auch Aufgaben, die ich bin nicht betroffen zu
+ShowMyTasksOnly=Sehen Sie nur Aufgaben, die ich bin betroffen sind,
+TaskRessourceLinks=Ressources
+ProjectsDedicatedToThisThirdParty=Projekte, zu diesem Thema Dritten
+NoTasks=Nr. Aufgaben für dieses Projekt
+LinkedToAnotherCompany=Verbunden mit anderen Dritten
+TypeContact_project_internal_PROJECTLEADER=Projektleiter
+TypeContact_project_external_PROJECTLEADER=Projektleiter
+TypeContact_project_internal_CONTRIBUTOR=Contributor
+TypeContact_project_external_CONTRIBUTOR=Contributor
+TypeContact_project_task_internal_TASKEXECUTIVE=Task Exekutive
+TypeContact_project_task_external_TASKEXECUTIVE=Task Exekutive
+TypeContact_project_task_internal_CONTRIBUTOR=Contributor
+TypeContact_project_task_external_CONTRIBUTOR=Contributor
+DocumentModelBaleine=Ein komplettes Projekt-Berichts-Modell (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:28).

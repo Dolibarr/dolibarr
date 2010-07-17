@@ -388,3 +388,28 @@ NoSupplierBillsUnpaid=Nr. Lieferanten Rechnungen unbezahlt
 CustomerBillsUnpaid=Kunden wegen eines nicht bezahlten Rechnungen
 ShowUnpaidLateOnly=Show Ende unbezahlte Rechnung nur
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Diese Wahl ist möglich, wenn Sie Ihre Rechnung mit passenden Kommentar versehen sein. (Beispiel «Nur die Steuer entsprechend dem Preis, der gezahlt worden tatsächlich gibt Rechte an Abzug»)
+AlreadyPaidNoCreditNotesNoDeposits=Bereits bezahlte (ohne Gutschriften und Einlagen)
+RelatedBill=Verwandte Rechnung
+RelatedBills=Ähnliche Rechnungen
+ValidateInvoice=Validate Rechnung
+Cash=Bargeld
+Reported=Verspätet
+DisabledBecausePayments=Nicht möglich, da gibt es einige Zahlungen
+CantRemovePaymentWithOneInvoicePaid=Kann die Zahlung nicht entfernen, da es zumindest auf der Rechnung bezahlt klassifiziert
+ExpectedToPay=Erwartete Zahlung
+PayedByThisPayment=Bezahlt durch diese Zahlung
+TypeContact_facture_internal_SALESREPFOLL=Repräsentative Follow-up Debitorenrechnung
+TypeContact_facture_external_BILLING=Debitorenrechnung Kontakt
+TypeContact_facture_external_SHIPPING=Customer Versand Kontakt
+TypeContact_facture_external_SERVICE=Kundenservice kontaktieren
+TypeContact_facture_fourn_internal_SALESREPFOLL=Repräsentative Follow-up Lieferantenrechnung
+TypeContact_facture_fourn_external_BILLING=Lieferantenrechnung Kontakt
+TypeContact_facture_fourn_external_SHIPPING=Supplier Versand Kontakt
+TypeContact_facture_fourn_external_SERVICE=Supplier Service Kontakt
+PDFLinceDescription=Eine vollständige Rechnung Modell mit spanischen und RE IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:50).

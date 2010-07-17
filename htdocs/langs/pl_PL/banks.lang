@@ -151,3 +151,17 @@ BackToAccount=Powrót do konta
 ShowAllAccounts=Pokaż wszystkich rachunków
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+BankAccountCountry=Konto landet
+ListTransactions=Liste transaksjoner
+ListTransactionsByCategory=Liste transaksjon / kategori
+AllAccounts=Alle bank / cash kontoer
+BackToAccount=Tilbake til kontoen
+ShowAllAccounts=Vis for alle kontoer
+BankAccountCountry=Account land
+BankAccountCountry=Account land
+BankAccountCountry=Konto kraju
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:17).

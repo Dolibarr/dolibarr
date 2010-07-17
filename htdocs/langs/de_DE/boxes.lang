@@ -73,3 +73,13 @@ BoxTitleTotalUnpaidSuppliersBills=Unbezahlte Rechnungen des Lieferanten
 NoUnpaidCustomerBills=Kunden Nr. unbezahlte Rechnungen
 NoUnpaidSupplierBills=Nr. unbezahlte Rechnungen des Lieferanten
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+BoxLastContracts=Letzte Aufträge
+BoxTitleLastProductsInContract=Letzte %s Produkte / Dienstleistungen in einem Vertrag
+BoxTitleLastContracts=Letzte %s Verträge
+NoModifiedSupplierBills=Nr. aufgezeichnet Lieferantenrechnungen
+NoRecordedContracts=Keine Verträge erfasst
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:25:26).

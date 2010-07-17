@@ -66,3 +66,14 @@ SendingMethodCOLSUI=Colissimo
 DocumentModelSirocco=Yksinkertaisen mallin toimitusten kuitit
 DocumentModelTyphon=Täydellisempi mallin toimitusten kuitit (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+Shipments=Toimitukset
+StatusSendingCanceled=Peruttu
+StatusSendingCanceledShort=Peruttu
+DocumentModelMerou=Merou A5 malli
+DateDeliveryPlanned=Höylätty toimituspäivämäärä
+DateReceived=Päivämäärä toimitus sai
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:41).

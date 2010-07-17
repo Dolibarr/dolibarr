@@ -92,3 +92,41 @@ ProposalLine=Önerisi doğrultusunda
 DocModelAzurDescription=Tam bir öneri modeli (logo. ..)
 DocModelJauneDescription=Jaune modeli önerisi
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+ProposalShort=Forslag
+LastModifiedProposals=Sist endret forslag %s
+DatePropal=Dato for forslaget
+ClonePropal=Clone kommersielle forslag
+ConfirmClonePropal=Er du sikker på at du vil klone denne kommersielle forslaget <b>%s?</b>
+ProposalsAndProposalsLines=Kommersielle forslaget og linjer
+ProposalLine=Forslag linje
+TypeContact_propal_internal_SALESREPFOLL=Representant oppfølging forslag
+TypeContact_propal_external_BILLING=Kunden faktura kontakt
+TypeContact_propal_external_CUSTOMER=Kundekontakt oppfølging forslag
+DocModelRoigDescription=En komplett forslag modell med spansk skatt RE og IRPF
+TypeContact_propal_internal_SALESREPFOLL=Vertegenwoordiger van de follow-up voorstel
+TypeContact_propal_external_BILLING=Klant contact op factuur
+TypeContact_propal_external_CUSTOMER=Klant contact op met de follow-up voorstel
+DocModelRoigDescription=Een compleet model met het voorstel Spaanse belasting RE en IRPF
+DocModelRoigDescription=Een compleet model met het voorstel Spaanse belasting RE en IRPF
+TypeContact_propal_internal_SALESREPFOLL=Przedstawiciela w ślad za wniosek
+TypeContact_propal_external_BILLING=kontakt faktury klienta
+TypeContact_propal_external_CUSTOMER=kontakt klienta w ślad za wniosek
+DocModelRoigDescription=Kompletny model wniosku z podatku hiszpańskiego RE i IRPF
+TypeContact_propal_internal_SALESREPFOLL=Representante proposta seguimento
+TypeContact_propal_external_BILLING=contacto na factura do Cliente
+TypeContact_propal_external_CUSTOMER=Atendimento ao cliente seguinte proposta-up
+DocModelRoigDescription=A proposta do modelo completo com o espanhol fiscais RE e IRPF
+TypeContact_propal_internal_SALESREPFOLL=Представитель следующие меры предложение
+TypeContact_propal_external_BILLING=свяжитесь со счета
+TypeContact_propal_external_CUSTOMER=Абонентский отдел следующие меры предложение
+DocModelRoigDescription=Полная модель предложения с испанского налогового RE и IRPF
+DocModelRoigDescription=Popoln predlog model s španskim davčnim RE in IRPF
+TypeContact_propal_internal_SALESREPFOLL=Temsilci aşağıdaki-up öneri
+TypeContact_propal_external_BILLING=Müşteri fatura temas
+TypeContact_propal_external_CUSTOMER=Müşteri aşağıdaki-up öneri
+DocModelRoigDescription=İspanyol vergi RE ve IRPF ile tam bir öneri modeli
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:52:10).

@@ -99,3 +99,12 @@ DatePropal=Datum des Vorschlags
 ProposalsAndProposalsLines=Kommerzielle Vorschlag und Linien
 ProposalLine=Vorschlag Linie
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+TypeContact_propal_internal_SALESREPFOLL=Repräsentative Follow-up Vorschlag
+TypeContact_propal_external_BILLING=Debitorenrechnung Kontakt
+TypeContact_propal_external_CUSTOMER=Customer Contact Follow-up Vorschlag
+DocModelRoigDescription=Einen vollständigen Vorschlag Modell mit spanischen Steuerbehörden RE und IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:56).

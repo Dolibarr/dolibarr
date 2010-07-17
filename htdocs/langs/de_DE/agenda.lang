@@ -57,3 +57,9 @@ AgendaShowBirthdayEvents=Show Geburtstag Kontakte
 AgendaHideBirthdayEvents=Ausblenden Geburtstag Kontakte
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+InterventionValidatedInDolibarr=Intervention %s validiert
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:28).

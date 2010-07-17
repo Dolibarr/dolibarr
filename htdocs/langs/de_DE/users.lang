@@ -127,3 +127,11 @@ NameToCreate=Name des Dritten zu schaffen
 // Reference language: en_US
 PermissionInheritedFromAGroup=Genehmigung erteilt, weil die von einer der Benutzer-Gruppe.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+Inherited=Ererbt
+YourRole=Ihre Rollen
+YourQuotaOfUsersIsReached=Ihr Kontingent von aktiven Nutzern erreicht ist!
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:17).

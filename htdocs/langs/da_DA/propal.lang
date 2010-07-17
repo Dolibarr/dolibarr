@@ -100,3 +100,12 @@ LastModifiedProposals=Seneste %s ændrede forslag
 DatePropal=Dato for forslag
 ProposalsAndProposalsLines=Kommercielle forslag og linjer
 ProposalLine=Forslag linje
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+TypeContact_propal_internal_SALESREPFOLL=Repræsentant opfølgning forslag
+TypeContact_propal_external_BILLING=Kundefaktura kontakt
+TypeContact_propal_external_CUSTOMER=Kundekontakt opfølgning forslag
+DocModelRoigDescription=Et komplet forslag model med spansk skat RE og IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:22).

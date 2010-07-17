@@ -68,3 +68,14 @@ SendingMethodCOLSUI=Colissimo
 DocumentModelSirocco=Simpelt dokument model for levering kvitteringer
 DocumentModelTyphon=Mere komplet dokument model for levering kvitteringer (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+Shipments=Forsendelser
+StatusSendingCanceled=Aflyst
+StatusSendingCanceledShort=Aflyst
+DocumentModelMerou=Merou A5 model
+DateDeliveryPlanned=Høvlet leveringsdato
+DateReceived=Dato levering modtaget
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:57).

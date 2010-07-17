@@ -90,3 +90,12 @@ ActionAC_COM=Lähetä tilata postitse
 AddActionRendezVous=Lisää Rendezvous tehtävä
 Rendez-Vous=Rendezvous
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+ToDoActions=Puutteellinen toimet
+ToDoActionsFor=Puutteellinen toimia %s
+ActionAC_SUP_ORD=Lähetä toimittaja tilaa postitse
+ActionAC_SUP_INV=Lähetä toimittaja lasku postitse
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:03).

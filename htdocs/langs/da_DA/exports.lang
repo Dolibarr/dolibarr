@@ -77,3 +77,56 @@ ChooseFileToImport=Vælg fil for at importere og klik derefter på picto %s ...
 FieldsInSourceFile=Områder i kildefilen
 FieldsInTargetDatabase=Målret felter i Dolibarr database
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+NotImportedFields=Områder kildefil ikke importeret
+NoDiscardedFields=Ingen felter i source fil kasseres
+FieldOrder=Field For
+FieldTitle=Field titel
+DownloadEmptyExample=Download eksempel på tom kildefil
+ChooseFormatOfFileToImport=Vælg fil-format til brug som import filformat ved at klikke på picto %s for at vælge det ...
+SourceFileFormat=Kilde filformat
+Field=Field
+NoFields=Ingen felter
+MoveField=Flyt feltet kolonne nummer %s
+ExampleOfImportFile=Example_of_import_file
+SaveImportProfile=Gem denne import profil
+ErrorImportDuplicateProfil=Det lykkedes ikke at redde denne import profil med dette navn. En eksisterende profil allerede eksisterer med dette navn.
+ImportSummary=Import setup resumé
+TablesTarget=Målrettet tabeller
+FieldsTarget=Målrettet felter
+TableTarget=Målrettet tabel
+FieldTarget=Målrettet område
+FieldSource=Kilde område
+DoNotImportFirstLine=Importer ikke første linje i kildefilen
+NbOfSourceLines=Antal linjer i kildefilen
+NowClickToTestTheImport=Check import parametre, som du har defineret. Hvis de er korrekte, skal du klikke på knappen <b>&quot;%s&quot;</b> for at starte en simulering af import-processen (ingen data vil blive ændret i databasen, er det kun en simulation for øjeblikket) ...
+RunSimulateImportFile=Start import simulation
+FieldNeedSource=Dette finder i database kræver en data fra kildefil
+SomeMandatoryFieldHaveNoSource=Nogle obligatoriske felter er ingen kilde fra datafil
+InformationOnSourceFile=Oplysninger om kildefil
+InformationOnTargetTables=Oplysninger om målet felter
+SelectAtLeastOneField=Switch mindst én kilde felt i kolonnen for felter for at eksportere
+SelectFormat=Vælg denne import filformat
+RunImportFile=Launch import-fil
+NowClickToRunTheImport=Check følge af import simulering. Hvis alt er ok, lancering af den endelige import.
+DataLoadedWithId=Alle data vil være belastet med det følgende import id: <b>%s</b>
+ErrorMissingMandatoryValue=Obligatorisk data er tom i kildefilen for felt <b>%s.</b>
+TooMuchErrors=Der er stadig <b>%s</b> anden kilde linjer med fejl, men produktionen har været begrænset.
+TooMuchWarnings=Der er stadig <b>%s</b> andre kildelinjer med advarsler, men produktionen har været begrænset.
+EmptyLine=Tom linje (vil blive kasseret)
+CorrectErrorBeforeRunningImport=Du skal først korrigere alle fejl, før du kører endelige import.
+YouCanUseImportIdToFindRecord=Du kan finde alle importerede poster i din database ved at filtrere på feltet <b>import_key = &#39;%s&#39;.</b>
+NbOfLinesOK=Antallet af linjer uden fejl og ingen advarsler: <b>%s.</b>
+NbOfLinesImported=Antallet af linjer med held importeret: <b>%s.</b>
+DataComeFromNoWhere=Værdi at indsætte kommer fra ingenting i kildefilen.
+DataComeFromFileFieldNb=Værdi at indsætte kommer fra feltnummer <b>%s</b> i kildefilen.
+DataComeFromIdFoundFromRef=Værdi, der kommer fra feltnummer <b>%s</b> af kildefilen vil blive brugt til at finde id af overordnede objekt til brug (Altså den objet <b>%s,</b> der har ref. Fra kildefilen skal findes i Dolibarr).
+DataIsInsertedInto=Data kommer fra kildefilen vil blive indsat i følgende felt:
+DataIDSourceIsInsertedInto=Den id af overordnede objekt findes ved brug af data i kildefilen, vil blive indsat i følgende felt:
+SourceRequired=Data værdi er obligatorisk
+SourceExample=Eksempel på mulige dataværdi
+CSVFormatDesc=<b>Semikolonseparerede Værdi</b> filformat (. Csv). <br> Dette er en tekstfil format, hvor felterne er adskilt af separator [%s]. Hvis separator er fundet inde i et felt indhold, er området afrundet med runde karakter [%s]. Escape character at flygte runde karakter er [%s].
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:31).

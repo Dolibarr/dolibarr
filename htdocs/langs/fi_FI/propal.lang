@@ -99,3 +99,12 @@ DatePropal=Päiväys Ehdotuksen
 ProposalsAndProposalsLines=Kaupalliset ehdotusta ja linjat
 ProposalLine=Ehdotus linja
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+TypeContact_propal_internal_SALESREPFOLL=Edustaja seurantaan ehdotus
+TypeContact_propal_external_BILLING=Asiakkaan lasku yhteystiedot
+TypeContact_propal_external_CUSTOMER=Asiakas ottaa yhteyttä seurantaan ehdotus
+DocModelRoigDescription=Täydellinen ehdotus malli Espanjan vero RE ja IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:11).

@@ -96,3 +96,15 @@ CatSupList=Elenco delle categorie fornitore
 CatCusList=Elenco delle categorie dei clienti / prospetti 
 CatProdList=Elenco delle categorie dei prodotti
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+MembersCategoriesArea=Membri categorie area
+MemberIsInCategories=Questo membro è di proprietà seguenti categorie di soci
+MemberHasNoCategory=Questo membro non è in alcun categorie
+MembersCategoryShort=Membri categoria
+MembersCategoriesShort=Membri categorie
+ThisCategoryHasNoMember=Questa categoria non contiene alcun membro.
+CatMemberList=Elenco dei membri categorie
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:32).

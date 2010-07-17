@@ -30,3 +30,9 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL til at tilbyde en %s online betalin
 YouCanAddTagOnUrl=Du kan også tilføje webadresseparameter <b>&amp; tag= <i>værdi</i></b> til nogen af disse URL (kræves kun for fri betaling) for at tilføje din egen betaling kommentere tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Opret din PayBox med <b>url %s</b> for at få betaling oprettes automatisk, når valideret af paybox.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL til at tilbyde en %s online betaling brugergrænseflade til et medlem abonnement
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).

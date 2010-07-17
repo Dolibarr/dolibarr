@@ -58,3 +58,10 @@ AgendaShowBirthdayEvents=Vis fødselsdag kontakter
 AgendaHideBirthdayEvents=Skjul fødselsdag kontakter
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+MenuToDoActions=Alle ufuldstændige tiltag
+InterventionValidatedInDolibarr=Intervention %s valideret
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:56).

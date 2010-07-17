@@ -134,3 +134,12 @@ NotUsedForGoods=Nicht für Waren
 OptionModeTrueDesc=In diesem Zusammenhang, der Umsatz wird über die Zahlungen (Zeitpunkt der Zahlungen). \ nDie Gültigkeit der Daten gewährleistet ist, nur dann, wenn die Buchführung geprüft werden durch die Input / Output über die Konten über Rechnungen.
 SupplierAccountancyCode=Supplier Code Buchführungen
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+TaxModuleSetupToModifyRules=Zur <a href="%s">Setup-Modul</a> zur Berechnung ändern Vorschriften für
+VATReportBuildWithOptionDefinedInModule=Ausgewiesenen Beträge sind hier anhand von Regeln Tax Modul Setup definiert.
+SocialContributionsPayments=Sozialbeiträge Zahlungen
+ThirdPartyMustBeEditAsCustomer=Dritten muss als Kunde definiert werden
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:24:53).

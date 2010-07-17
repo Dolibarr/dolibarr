@@ -119,3 +119,11 @@ ConfirmCreateLogin=Sei sicuro di voler creare un account per questo membro Dolib
 ConfirmCreateThirdParty=Sei sicuro di voler creare un terzo da questo utente?
 NameToCreate=Nome di terzi da creare
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+Inherited=Ereditato
+YourRole=Il tuo ruolo
+YourQuotaOfUsersIsReached=La tua quota di utenti attivi è raggiunto!
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:33).

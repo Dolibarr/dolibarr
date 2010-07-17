@@ -127,3 +127,11 @@ CreateInternalUserDesc=Tämän lomakkeen avulla voit luotu käyttäjän sisäine
 InternalExternalDesc=<b>Sisäinen</b> käyttäjä on käyttäjä, joka on osa yrityksen / perusta. <br> <b>Ulkoinen</b> käyttäjä on asiakas, toimittaja tai muu. <br><br> Molemmissa tapauksissa, oikeudet määritellään oikeuksia Dolibarr myös ulkoinen käyttäjä voi olla eri valikosta johtaja kuin sisäinen käyttäjä (Katso etusivu - Asetukset - Display)
 PermissionInheritedFromAGroup=Lupa myönnettiin, koska periytyy yhden käyttäjän ryhmä.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+Inherited=Peritty
+YourRole=Omat roolit
+YourQuotaOfUsersIsReached=Tilakiintiösi aktiivisia käyttäjiä on saavutettu!
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:28).

@@ -192,3 +192,27 @@ Experimental=(experimental, non operaţionale)
 MigrationUpdateFailed=Eşuare proces de actualizare
 MigrationBankTransfertsUpdate=Update-uri utile tranzacţie între bancă şi un transfer bancar
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+ForceHttps=Forţa de conexiuni securizate (HTTPS)
+CheckToForceHttps=Bifaţi această opţiune pentru a forţa conexiuni securizate (HTTPS). <br> Aceasta implică faptul că serverul de web este configurat cu un certificat SSL.
+DirectoryRecommendation=Este recomandat să utilizaţi un director din afara directorul de paginile dvs. de web.
+KeepDefaultValuesDeb=Puteţi utiliza expertul de configurare Dolibarr dintr-un pachet Debian sau Ubuntu, asa ca valorile propuse aici sunt deja optimizate. Numai parola proprietarul bazei de date pentru a crea trebuie completate. Schimbarea alţi parametri numai daca stii ce faci.
+InstallChoiceRecommanded=Recomandat alegere pentru a instala <b>%s</b> versiunea curentă de la <b>%s</b> versiunea dvs.
+CheckThatDatabasenameIsCorrect=Verificaţi că numele bazei de date <b>&quot;%s&quot;</b> este corectă.
+IfAlreadyExistsCheckOption=În cazul în care acest nume este corectă şi că baza de date nu există încă, trebuie să verificaţi opţiunea &quot;Creare de baze de date&quot;.
+OpenBaseDir=PHP openbasedir parametru
+YouAskToCreateDatabaseSoRootRequired=Aţi bifat caseta &quot;Crearea bazei de date&quot;. Pentru aceasta, aveţi nevoie pentru a oferi autentificare user / parola de superuser (partea de jos a formularului).
+YouAskToCreateDatabaseUserSoRootRequired=Aţi bifat caseta &quot;Crearea proprietarul bazei de date&quot;. Pentru aceasta, aveţi nevoie pentru a oferi autentificare user / parola de superuser (partea de jos a formularului).
+NextStepMightLastALongTime=pasul curent poate dura câteva minute. Vă rugăm să aşteptaţi până când ecranul următor este prezentată complet înainte de a continua.
+MigrationCustomerOrderShipping=Migrarea de transport maritim pentru depozitare client comenzi
+MigrationShippingDelivery=Upgrade-ul de stocare de transport maritim
+MigrationShippingDelivery2=Upgrade-ul de stocare de transport maritim 2
+MigrationFixData=Fix pentru datele denormalized
+MigrationRelationshipTables=migrarea datelor pentru tabelele relaţia (%s)
+MigrationProjectTaskActors=migrare de date pentru tabel llx_projet_task_actors
+MigrationProjectUserResp=Datele fk_user_resp domeniul migraţiei de la llx_projet llx_element_contact
+MigrationProjectTaskTime=Update timpul petrecut în câteva secunde
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:39:31).

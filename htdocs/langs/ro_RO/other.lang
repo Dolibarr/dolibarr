@@ -172,3 +172,36 @@ EMailTextInvoiceValidated=Factura %s validate
 ImportedWithSet=Importul set de date
 DolibarrNotification=Automat de notificare
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+Notify_NOTIFY_VAL_ORDER=Pentru clienţilor validate
+Notify_NOTIFY_VAL_PROPAL=Propunerea clienţilor validate
+PredefinedMailTest=Acesta este un e-mail de test. \ NMesajul două linii sunt separate printr-un retur de car.
+PredefinedMailTestHtml=Acesta este un e-mail <b>de testare</b> (test de cuvânt trebuie să fie în aldine). <br> Cele două linii sunt separate printr-un retur de car.
+CalculatedWeight=Calculat în greutate
+CalculatedVolume=Calculat volum
+Length=Lungime
+LengthUnitm=m
+LengthUnitdm=dm
+LengthUnitcm=cm
+LengthUnitmm=mm
+Surface=Zonă
+SurfaceUnitm2=m2
+SurfaceUnitdm2=dm2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+NumberOfUnitsProposals=Numărul de unităţi cu privire la propunerile pe ultimele 12 luni
+EMailTextProposalValidated=Propunerea %s a fost validat.
+EMailTextOrderValidated=Pentru %s a fost validat.
+ResizeDesc=Introduceţi lăţimea noi <b>sau</b> înălţimea noi. Raportul va fi păstrat în timpul redimensionare ...
+NewLength=Noi lăţime
+NewHeight=Noua înălţime
+NewSizeAfterCropping=noi dimensiuni după recoltare
+DefineNewAreaToPick=Definiţi zona noi pe imagine pentru a alege (click stanga pe imagine, apoi glisaţi până când ajunge la coltul opus)
+CurrentInformationOnImage=Informatii privind imaginea curentă
+YouReceiveMailBecauseOfNotification=Veţi primi acest mesaj deoarece adresa dvs. de email a fost adăugat la lista de obiective care urmează să fie informat cu privire la evenimentele special în software-ul de %s %s.
+YouReceiveMailBecauseOfNotification2=Acest eveniment este următoarea:
+ExternalSites=Site-uri externe
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:39:26).

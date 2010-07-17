@@ -162,3 +162,13 @@ NoThirdPartyAssociatedToMember=Keine dritte Person im Zusammenhang mit diesem Mi
 ThirdPartyDolibarr=Dolibarr Dritten
 MembersAndSubscriptions=Mitglieder und Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Email-Betreff für Mitglieder autosubscription
+DescADHERENT_AUTOREGISTER_MAIL=Email for Mitglied autosubscription
+DescADHERENT_CARD_TYPE=Format der Karten-Seite
+DescADHERENT_CARD_TEXT_RIGHT=Text auf Karten Mitglied (gedruckt align rechts)
+DescADHERENT_MAILMAN_LISTS=List (s) zur automatischen Papierabnahme neuer Mitglieder (durch ein Komma getrennt)
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:31).

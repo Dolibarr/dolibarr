@@ -279,3 +279,28 @@ CountryCH=Sveitsi
 CountryIE=Irlanti
 CountryMA=Marokko
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+CurrencySingAUD=AU dollari
+CurrencySingCAD=CAN dollari
+CurrencySingCHF=Sveitsin frangi
+CurrencySingEUR=Euro
+CurrencySingFRF=Ranskan frangi
+CurrencySingGBP=GB Pound
+CurrencyINR=Intian rupia
+CurrencySingINR=Intian rupia
+CurrencySingMAD=Dirham
+CurrencySingMGA=Ariary
+CurrencyMUR=Mauritius rupia
+CurrencySingMUR=Mauritius rupia
+CurrencyNOK=Norja Krones
+CurrencySingNOK=Norja kruunu
+CurrencySingTND=Tunisian dinaari
+CurrencySingUSD=Yhdysvaltain dollari
+CurrencySingXAF=CFA-frangi BEAC
+CurrencySingXOF=CFA: n frangin BCEAO
+CurrencyXPF=YKP Francs
+CurrencySingXPF=CFP-frangi
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:15).

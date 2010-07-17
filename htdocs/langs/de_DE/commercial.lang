@@ -97,3 +97,10 @@ Rendez-Vous=Rendez-Vous
 // Reference language: en_US
 AddActionRendezVous=Fügen Sie ein Rendezvous Aufgabe
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+ActionAC_SUP_ORD=Senden Anbieter per Post bestellen
+ActionAC_SUP_INV=Senden Lieferanten Rechnung per Post
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:24:54).

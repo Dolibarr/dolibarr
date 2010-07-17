@@ -10,3 +10,29 @@ FailedToConnectToFTPServer=Geen verbinding maken met server (FTP-server: %s, poo
 FailedToConnectToFTPServerWithCredentials=Inloggen met de geconfigureerde login/wachtwoord FTP mislukt
 FTPFailedToRemoveFile=Bestand <b>%s</b> verwijderen mislukt.
 FTPFailedToRemoveDir=Map <b>%s</b> verwijderen mislukt (Controleer de rechten en of de map leeg is).
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+CHARSET=UTF-8
+FTPClientSetup=FTP klient modul oppsett
+NewFTPClient=Ny FTP tilkoblingsoppsettet
+FTPArea=FTP området
+FTPAreaDesc=Denne skjermen viser innholdet på en FTP server visning
+SetupOfFTPClientModuleNotComplete=Oppsett av FTP-klient modul synes å være ikke fullstendig
+FTPFeatureNotSupportedByYourPHP=Din PHP støtter ikke FTP-funksjoner
+FailedToConnectToFTPServer=Kunne ikke koble til FTP-server (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Klarte å logge inn på FTP-server med definert brukernavn og passord
+FTPFailedToRemoveFile=Klarte å fjerne filen <b>%s.</b>
+FTPFailedToRemoveDir=Kunne ikke fjerne katalogen <b>%s</b> (Sjekk tillatelser, og at katalogen er tom).
+CHARSET=UTF-8
+FTPClientSetup=FTP-client module setup
+NewFTPClient=Nieuwe FTP-verbinding instellen
+FTPArea=FTP Ruimte
+FTPAreaDesc=Dit scherm toont u de inhoud van een FTP-server bekijken
+SetupOfFTPClientModuleNotComplete=Instellen van FTP-client module lijkt niet compleet
+FTPFeatureNotSupportedByYourPHP=Uw PHP ondersteunt geen FTP-functies
+FailedToConnectToFTPServer=Mislukt om verbinding te maken met FTP-server (server sssss, haven sssss)
+FailedToConnectToFTPServerWithCredentials=Mislukt in te loggen op FTP-server met een gedefinieerde login / paswoord
+FTPFailedToRemoveFile=Fout bij het verwijderen van <b>sssss</b> bestand.
+FTPFailedToRemoveDir=Mislukt (directory verwijderen <b>sssss</b> machtigingen Controleer en die map leeg is).
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:22).

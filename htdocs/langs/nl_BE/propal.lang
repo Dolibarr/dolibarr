@@ -88,3 +88,23 @@ DatePropal=Datum van het voorstel
 ProposalsAndProposalsLines=Commerciële voorstel en lijnen
 ProposalLine=Voorstel lijn
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+ProposalShort=Forslag
+LastModifiedProposals=Sist endret forslag %s
+DatePropal=Dato for forslaget
+ClonePropal=Clone kommersielle forslag
+ConfirmClonePropal=Er du sikker på at du vil klone denne kommersielle forslaget <b>%s?</b>
+ProposalsAndProposalsLines=Kommersielle forslaget og linjer
+ProposalLine=Forslag linje
+TypeContact_propal_internal_SALESREPFOLL=Representant oppfølging forslag
+TypeContact_propal_external_BILLING=Kunden faktura kontakt
+TypeContact_propal_external_CUSTOMER=Kundekontakt oppfølging forslag
+DocModelRoigDescription=En komplett forslag modell med spansk skatt RE og IRPF
+TypeContact_propal_internal_SALESREPFOLL=Vertegenwoordiger van de follow-up voorstel
+TypeContact_propal_external_BILLING=Klant contact op factuur
+TypeContact_propal_external_CUSTOMER=Klant contact op met de follow-up voorstel
+DocModelRoigDescription=Een compleet model met het voorstel Spaanse belasting RE en IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:52:05).

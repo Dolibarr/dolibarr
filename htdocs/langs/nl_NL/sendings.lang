@@ -58,3 +58,31 @@ NumRefModelJade=Terugkeer van een referentienummer met formaat BLYY00001, ... wa
 # ModelDocument
 DocumentModelSirocco=Voorbeeld voor eenvoudige ontvangstbewijs
 DocumentModelTyphon=Model ontvangstbewijs volledige levering (logo...)
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+Shipments=Skipninger
+StatusSendingCanceled=Kansellert
+StatusSendingCanceledShort=Kansellert
+DocumentModelMerou=Merou A5 modell
+WarningNoQtyLeftToSend=Advarsel, ingen produkter venter sendes.
+StatsOnShipmentsOnlyValidated=Statistikk utført på forsendelser bare validert
+DateDeliveryPlanned=Høvlet levering
+DateReceived=Dato levering mottatt
+SendingMethodCATCH=Catch av kunde
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=Enkelt dokument modellen for levering kvitteringer
+DocumentModelTyphon=Mer fullstendig dokument modellen for levering kvitteringer (logo. ..)
+Shipments=Zendingen
+StatusSendingCanceled=Geannuleerd
+StatusSendingCanceledShort=Geannuleerd
+DocumentModelMerou=Merou A5 model
+DateDeliveryPlanned=Geschaafd datum van levering
+DateReceived=Datum van aflevering ontvangen
+Shipments=Zendingen
+DocumentModelMerou=Merou A5 model
+DateDeliveryPlanned=Geschaafd datum van levering
+DateReceived=Datum van aflevering ontvangen
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:07).

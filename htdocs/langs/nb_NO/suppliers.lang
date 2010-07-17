@@ -33,3 +33,10 @@ AddCustomerInvoice=Opprett kundefaktura
 AddSupplierOrder=Opprett innkjøpsordre
 AddSupplierInvoice=Opprett innkjøpsfaktura
 ListOfSupplierProductForSupplier=Oversikt over produkter og priser for leverandøren <b>%s</b>
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Denne referansen leverandøren er allerede tilknyttet en referanse: %s
+NoneOrBatchFileNeverRan=Ingen eller batch <b>%s</b> ikke løp nylig
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:52:11).

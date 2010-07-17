@@ -83,3 +83,17 @@ AverageUnitPricePMP=Durchschnittliche Input Preis
 EstimatedStockValueShort=Geschätzter Wert der Aktie
 EstimatedStockValue=Geschätzter Wert der Aktie
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+WarehouseEdit=Ändern Lagerhalle
+ReStockOnDispatchOrder=Steigern realen Bestände auf manuelle Dispatching in Hallen, nach Erhalt Lieferanten bestellen
+OrderStatusNotReadyToDispatch=Auftrag wurde noch nicht oder nicht mehr ein Status, der Erzeugnisse auf Lager Hallen Versand ermöglicht.
+NoPredefinedProductToDispatch=Keine vordefinierten Produkte für dieses Objekt. Also kein Versand im Lager erforderlich ist.
+DispatchVerb=Versand
+DeleteAWarehouse=Löschen einer Lagerhalle
+ConfirmDeleteWarehouse=Sind Sie sicher, dass Sie löschen <b>%s</b> das Lager?
+PersonalStock=Persönliche Lager %s
+ThisWarehouseIsPersonalStock=Dieses Lager stellt persönliche Bestandsaufnahme sssss sssss
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:19).

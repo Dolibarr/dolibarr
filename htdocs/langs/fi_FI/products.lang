@@ -166,3 +166,18 @@ ClonePricesProduct=Klooni tärkeimmät tiedot ja hinnat
 // Reference language: en_US
 LastRecordedProductsAndServices=Viimeisin %s kirjataan tuotteet / palvelut
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+ProductAccountancyBuyCode=Kirjanpidon koodi (osta)
+ProductAccountancySellCode=Kirjanpidon koodi (myydä)
+SellingPriceHT=Myyntihinta (ilman veroja)
+SellingPriceTTC=Myyntihinta (sis. alv)
+ListProductServiceByPopularity=Luettelo tuotteiden tai palveluiden suosion
+ListServiceByPopularity=Luettelo palvelujen suosio
+ProductIsUsed=Tämä tuote on käytetty
+NewRefForClone=Ref. uuden tuotteen tai palvelun
+CustomerPrices=Asiakkaat hinnat
+SuppliersPrices=Toimittajat hinnat
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:33).

@@ -102,3 +102,15 @@ CatSupList=Liste over leverandør kategorier
 CatCusList=Liste over kunde / udsigt kategorier
 CatProdList=Liste over produkter kategorier
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+MembersCategoriesArea=Medlemmer kategorier område
+MemberIsInCategories=Dette medlem ejer til følgende medlemmer kategorier
+MemberHasNoCategory=Dette medlem er ikke på nogen kategorier
+MembersCategoryShort=Medlemmer kategori
+MembersCategoriesShort=Medlemmer kategorier
+ThisCategoryHasNoMember=Denne kategori indeholder ikke et medlem.
+CatMemberList=Liste over medlemmer kategorier
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:43).

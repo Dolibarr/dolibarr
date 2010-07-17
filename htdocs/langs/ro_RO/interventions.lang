@@ -47,3 +47,10 @@ PacificNumRefModelError=O carte de intervenţie începând cu $ syymm există de
 // Reference language: en_US
 ModifyIntervention=Modificare de intervenţie
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+ModifyIntervention=Endre intervensjon
+DocumentModelStandard=Standard dokumentet modell for intervensjoner
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:47:07).

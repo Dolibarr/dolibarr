@@ -105,3 +105,25 @@ ConfirmDeleteContractLine=Вы уверены, что хотите удалит�
 PaymentRenewContractId=Продлить контракт линия (номер %s)
 ExpiredSince=Срок действия
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+CHARSET=UTF-8
+ServiceStatusNotLate=Running, ikke er utløpt
+ServiceStatusNotLateShort=Ikke er utløpt
+ServiceStatusLateShort=Utløpt
+ListOfInactiveServices=Liste over ikke aktive tjenester
+ListOfExpiredServices=Liste over utløpt aktive tjenester
+ListOfClosedServices=Liste over lukkede tjenester
+DeleteContractLine=Slette en kontrakt linje
+ConfirmDeleteContractLine=Er du sikker på at du vil slette denne kontrakten linje?
+PaymentRenewContractId=Forny kontrakt linje (antall %s)
+ExpiredSince=Utløpsdato
+RelatedContracts=Relaterte kontrakter
+RelatedContracts=Gerelateerde contracten
+RelatedContracts=Gerelateerde contracten
+RelatedContracts=Związane z nimi umowy
+RelatedContracts=contratos relacionados
+RelatedContracts=Связанные контрактов
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:41).

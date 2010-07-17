@@ -205,3 +205,26 @@ MigrationStockDetail=Aggiornamento del valore delle scorte di prodotti
 MigrationMenusDetail=Aggiornamento dinamico menu tabelle
 MigrationDeliveryAddress=Aggiornamento indirizzo di consegna in spedizioni
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+ForceHttps=Forzare connessioni sicure (HTTPS)
+CheckToForceHttps=Seleziona questa opzione per forzare le connessioni sicure (HTTPS). <br> Ciò richiede che il server Web è configurato con un certificato SSL.
+DirectoryRecommendation=E &#39;raccomandato di utilizzare una directory al di fuori della directory delle tue pagine web.
+KeepDefaultValuesDeb=Si utilizza la configurazione guidata Dolibarr da un pacchetto Debian o Ubuntu, per cui i valori proposti qui sono già ottimizzati. Solo la password del proprietario del database per creare deve essere completata. Modificare i parametri di altri solo se sai quello che fai.
+CheckThatDatabasenameIsCorrect=Controllare che il nome del database <b>&quot;%s&quot;</b> è corretta.
+IfAlreadyExistsCheckOption=Se questo nome sia corretto e che la base non esiste ancora, è necessario verificare l&#39;opzione &quot;CREATE DATABASE&quot;.
+OpenBaseDir=PHP openbasedir parametro
+YouAskToCreateDatabaseSoRootRequired=Hai selezionato la casella &quot;CREATE DATABASE&quot;. Per questo, è necessario fornire nome utente / password di superuser (parte inferiore del modulo).
+YouAskToCreateDatabaseUserSoRootRequired=Hai selezionato la casella &quot;Crea il proprietario del database&quot;. Per questo, è necessario fornire nome utente / password di superuser (parte inferiore del modulo).
+NextStepMightLastALongTime=passaggio di corrente può durare diversi minuti. Vi preghiamo di attendere la schermata successiva è mostrata completamente prima di continuare.
+MigrationCustomerOrderShipping=Migrare spedizione per la conservazione degli ordini dei clienti
+MigrationShippingDelivery=stoccaggio di aggiornamento di spedizione
+MigrationShippingDelivery2=stoccaggio di aggiornamento di spedizione 2
+MigrationFixData=Fix per i dati denormalizzati
+MigrationRelationshipTables=la migrazione dei dati per le tabelle rapporto (%s)
+MigrationProjectTaskActors=la migrazione dei dati per llx_projet_task_actors tavolo
+MigrationProjectUserResp=fk_user_resp migrazione dei dati per settore di llx_projet llx_element_contact
+MigrationProjectTaskTime=Aggiornare il tempo trascorso in secondi
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:35:36).

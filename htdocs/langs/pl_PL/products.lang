@@ -168,3 +168,48 @@ ClonePricesProduct=Clone główne informacje i ceny
 // Reference language: en_US
 LastRecordedProductsAndServices=Ostatnia %s rejestrowane produkty / usługi
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+ProductRef=Produkt Ref.
+ProductLabel=Etiketten
+ProductAccountancyBuyCode=Revisjon kode (kjøpe)
+ProductAccountancySellCode=Revisjon kode (selge)
+SellingPriceHT=Salgspris (etter skatt)
+SellingPriceTTC=Salgspris (inkl. skatt)
+MinPrice=Minim. salgspris
+CantBeLessThanMinPrice=Salgsprisen kan ikke være lavere enn minste tillatte for dette produktet (%s uten skatt)
+ExportDataset_service_1=Tjenester
+ListProductServiceByPopularity=Liste over produkter / tjenester etter popularitet
+ListServiceByPopularity=Liste av tjenester etter popularitet
+CloneProduct=Klon produkt eller tjeneste
+ConfirmCloneProduct=Er du sikker på at du vil klone produktet eller tjenesten <b>%s?</b>
+CloneContentProduct=Klon alle de viktigste informasjoner av produkt / tjeneste
+ClonePricesProduct=Klone viktigste informasjon og priser
+ProductIsUsed=Dette produktet brukes
+NewRefForClone=Ref. av nye produkt / tjeneste
+CustomerPrices=Kunder priser
+SuppliersPrices=Leverandører priser
+ProductAccountancyBuyCode=Accountancy-code (kopen)
+ProductAccountancySellCode=Accountancy-code (verkopen)
+SellingPriceHT=Verkoopprijs (exclusief BTW)
+SellingPriceTTC=Verkoopprijs (incl. btw)
+ListProductServiceByPopularity=Lijst van producten / diensten op populariteit
+ListServiceByPopularity=Lijst van diensten door de populariteit
+ProductIsUsed=Dit product wordt gebruikt
+NewRefForClone=Ref. van nieuwe product / dienst
+CustomerPrices=Klanten prijzen
+SuppliersPrices=Leveranciers prijzen
+Create=Creëren
+ProductAccountancyBuyCode=Kod Rachunkowości (kupić)
+ProductAccountancySellCode=Kod Rachunkowości (sprzedaż)
+SellingPriceHT=Cena sprzedaży (bez podatku)
+SellingPriceTTC=Cena sprzedaży (w tym podatkowych)
+ListProductServiceByPopularity=Wykaz produktów / usług przez popularność
+ListServiceByPopularity=Wykaz usług według popularności
+ProductIsUsed=Ten produkt jest używany
+NewRefForClone=Ref. nowych produktów / usług
+CustomerPrices=Klientów cenami
+SuppliersPrices=Dostawcy cen
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:46:57).

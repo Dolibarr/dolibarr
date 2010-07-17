@@ -118,3 +118,40 @@ NameToCreate=第三党的名称创建
 YourRole=您的角色
 YourQuotaOfUsersIsReached=你的活跃用户达到配额！
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator med alle rettigheter
+LinkToCompanyContact=Lenke til tredjepart / kontakt
+LinkedToDolibarrMember=Link til medlem
+LinkedToDolibarrUser=Link til Dolibarr brukeren
+LinkedToDolibarrThirdParty=Link til Dolibarr tredjepart
+CreateDolibarrThirdParty=Lag en tredjepart
+Inherited=Arvet
+ConfirmCreateLogin=Er du sikker på at du vil opprette en Dolibarr konto for medlemmet?
+ConfirmCreateThirdParty=Er du sikker på at du vil opprette en tredje part for medlemmet?
+NameToCreate=Navn på tredjepart til å lage
+YourRole=Din roller
+YourQuotaOfUsersIsReached=Din kvote på aktive brukere er nådd!
+Inherited=Erfelijke
+YourRole=Uw rol
+YourQuotaOfUsersIsReached=Uw quotum van actieve gebruikers is bereikt!
+YourQuotaOfUsersIsReached=Uw quotum van actieve gebruikers is bereikt!
+Inherited=Odziedziczone
+YourRole=Swoje role
+YourQuotaOfUsersIsReached=Limitu aktywnych użytkowników został osiągnięty!
+Inherited=Herdado
+YourRole=Seus papéis
+YourQuotaOfUsersIsReached=Seu contingente de usuários ativos é atingida!
+Inherited=Унаследованный
+YourRole=Ваша роль
+YourQuotaOfUsersIsReached=Квота активных пользователей будет достигнута!
+Inherited=Podedoval
+YourRole=Vaša vloga
+YourQuotaOfUsersIsReached=Vaš kvote aktivnih uporabnikov je dosežen!
+Inherited=Miras
+YourRole=Sizin rolleri
+YourQuotaOfUsersIsReached=aktif kullanıcıların Kotanız ulaşılır!
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:46:28).

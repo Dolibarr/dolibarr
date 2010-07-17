@@ -563,3 +563,52 @@ Day5=Vineri
 Day6=Sâmbătă
 Day0=Duminică
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+FormatHourShortDuration=%H:%M
+NoError=Nicio eroare
+ErrorNoSocialContributionForSellerCountry=Eroare, nici un tip de contribuţii sociale definite pentru ţară &quot;%s&quot;.
+BackgroundColorByDefault=Implicit culoare de fundal
+FileWasNotUploaded=Un fişier este selectat pentru ataşarea dar nu a fost încă încărcat. Faceţi clic pe &quot;dosar Ataşaţi&quot; pentru acest lucru.
+NbOfEntries=Nb de intrări
+Resize=Redimensionarea
+Recenter=Recenter
+NumberByMonth=Numărul de luni
+KiloBytes=Kilobytes
+MegaBytes=Megabytes
+GigaBytes=Gigaocteţi
+b=b.
+Kb=Kb
+Mb=Mb
+Gb=Gb
+AmountLT1ES=Suma RE
+AmountLT2ES=Suma IRPF
+TotalLT1ES=Total RE
+TotalLT2ES=Total IRPF
+Available=Disponibil
+Examples=Exemple
+Reason=Motiv
+SendByMail=Trimite prin e-mail
+DocumentsNb=fişierele legate (%s)
+PrintContentArea=Afişaţi pagina pentru a imprima zona conţinutul principal
+NoMenu=Nici un sub-meniu
+WarningYouAreInMaintenanceMode=Atenţie, vă aflaţi într-un mod de întreţinere, numai login <b>%s</b> acest lucru este permis să utilizeze aplicaţia în acest moment.
+CreditCard=Card de credit
+FieldsWithAreMandatory=Campurile marcate cu <b>%s</b> sunt obligatorii
+FieldsWithIsForPublic=Campurile marcate cu <b>%s</b> sunt afişate pe lista publică, de membri. Dacă nu doriţi acest lucru, a verifica &quot;public&quot; cutie.
+AccordingToGeoIPDatabase=(În funcţie de conversie GeoIP)
+Line=Linie
+NotSupported=Nu este suportat
+RequiredField=Câmp obligatoriu
+Result=Rezultat
+ToTest=Încercare
+ValidateBefore=Carte trebuie să fie validate înainte de a utiliza această caracteristică
+Visibility=Vizibilitate
+Private=Privat
+Hidden=Ascuns
+Resources=Resurse
+Source=Sursă
+Prefix=Prefix
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:39:15).

@@ -30,3 +30,9 @@ DonationsModels					 =Modelli di documento per ricevute donazione
 CHARSET=UTF-8
 Donations=Donazioni
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+ValidPromess=Valida promessa
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:52).

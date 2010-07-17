@@ -83,3 +83,19 @@ AverageUnitPricePMP=Gennemsnitlig input pris
 EstimatedStockValueShort=Anslåede værdi af materiel
 EstimatedStockValue=Anslåede værdi af materiel
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+WarehouseEdit=Rediger lager
+DeStockOnShipment=Formindsk reelle bestande om overførsel validering
+ReStockOnDispatchOrder=Øge den reelle bestande på manuel ekspedition i pakhuse, efter at leverandøren ordremodtagelse
+OrderStatusNotReadyToDispatch=Ordren er endnu ikke eller ikke mere en status, der tillader forsendelse af varer på lager lagre.
+StockDiffPhysicTeoric=Årsag til forskel bestand fysisk og teoretisk
+NoPredefinedProductToDispatch=Ingen foruddefinerede produkter for dette objekt. Så ingen ekspedition på lager er påkrævet.
+DispatchVerb=Forsendelse
+DeleteAWarehouse=Slet et lager
+ConfirmDeleteWarehouse=Er du sikker på du vil slette lageret <b>%s?</b>
+PersonalStock=Personligt lager %s
+ThisWarehouseIsPersonalStock=Denne lagerhal er personlig status over %s %s
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:46).

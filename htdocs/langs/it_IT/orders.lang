@@ -132,3 +132,11 @@ AddDeliveryCostLine					=Aggiungi un costo di consegna linea che indica il peso 
 
 # einstein PDF Model
 PDFEinsteinDescription					=Un modello completo per gli ordini (logo,etc)
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+OrderToProcess=Ordine di processo
+PDFEdisonDescription=Un modello semplice ordine
+PDFQuevedoDescription=Un modello di ordine completo con lo spagnolo RE e IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:29).

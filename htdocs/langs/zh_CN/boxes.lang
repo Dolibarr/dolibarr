@@ -64,3 +64,56 @@ NoRecordedProducts=没有记录的产品/服务
 NoRecordedProspects=没有记录的前景
 NoContractedProducts=没有产品/服务合同
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:08:18).
+// Reference language: en_US
+BoxLastContracts=Siste kontrakter
+LastRefreshDate=Siste oppdatering dato
+BoxTitleLastContracts=Siste %s kontrakter
+NoModifiedSupplierBills=Ingen registrert leverandørens faktura
+NoRecordedProducts=Ingen registrert produkter / tjenester
+NoRecordedProspects=Ingen registrert utsikter
+NoContractedProducts=Ingen produkter / tjenester innleide
+NoRecordedContracts=Ingen registrert kontrakter
+BoxLastContracts=Laatste contracten
+BoxTitleLastContracts=Laatste sssss contracten
+NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
+NoRecordedContracts=Geen geregistreerde overeenkomsten
+BoxOldestUnpaidCustomerBills=Oudste onbetaalde facturen klant
+BoxOldestUnpaidSupplierBills=Oudste onbetaalde facturen van de leverancier
+BoxLastContracts=Laatste contracten
+BoxTotalUnpaidCustomerBills=Totaal aantal onbetaalde facturen klant
+BoxTotalUnpaidSuppliersBills=Totaal aantal onbetaalde facturen van de leverancier
+BoxTitleOldestUnpaidCustomerBills=Oudste sssss onbetaalde facturen klant
+BoxTitleOldestUnpaidSupplierBills=Oudste sssss onbetaalde facturen van de leverancier
+BoxTitleTotalUnpaidCustomerBills=Onbetaalde facturen klant
+BoxTitleTotalUnpaidSuppliersBills=Onbetaalde facturen van de leverancier
+BoxTitleLastContracts=Laatste sssss contracten
+NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
+NoRecordedContracts=Geen geregistreerde overeenkomsten
+BoxLastContracts=Ostatnie zamówienia
+BoxTitleLastProductsInContract=Ostatnie sssss produktów / usług w umowie
+BoxTitleLastContracts=Ostatnie sssss umów
+NoModifiedSupplierBills=Nie zarejestrowane faktury dostawcy
+NoRecordedContracts=Umów nie zarejestrowanych
+BoxLastContracts=Última contratos
+BoxTitleLastContracts=Última contratos %s
+NoModifiedSupplierBills=Nenhum fornecedor facturas registadas na
+NoRecordedContracts=Sem contratos registrados
+BoxLastContracts=Последние контракты
+BoxTitleLastProductsInContract=Последние продукты %s / услуги на основании договора
+BoxTitleLastContracts=Последние контракты %s
+NoModifiedSupplierBills=Нет зарегистрированных поставщиков счетов
+NoRecordedContracts=Нет зарегистрированных контрактов
+BoxLastContracts=Zadnja naročila
+BoxTitleLastContracts=Zadnja pogodbe %s
+NoModifiedSupplierBills=Št zabeležene dobavitelja račune
+NoRecordedContracts=Št zabeležene pogodbe
+BoxLastContracts=Son sözleşmeleri
+BoxTitleLastContracts=Son Ssss sözleşmeleri
+NoModifiedSupplierBills=No kaydedildi tedarikçinin faturalar
+NoRecordedContracts=No kaydedildi sözleşmeleri
+NoModifiedSupplierBills=没有记录供应商的发票
+NoRecordedContracts=合同没有记录
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:27).

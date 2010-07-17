@@ -46,3 +46,44 @@ ClassCredited=Klassificere krediteres
 ClassCreditedConfirm=Er du sikker på at du vil klassificere denne tilbagetrækning modtagelse som krediteres på din bankkonto?
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+StandingOrderToProcess=For at kunne behandle
+StandingOrderProcessed=Forarbejdet
+TransData=Dato Transmission
+TransMetod=Metode Transmission
+Send=Send
+Lines=Lines
+StandingOrderReject=Udstedelse en forkaste
+WithdrawalRefused=Udbetalinger Refuseds
+WithdrawalRefusedConfirm=Er du sikker på du vil indtaste en tilbagetrækning afvisning for samfundet
+RefusedData=Dato for afvisning
+RefusedReason=Årsag til afvisning
+RefusedInvoicing=Fakturering afvisningen
+NoInvoiceRefused=Oplad ikke afvisning
+InvoiceRefused=Oplad afslag til kunden
+Status=Status
+StatusUnknown=Ukendt
+StatusWaiting=Venter
+StatusCredited=Krediteres
+StatusRefused=Afviste
+StatusMotif0=Uspecificeret
+StatusMotif1=Levering insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=Ingen Tilbagetrækning for
+StatusMotif4=Kunde Bestil
+StatusMotif5=RIB inexploitable
+StatusMotif6=Konto uden balance
+StatusMotif7=Retslig afgørelse
+StatusMotif8=Andre grunde
+CreateAll=Tilbagekalde alle
+CreateGuichet=Kun kontor
+CreateBanque=Kun bank
+OrderWaiting=Venter på behandling
+NotifyTransmision=Tilbagetrækning Transmission
+NotifyEmision=Tilbagetrækning Emission
+NotifyCredit=Tilbagetrækning Credit
+NumeroNationalEmetter=National Transmitter Antal
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:54).

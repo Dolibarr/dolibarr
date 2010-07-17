@@ -30,3 +30,40 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL-ul pentru a oferi un %s plata onlin
 YouCanAddTagOnUrl=Puteţi, de asemenea, să adăugaţi URL-ul parametru <b>&amp; tag= <i>valoarea</i></b> la oricare dintre aceste URL-ul (necesar doar pentru liber de plată) pentru a adăuga propriul plată comentariu tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Configuraţi-vă PayBox cu <b>URL-ul %s</b> pentru a avea de plată a creat în mod automat atunci când validate de paybox.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL-ul pentru a oferi o plată %s interfata online pentru un abonament de membru
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:48).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+CHARSET=UTF-8
+PayBoxSetup=PayBox modul oppsett
+PayBoxDesc=Denne modulen tilbudet sider å tillate betaling på <a href="http://www.paybox.com" target="_blank">Paybox</a> av kunder. Dette kan brukes for en gratis betaling eller for en betaling på en bestemt Dolibarr objekt (faktura, ordre, ...)
+FollowingUrlAreAvailableToMakePayments=Følgende nettadresser er klare med en side til en kunde til å foreta en betaling på Dolibarr objekter
+PaymentForm=Betaling form
+WelcomeOnPaymentPage=Velkommen på våre elektroniske betalingstjenester
+ThisScreenAllowsYouToPay=Dette skjermbildet kan du foreta en online betaling for å %s.
+ThisIsInformationOnPayment=Dette er informasjon om betaling å gjøre
+ToComplete=For å fullføre
+YourEMail=E-post for betalingsbekreftelsen
+Creditor=Kreditor
+PaymentCode=Betaling kode
+PayBoxDoPayment=Gå på betaling
+YouWillBeRedirectedOnPayBox=Du vil bli omdirigert på sikrede Paybox siden for å inndataene du kredittkortinformasjonen
+PleaseBePatient=Vær, være tålmodig
+Continue=Neste
+ToOfferALinkForOnlinePaymentOnOrder=URL for å tilby en %s online betaling brukergrensesnitt for en bestilling
+ToOfferALinkForOnlinePaymentOnInvoice=URL for å tilby en %s online betaling brukergrensesnitt for en faktura
+ToOfferALinkForOnlinePaymentOnContractLine=URL for å tilby en %s online betaling brukergrensesnitt for en kontrakt linje
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL for å tilby en %s online betaling brukergrensesnitt for et fritt beløp
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL for å tilby en %s online betaling brukergrensesnitt for et medlem abonnement
+YouCanAddTagOnUrl=Du kan også legge til url parameter <b>&amp; tag = <i>verdien</i></b> til noen av disse URL (kreves kun gratis betaling) for å legge til dine egne betalingen kommentar taggen.
+SetupPayBoxToHavePaymentCreatedAutomatically=Oppsettet ditt PayBox med url <b>%s</b> å få betaling opprettes automatisk når validert av paybox.
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL om een online betaling sssss gebruikersinterface voor een lid aanbieding
+ToOfferALinkForOnlinePaymentOnMemberSubscription=Adres URL do zaoferowania płatności online sssss interfejs użytkownika jest członkiem subskrypcji
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para oferecer uma interface on-line %s pagamento de uma subscrição de membro
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:45:23).

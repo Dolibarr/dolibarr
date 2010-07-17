@@ -156,3 +156,9 @@ ShowAllAccounts=Vis for alle konti
 // Reference language: en_US
 TransactionWithOtherAccount=Konto overførsel
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+BankAccountCountry=Account land
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:57).

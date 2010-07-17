@@ -59,3 +59,61 @@ NumRefModelJade=Return biçimi BLYY00001, bir referans numarası ... burada YY y
 DocumentModelSirocco=Teslimat makbuzlarını için basit belge modeli
 DocumentModelTyphon=Teslimat makbuzlarını için daha fazla dokümanın modeli (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+Shipments=Skipninger
+StatusSendingCanceled=Kansellert
+StatusSendingCanceledShort=Kansellert
+DocumentModelMerou=Merou A5 modell
+WarningNoQtyLeftToSend=Advarsel, ingen produkter venter sendes.
+StatsOnShipmentsOnlyValidated=Statistikk utført på forsendelser bare validert
+DateDeliveryPlanned=Høvlet levering
+DateReceived=Dato levering mottatt
+SendingMethodCATCH=Catch av kunde
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=Enkelt dokument modellen for levering kvitteringer
+DocumentModelTyphon=Mer fullstendig dokument modellen for levering kvitteringer (logo. ..)
+Shipments=Zendingen
+StatusSendingCanceled=Geannuleerd
+StatusSendingCanceledShort=Geannuleerd
+DocumentModelMerou=Merou A5 model
+DateDeliveryPlanned=Geschaafd datum van levering
+DateReceived=Datum van aflevering ontvangen
+Shipments=Zendingen
+DocumentModelMerou=Merou A5 model
+DateDeliveryPlanned=Geschaafd datum van levering
+DateReceived=Datum van aflevering ontvangen
+Shipments=Wysyłek
+StatusSendingCanceled=Odwołany
+StatusSendingCanceledShort=Odwołany
+DocumentModelMerou=Mérou model A5
+DateDeliveryPlanned=Strugane daty dostawy
+DateReceived=Data otrzymania dostawy
+Shipments=Envios
+StatusSendingCanceled=Cancelado
+StatusSendingCanceledShort=Cancelado
+DocumentModelMerou=Mérou modelo A5
+DateDeliveryPlanned=aplainada data de entrega
+DateReceived=Data da entrega recebida
+Shipments=Поставки
+StatusSendingCanceled=Отменен
+StatusSendingCanceledShort=Отменен
+DocumentModelMerou=Mérou модели A5
+DateDeliveryPlanned=Планируемая дата поставки
+DateReceived=Дата доставки получили
+Shipments=Pošiljke
+StatusSendingCanceled=Canceled
+StatusSendingCanceledShort=Canceled
+DocumentModelMerou=Merou A5 model
+DateDeliveryPlanned=Skobljan datum dostave
+DateReceived=Datum dostavi
+Shipments=Gönderiler
+StatusSendingCanceled=Iptal
+StatusSendingCanceledShort=Iptal
+DocumentModelMerou=Merou A5 model
+DateDeliveryPlanned=Teslim Planlı tarih
+DateReceived=Tarih teslim aldı
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:11).

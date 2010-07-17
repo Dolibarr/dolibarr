@@ -105,3 +105,9 @@ ConfirmDeleteContractLine=Sind Sie sicher, dass Sie löschen möchten, diesen Ve
 PaymentRenewContractId=Renew Vertrag Zeile (Zahl %s)
 ExpiredSince=Ablaufdatum
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+RelatedContracts=Ähnliche Verträge
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:31).

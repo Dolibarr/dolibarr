@@ -63,3 +63,32 @@ ErrorRecordHasChildren=Fehler zu löschen Einträge, da es einige Kinder.
 MenuManager=Menü-Manager
 ErrorUrlNotValid=Die Website-Adresse ist nicht korrekt
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+Error=Fehler
+Errors=Errors
+ErrorBadEMail=EMail %s ist falsch
+ErrorBadUrl=Url %s ist falsch
+ErrorRecordNotFound=Eintrag nicht gefunden.
+ErrorDirNotFound=<b>%s</b> Directory nicht gefunden (Bad Weg, falsche Berechtigungen oder der Zugriff verweigert Parameter von PHP openbasedir oder safe_mode)
+ErrorFileAlreadyExists=Eine Datei mit diesem Namen existiert bereits.
+ErrorPartialFile=Die Datei wurde nicht vollständig empfangen vom Server.
+ErrorNoTmpDir=Temporäre directy %s existiert nicht.
+ErrorUploadBlockedByAddon=Upload blockiert durch eine PHP / Apache-Plugin.
+ErrorFileSizeTooLarge=Dateigröße ist zu groß.
+WarningSafeModeOnCheckExecDir=Warnung, PHP-Option <b>safe_mode</b> ist auf Befehl muss so gelagert werden <b>safe_mode_exec_dir</b> Parameter innerhalb eines Verzeichnisses von PHP erklärt.
+WarningConfFileMustBeReadOnly=Warnung, config-Datei <b>(htdocs / conf / conf.php)</b> können Sie Ihre Server überschrieben werden durch das Web. Das ist ein ernstes Sicherheitsloch. Ändern Sie Berechtigungen auf Datei im Nur-Lese-Modus für die Betriebssystem-Benutzer von Web-Server verwendet werden. Wenn Sie Windows-und FAT-Format für Ihre Festplatte zu nutzen, müssen Sie wissen, dass dieses Dateisystem nicht möglich, Berechtigungen auf Datei hinzufügen, können so nicht völlig sicher.
+ErrorModuleRequireJavascript=Javascript muss nicht deaktiviert werden, um diese Funktion gearbeitet haben. So aktivieren / deaktivieren Sie Javascript, um Menü Home-&gt; Einstellungen-&gt; Display.
+ErrorPasswordsMustMatch=Beide eingegeben Passwörter müssen zueinander passen
+ErrorContactEMail=Ein technischer Fehler aufgetreten. Bitte Administrator kontaktieren folowwing <b>email%</b> en bieten den Fehlercode <b>%s</b> in Ihrer Nachricht, oder noch besser, indem Sie einen Bildschirm-Kopie dieser Seite.
+ErrorWrongValueForField=Falscher Wert für das Feld Anzahl <b>%s</b> (Wert <b>&#39;%s&#39;</b> passt nicht regex Regel <b>%s)</b>
+ErrorsOnXLines=Fehler auf <b>%s</b> Quellzeilen
+WarningsOnXLines=Warnhinweise auf <b>%s</b> Quellzeilen
+ErrorFileIsInfectedWithAVirus=Die Antiviren-Programm konnte nicht validiert die Datei (vielleicht mit einem Virus infiziert werden)
+ErrorSpecialCharNotAllowedForField=Sonderzeichen sind nicht zulässig für das Feld &quot;%s&quot;
+WarningNoDocumentModelActivated=Kein Modell für die Generierung von Dokumenten, wurde aktiviert. Ein Modell wird standardmäßig choosed, bis Sie Ihr Modul Setup zu überprüfen.
+ErrorDatabaseParameterWrong=Datenbank-Setup-Parameter <b>&#39;%s</b> &quot;hat einen Wert nicht kompatibel zu&quot; benutzen Dolibarr (müssen <b>%s</b> Wert&#39;).
+ErrorNumRefModel=Bezug besteht, in die Datenbank (%s) und ist nicht kompatibel mit dieser Nummerierung Regel. Entfernen Sie aufzeichnen oder umbenannt Verweis auf dieses Modul zu aktivieren.
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:55).

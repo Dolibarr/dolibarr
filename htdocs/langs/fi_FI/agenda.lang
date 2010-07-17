@@ -56,3 +56,10 @@ AgendaShowBirthdayEvents=Näytä syntymäpäivä yhteyksiä
 AgendaHideBirthdayEvents=Piilota syntymäpäivä yhteyksiä
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+MenuToDoActions=Kaikki puutteelliset toimet
+InterventionValidatedInDolibarr=Intervention %s validoitu
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:40).

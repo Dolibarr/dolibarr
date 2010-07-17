@@ -63,3 +63,32 @@ ErrorRecordHasChildren=Poistaminen ei onnistunut kirjaa, koska se on noin lapsen
 MenuManager=Valikko johtaja
 ErrorUrlNotValid=Www-sivuston osoite on virheellinen
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+Error=Virhe
+Errors=Virheet
+ErrorBadEMail=EMail %s on väärä
+ErrorBadUrl=Url %s on väärä
+ErrorRecordNotFound=Levykauppa ei löytynyt.
+ErrorDirNotFound=Directory <b>%s</b> ei löytynyt (Bad polku, väärä oikeudet tai pääsyn lennolle PHP openbasedir tai safe_mode parametri)
+ErrorFileAlreadyExists=Tämän niminen tiedosto on jo olemassa.
+ErrorPartialFile=Tiedosto ei saanut kokonaan palvelimelta.
+ErrorNoTmpDir=Tilapäinen directy %s ei ole.
+ErrorUploadBlockedByAddon=Lähetä estetty PHP / Apache plugin.
+ErrorFileSizeTooLarge=Tiedoston koko on liian suuri.
+WarningSafeModeOnCheckExecDir=Varoitus, PHP vaihtoehto <b>safe_mode</b> on niin komento on tallennettu hakemistoon ilmoittama php parametri <b>safe_mode_exec_dir.</b>
+WarningConfFileMustBeReadOnly=Varoitus, config tiedosto <b>(htdocs / conf / conf.php)</b> voidaan korvata jonka web-palvelin. Tämä on vakava tietoturva-aukko. Muokkaa käyttöoikeuksia tiedoston luettavaksi vain tila-käyttöjärjestelmän käyttäjä käyttää Web-palvelimeen. Jos käytät Windows ja FAT oman levy, sinun täytyy tietää, että tämä tiedostojärjestelmä ei mahdollista lisätä käyttöoikeuksia tiedostoon, joten ei voi olla täysin turvallista.
+ErrorModuleRequireJavascript=Javascript ei saa keskeytyä, on tämä ominaisuus toimii. Ottaa käyttöön / poistaa Javascript, mene menu Koti-&gt; Asetukset-&gt; Näyttö.
+ErrorPasswordsMustMatch=Molemmat kirjoittaa salasanat on vastattava toisiaan
+ErrorContactEMail=Tekninen virhe. Ota yhteyttä järjestelmänvalvojaan folowwing <b>email%</b> en antaa virhekoodi <b>%s</b> viestissä, tai jopa paremmin lisäämällä näytön kopion tästä sivusta.
+ErrorWrongValueForField=Väärä arvo kentän numero <b>%s</b> (arvo <b>&quot;%s&quot;</b> ei vastaa regex sääntö <b>%s)</b>
+ErrorsOnXLines=Virheet <b>%s</b> lähde linjat
+WarningsOnXLines=Varoitukset <b>%s</b> lähde linjat
+ErrorFileIsInfectedWithAVirus=Virustentorjuntaohjelma ei voinut tarkistaa tiedoston (tiedosto saattaa olla tartunnan virus)
+ErrorSpecialCharNotAllowedForField=Erikoismerkkejä ei sallita kentän &quot;%s&quot;
+WarningNoDocumentModelActivated=Ei mallia, dokumenttien tuotanto, on aktivoitu. Mallia valitsi oletuksena kunnes olet tarkistanut moduuli setup.
+ErrorDatabaseParameterWrong=Tietokannan asetukset parametri <b>&quot;%s&quot;</b> on arvo ei ole yhteensopiva käyttää Dolibarr (on arvo <b>&quot;%s).</b>
+ErrorNumRefModel=Viittaus olemassa otetaan tietokantaan (%s) ja ei ole yhteensopiva tämän numeroinnin sääntöä. Poista levy tai nimen viittaus aktivoida tämän moduulin.
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:10).

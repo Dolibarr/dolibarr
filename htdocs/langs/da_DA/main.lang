@@ -571,3 +571,52 @@ Day0=Søndag
 // Reference language: en_US
 ErrorGoToGlobalSetup=Gå til 'Company / Foundation &quot;-opsætningen til at løse dette
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+FormatHourShortDuration=%H:%M
+NoError=Ingen fejl
+ErrorNoSocialContributionForSellerCountry=Fejl, ingen social bidrag type der er defineret for landets %s &#39;.
+BackgroundColorByDefault=Standard baggrundsfarve
+FileWasNotUploaded=En fil er valgt for udlæg, men endnu ikke var uploadet. Klik på &quot;Vedhæft fil&quot; for dette.
+NbOfEntries=Nb af tilmeldinger
+Resize=Resize
+Recenter=Recenter
+NumberByMonth=Antal efter måned
+KiloBytes=Kilobyte
+MegaBytes=Megabyte
+GigaBytes=Gigabyte
+b=b.
+Kb=Kb
+Mb=Mb
+Gb=Gb
+AmountLT1ES=Beløb RE
+AmountLT2ES=Beløb IRPF
+TotalLT1ES=Total RE
+TotalLT2ES=Total IRPF
+Available=Tilgængelig
+Examples=Eksempler
+Reason=Årsag
+SendByMail=Send via e-mail
+DocumentsNb=Linkede filer (%s)
+PrintContentArea=Vis side for at udskrive hovedindhold område
+NoMenu=Ingen sub-menu
+WarningYouAreInMaintenanceMode=Advarsel, du er i en vedligeholdelses mode, så kun login <b>%s</b> er tilladt at bruge ansøgningen på i øjeblikket.
+CreditCard=Kreditkort
+FieldsWithAreMandatory=Felter med <b>%s</b> er obligatoriske
+FieldsWithIsForPublic=Felter med <b>%s</b> er vist på offentlig liste over medlemmer. Hvis du ikke ønsker dette, se &quot;offentlige&quot; boks.
+AccordingToGeoIPDatabase=(Ifølge GeoIP konvertering)
+Line=Line
+NotSupported=Ikke understøttet
+RequiredField=Obligatorisk felt
+Result=Resultat
+ToTest=Test
+ValidateBefore=Kortet skal være valideret, før du bruger denne funktion
+Visibility=Synlighed
+Private=Private
+Hidden=Skjulte
+Resources=Ressourcer
+Source=Kilde
+Prefix=Præfiks
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:47).

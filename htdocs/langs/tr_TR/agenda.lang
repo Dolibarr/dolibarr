@@ -55,3 +55,16 @@ AgendaUrlOptions5=<b>logind=%</b> eylemler <b>kullanıcı%</b> tarafından yapı
 AgendaShowBirthdayEvents=Show doğum rehber
 AgendaHideBirthdayEvents=Sakla doğum rehber
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:42:52).
+// Reference language: en_US
+InterventionValidatedInDolibarr=Intervensjon %s validert
+InterventionValidatedInDolibarr=Interventie sssss gevalideerd
+MenuToDoActions=Wszystkich działań niekompletne
+InterventionValidatedInDolibarr=Sssss interwencji zatwierdzone
+InterventionValidatedInDolibarr=%s Intervenção validado
+MenuToDoActions=Все действия неполным
+InterventionValidatedInDolibarr=Вмешательство %s проверки
+InterventionValidatedInDolibarr=Müdahale Ssss onaylandı
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:54).

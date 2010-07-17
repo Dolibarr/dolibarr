@@ -563,3 +563,52 @@ Day5=Perjantai
 Day6=Lau
 Day0=Sunnuntai
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+FormatHourShortDuration=%H:%M
+NoError=Ei virheitä
+ErrorNoSocialContributionForSellerCountry=Virhe, ei sosiaaliturvamaksujen tyyppi määritellään maan %s &quot;.
+BackgroundColorByDefault=Default taustaväri
+FileWasNotUploaded=Tiedosto on valittu liite mutta ei ollut vielä ladattu. Klikkaa &quot;Liitä tiedosto&quot; tätä.
+NbOfEntries=Huom Merkintöjen
+Resize=Asua
+Recenter=Keskitä
+NumberByMonth=Numero kuukausittain
+KiloBytes=Kilotavua
+MegaBytes=Megatavua
+GigaBytes=Gigatavua
+b=b.
+Kb=Kb
+Mb=Mb
+Gb=Gb
+AmountLT1ES=Määrä RE
+AmountLT2ES=Määrä IRPF
+TotalLT1ES=Yhteensä RE
+TotalLT2ES=Yhteensä IRPF
+Available=Saatavissa
+Examples=Esimerkkejä
+Reason=Syy
+SendByMail=Lähetä sähköpostilla
+DocumentsNb=Linkitettyä kuvaa (%s)
+PrintContentArea=Näytä sivu tulostaa päävalikkoon alue
+NoMenu=Ei alivalikko
+WarningYouAreInMaintenanceMode=Varoitus, olet ylläpitotilassa, joten vain kirjautunut <b>%s</b> saa käyttää hakemuksen tällä hetkellä.
+CreditCard=Luottokortti
+FieldsWithAreMandatory=Tähdellä <b>%s</b> ovat pakollisia
+FieldsWithIsForPublic=Tähdellä <b>%s</b> näkyvät julkisen jäsenluettelo. Jos et halua tätä, tarkista &quot;julkinen&quot;-kenttään.
+AccordingToGeoIPDatabase=(Mukaan GeoIP muuntaminen)
+Line=Rivi
+NotSupported=Ei tuettu
+RequiredField=Pakollinen kenttä
+Result=Tulos
+ToTest=Testi
+ValidateBefore=Kortti on validoitava ennen tämän toiminnon
+Visibility=Näkyvyys
+Private=Yksityinen
+Hidden=Kätketty
+Resources=Resurssit
+Source=Lähde
+Prefix=Etuliite
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:32).

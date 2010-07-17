@@ -124,3 +124,38 @@ PaymentOrderRef=Betaling van de bestelling %s
 CloneOrder=Klonen Om
 ConfirmCloneOrder=Weet u zeker dat u wilt kloon deze <b>bestelling %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+OrderLine=Bestill linje
+OrderToProcess=For å kunne behandle
+PaymentOrderRef=Betaling av ordre %s
+CloneOrder=Clone bestilling
+ConfirmCloneOrder=Er du sikker på at du vil klone denne bestillingen <b>%s?</b>
+TypeContact_commande_internal_SALESREPFOLL=Representant oppfølging kundeordre
+TypeContact_commande_internal_SHIPPING=Representant oppfølging shipping
+TypeContact_commande_external_BILLING=Kunden faktura kontakt
+TypeContact_commande_external_SHIPPING=Kunden shipping kontakt
+TypeContact_commande_external_CUSTOMER=Kundekontakt oppfølging rekkefølge
+TypeContact_order_supplier_internal_SALESREPFOLL=Representant oppfølging leverandør bestilling
+TypeContact_order_supplier_internal_SHIPPING=Representant oppfølging shipping
+TypeContact_order_supplier_external_BILLING=Leverandørfaktura kontakt
+TypeContact_order_supplier_external_SHIPPING=Leverandør shipping kontakt
+TypeContact_order_supplier_external_CUSTOMER=Leverandør kontakt oppfølging rekkefølge
+PDFEdisonDescription=En enkel bestilling modell
+PDFQuevedoDescription=En komplett ordre modell med spanske RE og IRPF
+OrderToProcess=Order proces
+TypeContact_commande_internal_SALESREPFOLL=Vertegenwoordiger van de follow-up bestelling van de klant
+TypeContact_commande_internal_SHIPPING=Vertegenwoordiger follow-up van de scheepvaart
+TypeContact_commande_external_BILLING=Klant contact op factuur
+TypeContact_commande_external_SHIPPING=Klant contact op met de scheepvaart
+TypeContact_commande_external_CUSTOMER=Klant contact op met de follow-up om
+TypeContact_order_supplier_internal_SALESREPFOLL=Vertegenwoordiger follow-up van de leverancier om
+TypeContact_order_supplier_internal_SHIPPING=Vertegenwoordiger follow-up van de scheepvaart
+TypeContact_order_supplier_external_BILLING=Factuur van de leverancier contact opnemen met
+TypeContact_order_supplier_external_SHIPPING=Leverancier verzending contact
+TypeContact_order_supplier_external_CUSTOMER=Leverancier contact opnemen met de follow-up om
+PDFEdisonDescription=Een eenvoudig model om
+PDFQuevedoDescription=Een complete orde model met Spaanse RE en IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:45:38).

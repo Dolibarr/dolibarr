@@ -100,3 +100,61 @@ CatCusList=客户名单/前景类别
 CatProdList=产品类别列表
 CatMemberList=类别的成员名单
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+NoCategoryYet=Ingen kategori av denne typen er opprettet
+MembersCategoriesArea=Medlemmer kategorier området
+MemberIsInCategories=Dette medlemmet eier til følgende medlemmer kategorier
+MemberHasNoCategory=Dette medlem er ikke i noen kategorier
+MembersCategoryShort=Medlemmer kategori
+MembersCategoriesShort=Medlemmer kategorier
+ThisCategoryHasNoMember=Denne kategorien inneholder ingen medlem.
+CatSupList=Liste av leverandør kategorier
+CatCusList=Liste over kunde / prospektet kategorier
+CatProdList=Liste over produkter kategorier
+CatMemberList=Liste over medlemmer kategorier
+MembersCategoriesArea=Leden categorieën gebied
+MemberIsInCategories=Dit lid is eigenaar van de volgende categorieën leden
+MemberHasNoCategory=Dit lid is op geen enkele categorieën
+MembersCategoryShort=Leden categorie
+MembersCategoriesShort=Leden categorieën
+ThisCategoryHasNoMember=Deze categorie bevat geen lid.
+CatMemberList=Lijst van de leden categorieën
+MembersCategoriesArea=Członków kategorii obszaru
+MemberIsInCategories=Ten użytkownik posiada do następujących kategorii użytkowników
+MemberHasNoCategory=Członek ten nie jest w żadnym kategorii
+MembersCategoryShort=Członków kategorii
+MembersCategoriesShort=Członków kategorii
+ThisCategoryHasNoMember=Ta kategoria nie zawiera żadnych członków.
+CatMemberList=Lista członków kategorii
+MembersCategoriesArea=Os membros da zona categorias
+MemberIsInCategories=Este membro possui a seguinte membros categorias
+MemberHasNoCategory=Este membro não está em nenhuma categoria
+MembersCategoryShort=Membros da categoria
+MembersCategoriesShort=categorias de membros
+ThisCategoryHasNoMember=Esta categoria não contém nenhum membro.
+CatMemberList=Categorias Lista de membros
+MembersCategoriesArea=Члены категорий области
+MemberIsInCategories=Этот элемент принадлежит к следующим категориям членов
+MemberHasNoCategory=Этот пользователь не находится в какой-либо категории
+MembersCategoryShort=Члены категории
+MembersCategoriesShort=Члены категории
+ThisCategoryHasNoMember=Эта категория не содержит членов.
+CatMemberList=Список членов категории
+MembersCategoriesArea=Člani skupine območje
+MemberIsInCategories=Ta član je lastnik do naslednje člane skupine
+MemberHasNoCategory=Ta član ni na noben kategorijah
+MembersCategoryShort=Člani skupine
+MembersCategoriesShort=Člani skupine
+ThisCategoryHasNoMember=Ta kategorija ne vsebuje katerega koli člana.
+CatMemberList=Seznam članov skupine
+MembersCategoriesArea=Üyeler kategoriler alan
+MemberIsInCategories=Bu üye kategoriler üyeleri aşağıdaki sahibi
+MemberHasNoCategory=Bu üye herhangi bir kategoride değil
+MembersCategoryShort=Üyeler kategori
+MembersCategoriesShort=Üyeler kategoriler
+ThisCategoryHasNoMember=Bu kategoride herhangi bir üye içermez.
+CatMemberList=Üye Listesi kategoriler
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:46:18).

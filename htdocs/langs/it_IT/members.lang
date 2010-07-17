@@ -162,3 +162,9 @@ NoThirdPartyAssociatedToMember=N. terzi associati a questo membro
 ThirdPartyDolibarr=Dolibarr terzi
 MembersAndSubscriptions=Deputati e Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+DescADHERENT_MAILMAN_LISTS=List (s) per insription automatica di nuovi membri (separati da una virgola)
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:46).

@@ -169,3 +169,13 @@ MembersAndSubscriptions=Medlemmer og Suscriptions
 // Reference language: en_US
 FundationMembers=Instituttets medlemmer
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=E-mail emne til medlem autosubscription
+DescADHERENT_AUTOREGISTER_MAIL=EMail for medlem autosubscription
+DescADHERENT_CARD_TYPE=Format af kort side
+DescADHERENT_CARD_TEXT_RIGHT=Tekst trykt på medlem-kort (tilpasning til højre)
+DescADHERENT_MAILMAN_LISTS=Liste (r) for automatisk insription af nye medlemmer (adskilt af et komma)
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:58).

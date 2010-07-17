@@ -82,3 +82,22 @@ FromTo=
 MargeOrder=
 RecapAnnee=
 NoData=
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+Rendez-Vous=Rendezvous
+ActionAC_SUP_ORD=Send leverandør bestill ved mail
+ActionAC_SUP_INV=Send leverandør faktura i posten
+ActionAC_SUP_ORD=Stuur leverancier bestellen via e-mail
+ActionAC_SUP_INV=Stuur factuur van de leverancier via e-mail
+Rendez-Vous=Rendez-vous
+ActionAC_SUP_ORD=Stuur leverancier bestellen via e-mail
+ActionAC_SUP_INV=Stuur factuur van de leverancier via e-mail
+ToDoActions=Niekompletne działań
+ToDoActionsFor=Niekompletne działań na rzecz sssss
+ActionAC_SUP_ORD=aby dostawca przesłać pocztą
+ActionAC_SUP_INV=fakturze dostawcy przesłać pocztą
+ActionAC_SUP_ORD=Enviar por e-mail para fornecedor
+ActionAC_SUP_INV=Enviar fatura do fornecedor por e-mail
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:15).

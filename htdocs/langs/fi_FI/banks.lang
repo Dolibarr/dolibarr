@@ -154,3 +154,9 @@ ShowAllAccounts=Näytä kaikki tilit
 // Reference language: en_US
 TransactionWithOtherAccount=Tilisiirto
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+BankAccountCountry=Tili maa
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:41).

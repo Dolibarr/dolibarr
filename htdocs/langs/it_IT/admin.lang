@@ -1134,3 +1134,94 @@ BankSetupModule=Impostazione modulo Banca/Cassa
 FreeLegalTextOnChequeReceipts=Testo libero su ricevute assegno
 MultiCompanySetup=Multi-azienda modulo configurazione
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+SessionSaveHandler=Handler per salvare le sessioni
+PurgeSessions=Spurgo delle sessioni
+ConfirmPurgeSessions=Vuoi davvero per eliminare tutte le sessioni? Questo disconnettere ogni utente (tranne voi stessi).
+NoSessionListWithThisHandler=gestore di sessione Salva configurato in PHP non consente di elencare tutte le sessioni in esecuzione.
+LockNewSessions=Bloccare le connessioni nuovo
+ConfirmLockNewSessions=Sei sicuro di voler limitare qualsiasi nuova connessione Dolibarr a te stesso. <b>%s</b> solo utente sarà in grado di connettersi dopo.
+UnlockNewSessions=Rimuovere il blocco di connessione
+YourSession=La sessione di
+Sessions=Utenti sessione
+NoSessionFound=PHP sembra non consentire alla lista sessioni attive. Directory usato per salvare le sessioni <b>(%s)</b> potrebbe essere protette (per esempio, le autorizzazioni di sistema operativo o da open_basedir direttiva PHP).
+FormToTestFileUploadForm=Modulo per caricare file di prova (secondo configurazione)
+PreviewNotAvailable=Anteprima non disponibile
+AntiVirusCommand=Percorso completo al comando antivirus
+AntiVirusCommandExample=Esempio per ClamWin: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Esempio per ClamAV: / usr / bin / clamscan
+AntiVirusParam=Più parametri sulla riga di comando
+AntiVirusParamExample=Esempio per ClamWin: - database = &quot;C: \ Program Files (x86) \ ClamWin lib \&quot;
+YouCanDownloadBackupFile=i file generati possono essere scaricati
+IgnoreDuplicateRecords=Ignora errori di record duplicati (INSERT IGNORE)
+InstrucToEncodePass=Per avere password codificate nel <b>conf.php</b> file, sostituire la riga <br> <b>dolibarr_main_db_pass $ =&quot;...&quot;</b> <br> da <br> <b>dolibarr_main_db_pass $ = &quot;criptato: %s&quot;</b>
+InstrucToClearPass=Per avere la password decodificata (chiaro) nel <b>conf.php</b> file, sostituire la riga <br> <b>dolibarr_main_db_pass $ = &quot;:...&quot; criptato</b> <br> da <br> <b>dolibarr_main_db_pass $ = &quot;%s&quot;</b>
+MAIN_MAIL_EMAIL_TLS=Usa TLS (SSL) cifrare
+SubmitTranslation=Se la traduzione per questo linguaggio non è completa o trovi errori, è possibile correggere questo con la modifica dei file in <b>langs</b> directory <b>/ %s</b> ed inviare file di modifica per www.dolibarr.org forum.
+FindPackageFromWebSite=Trova un pacchetto che fornisce funzionalità desiderata (per esempio su %s sito web).
+MinLength=Durata minima del
+LanguageFilesCachedIntoShmopSharedMemory=Files. Lang caricata in memoria condivisa
+ExamplesWithCurrentSetup=Esempi di funzionamento con corrente di installazione
+ListOfDirectories=Elenco dei modelli di directory OpenDocument
+ListOfDirectoriesForModelGenODT=Elenco di directory contenenti i modelli di file con il formato OpenDocument. <br><br> Metti qui il percorso completo della directory. <br> Aggiungere un ritorno a capo tra directory eah. <br> Per aggiungere una directory del modulo di GED, aggiungere qui <b>DOL_DATA_ROOT / ECM / yourdirectoryname.</b> <br><br> File in queste directory devono terminare <b>con. Odt.</b>
+NumberOfModelFilesFound=Numero di modelli ODT file trovati in queste directory
+ExampleOfDirectoriesForModelGen=Esempi di sintassi: <br> c: dir \ <br> / Home / mydir <br> DOL_DATA_ROOT / ECM / ecmdir
+FirstnameNamePosition=Posizione del cognome / nome
+Module23Name=Energia
+Module23Desc=Monitoraggio del consumo di energie
+Module100Name=ExternalSite
+Module100Desc=Include qualsiasi sito web esterno in menu Dolibarr e vederlo in una cornice Dolibarr
+Module2000Name=FCKeditor
+Module2000Desc=Editor WYSIWYG
+Module2600Name=WebServices
+Module2600Desc=Attivare il server web Dolibarr servizi
+Module13452Name=SpeedFinder
+Module13452Desc=Motore di ricerca in AJAX per trovare un nome da parte di un numero di telefono entro 2 secondi
+Permission36=Vedere / gestire i prodotti nascosti
+Permission141=Per saperne di compiti
+Permission142=Creare / modificare i compiti
+Permission144=compiti Elimina
+Permission536=Vedere / gestione dei servizi nascosti
+DictionnaryStaff=Personale
+LocalTax1ManagementES=RE Management
+LocalTax1IsUsedDescES=Il tasso di RE per impostazione predefinita quando le prospettive di creazione, fatture, ordini, ecc seguire la regola attivo standard: <br> Se il compratore te non è sottoposto a RE, RE di default = 0. Fine della regola. <br> Se l&#39;acquirente è soggetto a RE poi RE per impostazione predefinita. Fine della regola. <br>
+LocalTax1IsNotUsedDescES=Per default il RE proposto è 0. Fine della regola.
+LocalTax1IsUsedExampleES=In Spagna sono dei professionisti soggetti ad alcune sezioni specifiche del IAE spagnolo.
+LocalTax1IsNotUsedExampleES=In Spagna sono e società professionali e fatte salve alcune sezioni del IAE spagnolo.
+LocalTax2ManagementES=IRPF Management
+LocalTax2IsUsedDescES=Il tasso di RE per impostazione predefinita quando le prospettive di creazione, fatture, ordini, ecc seguire la regola attivo standard: <br> Se il venditore non è sottoposto a IRPF, poi IRPF di default = 0. Fine della regola. <br> Se il venditore è sottoposto a IRPF poi la IRPF per impostazione predefinita. Fine della regola. <br>
+LocalTax2IsNotUsedDescES=Per impostazione predefinita la proposta di IRPF è 0. Fine della regola.
+LocalTax2IsUsedExampleES=In Spagna, liberi professionisti e professionisti indipendenti che forniscono servizi e le aziende che hanno scelto il regime fiscale dei moduli.
+LocalTax2IsNotUsedExampleES=In Spagna non sono bussines soggette al regime fiscale dei moduli.
+MenuUpgrade=Aggiornamento / Extend
+DatabaseServer=Database host
+DatabaseUser=Database degli utenti
+DatabasePassword=Database delle password
+DelaysOfToleranceMembers=Tolleranza ritardo (in giorni) prima segnalazione su quota di adesione ritardata
+MAIN_ROUNDING_RULE_TOT=Dimensione gamma di arrotondamento (per i paesi in rari casi in cui è fatto l&#39;arrotondamento per qualcosa di diverso da base 10)
+UnitPriceOfProduct=prezzo unitario netto di un prodotto
+TotalPriceAfterRounding=Prezzo totale (al netto / IVA / incl IVA) dopo l&#39;arrotondamento
+PreviousDumpFiles=Disponibile il dump dei file di backup del database
+RunningUpdateProcessMayBeRequired=L&#39;esecuzione del processo di aggiornamento sembra essere richiesta (Programmi %s versione differisce dalla %s versione del database)
+YouMustRunCommandFromCommandLineAfterLoginToUser=È necessario eseguire questo comando dalla riga di comando dopo il login ad una shell con <b>%s</b> utente.
+YourPHPDoesNotHaveSSLSupport=funzioni di SSL non disponibile in PHP
+DownloadMoreSkins=Più skin da scaricare
+ListOfEntities=Elenco degli enti
+AddEntity=Aggiungi ente
+EditEntity=Modifica entità
+UsersSetup=Gli utenti di installazione modulo
+UserMailRequired=E-mail necessaria per creare un nuovo utente
+ModelModules=Documenti modelli
+DocumentModelOdt=Generare documenti da OpenDocuments modelli (file. ODT per OpenOffice, KOffice, TextEdit ,...)
+WatermarkOnDraft=Watermark sul progetto di documento
+LDAPFieldGroupMembers=Membri del gruppo
+LDAPFieldGroupMembersExample=Esempio: uniqueMember
+DonationsReceiptModel=Modello della donazione ricevuta
+PastDelayVCalExport=Non esportare evento più grande di
+CashDesk=Punto di vendita
+SuppliersCommandModel=modello completo di ordine fornitore (logo. ..)
+NumberWordsSetup=NumberWords di installazione modulo
+DescNumberWords=Questo modulo fornisce le funzioni per convertire il numero in caratteri o importo intero. Sostituirà anche le occorrenze seguente stringa __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ o __TOTAL_VAT_WORDS__ da incl totale. fiscale, al netto delle imposte totale, o totale dell&#39;IVA in tutte le textes che li utilizzano (testo libero sulle fatture, ...)
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:00).

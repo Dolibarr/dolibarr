@@ -124,3 +124,12 @@ YouCanUseCommaSeparatorForSeveralRecipients=Du kan bruge <b>comma</b> separator 
 // Reference language: en_US
 MailingModuleDescFundationMembers=Instituttets medlemmer med e-mails
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+DateSending=Dato sende
+SentTo=Sendt til <b>%s</b>
+LimitSendingEmailing=På linje afsendelse af emailings er begrænset til sikkerhed og timeout grunde til at <b>%s</b> modtagere ved at sende session.
+ListOfNotificationsDone=List alle e-mail meddelelser
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:42).

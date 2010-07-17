@@ -40,3 +40,40 @@ ErrorNoAccountancyModuleLoaded=Ingen regnskapsmodul aktivert
 ErrorExportDuplicateProfil=Det er allerede lagret en eksportprofil med dette navnet.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP oppsett er ikke komplett.
 ErrorLDAPMakeManualTest=En .ldif fil er opprettet i mappen %s. Prøv å lese den manuelt for å se mer informasjon om feil.
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+MenuManager=Meny manager
+Error=Feil
+Errors=Feil
+ErrorBadEMail=E-post %s er feil
+ErrorBadUrl=Url %s er feil
+ErrorRecordNotFound=Record ikke funnet.
+ErrorFailToDeleteDir=Klarte ikke å slette katalogen <b>«%s</b> &#39;.
+ErrorFailedToDeleteJoinedFiles=Kan ikke slette foretaket fordi det er noe blitt filer. Fjern delta filer først.
+ErrorUrlNotValid=Nettstedet adressen er feil
+ErrorDirNotFound=Directory <b>%s</b> ikke funnet (Bad bane, feil rettigheter eller ingen tilgang på PHP openbasedir eller safe_mode parameter)
+ErrorFileAlreadyExists=En fil med dette navnet finnes allerede.
+ErrorPartialFile=Fil ikke mottatt fullstendig av server.
+ErrorNoTmpDir=Midlertidig directy %s ikke eksisterer.
+ErrorUploadBlockedByAddon=Last opp blokkert av en PHP / Apache plugin.
+ErrorFileSizeTooLarge=Filstørrelsen er for stor.
+WarningSafeModeOnCheckExecDir=Advarsel, PHP alternativet <b>safe_mode</b> er på så kommandere må lagres i en katalog erklært av php parameter <b>safe_mode_exec_dir.</b>
+ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke lagre en handling med &quot;ikke statut startet&quot; hvis feltet &quot;gjort av&quot; er også fylt.
+ErrorRefAlreadyExists=Ref brukes til oppretting finnes allerede.
+ErrorPleaseTypeBankTransactionReportName=Vennligst skriv kvittering fra bank navnet der hvor transaksjonen er rapportert (Format ÅÅÅÅMM eller ÅÅÅÅMMDD)
+ErrorRecordHasChildren=Kunne ikke slette poster siden den har noen Childs.
+WarningConfFileMustBeReadOnly=Advarsel, config <b>(htdocs / conf / conf.php)</b> kan du bli overkjørt av webserveren. Dette er et alvorlig sikkerhetshull. Endre tillatelser på filen for å være i skrivebeskyttet modus for operativsystem bruker brukes av web-server. Hvis du bruker Windows og FAT format for disken din, må du vite at dette filsystemet ikke tillater å legge til tillatelser på filen, så kan ikke være helt sikker.
+ErrorModuleRequireJavascript=Javascript må ikke deaktiveres å ha denne funksjonen fungerer. For å aktivere / deaktivere Javascript, gå til menyen Home-&gt; Setup-&gt; Display.
+ErrorPasswordsMustMatch=Begge har skrevet passord må samsvare med hverandre
+ErrorContactEMail=En teknisk feil oppstod. Vennligst administrator å kontakte folowwing <b>e%</b> no oppgi feilkoden <b>%s</b> i meldingen, eller enda bedre ved å legge en skjerm kopi av denne siden.
+ErrorWrongValueForField=Feil verdi for feltet tall <b>%s</b> (verdien <b>«%s&quot;</b> samsvarer ikke med regex regel <b>%s)</b>
+ErrorsOnXLines=Feil på <b>%s</b> kilde linjer
+WarningsOnXLines=Advarsler på <b>%s</b> kilde linjer
+ErrorFileIsInfectedWithAVirus=Det antivirus programmet var ikke i stand til å validere filen (filen kan være infisert av et virus)
+ErrorSpecialCharNotAllowedForField=Spesialtegn er ikke tillatt for feltet &quot;%s&quot;
+WarningNoDocumentModelActivated=Ingen modell, for dokument generasjon, har blitt aktivert. En modell vil bli choosed av retten til du sjekke modulen oppsett.
+ErrorDatabaseParameterWrong=Database setup parameter <b>&#39;%s</b> &quot;har en verdi ikke forenlig å bruke Dolibarr (må ha verdi&#39; <b>%s</b> &#39;).
+ErrorNumRefModel=En referanse finnes i databasen (%s), og er ikke kompatibel med denne nummerering regelen. Fjern posten eller omdøpt referanse for å aktivere denne modulen.
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:51:32).

@@ -81,3 +81,19 @@ AverageUnitPricePMP=Keskimääräiset tulohintajärjestelmää
 EstimatedStockValueShort=Arvioitu arvo varastossa
 EstimatedStockValue=Arvioitu arvo varastossa
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+WarehouseEdit=Muokkaa varasto
+DeStockOnShipment=Otto real varastojen siirtoa validointi
+ReStockOnDispatchOrder=Lisäys real varastot käsikirja lähettämistä osaksi varastot, kun toimittaja voidaan vastaanottaa
+OrderStatusNotReadyToDispatch=Tilaa ei ole vielä tai enää asema, joka mahdollistaa lähettäminen varastossa olevista tuotteista varastoissa.
+StockDiffPhysicTeoric=Syy ero kannan fyysinen ja teoreettinen
+NoPredefinedProductToDispatch=Ei ennalta tuotteet tämän objektin. Joten ei lähettämistä varastossa on.
+DispatchVerb=Lähettäminen
+DeleteAWarehouse=Poista varasto
+ConfirmDeleteWarehouse=Oletko varma että haluat poistaa varastoon <b>%s?</b>
+PersonalStock=Henkilökohtainen varastossa %s
+ThisWarehouseIsPersonalStock=Tämä varasto edustaa henkilökohtainen kanta %s %s
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:30).

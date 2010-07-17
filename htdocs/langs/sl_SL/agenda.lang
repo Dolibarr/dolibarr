@@ -47,3 +47,15 @@ AgendaUrlOptions4=<b>logint=%s</b> za omejitev izhoda na aktivnosti, ki se nana�
 AgendaUrlOptions5=<b>logind=%s</b> za omejitev izhoda na aktivnosti uporabnika <b>%s</b>.
 AgendaShowBirthdayEvents=Prikaži rojstni dan kontakta
 AgendaHideBirthdayEvents=Skrij rojstni dan kontakta
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:42:52).
+// Reference language: en_US
+InterventionValidatedInDolibarr=Intervensjon %s validert
+InterventionValidatedInDolibarr=Interventie sssss gevalideerd
+MenuToDoActions=Wszystkich działań niekompletne
+InterventionValidatedInDolibarr=Sssss interwencji zatwierdzone
+InterventionValidatedInDolibarr=%s Intervenção validado
+MenuToDoActions=Все действия неполным
+InterventionValidatedInDolibarr=Вмешательство %s проверки
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:54).

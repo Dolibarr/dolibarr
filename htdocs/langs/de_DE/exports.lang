@@ -75,3 +75,56 @@ ChooseFileToImport=Wählen Sie Datei zu importieren und klicken Sie dann auf pic
 FieldsInSourceFile=Felder in der Quelldatei
 FieldsInTargetDatabase=Ziel Felder in Dolibarr Datenbank
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+NotImportedFields=Felder der Quelldatei nicht importiert
+NoDiscardedFields=Keine Felder in der Quelldatei werden verworfen
+FieldOrder=Feldreihenfolge
+FieldTitle=Field title
+DownloadEmptyExample=Download Beispiel leere Quelldatei
+ChooseFormatOfFileToImport=Wählen Sie Datei-Format als Datei-Format zu importieren, indem Sie auf picto %s, um es auszuwählen benutzen ...
+SourceFileFormat=Source-Dateiformat
+Field=Feld
+NoFields=Keine Felder
+MoveField=Move Feldspalte Zahl %s
+ExampleOfImportFile=Example_of_import_file
+SaveImportProfile=Speichern Sie diese importieren anzeigen
+ErrorImportDuplicateProfil=Konnte dieser Import Profil mit diesem Namen zu speichern. Ein vorhandenes Profil existiert bereits mit diesem Namen.
+ImportSummary=Import Setup-Zusammenfassung
+TablesTarget=Gezielte Tabellen
+FieldsTarget=Zielbereichen
+TableTarget=Gezielte Tisch
+FieldTarget=Gezielte Feld
+FieldSource=Feld Quelle
+DoNotImportFirstLine=Nicht importieren ersten Zeile der Quelldatei
+NbOfSourceLines=Anzahl der Zeilen in der Quelldatei
+NowClickToTestTheImport=Prüfen Sie Import-Parameter definiert haben. Wenn sie korrekt sind klicken Sie auf die Schaltfläche <b>&quot;%s&quot;</b> zur Datenbank starten eine Simulation der Import-Vorgang (keine Daten in Ihrem verändert werden, es ist nur eine Simulation für den Moment) ...
+RunSimulateImportFile=Starten Sie den Import-Simulation
+FieldNeedSource=Dieser fühlt sich in der Datenbank erfordert eine Daten aus der Quelldatei
+SomeMandatoryFieldHaveNoSource=Einige Felder müssen ausgefüllt haben keine Quelle, aus Datendatei
+InformationOnSourceFile=Informationen über die Quelldatei
+InformationOnTargetTables=Informationen über die Zielfelder
+SelectAtLeastOneField=Schalten von zumindest einer Datenquelle Feld in der Spalte von Feldern zu exportieren
+SelectFormat=Wählen Sie diese Datei importieren-Format
+RunImportFile=Launch Importdatei
+NowClickToRunTheImport=Überprüfen Sie die Wirkung von Einfuhr-Simulation. Wenn alles in Ordnung ist, starten Sie den endgültigen importieren.
+DataLoadedWithId=Alle Daten werden geladen werden id Import mit der folgenden: <b>%s</b>
+ErrorMissingMandatoryValue=Vorgeschriebene Daten ist leer in der Quelldatei für das Feld <b>%s.</b>
+TooMuchErrors=Es gibt noch andere Quelle <b>%s</b> Zeilen mit Fehlern doch hat die Produktion begrenzt.
+TooMuchWarnings=Es gibt noch andere Quelle <b>%s</b> Zeilen mit Warnungen doch hat die Produktion begrenzt.
+EmptyLine=Leerzeile (wird verworfen)
+CorrectErrorBeforeRunningImport=Sie müssen zuerst alle Fehler beheben, bevor Sie endgültig zu importieren.
+YouCanUseImportIdToFindRecord=Sie können Datenbank finden Sie alle importierten Datensätze in Ihrem Bereich durch Filterung auf <b>import_key = &#39;%s &quot;.</b>
+NbOfLinesOK=Anzahl der Zeilen ohne Fehler und ohne Warnungen: <b>%s.</b>
+NbOfLinesImported=Anzahl der Linien erfolgreich importiert: <b>%s.</b>
+DataComeFromNoWhere=Preis zum Einfügen aus dem Nichts kommt in der Quelldatei.
+DataComeFromFileFieldNb=Preis einzufügen kommt aus Feldnummer <b>%s</b> in der Quelldatei.
+DataComeFromIdFoundFromRef=Preis dieser Datei stammt aus Feldnummer <b>%s</b> der Quelle wird von Eltern verwendet werden id Objekt zu finden, zu benutzen (also die objet <b>%s</b> dass ref hat. Aus der Quelldatei muss Dolibarr existiert in).
+DataIsInsertedInto=Daten aus der Quelldatei wird in das folgende Feld eingefügt:
+DataIDSourceIsInsertedInto=Die ID des übergeordneten Objekts gefunden mit den Daten in der Quelldatei, wird in das folgende Feld eingefügt:
+SourceRequired=Data-Wert ist obligatorisch
+SourceExample=Beispiel der möglichen Datenwert
+CSVFormatDesc=<b>Comma Separated Value</b> Format (. Csv). <br> Dies ist eine Text-Datei-Format, wo Felder durch Trennzeichen [%s] getrennt sind. Wenn in einem Feld-Separator Inhalt gefunden wird, wird durch runde Feld Zeichen [%s] gerundet. Escape-Zeichen zu runden Charakter entkommen [%s].
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:25:08).

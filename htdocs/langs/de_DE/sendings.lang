@@ -66,3 +66,14 @@ SendingMethodCOLSUI=Colissimo
 DocumentModelSirocco=Einfache Dokument-Modell für die Lieferung Einnahmen
 DocumentModelTyphon=Mehr komplette Dokument-Modell für die Lieferung Einnahmen (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+Shipments=Sendungen
+StatusSendingCanceled=Annulliert
+StatusSendingCanceledShort=Annulliert
+DocumentModelMerou=Merou A5-Modell
+DateDeliveryPlanned=Gehobelte Zeitpunkt der Lieferung
+DateReceived=Datum der Lieferung erhalten
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:29).

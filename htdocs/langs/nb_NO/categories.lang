@@ -80,3 +80,19 @@ AssignedToTheCustomer=Knyttet til kunden
 InternalCategory=Intern kategori
 CategoryContents=Innhold i kategori
 CategId=Kategori-ID
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+NoCategoryYet=Ingen kategori av denne typen er opprettet
+MembersCategoriesArea=Medlemmer kategorier området
+MemberIsInCategories=Dette medlemmet eier til følgende medlemmer kategorier
+MemberHasNoCategory=Dette medlem er ikke i noen kategorier
+MembersCategoryShort=Medlemmer kategori
+MembersCategoriesShort=Medlemmer kategorier
+ThisCategoryHasNoMember=Denne kategorien inneholder ingen medlem.
+CatSupList=Liste av leverandør kategorier
+CatCusList=Liste over kunde / prospektet kategorier
+CatProdList=Liste over produkter kategorier
+CatMemberList=Liste over medlemmer kategorier
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:46:10).

@@ -119,3 +119,12 @@ DateLastSend=Data ultimo invio
 MailingModuleDescDolibarrContractsLinesExpired=Terze parti con il contratto scaduto
 YouCanUseCommaSeparatorForSeveralRecipients=È possibile utilizzare il separatore <b>virgola(,)</b> per specificare più destinatari.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+DateSending=Data di invio
+SentTo=Inviata a <b>%s</b>
+LimitSendingEmailing=On line l&#39;invio di emailings sono limitati per motivi di sicurezza e timeout <b>%s</b> ai destinatari mediante l&#39;invio di sessione.
+ListOfNotificationsDone=Lista tutte le notifiche e-mail inviate
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:30).

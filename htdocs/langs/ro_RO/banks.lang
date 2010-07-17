@@ -154,3 +154,24 @@ ShowAllAccounts=Arata pentru toate conturile
 // Reference language: en_US
 TransactionWithOtherAccount=Contul de transfer
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+BankAccountCountry=Contul ţară
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:09).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+BankAccountCountry=Konto landet
+ListTransactions=Liste transaksjoner
+ListTransactionsByCategory=Liste transaksjon / kategori
+AllAccounts=Alle bank / cash kontoer
+BackToAccount=Tilbake til kontoen
+ShowAllAccounts=Vis for alle kontoer
+BankAccountCountry=Account land
+BankAccountCountry=Account land
+BankAccountCountry=Konto kraju
+BankAccountCountry=Conta do país
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:18).

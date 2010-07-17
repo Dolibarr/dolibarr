@@ -107,3 +107,9 @@ ConfirmDeleteContractLine=Er du sikker på du vil slette denne kontrakt linje?
 PaymentRenewContractId=Forny kontrakten linje (antal %s)
 ExpiredSince=Udløbsdatoen
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+RelatedContracts=Relaterede kontrakter
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:59).

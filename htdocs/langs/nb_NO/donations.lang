@@ -23,3 +23,10 @@ DonationStatusPaidShort=Mottatt
 ValidPromise=Godkjenn løfte
 BuildDonationReceipt=Opprett kvittering
 DonationsModels=Dokumentmal for donasjonskvitteringer
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+Donations=Donasjoner
+ValidPromess=Valider lover
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:49:37).

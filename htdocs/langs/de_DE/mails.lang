@@ -117,3 +117,12 @@ DateLastSend=Datum der letzten Senden
 MailingModuleDescDolibarrContractsLinesExpired=Dritte mit Ablauf des Vertrages Linien
 YouCanUseCommaSeparatorForSeveralRecipients=Sie können das Trennzeichen <b>Komma,</b> um mehrere Empfänger.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+DateSending=Datum der Zusendung
+SentTo=Sent to <b>%s</b>
+LimitSendingEmailing=On line Versenden von Mailings sind begrenzt Session-Timeout für die Sicherheit und Gründen zu <b>%s</b> Empfänger durch Senden.
+ListOfNotificationsDone=Liste aller E-Mail-Benachrichtigungen versandt
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:15).

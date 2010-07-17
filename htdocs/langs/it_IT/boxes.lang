@@ -68,3 +68,12 @@ NoRecordedProducts=N. prodotti / servizi registrati
 NoRecordedProspects=N. prospetti registrati
 NoContractedProducts=N. prodotti / servizi appaltati
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+BoxLastContracts=ultimi contratti
+BoxTitleLastContracts=Ultimo %s contratti
+NoModifiedSupplierBills=Nessun fornitore ha registrato le fatture
+NoRecordedContracts=N. contratti registrati
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:42).

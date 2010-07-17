@@ -63,3 +63,33 @@ CHARSET=UTF-8
 MenuManager=Gestore menu
 ErrorUrlNotValid=L'indirizzo del sito Internet non è corretto
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+Error=Errore
+Errors=Errori
+ErrorBadEMail=EMail %s è sbagliato
+ErrorBadUrl=Url %s è sbagliato
+ErrorRecordNotFound=Record non trovato.
+ErrorDirNotFound=Directory <b>%s</b> non trovato (via Bad, permessi errati o accesso negato da openbasedir PHP safe_mode o parametri)
+ErrorFileAlreadyExists=Un file con questo nome esiste già.
+ErrorPartialFile=Il file non completamente ricevuto dal server.
+ErrorNoTmpDir=Temporary directy %s non esiste.
+ErrorUploadBlockedByAddon=Carica bloccata da un plugin / PHP Apache.
+ErrorFileSizeTooLarge=La dimensione del file è troppo grande.
+WarningSafeModeOnCheckExecDir=Attenzione, il PHP è l&#39;opzione <b>safe_mode</b> su così comando deve essere conservato all&#39;interno di una directory dichiarata dal parametro <b>safe_mode_exec_dir</b> php.
+ErrorRefAlreadyExists=Rif. utilizzati per la creazione esiste già.
+WarningConfFileMustBeReadOnly=Attenzione, il file di configurazione <b>(htdocs / conf / conf.php)</b> può essere sovrascritto dal server web. Questo è un grave buco di sicurezza. Modificare le autorizzazioni per file di essere in modalità di sola lettura per l&#39;utente del sistema operativo utilizzato dal server web. Se si utilizza Windows e il formato FAT per il disco, dovete sapere che questo sistema fascicolo non consentono di aggiungere le autorizzazioni sul file, quindi non può essere completamente sicuro.
+ErrorModuleRequireJavascript=Javascript non deve essere disattivato per avere questa caratteristica di lavoro. Per abilitare / disabilitare Javascript, andare al menù Home-&gt; Setup-&gt; Schermo.
+ErrorPasswordsMustMatch=Entrambe le password digitata deve corrispondere a vicenda
+ErrorContactEMail=Un errore tecnico si era verificato. Si prega di contattare l&#39;amministratore di folowwing <b>email%</b> en <b>%s</b> fornire il codice di errore nel messaggio, o meglio ancora con l&#39;aggiunta di una copia dello schermo di questa pagina.
+ErrorWrongValueForField=Valore errato per <b>%s</b> numero del campo (valore <b>&#39;%s&#39;</b> non corrisponde <b>%s</b> regola regex)
+ErrorsOnXLines=Errori sul fonte <b>%s</b> linee
+WarningsOnXLines=Avvertenze sui fonte <b>%s</b> linee
+ErrorFileIsInfectedWithAVirus=Il programma antivirus non è stato in grado di convalidare il file (file potrebbe essere infettato da un virus)
+ErrorSpecialCharNotAllowedForField=I caratteri speciali non sono ammessi per il campo &quot;%s&quot;
+WarningNoDocumentModelActivated=Nessun modello, per la generazione di documenti, è stato attivato. Un modello sarà scelto per impostazione predefinita finché non si verifica la configurazione del modulo.
+ErrorDatabaseParameterWrong=parametro di configurazione database <b>&#39;%s&#39;</b> ha un valore non compatibile da utilizzare Dolibarr (deve avere un valore <b>&#39;%s&#39;).</b>
+ErrorNumRefModel=Esiste un riferimento nel database (%s) e non è compatibile con questa regola di numerazione. Rimuovere o rinominare record di riferimento per attivare questo modulo.
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:33:08).

@@ -291,3 +291,35 @@ ProfId2DE=Prof Id 2 (USt.-Nr)
 ProfId3DE=Prof Id 3 (Handelsregister-Nr.)
 ProfId4DE=--
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+ThirdPartyName=Tredjeparts navn
+Poste=Position
+DefaultLang=Sprog som standard
+LocalTax1IsUsedES=RE bruges
+LocalTax1IsNotUsedES=RE bruges ikke
+LocalTax2IsUsedES=IRPF bruges
+LocalTax2IsNotUsedES=IRPF ikke bruges
+ProfId1IN=Prof Id 1 (TIN)
+ProfId2IN=Prof Id 2
+ProfId3IN=Prof Id 3
+ProfId4IN=Prof Id 4
+ProfId1ES=Prof Id 1 (CIF / NIF)
+ProfId2ES=Prof Id 2 (Social Security Number)
+ProfId3ES=Prof Id 3 (CNAE)
+ProfId4ES=Prof Id 4 (Collegiate nummer)
+ProfId1NL=KVK Nummer
+ProfId2NL=-
+ProfId3NL=-
+ProfId4NL=-
+ProfId1AR=Prof Id 1 (CUIT / Cuil)
+ProfId2AR=Prof Id 2 (revenu Bestier)
+ProfId3AR=-
+ProfId4AR=-
+SupplierCategory=Leverandør kategori
+ListSuppliersShort=Liste over leverandører
+ListProspectsShort=Liste over udsigterne
+ListCustomersShort=Liste over kunder
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:05).

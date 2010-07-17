@@ -39,3 +39,44 @@ ClassCredited=Classifica accreditata
 ClassCreditedConfirm=Sei sicuro di voler classificare questa ricevuta di prelievo come accreditata sul vostro conto bancario?
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+StandingOrderToProcess=Per elaborare
+StandingOrderProcessed=Re
+TransData=Data di trasmissione
+TransMetod=Metodo di trasmissione
+Send=Inviare
+Lines=Lines
+StandingOrderReject=Emettere un rifiuto
+WithdrawalRefused=Prelievi Refuseds
+WithdrawalRefusedConfirm=Sei sicuro di voler entrare in un rifiuto di ritiro per la società
+RefusedData=Data del rifiuto
+RefusedReason=Motivo del rifiuto
+RefusedInvoicing=Il rifiuto di fatturazione
+NoInvoiceRefused=Non caricare il rigetto
+InvoiceRefused=Caricare il rifiuto al cliente
+Status=Stato
+StatusUnknown=Sconosciuto
+StatusWaiting=Attesa
+StatusCredited=Accreditato
+StatusRefused=Refused
+StatusMotif0=Imprecisato
+StatusMotif1=Fornitura insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=Nessun ordine di sospensione
+StatusMotif4=Ordine Cliente
+StatusMotif5=RIB inexploitable
+StatusMotif6=Conto senza equilibrio
+StatusMotif7=La decisione giudiziaria
+StatusMotif8=Altri motivi
+CreateAll=Ritirare tutte le
+CreateGuichet=Solo per ufficio
+CreateBanque=Solo banca
+OrderWaiting=In attesa di trattamento
+NotifyTransmision=Ritiro di trasmissione
+NotifyEmision=Ritiro delle emissioni
+NotifyCredit=Ritiro di credito
+NumeroNationalEmetter=Numero nazionale del trasmettitore
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:35:04).

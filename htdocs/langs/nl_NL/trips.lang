@@ -18,3 +18,11 @@ TF_OTHER=Ander
 TF_LUNCH=Lunch
 TF_TRIP=Reis
 ListTripsAndExpenses=Lijst van de reis- en onkosten
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:07:33).
+// Reference language: en_US
+TripsAndExpensesStatistics=Turer og utgifter statistikk
+ListTripsAndExpenses=Liste over turer og utgifter
+TripsAndExpensesStatistics=Uitstapjes en kosten statistieken
+TripsAndExpensesStatistics=Uitstapjes en kosten statistieken
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:07:33).

@@ -385,3 +385,31 @@ Abandoned=Hylätyt
 NoSupplierBillsUnpaid=N: o toimittajien laskut palkaton
 CustomerBillsUnpaid=Maksamattomat asiakkaiden laskut
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+ClassifyCanceled=Luokittele &quot;Hylätty&quot;
+BillStatusCanceled=Hylätty
+BillShortStatusCanceled=Hylätty
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Tämä valinta on mahdollinen, jos lasku on toimitettu sopiva kommentti. (Esimerkki &quot;Vain vero vastaa hintaa, joka on tosiasiallisesti maksettu antaa oikeuksia vähennys»)
+AlreadyPaidNoCreditNotesNoDeposits=On jo maksettu (ilman hyvityslasku ja talletukset)
+RelatedBill=Related lasku
+RelatedBills=Related laskut
+ValidateInvoice=Vahvista lasku
+Cash=Kassa
+Reported=Myöhässä
+DisabledBecausePayments=Ole mahdollista, koska on olemassa joitakin maksuja
+CantRemovePaymentWithOneInvoicePaid=Ei voi poistaa maksua koska siellä on ainakin laskulla luokiteltu maksanut
+ExpectedToPay=Odotettu maksu
+PayedByThisPayment=Maksanut tämän maksun
+TypeContact_facture_internal_SALESREPFOLL=Edustaja seurantaan asiakkaan laskussa
+TypeContact_facture_external_BILLING=Asiakkaan lasku yhteystiedot
+TypeContact_facture_external_SHIPPING=Asiakas merenkulku yhteystiedot
+TypeContact_facture_external_SERVICE=Asiakaspalvelu ottaa yhteyttä
+TypeContact_facture_fourn_internal_SALESREPFOLL=Edustaja seurantaan toimittaja laskussa
+TypeContact_facture_fourn_external_BILLING=Toimittajan lasku yhteystiedot
+TypeContact_facture_fourn_external_SHIPPING=Toimittajan merenkulku yhteystiedot
+TypeContact_facture_fourn_external_SERVICE=Toimittajan huoltoliikkeestä
+PDFLinceDescription=Täydellinen lasku malli Espanjan RE ja IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:05).

@@ -50,3 +50,9 @@ ListOfSupplierProductForSupplier=Luettelo tuotteista ja hinnoista <b>toimittaja 
 // Reference language: en_US
 NoneOrBatchFileNeverRan=Ei mitään tai <b>erän %s</b> ei juoksi hiljattain
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Tämä viittaus toimittaja on jo liitetty viite: %s
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:11).

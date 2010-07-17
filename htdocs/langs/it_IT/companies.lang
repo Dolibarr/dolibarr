@@ -295,3 +295,35 @@ ProfId2DE=Id Prof 2 (USt.-Nr)
 ProfId3DE=Id Prof 3 (Handelsregister-Nr.)
 ProfId4DE=--
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:42:54).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+ThirdPartyName=Partito terzo nome
+Poste=Posizione
+DefaultLang=Lingua di default
+LocalTax1IsUsedES=RE è usato
+LocalTax1IsNotUsedES=RE non è utilizzato
+LocalTax2IsUsedES=IRPF è usato
+LocalTax2IsNotUsedES=IRPF non viene utilizzato
+ProfId1IN=Prof Id 1 (TIN)
+ProfId2IN=Prof ID 2
+ProfId3IN=Prof ID 3
+ProfId4IN=Prof 4 ID
+ProfId1ES=Prof Id 1 (CIF / NIF)
+ProfId2ES=Prof 2 ID (numero di sicurezza sociale)
+ProfId3ES=Id Prof 3 (CNAE)
+ProfId4ES=Prof Id 4 (numero Collegiata)
+ProfId1NL=KVK nummer
+ProfId2NL=-
+ProfId3NL=-
+ProfId4NL=-
+ProfId1AR=Prof Id 1 (CUIT / CUIL)
+ProfId2AR=Id Prof 2 (Revenu bruti)
+ProfId3AR=-
+ProfId4AR=-
+SupplierCategory=Fornitore categoria
+ListSuppliersShort=Elenco dei fornitori
+ListProspectsShort=Elenco delle prospettive
+ListCustomersShort=Elenco dei clienti
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:52).

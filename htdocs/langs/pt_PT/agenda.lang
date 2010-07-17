@@ -46,3 +46,13 @@ AgendaUrlOptions4=<b>logint=%s</b> para restringir a produção para as acções
 AgendaUrlOptions5=<b>logind=%s</b> para restringir a produção para acções feitas pelo utilizador <b>%s</b>.
 AgendaShowBirthdayEvents=Mostrar Aniversários dos Contactos
 AgendaHideBirthdayEvents=Esconder Aniversários dos Contactos
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:42:52).
+// Reference language: en_US
+InterventionValidatedInDolibarr=Intervensjon %s validert
+InterventionValidatedInDolibarr=Interventie sssss gevalideerd
+MenuToDoActions=Wszystkich działań niekompletne
+InterventionValidatedInDolibarr=Sssss interwencji zatwierdzone
+InterventionValidatedInDolibarr=%s Intervenção validado
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:53).

@@ -179,3 +179,36 @@ DolibarrNotification=Automatisk anmeldelse
 DemoFundation=Administrer medlemmer af en fond
 DemoFundation2=Administrer medlemmer og bankkonto i en fond
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+Notify_NOTIFY_VAL_ORDER=Kundeordre valideret
+Notify_NOTIFY_VAL_PROPAL=Kunde forslag valideret
+PredefinedMailTest=Dette er en test mail. \ NDen to linjer er adskilt af et linjeskift.
+PredefinedMailTestHtml=Dette er en <b>test</b> mail (ordet test skal være i fed). <br> De to linjer er adskilt af et linjeskift.
+CalculatedWeight=Beregnet vægt
+CalculatedVolume=Beregnet mængde
+Length=Længde
+LengthUnitm=m
+LengthUnitdm=dm
+LengthUnitcm=cm
+LengthUnitmm=mm
+Surface=Område
+SurfaceUnitm2=m2
+SurfaceUnitdm2=dm2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+NumberOfUnitsProposals=Antal enheder på forslag om sidste 12 måneder
+EMailTextProposalValidated=Forslaget %s er blevet valideret.
+EMailTextOrderValidated=Ordren %s er blevet valideret.
+ResizeDesc=Indtast nye bredde <b>OR</b> ny højde. Ratio vil blive holdt i resizing ...
+NewLength=Ny bredde
+NewHeight=Ny højde
+NewSizeAfterCropping=Ny størrelse efter beskæring
+DefineNewAreaToPick=Definer et nyt område på billedet for at vælge (til venstre klik på billedet og derefter trække, indtil du når det modsatte hjørne)
+CurrentInformationOnImage=Informationer om aktuelle billede
+YouReceiveMailBecauseOfNotification=Du modtager denne besked fordi din e-mail er blevet føjet til listen over mål, der skal informeres om bestemte begivenheder i %s software %s.
+YouReceiveMailBecauseOfNotification2=Denne begivenhed er følgende:
+ExternalSites=Eksterne sites
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:22:00).

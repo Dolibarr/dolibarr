@@ -34,3 +34,10 @@ ArcticNumRefModelError=Aktivacija ni uspela
 PacificNumRefModelDesc1=Predlaga številko v formatu %syymm-nnnn kjer je yy leto, mm mesec in nnnn zaporedna številka brez presledkov in različna od 0
 PacificNumRefModelError=Kartica intervencije, ki se začne z $syymm že obstaja in ni kompatibilna s tem modelom sekvence. Odstranite jo ali jo preimenujte, če želite aktivirati ta modul.
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+ModifyIntervention=Endre intervensjon
+DocumentModelStandard=Standard dokumentet modell for intervensjoner
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:47:07).

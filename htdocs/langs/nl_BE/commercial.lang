@@ -81,3 +81,13 @@ ActionAC_COM=Verzend bestelling per mail
 // Reference language: en_US
 Rendez-Vous=Rendezvous
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+Rendez-Vous=Rendezvous
+ActionAC_SUP_ORD=Send leverandør bestill ved mail
+ActionAC_SUP_INV=Send leverandør faktura i posten
+ActionAC_SUP_ORD=Stuur leverancier bestellen via e-mail
+ActionAC_SUP_INV=Stuur factuur van de leverancier via e-mail
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:13).

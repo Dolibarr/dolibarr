@@ -81,3 +81,17 @@ AverageUnitPricePMP=Media dei prezzi delle scorte
 EstimatedStockValueShort=Valore stimato scorte
 EstimatedStockValue=Valore stimato delle scorte
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+WarehouseEdit=Modificare magazzino
+ReStockOnDispatchOrder=Aumentare le scorte reale sul manuale di dispacciamento in magazzini, dopo ordine fornitore ricevente
+OrderStatusNotReadyToDispatch=Ordine non è ancora o non più uno status che consenta di spedizione dei prodotti nei magazzini delle scorte.
+NoPredefinedProductToDispatch=Nessun prodotto predefinita per questo oggetto. Quindi non dispacciamento in magazzino è necessario.
+DispatchVerb=Spedizione
+DeleteAWarehouse=Eliminare un magazzino
+ConfirmDeleteWarehouse=Sei sicuro di voler cancellare il <b>%s</b> magazzino?
+PersonalStock=%s scorta personale
+ThisWarehouseIsPersonalStock=Questo deposito rappresenta riserva personale di %s %s
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:35).

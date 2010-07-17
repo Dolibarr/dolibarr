@@ -120,3 +120,9 @@ NowClickToTestTheImport=Athugaðu að flytja viðföng sem þú hefur skilgreint
 RunSimulateImportFile=Hefja innflutning uppgerð
 FieldNeedSource=Þetta finnst í gagnagrunni þarf að senda gögn frá frumskrár
 // STOP - Lines generated via autotranslator.php tool (2010-07-10 01:18:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:29:16).
+// Reference language: en_US
+CSVFormatDesc=<b>Comma Seperated Gildi</b> skráarsnið (. Csv). <br> Þetta er textaskrá snið þar sem reitir eru aðskilin með skiltákn [%s]. Ef skiltákn finnst inni í reitinn innihald er á sviði rúnnuð með umferð karakter [%s]. Flýja staf til að flýja umferð eðli er [%s].
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:30:04).

@@ -163,3 +163,18 @@ ConfirmCloneProduct=Er du sikker på at du vil klone vare eller <b>tjenesteydels
 CloneContentProduct=Klon alle de vigtigste informationer af produkt / service
 ClonePricesProduct=Klon vigtigste informationer og priser
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+ProductAccountancyBuyCode=Regnskab kode (købe)
+ProductAccountancySellCode=Regnskab kode (sælge)
+SellingPriceHT=Salgspris (efter skat)
+SellingPriceTTC=Salgspris (inkl. skat)
+ListProductServiceByPopularity=Liste over produkter / ydelser efter popularitet
+ListServiceByPopularity=Liste over tjenesteydelser efter popularitet
+ProductIsUsed=Dette produkt er brugt
+NewRefForClone=Ref. af nye produkter / ydelser
+CustomerPrices=Kunder priser
+SuppliersPrices=Leverandører priser
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:48).

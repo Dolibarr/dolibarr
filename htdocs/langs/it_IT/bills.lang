@@ -409,3 +409,21 @@ TypeContact_facture_fourn_internal_SALESREPFOLL=Responsabile pagamenti fornitori
 TypeContact_facture_fourn_external_BILLING=Contatto fatturazioni fornitori
 TypeContact_facture_fourn_external_SHIPPING=Contatto spedizioni fornitori
 TypeContact_facture_fourn_external_SERVICE=Contatto servizio fornitori
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+InvoiceProForma=Fattura proforma
+InvoiceProFormaAsk=Fattura proforma
+InvoiceProFormaDesc=<b>fattura proforma</b> è un&#39;immagine di una fattura vero, ma non ha valore contabile.
+RelatedBill=fattura correlati
+RelatedBills=fatture relative
+ValidateInvoice=Valida fattura
+Cash=Contanti
+Reported=Ritardato
+DisabledBecausePayments=Non è possibile poiché non vi è alcuni pagamenti
+CantRemovePaymentWithOneInvoicePaid=Impossibile rimuovere il pagamento dato che non esiste, almeno sulla fattura pagata classificato
+ExpectedToPay=Il pagamento previsto
+PayedByThisPayment=Pagato da questo pagamento
+PDFLinceDescription=Un modello di fattura completa con lo spagnolo RE e IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:33:01).

@@ -82,3 +82,10 @@ CHARSET=UTF-8
 AddActionRendezVous=Aggiungi un appuntamento
 Rendez-Vous=Appuntantamenti
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:42:54).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+ActionAC_SUP_ORD=Inviare ordine fornitore tramite e-mail
+ActionAC_SUP_INV=Inviare fattura fornitore tramite e-mail
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:02).

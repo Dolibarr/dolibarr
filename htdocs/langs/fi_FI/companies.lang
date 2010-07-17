@@ -289,3 +289,35 @@ ProfId4DE=--
 ProspectLevelShort=Mahdollinen
 ExportDataset_company_1=Yhtiöiden / säätiöiden ja ominaisuudet
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+ThirdPartyName=Kolmannen osapuolen nimi
+Poste=Sijainti
+DefaultLang=Kieli oletusarvoisesti
+LocalTax1IsUsedES=RE käytetään
+LocalTax1IsNotUsedES=RE ei käytetä
+LocalTax2IsUsedES=IRPF käytetään
+LocalTax2IsNotUsedES=IRPF ei käytetä
+ProfId1IN=Prof Id 1 (TIN)
+ProfId2IN=Prof tunnus 2
+ProfId3IN=Prof Id 3
+ProfId4IN=Prof Id 4
+ProfId1ES=Prof Id 1 (CIF / NIF)
+ProfId2ES=Prof Id 2 (henkilötunnus)
+ProfId3ES=Prof tunnus 3 (CNAE)
+ProfId4ES=Prof Id 4 (Collegiate numero)
+ProfId1NL=KvK nummer
+ProfId2NL=-
+ProfId3NL=-
+ProfId4NL=-
+ProfId1AR=Prof Id 1 (CUIT / Cuil)
+ProfId2AR=Prof Id 2 (revenu brutes)
+ProfId3AR=-
+ProfId4AR=-
+SupplierCategory=Toimittajan tuoteryhmä
+ListSuppliersShort=Luettelo toimittajat
+ListProspectsShort=Luettelo näkymät
+ListCustomersShort=Luettelo asiakkaiden
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:49).

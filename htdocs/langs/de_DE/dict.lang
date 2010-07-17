@@ -279,3 +279,28 @@ CurrencyXOF=CFA Francs BCEAO
 CountryCH=Schweiz
 CountryIE=Irland
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+CurrencySingAUD=AU Dollar
+CurrencySingCAD=CAN-Dollar
+CurrencySingCHF=Swiss Franc
+CurrencySingEUR=Euro
+CurrencySingFRF=Französisch Franc
+CurrencySingGBP=GB Pound
+CurrencyINR=Indische Rupien
+CurrencySingINR=Indische Rupie
+CurrencySingMAD=Dirham
+CurrencySingMGA=Ariary
+CurrencyMUR=Mauritius Rupien
+CurrencySingMUR=Mauritius Rupie
+CurrencyNOK=Norwegian krones
+CurrencySingNOK=Norwegische Krone
+CurrencySingTND=Tunesische Dinar
+CurrencySingUSD=US-Dollar
+CurrencySingXAF=CFA Franc BEAC
+CurrencySingXOF=CFA Franc BCEAO
+CurrencyXPF=CFP Francs
+CurrencySingXPF=CFP Franc
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:24:02).

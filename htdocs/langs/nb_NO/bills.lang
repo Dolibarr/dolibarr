@@ -364,3 +364,59 @@ TitanNumRefModelDesc3=Angi verdien SOCIETE_FISCAL_MONTH_START med den måneden s
 TitanNumRefModelDesc4=I dette eksempel får vi den 1 september 2006 en faktura med nummeret FA0700001.
 # pluton
 PlutonNumRefModelDesc1=Gir et fakturanummer etter egendefinerte regler.
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+InvoiceDepositAsk=Innskudd faktura
+InvoiceDepositDesc=Denne typen faktura gjøres når et innskudd har blitt mottatt.
+InvoiceProForma=Proforma faktura
+InvoiceProFormaAsk=Proforma faktura
+InvoiceProFormaDesc=<b>Proforma faktura</b> er et bilde av en ekte faktura, men har ingen regnskapsføring verdi.
+InvoiceReplacementDesc=<b>Erstatning faktura</b> brukes til å avbryte og erstatte fullstendig faktura uten betaling allerede mottatt. <br><br> Merk: Bare faktura uten betaling på det kan erstattes. Hvis ikke stengt, vil det bli automatisk stengt for &#39;forlatt&#39;.
+UsedByInvoice=Brukes til å betale faktura %s
+ConsumedBy=Konsumert av
+NotConsumed=Ikke forbrukt
+HelpPaymentHigherThanReminderToPay=Oppmerksomhet, er betalingen mengden av en eller flere regninger høyere enn resten til å betale. <br> Endre din oppføring, ellers bekrefte og tenke på å lage en kreditnota av det overskytende mottatt for hver overbetalte fakturaer.
+BillStatusConverted=Konvertert til rabatt
+BillShortStatusConverted=Behandlet
+ShowInvoiceDeposit=Vis depositum faktura
+AlreadyPaidNoCreditNotesNoDeposits=Allerede betalt (uten kreditt notater og innskudd)
+SetDate=Angi dato
+Deposit=Innskudd
+Deposits=Innskudd
+DiscountFromDeposit=Betalinger fra forekomst faktura %s
+AbsoluteDiscountUse=Denne typen kreditt kan brukes på faktura før godkjenningen sin
+CreditNoteDepositUse=Faktura må godkjennes for å bruke denne kongen av studiepoeng
+NewRelativeDiscount=Nye relative rabatt
+IdSocialContribution=Sosiale bidrag id
+PaymentId=Betaling id
+DescTaxAndDividendsArea=Dette området inneholder et sammendrag av alle betalinger gjøres for skatt eller sosiale bidrag. Bare poster med betaling i løpet av faste året er tatt med her.
+NbOfPayments=Nb av betalinger
+SplitDiscount=Split rabatt i to
+ConfirmSplitDiscount=Er du sikker på at du vil dele denne rabatten av <b>%s</b> %s i to lavere rabatter?
+TypeAmountOfEachNewDiscount=Inngang beløp for hver av to deler:
+TotalOfTwoDiscountMustEqualsOriginal=Totalt to nye rabatt må være lik originale rabattbeløpet.
+ConfirmRemoveDiscount=Er du sikker på at du vil fjerne denne rabatten?
+RelatedBill=Relaterte faktura
+RelatedBills=Relaterte fakturaer
+UseCredit=Bruk kredittkort
+ShowUnpaidLateOnly=Vis sent ubetalte faktura bare
+PaymentInvoiceRef=Betaling faktura %s
+ValidateInvoice=Valider faktura
+Cash=Kontanter
+Reported=Forsinket
+DisabledBecausePayments=Ikke mulig siden det er noen betalinger
+CantRemovePaymentWithOneInvoicePaid=Kan ikke fjerne betalingen siden det er i alle fall på faktura klassifisert utbetales
+ExpectedToPay=Forventet utbetaling
+PayedByThisPayment=Betales av denne betalingen
+TypeContact_facture_internal_SALESREPFOLL=Representant oppfølging kunde faktura
+TypeContact_facture_external_BILLING=Kunden faktura kontakt
+TypeContact_facture_external_SHIPPING=Kunden shipping kontakt
+TypeContact_facture_external_SERVICE=Kundeservice Kontakt
+TypeContact_facture_fourn_internal_SALESREPFOLL=Representant oppfølging leverandørfaktura
+TypeContact_facture_fourn_external_BILLING=Leverandørfaktura kontakt
+TypeContact_facture_fourn_external_SHIPPING=Leverandør shipping kontakt
+TypeContact_facture_fourn_external_SERVICE=Leverandør service kontakt
+PDFLinceDescription=En komplett faktura modell med spanske RE og IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:50:35).

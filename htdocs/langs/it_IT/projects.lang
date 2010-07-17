@@ -65,3 +65,44 @@ CHARSET=UTF-8
 ListPredefinedInvoicesAssociatedProject=Elenco delle fatture clienti predefinite associate con il progetto
 CantRemoveProject=Questo progetto non può essere rimosso in quanto è di riferimento per alcuni altri oggetti (fatture, ordini o altri). Vedi scheda referers.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+PrivateProject=Contatti di progetto
+MyProjectsDesc=Questa visione è limitata a progetti che state per un contatto (qualunque sia il tipo).
+ProjectsPublicDesc=Questo punto di vista presenta tutti i progetti sono autorizzati a leggere.
+ProjectsDesc=Questo punto di vista presenta tutti i progetti (le autorizzazioni utente si concede l&#39;autorizzazione per visualizzare tutto).
+MyTasksDesc=Questa visione è limitata a progetti o attività che sono per un contatto (qualunque sia il tipo).
+TasksPublicDesc=Questo punto di vista presenta tutti i progetti e le attività sono permesso di leggere.
+TasksDesc=Questo punto di vista presenta tutti i progetti e le attività (le autorizzazioni utente si concede l&#39;autorizzazione per visualizzare tutto).
+Progress=Progressi
+ListFichinterAssociatedProject=Elenco degli interventi legati al progetto
+ListTripAssociatedProject=Elenco dei viaggi e delle spese associate al progetto
+ListActionsAssociatedProject=Elenco delle azioni associate al progetto
+ValidateProject=Valida projet
+ConfirmValidateProject=Sei sicuro di voler convalidare questo progetto?
+CloseAProject=Chiusura del progetto
+ConfirmCloseAProject=Sei sicuro di voler chiudere questo progetto?
+ReOpenAProject=Apri progetto
+ConfirmReOpenAProject=Sei sicuro di voler riaprire questo progetto?
+ProjectContact=Progetto contatti
+ActionsOnProject=Azioni sul progetto
+YouAreNotContactOfProject=Lei non è un contatto di questo progetto privato
+DeleteATimeSpent=Elimina il tempo trascorso
+ConfirmDeleteATimeSpent=Sei sicuro di voler cancellare questo tempo?
+DoNotShowMyTasksOnly=Vedi anche compiti io non sono interessato a
+ShowMyTasksOnly=Visualizza solo compiti sono affetto da
+TaskRessourceLinks=Risorse
+ProjectsDedicatedToThisThirdParty=I progetti dedicati a questo terzo
+NoTasks=Le funzioni di questo progetto
+LinkedToAnotherCompany=Collegato a una terza parte
+TypeContact_project_internal_PROJECTLEADER=Capo progetto
+TypeContact_project_external_PROJECTLEADER=Capo progetto
+TypeContact_project_internal_CONTRIBUTOR=Contributore
+TypeContact_project_external_CONTRIBUTOR=Contributore
+TypeContact_project_task_internal_TASKEXECUTIVE=Compito dell&#39;esecutivo
+TypeContact_project_task_external_TASKEXECUTIVE=Compito dell&#39;esecutivo
+TypeContact_project_task_internal_CONTRIBUTOR=Contributore
+TypeContact_project_task_external_CONTRIBUTOR=Contributore
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:44).

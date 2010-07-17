@@ -178,3 +178,35 @@ DolibarrNotification=Automaattinen ilmoitus
 DemoFundation=Hallitse jäseniä säätiön
 DemoFundation2=Jäsenten hallinta ja pankkitilille säätiön
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+Notify_NOTIFY_VAL_ORDER=Asiakas tilaa validoitu
+Notify_NOTIFY_VAL_PROPAL=Asiakas ehdotus validoidaan
+PredefinedMailTest=Tämä on testi postitse. \ NOsoitteen kaksi riviä välissä rivinvaihto.
+PredefinedMailTestHtml=Tämä on <b>testi</b> postitse (sana testi on lihavoitu). <br> Kaksi riviä välissä rivinvaihto.
+CalculatedWeight=Laskettu paino
+CalculatedVolume=Laskettu määrä
+Length=Pituus
+LengthUnitm=m
+LengthUnitdm=dm
+LengthUnitcm=cm
+LengthUnitmm=mm
+Surface=Alue
+SurfaceUnitm2=m2
+SurfaceUnitdm2=dm2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+EMailTextProposalValidated=Ehdotus %s on hyväksytty.
+EMailTextOrderValidated=Jotta %s on hyväksytty.
+ResizeDesc=Kirjoita uusi leveys <b>tai</b> uusien korkeus. Suhde pidetään ajan kokoa ...
+NewLength=Uusi leveys
+NewHeight=Uusi korkeus
+NewSizeAfterCropping=Uusi koko jälkeen rajaus
+DefineNewAreaToPick=Määritä uusi alue kuvasta valita (vasemmalla klikkaa kuvaa vetämällä kunnes tulet päinvastainen kulma)
+CurrentInformationOnImage=Tiedot ajankohtaisista kuva
+YouReceiveMailBecauseOfNotification=Saat tämän viestin koska sähköpostiosoitteesi on lisätty luetteloon tavoitteet ilmoitetaan erityisesti tapahtumien osaksi %s ohjelmisto %s.
+YouReceiveMailBecauseOfNotification2=Tämä tapahtuma on seuraava:
+ExternalSites=Ulkoiset sivustot
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:43).

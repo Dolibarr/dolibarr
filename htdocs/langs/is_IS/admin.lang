@@ -276,7 +276,6 @@ MinLength=Lágmarks lengd
 LanguageFilesCachedIntoShmopSharedMemory=Skrá. Lang hlaðinn í samnýtt minni
 ExamplesWithCurrentSetup=Dæmi með núverandi hlaupandi skipulag
 ListOfDirectories=Listi yfir OpenDocument sniðmát framkvæmdarstjóra
-ListOfDirectoriesForModelGenODT=Listi yfir möppur contenaining sniðmát skrá með OpenDocument sniði. <br><br> Settu hér fulla slóð í möppur. <br> Bæta við flutning til baka á milli eah skrá. <br> Til að bæta við möppu á GED mát, bæta við hér <b>DOL_DATA_ROOT / ECM / yourdirectoryname.</b> <br><br> Skrá í þessum möppum verður að enda <b>með. Odt.</b>
 NumberOfModelFilesFound=Fjöldi ODT sniðmát skrár fundust í þessum möppum
 ExampleOfDirectoriesForModelGen=Dæmi um setningafræði: <br> c: \ mydir <br> / Home / mydir <br> DOL_DATA_ROOT / ECM / ecmdir
 FirstnameNamePosition=Staðsetning firstname / nafn
@@ -1158,3 +1157,12 @@ ProjectsModelModule=Project Skýrsla skjal líkan
 Permission36=Sjá / stjórna falinn vörur
 Permission536=Sjá / stjórna falinn þjónusta
 // STOP - Lines generated via autotranslator.php tool (2010-07-10 01:17:23).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:29:16).
+// Reference language: en_US
+IgnoreDuplicateRecords=Hunsa villurnar af afrit records (INSERT hunsa)
+SubmitTranslation=Ef þýðing fyrir þetta tungumál er ekki lokið eða þú finnur villur, getur þú rétta þetta með því að skrá útgáfa inn <b>langs</b> skrá <b>/ %s</b> og leggja breytt skrám www.dolibarr.org umræðum.
+ListOfDirectoriesForModelGenODT=Listi yfir möppur sem innihalda sniðmát skrá með OpenDocument sniði. <br><br> Settu hér fulla slóð í möppur. <br> Bæta við flutning til baka á milli eah skrá. <br> Til að bæta við möppu á GED mát, bæta við hér <b>DOL_DATA_ROOT / ECM / yourdirectoryname.</b> <br><br> Skrá í þessum möppum verður að enda <b>með. Odt.</b>
+Permission14=Staðfesta reikningum
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:30:01).

@@ -154,3 +154,9 @@ ShowAllAccounts=Show für alle
 // Reference language: en_US
 TransactionWithOtherAccount=-Konto übertragen
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+BankAccountCountry=Konto Land
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:30).

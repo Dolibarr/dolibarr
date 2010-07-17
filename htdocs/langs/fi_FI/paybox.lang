@@ -30,3 +30,9 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL tarjota %s online maksu käyttölii
 YouCanAddTagOnUrl=Voit myös lisätä URL-parametrin <b>&amp; tag= <i>arvo</i></b> mille tahansa niistä URL (vaaditaan ainoastaan ilmaiseksi maksu) lisätään oma maksu kommentoida tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Määritä oman PayBox kanssa <b>url %s</b> on maksu luodaan automaattisesti, kun validoinut paybox.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL tarjota %s online maksu käyttöliittymän jäsen tilaus
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).

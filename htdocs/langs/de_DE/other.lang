@@ -172,3 +172,36 @@ EMailTextInvoiceValidated=Rechnung %s validiert
 ImportedWithSet=Einfuhr Daten
 DolibarrNotification=Automatische Benachrichtigung
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+Notify_NOTIFY_VAL_ORDER=Um Kunden validiert
+Notify_NOTIFY_VAL_PROPAL=Customer Vorschlag validiert
+PredefinedMailTest=Dies ist ein Test Post. \ NDie beiden Zeilen sind von einem Wagenrücklauf getrennt.
+PredefinedMailTestHtml=Dies ist ein <b>Test</b> Post (das Wort Test ist fett werden). <br> Die beiden Linien werden durch einen Wagenrücklauf getrennt.
+CalculatedWeight=Berechnete Gewicht
+CalculatedVolume=Berechnete Volumen
+Length=Länge
+LengthUnitm=m
+LengthUnitdm=dm
+LengthUnitcm=cm
+LengthUnitmm=mm
+Surface=Bereich
+SurfaceUnitm2=m2
+SurfaceUnitdm2=dm2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+NumberOfUnitsProposals=Anzahl der Einheiten auf Vorschläge letzten 12 Monate
+EMailTextProposalValidated=Der Vorschlag %s validiert wurde.
+EMailTextOrderValidated=Die Reihenfolge %s validiert wurde.
+ResizeDesc=Geben Sie die neue Breite <b>oder</b> neue Höhe. Ratio wird während der Größenänderung gehalten werden ...
+NewLength=Neue Breite
+NewHeight=Neue Höhe
+NewSizeAfterCropping=Neue Größe nach dem Zuschneiden
+DefineNewAreaToPick=Definieren neuer Bereich auf das Bild holen (links auf das Bild klicken und ziehen, bis Sie die gegenüberliegende Ecke zu erreichen)
+CurrentInformationOnImage=Informationen über aktuelle Bild
+YouReceiveMailBecauseOfNotification=Sie erhalten diese Nachricht, weil Sie Ihre E-Mail wurde zur Liste der Ziele hinzugefügt worden, um besondere Ereignisse in der %s %s Software informiert werden.
+YouReceiveMailBecauseOfNotification2=Diese Veranstaltung ist die folgende:
+ExternalSites=Externe Seiten
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:25:37).

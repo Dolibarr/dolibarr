@@ -134,3 +134,21 @@ PaymentOrderRef=Die Zahlung der Bestellung %s
 CloneOrder=Klonen, um
 ConfirmCloneOrder=Sind Sie sicher, dass Sie zu klonen, um <b>diese %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+OrderToProcess=Zur Bearbeitung
+TypeContact_commande_internal_SALESREPFOLL=Repräsentative Follow-up Kundenauftrag
+TypeContact_commande_internal_SHIPPING=Repräsentative Follow-up-Express
+TypeContact_commande_external_BILLING=Debitorenrechnung Kontakt
+TypeContact_commande_external_SHIPPING=Customer Versand Kontakt
+TypeContact_commande_external_CUSTOMER=Customer Contact Follow-up um
+TypeContact_order_supplier_internal_SALESREPFOLL=Repräsentative Follow-up Lieferanten bestellen
+TypeContact_order_supplier_internal_SHIPPING=Repräsentative Follow-up-Express
+TypeContact_order_supplier_external_BILLING=Lieferantenrechnung Kontakt
+TypeContact_order_supplier_external_SHIPPING=Supplier Versand Kontakt
+TypeContact_order_supplier_external_CUSTOMER=Anbieter kontaktieren Follow-up um
+PDFEdisonDescription=Ein einfaches Modell, um
+PDFQuevedoDescription=Eine vollständige Bestellung Modell mit spanischen und RE IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:14).

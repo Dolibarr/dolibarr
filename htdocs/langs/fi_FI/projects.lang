@@ -68,3 +68,45 @@ AffectedTo=Vaikuttaa
 ListPredefinedInvoicesAssociatedProject=Luettelo asiakkaiden ennalta laskut liittyvät hankkeen
 CantRemoveProject=Tämä hanke ei voi poistaa, koska se on viittaamat joitakin muita esineitä (lasku, tilaukset ja muut). Katso viittaajan välilehti.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+PrivateProject=Yhteystiedot Hankkeen
+MyProjectsDesc=Tämä näkemys on vain hankkeisiin olet yhteyshenkilö (mikä on tyyppi).
+ProjectsPublicDesc=Tämä näkemys esitetään kaikki hankkeet sinulla voi lukea.
+ProjectsDesc=Tämä näkemys esitetään kaikki hankkeet (käyttäjäoikeuksien antaa sinulle luvan katsella kaikkea).
+MyTasksDesc=Tämä näkemys on vain hankkeisiin tai tehtäviä olet yhteyshenkilö (mikä on tyyppi).
+TasksPublicDesc=Tämä näkemys esitetään kaikki hankkeet ja tehtävät sinulla voi lukea.
+TasksDesc=Tämä näkemys esitetään kaikki hankkeet ja tehtävät (käyttäjäoikeuksien antaa sinulle luvan katsella kaikkea).
+Progress=Edistyminen
+ListFichinterAssociatedProject=Luettelo toimien hankkeeseen liittyvän
+ListTripAssociatedProject=Luettelo matkat ja kulut hankkeeseen liittyvät
+ListActionsAssociatedProject=Luettelo toimia, jotka liittyvät hankkeen
+ValidateProject=Vahvista projet
+ConfirmValidateProject=Oletko varma että haluat vahvistaa tätä hanketta?
+CloseAProject=Sulje projekti
+ConfirmCloseAProject=Oletko varma että haluat sulkea tämän hankkeen?
+ReOpenAProject=Avaa projekti
+ConfirmReOpenAProject=Oletko varma että haluat avata uudelleen tämän hankkeen?
+ProjectContact=Hankkeen yhteystiedot
+ActionsOnProject=Toimien hanketta
+YouAreNotContactOfProject=Et ole kosketuksissa tämän yksityisen hankkeen
+DeleteATimeSpent=Poista käytetty aika
+ConfirmDeleteATimeSpent=Oletko varma että haluat poistaa tämän aika?
+DoNotShowMyTasksOnly=Katso myös tehtävien En vaikuteta
+ShowMyTasksOnly=Näytä vain tehtäviä olen vaikuttaa
+TaskRessourceLinks=Ressources
+ProjectsDedicatedToThisThirdParty=Hankkeet omistettu tälle kolmannelle
+NoTasks=Ei tehtävät hankkeen
+LinkedToAnotherCompany=Liittyy muihin kolmannen osapuolen
+TypeContact_project_internal_PROJECTLEADER=Projektin johtaja
+TypeContact_project_external_PROJECTLEADER=Projektin johtaja
+TypeContact_project_internal_CONTRIBUTOR=Avustaja
+TypeContact_project_external_CONTRIBUTOR=Avustaja
+TypeContact_project_task_internal_TASKEXECUTIVE=Tehtävä johtoon
+TypeContact_project_task_external_TASKEXECUTIVE=Tehtävä johtoon
+TypeContact_project_task_internal_CONTRIBUTOR=Avustaja
+TypeContact_project_task_external_CONTRIBUTOR=Avustaja
+DocumentModelBaleine=Täydellinen hankkeen tarkastusraportin malli (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:40).

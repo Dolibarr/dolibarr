@@ -100,3 +100,15 @@ CatSupList=Luettelo toimittaja tuoteryhmät
 CatCusList=Luettelo asiakas / näköpiirissä tuoteryhmät
 CatProdList=Luettelo tuotteista tuoteryhmät
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+MembersCategoriesArea=Jäsenet luokat alue
+MemberIsInCategories=Tämä jäsen omistaa seuraaville jäsenille ryhmiin
+MemberHasNoCategory=Tämä jäsen ei ole mitään luokkiin
+MembersCategoryShort=Jäsenet luokka
+MembersCategoriesShort=Jäsenet luokat
+ThisCategoryHasNoMember=Tämä kategoria ei sisällä mitään jäsen.
+CatMemberList=Jäsenlista luokkien
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:27).

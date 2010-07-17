@@ -129,3 +129,11 @@ CreateInternalUserDesc=Denne form giver dig mulighed for at oprettet en bruger i
 InternalExternalDesc=En <b>intern</b> bruger er en bruger, der er en del af din virksomhed / fundament. <br> En <b>ekstern</b> bruger er en kunde, leverandør eller andre. <br><br> I begge tilfælde permissions definerer rettigheder på Dolibarr, også eksterne bruger kan have en anden menu manager end intern bruger (Se Home - Setup - Display)
 PermissionInheritedFromAGroup=Tilladelse gives, fordi arvet fra en af en brugers gruppe.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+Inherited=Arvelige
+YourRole=Din roller
+YourQuotaOfUsersIsReached=Din kvote af aktive brugere er nået!
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:44).

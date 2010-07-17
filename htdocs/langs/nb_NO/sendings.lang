@@ -45,3 +45,21 @@ DocumentModelSimple=ENkel dokumentmodell
 
 # NumRef
 NumRefModelJade=Gir et referansenummer med formatet BLÅÅ00001, ... hvor ÅÅ viser året. Det siste tallet blir aldri tilbakestilt til null.
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+Shipments=Skipninger
+StatusSendingCanceled=Kansellert
+StatusSendingCanceledShort=Kansellert
+DocumentModelMerou=Merou A5 modell
+WarningNoQtyLeftToSend=Advarsel, ingen produkter venter sendes.
+StatsOnShipmentsOnlyValidated=Statistikk utført på forsendelser bare validert
+DateDeliveryPlanned=Høvlet levering
+DateReceived=Dato levering mottatt
+SendingMethodCATCH=Catch av kunde
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=Enkelt dokument modellen for levering kvitteringer
+DocumentModelTyphon=Mer fullstendig dokument modellen for levering kvitteringer (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:05).

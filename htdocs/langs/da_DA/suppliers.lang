@@ -52,3 +52,9 @@ ListOfSupplierProductForSupplier=Liste over produkter og priser for <b>leverand�
 // Reference language: en_US
 NoneOrBatchFileNeverRan=Ingen eller <b>parti %s</b> ikke kørte for nylig
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Denne henvisning leverandøren er allerede forbundet med en reference: %s
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:22).

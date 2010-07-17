@@ -136,3 +136,21 @@ PaymentOrderRef=Betaling af for %s
 CloneOrder=Klon orden
 ConfirmCloneOrder=Er du sikker på at du vil klone denne <b>ordre %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+OrderToProcess=For at kunne behandle
+TypeContact_commande_internal_SALESREPFOLL=Repræsentant opfølgning kundeordre
+TypeContact_commande_internal_SHIPPING=Repræsentant opfølgning shipping
+TypeContact_commande_external_BILLING=Kundefaktura kontakt
+TypeContact_commande_external_SHIPPING=Kunde shipping kontakt
+TypeContact_commande_external_CUSTOMER=Kundekontakt følgende retskendelse
+TypeContact_order_supplier_internal_SALESREPFOLL=Repræsentant opfølgning leverandør for
+TypeContact_order_supplier_internal_SHIPPING=Repræsentant opfølgning shipping
+TypeContact_order_supplier_external_BILLING=Leverandør faktura kontakt
+TypeContact_order_supplier_external_SHIPPING=Leverandør shipping kontakt
+TypeContact_order_supplier_external_CUSTOMER=Leverandør kontakt efter retskendelse
+PDFEdisonDescription=En simpel orden model
+PDFQuevedoDescription=En komplet orden model med spanske RE og IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:41).

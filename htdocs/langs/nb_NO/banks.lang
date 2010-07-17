@@ -133,3 +133,14 @@ PaymentNumberUpdateFailed=Klarte ikke å oppdatere betalingsnummer
 PaymentDateUpdateSucceeded=Betalingsdato oppdatert
 PaymentDateUpdateFailed=Klarte ikke å oppdatere betalingsdatoen
 BankTransactionLine=Bankoverføring
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+BankAccountCountry=Konto landet
+ListTransactions=Liste transaksjoner
+ListTransactionsByCategory=Liste transaksjon / kategori
+AllAccounts=Alle bank / cash kontoer
+BackToAccount=Tilbake til kontoen
+ShowAllAccounts=Vis for alle kontoer
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:15).

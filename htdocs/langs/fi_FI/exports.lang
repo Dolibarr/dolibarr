@@ -75,3 +75,56 @@ ChooseFileToImport=Valitse tiedosto tuoda sitten picto %s ...
 FieldsInSourceFile=Toimialoja lähdetiedostoa
 FieldsInTargetDatabase=Kohdekieli kentät Dolibarr tietokanta
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+NotImportedFields=Aihealue lähdetiedoston ei tuoda
+NoDiscardedFields=Ei aloilla lähdetiedosto on hävitettävä
+FieldOrder=Kenttä järjestys
+FieldTitle=Kentän nimi
+DownloadEmptyExample=Lataa esimerkiksi tyhjiä lähdetiedoston
+ChooseFormatOfFileToImport=Valitse tiedostomuoto käyttää kuin tuoda tiedostomuodossa napsauttamalla picto %s valitse se ...
+SourceFileFormat=Lähde tiedostomuoto
+Field=Kenttä
+NoFields=Ei kentät
+MoveField=Siirrä kenttä sarakkeeseen numero %s
+ExampleOfImportFile=Example_of_import_file
+SaveImportProfile=Tallenna tämä tuonti profiili
+ErrorImportDuplicateProfil=Tallennus epäonnistui tämän tuoda profiilin tällä nimellä. Nykyinen profiili on jo olemassa tällä nimellä.
+ImportSummary=Tuo setup yhteenveto
+TablesTarget=Kohdennettu taulukot
+FieldsTarget=Kohdennettu kentät
+TableTarget=Kohdennettu taulukko
+FieldTarget=Alalta
+FieldSource=Lähde kenttä
+DoNotImportFirstLine=Älä tuo ensimmäinen rivi lähdetiedoston
+NbOfSourceLines=Määrä riviä lähdetiedoston
+NowClickToTestTheImport=Tarkista tuonti parametrit olet määrittänyt. Jos ne ovat oikein, klikkaa painiketta <b>&quot;%s&quot;</b> käynnistää simulaation tuominen (eikä tietoja muuttaa tietokannan, se on vain simulaatio tällä hetkellä) ...
+RunSimulateImportFile=Käynnistä tuonti simulointi
+FieldNeedSource=Tämä tuntuu tietokannassa vaatia tietoja lähdetiedoston
+SomeMandatoryFieldHaveNoSource=Jotkut pakolliset kentät eivät lähde tiedosto
+InformationOnSourceFile=Tietoa lähdetiedosto
+InformationOnTargetTables=Tietoa kohde-kentät
+SelectAtLeastOneField=Vaihda ainakin yksi lähde kenttä-sarakkeen kenttiin viedä
+SelectFormat=Valitse tämä tuonti tiedostomuoto
+RunImportFile=Käynnistä tuo tiedosto
+NowClickToRunTheImport=Tarkista tulos tuonti simulointi. Jos kaikki on ok, aloittaa lopullista maahantuontia.
+DataLoadedWithId=Kaikki tiedot ladataan seuraavat tuonti id: <b>%s</b>
+ErrorMissingMandatoryValue=Pakollinen tieto on tyhjä lähdetiedostossa Kentän <b>%s.</b>
+TooMuchErrors=Vielä on <b>%s</b> muulta radoilla virheitä, mutta tuotanto on ollut vähäistä.
+TooMuchWarnings=Vielä on <b>%s</b> muulta linjat varoituksia, mutta tuotanto on ollut vähäistä.
+EmptyLine=Tyhjä rivi (on hävitettävä)
+CorrectErrorBeforeRunningImport=Sinun on ensin korjata kaikki virheet ennen jatkuva lopullista maahantuontia.
+YouCanUseImportIdToFindRecord=Löydät kaikki tuodut tietokannan tietueisiin suodattamalla pellolla <b>import_key = &quot;%s&quot;.</b>
+NbOfLinesOK=Rivien määrä ilman virheitä ja varoituksia ei: <b>%s.</b>
+NbOfLinesImported=Rivien määrä Tuodut: <b>%s.</b>
+DataComeFromNoWhere=Arvo lisätä peräisin missään lähdetiedostoon.
+DataComeFromFileFieldNb=Arvoa lisää tulee kentän numero <b>%s</b> vuonna lähdetiedostossa.
+DataComeFromIdFoundFromRef=Arvo, joka tulee kentän numero <b>%s</b> lähteitä tiedosto voidaan löytää id vanhempi vastustaa käyttää (siis esine <b>%s</b> joka on viite. Lähteestä tiedosto on olemassa osaksi Dolibarr).
+DataIsInsertedInto=Tiedot ovat peräisin lähteestä tiedosto lisätään seuraavilla aloilla:
+DataIDSourceIsInsertedInto=Id emoyhtiön esine löytyi käyttää tietoja lähdetiedoston on lisättävä seuraavilla aloilla:
+SourceRequired=Tiedon arvo on pakollinen
+SourceExample=Esimerkki mahdollisesta tietojen arvo
+CSVFormatDesc=<b>Pilkuin erotellut</b> tiedostomuodossa (. Csv). <br> Tämä on tekstitiedosto muodossa, jossa kentät on erotettu separaattori [%s]. Jos erotin on sisäpuolella kentän sisältöä, kenttä on pyöristetty pyöreä merkki [%s]. Escape paeta pyöreä merkki on [%s].
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:17).

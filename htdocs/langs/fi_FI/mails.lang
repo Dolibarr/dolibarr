@@ -122,3 +122,12 @@ YouCanUseCommaSeparatorForSeveralRecipients=Voit käyttää <b>comma</b> separat
 // Reference language: en_US
 MailingModuleDescFundationMembers=Säätiön jäsenten sähköpostit
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+DateSending=Päivämäärä lähettää
+SentTo=Lähetetään <b>%s</b>
+LimitSendingEmailing=On-line lähettämistä emailings on rajoitettu turvallisuussyistä ja aika syistä <b>%s</b> vastaanottajille lähettämällä istunto.
+ListOfNotificationsDone=Listaa kaikki sähköposti-ilmoitukset lähetetään
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:26).

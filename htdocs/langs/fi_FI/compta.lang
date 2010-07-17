@@ -134,3 +134,12 @@ OptionModeTrueDesc=Tässä yhteydessä, että liikevaihto on laskettu yli maksut
 ShowVatPayment=Näytä arvonlisäveron maksaminen
 SupplierAccountancyCode=Toimittaja kirjanpitotietojen koodi
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+TaxModuleSetupToModifyRules=Siirry <a href="%s">moduuli setup</a> muuttaa laskentaa koskevia sääntöjä
+VATReportBuildWithOptionDefinedInModule=Määrät kuvassa on laskettu määrittelemien sääntöjen Tax moduuli setup.
+SocialContributionsPayments=Sosiaaliturvamaksut maksut
+ThirdPartyMustBeEditAsCustomer=Kolmannen osapuolen on määriteltävä asiakkaan
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:03).

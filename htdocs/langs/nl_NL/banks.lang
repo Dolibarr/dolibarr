@@ -138,3 +138,15 @@ BankTransactionLine=Bank transactie
 AllAccounts=Alle bank/Kasrekeningen
 BackToAccount=Terug naar rekeningen
 ShowAllAccounts=Toon voor alle rekeningen
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+BankAccountCountry=Konto landet
+ListTransactions=Liste transaksjoner
+ListTransactionsByCategory=Liste transaksjon / kategori
+AllAccounts=Alle bank / cash kontoer
+BackToAccount=Tilbake til kontoen
+ShowAllAccounts=Vis for alle kontoer
+BankAccountCountry=Account land
+BankAccountCountry=Account land
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:16).

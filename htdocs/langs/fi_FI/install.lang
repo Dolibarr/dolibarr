@@ -192,3 +192,27 @@ Experimental=(kokeellinen, ei käytössä)
 MigrationUpdateFailed=Epäonnistui päivitysprosessi
 MigrationBankTransfertsUpdate=Päivitä välisiä pankkitoimiin ja pankkisiirtoa
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+ForceHttps=Force suojatut yhteydet (https)
+CheckToForceHttps=Valitse tämä asetus pakottaa suojattuja yhteyksiä (https). <br> Tämä edellyttää, että www-palvelin on määritetty SSL-varmenne.
+DirectoryRecommendation=On recommanded käyttää hakemiston ulkopuolella teidän hakemistoon verkkosivuja.
+KeepDefaultValuesDeb=Voit käyttää Dolibarr ohjatun peräisin Ubuntu tai Debian-pakettien, joten ehdottamat arvot tässä on jo optimoitu. Vain salasanan tietokannan omistajan luoda on täytettävä. Muuta muut parametrit vain, jos tiedät mitä teet.
+InstallChoiceRecommanded=Suositeltava valinta asentaa version <b>%s</b> nykyisestä versiosta <b>%s</b>
+CheckThatDatabasenameIsCorrect=Tarkista, että tietokannan nimi <b>&quot;%s&quot;</b> on oikea.
+IfAlreadyExistsCheckOption=Jos tämä nimi on oikea ja että tietokanta ei ole vielä olemassa, sinun täytyy tarkistaa vaihtoehto &quot;Luo tietokanta&quot;.
+OpenBaseDir=PHP openbasedir parametri
+YouAskToCreateDatabaseSoRootRequired=Olet ruudun &quot;Luo tietokanta&quot;. Tätä varten sinun pitää / salasana on pääkäyttäjän (pohjan muoto).
+YouAskToCreateDatabaseUserSoRootRequired=Olet ruudun &quot;Luo tietokanta omistaja&quot;. Tätä varten sinun pitää / salasana on pääkäyttäjän (pohjan muoto).
+NextStepMightLastALongTime=Nykyinen vaihe saattaa kestää useita minuutteja. Odota, kunnes seuraava näyttö näkyy kokonaan ennen kuin jatkat.
+MigrationCustomerOrderShipping=Siirrä toimituskuluja asiakastilausten varastointi
+MigrationShippingDelivery=Päivitä varastointi merenkulun
+MigrationShippingDelivery2=Päivitä varastointi merenkulun 2
+MigrationFixData=Korjaus denormalized tiedot
+MigrationRelationshipTables=Tiedot maahanmuuton suhteen taulukot (%s)
+MigrationProjectTaskActors=Tiedot maahanmuuton llx_projet_task_actors taulukko
+MigrationProjectUserResp=Tietojen siirtäminen alalla fk_user_resp ja llx_projet on llx_element_contact
+MigrationProjectTaskTime=Päivitä aika sekunneissa
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:47).

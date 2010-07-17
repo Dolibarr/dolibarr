@@ -193,3 +193,26 @@ MigrationDeliveryAddress=Update Lieferadresse in Sendungen
 MigrationUpdateFailed=Failed Upgrade-Prozess
 MigrationBankTransfertsUpdate=Update Links Transaktion zwischen Bank und eine Überweisung
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+ForceHttps=Force sichere Verbindungen (https)
+CheckToForceHttps=Aktivieren Sie diese Option, um sichere Verbindungen (https Kraft). <br> Dies erfordert, dass der Webserver mit einem SSL-Zertifikat konfiguriert ist.
+DirectoryRecommendation=Es wird empfohlen, ein Verzeichnis außerhalb Ihres Verzeichnis Ihrer Web-Seiten verwenden.
+KeepDefaultValuesDeb=Sie verwenden den Setup-Assistenten Dolibarr von einem Ubuntu oder Debian-Paket, so dass hier Werte sind bereits optimiert vorgeschlagen. Nur das Passwort der Datenbank-Besitzer zu schaffen, müssen ausgefüllt werden. Ändern anderer Parameter nur, wenn Sie wissen was Sie tun.
+CheckThatDatabasenameIsCorrect=Überprüfen Sie, dass Datenbank-Name <b>&quot;%s&quot;</b> ist richtig.
+IfAlreadyExistsCheckOption=Wenn dieser Name korrekt ist und die Datenbank noch nicht vorhanden ist, müssen Sie überprüfen Option &quot;Datenbank erstellen&quot;.
+OpenBaseDir=PHP openbasedir Parameter
+YouAskToCreateDatabaseSoRootRequired=Sie überprüft das Feld &quot;Datenbank erstellen&quot;. Hierfür müssen Sie Login / Passwort des Superuser (unten Form) zu liefern.
+YouAskToCreateDatabaseUserSoRootRequired=Sie überprüft das Feld &quot;Create Datenbank-Besitzer&quot;. Hierfür müssen Sie Login / Passwort des Superuser (unten Form) zu liefern.
+NextStepMightLastALongTime=Aktuelle Schritt kann mehrere Minuten dauern. Bitte bis zum nächsten Bildschirm zu warten ist komplett, bevor Sie fortfahren gezeigt.
+MigrationCustomerOrderShipping=Migrate Versand für Kundenaufträge Lagerung
+MigrationShippingDelivery=Upgrade Lagerung der Schifffahrt
+MigrationShippingDelivery2=Upgrade Lagerung von Versand 2
+MigrationFixData=Fix für denormalisierte Daten
+MigrationRelationshipTables=Data Migration Beziehung Tabellen (%s)
+MigrationProjectTaskActors=Data Migration für llx_projet_task_actors Tisch
+MigrationProjectUserResp=Datenmigration Bereich der fk_user_resp llx_projet zu llx_element_contact
+MigrationProjectTaskTime=Update-Zeit in Sekunden ausgegeben
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:25:41).

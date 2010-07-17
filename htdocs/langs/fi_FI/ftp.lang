@@ -1,0 +1,21 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-07-17 11:26:22
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+CHARSET=UTF-8
+FTPClientSetup=FTP Client-moduuli asennus
+NewFTPClient=Uusi FTP-yhteys asetukset
+FTPArea=FTP Area
+FTPAreaDesc=Tämä ruutu näyttää sisällön FTP-palvelimen mieltä
+SetupOfFTPClientModuleNotComplete=Asennus ja FTP-moduuli näyttää ole täydellinen
+FTPFeatureNotSupportedByYourPHP=PHP ei tue FTP toiminnot
+FailedToConnectToFTPServer=Yhteyden muodostaminen epäonnistui FTP-palvelimen (palvelin %s, portti %s)
+FailedToConnectToFTPServerWithCredentials=Epäonnistui kirjautua FTP-palvelimeen on määritelty / salasana
+FTPFailedToRemoveFile=Ole poistanut tiedoston <b>%s.</b>
+FTPFailedToRemoveDir=Ole poistanut hakemistoon <b>%s</b> (Tarkista oikeudet ja että hakemisto on tyhjä).
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:05).

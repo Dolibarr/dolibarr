@@ -89,3 +89,26 @@ CatSupList=Lijst van de leverancier categorieën
 CatCusList=Lijst van de klant / prospect categorieën
 CatProdList=Lijst van producten van de categorieën
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+NoCategoryYet=Ingen kategori av denne typen er opprettet
+MembersCategoriesArea=Medlemmer kategorier området
+MemberIsInCategories=Dette medlemmet eier til følgende medlemmer kategorier
+MemberHasNoCategory=Dette medlem er ikke i noen kategorier
+MembersCategoryShort=Medlemmer kategori
+MembersCategoriesShort=Medlemmer kategorier
+ThisCategoryHasNoMember=Denne kategorien inneholder ingen medlem.
+CatSupList=Liste av leverandør kategorier
+CatCusList=Liste over kunde / prospektet kategorier
+CatProdList=Liste over produkter kategorier
+CatMemberList=Liste over medlemmer kategorier
+MembersCategoriesArea=Leden categorieën gebied
+MemberIsInCategories=Dit lid is eigenaar van de volgende categorieën leden
+MemberHasNoCategory=Dit lid is op geen enkele categorieën
+MembersCategoryShort=Leden categorie
+MembersCategoriesShort=Leden categorieën
+ThisCategoryHasNoMember=Deze categorie bevat geen lid.
+CatMemberList=Lijst van de leden categorieën
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:46:11).

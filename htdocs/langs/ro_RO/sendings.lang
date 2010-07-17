@@ -66,3 +66,54 @@ SendingMethodCOLSUI=Colissimo
 DocumentModelSirocco=Simplă document model pentru livrare încasări
 DocumentModelTyphon=Mai completă, documentul model de livrare încasări (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+Shipments=Transporturile
+StatusSendingCanceled=Anulat
+StatusSendingCanceledShort=Anulat
+DocumentModelMerou=Merou modelul A5
+DateDeliveryPlanned=geluite data de livrare
+DateReceived=Data de livrare a primit
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:08).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+Shipments=Skipninger
+StatusSendingCanceled=Kansellert
+StatusSendingCanceledShort=Kansellert
+DocumentModelMerou=Merou A5 modell
+WarningNoQtyLeftToSend=Advarsel, ingen produkter venter sendes.
+StatsOnShipmentsOnlyValidated=Statistikk utført på forsendelser bare validert
+DateDeliveryPlanned=Høvlet levering
+DateReceived=Dato levering mottatt
+SendingMethodCATCH=Catch av kunde
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=Enkelt dokument modellen for levering kvitteringer
+DocumentModelTyphon=Mer fullstendig dokument modellen for levering kvitteringer (logo. ..)
+Shipments=Zendingen
+StatusSendingCanceled=Geannuleerd
+StatusSendingCanceledShort=Geannuleerd
+DocumentModelMerou=Merou A5 model
+DateDeliveryPlanned=Geschaafd datum van levering
+DateReceived=Datum van aflevering ontvangen
+Shipments=Zendingen
+DocumentModelMerou=Merou A5 model
+DateDeliveryPlanned=Geschaafd datum van levering
+DateReceived=Datum van aflevering ontvangen
+Shipments=Wysyłek
+StatusSendingCanceled=Odwołany
+StatusSendingCanceledShort=Odwołany
+DocumentModelMerou=Mérou model A5
+DateDeliveryPlanned=Strugane daty dostawy
+DateReceived=Data otrzymania dostawy
+Shipments=Envios
+StatusSendingCanceled=Cancelado
+StatusSendingCanceledShort=Cancelado
+DocumentModelMerou=Mérou modelo A5
+DateDeliveryPlanned=aplainada data de entrega
+DateReceived=Data da entrega recebida
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:09).

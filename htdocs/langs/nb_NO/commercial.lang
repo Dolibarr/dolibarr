@@ -75,3 +75,11 @@ ActionAC_REL=Send purring
 ActionAC_CLO=Lukk
 ActionAC_EMAILING=Send e-postutsendelse (massemailing)
 ActionAC_COM=Send ordre i posten
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+Rendez-Vous=Rendezvous
+ActionAC_SUP_ORD=Send leverandør bestill ved mail
+ActionAC_SUP_INV=Send leverandør faktura i posten
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:13).

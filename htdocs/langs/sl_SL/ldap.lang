@@ -28,3 +28,11 @@ MemberSynchronized=Član sinhroniziran
 ContactSynchronized=Kontakt sinhroniziran
 ForceSynchronize=Vsili sinhronizacijo Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Branje LDAP baze podatkov ni uspelo. Preverite nastavitev LDAP modula in dostopnost baze podatkov.
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+GroupSynchronized=Gruppe synkronisert
+MemberSynchronized=Medlem synkronisert
+ContactSynchronized=Kontakt synkronisert
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:11).

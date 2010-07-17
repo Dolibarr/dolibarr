@@ -136,3 +136,12 @@ OptionModeTrueDesc=I denne sammenhæng, omsætningen er beregnet over betalinger
 ShowVatPayment=Vis momsbetaling
 SupplierAccountancyCode=Leverandør regnskabspool kode
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+TaxModuleSetupToModifyRules=Gå til <a href="%s">modul opsætning</a> til at ændre reglerne for beregning
+VATReportBuildWithOptionDefinedInModule=Beløb der vises her, beregnes ved hjælp af regler fastlagt af Skat modul setup.
+SocialContributionsPayments=Sociale bidrag betalinger
+ThirdPartyMustBeEditAsCustomer=Tredjeparts skal defineres som kunde
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:19).

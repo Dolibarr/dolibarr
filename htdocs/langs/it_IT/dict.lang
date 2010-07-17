@@ -273,3 +273,28 @@ CurrencyXOF				=Franchi CFA BCEAO
 // Reference language: en_US
 CHARSET=UTF-8
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+CurrencySingAUD=AU Dollaro
+CurrencySingCAD=CAN Dollaro
+CurrencySingCHF=Franco Svizzero
+CurrencySingEUR=Euro
+CurrencySingFRF=Franco Francese
+CurrencySingGBP=GB Pound
+CurrencyINR=rupie indiane
+CurrencySingINR=Rupia indiana
+CurrencySingMAD=Dirham
+CurrencySingMGA=Ariary
+CurrencyMUR=Mauritius rupie
+CurrencySingMUR=Mauritius Rupia
+CurrencyNOK=Krones norvegese
+CurrencySingNOK=corone norvegesi
+CurrencySingTND=Dinaro tunisino
+CurrencySingUSD=US Dollar
+CurrencySingXAF=Franco CFA BEAC
+CurrencySingXOF=Franco CFA BCEAO
+CurrencyXPF=CFP Franchi
+CurrencySingXPF=Franco CFP
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:33:13).

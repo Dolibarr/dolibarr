@@ -44,3 +44,44 @@ ClassCredited=Einordnen gutgeschrieben
 ClassCreditedConfirm=Sind Sie sicher, dass Sie klassifizieren diese Rücknahme Eingang als Gutschrift auf Ihrem Konto?
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+StandingOrderToProcess=Zum Prozess
+StandingOrderProcessed=Verarbeitete
+TransData=Datum der Übermittlung
+TransMetod=Methode Transmission
+Send=Senden
+Lines=Lines
+StandingOrderReject=Geben Sie eine Ablehnung
+WithdrawalRefused=Abhebungen Refuseds
+WithdrawalRefusedConfirm=Sind Sie sicher, dass Sie eine Auszahlung Ablehnung für die Gesellschaft geben
+RefusedData=Datum der Ablehnung
+RefusedReason=Grund für die Ablehnung
+RefusedInvoicing=Billing der Ablehnung
+NoInvoiceRefused=Laden Sie nicht die Ablehnung
+InvoiceRefused=Laden Sie die Ablehnung des Kunden
+Status=Status
+StatusUnknown=Unbekannt
+StatusWaiting=Warten
+StatusCredited=Abspann
+StatusRefused=Refused
+StatusMotif0=Nicht spezifiziert
+StatusMotif1=Bereitstellung insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=Kein Rückzug, um
+StatusMotif4=Customer Order
+StatusMotif5=RIB inexploitable
+StatusMotif6=Konto ohne Balance
+StatusMotif7=Gerichtliche Entscheidung
+StatusMotif8=Andere Gründe
+CreateAll=Ziehen Sie alle
+CreateGuichet=Nur Büro
+CreateBanque=Nur Bank
+OrderWaiting=Warten auf die Behandlung
+NotifyTransmision=Widerrufsrecht Transmission
+NotifyEmision=Widerrufsrecht Emission
+NotifyCredit=Widerrufsrecht Credit
+NumeroNationalEmetter=National-Sender Nummer
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:25:31).

@@ -194,3 +194,27 @@ MigrationDeliveryAddress=Update leverings adresse i forsendelser
 MigrationUpdateFailed=Mislykket Opgraderingsprocessen
 MigrationBankTransfertsUpdate=Update forbindelser mellem bank transaktion og en bankoverførsel
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+ForceHttps=Force sikre forbindelser (https)
+CheckToForceHttps=Markér dette for at tvinge sikre forbindelser (https). <br> Dette kræver, at web-serveren er konfigureret med en SSL-certifikat.
+DirectoryRecommendation=Det er opfordres der til at bruge en mappe uden for din mappe på dine websider.
+KeepDefaultValuesDeb=Du bruger Dolibarr opsætningsguiden fra en Ubuntu eller Debian-pakke, så værdier, der foreslås her, er allerede optimeret. Kun den password i databasen ejeren for at oprette skal udfyldes. Ændre andre parametre kun hvis du ved hvad du gør.
+InstallChoiceRecommanded=Anbefalet valg til at installere version <b>%s</b> fra din nuværende version <b>%s</b>
+CheckThatDatabasenameIsCorrect=Kontroller, at databasen navnet <b>&quot;%s&quot;</b> er korrekt.
+IfAlreadyExistsCheckOption=Hvis dette navn er korrekte, og at databasen ikke findes endnu, skal du kontrollere indstillingen &quot;Opret database&quot;.
+OpenBaseDir=PHP openbasedir parameter
+YouAskToCreateDatabaseSoRootRequired=Du har markeret afkrydsningsfeltet &quot;Opret database&quot;. Til dette skal du give login / password på superbruger (i bunden af skemaet).
+YouAskToCreateDatabaseUserSoRootRequired=Du har markeret afkrydsningsfeltet &quot;Opret database ejer&quot;. Til dette skal du give login / password på superbruger (i bunden af skemaet).
+NextStepMightLastALongTime=Nuværende trin kan vare flere minutter. Vent venligst indtil det næste skærmbillede vises helt, før du fortsætter.
+MigrationCustomerOrderShipping=Migræne shipping for kundeordrer opbevaring
+MigrationShippingDelivery=Opgrader opbevaring af skibsfart
+MigrationShippingDelivery2=Opgrader opbevaring af shipping 2
+MigrationFixData=Fix for denormalized data
+MigrationRelationshipTables=Data migration for forholdet tabeller (%s)
+MigrationProjectTaskActors=Data migration for llx_projet_task_actors tabel
+MigrationProjectUserResp=Data migration inden fk_user_resp af llx_projet til llx_element_contact
+MigrationProjectTaskTime=Update tid i sekunder
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:22:05).

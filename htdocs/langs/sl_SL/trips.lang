@@ -17,3 +17,21 @@ TF_OTHER=Ostalo
 TF_LUNCH=Kosilo
 TF_TRIP=Pot
 ListTripsAndExpenses=Seznam poti in stroškov
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:07:10).
+// Reference language: en_US
+TripsAndExpensesStatistics=Koszty podróży i statystyki
+TripsAndExpensesStatistics=Viagens e estatísticas despesas
+TripsAndExpensesStatistics=Экскурсии и расходы статистика
+TripsAndExpensesStatistics=Izleti in stroškov statistike
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:07:13).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:07:33).
+// Reference language: en_US
+TripsAndExpensesStatistics=Turer og utgifter statistikk
+ListTripsAndExpenses=Liste over turer og utgifter
+TripsAndExpensesStatistics=Uitstapjes en kosten statistieken
+TripsAndExpensesStatistics=Uitstapjes en kosten statistieken
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:07:34).

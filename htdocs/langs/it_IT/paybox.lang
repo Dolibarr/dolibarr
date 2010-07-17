@@ -30,3 +30,9 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL di offrire un pagamento on-line %s 
 YouCanAddTagOnUrl=È inoltre possibile aggiungere <b>tag di</b> parametro <b>&amp;</b> url <b>= <i>valore</i></b> di uno qualsiasi di questi URL (richiesto solo per il pagamento gratuito) per aggiungere il tuo commento pagamento tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Imposta il tuo Paybox con <b>url %s</b> per il pagamento sono creati automaticamente quando convalidati dal Paybox.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL di offrire una interfaccia online %s pagamento utente per un abbonamento membro
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).

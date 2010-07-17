@@ -1,0 +1,21 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-07-17 11:29:16
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:29:16).
+// Reference language: en_US
+CHARSET=UTF-8
+FTPClientSetup=FTP Viðskiptavinur mát skipulag
+NewFTPClient=Nýr FTP tengingu skipulag
+FTPArea=FTP svæði
+FTPAreaDesc=Þessi skjár sýnir þér innihald FTP þjóninum að skoða
+SetupOfFTPClientModuleNotComplete=Uppsetning á FTP viðskiptavinur eining virðist ekki vera heill
+FTPFeatureNotSupportedByYourPHP=Your PHP styður ekki FTP aðgerðir
+FailedToConnectToFTPServer=Tókst ekki að tengjast FTP miðlara (miðlara %s, höfn %s)
+FailedToConnectToFTPServerWithCredentials=Ekki tókst að skrá þig inn á FTP þjóninum með skilgreint tenging / lykilorð
+FTPFailedToRemoveFile=Ekki tókst að fjarlægja skrá <b>%s.</b>
+FTPFailedToRemoveDir=Ekki tókst að fjarlægja skrá <b>%s</b> (Athugaðu heimildir og skrá er tóm).
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:30:03).

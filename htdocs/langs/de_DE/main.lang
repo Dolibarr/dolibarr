@@ -562,3 +562,54 @@ Day5=Freitag
 Day6=Samstag
 Day0=Sonntag
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+FormatHourShortDuration=%H:%M
+NoError=Kein Fehler
+ErrorNoSocialContributionForSellerCountry=Fehler, keine Sozialabgaben Typ für Land &quot;definiert %s&quot;.
+BackgroundColorByDefault=Standard-Hintergrundfarbe
+FileWasNotUploaded=Eine Datei wird für die Befestigung gewählt wurde aber noch nicht hochgeladen. Klicken Sie auf &quot;Datei anhängen&quot; für diese.
+NbOfEntries=Nb Einträge
+Resize=Resize
+Recenter=Zentrieren
+NumberByMonth=Anzahl von Monat
+KiloBytes=Kilobytes
+MegaBytes=Megabytes
+GigaBytes=Gigabytes
+b=b.
+Kb=Kb
+Mb=Mb
+Gb=Gb
+AmountLT1ES=RE Amount
+AmountLT2ES=Amount IRPF
+TotalLT1ES=Total RE
+TotalLT2ES=Total IRPF
+Available=Verfügbar
+Reporting=Berichterstattung
+Reportings=Berichterstattung
+Examples=Beispiele
+Reason=Grund
+SendByMail=E-Mail versenden
+DocumentsNb=Verlinkte Dateien (%s)
+PrintContentArea=Zeige Seite zu drucken Hauptinhaltsbereich
+NoMenu=Kein Untermenü
+WarningYouAreInMaintenanceMode=Achtung, Sie sind in einem Wartungs-Modus, so dass nur Login <b>%s</b> darf Moment bedienende Anwendung bei der.
+CreditCard=Kreditkarte
+FieldsWithAreMandatory=Felder mit <b>%s</b> sind Pflichtfelder
+FieldsWithIsForPublic=Felder mit <b>%s</b> sind Mitglieder gezeigt, auf die öffentliche Liste. Wenn Sie dies nicht wollen, überprüfen Sie die &quot;public&quot;-Box.
+AccordingToGeoIPDatabase=(Nach GeoIP-Konvertierung)
+Line=Linie
+NotSupported=Nicht unterstützt
+RequiredField=Pflichtfeld
+Result=Ergebnis
+ToTest=Test
+ValidateBefore=Card muss vor Verwendung dieser Funktion validiert werden
+Visibility=Sichtbarkeit
+Private=Privat
+Hidden=Versteckt
+Resources=Ressourcen
+Source=Quelle
+Prefix=Präfix
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:25:25).

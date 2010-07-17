@@ -44,3 +44,44 @@ ClassCredited=Clasifica creditat
 ClassCreditedConfirm=Sunteţi sigur că doriţi pentru a clasifica această retragere primirea ca creditate pe contul bancar?
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+StandingOrderToProcess=Pentru a procesa
+StandingOrderProcessed=Prelucrate
+TransData=Data transmiterii
+TransMetod=Metodei de transmisie
+Send=Trimite
+Lines=Linii
+StandingOrderReject=Emită o respinge
+WithdrawalRefused=Retragerile Refuseds
+WithdrawalRefusedConfirm=Sunteţi sigur că doriţi să introduceţi un respingere de retragere pentru societate
+RefusedData=Data respingerii
+RefusedReason=Motivul respingerii
+RefusedInvoicing=Facturare respingerea
+NoInvoiceRefused=Nu încărcaţi respingerea
+InvoiceRefused=Încărcaţi respingere la client
+Status=Status
+StatusUnknown=Necunoscut
+StatusWaiting=Aşteptare
+StatusCredited=Creditate
+StatusRefused=A refuzat
+StatusMotif0=Nespecificat
+StatusMotif1=Furnizarea insuffisante
+StatusMotif2=Tiraj conteste
+StatusMotif3=Nici o retragere pentru a
+StatusMotif4=Clientul Ordine
+StatusMotif5=RIB inexploitable
+StatusMotif6=Cont fără echilibru
+StatusMotif7=Hotărâre judecătorească
+StatusMotif8=Alte motive
+CreateAll=Retragă toate
+CreateGuichet=Numai de birou
+CreateBanque=Numai banca
+OrderWaiting=De aşteptare pentru tratament
+NotifyTransmision=Retragerea Transmitere
+NotifyEmision=Retragerea de emisie
+NotifyCredit=Retragerea de credit
+NumeroNationalEmetter=Numărul naţional transmiţător
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:39:21).

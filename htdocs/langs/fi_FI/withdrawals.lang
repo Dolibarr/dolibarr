@@ -44,3 +44,44 @@ ClassCredited=Luokittele hyvitetään
 ClassCreditedConfirm=Oletko varma, että haluat luokitella tämän vetäytymisen vastaanottamisesta kuin hyvitetty pankkitilisi?
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+StandingOrderToProcess=Jotta prosessi
+StandingOrderProcessed=Jalostettu
+TransData=Päivämäärä Lähetetty
+TransMetod=Menetelmä Lähetetty
+Send=Lähettää
+Lines=Linjat
+StandingOrderReject=Issue hylätä
+WithdrawalRefused=Nostot Refuseds
+WithdrawalRefusedConfirm=Oletko varma että haluat kirjoittaa peruuttamisesta hylkäämisen yhteiskunnan
+RefusedData=Päivä hylkäämisestä
+RefusedReason=Hylkäämisen syy
+RefusedInvoicing=Laskutus hylkääminen
+NoInvoiceRefused=Älä lataa hylkäämisestä
+InvoiceRefused=Lataa hylkäämisen asiakkaan
+Status=Tila
+StatusUnknown=Tuntematon
+StatusWaiting=Odotus
+StatusCredited=Hyvitetään
+StatusRefused=Refused
+StatusMotif0=Määrittelemätön
+StatusMotif1=Säännös insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=Ei vetäytyminen järjestys
+StatusMotif4=Asiakkaan tilauksen
+StatusMotif5=RIB inexploitable
+StatusMotif6=Huomioon ilman tasapaino
+StatusMotif7=Ratkaisusta
+StatusMotif8=Muu syy
+CreateAll=Nosta kaikki
+CreateGuichet=Vain toimisto
+CreateBanque=Vain pankki
+OrderWaiting=Odottelen hoito
+NotifyTransmision=Irtisanominen Lähetetty
+NotifyEmision=Irtisanominen päästöjen
+NotifyCredit=Irtisanominen Credit
+NumeroNationalEmetter=Kansallinen lähetin määrä
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:38).

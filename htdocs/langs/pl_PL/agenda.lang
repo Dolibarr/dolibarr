@@ -58,3 +58,12 @@ AgendaShowBirthdayEvents=Pokaż urodziny kontaktów
 AgendaHideBirthdayEvents=Ukryj urodzin kontaktów
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:42:52).
+// Reference language: en_US
+InterventionValidatedInDolibarr=Intervensjon %s validert
+InterventionValidatedInDolibarr=Interventie sssss gevalideerd
+MenuToDoActions=Wszystkich działań niekompletne
+InterventionValidatedInDolibarr=Sssss interwencji zatwierdzone
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:53).

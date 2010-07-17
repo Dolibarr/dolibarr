@@ -139,3 +139,20 @@ AllAccounts=Vsi bančno/gotovinski računi
 BackToAccount=Nazaj na račun
 ShowAllAccounts=Prikaži vse račune
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+BankAccountCountry=Konto landet
+ListTransactions=Liste transaksjoner
+ListTransactionsByCategory=Liste transaksjon / kategori
+AllAccounts=Alle bank / cash kontoer
+BackToAccount=Tilbake til kontoen
+ShowAllAccounts=Vis for alle kontoer
+BankAccountCountry=Account land
+BankAccountCountry=Account land
+BankAccountCountry=Konto kraju
+BankAccountCountry=Conta do país
+BankAccountCountry=Счет страны
+BankAccountCountry=Račun državi
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:19).

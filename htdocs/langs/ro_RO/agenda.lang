@@ -56,3 +56,20 @@ AgendaShowBirthdayEvents=Arata de ziua lui de contact
 AgendaHideBirthdayEvents=Ascunde ziua lui de contact
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+MenuToDoActions=Toate acţiunile incomplet
+InterventionValidatedInDolibarr=%s de intervenţie validate
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:42:52).
+// Reference language: en_US
+InterventionValidatedInDolibarr=Intervensjon %s validert
+InterventionValidatedInDolibarr=Interventie sssss gevalideerd
+MenuToDoActions=Wszystkich działań niekompletne
+InterventionValidatedInDolibarr=Sssss interwencji zatwierdzone
+InterventionValidatedInDolibarr=%s Intervenção validado
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:54).

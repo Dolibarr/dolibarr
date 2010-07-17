@@ -65,3 +65,32 @@ ErrorRecordHasChildren=Det lykkedes ikke at slette poster, da det har nogle Chil
 MenuManager=Menu manager
 ErrorUrlNotValid=Adressen på webstedet er forkert
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+Error=Fejl
+Errors=Fejl
+ErrorBadEMail=EMail %s er forkert
+ErrorBadUrl=Url %s er forkert
+ErrorRecordNotFound=Optag ikke fundet.
+ErrorDirNotFound=Directory <b>%s</b> ikke fundet (Bad sti, forkerte rettigheder eller adgang nægtet af PHP openbasedir eller safe_mode parameter)
+ErrorFileAlreadyExists=En fil med dette navn findes allerede.
+ErrorPartialFile=Fil ikke modtaget helt af serveren.
+ErrorNoTmpDir=Midlertidig directy %s ikke eksisterer.
+ErrorUploadBlockedByAddon=Upload blokeret af en PHP / Apache plugin.
+ErrorFileSizeTooLarge=Filstørrelse er for stor.
+WarningSafeModeOnCheckExecDir=Advarsel, PHP option <b>safe_mode</b> er på så kommandoen skal opbevares i en mappe angivet af php parameter <b>safe_mode_exec_dir.</b>
+WarningConfFileMustBeReadOnly=Advarsel, config fil <b>(htdocs / conf / conf.php)</b> kan din blive overskrevet af den web-server. Dette er en alvorlig sikkerhedsrisiko hul. Rediger tilladelserne til filen skal være i read only mode i operativsystemet bruger bruges af web-serveren. Hvis du bruger Windows og FAT format til din disk, skal du vide, at denne fil systemet ikke lader til at tilføje tilladelser på filen, kan så ikke helt sikker.
+ErrorModuleRequireJavascript=Javascript skal ikke være deaktiveret for at have denne funktion virker. For at aktivere / deaktivere Javascript, gå til menu Home-&gt; Setup-&gt; Display.
+ErrorPasswordsMustMatch=Begge har skrevet passwords skal matche hinanden
+ErrorContactEMail=En teknisk fejl opstod. Venligst, administrator til at kontakte folowwing <b>email%</b> en give fejlkode <b>%s</b> i din besked, eller endnu bedre ved at tilføje en skærm kopi af denne side.
+ErrorWrongValueForField=Forkert værdi for felt nummer <b>%s</b> (værdi <b>&#39;%s&#39;</b> passer ikke regex regel <b>%s)</b>
+ErrorsOnXLines=Fejl på <b>%s</b> kildelinjer
+WarningsOnXLines=Advarsler om <b>%s</b> kildelinjer
+ErrorFileIsInfectedWithAVirus=Det antivirusprogram var ikke i stand til at validere filen (filen kan være inficeret med en virus)
+ErrorSpecialCharNotAllowedForField=Specialtegn er ikke tilladt for feltet &quot;%s&quot;
+WarningNoDocumentModelActivated=Ingen model, for dokument generation, er blevet aktiveret. En model vil være choosed som standard, indtil du tjekke din modul opsætning.
+ErrorDatabaseParameterWrong=Database setup parameter <b>&#39;%s&#39;</b> har en værdi ikke er forenelige at bruge Dolibarr (skal have værdi <b>&#39;%s</b> «).
+ErrorNumRefModel=En henvisning findes i databasen (%s) og er ikke kompatible med denne nummerering regel. Fjern optage eller omdøbt henvisning til aktivere dette modul.
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:21).

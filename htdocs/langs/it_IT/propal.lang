@@ -88,3 +88,9 @@ TypeContact_propal_external_CUSTOMER=Contatto proposta clienti
 # Documents models
 DocModelAzurDescription                    =Modello di proposta completa (logo...)
 DocModelJauneDescription                   =Modello di proposta Jaune
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+DocModelRoigDescription=Un modello di proposta completa con la tassa RE spagnolo e IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:33:08).
