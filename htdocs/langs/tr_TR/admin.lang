@@ -266,7 +266,7 @@ ModuleDisabled=Modülü devre dışı
 ModuleDisabledSoNoEvent=Modülü çok etkinlik hazırlandı asla devre dışı
 ConfirmPurge=Bunu tasfiye çalıştırmak istediğinizden emin misiniz? <br> Bu kesinlikle ...). (ECM resimler, ekli dosyaları onları geri getirmenin bir yolu tüm veri dosyalarınızı siler
 MinLength=Minimum uzunluğu
-Module0Name=Kullanıcılar &amp; gruplar
+Module0Name=Kullanıcılar & gruplar
 Module0Desc=Kullanıcıların ve grupların yönetimi
 Module1Name=Üçüncü şahıslar
 Module1Desc=Şirketler ve kişiler yönetim
@@ -903,7 +903,7 @@ LDAPLdapMapping=LDAP Haritalama
 LDAPFieldLoginUnix=Giriş (Unix)
 LDAPFieldLoginExample=Örnek: uid
 LDAPFilterConnection=Arama filtresi
-LDAPFilterConnectionExample=Örnek: &amp; (objectClass= InetOrgPerson)
+LDAPFilterConnectionExample=Örnek: & (objectClass= InetOrgPerson)
 LDAPFieldLoginSamba=Giriş (samba, activedirectory)
 LDAPFieldLoginSambaExample=Örnek: sAMAccountName
 LDAPFieldFullname=Firstname Adı

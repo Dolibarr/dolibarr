@@ -279,7 +279,7 @@ ListOfDirectories=Listi yfir OpenDocument sniðmát framkvæmdarstjóra
 NumberOfModelFilesFound=Fjöldi ODT sniðmát skrár fundust í þessum möppum
 ExampleOfDirectoriesForModelGen=Dæmi um setningafræði: <br> c: \ mydir <br> / Home / mydir <br> DOL_DATA_ROOT / ECM / ecmdir
 FirstnameNamePosition=Staðsetning firstname / nafn
-Module0Name=Notendur &amp; hópar
+Module0Name=Notendur & hópar
 Module0Desc=Notendur og hópar stjórnun
 Module1Name=Í þriðja aðila
 Module1Desc=Fyrirtæki og stjórnun tengiliðs
@@ -740,7 +740,7 @@ TriggerActiveAsModuleActive=Hrindir af stað í þessari skrá eru virku og <b>m
 GeneratedPasswordDesc=Veldu hér sem regla sem þú vilt nota til að búa til nýtt lykilorð ef þú beðið um að hafa farartæki mynda lykilorð
 DictionnaryDesc=Define hér öll tilvísun gögn. Þú getur lokið fyrirfram gildi við þitt.
 ConstDesc=Þessi síða leyfir þér að breyta öllum öðrum breytum ekki í boði í fyrri síður. Þau eru frátekin breytur fyrir háþróaður verktaki eða troubleshouting.
-OnceSetupFinishedCreateUsers=Aðvörun, ertu Dolibarr stjórnandi notandann. Stjórnandi notendur eru notuð til að skipulag Dolibarr. Fyrir venjulega notkun Dolibarr, það er mælt með að nota ekki stjórnandi notandi stofnaðar Notendur &amp; Groups valmyndinni.
+OnceSetupFinishedCreateUsers=Aðvörun, ertu Dolibarr stjórnandi notandann. Stjórnandi notendur eru notuð til að skipulag Dolibarr. Fyrir venjulega notkun Dolibarr, það er mælt með að nota ekki stjórnandi notandi stofnaðar Notendur & Groups valmyndinni.
 MiscellanousDesc=Veldu hér öllum öðrum þáttum sem tengjast öryggi.
 LimitsSetup=Mörk / Precision skipulag
 LimitsDesc=Þú getur skilgreint takmörk, precisions og optimisations notaður við Dolibarr hér
@@ -946,7 +946,7 @@ LDAPLdapMapping=LDAP Kortlagning
 LDAPFieldLoginUnix=Tenging (Unix)
 LDAPFieldLoginExample=Dæmi: uid
 LDAPFilterConnection=Leita sía
-LDAPFilterConnectionExample=Dæmi: &amp; (objectclass = inetOrgPerson)
+LDAPFilterConnectionExample=Dæmi: & (objectclass = inetOrgPerson)
 LDAPFieldLoginSamba=Tenging (samba, activedirectory)
 LDAPFieldLoginSambaExample=Dæmi: samaccountname
 LDAPFieldFullname=Firstname Nafn

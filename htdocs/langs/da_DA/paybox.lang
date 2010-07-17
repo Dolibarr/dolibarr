@@ -27,7 +27,7 @@ ToOfferALinkForOnlinePaymentOnOrder=URL til at tilbyde en %s online betaling bru
 ToOfferALinkForOnlinePaymentOnInvoice=URL til at tilbyde en %s online betaling brugergrænseflade til en faktura
 ToOfferALinkForOnlinePaymentOnContractLine=URL til at tilbyde en %s online betaling brugergrænseflade til en kontrakt linje
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL til at tilbyde en %s online betaling brugergrænseflade til et frit beløb
-YouCanAddTagOnUrl=Du kan også tilføje webadresseparameter <b>&amp; tag= <i>værdi</i></b> til nogen af disse URL (kræves kun for fri betaling) for at tilføje din egen betaling kommentere tag.
+YouCanAddTagOnUrl=Du kan også tilføje webadresseparameter <b>& tag= <i>værdi</i></b> til nogen af disse URL (kræves kun for fri betaling) for at tilføje din egen betaling kommentere tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Opret din PayBox med <b>url %s</b> for at få betaling oprettes automatisk, når valideret af paybox.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
 

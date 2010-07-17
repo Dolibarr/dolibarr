@@ -27,7 +27,7 @@ ToOfferALinkForOnlinePaymentOnOrder=URL tarjota %s online maksu käyttöliittym�
 ToOfferALinkForOnlinePaymentOnInvoice=URL tarjota %s online maksu käyttöliittymän lasku
 ToOfferALinkForOnlinePaymentOnContractLine=URL tarjota %s online maksu käyttöliittymän sopimuksen linjan
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL tarjota %s online maksu käyttöliittymän vapaa määrä
-YouCanAddTagOnUrl=Voit myös lisätä URL-parametrin <b>&amp; tag= <i>arvo</i></b> mille tahansa niistä URL (vaaditaan ainoastaan ilmaiseksi maksu) lisätään oma maksu kommentoida tag.
+YouCanAddTagOnUrl=Voit myös lisätä URL-parametrin <b>& tag= <i>arvo</i></b> mille tahansa niistä URL (vaaditaan ainoastaan ilmaiseksi maksu) lisätään oma maksu kommentoida tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Määritä oman PayBox kanssa <b>url %s</b> on maksu luodaan automaattisesti, kun validoinut paybox.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
 
