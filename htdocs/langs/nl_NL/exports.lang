@@ -221,3 +221,12 @@ SourceExample=Voorbeeld van een mogelijke waarde voor de gegevens
 CSVFormatDesc=<b>Comma Separated Value-bestandsindeling</b> (. Csv). <br> Dit is een tekstbestand waar de velden zijn gescheiden door het scheidingsteken [sssss]. Als separator is gevonden in een veld inhoud, is afgerond gebied door ronde karakter [sssss]. Escape character te ontsnappen ronde karakter is [sssss].
 CSVFormatDesc=<b>Comma Separated Value-bestandsindeling</b> (. Csv). <br> Dit is een tekstbestand waar de velden zijn gescheiden door het scheidingsteken [sssss]. Als separator is gevonden in een veld inhoud, is afgerond gebied door ronde karakter [sssss]. Escape character te ontsnappen ronde karakter is [sssss].
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:04:01).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:23:40).
+// Reference language: en_US
+DataIDSourceIsInsertedInto=IDen til overordnede objektet ble funnet ved hjelp av dataene i kildefilen, vil bli satt inn på følgende felt:
+SourceRequired=Dataverdi er obligatorisk
+SourceExample=Eksempel på mulige dataverdi
+CSVFormatDesc=<b>Kommadelte Verdi</b> filformatet (. CSV). <br> Dette er en tekstfil format der feltene er atskilt med skilletegn [%s]. Hvis separatoren blir funnet inne i et felt innhold, er felt omgitt av runde tegn [%s]. Escape karakter å unnslippe runde tegn er [%s].
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:35:53).

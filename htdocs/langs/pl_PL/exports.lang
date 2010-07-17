@@ -240,3 +240,12 @@ SourceRequired=Wartość danych jest obowiązkowe
 SourceExample=Przykład możliwych wartości danych
 CSVFormatDesc=Format pliku <b>oddzielonych przecinkami jakości</b> (. Csv). <br> Jest to format pliku tekstowego, gdzie pola oddzielone są separatorem [sssss]. Jeśli wewnątrz znajduje się separator zawartości pola, jest zaokrąglona przez cały charakter [sssss]. Ucieczka do charakteru uciec charakter rundy [sssss].
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:04:12).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:23:40).
+// Reference language: en_US
+DataIDSourceIsInsertedInto=IDen til overordnede objektet ble funnet ved hjelp av dataene i kildefilen, vil bli satt inn på følgende felt:
+SourceRequired=Dataverdi er obligatorisk
+SourceExample=Eksempel på mulige dataverdi
+CSVFormatDesc=<b>Kommadelte Verdi</b> filformatet (. CSV). <br> Dette er en tekstfil format der feltene er atskilt med skilletegn [%s]. Hvis separatoren blir funnet inne i et felt innhold, er felt omgitt av runde tegn [%s]. Escape karakter å unnslippe runde tegn er [%s].
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:35:53).

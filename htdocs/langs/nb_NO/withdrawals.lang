@@ -33,3 +33,44 @@ ThirdPartyDeskCode=Tredjepartens desk code
 NoInvoiceCouldBeWithdrawed=Kunne ikke betale noen fakturaer. Sjekk at faktura er på firmaer med gyldig BAN.
 ClassCredited=Godkjenn belastning
 ClassCreditedConfirm=Er du sikker på at du vil godkjenne denne betalingen som bokført på din bankkonto?
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:23:40).
+// Reference language: en_US
+StandingOrderToProcess=Å behandle
+StandingOrderProcessed=Behandlet
+TransData=Dato Transmission
+TransMetod=Metode Transmission
+Send=Send
+Lines=Linjer
+StandingOrderReject=Utstede en avvise
+WithdrawalRefused=Uttak Refuseds
+WithdrawalRefusedConfirm=Er du sikker på at du vil angi en tilbaketrekning avslag for samfunnet
+RefusedData=Dato for avvisning
+RefusedReason=Årsak til avslag
+RefusedInvoicing=Fakturering avvisningen
+NoInvoiceRefused=Ikke lad avvisningen
+InvoiceRefused=Lad avvisningen til kunden
+Status=Status
+StatusUnknown=Ukjent
+StatusWaiting=Venter
+StatusCredited=Kreditert
+StatusRefused=Nektet
+StatusMotif0=Uspesifisert
+StatusMotif1=Utdeling insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=Ingen Uttak bestilling
+StatusMotif4=Kunden Bestill
+StatusMotif5=RIB inexploitable
+StatusMotif6=Konto uten balanse
+StatusMotif7=Rettslig avgjørelse
+StatusMotif8=Andre grunnen
+CreateAll=Ta ut alle
+CreateGuichet=Bare kontor
+CreateBanque=Bare bank
+OrderWaiting=Venter på behandling
+NotifyTransmision=Uttak Transmission
+NotifyEmision=Uttak Emisjon
+NotifyCredit=Uttak Credit
+NumeroNationalEmetter=Nasjonale Transmitter nummer
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:38:41).

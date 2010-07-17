@@ -590,3 +590,16 @@ Hidden=Skjult
 Resources=Ressurser
 Source=Kilde
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:06:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:23:40).
+// Reference language: en_US
+Prefix=Prefiks
+Day1=Mandag
+Day2=Tirsdag
+Day3=Onsdag
+Day4=Torsdag
+Day5=Fredag
+Day6=Lørdag
+Day0=Søndag
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:36:50).

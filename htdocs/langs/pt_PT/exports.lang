@@ -239,3 +239,12 @@ MoveField=Move %s campo número da coluna
 ExampleOfImportFile=Example_of_import_file
 SaveImportProfile=Salvar este perfil de importação
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:04:39).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:23:40).
+// Reference language: en_US
+DataIDSourceIsInsertedInto=IDen til overordnede objektet ble funnet ved hjelp av dataene i kildefilen, vil bli satt inn på følgende felt:
+SourceRequired=Dataverdi er obligatorisk
+SourceExample=Eksempel på mulige dataverdi
+CSVFormatDesc=<b>Kommadelte Verdi</b> filformatet (. CSV). <br> Dette er en tekstfil format der feltene er atskilt med skilletegn [%s]. Hvis separatoren blir funnet inne i et felt innhold, er felt omgitt av runde tegn [%s]. Escape karakter å unnslippe runde tegn er [%s].
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:35:54).
