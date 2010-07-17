@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 require("../../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facturestats.class.php");
 
 $GRAPHWIDTH=500;
 $GRAPHHEIGHT=200;
