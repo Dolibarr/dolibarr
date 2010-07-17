@@ -30,9 +30,9 @@ LDAPFieldFirstSubscriptionDate=Erste Abonnement Datum
 LDAPFieldFirstSubscriptionAmount=Fist Abonnement Betrag
 LDAPFieldLastSubscriptionDate=Letzte Abonnement Datum
 LDAPFieldLastSubscriptionAmount=Letzte Abonnement Betrag
-SynchronizeDolibarr2Ldap=Synchronisieren Sie Benutzer (Dolibarr -&gt; LDAP)
+SynchronizeDolibarr2Ldap=Synchronisieren Sie Benutzer (Dolibarr -> LDAP)
 UserSynchronized=Benutzer synchronisiert
-ForceSynchronize=Force Synchronisierung Dolibarr -&gt; LDAP
+ForceSynchronize=Force Synchronisierung Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Fehler beim Lesen LDAP-Datenbank. LDAP-Setup-Check-Modul und Datenbank Barrierefreiheit.
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser

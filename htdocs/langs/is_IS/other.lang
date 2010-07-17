@@ -10,7 +10,7 @@
 CHARSET=UTF-8
 ErrorPasswordDiffers=Lykilorð ólíkt skaltu slá þau aftur.
 ErrorForbidden=Aðgangur neitun. <br> Þú ert að reyna að komast á síðu, svæði eða lögun án þess að vera í staðfesta setu eða sem er ekki leyft að notandinn þinn.
-ErrorForbidden2=Leyfi fyrir þetta notandanafn er hægt að skilgreina með Dolibarr kerfisstjóra valmynd %s -&gt; %s .
+ErrorForbidden2=Leyfi fyrir þetta notandanafn er hægt að skilgreina með Dolibarr kerfisstjóra valmynd %s -> %s .
 ErrorForbidden3=Það virðist sem Dolibarr er ekki notað í gegnum staðfesta setu. Skoðaðu Dolibarr skipulag Documentation að vita hvernig á að stjórna authentications (htaccess, mod_auth eða önnur ...).
 ErrorNoImagickReadimage=Virka imagick_readimage er ekki að finna í þessari PHP. Engin sýnishorn geta verið fyrir hendi. Stjórnandi getur aftengt þennan flipa valmynd Skipulag - Skjár.
 ErrorRecordAlreadyExists=Upptaka er til nú þegar
@@ -47,7 +47,7 @@ LinkedObject=Tengd mótmæla
 Miscellanous=Ýmislegt
 NbOfActiveNotifications=Fjöldi tilkynninga
 WarningInstallDirExists=Aðvörun, setja í embætti skrá <b>(htdocs / setja í embætti)</b> enn til staðar. Þetta er alvarlegur öryggi gat. Þú ættir að fjarlægja það eins fljótt og auðið er.
-WarningUntilDirRemoved=Öll öryggi viðvaranir (sýnileg notendum admin eingöngu) verða áfram virkur eins lengi og varnarleysi er til staðar (eða þessi fasti MAIN_REMOVE_INSTALL_WARNING er bætt í Uppsetning-&gt; Annað skipulag).
+WarningUntilDirRemoved=Öll öryggi viðvaranir (sýnileg notendum admin eingöngu) verða áfram virkur eins lengi og varnarleysi er til staðar (eða þessi fasti MAIN_REMOVE_INSTALL_WARNING er bætt í Uppsetning-> Annað skipulag).
 PredefinedMailTest=Þetta er prófun póst. \ NThe tvær línur eru aðskilin með vagn til baka.
 PredefinedMailTestHtml=Þetta er <b>prófun</b> póstur (orðið próf verður feitletruð). <br> Þessar tvær línur eru aðskilin með vagn til baka.
 PredefinedMailContentSendInvoice=Þú vilja finna hér á kvittuninni __FACREF__ \ n \ nSincerely \ n \ n

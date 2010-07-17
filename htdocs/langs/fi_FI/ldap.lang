@@ -30,9 +30,9 @@ LDAPFieldFirstSubscriptionDate=Ensimmäisen tilauksen päivämäärä
 LDAPFieldFirstSubscriptionAmount=Fist merkinnän määrästä
 LDAPFieldLastSubscriptionDate=Viimeisin tilaus päivämäärän
 LDAPFieldLastSubscriptionAmount=Viimeisin tilaus määrä
-SynchronizeDolibarr2Ldap=Synkronoi käyttäjä (Dolibarr -&gt; LDAP)
+SynchronizeDolibarr2Ldap=Synkronoi käyttäjä (Dolibarr -> LDAP)
 UserSynchronized=Käyttäjän synkronoidaan
-ForceSynchronize=Force synkronointi Dolibarr -&gt; LDAP
+ForceSynchronize=Force synkronointi Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Lukeminen epäonnistui LDAP-tietokantaan. Tarkista LDAP-moduulin asennus ja tietokannan saavutettavuus.
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser

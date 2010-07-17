@@ -21,12 +21,12 @@ LDAPFieldFirstSubscriptionDate=First áskrift dagsetningu
 LDAPFieldFirstSubscriptionAmount=Fist áskrift upphæð
 LDAPFieldLastSubscriptionDate=Síðasta áskrift dagsetningu
 LDAPFieldLastSubscriptionAmount=Síðasta áskrift upphæð
-SynchronizeDolibarr2Ldap=Samstilling notandi (Dolibarr -&gt; LDAP)
+SynchronizeDolibarr2Ldap=Samstilling notandi (Dolibarr -> LDAP)
 UserSynchronized=Notandi samstilla
 GroupSynchronized=Group samstilla
 MemberSynchronized=Aðildarríkin samstilla
 ContactSynchronized=Hafðu samstilla
-ForceSynchronize=Force synchronizing Dolibarr -&gt; LDAP
+ForceSynchronize=Force synchronizing Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Ekki tókst að lesa LDAP gagnagrunninn. Athugaðu LDAP mát skipulag og gagnasafn aðgengi.
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
 

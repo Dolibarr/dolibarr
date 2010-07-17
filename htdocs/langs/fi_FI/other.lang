@@ -11,7 +11,7 @@
 CHARSET=UTF-8
 ErrorPasswordDiffers=Salasanat vaihtelee, kirjoita ne uudelleen.
 ErrorForbidden=Pääsy kielletty. <br> Yrität saada sivun, alue tai ominaisuus ilman oikeaksi todistettu istunnon tai että ei saa käyttäjän.
-ErrorForbidden2=Lupa tämän sisäänkirjoittautumissivuksesi voidaan määritellä oma Dolibarr järjestelmänvalvoja valikkopalkki %s-&gt; %s.
+ErrorForbidden2=Lupa tämän sisäänkirjoittautumissivuksesi voidaan määritellä oma Dolibarr järjestelmänvalvoja valikkopalkki %s-> %s.
 ErrorForbidden3=Vaikuttaa siltä, että Dolibarr ei käytetä kautta autentikoitu istunnossa. Tutustu Dolibarr setup asiakirjat tietää, miten hallita authentications (htaccess, mod_auth tai muita ...).
 ErrorNoImagickReadimage=Tehtävä imagick_readimage ei löydy tässä PHP. Esikatselu ei voi olla käytettävissä. Järjestelmänvalvojat voivat poistaa tämän välilehden valikosta Asetukset - Näyttö.
 ErrorRecordAlreadyExists=Record jo olemassa

@@ -32,9 +32,9 @@ LDAPFieldFirstSubscriptionDate=Første abonnement dato
 LDAPFieldFirstSubscriptionAmount=Fist abonnement beløb
 LDAPFieldLastSubscriptionDate=Seneste abonnement dato
 LDAPFieldLastSubscriptionAmount=Seneste abonnement beløb
-SynchronizeDolibarr2Ldap=Synkronisering bruger (Dolibarr -&gt; LDAP)
+SynchronizeDolibarr2Ldap=Synkronisering bruger (Dolibarr -> LDAP)
 UserSynchronized=Bruger synkroniseres
-ForceSynchronize=Force synkronisering Dolibarr -&gt; LDAP
+ForceSynchronize=Force synkronisering Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Kunne ikke læse LDAP database. Check LDAP modul opsætning og database tilgængelighed.
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser

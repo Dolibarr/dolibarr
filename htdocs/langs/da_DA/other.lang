@@ -13,7 +13,7 @@
 CHARSET=UTF-8
 ErrorPasswordDiffers=Passwords er forskellig, skal du skrive dem igen.
 ErrorForbidden=Adgang forbudt. <br> Du forsøger at få adgang til en side, et område eller funktion uden at være i en authenticated samling, eller som ikke er tilladt til din brugerkonto.
-ErrorForbidden2=Tilladelse til dette login kan defineres af din Dolibarr administrator fra menuen %s-&gt; %s.
+ErrorForbidden2=Tilladelse til dette login kan defineres af din Dolibarr administrator fra menuen %s-> %s.
 ErrorForbidden3=Det lader til, at Dolibarr ikke anvendes gennem en authenticated session. Tag et kig på Dolibarr setup dokumentation for at vide, hvordan man forvalter authentications (htaccess, mod_auth eller andre ...).
 ErrorNoImagickReadimage=Funktion imagick_readimage er ikke fundet i denne PHP. Intet eksempel kan være til rådighed. Administratorer kan deaktivere denne fane fra menuen Setup - Display.
 ErrorRecordAlreadyExists=Optag allerede findes

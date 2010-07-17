@@ -11,7 +11,7 @@
 CHARSET=UTF-8
 ErrorPasswordDiffers=وتختلف كلمات السر ، يرجى منها من نوع جديد.
 ErrorForbidden=الوصول ممنوع. <br> محاولة الوصول إلى صفحة ، أو منطقة دون سمة في الدورة من صحة أو عدم السماح لالمستخدم.
-ErrorForbidden2=إذن لدخول هذا يمكن تعريف بلدكم من قائمة مدير Dolibarr ٪ ق -&gt; ٪ s.
+ErrorForbidden2=إذن لدخول هذا يمكن تعريف بلدكم من قائمة مدير Dolibarr ٪ ق -> ٪ s.
 ErrorForbidden3=يبدو أن Dolibarr لا يستخدم من صحتها من خلال هذه الدورة. إلقاء نظرة على Dolibarr إعداد الوثائق لمعرفة كيفية ادارة التوثيقات (htaccess ، mod_auth أو غيرها...).
 ErrorNoImagickReadimage=وظيفة imagick_readimage لا يوجد في هذا PHP. لا يمكن معاينة المتاحة. يمكن للمشرفين تعطيل هذه القائمة من علامة التبويب إعداد -- عرض.
 ErrorRecordAlreadyExists=سجل موجود بالفعل

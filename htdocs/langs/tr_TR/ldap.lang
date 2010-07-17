@@ -29,12 +29,12 @@ LDAPFieldFirstSubscriptionDate=İlk abonelik Tarih
 LDAPFieldFirstSubscriptionAmount=Fist abonelik miktarı
 LDAPFieldLastSubscriptionDate=Son abonelik tarih
 LDAPFieldLastSubscriptionAmount=Son abonelik miktarı
-SynchronizeDolibarr2Ldap=Senkronize kullanıcı (Dolibarr -&gt; LDAP)
+SynchronizeDolibarr2Ldap=Senkronize kullanıcı (Dolibarr -> LDAP)
 UserSynchronized=Kullanıcı senkronize
 GroupSynchronized=Grup senkronize
 MemberSynchronized=Üye senkronize
 ContactSynchronized=İletişim senkronize
-ForceSynchronize=Kuvvet senkronizasyon Dolibarr -&gt; LDAP
+ForceSynchronize=Kuvvet senkronizasyon Dolibarr -> LDAP
 ErrorFailedToReadLDAP=LDAP veritabanında okunamadı. Kontrol LDAP modülü kurulum ve veritabanı erişilebilirlik.
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 

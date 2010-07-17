@@ -30,9 +30,9 @@ LDAPFieldFirstSubscriptionDate=أول موعد الاكتتاب
 LDAPFieldFirstSubscriptionAmount=قبضة مبلغ الاشتراك
 LDAPFieldLastSubscriptionDate=آخر موعد الاكتتاب
 LDAPFieldLastSubscriptionAmount=الاكتتاب المبلغ الأخير
-SynchronizeDolibarr2Ldap=التزامن بين المستخدمين (Dolibarr --&gt; LDAP)
+SynchronizeDolibarr2Ldap=التزامن بين المستخدمين (Dolibarr --> LDAP)
 UserSynchronized=وتزامن المستخدم
-ForceSynchronize=واكبت قوة Dolibarr --&gt; LDAP
+ForceSynchronize=واكبت قوة Dolibarr --> LDAP
 ErrorFailedToReadLDAP=فشل في قراءة قاعدة البيانات LDAP. LDAP وحدة التحقق من الإعداد ، وإمكانية الوصول إلى قاعدة البيانات.
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
