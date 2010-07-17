@@ -46,7 +46,7 @@ class DeplacementStats extends Stats
 	 *
 	 * @param 	$DB		Database handler
 	 * @param 	$socid	Id third party
-	 * @return FactureStats
+	 * @return  DeplacementStats
 	 */
 	function DeplacementStats($DB, $socid=0)
 	{
