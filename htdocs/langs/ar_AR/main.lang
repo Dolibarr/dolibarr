@@ -547,3 +547,51 @@ CompanyFoundation=الشركة / المؤسسة
 FileTransferComplete=تم تحميل الملف بنجاح
 Paid=دفع
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
+// Reference language: en_US
+FormatHourShortDuration=%H:%M
+NoError=أي خطأ
+ErrorNoSocialContributionForSellerCountry=خطأ ، لا يوجد نوع المساهمة الاجتماعية المحددة للبلد &#39;%s&#39;.
+BackgroundColorByDefault=لون الخلفية الافتراضي
+FileWasNotUploaded=يتم تحديد ملف مرفق لكنه لم يكن بعد تحميلها. انقر على &quot;ملف إرفاق&quot; لهذا الغرض.
+NbOfEntries=ملاحظة : إدخالات
+Resize=تغيير حجم
+Recenter=Recenter
+NumberByMonth=عدد من الشهر
+KiloBytes=كيلو بايت
+MegaBytes=ميغا بايت
+GigaBytes=غيغا بايت
+b=ب.
+Kb=كيلو بايت
+Mb=ميغابايت
+Gb=غيغابايت
+AmountLT1ES=كمية الطاقة المتجددة
+AmountLT2ES=مبلغ IRPF
+TotalLT1ES=مجموع الطاقة المتجددة
+TotalLT2ES=مجموع IRPF
+Available=متاح
+Examples=أمثلة
+SendByMail=أرسل عن طريق البريد الالكتروني
+DocumentsNb=ملفات مرتبطة (%s)
+PrintContentArea=وتظهر الصفحة الرئيسية لطباعة ناحية المحتوى
+NoMenu=لا القائمة الفرعية
+WarningYouAreInMaintenanceMode=انذار ، كنت في وضع الصيانة ، <b>%s</b> الدخول فقط بحيث يتم السماح لاستخدام التطبيق في الوقت الراهن.
+CreditCard=بطاقة الائتمان
+FieldsWithAreMandatory=حقول إلزامية مع <b>%s</b>
+FieldsWithIsForPublic=<b>%s</b> تظهر الحقول التي تحتوي على قائمة العامة للأعضاء. إذا كنت لا تريد هذا ، والتحقق من &quot;العامة&quot; مربع.
+AccordingToGeoIPDatabase=(وفقا لGeoIP التحويل)
+Line=خط
+NotSupported=غير معتمد
+RequiredField=الحقل مطلوب
+Result=نتيجة
+ToTest=اختبار
+ValidateBefore=يجب التحقق من صحة البطاقة قبل استخدام هذه الميزة
+Visibility=وضوح
+Private=خاص
+Hidden=مخفي
+Resources=موارد
+Source=مصدر
+Prefix=بادئة
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:02).

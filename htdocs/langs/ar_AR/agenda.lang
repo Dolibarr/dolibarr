@@ -48,16 +48,18 @@ DateActionDoneEnd=نهاية التاريخ الحقيقي
 DateActionStart=تاريخ البدء
 DateActionEnd=نهاية التاريخ
 AgendaUrlOptions1=يمكنك أيضا إضافة المعايير التالية لترشيح الناتج :
-AgendaUrlOptions2=<b>login=<b>ادخل ق= ٪</b> لتقييد الانتاج لإجراءات التي أوجدتها ، وأثرت على المستخدم الذي قام به أو <b>٪ ق.</b>
-AgendaUrlOptions3=<b>logina=<b>logina ق= ٪</b> لتقييد الانتاج لإجراءات التي أنشأها مستخدم <b>٪ ق.</b>
-AgendaUrlOptions4=<b>logint=<b>ق= logint ٪</b> لتقييد الانتاج لإجراءات المتضررة لمستخدم <b>٪ ق.</b>
-AgendaUrlOptions5=<b>logind=<b>ق= logind ٪</b> لتقييد الانتاج لإجراءات قامت به المستخدم <b>٪ ق.</b>
+AgendaUrlOptions2=<b>login=<b>login=%s</b> لتقييد الانتاج لإجراءات التي أوجدتها ، وأثرت على المستخدم الذي قام به أو <b>%s</b>
+AgendaUrlOptions3=<b>logina=<b>logina=%s</b> لتقييد الانتاج لإجراءات التي أنشأها مستخدم <b>%s</b>
+AgendaUrlOptions4=<b>logint=<b>logint=%s</b> لتقييد الانتاج لإجراءات المتضررة لمستخدم <b>%s</b>
+AgendaUrlOptions5=<b>logind=<b>logind=%s</b> لتقييد الانتاج لإجراءات قامت به المستخدم <b>%s</b>
 AgendaShowBirthdayEvents=عيد ميلاد تظهر اتصالات
 AgendaHideBirthdayEvents=عيد ميلاد إخفاء اتصالات
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
 
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:54:01).
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:11:26).
 // Reference language: en_US
 MenuToDoActions=جميع الأعمال غير مكتملة
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:54:01).
+InterventionValidatedInDolibarr=التحقق من صحة التدخل %s
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:11:26).

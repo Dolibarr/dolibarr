@@ -94,3 +94,12 @@ DocModelAzurDescription=اقتراح نموذج كامل (logo...)
 DocModelJauneDescription=اقتراح نموذج اليد الصفراء
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
+// Reference language: en_US
+TypeContact_propal_internal_SALESREPFOLL=اقتراح ممثل متابعة
+TypeContact_propal_external_BILLING=الزبون فاتورة الاتصال
+TypeContact_propal_external_CUSTOMER=اتصل العملاء اقتراح متابعة
+DocModelRoigDescription=نموذج المقترح الكامل مع الطاقة المتجددة من الضرائب الاسبانية وIRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:02).

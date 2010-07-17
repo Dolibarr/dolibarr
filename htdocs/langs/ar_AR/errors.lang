@@ -58,3 +58,32 @@ ErrorPleaseTypeBankTransactionReportName=الرجاء كتابة اسم البن
 ErrorRecordHasChildren=فشل حذف السجلات منذ نحو الطفل.
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
+// Reference language: en_US
+Error=خطأ
+Errors=أخطاء
+ErrorBadEMail=بريد إلكتروني خاطئ %s
+ErrorBadUrl=عنوان الموقع هو الخطأ %s
+ErrorRecordNotFound=لم يتم العثور على السجل.
+ErrorDirNotFound=لم يتم العثور على دليل <b>%s</b> (مسار غير صالح ، أو الحصول على أذونات خاطئة نفته openbasedir بي إتش بي أو safe_mode المعلمة)
+ErrorFileAlreadyExists=ملف بهذا الاسم موجود مسبقا.
+ErrorPartialFile=الملف لم تتلق تماما بواسطة الخادم.
+ErrorNoTmpDir=%s directy مؤقتة لا وجود.
+ErrorUploadBlockedByAddon=حظر حمل من قبل البرنامج المساعد بى اباتشي /.
+ErrorFileSizeTooLarge=حجم الملف كبير جدا.
+WarningSafeModeOnCheckExecDir=انذار ، فب <b>safe_mode</b> الخيار في ذلك تخزين الأمر يجب أن يكون داخل الدليل الذي أعلنته <b>safe_mode_exec_dir</b> المعلمة بي.
+WarningConfFileMustBeReadOnly=انذار ، ملف (التكوين <b>htdocs / أسيوط / conf.php)</b> الخاص يمكن أن تكون الكتابة بواسطة خادم الويب. هذه هي ثغرة أمنية خطيرة. أذونات تعديل على ملف ليكون في وضع القراءة فقط لمستخدم نظام التشغيل المستخدمة من قبل ملقم ويب. إذا كنت تستخدم ويندوز وشكل نسبة الدهون لمدة القرص الخاص بك ، فإنك يجب أن نعرف أن هذا النظام لا يسمح ملف لإضافة الأذونات على الملف ، بحيث لا تكون آمنة تماما.
+ErrorModuleRequireJavascript=يجب عدم تعطيل جافا سكريبت لجعل هذا العمل الميزة. لتمكين / تعطيل جافا سكريبت ، انتقل إلى القائمة الرئيسية -&gt; الإعداد -&gt; العرض.
+ErrorPasswordsMustMatch=ويجب على كلا كلمات المرور المكتوبة تطابق بعضها البعض
+ErrorContactEMail=حدث خطأ فني. من فضلك ، مدير الاتصال لfolowwing <b>٪</b> البريد الإلكتروني أون توفير <b>%s</b> رمز الخطأ في رسالتك ، أو حتى أفضل من خلال إضافة نسخة شاشة من هذه الصفحة.
+ErrorWrongValueForField=قيمة خاطئة لعدد <b>%s</b> الحقل (قيمة <b>&#39;%s&#39;</b> لا يتطابق <b>%s</b> حكم [رجإكس])
+ErrorsOnXLines=الأخطاء على خطوط مصدر <b>%s</b>
+WarningsOnXLines=تحذيرات عن مصدر خطوط <b>%s</b>
+ErrorFileIsInfectedWithAVirus=وكان برنامج مكافحة الفيروسات غير قادرة على التحقق من صحة الملف (ملف قد يكون مصابا بواسطة فيروس)
+ErrorSpecialCharNotAllowedForField=غير مسموح الأحرف الخاصة لحقل &quot;%s&quot;
+WarningNoDocumentModelActivated=لا يوجد نموذج لجيل وثيقة ، قد تم تنشيط. سيكون نموذج المختار افتراضيا حتى يمكنك التحقق من إعداد وحدة الخاص.
+ErrorDatabaseParameterWrong=قاعدة بيانات المعلمة الإعداد <b>&#39;%s&#39;</b> يحتوي على قيمة غير متوافق لاستخدام Dolibarr (يجب أن يكون قيمة <b>&#39;%s&#39;).</b>
+ErrorNumRefModel=إشارة إلى وجود قاعدة بيانات (%s) ، وغير متوافق مع هذه القاعدة الترقيم. سجل إزالة أو إعادة تسميته اشارة الى تفعيل هذه الوحدة.
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:01).

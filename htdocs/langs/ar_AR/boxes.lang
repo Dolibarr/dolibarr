@@ -73,3 +73,12 @@ BoxTitleLastProductsInContract=الماضي ٪ ق المنتجات / الخدم�
 NoUnpaidCustomerBills=لا العميل الفواتير غير المدفوعة
 NoUnpaidSupplierBills=لا المورد الفواتير غير المدفوعة
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
+// Reference language: en_US
+BoxLastContracts=آخر العقود
+BoxTitleLastContracts=%s العقود الماضية
+NoModifiedSupplierBills=أي مورد مسجل في الفواتير
+NoRecordedContracts=لا عقود المسجلة
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:02).

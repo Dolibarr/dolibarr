@@ -117,3 +117,12 @@ ListOfActiveNotifications=قائمة البريد الإلكتروني لجمي�
 // Reference language: en_US
 MailingModuleDescFundationMembers=مؤسسة البريد الالكتروني للأعضاء
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+DateSending=تاريخ إرسال
+SentTo=إرسالها إلى <b>%s</b>
+LimitSendingEmailing=على خط ارسال emailings محدودة لأسباب أمنية ومهلة للمستفيدين عن طريق إرسال <b>%s</b> الدورة.
+ListOfNotificationsDone=أرسلت قائمة جميع اشعارات بالبريد الالكتروني
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:55).

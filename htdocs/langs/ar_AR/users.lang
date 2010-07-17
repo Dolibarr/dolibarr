@@ -127,3 +127,11 @@ FirstName=الاسم الأول
 // Reference language: en_US
 PermissionInheritedFromAGroup=منح إذن لأن الموروث من واحد من المستخدم.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+Inherited=موروث
+YourRole=الأدوار الخاص
+YourQuotaOfUsersIsReached=يتم التوصل إلى حصة الخاص بك من المستخدمين النشطين!
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:57).

@@ -292,3 +292,31 @@ ProfId2ES=(رقم الضمان الاجتماعي)
 ProfId3ES=(IAE)
 ProfId4ES=(عدد الجماعية)
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:28:02).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+ThirdPartyName=اسم طرف ثالث
+Poste=موقف
+DefaultLang=اللغة افتراضيا
+LocalTax1IsUsedES=يتم استخدام الطاقة المتجددة
+LocalTax1IsNotUsedES=لا يتم استخدام الطاقة المتجددة
+LocalTax2IsUsedES=يستخدم IRPF
+LocalTax2IsNotUsedES=IRPF لا يستخدم
+ProfId1IN=معرف البروفيسور 1 (القصدير)
+ProfId2IN=معرف البروفيسور 2
+ProfId3IN=معرف البروفيسور 3
+ProfId4IN=معرف البروفيسور 4
+ProfId1NL=KVK نومير
+ProfId2NL=-
+ProfId3NL=-
+ProfId4NL=-
+ProfId1AR=معرف البروفيسور 1 (CUIT / [كيل])
+ProfId2AR=البروفيسور رقم 2 (المتوحشون الايرادات)
+ProfId3AR=-
+ProfId4AR=-
+SupplierCategory=المورد الفئة
+ListSuppliersShort=قائمة الموردين
+ListProspectsShort=قائمة التوقعات
+ListCustomersShort=قائمة العملاء
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:23).

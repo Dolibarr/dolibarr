@@ -183,3 +183,35 @@ InvoicePaidInDolibarr=ق ٪ الفاتورة المدفوعة في تغيير Do
 // Reference language: en_US
 NumberOfUnitsProposals=عدد من الوحدات على مقترحات بشأن 12 الشهر الماضي
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
+// Reference language: en_US
+Notify_NOTIFY_VAL_ORDER=التحقق من صحة النظام العميل
+Notify_NOTIFY_VAL_PROPAL=التحقق من صحة اقتراح العملاء
+PredefinedMailTest=هذا هو الاختبار الإلكتروني. تكون مفصولة \ nThe سطرين من قبل حرف إرجاع.
+PredefinedMailTestHtml=هذا هو البريد <b>الاختبار</b> (الاختبار يجب أن تكون في كلمة جريئة). <br> وتفصل بين الخطين من قبل حرف إرجاع.
+CalculatedWeight=يحسب الوزن
+CalculatedVolume=يحسب حجم
+Length=طول
+LengthUnitm=م
+LengthUnitdm=مارك ألماني
+LengthUnitcm=الطول
+LengthUnitmm=مم
+Surface=منطقة
+SurfaceUnitm2=m2
+SurfaceUnitdm2=dm2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+EMailTextProposalValidated=وقد تم اقتراح %s التحقق من صحة.
+EMailTextOrderValidated=وقد تم التحقق من صحة %s النظام.
+ResizeDesc=أدخل عرض جديدة <b>أو</b> ارتفاع جديد. وستبقى نسبة خلال تغيير حجم...
+NewLength=عرض جديد
+NewHeight=ارتفاع جديد
+NewSizeAfterCropping=حجم جديد بعد الاقتصاص
+DefineNewAreaToPick=تحديد منطقة جديدة على الصورة لاختيار (اليسار انقر على الصورة ثم اسحب حتى تصل إلى الزاوية المقابلة)
+CurrentInformationOnImage=معلومات عن الصورة الحالية
+YouReceiveMailBecauseOfNotification=تلقيت هذه الرسالة لأنه قد تم إضافة البريد الإلكتروني الخاص بك إلى قائمة الأهداف التي يتعين على علم الأحداث ولا سيما في صناعة البرمجيات من %s %s.
+YouReceiveMailBecauseOfNotification2=هذا الحدث هو ما يلي :
+ExternalSites=المواقع الخارجية
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:13).

@@ -100,3 +100,9 @@ TypeContact_contrat_external_CUSTOMER=متابعة العملاء الاتصال
 TypeContact_contrat_external_SALESREPSIGN=توقيع عقد خدمات العملاء
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+RelatedContracts=العقود ذات الصلة
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:18).

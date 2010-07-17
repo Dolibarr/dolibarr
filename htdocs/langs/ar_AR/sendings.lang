@@ -61,3 +61,14 @@ DocumentModelSirocco=نموذج بسيط لتسليم وثيقة من وثائق
 DocumentModelTyphon=أكمل نموذج لتسليم وثيقة من وثائق الإيصالات (logo...)
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+Shipments=شحنات
+StatusSendingCanceled=ألغيت
+StatusSendingCanceledShort=ألغيت
+DocumentModelMerou=Mérou A5 نموذج
+DateDeliveryPlanned=مسطح تاريخ التسليم
+DateReceived=تلقى تاريخ التسليم
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:15).

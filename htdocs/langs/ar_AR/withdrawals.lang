@@ -44,3 +44,44 @@ ClassCredited=تصنيف حساب
 ClassCreditedConfirm=هل أنت متأكد من أن يصنف هذا الانسحاب كما تلقي على حساب حسابك المصرفي؟
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
+// Reference language: en_US
+StandingOrderToProcess=لعملية
+StandingOrderProcessed=معالجة
+TransData=تاريخ الإرسال
+TransMetod=طريقة البث
+Send=إرسال
+Lines=خطوط
+StandingOrderReject=رفض إصدار
+WithdrawalRefused=سحب Refuseds
+WithdrawalRefusedConfirm=هل أنت متأكد أنك تريد الدخول في رفض الانسحاب للمجتمع
+RefusedData=تاريخ الرفض
+RefusedReason=أسباب الرفض
+RefusedInvoicing=رفض الفواتير
+NoInvoiceRefused=لا تهمة الرفض
+InvoiceRefused=تهمة الرفض لزبون
+Status=حالة
+StatusUnknown=غير معروف
+StatusWaiting=انتظار
+StatusCredited=الفضل
+StatusRefused=رفض
+StatusMotif0=غير محدد
+StatusMotif1=توفير insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=لا من أجل الانسحاب
+StatusMotif4=طلب العملاء
+StatusMotif5=الضلع inexploitable
+StatusMotif6=حساب بدون رصيد
+StatusMotif7=قرار قضائي
+StatusMotif8=سبب آخر
+CreateAll=سحب جميع
+CreateGuichet=مكتب فقط
+CreateBanque=البنك الوحيد
+OrderWaiting=الانتظار لتلقي العلاج
+NotifyTransmision=انسحاب البث
+NotifyEmision=انسحاب الانبعاثات
+NotifyCredit=انسحاب الائتمان
+NumeroNationalEmetter=رقم المرسل وطنية
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:07).

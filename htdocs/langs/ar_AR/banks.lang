@@ -153,3 +153,9 @@ ShowAllAccounts=وتبين للجميع الحسابات
 // Reference language: en_US
 TransactionWithOtherAccount=تحويل الحساب
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:13:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+BankAccountCountry=حساب البلاد
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:16).

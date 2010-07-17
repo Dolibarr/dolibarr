@@ -386,3 +386,27 @@ ConfirmCustomerPayment=هل تؤكد ذلك دفع مساهمات <b>٪</b> ٪ <
 ConfirmValidatePayment=هل أنت متأكد أنك تريد التحقق من صحة هذا الدفع؟ لم يطرأ أي تغيير يمكن الدفع مرة واحدة على صحتها.
 HelpEscompte=هذا الخصم هو الخصم الممنوح للعميل لأن الدفع قبل البعيد.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+AlreadyPaidNoCreditNotesNoDeposits=دفعت بالفعل (بدون تلاحظ الائتمان والودائع)
+RelatedBill=الفاتورة ذات الصلة
+RelatedBills=الفواتير ذات الصلة
+ValidateInvoice=تحقق من صحة الفواتير
+Cash=نقد
+Reported=تأخر
+DisabledBecausePayments=غير ممكن لأن هناك بعض المدفوعات
+CantRemovePaymentWithOneInvoicePaid=تصنيف لا يمكن إزالة الدفع لأنه ليس هناك على الأقل على الفاتورة سيولي
+ExpectedToPay=من المتوقع الدفع
+PayedByThisPayment=سيولي هذا الدفع
+TypeContact_facture_internal_SALESREPFOLL=ممثل العميل متابعة فاتورة
+TypeContact_facture_external_BILLING=الزبون فاتورة الاتصال
+TypeContact_facture_external_SHIPPING=العملاء الشحن الاتصال
+TypeContact_facture_external_SERVICE=خدمة العملاء الاتصال
+TypeContact_facture_fourn_internal_SALESREPFOLL=ممثل المورد متابعة فاتورة
+TypeContact_facture_fourn_external_BILLING=المورد فاتورة الاتصال
+TypeContact_facture_fourn_external_SHIPPING=المورد الشحن الاتصال
+TypeContact_facture_fourn_external_SERVICE=المورد خدمة الاتصال
+PDFLinceDescription=نموذج الفاتورة كاملة مع الطاقة المتجددة الاسبانية وIRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:33).

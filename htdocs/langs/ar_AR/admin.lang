@@ -1061,3 +1061,117 @@ OnPayment=عن الدفع
 DelaysOfToleranceMembers=تأخير التسامح (في يوم) في حالة تأهب قبل يوم تأخير رسوم العضوية
 SetupDescription5=القيود الأخرى القائمة في إدارة اختياري البارامترات.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 10:57:19).
+// Reference language: en_US
+SessionSaveHandler=معالج لحفظ دورات
+PurgeSessions=تطهير الدورات
+ConfirmPurgeSessions=هل تريد حقا لتطهير جميع الدورات؟ وهذا قطع كل مستخدم (إلا نفسك).
+NoSessionListWithThisHandler=حفظ معالج دورة تكوين في بي الخاص بك لا يسمح لسرد كافة جلسات على التوالي.
+LockNewSessions=اتصالات لوك جديد
+ConfirmLockNewSessions=هل أنت متأكد أنك تريد تقييد أي اتصال Dolibarr جديدة لنفسك. <b>ق ٪</b> سوف مستخدم فقط تكون قادرا على الاتصال بعد ذلك.
+UnlockNewSessions=إزالة اتصال قفل
+YourSession=الدورة الخاصة بك
+Sessions=شاهد الدورة
+NoSessionFound=الخاص بي ويبدو أن عدم السماح لقائمة جلسات العمل النشطة. دليل المستخدم لحفظ دورات <b>(ق ٪)</b> قد تكون محمية (على سبيل المثال ، من خلال أذونات نظام التشغيل أو عن طريق التوجيه open_basedir فب).
+FormToTestFileUploadForm=نموذج لاختبار تحميل الملف (وفقا لبرنامج الإعداد)
+PreviewNotAvailable=المعاينة غير متاحة
+AntiVirusCommand=المسار الكامل لقيادة مكافحة الفيروسات
+AntiVirusCommandExample=مثال لكلاموين : ج : \ ملفات البرنامج (x86) \ كلاموين \ بن \ clamscan.exe <br> مثال لكلاماف : / البيرة / بن / clamscan
+AntiVirusParam=مزيد من المعلمات على سطر الأوامر
+AntiVirusParamExample=مثال لكلاموين : -- قاعدة بيانات = &quot;جيم : \ ملفات البرنامج (x86) \ ليب \ كلاموين&quot;
+YouCanDownloadBackupFile=يمكن أن الملفات التي تم إنشاؤها الآن يمكن تحميلها
+IgnoreDuplicateRecords=تجاهل الأخطاء في سجلات مكررة (إدراج تجاهل)
+InstrucToEncodePass=لديك كلمة المرور المشفرة في ملف <b>conf.php</b> ، استبدال خط <br> <b>dolibarr_main_db_pass $ =&quot;...&quot;</b> <br> من قبل <br> <b>&quot;= $ crypted dolibarr_main_db_pass : ٪ ق&quot;</b>
+InstrucToClearPass=لديك كلمة السر فك الشفرة (واضح) في <b>conf.php</b> الملف ، استبدال السطر <br> <b>dolibarr_main_db_pass $ = &quot;:...&quot; crypted</b> <br> من قبل <br> <b>dolibarr_main_db_pass $ = &quot;٪ ق&quot;</b>
+MAIN_MAIL_EMAIL_TLS=استخدام تلس (خدمة تصميم المواقع) تشفير
+SubmitTranslation=إذا كان ترجمة لهذه اللغة ليست كاملة أو تجد الأخطاء ، يمكنك تصحيح هذا عن طريق تحرير الملفات إلى الدليل <b>langs / ق ٪</b> ، وإرسال ملفات تعديل على www.dolibarr.org المنتدى.
+FindPackageFromWebSite=العثور على الحزمة التي توفر ميزة تريد (على سبيل المثال على موقع الويب ق ٪).
+AddCRIfTooLong=ليس هناك التفاف تلقائي ، حتى إذا خرج من خط صفحة على وثائق لفترة طويلة جدا ، يجب إضافة حرف إرجاع نفسك في ناحية النص.
+MinLength=الحد الأدني لمدة
+LanguageFilesCachedIntoShmopSharedMemory=لانغ لتحميل الملفات. في الذاكرة المشتركة
+ExamplesWithCurrentSetup=أمثلة مع تشغيل الإعداد الحالي
+ListOfDirectories=قائمة الدلائل المفتوحة قوالب
+ListOfDirectoriesForModelGenODT=قائمة الدلائل التي تحتوي على ملفات ذات شكل قوالب المفتوحة. <br><br> هنا وضع المسار الكامل من الدلائل. <br> إضافة حرف إرجاع بين الدليل ايه. <br> لإضافة دليل وحدة [جد] ، أضيف هنا <b>DOL_DATA_ROOT / إدارة المحتوى في المؤسسة / yourdirectoryname.</b> <br><br> في هذه الدلائل يجب أن تنتهي مع <b>ملفات. odt.</b>
+NumberOfModelFilesFound=عدد ODT القوالب العثور على الملفات في هذه الدلائل
+ExampleOfDirectoriesForModelGen=أمثلة على بناء الجملة : <br> ج : mydir \ <br> / الوطن / mydir <br> DOL_DATA_ROOT / إدارة المحتوى في المؤسسة / ecmdir
+FirstnameNamePosition=موقف الإسم / اسم
+Module23Name=طاقة
+Module23Desc=مراقبة استهلاك الطاقة
+Module100Name=ExternalSite
+Module100Desc=وتشمل أي موقع خارجي في القوائم Dolibarr ومشاهدته في إطار Dolibarr
+Module2000Name=Fckeditor
+Module2000Desc=سوغ محرر
+Module2600Name=WebServices
+Module2600Desc=تمكين خدمات الويب Dolibarr الملقم
+Module2700Name=غرفتر
+Module2700Desc=استخدام خدمة غرفتر على الانترنت (www.gravatar.com) لإظهار الصورة من المستخدمين / أعضاء (وجدت مع رسائل البريد الإلكتروني الخاصة بهم). في حاجة الى الوصول الى شبكة الانترنت
+Module2900Name=GeoIPMaxmind
+Module2900Desc=GeoIP التحويلات Maxmind القدرات
+Module13452Name=SpeedFinder
+Module13452Desc=محرك البحث للعثور على أجاكس في اسم من جزء من رقم الهاتف في حدود 2 ثانية
+Permission36=انظر / إدارة المنتجات المخفية
+Permission141=المهام اقرأ
+Permission142=إنشاء / تعديل المهام
+Permission144=حذف المهام
+Permission536=انظر / إدارة الخدمات الخفية
+Permission2411=الإجراءات قراءة (أحداث أو المهام) للاخرين
+Permission2412=إنشاء / تعديل الإجراءات (أحداث أو المهام) للاخرين
+Permission2413=حذف الإجراءات (أحداث أو المهام) للاخرين
+DictionnaryStaff=العاملين
+LocalTax1ManagementES=إدارة الطاقة المتجددة
+LocalTax1IsUsedDescES=معدل الطاقة المتجددة بشكل افتراضي عند احتمالات خلق ، والفواتير ، وأوامر الخ اتباع القاعدة نشط القياسية : <br> إذا لم تعرض الشركة المصرية للاتصالات لمشتري الطاقة المتجددة ، الطاقة المتجددة بشكل افتراضي = 0. نهاية الحكم. <br> في حال التعرض للمشتري بعد ذلك الطاقة المتجددة الطاقة المتجددة بشكل افتراضي. نهاية الحكم. <br>
+LocalTax1IsNotUsedDescES=افتراضيا الطاقة المتجددة المقترحة هي 0. نهاية الحكم.
+LocalTax1IsUsedExampleES=في اسبانيا هم من المهنيين تخضع لبعض المقاطع المحددة للشركة التعليم الصوتي التفاعلي الاسبانية.
+LocalTax1IsNotUsedExampleES=في اسبانيا هم المهنية والجمعيات وتخضع لقطاعات معينة من شركة التعليم الصوتي التفاعلي الاسبانية.
+LocalTax2ManagementES=IRPF الإدارة
+LocalTax2IsUsedDescES=معدل الطاقة المتجددة بشكل افتراضي عند احتمالات خلق ، والفواتير ، وأوامر الخ اتباع القاعدة نشط القياسية : <br> إذا لم يتم التعرض للبائع IRPF ، ثم IRPF افتراضيا = 0. نهاية الحكم. <br> في حال التعرض للبائع IRPF ثم IRPF افتراضيا. نهاية الحكم. <br>
+LocalTax2IsNotUsedDescES=افتراضيا IRPF المقترحة هي 0. نهاية الحكم.
+LocalTax2IsUsedExampleES=في اسبانيا ، لحسابهم الخاص والمهنيين المستقلين الذين يقدمون الخدمات والشركات الذين اختاروا النظام الضريبي من وحدات.
+LocalTax2IsNotUsedExampleES=في اسبانيا هم bussines لا تخضع لنظام ضريبي وحدات.
+MenuUpgrade=ترقية / توسيع
+DatabaseServer=قاعدة بيانات المضيف
+DatabaseUser=قاعدة بيانات المستخدم
+DatabasePassword=قاعدة بيانات كلمة السر
+EnableShowLogo=عرض الشعار على اليسار القائمة
+MAIN_ROUNDING_RULE_TOT=حجم التقريب مجموعة (لبلدان النادرة التي يتم التقريب على شيء آخر من قاعدة 10)
+UnitPriceOfProduct=صافي سعر وحدة من المنتج
+TotalPriceAfterRounding=إجمالي السعر الصافي / ضريبة القيمة المضافة / ضريبة مدفوع) بعد التقريب
+PreviousDumpFiles=متاح تفريغ النسخ الاحتياطي ملفات قاعدة البيانات
+WeekStartOnDay=أول يوم من الأسبوع
+RunningUpdateProcessMayBeRequired=تشغيل عملية الترقية ويبدو أن المطلوب (ليالي برامج الإصدار ٪ يختلف عن إصدار قاعدة بيانات ٪)
+YouMustRunCommandFromCommandLineAfterLoginToUser=يجب تشغيل هذا الأمر من سطر الأوامر بعد الدخول إلى قذيفة مع المستخدم <b>٪ ق.</b>
+YourPHPDoesNotHaveSSLSupport=وظائف خدمة تصميم المواقع لا تتوفر في بي الخاص بك
+DownloadMoreSkins=مزيد من جلود بتحميل
+SimpleNumRefModelDesc=عودة الرقم المرجعي للتنسيق مع nnnn - ٪ syymm ث ث حيث هي السنة ، هو شهر ملم وnnnn هو تسلسل بدون ثقب ودون إعادة تعيين
+ListOfEntities=قائمة الكيانات
+AddEntity=إضافة كيان
+EditEntity=عدل كيان
+UsersSetup=شاهد الإعداد وحدة
+UserMailRequired=مطلوب بريد إلكتروني لإنشاء مستخدم جديد
+ModelModules=وثائق قوالب
+DocumentModelOdt=انتج وثائق من OpenDocuments قوالب (ملفات ODT لأوبن أوفيس ، ومعالجات ، TextEdit ،...)
+WatermarkOnDraft=علامة مائية على مشروع الوثيقة
+LDAPFieldGroupMembers=أعضاء الفريق
+LDAPFieldGroupMembersExample=على سبيل المثال : uniqueMember
+DonationsReceiptModel=قالب من استلام التبرع
+MailingEMailError=بريد إلكتروني العودة (إلى أخطاء) لرسائل البريد الإلكتروني مع الأخطاء
+PastDelayVCalExport=لا تصدر الحدث الأكبر من
+CashDesk=نقاط البيع
+CashDeskBankAccountForCheque=حساب لاستخدام لتلقي المدفوعات عن طريق الشيكات
+CashDeskBankAccountForCB=حساب لاستخدام لاستلام المبالغ النقدية عن طريق بطاقات الائتمان
+SuppliersSetup=المورد الإعداد وحدة
+SuppliersCommandModel=قالب كاملة من أجل المورد (logo...)
+GeoIPMaxmindSetup=GeoIP Maxmind الإعداد وحدة
+PathToGeoIPMaxmindCountryDataFile=المسار إلى ملف يحتوي على Maxmind الملكية الفكرية لترجمة البلاد. <br> مثال : / البيرة / المحلية / مشاركة / GeoIP / GeoIP.dat
+NoteOnPathLocation=لاحظ أن الملكية الفكرية الخاصة بك على البيانات القطرية الملف يجب أن تكون داخل الدليل الخاص بي يمكن قراءة (راجع الإعداد open_basedir بى وأذونات نظام الملفات).
+YouCanDownloadFreeDatFileTo=يمكنك تحميل <b>نسخة تجريبية مجانية</b> من GeoIP ملف Maxmind البلاد في ٪ s.
+YouCanDownloadAdvancedDatFileTo=كما يمكنك تحميل <b>نسخة كاملة</b> أكثر من ذلك <b>، مع التحديثات ،</b> من GeoIP ملف Maxmind البلاد في ٪ s.
+TestGeoIPResult=اختبار لتحويل الملكية الفكرية --&gt; البلاد
+NumberWordsSetup=NumberWords الإعداد وحدة
+DescNumberWords=هذا يوفر وظائف وحدة لتحويل المبلغ أو عدد الأحرف في الكامل. وسيكون أيضا استبدال تكرارات السلسلة التالية __TOTAL_TTC_WORDS__ ، __TOTAL_HT_WORDS__ أو مدفوع من قبل __TOTAL_VAT_WORDS__ الإجمالي. الضرائب ، ومجموع صافي الضرائب ، أو مجموع ضريبة القيمة المضافة في جميع textes التي تستخدمها (النص الحرة على الفواتير ،...)
+ProjectsNumberingModules=مشاريع وحدة الترقيم
+ProjectsSetup=مشروع إعداد وحدة
+ProjectsModelModule=المشروع نموذج التقرير وثيقة
+// STOP - Lines generated via autotranslator.php tool ().

@@ -129,3 +129,12 @@ AnnualByCompaniesInputOutputMode=ميزان الإيرادات والنفقات 
 SeeReportInInputOutputMode=انظر التقرير <b>sIncomes ٪</b> بين <b>المصروفات ٪ ق</b> قال <b>المحاسبة النقدية</b> لحساب المدفوعات الفعلية
 SeeReportInDueDebtMode=انظر التقرير <b>sClaims ٪</b> بين <b>ديونها ٪ ق الالتزام والمحاسبة</b> وقال لحساب فواتير
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
+// Reference language: en_US
+TaxModuleSetupToModifyRules=انتقل إلى <a href="%s">وحدة الإعداد</a> لتعديل القواعد لحساب
+VATReportBuildWithOptionDefinedInModule=المبالغ المبينة هنا يتم حسابها باستخدام القواعد التي تحددها وحدة الإعداد الضرائب.
+SocialContributionsPayments=المساهمات الاجتماعية المدفوعات
+ThirdPartyMustBeEditAsCustomer=ويجب تحديد الطرف الثالث كزبون
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:37).

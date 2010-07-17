@@ -129,3 +129,21 @@ PDFEinsteinDescription=من أجل نموذج كامل (logo...)
 MarbreNumRefDesc=Renvoie جنيه numéro sous لوس انجليس في شكل syymm ٪ nnnn - où l' année السنة بتوقيت شرق الولايات المتحدة ، مم جنيه mois ét nnnn الامم المتحدة compteur sequentiel بلا انقطاع ét بلا remise ه 0
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+OrderToProcess=من أجل عملية
+TypeContact_commande_internal_SALESREPFOLL=ممثل العميل متابعة النظام
+TypeContact_commande_internal_SHIPPING=ممثل الشحن متابعة
+TypeContact_commande_external_BILLING=الزبون فاتورة الاتصال
+TypeContact_commande_external_SHIPPING=العملاء الشحن الاتصال
+TypeContact_commande_external_CUSTOMER=اتصل العملاء بغية متابعة
+TypeContact_order_supplier_internal_SALESREPFOLL=ممثل النظام المورد متابعة
+TypeContact_order_supplier_internal_SHIPPING=ممثل الشحن متابعة
+TypeContact_order_supplier_external_BILLING=المورد فاتورة الاتصال
+TypeContact_order_supplier_external_SHIPPING=المورد الشحن الاتصال
+TypeContact_order_supplier_external_CUSTOMER=المورد الاتصال أجل متابعة
+PDFEdisonDescription=نموذج النظام بسيطة
+PDFQuevedoDescription=نموذج النظام الكامل مع الطاقة المتجددة الاسبانية وIRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:54).

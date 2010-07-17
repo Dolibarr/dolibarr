@@ -83,3 +83,17 @@ EstimatedStockValue=وتقدر قيمة المخزون
 DeStockOnShipment=انخفاض الاسهم الحقيقي على شحنة المصادقة (مستحسن)
 StockDiffPhysicTeoric=والسبب في الاختلاف المخزون المادي والنظرية
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:28:02).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+WarehouseEdit=تعديل مستودع
+ReStockOnDispatchOrder=زيادة مخزونات دليل حقيقي على إيفاد في المستودعات ، وبعد تلقي أمر المورد
+OrderStatusNotReadyToDispatch=أمر لم يتم بعد أو لا أكثر من ذلك الوضع الذي يسمح بإرسال من المنتجات في مخازن المخزون.
+NoPredefinedProductToDispatch=لا توجد منتجات محددة سلفا لهذا الكائن. لذلك لا إرسال في المخزون المطلوب.
+DispatchVerb=إيفاد
+DeleteAWarehouse=حذف مستودع
+ConfirmDeleteWarehouse=هل أنت متأكد أنك تريد حذف <b>%s</b> مستودع؟
+PersonalStock=%s طبيعة الشخصية
+ThisWarehouseIsPersonalStock=هذا يمثل مستودع للطبيعة الشخصية لل%s %s
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:59).

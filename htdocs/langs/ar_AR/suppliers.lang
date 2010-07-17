@@ -45,3 +45,9 @@ ListOfSupplierProductForSupplier=قائمة المنتجات والأسعار ل
 NoneOrBatchFileNeverRan=أو لا شيء دفعة <b>٪ ق</b> لا يتعارض مؤخرا
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
+// Reference language: en_US
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=ويرتبط هذا المورد بالفعل مرجع مع مرجع : %s
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:02).

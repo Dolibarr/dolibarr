@@ -95,3 +95,15 @@ CatCusList=قائمة العملاء / احتمال الفئات
 CatProdList=قائمة المنتجات فئات
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+MembersCategoriesArea=أعضاء فئات المناطق
+MemberIsInCategories=يملك هذا العضو إلى الفئات التالية الأعضاء
+MemberHasNoCategory=هذا العضو غير موجود في أي فئات
+MembersCategoryShort=أعضاء الفئة
+MembersCategoriesShort=أعضاء الفئات
+ThisCategoryHasNoMember=هذا التصنيف لا يحتوي على أي عضو.
+CatMemberList=قائمة بأسماء أعضاء الفئات
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:56).

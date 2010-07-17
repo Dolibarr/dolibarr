@@ -161,3 +161,13 @@ MembersAndSubscriptions=وأعضاء Suscriptions
 // Reference language: en_US
 FundationMembers=أعضاء المؤسسة
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=بريد إلكتروني الموضوع لautosubscription الأعضاء
+DescADHERENT_AUTOREGISTER_MAIL=البريد الإلكتروني لعضو autosubscription
+DescADHERENT_CARD_TYPE=شكل بطاقات صفحة
+DescADHERENT_CARD_TEXT_RIGHT=النص المطبوع على بطاقات الأعضاء (في محاذاة اليمين)
+DescADHERENT_MAILMAN_LISTS=قائمة (ق) للinsription التلقائي للأعضاء الجدد (مفصولة بفاصلة)
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:17).

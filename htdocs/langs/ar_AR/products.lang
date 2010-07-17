@@ -161,3 +161,18 @@ ClonePricesProduct=استنساخ الرئيسية معلومات والأسعا
 LastRecordedProductsAndServices=٪ ق الماضي سجلت المنتجات / الخدمات
 ContractStatusToRun=ألف mettre én الخدمة
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+ProductAccountancyBuyCode=المحاسبة الرمز (شراء)
+ProductAccountancySellCode=المحاسبة الرمز (بيع)
+SellingPriceHT=سعر البيع (صافي الضرائب)
+SellingPriceTTC=سعر البيع (شركة الضريبية)
+ListProductServiceByPopularity=قائمة المنتجات / الخدمات حسب الشهرة
+ListServiceByPopularity=قائمة الخدمات حسب الشهرة
+ProductIsUsed=ويستخدم هذا المنتج
+NewRefForClone=المرجع. من المنتجات الجديدة / خدمة
+CustomerPrices=أسعار العملاء
+SuppliersPrices=أسعار الموردين
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:06).

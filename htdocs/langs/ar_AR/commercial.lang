@@ -96,3 +96,10 @@ Rendez-Vous=الموعد
 ToDoActions=عدم اكتمال الإجراءات
 ToDoActionsFor=لعدم اكتمال الإجراءات ق ٪
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:54:01).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
+// Reference language: en_US
+ActionAC_SUP_ORD=أرسل النظام المورد عن طريق البريد
+ActionAC_SUP_INV=إرسال فاتورة المورد عن طريق البريد
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:37).
