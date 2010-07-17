@@ -569,7 +569,7 @@ Day0=Søndag
 
 // START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
 // Reference language: en_US
-ErrorGoToGlobalSetup=Gå til 'Company / Foundation &quot;-opsætningen til at løse dette
+ErrorGoToGlobalSetup=Gå til 'Company / Foundation "-opsætningen til at løse dette
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
 
 
@@ -577,9 +577,9 @@ ErrorGoToGlobalSetup=Gå til 'Company / Foundation &quot;-opsætningen til at l�
 // Reference language: en_US
 FormatHourShortDuration=%H:%M
 NoError=Ingen fejl
-ErrorNoSocialContributionForSellerCountry=Fejl, ingen social bidrag type der er defineret for landets %s &#39;.
+ErrorNoSocialContributionForSellerCountry=Fejl, ingen social bidrag type der er defineret for landets %s '.
 BackgroundColorByDefault=Standard baggrundsfarve
-FileWasNotUploaded=En fil er valgt for udlæg, men endnu ikke var uploadet. Klik på &quot;Vedhæft fil&quot; for dette.
+FileWasNotUploaded=En fil er valgt for udlæg, men endnu ikke var uploadet. Klik på "Vedhæft fil" for dette.
 NbOfEntries=Nb af tilmeldinger
 Resize=Resize
 Recenter=Recenter
@@ -605,7 +605,7 @@ NoMenu=Ingen sub-menu
 WarningYouAreInMaintenanceMode=Advarsel, du er i en vedligeholdelses mode, så kun login <b>%s</b> er tilladt at bruge ansøgningen på i øjeblikket.
 CreditCard=Kreditkort
 FieldsWithAreMandatory=Felter med <b>%s</b> er obligatoriske
-FieldsWithIsForPublic=Felter med <b>%s</b> er vist på offentlig liste over medlemmer. Hvis du ikke ønsker dette, se &quot;offentlige&quot; boks.
+FieldsWithIsForPublic=Felter med <b>%s</b> er vist på offentlig liste over medlemmer. Hvis du ikke ønsker dette, se "offentlige" boks.
 AccordingToGeoIPDatabase=(Ifølge GeoIP konvertering)
 Line=Line
 NotSupported=Ikke understøttet

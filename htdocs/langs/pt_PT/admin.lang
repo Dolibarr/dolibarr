@@ -1043,14 +1043,14 @@ CompanyTZ=Fuso horário empresa (principal empresa)
 CompanyHour=Hora empresa (principal empresa)
 PurgeDeleteLogFile=Apagar <b>ficheiro %s</b> definida para Syslog módulo (sem risco de perderem os dados)
 UseACacheDelay=Prazo para o caching exportação resposta em segundos (0 ou em branco para não cache)
-DisableLinkToHelpCenter=Ocultar link <b>&quot;Precisa de ajuda ou apoio&quot;</b> na página de login
-DisableLinkToHelp=Ocultar link <b>&quot; %s Online ajudar&quot;</b> no menu esquerdo
+DisableLinkToHelpCenter=Ocultar link <b>"Precisa de ajuda ou apoio"</b> na página de login
+DisableLinkToHelp=Ocultar link <b>" %s Online ajudar"</b> no menu esquerdo
 AddCRIfTooLong=Não há envolvimento automática, por isso, se estiver fora de linha página de documentos, porque demasiado longo, você deve adicionar a si mesmo o retorno de carro em textarea.
 ModuleDisabled=Módulo deficientes
 ModuleDisabledSoNoEvent=Módulo deficientes tão evento nunca criou
 ConfirmPurge=Tem certeza de que deseja executar este purge? <br> Isto irá apagar definitivamente todos os seus arquivos dados sem forma de restaurar eles (ECM arquivos, ficheiros anexados ...).
 Module51Name=Massa enviamentos
-Module51Desc=Massa papel expedições &quot;gestão
+Module51Desc=Massa papel expedições "gestão
 Module5000Name=Multi-empresa
 Module5000Desc=Permite-lhe gerir várias empresas
 Module10000Name=PayBox
@@ -1110,15 +1110,15 @@ PreviewNotAvailable=Forhåndsvisning ikke tilgjengelig
 AntiVirusCommand=Full sti til antivirus kommandoen
 AntiVirusCommandExample=Eksempel på ClamWin: c: \ Program Files (x86) \ Klappe \ bin \ clamscan.exe <br> Eksempel på ClamAV: / usr / bin / clamscan
 AntiVirusParam=Flere parametre på kommandolinjen
-AntiVirusParamExample=Eksempel på ClamWin: - database = &quot;C: \ Program Files (x86) \ Klappe \ lib&quot;
+AntiVirusParamExample=Eksempel på ClamWin: - database = "C: \ Program Files (x86) \ Klappe \ lib"
 ClientHour=Time klienten (bruker)
 CompanyTZ=Time Zone selskap (firmaets)
 CompanyHour=Time selskap (firmaets)
 PurgeDeleteLogFile=Slett loggfil <b>%s</b> definert for Syslog modul (ingen risiko for å miste data)
 IgnoreDuplicateRecords=Ignorer feil av like poster (INS ignorere)
 DoNotStoreClearPassword=Har ingen butikk klar passord i databasen men butikken bare kryptert verdi (Aktiverte anbefales)
-InstrucToEncodePass=Å ha passord kodet inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> av <br> <b>$ Dolibarr_main_db_pass = &quot;kryptert: %s&quot;</b>
-InstrucToClearPass=Å ha passord dekodet (klar) inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass = &quot;kryptert :...&quot;</b> <br> av <br> <b>$ Dolibarr_main_db_pass = &quot;%s&quot;</b>
+InstrucToEncodePass=Å ha passord kodet inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> av <br> <b>$ Dolibarr_main_db_pass = "kryptert: %s"</b>
+InstrucToClearPass=Å ha passord dekodet (klar) inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass = "kryptert :..."</b> <br> av <br> <b>$ Dolibarr_main_db_pass = "%s"</b>
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr online demonstrasjon
 ForDocumentationSeeWiki=For brukeren eller utviklerens dokumentasjon (Doc, FAQs ...), <br> ta en titt på Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
@@ -1138,8 +1138,8 @@ GenericMaskCodes4b=<u>Eksempel på tredjeparts opprettet på 2007-03-01:</u> <br
 GenericMaskCodes5=<b>ABC (åå) (mm) - (000000)</b> vil gi <b>ABC0701-000099</b> <br> <b>(0000)-ZZZ 100 / dd () / XXX</b> vil gi <b>0199-ZZZ/31/XXX</b>
 SeeWikiForAllTeam=Ta en titt på wiki siden for fullstendig liste over alle aktører og deres organisering
 UseACacheDelay=Forsinkelse for skjulested eksport respons i sekunder (0 eller tom for ingen buffer)
-DisableLinkToHelpCenter=Skjul linken <b>&quot;Trenger du hjelp eller støtte&quot;</b> på innloggingssiden
-DisableLinkToHelp=Skjul linken <b>&quot;%s Online hjelp&quot;</b> på venstre meny
+DisableLinkToHelpCenter=Skjul linken <b>"Trenger du hjelp eller støtte"</b> på innloggingssiden
+DisableLinkToHelp=Skjul linken <b>"%s Online hjelp"</b> på venstre meny
 AddCRIfTooLong=Det er ingen automatisk innpakning, så hvis linjen ut av siden på dokumenter fordi for lenge, må du legge deg vognreturer i tekstfeltet.
 ModuleDisabled=Modul deaktivert
 ModuleDisabledSoNoEvent=Modul deaktivert slik hendelse aldri opprettet
@@ -1267,7 +1267,7 @@ WatermarkOnDraft=Vannmerke på utkast
 LDAPFieldPasswordCrypted=Passord kryptert
 LDAPFieldGroupMembers=Gruppemedlemmer
 LDAPFieldGroupMembersExample=Eksempel: uniqueMember
-YouCanUseDOL_DATA_ROOT=Du kan bruke DOL_DATA_ROOT / dolibarr.log for en loggfil i Dolibarr &quot;dokumenter&quot;-katalogen. Du kan angi en annen vei til å lagre denne filen.
+YouCanUseDOL_DATA_ROOT=Du kan bruke DOL_DATA_ROOT / dolibarr.log for en loggfil i Dolibarr "dokumenter"-katalogen. Du kan angi en annen vei til å lagre denne filen.
 DonationsReceiptModel=Mal for donasjonen kvittering
 MailingEMailError=Tilbake e-post (Feil-til) for e-post med feil
 Menus=Menyer
@@ -1323,10 +1323,10 @@ PreviewNotAvailable=Preview niet beschikbaar
 AntiVirusCommand=Het volledige pad naar antivirus commando
 AntiVirusCommandExample=Voorbeeld voor ClamWin: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Voorbeeld voor ClamAV: / usr / bin / clamscan
 AntiVirusParam=Meer parameters op de opdrachtregel
-AntiVirusParamExample=Voorbeeld voor ClamWin: - database = &quot;C: \ Program Files (x86) \ ClamWin \ lib&quot;
+AntiVirusParamExample=Voorbeeld voor ClamWin: - database = "C: \ Program Files (x86) \ ClamWin \ lib"
 IgnoreDuplicateRecords=Negeer fouten van dubbele records (INSERT negeren)
-InstrucToEncodePass=Om wachtwoord gecodeerd in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> door <br> <b>$ Dolibarr_main_db_pass = &quot;breuken: sssss&quot;</b>
-InstrucToClearPass=Om gedecodeerd wachtwoord (duidelijk) in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass = &quot;versleutelde :...&quot;</b> <br> door <br> <b>$ Dolibarr_main_db_pass = &quot;sssss&quot;</b>
+InstrucToEncodePass=Om wachtwoord gecodeerd in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> door <br> <b>$ Dolibarr_main_db_pass = "breuken: sssss"</b>
+InstrucToClearPass=Om gedecodeerd wachtwoord (duidelijk) in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass = "versleutelde :..."</b> <br> door <br> <b>$ Dolibarr_main_db_pass = "sssss"</b>
 MAIN_MAIL_EMAIL_TLS=Gebruik TLS (SSL) versleutelen
 SubmitTranslation=Als vertaling voor deze taal niet volledig is of u fouten vindt, kun je dit corrigeren door het bewerken van bestanden in directory <b>Langs / sssss</b> en het forum leggen gewijzigde bestanden op www.dolibarr.org.
 FindPackageFromWebSite=Zoek een pakket dat u wilt functie biedt (bijvoorbeeld op website sssss).
@@ -1341,7 +1341,7 @@ FirstnameNamePosition=Standpunt van voornaam / naam
 Module23Name=Energie
 Module23Desc=Toezicht op het verbruik van energie
 Module100Name=ExternalSite
-Module100Desc=Inclusief een externe website in Dolibarr menu&#39;s en bekijken in een frame Dolibarr
+Module100Desc=Inclusief een externe website in Dolibarr menu's en bekijken in een frame Dolibarr
 Module2000Name=Fckeditor
 Module2000Desc=WYSIWYG-editor
 Module2600Name=WebServices
@@ -1382,7 +1382,7 @@ UnitPriceOfProduct=Netto prijs per eenheid van een product
 TotalPriceAfterRounding=Totale prijs (netto / BTW / incl. BTW) na afronding
 PreviousDumpFiles=Beschikbaar database back-up dumpbestanden
 WeekStartOnDay=Eerste dag van de week
-RunningUpdateProcessMayBeRequired=Het uitvoeren van de upgrade proces lijkt te worden vereist (Programma&#39;s sssss versie verschilt van database versie sssss)
+RunningUpdateProcessMayBeRequired=Het uitvoeren van de upgrade proces lijkt te worden vereist (Programma's sssss versie verschilt van database versie sssss)
 YouMustRunCommandFromCommandLineAfterLoginToUser=U moet deze opdracht uitvoert vanaf de command line na het inloggen op een schaal met de gebruiker <b>sssss.</b>
 YourPHPDoesNotHaveSSLSupport=SSL-functies niet beschikbaar zijn in uw PHP
 DownloadMoreSkins=Meer skins te downloaden
@@ -1425,7 +1425,7 @@ SubmitTranslation=Als vertaling voor deze taal niet volledig is of u fouten vind
 FindPackageFromWebSite=Zoek een pakket dat u wilt functie biedt (bijvoorbeeld op website sssss).
 FirstnameNamePosition=Standpunt van voornaam / naam
 Module100Name=ExternalSite
-Module100Desc=Inclusief een externe website in Dolibarr menu&#39;s en bekijken in een frame Dolibarr
+Module100Desc=Inclusief een externe website in Dolibarr menu's en bekijken in een frame Dolibarr
 Module10000Desc=Module voor een online betaling per credit card pagina met Paybox bieden
 Permission13=Unvalidate facturen
 Permission38=Export producten
@@ -1459,11 +1459,11 @@ PreviewNotAvailable=Podgląd niedostępny
 AntiVirusCommand=Pełna ścieżka do polecenia antivirus
 AntiVirusCommandExample=ClamWin przykład: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> ClamAV przykład: / usr / bin / clamscan
 AntiVirusParam=Więcej parametrów w linii poleceń
-AntiVirusParamExample=ClamWin przykład: - bazy danych = &quot;C: \ Program Files (x86) \ lib ClamWin \&quot;
+AntiVirusParamExample=ClamWin przykład: - bazy danych = "C: \ Program Files (x86) \ lib ClamWin \"
 YouCanDownloadBackupFile=Wygenerowane pliki mogą być teraz pobierane
 IgnoreDuplicateRecords=Ignoruj błędy zduplikowanych rekordów (INSERT IGNORE)
-InstrucToEncodePass=Się, że hasło zakodowane w <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = &quot;zaszyfrowane: sssss&quot;</b>
-InstrucToClearPass=Do hasła zdekodowane (jasne) do <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass = &quot;zaszyfrowane :...&quot;</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = &quot;sssss&quot;</b>
+InstrucToEncodePass=Się, że hasło zakodowane w <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = "zaszyfrowane: sssss"</b>
+InstrucToClearPass=Do hasła zdekodowane (jasne) do <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass = "zaszyfrowane :..."</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = "sssss"</b>
 MAIN_MAIL_EMAIL_TLS=Użyj TLS (SSL) szyfrowania
 SubmitTranslation=Jeżeli tłumaczenie na ten język nie jest kompletny lub znajdują się błędy, można rozwiązać poprzez edycję plików w katalogu <b>langs / sssss</b> i złożyć zmodyfikowane pliki na www.dolibarr.org forum.
 FindPackageFromWebSite=Znaleźć pakiet, który zapewnia funkcję chcesz (np. na sssss stronie internetowej).
@@ -1570,10 +1570,10 @@ PreviewNotAvailable=Visualização não disponível
 AntiVirusCommand=Caminho completo para o comando de antivírus
 AntiVirusCommandExample=Exemplo de Mexilhão: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Exemplo de Mexilhão: / usr / bin / clamscan
 AntiVirusParam=Mais informações sobre parâmetros de linha de comando
-AntiVirusParamExample=Exemplo de Mexilhão: - database = &quot;C: \ Program Files (x86) \ lib ClamWin \&quot;
+AntiVirusParamExample=Exemplo de Mexilhão: - database = "C: \ Program Files (x86) \ lib ClamWin \"
 IgnoreDuplicateRecords=Ignore os erros de registros duplicados (INSERT IGNORE)
-InstrucToEncodePass=Para ter uma senha codificada no <b>conf.php</b> arquivo, substitua a linha <br> <b>=&quot;...&quot; Dolibarr_main_db_pass $</b> <br> por <br> <b>dolibarr_main_db_pass $ = &quot;crypted: %s&quot;</b>
-InstrucToClearPass=Para ter a senha decodificado (transparente) para o <b>conf.php</b> arquivo, substitua a linha <br> <b>dolibarr_main_db_pass $ = crypted :...&quot; &quot;</b> <br> por <br> <b>dolibarr_main_db_pass $ = &quot;%s&quot;</b>
+InstrucToEncodePass=Para ter uma senha codificada no <b>conf.php</b> arquivo, substitua a linha <br> <b>="..." Dolibarr_main_db_pass $</b> <br> por <br> <b>dolibarr_main_db_pass $ = "crypted: %s"</b>
+InstrucToClearPass=Para ter a senha decodificado (transparente) para o <b>conf.php</b> arquivo, substitua a linha <br> <b>dolibarr_main_db_pass $ = crypted :..." "</b> <br> por <br> <b>dolibarr_main_db_pass $ = "%s"</b>
 MAIN_MAIL_EMAIL_TLS=Use TLS (SSL) criptografa
 SubmitTranslation=Se a tradução para esse idioma não esteja completa ou você encontrar erros, você pode corrigir isso, a edição de arquivos em <b>langs</b> diretório <b>/ %s</b> e enviar arquivos modificados www.dolibarr.org fórum.
 FindPackageFromWebSite=Encontre um pacote que fornece funcionalidade que você quiser (por exemplo, %s site).
@@ -1640,7 +1640,7 @@ UsersSetup=Usuários de configuração do módulo
 UserMailRequired=Email exigidos para criar um novo usuário
 ModelModules=Documentos modelos
 DocumentModelOdt=Gere documentos de OpenDocuments templates (arquivos. ODT para o OpenOffice, KOffice, TextEdit ,...)
-WatermarkOnDraft=Marca d&#39;água sobre o projecto de documento
+WatermarkOnDraft=Marca d'água sobre o projecto de documento
 LDAPFieldGroupMembers=Os membros do grupo
 LDAPFieldGroupMembersExample=Exemplo: uniqueMember
 DonationsReceiptModel=Modelo de recibo de doação

@@ -185,8 +185,8 @@ Security=Güvenlik
 Passwords=Şifreler
 DoNotStoreClearPassword=Hayır (Aktif veritabanı ancak mağazası yalnızca şifrelenmiş değeri net şifreleri saklamak mı önerilir)
 MainDbPasswordFileConfEncrypted=Veritabanı conf.php içinde (Aktif şifreli parola önerilir)
-InstrucToEncodePass=<b>Conf.php</b> dosyası içerisinde, çizgi yerine kodlanmış şifre sahip olmak <br> <b>$ dolibarr_main_db_pass=&quot;...&quot;</b> <br> tarafından <br> <b>$= &quot;dolibarr_main_db_pass kriptolanmis: %s &quot;</b>
-InstrucToClearPass=Çözümlenmiş (net) <b>conf.php</b> dosyası içerisinde, çizgi yerine şifre sahip olmak <br> <b>$= dolibarr_main_db_pass &quot;:...&quot; kriptolanmis</b> <br> tarafından <br> <b>$ dolibarr_main_db_pass= &quot; %s &quot;</b>
+InstrucToEncodePass=<b>Conf.php</b> dosyası içerisinde, çizgi yerine kodlanmış şifre sahip olmak <br> <b>$ dolibarr_main_db_pass="..."</b> <br> tarafından <br> <b>$= "dolibarr_main_db_pass kriptolanmis: %s "</b>
+InstrucToClearPass=Çözümlenmiş (net) <b>conf.php</b> dosyası içerisinde, çizgi yerine şifre sahip olmak <br> <b>$= dolibarr_main_db_pass ":..." kriptolanmis</b> <br> tarafından <br> <b>$ dolibarr_main_db_pass= " %s "</b>
 ProtectAndEncryptPdfFiles=Koruma oluşturulan PDF dosyaları (aktifleştirmediniz tavsiye kitle PDF Generation sonları)
 ProtectAndEncryptPdfFilesDesc=Koruma PDF belgesinin okumak için ve herhangi bir PDF tarayıcı ile baskı mevcut tutar. Ancak, düzenleme ve kopyalama artık mümkün değildir. Bu özelliği kullanarak küresel kümülatif pdf ödenmemiş faturalar () gibi çalışmıyor bina olun.
 Feature=Özellik
@@ -259,8 +259,8 @@ UMask=Unix yeni dosyalar için umask parametresi / Linux / BSD dosya sistemi.
 UMaskExplanation=Bu parametre izinlerini dosyaları Dolibarr server örneğin upload () sırasında oluşturulan varsayılan olarak tanımlamanıza izin verir. <br> Bu sekizli değer (örneğin, 0666 okuma anlamına gelir ve herkes için yazma) olmalıdır. <br> Ce Parametre ne sert pas sous un serveur Windows.
 SeeWikiForAllTeam=Tüm aktörlerin ve kuruluşun tam listesi için wiki sayfası bir göz atın
 UseACacheDelay=Gecikme saniye ihracat yanıt önbelleğe almak için (0 veya boş hiçbir önbellek için)
-DisableLinkToHelpCenter=Hide link <b>&quot;yardıma ihtiyacınız var veya destek&quot;</b> giriş sayfası
-DisableLinkToHelp=Hide link <b>&quot;%&quot;</b> sol menüsünde <b>Online help</b>
+DisableLinkToHelpCenter=Hide link <b>"yardıma ihtiyacınız var veya destek"</b> giriş sayfası
+DisableLinkToHelp=Hide link <b>"%"</b> sol menüsünde <b>Online help</b>
 AddCRIfTooLong=Hiçbir otomatik sarma, böylece satır sayfa belgeleri, çünkü çok uzun, kendinize textarea taşıma döner eklemelisiniz dışarı olmasıdır.
 ModuleDisabled=Modülü devre dışı
 ModuleDisabledSoNoEvent=Modülü çok etkinlik hazırlandı asla devre dışı
@@ -587,7 +587,7 @@ VATManagement=KDV Yönetimi
 VATIsUsedDesc=Varsayılan potansiyel oluşturarak KDV oranı, fatura, sipariş vb etkin standart kural: <br> Eğer satıcı KDV, sonra varsayılan= 0 tarafından KDV tabi tutulur. Kural sonu. <br> (Satan ülke= satın ülke) Eğer, o zaman varsayılan KDV= KDV satan ülkede ürün. Kural sonu. <br> Eğer satıcı ve Avrupa Topluluğu ve mal alıcı (araba, gemi, uçak) ulaşım yeni anlamı olan satılmaktadır,= 0 (KDV ülkesinin customoffice de alıcı tarafından değil, satıcı olarak ödenmelidir KDV varsayılan ). Kural sonu. <br> Eğer satıcı ve Avrupa Topluluğu ve eşya taşımacılığı yeni anlamı yerine başka yollarla satılan, sonra varsayılan KDV= KDV ürün olarak alıcı sattı. Kural sonu. <br>= 1 KDV Else önerilen varsayılan. Kural sonu.
 VATIsNotUsedDesc=Varsayılan olarak önerilen KDV 0 olan dernekler gibi durumlarda, bireyler yapın küçük şirketlerin kullanılmış olabilir.
 VATIsUsedExampleFR=Fransa'da, o (Basitleştirilmiş gerçek ya da gerçek normal) şirketler veya kuruluşlar, gerçek mali sistemine sahip olmak anlamına gelir. Olan KDV ilan edilir bir sistem.
-VATIsNotUsedExampleFR=Fransa'da, bu dernekler olmayan KDV demektir ilan veya şirketler, kuruluşlar ya da franchise olarak (KDV mali sistemi mikro işletme seçtiniz, liberal meslekler) ve herhangi bir KDV beyan olmadan franchise KDV ödedi. Bu seçimi &quot;faturada referans&quot; Sigara uygulanan KDV - sanat-293B CGI gösterecektir.
+VATIsNotUsedExampleFR=Fransa'da, bu dernekler olmayan KDV demektir ilan veya şirketler, kuruluşlar ya da franchise olarak (KDV mali sistemi mikro işletme seçtiniz, liberal meslekler) ve herhangi bir KDV beyan olmadan franchise KDV ödedi. Bu seçimi "faturada referans" Sigara uygulanan KDV - sanat-293B CGI gösterecektir.
 LabelUsedByDefault=Hiçbir çeviri kodu bulunabilir Label varsayılan olarak kullanılan
 LabelOnDocuments=Etiket belgeler üzerinde
 NbOfDays=Nb gün
@@ -661,8 +661,8 @@ DoNotSuggestPaymentMode=Öneririz Don't
 NoActiveBankAccountDefined=Etkin tanımlı banka hesabı
 OwnerOfBankAccount=Sahibinin banka hesabına %s 
 BankModuleNotActive=Banka hesapları etkin değil modülü
-ShowBugTrackLink=Bağlantı göster &quot;Hata bildir&quot;
-ShowWorkBoard=Show &quot;on&quot; ana tezgah
+ShowBugTrackLink=Bağlantı göster "Hata bildir"
+ShowWorkBoard=Show "on" ana tezgah
 Alerts=Uyarılar
 Delays=Gecikmeler
 DelayBeforeWarning=Gecikme uyarı önce
@@ -718,7 +718,7 @@ MAIN_MAX_DECIMALS_TOT=Toplam fiyatları Max ondalık
 MAIN_MAX_DECIMALS_SHOWN=Fiyatları ekranda görüntülenir Max ondalık (ekle <b>...</b> bu sayı sonra eğer görmek için <b>...</b> ne zaman numara kesilmiş olduğu ekranda gösterilmesini istiyorsanız)
 MAIN_DISABLE_PDF_COMPRESSION=Oluşturulan PDF dosyaları için kullanın PDF sıkıştırma.
 ParameterActiveForNextInputOnly=Parametre sonraki giriş için etkili tek
-NoEventOrNoAuditSetup=Hiçbir güvenlik olay henüz kaydedildi. Eğer denetim setup &quot;- güvenlik - denetim&quot; sayfa etkinleştirilmemiş Bu normal olabilir.
+NoEventOrNoAuditSetup=Hiçbir güvenlik olay henüz kaydedildi. Eğer denetim setup "- güvenlik - denetim" sayfa etkinleştirilmemiş Bu normal olabilir.
 NoEventFoundWithCriteria=Herhangi bir güvenlik olayı gibi arama kriterleri değer bulundu.
 SeeLocalSendMailSetup=Yerel sendmail kurulum bak
 BackupDesc=Dolibarr tam bir yedekleme yapmak için şunları yapmalısınız:
@@ -743,13 +743,13 @@ GeneratePassword=Önermek bir şifre oluşturulur
 RuleForGeneratedPasswords=Kural önerilen şifreler veya doğrulamak şifreler oluşturmak için
 DoNotSuggest=Herhangi bir şifre öneririz Don't
 EncryptedPasswordInDatabase=Veritabanında şifre şifreleme izin vermek için
-DisableForgetPasswordLinkOnLogonPage=Giriş sayfasında bağlantı Forget &quot;parola&quot; Don't show
+DisableForgetPasswordLinkOnLogonPage=Giriş sayfasında bağlantı Forget "parola" Don't show
 CompanySetup=Firmalar modülü kurulumu
 CompanyCodeChecker=Modülü üçüncü kişilere kod üretimi ve denetimi (müşteri veya tedarikçi için)
 AccountCodeManager=Modülü muhasebe kod üretimi (müşteri veya tedarikçi için)
-ModuleCompanyCodeAquarium=Return bir muhasebe kodu 401 &quot;tedarikçisi muhasebe kodu için üçüncü taraf tedarikçi kodunun arkasından&quot; tarafından inşa ve &quot;411&quot; bir müşteri muhasebe kodu için üçüncü taraf müşteri kodunu girin.
+ModuleCompanyCodeAquarium=Return bir muhasebe kodu 401 "tedarikçisi muhasebe kodu için üçüncü taraf tedarikçi kodunun arkasından" tarafından inşa ve "411" bir müşteri muhasebe kodu için üçüncü taraf müşteri kodunu girin.
 ModuleCompanyCodePanicum=Return boş bir muhasebe kodu.
-ModuleCompanyCodeDigitaria=Muhasebe kodu üçüncü parti kodu bağlıdır. Kod karakter &quot;C&quot; birinci konumda üçüncü kodunun ilk 5 karakter takip içinde oluşur.
+ModuleCompanyCodeDigitaria=Muhasebe kodu üçüncü parti kodu bağlıdır. Kod karakter "C" birinci konumda üçüncü kodunun ilk 5 karakter takip içinde oluşur.
 UseNotifications=Kullanım bildirimleri
 NotificationsDesc=E-postalar bildirimleri özelliği, sessiz otomatik posta göndermenize izin verir, bazı Dolibarr olaylar, üçüncü şahıslar (müşteriler veya tedarikçiler) bu şekilde yapılandırılmıştır için. Etkin bildirim ve hedefleri rehber seçimi her seferinde bir üçüncü parti yapılır.
 WebCalSetup=WebCalendar bağlantı kurulum
@@ -970,7 +970,7 @@ SyslogFacility=Tesis
 SyslogLevel=Level
 SyslogSimpleFile=Dosya
 SyslogFilename=Dosya adı ve yolu
-YouCanUseDOL_DATA_ROOT=Sen DOL_DATA_ROOT / Dolibarr bir günlük dosyası için &quot;belgeler&quot; dizini dolibarr.log kullanabilirsiniz. Bu dosyayı saklamak için farklı bir yol ayarlayabilirsiniz.
+YouCanUseDOL_DATA_ROOT=Sen DOL_DATA_ROOT / Dolibarr bir günlük dosyası için "belgeler" dizini dolibarr.log kullanabilirsiniz. Bu dosyayı saklamak için farklı bir yol ayarlayabilirsiniz.
 ErrorUnknownSyslogConstant=Sabit %s abit bir syslog bilinmemektedir s
 DonationsSetup=Bağış modülü kurulumu
 BarcodeSetup=Barkod kurulum
@@ -1119,15 +1119,15 @@ PreviewNotAvailable=Forhåndsvisning ikke tilgjengelig
 AntiVirusCommand=Full sti til antivirus kommandoen
 AntiVirusCommandExample=Eksempel på ClamWin: c: \ Program Files (x86) \ Klappe \ bin \ clamscan.exe <br> Eksempel på ClamAV: / usr / bin / clamscan
 AntiVirusParam=Flere parametre på kommandolinjen
-AntiVirusParamExample=Eksempel på ClamWin: - database = &quot;C: \ Program Files (x86) \ Klappe \ lib&quot;
+AntiVirusParamExample=Eksempel på ClamWin: - database = "C: \ Program Files (x86) \ Klappe \ lib"
 ClientHour=Time klienten (bruker)
 CompanyTZ=Time Zone selskap (firmaets)
 CompanyHour=Time selskap (firmaets)
 PurgeDeleteLogFile=Slett loggfil <b>%s</b> definert for Syslog modul (ingen risiko for å miste data)
 IgnoreDuplicateRecords=Ignorer feil av like poster (INS ignorere)
 DoNotStoreClearPassword=Har ingen butikk klar passord i databasen men butikken bare kryptert verdi (Aktiverte anbefales)
-InstrucToEncodePass=Å ha passord kodet inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> av <br> <b>$ Dolibarr_main_db_pass = &quot;kryptert: %s&quot;</b>
-InstrucToClearPass=Å ha passord dekodet (klar) inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass = &quot;kryptert :...&quot;</b> <br> av <br> <b>$ Dolibarr_main_db_pass = &quot;%s&quot;</b>
+InstrucToEncodePass=Å ha passord kodet inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> av <br> <b>$ Dolibarr_main_db_pass = "kryptert: %s"</b>
+InstrucToClearPass=Å ha passord dekodet (klar) inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass = "kryptert :..."</b> <br> av <br> <b>$ Dolibarr_main_db_pass = "%s"</b>
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr online demonstrasjon
 ForDocumentationSeeWiki=For brukeren eller utviklerens dokumentasjon (Doc, FAQs ...), <br> ta en titt på Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
@@ -1147,8 +1147,8 @@ GenericMaskCodes4b=<u>Eksempel på tredjeparts opprettet på 2007-03-01:</u> <br
 GenericMaskCodes5=<b>ABC (åå) (mm) - (000000)</b> vil gi <b>ABC0701-000099</b> <br> <b>(0000)-ZZZ 100 / dd () / XXX</b> vil gi <b>0199-ZZZ/31/XXX</b>
 SeeWikiForAllTeam=Ta en titt på wiki siden for fullstendig liste over alle aktører og deres organisering
 UseACacheDelay=Forsinkelse for skjulested eksport respons i sekunder (0 eller tom for ingen buffer)
-DisableLinkToHelpCenter=Skjul linken <b>&quot;Trenger du hjelp eller støtte&quot;</b> på innloggingssiden
-DisableLinkToHelp=Skjul linken <b>&quot;%s Online hjelp&quot;</b> på venstre meny
+DisableLinkToHelpCenter=Skjul linken <b>"Trenger du hjelp eller støtte"</b> på innloggingssiden
+DisableLinkToHelp=Skjul linken <b>"%s Online hjelp"</b> på venstre meny
 AddCRIfTooLong=Det er ingen automatisk innpakning, så hvis linjen ut av siden på dokumenter fordi for lenge, må du legge deg vognreturer i tekstfeltet.
 ModuleDisabled=Modul deaktivert
 ModuleDisabledSoNoEvent=Modul deaktivert slik hendelse aldri opprettet
@@ -1276,7 +1276,7 @@ WatermarkOnDraft=Vannmerke på utkast
 LDAPFieldPasswordCrypted=Passord kryptert
 LDAPFieldGroupMembers=Gruppemedlemmer
 LDAPFieldGroupMembersExample=Eksempel: uniqueMember
-YouCanUseDOL_DATA_ROOT=Du kan bruke DOL_DATA_ROOT / dolibarr.log for en loggfil i Dolibarr &quot;dokumenter&quot;-katalogen. Du kan angi en annen vei til å lagre denne filen.
+YouCanUseDOL_DATA_ROOT=Du kan bruke DOL_DATA_ROOT / dolibarr.log for en loggfil i Dolibarr "dokumenter"-katalogen. Du kan angi en annen vei til å lagre denne filen.
 DonationsReceiptModel=Mal for donasjonen kvittering
 MailingEMailError=Tilbake e-post (Feil-til) for e-post med feil
 Menus=Menyer
@@ -1332,10 +1332,10 @@ PreviewNotAvailable=Preview niet beschikbaar
 AntiVirusCommand=Het volledige pad naar antivirus commando
 AntiVirusCommandExample=Voorbeeld voor ClamWin: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Voorbeeld voor ClamAV: / usr / bin / clamscan
 AntiVirusParam=Meer parameters op de opdrachtregel
-AntiVirusParamExample=Voorbeeld voor ClamWin: - database = &quot;C: \ Program Files (x86) \ ClamWin \ lib&quot;
+AntiVirusParamExample=Voorbeeld voor ClamWin: - database = "C: \ Program Files (x86) \ ClamWin \ lib"
 IgnoreDuplicateRecords=Negeer fouten van dubbele records (INSERT negeren)
-InstrucToEncodePass=Om wachtwoord gecodeerd in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> door <br> <b>$ Dolibarr_main_db_pass = &quot;breuken: sssss&quot;</b>
-InstrucToClearPass=Om gedecodeerd wachtwoord (duidelijk) in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass = &quot;versleutelde :...&quot;</b> <br> door <br> <b>$ Dolibarr_main_db_pass = &quot;sssss&quot;</b>
+InstrucToEncodePass=Om wachtwoord gecodeerd in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> door <br> <b>$ Dolibarr_main_db_pass = "breuken: sssss"</b>
+InstrucToClearPass=Om gedecodeerd wachtwoord (duidelijk) in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass = "versleutelde :..."</b> <br> door <br> <b>$ Dolibarr_main_db_pass = "sssss"</b>
 MAIN_MAIL_EMAIL_TLS=Gebruik TLS (SSL) versleutelen
 SubmitTranslation=Als vertaling voor deze taal niet volledig is of u fouten vindt, kun je dit corrigeren door het bewerken van bestanden in directory <b>Langs / sssss</b> en het forum leggen gewijzigde bestanden op www.dolibarr.org.
 FindPackageFromWebSite=Zoek een pakket dat u wilt functie biedt (bijvoorbeeld op website sssss).
@@ -1350,7 +1350,7 @@ FirstnameNamePosition=Standpunt van voornaam / naam
 Module23Name=Energie
 Module23Desc=Toezicht op het verbruik van energie
 Module100Name=ExternalSite
-Module100Desc=Inclusief een externe website in Dolibarr menu&#39;s en bekijken in een frame Dolibarr
+Module100Desc=Inclusief een externe website in Dolibarr menu's en bekijken in een frame Dolibarr
 Module2000Name=Fckeditor
 Module2000Desc=WYSIWYG-editor
 Module2600Name=WebServices
@@ -1391,7 +1391,7 @@ UnitPriceOfProduct=Netto prijs per eenheid van een product
 TotalPriceAfterRounding=Totale prijs (netto / BTW / incl. BTW) na afronding
 PreviousDumpFiles=Beschikbaar database back-up dumpbestanden
 WeekStartOnDay=Eerste dag van de week
-RunningUpdateProcessMayBeRequired=Het uitvoeren van de upgrade proces lijkt te worden vereist (Programma&#39;s sssss versie verschilt van database versie sssss)
+RunningUpdateProcessMayBeRequired=Het uitvoeren van de upgrade proces lijkt te worden vereist (Programma's sssss versie verschilt van database versie sssss)
 YouMustRunCommandFromCommandLineAfterLoginToUser=U moet deze opdracht uitvoert vanaf de command line na het inloggen op een schaal met de gebruiker <b>sssss.</b>
 YourPHPDoesNotHaveSSLSupport=SSL-functies niet beschikbaar zijn in uw PHP
 DownloadMoreSkins=Meer skins te downloaden
@@ -1434,7 +1434,7 @@ SubmitTranslation=Als vertaling voor deze taal niet volledig is of u fouten vind
 FindPackageFromWebSite=Zoek een pakket dat u wilt functie biedt (bijvoorbeeld op website sssss).
 FirstnameNamePosition=Standpunt van voornaam / naam
 Module100Name=ExternalSite
-Module100Desc=Inclusief een externe website in Dolibarr menu&#39;s en bekijken in een frame Dolibarr
+Module100Desc=Inclusief een externe website in Dolibarr menu's en bekijken in een frame Dolibarr
 Module10000Desc=Module voor een online betaling per credit card pagina met Paybox bieden
 Permission13=Unvalidate facturen
 Permission38=Export producten
@@ -1468,11 +1468,11 @@ PreviewNotAvailable=Podgląd niedostępny
 AntiVirusCommand=Pełna ścieżka do polecenia antivirus
 AntiVirusCommandExample=ClamWin przykład: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> ClamAV przykład: / usr / bin / clamscan
 AntiVirusParam=Więcej parametrów w linii poleceń
-AntiVirusParamExample=ClamWin przykład: - bazy danych = &quot;C: \ Program Files (x86) \ lib ClamWin \&quot;
+AntiVirusParamExample=ClamWin przykład: - bazy danych = "C: \ Program Files (x86) \ lib ClamWin \"
 YouCanDownloadBackupFile=Wygenerowane pliki mogą być teraz pobierane
 IgnoreDuplicateRecords=Ignoruj błędy zduplikowanych rekordów (INSERT IGNORE)
-InstrucToEncodePass=Się, że hasło zakodowane w <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = &quot;zaszyfrowane: sssss&quot;</b>
-InstrucToClearPass=Do hasła zdekodowane (jasne) do <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass = &quot;zaszyfrowane :...&quot;</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = &quot;sssss&quot;</b>
+InstrucToEncodePass=Się, że hasło zakodowane w <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = "zaszyfrowane: sssss"</b>
+InstrucToClearPass=Do hasła zdekodowane (jasne) do <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass = "zaszyfrowane :..."</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = "sssss"</b>
 MAIN_MAIL_EMAIL_TLS=Użyj TLS (SSL) szyfrowania
 SubmitTranslation=Jeżeli tłumaczenie na ten język nie jest kompletny lub znajdują się błędy, można rozwiązać poprzez edycję plików w katalogu <b>langs / sssss</b> i złożyć zmodyfikowane pliki na www.dolibarr.org forum.
 FindPackageFromWebSite=Znaleźć pakiet, który zapewnia funkcję chcesz (np. na sssss stronie internetowej).
@@ -1579,10 +1579,10 @@ PreviewNotAvailable=Visualização não disponível
 AntiVirusCommand=Caminho completo para o comando de antivírus
 AntiVirusCommandExample=Exemplo de Mexilhão: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Exemplo de Mexilhão: / usr / bin / clamscan
 AntiVirusParam=Mais informações sobre parâmetros de linha de comando
-AntiVirusParamExample=Exemplo de Mexilhão: - database = &quot;C: \ Program Files (x86) \ lib ClamWin \&quot;
+AntiVirusParamExample=Exemplo de Mexilhão: - database = "C: \ Program Files (x86) \ lib ClamWin \"
 IgnoreDuplicateRecords=Ignore os erros de registros duplicados (INSERT IGNORE)
-InstrucToEncodePass=Para ter uma senha codificada no <b>conf.php</b> arquivo, substitua a linha <br> <b>=&quot;...&quot; Dolibarr_main_db_pass $</b> <br> por <br> <b>dolibarr_main_db_pass $ = &quot;crypted: %s&quot;</b>
-InstrucToClearPass=Para ter a senha decodificado (transparente) para o <b>conf.php</b> arquivo, substitua a linha <br> <b>dolibarr_main_db_pass $ = crypted :...&quot; &quot;</b> <br> por <br> <b>dolibarr_main_db_pass $ = &quot;%s&quot;</b>
+InstrucToEncodePass=Para ter uma senha codificada no <b>conf.php</b> arquivo, substitua a linha <br> <b>="..." Dolibarr_main_db_pass $</b> <br> por <br> <b>dolibarr_main_db_pass $ = "crypted: %s"</b>
+InstrucToClearPass=Para ter a senha decodificado (transparente) para o <b>conf.php</b> arquivo, substitua a linha <br> <b>dolibarr_main_db_pass $ = crypted :..." "</b> <br> por <br> <b>dolibarr_main_db_pass $ = "%s"</b>
 MAIN_MAIL_EMAIL_TLS=Use TLS (SSL) criptografa
 SubmitTranslation=Se a tradução para esse idioma não esteja completa ou você encontrar erros, você pode corrigir isso, a edição de arquivos em <b>langs</b> diretório <b>/ %s</b> e enviar arquivos modificados www.dolibarr.org fórum.
 FindPackageFromWebSite=Encontre um pacote que fornece funcionalidade que você quiser (por exemplo, %s site).
@@ -1649,7 +1649,7 @@ UsersSetup=Usuários de configuração do módulo
 UserMailRequired=Email exigidos para criar um novo usuário
 ModelModules=Documentos modelos
 DocumentModelOdt=Gere documentos de OpenDocuments templates (arquivos. ODT para o OpenOffice, KOffice, TextEdit ,...)
-WatermarkOnDraft=Marca d&#39;água sobre o projecto de documento
+WatermarkOnDraft=Marca d'água sobre o projecto de documento
 LDAPFieldGroupMembers=Os membros do grupo
 LDAPFieldGroupMembersExample=Exemplo: uniqueMember
 DonationsReceiptModel=Modelo de recibo de doação
@@ -1686,11 +1686,11 @@ PreviewNotAvailable=Предварительный нет
 AntiVirusCommand=Полный путь к антивирусной команду
 AntiVirusCommandExample=Пример для ClamWin: C: \ Program Files (x86) \ ClamWin \ Bin \ clamscan.exe <br> Пример для ClamAV: / USR / BIN / clamscan
 AntiVirusParam=Дополнительные параметры командной строки
-AntiVirusParamExample=Пример для ClamWin: - база данных = &quot;C: \ Program Files (x86) \ ClamWin \ Библиотека&quot;
+AntiVirusParamExample=Пример для ClamWin: - база данных = "C: \ Program Files (x86) \ ClamWin \ Библиотека"
 YouCanDownloadBackupFile=Генерируемые файлы теперь могут быть загружены
 IgnoreDuplicateRecords=Игнорировать ошибки дублирующихся записей (INSERT IGNORE)
-InstrucToEncodePass=Чтобы иметь пароль кодируется в <b>conf.php</b> файл, замените строку <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> по <br> <b>Dolibarr_main_db_pass $ = &quot;Кодировка: %s&quot;</b>
-InstrucToClearPass=Чтобы декодировать пароль (прозрачный) в <b>conf.php</b> файл, замените строку <br> <b>Dolibarr_main_db_pass $ = &quot;Кодировка :...&quot;</b> <br> по <br> <b>Dolibarr_main_db_pass $ = &quot;%s&quot;</b>
+InstrucToEncodePass=Чтобы иметь пароль кодируется в <b>conf.php</b> файл, замените строку <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> по <br> <b>Dolibarr_main_db_pass $ = "Кодировка: %s"</b>
+InstrucToClearPass=Чтобы декодировать пароль (прозрачный) в <b>conf.php</b> файл, замените строку <br> <b>Dolibarr_main_db_pass $ = "Кодировка :..."</b> <br> по <br> <b>Dolibarr_main_db_pass $ = "%s"</b>
 MAIN_MAIL_EMAIL_TLS=Использовать TLS (SSL) шифрует
 SubmitTranslation=Если перевод на этот язык не является полным, или вы нашли ошибки, вы можете исправить это путем редактирования файлов в каталоге <b>Лангс / %s</b> и представить измененные файлы на www.dolibarr.org форуме.
 FindPackageFromWebSite=Найти пакет, который обеспечивает функции вы хотите (например, на веб-сайте %s).
@@ -1827,7 +1827,7 @@ PreviewNotAvailable=Önizleme mevcut değil
 AntiVirusCommand=antivirus komuta tam yolu
 AntiVirusCommandExample=Örnek ClamWin için: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Örnek ClamAV için: / usr / bin / clamscan
 AntiVirusParam=komut satırında Diğer parametreler
-AntiVirusParamExample=Örnek ClamWin için: - database = &quot;C: \ Program Files (x86) \ ClamWin \ lib&quot;
+AntiVirusParamExample=Örnek ClamWin için: - database = "C: \ Program Files (x86) \ ClamWin \ lib"
 IgnoreDuplicateRecords=kayıtları (INSERT IGNORE) yinelenen hataları yoksay
 SubmitTranslation=tam bunun için eğer çeviri değildir dil ya da hataları bulmak, sen forum www.dolibarr.org bundan edebilirsiniz doğru düzenleme dosyalarını dizine <b>diller</b> dosyaları teslim olarak ve <b>Ssss /.</b>
 FindPackageFromWebSite=Eğer (web sitesi Ssss üzerinde örneğin istiyorum) özelliği sunan bir paket bulun.
@@ -1848,14 +1848,14 @@ Permission144=Sil görevleri
 Permission536=/ Gizli servisleri yönetmek bak
 LocalTax1ManagementES=RE Yönetimi
 LocalTax1IsUsedDescES=gıyaben RE oran oluştururken umutları, faturalar, sipariş vs aktif standart kural izleyin: <br> te alıcı RE için default = 0 RE tabi değilse. kural sonu. <br> Alıcı daha sonra varsayılan RE RE tabi varsa. kural sonu. <br>
-LocalTax1IsNotUsedDescES=Varsayılan olarak önerilen RE 0&#39;dır. kural sonu.
-LocalTax1IsUsedExampleES=İspanya&#39;da onlar profesyoneller İspanyol IAE bazı belirli bölümlerini tabidir.
-LocalTax1IsNotUsedExampleES=İspanya&#39;da onlar profesyonel ve toplumlar ve İspanyol IAE belirli bölümlerini tabidir.
+LocalTax1IsNotUsedDescES=Varsayılan olarak önerilen RE 0'dır. kural sonu.
+LocalTax1IsUsedExampleES=İspanya'da onlar profesyoneller İspanyol IAE bazı belirli bölümlerini tabidir.
+LocalTax1IsNotUsedExampleES=İspanya'da onlar profesyonel ve toplumlar ve İspanyol IAE belirli bölümlerini tabidir.
 LocalTax2ManagementES=IRPF Yönetimi
 LocalTax2IsUsedDescES=gıyaben RE oran oluştururken umutları, faturalar, sipariş vs aktif standart kural izleyin: <br> satıcı IRPF, sonra IRPF default = 0 tabi değilse. kural sonu. <br> Satıcı IRPF daha sonra varsayılan IRPF tabi ise. kural sonu. <br>
-LocalTax2IsNotUsedDescES=Varsayılan olarak önerilen IRPF 0&#39;dır. kural sonu.
-LocalTax2IsUsedExampleES=İspanya&#39;da, serbest ve hizmetler sunmak ve modüllerin vergi sistemi seçen şirketler bağımsız profesyoneller.
-LocalTax2IsNotUsedExampleES=İspanya&#39;da oldukları modüllerin vergi sistemine tabi değildir Bussines.
+LocalTax2IsNotUsedDescES=Varsayılan olarak önerilen IRPF 0'dır. kural sonu.
+LocalTax2IsUsedExampleES=İspanya'da, serbest ve hizmetler sunmak ve modüllerin vergi sistemi seçen şirketler bağımsız profesyoneller.
+LocalTax2IsNotUsedExampleES=İspanya'da oldukları modüllerin vergi sistemine tabi değildir Bussines.
 DatabaseUser=Veritabanı kullanıcı
 DatabasePassword=Veritabanı şifresi
 EnableShowLogo=soldaki Show logo menü

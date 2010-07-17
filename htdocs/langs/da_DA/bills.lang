@@ -69,9 +69,9 @@ PaymentConditions=Betaling sigt
 PaymentConditionsShort=Betaling sigt
 PaymentAmount=Indbetalingsbeløb
 PaymentHigherThanReminderToPay=Betaling højere end påmindelse om at betale
-ClassifyPaid=Klassificere &quot;betales&quot;
+ClassifyPaid=Klassificere "betales"
 ClassifyPaidPartially=Klassificere 'betales delvist'
-ClassifyClosed=Klassificere &quot;lukket&quot;
+ClassifyClosed=Klassificere "lukket"
 CreateBill=Opret Faktura
 AddBill=Tilføj faktura eller kreditnota
 DeleteBill=Slet faktura
@@ -378,7 +378,7 @@ BillsCustomersUnpaid=Ulønnet kundernes fakturaer
 BillsCustomersUnpaidForCompany=Ulønnet kundernes fakturaer for %s
 BillsSuppliersUnpaid=Ulønnet leverandørernes fakturaer
 BillsUnpaid=Ulønnet
-InvoiceReplacementDesc=<b>Erstatning fakturaen</b> er anvendt til at annullere og erstatter fuldstændigt en faktura uden betaling allerede modtaget. <br><br> Bemærk: Kun faktura uden betaling på det kan udskiftes. Hvis det ikke er lukket, vil det automatisk blive lukket for &quot;opgivet&quot;.
+InvoiceReplacementDesc=<b>Erstatning fakturaen</b> er anvendt til at annullere og erstatter fuldstændigt en faktura uden betaling allerede modtaget. <br><br> Bemærk: Kun faktura uden betaling på det kan udskiftes. Hvis det ikke er lukket, vil det automatisk blive lukket for "opgivet".
 BillStatusClosedUnpaid=Lukket (ubetalte)
 BillShortStatusClosedUnpaid=Lukket
 Unpaid=Ulønnet
@@ -391,7 +391,7 @@ CustomerBillsUnpaid=Vederlagsfri kunder fakturaer
 
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
 // Reference language: en_US
-ClassifyCanceled=Klassificere &#39;Abandoned &quot;
+ClassifyCanceled=Klassificere 'Abandoned "
 BillStatusCanceled=Abandoned
 BillShortStatusCanceled=Abandoned
 ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Dette valg er muligt, hvis din faktura er blevet forsynet med passende kommentar. (Eksempel «Kun den afgift, der svarer til den pris, der rent faktisk var blevet betalt giver ret til fradrag»)

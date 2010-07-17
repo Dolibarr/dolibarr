@@ -28,7 +28,7 @@ TypeHelpDev=Ajutor + Dezvoltare
 TypeHelpDevForm=Ajutor + + Formarea de Dezvoltare
 ToGetHelpGoOnSparkAngels1=Unele companii pot oferi o repede (cândva imediată) şi mai eficientă asistenţă online, prin luarea de control de pe computer. Aceste ajutoare pot fi găsite pe <b>site-ul %s:</b>
 ToGetHelpGoOnSparkAngels3=De asemenea, puteţi să mergeţi la lista de toate disponibile pentru autocare Dolibarr, pentru aceasta, faceţi clic pe butonul
-ToGetHelpGoOnSparkAngels2=Uneori, nu există nici o companie disponibile în acest moment pe care le faceţi dumneavoastră de căutare, aşa cred că pentru a schimba filtrul de a căuta &quot;disponibilitatea tuturor&quot;. Vi se va putea trimite mai multe cereri.
+ToGetHelpGoOnSparkAngels2=Uneori, nu există nici o companie disponibile în acest moment pe care le faceţi dumneavoastră de căutare, aşa cred că pentru a schimba filtrul de a căuta "disponibilitatea tuturor". Vi se va putea trimite mai multe cereri.
 BackToHelpCenter=Altfel, faceţi clic aici pentru a merge <a href="%s">înapoi la Centrul de Ajutor pentru pagina de start.</a>
 LinkToGoldMember=Aveţi posibilitatea să apelaţi unul dintre antrenor preselected de Dolibarr pentru limba dumneavoastră ( %s), făcând clic pe sale Widget (statutul şi preţul maxim sunt actualizate automat):
 PossibleLanguages=Sprijinită de limbi
@@ -59,7 +59,7 @@ TypeHelpDev=Hjelp + Utvikling
 TypeHelpDevForm=Hjelp + utvikling + Dannelse
 ToGetHelpGoOnSparkAngels1=Noen selskaper kan gi en rask (umiddelbar gang) og mer effektiv online-støtte ved å ta kontroll over datamaskinen. Slike hjelpere kan bli funnet på <b>%s</b> nettsted:
 ToGetHelpGoOnSparkAngels3=Du kan også gå til listen over alle tilgjengelige trenere for Dolibarr, for dette klikk på knappen
-ToGetHelpGoOnSparkAngels2=Noen ganger er det ingen selskap tilgjengelig i det øyeblikket du gjøre søk, så tenk å endre filter for å se etter &quot;alt tilgjengelighet&quot;. Du vil kunne sende flere forespørsler.
+ToGetHelpGoOnSparkAngels2=Noen ganger er det ingen selskap tilgjengelig i det øyeblikket du gjøre søk, så tenk å endre filter for å se etter "alt tilgjengelighet". Du vil kunne sende flere forespørsler.
 BackToHelpCenter=Ellers, her klikker du gå <a href="%s">tilbake til hjemmesiden for brukerstøtten</a> .
 LinkToGoldMember=Du kan ringe en av coach forhåndsvalgt ved Dolibarr for ditt språk (%s) ved å klikke sine Widget (status og høyeste pris er automatisk oppdatert):
 PossibleLanguages=Støttede språk

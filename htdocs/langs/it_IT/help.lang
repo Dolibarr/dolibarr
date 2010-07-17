@@ -28,7 +28,7 @@ TypeHelpDev=Guida per lo sviluppo
 TypeHelpDevForm=Aiuto per lo Sviluppo e la Formazione
 ToGetHelpGoOnSparkAngels1=Alcune aziende possono fornire un veloce (a volte immediata) e una più efficiente supporto online prendendo il controllo del computer. Tali aiuti possono essere trovati sul sito <b>web %s:</b>
 ToGetHelpGoOnSparkAngels3=È inoltre possibile accedere alla lista di tutti i servizi a disposizione per Dolibarr, per questo, fate clic sul pulsante
-ToGetHelpGoOnSparkAngels2=Può accadere che alcune aziend non siano disponibili al momento della ricerca, nel caso usate il filtro &quot;tutte le disponibilità&quot;. Sarete in grado di inviare più richieste.
+ToGetHelpGoOnSparkAngels2=Può accadere che alcune aziend non siano disponibili al momento della ricerca, nel caso usate il filtro "tutte le disponibilità". Sarete in grado di inviare più richieste.
 BackToHelpCenter=In caso contrario, fare clic qui per andare <a href="%s">indietro alla home page Centro assistenza.</a>
 LinkToGoldMember=È possibile chiamare uno dei servizi preselezionati da Dolibarr per la propria lingua ( %s) cliccando sul relativo Widget (stato e prezzo massimo vengono aggiornati automaticamente):
 PossibleLanguages=Lingue supportate

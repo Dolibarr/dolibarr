@@ -30,7 +30,7 @@ ChooseFieldsOrdersAndTitle=Vælg felter ordre ...
 FieldsOrder=Områder for
 FieldsTitle=Felter titel
 ChooseExportFormat=Vælg eksportformat
-NowClickToGenerateToBuildExportFile=Nu skal du klikke på &quot;Generer&quot; at opbygge eksport fil ...
+NowClickToGenerateToBuildExportFile=Nu skal du klikke på "Generer" at opbygge eksport fil ...
 AvailableFormats=Formater disponibles
 LibraryUsed=Librairie
 LibraryVersion=Version
@@ -102,7 +102,7 @@ FieldTarget=Målrettet område
 FieldSource=Kilde område
 DoNotImportFirstLine=Importer ikke første linje i kildefilen
 NbOfSourceLines=Antal linjer i kildefilen
-NowClickToTestTheImport=Check import parametre, som du har defineret. Hvis de er korrekte, skal du klikke på knappen <b>&quot;%s&quot;</b> for at starte en simulering af import-processen (ingen data vil blive ændret i databasen, er det kun en simulation for øjeblikket) ...
+NowClickToTestTheImport=Check import parametre, som du har defineret. Hvis de er korrekte, skal du klikke på knappen <b>"%s"</b> for at starte en simulering af import-processen (ingen data vil blive ændret i databasen, er det kun en simulation for øjeblikket) ...
 RunSimulateImportFile=Start import simulation
 FieldNeedSource=Dette finder i database kræver en data fra kildefil
 SomeMandatoryFieldHaveNoSource=Nogle obligatoriske felter er ingen kilde fra datafil
@@ -118,7 +118,7 @@ TooMuchErrors=Der er stadig <b>%s</b> anden kilde linjer med fejl, men produktio
 TooMuchWarnings=Der er stadig <b>%s</b> andre kildelinjer med advarsler, men produktionen har været begrænset.
 EmptyLine=Tom linje (vil blive kasseret)
 CorrectErrorBeforeRunningImport=Du skal først korrigere alle fejl, før du kører endelige import.
-YouCanUseImportIdToFindRecord=Du kan finde alle importerede poster i din database ved at filtrere på feltet <b>import_key = &#39;%s&#39;.</b>
+YouCanUseImportIdToFindRecord=Du kan finde alle importerede poster i din database ved at filtrere på feltet <b>import_key = '%s'.</b>
 NbOfLinesOK=Antallet af linjer uden fejl og ingen advarsler: <b>%s.</b>
 NbOfLinesImported=Antallet af linjer med held importeret: <b>%s.</b>
 DataComeFromNoWhere=Værdi at indsætte kommer fra ingenting i kildefilen.

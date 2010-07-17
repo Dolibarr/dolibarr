@@ -28,7 +28,7 @@ ChooseFieldsOrdersAndTitle=Wählen Sie Felder, um ...
 FieldsOrder=Felder, um
 FieldsTitle=Felder Titel
 ChooseExportFormat=Wählen Sie den Export-Format
-NowClickToGenerateToBuildExportFile=Nun, klicken Sie auf &quot;Generieren&quot;, um Export-Datei ...
+NowClickToGenerateToBuildExportFile=Nun, klicken Sie auf "Generieren", um Export-Datei ...
 AvailableFormats=Formate verfügbar
 LibraryUsed=Librairie
 LibraryVersion=Version
@@ -100,7 +100,7 @@ FieldTarget=Gezielte Feld
 FieldSource=Feld Quelle
 DoNotImportFirstLine=Nicht importieren ersten Zeile der Quelldatei
 NbOfSourceLines=Anzahl der Zeilen in der Quelldatei
-NowClickToTestTheImport=Prüfen Sie Import-Parameter definiert haben. Wenn sie korrekt sind klicken Sie auf die Schaltfläche <b>&quot;%s&quot;</b> zur Datenbank starten eine Simulation der Import-Vorgang (keine Daten in Ihrem verändert werden, es ist nur eine Simulation für den Moment) ...
+NowClickToTestTheImport=Prüfen Sie Import-Parameter definiert haben. Wenn sie korrekt sind klicken Sie auf die Schaltfläche <b>"%s"</b> zur Datenbank starten eine Simulation der Import-Vorgang (keine Daten in Ihrem verändert werden, es ist nur eine Simulation für den Moment) ...
 RunSimulateImportFile=Starten Sie den Import-Simulation
 FieldNeedSource=Dieser fühlt sich in der Datenbank erfordert eine Daten aus der Quelldatei
 SomeMandatoryFieldHaveNoSource=Einige Felder müssen ausgefüllt haben keine Quelle, aus Datendatei
@@ -116,7 +116,7 @@ TooMuchErrors=Es gibt noch andere Quelle <b>%s</b> Zeilen mit Fehlern doch hat d
 TooMuchWarnings=Es gibt noch andere Quelle <b>%s</b> Zeilen mit Warnungen doch hat die Produktion begrenzt.
 EmptyLine=Leerzeile (wird verworfen)
 CorrectErrorBeforeRunningImport=Sie müssen zuerst alle Fehler beheben, bevor Sie endgültig zu importieren.
-YouCanUseImportIdToFindRecord=Sie können Datenbank finden Sie alle importierten Datensätze in Ihrem Bereich durch Filterung auf <b>import_key = &#39;%s &quot;.</b>
+YouCanUseImportIdToFindRecord=Sie können Datenbank finden Sie alle importierten Datensätze in Ihrem Bereich durch Filterung auf <b>import_key = '%s ".</b>
 NbOfLinesOK=Anzahl der Zeilen ohne Fehler und ohne Warnungen: <b>%s.</b>
 NbOfLinesImported=Anzahl der Linien erfolgreich importiert: <b>%s.</b>
 DataComeFromNoWhere=Preis zum Einfügen aus dem Nichts kommt in der Quelldatei.

@@ -65,7 +65,7 @@ AffectedTo=Afectate de
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
 // Reference language: en_US
-ListPredefinedInvoicesAssociatedProject=Lista de clienţi &quot;predefinite facturi asociate cu proiectul
+ListPredefinedInvoicesAssociatedProject=Lista de clienţi "predefinite facturi asociate cu proiectul
 CantRemoveProject=Acest proiect nu pot fi eliminate, deoarece se face referire prin alte obiecte (facturi, comenzi sau altele). Vezi referals filă.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
 

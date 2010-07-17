@@ -128,7 +128,7 @@ NotUsedForGoods=Не используется на товары
 
 // START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
 // Reference language: en_US
-OptionModeTrue=Вариант &quot;затраты-выпуск&quot;
+OptionModeTrue=Вариант "затраты-выпуск"
 OptionModeTrueDesc=В этом контексте, оборот исчисляется за платежи (дата выплаты). \ nThe действительности цифры обеспечивается только в том случае, если бухгалтерия является тщательно путем ввода / вывода по счетам с помощью счетов-фактур.
 ShowVatPayment=Показать оплате НДС
 SupplierAccountancyCode=Поставщик бухгалтерских код

@@ -1111,7 +1111,7 @@ RestoreDesc2=* Ripristinare il contenuto della directory dei documenti <b>(%s)</
 RestoreDesc3=* Ripristinare i dati dal file di backup del database nel database del nuovo Dolibarr o dell'installazione corrente.<br> Attenzione: con questa operazione verranno ripristinate anche le password esistenti al momento del backup, può essere quindi necessaria una nuova autenticazione.<br><br> Per ripristinare un backup di database in questa installazione, è possibile seguire questo assistente.
 ForcedToByAModule=Questa regola è costretto <b>a %s</b> attivata da un modulo
 LDAPFieldPasswordCrypted=Password crypted
-YouCanUseDOL_DATA_ROOT=È possibile utilizzare DOL_DATA_ROOT/dolibarr.log per un file di log in Dolibarr &quot;documenti&quot; directory. È possibile impostare un percorso diverso per archiviare questo file.
+YouCanUseDOL_DATA_ROOT=È possibile utilizzare DOL_DATA_ROOT/dolibarr.log per un file di log in Dolibarr "documenti" directory. È possibile impostare un percorso diverso per archiviare questo file.
 Menus=Menu
 DetailEnabled=Condizione per mostrare o non entrata
 SummaryOfVatExigibilityUsedByDefault=Tempo di esigibilità IVA per impostazione predefinita in base alla scelta :
@@ -1153,11 +1153,11 @@ PreviewNotAvailable=Anteprima non disponibile
 AntiVirusCommand=Percorso completo al comando antivirus
 AntiVirusCommandExample=Esempio per ClamWin: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Esempio per ClamAV: / usr / bin / clamscan
 AntiVirusParam=Più parametri sulla riga di comando
-AntiVirusParamExample=Esempio per ClamWin: - database = &quot;C: \ Program Files (x86) \ ClamWin lib \&quot;
+AntiVirusParamExample=Esempio per ClamWin: - database = "C: \ Program Files (x86) \ ClamWin lib \"
 YouCanDownloadBackupFile=i file generati possono essere scaricati
 IgnoreDuplicateRecords=Ignora errori di record duplicati (INSERT IGNORE)
-InstrucToEncodePass=Per avere password codificate nel <b>conf.php</b> file, sostituire la riga <br> <b>dolibarr_main_db_pass $ =&quot;...&quot;</b> <br> da <br> <b>dolibarr_main_db_pass $ = &quot;criptato: %s&quot;</b>
-InstrucToClearPass=Per avere la password decodificata (chiaro) nel <b>conf.php</b> file, sostituire la riga <br> <b>dolibarr_main_db_pass $ = &quot;:...&quot; criptato</b> <br> da <br> <b>dolibarr_main_db_pass $ = &quot;%s&quot;</b>
+InstrucToEncodePass=Per avere password codificate nel <b>conf.php</b> file, sostituire la riga <br> <b>dolibarr_main_db_pass $ ="..."</b> <br> da <br> <b>dolibarr_main_db_pass $ = "criptato: %s"</b>
+InstrucToClearPass=Per avere la password decodificata (chiaro) nel <b>conf.php</b> file, sostituire la riga <br> <b>dolibarr_main_db_pass $ = ":..." criptato</b> <br> da <br> <b>dolibarr_main_db_pass $ = "%s"</b>
 MAIN_MAIL_EMAIL_TLS=Usa TLS (SSL) cifrare
 SubmitTranslation=Se la traduzione per questo linguaggio non è completa o trovi errori, è possibile correggere questo con la modifica dei file in <b>langs</b> directory <b>/ %s</b> ed inviare file di modifica per www.dolibarr.org forum.
 FindPackageFromWebSite=Trova un pacchetto che fornisce funzionalità desiderata (per esempio su %s sito web).
@@ -1186,7 +1186,7 @@ Permission144=compiti Elimina
 Permission536=Vedere / gestione dei servizi nascosti
 DictionnaryStaff=Personale
 LocalTax1ManagementES=RE Management
-LocalTax1IsUsedDescES=Il tasso di RE per impostazione predefinita quando le prospettive di creazione, fatture, ordini, ecc seguire la regola attivo standard: <br> Se il compratore te non è sottoposto a RE, RE di default = 0. Fine della regola. <br> Se l&#39;acquirente è soggetto a RE poi RE per impostazione predefinita. Fine della regola. <br>
+LocalTax1IsUsedDescES=Il tasso di RE per impostazione predefinita quando le prospettive di creazione, fatture, ordini, ecc seguire la regola attivo standard: <br> Se il compratore te non è sottoposto a RE, RE di default = 0. Fine della regola. <br> Se l'acquirente è soggetto a RE poi RE per impostazione predefinita. Fine della regola. <br>
 LocalTax1IsNotUsedDescES=Per default il RE proposto è 0. Fine della regola.
 LocalTax1IsUsedExampleES=In Spagna sono dei professionisti soggetti ad alcune sezioni specifiche del IAE spagnolo.
 LocalTax1IsNotUsedExampleES=In Spagna sono e società professionali e fatte salve alcune sezioni del IAE spagnolo.
@@ -1200,11 +1200,11 @@ DatabaseServer=Database host
 DatabaseUser=Database degli utenti
 DatabasePassword=Database delle password
 DelaysOfToleranceMembers=Tolleranza ritardo (in giorni) prima segnalazione su quota di adesione ritardata
-MAIN_ROUNDING_RULE_TOT=Dimensione gamma di arrotondamento (per i paesi in rari casi in cui è fatto l&#39;arrotondamento per qualcosa di diverso da base 10)
+MAIN_ROUNDING_RULE_TOT=Dimensione gamma di arrotondamento (per i paesi in rari casi in cui è fatto l'arrotondamento per qualcosa di diverso da base 10)
 UnitPriceOfProduct=prezzo unitario netto di un prodotto
-TotalPriceAfterRounding=Prezzo totale (al netto / IVA / incl IVA) dopo l&#39;arrotondamento
+TotalPriceAfterRounding=Prezzo totale (al netto / IVA / incl IVA) dopo l'arrotondamento
 PreviousDumpFiles=Disponibile il dump dei file di backup del database
-RunningUpdateProcessMayBeRequired=L&#39;esecuzione del processo di aggiornamento sembra essere richiesta (Programmi %s versione differisce dalla %s versione del database)
+RunningUpdateProcessMayBeRequired=L'esecuzione del processo di aggiornamento sembra essere richiesta (Programmi %s versione differisce dalla %s versione del database)
 YouMustRunCommandFromCommandLineAfterLoginToUser=È necessario eseguire questo comando dalla riga di comando dopo il login ad una shell con <b>%s</b> utente.
 YourPHPDoesNotHaveSSLSupport=funzioni di SSL non disponibile in PHP
 DownloadMoreSkins=Più skin da scaricare
@@ -1223,5 +1223,5 @@ PastDelayVCalExport=Non esportare evento più grande di
 CashDesk=Punto di vendita
 SuppliersCommandModel=modello completo di ordine fornitore (logo. ..)
 NumberWordsSetup=NumberWords di installazione modulo
-DescNumberWords=Questo modulo fornisce le funzioni per convertire il numero in caratteri o importo intero. Sostituirà anche le occorrenze seguente stringa __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ o __TOTAL_VAT_WORDS__ da incl totale. fiscale, al netto delle imposte totale, o totale dell&#39;IVA in tutte le textes che li utilizzano (testo libero sulle fatture, ...)
+DescNumberWords=Questo modulo fornisce le funzioni per convertire il numero in caratteri o importo intero. Sostituirà anche le occorrenze seguente stringa __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ o __TOTAL_VAT_WORDS__ da incl totale. fiscale, al netto delle imposte totale, o totale dell'IVA in tutte le textes che li utilizzano (testo libero sulle fatture, ...)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:00).

@@ -115,7 +115,7 @@ FieldTarget=Målrettet feltet
 FieldSource=Kilde-feltet
 DoNotImportFirstLine=Ikke importer første linje av kildefilen
 NbOfSourceLines=Antall linjer i kildefilen
-NowClickToTestTheImport=Sjekk import parametre du har definert. Hvis de er riktige, klikker du på knappen <b>&quot;%s&quot;</b> til å lansere en simulering av importen (ingen data vil bli endret i databasen, det er bare en simulering for øyeblikket) ...
+NowClickToTestTheImport=Sjekk import parametre du har definert. Hvis de er riktige, klikker du på knappen <b>"%s"</b> til å lansere en simulering av importen (ingen data vil bli endret i databasen, det er bare en simulering for øyeblikket) ...
 RunSimulateImportFile=Start import simuleringen
 FieldNeedSource=Dette føles i databasen krever en data fra kildefil
 SomeMandatoryFieldHaveNoSource=Noen obligatoriske felt er ikke noen kilder fra datafilen
@@ -131,7 +131,7 @@ TooMuchErrors=Det er fortsatt <b>%s</b> annen kilde linjer med feil, men produks
 TooMuchWarnings=Det er fortsatt <b>%s</b> annen kilde linjer med advarsler, men produksjonen har vært begrenset.
 EmptyLine=Tom linje (vil bli forkastet)
 CorrectErrorBeforeRunningImport=Du må først rette alle feil før du kjører definitive import.
-YouCanUseImportIdToFindRecord=Du kan finne alle importerte poster i databasen ved å filtrere på feltet <b>import_key = &#39;%s&#39;.</b>
+YouCanUseImportIdToFindRecord=Du kan finne alle importerte poster i databasen ved å filtrere på feltet <b>import_key = '%s'.</b>
 NbOfLinesOK=Antall linjer uten feil og ingen advarsler: <b>%s.</b>
 NbOfLinesImported=Antall linjer importert: <b>%s.</b>
 DataComeFromNoWhere=Verdi for å sette inn kommer fra ingensteds i kildefilen.
@@ -150,7 +150,7 @@ FieldTarget=Gerichte gebied
 FieldSource=Bron gebied
 DoNotImportFirstLine=Niet importeren eerste regel van het bronbestand
 NbOfSourceLines=Aantal lijnen in een bronbestand
-NowClickToTestTheImport=Controleer de invoer parameters die u hebt gedefinieerd. Als ze kloppen, klikt u op de knop <b>&quot;sssss&quot;</b> naar de database lanceren van een simulatie van de invoer-proces (geen gegevens zal worden veranderd in je, het is slechts een simulatie voor de moment) ...
+NowClickToTestTheImport=Controleer de invoer parameters die u hebt gedefinieerd. Als ze kloppen, klikt u op de knop <b>"sssss"</b> naar de database lanceren van een simulatie van de invoer-proces (geen gegevens zal worden veranderd in je, het is slechts een simulatie voor de moment) ...
 RunSimulateImportFile=Start de invoer simulatie
 FieldNeedSource=Dit voelt in de database gegevens uit vereisen een bronbestand
 SomeMandatoryFieldHaveNoSource=Enkele verplichte velden zijn geen bron van data-bestand
@@ -166,7 +166,7 @@ TooMuchErrors=Er is nog een andere bron <b>sssss</b> lijnen met fouten maar de o
 TooMuchWarnings=Er is nog een andere bron <b>sssss</b> lijnen met waarschuwingen, maar de uitgang is beperkt.
 EmptyLine=Lege regel (zal worden weggegooid)
 CorrectErrorBeforeRunningImport=U moet eerst alle fouten te corrigeren voordat u de definitieve invoer.
-YouCanUseImportIdToFindRecord=U vindt alle ingevoerde records in de database door te filteren op veld <b>import_key = &#39;sssss&#39;.</b>
+YouCanUseImportIdToFindRecord=U vindt alle ingevoerde records in de database door te filteren op veld <b>import_key = 'sssss'.</b>
 NbOfLinesOK=Aantal lijnen met geen fouten en geen waarschuwingen: <b>sssss.</b>
 NbOfLinesImported=Aantal lijnen geïmporteerd: <b>sssss.</b>
 DataComeFromNoWhere=Prijs te voegen komt uit het niets in een bronbestand.

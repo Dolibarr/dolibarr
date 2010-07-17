@@ -150,7 +150,7 @@ No=Nie
 AutoDetectLang=Autodetect (język przeglądarki)
 FeatureDisabledInDemo=Funkcja niedostępna w demo
 Rights=Uprawnienia
-BoxesDesc=Boksy są obszarze ekranu pokazują, że informacja na niektórych stronach. Możesz wybierać między pokazano pole lub nie, wybierając cel stronie i klikając przycisk &quot;Włącz&quot;, lub klikając pojemnik na śmieci, aby ją wyłączyć.
+BoxesDesc=Boksy są obszarze ekranu pokazują, że informacja na niektórych stronach. Możesz wybierać między pokazano pole lub nie, wybierając cel stronie i klikając przycisk "Włącz", lub klikając pojemnik na śmieci, aby ją wyłączyć.
 OnlyActiveElementsAreShown=Only elements from <a href=Tylko elementy <a href="modules.php">aktywne moduły</a> są widoczne.
 ModulesDesc=Dolibarr modules określić funkcje, które jest włączone w oprogramowaniu. Niektóre moduły wymagają uprawnień należy przyznać użytkownikom, po włączeniu modułu.
 ModulesInterfaceDesc=W Dolibarr modules interfejs umożliwia dodawanie funkcji w zależności od zewnętrznego oprogramowania, systemów lub usług.
@@ -245,7 +245,7 @@ Module40Desc=Dostawcy zarządzania i zakupu (zamówienia i faktury)
 Module42Name=Syslog
 Module42Desc=Rejestrowanie urządzenia (syslog)
 Module49Name=Redakcja
-Module49Desc=Redakcja &quot;zarządzania
+Module49Desc=Redakcja "zarządzania
 Module50Name=Produkty
 Module50Desc=Produkty zarządzania
 Module52Name=Zapasy
@@ -487,7 +487,7 @@ VATManagement=Zarządzanie VAT
 VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country= buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Stawki VAT domyślnie podczas tworzenia perspektyw, faktury, zamówienia itp. następujące aktywnych standardowe zasady: <br> Jeśli sprzedający jest narażony na podatek VAT, wówczas podatek domyślnie= 0. Koniec rządów. <br> Jeśli (sprzedaż kraju= skupu kraju), a następnie VAT domyślnie= VAT produktu w sprzedaży kraju. Koniec rządów. <br> Jeżeli sprzedający i kupujący we Wspólnocie Europejskiej i towary są sprzedawane mając nowych środków transportu (samochód, statek, samolot), domyślne VAT= 0 (VAT powinna być zapłacona przez kupującego na customoffice swojego kraju, a nie sprzedającego ). Koniec rządów. <br> Jeżeli sprzedający i kupujący we Wspólnocie Europejskiej i towary sprzedawane za pomocą innych środków niż nowe środki transportu, a następnie VAT domyślnie= VAT produktu sprzedawanego. Koniec rządów. <br> Inne proponowane domyślne VAT= 1. Koniec rządów.
 VATIsNotUsedDesc=Domyślnie proponowany VAT wynosi 0, które mogą być wykorzystane w przypadkach takich jak stowarzyszeń, osób fizycznych lub małych firm.
 VATIsUsedExampleFR=We Francji, oznacza to, że firmy i organizacje o rzeczywistym systemu fiskalnego (uproszczony rzeczywistym lub normalnej rzeczywistym). A system, w którym VAT jest deklarowana.
-VATIsNotUsedExampleFR=We Francji, oznacza to stowarzyszenia, które nie są zgłoszone VAT lub firm, organizacji i wolnych zawodów, które wybrały mikro przedsiębiorstw systemu fiskalnego (VAT w franczyzy) i wypłaciła franszyzowej VAT bez deklaracji VAT. Ten wybór będzie wyświetlany odniesienie &quot;Nie dotyczy podatku VAT - art-293B z CGI&quot; na fakturach.
+VATIsNotUsedExampleFR=We Francji, oznacza to stowarzyszenia, które nie są zgłoszone VAT lub firm, organizacji i wolnych zawodów, które wybrały mikro przedsiębiorstw systemu fiskalnego (VAT w franczyzy) i wypłaciła franszyzowej VAT bez deklaracji VAT. Ten wybór będzie wyświetlany odniesienie "Nie dotyczy podatku VAT - art-293B z CGI" na fakturach.
 LabelUsedByDefault=Wytwórnia używany domyślnie, jeśli nie można znaleźć tłumaczenie dla kodu
 LabelOnDocuments=Etykieta na dokumenty
 NbOfDays=Nb dni
@@ -559,8 +559,8 @@ DoNotSuggestPaymentMode=Nie wskazują
 NoActiveBankAccountDefined=Brak aktywnego konta bankowego zdefiniowane
 OwnerOfBankAccount=Właściciel konta bankowego %s
 BankModuleNotActive=Rachunki bankowe modułu nie aktywny
-ShowBugTrackLink=Pokaż link &quot;Zgłoś błąd&quot;
-ShowWorkBoard=Pokaż &quot;roboczego&quot; na stronie głównej
+ShowBugTrackLink=Pokaż link "Zgłoś błąd"
+ShowWorkBoard=Pokaż "roboczego" na stronie głównej
 Alerts=Alarmy
 Delays=Opóźnienia
 DelayBeforeWarning=Opóźnienie ostrzeżenie przed
@@ -614,7 +614,7 @@ MAIN_MAX_DECIMALS_TOT=Max dziesiętnych dla całkowitej ceny
 MAIN_MAX_DECIMALS_SHOWN=Max dziesiętnych ceny wyświetlane na ekranie (Dodaj <b>...</b> po ten numer, jeśli chcesz zobaczyć <b>...</b> kiedy liczba jest obcięty przy wyświetlane na ekranie)
 MAIN_DISABLE_PDF_COMPRESSION=Użyj PDF kompresji generowanych plików PDF.
 ParameterActiveForNextInputOnly=Parametr skuteczne wejście tylko dla najbliższych
-NoEventOrNoAuditSetup=Nr bezpieczeństwa zdarzenie zostało jeszcze zarejestrowane. To może być normalne, jeśli kontrola nie została włączona w &quot;setup - bezpieczeństwo - audytu&quot; strony.
+NoEventOrNoAuditSetup=Nr bezpieczeństwa zdarzenie zostało jeszcze zarejestrowane. To może być normalne, jeśli kontrola nie została włączona w "setup - bezpieczeństwo - audytu" strony.
 NoEventFoundWithCriteria=Nr bezpieczeństwa zdarzenie zostało znalezionych dla takich kryteriów wyszukiwania.
 SeeLocalSendMailSetup=Zobacz lokalnej konfiguracji sendmaila
 PasswordGenerationStandard=Wróć hasło generowane zgodnie z wewnętrznym Dolibarr algorytmu: 8 znaków zawierających cyfry i znaki udostępniony w małe.
@@ -624,13 +624,13 @@ GeneratePassword=Zaproponuj wygenerowane hasło
 RuleForGeneratedPasswords=Artykuł sugerował, aby wygenerować hasła
 DoNotSuggest=Nie zgłosił żadnych hasło
 EncryptedPasswordInDatabase=Aby umożliwić szyfrowanie haseł w bazie danych
-DisableForgetPasswordLinkOnLogonPage=Nie pokazuj link &quot;Zapomniałeś hasła&quot; na stronie logowania
+DisableForgetPasswordLinkOnLogonPage=Nie pokazuj link "Zapomniałeś hasła" na stronie logowania
 CompanySetup=Firmy konfiguracji modułu
 CompanyCodeChecker=Moduł dla stron trzecich i generowania kodu kontroli (klienta lub dostawcy)
 AccountCodeManager=Moduł do generowania kodu rachunkowych (klienta lub dostawcy)
-ModuleCompanyCodeAquarium=Zwrócić rachunkowych kod zbudowany przez &quot;401&quot;, a następnie trzeciej dostawcy kod dostawcy rachunkowych kod i &quot;411&quot;, a następnie trzeciej klienta kodu dla klienta rachunkowych kodu.
+ModuleCompanyCodeAquarium=Zwrócić rachunkowych kod zbudowany przez "401", a następnie trzeciej dostawcy kod dostawcy rachunkowych kod i "411", a następnie trzeciej klienta kodu dla klienta rachunkowych kodu.
 ModuleCompanyCodePanicum=Wróć pusty rachunkowych kodu.
-ModuleCompanyCodeDigitaria=Księgowość kod zależy od trzeciej kodu. Kod składa się z charakterem &quot;C&quot; na pierwszej pozycji, po którym następuje pierwsze 5 znaków w kodzie strony trzeciej.
+ModuleCompanyCodeDigitaria=Księgowość kod zależy od trzeciej kodu. Kod składa się z charakterem "C" na pierwszej pozycji, po którym następuje pierwsze 5 znaków w kodzie strony trzeciej.
 UseNotifications=Użyj powiadomień
 NotificationsDesc=Powiadomienia umożliwia automatyczne cichu wysłać mail, w przypadku niektórych Dolibarr wydarzeń, do spółek, które są skonfigurowane do
 WebCalSetup=Webcalendar link konfiguracji
@@ -644,7 +644,7 @@ WebCalServer=Serwerze bazy danych kalendarza
 WebCalDatabaseName=Nazwa bazy danych
 WebCalUser=Użytkownicy mają dostęp do bazy danych
 WebCalSetupSaved=Webcalendar konfiguracji zapisany pomyślnie.
-WebCalTestOk=Połączenie do serwera ' %s' w bazie danych &quot; %s&quot; z użytkownika' %s' powiodło się.
+WebCalTestOk=Połączenie do serwera ' %s' w bazie danych " %s" z użytkownika' %s' powiodło się.
 WebCalTestKo1=Połączenie do serwera ' %s' sukces, ale baza danych' %s' nie mógł zostać osiągnięty.
 WebCalTestKo2=Połączenie do serwera ' %s' z użytkownika' %s' nie powiodło się.
 WebCalErrorConnectOkButWrongDatabase=Połączenie udało, ale baza danych nie patrzy się Webcalendar danych.
@@ -747,7 +747,7 @@ LDAPDnContactActiveYes=Aktywowany synchronizacji
 LDAPDnContactActiveExample=Aktywowany / Unactivated synchronizacji
 LDAPDnMemberActive=Posłów synchronizacji
 LDAPDnMemberActiveExample=Aktywowany / Unactivated synchronizacji
-LDAPContactDn=Dolibarr kontaktów &quot;DN
+LDAPContactDn=Dolibarr kontaktów "DN
 LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Kompletny DN (dawniej: ou= Kontakty, DC= społeczeństwa, dc= com)
 LDAPMemberDn=Dolibarr członków DN
 LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Kompletny DN (dawniej: ou= użytkowników, dc= społeczeństwa, dc= com)
@@ -883,13 +883,13 @@ DeliveriesOrderAbility=Wsparcie dostaw produktów wpływy
 ActivateFCKeditor=Uaktywnij FCKeditor za:
 FCKeditorForUsers=WYSIWIG tworzenie / edycja użytkowników opis i notatki
 FCKeditorForCompany=WYSIWIG tworzenie / edycja spółek opis i notatki
-FCKeditorForProduct=WYSIWIG tworzenie / edycja produktów / usług &quot;opis i notatki
+FCKeditorForProduct=WYSIWIG tworzenie / edycja produktów / usług "opis i notatki
 FCKeditorForMembers=WYSIWIG tworzenie / edycja członków opis i notatki
 FCKeditorForProductDetails=WYSIWIG tworzenie / edycja szczegółów linii produktów dla wszystkich podmiotów (wnioski, zamówienia, faktury, itp. ..) <br> Ostrzeżenie: Użycie tej opcji nie jest poważnie zaleciły, ponieważ może powodować problemy ze znaków specjalnych i strona w trakcie budowy formatowania plików PDF.
 FCKeditorForProductDetailsPerso=WYSIWIG tworzenie / edycja produktów spersonalizowanych szczegóły linii dla wszystkich podmiotów (wnioski, zamówienia, faktury, itp. ..)
 FCKeditorForMailing=WYSIWIG tworzenie / edycja wiadomości
 OSCommerceErrorConnectOkButWrongDatabase=Połączenie udało, ale baza danych nie patrzy się osCommerce danych (klucz %s nie został znaleziony w tabeli %s).
-OSCommerceTestOk=Połączenie do serwera ' %s' w bazie danych &quot; %s&quot; z użytkownika' %s' powiodło się.
+OSCommerceTestOk=Połączenie do serwera ' %s' w bazie danych " %s" z użytkownika' %s' powiodło się.
 OSCommerceTestKo1=Połączenie do serwera ' %s' sukces, ale baza danych' %s' nie mógł zostać osiągnięty.
 OSCommerceTestKo2=Połączenie do serwera ' %s' z użytkownika' %s' nie powiodło się.
 MantisSetup=Mantis link konfiguracji
@@ -898,7 +898,7 @@ MantisServer=Serwerze bazy danych Mantis
 MantisDatabaseName=Nazwa bazy danych
 MantisUser=Użytkownicy mają dostęp do bazy danych
 MantisSetupSaved=Mantis konfiguracji zapisany pomyślnie.
-MantisTestOk=Połączenie do serwera ' %s' w bazie danych &quot; %s&quot; z użytkownika' %s' powiodło się.
+MantisTestOk=Połączenie do serwera ' %s' w bazie danych " %s" z użytkownika' %s' powiodło się.
 MantisTestKo1=Połączenie do serwera ' %s' sukces, ale baza danych' %s' nie mógł zostać osiągnięty.
 MantisTestKo2=Połączenie do serwera ' %s' z użytkownika' %s' nie powiodło się.
 MantisErrorConnectOkButWrongDatabase=Połączenie udało, ale baza danych nie patrzy się Mantis bazy danych.
@@ -971,8 +971,8 @@ GenericMaskCodes4b=<u>Przykład trzeciej na uaktualniona w dniu 2007-03-01:</u> 
 GenericMaskCodes5=<b>ABC rr) ((MM) - () 000000</b> dadzą <b>ABC0701-000099</b> <br> <b>(0000 +100) ZZZ / dd () / XXX</b> będzie <b>0199-ZZZ/31/XXX</b>
 SeeWikiForAllTeam=Zapraszamy na stronę wiki pełna lista wszystkich uczestników i ich organizacji
 UseACacheDelay=Delay dla buforowania odpowiedzi eksportu w sekundach (0 lub puste nie Wikisłowniku)
-DisableLinkToHelpCenter=Ukryj link <b>&quot;Potrzebujesz pomocy lub wsparcia&quot;</b> na stronie logowania
-DisableLinkToHelp=Ukryj link <b>&quot; %s Pomoc online&quot;</b> na lewym menu
+DisableLinkToHelpCenter=Ukryj link <b>"Potrzebujesz pomocy lub wsparcia"</b> na stronie logowania
+DisableLinkToHelp=Ukryj link <b>" %s Pomoc online"</b> na lewym menu
 AddCRIfTooLong=Nie ma automatycznego pakowania, więc jeśli linia jest obecnie na stronie dokumenty, ponieważ zbyt długo, należy dodać sobie powrotu karetki w textarea.
 ModuleDisabled=Moduł niepełnosprawnych
 ModuleDisabledSoNoEvent=Moduł niepełnosprawnych przypadku tak nie utworzonych
@@ -1032,7 +1032,7 @@ RestoreDesc=Aby przywrócić Dolibarr zapasowej, należy:
 RestoreDesc2=* Przywracanie pliku archiwum (np. zip) katalog dokumentów, aby wyodrębnić drzewa plików w katalogu dokumentów na nowe Dolibarr instalacji lub na tym dokumenty directoy <b>( %s).</b>
 RestoreDesc3=* Przywracanie danych z kopii zapasowej pliku zrzutu, do bazy danych do nowego Dolibarr instalacji lub do bazy danych tej instalacji. Ostrzeżenie, po przywróceniu jest gotowy, należy użyć loginu i hasła, które istniały, gdy kopia zapasowa została dokonana, aby połączyć się ponownie. Aby przywrócić kopię zapasową bazy danych do tej instalacji, można się do tego asystenta.
 ForcedToByAModule=Ta zasada jest zmuszona <b>do %s</b> przez aktywowany modułu
-YouCanUseDOL_DATA_ROOT=Możesz użyć DOL_DATA_ROOT / dolibarr.log do pliku w Dolibarr &quot;dokumenty&quot; katalogu. Można ustawić inną ścieżkę do przechowywania tego pliku.
+YouCanUseDOL_DATA_ROOT=Możesz użyć DOL_DATA_ROOT / dolibarr.log do pliku w Dolibarr "dokumenty" katalogu. Można ustawić inną ścieżkę do przechowywania tego pliku.
 Menus=Menu
 DetailEnabled=Warunek, aby pokazać lub nie wejścia
 SummaryOfVatExigibilityUsedByDefault=Godzina VAT wymagalność domyślnie według choosed opcji:
@@ -1086,15 +1086,15 @@ PreviewNotAvailable=Forhåndsvisning ikke tilgjengelig
 AntiVirusCommand=Full sti til antivirus kommandoen
 AntiVirusCommandExample=Eksempel på ClamWin: c: \ Program Files (x86) \ Klappe \ bin \ clamscan.exe <br> Eksempel på ClamAV: / usr / bin / clamscan
 AntiVirusParam=Flere parametre på kommandolinjen
-AntiVirusParamExample=Eksempel på ClamWin: - database = &quot;C: \ Program Files (x86) \ Klappe \ lib&quot;
+AntiVirusParamExample=Eksempel på ClamWin: - database = "C: \ Program Files (x86) \ Klappe \ lib"
 ClientHour=Time klienten (bruker)
 CompanyTZ=Time Zone selskap (firmaets)
 CompanyHour=Time selskap (firmaets)
 PurgeDeleteLogFile=Slett loggfil <b>%s</b> definert for Syslog modul (ingen risiko for å miste data)
 IgnoreDuplicateRecords=Ignorer feil av like poster (INS ignorere)
 DoNotStoreClearPassword=Har ingen butikk klar passord i databasen men butikken bare kryptert verdi (Aktiverte anbefales)
-InstrucToEncodePass=Å ha passord kodet inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> av <br> <b>$ Dolibarr_main_db_pass = &quot;kryptert: %s&quot;</b>
-InstrucToClearPass=Å ha passord dekodet (klar) inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass = &quot;kryptert :...&quot;</b> <br> av <br> <b>$ Dolibarr_main_db_pass = &quot;%s&quot;</b>
+InstrucToEncodePass=Å ha passord kodet inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> av <br> <b>$ Dolibarr_main_db_pass = "kryptert: %s"</b>
+InstrucToClearPass=Å ha passord dekodet (klar) inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass = "kryptert :..."</b> <br> av <br> <b>$ Dolibarr_main_db_pass = "%s"</b>
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr online demonstrasjon
 ForDocumentationSeeWiki=For brukeren eller utviklerens dokumentasjon (Doc, FAQs ...), <br> ta en titt på Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
@@ -1114,8 +1114,8 @@ GenericMaskCodes4b=<u>Eksempel på tredjeparts opprettet på 2007-03-01:</u> <br
 GenericMaskCodes5=<b>ABC (åå) (mm) - (000000)</b> vil gi <b>ABC0701-000099</b> <br> <b>(0000)-ZZZ 100 / dd () / XXX</b> vil gi <b>0199-ZZZ/31/XXX</b>
 SeeWikiForAllTeam=Ta en titt på wiki siden for fullstendig liste over alle aktører og deres organisering
 UseACacheDelay=Forsinkelse for skjulested eksport respons i sekunder (0 eller tom for ingen buffer)
-DisableLinkToHelpCenter=Skjul linken <b>&quot;Trenger du hjelp eller støtte&quot;</b> på innloggingssiden
-DisableLinkToHelp=Skjul linken <b>&quot;%s Online hjelp&quot;</b> på venstre meny
+DisableLinkToHelpCenter=Skjul linken <b>"Trenger du hjelp eller støtte"</b> på innloggingssiden
+DisableLinkToHelp=Skjul linken <b>"%s Online hjelp"</b> på venstre meny
 AddCRIfTooLong=Det er ingen automatisk innpakning, så hvis linjen ut av siden på dokumenter fordi for lenge, må du legge deg vognreturer i tekstfeltet.
 ModuleDisabled=Modul deaktivert
 ModuleDisabledSoNoEvent=Modul deaktivert slik hendelse aldri opprettet
@@ -1243,7 +1243,7 @@ WatermarkOnDraft=Vannmerke på utkast
 LDAPFieldPasswordCrypted=Passord kryptert
 LDAPFieldGroupMembers=Gruppemedlemmer
 LDAPFieldGroupMembersExample=Eksempel: uniqueMember
-YouCanUseDOL_DATA_ROOT=Du kan bruke DOL_DATA_ROOT / dolibarr.log for en loggfil i Dolibarr &quot;dokumenter&quot;-katalogen. Du kan angi en annen vei til å lagre denne filen.
+YouCanUseDOL_DATA_ROOT=Du kan bruke DOL_DATA_ROOT / dolibarr.log for en loggfil i Dolibarr "dokumenter"-katalogen. Du kan angi en annen vei til å lagre denne filen.
 DonationsReceiptModel=Mal for donasjonen kvittering
 MailingEMailError=Tilbake e-post (Feil-til) for e-post med feil
 Menus=Menyer
@@ -1299,10 +1299,10 @@ PreviewNotAvailable=Preview niet beschikbaar
 AntiVirusCommand=Het volledige pad naar antivirus commando
 AntiVirusCommandExample=Voorbeeld voor ClamWin: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Voorbeeld voor ClamAV: / usr / bin / clamscan
 AntiVirusParam=Meer parameters op de opdrachtregel
-AntiVirusParamExample=Voorbeeld voor ClamWin: - database = &quot;C: \ Program Files (x86) \ ClamWin \ lib&quot;
+AntiVirusParamExample=Voorbeeld voor ClamWin: - database = "C: \ Program Files (x86) \ ClamWin \ lib"
 IgnoreDuplicateRecords=Negeer fouten van dubbele records (INSERT negeren)
-InstrucToEncodePass=Om wachtwoord gecodeerd in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> door <br> <b>$ Dolibarr_main_db_pass = &quot;breuken: sssss&quot;</b>
-InstrucToClearPass=Om gedecodeerd wachtwoord (duidelijk) in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass = &quot;versleutelde :...&quot;</b> <br> door <br> <b>$ Dolibarr_main_db_pass = &quot;sssss&quot;</b>
+InstrucToEncodePass=Om wachtwoord gecodeerd in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> door <br> <b>$ Dolibarr_main_db_pass = "breuken: sssss"</b>
+InstrucToClearPass=Om gedecodeerd wachtwoord (duidelijk) in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass = "versleutelde :..."</b> <br> door <br> <b>$ Dolibarr_main_db_pass = "sssss"</b>
 MAIN_MAIL_EMAIL_TLS=Gebruik TLS (SSL) versleutelen
 SubmitTranslation=Als vertaling voor deze taal niet volledig is of u fouten vindt, kun je dit corrigeren door het bewerken van bestanden in directory <b>Langs / sssss</b> en het forum leggen gewijzigde bestanden op www.dolibarr.org.
 FindPackageFromWebSite=Zoek een pakket dat u wilt functie biedt (bijvoorbeeld op website sssss).
@@ -1317,7 +1317,7 @@ FirstnameNamePosition=Standpunt van voornaam / naam
 Module23Name=Energie
 Module23Desc=Toezicht op het verbruik van energie
 Module100Name=ExternalSite
-Module100Desc=Inclusief een externe website in Dolibarr menu&#39;s en bekijken in een frame Dolibarr
+Module100Desc=Inclusief een externe website in Dolibarr menu's en bekijken in een frame Dolibarr
 Module2000Name=Fckeditor
 Module2000Desc=WYSIWYG-editor
 Module2600Name=WebServices
@@ -1358,7 +1358,7 @@ UnitPriceOfProduct=Netto prijs per eenheid van een product
 TotalPriceAfterRounding=Totale prijs (netto / BTW / incl. BTW) na afronding
 PreviousDumpFiles=Beschikbaar database back-up dumpbestanden
 WeekStartOnDay=Eerste dag van de week
-RunningUpdateProcessMayBeRequired=Het uitvoeren van de upgrade proces lijkt te worden vereist (Programma&#39;s sssss versie verschilt van database versie sssss)
+RunningUpdateProcessMayBeRequired=Het uitvoeren van de upgrade proces lijkt te worden vereist (Programma's sssss versie verschilt van database versie sssss)
 YouMustRunCommandFromCommandLineAfterLoginToUser=U moet deze opdracht uitvoert vanaf de command line na het inloggen op een schaal met de gebruiker <b>sssss.</b>
 YourPHPDoesNotHaveSSLSupport=SSL-functies niet beschikbaar zijn in uw PHP
 DownloadMoreSkins=Meer skins te downloaden
@@ -1401,7 +1401,7 @@ SubmitTranslation=Als vertaling voor deze taal niet volledig is of u fouten vind
 FindPackageFromWebSite=Zoek een pakket dat u wilt functie biedt (bijvoorbeeld op website sssss).
 FirstnameNamePosition=Standpunt van voornaam / naam
 Module100Name=ExternalSite
-Module100Desc=Inclusief een externe website in Dolibarr menu&#39;s en bekijken in een frame Dolibarr
+Module100Desc=Inclusief een externe website in Dolibarr menu's en bekijken in een frame Dolibarr
 Module10000Desc=Module voor een online betaling per credit card pagina met Paybox bieden
 Permission13=Unvalidate facturen
 Permission38=Export producten
@@ -1435,11 +1435,11 @@ PreviewNotAvailable=Podgląd niedostępny
 AntiVirusCommand=Pełna ścieżka do polecenia antivirus
 AntiVirusCommandExample=ClamWin przykład: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> ClamAV przykład: / usr / bin / clamscan
 AntiVirusParam=Więcej parametrów w linii poleceń
-AntiVirusParamExample=ClamWin przykład: - bazy danych = &quot;C: \ Program Files (x86) \ lib ClamWin \&quot;
+AntiVirusParamExample=ClamWin przykład: - bazy danych = "C: \ Program Files (x86) \ lib ClamWin \"
 YouCanDownloadBackupFile=Wygenerowane pliki mogą być teraz pobierane
 IgnoreDuplicateRecords=Ignoruj błędy zduplikowanych rekordów (INSERT IGNORE)
-InstrucToEncodePass=Się, że hasło zakodowane w <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = &quot;zaszyfrowane: sssss&quot;</b>
-InstrucToClearPass=Do hasła zdekodowane (jasne) do <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass = &quot;zaszyfrowane :...&quot;</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = &quot;sssss&quot;</b>
+InstrucToEncodePass=Się, że hasło zakodowane w <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = "zaszyfrowane: sssss"</b>
+InstrucToClearPass=Do hasła zdekodowane (jasne) do <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass = "zaszyfrowane :..."</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = "sssss"</b>
 MAIN_MAIL_EMAIL_TLS=Użyj TLS (SSL) szyfrowania
 SubmitTranslation=Jeżeli tłumaczenie na ten język nie jest kompletny lub znajdują się błędy, można rozwiązać poprzez edycję plików w katalogu <b>langs / sssss</b> i złożyć zmodyfikowane pliki na www.dolibarr.org forum.
 FindPackageFromWebSite=Znaleźć pakiet, który zapewnia funkcję chcesz (np. na sssss stronie internetowej).

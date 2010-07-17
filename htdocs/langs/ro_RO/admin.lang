@@ -148,7 +148,7 @@ No=Nu
 AutoDetectLang=Autodetect (browser limbă)
 FeatureDisabledInDemo=Caracteristicã handicap în demo
 Rights=Permisiuni
-BoxesDesc=Cutii sunt ecran domeniu arată că o bucată de informaţii cu privire la unele pagini. Aveţi posibilitatea să alegeţi între afişarea pe cutie sau nu, prin selectarea ţintă pagină şi faceţi clic pe &quot;Activaţi&quot;, sau făcând clic pe un coş de gunoi barat pentru al dezactiva.
+BoxesDesc=Cutii sunt ecran domeniu arată că o bucată de informaţii cu privire la unele pagini. Aveţi posibilitatea să alegeţi între afişarea pe cutie sau nu, prin selectarea ţintă pagină şi faceţi clic pe "Activaţi", sau făcând clic pe un coş de gunoi barat pentru al dezactiva.
 OnlyActiveElementsAreShown=Only elements from <a href=Numai de la elemente <a href="modules.php">activat modulele</a> sunt afişate.
 ModulesDesc=Dolibarr modulele care definesc funcţia este activată în software-ul. Unele module necesită permisiuni, trebuie să acorde pentru utilizatori, după care să permită modul.
 ModulesInterfaceDesc=De Dolibarr module de interfaţă vă permite să adăugaţi caracteristici externe, în funcţie de software, sisteme sau servicii.
@@ -226,7 +226,7 @@ UMaskExplanation=Acest parametru permite să se definească permissions stabilit
 Module0Name=Utilizatori & grupuri
 Module0Desc=Utilizatori şi grupuri de management
 Module1Name=Terţi
-Module1Desc=Companiile şi persoanele de contact &quot;de gestionare a
+Module1Desc=Companiile şi persoanele de contact "de gestionare a
 Module2Name=Comerciale
 Module2Desc=Comerciale de management
 Module10Name=Contabilitate
@@ -234,11 +234,11 @@ Module10Desc=Simplu de contabilitate de gestiune (factura de plată şi de distr
 Module20Name=Propuneri
 Module20Desc=Comerciale propuneri 'de management
 Module22Name=E-mailing
-Module22Desc=E-mailing &quot;de gestionare a
+Module22Desc=E-mailing "de gestionare a
 Module25Name=Comenzi clienţi
-Module25Desc=Clientul ordinele &quot;de gestionare a
+Module25Desc=Clientul ordinele "de gestionare a
 Module30Name=Facturi
-Module30Desc=Facturi şi note de credit &quot;de management pentru clienţi. Facturi de gestionare pentru furnizorii
+Module30Desc=Facturi şi note de credit "de management pentru clienţi. Facturi de gestionare pentru furnizorii
 Module40Name=Furnizori
 Module40Desc=Furnizori de gestionare şi de cumpărare (comenzi si facturi)
 Module42Name=Syslog
@@ -252,13 +252,13 @@ Module52Desc=Stocuri de gestionare a produselor
 Module53Name=Servicii
 Module53Desc=Servicii de gestionare
 Module54Name=Contracte
-Module54Desc=Contractele &quot;şi servicii de gestionare
+Module54Desc=Contractele "şi servicii de gestionare
 Module55Name=Coduri de bare
-Module55Desc=Coduri de bare &quot;de gestionare a
+Module55Desc=Coduri de bare "de gestionare a
 Module56Name=Telefonie
 Module56Desc=Telefonie integrare
 Module57Name=Ordine de plată
-Module57Desc=Ordine de plată şi retrageri &quot;de gestionare a
+Module57Desc=Ordine de plată şi retrageri "de gestionare a
 Module58Name=ClickToDial
 Module58Desc=ClickToDial integrare
 Module59Name=Bookmark4u
@@ -284,17 +284,17 @@ Module310Desc=Fundatia membri de management
 Module320Name=Feed RSS
 Module320Desc=Adauga RSS feed interiorul Dolibarr ecran pagini
 Module330Name=Marcaje
-Module330Desc=Marcaje &quot;de gestionare a
+Module330Desc=Marcaje "de gestionare a
 Module400Name=Proiecte
 Module400Desc=Proiecte de gestionare în interiorul alte module
 Module410Name=Webcalendar
 Module410Desc=Webcalendar integrare
 Module500Name=Impozite, contribuţii sociale şi a dividendelor
-Module500Desc=Impozite şi contribuţii sociale &quot;de gestionare a
+Module500Desc=Impozite şi contribuţii sociale "de gestionare a
 Module600Name=Anunturi
 Module600Desc=Trimite notificări (prin e-mail) pe Dolibarr de afaceri evenimente
 Module700Name=Donatii
-Module700Desc=Donatii &quot;de gestionare a
+Module700Desc=Donatii "de gestionare a
 Module800Name=OSCommerce direct
 Module800Desc=Interfata pentru a afişa o OSCommerce OSCSS magazin sau prin intermediul bazei de date de acces direct
 Module900Name=OSCommerce de WS
@@ -304,7 +304,7 @@ Module1200Desc=Mantis integrare
 Module1400Name=Expert contabil
 Module1400Desc=Contabilitate de gestiune pentru experţi (dublu părţi)
 Module1780Name=Categorii
-Module1780Desc=Categorii de &quot;management (produse, furnizori şi clienţi)
+Module1780Desc=Categorii de "management (produse, furnizori şi clienţi)
 Module2200Name=Credite drepturile
 Module2200Desc=Credite de gestionare a drepturilor
 Module2300Name=Meniuri
@@ -486,7 +486,7 @@ VATManagement=TVA-ul de management
 VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country= buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Ratei TVA, în mod implicit atunci când se creează perspective, facturi, comenzi etc urmaţi activă standard regulă: <br> În cazul în care vânzătorul este supusă la TVA, TVA-ul, atunci în mod implicit= 0. Sfârşitul regulă. <br> În cazul în care (= ţara de vânzare cumpărare ţară), iar apoi a TVA-ului, în mod implicit= TVA a produsului în ţara de vânzare. Sfârşitul regulă. <br> Dacă vânzătorul şi cumpărătorul, în Comunitatea Europeană şi mărfurile sunt vândute cu noile mijloace de transport (auto, nava, avion), implicit TVA= 0 (de TVA ar trebui să fie plătite de către cumpărător la customoffice din ţara sa, şi nu de la vanzator ). Sfârşitul regulă. <br> Dacă vânzătorul şi cumpărătorul, în Comunitatea Europeană şi bunurilor vândute prin alte mijloace, mai degrabă decât mijloace de transport noi, atunci TVA-ul, în mod implicit= TVA de produse vândute. Sfârşitul regulă. <br> Altfel, propuse implicit TVA= 1. Sfârşitul regulă.
 VATIsNotUsedDesc=În mod implicit propuse de TVA este 0, care poate fi utilizat pentru cazuri ca asociaţiile, persoane fizice ou firme mici.
 VATIsUsedExampleFR=În Franţa, aceasta înseamnă societăţilor sau organizaţiilor care au un real sistemului fiscal (Simplified reale sau normale de real). Un sistem în care TVA-ul este declarat.
-VATIsNotUsedExampleFR=În Franţa, înseamnă că asociaţiile care nu sunt declarate de TVA sau de companii, organizaţii sau profesiilor liberale care au ales de micro-întreprindere sistemului fiscal (TVA în franciză) şi a plătit o franciza de TVA, fără nici o declaraţie de TVA. Această opţiune va afişa de referinţă &quot;nu se aplică TVA - art-293B din CGI&quot; pe facturi.
+VATIsNotUsedExampleFR=În Franţa, înseamnă că asociaţiile care nu sunt declarate de TVA sau de companii, organizaţii sau profesiilor liberale care au ales de micro-întreprindere sistemului fiscal (TVA în franciză) şi a plătit o franciza de TVA, fără nici o declaraţie de TVA. Această opţiune va afişa de referinţă "nu se aplică TVA - art-293B din CGI" pe facturi.
 LabelUsedByDefault=Eticheta utilizat în mod implicit în cazul în care nu poate fi găsit de traducere pentru codul
 LabelOnDocuments=Eticheta de pe documente
 NbOfDays=Nb de zile
@@ -558,8 +558,8 @@ DoNotSuggestPaymentMode=Nu sugerează
 NoActiveBankAccountDefined=Nu cont bancar activ definit
 OwnerOfBankAccount=Titular de cont bancar %s
 BankModuleNotActive=Conturi bancare de module nu a permis
-ShowBugTrackLink=Arata link-ul &quot;Raportaţi o eroare&quot;
-ShowWorkBoard=Show &quot;de lucru&quot; la pagina de start
+ShowBugTrackLink=Arata link-ul "Raportaţi o eroare"
+ShowWorkBoard=Show "de lucru" la pagina de start
 Alerts=Alerte
 Delays=Întârzierile
 DelayBeforeWarning=Întârziere înainte de avertisment
@@ -613,7 +613,7 @@ MAIN_MAX_DECIMALS_TOT=Max zecimale pentru cantitatea totală de preţuri
 MAIN_MAX_DECIMALS_SHOWN=Max zecimale pentru preţuri afişate pe ecran (Adăugaţi <b>...</b> după acest număr, dacă doriţi să vezi <b>...</b> când numărul este trunchiat atunci când afişate pe ecran)
 MAIN_DISABLE_PDF_COMPRESSION=Utilizaţi PDF generate de compresie pentru fişiere PDF.
 ParameterActiveForNextInputOnly=Parametru de eficient pentru următoarea intrare numai
-NoEventOrNoAuditSetup=Nici un eveniment de securitate a fost înregistrată încă. Acest lucru poate fi normală de audit, dacă nu a fost activată la &quot;setup - securitate - audit&quot; paginii.
+NoEventOrNoAuditSetup=Nici un eveniment de securitate a fost înregistrată încă. Acest lucru poate fi normală de audit, dacă nu a fost activată la "setup - securitate - audit" paginii.
 NoEventFoundWithCriteria=Nici un eveniment de securitate a fost găsit pentru o astfel de criterii de căutare.
 SeeLocalSendMailSetup=Vedeţi-vă locale sendmail setup
 PasswordGenerationStandard=Întoarceţi-vă o parolă generate în funcţie de interne Dolibarr algoritmul: 8 caractere care conţin numere în comun şi în caractere minuscule.
@@ -623,13 +623,13 @@ GeneratePassword=Suggest a generat parola
 RuleForGeneratedPasswords=Norma pentru a genera parole sugerat
 DoNotSuggest=Nu sugerează orice parolă
 EncryptedPasswordInDatabase=Pentru a permite criptarea de parolele in baza de date
-DisableForgetPasswordLinkOnLogonPage=Nu afişa link-ul &quot;Uită parola&quot; de pe pagina de login
+DisableForgetPasswordLinkOnLogonPage=Nu afişa link-ul "Uită parola" de pe pagina de login
 CompanySetup=Companiile modul de configurare
 CompanyCodeChecker=Modulul pentru terţi cod de generare şi de verificare (client sau furnizor)
 AccountCodeManager=Modulul de contabilitate cod generaţie (client sau furnizor)
-ModuleCompanyCodeAquarium=Întoarceţi-vă un cod de contabilitate construit de &quot;401&quot;, urmată de o terţă parte furnizorului codul pentru un furnizor de contabilitate de cod şi &quot;411&quot;, urmată de o terţă parte codul de client pentru un client de contabilitate cod.
+ModuleCompanyCodeAquarium=Întoarceţi-vă un cod de contabilitate construit de "401", urmată de o terţă parte furnizorului codul pentru un furnizor de contabilitate de cod şi "411", urmată de o terţă parte codul de client pentru un client de contabilitate cod.
 ModuleCompanyCodePanicum=Întoarceţi-vă un gol de contabilitate cod.
-ModuleCompanyCodeDigitaria=Contabilitate cod depinde de o terţă parte de cod. Acest cod este format din caractere &quot;C&quot; în prima poziţie, urmat de primele 5 caractere de-a treia parte de cod.
+ModuleCompanyCodeDigitaria=Contabilitate cod depinde de o terţă parte de cod. Acest cod este format din caractere "C" în prima poziţie, urmat de primele 5 caractere de-a treia parte de cod.
 UseNotifications=Utilizaţi notificări
 NotificationsDesc=Anunturi caracteristică vă permite să tăcut trimite automat mail, pentru unele Dolibarr evenimente, pentru companii care sunt configurate pentru a
 WebCalSetup=Webcalendar link-ul de instalare
@@ -643,9 +643,9 @@ WebCalServer=Server de găzduire de date calendaristice
 WebCalDatabaseName=Baza de date nume
 WebCalUser=De utilizator pentru a accesa baza de date
 WebCalSetupSaved=Webcalendar setup fost salvate cu succes.
-WebCalTestOk=Conectarea la server ' %s' pe bază de date &quot; %s&quot; cu utilizatorul &quot; %s&quot; de succes.
-WebCalTestKo1=Conectarea la server ' %s' reuseste, dar baza de date &quot; %s&quot; nu a putut fi atins.
-WebCalTestKo2=Conectarea la server ' %s' cu utilizatorul &quot; %s&quot; nu a reuşit.
+WebCalTestOk=Conectarea la server ' %s' pe bază de date " %s" cu utilizatorul " %s" de succes.
+WebCalTestKo1=Conectarea la server ' %s' reuseste, dar baza de date " %s" nu a putut fi atins.
+WebCalTestKo2=Conectarea la server ' %s' cu utilizatorul " %s" nu a reuşit.
 WebCalErrorConnectOkButWrongDatabase=Conexiunii la baza de date a reusit, dar nu arata a fi o bază de date Webcalendar.
 WebCalAddEventOnCreateActions=Adauga eveniment calendaristic cu privire la acţiunile crea
 WebCalAddEventOnCreateCompany=Adauga eveniment la calendar companii crea
@@ -741,7 +741,7 @@ LDAPServerDnExample=Complete DN (ex: dc=company,dc=Finalizarea DN (ex: dc= compa
 LDAPPasswordExample=Admin parola
 LDAPDnSynchroActive=Utilizatori şi grupuri de sincronizare
 LDAPDnSynchroActiveExample=LDAP a Dolibarr sau Dolibarr la LDAP de sincronizare
-LDAPDnContactActive=Contacte &quot;sincronizare
+LDAPDnContactActive=Contacte "sincronizare
 LDAPDnContactActiveYes=Activat de sincronizare
 LDAPDnContactActiveExample=Activat / Unactivated de sincronizare
 LDAPDnMemberActive=Membrilor de sincronizare
@@ -882,24 +882,24 @@ DeliveriesOrderAbility=Suport produse livrările încasări
 ActivateFCKeditor=Activaţi FCKeditor pentru:
 FCKeditorForUsers=WYSIWIG crearea / editie a utilizatorilor, descrierea şi nota
 FCKeditorForCompany=WYSIWIG crearea / editie a companiilor şi de note descriere
-FCKeditorForProduct=WYSIWIG crearea / editie a produselor / serviciilor &quot;descrierea şi nota
+FCKeditorForProduct=WYSIWIG crearea / editie a produselor / serviciilor "descrierea şi nota
 FCKeditorForMembers=WYSIWIG crearea / editie a membrilor descriere şi de note
 FCKeditorForProductDetails=WYSIWIG crearea / ediţie detalii linii de produse pentru toate entităţile (propuneri, comenzilor, facturilor, etc ..) <br> Atenţie: Folosind această opţiune nu este grav recommanded deoarece astfel se pot crea probleme cu caractere speciale şi pagina formating atunci când clădirea fişiere PDF.
 FCKeditorForProductDetailsPerso=WYSIWIG crearea / ediţie de produse personalizate detalii linii pentru toate entităţile (propuneri, comenzilor, facturilor, etc ..)
 FCKeditorForMailing=WYSIWIG crearea / ediţie de mailing
 OSCommerceErrorConnectOkButWrongDatabase=Conexiunii la baza de date a reusit, dar nu arata a fi o bază de date OSCommerce (cheie %s nu a fost găsit în tabelul %s).
-OSCommerceTestOk=Conectarea la server ' %s' pe bază de date &quot; %s&quot; cu utilizatorul &quot; %s&quot; de succes.
-OSCommerceTestKo1=Conectarea la server ' %s' reuseste, dar baza de date &quot; %s&quot; nu a putut fi atins.
-OSCommerceTestKo2=Conectarea la server ' %s' cu utilizatorul &quot; %s&quot; nu a reuşit.
+OSCommerceTestOk=Conectarea la server ' %s' pe bază de date " %s" cu utilizatorul " %s" de succes.
+OSCommerceTestKo1=Conectarea la server ' %s' reuseste, dar baza de date " %s" nu a putut fi atins.
+OSCommerceTestKo2=Conectarea la server ' %s' cu utilizatorul " %s" nu a reuşit.
 MantisSetup=Mantis link-ul de instalare
 MantisURL=URL-ul pentru Mantis acces
 MantisServer=Server de baze de date hosting Mantis
 MantisDatabaseName=Baza de date nume
 MantisUser=De utilizator pentru a accesa baza de date
 MantisSetupSaved=Mantis setup salvate cu succes.
-MantisTestOk=Conectarea la server ' %s' pe bază de date &quot; %s&quot; cu utilizatorul &quot; %s&quot; de succes.
-MantisTestKo1=Conectarea la server ' %s' reuseste, dar baza de date &quot; %s&quot; nu a putut fi atins.
-MantisTestKo2=Conectarea la server ' %s' cu utilizatorul &quot; %s&quot; nu a reuşit.
+MantisTestOk=Conectarea la server ' %s' pe bază de date " %s" cu utilizatorul " %s" de succes.
+MantisTestKo1=Conectarea la server ' %s' reuseste, dar baza de date " %s" nu a putut fi atins.
+MantisTestKo2=Conectarea la server ' %s' cu utilizatorul " %s" nu a reuşit.
 MantisErrorConnectOkButWrongDatabase=Conexiunii la baza de date a reusit, dar nu arata a fi o bază de date Mantis.
 StockSetup=Configurarea modulului stoc
 UserWarehouse=Utilizaţi utilizator personal stocuri
@@ -970,14 +970,14 @@ GenericMaskCodes4b=<u>Exemplu de la o terţă parte a creat pe 2007-03-01:</u> <
 GenericMaskCodes5=<b>ABC (aa) (mm) - (000000)</b> va da <b>ABC0701-000099</b> <br> <b>(0000) 100-zzz / zz () / XXX</b> va da <b>0199-ZZZ/31/XXX</b>
 SeeWikiForAllTeam=Aruncati o privire la pagina de wiki pentru lista completă a tuturor actorilor şi organizarea lor
 UseACacheDelay=Întârziere pentru caching de export de răspuns în câteva secunde (0 sau gol pentru nici un cache)
-DisableLinkToHelpCenter=Ascundere link-ul <b>&quot;Aveţi nevoie de ajutor sau sprijin&quot;</b> de la pagina de login
-DisableLinkToHelp=Ascundere link-ul <b>&quot; %s Online Help&quot;</b> de la stânga meniul
+DisableLinkToHelpCenter=Ascundere link-ul <b>"Aveţi nevoie de ajutor sau sprijin"</b> de la pagina de login
+DisableLinkToHelp=Ascundere link-ul <b>" %s Online Help"</b> de la stânga meniul
 AddCRIfTooLong=Nu exista un ambalaj, aşa că, dacă este linia de documente pe pagină, pentru că prea mult timp, trebuie să adăugaţi-vă revine transportului în textarea.
 ModuleDisabled=Modulul cu handicap
 ModuleDisabledSoNoEvent=Modul de persoane atât de eveniment nu a creat
 ConfirmPurge=Sunteţi sigur că doriţi să execute acest purge? <br> Aceasta va şterge definitiv toate fişiere de date cu nici un mod de a le restaura (ECM imagini, fişiere ataşate ...).
 Module51Name=Mass-mailing
-Module51Desc=Mass-mailing hârtie &quot;de gestionare a
+Module51Desc=Mass-mailing hârtie "de gestionare a
 Module5000Name=Multi-societate
 Module5000Desc=Vă permite să administraţi mai multe companii
 Module10000Name=PayBox
@@ -1031,7 +1031,7 @@ RestoreDesc=Pentru a restabili o Dolibarr de rezervă, trebuie să:
 RestoreDesc2=* Restaurare fişier arhivă (zip dosar, de exemplu) din directorul de documente pentru a extrage fişierele din copac de documente de un nou director de instalare sau Dolibarr în acest curent documente directoy <b>( %s).</b>
 RestoreDesc3=* Restaurare de date, de la un fişier de imagine memorie de rezervă, în baza de date a noilor Dolibarr instalare sau în baza de date de acest curent de instalare. Atenţie, o dată de restaurare este terminat, trebuie să folosiţi un login / parola, care a existat, atunci când a fost făcută de rezervă, pentru a vă conecta din nou. Pentru a restaura o copie de siguranţă în baza de date a acestui curent de instalare, aveţi posibilitatea să urmaţi acest asistent.
 ForcedToByAModule=Această regulă este obligat <b>la %s</b> către un activat modulul
-YouCanUseDOL_DATA_ROOT=Puteţi folosi DOL_DATA_ROOT / dolibarr.log pentru un fişier de log în Dolibarr &quot;Documente&quot; director. Aveţi posibilitatea să setaţi o altă cale de a păstra acest fişier.
+YouCanUseDOL_DATA_ROOT=Puteţi folosi DOL_DATA_ROOT / dolibarr.log pentru un fişier de log în Dolibarr "Documente" director. Aveţi posibilitatea să setaţi o altă cale de a păstra acest fişier.
 Menus=Meniuri
 DetailEnabled=Conditia pentru a afişa sau nu intrare
 SummaryOfVatExigibilityUsedByDefault=Timp de TVA exigibility, în mod implicit în funcţie de choosed opţiune:
@@ -1080,11 +1080,11 @@ PreviewNotAvailable=Preview nu este disponibil
 AntiVirusCommand=plin patetic la comanda antivirus
 AntiVirusCommandExample=Exemplu pentru Scoici: C: \ Program Files (x86) \ Scoici \ bin \ clamscan.exe <br> Exemplu pentru ClamAV: / usr / bin / clamscan
 AntiVirusParam=Mai multe despre parametrii în linia de comandă
-AntiVirusParamExample=Exemplu pentru Scoici: - baza de date = &quot;C: \ Program Files (x86) \ Scoici \ lib&quot;
+AntiVirusParamExample=Exemplu pentru Scoici: - baza de date = "C: \ Program Files (x86) \ Scoici \ lib"
 YouCanDownloadBackupFile=fişiere generate pot fi acum descarcate
 IgnoreDuplicateRecords=Ignora erorile de înregistrări duplicat (INSERT IGNORE)
-InstrucToEncodePass=Pentru a avea parola codate în <b>conf.php</b> dosar, înlocuiţi linie <br> <b>dolibarr_main_db_pass $ =&quot;...&quot;</b> <br> de <br> <b>dolibarr_main_db_pass $ = &quot;criptat: %s&quot;</b>
-InstrucToClearPass=Pentru a avea parola decodificate (clare) în <b>conf.php</b> dosar, înlocuiţi linie <br> <b>dolibarr_main_db_pass $ = &quot;criptat :...&quot;</b> <br> de <br> <b>dolibarr_main_db_pass $ = &quot;%s&quot;</b>
+InstrucToEncodePass=Pentru a avea parola codate în <b>conf.php</b> dosar, înlocuiţi linie <br> <b>dolibarr_main_db_pass $ ="..."</b> <br> de <br> <b>dolibarr_main_db_pass $ = "criptat: %s"</b>
+InstrucToClearPass=Pentru a avea parola decodificate (clare) în <b>conf.php</b> dosar, înlocuiţi linie <br> <b>dolibarr_main_db_pass $ = "criptat :..."</b> <br> de <br> <b>dolibarr_main_db_pass $ = "%s"</b>
 MAIN_MAIL_EMAIL_TLS=Utilizaţi TLS (SSL) cripta
 SubmitTranslation=Dacă traducere pentru această limbă nu este completă sau găsiţi erori, puteţi corecta acest lucru prin editarea fişierelor în <b>langs</b> directorul <b>/ %s</b> şi prezintă fişiere modificare www.dolibarr.org forum.
 FindPackageFromWebSite=Găsiţi un pachet care ofera facilitate dorit (de exemplu, pe site-ul web %s).
@@ -1200,15 +1200,15 @@ PreviewNotAvailable=Forhåndsvisning ikke tilgjengelig
 AntiVirusCommand=Full sti til antivirus kommandoen
 AntiVirusCommandExample=Eksempel på ClamWin: c: \ Program Files (x86) \ Klappe \ bin \ clamscan.exe <br> Eksempel på ClamAV: / usr / bin / clamscan
 AntiVirusParam=Flere parametre på kommandolinjen
-AntiVirusParamExample=Eksempel på ClamWin: - database = &quot;C: \ Program Files (x86) \ Klappe \ lib&quot;
+AntiVirusParamExample=Eksempel på ClamWin: - database = "C: \ Program Files (x86) \ Klappe \ lib"
 ClientHour=Time klienten (bruker)
 CompanyTZ=Time Zone selskap (firmaets)
 CompanyHour=Time selskap (firmaets)
 PurgeDeleteLogFile=Slett loggfil <b>%s</b> definert for Syslog modul (ingen risiko for å miste data)
 IgnoreDuplicateRecords=Ignorer feil av like poster (INS ignorere)
 DoNotStoreClearPassword=Har ingen butikk klar passord i databasen men butikken bare kryptert verdi (Aktiverte anbefales)
-InstrucToEncodePass=Å ha passord kodet inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> av <br> <b>$ Dolibarr_main_db_pass = &quot;kryptert: %s&quot;</b>
-InstrucToClearPass=Å ha passord dekodet (klar) inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass = &quot;kryptert :...&quot;</b> <br> av <br> <b>$ Dolibarr_main_db_pass = &quot;%s&quot;</b>
+InstrucToEncodePass=Å ha passord kodet inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> av <br> <b>$ Dolibarr_main_db_pass = "kryptert: %s"</b>
+InstrucToClearPass=Å ha passord dekodet (klar) inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass = "kryptert :..."</b> <br> av <br> <b>$ Dolibarr_main_db_pass = "%s"</b>
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr online demonstrasjon
 ForDocumentationSeeWiki=For brukeren eller utviklerens dokumentasjon (Doc, FAQs ...), <br> ta en titt på Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
@@ -1228,8 +1228,8 @@ GenericMaskCodes4b=<u>Eksempel på tredjeparts opprettet på 2007-03-01:</u> <br
 GenericMaskCodes5=<b>ABC (åå) (mm) - (000000)</b> vil gi <b>ABC0701-000099</b> <br> <b>(0000)-ZZZ 100 / dd () / XXX</b> vil gi <b>0199-ZZZ/31/XXX</b>
 SeeWikiForAllTeam=Ta en titt på wiki siden for fullstendig liste over alle aktører og deres organisering
 UseACacheDelay=Forsinkelse for skjulested eksport respons i sekunder (0 eller tom for ingen buffer)
-DisableLinkToHelpCenter=Skjul linken <b>&quot;Trenger du hjelp eller støtte&quot;</b> på innloggingssiden
-DisableLinkToHelp=Skjul linken <b>&quot;%s Online hjelp&quot;</b> på venstre meny
+DisableLinkToHelpCenter=Skjul linken <b>"Trenger du hjelp eller støtte"</b> på innloggingssiden
+DisableLinkToHelp=Skjul linken <b>"%s Online hjelp"</b> på venstre meny
 AddCRIfTooLong=Det er ingen automatisk innpakning, så hvis linjen ut av siden på dokumenter fordi for lenge, må du legge deg vognreturer i tekstfeltet.
 ModuleDisabled=Modul deaktivert
 ModuleDisabledSoNoEvent=Modul deaktivert slik hendelse aldri opprettet
@@ -1357,7 +1357,7 @@ WatermarkOnDraft=Vannmerke på utkast
 LDAPFieldPasswordCrypted=Passord kryptert
 LDAPFieldGroupMembers=Gruppemedlemmer
 LDAPFieldGroupMembersExample=Eksempel: uniqueMember
-YouCanUseDOL_DATA_ROOT=Du kan bruke DOL_DATA_ROOT / dolibarr.log for en loggfil i Dolibarr &quot;dokumenter&quot;-katalogen. Du kan angi en annen vei til å lagre denne filen.
+YouCanUseDOL_DATA_ROOT=Du kan bruke DOL_DATA_ROOT / dolibarr.log for en loggfil i Dolibarr "dokumenter"-katalogen. Du kan angi en annen vei til å lagre denne filen.
 DonationsReceiptModel=Mal for donasjonen kvittering
 MailingEMailError=Tilbake e-post (Feil-til) for e-post med feil
 Menus=Menyer
@@ -1413,10 +1413,10 @@ PreviewNotAvailable=Preview niet beschikbaar
 AntiVirusCommand=Het volledige pad naar antivirus commando
 AntiVirusCommandExample=Voorbeeld voor ClamWin: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Voorbeeld voor ClamAV: / usr / bin / clamscan
 AntiVirusParam=Meer parameters op de opdrachtregel
-AntiVirusParamExample=Voorbeeld voor ClamWin: - database = &quot;C: \ Program Files (x86) \ ClamWin \ lib&quot;
+AntiVirusParamExample=Voorbeeld voor ClamWin: - database = "C: \ Program Files (x86) \ ClamWin \ lib"
 IgnoreDuplicateRecords=Negeer fouten van dubbele records (INSERT negeren)
-InstrucToEncodePass=Om wachtwoord gecodeerd in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> door <br> <b>$ Dolibarr_main_db_pass = &quot;breuken: sssss&quot;</b>
-InstrucToClearPass=Om gedecodeerd wachtwoord (duidelijk) in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass = &quot;versleutelde :...&quot;</b> <br> door <br> <b>$ Dolibarr_main_db_pass = &quot;sssss&quot;</b>
+InstrucToEncodePass=Om wachtwoord gecodeerd in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> door <br> <b>$ Dolibarr_main_db_pass = "breuken: sssss"</b>
+InstrucToClearPass=Om gedecodeerd wachtwoord (duidelijk) in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass = "versleutelde :..."</b> <br> door <br> <b>$ Dolibarr_main_db_pass = "sssss"</b>
 MAIN_MAIL_EMAIL_TLS=Gebruik TLS (SSL) versleutelen
 SubmitTranslation=Als vertaling voor deze taal niet volledig is of u fouten vindt, kun je dit corrigeren door het bewerken van bestanden in directory <b>Langs / sssss</b> en het forum leggen gewijzigde bestanden op www.dolibarr.org.
 FindPackageFromWebSite=Zoek een pakket dat u wilt functie biedt (bijvoorbeeld op website sssss).
@@ -1431,7 +1431,7 @@ FirstnameNamePosition=Standpunt van voornaam / naam
 Module23Name=Energie
 Module23Desc=Toezicht op het verbruik van energie
 Module100Name=ExternalSite
-Module100Desc=Inclusief een externe website in Dolibarr menu&#39;s en bekijken in een frame Dolibarr
+Module100Desc=Inclusief een externe website in Dolibarr menu's en bekijken in een frame Dolibarr
 Module2000Name=Fckeditor
 Module2000Desc=WYSIWYG-editor
 Module2600Name=WebServices
@@ -1472,7 +1472,7 @@ UnitPriceOfProduct=Netto prijs per eenheid van een product
 TotalPriceAfterRounding=Totale prijs (netto / BTW / incl. BTW) na afronding
 PreviousDumpFiles=Beschikbaar database back-up dumpbestanden
 WeekStartOnDay=Eerste dag van de week
-RunningUpdateProcessMayBeRequired=Het uitvoeren van de upgrade proces lijkt te worden vereist (Programma&#39;s sssss versie verschilt van database versie sssss)
+RunningUpdateProcessMayBeRequired=Het uitvoeren van de upgrade proces lijkt te worden vereist (Programma's sssss versie verschilt van database versie sssss)
 YouMustRunCommandFromCommandLineAfterLoginToUser=U moet deze opdracht uitvoert vanaf de command line na het inloggen op een schaal met de gebruiker <b>sssss.</b>
 YourPHPDoesNotHaveSSLSupport=SSL-functies niet beschikbaar zijn in uw PHP
 DownloadMoreSkins=Meer skins te downloaden
@@ -1515,7 +1515,7 @@ SubmitTranslation=Als vertaling voor deze taal niet volledig is of u fouten vind
 FindPackageFromWebSite=Zoek een pakket dat u wilt functie biedt (bijvoorbeeld op website sssss).
 FirstnameNamePosition=Standpunt van voornaam / naam
 Module100Name=ExternalSite
-Module100Desc=Inclusief een externe website in Dolibarr menu&#39;s en bekijken in een frame Dolibarr
+Module100Desc=Inclusief een externe website in Dolibarr menu's en bekijken in een frame Dolibarr
 Module10000Desc=Module voor een online betaling per credit card pagina met Paybox bieden
 Permission13=Unvalidate facturen
 Permission38=Export producten
@@ -1549,11 +1549,11 @@ PreviewNotAvailable=Podgląd niedostępny
 AntiVirusCommand=Pełna ścieżka do polecenia antivirus
 AntiVirusCommandExample=ClamWin przykład: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> ClamAV przykład: / usr / bin / clamscan
 AntiVirusParam=Więcej parametrów w linii poleceń
-AntiVirusParamExample=ClamWin przykład: - bazy danych = &quot;C: \ Program Files (x86) \ lib ClamWin \&quot;
+AntiVirusParamExample=ClamWin przykład: - bazy danych = "C: \ Program Files (x86) \ lib ClamWin \"
 YouCanDownloadBackupFile=Wygenerowane pliki mogą być teraz pobierane
 IgnoreDuplicateRecords=Ignoruj błędy zduplikowanych rekordów (INSERT IGNORE)
-InstrucToEncodePass=Się, że hasło zakodowane w <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = &quot;zaszyfrowane: sssss&quot;</b>
-InstrucToClearPass=Do hasła zdekodowane (jasne) do <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass = &quot;zaszyfrowane :...&quot;</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = &quot;sssss&quot;</b>
+InstrucToEncodePass=Się, że hasło zakodowane w <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = "zaszyfrowane: sssss"</b>
+InstrucToClearPass=Do hasła zdekodowane (jasne) do <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass = "zaszyfrowane :..."</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = "sssss"</b>
 MAIN_MAIL_EMAIL_TLS=Użyj TLS (SSL) szyfrowania
 SubmitTranslation=Jeżeli tłumaczenie na ten język nie jest kompletny lub znajdują się błędy, można rozwiązać poprzez edycję plików w katalogu <b>langs / sssss</b> i złożyć zmodyfikowane pliki na www.dolibarr.org forum.
 FindPackageFromWebSite=Znaleźć pakiet, który zapewnia funkcję chcesz (np. na sssss stronie internetowej).
@@ -1660,10 +1660,10 @@ PreviewNotAvailable=Visualização não disponível
 AntiVirusCommand=Caminho completo para o comando de antivírus
 AntiVirusCommandExample=Exemplo de Mexilhão: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Exemplo de Mexilhão: / usr / bin / clamscan
 AntiVirusParam=Mais informações sobre parâmetros de linha de comando
-AntiVirusParamExample=Exemplo de Mexilhão: - database = &quot;C: \ Program Files (x86) \ lib ClamWin \&quot;
+AntiVirusParamExample=Exemplo de Mexilhão: - database = "C: \ Program Files (x86) \ lib ClamWin \"
 IgnoreDuplicateRecords=Ignore os erros de registros duplicados (INSERT IGNORE)
-InstrucToEncodePass=Para ter uma senha codificada no <b>conf.php</b> arquivo, substitua a linha <br> <b>=&quot;...&quot; Dolibarr_main_db_pass $</b> <br> por <br> <b>dolibarr_main_db_pass $ = &quot;crypted: %s&quot;</b>
-InstrucToClearPass=Para ter a senha decodificado (transparente) para o <b>conf.php</b> arquivo, substitua a linha <br> <b>dolibarr_main_db_pass $ = crypted :...&quot; &quot;</b> <br> por <br> <b>dolibarr_main_db_pass $ = &quot;%s&quot;</b>
+InstrucToEncodePass=Para ter uma senha codificada no <b>conf.php</b> arquivo, substitua a linha <br> <b>="..." Dolibarr_main_db_pass $</b> <br> por <br> <b>dolibarr_main_db_pass $ = "crypted: %s"</b>
+InstrucToClearPass=Para ter a senha decodificado (transparente) para o <b>conf.php</b> arquivo, substitua a linha <br> <b>dolibarr_main_db_pass $ = crypted :..." "</b> <br> por <br> <b>dolibarr_main_db_pass $ = "%s"</b>
 MAIN_MAIL_EMAIL_TLS=Use TLS (SSL) criptografa
 SubmitTranslation=Se a tradução para esse idioma não esteja completa ou você encontrar erros, você pode corrigir isso, a edição de arquivos em <b>langs</b> diretório <b>/ %s</b> e enviar arquivos modificados www.dolibarr.org fórum.
 FindPackageFromWebSite=Encontre um pacote que fornece funcionalidade que você quiser (por exemplo, %s site).
@@ -1730,7 +1730,7 @@ UsersSetup=Usuários de configuração do módulo
 UserMailRequired=Email exigidos para criar um novo usuário
 ModelModules=Documentos modelos
 DocumentModelOdt=Gere documentos de OpenDocuments templates (arquivos. ODT para o OpenOffice, KOffice, TextEdit ,...)
-WatermarkOnDraft=Marca d&#39;água sobre o projecto de documento
+WatermarkOnDraft=Marca d'água sobre o projecto de documento
 LDAPFieldGroupMembers=Os membros do grupo
 LDAPFieldGroupMembersExample=Exemplo: uniqueMember
 DonationsReceiptModel=Modelo de recibo de doação

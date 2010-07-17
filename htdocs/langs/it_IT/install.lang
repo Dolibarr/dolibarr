@@ -187,8 +187,8 @@ MigrationDeliveryDetail						     =Migrazione dettagli ordini di spedizione
 PHPSupportUTF8=Questo supporto PHP UTF8 funzioni.
 ErrorPHPDoesNotSupportGD=La tua installazione di PHP non supporta la funzione grafica GD. Nessun grafico sarà disponibile.
 ErrorPHPDoesNotSupportUTF8=La tua installazione di PHP non supporta la codifica UTF8 funzioni. Dolibarr non può funzionare correttamente. Risolvere questo problema prima di installare Dolibarr.
-IfLoginDoesNotExistsCheckCreateUser=Se il login non esiste ancora, è necessario verificare l'opzione &quot;Crea utente&quot;
-ErrorConnection=Server <b>&quot; %s&quot;,</b> nome del database <b>&quot; %s&quot;,</b> di accesso <b>&quot; %s&quot;,</b> o la password di database può essere sbagliato o PHP versione client può essere troppo vecchio rispetto alla versione del database.
+IfLoginDoesNotExistsCheckCreateUser=Se il login non esiste ancora, è necessario verificare l'opzione "Crea utente"
+ErrorConnection=Server <b>" %s",</b> nome del database <b>" %s",</b> di accesso <b>" %s",</b> o la password di database può essere sbagliato o PHP versione client può essere troppo vecchio rispetto alla versione del database.
 MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Correggere contratto %s (data del contratto = %s, data di inizio del servizio min = %s)
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
@@ -211,13 +211,13 @@ MigrationDeliveryAddress=Aggiornamento indirizzo di consegna in spedizioni
 // Reference language: en_US
 ForceHttps=Forzare connessioni sicure (HTTPS)
 CheckToForceHttps=Seleziona questa opzione per forzare le connessioni sicure (HTTPS). <br> Ciò richiede che il server Web è configurato con un certificato SSL.
-DirectoryRecommendation=E &#39;raccomandato di utilizzare una directory al di fuori della directory delle tue pagine web.
+DirectoryRecommendation=E 'raccomandato di utilizzare una directory al di fuori della directory delle tue pagine web.
 KeepDefaultValuesDeb=Si utilizza la configurazione guidata Dolibarr da un pacchetto Debian o Ubuntu, per cui i valori proposti qui sono già ottimizzati. Solo la password del proprietario del database per creare deve essere completata. Modificare i parametri di altri solo se sai quello che fai.
-CheckThatDatabasenameIsCorrect=Controllare che il nome del database <b>&quot;%s&quot;</b> è corretta.
-IfAlreadyExistsCheckOption=Se questo nome sia corretto e che la base non esiste ancora, è necessario verificare l&#39;opzione &quot;CREATE DATABASE&quot;.
+CheckThatDatabasenameIsCorrect=Controllare che il nome del database <b>"%s"</b> è corretta.
+IfAlreadyExistsCheckOption=Se questo nome sia corretto e che la base non esiste ancora, è necessario verificare l'opzione "CREATE DATABASE".
 OpenBaseDir=PHP openbasedir parametro
-YouAskToCreateDatabaseSoRootRequired=Hai selezionato la casella &quot;CREATE DATABASE&quot;. Per questo, è necessario fornire nome utente / password di superuser (parte inferiore del modulo).
-YouAskToCreateDatabaseUserSoRootRequired=Hai selezionato la casella &quot;Crea il proprietario del database&quot;. Per questo, è necessario fornire nome utente / password di superuser (parte inferiore del modulo).
+YouAskToCreateDatabaseSoRootRequired=Hai selezionato la casella "CREATE DATABASE". Per questo, è necessario fornire nome utente / password di superuser (parte inferiore del modulo).
+YouAskToCreateDatabaseUserSoRootRequired=Hai selezionato la casella "Crea il proprietario del database". Per questo, è necessario fornire nome utente / password di superuser (parte inferiore del modulo).
 NextStepMightLastALongTime=passaggio di corrente può durare diversi minuti. Vi preghiamo di attendere la schermata successiva è mostrata completamente prima di continuare.
 MigrationCustomerOrderShipping=Migrare spedizione per la conservazione degli ordini dei clienti
 MigrationShippingDelivery=stoccaggio di aggiornamento di spedizione

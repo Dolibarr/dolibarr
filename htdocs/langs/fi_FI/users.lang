@@ -123,7 +123,7 @@ NameToCreate=Nimi kolmannen osapuolen luoda
 
 // START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
 // Reference language: en_US
-CreateInternalUserDesc=Tämän lomakkeen avulla voit luotu käyttäjän sisäinen yrityksenne / perusta. Voit luotu ulkopuolinen käyttäjä (asiakas, toimittaja, ...), käytä painiketta Luo Dolibarr käyttäjä &quot;kolmannen osapuolen yhteystiedot kortin.
+CreateInternalUserDesc=Tämän lomakkeen avulla voit luotu käyttäjän sisäinen yrityksenne / perusta. Voit luotu ulkopuolinen käyttäjä (asiakas, toimittaja, ...), käytä painiketta Luo Dolibarr käyttäjä "kolmannen osapuolen yhteystiedot kortin.
 InternalExternalDesc=<b>Sisäinen</b> käyttäjä on käyttäjä, joka on osa yrityksen / perusta. <br> <b>Ulkoinen</b> käyttäjä on asiakas, toimittaja tai muu. <br><br> Molemmissa tapauksissa, oikeudet määritellään oikeuksia Dolibarr myös ulkoinen käyttäjä voi olla eri valikosta johtaja kuin sisäinen käyttäjä (Katso etusivu - Asetukset - Display)
 PermissionInheritedFromAGroup=Lupa myönnettiin, koska periytyy yhden käyttäjän ryhmä.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

@@ -125,6 +125,6 @@ YouCanUseCommaSeparatorForSeveralRecipients=È possibile utilizzare il separator
 // Reference language: en_US
 DateSending=Data di invio
 SentTo=Inviata a <b>%s</b>
-LimitSendingEmailing=On line l&#39;invio di emailings sono limitati per motivi di sicurezza e timeout <b>%s</b> ai destinatari mediante l&#39;invio di sessione.
+LimitSendingEmailing=On line l'invio di emailings sono limitati per motivi di sicurezza e timeout <b>%s</b> ai destinatari mediante l'invio di sessione.
 ListOfNotificationsDone=Lista tutte le notifiche e-mail inviate
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:30).

@@ -148,7 +148,7 @@ No=Нет
 AutoDetectLang=Autodetect (язык браузера)
 FeatureDisabledInDemo=Функция отключена в демо -
 Rights=Разрешения
-BoxesDesc=Ящики экрана показывают, что часть информации на некоторых страницах. Вы можете выбирать между показ поле или нет, выбрав целевой страницы и нажать кнопку &quot;Включить&quot;, или нажав на свалку, чтобы отключить его.
+BoxesDesc=Ящики экрана показывают, что часть информации на некоторых страницах. Вы можете выбирать между показ поле или нет, выбрав целевой страницы и нажать кнопку "Включить", или нажав на свалку, чтобы отключить его.
 OnlyActiveElementsAreShown=Only elements from <a href=Только элементы <a href="modules.php">позволили модули</a> показаны.
 ModulesDesc=Dolibarr модулей определяют функциональность, которая включена в программу. Некоторые модули требуют разрешения вы должны предоставить пользователям, после включения модуля.
 ModulesInterfaceDesc=Dolibarr модули интерфейса позволяет добавлять новые функции в зависимости от внешнего программного обеспечения, систем и услуг.
@@ -485,14 +485,14 @@ VATManagement=НДС менеджмент
 VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country= buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Ставка НДС по умолчанию при создании перспективы, счета-фактуры, приказы и т.д. последующей активной стандартные правила: <br> Если продавец является жертвой НДС, то НДС по умолчанию= 0. Конец правлению. <br> Если (продажная страна= покупка страны), то НДС по умолчанию= НДС продукт в продажу стране. Конец правлению. <br> Если продавец и покупатель в Европейском сообществе и товары продаются с новыми транспортными средствами (автомобиль, корабль, самолет), по умолчанию НДС= 0 (НДС должен быть оплачен покупателем в customoffice своей страны, а не на продавца ). Конец правлению. <br> Если продавец и покупатель в Европейском сообществе и проданные товары с помощью других средств, а не новых транспортных средств, то НДС по умолчанию= НДС продукт продается. Конец правлению. <br> Другое предлагаемое по умолчанию НДС= 1. Конец правлению.
 VATIsNotUsedDesc=По умолчанию, предлагаемый НДС 0, которая может быть использована как для дела ассоциаций, отдельных лиц или небольших компаний.
 VATIsUsedExampleFR=Во Франции, это означает, компаний или организаций, имеющих реальной финансовой системы (упрощенное реальных или нормальный реальный). Система, в которой НДС не объявлены.
-VATIsNotUsedExampleFR=Во Франции, это означает, объединений, которые не объявили НДС или компаний, организаций и свободных профессий, которые выбрали микропредприятиях бюджетной системы (НДС в франшиза) и оплачивается франшиза НДС без НДС декларации. Этот выбор будет отображаться ссылка &quot;не применимо НДС - арт-293B из CGI&quot; на счетах-фактурах.
+VATIsNotUsedExampleFR=Во Франции, это означает, объединений, которые не объявили НДС или компаний, организаций и свободных профессий, которые выбрали микропредприятиях бюджетной системы (НДС в франшиза) и оплачивается франшиза НДС без НДС декларации. Этот выбор будет отображаться ссылка "не применимо НДС - арт-293B из CGI" на счетах-фактурах.
 LabelUsedByDefault=Метки, используемые по умолчанию, если нет перевода можно найти код
 LabelOnDocuments=Этикетка на документах
 NbOfDays=Nb дней
 AtEndOfMonth=На конец месяца
 Offset=Сдвиг
 AlwaysActive=Всегда активный
-UpdateRequired=Your system needs to be updated. To do this, click on <a href=Ваша система должна быть обновлена. Чтобы сделать это, нажмите на <a href="%s">&quot;Обновить&quot;.</a>
+UpdateRequired=Your system needs to be updated. To do this, click on <a href=Ваша система должна быть обновлена. Чтобы сделать это, нажмите на <a href="%s">"Обновить".</a>
 Upgrade=Обновление
 AddExtensionThemeModuleOrOther=Добавить расширение (темы, модули, ...)
 WebServer=Веб-сервер
@@ -557,8 +557,8 @@ DoNotSuggestPaymentMode=Не рекомендуем
 NoActiveBankAccountDefined=Нет активного банковского счета определяется
 OwnerOfBankAccount=Владелец банковского счета %s
 BankModuleNotActive=Банковские счета Модуль не активирован
-ShowBugTrackLink=Показать ссылку &quot;Сообщить об ошибке&quot;
-ShowWorkBoard=Шоу &quot;Workbench&quot; на главной странице
+ShowBugTrackLink=Показать ссылку "Сообщить об ошибке"
+ShowWorkBoard=Шоу "Workbench" на главной странице
 Alerts=Предупреждения
 Delays=Задержки
 DelayBeforeWarning=Задержка перед предупреждение
@@ -612,7 +612,7 @@ MAIN_MAX_DECIMALS_TOT=Макс десятичных общей цены
 MAIN_MAX_DECIMALS_SHOWN=Макс десятичных цен отображается на экране (Добавить <b>...</b> После этого, если вы хотите посмотреть <b>...</b> когда число усекается когда отображаются на экране)
 MAIN_DISABLE_PDF_COMPRESSION=Использовать сжатие PDF для порожденных PDF файлов.
 ParameterActiveForNextInputOnly=Параметр эффективным для следующего ввода только
-NoEventOrNoAuditSetup=Нет безопасности событие было зафиксировано еще. Это может быть нормально, если проверка не была включена в &quot;Настройка - Безопасность - аудит&quot; страница.
+NoEventOrNoAuditSetup=Нет безопасности событие было зафиксировано еще. Это может быть нормально, если проверка не была включена в "Настройка - Безопасность - аудит" страница.
 NoEventFoundWithCriteria=Нет событий безопасности была обнаружена в таких поисковых критериев.
 SeeLocalSendMailSetup=См. вашей локальной настройки Sendmail
 PasswordGenerationStandard=Возврат пароля, полученных в соответствии с внутренними Dolibarr алгоритма: 8 символов, содержащих общие цифры и символы в нижнем регистре.
@@ -622,13 +622,13 @@ GeneratePassword=Предложить генерируемого пароля
 RuleForGeneratedPasswords=Правило предложили генерировать пароли
 DoNotSuggest=Не предложить какой-либо пароль
 EncryptedPasswordInDatabase=Для шифрования паролей в базе данных
-DisableForgetPasswordLinkOnLogonPage=Не показывать ссылку &quot;Забыли пароль&quot; на странице входа
+DisableForgetPasswordLinkOnLogonPage=Не показывать ссылку "Забыли пароль" на странице входа
 CompanySetup=Предприятия модуль настройки
 CompanyCodeChecker=Модуль для третьих сторон, генерации кода и проверку (клиент или поставщик)
 AccountCodeManager=Модуль для учета генерации кода (клиент или поставщик)
-ModuleCompanyCodeAquarium=Вернуться бухгалтерские код построен на &quot;401&quot; с третьей стороны поставщика код поставщика бухгалтерских код, и &quot;411&quot;, а затем третьей стороне клиента код клиента бухгалтерского код.
+ModuleCompanyCodeAquarium=Вернуться бухгалтерские код построен на "401" с третьей стороны поставщика код поставщика бухгалтерских код, и "411", а затем третьей стороне клиента код клиента бухгалтерского код.
 ModuleCompanyCodePanicum=Возврат порожних бухгалтерские код.
-ModuleCompanyCodeDigitaria=Бухгалтерия код зависит от третьей стороны кода. Код состоит из символов &quot;С&quot; в первой позиции следуют первые 5 символов сторонних код.
+ModuleCompanyCodeDigitaria=Бухгалтерия код зависит от третьей стороны кода. Код состоит из символов "С" в первой позиции следуют первые 5 символов сторонних код.
 UseNotifications=Использование уведомлений
 NotificationsDesc=Уведомления функция позволяет отправить молча автоматической почте, для некоторых Dolibarr событий, для компаний, которые настроены на
 WebCalSetup=Webcalendar ссылке Настройка
@@ -740,12 +740,12 @@ LDAPServerDnExample=Complete DN (ex: dc=company,dc=Полное DN (пример
 LDAPPasswordExample=Пароль администратора
 LDAPDnSynchroActive=Пользователи и группы синхронизации
 LDAPDnSynchroActiveExample=LDAP для Dolibarr или Dolibarr LDAP для синхронизации
-LDAPDnContactActive=Контакты &quot;синхронизации
+LDAPDnContactActive=Контакты "синхронизации
 LDAPDnContactActiveYes=Активированное синхронизации
 LDAPDnContactActiveExample=Активированное / Unactivated синхронизации
 LDAPDnMemberActive=Члены синхронизации
 LDAPDnMemberActiveExample=Активированное / Unactivated синхронизации
-LDAPContactDn=Dolibarr контактов &quot;DN
+LDAPContactDn=Dolibarr контактов "DN
 LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Полное Д.Н. (например, OU= контактов, DC= обществе, DC= COM)
 LDAPMemberDn=Dolibarr члены DN
 LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Полное Д.Н. (например, OU= членов, DC= обществе, DC= COM)
@@ -969,8 +969,8 @@ GenericMaskCodes4b=<u>Пример на сторонних из 2007-03-01:</u> 
 GenericMaskCodes5=<b>ABC YY () (мм) - () 000000</b> даст <b>ABC0701-000099</b> <br> <b>0000 (100)-ZZZ / (ДД) / XXX</b> даст <b>0199-ZZZ/31/XXX</b>
 SeeWikiForAllTeam=Взгляните на вики-странице полный список всех участников и их организация
 UseACacheDelay=Задержка для кэширования экспорт ответ в считанные секунды (0 или пусто не кэш)
-DisableLinkToHelpCenter=Скрыть ссылку <b>&quot;нужна помощь или поддержка&quot;</b> на странице входа
-DisableLinkToHelp=Скрыть ссылку <b>&quot; %s Справка&quot;</b> на левом меню
+DisableLinkToHelpCenter=Скрыть ссылку <b>"нужна помощь или поддержка"</b> на странице входа
+DisableLinkToHelp=Скрыть ссылку <b>" %s Справка"</b> на левом меню
 AddCRIfTooLong=Существует нет автоматической упаковке, так что если строка из страницы на документы, поскольку слишком долго, вы должны добавить себе возврат каретки в textarea.
 ModuleDisabled=Модуль отключен
 ModuleDisabledSoNoEvent=Модуль инвалидов событие так и не создали
@@ -1030,7 +1030,7 @@ RestoreDesc=Для восстановления резервной Dolibarr, В�
 RestoreDesc2=* Восстановить архив (ZIP-файл, например) документов каталог для извлечения файлов в директории документов нового Dolibarr установка или в текущем каталоге документов <b>( %s).</b>
 RestoreDesc3=* Восстановление данных из резервной копии файла дампа, в базу данных нового Dolibarr установки или в базу данных текущей установки. Внимание, после восстановления будет завершен, вы должны использовать один логин и пароль, которые существовали, когда было сделано резервное копирование, чтобы подключиться снова. Чтобы восстановить резервную копию базы данных в текущей установки, вы можете следить за этим ассистентом.
 ForcedToByAModule=Это правило <b>вынуждены %s</b> на активированный модуль
-YouCanUseDOL_DATA_ROOT=Вы можете использовать DOL_DATA_ROOT / dolibarr.log в лог-файл в Dolibarr &quot;документы&quot; каталог. Вы можете установить различные пути для хранения этого файла.
+YouCanUseDOL_DATA_ROOT=Вы можете использовать DOL_DATA_ROOT / dolibarr.log в лог-файл в Dolibarr "документы" каталог. Вы можете установить различные пути для хранения этого файла.
 Menus=Меню
 DetailEnabled=Условие, чтобы показать или не вступления
 SummaryOfVatExigibilityUsedByDefault=Время НДС exigibility по умолчанию в соответствии с выбранным вариантом:
@@ -1084,15 +1084,15 @@ PreviewNotAvailable=Forhåndsvisning ikke tilgjengelig
 AntiVirusCommand=Full sti til antivirus kommandoen
 AntiVirusCommandExample=Eksempel på ClamWin: c: \ Program Files (x86) \ Klappe \ bin \ clamscan.exe <br> Eksempel på ClamAV: / usr / bin / clamscan
 AntiVirusParam=Flere parametre på kommandolinjen
-AntiVirusParamExample=Eksempel på ClamWin: - database = &quot;C: \ Program Files (x86) \ Klappe \ lib&quot;
+AntiVirusParamExample=Eksempel på ClamWin: - database = "C: \ Program Files (x86) \ Klappe \ lib"
 ClientHour=Time klienten (bruker)
 CompanyTZ=Time Zone selskap (firmaets)
 CompanyHour=Time selskap (firmaets)
 PurgeDeleteLogFile=Slett loggfil <b>%s</b> definert for Syslog modul (ingen risiko for å miste data)
 IgnoreDuplicateRecords=Ignorer feil av like poster (INS ignorere)
 DoNotStoreClearPassword=Har ingen butikk klar passord i databasen men butikken bare kryptert verdi (Aktiverte anbefales)
-InstrucToEncodePass=Å ha passord kodet inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> av <br> <b>$ Dolibarr_main_db_pass = &quot;kryptert: %s&quot;</b>
-InstrucToClearPass=Å ha passord dekodet (klar) inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass = &quot;kryptert :...&quot;</b> <br> av <br> <b>$ Dolibarr_main_db_pass = &quot;%s&quot;</b>
+InstrucToEncodePass=Å ha passord kodet inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> av <br> <b>$ Dolibarr_main_db_pass = "kryptert: %s"</b>
+InstrucToClearPass=Å ha passord dekodet (klar) inn i <b>conf.php</b> filen, erstatte linjen <br> <b>$ Dolibarr_main_db_pass = "kryptert :..."</b> <br> av <br> <b>$ Dolibarr_main_db_pass = "%s"</b>
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr online demonstrasjon
 ForDocumentationSeeWiki=For brukeren eller utviklerens dokumentasjon (Doc, FAQs ...), <br> ta en titt på Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
@@ -1112,8 +1112,8 @@ GenericMaskCodes4b=<u>Eksempel på tredjeparts opprettet på 2007-03-01:</u> <br
 GenericMaskCodes5=<b>ABC (åå) (mm) - (000000)</b> vil gi <b>ABC0701-000099</b> <br> <b>(0000)-ZZZ 100 / dd () / XXX</b> vil gi <b>0199-ZZZ/31/XXX</b>
 SeeWikiForAllTeam=Ta en titt på wiki siden for fullstendig liste over alle aktører og deres organisering
 UseACacheDelay=Forsinkelse for skjulested eksport respons i sekunder (0 eller tom for ingen buffer)
-DisableLinkToHelpCenter=Skjul linken <b>&quot;Trenger du hjelp eller støtte&quot;</b> på innloggingssiden
-DisableLinkToHelp=Skjul linken <b>&quot;%s Online hjelp&quot;</b> på venstre meny
+DisableLinkToHelpCenter=Skjul linken <b>"Trenger du hjelp eller støtte"</b> på innloggingssiden
+DisableLinkToHelp=Skjul linken <b>"%s Online hjelp"</b> på venstre meny
 AddCRIfTooLong=Det er ingen automatisk innpakning, så hvis linjen ut av siden på dokumenter fordi for lenge, må du legge deg vognreturer i tekstfeltet.
 ModuleDisabled=Modul deaktivert
 ModuleDisabledSoNoEvent=Modul deaktivert slik hendelse aldri opprettet
@@ -1241,7 +1241,7 @@ WatermarkOnDraft=Vannmerke på utkast
 LDAPFieldPasswordCrypted=Passord kryptert
 LDAPFieldGroupMembers=Gruppemedlemmer
 LDAPFieldGroupMembersExample=Eksempel: uniqueMember
-YouCanUseDOL_DATA_ROOT=Du kan bruke DOL_DATA_ROOT / dolibarr.log for en loggfil i Dolibarr &quot;dokumenter&quot;-katalogen. Du kan angi en annen vei til å lagre denne filen.
+YouCanUseDOL_DATA_ROOT=Du kan bruke DOL_DATA_ROOT / dolibarr.log for en loggfil i Dolibarr "dokumenter"-katalogen. Du kan angi en annen vei til å lagre denne filen.
 DonationsReceiptModel=Mal for donasjonen kvittering
 MailingEMailError=Tilbake e-post (Feil-til) for e-post med feil
 Menus=Menyer
@@ -1297,10 +1297,10 @@ PreviewNotAvailable=Preview niet beschikbaar
 AntiVirusCommand=Het volledige pad naar antivirus commando
 AntiVirusCommandExample=Voorbeeld voor ClamWin: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Voorbeeld voor ClamAV: / usr / bin / clamscan
 AntiVirusParam=Meer parameters op de opdrachtregel
-AntiVirusParamExample=Voorbeeld voor ClamWin: - database = &quot;C: \ Program Files (x86) \ ClamWin \ lib&quot;
+AntiVirusParamExample=Voorbeeld voor ClamWin: - database = "C: \ Program Files (x86) \ ClamWin \ lib"
 IgnoreDuplicateRecords=Negeer fouten van dubbele records (INSERT negeren)
-InstrucToEncodePass=Om wachtwoord gecodeerd in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> door <br> <b>$ Dolibarr_main_db_pass = &quot;breuken: sssss&quot;</b>
-InstrucToClearPass=Om gedecodeerd wachtwoord (duidelijk) in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass = &quot;versleutelde :...&quot;</b> <br> door <br> <b>$ Dolibarr_main_db_pass = &quot;sssss&quot;</b>
+InstrucToEncodePass=Om wachtwoord gecodeerd in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> door <br> <b>$ Dolibarr_main_db_pass = "breuken: sssss"</b>
+InstrucToClearPass=Om gedecodeerd wachtwoord (duidelijk) in de <b>conf.php</b> bestand, het vervangen van de lijn <br> <b>$ Dolibarr_main_db_pass = "versleutelde :..."</b> <br> door <br> <b>$ Dolibarr_main_db_pass = "sssss"</b>
 MAIN_MAIL_EMAIL_TLS=Gebruik TLS (SSL) versleutelen
 SubmitTranslation=Als vertaling voor deze taal niet volledig is of u fouten vindt, kun je dit corrigeren door het bewerken van bestanden in directory <b>Langs / sssss</b> en het forum leggen gewijzigde bestanden op www.dolibarr.org.
 FindPackageFromWebSite=Zoek een pakket dat u wilt functie biedt (bijvoorbeeld op website sssss).
@@ -1315,7 +1315,7 @@ FirstnameNamePosition=Standpunt van voornaam / naam
 Module23Name=Energie
 Module23Desc=Toezicht op het verbruik van energie
 Module100Name=ExternalSite
-Module100Desc=Inclusief een externe website in Dolibarr menu&#39;s en bekijken in een frame Dolibarr
+Module100Desc=Inclusief een externe website in Dolibarr menu's en bekijken in een frame Dolibarr
 Module2000Name=Fckeditor
 Module2000Desc=WYSIWYG-editor
 Module2600Name=WebServices
@@ -1356,7 +1356,7 @@ UnitPriceOfProduct=Netto prijs per eenheid van een product
 TotalPriceAfterRounding=Totale prijs (netto / BTW / incl. BTW) na afronding
 PreviousDumpFiles=Beschikbaar database back-up dumpbestanden
 WeekStartOnDay=Eerste dag van de week
-RunningUpdateProcessMayBeRequired=Het uitvoeren van de upgrade proces lijkt te worden vereist (Programma&#39;s sssss versie verschilt van database versie sssss)
+RunningUpdateProcessMayBeRequired=Het uitvoeren van de upgrade proces lijkt te worden vereist (Programma's sssss versie verschilt van database versie sssss)
 YouMustRunCommandFromCommandLineAfterLoginToUser=U moet deze opdracht uitvoert vanaf de command line na het inloggen op een schaal met de gebruiker <b>sssss.</b>
 YourPHPDoesNotHaveSSLSupport=SSL-functies niet beschikbaar zijn in uw PHP
 DownloadMoreSkins=Meer skins te downloaden
@@ -1399,7 +1399,7 @@ SubmitTranslation=Als vertaling voor deze taal niet volledig is of u fouten vind
 FindPackageFromWebSite=Zoek een pakket dat u wilt functie biedt (bijvoorbeeld op website sssss).
 FirstnameNamePosition=Standpunt van voornaam / naam
 Module100Name=ExternalSite
-Module100Desc=Inclusief een externe website in Dolibarr menu&#39;s en bekijken in een frame Dolibarr
+Module100Desc=Inclusief een externe website in Dolibarr menu's en bekijken in een frame Dolibarr
 Module10000Desc=Module voor een online betaling per credit card pagina met Paybox bieden
 Permission13=Unvalidate facturen
 Permission38=Export producten
@@ -1433,11 +1433,11 @@ PreviewNotAvailable=Podgląd niedostępny
 AntiVirusCommand=Pełna ścieżka do polecenia antivirus
 AntiVirusCommandExample=ClamWin przykład: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> ClamAV przykład: / usr / bin / clamscan
 AntiVirusParam=Więcej parametrów w linii poleceń
-AntiVirusParamExample=ClamWin przykład: - bazy danych = &quot;C: \ Program Files (x86) \ lib ClamWin \&quot;
+AntiVirusParamExample=ClamWin przykład: - bazy danych = "C: \ Program Files (x86) \ lib ClamWin \"
 YouCanDownloadBackupFile=Wygenerowane pliki mogą być teraz pobierane
 IgnoreDuplicateRecords=Ignoruj błędy zduplikowanych rekordów (INSERT IGNORE)
-InstrucToEncodePass=Się, że hasło zakodowane w <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = &quot;zaszyfrowane: sssss&quot;</b>
-InstrucToClearPass=Do hasła zdekodowane (jasne) do <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass = &quot;zaszyfrowane :...&quot;</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = &quot;sssss&quot;</b>
+InstrucToEncodePass=Się, że hasło zakodowane w <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = "zaszyfrowane: sssss"</b>
+InstrucToClearPass=Do hasła zdekodowane (jasne) do <b>conf.php</b> pliku, zamienić linię <br> <b>$ Dolibarr_main_db_pass = "zaszyfrowane :..."</b> <br> przez <br> <b>$ Dolibarr_main_db_pass = "sssss"</b>
 MAIN_MAIL_EMAIL_TLS=Użyj TLS (SSL) szyfrowania
 SubmitTranslation=Jeżeli tłumaczenie na ten język nie jest kompletny lub znajdują się błędy, można rozwiązać poprzez edycję plików w katalogu <b>langs / sssss</b> i złożyć zmodyfikowane pliki na www.dolibarr.org forum.
 FindPackageFromWebSite=Znaleźć pakiet, który zapewnia funkcję chcesz (np. na sssss stronie internetowej).
@@ -1544,10 +1544,10 @@ PreviewNotAvailable=Visualização não disponível
 AntiVirusCommand=Caminho completo para o comando de antivírus
 AntiVirusCommandExample=Exemplo de Mexilhão: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Exemplo de Mexilhão: / usr / bin / clamscan
 AntiVirusParam=Mais informações sobre parâmetros de linha de comando
-AntiVirusParamExample=Exemplo de Mexilhão: - database = &quot;C: \ Program Files (x86) \ lib ClamWin \&quot;
+AntiVirusParamExample=Exemplo de Mexilhão: - database = "C: \ Program Files (x86) \ lib ClamWin \"
 IgnoreDuplicateRecords=Ignore os erros de registros duplicados (INSERT IGNORE)
-InstrucToEncodePass=Para ter uma senha codificada no <b>conf.php</b> arquivo, substitua a linha <br> <b>=&quot;...&quot; Dolibarr_main_db_pass $</b> <br> por <br> <b>dolibarr_main_db_pass $ = &quot;crypted: %s&quot;</b>
-InstrucToClearPass=Para ter a senha decodificado (transparente) para o <b>conf.php</b> arquivo, substitua a linha <br> <b>dolibarr_main_db_pass $ = crypted :...&quot; &quot;</b> <br> por <br> <b>dolibarr_main_db_pass $ = &quot;%s&quot;</b>
+InstrucToEncodePass=Para ter uma senha codificada no <b>conf.php</b> arquivo, substitua a linha <br> <b>="..." Dolibarr_main_db_pass $</b> <br> por <br> <b>dolibarr_main_db_pass $ = "crypted: %s"</b>
+InstrucToClearPass=Para ter a senha decodificado (transparente) para o <b>conf.php</b> arquivo, substitua a linha <br> <b>dolibarr_main_db_pass $ = crypted :..." "</b> <br> por <br> <b>dolibarr_main_db_pass $ = "%s"</b>
 MAIN_MAIL_EMAIL_TLS=Use TLS (SSL) criptografa
 SubmitTranslation=Se a tradução para esse idioma não esteja completa ou você encontrar erros, você pode corrigir isso, a edição de arquivos em <b>langs</b> diretório <b>/ %s</b> e enviar arquivos modificados www.dolibarr.org fórum.
 FindPackageFromWebSite=Encontre um pacote que fornece funcionalidade que você quiser (por exemplo, %s site).
@@ -1614,7 +1614,7 @@ UsersSetup=Usuários de configuração do módulo
 UserMailRequired=Email exigidos para criar um novo usuário
 ModelModules=Documentos modelos
 DocumentModelOdt=Gere documentos de OpenDocuments templates (arquivos. ODT para o OpenOffice, KOffice, TextEdit ,...)
-WatermarkOnDraft=Marca d&#39;água sobre o projecto de documento
+WatermarkOnDraft=Marca d'água sobre o projecto de documento
 LDAPFieldGroupMembers=Os membros do grupo
 LDAPFieldGroupMembersExample=Exemplo: uniqueMember
 DonationsReceiptModel=Modelo de recibo de doação
@@ -1651,11 +1651,11 @@ PreviewNotAvailable=Предварительный нет
 AntiVirusCommand=Полный путь к антивирусной команду
 AntiVirusCommandExample=Пример для ClamWin: C: \ Program Files (x86) \ ClamWin \ Bin \ clamscan.exe <br> Пример для ClamAV: / USR / BIN / clamscan
 AntiVirusParam=Дополнительные параметры командной строки
-AntiVirusParamExample=Пример для ClamWin: - база данных = &quot;C: \ Program Files (x86) \ ClamWin \ Библиотека&quot;
+AntiVirusParamExample=Пример для ClamWin: - база данных = "C: \ Program Files (x86) \ ClamWin \ Библиотека"
 YouCanDownloadBackupFile=Генерируемые файлы теперь могут быть загружены
 IgnoreDuplicateRecords=Игнорировать ошибки дублирующихся записей (INSERT IGNORE)
-InstrucToEncodePass=Чтобы иметь пароль кодируется в <b>conf.php</b> файл, замените строку <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> по <br> <b>Dolibarr_main_db_pass $ = &quot;Кодировка: %s&quot;</b>
-InstrucToClearPass=Чтобы декодировать пароль (прозрачный) в <b>conf.php</b> файл, замените строку <br> <b>Dolibarr_main_db_pass $ = &quot;Кодировка :...&quot;</b> <br> по <br> <b>Dolibarr_main_db_pass $ = &quot;%s&quot;</b>
+InstrucToEncodePass=Чтобы иметь пароль кодируется в <b>conf.php</b> файл, замените строку <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> по <br> <b>Dolibarr_main_db_pass $ = "Кодировка: %s"</b>
+InstrucToClearPass=Чтобы декодировать пароль (прозрачный) в <b>conf.php</b> файл, замените строку <br> <b>Dolibarr_main_db_pass $ = "Кодировка :..."</b> <br> по <br> <b>Dolibarr_main_db_pass $ = "%s"</b>
 MAIN_MAIL_EMAIL_TLS=Использовать TLS (SSL) шифрует
 SubmitTranslation=Если перевод на этот язык не является полным, или вы нашли ошибки, вы можете исправить это путем редактирования файлов в каталоге <b>Лангс / %s</b> и представить измененные файлы на www.dolibarr.org форуме.
 FindPackageFromWebSite=Найти пакет, который обеспечивает функции вы хотите (например, на веб-сайте %s).

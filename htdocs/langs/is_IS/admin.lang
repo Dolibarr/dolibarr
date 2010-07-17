@@ -77,7 +77,7 @@ UseAvToScanUploadedFiles=Nota andstæðingur-veira grannskoða skrár
 AntiVirusCommand=Full slóð að antivirus stjórn
 AntiVirusCommandExample=Dæmi um Samloka: c: \ Program Files (x86) \ Samloka \ kassi \ clamscan.exe <br> Dæmi um Samloka: / usr / bin / clamscan
 AntiVirusParam=Fleiri breytur á lína
-AntiVirusParamExample=Dæmi um Samloka: - gagnasafn = &quot;C: \ Program Files (x86) \ Samloka \ lib&quot;
+AntiVirusParamExample=Dæmi um Samloka: - gagnasafn = "C: \ Program Files (x86) \ Samloka \ lib"
 ComptaSetup=Bókhald mát skipulag
 UserSetup=Stjórn notanda skipulag
 MenuSetup=Stjórn Valmynd's skipulag
@@ -191,8 +191,8 @@ Security=Öryggi
 Passwords=Lykilorð
 DoNotStoreClearPassword=Gera ekki geyma skýrar lykilorð í gagnagrunninum en geyma aðeins dulkóðuð gildi (Virkja mælt með)
 MainDbPasswordFileConfEncrypted=Gagnasafn lykilorð dulkóðuð í conf.php (Virkja mælt með)
-InstrucToEncodePass=Til að fá lykilorðið kóðuð í <b>conf.php</b> skrá, skipta um línu <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> eftir <br> <b>$ Dolibarr_main_db_pass = &quot;crypted: %s &quot;</b>
-InstrucToClearPass=Til að fá lykilorð lesa úr leyniletri (ljóst) í <b>conf.php</b> skrá, skipta um línu <br> <b>$ Dolibarr_main_db_pass = &quot;crypted :...&quot;</b> <br> eftir <br> <b>$ Dolibarr_main_db_pass = &quot; %s &quot;</b>
+InstrucToEncodePass=Til að fá lykilorðið kóðuð í <b>conf.php</b> skrá, skipta um línu <br> <b>$ Dolibarr_main_db_pass ="..."</b> <br> eftir <br> <b>$ Dolibarr_main_db_pass = "crypted: %s "</b>
+InstrucToClearPass=Til að fá lykilorð lesa úr leyniletri (ljóst) í <b>conf.php</b> skrá, skipta um línu <br> <b>$ Dolibarr_main_db_pass = "crypted :..."</b> <br> eftir <br> <b>$ Dolibarr_main_db_pass = " %s "</b>
 ProtectAndEncryptPdfFiles=Verndun mynda pdf skrá (Virkja EKKI mælt, brýtur massi pdf-kynslóð)
 ProtectAndEncryptPdfFilesDesc=Verndun á PDF skjal heldur laus við að lesa og prenta með einhverju PDF vafra. Hins vegar útgáfa og afritun er ekki hægt lengur. Athugaðu að nota þennan eiginleika að byggja upp alþjóðlegt cumulated Pdf ekki að vinna (eins og ógreiddra reikninga).
 Feature=Lögun
@@ -266,8 +266,8 @@ UMask=UMask breytu fyrir nýja skrá á Unix / Linux / BSD skrá kerfi.
 UMaskExplanation=Þessi stika gerir þér kleift að tilgreina heimildir sjálfgefið á skrá skapa við Dolibarr á miðlara (á senda til dæmis). <br> Það hlýtur að vera octal gildi (til dæmis, 0666 þýðir að lesa og skrifa fyrir alla). <br> Þessi stika er gagnslaus á Gluggakista framreiðslumaður.
 SeeWikiForAllTeam=Taka a líta á the wiki síðuna fyrir fullan lista af öllum aðilum og samtökum þeirra
 UseACacheDelay=Töf á flýtiminni útflutningur svar í sekúndum (0 eða tómt fyrir ekkert skyndiminni)
-DisableLinkToHelpCenter=Fela tengilinn <b>&quot;Vantar þig aðstoð eða stuðning&quot;</b> á innskráningarsíðu
-DisableLinkToHelp=Fela tengilinn <b>&quot; %s  Online hjálp&quot;</b> á vinstri valmynd
+DisableLinkToHelpCenter=Fela tengilinn <b>"Vantar þig aðstoð eða stuðning"</b> á innskráningarsíðu
+DisableLinkToHelp=Fela tengilinn <b>" %s  Online hjálp"</b> á vinstri valmynd
 AddCRIfTooLong=Það er engin sjálfvirk umbúðir, þannig að ef lína er út af síðu á skjal vegna þess að of langur, þú verður að bæta þig flutning aftur í reit.
 ModuleDisabled=Module fatlaðra
 ModuleDisabledSoNoEvent=Module fatlaður svo atburður aldrei búið
@@ -605,7 +605,7 @@ VATManagement=VSK Stjórn
 VATIsUsedDesc=VSK-hlutfall sjálfgefið þegar þú býrð til viðskiptavina, reikninga, pantanir o.þ.h. fylgja virku staðall reglu: <br> Ef seljandi er með VSK, þá VSK sjálfgefið = 0. Lok reglu. <br> Ef (selja country = kaupa land), svo VSK sjálfgefið = VSK af vörunni í að selja landið. Lok reglu. <br> Ef seljanda og kaupanda í Evrópubandalagið og vörur eru seldar með nýjum flutningatæki (bíll, skip, flugvél) er sjálfgefna VSK = 0 (VSK ætti að vera greiddur af kaupanda við customoffice lands síns og ekki á seljandi ). Lok reglu. <br> Ef seljanda og kaupanda í Evrópubandalagið og seldum vörum með öðrum hætti en nýr flutningatæki, svo VSK sjálfgefið = VSK af vörunni seld. Lok reglu. <br> Annars fyrirhugaðar sjálfgefið VSK = 1. Lok reglu.
 VATIsNotUsedDesc=Sjálfgefið er fyrirhuguð VSK er 0 sem hægt er að nota til tilvikum eins og samtökum, einstaklingum OU lítil fyrirtæki.
 VATIsUsedExampleFR=Í Frakklandi, þá þýðir það fyrirtæki eða stofnanir sem hafa raunveruleg reikningsár kerfi (Simplified raunverulegur eða venjulegt alvöru). Kerfi þar sem VSK er lýst.
-VATIsNotUsedExampleFR=Í Frakklandi, það þýðir samtök sem eru ekki VSK lýst eða fyrirtæki, stofnanir eða frjálslynda starfsstéttum sem hafa valið ör framtak reikningsár kerfi (VSK í kosningaréttur) og greidd kosningaréttur VSK án VSK yfirlýsingu. Þetta val mun birta tilvísunarnúmer &quot;Non viðeigandi VSK - list-293B af CGI&quot; á reikningum.
+VATIsNotUsedExampleFR=Í Frakklandi, það þýðir samtök sem eru ekki VSK lýst eða fyrirtæki, stofnanir eða frjálslynda starfsstéttum sem hafa valið ör framtak reikningsár kerfi (VSK í kosningaréttur) og greidd kosningaréttur VSK án VSK yfirlýsingu. Þetta val mun birta tilvísunarnúmer "Non viðeigandi VSK - list-293B af CGI" á reikningum.
 LocalTax1ManagementES=RE Stjórn
 LocalTax1IsUsedDescES=RE hlutfall sjálfgefið þegar þú býrð til viðskiptavina, reikninga, pantanir o.þ.h. fylgja virku staðall reglu: <br> Ef Te kaupanda er ekki efni til OR OR sjálfgefið = 0. Lok reglu. <br> Ef kaupandi er tekið til OR þá RE sjálfgefið. Lok reglu. <br>
 LocalTax1IsNotUsedDescES=Sjálfgefið er lagt til OR er 0. Lok reglu.
@@ -692,8 +692,8 @@ DoNotSuggestPaymentMode=Ekki benda ekki til
 NoActiveBankAccountDefined=Engin virk bankareikning skilgreind
 OwnerOfBankAccount=Eigandi bankareikning %s 
 BankModuleNotActive=Bankareikninga mát ekki virkt
-ShowBugTrackLink=Sýna tengilinn &quot;Report galla&quot;
-ShowWorkBoard=Sýning &quot;vinnubekkur&quot; á heimasíðu
+ShowBugTrackLink=Sýna tengilinn "Report galla"
+ShowWorkBoard=Sýning "vinnubekkur" á heimasíðu
 Alerts=Alerts
 Delays=Tafir
 DelayBeforeWarning=Töf áður viðvörun
@@ -752,7 +752,7 @@ MAIN_ROUNDING_RULE_TOT=Stærð lokið máli mínu svið (til Sjaldgæf löndum �
 UnitPriceOfProduct=Hrein einingaverð vöru
 TotalPriceAfterRounding=Samtals verð (net / VSK / incl skatt) eftir lokið máli mínu
 ParameterActiveForNextInputOnly=Breytu gildi fyrir næsta inntak aðeins
-NoEventOrNoAuditSetup=Nei öryggi atburður hefur verið skráð enn. Þetta getur verið eðlilegt ef endurskoðun hefur ekki verið virkt á &quot;skipulag - öryggi - endurskoðun&quot; síðunni.
+NoEventOrNoAuditSetup=Nei öryggi atburður hefur verið skráð enn. Þetta getur verið eðlilegt ef endurskoðun hefur ekki verið virkt á "skipulag - öryggi - endurskoðun" síðunni.
 NoEventFoundWithCriteria=Nei öryggi atburður hefur fundist um slíka viðmiðun leit.
 SeeLocalSendMailSetup=Sjá sveitarfélaga sendmail uppsetningu
 BackupDesc=Til að ljúka öryggisafrit af Dolibarr, verður þú að:
@@ -781,15 +781,15 @@ GeneratePassword=Tillaga að mynda lykilorð
 RuleForGeneratedPasswords=Regla til að mynda lagt lykilorð eða sannprófa lykilorð
 DoNotSuggest=Ekki benda allir lykilorð
 EncryptedPasswordInDatabase=Til að leyfa dulkóðun á lykilorð í gagnagrunninum
-DisableForgetPasswordLinkOnLogonPage=Ekki sýna á tengilinn &quot;Gleymt aðgangsorð&quot; á innskráningarsíðu
+DisableForgetPasswordLinkOnLogonPage=Ekki sýna á tengilinn "Gleymt aðgangsorð" á innskráningarsíðu
 UsersSetup=Notendur mát skipulag
 UserMailRequired=Netfang sem þarf til að búa til nýjan notanda
 CompanySetup=Stofnanir mát skipulag
 CompanyCodeChecker=Eining til þriðja aðila kóða kynslóð og eftirlit (viðskiptavini eða birgja)
 AccountCodeManager=Eining fyrir bókhalds kóða kynslóð (viðskiptavina eða birgja)
-ModuleCompanyCodeAquarium=Fara aftur á bókhalds kóða byggt af &quot;401&quot; á eftir þriðja aðila birgi kóða fyrir bókhalds birgir kóða og &quot;411&quot; á eftir þriðja aðila viðskiptavinur minn fyrir bókhalds viðskiptavinur númer.
+ModuleCompanyCodeAquarium=Fara aftur á bókhalds kóða byggt af "401" á eftir þriðja aðila birgi kóða fyrir bókhalds birgir kóða og "411" á eftir þriðja aðila viðskiptavinur minn fyrir bókhalds viðskiptavinur númer.
 ModuleCompanyCodePanicum=Return tómt bókhalds-númer.
-ModuleCompanyCodeDigitaria=Bókhalds kóða ráðast á þriðja aðila kóða. Kóðinn er samsett af eðli &quot;C&quot; í efstu stöðu eftir fyrstu 5 stafina þriðja aðila kóðann.
+ModuleCompanyCodeDigitaria=Bókhalds kóða ráðast á þriðja aðila kóða. Kóðinn er samsett af eðli "C" í efstu stöðu eftir fyrstu 5 stafina þriðja aðila kóðann.
 UseNotifications=Notaðu tilkynningar
 NotificationsDesc=Tölvupóst tilkynningar leyfir þér að hljóður senda sjálfvirkar póstur, fyrir sumir Dolibarr viðburðir, til þriðja aðila (viðskiptavini eða birgja) sem er stillt á. Val á virkum tilkynningu og markmið tengiliði er einn þriðja aðila á sama tíma.
 ModelModules=Skjöl sniðmát
@@ -1015,7 +1015,7 @@ SyslogFacility=Aðstaða
 SyslogLevel=Stig
 SyslogSimpleFile=Skrá
 SyslogFilename=Skráarnafn og slóði
-YouCanUseDOL_DATA_ROOT=Þú getur notað DOL_DATA_ROOT / dolibarr.log fyrir annálinn í Dolibarr &quot;skjöl&quot; skrá. Þú getur stillt mismunandi leið til að geyma þessa skrá.
+YouCanUseDOL_DATA_ROOT=Þú getur notað DOL_DATA_ROOT / dolibarr.log fyrir annálinn í Dolibarr "skjöl" skrá. Þú getur stillt mismunandi leið til að geyma þessa skrá.
 ErrorUnknownSyslogConstant=Constant %s  er ekki þekktur skrifað fasti
 DonationsSetup=Safnast mát skipulag
 DonationsReceiptModel=Snið af málefnið berst
@@ -1051,7 +1051,7 @@ DeliveriesOrderAbility=Stuðningur vörur afgreiðsla greiðslukvittun
 ActivateFCKeditor=Virkja FCKeditor fyrir:
 FCKeditorForUsers=WYSIWIG sköpun / útgáfa af lýsingu notanda og skrifaðu
 FCKeditorForCompany=WYSIWIG sköpun / útgáfa af lýsingu companie og athugaðu
-FCKeditorForProduct=s WYSIWIG sköpun / útgáfa af vörum / þjónustu &quot;lýsingu og athugaðu
+FCKeditorForProduct=s WYSIWIG sköpun / útgáfa af vörum / þjónustu "lýsingu og athugaðu
 FCKeditorForMembers=WYSIWIG sköpun / útgáfa af lýsingu meðlimur og athugaðu
 FCKeditorForProductDetails=WYSIWIG sköpun / útgáfa af vörum upplýsingar línur fyrir alla aðila (tillögur, pantanir, reikninga, etc ..). <font class="warning">Viðvörun: Þegar þessi kostur fyrir þessu tilfelli er alvarlega ekki recommanded eins og það getur skapað vandamál með sértákn og blaðsíða myndun við að setja upp PDF skrá.</font>
 FCKeditorForProductDetailsPerso=WYSIWIG sköpun / útgáfa af vörum persónulega upplýsingar línur fyrir alla aðila (tillögur, pantanir, reikninga, etc ..)
