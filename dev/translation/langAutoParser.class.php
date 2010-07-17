@@ -68,7 +68,7 @@ class langAutoParser {
 					if (preg_match('/^en/i',$dirtmp['name']))  continue;	// We discard en_* languages
 					if (preg_match('/^fr/i',$dirtmp['name']))  continue;	// We discard fr_* languages
 					if (preg_match('/^es/i',$dirtmp['name']))  continue;	// We discard es_* languages
-					if (preg_match('/es_CA/i',$dirtmp['name']))  continue;	// We discard es_CA language
+					if (preg_match('/ca_ES/i',$dirtmp['name']))  continue;	// We discard es_CA language
 					if (preg_match('/pt_BR/i',$dirtmp['name']))  continue;	// We discard pt_BR language
 					if (preg_match('/^\./i',$dirtmp['name']))  continue;	// We discard files .*
 					if (preg_match('/^CVS/i',$dirtmp['name']))  continue;	// We discard CVS
