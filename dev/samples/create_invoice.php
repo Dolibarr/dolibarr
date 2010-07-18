@@ -69,7 +69,7 @@ $db->begin();
 
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
-// Create order object
+// Create invoice object
 $obj = new Facture($db);
 
 $obj->ref            = 'ABCDE';
@@ -87,7 +87,7 @@ $line1->total_tva=10;
 $line1->total_ttc=110;
 $obj->lignes[]=$line1;
 
-// Create order
+// Create invoice
 $idobject=$obj->create($user);
 if ($idobject > 0)
 {
