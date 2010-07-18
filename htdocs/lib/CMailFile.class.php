@@ -334,7 +334,7 @@ class CMailFile
 				{
 					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
 
-					$bounce = '';
+					$bounce = '';	// By default
 					if ($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)
 					{
 						// le return-path dans les header ne fonctionne pas avec tous les MTA
@@ -347,7 +347,8 @@ class CMailFile
 
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
-					$res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
+					if (! empty($bounce)) $res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
+					else $res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers);
 
 					if (! $res)
 					{
