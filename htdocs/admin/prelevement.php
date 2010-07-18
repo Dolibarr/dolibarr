@@ -126,7 +126,7 @@ if ($conf->global->PRELEVEMENT_USER > 0)
 {
 	$cuser = new User($db);
 	$cuser->fetch($conf->global->PRELEVEMENT_USER);
-	print $cuser->fullname;
+	print $cuser->getFullName($langs);
 }
 else
 {

@@ -120,7 +120,7 @@ class CommActionRapport
 			$pdf->SetTitle($outputlangs->convToOutputCharset($this->title));
 			$pdf->SetSubject($outputlangs->convToOutputCharset($this->subject));
 			$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-			$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+			$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 			$pdf->SetKeywords($outputlangs->convToOutputCharset($this->title." ".$this->subject));
 
 			$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right

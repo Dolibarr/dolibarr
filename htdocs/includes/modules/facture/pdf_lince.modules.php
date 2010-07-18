@@ -185,7 +185,7 @@ class pdf_lince extends ModelePDFFactures
 				$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($fac->ref)." ".$outputlangs->transnoentities("Invoice"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
@@ -286,16 +286,16 @@ class pdf_lince extends ModelePDFFactures
 					$tvaligne=$fac->lignes[$i]->total_tva;
 					$localtax1ligne=$fac->lignes[$i]->total_localtax1;
 					$localtax2ligne=$fac->lignes[$i]->total_localtax2;
-					
+
 					if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
 					if ($fac->remise_percent) $localtax1ligne-=($localtax1ligne*$fac->remise_percent)/100;
 					if ($fac->remise_percent) $localtax2ligne-=($localtax2ligne*$fac->remise_percent)/100;
-					
-					
+
+
 					$vatrate=(string) $fac->lignes[$i]->tva_tx;
 					$localtax1rate=(string) $fac->lignes[$i]->localtax1_tx;
 					$localtax2rate=(string) $fac->lignes[$i]->localtax2_tx;
-					
+
 					if (($fac->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
@@ -763,7 +763,7 @@ class pdf_lince extends ModelePDFFactures
 					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
 				}
-				
+
 				// Total LocalTax2
 				if ($conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax2on' && $object->total_localtax2>0)
 				{
@@ -782,10 +782,10 @@ class pdf_lince extends ModelePDFFactures
 					if ($tvakey>0)    // On affiche pas taux 0
 					{
 						//$this->atleastoneratenotnull++;
-		
+
 						$index++;
 						$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-		
+
 						$tvacompl='';
 						if (preg_match('/\*/',$tvakey))
 						{
@@ -795,22 +795,22 @@ class pdf_lince extends ModelePDFFactures
 						$totalvat =$outputlangs->transnoentities("TotalLT1ES").' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-		
+
 						$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 					}
 				}
-				
+
 				//Local tax 2
 				foreach( $this->localtax2 as $tvakey => $tvaval )
 				{
 					if ($tvakey>0)    // On affiche pas taux 0
 					{
 					//$this->atleastoneratenotnull++;
-		
+
 						$index++;
 						$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-		
+
 						$tvacompl='';
 						if (preg_match('/\*/',$tvakey))
 						{
@@ -820,11 +820,11 @@ class pdf_lince extends ModelePDFFactures
 						$totalvat =$outputlangs->transnoentities("TotalLT2ES").' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-	
+
 						$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);	
+						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 					}
-				}	
+				}
 			}
 		}
 

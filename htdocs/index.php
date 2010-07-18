@@ -84,7 +84,7 @@ if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Informations").'</td></tr>';
 print '<tr '.$bc[false].'>';
-$userstring=$user->fullname;
+$userstring=$user->getFullName($langs);
 print '<td nowrap>'.$langs->trans("User").'</td><td>'.$userstring.'</td></tr>';
 print '<tr '.$bc[true].'>';
 print '<td nowrap>'.$langs->trans("PreviousConnexion").'</td><td>';

@@ -398,7 +398,7 @@ class InterfaceActionsAuto
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("MemberValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("MemberValidatedInDolibarr",$object->ref);
-            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -417,7 +417,7 @@ class InterfaceActionsAuto
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
-            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
             $object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
             $object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
@@ -441,7 +441,7 @@ class InterfaceActionsAuto
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
-            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -459,7 +459,7 @@ class InterfaceActionsAuto
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
-            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 

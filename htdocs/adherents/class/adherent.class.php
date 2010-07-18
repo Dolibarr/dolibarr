@@ -544,8 +544,6 @@ class Adherent extends CommonObject
 					}
 				}
 
-				$this->fullname=trim($this->nom.' '.$this->prenom);
-
 				if (! $error && ! $notrigger)
 				{
 					$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
@@ -973,7 +971,6 @@ class Adherent extends CommonObject
 				$this->civilite_id    = $obj->civilite;
 				$this->prenom         = $obj->prenom;
 				$this->nom            = $obj->nom;
-				$this->fullname       = trim($obj->nom.' '.$obj->prenom);
 				$this->login          = $obj->login;
 				$this->pass           = $obj->pass;
 				$this->societe        = $obj->societe;
@@ -1709,22 +1706,41 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *    \brief      Return full name of member
-	 *    \return     string      	Full name
+	 *    	\brief      Return full name (civility+' '+name+' '+lastname)
+	 *		\param		langs			Language object for translation of civility
+	 *		\param		option			0=No option, 1=Add civility
+	 * 		\param		nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+	 * 		\return		string			String with full name
 	 */
-	function getFullname($outputlangs)
+	function getFullName($langs,$option=0,$nameorder=-1)
 	{
 		global $conf;
 
-		if ($this->nom && $this->prenom)
+		$ret='';
+		if ($option && $this->civilite_id)
 		{
-			if (! empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) return $this->nom.' '.$this->prenom;
-			else return $this->prenom.' '.$this->nom;
+			if ($langs->transnoentitiesnoconv("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civilite_id).' ';
+			else $ret.=$this->civilite_id.' ';
 		}
-		if ($this->nom)    return $this->nom;
-		if ($this->prenom) return $this->prenom;
-		return '';
+
+		// If order not defined, we use the setup
+		if ($nameorder < 0) $nameorder=(! $conf->global->MAIN_FIRSTNAME_NAME_POSITION);
+
+		if ($nameorder)
+		{
+			if ($this->prenom) $ret.=$this->prenom;
+			if ($this->prenom && $this->nom) $ret.=' ';
+			if ($this->nom)      $ret.=$this->nom;
+		}
+		else
+		{
+			if ($this->nom)      $ret.=$this->nom;
+			if ($this->prenom && $this->nom) $ret.=' ';
+			if ($this->prenom) $ret.=$this->prenom;
+		}
+		return trim($ret);
 	}
+
 
 	/**
 	 *    \brief      Retourne le libelle de civilite du contact
@@ -1949,7 +1965,6 @@ class Adherent extends CommonObject
 		$this->civilite_id = 0;
 		$this->nom = 'DOLIBARR';
 		$this->prenom = 'SPECIMEN';
-		$this->fullname=trim($this->nom.' '.$this->prenom);
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
 		$this->societe = 'Societe ABC';
@@ -2016,8 +2031,10 @@ class Adherent extends CommonObject
 		// Object classes
 		$info["objectclass"]=explode(',',$conf->global->LDAP_MEMBER_OBJECT_CLASS);
 
+		$this->fullname=$this->getFullName($langs);
+
 		// Member
-		if ($this->fullname  && $conf->global->LDAP_MEMBER_FIELD_FULLNAME) $info[$conf->global->LDAP_MEMBER_FIELD_FULLNAME] = $this->fullname;
+		if ($this->fullname && $conf->global->LDAP_MEMBER_FIELD_FULLNAME) $info[$conf->global->LDAP_MEMBER_FIELD_FULLNAME] = $this->fullname;
 		if ($this->nom && $conf->global->LDAP_MEMBER_FIELD_NAME)         $info[$conf->global->LDAP_MEMBER_FIELD_NAME] = $this->nom;
 		if ($this->prenom && $conf->global->LDAP_MEMBER_FIELD_FIRSTNAME) $info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->prenom;
 		if ($this->login && $conf->global->LDAP_MEMBER_FIELD_LOGIN)      $info[$conf->global->LDAP_MEMBER_FIELD_LOGIN] = $this->login;

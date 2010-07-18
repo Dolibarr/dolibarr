@@ -169,7 +169,6 @@ class User extends CommonObject
 				$this->nom = $obj->name;
 				$this->prenom = $obj->firstname;
 
-				$this->fullname = trim($this->prenom . ' ' . $this->nom);
 				$this->login = $obj->login;
 				$this->pass_indatabase = $obj->pass;
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
@@ -973,7 +972,6 @@ class User extends CommonObject
 		// Clean parameters
 		$this->nom          = trim($this->nom);
 		$this->prenom       = trim($this->prenom);
-		$this->fullname     = $this->prenom." ".$this->nom;
 		$this->login        = trim($this->login);
 		$this->pass         = trim($this->pass);
 		$this->office_phone = trim($this->office_phone);
@@ -1325,7 +1323,7 @@ class User extends CommonObject
 			$url = "http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT;
 			$mesg.= 'Click here to go to Dolibarr: '.$url."\n\n";
 			$mesg.= "--\n";
-			$mesg.= $user->fullname;	// Username that make then sending
+			$mesg.= $user->getFullName($langs);	// Username that make then sending
 		}
 		else
 		{
@@ -1464,10 +1462,11 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
-	 *		\param		option			Sur quoi pointe le lien
-	 *		\return		string			Chaine avec URL
+	 *    	\brief      Return a link to the user card (with optionnaly the picto)
+	 *		\param		withpicto		Include picto in link
+	 *		\param		option			On what the link point to
+	 *		\return		string			String with URL
+	 * 		\remarks	Use this->id,this->nom, this->prenom
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
@@ -1485,7 +1484,7 @@ class User extends CommonObject
 		}
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin.' ');
-		$result.=$lien.$this->nom.' '.$this->prenom.$lienfin;
+		$result.=$lien.$this->getFullName($langs).$lienfin;
 		return $result;
 	}
 
@@ -1514,6 +1513,44 @@ class User extends CommonObject
 		$result.=$lien.$this->login.$lienfin;
 		return $result;
 	}
+
+	/**
+	 *    	\brief      Return full name (civility+' '+name+' '+lastname)
+	 *		\param		langs			Language object for translation of civility
+	 *		\param		option			0=No option, 1=Add civility
+	 * 		\param		nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+	 * 		\return		string			String with full name
+	 */
+	function getFullName($langs,$option=0,$nameorder=-1)
+	{
+		global $conf;
+
+		$ret='';
+		if ($option && $this->civilite_id)
+		{
+			if ($langs->transnoentitiesnoconv("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civilite_id).' ';
+			else $ret.=$this->civilite_id.' ';
+		}
+
+		// If order not defined, we use the setup
+		if ($nameorder < 0) $nameorder=(! $conf->global->MAIN_FIRSTNAME_NAME_POSITION);
+
+		if ($nameorder)
+		{
+			if ($this->prenom) $ret.=$this->prenom;
+			if ($this->prenom && $this->nom) $ret.=' ';
+			if ($this->nom)      $ret.=$this->nom;
+		}
+		else
+		{
+			if ($this->nom)      $ret.=$this->nom;
+			if ($this->prenom && $this->nom) $ret.=' ';
+			if ($this->prenom) $ret.=$this->prenom;
+		}
+
+		return trim($ret);
+	}
+
 
 	/**
 	 *    \brief      Retourne le libelle du statut d'un user (actif, inactif)
@@ -1607,8 +1644,10 @@ class User extends CommonObject
 		// Object classes
 		$info["objectclass"]=explode(',',$conf->global->LDAP_USER_OBJECT_CLASS);
 
+		$this->fullname=$this->getFullName($langs);
+
 		// Champs
-		if ($this->fullname  && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
+		if ($this->fullname && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
 		if ($this->nom && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;
 		if ($this->prenom && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->prenom;
 		if ($this->login && $conf->global->LDAP_FIELD_LOGIN) $info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
@@ -1677,7 +1716,6 @@ class User extends CommonObject
 
 		$this->nom='DOLIBARR';
 		$this->prenom='SPECIMEN';
-		$this->fullname=trim($this->prenom.' '.$this->nom);
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
 		$this->office_phone='0999999999';

@@ -183,7 +183,7 @@ if ($_GET["id"])
 
 			print '<tr><td width="20%">Date Transmission / Par</td><td>';
 			print dol_print_date($bon->date_trans,'dayhour');
-			print ' par '.$muser->fullname.'</td></tr>';
+			print ' / '.$muser->getFullName($langs).'</td></tr>';
 			print '<tr><td width="20%">Methode Transmission</td><td>';
 			print $bon->methodes_trans[$bon->method_trans];
 			print '</td></tr>';

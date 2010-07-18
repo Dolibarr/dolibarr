@@ -3426,7 +3426,7 @@ else
 				$formmail = new FormMail($db);
 				$formmail->fromtype = 'user';
 				$formmail->fromid   = $user->id;
-				$formmail->fromname = $user->fullname;
+				$formmail->fromname = $user->getFullName($langs);
 				$formmail->frommail = $user->email;
 				$formmail->withfrom=1;
 				$formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];

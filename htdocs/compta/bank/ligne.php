@@ -246,7 +246,7 @@ if ($result)
 			$author=new User($db);
 			$author->fetch($objp->fk_user_author);
 			print '<td colspan="4"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$author->id.'">';
-			print img_object($langs->trans("ShowUser"),'user').' '.$author->fullname.'</a></td>';
+			print img_object($langs->trans("ShowUser"),'user').' '.$author->getFullName($langs).'</a></td>';
 		}
 		else
 		{

@@ -56,7 +56,7 @@ class pdf_quevedo extends ModelePDFCommandes
 
 		$this->db = $db;
 		$this->name = "quevedo";
-		$this->description =$langs->trans('PDFQuevedoDescription'); 
+		$this->description =$langs->trans('PDFQuevedoDescription');
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -180,7 +180,7 @@ class pdf_quevedo extends ModelePDFCommandes
 				$pdf->SetTitle($outputlangs->convToOutputCharset($com->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Order"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($com->ref)." ".$outputlangs->transnoentities("Order"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
@@ -279,14 +279,14 @@ class pdf_quevedo extends ModelePDFCommandes
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$com->lignes[$i]->total_tva;
-					
+
 					$localtax1ligne=$com->lignes[$i]->total_localtax1;
 					$localtax2ligne=$com->lignes[$i]->total_localtax2;
-					
+
 					$vatrate=(string) $com->lignes[$i]->tva_tx;
 					$localtax1rate=(string) $com->lignes[$i]->localtax1_tx;
 					$localtax2rate=(string) $com->lignes[$i]->localtax2_tx;
-					
+
 					if (($com->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
@@ -613,7 +613,7 @@ class pdf_quevedo extends ModelePDFCommandes
 				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
 			}
-				
+
 			// Total LocalTax2
 			if ($conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax2on' && $object->total_localtax2>0)
 			{
@@ -632,10 +632,10 @@ class pdf_quevedo extends ModelePDFCommandes
 				if ($tvakey>0)    // On affiche pas taux 0
 				{
 					//$this->atleastoneratenotnull++;
-		
+
 					$index++;
 					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-		
+
 					$tvacompl='';
 					if (preg_match('/\*/',$tvakey))
 					{
@@ -645,22 +645,22 @@ class pdf_quevedo extends ModelePDFCommandes
 					$totalvat =$outputlangs->transnoentities("TotalLT1ES").' ';
 					$totalvat.=vatrate($tvakey,1).$tvacompl;
 					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-		
+
 					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 				}
 			}
-				
+
 			//Local tax 2
 			foreach( $this->localtax2 as $tvakey => $tvaval )
 			{
 				if ($tvakey>0)    // On affiche pas taux 0
 				{
 					//$this->atleastoneratenotnull++;
-		
+
 					$index++;
 					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-		
+
 					$tvacompl='';
 					if (preg_match('/\*/',$tvakey))
 					{
@@ -670,11 +670,11 @@ class pdf_quevedo extends ModelePDFCommandes
 					$totalvat =$outputlangs->transnoentities("TotalLT2ES").' ';
 					$totalvat.=vatrate($tvakey,1).$tvacompl;
 					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-	
+
 					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);	
+					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 				}
-			}	
+			}
 		}
 
 		$useborder=0;

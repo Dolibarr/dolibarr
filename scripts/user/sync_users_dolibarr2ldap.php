@@ -81,7 +81,7 @@ if ($resql)
 		$fuser = new User($db);
 		$fuser->fetch($obj->rowid);
 
-		print $langs->trans("UpdateUser")." rowid=".$fuser->id." ".$fuser->fullname;
+		print $langs->trans("UpdateUser")." rowid=".$fuser->id." ".$fuser->getFullName($langs);
 
 		$oldobject=$fuser;
 

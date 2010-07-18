@@ -44,7 +44,7 @@ class ComptaJournalPaiement
 
 	function GeneratePdf($user, $dir, $excid, $excref)
 	{
-		global $conf;
+		global $conf,$langs;
 
 		$date = strftime("%Y%m",time());
 
@@ -67,7 +67,7 @@ class ComptaJournalPaiement
 
 			$this->pdf->SetTitle("Journal des paiements");
 			$this->pdf->SetCreator("Dolibarr ".DOL_VERSION);
-			$this->pdf->SetAuthor($user->fullname);
+			$this->pdf->SetAuthor($user->getFullName($langs));
 
 			$this->pdf->SetMargins(10, 10, 10);
 			$this->pdf->SetAutoPageBreak(1,10);

@@ -153,7 +153,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$pdf->SetTitle($outputlangs->convToOutputCharset($propale->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("CommercialProposal"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($propale->ref)." ".$outputlangs->transnoentities("CommercialProposal"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
@@ -519,7 +519,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 	 	if (sizeof($arrayidcontact) > 0)
 	 	{
 	 		$object->fetch_user($arrayidcontact[0]);
-	 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->fullname);
+	 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
 	 	}
 
 	 	$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);

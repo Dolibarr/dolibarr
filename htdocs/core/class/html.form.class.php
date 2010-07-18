@@ -2084,7 +2084,7 @@ class Form
 				//print $this->cache_contacts[$selected];
 				$contact=new Contact($this->db);
 				$contact->fetch($selected);
-				print $contact->nom.' '.$contact->prenom;
+				print $contact->getFullName($langs);
 			} else {
 				print "&nbsp;";
 			}

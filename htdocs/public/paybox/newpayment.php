@@ -566,7 +566,7 @@ if ($_REQUEST["amount"] == 'membersubscription')
 
 	$amount=$subscription->total_ttc;
 
-	$newtag='MID='.$member->id.'.M='.strtr($member->fullname,"-"," ");
+	$newtag='MID='.$member->id.'.M='.strtr($member->getFullName($langs),"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
 	$newtag=dol_string_unaccent($newtag);
 
@@ -578,7 +578,7 @@ if ($_REQUEST["amount"] == 'membersubscription')
 	// Debitor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$member->fullname.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$member->getFullName($langs).'</b>';
 
 	// Object
 	$var=!$var;

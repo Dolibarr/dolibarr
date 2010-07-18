@@ -172,7 +172,7 @@ class InterfaceNotification
             $filepdf = $conf->fournisseur->dir_output . '/commande/' . $ref . '/' . $ref . '.pdf';
             if (! file_exists($filepdf)) $filepdf='';
             $mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-			$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->fullname);
+			$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->getFullName($langs));
 			$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 
             $notify = new Notify($this->db);
@@ -188,7 +188,7 @@ class InterfaceNotification
             $filepdf = $conf->fournisseur->dir_output . '/commande/' . $ref . '/' . $ref . '.pdf';
             if (! file_exists($filepdf)) $filepdf='';
 			$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-			$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->fullname);
+			$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->getFullName($langs));
 			$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 
             $notify = new Notify($this->db);

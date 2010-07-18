@@ -1449,7 +1449,7 @@ else
 		$result=$adh->fetch('','',$soc->id);
 		if ($result > 0)
 		{
-			$adh->ref=$adh->fullname;
+			$adh->ref=$adh->getFullName($langs);
 			print $adh->getNomUrl(1);
 		}
 		else

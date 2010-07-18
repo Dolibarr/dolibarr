@@ -79,7 +79,7 @@ class pdf_propale_roig extends ModelePDFPropales
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
 		$this->franchise=!$mysoc->tva_assuj;
-		
+
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
@@ -180,7 +180,7 @@ class pdf_propale_roig extends ModelePDFPropales
 				$pdf->SetTitle($outputlangs->convToOutputCharset($propale->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("CommercialProposal"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($propale->ref)." ".$outputlangs->transnoentities("CommercialProposal"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
@@ -293,21 +293,21 @@ class pdf_propale_roig extends ModelePDFPropales
 					$tvaligne=$propale->lignes[$i]->total_tva;
 					$localtax1ligne=$propale->lignes[$i]->total_localtax1;
 					$localtax2ligne=$propale->lignes[$i]->total_localtax2;
-					
+
 					if ($propale->remise_percent) $tvaligne-=($tvaligne*$propale->remise_percent)/100;
 					if ($propale->remise_percent) $localtax1ligne-=($localtax1ligne*$propale->remise_percent)/100;
 					if ($propale->remise_percent) $localtax2ligne-=($localtax2ligne*$propale->remise_percent)/100;
-					
+
 					$vatrate=(string) $propale->lignes[$i]->tva_tx;
 					$localtax1rate=(string) $propale->lignes[$i]->localtax1_tx;
 					$localtax2rate=(string) $propale->lignes[$i]->localtax2_tx;
-					
+
 					if (($propale->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
-					
+
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
-					
+
 					$nexY+=2;    // Passe espace entre les lignes
 
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
@@ -622,7 +622,7 @@ class pdf_propale_roig extends ModelePDFPropales
 
 					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
-				
+
 				}
 			}
 
@@ -644,7 +644,7 @@ class pdf_propale_roig extends ModelePDFPropales
 					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
 				}
-				
+
 				// Total LocalTax2
 				if ($conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax2on' && $object->total_localtax2>0)
 				{
@@ -663,10 +663,10 @@ class pdf_propale_roig extends ModelePDFPropales
 					if ($tvakey>0)    // On affiche pas taux 0
 					{
 						//$this->atleastoneratenotnull++;
-	
+
 						$index++;
 						$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-	
+
 						$tvacompl='';
 						if (preg_match('/\*/',$tvakey))
 						{
@@ -676,22 +676,22 @@ class pdf_propale_roig extends ModelePDFPropales
 						$totalvat =$outputlangs->transnoentities("TotalLT1ES").' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-	
+
 						$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 					}
 				}
-				
+
 				//Local tax 2
 				foreach( $this->localtax2 as $tvakey => $tvaval )
 				{
 					if ($tvakey>0)    // On affiche pas taux 0
 					{
 						//$this->atleastoneratenotnull++;
-	
+
 						$index++;
 						$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-	
+
 						$tvacompl='';
 						if (preg_match('/\*/',$tvakey))
 						{
@@ -701,12 +701,12 @@ class pdf_propale_roig extends ModelePDFPropales
 						$totalvat =$outputlangs->transnoentities("TotalLT2ES").' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-	
+
 						$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
-					
+
 					}
-				}	
+				}
 			}
 		}
 
@@ -945,7 +945,7 @@ class pdf_propale_roig extends ModelePDFPropales
 		 	if (sizeof($arrayidcontact) > 0)
 		 	{
 		 		$object->fetch_user($arrayidcontact[0]);
-		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->fullname);
+		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
 		 	}
 
 		 	$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);

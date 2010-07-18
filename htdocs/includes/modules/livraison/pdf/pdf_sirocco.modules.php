@@ -162,7 +162,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("DeliveryOrder"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
@@ -425,7 +425,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$pdf->SetFont('Arial','B',9);
 
 		// Add list of linked orders
-		// TODO mutualiser 
+		// TODO mutualiser
 	    $object->load_object_linked();
 
 	    if ($conf->commande->enabled)

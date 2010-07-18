@@ -263,8 +263,10 @@ class Contact extends CommonObject
 		// Object classes
 		$info["objectclass"]=explode(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
 
-		// Champs
-		if ($this->getFullName($langs) && $conf->global->LDAP_CONTACT_FIELD_FULLNAME) $info[$conf->global->LDAP_CONTACT_FIELD_FULLNAME] = $this->getFullName($langs);
+		$this->fullname=$this->getFullName($langs);
+
+		// Fields
+		if ($this->fullname && $conf->global->LDAP_CONTACT_FIELD_FULLNAME) $info[$conf->global->LDAP_CONTACT_FIELD_FULLNAME] = $this->fullname;
 		if ($this->name && $conf->global->LDAP_CONTACT_FIELD_NAME) $info[$conf->global->LDAP_CONTACT_FIELD_NAME] = $this->name;
 		if ($this->firstname && $conf->global->LDAP_CONTACT_FIELD_FIRSTNAME) $info[$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME] = $this->firstname;
 
@@ -786,9 +788,9 @@ class Contact extends CommonObject
 
 	/**
 	 *    	\brief      Return full name (civility+' '+name+' '+lastname)
-	 *		\param		langs			Lang object for translation of civility
+	 *		\param		langs			Language object for translation of civility
 	 *		\param		option			0=No option, 1=Add civility
-	 * 		\param		nameorder		0=Lastname+Firstname, 1=Firstname+Lastname
+	 * 		\param		nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
 	 * 		\return		string			String with full name
 	 */
 	function getFullName($langs,$option=0,$nameorder=-1)

@@ -945,7 +945,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	$logintext.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
 	$logintext.='>'.$user->login.'</a>';
 	$loginhtmltext.='<u>'.$langs->trans("User").'</u>';
-	$loginhtmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->fullname;
+	$loginhtmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->getFullName($langs);
 	$loginhtmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
 	$loginhtmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
 	$type=($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));

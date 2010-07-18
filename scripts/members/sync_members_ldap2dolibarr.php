@@ -182,7 +182,6 @@ if ($result >= 0)
 			// Propriete membre
 			$member->prenom=$ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME];
 			$member->nom=$ldapuser[$conf->global->LDAP_FIELD_NAME];
-			$member->fullname=($ldapuser[$conf->global->LDAP_FIELD_FULLNAME] ? $ldapuser[$conf->global->LDAP_FIELD_FULLNAME] : trim($member->prenom." ".$member->nom));
 			$member->login=$ldapuser[$conf->global->LDAP_FIELD_LOGIN];
 			$member->pass=$ldapuser[$conf->global->LDAP_FIELD_PASSWORD];
 
@@ -221,7 +220,7 @@ if ($result >= 0)
 			$member->typeid=$typeid;
 
 			// Creation membre
-			print $langs->transnoentities("MemberCreate").' # '.$key.': login='.$member->login.', fullname='.$member->fullname;
+			print $langs->transnoentities("MemberCreate").' # '.$key.': login='.$member->login.', fullname='.$member->getFullName($langs);
 			print ', datec='.$member->datec;
 			$member_id=$member->create($user);
 			if ($member_id > 0)

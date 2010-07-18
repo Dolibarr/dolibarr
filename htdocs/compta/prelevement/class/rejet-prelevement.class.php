@@ -170,10 +170,12 @@ class RejetPrelevement
 
     /**
      *      \brief      Envoi mail
-     *
+     * 		\param		fac			Invoice object
      */
     function _send_email($fac)
     {
+    	global $langs;
+
         $userid = 0;
 
         $sql = "SELECT fk_user_demande";
@@ -207,8 +209,8 @@ class RejetPrelevement
             require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
             $subject = "Prelevement rejete";
-            $sendto = $emuser->fullname." <".$emuser->email.">";
-            $from = $this->user->fullname." <".$this->user->email.">";
+            $sendto = $emuser->getFullName($langs)." <".$emuser->email.">";
+            $from = $this->user->getFullName($langs)." <".$this->user->email.">";
     		$msgishtml=0;
 
             $arr_file = array();
@@ -217,7 +219,7 @@ class RejetPrelevement
 
             $message = "Bonjour,\n";
             $message .= "\nLe prelevement de la facture ".$fac->ref." pour le compte de la societe ".$soc->nom." d'un montant de ".price($fac->total_ttc)." a ete rejete par la banque.";
-            $message .= "\n\n--\n".$this->user->fullname;
+            $message .= "\n\n--\n".$this->user->getFullName($langs);
 
             $mailfile = new CMailFile($subject,$sendto,$from,$message,
                                       $arr_file,$arr_mime,$arr_name,

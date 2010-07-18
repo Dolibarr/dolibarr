@@ -121,7 +121,7 @@ if ($resql)
 			exit;
 		}
 
-		print $langs->transnoentities("UpdateMember")." rowid=".$member->id." ".$member->fullname;
+		print $langs->transnoentities("UpdateMember")." rowid=".$member->id." ".$member->getFullName($langs);
 
 		$oldobject=$member;
 

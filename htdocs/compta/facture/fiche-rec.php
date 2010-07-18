@@ -133,7 +133,7 @@ if ($_GET["action"] == 'create')
 		print '<textarea class="flat" name="note" wrap="soft" cols="60" rows="'.ROWS_4.'"></textarea>';
 		print '</td></tr>';
 
-		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->fullname."</td></tr>";
+		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->getFullName($langs)."</td></tr>";
 
 		print "<tr><td>".$langs->trans("PaymentConditions")."</td><td>";
 		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$facture->id,$facture->cond_reglement_id,'none');
@@ -357,7 +357,7 @@ else
 			$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
 			print "</td></tr>";
 
-			print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td>";
+			print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">".$author->getFullName($langs)."</td>";
 
 			if ($fac->remise_percent > 0)
 			{

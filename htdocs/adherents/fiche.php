@@ -144,7 +144,7 @@ if ($_POST['action'] == 'setsocid')
 					$thirdparty=new Societe($db);
 					$thirdparty->fetch($_POST["socid"]);
 					$error++;
-					$mesg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->fullname,$othermember->login,$thirdparty->nom).'</div>';
+					$mesg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->nom).'</div>';
 				}
 			}
 
@@ -231,7 +231,6 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		$adh->civilite_id = trim($_POST["civilite_id"]);
 		$adh->prenom      = trim($_POST["prenom"]);
 		$adh->nom         = trim($_POST["nom"]);
-		$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
 		$adh->login       = trim($_POST["login"]);
 		$adh->pass        = trim($_POST["pass"]);
 

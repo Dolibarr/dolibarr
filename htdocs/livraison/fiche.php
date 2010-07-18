@@ -259,7 +259,7 @@ if ($_GET["action"] == 'create')
 			print '</td>';
 		}
 
-		print "<td>".$langs->trans("Author")."</td><td>$author->fullname</td>\n";
+		print "<td>".$langs->trans("Author")."</td><td>".$author->getFullName($langs)."</td>\n";
 
 		if ($commande->note)
 		{
