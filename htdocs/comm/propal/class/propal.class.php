@@ -2220,8 +2220,8 @@ class Propal extends CommonObject
 
 
 /**
- \class      PropalLigne
- \brief      Classe permettant la gestion des lignes de propales
+ *	\class      PropalLigne
+ *	\brief      Class to manage commercial proposal lines
  */
 class PropaleLigne
 {
@@ -2330,7 +2330,7 @@ class PropaleLigne
 
 	/**
 	 *      \brief     	Insert object line propal in database
-	 *		\return		int		<0 si ko, >0 si ok
+	 *		\return		int		<0 if KO, >0 if OK
 	 */
 	function insert()
 	{
@@ -2343,6 +2343,7 @@ class PropaleLigne
 		if (! $this->remise) $this->remise=0;
 		if (! $this->remise_percent) $this->remise_percent=0;
 		if (! $this->info_bits) $this->info_bits=0;
+		if (empty($this->tva_tx)) $this->tva_tx=0;
 
 		// Check parameters
 		if ($this->type < 0) return -1;
@@ -2367,7 +2368,7 @@ class PropaleLigne
 			}
 		}
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
 		$sql.= ' (fk_propal, description, fk_product, product_type, fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
 		$sql.= ' subprice, remise_percent, ';
