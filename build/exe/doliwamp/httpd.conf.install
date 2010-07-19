@@ -86,7 +86,7 @@ LoadModule cgi_module modules/mod_cgi.so
 #LoadModule deflate_module modules/mod_deflate.so
 LoadModule dir_module modules/mod_dir.so
 LoadModule env_module modules/mod_env.so
-#LoadModule expires_module modules/mod_expires.so
+LoadModule expires_module modules/mod_expires.so
 #LoadModule file_cache_module modules/mod_file_cache.so
 #LoadModule headers_module modules/mod_headers.so
 LoadModule imagemap_module modules/mod_imagemap.so
