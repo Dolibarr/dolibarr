@@ -741,19 +741,20 @@ SSLCertificateKeyFile "WAMPROOT/myserver.key"
 #AddEncoding gzip .jgz
 
 # OPTIMIZE: To use gzip compression (on the fly).
-# Note that you must also enable the module mod_deflate 
+# Note that you must also enable the module mod_deflate.
+# You can also set this with constant MAIN_OPTIMIZE_SPEED and bit 2 set. 
 #TODO
 
 # OPTIMIZE: To use cache on static pages.
-# Note that you must also enable the module mod_expires
+# Note that you must also enable the module mod_expires.
 #ExpiresActive On
-#ExpiresByType image/gif A86400
-#ExpiresByType image/png A86400
-#ExpiresByType image/jpeg A86400
-#ExpiresByType text/html A86400
-#ExpiresByType text/css A86400
-#ExpiresByType text/javascript A86400
-#ExpiresByType application/x-javascript A86400
+#ExpiresByType image/x-icon A2592000
+#ExpiresByType image/gif A2592000
+#ExpiresByType image/png A2592000
+#ExpiresByType image/jpeg A2592000
+#ExpiresByType text/css A2592000
+#ExpiresByType text/javascript A2592000
+#ExpiresByType application/x-javascript A2592000
 
 
 # Declare alias for Dolibarr, PHPMyAdmin and other softwares
