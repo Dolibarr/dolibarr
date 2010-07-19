@@ -117,7 +117,7 @@ if ($result)
 		$objp = $db->fetch_object($result);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print "<td><a href=\"priv_fiche.php?id=$objp->rowid\">".$objp->prenom." ".$objp->nom.($objp->societe?" / ".$objp->societe:"")."</a></TD>\n";
+		print "<td><a href=\"public_card.php?id=$objp->rowid\">".$objp->prenom." ".$objp->nom.($objp->societe?" / ".$objp->societe:"")."</a></TD>\n";
 		print "<td>$objp->naiss</td>\n";
 		print "<td>$objp->email</td>\n";
 		print "<td>$objp->cp</td>\n";

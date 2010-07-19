@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/public/members/priv_fiche.php
+ *	\file       htdocs/public/members/public_card.php
  *	\ingroup    adherent
- * 	\brief      Fichier de gestion de la popup de selection de date eldy
+ * 	\brief      File to show a public card of a member
  *	\version    $Id$
  */
 
