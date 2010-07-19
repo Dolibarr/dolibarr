@@ -26,6 +26,8 @@ ApachePort=Puerto Apache (únicamente primera instalación, normalmente es el 80) 
 MySqlPort=Puerto Mysql (únicamente primera instalación, normalmente es el 3306) :
 MySqlPassword=Contraseña del servidor y la base de datos MySQL de root (únicamente primera instalación):
 
+FailedToDeleteLock=Error en la eliminación del archivo %1/www/dolibarr/install.lock. Puede ignorar el aviso pero es posible que deba eliminarlo manualmente más tarde. En este caso, será informado. Haga clic en OK para continuar...
+
 PortAlreadyInUse=Parece que el puerto %1 ya esta siendo usado. Se recomienda cancelar, volver atras y especificar otro valor para el puerto %2. ¿Cancelar y escojer otro valor?
 
 FirefoxDetected=Se ha detectado Firefox en su ordenador. Desea activarlo por defecto como navegador para Dolibarr ?

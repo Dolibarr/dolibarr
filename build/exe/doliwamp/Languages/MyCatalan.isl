@@ -26,7 +26,9 @@ ApachePort=Puerto Apache (únicament primera instal.lació, normalment és el 80) :
 MySqlPort=Puerto Mysql (únicament primera instal.lació, normalment és el 3306) :
 MySqlPassword=Contrasenya del servidor i la base de dades MySQL de root (únicament primera instal.lació):
 
-PortAlreadyInUse=Sembla que el port %1 ja està sent utilitzat. Es recomana cancel·lar, tornar enrere i especificar un altre valor per al port% 2. ¿Cancel i escollir un altre valor?
+FailedToDeleteLock=FailedToDeleteLock=Error en l'eliminació del fitxer %1/www/dolibarr/install.lock. Pot ignorar l'avís però és possible que hagi de eliminar-lo manualment més tard. En aquest cas, serà informat. Feu clic a OK per continuar...
+
+PortAlreadyInUse=Sembla que el port %1 ja està sent utilitzat. Es recomana cancel·lar, tornar enrere i especificar un altre valor per al port% 2. Cancel·lar i escollir un altre valor?
 
 FirefoxDetected=S'ha detectat Firefox al seu ordinador. Voleu activar per defecte com a navegador per Dolibarr?
 ChooseDefaultBrowser=Esculli el seu navegador per defecte. Si no està segur, simplement feu clic a Obrir:
