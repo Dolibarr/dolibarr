@@ -201,7 +201,7 @@ if ($_POST["action"] == "set")
 			}
 		}
 	}
-	
+
 	// Force https
 	$_POST["main_force_https"] = ((isset($_POST["main_force_https"]) && $_POST["main_force_https"] == "on")?'1':'0');
 
@@ -356,7 +356,7 @@ if ($_POST["action"] == "set")
 					print $langs->trans("DatabaseCreation").' : ';
 					print $dolibarr_main_db_name;
 					print '</td>';
-					print '<td>'.$langs->trans("Error").' '.$db->lasterrno().'</td></tr>';
+					print '<td>'.$langs->trans("Error").' '.$db->lasterrno().'<br>'.$db->lasterror().'</td></tr>';
 
 					// Affiche aide diagnostique
 					print '<tr><td colspan="2"><br>';
@@ -365,7 +365,7 @@ if ($_POST["action"] == "set")
 					print '<br>';
 					print '</td></tr>';
 
-					dolibarr_install_syslog('etape1: Failed to create database '.$dolibarr_main_db_name.' '.$db->lasterrno(), LOG_ERR);
+					dolibarr_install_syslog('etape1: Failed to create database '.$dolibarr_main_db_name.' '.$db->lasterrno().' '.$db->lasterror(), LOG_ERR);
 					$error++;
 				}
 				$db->close();
@@ -562,7 +562,7 @@ function write_conf_file($conffile)
 		/* Authentication */
 		fputs($fp, '$dolibarr_main_authentication=\'dolibarr\';');
 		fputs($fp,"\n");
-		
+
 		fputs($fp, '$dolibarr_main_force_https=\''.$_POST["main_force_https"].'\';');
 		fputs($fp,"\n");
 

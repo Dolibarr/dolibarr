@@ -1,5 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+-- Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,6 +19,9 @@
 -- $Id$
 -- ============================================================================
 
+CREATE LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION UNIX_TIMESTAMP(TIMESTAMP WITHOUT TIME ZONE) RETURNS BIGINT LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;';
 
 CREATE OR REPLACE FUNCTION UNIX_TIMESTAMP(TIMESTAMP WITH TIME ZONE) RETURNS BIGINT LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;';
@@ -32,6 +36,7 @@ CREATE OR REPLACE FUNCTION MONTH(TIMESTAMP without TIME ZONE) RETURNS INTEGER AS
 CREATE OR REPLACE FUNCTION MONTH(TIMESTAMP WITH TIME ZONE) RETURNS INTEGER AS $$ SELECT EXTRACT(MONTH FROM $1)::INTEGER; $$ LANGUAGE SQL STABLE;
 
 CREATE OR REPLACE FUNCTION MONTH(DATE) RETURNS INTEGER AS $$ SELECT EXTRACT(MONTH FROM $1)::INTEGER; $$ LANGUAGE SQL IMMUTABLE;
+
 
 CREATE OR REPLACE FUNCTION DAY(TIMESTAMP without TIME ZONE) RETURNS INTEGER AS $$ SELECT EXTRACT(DAY FROM $1)::INTEGER; $$ LANGUAGE SQL IMMUTABLE;
 

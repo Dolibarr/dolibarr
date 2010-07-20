@@ -388,14 +388,14 @@ if ($_POST["action"] == "set")
 					$buf = fgets($fp, 4096);
 					if (substr($buf, 0, 2) <> '--')
 					{
-						$buffer .= $buf;
+						$buffer .= $buf."§";
 					}
 				}
 				fclose($fp);
 			}
+			//$buffer=preg_replace('/;\';/',";'§",$buffer);
 
-			// Si plusieurs requetes, on boucle sur chaque
-			$buffer=preg_replace('/;\';/',";'§",$buffer);
+			// If several requests, we loop on each of them
 			$listesql=explode('§',$buffer);
 			foreach ($listesql as $buffer)
 			{
@@ -403,6 +403,7 @@ if ($_POST["action"] == "set")
 				if ($buffer)
 				{
 					dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
+					print "<!-- Insert line : ".$buffer."<br>-->\n";
 					$resql=$db->query($buffer);
 					if ($resql)
 					{
@@ -411,14 +412,15 @@ if ($_POST["action"] == "set")
 					}
 					else
 					{
-						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
+						|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS')
 						{
-							// print "<tr><td>Insertion ligne : $buffer</td><td>
+							//print "Insert line : ".$buffer."<br>\n";
 						}
 						else
 						{
 							$ok = 0;
-							print $langs->trans("ErrorSQL")." : ".$db->errno()." - '$buffer' - ".$db->lastqueryerror()."<br>";
+							print $langs->trans("ErrorSQL")." : ".$db->errno()." - '".$buffer."'<br>\n";
 						}
 					}
 				}
