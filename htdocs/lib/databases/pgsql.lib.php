@@ -741,6 +741,7 @@ class DoliDb
 			'23503' => 'DB_ERROR_NO_PARENT',
 			1217 => 'DB_ERROR_CHILD_EXISTS',
 			1451 => 'DB_ERROR_CHILD_EXISTS'
+			//'42P04' => 'DB_DATABASE_ALREADY_EXISTS'
 			);
 
 			$errorlabel=pg_last_error($this->db);

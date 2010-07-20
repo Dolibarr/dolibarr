@@ -92,7 +92,6 @@ YouNeedToPersonalizeSetup=عليك تكوين Dolibarr لتناسب احتياج
 AdminLoginCreatedSuccessfuly=مدير Dolibarr ادخل <b>'٪ ق'</b> خلق بنجاح.
 GoToDolibarr=الذهاب إلى Dolibarr
 GoToSetupArea=الذهاب إلى Dolibarr (مجال الإعداد)
-MigrationNotFinished=النسخة الخاصة بك ليست dtabase تماما حتى الآن ، لذلك سيكون لديك لادارة عملية رفع مستوى جديد.
 GoToUpgradePage=الذهاب لتحديث الصفحة مرة أخرى
 Examples=أمثلة
 WithNoSlashAtTheEnd=بدون خفض "/" في نهاية

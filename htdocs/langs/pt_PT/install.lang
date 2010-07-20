@@ -178,7 +178,6 @@ MigrationDeliveryDetail=Delivery update
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 // Reference language: en_US
 GoToDolibarr=Ir para Dolibarr
-MigrationNotFinished=Versão do seu dtabase não é completamente até à data, assim você terá que executar o processo de atualização novamente.
 GoToUpgradePage=Ir para a página atualizar novamente
 InstallChoiceSuggested=<b>Instale opção sugerida pelo instalador.</b>
 MigrationStockDetail=Atualizar estoque valor dos produtos
@@ -282,7 +281,6 @@ YouNeedToPersonalizeSetup=Du må konfigurere Dolibarr som passer dine behov (uts
 AdminLoginCreatedSuccessfuly=Dolibarr administrator login <b>'%s'</b> opprettet heldig.
 GoToDolibarr=Gå til Dolibarr
 GoToSetupArea=Gå til Dolibarr (setup-området)
-MigrationNotFinished=Versjon av dtabase din ikke er helt oppdatert, så du må kjøre upgrade prosessen igjen.
 GoToUpgradePage=Gå til side oppgradere igjen
 Examples=Eksempler
 WithNoSlashAtTheEnd=Uten skråstrek "/" på slutten

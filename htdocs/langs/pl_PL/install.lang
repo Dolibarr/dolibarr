@@ -200,7 +200,6 @@ MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
 // Reference language: en_US
 GoToDolibarr=Idź do Dolibarr
-MigrationNotFinished=Wersja Twojej dtabase nie jest w pełni aktualne, więc musisz uruchomić ponownie proces aktualizacji.
 GoToUpgradePage=Wejdź na stronę aktualizacji ponownie
 InstallChoiceRecommanded=Zaleciły wybór zainstalować <b>wersję %s</b> od aktualnej <b>wersji %s</b>
 InstallChoiceSuggested=<b>Zainstaluj wyboru sugerowane przez instalatora.</b>
@@ -299,7 +298,6 @@ YouNeedToPersonalizeSetup=Du må konfigurere Dolibarr som passer dine behov (uts
 AdminLoginCreatedSuccessfuly=Dolibarr administrator login <b>'%s'</b> opprettet heldig.
 GoToDolibarr=Gå til Dolibarr
 GoToSetupArea=Gå til Dolibarr (setup-området)
-MigrationNotFinished=Versjon av dtabase din ikke er helt oppdatert, så du må kjøre upgrade prosessen igjen.
 GoToUpgradePage=Gå til side oppgradere igjen
 Examples=Eksempler
 WithNoSlashAtTheEnd=Uten skråstrek "/" på slutten

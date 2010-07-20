@@ -293,7 +293,6 @@ YouNeedToPersonalizeSetup=Du må konfigurere Dolibarr som passer dine behov (uts
 AdminLoginCreatedSuccessfuly=Dolibarr administrator login <b>'%s'</b> opprettet heldig.
 GoToDolibarr=Gå til Dolibarr
 GoToSetupArea=Gå til Dolibarr (setup-området)
-MigrationNotFinished=Versjon av dtabase din ikke er helt oppdatert, så du må kjøre upgrade prosessen igjen.
 GoToUpgradePage=Gå til side oppgradere igjen
 Examples=Eksempler
 WithNoSlashAtTheEnd=Uten skråstrek "/" på slutten

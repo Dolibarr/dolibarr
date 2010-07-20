@@ -79,7 +79,6 @@ YouNeedToPersonalizeSetup=Þú þarft að stilla Dolibarr til föt þinn af nau�
 AdminLoginCreatedSuccessfuly=stjórnandi tenging <b>'%</b> Dolibarr <b>s'</b> skapa successfuly.
 GoToDolibarr=Fara til Dolibarr
 GoToSetupArea=Fara til Dolibarr (skipulag svæði)
-MigrationNotFinished=Útgáfa af dtabase þín er ekki alveg upp til dagsetning, svo þú verður að keyra uppfærslu ferlið aftur.
 GoToUpgradePage=Fara til uppfærsla síðu aftur
 Examples=Dæmi
 WithNoSlashAtTheEnd=Án rista "/" í lok

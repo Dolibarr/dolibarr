@@ -311,7 +311,7 @@ if ($_POST["action"] == "set")
 	{
 		// If here MAIN_VERSION_LAST_UPGRADE is not empty
 		print $langs->trans("VersionLastUpgrade").': <b><font class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</font></b><br>';
-		print $langs->trans("VersionProgram").': <b><font class="ok">'.DOL_VERSION.'</font></b>';
+		print $langs->trans("VersionProgram").': <b><font class="ok">'.DOL_VERSION.'</font></b><br>';
 		print $langs->trans("MigrationNotFinished").'<br>';
 		print "<br>";
 

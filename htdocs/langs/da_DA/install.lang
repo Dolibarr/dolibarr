@@ -180,7 +180,6 @@ MigrationDeliveryDetail=Levering opdatering
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
 // Reference language: en_US
 GoToDolibarr=Gå til Dolibarr
-MigrationNotFinished=Version af din dtabase er ikke helt up to date, så du er nødt til at køre opgraderingsprocessen igen.
 GoToUpgradePage=Gå til opgradere siden igen
 InstallChoiceSuggested=<b>Installer valg foreslået af installationsprogrammet.</b>
 MigrationStockDetail=Update materiel værdi af produkter
