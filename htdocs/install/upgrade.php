@@ -67,7 +67,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
  * View
  */
 
-pHeader('',"upgrade2",$_REQUEST['action'],'versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('',"upgrade2",isset($_REQUEST['action'])?$_REQUEST['action']:'','versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 $actiondone=0;
 
@@ -80,7 +80,7 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 
 	if (! $versionfrom && ! $versionto)
 	{
-		print '<div class="error">Parameter versionfrom or version to missing.</div>';
+		print '<div class="error">Parameter versionfrom or version to missing. Upgrade is launched from page install/install.php (like a first install) instead of install/upgrade.php</div>';
 		exit;
 	}
 
