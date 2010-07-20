@@ -1,6 +1,6 @@
 # Dolibarr language file - es_AR - other
 CHARSET= UTF-8
-ErrorPasswordDiffers= Las contraseñas no son identicas, vuelva a introducirlas
+ErrorPasswordDiffers= Las contraseñas no son idénticas, vuelva a introducirlas
 ErrorForbidden= Acceso no autorizado.<br>Intenta acceder a una página, zona o función sin estar en una sesión autentificada o que no se autoriza para su cuenta de usuario.
 ErrorForbidden2= Los permisos para este usuario pueden ser asignados por el administrador Dolibarr mediante el menú %s-> %s.
 ErrorForbidden3= Dolibarr no parece funcionar en una sesión autentificada. Consulte la documentación de instalación de Dolibarr para saber cómo administrar las autenticaciones (htaccess, mod_auth u otro...).
@@ -41,7 +41,7 @@ NbOfActiveNotifications= Número notificaciones
 WarningInstallDirExists= Atención: El directorio install (<b>htdocs/install</b>) todavía existe. Una vez concluida la instalación su presencia no es necesaria, y representa un fallo serio de seguridad. Debería eliminarla lo antes posible.
 WarningUntilDirRemoved= Las alertas de seguridad sólo son visibles a los administradores y permanecen activas hasta que el problema sea resuelto (o si la constante MAIN_REMOVE_INSTALL_WARNING es definida en Configuración->Varios)
 PredefinedMailTest= Esto es un correo de prueba.\nLas 2 líneas están separadas por un retorno de carro a la línea.
-PredefinedMailTestHtml= Esto es un email de <b>prueba</b>(la palabra prueba debe de estar en negrita).<br>Las 2 líneas están separadas por un retorno de carro en la línea
+PredefinedMailTestHtml= Esto es un e-mail de <b>prueba</b>(la palabra prueba debe de estar en negrita).<br>Las 2 líneas están separadas por un retorno de carro en la línea
 PredefinedMailContentSendInvoice= Le adjuntamos la factura __FACREF__\n\nCordialmente\n\n
 PredefinedMailContentSendInvoiceReminder= Ponemos en su conocimiento que la factura __FACREF__ parece no estar pagada. Se la adjuntamos pues, para que pueda revisarla.\n\nCordialmente\n\n
 PredefinedMailContentSendProposal= Le adjuntamos el presupuesto __PROPREF__\n\nCordialmente\n\n
@@ -100,7 +100,7 @@ SizeUnitdm= dm
 SizeUnitcm= cm
 SizeUnitmm= mm
 BugTracker= Incidencias
-SendNewPasswordDesc= Este formulario permite enviar una nueva contraseña. Se enviará al e-mail del usuario<br>La modificación de la contraseña no será efectiva hasta que el usario haga click en el link de confirmación incluido en este e-mail.<br>Supervise su correo.
+SendNewPasswordDesc= Este formulario permite enviar una nueva contraseña. Se enviará al e-mail del usuario<br>La modificación de la contraseña no será efectiva hasta que el usuario haga clic en el link de confirmación incluido en este e-mail.<br>Supervise su correo.
 BackToLoginPage= Volver a la página de conexión
 AuthenticationDoesNotAllowSendNewPassword= El modo de autentificación de Dolibarr está configurado como "<b>%s</b>".<br>En este modo Dolibarr no puede conocer ni modificar su contraseña<br>Contacte con su administrador para conocer las modalidades de cambio.
 EnableGDLibraryDesc= Debe activar o instalar la librería GD en su PHP para poder activar esta opción
@@ -147,18 +147,18 @@ BookmarkTargetNewWindowShort= Nueva ventana
 BookmarkTargetReplaceWindowShort= Ventana actual
 BookmarkTitle= Título del marcador
 UrlOrLink= URL
-BehaviourOnClick= Comportamiento al hacer click en la URL
+BehaviourOnClick= Comportamiento al hacer clic en la URL
 CreateBookmark= Crear marcador
 SetHereATitleForLink= Indicar aquí un título para el marcador
 UseAnExternalHttpLinkOrRelativeDolibarrLink= Indicar un URL http externo o un URL Dolibarr relativo
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark= Elegir si debe abrise la página en una nueva ventana o en la actual
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark= Elegir si debe abrirse la página en una nueva ventana o en la actual
 BookmarksManagement= Gestión de marcadores
 ListOfBookmarks= Listado de marcadores
 ##### Webcal #####
 LoginWebcal= Login Webcalendar
 ErrorWebcalLoginNotDefined= El login Webcalendar asociado a su usuario Dolibarr <b>%s</b> no está definido
 ##### Phenix #####
-ErrorPhenixLoginNotDefined= El login Phenix asociado a su cuenta Dolibarrr <b>%s</b>  no está definido
+ErrorPhenixLoginNotDefined= El login Phenix asociado a su cuenta Dolibarr <b>%s</b>  no está definido
 ##### Calendar common #####
 AddCalendarEntry= Añadir entrada en el calendario
 NewCompanyToDolibarr= Empresa %s insertada en Dolibarr

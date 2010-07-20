@@ -1,11 +1,11 @@
-# Dolibarr language file - es_AR - donations
+# Dolibarr language file - es_ES - donations
 CHARSET= UTF-8
 Donation=Subvención
 Donations=Subvenciones
 Donor=Donante
 Donors=Donantes
 AddDonation=Añadir subvención
-NewDonation=Nueva subvencion
+NewDonation=Nueva subvención
 DonationPromise=Promesa de subvención
 PromisesNotValid=Promesas no validadas
 PromisesValid=Promesas validadas

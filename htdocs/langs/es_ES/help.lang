@@ -8,7 +8,7 @@ ToSeeListOfAvailableRessources= Para contactar/ver los recursos disponibles:
 ClickHere= Click aquí
 HelpCenter= Centro de asistencia
 DolibarrHelpCenter= Centro de soporte y ayuda Dolibarr
-ToGoBackToDolibarr= Haga click <a href="%s">aquí para utilizar Dolibarr</a>
+ToGoBackToDolibarr= Haga clic <a href="%s">aquí para utilizar Dolibarr</a>
 TypeOfSupport= Tipo de soporte
 TypeSupportCommunauty= Comunitario (gratuito)
 TypeSupportCommercial= Comercial

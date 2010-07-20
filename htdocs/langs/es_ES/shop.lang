@@ -2,10 +2,10 @@
 CHARSET= UTF-8
 Shop=Tienda
 ShopWeb=Tienda web
-LastOrders=Ultimos pedidos
+LastOrders=Últimos pedidos
 OnStandBy=En espera
 TreatmentInProgress=En proceso
 LastCustomers=Ultimos clientes
-OSCommerceShop=Tienda OS Commerce
+OSCommerceShop=Tienda OSCommerce
 OSCommerce=OSCommerce
 AddProd=Venta en línea

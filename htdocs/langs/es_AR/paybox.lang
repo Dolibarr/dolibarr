@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - paybox 
+# Dolibarr language file - es_AR - paybox 
 CHARSET= UTF-8
 PayBoxSetup= Configuración módulo PayBox
 PayBoxDesc= Este módulo ofrece una página  de pago a través del proveedor <a href=\"http://www.paybox.com\" target=\"_blank\">Paybox</a> para realizar cualquier pago o un pago en relación con un objeto Dolibarr (facturas, pedidos ...)

@@ -42,7 +42,7 @@ DateActionStart= Fecha de inicio
 DateActionEnd= Fecha finalización
 AgendaUrlOptions1= Puede también añadir estos parámetros al filtro de salida:
 AgendaUrlOptions2= <b>login=%s</b> para restringir inserciones a acciones creadas , que afecten o realizadas por el usuario <b>%s</b>.
-AgendaUrlOptions3= <b>logina=%s</b> para restringir inserciones a accciones creadas por el usuario <b>%s</b>.
+AgendaUrlOptions3= <b>logina=%s</b> para restringir inserciones a acciones creadas por el usuario <b>%s</b>.
 AgendaUrlOptions4= <b>logint=%s</b> para restringir inserciones a acciones que afecten al usuario <b>%s</b>.
 AgendaUrlOptions5= <b>logind=%s</b> para restringir inserciones a acciones realizadas por el usuario <b>%s</b>.
 AgendaShowBirthdayEvents= Mostrar cumpleaños de los contactos

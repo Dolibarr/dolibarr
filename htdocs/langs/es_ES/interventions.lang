@@ -37,10 +37,10 @@ InterLineDesc=Descripción linea
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable seguimiento de la intervención
 TypeContact_fichinter_internal_INTERVENING=Interventor
-TypeContact_fichinter_external_BILLING=Contacto cliente facturación intevención
+TypeContact_fichinter_external_BILLING=Contacto cliente facturación intervención
 TypeContact_fichinter_external_CUSTOMER=Contacto cliente seguimiento intervención
 # Modele numérotation
 ArcticNumRefModelDesc1=Modelo de numeración genérico
 ArcticNumRefModelError=Activación imposible
 PacificNumRefModelDesc1=Devuelve el número con el formato %syymm-nnnn dónde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin quedar a 0
-PacificNumRefModelError=Una factura que empieza por # $$syymm existe en base y es incompatible con esta numeración. Elemínela  o renombrela para activar este módulo.
+PacificNumRefModelError=Una factura que empieza por # $$syymm existe en base y es incompatible con esta numeración. Elimínela  o renombrela para activar este módulo.
