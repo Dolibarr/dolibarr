@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/paiement.class.php
+ *	\file       htdocs/compta/paiement/class/paiement.class.php
  *	\ingroup    facture
  *	\brief      Fichier de la classe des paiement de factures clients
  *	\remarks	Cette classe est presque identique a paiementfourn.class.php

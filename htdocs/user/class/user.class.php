@@ -23,7 +23,7 @@
  */
 
 /**
- *  \file       htdocs/user.class.php
+ *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
  *  \version    $Id$
  */

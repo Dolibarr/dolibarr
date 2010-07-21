@@ -19,7 +19,7 @@
  */
 
 /**
- *		\file       	scripts/banque/build-graph-sold-example.php
+ *		\file       	scripts/banks/build-graph-sold-example.php
  *		\ingroup    	banque
  *		\brief      	Script to build graph of sold for each bank account
  *		\deprecated		Ce script n'est plus utilise car les graphiques sont generes dynamiquement maintenant.

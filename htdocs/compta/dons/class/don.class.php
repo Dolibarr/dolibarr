@@ -19,7 +19,7 @@
  */
 
 /**
- *   	\file       htdocs/don.class.php
+ *   	\file       htdocs/compta/dons/class/don.class.php
  *		\ingroup    don
  *		\brief      Fichier de la classe des dons
  *		\version    $Id$

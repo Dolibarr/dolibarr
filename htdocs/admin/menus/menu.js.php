@@ -17,7 +17,7 @@
  */
 
 /**
- *		\file       htdocs/admin/menus/menus.js.php
+ *		\file       htdocs/admin/menus/menu.js.php
  *		\brief      File for js menu
  *		\version    $Id$
  */

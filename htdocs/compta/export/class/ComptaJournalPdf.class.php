@@ -15,15 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
- *       \file       htdocs/compta/export/ComptaJournalPdf.php
+ *       \file       htdocs/compta/export/class/ComptaJournalPdf.php
  *       \ingroup    compta
  *       \brief      Fichier de la classe export compta journal
- *       \version    $Revision$
+ *       \version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');

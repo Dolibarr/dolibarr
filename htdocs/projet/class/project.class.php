@@ -19,7 +19,7 @@
  */
 
 /**
- *		\file       htdocs/projet/project.class.php
+ *		\file       htdocs/projet/class/project.class.php
  *		\ingroup    projet
  *		\brief      Fichier de la classe de gestion des projets
  *		\version    $Id$

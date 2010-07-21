@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/facture/mercure/mercure.modules.php
+ *	\file       htdocs/includes/modules/facture/mercure.modules.php
  *	\ingroup    facture
  *	\brief      File containing class for numbering module Mercure
  *	\version    $Id$

@@ -17,7 +17,7 @@
  */
 
 /**
- * 	\file       	htdocs/ecm/htmlecm.form.class.php
+ * 	\file       	htdocs/ecm/class/htmlecm.form.class.php
  * 	\brief      	Fichier de la classe des fonctions predefinie de composants html
  * 	\version		$Id$
  */
@@ -42,7 +42,7 @@ class FormEcm
 	function FormEcm($DB)
 	{
 		$this->db = $DB;
-		 
+
 		return 1;
 	}
 

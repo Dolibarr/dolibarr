@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/fourn/classfournisseur.commande.class.php
+ *	\file       htdocs/fourn/class/fournisseur.commande.class.php
  *	\ingroup    fournisseur,commande
  *	\brief      File of class to manage suppliers orders
  *	\version    $Id$

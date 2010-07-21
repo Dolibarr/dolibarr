@@ -18,7 +18,7 @@
  */
 
 /**
- *       \file       htdocs/product/service.class.php
+ *       \file       htdocs/product/class/service.class.php
  *       \ingroup    service
  *       \brief      Fichier de la classe des services predefinis
  *       \version    $Id$

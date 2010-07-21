@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       htdocs/ecm/ecm_directories.class.php
+ *  \file       htdocs/ecm/class/ecm_directories.class.php
  *  \ingroup    ecm
  *  \brief      This file is an example for a class file
  *  \version    $Id$

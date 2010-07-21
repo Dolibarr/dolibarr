@@ -19,7 +19,7 @@
  */
 
 /**
-        \file       htdocs/includes/modules/societe/mod_codecompta_digitaria.class.php
+        \file       htdocs/includes/modules/societe/mod_codecompta_digitaria.php
         \ingroup    societe
         \brief      Fichier de la classe des gestion digitaria des codes compta des societes clientes
         \version    $Id$

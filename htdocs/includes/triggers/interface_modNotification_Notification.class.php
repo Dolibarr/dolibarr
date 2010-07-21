@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/includes/triggers/interface_modNotification_notification.class.php
+ *      \file       htdocs/includes/triggers/interface_modNotification_Notification.class.php
  *      \ingroup    notification
  *      \brief      Fichier de gestion des notifications sur evenement Dolibarr
  *		\version	$Id$

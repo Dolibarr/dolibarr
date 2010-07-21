@@ -19,7 +19,7 @@
  */
 
 /**
- *      \file       htdocs/includes/modules/societe/mod_codecompta_panicum.class.php
+ *      \file       htdocs/includes/modules/societe/mod_codecompta_panicum.php
  *      \ingroup    societe
  *      \brief      Fichier de la classe des gestion panicum des codes compta des societes clientes
  *      \version    $Id$

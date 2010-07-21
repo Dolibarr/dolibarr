@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/includes/modules/societe/mod_codeclient_monkey.class.php
+ *       \file       htdocs/includes/modules/societe/mod_codeclient_monkey.php
  *       \ingroup    societe
  *       \brief      Fichier de la classe des gestion lion des codes clients
  *       \version    $Id$

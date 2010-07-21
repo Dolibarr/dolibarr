@@ -54,7 +54,7 @@
 ////////////////////////////////////////////////////
 
 /**
- *	\file       htdocs/adherents/cartes/PDF_card.class.php
+ *	\file       htdocs/includes/modules/member/PDF_card.class.php
  *	\ingroup    member
  *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  *	\author     Steve Dillon

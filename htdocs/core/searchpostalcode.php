@@ -32,7 +32,7 @@
  * ************************************************************************* */
 
 /**
- *       \file       htdocs/searchpostalcode.php
+ *       \file       htdocs/core/searchpostalcode.php
  *       \ingroup    societe
  *       \brief      Search the city corresponding to the ZIP code entered. 1st round is sought in the company table, if we have two customers in the same city that is direct. If the search never does anything then we start looking in the table of postcodes.
  *       \version    $Id$

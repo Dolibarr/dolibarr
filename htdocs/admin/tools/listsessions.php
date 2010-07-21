@@ -18,7 +18,7 @@
  */
 
 /**
- *		\file       htdocs/admin/tools/listessions.php
+ *		\file       htdocs/admin/tools/listsessions.php
  *      \ingroup    core
  *      \brief      List of PHP sessions
  *      \version    $Id$

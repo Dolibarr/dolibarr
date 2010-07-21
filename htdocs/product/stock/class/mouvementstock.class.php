@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/product/stock/mouvementstock.class.php
+ *	\file       htdocs/product/stock/class/mouvementstock.class.php
  *	\ingroup    stock
  *	\brief      Fichier de la classe de gestion des mouvements de stocks
  *	\version    $Revision$

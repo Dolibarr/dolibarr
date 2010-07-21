@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/admin/imports/index.php
+ *       \file       htdocs/imports/index.php
  *       \ingroup    import
  *       \brief      Page accueil de la zone import
  *       \version    $Id$

@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/public/members/priv_liste.php
+ *	\file       htdocs/public/members/public_list.php
  *	\ingroup    member
  *  \brief      File sample to list members
  *  \version    $Id$

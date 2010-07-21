@@ -22,16 +22,16 @@
  */
 
 /**
- *      \file       htdocs/includes/modules/modMyModule.class.php
+ *      \file       htdocs/includes/modules/modPaybox.class.php
  *      \ingroup    mymodule
- *      \brief      Description and activation file for module MyModule
+ *      \brief      Description and activation file for module Paybox
  *		\version	$Id$
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**     \class      modPayBox
- *      \brief      Description and activation class for module MyModule
+ *      \brief      Description and activation class for module Paybox
  */
 class modPayBox extends DolibarrModules
 {

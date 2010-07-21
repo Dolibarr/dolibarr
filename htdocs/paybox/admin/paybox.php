@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**	    \file       htdocs/admin/paybox.php
+/**	    \file       htdocs/paybox/admin/paybox.php
  *		\ingroup    paybox
  *		\brief      Page to setup paybox module
  *		\version    $Id$

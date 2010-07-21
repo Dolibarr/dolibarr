@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       scripts/user/sync_user_dolibarr2ldap.php
+ *      \file       scripts/user/sync_users_dolibarr2ldap.php
  *      \ingroup    ldap core
  *      \brief      Script de mise a jour des users dans LDAP depuis base Dolibarr
  *		\version	$Id$

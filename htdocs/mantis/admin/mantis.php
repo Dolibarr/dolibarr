@@ -23,7 +23,7 @@
  */
 
 /**
- *   \file       htdocs/admin/mantis.php
+ *   \file       htdocs/mantis/admin/mantis.php
  *   \ingroup    mantis
  *   \brief      Page de configuration du module mantis
  *   \version    $Revision$
@@ -51,7 +51,7 @@ if ($actionsave)
     $i=0;
 
     $db->begin();
-    
+
     $i+=dolibarr_set_const($db,'PHPMANTIS_URL',trim($_POST["phpmantis_url"]),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'PHPMANTIS_HOST',trim($_POST["phpmantis_host"]),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'PHPMANTIS_DBNAME',trim($_POST["phpmantis_dbname"]),'chaine',0,'',$conf->entity);
@@ -87,7 +87,7 @@ elseif ($actiontest)
 
     //print "D ".$db." - ".$db->db."<br>\n";
     //print "W ".$mantis->localdb." - ".$mantis->localdb->db."<br>\n";
-    
+
     if ($mantis->localdb->connected == 1 && $mantis->localdb->database_selected == 1)
     {
         // V�rifie si bonne base

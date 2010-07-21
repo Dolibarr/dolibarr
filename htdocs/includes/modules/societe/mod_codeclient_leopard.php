@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/includes/modules/societe/mod_codeclient_leopard.class.php
+ *       \file       htdocs/includes/modules/societe/mod_codeclient_leopard.php
  *       \ingroup    societe
  *       \brief      Fichier de la classe des gestion leopard des codes clients
  *       \version    $Id$

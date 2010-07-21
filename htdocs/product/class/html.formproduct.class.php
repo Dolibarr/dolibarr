@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/product/html.formproduct.class.php
+ *	\file       htdocs/product/class/html.formproduct.class.php
  *	\brief      Fichier de la classe des fonctions predefinie de composants html
  *	\version	$Id$
  */

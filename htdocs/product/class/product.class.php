@@ -22,7 +22,7 @@
  */
 
 /**
- *	\file       htdocs/product.class.php
+ *	\file       htdocs/product/class/product.class.php
  *	\ingroup    produit
  *	\brief      Fichier de la classe des produits predefinis
  *	\version    $Id$

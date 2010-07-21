@@ -18,7 +18,7 @@
 
 
 /**
- *      \file       htdocs/admin/bank.php
+ *      \file       htdocs/compta/bank/admin/bank.php
  *		\ingroup    bank
  *		\brief      Page to setup the bank module
  *		\version    $Id$

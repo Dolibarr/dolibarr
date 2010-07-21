@@ -20,7 +20,7 @@
  */
 
 /**
- \file       htdocs/includes/modules/societe/mod_codecompta_aquarium.class.php
+ \file       htdocs/includes/modules/societe/mod_codecompta_aquarium.php
  \ingroup    societe
  \brief      Fichier de la classe des gestion aquarium des codes compta des societes clientes
  \version    $Id$

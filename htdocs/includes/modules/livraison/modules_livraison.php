@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/includes/livraison/modules_livraison.php
+ *	\file       htdocs/includes/modules/livraison/modules_livraison.php
  *	\ingroup    expedition
  *	\brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
  *				et la classe mere de numerotation des bons de livraisons

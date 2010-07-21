@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/facture/terre/terre.modules.php
+ *	\file       htdocs/includes/modules/facture/terre.modules.php
  *	\ingroup    facture
  *	\brief      File containing class for numbering module Terre
  *	\version    $Id$

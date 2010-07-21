@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/compta/facture/facture-rec.class.php
+ *	\file       htdocs/compta/facture/class/facture-rec.class.php
  *	\ingroup    facture
  *	\brief      Fichier de la classe des factures recurentes
  *	\version    $Id$

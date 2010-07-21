@@ -18,7 +18,7 @@
  */
 
 /**
- *   \file       htdocs/admin/phenix.php
+ *   \file       htdocs/phenix/admin/phenix.php
  *   \ingroup    phenix
  *   \brief      Page de configuration du module Phenix
  *   \version    $Id$
@@ -46,7 +46,7 @@ if ($actionsave)
     $i=0;
 
     $db->begin();
-    
+
     $i+=dolibarr_set_const($db,'PHPPHENIX_URL',trim($_POST["phpphenix_url"]),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'PHPPHENIX_HOST',trim($_POST["phpphenix_host"]),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'PHPPHENIX_DBNAME',trim($_POST["phpphenix_dbname"]),'chaine',0,'',$conf->entity);
@@ -90,7 +90,7 @@ elseif ($actiontest)
 
     //print "D ".$db." - ".$db->db."<br>\n";
     //print "W ".$phenix->localdb." - ".$phenix->localdb->db."<br>\n";
-    
+
     if ($phenix->localdb->connected == 1 && $phenix->localdb->database_selected == 1)
     {
     	// V�rifie si bonne base

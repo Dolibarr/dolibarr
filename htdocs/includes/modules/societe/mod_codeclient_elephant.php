@@ -20,7 +20,7 @@
  */
 
 /**
- *       \file       htdocs/includes/modules/societe/mod_codeclient_elephant.class.php
+ *       \file       htdocs/includes/modules/societe/mod_codeclient_elephant.php
  *       \ingroup    societe
  *       \brief      File of class to manage third party code with elephant rule
  *       \version    $Id$

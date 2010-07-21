@@ -18,7 +18,7 @@
  */
 
 /**
- *	 \file       htdocs/usergroup.class.php
+ *	 \file       htdocs/user/class/usergroup.class.php
  *	 \brief      Fichier de la classe des groupes d'utilisateur
  *	 \author     Rodolphe Qiedeville
  *	 \version    $Id$

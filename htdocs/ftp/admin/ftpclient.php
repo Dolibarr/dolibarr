@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/admin/ftpclient.php
+ *       \file       htdocs/ftp/admin/ftpclient.php
  *       \ingroup    ftp
  *       \brief      Admin page to setup FTP client module
  *       \version    $Id$

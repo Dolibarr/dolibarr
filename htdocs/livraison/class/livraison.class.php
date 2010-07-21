@@ -20,7 +20,7 @@
  */
 
 /**
- *  \file       htdocs/livraison/livraison.class.php
+ *  \file       htdocs/livraison/class/livraison.class.php
  *  \ingroup    delivery
  *  \brief      Fichier de la classe de gestion des bons de livraison
  *  \version    $Id$

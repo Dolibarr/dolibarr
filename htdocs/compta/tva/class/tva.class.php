@@ -18,7 +18,7 @@
  */
 
 /**
-        \file       htdocs/compta/tva/tva.class.php
+        \file       htdocs/compta/tva/class/tva.class.php
 		\ingroup    tax
 		\version    $Id$
 		\author		Laurent Destailleur

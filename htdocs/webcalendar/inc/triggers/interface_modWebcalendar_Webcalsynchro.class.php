@@ -17,7 +17,7 @@
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_modWebcalendar_webcalsynchro.class.php
+        \file       htdocs/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php
         \ingroup    webcalendar
         \brief      Fichier de gestion des triggers webcalendar
 		\version	$Id$

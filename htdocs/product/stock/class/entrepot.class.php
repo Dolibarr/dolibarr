@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/product/stock/entrepot.class.php
+ *  \file       htdocs/product/stock/class/entrepot.class.php
  *  \ingroup    stock
  *  \brief      Fichier de la classe de gestion des entrepots
  *  \version    $Id$

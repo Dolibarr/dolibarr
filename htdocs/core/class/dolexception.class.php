@@ -17,7 +17,7 @@
  */
 
 /**
- *   \file			htdocs/core/class/DolException.class.php
+ *   \file			htdocs/core/class/dolexception.class.php
  *   \ingroup		core
  *   \brief			File of class for exceptions
  *   \version		$Id$

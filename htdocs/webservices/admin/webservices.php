@@ -17,8 +17,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**	    
- *      \file       htdocs/admin/webservices.php
+/**
+ *      \file       htdocs/webservices/admin/webservices.php
  *		\ingroup    webservices
  *		\brief      Page to setup webservices module
  *		\version    $Id$

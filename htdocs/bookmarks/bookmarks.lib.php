@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/bookmarks.lib.php
+ *	\file       htdocs/bookmarks/bookmarks.lib.php
  *	\ingroup	bookmarks
  *	\brief      File with library for bookmark module
  *	\version    $Id$

@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       compta/bank/bankcateg.class.php
+ *      \file       compta/bank/class/bankcateg.class.php
  *      \ingroup    banque
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for bank categories
  *		\version    $Id$

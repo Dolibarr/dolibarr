@@ -24,7 +24,7 @@
  */
 
 /**
- *	\file       htdocs/societe.class.php
+ *	\file       htdocs/societe/class/societe.class.php
  *	\ingroup    societe
  *	\brief      File for third party class
  *	\version    $Id$

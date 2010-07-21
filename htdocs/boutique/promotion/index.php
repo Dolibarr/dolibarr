@@ -18,7 +18,7 @@
  */
 
 /**
-	    \file       htdocs/boutique/promotions/index.php
+	    \file       htdocs/boutique/promotion/index.php
 		\ingroup    boutique
 		\brief      Page gestion promotions OSCommerce
 		\version    $Id$
