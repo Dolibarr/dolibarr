@@ -19,7 +19,7 @@
  */
 
 /**
- * 	\file       htdocs/comm/class/address.class.php
+ * 	\file       htdocs/societe/class/address.class.php
  * 	\ingroup    societe
  *  \brief      Fichier de la classe des adresses des tiers
  *  \version    $Id$

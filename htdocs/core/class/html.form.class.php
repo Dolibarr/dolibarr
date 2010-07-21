@@ -2120,7 +2120,7 @@ class Form
 		{
 			if ($selected)
 			{
-				require_once(DOL_DOCUMENT_ROOT ."/comm/class/address.class.php");
+				require_once(DOL_DOCUMENT_ROOT ."/societe/class/address.class.php");
 				$address=new Address($this->db);
 				$result=$address->fetch_address($selected);
 				print '<a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$address->socid.'&id='.$address->id.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$address->label.'</a>';

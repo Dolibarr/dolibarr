@@ -24,7 +24,7 @@
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/class/address.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/societe/class/address.class.php");
 include_once(DOL_DOCUMENT_ROOT.'/boutique/commande/class/boutiquecommande.class.php');
 
 

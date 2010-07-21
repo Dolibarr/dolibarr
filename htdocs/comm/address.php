@@ -27,7 +27,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/class/address.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe/class/address.class.php");
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -199,7 +199,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             $sql = "SELECT code, libelle";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
             $sql.= " WHERE rowid = ".$address->pays_id;
-            
+
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -307,7 +307,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
                 $sql = "SELECT code, libelle";
                 $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
                 $sql.= "WHERE rowid = ".$address->pays_id;
-                
+
                 $resql=$db->query($sql);
                 if ($resql)
                 {
