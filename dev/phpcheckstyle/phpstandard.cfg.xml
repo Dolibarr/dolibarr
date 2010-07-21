@@ -53,12 +53,14 @@
     <test name="noShellComments"/>
     
     <!-- Tests that every function and class is immediately preceded by a docblock. A property "excludePrivateMembers" can be set if you want to disable docblocks for private member functions. -->
+    <!--
     <test name="docBlocks">
         <property name="excludePrivateMembers" value="true"/>
         <property name="testReturn" value="true"/>
         <property name="testParam" value="true"/>
         <property name="testThrow" value="true"/>
     </test>
+    -->
     
     <!--  ****************  -->
     <!--    Indentation     -->
