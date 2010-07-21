@@ -251,8 +251,8 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 \brief  Supprime la remise en base
-	 \param  user utilisateur qui effectue l'operation
+	 *	Supprime la remise en base
+	 *	@param  user utilisateur qui effectue l'operation
 	 */
 	function delete($user='')
 	{
@@ -305,8 +305,8 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *  \brief  Validate receipt
-	 *  \param  user 	User
+	 *  Validate receipt
+	 *  @param  user 	User
 	 */
 	function validate($user)
 	{
@@ -446,7 +446,8 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	\brief  	Build document
 	 *	\param 		model 			Model name
-	 *	\return  	int        		<0 if KO, >0 if OK
+	 *	\param 		outputlangs		Object langs
+	 * 	\return  	int        		<0 if KO, >0 if OK
 	 */
 	function generatePdf($model='blochet', $outputlangs)
 	{
@@ -527,8 +528,8 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	\brief  Mets a jour le montant total
-	 *	\return int, 0 en cas de succes
+	 *	\brief  	Mets a jour le montant total
+	 *	\return 	int		0 en cas de succes
 	 */
 	function updateAmount()
 	{
@@ -586,9 +587,9 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 \brief  Insere la remise en base
-	 \param  user utilisateur qui effectue l'operation
-	 \param  account_id Compte bancaire concerne
+	 *	\brief  	Insere la remise en base
+	 *	\param  	account_id 		Compte bancaire concerne
+	 * 	\return		int
 	 */
 	function removeCheck($account_id)
 	{
@@ -615,8 +616,8 @@ class RemiseCheque extends CommonObject
 		return 0;
 	}
 	/**
-	 \brief      Charge les proprietes ref_previous et ref_next
-	 \return     int   <0 si ko, 0 si ok
+	 *	\brief      Charge les proprietes ref_previous et ref_next
+	 *	\return     int   <0 si ko, 0 si ok
 	 */
 	function load_previous_next_id()
 	{

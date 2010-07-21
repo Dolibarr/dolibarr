@@ -113,9 +113,9 @@ class FormMail
 	/**
 	 * Add a file into the list of attached files (stored in SECTION array)
 	 *
-	 * @param unknown_type $path
-	 * @param unknown_type $file
-	 * @param unknown_type $type
+	 * @param 	$path
+	 * @param 	$file
+	 * @param 	$type
 	 */
 	function add_attached_files($path,$file,$type)
 	{

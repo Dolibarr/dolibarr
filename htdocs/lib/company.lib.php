@@ -146,8 +146,8 @@ function societe_prepare_head($objsoc)
 /**
  * Return array of tabs to used on page
  *
- * @param unknown_type $objsoc
- * @return unknown
+ * @param 	$objsoc
+ * @return
  */
 function societe_prepare_head2($objsoc)
 {

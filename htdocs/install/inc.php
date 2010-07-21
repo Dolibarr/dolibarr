@@ -255,10 +255,10 @@ function conf($dolibarr_main_document_root)
 /**
  * Show header of install pages
  *
- * @param unknown_type $soutitre
- * @param unknown_type $next
- * @param unknown_type $action
- * @param unknown_type $param
+ * @param 	$soutitre
+ * @param 	$next
+ * @param 	$action
+ * @param 	$param
  */
 function pHeader($soutitre,$next,$action='set',$param='')
 {
@@ -346,8 +346,8 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='')
 /**
  * Log function for install pages
  *
- * @param unknown_type $message
- * @param unknown_type $level
+ * @param 	$message
+ * @param 	$level
  */
 function dolibarr_install_syslog($message, $level=LOG_DEBUG)
 {

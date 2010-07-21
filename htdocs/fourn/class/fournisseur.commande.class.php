@@ -925,12 +925,12 @@ class CommandeFournisseur extends Commande
 	/**
 	 * Add a product into a stock warehouse.
 	 *
-	 * @param unknown_type $user
-	 * @param unknown_type $product
-	 * @param unknown_type $qty
-	 * @param unknown_type $entrepot	Id of warehouse to add product
-	 * @param unknown_type $price
-	 * @return unknown
+	 * @param 	$user
+	 * @param 	$product
+	 * @param 	$qty
+	 * @param 	$entrepot	Id of warehouse to add product
+	 * @param 	$price
+	 * @return 	int			<0 if KO, =0 if OK
 	 */
 	function DispatchProduct($user, $product, $qty, $entrepot, $price=0)
 	{
@@ -988,8 +988,8 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * Supprime une ligne de la commande
-	 *
+	 * 	Delete line
+	 *	@param		idligne
 	 */
 	function delete_line($idligne)
 	{

@@ -611,8 +611,8 @@ class CMailFile
 	/**
 	 * Correct an uncomplete html string
 	 *
-	 * @param unknown_type $msg
-	 * @return unknown
+	 * @param 		$msg
+	 * @return
 	 */
 	function checkIfHTML($msg)
 	{

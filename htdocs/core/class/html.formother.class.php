@@ -461,10 +461,11 @@ class FormOther
 /**
  * Write all lines of a project (if parent = 0)
  *
- * @param unknown_type $inc
- * @param unknown_type $parent
- * @param unknown_type $lines
- * @param unknown_type $level
+ * @param 	$inc
+ * @param 	$parent
+ * @param 	$lines
+ * @param 	$level
+ * @param 	$selected
  */
 function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 {

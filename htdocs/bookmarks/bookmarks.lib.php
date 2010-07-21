@@ -26,9 +26,9 @@
 /**
  * Add area with bookmarks in menu
  *
- * @param unknown_type $aDb
- * @param unknown_type $aLangs
- * @return unknown
+ * @param 	$aDb
+ * @param 	$aLangs
+ * @return	string
  */
 function printBookmarksList ($aDb, $aLangs)
 {

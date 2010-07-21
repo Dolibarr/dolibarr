@@ -624,14 +624,14 @@ llxFooter('$Date$ - $Revision$');
 
 
 /**
- * Enter description here...
+ * Connect to FTP server
  *
- * @param unknown_type $ftp_server
- * @param unknown_type $ftp_port
- * @param unknown_type $ftp_user
- * @param unknown_type $ftp_password
- * @param unknown_type $section
- * @return unknown
+ * @param 	$ftp_server
+ * @param 	$ftp_port
+ * @param 	$ftp_user
+ * @param 	$ftp_password
+ * @param 	$section
+ * @return	int 	<0 if OK, >0 if KO
  */
 function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section)
 {
@@ -683,9 +683,9 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 /**
  * Tell if an entry is a FTP directory
  *
- * @param unknown_type $connect_id
- * @param unknown_type $dir
- * @return unknown
+ * @param 		$connect_id
+ * @param 		$dir
+ * @return
  */
 function ftp_isdir($connect_id,$dir)
 {

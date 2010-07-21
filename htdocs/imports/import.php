@@ -1936,8 +1936,8 @@ function show_elem($fieldssource,$i,$pos,$key,$var,$nostyle='')
 /**
  * Return not used field number
  *
- * @param unknown_type $listofkey
- * @return unknown
+ * @param 	$listofkey
+ * @return
  */
 function getnewkey(&$fieldssource,&$listofkey)
 {

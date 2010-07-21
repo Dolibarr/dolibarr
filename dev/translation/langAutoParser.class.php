@@ -147,12 +147,12 @@ class langAutoParser {
 	/**
 	 * Put in array translatedFiles[$file], line of a new tranlated pair
 	 *
-	 * @param unknown_type $content		Existing content of dest file
-	 * @param unknown_type $file		Target file name translated (xxxx.lang)
-	 * @param unknown_type $key			Key to translate
-	 * @param unknown_type $value		Existing value in source file
-	 * @param	string					Language code (ie: fr_FR)
-	 * @return	int						0=Nothing translated, 1=Record translated
+	 * @param 	$content		Existing content of dest file
+	 * @param 	$file			Target file name translated (xxxx.lang)
+	 * @param 	$key			Key to translate
+	 * @param 	$value			Existing value in source file
+	 * @param	string			Language code (ie: fr_FR)
+	 * @return	int				0=Nothing translated, 1=Record translated
 	 */
 	private function translateFileLine($content,$file,$key,$value,$mydestLang)
 	{
@@ -213,8 +213,8 @@ class langAutoParser {
 	 * Return translation of a value
 	 *
 	 * @param 	$src_texts		Array with one value
-	 * @param 	unknown_type $src_lang
-	 * @param 	unknown_type $dest_lang
+	 * @param 	$src_lang
+	 * @param 	$dest_lang
 	 * @return 	string			Value translated
 	 */
 	private function translateTexts($src_texts = array(), $src_lang, $dest_lang){

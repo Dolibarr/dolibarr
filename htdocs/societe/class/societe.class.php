@@ -1214,10 +1214,10 @@ class Societe extends CommonObject
 
 
 	/**
-	 * Enter description here...
+	 * Set the price level
 	 *
-	 * @param unknown_type $price_level
-	 * @param unknown_type $user
+	 * @param $price_level
+	 * @param $user
 	 */
 	function set_price_level($price_level, $user)
 	{
@@ -1994,7 +1994,7 @@ class Societe extends CommonObject
 	/**
 	 * Add a line in log table to save status change.
 	 *
-	 * @param unknown_type $id_status
+	 * @param $id_status
 	 */
 	function set_status($id_status)
 	{

@@ -188,10 +188,10 @@ llxFooter('$Date$ - $Revision$',0);
 
 
 /**
- * Enter description here...
+ * Return cursor on request to find zip/town
  *
- * @param unknown_type $table
- * @return unknown
+ * @param 	$table
+ * @return 	cursor
  */
 function run_request($table)
 {

@@ -65,9 +65,8 @@ class Deplacement extends CommonObject
 	/**
 	 * Create object in database
 	 *
-	 * @param unknown_type $user	User that creat
-	 * @param unknown_type $type	Type of record: 0=trip, 1=credit note
-	 * @return unknown
+	 * @param 	$user	User that creat
+	 * @return 	int		<0 if KO, >0 if OK
 	 * @TODO Add ref number
 	 */
 	function create($user)

@@ -482,17 +482,17 @@ llxFooter('$Date$ - $Revision$');
 
 
 /**
- * \brief	Show event of a particular day
+ * Show event of a particular day
  *
- * @param unknown_type $db				Database handler
- * @param unknown_type $day				Day
- * @param unknown_type $month			Month
- * @param unknown_type $year			Year
- * @param unknown_type $monthshown      Month shown in calendar view
- * @param unknown_type $style			Style to use for this day
- * @param unknown_type $actionarray		Array of actions
- * @param unknown_type $maxPrint		Nb of actions to show each day on month view (0 means non limit)
- * @param unknown_type nbofchartoshow	Nb of characters to show for event line
+ * @param 	$db				Database handler
+ * @param 	$day			Day
+ * @param 	$month			Month
+ * @param 	$year			Year
+ * @param 	$monthshown     Month shown in calendar view
+ * @param 	$style			Style to use for this day
+ * @param 	$actionarray	Array of actions
+ * @param 	$maxPrint		Nb of actions to show each day on month view (0 means non limit)
+ * @param 	nbofchartoshow	Nb of characters to show for event line
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$actionarray, $maxPrint=0, $nbofchartoshow=14)
 {

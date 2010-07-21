@@ -28,18 +28,18 @@
 /**
  * Show filter form in agenda view
  *
- * @param unknown_type $canedit
- * @param unknown_type $status
- * @param unknown_type $year
- * @param unknown_type $month
- * @param unknown_type $day
- * @param unknown_type $showborthday
- * @param unknown_type $action
- * @param unknown_type $filtera
- * @param unknown_type $filtert
- * @param unknown_type $filterd
- * @param unknown_type $pid
- * @param unknown_type $socid
+ * @param 		$canedit
+ * @param 		$status
+ * @param 		$year
+ * @param 		$month
+ * @param 		$day
+ * @param 		$showborthday
+ * @param 		$action
+ * @param 		$filtera
+ * @param 		$filtert
+ * @param 		$filterd
+ * @param 		$pid
+ * @param 		$socid
  */
 function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$action,$filtera,$filtert,$filterd,$pid,$socid)
 {
