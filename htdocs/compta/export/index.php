@@ -72,12 +72,12 @@ if ($_GET["action"] == 'export')
   /* G�n�ration du journal des Paiements */
 
   $jp= new ComptaJournalPaiement($db);
-  $jp->GeneratePdf($user, $dir, $exc->id, $exc->ref);
+  $jp->generatePdf($user, $dir, $exc->id, $exc->ref);
 
   /* G�n�ration du journal des Ventes */
 
   $jp= new ComptaJournalVente($db);
-  $jp->GeneratePdf($user, $dir, $exc->id, $exc->ref);
+  $jp->generatePdf($user, $dir, $exc->id, $exc->ref);
 }
 
 /*

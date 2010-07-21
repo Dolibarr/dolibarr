@@ -18,7 +18,7 @@
  */
 
 /**
- *       \file       htdocs/compta/export/class/ComptaJournalPdf.php
+ *       \file       htdocs/compta/export/class/ComptaJournalPdf.class.php
  *       \ingroup    compta
  *       \brief      Fichier de la classe export compta journal
  *       \version    $Id$

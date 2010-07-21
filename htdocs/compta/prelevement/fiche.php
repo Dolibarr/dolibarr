@@ -84,7 +84,7 @@ if ($_POST["action"] == 'infotrans')
 if ($_POST["action"] == 'infocredit')
 {
 	$bon = new BonPrelevement($db,"");
-	$bon->Fetch($_GET["id"]);
+	$bon->fetch($_GET["id"]);
 	$dt = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 
 	$error = $bon->set_infocredit($user, $dt);

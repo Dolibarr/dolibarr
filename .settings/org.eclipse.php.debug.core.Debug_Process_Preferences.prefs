@@ -1,8 +1,8 @@
-#Thu Jun 24 20:12:23 CEST 2010
+#Wed Jul 21 18:10:37 CEST 2010
 eclipse.preferences.version=1
 org.eclipse.php.debug.core.use-project-settings=true
-org.eclipse.php.debug.coredefaultPHP=PHP Wamp 5.2.8
-org.eclipse.php.debug.coreoutput_encoding=
+org.eclipse.php.debug.coredefaultPHP=PHP Wamp 5.3.0
+org.eclipse.php.debug.coreoutput_encoding=UTF-8
 org.eclipse.php.debug.corephp_debugger_id=org.eclipse.php.debug.core.xdebugDebugger
 org.eclipse.php.debug.corestop_at_first_line_string=true
-org.eclipse.php.debug.coretransfer_encoding=
+org.eclipse.php.debug.coretransfer_encoding=UTF-8

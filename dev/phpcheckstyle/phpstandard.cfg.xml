@@ -1,18 +1,20 @@
 <!-- somewhat inspired by java checkstyle -->
 <phpcheckstyle-configuration>
 
-	<!--  ****************  -->
+    <!--  ****************  -->
     <!--        Naming      -->
     <!--  ****************  -->
     
     <!-- Check Constant Naming -->
+    <!-- Disabled to avoid warning with $sql="SELECT ..." 
     <test name="constantNaming" regexp="/^[A-Z_][A-Z_]*[A-Z_]$/" level="ERROR"/>
+    -->
     
      <!-- Check Variable Naming -->
     <test name="variableNaming" regexp="/^[a-z_][a-zA-Z0-9]*$/" />
     
     <!-- Check Function Naming -->
-    <test name="functionNaming" regexp="/^[a-z]/" level="ERROR"/>
+    <test name="functionNaming" regexp="/^[a-z_]/" level="ERROR"/>
     
     <!-- Check Private Function Naming -->
     <test name="privateFunctionNaming" regexp="/^_[a-z]/" level="ERROR"/>
@@ -28,7 +30,7 @@
     <test name="classNaming" regexp="/^[A-Z]/" level="ERROR"/>
     
     
-	<!--  ****************  -->
+    <!--  ****************  -->
     <!--      PHP Tags      -->
     <!--  ****************  -->    
     
@@ -37,7 +39,7 @@
     <test name="noShortPhpCodeTag"/>
     
     <!-- Test if a PHP closing file is present at the end of a file -->
-    <test name="noFileCloseTag"/>
+    <!-- <test name="noFileCloseTag"/> -->
     
     <!-- Test if a file finish with some inner HTML (OK for some view but could provoque "header already sent" error) -->
     <test name="noFileFinishHTML" level="ERROR" />
@@ -47,7 +49,7 @@
     <!--      Comments      -->
     <!--  ****************  -->    
     
-	<!-- Check if some C style comments are used (#) -->    
+    <!-- Check if some C style comments are used (#) -->    
     <test name="noShellComments"/>
     
     <!-- Tests that every function and class is immediately preceded by a docblock. A property "excludePrivateMembers" can be set if you want to disable docblocks for private member functions. -->
@@ -72,7 +74,7 @@
     <!-- sl = same line -->
     <!-- nl = new line -->    
     <test name="controlStructOpenCurly">
-        <property name="position" value="sl"/>
+        <property name="position" value="nl"/>
     </test>
     
     <!-- Check the position of the close curly brace  -->
@@ -82,18 +84,16 @@
     <!-- Check the position of the open curly brace after a function -->
     <!-- sl = same line -->
     <!-- nl = new line -->
-	<!--
     <test name="funcDefinitionOpenCurly">
-        <property name="position" value="sl"/>
+        <property name="position" value="nl"/>
     </test>
-    -->
-	
-	<!-- Check the position of the else -->
-	<!-- sl = same line -->
+    
+    <!-- Check the position of the else -->
+    <!-- sl = same line -->
     <!-- nl = new line -->
     <test name="controlStructElse">
-	 	<property name="position" value="nl"/>
-	</test>
+        <property name="position" value="nl"/>
+    </test>
     
     
     <!--  ****************  -->
@@ -108,27 +108,34 @@
    
     <!-- Check that there is no space after a function name in a function call -->
     <!-- <test name="noSpaceAfterFunctionName" level="INFO"></test>  -->  
-	 
+     
     
     <!-- Check for the (required) presence of a white space after some tokens (like ,) -->
+    <!--
     <test name="checkWhiteSpaceAfter"> 
-    	<exception value="."/>  <!-- Exceptions to this rule -->
+        <exception value="."/>
     </test>
-    
+    -->
+        
     <!-- Check for the (required) presence of a white space before some tokens -->
+    <!--
     <test name="checkWhiteSpaceBefore">
-    	<exception value="."/>  <!-- Exceptions to this rule -->
-    	<exception value=":"/>  <!-- Because of the switch/case --> 
+        <exception value="."/>
+        <exception value=":"/> 
     </test> 
-    
+    -->
         
     <!-- Check that there is no space before before some tokens  -->
+    <!--
     <test name="noSpaceBeforeToken" level="INFO">
     </test>
-    
+    -->
+
     <!-- Check that there is no space after some tokens -->
+    <!--
     <test name="noSpaceAfterToken"  level="INFO">
     </test>
+    -->
     
     <!--  ****************  -->
     <!--      Metrics       -->
@@ -150,8 +157,8 @@
     </test> -->
     
     <!-- Check Cyclomatic Complexity -->
-	<!-- see http://www.aivosto.com/project/help/pm-complexity.html -->
- 	<test name="cyclomaticComplexity">
+    <!-- see http://www.aivosto.com/project/help/pm-complexity.html -->
+    <test name="cyclomaticComplexity">
         <!-- Level raising a warning -->
         <property name="warningLevel" value="10"/>
         <!-- Level raising an error -->
@@ -168,50 +175,50 @@
     <!-- Check for prohibited functions -->
     <!-- @see http://www.php.net/manual/en/indexes.php -->
     <test name="checkProhibitedFunctions">
-    	<item value="echo"/>
-    	<item value="system"/>
-    	<item value="print_r"/>
-    	<item value="var_dump"/>
-    	<item value="dl"/>
-    	<item value="exec"/>
-    	<item value="passthru"/>
-    	<item value="delete"/>
-    	<item value="ereg_replace"/>
-    	<item value="ereg"/>
-    	<item value="eregi"/>
-    	<!-- <item value="copy"/>  -->
-    	<!-- <item value="fwrite"/>  -->
+        <item value="echo"/>
+        <item value="system"/>
+        <item value="print_r"/>
+        <item value="var_dump"/>
+        <item value="dl"/>
+        <!--<item value="exec"/>-->
+        <item value="passthru"/>
+        <!-- <item value="delete"/> We disable because of false report when using method delete -->
+        <item value="ereg_replace"/>
+        <item value="ereg"/>
+        <item value="eregi"/>
+        <!-- <item value="copy"/>  -->
+        <!-- <item value="fwrite"/>  -->
     </test>
     
     <!-- Check for prohibited tokens -->
     <!-- @see http://www.php.net/manual/en/tokens.php -->
     <test name="checkProhibitedTokens">
-    	<item value="T_BAD_CHARACTER"/>
-    	<item value="T_DECLARE"/>
-    	<item value="T_ENDDECLARE"/>
-    	<item value="T_ENDFOR"/>
-    	<item value="T_ENDFOREACH"/>
-    	<item value="T_ENDIF"/>
-    	<item value="T_ENDSWITCH"/>
-    	<item value="T_ENDWHILE"/>
-    	<item value="T_HALT_COMPILER"/>
-    	<item value="T_OLD_FUNCTION"/>
-    	<item value="T_PRINT"/>
-    	
-    	<!--  Same thing as the noShortPhpCodeTag rule -->
-    	<!-- <item value="T_OPEN_TAG_WITH_ECHO"/> -->
-    	
-    	<!-- <item value="T_INLINE_HTML"/> -->
-    	<!-- <item value="T_ECHO"/>  -->
-    	
-    	
+        <item value="T_BAD_CHARACTER"/>
+        <item value="T_DECLARE"/>
+        <item value="T_ENDDECLARE"/>
+        <item value="T_ENDFOR"/>
+        <item value="T_ENDFOREACH"/>
+        <item value="T_ENDIF"/>
+        <item value="T_ENDSWITCH"/>
+        <item value="T_ENDWHILE"/>
+        <item value="T_HALT_COMPILER"/>
+        <item value="T_OLD_FUNCTION"/>
+        <!-- <item value="T_PRINT"/> -->
+        
+        <!--  Same thing as the noShortPhpCodeTag rule -->
+        <!-- <item value="T_OPEN_TAG_WITH_ECHO"/> -->
+        
+        <!-- <item value="T_INLINE_HTML"/> -->
+        <!-- <item value="T_ECHO"/>  -->
+        
+        
     </test>
     
      <!-- Check for silenced errors before function calls (@function) -->
     <test name="checkSilencedError">
-    	<exception value="rename"/> <!-- Exceptions to this rule -->
-    	<exception value="mkdir"/>
-    	<exception value="chmod"/>
+        <exception value="rename"/> <!-- Exceptions to this rule -->
+        <exception value="mkdir"/>
+        <exception value="chmod"/>
     </test>
     
     <!-- Check for encapsed variables inside a String ("$a") -->
@@ -231,7 +238,7 @@
     
     <!-- Check empty block like if ($a) {} -->
     <test name="checkEmptyBlock">
-     	<!--  <exception value="catch"/>  -->
+        <!--  <exception value="catch"/>  -->
     </test>
     
     <!-- Check empty statement ( ;; ) -->
@@ -264,7 +271,7 @@
     With the exception of for iterators, all variable incrementation or decrementation should occur in their own toplevel statement to increase readability.  
     -->
     <test name="checkUnaryOperator">
-   		<exception value="for"/>
+        <exception value="for"/>
     </test>
     
     <!--
@@ -272,7 +279,7 @@
     With the exception of for iterators, all assignments should occur in their own toplevel statement to increase readability.  
     -->
     <test name="checkInnerAssignment">
-    	<exception value="for"/>
+        <exception value="for"/>
     </test>
     
     <!-- Detect unused private functions (detecting unused public ones is more difficult) -->

@@ -19,7 +19,7 @@
  */
 
 /**
- \file       htdocs/compta/export/classComptaJournalVente.php
+ \file       htdocs/compta/export/class/ComptaJournalVente.class.php
  \ingroup    compta
  \brief      Fichier de la classe export compta journal
  \version    $Id$
@@ -40,7 +40,7 @@ class ComptaJournalVente  {
 	}
 
 
-	function GeneratePdf($user, $dir, $excid, $excref)
+	function generatePdf($user, $dir, $excid, $excref)
 	{
 		global $conf, $langs;
 

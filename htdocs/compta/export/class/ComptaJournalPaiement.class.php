@@ -20,7 +20,7 @@
  */
 
 /**
- *    \file       htdocs/compta/export/class/ComptaJournalPaiement.php
+ *    \file       htdocs/compta/export/class/ComptaJournalPaiement.class.php
  *    \ingroup    compta
  *    \brief      Fichier de la classe export compta journal
  *    \version    $Id$
@@ -40,7 +40,7 @@ class ComptaJournalPaiement
 		$this->db = $db;
 	}
 
-	function GeneratePdf($user, $dir, $excid, $excref)
+	function generatePdf($user, $dir, $excid, $excref)
 	{
 		global $conf,$langs;
 
