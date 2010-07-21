@@ -8,9 +8,20 @@
  * Code that need to be changed in this file are marked by "CHANGE THIS" tag.
  */
 
+/**
+ *	\file       htdocs/includes/modules/mailings/dolibarr_services_expired.modules.php
+ *	\ingroup    mailing
+ *	\brief      File of class to offer a selector of emailing targets with Rule 'services expired'.
+ *	\version    $Id$
+ */
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
+/**
+ *	\class      mailing_dolibarr_services_expired
+ *	\brief      Class to offer a selector of emailing targets with Rule 'services expired'.
+ */
 class mailing_dolibarr_services_expired extends MailingTargets
 {
 	var $name='DolibarrContractsLinesExpired';

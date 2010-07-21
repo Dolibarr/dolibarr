@@ -22,7 +22,7 @@
 
 /**
  *   	\file       htdocs/admin/ldap_members.php
- *		\ingroup    ldap adherent
+ *		\ingroup    ldap member
  *		\brief      Page d'administration/configuration du module Ldap adherent
  *		\version    $Id$
  */

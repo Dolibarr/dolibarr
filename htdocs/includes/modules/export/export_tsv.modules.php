@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/includes/modules/export/export_csv.modules.php
  *		\ingroup    export
- *		\brief      Fichier de la classe permettant de g�n�rer les export au format CSV
+ *		\brief      File of class to build export files with format TSV
  *		\author	    Laurent Destailleur
  *		\version    $Id$
 */
@@ -29,8 +29,8 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/export/modules_export.php");
 
 
 /**
- *	    \class      ExportCsv
- *		\brief      Classe permettant de g�n�rer les factures au mod�le Crabe
+ *	    \class      ExportTsv
+ *		\brief      Class to build export files with format TSV
  */
 class ExportTsv extends ModeleExports
 {

@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////
 // PDF_Label
 //
-// Classe afin d'�diter au format PDF des �tiquettes
+// Classe afin d'editer au format PDF des etiquettes
 // au format Avery ou personnalis�
 //
 //
@@ -55,7 +55,7 @@
 
 /**
  *	\file       htdocs/adherents/cartes/PDF_card.class.php
- *	\ingroup    adherent
+ *	\ingroup    member
  *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  *	\author     Steve Dillon
  *	\author	    Laurent Passebecq

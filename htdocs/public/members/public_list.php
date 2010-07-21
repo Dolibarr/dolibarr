@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/public/members/priv_liste.php
- *	\ingroup    adherent
+ *	\ingroup    member
  *  \brief      File sample to list members
  *  \version    $Id$
  */

@@ -37,8 +37,8 @@
 
 
 /**
- *	\class      Graph
- *	\brief      Classe mere permettant la gestion des graph
+ *	\class      DolGraph
+ *	\brief      Parent class of graph classes
  */
 class DolGraph
 {

@@ -20,7 +20,7 @@
 
 /**
  *	\file 		htdocs/adherents/cartes/etiquette.php
- *	\ingroup    adherent
+ *	\ingroup    member
  *	\brief      Page de creation d'etiquettes
  *	\version    $Id$
  */

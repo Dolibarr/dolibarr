@@ -32,7 +32,7 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**
- *	\class      modMailing
+ *	\class      modNotification
  *	\brief      Classe de description et activation du module Mailing
  */
 class modNotification extends DolibarrModules

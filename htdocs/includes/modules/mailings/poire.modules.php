@@ -20,20 +20,19 @@
  */
 
 /**
- \file       htdocs/includes/modules/mailings/poire.modules.php
- \ingroup    mailing
- \brief      Fichier de la classe permettant de g�n�rer la liste de destinataires Poire
- \version    $Id$
+ *	\file       htdocs/includes/modules/mailings/poire.modules.php
+ *	\ingroup    mailing
+ *	\brief      File of class to offer a selector of emailing targets with Rule 'Poire'.
+ *	\version    $Id$
  */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 
 
 /**
- \class      mailing_poire
- \brief      Classe permettant de g�n�rer la liste des destinataires Poire
+ *	\class      mailing_poire
+ *	\brief      Class to offer a selector of emailing targets with Rule 'Poire'.
  */
-
 class mailing_poire extends MailingTargets
 {
 	var $name='ContactCompanies';                     // Identifiant du module mailing

@@ -22,18 +22,19 @@
 
 /**
  *	\file 		htdocs/lib/ldap.class.php
- *	\brief 		Classe de gestion d'annuaire LDAP
- *	\author 	Rodolphe Quiedeville
- *	\author		Benoit Mortier
- *	\author		Regis Houssin
- *	\author		Laurent Destailleur
+ *	\brief 		File of class to manage LDAP features
  *	\version 	$Id$
+ */
+
+/**
+ *      \class      Ldap
+ *      \brief      Class to manage LDAP features
  */
 class Ldap
 {
 
 	/**
-	 * Tableau des serveurs (IP addresses ou nom d'h�tes)
+	 * Tableau des serveurs (IP addresses ou nom d'hotes)
 	 */
 	var $server=array();
 	/**

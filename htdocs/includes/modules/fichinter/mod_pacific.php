@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.p
 
 /**
  *  \class      mod_pacific
- *	\brief      Classe du moderotation de reference de fiche intervention Pacific
+ *	\brief      Class to manage numbering of intervention cards with rule Pacific.
  */
 class mod_pacific extends ModeleNumRefFicheinter
 {

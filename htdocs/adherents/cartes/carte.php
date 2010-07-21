@@ -20,7 +20,7 @@
 
 /**
  *	\file 		htdocs/adherents/cartes/carte.php
- *	\ingroup    adherent
+ *	\ingroup    member
  *	\brief      Page to output members business cards
  *	\version    $Id$
  */

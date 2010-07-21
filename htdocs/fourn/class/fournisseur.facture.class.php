@@ -22,9 +22,9 @@
  */
 
 /**
- *	\file       htdocs/fourn/fournisseur.facture.class.php
+ *	\file       htdocs/fourn/class/fournisseur.facture.class.php
  *	\ingroup    fournisseur,facture
- *	\brief      Fichier de la classe des factures fournisseurs
+ *	\brief      File of class to manage suppliers invoices
  *	\version    $Id$
  */
 
@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
 /**
  *	\class      FactureFournisseur
- *	\brief      Classe permettant la gestion des factures fournisseurs
+ *	\brief      Class to manage suppliers invoices
  */
 class FactureFournisseur extends Facture
 {

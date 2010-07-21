@@ -23,6 +23,11 @@
  *	\brief      File of class to manage cookies
  */
 
+
+/**
+ *	\class      DolCookie
+ *	\brief      Class to manage cookies
+ */
 class DolCookie
 {
 	var $myKey;

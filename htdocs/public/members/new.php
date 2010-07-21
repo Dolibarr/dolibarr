@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/public/members/new.php
- *	\ingroup    adherent
+ *	\ingroup    member
  *	\brief      Example of form to add a new member
  *	\version    $Id$
  */

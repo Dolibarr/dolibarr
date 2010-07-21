@@ -30,7 +30,7 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     \class      modImport
+/**     \class      modGeoIPMaxmind
  *		\brief      Classe de description et activation du module Import
  */
 class modGeoIPMaxmind extends DolibarrModules

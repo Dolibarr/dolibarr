@@ -21,7 +21,7 @@
  */
 
 /**
- *       \defgroup   adherent     Module foundation
+ *       \defgroup   member     Module foundation
  *       \brief      Module to manage members of a foundation
  */
 

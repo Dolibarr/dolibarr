@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**	    \file       htdocs/fichinter/fichinter.class.php
+/**	    \file       htdocs/fichinter/class/fichinter.class.php
  *		\ingroup    ficheinter
  *		\brief      Fichier de la classe des gestion des fiches interventions
  *		\version    $Id$
@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 
 /**
- * 	\class      Ficheinter
+ * 	\class      Fichinter
  *	\brief      Classe des gestion des fiches interventions
  */
 class Fichinter extends CommonObject

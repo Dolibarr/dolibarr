@@ -28,9 +28,9 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/security/generate/modules_gen
 
 
 /**
-	    \class      modGeneratePassNone
-		\brief      Classe permettant de g�n�rer un mot de passe selon r�gle standard
-*/
+ *	    \class      modGeneratePassNone
+ *		\brief      Class to generate a password according to rule 'no password'
+ */
 class modGeneratePassNone extends ModeleGenPassword
 {
 	var $id;

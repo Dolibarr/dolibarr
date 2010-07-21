@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/includes/modules/export/export_csv.modules.php
  *		\ingroup    export
- *		\brief      File to build exports with CSV format
+ *		\brief      File of class to build exports with CSV format
  *		\author	    Laurent Destailleur
  *		\version    $Id$
  */
@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/export/modules_export.php");
 
 /**
  *	    \class      ExportCsv
- *		\brief      Classe permettant de generer les fichiers exports au format CSV
+ *		\brief      Class to build export files with format CSV
  */
 class ExportCsv extends ModeleExports
 {

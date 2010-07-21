@@ -19,9 +19,9 @@
  */
 
 /**
- * 	\file       htdocs/fourn/fournisseur.product.class.php
+ * 	\file       htdocs/fourn/class/fournisseur.product.class.php
  * 	\ingroup    produit
- * 	\brief      Fichier de la classe des produits predefinis
+ * 	\brief      File of class to manage predefined suppliers products
  * 	\version    $Id$
  */
 
@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php";
 
 
 /**
- * 	\class      Product
- * 	\brief      Classe permettant la gestion des produits predefinis
+ * 	\class      ProductFournisseur
+ * 	\brief      Class to manage predefined suppliers products
  */
 class ProductFournisseur extends Product
 {

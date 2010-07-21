@@ -19,22 +19,20 @@
  */
 
 /**
- *	\file       htdocs/fourn/fournisseur.class.php
+ *	\file       htdocs/fourn/class/fournisseur.class.php
  *	\ingroup    fournisseur,societe
- *	\brief      Fichier de la classe des fournisseurs
+ *	\brief      File of class to manage suppliers
  *	\version    $Id$
  */
-
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php");
 
 
 /**
- *	\class Fournisseur
- *	\brief Classe permettant la gestion des fournisseur
+ *	\class 	Fournisseur
+ *	\brief 	Class to manage suppliers
  */
-
 class Fournisseur extends Societe
 {
 	var $db;

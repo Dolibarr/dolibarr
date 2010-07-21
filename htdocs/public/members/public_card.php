@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/public/members/public_card.php
- *	\ingroup    adherent
+ *	\ingroup    member
  * 	\brief      File to show a public card of a member
  *	\version    $Id$
  */

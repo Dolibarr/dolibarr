@@ -20,20 +20,18 @@
  */
 
 /**
-	    \file       htdocs/includes/modules/mailings/modules_mailings.php
-		\ingroup    mailing
-		\brief      Fichier contenant la classe m�re des classes de liste de destinataires mailing
-		\version    $Id$
-*/
-
+ *	    \file       htdocs/includes/modules/mailings/modules_mailings.php
+ *		\ingroup    mailing
+ *		\brief      File with parent class of emailing target selectors modules
+ *		\version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 
 
 /**
-	    \class      MailingTargets
-		\brief      Classe m�re des classes de liste de destinataires mailing
-*/
-
+ *	    \class      MailingTargets
+ *		\brief      Parent class of emailing target selectors modules
+ */
 class MailingTargets
 {
     var $db='';

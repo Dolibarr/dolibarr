@@ -55,7 +55,7 @@
 
 /**
  *	\file       htdocs/includes/modules/member/card/pdf_standard.class.php
- *	\ingroup    adherent
+ *	\ingroup    member
  *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  *	\author     Steve Dillon
  *	\author	    Laurent Passebecq

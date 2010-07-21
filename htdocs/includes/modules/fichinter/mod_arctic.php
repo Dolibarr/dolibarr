@@ -21,18 +21,17 @@
  */
 
 /**
-	\file       htdocs/includes/modules/fichinter/mod_arctic.php
-	\ingroup    fiche intervention
-	\brief      Fichier contenant la classe du modèle de numérotation de référence de fiche intervention Arctic
-	\version    $Id$
-*/
-
+ *	\file       htdocs/includes/modules/fichinter/mod_arctic.php
+ *	\ingroup    fiche intervention
+ *	\brief      Fichier contenant la classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de fiche intervention Arctic
+ *	\version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 
 /**
-	\class      mod_arctic
-	\brief      Classe du modèle de numérotation de référence de fiche intervention Arctic
-*/
+ *	\class      mod_arctic
+ *	\brief      Class to manage numbering of intervention cards with rule Artic.
+ */
 class mod_arctic extends ModeleNumRefFicheinter
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
@@ -46,7 +45,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		$this->nom = "arctic";
 	}
 
-    /**     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numï¿½rotation
      *      \return     string      Texte descripif
      */
 	function info()
@@ -84,7 +83,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numï¿½rotation
      *      \return     string      Example
      */
     function getExample()
@@ -103,8 +102,8 @@ class mod_arctic extends ModeleNumRefFicheinter
 		return $numExample;
     }
 
-	/**		\brief      Renvoi prochaine valeur attribuée
-	*      	\param      objsoc      Objet société
+	/**		\brief      Renvoi prochaine valeur attribuï¿½e
+	*      	\param      objsoc      Objet sociï¿½tï¿½
 	*      	\param      ficheinter	Object ficheinter
 	*      	\return     string      Valeur
 	*/
@@ -114,7 +113,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
 
-		// On défini critere recherche compteur
+		// On dï¿½fini critere recherche compteur
 		$mask=$conf->global->FICHINTER_ARTIC_MASK;
 
 		if (! $mask)

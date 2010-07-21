@@ -22,7 +22,7 @@
 
 /**
  *   	\file       htdocs/adherents/admin/adherent.php
- *		\ingroup    adherent
+ *		\ingroup    member
  *		\brief      Page to setup the module Foundation
  *		\version    $Id$
  */

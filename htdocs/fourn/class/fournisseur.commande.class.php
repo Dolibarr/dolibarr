@@ -21,9 +21,9 @@
  */
 
 /**
- *	\file       htdocs/fourn/fournisseur.commande.class.php
+ *	\file       htdocs/fourn/classfournisseur.commande.class.php
  *	\ingroup    fournisseur,commande
- *	\brief      Fichier des classes des commandes fournisseurs
+ *	\brief      File of class to manage suppliers orders
  *	\version    $Id$
  */
 
@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 /**
  *	\class      CommandeFournisseur
- *	\brief      Classe de gestion de commande fournisseur
+ *	\brief      Class to manage predefined suppliers products
  */
 class CommandeFournisseur extends Commande
 {

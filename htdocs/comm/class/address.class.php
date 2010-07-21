@@ -30,7 +30,6 @@
  *  \class 		Address
  *  \brief 		Classe permettant la gestion des adresses des tiers
  */
-
 class Address
 {
 	var $db;
@@ -470,6 +469,11 @@ class Address
 
 }
 
+
+/**
+ *  \class 		AddressLine
+ *  \brief 		Class to manage one address line
+ */
 class AddressLine
 {
 

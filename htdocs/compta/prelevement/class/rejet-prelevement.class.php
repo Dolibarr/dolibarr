@@ -20,19 +20,18 @@
  * $Id$
  */
 
-/*
-		\file       htdocs/compta/prelevement/rejet-prelevement.class.php
+/**
+		\file       htdocs/compta/prelevementclass//rejet-prelevement.class.php
 		\ingroup    prelevement
-		\brief      Fichier de la classe des prelevements
+		\brief      File of class to manage standing orders rejects
 		\version    $Revision$
 */
 
 
 /**
 		\class 		Prelevement
-		\brief      Classe permettant la gestion des prelevements
+		\brief      Class to manage standing orders rejects
 */
-
 class RejetPrelevement
 {
   var $id;

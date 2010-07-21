@@ -21,10 +21,9 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/facture/modules_facture.php
- *	\ingroup    facture
- *	\brief      Fichier contenant la classe mere de generation des factures en PDF
- * 				et la classe mere de numerotation des factures
+ *	\file       htdocs/includes/modules/members/cards/modules_facture.php
+ *	\ingroup    member
+ *	\brief      File of parent class of document generator for members cards.
  *	\version    $Id$
  */
 
@@ -34,8 +33,8 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 
 /**
- *	\class      ModelePDFFactures
- *	\brief      Classe mere des modeles de facture
+ *	\class      ModelePDFCards
+ *	\brief      Parent class of document generator for members cards.
  */
 class ModelePDFCards
 {

@@ -20,19 +20,17 @@
 /**
  *	\file       htdocs/includes/modules/mailings/peche.modules.php
  *	\ingroup    mailing
- *	\brief      Fichier de la classe permettant de generer la liste de destinataires Peche
+ *	\brief      File of class to offer a selector of emailing targets with Rule 'Peche'.
  *	\version    $Id$
  */
-
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
 /**
- *	\class      mailing_pomme
- *	\brief      Classe permettant de generer la liste des destinataires Peche
+ *	\class      mailing_peche
+ *	\brief      Class to offer a selector of emailing targets with Rule 'Peche'.
  */
-
 class mailing_peche extends MailingTargets
 {
 	var $name='EmailsFromFile';              // Identifiant du module mailing
