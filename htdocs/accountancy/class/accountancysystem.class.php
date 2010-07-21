@@ -19,13 +19,13 @@
 /**
  *	\file       htdocs/accountancy/class/accountancysystem.class.php
  * 	\ingroup    accounting
- * 	\brief      Fichier de la classe des plans de comptes comptables
+ * 	\brief      File of class to manage accountancy systems
  * 	\version    $Id$
  */
 
 
 /**	\class 		AccountancySystem
- *	\brief 		Classe permettant la gestion des plans de comptes
+ *	\brief 		Classe to manage accountancy systems
  */
 class AccountancySystem
 {
@@ -42,9 +42,9 @@ class AccountancySystem
 
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB          Handler acc�s base de donn�es
-	 *    \param  id          Id compte (0 par defaut)
+	 *    \brief  Constructor of class
+	 *    \param  DB          Database handler
+	 *    \param  id          Id compte (0 by default)
 	 */
 	function AccountancySystem($DB, $id=0)
 	{
@@ -54,9 +54,9 @@ class AccountancySystem
 
 
 	/**
-	 *    \brief  	Ins�re le plan de compte en base
-	 *    \param  	user 	Utilisateur qui effectue l'insertion
-	 *    \return	int		<0 si ko, Id ligne ajout�e si ok
+	 *    \brief  	Insert accountancy system name into database
+	 *    \param  	user 	User making insert
+	 *    \return	int		<0 if KO, Id of line if OK
 	 */
 	function create($user)
 	{
