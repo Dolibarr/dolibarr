@@ -129,7 +129,7 @@ class Translate {
 	 * 				All data in translation array are stored in UTF-8 format.
 	 *  \param      domain      		File name to load (.lang file). Use file@module if file is in a module directory.
 	 *  \param      alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
-	 * 	\param		soptafterdirection	Stop when the DIRECTION tag is found (optimize)
+	 * 	\param		stopafterdirection	Stop when the DIRECTION tag is found (optimize)
 	 * 	\param		forcelangdir		To force a lang directory
 	 *	\return		int					<0 if KO, 0 if already loaded, >0 if OK
 	 *	\remarks	tab_loaded is completed with $domain key.
@@ -355,10 +355,10 @@ class Translate {
 	}
 
 	/**
-	 * Enter description here...
+	 * Return translated value of key
 	 *
-	 * @param unknown_type $key
-	 * @return unknown
+	 * @param  key
+	 * @return string
 	 */
 	function getTradFromKey($key)
 	{
@@ -583,7 +583,7 @@ class Translate {
 
 	/**
 	 *      \brief      Return full text translated to language label for a key. Store key-label in a cache.
-	 *		\number		number		Number to encode in full text
+	 *		\param		number		Number to encode in full text
 	 * 		\param		isamount	1=It's an amount, 0=it's just a number
 	 *      \return     string		Label translated in UTF8 (but without entities)
 	 * 								10 if setDefaultLang was en_US => ten

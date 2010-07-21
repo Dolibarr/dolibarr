@@ -57,8 +57,10 @@ class Menubase
 
 
 	/**
-	 *      \brief      Constructor
-	 *      \param      DB      Database handler
+	 *      Constructor
+	 *      @param     DB      Database handler
+	 *      @param     menu_handler
+	 *      @param     type
 	 */
 	function Menubase($DB,$menu_handler='',$type='')
 	{

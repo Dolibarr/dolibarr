@@ -619,8 +619,8 @@ class User extends CommonObject
 
 
 	/**
-	 *    	\brief      Delete the user
-	 * 		\param		int		<0 if KO, >0 if OK
+	 *    	Delete the user
+	 * 		@return		int		<0 if KO, >0 if OK
 	 */
 	function delete()
 	{
