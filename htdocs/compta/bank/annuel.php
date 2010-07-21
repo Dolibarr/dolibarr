@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -182,15 +182,18 @@ print '<br>';
 
 // Affiche tableau
 print '<table class="notopnoleftnoright" width="100%">';
-print '<tr><td colspan="'.(1+($year_end-$year_start+1)*2).'" align="right">'.$lien.'</td></tr>';
-print '<tr class="liste_titre"><td rowspan=2>'.$langs->trans("Month").'</td>';
 
+print '<tr><td colspan="'.(1+($year_end-$year_start+1)*2).'" align="right">'.$lien.'</td></tr>';
+
+print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	print '<td align="center" width="20%" colspan="2">'.$annee.'</td>';
 }
 print '</tr>';
+
 print '<tr class="liste_titre">';
+print '<td class="liste_titre">&nbsp;</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td>';
