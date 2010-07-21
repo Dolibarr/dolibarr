@@ -91,8 +91,9 @@ For developers:
 - Qual: Mutualize code of menu managers.
 - Better isolation of modules files and dolibarr core files. 
 - task #8682 : Remove functions unix_timestamp
-- The makepack tool nos make pack with UID 500.
+- The makepack tool now make pack with UID 500.
 - More css class and div to ouput menu to allow more skins.
+- Generated documentation can be build from Eclipse using Doxygen plugin.
 
 WARNING: 
 - A lot of class files (*.class.php) has moved into subdirectories. So If you use
