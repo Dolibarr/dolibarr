@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-	// Création aléatoire de chaines de caractères de longueur $taille passée en argument
+	// Crï¿½ation alï¿½atoire de chaines de caractï¿½res de longueur $taille passï¿½e en argument
 	function rand_chaine ($taille) {
 
 		$tableau = '9632587410wqaxszcdevfrbgtnhyjukilompMPLOKIJUNHYBGTVFRCDEXSZWQA';
@@ -33,7 +33,7 @@
 
 	}
 
-	// Vérification du format d'une adresse email passée en argument
+	// Vï¿½rification du format d'une adresse email passï¿½e en argument
 	// Retour : 0 = pas d'erreur, 1 = format invalide
 	function verif_email ($email) {
 
@@ -51,7 +51,7 @@
 
 	}
 
-	// Vérification du format d'une url (avec http://) email passée en argument
+	// Vï¿½rification du format d'une url (avec http://) email passï¿½e en argument
 	// 0 = pas d'erreur, 1 = format invalide
 	function verif_url ($url) {
 
@@ -69,7 +69,7 @@
 
 	}
 
-	// Vérifie que la chaine passée en argument ne comporte que des chiffres
+	// Vï¿½rifie que la chaine passï¿½e en argument ne comporte que des chiffres
 	// 0 = pas d'erreur, 1 = format invalide
 	function verif_num ($num) {
 
@@ -88,11 +88,11 @@
 
 	}
 
-	// Supprime tous les accents de la chaîne passée en argument
+	// Supprime tous les accents de la chaï¿½ne passï¿½e en argument
 	function suppr_accents ($chaine) {
 
 		return( strtr( $chaine,
-			"ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
 			"AAAAAAaaaaaaOOOOOOooooooEEEEeeeeCcIIIIiiiiUUUUuuuuyNn"
 		) );
 
