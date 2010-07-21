@@ -17,141 +17,142 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-	class Auth {
 
-		protected $db;
-		
-		protected $login;
-		protected $passwd;
+class Auth {
 
-		protected $reponse;
+	protected $db;
 
-		protected $sqlQuery;
+	protected $login;
+	protected $passwd;
 
-		public function __construct ($DB) {
+	protected $reponse;
 
-			$this->db = $DB;
-			$this->reponse (null);
+	protected $sqlQuery;
 
-		}
+	public function __construct ($DB) {
 
-		public function login ($aLogin) {
+		$this->db = $DB;
+		$this->reponse (null);
 
-			$this->login = $aLogin;
+	}
 
-		}
+	public function login ($aLogin) {
 
-		public function passwd ($aPasswd) {
+		$this->login = $aLogin;
 
-			$this->passwd = $aPasswd;
+	}
+
+	public function passwd ($aPasswd) {
+
+		$this->passwd = $aPasswd;
 
 
-		}
+	}
 
-		public function reponse ($aReponse) {
+	public function reponse ($aReponse) {
 
-			$this->reponse = $aReponse;
+		$this->reponse = $aReponse;
 
-		}
+	}
 
-			/**
-			* Authentification d'un demandeur
-			* @return (int) 0 = Ok; -1 = login incorrect; -2 = login ok, mais compte desactive; -10 = aucune entree trouvee dans la base
-			*/
-			protected function verif_utilisateurs () {
+	/**
+	 * Authentification d'un demandeur
+	 * @return (int) 0 = Ok; -1 = login incorrect; -2 = login ok, mais compte desactive; -10 = aucune entree trouvee dans la base
+	 */
+	protected function verif_utilisateurs () {
 
-				global $conf;
+		global $conf;
 
-				// Verification des informations dans la base
-				$resql = $this->db->query ($this->sqlQuery);
-				if ($resql)
+		// Verification des informations dans la base
+		$resql = $this->db->query ($this->sqlQuery);
+		if ($resql)
+		{
+			$num = $this->db->num_rows ($resql);
+
+			if ( $num ) {
+
+				// fetchFirst
+				$ret=array();
+				$tab = $this->db->fetch_array($resql);
+				foreach ( $tab as $cle => $valeur )
 				{
-					$num = $this->db->num_rows ($resql);
+					$ret[$cle] = $valeur;
+				}
+				$tab=$ret;
 
-					if ( $num ) {
+				if ( ($tab['pass_crypted'] == md5 ($this->passwd)) || (($tab['pass'] == $this->passwd) && ($tab['pass'] != ''))) {
 
-						// fetchFirst
-						$ret=array();
-						$tab = $this->db->fetch_array($resql);
-						foreach ( $tab as $cle => $valeur )
-						{
-							$ret[$cle] = $valeur;
-						}
-						$tab=$ret;
+					// On verifie que le compte soit bien actif
+					if ( $tab['statut'] ) {
 
-						if ( ($tab['pass_crypted'] == md5 ($this->passwd)) || (($tab['pass'] == $this->passwd) && ($tab['pass'] != ''))) {
-
-							// On verifie que le compte soit bien actif
-							if ( $tab['statut'] ) {
-
-								$this->reponse(0);
-
-							} else {
-
-								$this->reponse(-2);
-
-							}
-
-						} else {
-
-							$this->reponse(-1);
-
-						}
+						$this->reponse(0);
 
 					} else {
 
-						$this->reponse(-10);
+						$this->reponse(-2);
 
 					}
-				}
-				else
-				{
+
+				} else {
+
+					$this->reponse(-1);
 
 				}
 
-			}
+			} else {
 
-		public function verif ($aLogin, $aPasswd) {
-			global $conf;
-
-			$this->login ($aLogin);
-			$this->passwd ($aPasswd);
-
-			$this->sqlQuery = "SELECT rowid, pass_crypted, statut";
-			$this->sqlQuery.= " FROM ".MAIN_DB_PREFIX."user";
-			$this->sqlQuery.= " WHERE login = '".$this->login."'";
-			$this->sqlQuery.= " AND entity IN (0,".$conf->entity.")";
-
-			$this->verif_utilisateurs();
-
-			switch ($this->reponse) {
-
-				default:
-					$ret = '-1';
-					break;
-
-				case 0:
-					$ret = '0';
-					break;
-
-				case -1:
-					$ret = '-1';
-					break;
-
-				case -2:
-					$ret = '-2';
-					break;
-
-				case -10:
-					$ret = '-10';
-					break;
+				$this->reponse(-10);
 
 			}
-
-			return $ret;
+		}
+		else
+		{
 
 		}
 
 	}
+
+	public function verif ($aLogin, $aPasswd) {
+		global $conf;
+
+		$this->login ($aLogin);
+		$this->passwd ($aPasswd);
+
+		$this->sqlQuery = "SELECT rowid, pass_crypted, statut";
+		$this->sqlQuery.= " FROM ".MAIN_DB_PREFIX."user";
+		$this->sqlQuery.= " WHERE login = '".$this->login."'";
+		$this->sqlQuery.= " AND entity IN (0,".$conf->entity.")";
+
+		$this->verif_utilisateurs();
+
+		switch ($this->reponse) {
+
+			default:
+				$ret = '-1';
+				break;
+
+			case 0:
+				$ret = '0';
+				break;
+
+			case -1:
+				$ret = '-1';
+				break;
+
+			case -2:
+				$ret = '-2';
+				break;
+
+			case -10:
+				$ret = '-10';
+				break;
+
+		}
+
+		return $ret;
+
+	}
+
+}
 
 ?>

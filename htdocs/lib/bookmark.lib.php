@@ -18,12 +18,12 @@
  */
 
 /**
-	    \file       htdocs/lib/invoice.lib.php
-		\brief      Ensemble de fonctions de base pour le module factures
-		\version    $Id$
-
-		Ensemble de fonctions de base de dolibarr sous forme d'include
-*/
+ *	    \file       htdocs/lib/bookmark.lib.php
+ *		\brief      List of functions for bookmark module
+ *		\version    $Id$
+ *
+ *		Ensemble de fonctions de base de dolibarr sous forme d'include
+ */
 
 function showArrayOfBookmark($fac)
 {

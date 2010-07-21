@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/chargesociales.class.php
+ *      \file       htdocs/compta/sociales/class/chargesociales.class.php
  *		\ingroup    facture
  *		\brief      Fichier de la classe des charges sociales
  *		\version    $Id$

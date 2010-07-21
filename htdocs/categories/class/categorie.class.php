@@ -22,7 +22,7 @@
  */
 
 /**
- *	\file       htdocs/categories/categorie.class.php
+ *	\file       htdocs/categories/class/categorie.class.php
  *	\ingroup    categorie
  *	\brief      Fichier de la classe des categorie
  *	\version	$Id$

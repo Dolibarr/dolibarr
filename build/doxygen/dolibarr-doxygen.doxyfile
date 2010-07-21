@@ -38,7 +38,7 @@ PROJECT_NUMBER = 2.9.0
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY = ../build
+OUTPUT_DIRECTORY = ../../build
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -450,7 +450,7 @@ SHOW_NAMESPACES = NO
 # is used as the file version. See the manual for examples.
 
 #FILE_VERSION_FILTER = dolibarr-doxygen-getversion.pl
-FILE_VERSION_FILTER =
+FILE_VERSION_FILTER = 
 
 
 #---------------------------------------------------------------------------
@@ -513,7 +513,7 @@ WARN_LOGFILE = doxygen_warnings.log
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT = ../htdocs ../scripts
+INPUT = ../../htdocs ../../scripts 
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -521,8 +521,7 @@ INPUT = ../htdocs ../scripts
 # into libc) for the transcoding. See http://www.gnu.org/software/libiconv for 
 # the list of possible encodings.
 
-#INPUT_ENCODING         = UTF-8
-INPUT_ENCODING = ISO-8859-1
+INPUT_ENCODING         = UTF-8
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -543,7 +542,7 @@ RECURSIVE = YES
 # excluded from the INPUT source files. This way you can easily exclude a 
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE = ../mssql ../mysql ../pgsql ../CVS ../build ../dev ../doc ../documents ../htdocs/conf/conf.php ../htdocs/includes/adodbtime ../htdocs/includes/artichow ../htdocs/includes/efc_xfss ../htdocs/includes/barcode ../htdocs/includes/fckeditor ../htdocs/includes/fpdf ../htdocs/includes/geoip ../htdocs/includes/magpierss ../htdocs/includes/nusoap ../htdocs/includes/odtphp ../htdocs/includes/pear ../htdocs/includes/php_excelreader ../htdocs/includes/php_writeexcel ../htdocs/includes/phplot ../htdocs/includes/phplot5 ../htdocs/includes/pwc ../htdocs/includes/scriptaculous ../htdocs/includes/simplemail ../htdocs/includes/smarty ../htdocs/includes/smtps ../htdocs/includes/vcard ../htdocs/avoir ../htdocs/document ../htdocs/documents ../htdocs/lolix ../htdocs/postnuke ../htdocs/rapport ../htdocs/telephonie ../htdocs/voyage ../htdocs/oscommerce_ws/ws_client_demo ../htdocs/oscommerce_ws/ws_server ../scripts/addons ../scripts/courrier ../scripts/lolix ../scripts/energie
+EXCLUDE = ../../mssql ../../mysql ../../pgsql ../../CVS ../../build ../../dev ../../doc ../../documents ../../htdocs/conf/conf.php ../../htdocs/includes/adodbtime ../../htdocs/includes/artichow ../../htdocs/includes/efc_xfss ../../htdocs/includes/barcode ../../htdocs/includes/fckeditor ../../htdocs/includes/fpdf ../../htdocs/includes/geoip ../../htdocs/includes/magpierss ../../htdocs/includes/nusoap ../../htdocs/includes/odtphp ../../htdocs/includes/pear ../../htdocs/includes/php_excelreader ../../htdocs/includes/php_writeexcel ../../htdocs/includes/phplot ../../htdocs/includes/phplot5 ../../htdocs/includes/pwc ../../htdocs/includes/scriptaculous ../../htdocs/includes/simplemail ../../htdocs/includes/smarty ../../htdocs/includes/smtps ../../htdocs/includes/vcard ../../htdocs/avoir ../../htdocs/document ../../htdocs/documents ../../htdocs/lolix ../../htdocs/postnuke ../../htdocs/rapport ../../htdocs/telephonie ../../htdocs/voyage ../../htdocs/oscommerce_ws/ws_client_demo ../../htdocs/oscommerce_ws/ws_server ../../scripts/addons ../../scripts/courrier ../../scripts/lolix ../../scripts/energie
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
@@ -571,7 +570,7 @@ EXCLUDE_SYMBOLS =
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH = ../dev/skeletons
+EXAMPLE_PATH = ../../dev/skeletons
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -591,7 +590,7 @@ EXAMPLE_RECURSIVE = NO
 # directories that contain image that are included in the documentation (see 
 # the \image command).
 
-IMAGE_PATH = ../doc/images
+IMAGE_PATH = ../../doc/images
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should 
 # invoke to filter for each input file. Doxygen will invoke the filter program 
@@ -602,8 +601,8 @@ IMAGE_PATH = ../doc/images
 # ignored.
 
 # Works on Linux only
-#INPUT_FILTER           = build/dolibarr-doxygen-filter.pl
-#INPUT_FILTER           = "perl build/dolibarr-doxygen-filter.pl"
+#INPUT_FILTER           = ../dolibarr-doxygen-filter.pl
+#INPUT_FILTER           = "perl ../dolibarr-doxygen-filter.pl"
 INPUT_FILTER = 
 
 # The FILTER_PATTERNS tag can be used to specify filters on a per file pattern 

@@ -33,8 +33,8 @@
 
 
 /**
- *      \class      Bank_categ
- *      \brief      Put here description of your class
+ *      \class      BankCateg
+ *      \brief      Class to manage bank categories
  *		\remarks	Initialy built by build_class_from_table on 2009-01-02 15:26
  */
 class BankCateg // extends CommonObject
@@ -44,23 +44,23 @@ class BankCateg // extends CommonObject
 	var $errors=array();				//!< To return several error codes (or messages)
 	//var $element='bank_categ';			//!< Id that identify managed objects
 	//var $table_element='bank_categ';	//!< Name of table without prefix where object is stored
-    
+
   var $id;
-    
+
 	var $label;
 
-  	
+
     /**
      *      \brief      Constructor
      *      \param      DB      Database handler
      */
-    function BankCateg($DB) 
+    function BankCateg($DB)
     {
     	$this->db = $DB;
       return 1;
     }
 
-	
+
     /**
      *      \brief      Create in database
      *      \param      user        	User that create
@@ -71,13 +71,13 @@ class BankCateg // extends CommonObject
     {
     	global $conf, $langs;
     	$error=0;
-    	
+
     	// Clean parameters
     	if (isset($this->label)) $this->label=trim($this->label);
-    	
+
     	// Check parameters
     	// Put here code to add control on parameters values
-    	
+
     	// Insert request
     	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (";
     	$sql.= "label";
@@ -86,22 +86,22 @@ class BankCateg // extends CommonObject
     	$sql.= " ".(! isset($this->label)?'NULL':"'".addslashes($this->label)."'")."";
     	$sql.= ", ".$conf->entity;
     	$sql.= ")";
-    	
+
     	$this->db->begin();
-		
+
 	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
       $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-    	
+
     	if (! $error)
       {
       	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_categ");
-    
+
 			if (! $notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action call a trigger.
-	            
+
 	            //// Call triggers
 	            //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 	            //$interface=new Interfaces($this->db);
@@ -118,7 +118,7 @@ class BankCateg // extends CommonObject
 			{
 	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}	
+			}
 			$this->db->rollback();
 			return -1*$error;
 		}
@@ -129,7 +129,7 @@ class BankCateg // extends CommonObject
 		}
     }
 
-    
+
     /**
      *    \brief      Load object in memory from database
      *    \param      id          id object
@@ -138,14 +138,14 @@ class BankCateg // extends CommonObject
     function fetch($id)
     {
     	global $langs,$conf;
-    	
+
     	$sql = "SELECT";
     	$sql.= " t.rowid,";
     	$sql.= " t.label";
     	$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as t";
     	$sql.= " WHERE t.rowid = ".$id;
     	$sql.= " AND t.entity = ".$conf->entity;
-    
+
     	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
       $resql=$this->db->query($sql);
       if ($resql)
@@ -153,12 +153,12 @@ class BankCateg // extends CommonObject
       	if ($this->db->num_rows($resql))
         {
         	$obj = $this->db->fetch_object($resql);
-        	
+
         	$this->id    = $obj->rowid;
         	$this->label = $obj->label;
         }
         $this->db->free($resql);
-        
+
         return 1;
       }
       else
@@ -168,7 +168,7 @@ class BankCateg // extends CommonObject
         return -1;
       }
     }
-    
+
 
     /**
      *      \brief      Update database
@@ -180,32 +180,32 @@ class BankCateg // extends CommonObject
     {
     	global $conf, $langs;
     	$error=0;
-    	
+
     	// Clean parameters
     	if (isset($this->label)) $this->label=trim($this->label);
 
       // Check parameters
       // Put here code to add control on parameters values
-      
+
       // Update request
       $sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ SET";
       $sql.= " label=".(isset($this->label)?"'".addslashes($this->label)."'":"null")."";
       $sql.= " WHERE rowid=".$this->id;
       $sql.= " AND entity = ".$conf->entity;
-      
+
       $this->db->begin();
-      
+
       dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
       $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-    	
+
     	if (! $error)
     	{
     		if (! $notrigger)
     		{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action call a trigger.
-				
+
 	            //// Call triggers
 	            //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 	            //$interface=new Interfaces($this->db);
@@ -214,7 +214,7 @@ class BankCateg // extends CommonObject
 	            //// End call triggers
 	    	}
 		}
-		
+
         // Commit or rollback
 		if ($error)
 		{
@@ -222,7 +222,7 @@ class BankCateg // extends CommonObject
 			{
 	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}	
+			}
 			$this->db->rollback();
 			return -1*$error;
 		}
@@ -230,10 +230,10 @@ class BankCateg // extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}		
+		}
     }
-  
-  
+
+
  	/**
 	 *   \brief      Delete object in database
      *	\param      user        	User that delete
@@ -244,33 +244,33 @@ class BankCateg // extends CommonObject
 	{
 		global $conf, $langs;
 		$error=0;
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
 		$sql.= " WHERE rowid=".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
-	
+
 		$this->db->begin();
-		
+
 		dol_syslog(get_class($this)."::delete sql=".$sql);
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		
+
 		if (! $error)
 		{
 			if (! $notrigger)
 			{
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action call a trigger.
-				
+
 		        //// Call triggers
 		        //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 		        //$interface=new Interfaces($this->db);
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		        //// End call triggers
-			}	
+			}
 		}
-		
+
         // Commit or rollback
 		if ($error)
 		{
@@ -278,7 +278,7 @@ class BankCateg // extends CommonObject
 			{
 	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}	
+			}
 			$this->db->rollback();
 			return -1*$error;
 		}
@@ -290,7 +290,7 @@ class BankCateg // extends CommonObject
 	}
 
 
-	
+
 	/**
 	 *		\brief      Load an object from its id and create a new one in database
 	 *		\param      fromid     		Id of object to clone
@@ -299,9 +299,9 @@ class BankCateg // extends CommonObject
 	function createFromClone($fromid)
 	{
 		global $user,$langs;
-		
+
 		$error=0;
-		
+
 		$object=new Bank_categ($this->db);
 
 		$this->db->begin();
@@ -313,24 +313,24 @@ class BankCateg // extends CommonObject
 
 		// Clear fields
 		// ...
-				
+
 		// Create clone
 		$result=$object->create($user);
 
 		// Other options
-		if ($result < 0) 
+		if ($result < 0)
 		{
 			$this->error=$object->error;
 			$error++;
 		}
-		
+
 		if (! $error)
 		{
-			
-			
-			
+
+
+
 		}
-		
+
 		// End
 		if (! $error)
 		{
@@ -344,7 +344,7 @@ class BankCateg // extends CommonObject
 		}
 	}
 
-	
+
 	/**
 	 *		\brief		Initialise object with example values
 	 *		\remarks	id must be 0 if object instance is a specimen.
@@ -352,10 +352,10 @@ class BankCateg // extends CommonObject
 	function initAsSpecimen()
 	{
 		$this->id=0;
-		
+
 		$this->label='';
 
-		
+
 	}
 
 }

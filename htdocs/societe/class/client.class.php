@@ -18,7 +18,7 @@
  */
 
 /**
- *   	\file       htdocs/societe/client.class.php
+ *   	\file       htdocs/societe/class/client.class.php
  *		\ingroup    societe
  *		\brief      File for class of customers
  *		\version    $Id$
