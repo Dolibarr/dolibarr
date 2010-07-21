@@ -125,14 +125,14 @@ function donnefocus() {
 	<?php echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode); ?>
 	</div>
 <?php } ?>
-	
+
 </td></tr>
 </table>
 
 <br>
 
 <?php if ($message) { ?>
-	<table width="90%"><tr><td align="center" style="font-size: 12px;>
+	<table width="90%"><tr><td align="center" style="font-size: 12px;">
 	<?php echo $message; ?>
 	</td></tr></table><br>
 <?php } ?>

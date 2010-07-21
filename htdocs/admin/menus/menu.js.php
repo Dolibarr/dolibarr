@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 20010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,8 @@ function arbre() {
     deplier_title = 'Deplier tous les noeuds de l\'arbre'
     // Recuperation de tous les arbres de la page
     uls = getElBy('ul','class','arbre');
-    for (uli=0;uli<uls.length;uli++) {
+    for (uli=0;uli < uls.length;uli++)
+    {
         ul = uls[uli];
         linkSwitch(ul);
         processULEL(ul);
