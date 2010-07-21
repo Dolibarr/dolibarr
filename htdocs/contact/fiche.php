@@ -314,7 +314,7 @@ if ($user->rights->societe->contact->creer)
 		if ($socid > 0)
 		{
 			print '<tr><td>'.$langs->trans("Company").'</td>';
-			print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id.'">'.$objsoc->nom.'</a></td>';
+			print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$objsoc->id.'">'.$objsoc->nom.'</a></td>';
 			print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
 			print '</td></tr>';
 		}

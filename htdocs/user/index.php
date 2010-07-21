@@ -111,7 +111,7 @@ if ($result)
         print "<td>";
         if ($obj->fk_societe)
         {
-            print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_societe.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
+            print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$obj->fk_societe.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
         }
         else if ($obj->ldap_sid)
         {

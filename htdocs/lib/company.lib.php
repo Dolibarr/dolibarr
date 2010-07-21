@@ -39,7 +39,7 @@ function societe_prepare_head($objsoc)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
+	$head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$objsoc->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'company';
 	$h++;
@@ -155,7 +155,7 @@ function societe_prepare_head2($objsoc)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
+	$head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$objsoc->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'company';
 	$h++;

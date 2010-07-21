@@ -19,13 +19,13 @@
  */
 
 /**
- *	\file       htdocs/societe.php
+ *	\file       htdocs/societe/societe.php
  *	\ingroup    societe
  *	\brief      Page to show a third party
  *	\version    $Id$
  */
 
-require_once("./main.inc.php");
+require_once("../main.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 
 $langs->load("companies");
@@ -94,7 +94,7 @@ if ($mode == 'search')
 		{
 			$obj = $db->fetch_object($result);
 			$socid = $obj->rowid;
-			header("Location: ".DOL_URL_ROOT."/soc.php?socid=".$socid);
+			header("Location: ".DOL_URL_ROOT."/societe/soc.php?socid=".$socid);
 			exit;
 		}
 		$db->free($result);

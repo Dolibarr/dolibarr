@@ -330,7 +330,7 @@ else
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='company') {
-					print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('ShowCustomer'),'company').' ';
 					print dol_trunc($links[$key]['label'],24);
 					print '</a>';

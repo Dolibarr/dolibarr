@@ -1034,7 +1034,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
 	{
 		$langs->load("companies");
-		$searchform.=printSearchForm(DOL_URL_ROOT.'/societe.php', DOL_URL_ROOT.'/societe.php',
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php',
 		img_object('','company').' '.$langs->trans("Companies"), 'soc', 'socname');
 	}
 

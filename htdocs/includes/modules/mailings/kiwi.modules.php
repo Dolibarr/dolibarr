@@ -213,7 +213,7 @@ class mailing_kiwi extends MailingTargets
 		//$companystatic->id=$id;
 		//$companystatic->nom='';
 		//return $companystatic->getNomUrl(1);	// Url too long
-		return '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$id.'">'.img_object('',"company").'</a>';
+		return '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$id.'">'.img_object('',"company").'</a>';
 	}
 
 }

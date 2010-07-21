@@ -23,13 +23,13 @@
  */
 
 /**
- *  \file       htdocs/soc.php
+ *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
  *  \version    $Id$
  */
 
-require("./main.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
@@ -279,7 +279,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 
 	if ($result >= 0)
 	{
-		Header("Location: ".DOL_URL_ROOT."/societe.php?delsoc=".$soc->nom."");
+		Header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$soc->nom."");
 		exit;
 	}
 	else

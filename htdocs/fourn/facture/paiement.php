@@ -462,7 +462,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 			print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 
 			print '<td>';
-			if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->nom,32).'</a>';
+			if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->nom,32).'</a>';
 			else print '&nbsp;';
 			print '</td>';
 

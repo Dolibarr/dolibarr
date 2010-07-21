@@ -1326,7 +1326,7 @@ class Societe extends CommonObject
 
 		if (empty($lien))
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id.'">';
 			$lienfin='</a>';
 		}
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->nom,'company').$lienfin.' ');

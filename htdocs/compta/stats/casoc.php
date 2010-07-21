@@ -236,7 +236,7 @@ if (sizeof($amount))
 
 		$fullname=$name[$key];
 		if ($key > 0) {
-			$linkname='<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$key.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$fullname.'</a>';
+			$linkname='<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$key.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$fullname.'</a>';
 		}
 		else {
 			$linkname=$langs->trans("PaymentsNotLinkedToInvoice");

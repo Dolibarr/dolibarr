@@ -3200,20 +3200,24 @@ function migrate_directories($db,$langs,$conf,$oldname,$newname)
 
 /**
  * Reload menu if dynamic menus
+ * @param       $db
+ * @param       $langs
+ * @param       $conf
  */
 function migrate_reload_menu($db,$langs,$conf)
 {
+	global $conf;
 	dolibarr_install_syslog("upgrade2::migrate_reload_menu");
 
 	// Define list of menu handlers to initialize
-	/*$listofmenuhandler=array();
-	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$main_menu_barretop)]=1;
-	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$main_menufront_barretop)]=1;
-	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$main_menu_barreleft)]=1;
-	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$main_menufront_barreleft)]=1;
-	foreach ($listofmenuhandler as $key => $val)
+	$listofmenuhandler=array('auguria');   // We set here only dinamic menu handlers
+	foreach ($listofmenuhandler as $key)
 	{
+        print '<tr><td colspan="4">';
+
 		//print "x".$key;
+        print '<br>';
+        print '<b>'.$langs->trans('Upgrade').'</b>: '.$langs->trans('MenuHandler')." ".$key."<br>\n";
 
 		// Load sql ini_menu_handler.sql file
 		$dir = DOL_DOCUMENT_ROOT."/includes/menus/";
@@ -3222,7 +3226,9 @@ function migrate_reload_menu($db,$langs,$conf)
 		{
 			$result=run_sql($dir.$file,1,'',1);
 		}
-	}*/
+
+		print '</td></tr>';
+	}
 }
 
 
