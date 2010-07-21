@@ -71,8 +71,11 @@ class Facturation {
 	protected $prix_total_ttc;
 
 
-	public function __construct () {
-
+	/**
+	 * Constructor
+	 */
+	public function Facturation()
+	{
 		$this->raz();
 		$this->raz_pers();
 	}
@@ -155,7 +158,8 @@ class Facturation {
 	}
 
    /**
-	*  \brief    Suppression du panier d'un article identifie par son id dans la table llx_tmp_caisse
+	*  Suppression du panier d'un article identifie par son id dans la table llx_tmp_caisse
+	*  @param      aArticle
 	*/
 	public function supprArticle($aArticle)
 	{
@@ -214,10 +218,10 @@ class Facturation {
 	}
 
 	/**
-		* R�initialisation des attributs
-		*/
-	public function raz () {
-
+	 * Reinitialisation des attributs
+	 */
+	public function raz ()
+	{
 		$this->id ('RESET');
 		$this->ref ('RESET');
 		$this->qte ('RESET');
@@ -230,10 +234,10 @@ class Facturation {
 	}
 
 	/**
-		* R�initialisation des attributs persistants
-		*/
-	public function raz_pers () {
-
+ 	 * Reinitialisation des attributs persistants
+	 */
+	public function raz_pers ()
+	{
 		$this->num_facture ('RESET');
 		$this->mode_reglement ('RESET');
 		$this->montant_encaisse ('RESET');
@@ -248,7 +252,14 @@ class Facturation {
 
 
 	// Methodes de modification des attributs proteges
-	public function id ( $aId=null ) {
+
+	/**
+	 * Getter for id
+	 * @param      aId
+	 * @return     id
+	 */
+	public function id ( $aId=null )
+	{
 
 		if ( !$aId ) {
 
@@ -266,6 +277,10 @@ class Facturation {
 
 	}
 
+	/**
+	 * Getter for ref
+	 * @param $aRef
+	 */
 	public function ref ( $aRef=null ) {
 
 		if ( !$aRef ) {
@@ -284,6 +299,11 @@ class Facturation {
 
 	}
 
+	/**
+     * Getter for qte
+     * @param $aQte
+     * @return
+     */
 	public function qte ( $aQte=null ) {
 
 		if ( !$aQte ) {
@@ -302,7 +322,13 @@ class Facturation {
 
 	}
 
-	public function stock ( $aStock=null ) {
+    /**
+     * Getter for stock
+     * @param      aStock
+     * @return
+     */
+	public function stock ( $aStock=null )
+	{
 
 		if ( !$aStock ) {
 
@@ -320,7 +346,13 @@ class Facturation {
 
 	}
 
-	public function remise_percent ( $aRemisePercent=null ) {
+	/**
+     * Getter for remise_percent
+     * @param      aRemisePercent
+     * @return
+     */
+	public function remise_percent ( $aRemisePercent=null )
+	{
 
 		if ( !$aRemisePercent ) {
 
@@ -338,6 +370,11 @@ class Facturation {
 
 	}
 
+	/**
+     * Getter for montant_remise
+     * @param      aMontantRemise
+     * @return
+     */
 	public function montant_remise ( $aMontantRemise=null ) {
 
 		if ( !$aMontantRemise ) {
@@ -356,7 +393,13 @@ class Facturation {
 
 	}
 
-	public function prix ( $aPrix=null ) {
+	/**
+     * Getter for prix
+     * @param      aPrix
+     * @return
+     */
+	public function prix ( $aPrix=null )
+	{
 
 		if ( !$aPrix ) {
 
@@ -374,7 +417,13 @@ class Facturation {
 
 	}
 
-	public function tva ( $aTva=null ) {
+    /**
+     * Getter for tva
+     * @param      aTva
+     * @return
+     */
+	public function tva ( $aTva=null )
+	{
 
 		if ( !$aTva ) {
 
@@ -392,7 +441,8 @@ class Facturation {
 
 	}
 
-	public function num_facture ( $aNumFacture=null ) {
+	public function num_facture ( $aNumFacture=null )
+	{
 
 		if ( !$aNumFacture ) {
 
@@ -410,7 +460,8 @@ class Facturation {
 
 	}
 
-	public function mode_reglement ( $aModeReglement=null ) {
+	public function mode_reglement ( $aModeReglement=null )
+	{
 
 		if ( !$aModeReglement ) {
 
@@ -428,7 +479,8 @@ class Facturation {
 
 	}
 
-	public function montant_encaisse ( $aMontantEncaisse=null ) {
+	public function montant_encaisse ( $aMontantEncaisse=null )
+	{
 
 		if ( !$aMontantEncaisse ) {
 
@@ -446,7 +498,8 @@ class Facturation {
 
 	}
 
-	public function montant_rendu ( $aMontantRendu=null ) {
+	public function montant_rendu ( $aMontantRendu=null )
+	{
 
 		if ( !$aMontantRendu ) {
 
@@ -463,7 +516,8 @@ class Facturation {
 
 	}
 
-	public function paiement_le ( $aPaiementLe=null ) {
+	public function paiement_le ( $aPaiementLe=null )
+	{
 
 		if ( !$aPaiementLe ) {
 
@@ -481,7 +535,8 @@ class Facturation {
 
 	}
 
-	public function prix_total_ht ( $aTotalHt=null ) {
+	public function prix_total_ht ( $aTotalHt=null )
+	{
 
 		if ( !$aTotalHt ) {
 
@@ -499,7 +554,8 @@ class Facturation {
 
 	}
 
-	public function montant_tva ( $aMontantTva=null ) {
+	public function montant_tva ( $aMontantTva=null )
+	{
 
 		if ( !$aMontantTva ) {
 
@@ -517,7 +573,8 @@ class Facturation {
 
 	}
 
-	public function prix_total_ttc ( $aTotalTtc=null ) {
+	public function prix_total_ttc ( $aTotalTtc=null )
+	{
 
 		if ( !$aTotalTtc ) {
 

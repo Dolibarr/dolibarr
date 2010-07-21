@@ -14,7 +14,7 @@
     <test name="variableNaming" regexp="/^[a-z_][a-zA-Z0-9_]*$/" />
     
     <!-- Check Function Naming -->
-    <test name="functionNaming" regexp="/^[a-z_]/" level="ERROR"/>
+    <test name="functionNaming" regexp="/^[a-z_]/" level="WARNING"/>
     
     <!-- Check Private Function Naming -->
     <test name="privateFunctionNaming" regexp="/^_[a-z]/" level="ERROR"/>
@@ -27,7 +27,7 @@
     </test>
     
     <!-- Check Class Naming -->
-    <test name="classNaming" regexp="/^[A-Z]/" level="ERROR"/>
+    <test name="classNaming" regexp="/^[A-Z]/" level="WARNING"/>
     
     
     <!--  ****************  -->
