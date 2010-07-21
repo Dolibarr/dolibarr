@@ -90,10 +90,11 @@ For developers:
 - Fix W3C errors in page forging.
 - Qual: Mutualize code of menu managers.
 - Better isolation of modules files and dolibarr core files. 
-- task #8682 : Remove functions unix_timestamp
+- Task #8682 : Remove functions unix_timestamp.
 - The makepack tool now make pack with UID 500.
 - More css class and div to output menu to allow more skins.
 - Generated documentation can be build from Eclipse using Doxygen plugin.
+- Snapshot is provided with PHPunit tests.
 
 WARNING: 
 - A lot of class files (*.class.php) has moved into subdirectories. So If you use
