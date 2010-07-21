@@ -448,13 +448,13 @@ class RemiseCheque extends CommonObject
 	 *	\param 		model 			Model name
 	 *	\return  	int        		<0 if KO, >0 if OK
 	 */
-	function GeneratePdf($model='blochet', $outputlangs)
+	function generatePdf($model='blochet', $outputlangs)
 	{
 		global $langs,$conf;
 
 		if (empty($model)) $model='blochet';
 
-		dol_syslog("RemiseCheque::GeneratePdf model=".$model, LOG_DEBUG);
+		dol_syslog("RemiseCheque::generatePdf model=".$model, LOG_DEBUG);
 
 		$dir=DOL_DOCUMENT_ROOT ."/includes/modules/cheque/pdf/";
 
@@ -478,7 +478,7 @@ class RemiseCheque extends CommonObject
 			$sql.= " AND bc.entity = ".$conf->entity;
 			$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
 
-			dol_syslog("RemiseCheque::GeneratePdf sql=".$sql, LOG_DEBUG);
+			dol_syslog("RemiseCheque::generatePdf sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
