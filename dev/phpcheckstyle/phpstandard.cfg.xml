@@ -53,19 +53,18 @@
     <test name="noShellComments"/>
     
     <!-- Tests that every function and class is immediately preceded by a docblock. A property "excludePrivateMembers" can be set if you want to disable docblocks for private member functions. -->
-    <!--
     <test name="docBlocks">
         <property name="excludePrivateMembers" value="true"/>
         <property name="testReturn" value="true"/>
         <property name="testParam" value="true"/>
         <property name="testThrow" value="true"/>
     </test>
-    -->
+
     
     <!--  ****************  -->
     <!--    Indentation     -->
     <!--  ****************  -->    
-             
+
     <!-- Tests to make sure that a line does not contain the tab character. -->
     <!-- <test name="noTabs"/>  -->
     
@@ -74,11 +73,11 @@
     
     <!-- Check the position of the open curly brace in a control structure (if) -->
     <!-- sl = same line -->
-    <!-- nl = new line -->    
+    <!-- nl = new line -->
     <test name="controlStructOpenCurly">
         <property name="position" value="nl"/>
     </test>
-    
+
     <!-- Check the position of the close curly brace  -->
     <test name="controlCloseCurly" level="INFO">
     </test>
@@ -106,7 +105,9 @@
          are followed by a space before the opening parenthesis. 
          PEAR standard stipulates this to distinguish it from function calls. 
     -->
-   <test name="spaceAfterControlStmt"/>
+    <!--
+    <test name="spaceAfterControlStmt"/>
+    -->
    
     <!-- Check that there is no space after a function name in a function call -->
     <!-- <test name="noSpaceAfterFunctionName" level="INFO"></test>  -->  
@@ -252,8 +253,10 @@
     </test>
     
     <!-- Check for braces around code blocs (if, else, elseif, do, while, for, foreach) -->
+    <!--
     <test name="needBraces">
     </test>
+    -->
     
     <!-- Switch need a default value -->
     <test name="switchNeedDefault">
