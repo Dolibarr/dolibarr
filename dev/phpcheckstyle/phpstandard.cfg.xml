@@ -35,7 +35,7 @@
     <!--  ****************  -->    
     
         
-    <!-- Test if a short php code open tag is used (<? instead of <?php ). -->
+    <!-- Test if a short php code open tag is used (? instead of ?php ). -->
     <test name="noShortPhpCodeTag"/>
     
     <!-- Test if a PHP closing file is present at the end of a file -->
@@ -68,7 +68,7 @@
     <!-- <test name="noTabs"/>  -->
     
     <!-- Test to make sure that every control structure is included within a {} block, even if it is syntactically optional. -->
-    <test name="controlStructNeedCurly"/>
+    <!-- <test name="controlStructNeedCurly"/> -->
     
     <!-- Check the position of the open curly brace in a control structure (if) -->
     <!-- sl = same line -->
