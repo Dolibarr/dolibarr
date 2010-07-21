@@ -39,12 +39,13 @@ class Canvas
 	var $error;
 
    /**
-	*   \brief      Constructor.
-	*   \param      DB      Database handler
+	*   Constructor.
+	*   @param     DB      Database handler
+	*   @param     user    User
 	*/
-	function Canvas($DB=0,$user)
+	function Canvas($DB,$user)
 	{
-		$this->db = $DB ;
+		$this->db = $DB;
 		$this->user = $user;
 	}
 
