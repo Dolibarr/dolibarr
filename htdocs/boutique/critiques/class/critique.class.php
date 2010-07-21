@@ -14,23 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
-/*
-		\file       htdocs/boutique/critiques/class/critique.class.php
-		\ingroup    prelevement
-		\brief      Fichier de la classe des critiques OSCommerce
-		\version    $Revision$
-*/
+/**
+ *		\file       htdocs/boutique/critiques/class/critique.class.php
+ *		\ingroup    osc
+ *		\brief      Fichier de la classe des critiques OSCommerce
+ *		\version    $Id$
+ */
 
 
 /**
-		\class 		Critique
-		\brief      Classe permettant la gestion des critiques OSCommerce
-*/
-
+ *		\class 		Critique
+ *		\brief      Classe permettant la gestion des critiques OSCommerce
+ */
 class Critique {
   var $db ;
 

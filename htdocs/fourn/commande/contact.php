@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/commande/contact.php
+ *       \file       htdocs/fourn/commande/contact.php
  *       \ingroup    commande
  *       \brief      Onglet de gestion des contacts de commande
  *       \version    $Id$
