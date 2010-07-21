@@ -22,7 +22,7 @@
  */
 
 /**
- * 	\file 		htdocs/adherents/adherent_options.class.php
+ * 	\file 		htdocs/adherents/class/adherent_options.class.php
  *	\ingroup    member
  *	\brief      Fichier de la classe de gestion de la table des champs optionels adherents
  *	\version    $Id$
