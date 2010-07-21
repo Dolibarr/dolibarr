@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/import/class/import.class.php
+ *	\file       htdocs/imports/class/import.class.php
  *	\ingroup    import
  *	\brief      File of class to manage imports
  *	\version    $Id$

@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/exports/class/xport.class.php
+ *	\file       htdocs/exports/class/export.class.php
  *	\ingroup    export
  *	\brief      Fichier de la classe des exports
  *	\version    $Id$

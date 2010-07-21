@@ -117,7 +117,7 @@ class RemiseCheque extends CommonObject
 	 *	\param  	account_id 		Compte bancaire concerne
 	 *	\return		int				<0 if KO, >0 if OK
 	 */
-	function Create($user, $account_id)
+	function create($user, $account_id)
 	{
 		global $conf;
 
@@ -220,7 +220,7 @@ class RemiseCheque extends CommonObject
 
 			if ($this->id > 0 && $this->errno == 0)
 			{
-				if ($this->UpdateAmount() <> 0)
+				if ($this->updateAmount() <> 0)
 				{
 					$this->errno = -1027;
 					dol_syslog("RemiseCheque::Create ERREUR ($this->errno)");
@@ -254,7 +254,7 @@ class RemiseCheque extends CommonObject
 	 \brief  Supprime la remise en base
 	 \param  user utilisateur qui effectue l'operation
 	 */
-	function Delete($user='')
+	function delete($user='')
 	{
 		global $conf;
 
@@ -308,7 +308,7 @@ class RemiseCheque extends CommonObject
 	 *  \brief  Validate receipt
 	 *  \param  user 	User
 	 */
-	function Validate($user)
+	function validate($user)
 	{
 		global $langs,$conf;
 
@@ -530,7 +530,7 @@ class RemiseCheque extends CommonObject
 	 *	\brief  Mets a jour le montant total
 	 *	\return int, 0 en cas de succes
 	 */
-	function UpdateAmount()
+	function updateAmount()
 	{
 		global $conf;
 
@@ -563,13 +563,13 @@ class RemiseCheque extends CommonObject
 	  if (!$resql)
 	  {
 	  	$this->errno = -1030;
-	  	dol_syslog("RemiseCheque::UpdateAmount ERREUR UPDATE ($this->errno)");
+	  	dol_syslog("RemiseCheque::updateAmount ERREUR UPDATE ($this->errno)");
 	  }
 		}
 		else
 		{
 			$this->errno = -1031;
-			dol_syslog("RemiseCheque::UpdateAmount ERREUR SELECT ($this->errno)");
+			dol_syslog("RemiseCheque::updateAmount ERREUR SELECT ($this->errno)");
 		}
 
 		if ($this->errno === 0)
@@ -579,7 +579,7 @@ class RemiseCheque extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			dol_syslog("RemiseCheque::UpdateAmount ROLLBACK ($this->errno)");
+			dol_syslog("RemiseCheque::updateAmount ROLLBACK ($this->errno)");
 		}
 
 		return $this->errno;
@@ -590,7 +590,7 @@ class RemiseCheque extends CommonObject
 	 \param  user utilisateur qui effectue l'operation
 	 \param  account_id Compte bancaire concerne
 	 */
-	function RemoveCheck($account_id)
+	function removeCheck($account_id)
 	{
 		$this->errno = 0;
 
@@ -604,12 +604,12 @@ class RemiseCheque extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql)
 	  {
-	  	$this->UpdateAmount();
+	  	$this->updateAmount();
 	  }
 	  else
 	  {
 	  	$this->errno = -1032;
-	  	dol_syslog("RemiseCheque::RemoveCheck ERREUR UPDATE ($this->errno)");
+	  	dol_syslog("RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)");
 	  }
 		}
 		return 0;
@@ -688,10 +688,10 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libelle d'un statut donne
-	 *    	\param      status      Statut
-	 *		\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string      Libelle du statut
+	 *    	Return label of a status
+	 *    	@param      status      Statut
+	 *		@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	@return     string      Libelle du statut
 	 */
 	function LibStatut($status,$mode=0)
 	{

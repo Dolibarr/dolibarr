@@ -21,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/members/cards/modules_cards.php
+ *	\file       htdocs/includes/modules/member/cards/modules_cards.php
  *	\ingroup    member
  *	\brief      File of parent class of document generator for members cards.
  *	\version    $Id$

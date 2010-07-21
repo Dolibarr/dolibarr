@@ -775,10 +775,14 @@ class CMailFile
 		return $_retVal;
 	}
 
-	// This function has been modified as provided
-	// by SirSir to allow multiline responses when
-	// using SMTP Extensions.
-	//
+	/**
+	 * This function has been modified as provided
+     * by SirSir to allow multiline responses when
+	 * using SMTP Extensions.
+	 * @param      socket
+	 * @param      response
+	 * @return     boolean
+	 */
 	function server_parse($socket, $response)
 	{
 		/**

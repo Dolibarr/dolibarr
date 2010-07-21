@@ -11,7 +11,7 @@
     -->
     
      <!-- Check Variable Naming -->
-    <test name="variableNaming" regexp="/^[a-z_][a-zA-Z0-9]*$/" />
+    <test name="variableNaming" regexp="/^[a-z_][a-zA-Z0-9_]*$/" />
     
     <!-- Check Function Naming -->
     <test name="functionNaming" regexp="/^[a-z_]/" level="ERROR"/>
