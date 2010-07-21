@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/facture/doc/doc_generic_odt.modules.php
+ *	\file       htdocs/includes/modules/facture/doc/doc_generic_invoice_odt.modules.php
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
  *	\author	    Laurent Destailleur
@@ -33,10 +33,10 @@ require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 
 /**
- *	\class      doc_generic_odt
+ *	\class      doc_generic_invoice_odt
  *	\brief      Class to build documents using ODF templates generator
  */
-class doc_generic_odt extends ModelePDFFactures
+class doc_generic_invoice_odt extends ModelePDFFactures
 {
 	var $emetteur;	// Objet societe qui emet
 
@@ -47,7 +47,7 @@ class doc_generic_odt extends ModelePDFFactures
 	 *		\brief  Constructor
 	 *		\param	db		Database handler
 	 */
-	function doc_generic_odt($db)
+	function doc_generic_invoice_odt($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -80,7 +80,7 @@ class doc_generic_odt extends ModelePDFFactures
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
-	 * @param unknown_type $mysoc
+	 * @param $mysoc
 	 */
 	function get_substitutionarray_mysoc($mysoc)
 	{
@@ -120,7 +120,7 @@ class doc_generic_odt extends ModelePDFFactures
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
-	 * @param unknown_type $object
+	 * @param $object
 	 */
 	function get_substitutionarray_object($object)
 	{

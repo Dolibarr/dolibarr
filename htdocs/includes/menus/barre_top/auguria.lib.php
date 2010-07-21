@@ -46,7 +46,7 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 	$menuArbo = new Menubase($db,'auguria','top');
 	$tabMenu = $menuArbo->menuTopCharger($hideifnotallowed,$_SESSION['mainmenu'], 'auguria');
 
-	print_start_menu_array();
+	print_start_menu_array_auguria();
 
 	for($i=0; $i<count($tabMenu); $i++)
 	{
@@ -77,50 +77,50 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 				else if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $classname='class="tmenusel"';
 				else $classname='class="tmenu"';
 
-				print_start_menu_entry($idsel);
+				print_start_menu_entry_auguria($idsel);
 				print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
-				print_text_menu_entry($tabMenu[$i]['titre']);
+				print_text_menu_entry_auguria($tabMenu[$i]['titre']);
 				print '</a>';
-				print_end_menu_entry();
+				print_end_menu_entry_auguria();
 			}
 			else
 			{
 				if (! $hideifnotallowed)
 				{
-					print_start_menu_entry($idsel);
+					print_start_menu_entry_auguria($idsel);
 					print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
-					print_text_menu_entry($tabMenu[$i]['titre']);
+					print_text_menu_entry_auguria($tabMenu[$i]['titre']);
 					print '</a>';
-					print_end_menu_entry();
+					print_end_menu_entry_auguria();
 				}
 			}
 		}
 	}
 
-	print_end_menu_array();
+	print_end_menu_array_auguria();
 
 	print "\n";
 }
 
 
 
-function print_start_menu_array()
+function print_start_menu_array_auguria()
 {
 	global $conf;
 	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
 	else print '<ul class="tmenu">';
 }
 
-function print_start_menu_entry($idsel)
+function print_start_menu_entry_auguria($idsel)
 {
 	global $conf;
 	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
 	else print '<li class="tmenu" id="mainmenutd_'.$idsel.'">';
 }
 
-function print_text_menu_entry($text)
+function print_text_menu_entry_auguria($text)
 {
 	global $conf;
 	print '<span class="mainmenuaspan">';
@@ -128,7 +128,7 @@ function print_text_menu_entry($text)
 	print '</span>';
 }
 
-function print_end_menu_entry()
+function print_end_menu_entry_auguria()
 {
 	global $conf;
 	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</td>';
@@ -136,7 +136,7 @@ function print_end_menu_entry()
 	print "\n";
 }
 
-function print_end_menu_array()
+function print_end_menu_array_auguria()
 {
 	global $conf;
 	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</tr></table>';

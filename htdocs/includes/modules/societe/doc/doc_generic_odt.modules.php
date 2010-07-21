@@ -79,7 +79,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
-	 * @param unknown_type $mysoc
+	 * @param $mysoc
 	 */
 	function get_substitutionarray_mysoc($mysoc)
 	{
@@ -119,7 +119,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
-	 * @param unknown_type $object
+	 * @param $object
 	 */
 	function get_substitutionarray_object($object)
 	{
