@@ -18,11 +18,11 @@
  */
 
 /**
-		\file       htdocs/theme/freelug/graph-color.php
-		\brief      Fichier de declaration des couleurs pour les graphiques
-        \ingroup    core
-		\version    $Id$
-*/
+ *		\file       htdocs/theme/freelug/graph-color.php
+ *		\brief      File to declare colors to use to build graphics with theme Freelug
+ *      \ingroup    core
+ *		\version    $Id$
+ */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235,235,224);

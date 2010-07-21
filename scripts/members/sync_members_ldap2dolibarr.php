@@ -19,7 +19,7 @@
 
 /**
  *      \file       scripts/members/sync_members_ldap2dolibarr.php
- *      \ingroup    ldap adherent
+ *      \ingroup    ldap member
  *      \brief      Script de mise a jour des adherents dans Dolibarr depuis LDAP
  * 		\version	$Id$
  */

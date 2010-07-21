@@ -20,7 +20,7 @@
 /**
     \file       htdocs/includes/boxes/box_osc_client.php
     \ingroup    osc
-    \brief      Module de génération de l'affichage de la box osc client
+    \brief      Module to generate box of shop customers
 	\version	$Id$
 */
 
@@ -52,8 +52,8 @@ class box_osc_clients extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les données en mémoire pour affichage ultérieur
-     *      \param      $max        Nombre maximum d'enregistrements à charger
+     *      \brief      Charge les donnï¿½es en mï¿½moire pour affichage ultï¿½rieur
+     *      \param      $max        Nombre maximum d'enregistrements ï¿½ charger
      */
     function loadBox($max=5)
     {

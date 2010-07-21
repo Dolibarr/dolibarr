@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/includes/boxes/box_bookmarks.php
  *      \ingroup    bookmark
- *      \brief      Module de g�n�ration de l'affichage de la box bookmark
+ *      \brief      Module to generate box of bookmarks list
  *		\version	$Id$
  */
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");

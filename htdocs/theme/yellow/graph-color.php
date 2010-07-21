@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net> 
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-		\file       htdocs/theme/yellow/graph-color.php
-		\brief      Fichier de déclaration des couleurs pour les graphiques
-        \ingroup    core
-		\version    $Id$
-*/
+ *		\file       htdocs/theme/yellow/graph-color.php
+ *		\brief      File to declare colors to use to build graphics with theme Yellow
+ *      \ingroup    core
+ *		\version    $Id$
+ */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235,235,224);
