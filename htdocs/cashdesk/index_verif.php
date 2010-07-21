@@ -90,6 +90,7 @@ if ( $retour >= 0 )
 else
 {
 	$langs->load("errors");
+    $langs->load("other");
 	$retour=$langs->trans("ErrorBadLoginPassword");
 	header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username);
 	exit;
