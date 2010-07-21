@@ -64,7 +64,7 @@ $dir=$conf->banque->dir_output.'/bordereau/';
 if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
-	$result = $remisecheque->Create($user, $_GET["accountid"]);
+	$result = $remisecheque->create($user, $_GET["accountid"]);
 	if ($result > 0)
 	{
 		Header("Location: fiche.php?id=".$remisecheque->id);
@@ -80,7 +80,7 @@ if ($_GET['action'] == 'remove' && $_GET["id"] > 0 && $_GET["lineid"] > 0 && $us
 {
 	$remisecheque = new RemiseCheque($db);
 	$remisecheque->id = $_GET["id"];
-	$result = $remisecheque->RemoveCheck($_GET["lineid"]);
+	$result = $remisecheque->removeCheck($_GET["lineid"]);
 	if ($result === 0)
 	{
 		Header("Location: fiche.php?id=".$remisecheque->id);
@@ -96,7 +96,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 {
 	$remisecheque = new RemiseCheque($db);
 	$remisecheque->id = $_GET["id"];
-	$result = $remisecheque->Delete();
+	$result = $remisecheque->delete();
 	if ($result == 0)
 	{
 		Header("Location: index.php");
@@ -111,8 +111,8 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
-	$result = $remisecheque->Fetch($_GET["id"]);
-	$result = $remisecheque->Validate($user);
+	$result = $remisecheque->fetch($_GET["id"]);
+	$result = $remisecheque->validate($user);
 	if ($result >= 0)
 	{
 		Header("Location: fiche.php?id=".$remisecheque->id);
@@ -127,7 +127,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 if ($_POST['action'] == 'builddoc' && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
-	$result = $remisecheque->Fetch($_GET["id"]);
+	$result = $remisecheque->fetch($_GET["id"]);
 
 	/*if ($_REQUEST['model'])
 	{
