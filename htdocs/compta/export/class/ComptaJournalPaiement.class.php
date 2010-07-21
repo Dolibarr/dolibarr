@@ -195,7 +195,7 @@ class ComptaJournalPaiement
 						$facnumber = $obj->increment;
 					}
 
-					$this->_print_ligne($this->db->jdate($obj->dp), $facnumber, '41100000', $s, $credit, $debit);
+					$this->printLine($this->db->jdate($obj->dp), $facnumber, '41100000', $s, $credit, $debit);
 
 					if ($obj->amount >= 0)
 					{
@@ -213,7 +213,7 @@ class ComptaJournalPaiement
 					}
 
 					$s = $socnom . ' '.$libelle;
-					$this->_print_ligne($this->db->jdate($obj->dp), $facnumber, '5122000', $s, $credit, $debit);
+					$this->printLine($this->db->jdate($obj->dp), $facnumber, '5122000', $s, $credit, $debit);
 
 					$i++;
 				}
@@ -260,10 +260,10 @@ class ComptaJournalPaiement
 		}
 	}
 
-	/*
+	/**
 	 *
 	 */
-	Function _print_ligne($a, $b, $c, $d, $e, $f)
+	function printLine($a, $b, $c, $d, $e, $f)
 	{
 		$this->pdf->cell(16,$this->hligne, strftime('%d%m%y',$a));
 		$this->pdf->cell(20,$this->hligne, $b);
