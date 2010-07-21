@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/security/generate/modules_gen
 
 
 /**
- *	    \class      modGeneratePassNone
+ *	    \class      modGeneratePassStandard
  *		\brief      Class to generate a password according to a dolibarr standard rule (8 random chars)
  */
 class modGeneratePassStandard extends ModeleGenPassword

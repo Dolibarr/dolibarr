@@ -21,7 +21,7 @@
  */
 
 /**
-		\file       htdocs/compta/prelevementclass//rejet-prelevement.class.php
+		\file       htdocs/compta/prelevement/class/rejet-prelevement.class.php
 		\ingroup    prelevement
 		\brief      File of class to manage standing orders rejects
 		\version    $Revision$
@@ -29,7 +29,7 @@
 
 
 /**
-		\class 		Prelevement
+		\class 		RejetPrelevement
 		\brief      Class to manage standing orders rejects
 */
 class RejetPrelevement

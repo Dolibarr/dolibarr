@@ -30,16 +30,16 @@
 
 /**
  \class      ComptaExport
- \brief      Classe permettant les exports comptables
+ \brief      Parent class for class to build accountancy export
  */
 
 class ComptaExport
 {
 	/**
 	 \brief      Constructeur de la class
-	 \param      DB          Object de base de donn�es
+	 \param      DB          Object de base de donnees
 	 \param      USER        Object utilisateur
-	 \param      classe      Nom de la classe utilis�e pour formater les rapports
+	 \param      classe      Nom de la classe utilisee pour formater les rapports
 	 */
 	function ComptaExport ($DB, $USER, $classname)
 	{

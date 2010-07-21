@@ -27,7 +27,6 @@
    \remarks    Ce fichier doit etre utilise comme un exemple, il est specifique a une utilisation particuliere
    \version    $Revision$
 */
-
 require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");
 require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
 
@@ -35,7 +34,6 @@ require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
    \class      ComptaExportPoivre
    \brief      Classe permettant les exports comptables au format tableur
 */
-
 class ComptaExportPoivre extends ComptaExport
 {
     var $db;
@@ -45,13 +43,13 @@ class ComptaExportPoivre extends ComptaExport
      \brief      Constructeur de la class
      \param      DB          Object de base de donnees
      \param      USER        Object utilisateur
-  */  
+  */
   function ComptaExportPoivre ($DB, $USER)
   {
     $this->db = $DB;
     $this->user = $USER;
   }
-  
+
   /**
    * Agregation des lignes de facture
    */
@@ -62,17 +60,17 @@ class ComptaExportPoivre extends ComptaExport
     $i = 0;
     $j = 0;
     $n = sizeof($line_in);
-    
+
     // On commence par la ligne 0
-    
+
     $this->line_out[$j] = $line_in[$i];
-    
+
     //print "$j ".$this->line_out[$j][8] . "<br>";
-    
+
     for ( $i = 1 ; $i < $n ; $i++)
       {
 	// On agrege les lignes avec le meme code comptable
-	
+
 	if ( ($line_in[$i][1] == $line_in[$i-1][1]) && ($line_in[$i][4] == $line_in[$i-1][4]) )
 	  {
 	    $this->line_out[$j][8] = ($this->line_out[$j][8] + $line_in[$i][8]);
@@ -81,35 +79,35 @@ class ComptaExportPoivre extends ComptaExport
 	  {
 	    $j++;
 	    $this->line_out[$j] = $line_in[$i];
-	  }	
+	  }
         }
-    
+
     dol_syslog("ComptaExportPoivre::Agregate " . sizeof($this->line_out) . " lignes en sorties");
-    
+
     return 0;
   }
-  
+
   /**
    *
    */
   function Export($dir, $linec, $linep, $id=0)
   {
     $error = 0;
-    
+
     dol_syslog("ComptaExportPoivre::Export");
     dol_syslog("ComptaExportPoivre::Export " . sizeof($linec) . " lignes en entrees");
-    
+
     $this->Agregate($linec);
-    
+
     $this->db->begin();
-    
+
     if ($id == 0)
       {
 	$dt = strftime('EC%y%m', time());
-	
+
 	$sql = "SELECT count(ref) FROM ".MAIN_DB_PREFIX."export_compta";
 	$sql .= " WHERE ref like '$dt%'";
-	
+
 	if ($this->db->query($sql))
 	  {
 	    $row = $this->db->fetch_row();
@@ -120,15 +118,15 @@ class ComptaExportPoivre extends ComptaExport
 	    $error++;
 	    dol_syslog("ComptaExportPoivre::Export Erreur Select");
 	  }
-	
-	
+
+
 	if (!$error)
 	  {
 	    $this->ref = $dt . substr("000".$cc, -2);
-	    
+
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."export_compta (ref, date_export, fk_user)";
 	    $sql .= " VALUES ('".$this->ref."', ".$this->db->idate(mktime()).",".$this->user->id.")";
-	    
+
 	    if ($this->db->query($sql))
 	      {
 		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."export_compta");
@@ -143,12 +141,12 @@ class ComptaExportPoivre extends ComptaExport
     else
       {
 	$this->id = $id;
-	
+
 	$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."export_compta";
 	$sql .= " WHERE rowid = ".$this->id;
-	
+
 	$resql = $this->db->query($sql);
-	
+
 	if ($resql)
 	  {
 	    $row = $this->db->fetch_row($resql);
@@ -160,18 +158,18 @@ class ComptaExportPoivre extends ComptaExport
 	    dol_syslog("ComptaExportPoivre::Export Erreur Select");
 	  }
       }
-    
-    
+
+
     if (!$error)
       {
 	dol_syslog("ComptaExportPoivre::Export ref : ".$this->ref);
-	
+
 	$fxname = $dir . "/".$this->ref.".xls";
-	
+
 	$workbook = new writeexcel_workbook($fxname);
-	
+
 	$page = &$workbook->addworksheet('Export');
-	
+
 	$page->set_column(0,0,8); // A
 	$page->set_column(1,1,6); // B
 	$page->set_column(2,2,9); // C
@@ -180,9 +178,9 @@ class ComptaExportPoivre extends ComptaExport
 	$page->set_column(5,5,9); // F Numero de piece
 	$page->set_column(6,6,8); // G
 
-	
+
 	// Pour les factures
-	
+
 	// A 0 Date Operation 040604 pour 4 juin 2004
 	// B 1 VE -> ventilation
 	// C 2 code Compte general
@@ -193,15 +191,15 @@ class ComptaExportPoivre extends ComptaExport
 	// H 8 Type operation D pour Debit ou C pour Credit
 	// I Date d'echeance, = a la date d'operation si pas d'echeance
 	// J EUR pour Monnaie en Euros
-	
+
 	// Pour les paiements
-	
+
 	$i = 0;
 	$j = 0;
 	$n = sizeof($this->line_out);
-	
+
 	$oldfacture = 0;
-	
+
 	for ( $i = 0 ; $i < $n ; $i++)
 	  {
 	    if ( $oldfacture <> $this->line_out[$i][1])
@@ -216,20 +214,20 @@ class ComptaExportPoivre extends ComptaExport
 		$page->write($j, 6, price2num($this->line_out[$i][7]));
 		$page->write_string($j, 7, 'D' ); // D pour debit
 		$page->write_string($j, 8, strftime("%d%m%y",$this->line_out[$i][0]));
-		
+
 		$j++;
-		
+
 		// Ligne TVA
 		$page->write_string($j, 0, strftime("%d%m%y",$this->line_out[$i][0]));
 		$page->write_string($j, 1, "VI");
 		$page->write_string($j, 2, '4457119');
-		
+
 		$page->write_string($j, 4, stripslashes($this->line_out[$i][3])." Facture");
 		$page->write_string($j, 5, $this->line_out[$i][5]); // Numero de facture
 		$page->write($j, 6, price2num($this->line_out[$i][6])); // Montant de TVA
 		$page->write_string($j, 7, 'C'); // C pour credit
 		$page->write_string($j, 8, strftime("%d%m%y",$this->line_out[$i][0]));
-				
+
 		$oldfacture = $this->line_out[$i][1];
 		$j++;
 	      }
@@ -242,10 +240,10 @@ class ComptaExportPoivre extends ComptaExport
 	    $page->write($j, 6, price2num(round($this->line_out[$i][8], 2)));
 	    $page->write_string($j, 7, 'C');                     // C pour credit
 	    $page->write_string($j, 8, strftime("%d%m%y",$this->line_out[$i][0]));
-	    
+
 	    $j++;
 	  }
-	
+
 	// Tag des lignes de factures
 	$n = sizeof($linec);
 	for ( $i = 0 ; $i < $n ; $i++)
@@ -253,15 +251,15 @@ class ComptaExportPoivre extends ComptaExport
 	    $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet";
 	    $sql .= " SET fk_export_compta=".$this->id;
 	    $sql .= " WHERE rowid = ".$linec[$i][10];
-	    
+
 	    if (!$this->db->query($sql))
 	      {
 		$error++;
 	      }
 	  }
-	
+
 	// Pour les paiements
-	
+
 	// A Date Operation 040604 pour 4 juin 2004
 	// B CE -> caisse d'epargne
 	// C code Compte general
@@ -272,13 +270,13 @@ class ComptaExportPoivre extends ComptaExport
 	// H Type operation D pour Debit ou C pour Credit
 	// I Date d'echeance, = a la date d'operation si pas d'echeance
 	// J EUR pour Monnaie en Euros
-	
+
 	$i = 0;
 	//$j = 0;
 	$n = sizeof($linep);
-	
+
 	$oldfacture = 0;
-	
+
 	for ( $i = 0 ; $i < $n ; $i++)
 	  {
 	    /*
@@ -295,36 +293,36 @@ class ComptaExportPoivre extends ComptaExport
 	      {
 		$debit = "C";
 		$credit = "D";
-		
+
 		if ($linep[$i][6] == 'Prelevement')
 		  {
 		    $linep[$i][6] = 'Rejet Prelevement';
-		  }		
+		  }
 	      }
-	    
+
 	    $page->write_string($j,0, strftime("%d%m%y",$linep[$i][0]));
 	    $page->write_string($j,1, 'CE');
-	    
+
 	    $page->write_string($j,2, '5122000');
 
 	    if ($linep[$i][6] == 'Prelevement')
 	      {
 		$linep[$i][6] = 'Prelevement';
 	      }
-	    
+
 	    $page->write_string($j,4, stripslashes($linep[$i][3])." ".stripslashes($linep[$i][6])); //
 	    $page->write_string($j,5, $linep[$i][7]);                  // Numero de facture
-	    
+
 	    $page->write($j,6, price2num(round(abs($linep[$i][5]), 2)));  // Montant de la ligne
 	    $page->write_string($j,7,$debit);
 	    $page->write_string($j,8, strftime("%d%m%y",$linep[$i][0]));
-	    
-	    
+
+
 	    $j++;
-	    
+
 	    $page->write_string($j,0, strftime("%d%m%y",$linep[$i][0]));
 	    $page->write_string($j,1, 'CE');
-	    
+
 	    $page->write_string($j,2, '41100000');
 	    $page->write_string($j,3, $linep[$i][2]);
 	    $page->write_string($j,4, stripslashes($linep[$i][3])." ".stripslashes($linep[$i][6])); //
@@ -332,29 +330,29 @@ class ComptaExportPoivre extends ComptaExport
 	    $page->write($j,6, price2num(round(abs($linep[$i][5]), 2)));  // Montant de la ligne
 	    $page->write_string($j,7, $credit);
 	    $page->write_string($j,8, strftime("%d%m%y",$linep[$i][0]));
-	    
+
 	    $j++;
-	    
+
 	  }
 	$workbook->close();
-	
+
 	// Tag des lignes de factures
 	$n = sizeof($linep);
 	for ( $i = 0 ; $i < $n ; $i++)
-	  
+
 	  {
 	    $sql = "UPDATE ".MAIN_DB_PREFIX."paiement";
 	    $sql .= " SET fk_export_compta=".$this->id;
 	    $sql .= " WHERE rowid = ".$linep[$i][1];
-	    
+
 	    if (!$this->db->query($sql))
 	      {
 		$error++;
 	      }
 	  }
-	
+
       }
-    
+
     if (!$error)
       {
 	$this->db->commit();
@@ -365,7 +363,7 @@ class ComptaExportPoivre extends ComptaExport
 	$this->db->rollback();
 	dol_syslog("ComptaExportPoivre::Export ROLLBACK");
       }
-    
+
     return 0;
   }
 }

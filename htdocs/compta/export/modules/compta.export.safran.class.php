@@ -14,32 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
+/**
+   \file       htdocs/compta/export/modules/compta.export.safran.class.php
+   \ingroup    compta
+   \brief      Modele d'export compta safran, export au format tableur
+   \remarks    Ce fichier doit etre utilise comme un exemple, il est specifique a une utilisation particuliere
+   \version    $Revision$
+*/
 require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");
 require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
 
-
+/**
+   \class      ComptaExportTableur
+   \brief      Classe permettant les exports comptables au format tableur
+*/
 class ComptaExportTableur extends ComptaExport
 {
 
   function ComptaExportTableur ()
   {
-    
+
   }
-  
+
   function Create()
     {
-      
+
       $this->date = time();
-      
+
       $this->datef = "commande-".strftime("%d%b%y-%HH%M", $this->date);
-      
+
       $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->datef.".xls";
-      
+
       if (strlen(trim($this->fournisseur->email_commande)) == 0)
         {
 	  return -3;
@@ -54,11 +61,11 @@ class ComptaExportTableur extends ComptaExport
 	  $res = $this->CreateFile($fname);
 	  $res = $res + $this->LogSql();
 	  $res = $res + $this->MailFile($fname);
-	  
+
 	  return $res;
         }
     }
-  
+
   function Export($dir, $linec)
     {
       //$fname = $dir . "/tmp/toto.xls"; DEBUG DEBUG

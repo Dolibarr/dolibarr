@@ -23,6 +23,11 @@
  *  \brief      Fichier des classes expedition
  *  \version    $Id$
  */
+
+/**
+ *	\class      ExpeditionStats
+ *	\brief      Class to manage shipment statistics
+ */
 class ExpeditionStats
 {
   var $db;

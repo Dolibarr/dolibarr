@@ -19,24 +19,22 @@
  */
 
 /**
- \file       htdocs/includes/modules/mailings/pomme.modules.php
- \ingroup    mailing
- \brief      Fichier de la classe permettant de g�n�rer la liste de destinataires Pomme
- \version    $Id$
+ *	\file       htdocs/includes/modules/mailings/pomme.modules.php
+ *	\ingroup    mailing
+ *	\brief      File of class to offer a selector of emailing targets with Rule 'Pomme'.
+ *	\version    $Id$
  */
-
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 
 
 /**
- \class      mailing_pomme
- \brief      Classe permettant de g�n�rer la liste des destinataires Pomme
+ *	\class      mailing_pomme
+ *	\brief      Class to offer a selector of emailing targets with Rule 'Peche'.
  */
-
 class mailing_pomme extends MailingTargets
 {
 	var $name='DolibarrUsers';                      // Identifiant du module mailing
-	var $desc='Utilisateurs de Dolibarr avec emails';  // Libell� utilis� si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	var $desc='Dolibarr users with emails';  		// Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
 	var $require_module=array();                    // Module mailing actif si modules require_module actifs
 	var $require_admin=1;                           // Module mailing actif pour user admin ou non
 	var $picto='user';

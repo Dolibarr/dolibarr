@@ -20,18 +20,17 @@
  */
 
 /**
-	\file       htdocs/includes/modules/livraison/mod_livraison_saphir.php
-	\ingroup    expedition
-	\brief      Fichier contenant la classe du modele de numerotation de reference de livraison Saphir
-	\version    $Id$
-*/
-
+ *	\file       htdocs/includes/modules/livraison/mod_livraison_saphir.php
+ *	\ingroup    expedition
+ *	\brief      Fichier contenant la classe du modele de numerotation de reference de livraison Saphir
+ *	\version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/livraison/modules_livraison.php");
 
 /**
-	\class      mod_livraison_saphir
-	\brief      Classe du mod�le de num�rotation de r�f�rence de livraison Saphir
-*/
+ *	\class      mod_livraison_saphir
+ *	\brief      Classe du modele de numerotation de reference de livraison Saphir
+ */
 class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
