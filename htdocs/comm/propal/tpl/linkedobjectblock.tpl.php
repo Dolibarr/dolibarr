@@ -21,7 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php 
+<?php
 if ($somethingshown) { echo '<br>'; }
 print_titre($langs->trans('RelatedCommercialProposals'));
 ?>
@@ -33,7 +33,7 @@ print_titre($langs->trans('RelatedCommercialProposals'));
 	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
 </tr>
-<?php 
+<?php
 $var=true;
 for ($i = 0 ; $i < $num ; $i++)
 {
@@ -41,7 +41,7 @@ for ($i = 0 ; $i < $num ; $i++)
 	$var=!$var;
 ?>
 <tr <?php echo $bc[$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/compta/propal.php?id='.$linkedObjectBlock->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$linkedObjectBlock->ref; ?></a></td>
+	<a href="<?php echo DOL_URL_ROOT.'/compta/propal.php?id='.$linkedObjectBlock->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$linkedObjectBlock->ref; ?>"></a></td>
 	<td><?php echo $linkedObjectBlock->ref_client; ?></td>
 	<td align="center"><?php echo dol_print_date($linkedObjectBlock->date,'day'); ?></td>
 	<td align="right"><?php echo price($linkedObjectBlock->total_ht); ?></td>

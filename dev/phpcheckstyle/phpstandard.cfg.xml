@@ -42,7 +42,7 @@
     <!-- <test name="noFileCloseTag"/> -->
     
     <!-- Test if a file finish with some inner HTML (OK for some view but could provoque "header already sent" error) -->
-    <test name="noFileFinishHTML" level="ERROR" />
+    <!-- <test name="noFileFinishHTML" level="ERROR" /> -->
     
     
     <!--  ****************  -->
