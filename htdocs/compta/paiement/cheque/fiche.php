@@ -111,7 +111,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
-	$result = $remisecheque->fetch($_GET["id"]);
+	$result = $remisecheque->Fetch($_GET["id"]);
 	$result = $remisecheque->Validate($user);
 	if ($result >= 0)
 	{
@@ -127,7 +127,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 if ($_POST['action'] == 'builddoc' && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
-	$result = $remisecheque->fetch($_GET["id"]);
+	$result = $remisecheque->Fetch($_GET["id"]);
 
 	/*if ($_REQUEST['model'])
 	{
