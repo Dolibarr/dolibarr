@@ -74,7 +74,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	 */
 	function write_file(&$object, $outputlangs)
 	{
-		global $user,$conf,$langs;
+		global $user,$conf,$langs,$mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
@@ -454,11 +454,12 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($blSocX2,$blSocY+20);
 		$pdf->SetFont('Arial','B',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($livreur->getFullName($outputlangs)), '' , 'L');
+
+		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($this->livreur->getFullName($outputlangs)), '' , 'L');
 
 
 		/**********************************/
-		//Emplacement Informations Expediteur (Client)
+		//Emplacement Informations Expediteur (My Company)
 		/**********************************/
 		$Ydef = $Yoff;
 		$blExpX=$Xoff-20;
@@ -466,40 +467,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$Yoff = $Yoff+5;
 		$Ydef = $Yoff;
 		$blSocY = 1;
-		//Titre
-		$pdf->SetXY($blExpX,$Yoff-3);
-		$pdf->SetFont('Arial','B',7);
-		$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Sender"), 0, 'L');
 		$pdf->Rect($blExpX, $Yoff, $blW, 20);
-		//Nom Client
-		$pdf->SetXY($blExpX,$Yoff+$blSocY);
-		$pdf->SetFont('Arial','B',7);
-		$pdf->MultiCell($blW,3, $outputlangs->convToOutputCharset($this->expediteur->nom), 0, 'C');
-		$pdf->SetFont('Arial','',7);
-		$blSocY+=3;
-		//Adresse Client
-		//Gestion des Retours chariots
-		$Out=explode("\n",$outputlangs->convToOutputCharset($this->expediteur->address));
-		for ($i=0;$i<count($Out);$i++) {
-			$pdf->SetXY($blExpX,$Yoff+$blSocY);
-			$pdf->MultiCell($blW,5,$Out[$i],  0, 'L');
-			$blSocY+=3;
-		}
-		$pdf->SetXY($blExpX,$Yoff+$blSocY);
-		$pdf->MultiCell($blW,5, $outputlangs->convToOutputCharset($this->expediteur->cp) . " " . $outputlangs->convToOutputCharset($this->expediteur->ville),  0, 'L');
-		$blSocY+=4;
-		//Tel
-		if ($this->expediteur->tel)
-		{
-			$pdf->SetXY($blExpX,$Yoff+$blSocY);
-			$pdf->SetFont('Arial','',7);
-			$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Tel")." : ".$outputlangs->convToOutputCharset($this->expediteur->tel), 0, 'L');
-		}
-
 
 		$object->fetch_client();
 
-		// If SHIPPING contact defined on invoice, we use it
+		// If SHIPPING contact defined on order, we use it
 		$usecontact=false;
 		$arrayidcontact=$object->commande->getIdContact('external','SHIPPING');
 		if (sizeof($arrayidcontact) > 0)
