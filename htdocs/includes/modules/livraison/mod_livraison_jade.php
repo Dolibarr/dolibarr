@@ -19,7 +19,7 @@
  * or see http://www.gnu.org/
  */
 
-/** 
+/**
  *   \file       htdocs/includes/modules/livraison/mod_livraison_jade.php
  *   \ingroup    delivery
  *   \brief      Fichier contenant la classe du modele de numerotation de reference de bon de livraison Jade
@@ -40,8 +40,10 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	var $error = '';
 	var $nom = "Jade";
 
+    var $prefix='BL';
 
-	/** 
+
+	/**
 	 *     \brief      Renvoi la description du modele de numerotation
 	 *     \return     string      Texte descripif
 	 */
@@ -50,17 +52,52 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 		global $langs;
 		return $langs->trans("NumRefModelJade");
 	}
-	
+
 	/**
 	 *      \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
     {
-        return "BL0600001";
+        return $this->prefix."0501-0001";
     }
-  
-	/**
+
+    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numerotation de fonctionner.
+     *      \return     boolean     false si conflit, true si ok
+     */
+    function canBeActivated()
+    {
+        global $langs,$conf;
+
+        $langs->load("bills");
+
+        // Check invoice num
+        $fayymm=''; $max='';
+
+        $posindice=8;
+        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";   // This is standard SQL
+        $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
+        $sql.= " WHERE facnumber LIKE '".$this->prefix."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
+
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
+        }
+        if ($fayymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$fayymm))
+        {
+            $langs->load("errors");
+            $this->error=$langs->trans('ErrorNumRefModel',$max);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
 	 * 		\brief      Return next value
 	 *    	\param      objsoc      Object third party
 	 *    	\param      delivery	Object delivery
@@ -70,53 +107,38 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     {
         global $db,$conf;
 
-        // D'abord on recupere la valeur max (reponse immediate car champ indexe)
-        $blyy='';
-        
-        $sql = "SELECT MAX(ref)";
+        // D'abord on recupere la valeur max
+        $posindice=8;
+        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";   // This is standard SQL
         $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
-        $sql.= " WHERE entity = ".$conf->entity;
-        
+        $sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
+
         $resql=$db->query($sql);
+        dol_syslog("mod_livraison_jade::getNextValue sql=".$sql);
         if ($resql)
         {
-            $row = $db->fetch_row($resql);
-            if ($row) $blyy = substr($row[0],0,4);
-        }
-    
-        // Si au moins un champ respectant le modele a ete trouvee
-        if (preg_match('/BL[0-9][0-9]/i',$blyy))
-        {
-            // Recherche rapide car restreint par un like sur champ indexe
-            $posindice=5;
-            
-            $sql = "SELECT MAX(SUBSTRING(ref,$posindice)) as max";
-            $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
-            $sql.= " WHERE ref like '".$blyy."%'";
-            $sql.= " AND entity = ".$conf->entity;
-            
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $obj = $db->fetch_object($resql);
-                if ($obj) $max = intval($obj->max);
-                else $max=0;
-            }
+            $obj = $db->fetch_object($resql);
+            if ($obj) $max = intval($obj->max);
+            else $max=0;
         }
         else
         {
-            $max=0;
-        }        
+            dol_syslog("mod_livraison_jade::getNextValue sql=".$sql, LOG_ERR);
+            return -1;
+        }
 
-        $date = $delivery->date_delivery;
-        $yy = strftime("%y",$date);
-        $num = sprintf("%05s",$max+1);
-        
-        return  "BL$yy$num";
+        $date=$delivery->date;
+        if (empty($date)) $date=dol_now();
+        $yymm = strftime("%y%m",$date);
+        $num = sprintf("%04s",$max+1);
+
+        dol_syslog("mod_livraison_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
+        return $this->prefix.$yymm."-".$num;
     }
 
-  
-    /**     
+
+    /**
      * 		\brief      Renvoie la reference de commande suivante non utilisee
      *      \param      objsoc      Objet societe
      *      \param      livraison	Objet livraison
