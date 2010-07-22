@@ -18,6 +18,7 @@ ECMSectionsManual=Árbol manual
 ECMSectionsAuto=Árbol automático
 ECMSections=Directorios
 ECMRoot=Raíz
+ECMNewSection = Nuevo directorio
 ECMAddSection=Añadir directorio
 ECMNewDocument=Nuevo documento
 ECMCreationDate=Fecha creación

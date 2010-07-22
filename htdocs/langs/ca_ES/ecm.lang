@@ -18,6 +18,7 @@ ECMSectionsManual=Arbre manual
 ECMSectionsAuto=Arbre automàtic
 ECMSections=Carpetes
 ECMRoot=Arrel
+ECMNewSection=Nova carpeta
 ECMAddSection=Afegir carpeta
 ECMNewDocument=Nou document
 ECMCreationDate=Data creació
