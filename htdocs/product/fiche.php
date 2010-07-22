@@ -829,10 +829,9 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 }
 
 /**
- *
- * Fiche produit
- *
+ * Product card
  */
+
 if ($_GET["id"] || $_GET["ref"])
 {
 	$product=new Product($db);
@@ -1283,7 +1282,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 		print '</tr>';
 
 		// Liste de "Mes propals"
-		print '<tr><td width="50%" valign="top">';
+		print '<tr><td'.($user->rights->societe->client->voir?' width="50%"':'').' valign="top">';
 
 		$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.ref, p.datep as dp";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
@@ -1309,8 +1308,8 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 					print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="addinpropal">';
-					print "<tr $bc[$var]>";
-					print "<td nowrap>";
+					print "<tr ".$bc[$var].">";
+					print '<td nowrap="nowrap">';
 					print "<a href=\"../comm/propal.php?id=".$objp->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
 					print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
 					print "<td nowrap=\"nowrap\">".dol_print_date($objp->dp,"%d %b")."</td>\n";
@@ -1400,7 +1399,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 		print '</tr>';
 
 		// Liste de "Mes commandes"
-		print '<tr><td width="50%" valign="top">';
+		print '<tr><td'.($user->rights->societe->client->voir?' width="50%"':'').' valign="top">';
 
 		$sql = "SELECT s.nom, s.rowid as socid, c.rowid as commandeid, c.ref, c.date_commande as dc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
@@ -1426,8 +1425,8 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 					print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="addincommande">';
-					print "<tr $bc[$var]>";
-					print "<td nowrap>";
+					print "<tr ".$bc[$var].">";
+					print '<td nowrap="nowrap">';
 					print "<a href=\"../commande/fiche.php?id=".$objc->commandeid."\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
 					print "<td><a href=\"../comm/fiche.php?socid=".$objc->socid."\">".dol_trunc($objc->nom,18)."</a></td>\n";
 					print "<td nowrap=\"nowrap\">".dol_print_date($db->jdate($objc->dc),"%d %b")."</td>\n";
@@ -1461,7 +1460,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 			print '<td width="50%" valign="top">';
 
 			$var=true;
-			$othercom = $commande->liste_array(1, ' <> '.$user->id);
+			$othercom = $commande->liste_array(1, $user);
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" width="100%">';
@@ -1488,14 +1487,15 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 			}
 			print '</table>';
 			print '</form>';
+
+			print '</td>';
 		}
-		print '</td>';
 
 		print '</tr>';
 	}
 
 	// Factures
-	if($conf->facture->enabled && $user->rights->facture->creer)
+	if ($conf->facture->enabled && $user->rights->facture->creer)
 	{
 		print '<tr class="liste_titre"><td width="50%" class="liste_titre">';
 		print $langs->trans("AddToMyBills").'</td>';
@@ -1513,7 +1513,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 		print '</tr>';
 
 		// Liste de Mes factures
-		print '<tr><td width="50%" valign="top">';
+		print '<tr><td'.($user->rights->societe->client->voir?' width="50%"':'').' valign="top">';
 
 		$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber, f.datef as df";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
@@ -1572,9 +1572,11 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 
 		if ($user->rights->societe->client->voir)
 		{
+            $facture = new Facture($db);
+
 			print '<td width="50%" valign="top">';
 
-			// Liste de Autres factures
+            // Liste de Autres factures
 			$var=true;
 
 			$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber, f.datef as df";
@@ -1591,7 +1593,8 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 				$num = $db->num_rows($result);
 				$var=true;
 				print '<table class="nobordernopadding" width="100%">';
-				if ($num) {
+				if ($num)
+				{
 					$i = 0;
 					while ($i < $num)
 					{
@@ -1601,7 +1604,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 						print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 						print '<input type="hidden" name="action" value="addinfacture">';
-						print "<tr $bc[$var]>";
+						print "<tr ".$bc[$var].">";
 						print "<td><a href=\"../compta/facture.php?facid=".$objp->factureid."\">$objp->facnumber</a></td>\n";
 						print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,24)."</a></td>\n";
 						print "<td colspan=\"2\">".$langs->trans("Qty");
@@ -1617,7 +1620,8 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 						$i++;
 					}
 				}
-				else {
+				else
+				{
 					print "<tr ".$bc[!$var]."><td>";
 					print $langs->trans("NoOtherDraftBills");
 					print '</td></tr>';
@@ -1629,9 +1633,11 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 			{
 				dol_print_error($db);
 			}
+
+			print '</td>';
 		}
 
-		print '</td></tr>';
+		print '</tr>';
 	}
 
 	print '</table>';

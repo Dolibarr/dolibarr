@@ -1663,38 +1663,29 @@ class Commande extends CommonObject
 	}
 
 	/**
-	 *    \brief      Renvoi la liste des commandes (eventuellement filtree sur un user) dans un tableau
+	 *    \brief      Return list of orders (eventuelly filtered on a user) into an array
 	 *    \param      brouillon       0=non brouillon, 1=brouillon
 	 *    \param      user            Objet user de filtre
-	 *    \return     int             -1 si erreur, tableau resultat si ok
+	 *    \return     int             -1 if KO, array with result if OK
 	 */
-	function liste_array ($brouillon=0, $user='')
+	function liste_array($brouillon=0, $user='')
 	{
 		global $conf;
 
 		$ga = array();
 
-		$sql = "SELECT rowid, ref";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande";
-		$sql.= " WHERE entity = ".$conf->entity;
-
-		if ($brouillon)
-		{
-			$sql.= " AND fk_statut = 0";
-			if ($user) $sql.= " AND fk_user_author".$user;
-		}
-		else
-		{
-			if ($user) $sql.= " AND fk_user_author".$user;
-		}
-
-		$sql .= " ORDER BY date_commande DESC";
+		$sql = "SELECT s.nom, s.rowid, c.rowid, c.ref";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
+		$sql.= " WHERE c.entity = ".$conf->entity;
+		$sql.= " AND c.fk_soc = s.rowid";
+		if ($brouillon) $sql.= " AND c.fk_statut = 0";
+        if ($user) $sql.= " AND c.fk_user_author <> ".$user->id;
+		$sql .= " ORDER BY c.date_commande DESC";
 
 		$result=$this->db->query($sql);
 		if ($result)
 		{
 			$numc = $this->db->num_rows($result);
-
 			if ($numc)
 			{
 				$i = 0;
@@ -1710,6 +1701,7 @@ class Commande extends CommonObject
 		}
 		else
 		{
+			dol_print_error($this->db);
 			return -1;
 		}
 	}

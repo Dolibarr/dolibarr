@@ -1398,12 +1398,17 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    \brief      Renvoi la liste des propal (eventuellement filtree sur un user) dans un tableau
-	 *    \param      draft				0=not draft, 1=draft
-	 *    \param      notcurrentuser	0=current user, 1=not current user
-	 *    \return     int				-1 si erreur, tableau resultat si ok
+	 *    \brief       Return list of proposal (eventually filtered on user) into an array
+	 *    \param       shortlist       0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref)
+	 *    \param       draft		   0=not draft, 1=draft
+	 *    \param       notcurrentuser  0=current user, 1=not current user
+	 *    \param       socid           Id third pary
+	 *    \param       limit           For pagination
+	 *    \param       offset          For pagination
+	 *    \param       sortfield       Sort criteria
+     *    \param       sortorder       Sort order
+	 *    \return      int		       -1 if KO, array with result if OK
 	 */
-
 	function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datep', $sortorder='DESC')
 	{
 		global $conf,$user;
@@ -1419,14 +1424,13 @@ class Propal extends CommonObject
 		if ($socid) $sql.= " AND s.rowid = ".$socid;
 		if ($draft)	$sql.= " AND p.fk_statut = 0";
 		if ($notcurrentuser) $sql.= " AND p.fk_user_author <> ".$user->id;
-		$sql.= " ORDER BY $sortfield $sortorder";
+		$sql.= $this->db->order($sortfield,$sortorder);
 		$sql.= $this->db->plimit($limit,$offset);
 
 		$result=$this->db->query($sql);
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
-
 			if ($num)
 			{
 				$i = 0;
@@ -1451,6 +1455,7 @@ class Propal extends CommonObject
 		}
 		else
 		{
+            dol_print_error($this->db);
 			return -1;
 		}
 	}
