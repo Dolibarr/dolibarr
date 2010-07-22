@@ -106,7 +106,7 @@ if (! empty($number))
 	$errstr=0 ;
 	$strCallerId = "Dolibarr <".strtolower($caller).">" ;
 	$oSocket = @fsockopen ($strHost, $port, $errno, $errstr, 10) ;
-	if ($oSocket)
+	if (!$oSocket)
 	{
 		print '<body>'."\n";
 		$txt="Failed to execute fsockopen($strHost, $port, \$errno, \$errstr, 10)<br>\n";
