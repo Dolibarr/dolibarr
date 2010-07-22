@@ -38,7 +38,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 	$result=dolibarr_set_const($db, "CLICKTODIAL_URL",$_POST["url"],'chaine',0,'',$conf->entity);
   	if ($result >= 0)
   	{
-  		$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
+  		$mesg='<div class="ok">'.$langs->trans("RecordModifiedSuccessfully").'</div>';
   	}
   	else
   	{
