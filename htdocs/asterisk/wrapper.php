@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +30,22 @@
  * 				write = system,call,log,verbose,command,agent,user
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+//if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');    // Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');        // Not disabled cause need to load personalized language
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
+if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK','1');
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL','1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 
-require_once("../master.inc.php");
+require_once("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
-dol_syslog("Call Dolibarr Asterisk interface");
-
+// Security check
 // TODO Enable and test if module Asterisk is enabled
 
 
@@ -80,9 +86,14 @@ $prefix = $conf->global->ASTERISK_INDICATIF;
 $port = $conf->global->ASTERISK_PORT;
 
 
+
+/*
+ * View
+ */
+
 print '<html>'."\n";
 print '<head>'."\n";
-print '<title>Asterisk redirection ...</title>'."\n";
+print '<title>Asterisk redirection from Dolibarr...</title>'."\n";
 print '</head>'."\n";
 
 
@@ -93,21 +104,25 @@ if (! empty($number))
 	if ($pos===false) :
 	$errno=0 ;
 	$errstr=0 ;
-	$strCallerId = "Dolibarr <$number>" ;
+	$strCallerId = "Dolibarr <".strtolower($caller).">" ;
 	$oSocket = @fsockopen ($strHost, $port, $errno, $errstr, 10) ;
-	if (!$oSocket)
+	if ($oSocket)
 	{
-		echo '<body>'."\n";
+		print '<body>'."\n";
 		$txt="Failed to execute fsockopen($strHost, $port, \$errno, \$errstr, 10)<br>\n";
-		echo $txt;
+		print $txt;
 		dol_syslog($txt,LOG_ERR);
 		$txt=$errstr." (".$errno.")<br>\n";
-		echo $txt;
+		print $txt;
 		dol_syslog($txt,LOG_ERR);
+        print '</body>'."\n";
 	}
 	else
 	{
-		echo '<body onload="javascript:history.go(-1);">'."\n";
+		$txt="Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
+		dol_syslog($txt);
+		print '<body onload="javascript:history.go(-1);">'."\n";
+		print '<!-- '.$txt.' -->';
 		fputs($oSocket, "Action: login\r\n" ) ;
 		fputs($oSocket, "Events: off\r\n" ) ;
 		fputs($oSocket, "Username: $login\r\n" ) ;
@@ -122,9 +137,9 @@ if (! empty($number))
 		fputs($oSocket, "Action: Logoff\r\n\r\n" ) ;
 		sleep(2) ;
 		fclose($oSocket) ;
+        print '</body>'."\n";
 	}
 	endif ;
 }
 
-print '</body>'."\n";
 print '</html>'."\n";
