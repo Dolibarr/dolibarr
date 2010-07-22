@@ -298,7 +298,7 @@ class Facture extends CommonObject
 						$prod = new Product($this->db, $_facrec->lignes[$i]->fk_product);
 						$res=$prod->fetch($_facrec->lignes[$i]->fk_product);
 					}
-					$tva_tx = get_default_tva($mysoc,$soc,($prod->tva_tx?$prod->tva_tx:0));
+					$tva_tx = get_default_tva($mysoc,$soc,$prod->id);
 					$localtax1_tx=get_localtax($tva_tx,1,$soc);
 					$localtax2_tx=get_localtax($tva_tx,2,$soc);
 
@@ -1586,7 +1586,7 @@ class Facture extends CommonObject
 	 *    	\return    	int             	>0 if OK, <0 if KO
 	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
+	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
 	function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0)

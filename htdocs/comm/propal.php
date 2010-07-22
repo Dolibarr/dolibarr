@@ -701,10 +701,10 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 			$prod = new Product($db, $_POST['idprod']);
 			$prod->fetch($_POST['idprod']);
 
-			$tva_tx = get_default_tva($mysoc,$propal->client,$prod->tva_tx);
+			$tva_tx = get_default_tva($mysoc,$propal->client,$prod->id);
 			$localtax1_tx= get_localtax($tva_tx, 1, $propal->client);  //get_default_localtax($mysoc,$propal->client,1,$prod->id);
 			$localtax2_tx= get_localtax($tva_tx, 2, $propal->client); //get_default_localtax($mysoc,$propal->client,2,$prod->id);
-			$tva_npr = get_default_npr($mysoc,$propal->client,$prod->tva_tx);
+			$tva_npr = get_default_npr($mysoc,$propal->client,$prod->id);
 
 			// On defini prix unitaire
 			if ($conf->global->PRODUIT_MULTIPRICES && $propal->client->price_level)

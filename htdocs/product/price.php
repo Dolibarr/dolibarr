@@ -196,7 +196,13 @@ if($conf->global->PRODUIT_MULTIPRICES)
 	{
 		for ($i=1; $i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 		{
-			print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
+            // TVA
+            if ($i == 1) // We show only price for level 1
+            {
+                 print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->multiprices_tva_tx[1],true).'</td></tr>';
+            }
+
+            print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
 
 			if ($product->multiprices_base_type["$i"] == 'TTC')
 			{
@@ -228,15 +234,15 @@ if($conf->global->PRODUIT_MULTIPRICES)
 				print price($product->multiprices_min["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
 			}
 			print '</td></tr>';
-
-			// TVA
-			print '<tr><td>'.$langs->trans("VATRate").' '.$i.'</td><td>'.vatrate($product->multiprices_tva_tx["$i"],true).'</td></tr>';
 		}
 	}
 }
 else
 {
-	// Prix
+    // TVA
+    print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx,true).'</td></tr>';
+
+    // Price
 	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
 	if ($product->price_base_type == 'TTC')
 	{
@@ -248,7 +254,7 @@ else
 	}
 	print '</td></tr>';
 
-	// Prix mini
+	// Price minimum
 	print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
 	if ($product->price_base_type == 'TTC')
 	{
@@ -259,9 +265,6 @@ else
 		print price($product->price_min).' '.$langs->trans($product->price_base_type);
 	}
 	print '</td></tr>';
-
-	// TVA
-	print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx,true).'</td></tr>';
 }
 
 // Statut
@@ -311,6 +314,11 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 		print '<input type="hidden" name="id" value="'.$product->id.'">';
 		print '<table class="border" width="100%">';
 
+        // VAT
+        print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
+        print $html->select_tva("tva_tx",$product->tva_tx,$mysoc,'');
+        print '</td></tr>';
+
 		// Price base
 		print '<tr><td width="15%">';
 		print $langs->trans('PriceBase');
@@ -335,6 +343,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 		}
 		print '</td></tr>';
 
+		// Price minimum
 		print '<tr><td>' ;
 		$text=$langs->trans('MinPrice') ;
 		print $html->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
@@ -348,11 +357,6 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 		}
 		print '</td></tr>';
 
-		// VAT
-		print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-		print $html->select_tva("tva_tx",$product->tva_tx,$mysoc,'');
-		print '</td></tr>';
-
 		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 		print '</table>';
@@ -360,13 +364,27 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 	}
 	else
 	{
-		for($i=1; $i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+		for ($i=1; $i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 		{
 			print '<form action="price.php?id='.$product->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update_price">';
 			print '<input type="hidden" name="id" value="'.$product->id.'">';
 			print '<table class="border" width="100%">';
+
+            // VAT
+            if ($i == 1)
+            {
+                print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
+                print $html->select_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'');
+                print '</td></tr>';
+            }
+            else
+            {    // We always use the vat rate of price level 1 (A vat rate does not depends on customer)
+                print '<input type="hidden" name="tva_tx_'.$i.'" value="'.$product->multiprices_tva_tx[1].'">';
+            }
+
+			// Selling price
 			print '<tr><td width="20%">';
 			$text=$langs->trans('SellingPrice').' '.$i;
 			print $html->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
@@ -382,6 +400,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 			print $html->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
 			print '</td></tr>';
 
+            // Min price
 			print '<tr><td>';
 			$text=$langs->trans('MinPrice').' '.$i;
 			print $html->textwithpicto($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
@@ -393,11 +412,6 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 			{
 				print '<td><input name="price_min_'.$i.'" size="10" value="'.price($product->multiprices_min["$i"]).'">';
 			}
-			print '</td></tr>';
-
-			// VAT
-			print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-			print $html->select_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'');
 			print '</td></tr>';
 
 			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';

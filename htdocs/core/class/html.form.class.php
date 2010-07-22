@@ -2210,19 +2210,19 @@ class Form
 
 	/**
 	 *      \brief      Output an HTML select vat rate
-	 *      \param      name                Nom champ html
-	 *      \param      selectedrate        Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
-	 *      \param      societe_vendeuse    Objet societe vendeuse
-	 *      \param      societe_acheteuse   Objet societe acheteuse
-	 *      \param      taux_produit        Taux par defaut du produit vendu
-	 *      \param      info_bits           Miscellanous information on line
+	 *      \param      name               Nom champ html
+	 *      \param      selectedrate       Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
+	 *      \param      societe_vendeuse   Objet societe vendeuse
+	 *      \param      societe_acheteuse  Objet societe acheteuse
+	 *      \param      idprod             Id product
+	 *      \param      info_bits          Miscellanous information on line
 	 *      \remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
 	 *                  Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
 	 *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
 	 *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
 	 *                  Sinon la TVA proposee par defaut=0. Fin de regle.
 	 */
-	function load_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='', $info_bits=0)
+	function load_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -2302,8 +2302,8 @@ class Form
 		// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
 		if ($defaulttx < 0 || strlen($defaulttx) == 0)
 		{
-			$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
-			$defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$taux_produit);
+			$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$idprod);
+			$defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$idprod);
 		}
 		// Si taux par defaut n'a pu etre determine, on prend dernier de la liste.
 		// Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant

@@ -209,14 +209,14 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 
 				if ( $soc->client == 1 )
 				{
-					Header("Location: comm/fiche.php?socid=".$soc->id);
+					Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$soc->id);
 					return;
 				}
 				else
 				{
 					if (  $soc->fournisseur == 1 )
 					{
-						Header("Location: fourn/fiche.php?socid=".$soc->id);
+						Header("Location: ".DOL_URL_ROOT."/fourn/fiche.php?socid=".$soc->id);
 						return;
 					}
 					else

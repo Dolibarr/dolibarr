@@ -151,7 +151,7 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 
 				$remise_percent = $_POST["remise_percent"] ? $_POST["remise_percent"] : $_POST["p_remise_percent"];
 
-				$tva_tx	= get_default_tva($societe,$mysoc,$product->tva_tx,$product->id);
+				$tva_tx	= get_default_tva($societe,$mysoc,$product->id);
 				$type = $product->type;
 
 				$result=$commande->addline(

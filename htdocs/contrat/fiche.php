@@ -227,8 +227,8 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
             $prod = new Product($db, $_POST['p_idprod']);
             $prod->fetch($_POST['p_idprod']);
 
-            $tva_tx = get_default_tva($mysoc,$contrat->client,$prod->tva_tx);
-            $tva_npr = get_default_npr($mysoc,$contrat->client,$prod->tva_npr);
+            $tva_tx = get_default_tva($mysoc,$contrat->client,$prod->id);
+            $tva_npr = get_default_npr($mysoc,$contrat->client,$prod->id);
 
             // On defini prix unitaire
             if ($conf->global->PRODUIT_MULTIPRICES && $contrat->client->price_level)
@@ -273,7 +273,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 
         $localtax1_tx=get_localtax($tva_tx,1,$contrat->client);
         $localtax2_tx=get_localtax($tva_tx,2,$contrat->client);
-        
+
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
@@ -326,7 +326,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
 
 		if ($date_start_real_update == '') $date_start_real_update=$contratline->date_ouverture;
 		if ($date_end_real_update == '')   $date_end_real_update=$contratline->date_cloture;
-		
+
 		$localtax1_tx=get_localtax($_POST["eltva_tx"],1,$contrat->client);
         $localtax2_tx=get_localtax($_POST["eltva_tx"],2,$contrat->client);
 

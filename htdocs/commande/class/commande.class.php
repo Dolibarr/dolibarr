@@ -825,7 +825,7 @@ class Commande extends CommonObject
 	 *    	\see       	add_product
 	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
+	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
 	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0)
@@ -962,7 +962,7 @@ class Commande extends CommonObject
 			$prod=new Product($this->db);
 			$prod->fetch($idproduct);
 
-			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
+			$tva_tx = get_default_tva($mysoc,$this->client,$prod->id);
 			$localtax1_tx=get_localtax($tva_tx,1,$this->client);
 			$localtax2_tx=get_localtax($tva_tx,2,$this->client);
 			// multiprix

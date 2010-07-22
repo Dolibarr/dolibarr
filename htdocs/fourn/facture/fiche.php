@@ -329,7 +329,7 @@ if ($_GET['action'] == 'addline')
 				$societe->fetch($facfou->socid);
 			}
 
-			$tvatx=get_default_tva($societe,$mysoc,$product->tva_tx);
+			$tvatx=get_default_tva($societe,$mysoc,$product->id);
 			$type = $product->type;
 
 			$result=$facfou->addline($label, $product->fourn_pu, $tvatx, $_POST['qty'], $idprod);

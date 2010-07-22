@@ -388,24 +388,21 @@ if ($_POST["action"] == 'addinpropal')
 	}
 
 	$desc = $prod->description;
-	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+
+	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
 	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
 	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
 
-	$price_base_type = 'HT';
+    $pu_ht = $prod->price;
+    $pu_ttc = $prod->price_ttc;
+    $price_base_type = $prod->price_base_type;
 
-	// multiprix
+	// If multiprice
 	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
 	{
 		$pu_ht = $prod->multiprices[$soc->price_level];
 		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
 		$price_base_type = $prod->multiprices_base_type[$soc->price_level];
-	}
-	else
-	{
-		$pu_ht = $prod->price;
-		$pu_ttc = $prod->price_ttc;
-		$price_base_type = $prod->price_base_type;
 	}
 
 	// On reevalue prix selon taux tva car taux tva transaction peut etre different
@@ -473,23 +470,23 @@ if ($_POST["action"] == 'addincommande')
 	}
 
 	$desc = $prod->description;
-	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+
+	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
 	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
 	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
 
-	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-	{
-		$pu_ht = $prod->multiprices[$soc->price_level];
-		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
-		$price_base_type = $prod->multiprices_base_type[$soc->price_level];
-	}
-	else
-	{
-		$pu_ht = $prod->price;
-		$pu_ttc = $prod->price_ttc;
-		$price_base_type = $prod->price_base_type;
-	}
+
+    $pu_ht = $prod->price;
+    $pu_ttc = $prod->price_ttc;
+    $price_base_type = $prod->price_base_type;
+
+    // If multiprice
+    if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
+    {
+        $pu_ht = $prod->multiprices[$soc->price_level];
+        $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
+        $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+    }
 
 	// On reevalue prix selon taux tva car taux tva transaction peut etre different
 	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
@@ -557,23 +554,22 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 	}
 
 	$desc = $prod->description;
-	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+
+	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
 	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
 	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
 
-	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-	{
-		$pu_ht = $prod->multiprices[$soc->price_level];
-		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
-		$price_base_type = $prod->multiprices_base_type[$soc->price_level];
-	}
-	else
-	{
-		$pu_ht = $prod->price;
-		$pu_ttc = $prod->price_ttc;
-		$price_base_type = $prod->price_base_type;
-	}
+    $pu_ht = $prod->price;
+    $pu_ttc = $prod->price_ttc;
+    $price_base_type = $prod->price_base_type;
+
+    // If multiprice
+    if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
+    {
+        $pu_ht = $prod->multiprices[$soc->price_level];
+        $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
+        $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+    }
 
 	// On reevalue prix selon taux tva car taux tva transaction peut etre different
 	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).

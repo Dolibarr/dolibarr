@@ -162,7 +162,7 @@ class Propal extends CommonObject
 
 			$productdesc = $prod->description;
 
-			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
+			$tva_tx = get_default_tva($mysoc,$this->client,$prod->id);
 			// local taxes
 			$localtax1_tx = get_default_localtax($mysoc,$this->client,1,$prod->tva_tx);
 			$localtax2_tx = get_default_localtax($mysoc,$this->client,2,$prod->tva_tx);
@@ -271,7 +271,7 @@ class Propal extends CommonObject
 	 * 		\param    	desc            	Description de la ligne
 	 * 		\param    	pu_ht              	Prix unitaire
 	 * 		\param    	qty             	Quantite
-	 * 		\param    	txtva           	Taux de tva force, sinon -1
+	 * 		\param    	txtva           	Taux de tva
 	 * 		\param		txlocaltax1			Local tax 1 rate
 	 *  	\param		txlocaltax2			Local tax 2 rate
 	 *		\param    	fk_product      	Id du produit/service predefini
@@ -283,7 +283,7 @@ class Propal extends CommonObject
 	 *    	\see       	add_product
 	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
+	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
 	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0)

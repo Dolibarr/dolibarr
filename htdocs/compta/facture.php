@@ -837,8 +837,8 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 			$prod = new Product($db, $_POST['idprod']);
 			$prod->fetch($_POST['idprod']);
 
-			$tva_tx = get_default_tva($mysoc,$fac->client,$prod->tva_tx);
-			$tva_npr = get_default_npr($mysoc,$fac->client,$prod->tva_tx);
+			$tva_tx = get_default_tva($mysoc,$fac->client,$prod->id);
+			$tva_npr = get_default_npr($mysoc,$fac->client,$prod->id);
 
 			// We define price for product
 			if ($conf->global->PRODUIT_MULTIPRICES && $fac->client->price_level)

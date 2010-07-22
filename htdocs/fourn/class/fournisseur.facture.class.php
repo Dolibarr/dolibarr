@@ -713,7 +713,7 @@ class FactureFournisseur extends Facture
 	 * 		\param		type			Type of line (0=product, 1=service)
 	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
+	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
 	function addline($desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
