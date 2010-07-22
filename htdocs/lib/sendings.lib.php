@@ -268,7 +268,7 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 					}
 					else
 					{
-						print '<td>&nbsp;</td>';
+						//print '<td>&nbsp;</td>';
 						print '<td>&nbsp;</td>';
 						print '<td>&nbsp;</td>';
 					}

@@ -127,7 +127,7 @@ if ($_POST["action"] == 'add')
 }
 
 /*
- * Genere un bon de livraison
+ * Build a receiving receipt
  */
 if ($_GET["action"] == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
 {

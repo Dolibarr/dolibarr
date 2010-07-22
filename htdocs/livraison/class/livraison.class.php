@@ -54,7 +54,7 @@ class Livraison extends CommonObject
 
 	var $expedition_id;
 
-	var $date_delivery;
+	var $date_delivery;    // Date really received
 	var $date_creation;
 	var $date_valid;
 
@@ -87,6 +87,8 @@ class Livraison extends CommonObject
 
 		$error = 0;
 
+        $now=dol_now();
+
 		/* On positionne en mode brouillon le bon de livraison */
 		$this->brouillon = 1;
 
@@ -108,9 +110,9 @@ class Livraison extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$this->socid;
 		$sql.= ", '".$this->ref_customer."'";
-		$sql.= ", ".$this->db->idate(mktime());
+		$sql.= ", ".$this->db->idate($now);
 		$sql.= ", ".$user->id;
-		$sql.= ", ".$this->db->idate($this->date_delivery);
+		$sql.= ", ".($this->date_delivery?"'".$this->db->idate($this->date_delivery)."'":"null");
 		$sql.= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
 		$sql.= ")";
 

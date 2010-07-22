@@ -139,12 +139,13 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 		if ($conf->expedition_bon->enabled)
 		{
 			Header("Location: ".DOL_URL_ROOT.'/expedition/fiche.php?id='.$delivery->origin_id);
+			exit;
 		}
 		else
 		{
-			Header("Location: liste.php");
+			Header("Location: ".DOL_URL_ROOT."/livraison/liste.php");
+			exit;
 		}
-		exit;
 	}
 	else
 	{
@@ -477,6 +478,7 @@ else
 			print '</tr>';
 
 			// Date delivery real / Received
+			// TODO Can edit this date, even if validated.
 			print '<tr><td>'.$langs->trans("DateReceived").'</td>';
 			print '<td colspan="3">'.dol_print_date($delivery->date_delivery,'daytext')."</td>\n";
 			print '</tr>';
