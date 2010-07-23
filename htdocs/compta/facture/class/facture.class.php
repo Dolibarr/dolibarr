@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
@@ -3016,8 +3016,9 @@ class FactureLigne
 
 		// Clean parameters
 		$this->desc=trim($this->desc);
-		if (! $this->subprice) $this->subprice=0;
-		if (! $this->price) $this->price=0;
+		if (empty($this->subprice)) $this->subprice=0;
+		if (empty($this->price))    $this->price=0;
+		if (empty($this->tva_tx))   $this->tva_tx=0;
 
 		// Check parameters
 		if ($this->product_type < 0) return -1;
