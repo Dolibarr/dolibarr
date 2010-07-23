@@ -78,7 +78,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         $posindice=8;
         $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";   // This is standard SQL
         $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
-        $sql.= " WHERE facnumber LIKE '".$this->prefix."____-%'";
+        $sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$db->query($sql);
@@ -128,7 +128,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
             return -1;
         }
 
-        $date=$delivery->date;
+        $date=$delivery->date_delivery;
         if (empty($date)) $date=dol_now();
         $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
