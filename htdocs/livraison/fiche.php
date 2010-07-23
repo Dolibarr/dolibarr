@@ -48,6 +48,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'expedition',$id,'livraison','livraison');
 
 
+
 /*
  * Actions
  */
@@ -176,6 +177,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
+
 	$result=delivery_order_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
 	if ($result <= 0)
 	{

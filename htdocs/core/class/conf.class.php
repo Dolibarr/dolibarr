@@ -376,7 +376,7 @@ class Conf
 			$this->global->MAIN_GRAPH_LIBRARY = 'artichow';
 		}
 
-		// Format for date
+		// Format for date (if not found in lang)
 		$this->format_date_short="%d/%m/%Y";			# Format of day with PHP/C tags (strftime functions)
 		$this->format_date_short_java="dd/MM/yyyy";		# Format of day with Java tags
 		$this->format_hour_short="%H:%M";

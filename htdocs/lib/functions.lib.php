@@ -434,18 +434,22 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 {
 	global $conf,$langs;
 
+    if (! is_object($outputlangs)) $outputlangs=$langs;
+
 	// Si format non defini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
 	if (! $format) $format=(isset($conf->format_date_text_short) ? $conf->format_date_text_short : '%Y-%m-%d %H:%M:%S');
 
-	if ($format == 'day')               $format=$conf->format_date_short;
-	if ($format == 'hour')              $format=$conf->format_hour_short;
-	if ($format == 'hourduration')      $format=$conf->format_hour_short_duration;
-	if ($format == 'daytext')           $format=$conf->format_date_text;
-	if ($format == 'daytextshort')      $format=$conf->format_date_text_short;
-	if ($format == 'dayhour')           $format=$conf->format_date_hour_short;
-	if ($format == 'dayhourtext')       $format=$conf->format_date_hour_text;
-	if ($format == 'dayhourtextshort')  $format=$conf->format_date_hour_text_short;
+	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
+	if ($format == 'day')               $format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
+	if ($format == 'hour')              $format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
+	if ($format == 'hourduration')      $format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
+	if ($format == 'daytext')           $format=($outputlangs->trans("FormatDateText")!="FormatDateText"?$outputlangs->trans("FormatDateText"):$conf->format_date_text);
+	if ($format == 'daytextshort')      $format=($outputlangs->trans("FormatDateTextShort")!="FormatDateTextShort"?$outputlangs->trans("FormatDateTextShort"):$conf->format_date_text_short);
+	if ($format == 'dayhour')           $format=($outputlangs->trans("FormatDateHourShort")!="FormatDateHourShort"?$outputlangs->trans("FormatDateHourShort"):$conf->format_date_hour_short);
+	if ($format == 'dayhourtext')       $format=($outputlangs->trans("FormatDateHourText")!="FormatDateHourText"?$outputlangs->trans("FormatDateHourText"):$conf->format_date_hour_text);
+	if ($format == 'dayhourtextshort')  $format=($outputlangs->trans("FormatDateHourTextShort")!="FormatDateHourTextShort"?$outputlangs->trans("FormatDateHourTextShort"):$conf->format_date_hour_text_short);
 
+	// Format not sensitive to language
 	if ($format == 'dayhourlog')        $format='%Y%m%d%H%M%S';
 	if ($format == 'dayhourldap')       $format='%Y%m%d%H%M%SZ';
 	if ($format == 'dayhourxcard')      $format='%Y%m%dT%H%M%SZ';
@@ -494,8 +498,6 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 		}
 		else $ret='Bad value '.$time.' for date';
 	}
-
-	if (! is_object($outputlangs)) $outputlangs=$langs;
 
 	if (preg_match('/__b__/i',$format))
 	{
