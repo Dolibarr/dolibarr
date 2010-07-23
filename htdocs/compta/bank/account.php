@@ -473,7 +473,12 @@ if ($account || $_GET["ref"])
 	if ($result)
 	{
 		$total = 0;
-		$time = dol_now('tzserver');
+
+		$now=dol_now('tzserver');
+		$nows=dol_date('Ymd',$now);
+
+		//$html->load_cache_types_paiements();
+		//$html->cache_types_paiements
 
 		$var=true;
 
@@ -489,10 +494,12 @@ if ($account || $_GET["ref"])
 				$var=!$var;
 
 				// Is it a transaction in future ?
-				if ($db->jdate($objp->do) > $time && !$sep)		// Yes, we show a subtotal
+				$dos=dol_date('Ymd',$db->jdate($objp->do));
+				//print "dos=".$dos." nows=".$nows;
+				if ($dos > $nows && !$sep)		// Yes, we show a subtotal
 				{
 					$sep = 1 ;
-					print '<tr class="liste_total"><td colspan="7">';
+					print '<tr class="liste_total"><td colspan="8">';
 					print $langs->trans("CurrentBalance");
 					print '</td>';
 					print "<td align=\"right\" nowrap><b>".price($total - $objp->amount)."</b></td>";
@@ -506,7 +513,11 @@ if ($account || $_GET["ref"])
 
 				print "<td nowrap>".dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
 
-				print "<td nowrap>".$langs->trans($objp->fk_type)."</td>\n";
+				// Payment type
+				print "<td nowrap>";
+				if ($objp->fk_type == 'SOLD') print '&nbsp;';
+				else print $langs->trans("PaymentTypeShort".$objp->fk_type);
+				print "</td>\n";
 				print '<td nowrap>'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
 
 				// Description
