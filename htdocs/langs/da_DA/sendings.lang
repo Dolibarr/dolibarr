@@ -54,7 +54,6 @@ GenericTransport=Generic transport
 Enlevement=Fået efter kunde
 DocumentModelSimple=Simpelt dokument model
 WarningNoQtyLeftToSend=Advarsel, ikke produkter som venter på at blive afsendt.
-NumRefModelJade=Retur et referencenummer med format BLYY00001, ... hvor ÅÅ er året. Antal ultimo aldrig er nulstillet.
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
 

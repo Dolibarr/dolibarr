@@ -55,7 +55,6 @@ StatsOnShipmentsOnlyValidated=İstatistikler gönderiler sadece onaylanmış ola
 SendingMethodCATCH=Catch müşteri tarafından
 SendingMethodTRANS=Transporter
 SendingMethodCOLSUI=Colissimo
-NumRefModelJade=Return biçimi BLYY00001, bir referans numarası ... burada YY yıldır. Sonunda sayısı sıfır sıfırlanır asla.
 DocumentModelSirocco=Teslimat makbuzlarını için basit belge modeli
 DocumentModelTyphon=Teslimat makbuzlarını için daha fazla dokümanın modeli (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

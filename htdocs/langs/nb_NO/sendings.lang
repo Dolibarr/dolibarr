@@ -43,10 +43,6 @@ GenericTransport=Standardtransport
 Enlevement=Hentet av kunde
 DocumentModelSimple=ENkel dokumentmodell
 
-# NumRef
-NumRefModelJade=Gir et referansenummer med formatet BLÅÅ00001, ... hvor ÅÅ viser året. Det siste tallet blir aldri tilbakestilt til null.
-
-
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
 // Reference language: en_US
 Shipments=Skipninger

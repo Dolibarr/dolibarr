@@ -52,7 +52,6 @@ GenericTransport=Generic de transport
 Enlevement=Ajuns de către client
 DocumentModelSimple=Simplă documentul model
 WarningNoQtyLeftToSend=Atenţie, nu produse care aşteaptă să fie expediate.
-NumRefModelJade=Întoarceţi-vă cu un număr de referinţă în format BLYY00001, ... unde YY este an. Numărul de la sfârşitul anului nu este niciodată resetate la zero.
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
 

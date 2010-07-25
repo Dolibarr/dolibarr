@@ -50,7 +50,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	function info()
 	{
 		global $langs;
-		return $langs->trans("NumRefModelJade");
+		return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
 	}
 
 	/**

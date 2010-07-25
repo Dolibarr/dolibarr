@@ -52,7 +52,6 @@ GenericTransport=Generic Verkehr
 Enlevement=Kunden bekommen von
 DocumentModelSimple=Einfache Dokument-Modell
 WarningNoQtyLeftToSend=Achtung, keine Produkte, aber noch nicht verschickt.
-NumRefModelJade=Zurück eine Referenznummer mit Format BLYY00001, ... wo ist JJ Jahr. Zahl am Ende ist nicht auf Null zurückgesetzt.
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
 

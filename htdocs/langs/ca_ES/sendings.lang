@@ -53,8 +53,6 @@ DateReceived=Data real de recepció
 SendingMethodCATCH=Recollit pel client
 SendingMethodTRANS=Transportista
 SendingMethodCOLSUI=Colissimo
-# NumRef
-NumRefModelJade=Retorna un número de referència en format l BLYY00001 ... on AA és l'any. L'increment per a l'any següent no es restableix l'inici d'any.
 # ModelDocument
 DocumentModelSirocco=Model simple nota de lliurament
 DocumentModelTyphon=Model complet de nota de lliurament (logo...)

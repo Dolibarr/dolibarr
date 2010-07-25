@@ -50,13 +50,9 @@ SendingMethodCATCH=Lasten prevzem kupca
 SendingMethodTRANS=Direkten prevoz
 SendingMethodCOLSUI=Zbirnik
 
-# NumRef
-NumRefModelJade=Predlaga referenčno številko v formatu BLYY00001, ... kjer je YY leto. Končna številka se nikoli ne resetira na 0.
-
 # ModelDocument
 DocumentModelSirocco=Enostaven vzorec dobavnice
 DocumentModelTyphon=Popolnejši vzorec dobavnice (logo...)
-
 
 
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).

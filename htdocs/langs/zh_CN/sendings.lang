@@ -60,7 +60,6 @@ DateReceived=交货日期收到
 SendingMethodCATCH=按客户捕捉
 SendingMethodTRANS=运输车
 SendingMethodCOLSUI=Colissimo
-NumRefModelJade=返回一个与格式BLYY00001，参考号码...其中YY是一年。在最后的数字是永远不会重置为零。
 DocumentModelSirocco=简单的送货单文档模型
 DocumentModelTyphon=更多的送货单（logo. ..完整的文档模型）
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).

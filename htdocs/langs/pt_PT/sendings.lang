@@ -43,7 +43,6 @@ GenericTransport=Transporte Genérico
 Enlevement=Pick-up por o Cliente
 DocumentModelSimple=Modelo Simples
 WarningNoQtyLeftToSend=Atenção, nenhum produto à espera de ser enviado.
-NumRefModelJade=Devolve um número de referencia em formato l BLYY00001 ... donde AA é o ano. o incremento para o ano seguinte não se restablece ao inicio de ano.
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 // Reference language: en_US

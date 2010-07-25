@@ -52,7 +52,6 @@ GenericTransport=Generic liikenne
 Enlevement=Saanut asiakkaan
 DocumentModelSimple=Yksinkertaisen mallin
 WarningNoQtyLeftToSend=Varoitus, ei tuotteet odottavat lähettämistä.
-NumRefModelJade=Palauttaa viitenumero muodossa BLYY00001, ... jos VV on vuosi. Numero lopussa ei koskaan nollaaminen.
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
 

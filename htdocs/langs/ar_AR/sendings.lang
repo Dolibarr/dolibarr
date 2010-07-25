@@ -56,7 +56,6 @@ StatsOnShipmentsOnlyValidated=والإحصاءات التي أجريت على ا
 SendingMethodCATCH=القبض على العملاء
 SendingMethodTRANS=نقل
 SendingMethodCOLSUI=Colissimo
-NumRefModelJade=العودة رقم مرجعي مع الشكل BLYY00001 ،... ص ص حيث هو. العدد في نهاية أبدا إعادة إلى الصفر.
 DocumentModelSirocco=نموذج بسيط لتسليم وثيقة من وثائق وإيصالات
 DocumentModelTyphon=أكمل نموذج لتسليم وثيقة من وثائق الإيصالات (logo...)
 // Date 2009-08-11 13:27:01

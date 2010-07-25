@@ -60,7 +60,6 @@ DateReceived=Date sending berast
 SendingMethodCATCH=Afli eftir viðskiptavina
 SendingMethodTRANS=Transporter
 SendingMethodCOLSUI=Colissimo
-NumRefModelJade=Return tilvísunarnúmer með snið BLYY00001, ... þar sem YY er ári. Fjöldi í árslok er aldrei endurstilla á núll.
 DocumentModelSirocco=Einföld skjal líkan fyrir kvittunum sending
 DocumentModelTyphon=Meira heill skjal líkan fyrir kvittunum sending (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

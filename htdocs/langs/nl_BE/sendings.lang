@@ -43,7 +43,6 @@ GenericTransport=Generieke vervoer
 Enlevement=Gotten by customer
 DocumentModelSimple=Eenvoudig document model
 WarningNoQtyLeftToSend=Waarschuwing, geen producten wachten nog voor verzending.
-NumRefModelJade=Terugkeer van een referentienummer met formaat BLYY00001, ... waar YY een jaar is. Nummer op het einde is nooit op nul.
 
 
 // START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

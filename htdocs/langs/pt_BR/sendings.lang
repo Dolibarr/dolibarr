@@ -50,10 +50,7 @@ SendingMethodCATCH=Remoção pelo cliente
 SendingMethodTRANS=Transportadora
 SendingMethodCOLSUI=Acompanhamento
 
-# NumRef
-NumRefModelJade=Devolve um número de referencia em formato l BLYY00001 ... donde AA é o ano. o incremento para o ano seguinte não se restablece ao inicio de ano.
 # ModelDocument
-
 DocumentModelSirocco=Modelo de Documento Sirocco
 DocumentModelTyphon=Modelo de Documento Typhon
 
