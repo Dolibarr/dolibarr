@@ -515,8 +515,9 @@ if ($account || $_GET["ref"])
 
 				// Payment type
 				print "<td nowrap>";
-				if ($objp->fk_type == 'SOLD') print '&nbsp;';
-				else print $langs->trans("PaymentTypeShort".$objp->fk_type);
+				$label=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
+				if ($objp->fk_type == 'SOLD') $label='&nbsp;';
+				print $label;
 				print "</td>\n";
 				print '<td nowrap>'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
 

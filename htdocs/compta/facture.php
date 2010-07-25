@@ -25,7 +25,7 @@
 /**
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
- *	\brief      Page de creation/visu facture
+ *	\brief      Page to cree=ate/see an invoice
  *	\version    $Id$
  */
 
@@ -1348,6 +1348,7 @@ $html = new Form($db);
 $formfile = new FormFile($db);
 
 
+
 /*********************************************************************
  *
  * Mode creation
@@ -2395,8 +2396,9 @@ else
 			*/
 
 			// Payments already done (from payment on this invoice)
-			$sql = 'SELECT datep as dp, pf.amount,';
-			$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
+			$sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid,';
+			$sql.= ' c.code as payment_code, c.libelle as payment_label,';
+			$sql.= ' pf.amount';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql.= ' WHERE pf.fk_facture = '.$fac->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
 			$sql.= ' ORDER BY dp, tms';
@@ -2416,7 +2418,8 @@ else
 						print '<tr '.$bc[$var].'><td>';
 						print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
 						print dol_print_date($db->jdate($objp->dp),'day').'</a></td>';
-						print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
+						$label=($langs->trans("PaymentType".$objp->payment_code)!=("PaymentType".$objp->payment_code))?$langs->trans("PaymentType".$objp->payment_code):$obj->payment_label;
+						print '<td>'.$label.' '.$objp->num_paiement.'</td>';
 						print '<td align="right">'.price($objp->amount).'</td>';
 						print '<td>&nbsp;</td>';
 						print '</tr>';

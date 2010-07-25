@@ -227,7 +227,9 @@ if ($resql)
 		}
 
 		// Number
-		print '<td nowrap="nowrap">'.$objp->type.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
+		$label=($langs->trans("PaymentType".$objp->type)!="PaymentType".$objp->type)?$langs->trans("PaymentType".$objp->type):$objp->type;  // $objp->type is a code
+		if ($label=='SOLD') $label='';
+		print '<td nowrap="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
 
 		// Description
         print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
