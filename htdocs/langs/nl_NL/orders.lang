@@ -135,10 +135,6 @@ AddDeliveryCostLine=Voeg een regel toe die aangeeft dat de leveringskosten afhan
 # Document models
 PDFEinsteinDescription=Model van een complete zakelijk voorstel model (incl. logo, ..)
 
-# NumRef Modules
-MarbreNumRefDesc=Geeft het aantal als %syymm-nnnn waar yy het jaar is, mm de maand en nnnn een sequencieel oplopende waarde zonder 0 vervanging
-
-
 
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
 // Reference language: en_US

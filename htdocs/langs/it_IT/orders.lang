@@ -103,7 +103,6 @@ OrdersStatisticsSuppliers=Stastistiche ordini fornitori
 AmountOfOrdersByMonthHT=Importo ordini per mese (al netto delle imposte)
 RunningOrders=Ordini in corso
 UserWithApproveOrderGrant=Utente con possibilità di approvare ordini
-MarbreNumRefDesc=Ritorna un numero nella forma %syymm-nnnn dove yy è l'anno, mm è il mese e nnnn un numero progressivo che non ritorna a 0.
 OrderLine=Linea Ordine
 PaymentOrderRef=Riferimento pagamento ordine %s
 CloneOrder=Clona ordine

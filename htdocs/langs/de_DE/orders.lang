@@ -122,7 +122,6 @@ OrderSource6=Lagern
 QtyOrdered=Anzahl bestellt
 AddDeliveryCostLine=Fügen Sie eine Lieferung Kosten Linie zeigt das Gewicht der Bestellung
 PDFEinsteinDescription=Eine vollständige Um-Modell (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme %syymm-nnnn oder yy est l'année, le mois et mm nnnn un compteur sequentiel ohne Bruch et sans remise e 0
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
 

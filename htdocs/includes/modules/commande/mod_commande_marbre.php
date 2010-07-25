@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,18 +19,16 @@
  */
 
 /**
- \file       htdocs/includes/modules/commande/mod_commande_marbre.php
- \ingroup    commande
- \brief      Fichier contenant la classe du modele de num�rotation de reference de commande Marbre
- \version    $Id$
+ *  \file       htdocs/includes/modules/commande/mod_commande_marbre.php
+ *  \ingroup    commande
+ *  \brief      File of class to manage customer order numbering rules Marbre
+ *  \version    $Id$
  */
-
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
 
 /**	    \class      mod_commande_marbre
- \brief      Classe du modele de numerotation de reference de commande Marbre
+ *      \brief      Class to manage customer order numbering rules Marbre
  */
-
 class mod_commande_marbre extends ModeleNumRefCommandes
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'

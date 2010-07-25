@@ -120,13 +120,8 @@ OrderSource6=Trgovina
 QtyOrdered=Naročena količina
 AddDeliveryCostLine=Dodaj vrstico s stroški dobave in navedeno težo
 
-
 # Documents models
 PDFEinsteinDescription=Vzorec kompletnega naročila (logo...)
-
-# NumRef Modules
-MarbreNumRefDesc=Predlaga številko v obliki %syymm-nnnn, kjer je yy leto, mm mesec in nnnn zaporedna številka brez presledka, večja od 0
-
 
 
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).

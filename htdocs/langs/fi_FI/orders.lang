@@ -122,7 +122,6 @@ OrderSource6=Varastoida
 QtyOrdered=Kpl velvoitti
 AddDeliveryCostLine=Lisää toimitus kustannukset linja ilmoitetaan paino, jotta
 PDFEinsteinDescription=Täydellinen jotta malli (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme %syymm-nnnn tai vv est l'année, mm le mois et nnnn un compteur sequentiel sans murtumasta et sans remise e 0
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
 

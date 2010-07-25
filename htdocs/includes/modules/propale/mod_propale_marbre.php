@@ -21,7 +21,7 @@
 /**
  *    	\file       htdocs/includes/modules/propale/mod_propale_marbre.php
  *		\ingroup    propale
- *		\brief      Fichier contenant la classe du modele de numerotation de reference de propale Marbre
+ *		\brief      File of class to manage commercial proposal numbering rules Marbre
  *		\version    $Id$
  */
 
@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php")
 
 
 /**	    \class      mod_propale_marbre
- *		\brief      Classe du modele de numerotation de reference de propale Marbre
+ *		\brief      Class to manage customer order numbering rules Marbre
  */
 class mod_propale_marbre extends ModeleNumRefPropales
 {

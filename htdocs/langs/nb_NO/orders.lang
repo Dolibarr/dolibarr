@@ -116,12 +116,8 @@ OrderSource6=Butikk
 QtyOrdered=Ant bestilt
 AddDeliveryCostLine=Legg til leveringskostnader og angi forsendelsens vekt
 
-
 # Documents models
 PDFEinsteinDescription=En komplett ordremodell (logo...)
-
-# NumRef Modules
-MarbreNumRefDesc=Returnerer et nummer i formatet %sååmm-nnnn hvor åå er året, mm er måneden og nnnn er et løpende nummer som aldri tilbakestilles til null.
 
 
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).

@@ -114,7 +114,6 @@ UseCustomerContactAsOrderRecipientIfExist=Gebruik de klant zijn contactadres ind
 RunningOrders=Lopende bestellingen
 UserWithApproveOrderGrant=Gebruikers gemachtigd om "bestellingen goed te keuren".
 PDFEinsteinDescription=Een compleet bestel document (logo. ..)
-MarbreNumRefDesc=Renvoie le numéro sous la forme %syymm-nnnn ou yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise e 0
 
 
 // START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

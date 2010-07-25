@@ -125,7 +125,6 @@ OrderSource6=Mağaza
 QtyOrdered=Adet sipariş
 AddDeliveryCostLine=Iletim hattı maliyet düzenin ağırlığı belirten ekle
 PDFEinsteinDescription=Tam bir düzen modeli (logo. ..)
-MarbreNumRefDesc=Renvoie le numéro sous la forme %s yymm-nnnn yapın yy est l'année, mm le mois et nnnn un compteur sequentiel sans kopma et sans feragat e 0
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 

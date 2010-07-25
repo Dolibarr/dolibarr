@@ -124,7 +124,6 @@ OrderSource6=Przechowywać
 QtyOrdered=Ilosc sortowane
 AddDeliveryCostLine=Dodaj dostawy koszt linii wskazujące wagi zamówienia
 PDFEinsteinDescription=Pełna kolejność modelu (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme syymm% rr-nnnn ou est l'année, le mois mm et un nnnn compteur sequentiel bez pęknięcia et sans zrzekanie e 0
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
 
