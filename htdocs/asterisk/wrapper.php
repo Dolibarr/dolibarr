@@ -30,15 +30,23 @@
  * 				write = system,call,log,verbose,command,agent,user
  */
 
-//if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');    // Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');        // Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
+if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN','1');
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK','1');
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+
+// C'est un wrapper, donc header vierge
+function llxHeader() {
+	print '<html>'."\n";
+	print '<head>'."\n";
+	print '<title>Asterisk redirection from Dolibarr...</title>'."\n";
+	print '</head>'."\n";
+}
 
 require_once("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
@@ -46,13 +54,20 @@ require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
 // Security check
-// TODO Enable and test if module Asterisk is enabled
+if (! $conf->clicktodial->enabled)
+{
+    accessforbidden();
+    exit;
+}
 
 
-$conf->global->ASTERISK_HOST="127.0.0.1";
-$conf->global->ASTERISK_TYPE="SIP/";
-$conf->global->ASTERISK_INDICATIF="0";
-$conf->global->ASTERISK_PORT=5038;
+// Define Asterisk setup
+if (! isset($conf->global->ASTERISK_HOST))      $conf->global->ASTERISK_HOST="127.0.0.1";
+if (! isset($conf->global->ASTERISK_TYPE))      $conf->global->ASTERISK_TYPE="SIP/";
+if (! isset($conf->global->ASTERISK_INDICATIF)) $conf->global->ASTERISK_INDICATIF="0";
+if (! isset($conf->global->ASTERISK_HOST))      $conf->global->ASTERISK_PORT=5038;
+if ($conf->global->ASTERISK_INDICATIF=='NONE')  $conf->global->ASTERISK_INDICATIF='';
+
 
 $login = $_GET['login'];
 $password = $_GET['password'];
@@ -61,41 +76,29 @@ $called = $_GET['called'];
 
 # Adresse IP du serveur Asterisk
 $strHost = $conf->global->ASTERISK_HOST;
-
-#Context ( generalement from-internal )
-$strContext = "from-internal";
-
 #Spécifiez le type d'extension par laquelle vous poste est connecte.
 #ex: SIP/, IAX2/, ZAP/, etc
 $channel = $conf->global->ASTERISK_TYPE;
-
+#Indicatif de la ligne sortante
+$prefix = $conf->global->ASTERISK_INDICATIF;
+#Port
+$port = $conf->global->ASTERISK_PORT;
+#Context ( generalement from-internal )
+$strContext = "from-internal";
 
 #Delai d'attente avant de raccrocher
 $strWaitTime = "30";
-
 #Priority
 $strPriority = "1";
-
 #Nomber of try
 $strMaxRetry = "2";
-
-#Indicatif de la ligne sortante
-$prefix = $conf->global->ASTERISK_INDICATIF;
-
-#Port
-$port = $conf->global->ASTERISK_PORT;
-
 
 
 /*
  * View
  */
 
-print '<html>'."\n";
-print '<head>'."\n";
-print '<title>Asterisk redirection from Dolibarr...</title>'."\n";
-print '</head>'."\n";
-
+llxHeader();
 
 $number=strtolower($called) ;
 $pos=strpos ($number,"local");
@@ -140,6 +143,9 @@ if (! empty($number))
         print '</body>'."\n";
 	}
 	endif ;
+}
+else {
+    print 'Bad parameters in URL. Must be http://MYDOLIBARR/asterisk/wrapper.php?caller=99999&called=99999&login=xxxxx&password=xxxxx';
 }
 
 print '</html>'."\n";

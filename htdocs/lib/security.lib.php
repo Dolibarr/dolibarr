@@ -27,7 +27,7 @@
 
 /**
  *	\brief      Show Dolibarr default login page
- *	\param		langs		Lang object
+ *	\param		langs		Lang object (must be initialized by a new).
  *	\param		conf		Conf object
  *	\param		mysoc		Company object
  */
@@ -76,7 +76,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		}
 	}
 
-	$conf->css  = "/theme/".$conf->theme."/style.css.php?lang=".$langs->defaultlang;
+	$conf->css = "/theme/".$conf->theme."/style.css.php?lang=".$langs->defaultlang;
 	$conf_css = DOL_URL_ROOT.$conf->css;
 
 	// Set cookie for timeout management

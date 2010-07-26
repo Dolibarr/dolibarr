@@ -395,6 +395,11 @@ if (! defined('NOLOGIN'))
 		{
 			// We show login page
 			include_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
+			if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined
+			{
+                include_once(DOL_DOCUMENT_ROOT."/core/class/translate.class.php");
+				$langs=new Translate("",$conf);
+			}
 			dol_loginfunction($langs,$conf,$mysoc);
 			exit;
 		}
