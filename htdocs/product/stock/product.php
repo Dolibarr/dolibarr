@@ -62,12 +62,18 @@ if ($_POST["action"] == "correct_stock" && ! $_POST["cancel"])
 		$product = new Product($db);
 		$result=$product->fetch($_GET["id"]);
 
-		$product->correct_stock($user,
+		$result=$product->correct_stock($user,
 		$_POST["id_entrepot"],
 		$_POST["nbpiece"],
 		$_POST["mouvement"],
 		$_POST["label"],
 		0);		// We do not change value of stock for a correction
+
+		if ($result > 0)
+		{
+			header("Location: product.php?id=".$product->id);
+			exit;
+		}
 	}
 }
 
@@ -111,6 +117,8 @@ if ($_POST["action"] == "transfert_stock" && ! $_POST["cancel"])
 			if ($result1 >= 0 && $result2 >= 0)
 			{
 				$db->commit();
+                header("Location: product.php?id=".$product->id);
+				exit;
 			}
 			else
 			{
@@ -376,14 +384,14 @@ print "<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '' )
 {
-	if ($user->rights->stock->mouvement->creer)
+    if ($user->rights->stock->creer)
+    {
+        print '<a class="butAction" href="product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
+    }
+
+    if ($user->rights->stock->mouvement->creer)
 	{
 		print '<a class="butAction" href="product.php?id='.$product->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
-	}
-
-	if ($user->rights->stock->creer)
-	{
-		print '<a class="butAction" href="product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
 	}
 }
 print '</div>';
