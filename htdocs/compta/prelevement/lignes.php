@@ -32,6 +32,8 @@ require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 // Security check
 if ($user->societe_id > 0) accessforbidden();
 
+$langs->load("categories");
+
 
 /*
  * View

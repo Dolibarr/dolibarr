@@ -36,20 +36,24 @@
  */
 class MenuLeft {
 
-	var $db;
-	var $menu_array;
 	var $require_top=array("eldy_frontoffice");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
+
+    var $db;
+    var $menu_array;
+    var $menu_array_after;
 
 
 	/**
-	 *    \brief      Constructeur
-	 *    \param      db            Handler d'acces base de donnee
-	 *    \param      menu_array    Tableau des entree de menu defini dans les fichier pre.inc.php
+     *  \brief      Constructor
+     *  \param      db                  Database handler
+     *  \param      menu_array          Table of menu entries to show before entries of menu handler
+     *  \param      menu_array_after    Table of menu entries to show after entries of menu handler
 	 */
-	function MenuLeft($db,&$menu_array='')
+	function MenuLeft($db,&$menu_array='',&$menu_array_after='')
 	{
 		$this->db=$db;
 		$this->menu_array=$menu_array;
+		$this->menu_array_after=$menu_array_after;
 	}
 
 
@@ -61,7 +65,7 @@ class MenuLeft {
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/includes/menus/barre_left/eldy.lib.php');
 
-		$res=print_left_eldy_menu($this->db,$this->menu_array);
+		$res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after);
 
 		$conf->global->MAIN_SEARCHFORM_SOCIETE=0;
 		$conf->global->MAIN_SEARCHFORM_CONTACT=0;

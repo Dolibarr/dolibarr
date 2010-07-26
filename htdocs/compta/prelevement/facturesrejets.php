@@ -24,12 +24,15 @@ require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php";
 require_once DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php";
 
+$langs->load("categories");
 
-/*
- * Security check
- */
+// Security check
 if ($user->societe_id > 0) accessforbidden();
 
+
+/*
+ * View
+ */
 llxHeader('',$langs->trans("WithdrawalReceipt"));
 
 $h = 0;

@@ -188,7 +188,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 	}
 
 	// Financial
-	if ($conf->compta->enabled || $conf->accounting->enabled || $conf->banque->enabled
+	if ($conf->compta->enabled || $conf->accounting->enabled
 	|| $conf->facture->enabled || $conf->deplacement->enabled)
 	{
 		$langs->load("compta");
@@ -227,6 +227,46 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 			}
 		}
 	}
+
+    // Bank
+    if ($conf->banque->enabled || $conf->prelevement->enabled)
+    {
+        $langs->load("compta");
+        $langs->load("banks");
+
+        $classname="";
+        if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank")
+        {
+            $classname='class="tmenusel"'; $_SESSION['idmenu']='';
+        }
+        else
+        {
+            $classname = 'class="tmenu"';
+        }
+
+        $idsel='bank';
+        if ($user->rights->banque->lire)
+        {
+            print_start_menu_entry($idsel);
+            print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+            print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'/compta/bank/index.php?mainmenu=bank&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+            print_text_menu_entry($langs->trans("MenuBankCash"));
+            print '</a>';
+            print_end_menu_entry();
+        }
+        else
+        {
+            if (! $hideifnotallowed)
+            {
+                print_start_menu_entry($idsel);
+                print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+                print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+                print_text_menu_entry($langs->trans("MenuBankCash"));
+                print '</a>';
+                print_end_menu_entry();
+            }
+        }
+    }
 
 	// Projects
 	if ($conf->projet->enabled)

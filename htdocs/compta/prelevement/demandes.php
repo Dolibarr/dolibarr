@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
 $langs->load("widthdrawals");
 $langs->load("companies");
+$langs->load("categories");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';

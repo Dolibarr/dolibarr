@@ -47,7 +47,6 @@ $statut=isset($_GET["statut"])?$_GET["statut"]:'';
 
 llxHeader();
 
-
 $link='';
 if ($statut == '') $link='<a href="'.$_SERVER["PHP_SELF"].'?statut=all">'.$langs->trans("IncludeClosedAccount").'</a>';
 if ($statut == 'all') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("OnlyOpenedAccount").'</a>';

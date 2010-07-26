@@ -29,6 +29,7 @@ require('../../main.inc.php');
 
 $langs->load("withdrawals");
 $langs->load("companies");
+$langs->load("categories");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';

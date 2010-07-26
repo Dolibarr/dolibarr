@@ -37,7 +37,7 @@ if ($user->societe_id > 0) accessforbidden();
 
 $langs->load("bills");
 $langs->load("withdrawals");
-$langs->load("main");
+$langs->load("categories");
 
 
 if ($_POST["action"] == 'confirm_rejet')
@@ -92,7 +92,7 @@ $h++;
 if ($_GET["id"])
 {
 	$lipre = new LignePrelevement($db, $user);
-	
+
 	$lipre->statuts[0] = $langs->trans("StatusWaiting");
     $lipre->statuts[2] = $langs->trans("StatusCredited");
     $lipre->statuts[3] = $langs->trans("StatusRefused");
@@ -156,7 +156,7 @@ if ($_GET["id"])
 		$soc->fetch($lipre->socid);
 
 		$rej = new RejetPrelevement($db, $user);
-		
+
 		$rej->motifs[0] = $langs->trans("StatusMotif0");
     	$rej->motifs[1] = $langs->trans("StatusMotif1");
     	$rej->motifs[2] = $langs->trans("StatusMotif2");

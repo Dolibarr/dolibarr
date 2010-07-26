@@ -32,6 +32,18 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 $langs->load("banks");
 $langs->load("categories");
 
+
+/**
+ *
+ * @param $head
+ * @param $title
+ * @param $help_url
+ * @param $target
+ * @param $disablejs
+ * @param $disablehead
+ * @param $arrayofjs
+ * @param $arrayofcss
+ */
 function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
 	global $db, $user, $conf, $langs;
@@ -40,30 +52,6 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 	top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 
 	$menu = new Menu();
-
-
-	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
-
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/categ.php",$langs->trans("Rubriques"),1,$user->rights->banque->configurer);
-
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
-
-	if ($user->rights->banque->transfer)
-	{
-		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
-	}
-
-	// Gestion cheques
-	if ($conf->facture->enabled && $conf->banque->enabled)
-	{
-		$langs->load("bills");
-
-		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
-		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=bank&amp;mainmenu=bank&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
-		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
-	}
 
 	// Entry for each bank account
 	if ($user->rights->banque->lire)
@@ -96,6 +84,6 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 		$db->free($resql);
 	}
 
-	left_menu($menu->liste);
+	left_menu('', $help_url, '', $menu->liste);
 }
 ?>

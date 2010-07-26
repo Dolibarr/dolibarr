@@ -28,6 +28,8 @@ require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php";
 
 $langs->load("bills");
+$langs->load("categories");
+
 
 /*
  * Securite acces client

@@ -41,7 +41,7 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 
 	$menu = new Menu();
 
-
+/*
 	$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
 
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
@@ -64,7 +64,7 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=bank&amp;mainmenu=bank&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
 		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
 	}
-
+*/
 	// Entry for each bank account
 	if ($user->rights->banque->lire)
 	{
@@ -96,7 +96,7 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 		$db->free($resql);
 	}
 
-	left_menu($menu->liste);
+	left_menu('', $help_url, '', $menu->liste);
 }
 
 ?>

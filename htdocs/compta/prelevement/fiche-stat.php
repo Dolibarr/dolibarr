@@ -31,7 +31,8 @@ require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.
 if ($user->societe_id > 0) accessforbidden();
 
 $langs->load("withdrawals");
-$langs->load("main");
+$langs->load("categories");
+
 
 /*
  * View

@@ -1011,13 +1011,14 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 /**
  *  \brief      Show left menu bar
- *  \param      menu_array      	Table menu entries
+ *  \param      menu_array_before 	Table of menu entries to show before entries of menu handler
  *  \param      helppagename    	Name of wiki page for help ('' by default).
- * 				Syntax is: 			For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- * 									For other external page: http://server/url
+ * 				                    Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+ * 									           For other external page: http://server/url
  *  \param      moresearchform     	Search Form Permanent Supplemental
+ *  \param      menu_array_after    Table of menu entries to show after entries of menu handler
  */
-function left_menu($menu_array, $helppagename='', $moresearchform='')
+function left_menu($menu_array_before, $helppagename='', $moresearchform='', $menu_array_after='')
 {
 	global $user, $conf, $langs, $db;
 
@@ -1083,10 +1084,11 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		$conf->left_menu='eldy_backoffice.php';
 		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
 	}
-	$menuleft=new MenuLeft($db,$menu_array);
-	$menuleft->showmenu();
+	$menuleft=new MenuLeft($db,$menu_array_before,$menu_array_after);
+	$menuleft->showmenu(); // output menu_array and menu found in database
 
 
+	// Show other forms
 	if ($searchform)
 	{
 		print "\n";
@@ -1097,11 +1099,13 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		print "<!-- End SearchForm -->\n";
 	}
 
+	// More search form
 	if ($moresearchform)
 	{
 		print $moresearchform;
 	}
 
+	// Bookmarks
 	if ($bookmarks)
 	{
 		print "\n";
@@ -1144,9 +1148,9 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		}
 	}
 
+    // Link to bugtrack
 	if (! empty($conf->global->MAIN_SHOW_BUGTRACK_LINK))
 	{
-		// Link to bugtrack
 		$bugbaseurl='http://savannah.nongnu.org/bugs/?';
 		$bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
 		$bugbaseurl.="&details=";

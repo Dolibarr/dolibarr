@@ -30,7 +30,7 @@
  *
  * @param unknown_type $db
  */
-function print_left_eldy_menu($db,$menu_array)
+function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
@@ -504,44 +504,6 @@ function print_left_eldy_menu($db,$menu_array)
 
 			}
 
-			// Prelevements
-			if ($conf->prelevement->enabled)
-			{
-				$langs->load("withdrawals");
-				$langs->load("banks");
-
-				$newmenu->add(DOL_URL_ROOT."/compta/prelevement/index.php?leftmenu=withdraw",$langs->trans("StandingOrders"),0,$user->rights->prelevement->bons->lire);
-
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/create.php",$langs->trans("NewStandingOrder"),1,$user->rights->prelevement->bons->creer);
-
-				//if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrder"),1,$user->rights->prelevement->bons->lire);
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=0",$langs->trans("StandingOrderToProcess"),1,$user->rights->prelevement->bons->lire);
-				//if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=1",$langs->trans("StandingOrderProcessed"),2,$user->rights->prelevement->bons->lire);
-
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/bons.php",$langs->trans("WithdrawalsReceipts"),1,$user->rights->prelevement->bons->lire);
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/liste.php",$langs->trans("WithdrawalsLines"),1,$user->rights->prelevement->bons->lire);
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/liste_factures.php",$langs->trans("WithdrawedBills"),1,$user->rights->prelevement->bons->lire);
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"),1,$user->rights->prelevement->bons->lire);
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"),1,$user->rights->prelevement->bons->lire);
-
-				//if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Setup"),1,$user->rights->prelevement->bons->configurer);
-			}
-
-			// Gestion cheques
-			if ($conf->facture->enabled && $conf->banque->enabled)
-			{
-				$newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=checks",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
-				if (preg_match("/checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
-				if (preg_match("/checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
-			}
-
-			// Bank-Caisse
-			if ($conf->banque->enabled)
-			{
-				$langs->load("banks");
-				$newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
-			}
-
 			// Rapports
 			if ($conf->compta->enabled || $conf->accounting->enabled)
 			{
@@ -569,6 +531,58 @@ function print_left_eldy_menu($db,$menu_array)
 
 		}
 
+
+		/*
+		 * Menu BANK
+		 */
+        if ($mainmenu == 'bank')
+        {
+            $langs->load("withdrawals");
+            $langs->load("banks");
+            $langs->load("bills");
+
+            // Bank-Caisse
+            if ($conf->banque->enabled)
+            {
+                $langs->load("banks");
+                $newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
+
+                $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
+                $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/categ.php",$langs->trans("Rubriques"),1,$user->rights->banque->configurer);
+
+                $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
+                $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
+            }
+
+            // Prelevements
+            if ($conf->prelevement->enabled)
+            {
+                $newmenu->add(DOL_URL_ROOT."/compta/prelevement/index.php?leftmenu=withdraw&amp;mainmenu=bank",$langs->trans("StandingOrders"),0,$user->rights->prelevement->bons->lire);
+
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/create.php?mainmenu=bank",$langs->trans("NewStandingOrder"),1,$user->rights->prelevement->bons->creer);
+
+                //if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrder"),1,$user->rights->prelevement->bons->lire);
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=0&amp;mainmenu=bank",$langs->trans("StandingOrderToProcess"),1,$user->rights->prelevement->bons->lire);
+                //if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=1",$langs->trans("StandingOrderProcessed"),2,$user->rights->prelevement->bons->lire);
+
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/bons.php?mainmenu=bank",$langs->trans("WithdrawalsReceipts"),1,$user->rights->prelevement->bons->lire);
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/liste.php?mainmenu=bank",$langs->trans("WithdrawalsLines"),1,$user->rights->prelevement->bons->lire);
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/liste_factures.php?mainmenu=bank",$langs->trans("WithdrawedBills"),1,$user->rights->prelevement->bons->lire);
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/rejets.php?mainmenu=bank",$langs->trans("Rejects"),1,$user->rights->prelevement->bons->lire);
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/stats.php?mainmenu=bank",$langs->trans("Statistics"),1,$user->rights->prelevement->bons->lire);
+
+                //if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Setup"),1,$user->rights->prelevement->bons->configurer);
+            }
+
+            // Gestion cheques
+            if ($conf->facture->enabled && $conf->banque->enabled)
+            {
+                $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
+                if (preg_match("/checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=checks&amp;action=new&amp;mainmenu=bank",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
+                if (preg_match("/checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=checks&amp;mainmenu=bank",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
+            }
+
+	   }
 
 		/*
 		 * Menu PRODUITS-SERVICES
@@ -850,9 +864,13 @@ function print_left_eldy_menu($db,$menu_array)
 	/**
 	 *  Si on est sur un cas gere de surcharge du menu, on ecrase celui par defaut
 	 */
-	if ($mainmenu) {
-		$menu_array=$newmenu->liste;
-	}
+    //var_dump($menu_array_before);exit;
+    //var_dump($menu_array_after);exit;
+	//if ($mainmenu) {
+	$menu_array=$newmenu->liste;
+    if (is_array($menu_array_before)) $menu_array=array_merge($menu_array_before, $menu_array);
+    if (is_array($menu_array_after))  $menu_array=array_merge($menu_array, $menu_array_after);
+	//}
 
 	// Affichage du menu
 	$alt=0;

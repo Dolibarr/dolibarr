@@ -30,7 +30,7 @@
  *
  * @param unknown_type $db
  */
-function print_left_auguria_menu($db,$menu_array)
+function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
@@ -99,17 +99,18 @@ function print_left_auguria_menu($db,$menu_array)
 		if ($mainmenu && ! in_array($mainmenu,$overwritemenufor)) { $mainmenu=""; }
 	}
 
-	//var_dump($newmenu->liste);
-	//var_dump($this->menu_array);
 
 	/**
 	 *  Si on est sur un cas gere de surcharge du menu, on ecrase celui par defaut
 	 */
-	if ($mainmenu) {
-		if ($leftmenu == 'bank') $menu_array=array_merge($menu_array,$newmenu->liste);
-		else $menu_array=$newmenu->liste;
-	}
-
+    //var_dump($menu_array_before);exit;
+    //var_dump($menu_array_after);exit;
+	$menu_array=$newmenu->liste;
+	//if ($mainmenu) {
+    if (is_array($menu_array_before)) $menu_array=array_merge($menu_array_before, $menu_array);
+    if (is_array($menu_array_after))  $menu_array=array_merge($menu_array, $menu_array_after);
+	//}
+    //var_dump($menu_array);exit;
 
 	// Affichage du menu
 	$alt=0;

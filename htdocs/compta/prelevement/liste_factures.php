@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
 $langs->load("withdrawals");
 $langs->load("companies");
+$langs->load("categories");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';

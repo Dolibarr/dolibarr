@@ -30,16 +30,22 @@ class MenuLeft {
 
     var $require_top=array("empty");     // If this top menu handler must be used with a particular left menu handler
 
+    var $db;
+    var $menu_array;
+    var $menu_array_after;
+
 
     /**
-     *    \brief      Constructor
-     *    \param      db      		Dabatase handler
-     *    \param      menu_array    Menu array that you will override in showmenu() function
+     *  \brief      Constructor
+     *  \param      db                  Database handler
+     *  \param      menu_array          Table of menu entries to show before entries of menu handler
+     *  \param      menu_array_after    Table of menu entries to show after entries of menu handler
      */
-    function MenuLeft($db,&$menu_array='')
+    function MenuLeft($db,&$menu_array='',&$menu_array_after='')
     {
         $this->db=$db;
         $this->menu_array=$menu_array;
+        $this->menu_array_after=$menu_array_after;
     }
 
 

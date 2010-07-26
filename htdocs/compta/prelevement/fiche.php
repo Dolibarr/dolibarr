@@ -33,7 +33,7 @@ accessforbidden();
 
 $langs->load("bills");
 $langs->load("withdrawals");
-$langs->load("main");
+$langs->load("categories");
 
 
 // Security check

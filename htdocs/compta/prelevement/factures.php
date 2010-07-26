@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.clas
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
 $langs->load("companies");
+$langs->load("categories");
 
 // Securite acces client
 if ($user->societe_id > 0) accessforbidden();

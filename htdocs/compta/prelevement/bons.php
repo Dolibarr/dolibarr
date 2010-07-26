@@ -28,6 +28,7 @@
 require('../../main.inc.php');
 
 $langs->load("widthdrawals");
+$langs->load("categories");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';

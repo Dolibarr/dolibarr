@@ -30,6 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 
 $langs->load("withdrawals");
+$langs->load("categories");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
