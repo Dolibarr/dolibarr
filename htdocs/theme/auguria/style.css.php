@@ -397,6 +397,10 @@ foreach($mainmenuusedarray as $key => $val)
 	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria' ?>/img/menus/topmenu_right.gif) no-repeat top right;
 	height:33px;
 }
+
+.tmenudisabled {
+    color: #D0D0D0 !important;
+}
 /* --- end nav --- */
 
 
