@@ -33,82 +33,82 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class ChargeSociales extends CommonObject
 {
-    var $db;
+	var $db;
 	var $error;
 	var $element='rowid';
 	var $table_element='chargesociales';
 
-    var $id;
-    var $date_ech;
-    var $lib;
-    var $type;
-    var $type_libelle;
-    var $amount;
-    var $paye;
-    var $periode;
+	var $id;
+	var $date_ech;
+	var $lib;
+	var $type;
+	var $type_libelle;
+	var $amount;
+	var $paye;
+	var $periode;
 
 
-    function ChargeSociales($DB)
-    {
-        $this->db = $DB;
+	function ChargeSociales($DB)
+	{
+		$this->db = $DB;
 
-        return 1;
-    }
+		return 1;
+	}
 
-    /**
-     *   \brief      Retrouve et charge une charge sociale
-     *   \return     int     1 si trouve, 0 sinon
-     */
-    function fetch($id)
-    {
-        $sql = "SELECT cs.rowid, cs.date_ech,";
-        $sql.= " cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode,";
+	/**
+	 *   \brief      Retrouve et charge une charge sociale
+	 *   \return     int     1 si trouve, 0 sinon
+	 */
+	function fetch($id)
+	{
+		$sql = "SELECT cs.rowid, cs.date_ech,";
+		$sql.= " cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode,";
 		$sql.= " c.libelle";
-        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs, ".MAIN_DB_PREFIX."c_chargesociales as c";
-        $sql.= " WHERE cs.fk_type = c.id";
-        $sql.= " AND cs.rowid = ".$id;
+		$sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs, ".MAIN_DB_PREFIX."c_chargesociales as c";
+		$sql.= " WHERE cs.fk_type = c.id";
+		$sql.= " AND cs.rowid = ".$id;
 
 		dol_syslog("ChargesSociales::fetch sql=".$sql);
-        $resql=$this->db->query($sql);
+		$resql=$this->db->query($sql);
 		if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id             = $obj->rowid;
-                $this->ref            = $obj->rowid;
-                $this->date_ech       = $this->db->jdate($obj->date_ech);
-                $this->lib            = $obj->lib;
-                $this->type           = $obj->fk_type;
-                $this->type_libelle   = $obj->libelle;
-                $this->amount         = $obj->amount;
-                $this->paye           = $obj->paye;
-                $this->periode        = $this->db->jdate($obj->periode);
+				$this->id             = $obj->rowid;
+				$this->ref            = $obj->rowid;
+				$this->date_ech       = $this->db->jdate($obj->date_ech);
+				$this->lib            = $obj->lib;
+				$this->type           = $obj->fk_type;
+				$this->type_libelle   = $obj->libelle;
+				$this->amount         = $obj->amount;
+				$this->paye           = $obj->paye;
+				$this->periode        = $this->db->jdate($obj->periode);
 
-                return 1;
-            }
-            else
-            {
-                return 0;
-            }
-            $this->db->free($resql);
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
-    }
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+			$this->db->free($resql);
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 
 
-    /**
-     *      \brief      Create a social contribution in database
-     *      \param      user    User making creation
-     *      \return     int     <0 if KO, id if OK
-     */
-    function create($user)
-    {
+	/**
+	 *      \brief      Create a social contribution in database
+	 *      \param      user    User making creation
+	 *      \return     int     <0 if KO, id if OK
+	 */
+	function create($user)
+	{
 		// Nettoyage parametres
 		$newamount=price2num($this->amount,'MT');
 
@@ -146,13 +146,13 @@ class ChargeSociales extends CommonObject
 	}
 
 
-    /**
-     *      \brief      Efface un charge sociale
-     *      \param      user    Utilisateur qui cree le paiement
-     *      \return     int     <0 si erreur, >0 si ok
-     */
-    function delete($user)
-    {
+	/**
+	 *      \brief      Efface un charge sociale
+	 *      \param      user    Utilisateur qui cree le paiement
+	 *      \return     int     <0 si erreur, >0 si ok
+	 */
+	function delete($user)
+	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
 
 		dol_syslog("ChargesSociales::delete sql=".$sql);
@@ -169,13 +169,13 @@ class ChargeSociales extends CommonObject
 	}
 
 
-    /**
-     *      \brief      Met a jour une charge sociale
-     *      \param      user    Utilisateur qui modifie
-     *      \return     int     <0 si erreur, >0 si ok
-     */
-    function update($user)
-    {
+	/**
+	 *      \brief      Met a jour une charge sociale
+	 *      \param      user    Utilisateur qui modifie
+	 *      \return     int     <0 si erreur, >0 si ok
+	 */
+	function update($user)
+	{
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
@@ -200,42 +200,42 @@ class ChargeSociales extends CommonObject
 	}
 
 
-    function solde($year = 0)
-    {
-        $sql = "SELECT sum(f.amount) as amount";
-        $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as f WHERE paye = 0";
+	function solde($year = 0)
+	{
+		$sql = "SELECT sum(f.amount) as amount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as f WHERE paye = 0";
 
-        if ($year) {
-            $sql .= " AND f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
-        }
+		if ($year) {
+			$sql .= " AND f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
+		}
 
-        $result = $this->db->query($sql);
+		$result = $this->db->query($sql);
 
-        if ($result) {
-            if ($this->db->num_rows()) {
-                $obj = $this->db->fetch_object();
-                return $obj->amount;
-            } else {
-                return 0;
-            }
+		if ($result) {
+			if ($this->db->num_rows()) {
+				$obj = $this->db->fetch_object();
+				return $obj->amount;
+			} else {
+				return 0;
+			}
 
-            $this->db->free();
+			$this->db->free();
 
-        } else {
-            print $this->db->error();
-            return -1;
-        }
-    }
+		} else {
+			print $this->db->error();
+			return -1;
+		}
+	}
 
 	/**
-	*    \brief      Tag la charge comme payee completement
-	*    \param      rowid       id de la ligne a modifier
-	*/
+	 *    \brief      Tag la charge comme payee completement
+	 *    \param      rowid       id de la ligne a modifier
+	 */
 	function set_paid($rowid)
-    {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales set paye=1 WHERE rowid = ".$rowid;
-      $return = $this->db->query( $sql);
-    }
+	{
+		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales set paye=1 WHERE rowid = ".$rowid;
+		$return = $this->db->query( $sql);
+	}
 
 	/**
 	 *    \brief      Retourne le libelle du statut d'une charge (impaye, payee)
@@ -356,8 +356,8 @@ class PaiementCharge extends CommonObject
 	var $element='paiementcharge';			//!< Id that identify managed objects
 	var $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
 
-    var $id;
-    var $ref;
+	var $id;
+	var $ref;
 
 	var $fk_charge;
 	var $datec='';
@@ -371,24 +371,24 @@ class PaiementCharge extends CommonObject
 	var $fk_user_creat;
 	var $fk_user_modif;
 
-    /**
-     *      \brief      Constructor
-     *      \param      DB      Database handler
-     */
-    function Paiementcharge($DB)
-    {
-        $this->db = $DB;
-        return 1;
-    }
-
-    /**
-     *      \brief      Creation d'un paiement de charge sociale dans la base
-     *      \param      user    Utilisateur qui cree le paiement
-     *      \return     int     <0 si KO, id du paiement cree si OK
-     */
-    function create($user)
+	/**
+	 *      \brief      Constructor
+	 *      \param      DB      Database handler
+	 */
+	function Paiementcharge($DB)
 	{
-    	global $conf, $langs;
+		$this->db = $DB;
+		return 1;
+	}
+
+	/**
+	 *      \brief      Creation d'un paiement de charge sociale dans la base
+	 *      \param      user    Utilisateur qui cree le paiement
+	 *      \return     int     <0 si KO, id du paiement cree si OK
+	 */
+	function create($user)
+	{
+		global $conf, $langs;
 		$error=0;
 
 		// Validation parametres
@@ -398,6 +398,7 @@ class PaiementCharge extends CommonObject
 			return -1;
 		}
 
+		$now=dol_now();
 
 		// Clean parameters
 		if (isset($this->fk_charge)) $this->fk_charge=trim($this->fk_charge);
@@ -419,14 +420,14 @@ class PaiementCharge extends CommonObject
 			$total += $amount;
 		}
 
-		if ($total > 0)
+		if ($total != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount,";
 			$sql.= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
-			$sql.= " VALUES ($this->chid, ".$this->db->idate(mktime()).", ";
-			$sql.= $this->db->idate($this->datepaye).", ";
+			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."', ";
+			$sql.= " '".$this->db->idate($this->datepaye)."', ";
 			$sql.= price2num($total);
-			$sql.= ", ".$this->paiementtype.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.",";
+			$sql.= ", ".$this->paiementtype.", '".addslashes($this->num_paiement)."', '".addslashes($this->note)."', ".$user->id.",";
 			$sql.= "0)";
 
 			dol_syslog("PaiementCharge::create sql=".$sql);
@@ -442,7 +443,7 @@ class PaiementCharge extends CommonObject
 
 		}
 
-		if ($total > 0 && ! $error)
+		if ($total != 0 && ! $error)
 		{
 			$this->db->commit();
 			return $this->id;
@@ -454,17 +455,17 @@ class PaiementCharge extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-    }
+	}
 
-    /**
-     *    \brief      Load object in memory from database
-     *    \param      id          id object
-     *    \return     int         <0 if KO, >0 if OK
-     */
-    function fetch($id)
-    {
-    	global $langs;
-        $sql = "SELECT";
+	/**
+	 *    \brief      Load object in memory from database
+	 *    \param      id          id object
+	 *    \return     int         <0 if KO, >0 if OK
+	 */
+	function fetch($id)
+	{
+		global $langs;
+		$sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.fk_charge,";
 		$sql.= " t.datec,";
@@ -481,18 +482,18 @@ class PaiementCharge extends CommonObject
 		$sql.= ' b.fk_account';
 		$sql.= " FROM (".MAIN_DB_PREFIX."paiementcharge as t, ".MAIN_DB_PREFIX."c_paiement as pt)";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-        $sql.= " WHERE t.rowid = ".$id." AND t.fk_typepaiement = pt.id";
+		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepaiement = pt.id";
 
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
-                $this->ref   = $obj->rowid;
+				$this->id    = $obj->rowid;
+				$this->ref   = $obj->rowid;
 
 				$this->fk_charge = $obj->fk_charge;
 				$this->datec = $this->db->jdate($obj->datec);
@@ -511,29 +512,29 @@ class PaiementCharge extends CommonObject
 
 				$this->bank_account   = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
-            }
-            $this->db->free($resql);
+			}
+			$this->db->free($resql);
 
-            return 1;
-        }
-        else
-        {
-      	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
-            return -1;
-        }
-    }
+			return 1;
+		}
+		else
+		{
+			$this->error="Error ".$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 
-    /**
-     *      \brief      Update database
-     *      \param      user        	User that modify
-     *      \param      notrigger	    0=launch triggers after, 1=disable triggers
-     *      \return     int         	<0 if KO, >0 if OK
-     */
-    function update($user=0, $notrigger=0)
-    {
-    	global $conf, $langs;
+	/**
+	 *      \brief      Update database
+	 *      \param      user        	User that modify
+	 *      \param      notrigger	    0=launch triggers after, 1=disable triggers
+	 *      \return     int         	<0 if KO, >0 if OK
+	 */
+	function update($user=0, $notrigger=0)
+	{
+		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
@@ -552,8 +553,8 @@ class PaiementCharge extends CommonObject
 		// Check parameters
 		// Put here code to add control on parameters values
 
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET";
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET";
 
 		$sql.= " fk_charge=".(isset($this->fk_charge)?$this->fk_charge:"null").",";
 		$sql.= " datec=".(strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
@@ -568,37 +569,37 @@ class PaiementCharge extends CommonObject
 		$sql.= " fk_user_modif=".(isset($this->fk_user_modif)?$this->fk_user_modif:"null")."";
 
 
-        $sql.= " WHERE rowid=".$this->id;
+		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		$resql = $this->db->query($sql);
+		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
 		if (! $error)
 		{
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
 
-	            //// Call triggers
-	            //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    	}
+				//// Call triggers
+				//include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
+			}
 		}
 
-        // Commit or rollback
+		// Commit or rollback
 		if ($error)
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
 			return -1*$error;
@@ -608,52 +609,65 @@ class PaiementCharge extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-    }
+	}
 
 
- 	/**
-	 *   \brief      Delete object in database
-     *	\param      user        	User that delete
-     *   \param      notrigger	    0=launch triggers after, 1=disable triggers
-	 *	\return		int				<0 if KO, >0 if OK
+	/**
+	 *     \brief      Delete object in database
+	 *     \param      user        	User that delete
+	 *     \param      notrigger	0=launch triggers after, 1=disable triggers
+	 *     \return     int			<0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger=0)
 	{
 		global $conf, $langs;
 		$error=0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge";
-		$sql.= " WHERE rowid=".$this->id;
-
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete sql=".$sql);
-		$resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+	    if (! $error)
+        {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
+            $sql.= " WHERE type='payment_sc' AND url_id=".$this->id;
+
+            dol_syslog(get_class($this)."::delete sql=".$sql);
+            $resql = $this->db->query($sql);
+            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        }
+
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge";
+			$sql.= " WHERE rowid=".$this->id;
+
+			dol_syslog(get_class($this)."::delete sql=".$sql);
+			$resql = $this->db->query($sql);
+			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		}
 
 		if (! $error)
 		{
 			if (! $notrigger)
 			{
 				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
+				// want this action call a trigger.
 
-		        //// Call triggers
-		        //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
+				//// Call triggers
+				//include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
 			}
 		}
 
-        // Commit or rollback
+		// Commit or rollback
 		if ($error)
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
 			return -1*$error;
@@ -746,27 +760,27 @@ class PaiementCharge extends CommonObject
 
 
 	/**
-     *      \brief      Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
-     *      \param      id_bank         Id de la banque
-     *      \return     int             >0 si OK, <=0 si KO
-     */
-    function update_fk_bank($id_bank)
+	 *      \brief      Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
+	 *      \param      id_bank         Id de la banque
+	 *      \return     int             >0 si OK, <=0 si KO
+	 */
+	function update_fk_bank($id_bank)
 	{
-        $sql = "UPDATE llx_paiementcharge set fk_bank = ".$id_bank." where rowid = ".$this->id;
+		$sql = "UPDATE llx_paiementcharge set fk_bank = ".$id_bank." where rowid = ".$this->id;
 
-        dol_syslog("PaiementCharge::update_fk_bank sql=".$sql);
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-        	return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
+		dol_syslog("PaiementCharge::update_fk_bank sql=".$sql);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
 			dol_syslog("PaiementCharges::update_fk_bank ".$this->error, LOG_ERR);
-            return 0;
-        }
-    }
+			return 0;
+		}
+	}
 
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)

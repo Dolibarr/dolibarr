@@ -51,17 +51,18 @@ $mesg='';
  * Actions
  */
 
-if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
+// Delete payment
+if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->tax->charges->supprimer)
 {
 	$db->begin();
 
 	$paiement = new PaiementCharge($db);
-	$paiement->fetch($_GET['id']);
-	$result = $paiement->delete();
+	$paiement->fetch($_REQUEST['id']);
+	$result = $paiement->delete($user);
 	if ($result > 0)
 	{
         $db->commit();
-        Header("Location: liste.php");
+        Header("Location: ".DOL_URL_ROOT."/compta/charges/index.php?mode=sconly");
         exit;
 	}
 	else
@@ -71,12 +72,13 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 	}
 }
 
-if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
+// Create payment
+if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->tax->charges->creer)
 {
 	$db->begin();
 
 	$paiement = new PaiementCharge($db);
-	$paiement->id = $_GET['id'];
+	$paiement->id = $_REQUEST['id'];
 	if ($paiement->valide() > 0)
 	{
 		$db->commit();
@@ -283,9 +285,9 @@ print '</div>';
 /*
  * Boutons Actions
  */
-/*
 print '<div class="tabsAction">';
 
+/*
 if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
 {
 	if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
@@ -296,10 +298,11 @@ if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
 		}
 	}
 }
+*/
 
-if ($user->societe_id == 0 && $_GET['action'] == '')
+if ($_GET['action'] == '')
 {
-	if ($user->rights->facture->paiement)
+	if ($user->rights->tax->charges->supprimer)
 	{
 		if (! $disable_delete)
 		{
@@ -313,7 +316,7 @@ if ($user->societe_id == 0 && $_GET['action'] == '')
 }
 
 print '</div>';
-*/
+
 
 $db->close();
 

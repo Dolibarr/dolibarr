@@ -47,7 +47,7 @@ if ($_POST["action"] == 'add_paiement')
 	if ($_POST["cancel"])
 	{
 		$loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
-		Header("Location: $loc");
+		Header("Location: ".$loc);
 		exit;
 	}
 
@@ -63,6 +63,11 @@ if ($_POST["action"] == 'add_paiement')
 		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Date"));
 		$error++;
 	}
+    if ($conf->banque->enabled && ! $_POST["accountid"] > 0)
+    {
+        $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit"));
+        $error++;
+    }
 
 	if (! $error)
 	{
@@ -108,7 +113,7 @@ if ($_POST["action"] == 'add_paiement')
 			$langs->load("banks");
 			$label = $langs->transnoentities("SocialContributionPayment");
 			$acc = new Account($db, $_POST["accountid"]);
-			$bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementtype, $label, -abs($total), $paiement->num_paiement, '', $user);
+			$bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementtype, $label, -$total, $paiement->num_paiement, '', $user);
 
 			// Mise a jour fk_bank dans llx_paiementcharge. On connait ainsi le paiement qui a genere l'ecriture bancaire
 			if ($bank_line_id > 0)
@@ -125,7 +130,7 @@ if ($_POST["action"] == 'add_paiement')
 				$db->commit();
 
 				$loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
-				Header("Location: $loc");
+				Header("Location: ".$loc);
 				exit;
 			}
 			else {
@@ -136,7 +141,7 @@ if ($_POST["action"] == 'add_paiement')
 		else
 		{
 			$db->rollback();
-			$mesg = "Failed to create payment: paiement_id=$paymentid ".$db->error();
+			$mesg = "Failed to create payment: paiement_id=".$paymentid." ".$db->error();
 		}
 	}
 
@@ -208,13 +213,14 @@ if ($_GET["action"] == 'create')
 	print "<input type=\"hidden\" name=\"chid\" value=\"$chid\">";
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+	$datepaye = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
 	$html->select_date($datepayment,'','','','',"add_paiement",1,1);
 	print "</td>";
 	print '<td>'.$langs->trans("Comments").'</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	$html->select_types_paiements($charge->paiementtype, "paiementtype");
+	$html->select_types_paiements(isset($_POST["paiementtype"])?$_POST["paiementtype"]:$charge->paiementtype, "paiementtype");
 	print "</td>\n";
 
 	print '<td rowspan="3" valign="top"><textarea name="comment" wrap="soft" cols="40" rows="'.ROWS_3.'"></textarea></td></tr>';
@@ -222,7 +228,7 @@ if ($_GET["action"] == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
 	print '<td>';
-	$html->select_comptes($charge->accountid, "accountid", 0, "courant=1");  // Affiche liste des comptes courant
+	$html->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, "courant=1",1);  // Affiche liste des comptes courant
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Numero');
@@ -235,7 +241,8 @@ if ($_GET["action"] == 'create')
 	$num = 1;
 	$i = 0;
 	print '<tr><td colspan="3">';
-	print '<table class="noborder" width="100%">';
+
+	print '<table class="nobordernopadding" width="100%">';
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("SocialContribution").'</td>';
 	print '<td align="left">'.$langs->trans("DateDue").'</td>';

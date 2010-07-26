@@ -396,6 +396,8 @@ if ($chid > 0)
 		else {
 			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($cha->date_ech,'day')."</td></tr>";
 		}
+
+		// Amount
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($cha->amount).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$cha->getLibStatut(4).'</td></tr>';
@@ -432,7 +434,7 @@ if ($chid > 0)
 			}
 
 			// Emettre paiement
-			if ($cha->paye == 0 && round($resteapayer) > 0 && $user->rights->tax->charges->creer)
+			if ($cha->paye == 0 && ((price2num($cha->amount) < 0 && round($resteapayer) < 0) || (price2num($cha->amount) > 0 && round($resteapayer) > 0)) && $user->rights->tax->charges->creer)
 			{
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
 			}
