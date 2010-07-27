@@ -109,12 +109,13 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 /**
  * Show an LDAP array in an HTML to records.
  *
- * @param unknown_type $result	Array to show. This array is already encoded into charset_output
- * @param unknown_type $level
- * @param unknown_type $count
- * @param unknown_type $var
- * @param unknown_type $hide
- * @return unknown
+ * @param   $result	    Array to show. This array is already encoded into charset_output
+ * @param   $level
+ * @param   $count
+ * @param   $var
+ * @param   $hide
+ * @param   $subcount
+ * @return  intr
  */
 function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 {

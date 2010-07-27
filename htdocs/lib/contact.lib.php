@@ -20,7 +20,7 @@
 /**
  *	    \file       htdocs/lib/contact.lib.php
  *		\brief      Ensemble de fonctions de base pour les contacts
- *		\version    $Id$ 
+ *		\version    $Id$
  *
  *		Ensemble de fonctions de base de dolibarr sous forme d'include
  */
@@ -28,41 +28,41 @@
 /**
  * Enter description here...
  *
- * @param unknown_type $contrat
- * @return unknown
+ * @param   $contrat
+ * @return  array
  */
 function contact_prepare_head($contrat)
 {
 	global $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'general';
 	$h++;
-	
+
 	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
 	{
 		$langs->load("ldap");
-		
+
 		$head[$h][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$_GET["id"];
 		$head[$h][1] = $langs->trans("LDAPCard");
 		$head[$h][2] = 'ldap';
 		$h++;
 	}
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
 	$head[$h][1] = $langs->trans("PersonalInformations");
 	$head[$h][2] = 'perso';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
 	$head[$h][1] = $langs->trans("ExportImport");
 	$head[$h][2] = 'exportimport';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';

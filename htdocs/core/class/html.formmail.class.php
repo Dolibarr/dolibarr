@@ -139,7 +139,7 @@ class FormMail
 	/**
 	 * Remove a file from the list of attached files (stored in SECTION array)
 	 *
-	 * @param unknown_type $file
+	 * @param  $keytodelete     Key in file array
 	 */
 	function remove_attached_files($keytodelete)
 	{
@@ -164,7 +164,7 @@ class FormMail
 	/**
 	 * Return list of attached files (stored in SECTION array)
 	 *
-	 * @return	unknown_type $type
+	 * @return	array       array('paths'=> ,'names'=>, 'mimes'=> )
 	 */
 	function get_attached_files()
 	{

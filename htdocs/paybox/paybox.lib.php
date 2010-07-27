@@ -228,8 +228,8 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 /**
  * Show footer of company in HTML pages
  *
- * @param unknown_type $fromcompany
- * @param unknown_type $langs
+ * @param   $fromcompany
+ * @param   $langs
  */
 function html_print_footer($fromcompany,$langs)
 {

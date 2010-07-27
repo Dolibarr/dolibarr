@@ -142,8 +142,9 @@ class CommActionRapport
 	/**
 	 * Write content of pages
 	 *
-	 * @param unknown_type 		$pdf
-	 * @return 	int				1
+	 * @param      $pdf
+     * @param      $outputlangs
+	 * @return     int				1
 	 */
 	function _pages(&$pdf, $outputlangs)
 	{

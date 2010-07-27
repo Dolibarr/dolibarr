@@ -198,9 +198,9 @@ function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
 /**
  * Enter description here...
  *
- * @param unknown_type $db
- * @param unknown_type $propalid
- * @return unknown
+ * @param   $db
+ * @param   $propalid
+ * @return  int
  */
 function supplier_order_delete_preview($db, $propalid)
 {

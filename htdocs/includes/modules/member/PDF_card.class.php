@@ -102,10 +102,10 @@ class PDF_card extends FPDF {
 	/**
 	 * Constructor
 	 *
-	 * @param unknown_type $format		Avery format of label paper. For example 5160, 5161, 5162, 5163, 5164, 8600, L7163
-	 * @param unknown_type $posX
-	 * @param unknown_type $posY
-	 * @param unknown_type $unit
+	 * @param  $format		Avery format of label paper. For example 5160, 5161, 5162, 5163, 5164, 8600, L7163
+	 * @param  $posX
+	 * @param  $posY
+	 * @param  $unit
 	 * @return PDF_card
 	 */
 	function PDF_card ($format, $posX=1, $posY=1, $unit='mm')

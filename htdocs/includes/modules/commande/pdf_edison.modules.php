@@ -446,11 +446,11 @@ class pdf_edison extends ModelePDFCommandes
 	/**
 	 * Enter description here...
 	 *
-	 * @param unknown_type $pdf
-	 * @param unknown_type $tab_top
-	 * @param unknown_type $tab_height
-	 * @param unknown_type $nexY
-	 * @param unknown_type $outputlangs
+	 * @param $pdf
+	 * @param $tab_top
+	 * @param $tab_height
+	 * @param $nexY
+	 * @param $outputlangs
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{

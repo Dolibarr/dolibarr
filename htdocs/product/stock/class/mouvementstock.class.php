@@ -323,8 +323,8 @@ class MouvementStock
 	/**
 	 * Return nb of subproducts lines for a product
 	 *
-	 * @param unknown_type $id
-	 * @return unknown
+	 * @param      $id
+	 * @return     int
 	 */
 	function nbOfSubProdcuts($id)
 	{

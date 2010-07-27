@@ -342,14 +342,14 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
 /**
  * Return next value for a mask
  *
- * @param unknown_type 	$db				Database handler
- * @param 				$mask			Mask to use
- * @param unknown_type 	$table			Table containing field with counter
- * @param unknown_type 	$field			Field containing already used values of counter
- * @param unknown_type 	$where			To add a filter on selection (for exemple to filter on invoice types)
- * @param unknown_type 	$objsoc			The company that own the object we need a counter for
- * @param unknown_type 	$date			Date to use for the {y},{m},{d} tags.
- * @return 	string		New value
+ * @param   $db				Database handler
+ * @param   $mask			Mask to use
+ * @param   $table			Table containing field with counter
+ * @param   $field			Field containing already used values of counter
+ * @param   $where			To add a filter on selection (for exemple to filter on invoice types)
+ * @param   $objsoc			The company that own the object we need a counter for
+ * @param   $date			Date to use for the {y},{m},{d} tags.
+ * @return 	string		    New value
  */
 function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='')
 {
@@ -577,14 +577,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='')
 /**
  * Check value
  *
- * @param unknown_type 	$db				Database handler
- * @param 				$mask			Mask to use
- * @param unknown_type 	$table			Table containing field with counter
- * @param unknown_type 	$field			Field containing already used values of counter
- * @param unknown_type 	$where			To add a filter on selection (for exemple to filter on invoice types)
- * @param unknown_type 	$valueforccc
- * @param unknown_type 	$date
- * @return		int			<0 if KO, 0 if OK
+ * @param 	$db			Database handler
+ * @param 	$mask		Mask to use
+ * @param 	$value
+ * @return	int         <0 if KO, 0 if OK
  */
 function check_value($mask,$value)
 {

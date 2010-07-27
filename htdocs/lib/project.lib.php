@@ -261,12 +261,12 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 /**
  * Enter description here...
  *
- * @param unknown_type $inc
- * @param unknown_type $parent
- * @param unknown_type $lines
- * @param unknown_type $level
- * @param unknown_type $tasksrole
- * @return unknown
+ * @param   $inc
+ * @param   $parent
+ * @param   $lines
+ * @param   $level
+ * @param   $projectsrole
+ * @return  $inc
  */
 function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 {
@@ -541,8 +541,8 @@ function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 
 /**
  * Clean task not linked to a parent
- * @param unknown_type $db
- * @return		int		Nb of records deleted
+ * @param   $db     Database handler
+ * @return	int		Nb of records deleted
  */
 function clean_orphelins($db)
 {
@@ -598,10 +598,10 @@ function clean_orphelins($db)
 /**
  * Return HTML table with list of projects and number of opened tasks
  *
- * @param unknown_type $db
- * @param unknown_type $mine
- * @param unknown_type $socid
- * @param unknown_type $projectsListId
+ * @param   $db
+ * @param   $mine
+ * @param   $socid
+ * @param   $projectsListId
  */
 function print_projecttasks_array($db,$mine,$socid,$projectsListId)
 {

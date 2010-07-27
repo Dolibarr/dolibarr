@@ -125,11 +125,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 }
 
 /**
- * \brief	Fast compare of 2 files identified by their properties ->name, ->date and ->size
+ * Fast compare of 2 files identified by their properties ->name, ->date and ->size
  *
- * @param 	unknown_type $a		File 1
- * @param 	unknown_type $b		File 2
- * @return 	int					1, 0, 1
+ * @param 	$a		File 1
+ * @param 	$b		File 2
+ * @return 	int		1, 0, 1
  */
 function dol_compare_file($a, $b)
 {

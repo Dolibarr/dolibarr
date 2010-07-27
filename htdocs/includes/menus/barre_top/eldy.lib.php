@@ -27,9 +27,9 @@
 /**
  * Core function to output top menu eldy
  *
- * @param unknown_type $db
- * @param unknown_type $atarget
- * @param unknown_type $hideifnotallowed
+ * @param $db
+ * @param $atarget
+ * @param $hideifnotallowed
  */
 function print_eldy_menu($db,$atarget,$hideifnotallowed)
 {

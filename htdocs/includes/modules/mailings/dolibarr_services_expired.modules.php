@@ -37,7 +37,7 @@ class mailing_dolibarr_services_expired extends MailingTargets
 	/**
 	 * Constructor
 	 *
-	 * @param unknown_type $DB
+	 * @param  $DB
 	 * @return mailing_dolibarr_services_expired
 	 */
 	function mailing_dolibarr_services_expired($DB)

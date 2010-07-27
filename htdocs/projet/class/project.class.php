@@ -139,8 +139,9 @@ class Project extends CommonObject
 	/**
 	 * Update a project
 	 *
-	 * @param unknown_type $user
-	 * @return unknown
+	 * @param  $user       User object of making update
+	 * @param  $notrigger  1=Disable all triggers
+	 * @return int
 	 */
 	function update($user, $notrigger=0)
 	{

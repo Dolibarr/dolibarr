@@ -345,12 +345,12 @@ class Menubase
 	/**
 	 *	Load entries found in database in a menu array
 	 *
-	 * @param unknown_type $newmenu		Menu array to complete
-	 * @param unknown_type $mainmenu	Value for mainmenu that defined top menu
-	 * @param unknown_type $leftmenu	Value for left that defined leftmenu
-	 * @param unknown_type $type_user 	0=Internal,1=External,2=All
-	 * @param menu_handler				Name of menu_handler used (auguria, eldy...)
-	 * @return 	array					Menu array completed
+	 * @param  $newmenu        Menu array to complete
+	 * @param  $mainmenu       Value for mainmenu that defined top menu
+	 * @param  $leftmenu       Value for left that defined leftmenu
+	 * @param  $type_user      0=Internal,1=External,2=All
+	 * @param  $menu_handler   Name of menu_handler used (auguria, eldy...)
+	 * @return array           Menu array completed
 	 */
 	function menuLeftCharger($newmenu, $mainmenu, $myleftmenu, $type_user, $menu_handler)
 	{

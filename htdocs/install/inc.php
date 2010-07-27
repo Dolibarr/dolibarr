@@ -296,9 +296,9 @@ function pHeader($soutitre,$next,$action='set',$param='')
 /**
  * Output footer of install pages
  *
- * @param unknown_type $nonext
- * @param unknown_type $setuplang
- * @param unknown_type $jscheckfunction
+ * @param $nonext
+ * @param $setuplang
+ * @param $jscheckfunction
  */
 function pFooter($nonext=0,$setuplang='',$jscheckfunction='')
 {

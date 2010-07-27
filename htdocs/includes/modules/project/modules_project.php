@@ -201,9 +201,9 @@ function project_pdf_create($db, $comid, $modele,$outputlangs)
 /**
  * Enter description here...
  *
- * @param unknown_type $db
- * @param unknown_type $projectid
- * @return unknown
+ * @param   $db
+ * @param   $projectid
+ * @return  int
  */
 function project_delete_preview($db, $projectid)
 {

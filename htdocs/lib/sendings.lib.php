@@ -115,8 +115,8 @@ function delivery_prepare_head($object)
 /**
  * List sendings and receive receipts
  *
- * @param unknown_type $option
- * @return unknown
+ * @param   $option
+ * @return
  */
 function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 {

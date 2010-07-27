@@ -28,7 +28,9 @@
 /**
  * Core function to output left menu eldy
  *
- * @param unknown_type $db
+ * @param      db                  Database handler
+ * @param      menu_array_before   Table of menu entries to show before entries of menu handler
+ * @param      menu_array_after    Table of menu entries to show after entries of menu handler
  */
 function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 {

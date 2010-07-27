@@ -26,8 +26,8 @@
 /**
  * Enter description here...
  *
- * @param unknown_type $contrat
- * @return unknown
+ * @param   $mil
+ * @return  array
  */
 function emailing_prepare_head($mil)
 {

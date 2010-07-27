@@ -26,8 +26,8 @@
 /**
  * Enter description here...
  *
- * @param unknown_type $contrat
- * @return unknown
+ * @param   $entrepot
+ * @return  array
  */
 function stock_prepare_head($entrepot)
 {

@@ -953,9 +953,9 @@ function isValidEmail($address)
 /**
  * Make a strlen call. Works even if mbstring module not enabled.
  *
- * @param unknown_type $string
- * @param unknown_type $stringencoding
- * @return unknown
+ * @param   $string
+ * @param   $stringencoding
+ * @return  int
  */
 function dol_strlen($string,$stringencoding='')
 {
@@ -978,11 +978,11 @@ function dol_strlen($string,$stringencoding='')
 /**
  * Make a substring. Works even in mbstring module not enabled
  *
- * @param unknown_type $string
- * @param unknown_type $start
- * @param unknown_type $length
- * @param unknown_type $stringencoding
- * @return unknown
+ * @param   $string
+ * @param   $start
+ * @param   $length
+ * @param   $stringencoding
+ * @return  string
  */
 function dol_substr($string,$start,$length,$stringencoding='')
 {

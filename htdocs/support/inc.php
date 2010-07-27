@@ -225,8 +225,8 @@ function pHeader($soutitre,$next,$action='none')
 /**
  * Enter description here...
  *
- * @param unknown_type $nonext
- * @param unknown_type $setuplang
+ * @param   $nonext
+ * @param   $setuplang
  */
 function pFooter($nonext=0,$setuplang='')
 {
@@ -239,10 +239,10 @@ function pFooter($nonext=0,$setuplang='')
 }
 
 /**
- * Enter description here...
+ * Output a text into a log file
  *
- * @param unknown_type $message
- * @param unknown_type $level
+ * @param   $message
+ * @param   $level
  */
 function dolibarr_support_syslog($message, $level=LOG_DEBUG)
 {

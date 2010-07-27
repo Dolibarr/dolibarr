@@ -41,7 +41,7 @@ class AntiVir
 	/**
 	 * Constructor
 	 *
-	 * @param unknown_type $db
+	 * @param  $db
 	 * @return AntiVir
 	 */
 	function AntiVir($db)

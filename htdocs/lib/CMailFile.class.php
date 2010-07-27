@@ -740,8 +740,8 @@ class CMailFile
 	/**
 	 * Try to create a socket connection
 	 *
-	 * @param 		unknown_type $host. Add ssl:// for SSL/TLS.
-	 * @param 		unknown_type $port. Example: 25, 465
+	 * @param 		$host. Add ssl:// for SSL/TLS.
+	 * @param 		$port. Example: 25, 465
 	 * @return 		Socket id if ok, 0 if KO
 	 */
 	function check_server_port($host,$port)
