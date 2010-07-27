@@ -1378,11 +1378,12 @@ if ($rowid && $action != 'edit')
 		}
 
 		// Envoi fiche par mail
-		if ($adh->statut >= 1 && $adh->email)
+		if ($adh->statut >= 1)
 		{
 			if ($user->rights->adherent->creer)
 			{
-		    	print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
+				if ($adh->email) print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
+				else print "<a class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NoEMail"))."\">".$langs->trans("SendCardByMail")."</a>\n";
 		    }
 			else
 			{
@@ -1447,11 +1448,11 @@ if ($rowid && $action != 'edit')
 	        $isinspip=$adh->is_in_spip();
 	        if ($isinspip == 1)
 	        {
-	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>\n";
+	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=del_spip\">".$langs->trans("DeleteIntoSpip")."</a>\n";
 	        }
 	        if ($isinspip == 0)
 	        {
-	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>\n";
+	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=add_spip\">".$langs->trans("AddIntoSpip")."</a>\n";
 	        }
 	        if ($isinspip == -1) {
 	            print '<br><font class="error">Failed to connect to SPIP: '.$adh->error.'</font>';

@@ -111,10 +111,10 @@ if ($_REQUEST["action"] == 'confirm_enable' && $_REQUEST["confirm"] == "yes")
 	if ($_GET["id"] <> $user->id)
 	{
 		$message='';
-		
+
 		$edituser = new User($db);
 		$edituser->fetch($_GET["id"]);
-		
+
 		if (!empty($conf->file->main_limit_users))
 		{
 			$nb = $edituser->getNbOfUsers(1);
@@ -165,9 +165,9 @@ if ($_POST["action"] == 'add' && $canadduser)
 		$message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
 		$action="create";       // Go back to create page
 	}
-	
+
 	$edituser = new User($db);
-	
+
 	if (!empty($conf->file->main_limit_users))
 	{
 		$nb = $edituser->getNbOfUsers(1);
@@ -1134,10 +1134,11 @@ else
 					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
 				}
 
-				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login && !$fuser->ldap_sid &&
+				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
 				(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
 				{
-					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
+					if ($fuser->email) print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
+					else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendNewPassword").'</a>';
 				}
 			}
 
