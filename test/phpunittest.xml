@@ -1,6 +1,7 @@
 <phpunit>
 <filter>
   <blacklist>
+    <directory>../CVS/</directory>
     <directory>../test/</directory>
     <directory>../htdocs/includes/adodbtime/</directory>
     <directory>../htdocs/includes/artichow/</directory>
