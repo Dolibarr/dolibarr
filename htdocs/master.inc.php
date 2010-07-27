@@ -350,17 +350,17 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE; // TODO obsolete
 	$mysoc->town=$conf->global->MAIN_INFO_SOCIETE_VILLE;
 	$mysoc->departement_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
-	$mysoc->note=$conf->global->MAIN_INFO_SOCIETE_NOTE;
+	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 	// For backwar compatibility: Si dans MAIN_INFO_SOCIETE_PAYS on a un id de pays, on recupere code
 	if (is_numeric($conf->global->MAIN_INFO_SOCIETE_PAYS))
 	{
 		$sql  = "SELECT rowid, code, libelle as label from ".MAIN_DB_PREFIX."c_pays";
 		$sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
-		$result=$db->query($sql);
-		if ($result)
+		$resql=$db->query($sql);
+		if ($resql)
 		{
-			$obj = $db->fetch_object();
-			$mysoc->pays_id=$conf->rowid;
+			$obj = $db->fetch_object($resql);
+			$mysoc->pays_id=$obj->rowid;
 			$mysoc->pays_code=$obj->code;
 			$mysoc->pays=$obj->code?($langs->trans('Country'.$obj->code)!='Country'.$obj->code?$langs->trans('Country'.$obj->code):$obj->label):'';	// deprecated
 			$mysoc->country=$obj->code?($langs->trans('Country'.$obj->code)!='Country'.$obj->code?$langs->trans('Country'.$obj->code):$obj->label):'';
@@ -376,10 +376,10 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 		$mysoc->pays=$conf->global->MAIN_INFO_SOCIETE_PAYS?$langs->trans('Country'.$conf->global->MAIN_INFO_SOCIETE_PAYS):'';	// deprecated
 		$mysoc->country=$conf->global->MAIN_INFO_SOCIETE_PAYS?$langs->trans('Country'.$conf->global->MAIN_INFO_SOCIETE_PAYS):'';
 	}
-	$mysoc->tel=$conf->global->MAIN_INFO_SOCIETE_TEL; // TODO obsolete
-	$mysoc->phone=$conf->global->MAIN_INFO_SOCIETE_TEL;
-	$mysoc->fax=$conf->global->MAIN_INFO_SOCIETE_FAX;
-	$mysoc->url=$conf->global->MAIN_INFO_SOCIETE_WEB;
+	$mysoc->tel=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;   // deprecated
+	$mysoc->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
+	$mysoc->fax=empty($conf->global->MAIN_INFO_SOCIETE_FAX)?'':$conf->global->MAIN_INFO_SOCIETE_FAX;
+	$mysoc->url=empty($conf->global->MAIN_INFO_SOCIETE_WEB)?'':$conf->global->MAIN_INFO_SOCIETE_WEB;
 	// Anciens id prof
 	$mysoc->siren=empty($conf->global->MAIN_INFO_SIREN)?'':$conf->global->MAIN_INFO_SIREN;
 	$mysoc->siret=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
