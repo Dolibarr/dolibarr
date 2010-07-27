@@ -951,7 +951,7 @@ function isValidEmail($address)
 
 
 /**
- * Make a strlen call. Works even in mbstring module not enabled
+ * Make a strlen call. Works even if mbstring module not enabled.
  *
  * @param unknown_type $string
  * @param unknown_type $stringencoding
@@ -961,7 +961,7 @@ function dol_strlen($string,$stringencoding='')
 {
 	global $langs;
 
-	if (empty($stringencoding)) $stringencoding=$langs->charset_output;
+	if (empty($stringencoding)) $stringencoding=(empty($langs->charset_output)?'UTF-8':$langs->charset_output);
 
 	$ret='';
 	if (function_exists('mb_strlen'))
