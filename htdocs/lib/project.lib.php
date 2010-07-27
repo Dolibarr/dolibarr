@@ -541,8 +541,8 @@ function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 
 /**
  * Clean task not linked to a parent
- * @param   $db     Database handler
- * @return	int		Nb of records deleted
+ * @param unknown_type $db
+ * @return		int		Nb of records deleted
  */
 function clean_orphelins($db)
 {
@@ -598,10 +598,10 @@ function clean_orphelins($db)
 /**
  * Return HTML table with list of projects and number of opened tasks
  *
- * @param   $db
- * @param   $mine
- * @param   $socid
- * @param   $projectsListId
+ * @param unknown_type $db
+ * @param unknown_type $mine
+ * @param unknown_type $socid
+ * @param unknown_type $projectsListId
  */
 function print_projecttasks_array($db,$mine,$socid,$projectsListId)
 {
