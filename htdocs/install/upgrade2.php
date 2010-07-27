@@ -3104,7 +3104,8 @@ function migrate_shipping_delivery($db,$langs,$conf)
 }
 
 /*
- * Migrate shipping ref_customer and date_delivery fields to llx_livraison
+ * We try to complete field ref_customer and date_delivery that are empty into llx_livraison.
+ * We set them with value from llx_expedition.
  */
 function migrate_shipping_delivery2($db,$langs,$conf)
 {
@@ -3126,6 +3127,7 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 	$sqlSelect.= " WHERE l.rowid = el.fk_target";
 	$sqlSelect.= " AND el.targettype = 'delivery'";
 	$sqlSelect.= " AND e.rowid = el.fk_source AND el.sourcetype = 'shipping'";
+	$sqlSelect.= " AND (e.ref_customer IS NOT NULL OR e.date_delivery IS NOT NULL)";   // Useless to process this record if both are null
 	// Add condition to know if we never migrate this record
 	$sqlSelect.= " AND (l.ref_customer IS NULL".($db->type!='pgsql'?" or l.ref_customer = ''":"").")";
 	$sqlSelect.= " AND (l.date_delivery IS NULL".($db->type!='pgsql'?" or l.date_delivery = ''":"").")";
@@ -3144,7 +3146,7 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 
 				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
 				$sqlUpdate.= " ref_customer = '".$obj->ref_customer."',";
-				$sqlUpdate.= " date_delivery = '".($obj->date_delivery?$obj->date_delivery:'null')."'";
+				$sqlUpdate.= " date_delivery = ".($obj->date_delivery?"'".$obj->date_delivery."'":'null');
 				$sqlUpdate.= " WHERE rowid = ".$obj->delivery_id;
 
 				$result=$db->query($sqlUpdate);

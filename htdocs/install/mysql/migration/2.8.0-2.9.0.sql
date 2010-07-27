@@ -240,6 +240,8 @@ ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, p
 
 UPDATE llx_const SET name = 'MAIN_MODULE_PRODUCT' WHERE name = 'MAIN_MODULE_PRODUIT';
 
+UPDATE llx_expedition set ref_customer = NULL where ref_customer = '';
+
 -- Add more predefined action codes --
 insert into llx_c_actioncomm (id, code, type, libelle, module) values (30, 'AC_SUP_ORD',  'system', 'Send supplier invoice by email'      ,'supplier_order');
 insert into llx_c_actioncomm (id, code, type, libelle, module) values (31, 'AC_SUP_INV',  'system', 'Send supplier invoice by email'      ,'supplier_invoice');
