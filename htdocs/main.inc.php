@@ -1055,7 +1055,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	&& $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE)
 	{
 		$langs->load("products");
-		$searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/index.php',
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/liste.php',
 		img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
 	}
 

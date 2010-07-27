@@ -49,7 +49,7 @@ $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="nom";
+if (! $sortfield) $sortfield="s.nom";
 
 if ($page == -1) { $page = 0 ; }
 
