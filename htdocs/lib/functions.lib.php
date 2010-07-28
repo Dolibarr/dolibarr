@@ -1889,7 +1889,7 @@ function dol_print_error($db='',$error='')
         if (function_exists("phpversion"))
         {
         	$out.="<b>".$langs->trans("PHP").":</b> ".phpversion()."<br>\n";
-        	phpinfo();       // This is to show location of php.ini file
+        	//phpinfo();       // This is to show location of php.ini file
         }
 		$out.="<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
         $out.="<br>\n";
