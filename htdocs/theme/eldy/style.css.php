@@ -322,6 +322,10 @@ div.mainmenu.accountancy {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/money.png' ?>);
 }
 
+div.mainmenu.bank {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/bank.png' ?>);
+}
+
 div.mainmenu.project {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/project.png' ?>);
 }
