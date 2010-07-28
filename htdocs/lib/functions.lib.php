@@ -1873,7 +1873,8 @@ function dol_print_error($db='',$error='')
 		$langs = new Translate("", $conf);
 		$langs->load("main");
 	}
-	$langs->load("errors");
+	$langs->load("main");
+    $langs->load("errors");
 
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
@@ -1882,13 +1883,19 @@ function dol_print_error($db='',$error='')
 		$out.="You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n";
 		$out.=$langs->trans("InformationToHelpDiagnose").":<br>\n";
 
+        $out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";;
 		$out.="<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;
-		$out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";;
 		if (isset($conf->global->MAIN_FEATURES_LEVEL)) $out.="<b>".$langs->trans("LevelOfFeature").":</b> ".$conf->global->MAIN_FEATURES_LEVEL."<br>\n";;
+        if (function_exists("phpversion"))
+        {
+        	$out.="<b>".$langs->trans("PHP").":</b> ".phpversion()."<br>\n";
+        	phpinfo();       // This is to show location of php.ini file
+        }
 		$out.="<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
-		$out.="<b>".$langs->trans("Referer").":</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
+        $out.="<br>\n";
 		$out.="<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
-		$out.="<b>".$langs->trans("MenuManager").":</b> ".$conf->left_menu.'/'.$conf->top_menu."<br>\n";
+        $out.="<b>".$langs->trans("Referer").":</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
+		$out.="<b>".$langs->trans("MenuManager").":</b> ".$conf->top_menu.($conf->top_menu||$conf->left_menu?'/':'').$conf->left_menu."<br>\n";
 		$out.="<br>\n";
 		$syslog.="url=".$_SERVER["REQUEST_URI"];
 		$syslog.=", query_string=".$_SERVER["QUERY_STRING"];

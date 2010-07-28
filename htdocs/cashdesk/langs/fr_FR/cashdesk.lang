@@ -1,6 +1,6 @@
 # Language file - fr_FR - cashdesk
 CHARSET=UTF-8
-CashDeskMenu=Caisse
+CashDeskMenu=Point vente
 CashDesk=Caisse enregistreuse
 CashDesks=Caisse enregistreuses
 CashDeskBank=Compte bancaire
