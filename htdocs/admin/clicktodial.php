@@ -84,8 +84,15 @@ print $langs->trans("ClickToDialUrlDesc").'<br>';
 print $langs->trans("Example").': http://myphoneserver/mypage?login=%3$s&password=%4$s&caller=%2$s&called=%1$s';
 print '</td></tr>';
 
-print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
+print '<tr><td colspan="3" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
+
+/*if (! empty($conf->global->CLICKTODIAL_URL))
+{
+    print $langs->trans("Test");
+    // Add a phone number to test
+}
+*/
 
 $db->close();
 
