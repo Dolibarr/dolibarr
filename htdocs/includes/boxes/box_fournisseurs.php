@@ -52,8 +52,8 @@ class box_fournisseurs extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-     *      \param      $max        Nombre maximum d'enregistrements � charger
+	 *      Load data of box into memory for a future usage
+	 *      @param      $max        Maximum number of records to show
      */
     function loadBox($max=5)
     {
