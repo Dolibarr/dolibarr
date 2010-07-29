@@ -132,6 +132,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				}
 			}
 
+			$object->fetch_client();
+
 			$nblignes = sizeof($object->lignes);
 
 			$objectref = dol_sanitizeFileName($object->ref);
@@ -509,7 +511,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);
 			}
 			else
 			{
@@ -521,24 +523,33 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		}
 		else $pdf->MultiCell(100, 4, $this->emetteur->nom, 0, 'L');
 
-		$pdf->SetFont('Arial','B',13);
+		$pdf->SetFont('Arial','B',12);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
+
 		$pdf->SetFont('Arial','',12);
 
-		$posy+=6;
+		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
 		if ($object->date_valid)
 		{
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_valid,"%d %b %Y",false,$outputlangs,true), '', 'R');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date(($object->date_delivery?$object->date_delivery:$date->valid),"%d %b %Y",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{
 			$pdf->SetTextColor(255,0,0);
 			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryNotValidated"), '', 'R');
 			$pdf->SetTextColor(0,0,60);
+		}
+
+		if ($object->client->code_client)
+		{
+			$posy+=5;
+			$pdf->SetXY(100,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
 
 		$pdf->SetTextColor(0,0,60);
@@ -611,8 +622,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);
-
-			$object->fetch_client();
 
 			// If SHIPPING contact defined on invoice, we use it
 			$usecontact=false;

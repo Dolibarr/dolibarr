@@ -110,6 +110,8 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				}
 			}
 
+			$object->fetch_client();
+
 			$nblignes = sizeof($object->lignes);
 
 			$objectref = dol_sanitizeFileName($object->ref);
@@ -380,8 +382,6 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		 * Adresse Client
 		 */
 
-		$object->fetch_client();
-
 		// If SHIPPING contact defined on invoice, we use it
 		$usecontact=false;
 		$arrayidcontact=$object->commande->getIdContact('external','SHIPPING');
@@ -419,8 +419,16 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_valid,"day",false,$outputlangs,true));
+		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dol_print_date(($object->date_delivery?$object->date_delivery:$date->valid),"day",false,$outputlangs,true));
 		$pdf->Text(11, 94, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref));
+
+		if ($object->client->code_client)
+		{
+			$posy+=7;
+			$pdf->SetXY(102,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(96, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+		}
 
 		$pdf->SetFont('Arial','B',9);
 
