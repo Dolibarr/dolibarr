@@ -345,7 +345,7 @@ class Form
 
 	/**
 	 *		\brief      Return list of social contributions.
-	 * 		\remarks	Use mysoc->pays_id or mysoc->pays_code
+	 * 		\remarks	Use mysoc->pays_id or mysoc->pays_code so they must be defined.
 	 *		\param      selected        Preselected type
 	 *		\param      htmlname        Name of field in form
 	 * 		\param		useempty		Set to 1 if we want an empty value
@@ -356,7 +356,11 @@ class Form
 	{
 		global $db,$langs,$user,$mysoc;
 
-		if (empty($mysoc->pays_id) && empty($mysoc->pays_code)) dol_print_error('','ErrorBadParameter');
+		if (empty($mysoc->pays_id) && empty($mysoc->pays_code))
+		{
+			dol_print_error('','Call to select_type_socialcontrib with mysoc country not yet defined');
+			exit;
+		}
 
 		if (! empty($mysoc->pays_id))
 		{

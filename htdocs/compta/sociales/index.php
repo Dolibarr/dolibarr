@@ -21,7 +21,7 @@
 /**
  *   	\file       htdocs/compta/sociales/index.php
  *		\ingroup    tax
- *		\brief      Ecran des charges sociales
+ *		\brief      Page to list all social contributions
  *		\version    $Id$
  */
 
@@ -130,83 +130,96 @@ if ($resql)
 	    print $mesg."<br>";
 	}
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
-	print "<table class=\"noborder\" width=\"100%\">";
-
-	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"index.php","id","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Type"),"index.php","type","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PeriodEndDate"),"index.php","periode","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateDue"),"index.php","de","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","",$param,'align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
-
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	// Type
-	print '<td class="liste_titre" align="left">';
-    $html->select_type_socialcontrib($typeid,'typeid',1,16,0);
-    print '</td>';
-	// Period end date
-	print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
-	print '</td>';
-	print "</tr>\n";
-
-	while ($i < min($num,$limit))
+	if (empty($mysoc->pays_id) && empty($mysoc->pays_code))
 	{
-		$obj = $db->fetch_object($resql);
-
-		$var = !$var;
-		print "<tr $bc[$var]>";
-
-		// Ref
-		print '<td width="60">';
-		$chargesociale_static->id=$obj->id;
-		$chargesociale_static->lib=$obj->id;
-		$chargesociale_static->ref=$obj->id;
-		print $chargesociale_static->getNomUrl(1,'20');
-		print '</td>';
-
-		// Label
-		print '<td>'.dol_trunc($obj->libelle,42).'</td>';
-
-		// Type
-		print '<td>'.dol_trunc($obj->type_lib,16).'</td>';
-
-		// Date end period
-		print '<td align="center">';
-		if ($obj->periode)
-		{
-			print '<a href="index.php?year='.strftime("%Y",$db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode),'day').'</a>';
-		}
-		else
-		{
-			print '&nbsp;';
-		}
-		print '</td>';
-
-		print '<td align="right" width="100">'.price($obj->amount).'</td>';
-
-		// Due date
-		print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->de), 'day').'</td>';
-
-		print '<td align="right" nowrap="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
-
-		print '</tr>';
-		$i++;
+		print '<div class="error">';
+		$langs->load("errors");
+		$countrynotdefined=$langs->trans("ErrorSetACountryFirst");
+		print $countrynotdefined;
+		print '</div>';
 	}
+	else
+	{
 
-	print '</table>';
+		print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
-	print '</form>';
+		print "<table class=\"noborder\" width=\"100%\">";
+
+		print "<tr class=\"liste_titre\">";
+		print_liste_field_titre($langs->trans("Ref"),"index.php","id","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Type"),"index.php","type","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("PeriodEndDate"),"index.php","periode","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateDue"),"index.php","de","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","",$param,'align="right"',$sortfield,$sortorder);
+		print "</tr>\n";
+
+		print '<tr class="liste_titre">';
+		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre">&nbsp;</td>';
+		// Type
+		print '<td class="liste_titre" align="left">';
+	    $html->select_type_socialcontrib($typeid,'typeid',1,16,0);
+	    print '</td>';
+		// Period end date
+		print '<td class="liste_titre">&nbsp;</td>';
+	    print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre" align="right">';
+		print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
+		print '</td>';
+		print "</tr>\n";
+
+		while ($i < min($num,$limit))
+		{
+			$obj = $db->fetch_object($resql);
+
+			$var = !$var;
+			print "<tr $bc[$var]>";
+
+			// Ref
+			print '<td width="60">';
+			$chargesociale_static->id=$obj->id;
+			$chargesociale_static->lib=$obj->id;
+			$chargesociale_static->ref=$obj->id;
+			print $chargesociale_static->getNomUrl(1,'20');
+			print '</td>';
+
+			// Label
+			print '<td>'.dol_trunc($obj->libelle,42).'</td>';
+
+			// Type
+			print '<td>'.dol_trunc($obj->type_lib,16).'</td>';
+
+			// Date end period
+			print '<td align="center">';
+			if ($obj->periode)
+			{
+				print '<a href="index.php?year='.strftime("%Y",$db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode),'day').'</a>';
+			}
+			else
+			{
+				print '&nbsp;';
+			}
+			print '</td>';
+
+			print '<td align="right" width="100">'.price($obj->amount).'</td>';
+
+			// Due date
+			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->de), 'day').'</td>';
+
+			print '<td align="right" nowrap="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
+
+			print '</tr>';
+			$i++;
+		}
+
+		print '</table>';
+
+		print '</form>';
+	}
 }
 else
 {
