@@ -621,6 +621,7 @@ if ($conf->tax->enabled && $user->rights->tax->charges->lire)
 					$obj = $db->fetch_object($resql);
 					print "<tr $bc[$var]>";
 					$chargestatic->id=$obj->rowid;
+					$chargestatic->ref=$obj->libelle;
 					$chargestatic->lib=$obj->libelle;
 					$chargestatic->paye=$obj->paye;
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
