@@ -31,7 +31,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/treeview.lib.php");
 
-$type=isset($_GET['type'])?$_GET['type']:$_POST['type'];
+$type=isset($_GET['type'])?$_GET['type']:isset($_POST['type'])?$_POST['type']:0;
 
 if (!$user->rights->categorie->lire) accessforbidden();
 
@@ -122,7 +122,10 @@ print '<br>';
 
 
 // Charge tableau des categories
-$cate_arbo = $categstatic->get_full_arbo($_GET['type']);
+$cate_arbo = $categstatic->get_full_arbo($type);
+
+// Define fulltree array
+$fulltree=$cate_arbo;
 
 
 
@@ -133,8 +136,6 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td colsp
 $section=isset($_GET["section"])?$_GET["section"]:$_POST['section'];
 if (! $section) $section=0;
 
-// Define fulltree array
-$fulltree=$cate_arbo;
 
 
 // ----- This section will show a tree from a fulltree array -----

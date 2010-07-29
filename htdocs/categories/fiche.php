@@ -71,6 +71,7 @@ $urlfrom=isset($_REQUEST["urlfrom"])?$_REQUEST["urlfrom"]:'';
  *	Actions
  */
 
+// Add action
 if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 {
 	// Action ajout d'une categorie
@@ -119,7 +120,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	$categorie->description    = $_POST["description"];
 	$categorie->socid          = ($_POST["socid"] ? $_POST["socid"] : 'null');
 	$categorie->visible        = $_POST["visible"];
-	$categorie->type		       = $_POST["type"];
+	$categorie->type		   = $_POST["type"];
 
 	if($_POST['catMere'] != "-1")
 	$categorie->id_mere = $_POST['catMere'];
@@ -127,11 +128,6 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	if (! $categorie->label)
 	{
 		$categorie->error = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
-		$_GET["action"] = 'create';
-	}
-	else if (! $categorie->description)
-	{
-		$categorie->error = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"));
 		$_GET["action"] = 'create';
 	}
 
@@ -147,6 +143,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	}
 }
 
+// Confirm action
 if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 {
 	// Action confirmation de creation categorie
