@@ -95,9 +95,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Verification de la configuration
 		if ($conf->expedition->dir_output."/sending")
 		{
-			//Creation du Client
-			$soc = new Societe($this->db);
-			$soc->fetch($object->commande->socid);
+			$object->fetch_client();
 
 			//Creation de l expediteur
 			$this->expediteur = $mysoc;
@@ -363,7 +361,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo,10, 5, 0, 24);
+				$pdf->Image($logo,10, 5, 0, 22);
 			}
 			else
 			{
@@ -388,7 +386,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Num Expedition
 		$Yoff = $Yoff+7;
 		$Xoff = 142;
-		//		$pdf->rect($Xoff, $Yoff, 85, 8);
+		//$pdf->rect($Xoff, $Yoff, 85, 8);
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
@@ -444,17 +442,28 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($blSocX,$blSocY+3);
 		$pdf->MultiCell(80, 2, $carac_emetteur);
 
+
+
+		if ($object->client->code_client)
+		{
+			$Yoff+=7;
+			$posy=$Yoff;
+			$pdf->SetXY(100,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+		}
+
 		//Date Expedition
 		$Yoff = $Yoff+7;
 		$pdf->SetXY($blSocX-80,$blSocY+20);
 		$pdf->SetFont('Arial','B',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs,true), '' , 'L');
-		//Date Expedition
-		$pdf->SetXY($blSocX2,$blSocY+20);
-		$pdf->SetFont('Arial','B',8);
-		$pdf->SetTextColor(0,0,0);
+		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_delivery,'day',false,$outputlangs,true), '' , 'L');
 
+		// Deliverer
+		$pdf->SetXY($blSocX-80,$blSocY+23);
+		$pdf->SetFont('Arial','',8);
+		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($this->livreur->getFullName($outputlangs)), '' , 'L');
 
 

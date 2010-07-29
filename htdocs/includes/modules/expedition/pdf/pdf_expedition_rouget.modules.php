@@ -168,14 +168,15 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref") ." : ".$object->ref, '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSending") ." : ".$object->ref, '', 'R');
 
+		//Date Expedition
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true), '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_delivery,"%d %b %Y",false,$outputlangs,true), '', 'R');
 
-		if ($object->client->code_client)
+		if (! empty($object->client->code_client))
 		{
 			$posy+=5;
 			$pdf->SetXY(100,$posy);
@@ -228,6 +229,8 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 	function write_file(&$object, $outputlangs)
 	{
 		global $user,$conf,$langs;
+
+		$object->fetch_client();
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
@@ -341,7 +344,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					// Description de la ligne produit
 					$libelleproduitservice=pdf_getlinedesc($object->lignes[$i],$outputlangs);
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
