@@ -74,7 +74,7 @@ class box_clients extends ModeleBoxes {
 			$sql.= " AND s.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($user->societe_id) $sql.= " AND s.rowid = $user->societe_id";
-			$sql.= " ORDER BY s.tms DESC";
+			$sql.= " ORDER BY s.datec DESC";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
