@@ -33,6 +33,7 @@ BoxTitleLastPropals=Les %s dernières propositions enregistrées
 BoxTitleLastCustomerBills=Les %s dernières factures clients modifiées
 BoxTitleLastSupplierBills=Les %s dernières factures fournisseurs modifiées
 BoxTitleLastProspects=Les %s derniers prospects enregistrés
+BoxTitleLastModifiedProspects=Les %s derniers prospects modifiés
 BoxTitleLastProductsInContract=Les %s derniers produits/services contractés
 BoxTitleOldestUnpaidCustomerBills=Les %s plus anciennes factures clients impayées
 BoxTitleOldestUnpaidSupplierBills=Les %s plus anciennes factures fournisseurs impayées

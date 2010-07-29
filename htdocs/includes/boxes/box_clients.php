@@ -49,7 +49,7 @@ class box_clients extends ModeleBoxes {
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxLastCustomers");
+		$this->boxlabel=$langs->trans("BoxLastModifiedCustomers");
 	}
 
 	/**
@@ -63,18 +63,18 @@ class box_clients extends ModeleBoxes {
 
 		$this->max=$max;
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomers",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers",$max));
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom, s.rowid as socid, s.tms";
+			$sql = "SELECT s.nom, s.rowid as socid, s.datec, s.tms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.client IN (1, 3)";
 			$sql.= " AND s.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($user->societe_id) $sql.= " AND s.rowid = $user->societe_id";
-			$sql.= " ORDER BY s.datec DESC";
+			$sql.= " ORDER BY s.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -87,7 +87,8 @@ class box_clients extends ModeleBoxes {
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($result);
-					$datem=$objp->tms;
+					$datec=$db->jdate($objp->datec);
+					$datem=$db->jdate($objp->tms);
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,

@@ -470,18 +470,17 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 
 	$langs->load("boxes");
 
-	$sql = "SELECT s.nom, s.rowid, s.datec as dc";
+	$sql = "SELECT s.nom, s.rowid, s.datec as dc, s.tms as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.client IN (1, 3)";
 	$sql.= " AND s.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
-	$sql.= " ORDER BY s.datec DESC ";
+	$sql.= $db->order("s.tms","DESC");
 	$sql.= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
-
 	if ($result)
 	{
 		$var=false;
@@ -490,7 +489,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastCustomers",min($max,$num)).'</td>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedCustomers",min($max,$num)).'</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
 		print '</tr>';
 		if ($num)
@@ -508,7 +507,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($objp->dc),'day').'</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
 				print '</tr>';
 
 				$i++;
@@ -529,14 +528,14 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
-	$sql = "SELECT s.nom, s.rowid, s.datec as dc";
+	$sql = "SELECT s.nom, s.rowid, s.datec as dc, s.tms as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.fournisseur = 1";
 	$sql.= " AND s.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
-	$sql.= $db->order("s.datec","DESC");
+	$sql.= $db->order("s.tms","DESC");
 	$sql.= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
@@ -548,7 +547,7 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastSuppliers",min($max,$num)).'</td>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
 		print '</tr>';
 		if ($num)
@@ -563,7 +562,7 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 				$customerstatic->nom=$objp->nom;
 				print '<tr '.$bc[$var].'>';
 				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($objp->dc),'day').'</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
 				print '</tr>';
 				$var=!$var;
 				$i++;

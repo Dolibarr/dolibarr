@@ -286,12 +286,13 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	//$sql.= " AND p.fk_statut > 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
-	$sql.= " ORDER BY p.datec DESC";
+	$sql.= " ORDER BY p.datep DESC";
 	$sql.= $db->plimit($NBMAX, 0);
 
-	if ( $db->query($sql) )
+	$resql=$db->query($sql);
+	if ($resql)
 	{
-		$num = $db->num_rows();
+		$num = $db->num_rows($resql);
 
 		$i = 0;
 		print '<table class="noborder" width="100%">';
@@ -299,7 +300,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 		$var=False;
 		while ($i < $num)
 		{
-			$objp = $db->fetch_object();
+			$objp = $db->fetch_object($resql);
 			print "<tr $bc[$var]>";
 
 			// Ref
@@ -326,17 +327,20 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
 			print '<td align="left"><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
 			print "<td align=\"right\">";
-			print dol_print_date($objp->dp,'day')."</td>\n";
+			print dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 			print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 			print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
 			print "</tr>\n";
 			$i++;
 			$var=!$var;
-
 		}
 
 		print "</table><br>";
-		$db->free();
+		$db->free($resql);
+	}
+	else
+	{
+		dol_print_error($db,'');
 	}
 }
 
@@ -347,7 +351,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
-	$sql = "SELECT s.rowid,s.nom,s.client,s.tms";
+	$sql = "SELECT s.rowid,s.nom,s.client,s.datec,s.tms";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.client IN (1, 2, 3)";
@@ -407,7 +411,7 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
-	$sql = "SELECT s.nom, s.rowid, s.datec as dc";
+	$sql = "SELECT s.nom, s.rowid, s.datec as dc, s.tms as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.fournisseur = 1";
@@ -425,7 +429,7 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastSuppliers",min($max,$num)).'</td>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
 		print '</tr>';
 		if ($num)
@@ -438,7 +442,7 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 				$company->nom=$objp->nom;
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap="nowrap">'.$company->getNomUrl(1,'supplier',48).'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($objp->dc),'day').'</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
 				print '</tr>';
 				$var=!$var;
 				$i++;

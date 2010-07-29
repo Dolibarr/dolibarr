@@ -33,6 +33,7 @@ BoxTitleLastPropals=Last %s recorded proposals
 BoxTitleLastCustomerBills=Last %s customer's invoices
 BoxTitleLastSupplierBills=Last %s supplier's invoices
 BoxTitleLastProspects=Last %s recorded prospects
+BoxTitleLastModifiedProspects=Last %s modified prospects
 BoxTitleLastProductsInContract=Last %s products/services in a contract
 BoxTitleOldestUnpaidCustomerBills=Oldest %s unpaid customer's invoices
 BoxTitleOldestUnpaidSupplierBills=Oldest %s unpaid supplier's invoices
