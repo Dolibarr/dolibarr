@@ -2290,6 +2290,7 @@ function migrate_menus($db,$langs,$conf)
 
 /*
  * Migration du champ fk_adresse_livraison dans expedition
+ * 2.6 -> 2.7
  */
 function migrate_commande_deliveryaddress($db,$langs,$conf)
 {

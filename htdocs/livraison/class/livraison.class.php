@@ -104,7 +104,7 @@ class Livraison extends CommonObject
 		$sql.= ", date_creation";
 		$sql.= ", fk_user_author";
 		$sql.= ", date_delivery";
-		$sql.= ", fk_adresse_livraison";
+		$sql.= ", fk_address";
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
@@ -244,7 +244,7 @@ class Livraison extends CommonObject
 
 		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_customer, l.fk_user_author,";
 		$sql.=" l.total_ht, l.fk_statut, l.fk_user_valid, l.note, l.note_public";
-		$sql.= ", l.date_delivery, l.fk_adresse_livraison, l.model_pdf";
+		$sql.= ", l.date_delivery, l.fk_address, l.model_pdf";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
@@ -268,7 +268,7 @@ class Livraison extends CommonObject
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->user_valid_id        = $obj->fk_user_valid;
-				$this->fk_delivery_address  = $obj->fk_adresse_livraison;
+				$this->fk_delivery_address  = $obj->fk_address;
 				$this->note                 = $obj->note;
 				$this->note_public          = $obj->note_public;
 				$this->modelpdf             = $obj->model_pdf;

@@ -56,6 +56,6 @@ create table llx_commande
   fk_cond_reglement     integer,                       -- condition de reglement
   fk_mode_reglement     integer,                       -- mode de reglement
   date_livraison 	      date 	  default NULL,
-  fk_adresse_livraison  integer,                       -- adresse de livraison
+  fk_adresse_livraison  integer,                       -- delivery address (deprecated)
   import_key            varchar(14)
 )type=innodb;

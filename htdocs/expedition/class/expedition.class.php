@@ -115,7 +115,7 @@ class Expedition extends CommonObject
 		$sql.= ", date_expedition";
 		$sql.= ", date_delivery";
 		$sql.= ", fk_soc";
-		$sql.= ", fk_adresse_livraison";
+		$sql.= ", fk_address";
 		$sql.= ", fk_expedition_methode";
 		$sql.= ", tracking_number";
 		$sql.= ", weight";
@@ -253,7 +253,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.fk_user_author, e.fk_statut";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
-		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_adresse_livraison, e.date_delivery";
+		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql.= ", e.fk_expedition_methode, e.tracking_number";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
@@ -280,7 +280,7 @@ class Expedition extends CommonObject
 				$this->date_expedition      = $this->db->jdate($obj->date_expedition);	// TODO obsolete
 				$this->date_shipping        = $this->db->jdate($obj->date_expedition);	// Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery);	// Date planed
-				$this->fk_delivery_address  = $obj->fk_adresse_livraison;
+				$this->fk_delivery_address  = $obj->fk_address;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->expedition_method_id = $obj->fk_expedition_methode;
 				$this->tracking_number      = $obj->tracking_number;
@@ -614,7 +614,7 @@ class Expedition extends CommonObject
 		$sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
 		$sql.= " date_expedition=".(strlen($this->date_expedition)!=0 ? "'".$this->db->idate($this->date_expedition)."'" : 'null').",";
 		$sql.= " date_delivery=".(strlen($this->date_delivery)!=0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
-		$sql.= " fk_adresse_livraison=".(isset($this->fk_adresse_livraison)?$this->fk_adresse_livraison:"null").",";
+		$sql.= " fk_address=".(isset($this->fk_adresse_livraison)?$this->fk_adresse_livraison:"null").",";
 		$sql.= " fk_expedition_methode=".(isset($this->expedition_method_id)?$this->expedition_method_id:"null").",";
 		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".addslashes($this->tracking_number)."'":"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
