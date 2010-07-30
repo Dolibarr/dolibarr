@@ -131,4 +131,3 @@ AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del
 # Document models
 PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=Modelo de pedido simple
-PDFQuevedoDescription=Modelo de pedido completo con RE e IRPF

@@ -136,4 +136,3 @@ AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
 # Documents models
 PDFEinsteinDescription=A complete order model (logo...)
 PDFEdisonDescription=A simple order model
-PDFQuevedoDescription=A complete order model with Spanish RE and IRPF

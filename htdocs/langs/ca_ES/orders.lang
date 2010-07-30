@@ -131,4 +131,3 @@ AddDeliveryCostLine=Afegir una línia de despeses de ports indicant el pes de la
 # Document models
 PDFEinsteinDescription=Model de comanda complet (logo...)
 PDFEdisonDescription=Model de comanda simple
-PDFQuevedoDescription=Modelo de comanda complet amb RE i IRPF

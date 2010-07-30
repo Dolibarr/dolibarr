@@ -378,8 +378,6 @@ PDFBigorneauDescription=Modelo de factura sin informaciones de pago
 PDFBulotDescription=Modelo de factura con descuentos e información de pago
 # crabe PDF Model
 PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar, logotipo...)
-# lince PDF Model
-PDFLinceDescription=Modelo de factura completo con RE e IRPF
 # huitre PDF Model
 PDFHuitreDescription=Modelo de factura con descuento e información de pago
 # oursin PDF Model

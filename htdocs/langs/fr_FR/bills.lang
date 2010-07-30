@@ -388,9 +388,6 @@ PDFBulotDescription=Modèle de facture avec remise et infos règlement
 # crabe PDF Model
 PDFCrabeDescription=Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)
 
-# lince PDF Model
-PDFLinceDescription=Modèle de facture complet avec Spanish RE et IRPF
-
 # huitre PDF Model
 PDFHuitreDescription=Modèle de facture avec remise et infos règlement
 

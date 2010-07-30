@@ -86,4 +86,3 @@ TypeContact_propal_external_CUSTOMER=Contacte client seguiment pressupost
 # Documents models
 DocModelAzurDescription=Model de pressupost complet (logo...)
 DocModelJauneDescription=Model de pressupost Jaune
-DocModelRoigDescription=Model de pressupost complet amb RE i IRPF

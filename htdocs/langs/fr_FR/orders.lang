@@ -135,4 +135,3 @@ AddDeliveryCostLine=Ajouter une ligne de frais port indiquant le poids de la com
 # Document models
 PDFEinsteinDescription=Modèle de comande complet (logo...)
 PDFEdisonDescription=Modèle de commande simple
-PDFQuevedoDescription=Modèle de comande complet avec Spanish RE et IRPF
