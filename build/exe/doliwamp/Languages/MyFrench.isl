@@ -37,5 +37,6 @@ LaunchNow=Lancer Dolibarr maintenant
 
 ProgramHasBeenRemoved=Les fichiers du programe Dolibarr ont été supprimés. Toutefois, tous vos fichiers de données sont toujours dans le répertoire $1. Vous devez supprimer ce répertoire manuellement pour avoir une désinstallation complète.
 
+DoliWampWillStartApacheMysql=L'installeur DoliWamp va maintenant démarrer ou redémarrer Apache et Mysql, ceci peut durer de quelques secondes à une minute après cette confirmation. Démarrer l'installation ou mise à jour du serveur web et base de données requis par Dolibarr ?
 
 

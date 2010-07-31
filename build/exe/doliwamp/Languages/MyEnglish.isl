@@ -36,3 +36,5 @@ ChooseDefaultBrowser=Please choose your default browser. If you are not sure, ju
 LaunchNow=Launch Dolibarr now
 
 ProgramHasBeenRemoved=Dolibarr program files have been removed. However, all your data files are still in directory $1. You must remove this directory manually for a complete uninstall.
+
+DoliWampWillStartApacheMysql=DoliWamp installer will now start or restart Apache and Mysql, this may last from several seconds to one minute after this confirmation. Start to install or upgrade the web and database server required by Dolibarr ?
