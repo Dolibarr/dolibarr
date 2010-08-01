@@ -1713,158 +1713,6 @@ function migrate_modeles($db,$langs,$conf)
 	//print $langs->trans("AlreadyDone");
 }
 
-/*
- * Supprime fichiers obsoletes
- */
-function migrate_delete_old_files($db,$langs,$conf)
-{
-	$result=true;
-
-	dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
-
-	// List of files to delete
-	$filetodeletearray=array(
-	DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php',
-	DOL_DOCUMENT_ROOT.'/includes/menus/barre_left/default.php',
-	DOL_DOCUMENT_ROOT.'/includes/menus/barre_top/default.php',
-	DOL_DOCUMENT_ROOT.'/includes/modules/modComptabiliteExpert.class.php',
-	DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modPhenix_Phenixsynchro.class.php',
-	DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modWebcalendar_webcalsynchro.class.php',
-	DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_Ecotax.class.php',
-	);
-
-	foreach ($filetodeletearray as $filetodelete)
-	{
-		//print '<b>'.$filetodelete."</b><br>\n";
-		if (file_exists($filetodelete))
-		{
-			$result=dol_delete_file($filetodelete);
-		}
-		if (! $result)
-		{
-			$langs->load("errors");
-			print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile",$filetodelete);
-			print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
-		}
-	}
-	return $result;
-}
-
-/*
- * Remove deprecated directories
- */
-function migrate_delete_old_dir($db,$langs,$conf)
-{
-	$result=true;
-
-	dolibarr_install_syslog("upgrade2::migrate_delete_old_dir");
-
-	// List of files to delete
-	$filetodeletearray=array(
-	DOL_DOCUMENT_ROOT.'/includes/modules/facture/terre',
-	DOL_DOCUMENT_ROOT.'/includes/modules/facture/mercure'
-	);
-
-	foreach ($filetodeletearray as $filetodelete)
-	{
-		//print '<b>'.$filetodelete."</b><br>\n";
-		if (file_exists($filetodelete))
-		{
-			$result=dol_delete_dir_recursive($filetodelete);
-		}
-		if (! $result)
-		{
-			$langs->load("errors");
-			print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteDir",$filetodelete);
-			print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
-		}
-	}
-	return $result;
-}
-
-
-/*
- * Disable/Reenable features modules.
- * We must do this when internal menu of module or permissions has changed
- * or when triggers have moved.
- */
-function migrate_reload_modules($db,$langs,$conf)
-{
-	dolibarr_install_syslog("upgrade2::migrate_reload_modules");
-
-	if (! empty($conf->global->MAIN_MODULE_AGENDA))
-	{
-		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Agenda");
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modAgenda.class.php');
-		$mod=new modAgenda($db);
-		$mod->remove('noboxes');
-		$mod->init('noboxes');
-	}
-	if (! empty($conf->global->MAIN_MODULE_PHENIX))
-	{
-		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Phenix");
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modPhenix.class.php');
-		$mod=new modPhenix($db);
-		$mod->init();
-	}
-	if (! empty($conf->global->MAIN_MODULE_WEBCALENDAR))
-	{
-		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Webcalendar");
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modWebcalendar.class.php');
-		$mod=new modWebcalendar($db);
-		$mod->init();
-	}
-	if (! empty($conf->global->MAIN_MODULE_MANTIS))
-	{
-		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Mantis");
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modMantis.class.php');
-		$mod=new modMantis($db);
-		$mod->init();
-	}
-	if (! empty($conf->global->MAIN_MODULE_SOCIETE))
-	{
-		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Societe");
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modSociete.class.php');
-		$mod=new modSociete($db);
-		$mod->remove('noboxes');
-		$mod->init('noboxes');
-	}
-	if (! empty($conf->global->MAIN_MODULE_PRODUIT))	// Permission has changed into 2.7
-	{
-		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Produit");
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modProduct.class.php');
-		$mod=new modProduct($db);
-		$mod->init();
-	}
-	if (! empty($conf->global->MAIN_MODULE_SERVICE))	// Permission has changed into 2.7
-	{
-		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Service");
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modService.class.php');
-		$mod=new modService($db);
-		$mod->init();
-	}
-	if (! empty($conf->global->MAIN_MODULE_COMMANDE))	// Permission has changed into 2.9
-	{
-		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Commande");
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modCommande.class.php');
-		$mod=new modCommande($db);
-		$mod->init();
-	}
-	if (! empty($conf->global->MAIN_MODULE_FACTURE))	// Permission has changed into 2.9
-	{
-		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Facture");
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modFacture.class.php');
-		$mod=new modFacture($db);
-		$mod->init();
-	}
-	if (! empty($conf->global->MAIN_MODULE_FOURNISSEUR))	// Permission has changed into 2.9
-	{
-		dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Fournisseur");
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modFournisseur.class.php');
-		$mod=new modFournisseur($db);
-		$mod->init();
-	}
-}
 
 /*
  * Correspondance des expeditions et des commandes clients dans la table llx_co_exp
@@ -3200,6 +3048,168 @@ function migrate_directories($db,$langs,$conf,$oldname,$newname)
 }
 
 
+/*
+ * Supprime fichiers obsoletes
+ */
+function migrate_delete_old_files($db,$langs,$conf)
+{
+    $result=true;
+
+    dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
+
+    // List of files to delete
+    $filetodeletearray=array(
+    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php',
+    DOL_DOCUMENT_ROOT.'/includes/menus/barre_left/default.php',
+    DOL_DOCUMENT_ROOT.'/includes/menus/barre_top/default.php',
+    DOL_DOCUMENT_ROOT.'/includes/modules/modComptabiliteExpert.class.php',
+    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modPhenix_Phenixsynchro.class.php',
+    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modWebcalendar_webcalsynchro.class.php',
+    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_Ecotax.class.php',
+    );
+
+    foreach ($filetodeletearray as $filetodelete)
+    {
+        //print '<b>'.$filetodelete."</b><br>\n";
+        if (file_exists($filetodelete))
+        {
+            $result=dol_delete_file($filetodelete);
+        }
+        if (! $result)
+        {
+            $langs->load("errors");
+            print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile",$filetodelete);
+            print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
+        }
+    }
+    return $result;
+}
+
+/*
+ * Remove deprecated directories
+ */
+function migrate_delete_old_dir($db,$langs,$conf)
+{
+    $result=true;
+
+    dolibarr_install_syslog("upgrade2::migrate_delete_old_dir");
+
+    // List of files to delete
+    $filetodeletearray=array(
+    DOL_DOCUMENT_ROOT.'/includes/modules/facture/terre',
+    DOL_DOCUMENT_ROOT.'/includes/modules/facture/mercure'
+    );
+
+    foreach ($filetodeletearray as $filetodelete)
+    {
+        //print '<b>'.$filetodelete."</b><br>\n";
+        if (file_exists($filetodelete))
+        {
+            $result=dol_delete_dir_recursive($filetodelete);
+        }
+        if (! $result)
+        {
+            $langs->load("errors");
+            print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteDir",$filetodelete);
+            print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
+        }
+    }
+    return $result;
+}
+
+
+/*
+ * Disable/Reenable features modules.
+ * We must do this when internal menu of module or permissions has changed
+ * or when triggers have moved.
+ */
+function migrate_reload_modules($db,$langs,$conf)
+{
+    dolibarr_install_syslog("upgrade2::migrate_reload_modules");
+
+    if (! empty($conf->global->MAIN_MODULE_AGENDA))
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Agenda");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modAgenda.class.php');
+        $mod=new modAgenda($db);
+        $mod->remove('noboxes');
+        $mod->init('noboxes');
+    }
+    if (! empty($conf->global->MAIN_MODULE_PHENIX))
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Phenix");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modPhenix.class.php');
+        $mod=new modPhenix($db);
+        $mod->remove('noboxes');
+        $mod->init();
+    }
+    if (! empty($conf->global->MAIN_MODULE_WEBCALENDAR))
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Webcalendar");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modWebcalendar.class.php');
+        $mod=new modWebcalendar($db);
+        $mod->remove('noboxes');
+        $mod->init();
+    }
+    if (! empty($conf->global->MAIN_MODULE_MANTIS))
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Mantis");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modMantis.class.php');
+        $mod=new modMantis($db);
+        $mod->remove('noboxes');
+        $mod->init();
+    }
+    if (! empty($conf->global->MAIN_MODULE_SOCIETE))
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Societe");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modSociete.class.php');
+        $mod=new modSociete($db);
+        $mod->remove('noboxes');
+        $mod->init('noboxes');
+    }
+    if (! empty($conf->global->MAIN_MODULE_PRODUIT))    // Permission has changed into 2.7
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Produit");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modProduct.class.php');
+        $mod=new modProduct($db);
+        //$mod->remove('noboxes');
+        $mod->init();
+    }
+    if (! empty($conf->global->MAIN_MODULE_SERVICE))    // Permission has changed into 2.7
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Service");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modService.class.php');
+        $mod=new modService($db);
+        //$mod->remove('noboxes');
+        $mod->init();
+    }
+    if (! empty($conf->global->MAIN_MODULE_COMMANDE))   // Permission has changed into 2.9
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Commande");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modCommande.class.php');
+        $mod=new modCommande($db);
+        //$mod->remove('noboxes');
+        $mod->init();
+    }
+    if (! empty($conf->global->MAIN_MODULE_FACTURE))    // Permission has changed into 2.9
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Facture");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modFacture.class.php');
+        $mod=new modFacture($db);
+        //$mod->remove('noboxes');
+        $mod->init();
+    }
+    if (! empty($conf->global->MAIN_MODULE_FOURNISSEUR))    // Permission has changed into 2.9
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Fournisseur");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modFournisseur.class.php');
+        $mod=new modFournisseur($db);
+        //$mod->remove('noboxes');
+        $mod->init();
+    }
+}
+
+
 
 /**
  * Reload menu if dynamic menus
@@ -3209,29 +3219,29 @@ function migrate_directories($db,$langs,$conf,$oldname,$newname)
  */
 function migrate_reload_menu($db,$langs,$conf)
 {
-	global $conf;
-	dolibarr_install_syslog("upgrade2::migrate_reload_menu");
+    global $conf;
+    dolibarr_install_syslog("upgrade2::migrate_reload_menu");
 
-	// Define list of menu handlers to initialize
-	$listofmenuhandler=array('auguria');   // We set here only dinamic menu handlers
-	foreach ($listofmenuhandler as $key)
-	{
+    // Define list of menu handlers to initialize
+    $listofmenuhandler=array('auguria');   // We set here only dinamic menu handlers
+    foreach ($listofmenuhandler as $key)
+    {
         print '<tr><td colspan="4">';
 
-		//print "x".$key;
+        //print "x".$key;
         print '<br>';
         print '<b>'.$langs->trans('Upgrade').'</b>: '.$langs->trans('MenuHandler')." ".$key."<br>\n";
 
-		// Load sql ini_menu_handler.sql file
-		$dir = DOL_DOCUMENT_ROOT."/includes/menus/";
-		$file='init_menu_'.$key.'.sql';
-		if (file_exists($dir.$file))
-		{
-			$result=run_sql($dir.$file,1,'',1);
-		}
+        // Load sql ini_menu_handler.sql file
+        $dir = DOL_DOCUMENT_ROOT."/includes/menus/";
+        $file='init_menu_'.$key.'.sql';
+        if (file_exists($dir.$file))
+        {
+            $result=run_sql($dir.$file,1,'',1);
+        }
 
-		print '</td></tr>';
-	}
+        print '</td></tr>';
+    }
 }
 
 

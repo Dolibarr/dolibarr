@@ -313,14 +313,18 @@ class DoliDb
 	}
 
 	/**
-	 * \brief          Renvoie la version du serveur
-	 * \return	        string      Chaine version
+	 * \brief          Return version of server
+	 * \return	       string      String with version
 	 */
 	function getVersion()
 	{
 		$resql=$this->query('SHOW server_version');
-		$liste=$this->fetch_array($resql);
-		return $liste['server_version'];
+		if ($resql)
+		{
+		  $liste=$this->fetch_array($resql);
+		  return $liste['server_version'];
+		}
+		return '';
 	}
 
 	/**
@@ -429,7 +433,7 @@ class DoliDb
 	/**
 	 * \brief      	Convert request to PostgreSQL syntax, execute it and return the resultset
 	 * \param		query			SQL query string
-	 * \param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
+	 * \param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
 	 * \return	    resource    	Resultset of answer
 	 */
 	function query($query,$usesavepoint=0)

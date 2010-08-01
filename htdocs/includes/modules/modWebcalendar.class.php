@@ -34,7 +34,7 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     
+/**
  * 		\class      modWebcalendar
  *      \brief      Description and activation class for module Webcalendar
  */
@@ -69,7 +69,7 @@ class modWebcalendar extends DolibarrModules
 		$this->special = 1;
 		// Name of png file (without png) used for this module
 		$this->picto='calendar';
-		
+
 		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
 		$this->triggers = 1;
 
@@ -127,11 +127,11 @@ class modWebcalendar extends DolibarrModules
      *					The init function add previous constants, boxes and permissions into Dolibarr database.
      *					It also creates data directories.
      */
-	function init()
+	function init($options='')
   	{
     	$sql = array();
 
-    	return $this->_init($sql);
+    	return $this->_init($sql,$options);
   	}
 
 	/**
@@ -139,11 +139,11 @@ class modWebcalendar extends DolibarrModules
  	 *              	Remove from database constants, boxes and permissions from Dolibarr database.
  	 *					Data directories are not deleted.
  	 */
-	function remove()
+	function remove($options='')
 	{
     	$sql = array();
 
-    	return $this->_remove($sql);
+    	return $this->_remove($sql,$options);
   	}
 
 }

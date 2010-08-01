@@ -169,6 +169,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 				$table=$reg[1];
 				if (! isset($listofmaxrowid[$table]))
 				{
+					//var_dump($db);
 					$sqlgetrowid='SELECT MAX(rowid) as max from '.$table;
 					$resql=$db->query($sqlgetrowid);
 					if ($resql)
@@ -179,6 +180,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 					}
 					else
 					{
+						dol_syslog('Admin.lib::run_sql Failed to get max rowid for '.$table.' '.$db->lasterror().' sql='.$sqlgetrowid, LOG_ERR);
 						if (! $silent) print '<tr><td valign="top" colspan="2">';
 						if (! $silent) print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
 						if (! $silent) print '</tr>';

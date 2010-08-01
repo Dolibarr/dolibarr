@@ -68,7 +68,7 @@ class DolibarrModules
 	/**
 	 *      \brief      Fonction d'activation. Insere en base les constantes et boites du module
 	 *      \param      array_sql       Tableau de requete sql a executer a l'activation
-	 *      \param		options			Options when enabling module
+	 *      \param		options			Options when enabling module ('', 'noboxes')
 	 * 		\return     int             1 if OK, 0 if KO
 	 */
 	function _init($array_sql, $options='')
@@ -163,7 +163,7 @@ class DolibarrModules
 	/**
 	 *  \brief      Fonction de desactivation. Supprime de la base les constantes et boites du module
 	 *  \param      array_sql       tableau de requete sql a executer a la desactivation
-	 *  \param		options			Options when disabling module
+	 *  \param		options			Options when disabling module ('', 'noboxes')
 	 *  \return     int             1 if OK, 0 if KO
 	 */
 	function _remove($array_sql, $options='')
@@ -173,28 +173,28 @@ class DolibarrModules
 
 		$this->db->begin();
 
-		// Remove line in activation module
+		// Remove line in activation module (entry in table llx_dolibarr_modules)
 		if (! $err) $err+=$this->_dbunactive();
 
-		// Remove activation module line
+		// Remove activation module line (constant MAIN_MODULE_MYMODULE in llx_const)
 		if (! $err) $err+=$this->_unactive();
 
-		// Remove activation of module's style sheet
+		// Remove activation of module's style sheet (constant MAIN_MODULE_MYMODULE_CSS in llx_const)
 		if (! $err) $err+=$this->delete_style_sheet();
 
-		// Remove activation of module's new tabs
+		// Remove activation of module's new tabs (MAIN_MODULE_MYMODULE_TABS_XXX in llx_const)
 		if (! $err) $err+=$this->delete_tabs();
 
-		// Remove activation of module's triggers
+		// Remove activation of module's triggers (MAIN_MODULE_MYMODULE_TRIGGERS in llx_const)
 		if (! $err) $err+=$this->delete_triggers();
 
-		// Remove list of module's available boxes
+		// Remove list of module's available boxes (entry in llx_boxes)
 		if (! $err && $options != 'noboxes') $err+=$this->delete_boxes();
 
-		// Remove module's permissions from list of available permissions
+		// Remove module's permissions from list of available permissions (entries in llx_rights_def)
 		if (! $err) $err+=$this->delete_permissions();
 
-		// Remove module's menus
+		// Remove module's menus (entries in llx_menu)
 		if (! $err) $err+=$this->delete_menus();
 
 		// Remove module's directories
@@ -859,6 +859,7 @@ class DolibarrModules
 		$sql_del.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
 		$sql_del.= " AND entity IN (0,".$conf->entity.")";
 
+		dol_syslog("DolibarrModules::insert_permissions sql=".$sql_del);
 		$resql=$this->db->query($sql_del);
 		if ($resql)
 		{
@@ -1201,7 +1202,7 @@ class DolibarrModules
 
 	/**
 	 *	\brief      Insert activation triggers from modules in llx_const
-	 *	\return     int     Number of errors (0 if ok)
+	 *	\return     int             Number of errors (0 if ok)
 	 */
 	function insert_triggers()
 	{
@@ -1230,6 +1231,11 @@ class DolibarrModules
 
 			dol_syslog("DolibarrModules::insert_triggers sql=".$sql);
 			$resql=$this->db->query($sql);
+            if (! $resql)
+            {
+                $this->error=$this->db->lasterror();
+            	dol_syslog("DolibarrModules::insert_triggers ".$this->error);
+            }
 		}
 		return $err;
 	}
