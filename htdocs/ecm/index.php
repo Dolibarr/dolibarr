@@ -614,9 +614,9 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	}
 }
 print '</td><td>';
-if ($user->rights->ecm->upload && ! empty($section))
+if (! empty($section))
 {
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php','',0,$section,1);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php','',0,$section,$user->rights->ecm->upload);
 }
 else print '&nbsp;';
 print '</td></tr>';

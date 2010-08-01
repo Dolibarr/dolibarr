@@ -54,7 +54,7 @@ class FormFile
 	 * 		\param		perm			Value of permission to allow upload
 	 * 		\return		int				<0 si ko, >0 si ok
 	 */
-	function form_attach_new_file($url,$title='',$addcancel=0, $sectionid=0, $perm=1)
+	function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1)
 	{
 		global $conf,$langs;
 
