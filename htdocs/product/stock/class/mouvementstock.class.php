@@ -79,7 +79,8 @@ class MouvementStock
 			$sql.= " '".price2num($price)."')";
 
 			dol_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
-			if ($resql = $this->db->query($sql))
+			$resql = $this->db->query($sql);
+			if ($resql)
 			{
 				$mvid = $this->db->last_insert_id(MAIN_DB_PREFIX."stock_mouvement");
 			}
@@ -104,7 +105,8 @@ class MouvementStock
 				$sql.= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
 
 				dol_syslog("MouvementStock::_create sql=".$sql);
-				if ($this->db->query($sql))
+				$resql=$this->db->query($sql);
+				if ($resql)
 				{
 					$obj = $this->db->fetch_object($resql);
 					if ($obj)
