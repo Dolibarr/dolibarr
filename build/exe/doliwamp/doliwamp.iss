@@ -521,7 +521,7 @@ begin
 	    end
 
 
-      if MsgBox('DoliWamp installer will now start or restart Apache and Mysql, this may last from several seconds to one minute after this confirmation.' #13#13 'Start to install or upgrade the web server and database server required by Dolibarr ?',mbConfirmation,MB_YESNO) = IDYES then
+      if MsgBox(CustomMessage('DoliWampWillStartApacheMysql'),mbConfirmation,MB_YESNO) = IDYES then
       begin
 
 		
