@@ -41,7 +41,7 @@ ALTER TABLE llx_entrepot  ADD COLUMN fk_departement integer        DEFAULT NULL 
 
 ALTER TABLE llx_bookmark ADD COLUMN position integer        DEFAULT 0;
 
--- rename llx_product_det
+-- Rename llx_product_det
 ALTER TABLE llx_product_det RENAME TO llx_product_lang;
 ALTER TABLE llx_product_lang ADD UNIQUE INDEX uk_product_lang (fk_product, lang);
 -- V4.1 DELETE FROM llx_product_lang WHERE fk_product NOT IN (SELECT rowid from llx_product);
@@ -64,7 +64,7 @@ update llx_facture_fourn set fk_statut=2 where fk_statut=1 AND paye=1;
 alter table llx_facture_fourn add column close_code          varchar(16) after remise;
 alter table llx_facture_fourn add column close_note          varchar(128) after close_code;
 
---add local taxes
+-- Add local taxes
 alter table llx_facture add column localtax1 double(24,8) DEFAULT 0 after tva;
 alter table llx_facture add column localtax2 double(24,8) DEFAULT 0 after localtax1;
 alter table llx_facturedet add column localtax1_tx double(6,3) DEFAULT 0 after tva_tx;
@@ -172,7 +172,7 @@ ALTER TABLE llx_adherent ADD COLUMN civilite varchar(6) after entity;
 
 ALTER TABLE llx_deplacement ADD COLUMN fk_projet integer DEFAULT 0 after fk_soc;
 
--- custom list
+-- Custom list
 DROP TABLE llx_c_field_list;
 create table llx_c_field_list
 (
@@ -204,7 +204,7 @@ INSERT INTO llx_c_field_list (rowid, element, entity, name, alias, title, align,
 UPDATE llx_adherent SET pays = null where pays <= '0' and pays != '0';
 ALTER table llx_adherent MODIFY pays integer;
 
--- drop old table
+-- Drop old tables
 DROP TABLE llx_projet_milestone;
 ALTER TABLE llx_projet drop column fk_milestone;
 
@@ -248,7 +248,7 @@ UPDATE llx_expedition set ref_customer = NULL where ref_customer = '';
 insert into llx_c_actioncomm (id, code, type, libelle, module) values (30, 'AC_SUP_ORD',  'system', 'Send supplier invoice by email'      ,'supplier_order');
 insert into llx_c_actioncomm (id, code, type, libelle, module) values (31, 'AC_SUP_INV',  'system', 'Send supplier invoice by email'      ,'supplier_invoice');
 
--- rename llx_societe_adresse_livraison
+-- Rename llx_societe_adresse_livraison
 ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_adresse_livraison;
 ALTER TABLE llx_expedition DROP INDEX idx_expedition_fk_adresse_livraison;
 ALTER TABLE llx_livraison DROP FOREIGN KEY fk_livraison_fk_adresse_livraison;
@@ -296,7 +296,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2324', 2305, '', 24, 'ISLAS MALVINAS', 'Islas Malvinas', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2325', 2305, '', 25, 'ANTARTIDA', 'Antártida', 1);
 
--- forme juridique Argentina
+-- Juridical status Argentina
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2301', 'Monotributista', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2302', 'Sociedad Civil', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2303', 'Sociedades Comerciales', 1);

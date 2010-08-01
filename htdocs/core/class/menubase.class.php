@@ -101,6 +101,13 @@ class Menubase
 		// Check parameters
 		// Put here code to add control on parameters values
 
+        // FIXME
+        // Get the max rowid in llx_menu and use it as rowid in insert because postgresql
+        // may use an already used value because its internal cursor does not increase when we do
+        // an insert with a forced id.
+        // Two solution: Disable menu handler with database for postgres or update couter when
+        // enabling such menus.
+
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
 		$sql.= "menu_handler,";
