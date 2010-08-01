@@ -554,6 +554,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
                 $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
                 $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
+
+		        $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
             }
 
             // Prelevements
