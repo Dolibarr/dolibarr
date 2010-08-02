@@ -222,8 +222,6 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 
 			migrate_detail_livraison($db,$langs,$conf);
 
-			migrate_module_menus($db,$langs,$conf);
-
 
 			// Script pour V2.5 -> V2.6
 			migrate_stocks($db,$langs,$conf);
