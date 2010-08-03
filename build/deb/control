@@ -4,7 +4,6 @@ Section: web
 Priority: optional
 Maintainer: Laurent Destailleur <eldy@users.sourceforge.net>
 Package: dolibarr
-Section: web
 Architecture: all
 Essential: no
 Depends: wwwconfig-common, apache2, libapache2-mod-php5, php5, php5-cgi, php5-curl, php5-gd, php5-imagick, php5-ldap, php5-mcrypt, php5-mysql, mysql-server, perl
