@@ -1,4 +1,4 @@
-*/build/*
+*/build
 */dev/dbmodel/*
 */dev/fpdf/*
 */dev/initdemo/*
@@ -59,7 +59,7 @@
 */scripts/addons/*
 */scripts/courrier/*
 */scripts/lolix/*
-*/test/*
+*/test
 */CVS/*
 *~
 *.#*
