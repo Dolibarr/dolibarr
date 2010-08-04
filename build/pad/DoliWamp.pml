@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PADGEN_PML>
-	<AppVerInfo>PADGen 3.1.0.41</AppVerInfo>
+	<AppVerInfo>PADGen 3.1.1.47</AppVerInfo>
 	<CompanyName />
 	<Program_Info>
 		<Program_Name>DoliWamp</Program_Name>
@@ -42,9 +42,10 @@
 			<Char_Desc_80>DoliWamp, the easy to use Dolibarr for Windows to manage your companyfoundation</Char_Desc_80>
 			<Char_Desc_250>DoliWamp is the Dolibarr ERP/CRM for Windows, the easy to use open source software to manage your activity (invoices, customers, suppliers, contracts, agenda, emailings...) and any other things a small or medium company or a foundation needs.</Char_Desc_250>
 			<Char_Desc_450>DoliWamp is the Dolibarr ERP/CRM autoinstaller for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations.</Char_Desc_450>
-			<Char_Desc_2000>DoliWamp is the Dolibarr ERP/CRM for Windows. It's an auto-installer for Windows users with no technical knowledge to install Dolibarr ERP/CRM and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file.
-Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations.
+			<Char_Desc_2000>DoliWamp is the Dolibarr ERP/CRM for Windows.
+Dolibarr ERP &amp; CRM is a software built by modules addition (you enable only features you need), to manage small or mid-sized businesses, freelancers or foundations (contacts, invoices, orders, commercial proposals, products, stock management, agenda, ...).
 It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems). Dolibarr differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, OpenERP, Neogia, Compiere, etc) because everything was made to be more simple: Simple to install, Simple to use, Simple to develop. 
+DoliWamp is an auto-installer for Windows users with no technical knowledge to install Dolibarr ERP/CRM and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file.
 </Char_Desc_2000>
 		</English>
 	</Program_Descriptions>
@@ -70,7 +71,7 @@ It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, P
 	<Affiliates>
 		<Affiliates_FORM>Y</Affiliates_FORM>
 		<Affiliates_VERSION>1.4</Affiliates_VERSION>
-		<Affiliates_URL>http://www.asp-shareware.org/pad/extensions/Affiliates.htm</Affiliates_URL>
+		<Affiliates_URL>http://pad.asp-software.org/extensions/Affiliates.htm</Affiliates_URL>
 		<Affiliates_Information_Page />
 		<Affiliates_Avangate_Order_Page />
 		<Affiliates_Avangate_Vendor_ID />
