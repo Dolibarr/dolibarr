@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PADGEN_PML>
-	<AppVerInfo>PADGen 3.1.0.41</AppVerInfo>
+	<AppVerInfo>PADGen 3.1.1.47</AppVerInfo>
 	<CompanyName />
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
@@ -37,12 +37,12 @@
 	</Program_Info>
 	<Program_Descriptions>
 		<English>
-			<Keywords>dolibarr, erp, crm, invoice, order, management, company, sme, accounting</Keywords>
+			<Keywords>dolibarr, erp, crm, invoices, commercial proposals, orders, accounting, stock, products, agenda, bank, business, company, foundation, management, sme, doliwamp</Keywords>
 			<Char_Desc_45>Dolibarr ERP/CRM</Char_Desc_45>
 			<Char_Desc_80>Dolibarr ERP/CRM, the easy to use open source software to manage your activity</Char_Desc_80>
-			<Char_Desc_250>Dolibarr ERP/CRM, the easy to use open source software to manage your activity (invoices, customers, suppliers, contracts, agenda, emailings...) and any other things a small or medium company or a foundation needs to follow.</Char_Desc_250>
+			<Char_Desc_250>Dolibarr ERP/CRM, the easy to use open source software to manage your activity (invoices, customers, suppliers, contracts, agenda, emailings...) and any other things a small or mid-sized business or a foundation needs to follow.</Char_Desc_250>
 			<Char_Desc_450>Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations. We can say Dolibarr is an ERP or CRM. Dolibarr is also available with an auto-installer for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. See DoliWamp software for this.</Char_Desc_450>
-			<Char_Desc_2000>Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations. We can say Dolibarr is an ERP or CRM (or both depending on activated modules).
+			<Char_Desc_2000>Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or mid-sized businesses, freelancers or foundations. We can say Dolibarr is an ERP or CRM (or both depending on activated modules).
 
 It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems). Dolibarr differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, OpenERP, Neogia, Compiere, etc) because everything was made to be more simple:
 
@@ -50,8 +50,16 @@ It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, P
     * Simple to use
     * Simple to develop 
 
-Note that Dolibarr is also available with an auto-installer for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. This version is called DoliWamp.</Char_Desc_2000>
+Note that Dolibarr is also available with an auto-installer for Windows or Ubuntu users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. This version is called DoliWamp (for Windows) or DoliBuntu (for Ubuntu/Debian).</Char_Desc_2000>
 		</English>
+		<French>
+			<Keywords />
+			<Char_Desc_45 />
+			<Char_Desc_80 />
+			<Char_Desc_250 />
+			<Char_Desc_450 />
+			<Char_Desc_2000 />
+		</French>
 	</Program_Descriptions>
 	<Web_Info>
 		<Application_URLs>
@@ -75,7 +83,7 @@ Note that Dolibarr is also available with an auto-installer for Windows users wi
 	<Affiliates>
 		<Affiliates_FORM>Y</Affiliates_FORM>
 		<Affiliates_VERSION>1.4</Affiliates_VERSION>
-		<Affiliates_URL>http://www.asp-shareware.org/pad/extensions/Affiliates.htm</Affiliates_URL>
+		<Affiliates_URL>http://pad.asp-software.org/extensions/Affiliates.htm</Affiliates_URL>
 		<Affiliates_Information_Page />
 		<Affiliates_Avangate_Order_Page />
 		<Affiliates_Avangate_Vendor_ID />
