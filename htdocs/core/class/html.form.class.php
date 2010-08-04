@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
@@ -34,7 +34,7 @@
 
 /**
  *	\class      Form
- *	\brief      Classe permettant la generation de composants html
+ *	\brief      Class to manage generation of HTML components
  *	\remarks	Only common components must be here.
  */
 class Form
@@ -51,24 +51,24 @@ class Form
 
 
 	/**
-	 *	\brief     Constructor
-	 *	\param     DB      Database handler
+	 * Constructor
+	 * @param      $DB      Database handler
 	 */
 	function Form($DB)
 	{
 		$this->db = $DB;
-
-		return 1;
 	}
 
 	/**
-	 *	\brief		Output key field for an editable field
-	 * 	\param		text			Text of label
-	 * 	\param		htmlname		Name of select field
-	 * 	\param		preselected		Preselected value for parameter
-	 * 	\param		paramkey		Key of parameter (unique if there is several parameter to show)
-	 * 	\param		perm			Permission to allow button to edit parameter
-	 * 	\param		typeofdata		Type of data (string by default, email, ...)
+	 * Output key field for an editable field
+	 * @param      text            Text of label
+	 * @param      htmlname        Name of select field
+	 * @param      preselected     Preselected value for parameter
+	 * @param      paramkey        Key of parameter (unique if there is several parameter to show)
+	 * @param      paramvalue      Value of parameter
+	 * @param      perm            Permission to allow button to edit parameter
+	 * @param      typeofdata      Type of data (string by default, email, ...)
+	 * @return     string          HTML edit field
 	 */
 	function editfieldkey($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
 	{
@@ -90,6 +90,7 @@ class Form
 	 * 	\param		paramkey		Key of parameter (unique if there is several parameter to show)
 	 * 	\param		perm			Permission to allow button to edit parameter
 	 * 	\param		typeofdata		Type of data (string by default, email, ...)
+	 *  \return     string         HTML edit field
 	 */
 	function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
 	{
@@ -426,7 +427,7 @@ class Form
 
 		// If product & services are enabled or both disabled.
 		if ($forceall || ($conf->product->enabled && $conf->service->enabled)
-			|| (empty($conf->product->enabled) && empty($conf->service->enabled)))
+		|| (empty($conf->product->enabled) && empty($conf->service->enabled)))
 		{
 			if (empty($hidetext)) print $langs->trans("Type").': ';
 			print '<select class="flat" name="'.$htmlname.'">';
@@ -1768,7 +1769,7 @@ class Form
 			$pageno=($useajax == 2?$page.'&confirm=no':'');
 			// Note: Title is not used by dialogConfirm function
 			print '<script type="text/javascript">window.onload = function(){ dialogConfirm(\''.$title.'\',\''.$pageyes.'\',\''.$pageno.'\',\''.dol_escape_js('<b>'.$title.'</b><br>'.$more.$question).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\'); }</script>';
-//			print '<script id="eee" type="text/javascript">dialogConfirm(\'aaa\',\'bbb\',\'ccc\',\'eee\',\'yyy\',\'zzz\',\'validate\')</script>';
+			//			print '<script id="eee" type="text/javascript">dialogConfirm(\'aaa\',\'bbb\',\'ccc\',\'eee\',\'yyy\',\'zzz\',\'validate\')</script>';
 
 			print "\n";
 			$ret='ajax';
@@ -2258,7 +2259,7 @@ class Form
 		if (is_object($societe_vendeuse))
 		{
 			if ($societe_vendeuse->isInEEC() && (! empty($societe_vendeuse->tva_intra))
-				&& preg_match('/^([A-Z][A-Z])/',$societe_vendeuse->tva_intra,$reg))
+			&& preg_match('/^([A-Z][A-Z])/',$societe_vendeuse->tva_intra,$reg))
 			{
 				$code_pays=$reg[1];
 			}
@@ -2866,12 +2867,12 @@ class Form
 		global $langs;
 
 		$week = array(	0=>$langs->trans("Day0"),
-						1=>$langs->trans("Day1"),
-						2=>$langs->trans("Day2"),
-						3=>$langs->trans("Day3"),
-						4=>$langs->trans("Day4"),
-						5=>$langs->trans("Day5"),
-						6=>$langs->trans("Day6"));
+		1=>$langs->trans("Day1"),
+		2=>$langs->trans("Day2"),
+		3=>$langs->trans("Day3"),
+		4=>$langs->trans("Day4"),
+		5=>$langs->trans("Day5"),
+		6=>$langs->trans("Day6"));
 
 		$select_week = '<select class="flat" name="'.$htmlname.'">';
 		if ($useempty)
@@ -3040,26 +3041,26 @@ class Form
 		if ($dir && $file)
 		{
 			if (file_exists($dir."/".$file))
-		    {
-		        $ret.='<img alt="Photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'">';
-		    }
+			{
+				$ret.='<img alt="Photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'">';
+			}
 			else if (file_exists($dir."/".$altfile))
-		    {
-		        $ret.='<img alt="Photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($altfile).'">';
-		    }
-		    else
-		    {
-		    	if ($conf->gravatar->enabled)
-		    	{
-		    		global $dolibarr_main_url_root;
-		    		$ret.='<!-- Put link to gravatar -->';
-		    		$ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" width="'.$width.'" src="http://www.gravatar.com/avatar/'.md5($email).'?s='.$width.'&d='.urlencode($dolibarr_main_url_root.'/theme/common/nophoto.jpg').'">';
-		    	}
-		    	else
-		    	{
-		        	$ret.='<img alt="No photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
-		    	}
-		    }
+			{
+				$ret.='<img alt="Photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($altfile).'">';
+			}
+			else
+			{
+				if ($conf->gravatar->enabled)
+				{
+					global $dolibarr_main_url_root;
+					$ret.='<!-- Put link to gravatar -->';
+					$ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" width="'.$width.'" src="http://www.gravatar.com/avatar/'.md5($email).'?s='.$width.'&d='.urlencode($dolibarr_main_url_root.'/theme/common/nophoto.jpg').'">';
+				}
+				else
+				{
+					$ret.='<img alt="No photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+				}
+			}
 		}
 		else
 		{
