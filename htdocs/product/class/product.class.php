@@ -1667,6 +1667,7 @@ class Product extends CommonObject
 	 *    	\return     int        < 0 si erreur, > 0 si ok
 	 * 		\remark		Not used. Used by module droitpret only.
 	 */
+	/* Deprecated. Is not used
 	function load_subproduct()
 	{
 		$this->subproducts_id = array();
@@ -1691,7 +1692,7 @@ class Product extends CommonObject
 	 		return -1;
 		}
 	}
-
+    */
 
 	/**
 	 *    	\brief      Lie un sous produit au produit/service
@@ -1699,6 +1700,7 @@ class Product extends CommonObject
 	 *    	\return     int        < 0 si erreur, > 0 si ok
 	 * 		\remark		Not used. Used by module droitpret only.
 	 */
+    /* Deprecated. Is not used
 	function add_subproduct($id_sub)
 	{
 		if ($id_sub)
@@ -1720,6 +1722,7 @@ class Product extends CommonObject
 			return -2;
 		}
 	}
+    */
 
 	/**
 	 *    \brief      Add a supplier reference for the product
