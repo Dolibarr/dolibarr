@@ -618,9 +618,9 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 	print '</td></tr>';
 
+    $generated_password='';
 	if (!$ldap_sid)
 	{
-		$generated_password='';
 		if ($conf->global->USER_PASSWORD_GENERATED)
 		{
 			$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
