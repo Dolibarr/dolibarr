@@ -40,7 +40,7 @@
  */
 function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocaltax1=0, $txlocaltax2=0, $remise_percent_global=0, $price_base_type='HT', $info_bits=0)
 {
-	global $conf;
+	global $conf,$mysoc;
 
 	$result=array();
 
@@ -108,17 +108,17 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 	{
 		$result[14] = 0;
 		$result[9]  = 0;
-		$result[11] = 0;	
+		$result[11] = 0;
 	}
-	
+
 	if ($txlocaltax2>0)
 	{
 		$result[15] = price2num(($tot_sans_remise * ( 1 + ( $txlocaltax2 / 100))) - $tot_sans_remise, 'MT');
 		$result[10] = price2num(($tot_avec_remise * ( 1 + ( $txlocaltax2 / 100))) - $tot_avec_remise, 'MT');
 		$result[12] = price2num(($pu * ( 1 + ( $txlocaltax2 / 100))) - $pu, 'MT');
-		
+
 		//If Country is Spain, localtax2 (IRPF) will be subtracted
-		if ($conf->global->MAIN_INFO_SOCIETE_PAYS='4')
+		if ($mysoc->pays_code=='ES')
 		{
 			$result[8] = $result[8] - $result[15];
 			$result[2] = $result[2] - $result[10];
@@ -137,7 +137,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		$result[10] = 0;
 		$result[12] = 0;
 	}
-	
+
 	// If rounding is not using base 10 (rare)
 	if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT))
 	{
