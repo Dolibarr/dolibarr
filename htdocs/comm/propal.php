@@ -1447,135 +1447,20 @@ if ($id > 0 || ! empty($ref))
 	{
 		$var=true;
 
-		if ($conf->milestone->enabled)
-		{
-			formAddMilestone($propal);
+		$propal->showAddFreeProductForm($propal);
 
-			$var=!$var;
-		}
-
-		if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
-		print '<tr class="liste_titre">';
-		print '<td '.$colspan.'>';
-		print '<a name="add"></a>'; // ancre
-		print $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone").'</td>';
-		print '<td align="right">'.$langs->trans('VAT').'</td>';
-		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-		print '<td align="right">'.$langs->trans('Qty').'</td>';
-		print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-		print '<td colspan="4">&nbsp;</td>';
-		print "</tr>\n";
-
-		// Add free products/services form
-		print "\n".'<form action="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'#add" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="addline">';
-		print '<input type="hidden" name="id" value="'.$propal->id.'">';
-
-		print '<tr '.$bc[$var].">\n";
-		print '<td '.$colspan.'>';
-
-		print $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
-		if ($conf->product->enabled && $conf->service->enabled) print '<br>';
-
-		// Editor wysiwyg
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-		{
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],100,'dolibarr_details');
-			$doleditor->Create();
-		}
-		else
-		{
-			$nbrows=ROWS_2;
-			if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-			print '<textarea class="flat" cols="70" name="dp_desc" rows="'.$nbrows.'">'.$_POST["dp_desc"].'</textarea>';
-		}
-		print '</td>';
-
-		print '<td align="right">';
-		if ($societe->tva_assuj == "0")
-		print '<input type="hidden" name="np_tva_tx" value="0">0';
-		else
-		$html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe);
-		print "</td>\n";
-		print '<td align="right"><input type="text" size="5" name="np_price"></td>';
-		print '<td align="right"><input type="text" size="2" name="qty" value="'.(isset($_POST["qty"])?$_POST["qty"]:1).'"></td>';
-		print '<td align="right" nowrap><input type="text" size="1" value="'.$societe->remise_client.'" name="remise_percent">%</td>';
-		print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
-		print '</tr>';
-
-		print '</form>'."\n";
-
-		// Ajout de produits/services predefinis
+		// Add predefined products/services
 		if ($conf->product->enabled || $conf->service->enabled)
 		{
-			if ($conf->global->PRODUIT_USE_MARKUP)
-			{
-				$colspan = 'colspan="4"';
-			}
-			else
-			{
-				$colspan = 'colspan="3"';
-			}
-			print '<tr class="liste_titre">';
-			print '<td '.$colspan.'>';
-			print $langs->trans("AddNewLine").' - ';
-			if ($conf->service->enabled)
-			{
-				print $langs->trans('RecordedProductsAndServices');
-			}
-			else
-			{
-				print $langs->trans('RecordedProducts');
-			}
-			print '</td>';
-			print '<td align="right">'.$langs->trans('Qty').'</td>';
-			print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-			print '<td colspan="4">&nbsp;</td>';
-			print '</tr>';
-			print "\n".'<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'#add" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="addline">';
-			print '<input type="hidden" name="id" value="'.$propal->id.'">';
-
 			$var=!$var;
-
-			print '<tr '.$bc[$var].'>';
-			print '<td '.$colspan.'>';
-			// multiprix
-			if($conf->global->PRODUIT_MULTIPRICES)
-			{
-				$html->select_produits('','idprod','',$conf->product->limit_size,$societe->price_level);
-			}
-			else
-			{
-				$html->select_produits('','idprod','',$conf->product->limit_size);
-			}
-			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
-
-			// Editor wysiwyg
-			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-			{
-				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('np_desc',$_POST["np_desc"],100,'dolibarr_details');
-				$doleditor->Create();
-			}
-			else
-			{
-				$nbrows=ROWS_2;
-				if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-				print '<textarea cols="70" name="np_desc" rows="'.$nbrows.'" class="flat">'.$_POST["np_desc"].'</textarea>';
-			}
-
-			print '</td>';
-			print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
-			print '<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="'.$societe->remise_client.'">%</td>';
-
-			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addline">';
-			print '</td></tr>'."\n";
-
-			print '</form>';
+			$propal->showAddPredefinedProductForm($propal);
+		}
+		
+		// Add hook of other modules
+		if ($conf->milestone->enabled)
+		{
+			$var=!$var;
+			formAddMilestone($propal);
 		}
 	}
 

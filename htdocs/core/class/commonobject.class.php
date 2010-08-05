@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010 	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -1149,9 +1149,34 @@ class CommonObject
 			print $sql;
 		}
 	}
+	
+	/**
+	 *	Show add free products/services form
+	 */
+	function showAddFreeProductForm($object)
+	{
+		global $conf,$langs;
+		global $html,$bc,$var;
+
+		include(DOL_DOCUMENT_ROOT.'/core/tpl/addfreeproductform.tpl.php');
+	}
+	
+	/**
+	 *	Show add predefined products/services form
+	 */
+	function showAddPredefinedProductForm($object)
+	{
+		global $conf,$langs;
+		global $html,$bc,$var;
+
+		include(DOL_DOCUMENT_ROOT.'/core/tpl/addpredefinedproductform.tpl.php');
+	}
 
 	/**
-	 *
+	 *	Show linked object block
+	 *	@param	$object
+	 *	@param	$objectid
+	 *	@param	$somethingshown
 	 */
 	function showLinkedObjectBlock($object,$objectid,$somethingshown=0)
 	{
