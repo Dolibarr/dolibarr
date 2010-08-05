@@ -1443,24 +1443,27 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Form to add new line
 	 */
-	if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] <> 'editline')
+	if ($propal->statut == 0 && $user->rights->propale->creer)
 	{
-		$var=true;
-
-		$propal->showAddFreeProductForm();
-
-		// Add predefined products/services
-		if ($conf->product->enabled || $conf->service->enabled)
+		if (! preg_match('/editline|edit_/',$_GET["action"]))
 		{
-			$var=!$var;
-			$propal->showAddPredefinedProductForm();
-		}
-		
-		// Add hook of other modules
-		if ($conf->milestone->enabled)
-		{
-			$var=!$var;
-			formAddMilestone($propal);
+			$var=true;
+			
+			$propal->showAddFreeProductForm();
+			
+			// Add predefined products/services
+			if ($conf->product->enabled || $conf->service->enabled)
+			{
+				$var=!$var;
+				$propal->showAddPredefinedProductForm();
+			}
+			
+			// Add hook of other modules
+			if ($conf->milestone->enabled)
+			{
+				$var=!$var;
+				formAddMilestone($propal);
+			}
 		}
 	}
 
