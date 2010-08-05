@@ -43,10 +43,10 @@ $colspan = 'colspan="3"';
 	<td colspan="4">&nbsp;</td>
 </tr>
 
-<form id="addpredefinedproduct" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>#add" method="POST">
+<form id="addpredefinedproduct" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="addline">
-<input type="hidden" name="id" value="<?php echo $object->id; ?>">
+<input type="hidden" name="id" value="<?php echo $this->id; ?>">
 
 <tr <?php echo $bc[$var]; ?>>
 	<td <?php echo $colspan; ?>>
@@ -79,6 +79,19 @@ $colspan = 'colspan="3"';
 
 	<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>" name="addline"></td>
 </tr>
+
+<?php if ($conf->service->enabled && $dateSelector) {?>
+<tr <?php echo $bc[$var]; ?>>
+	<td colspan="9">
+	<?php
+	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+	echo $html->select_date('','date_start',$usehm,$usehm,1,"addline");
+	echo ' '.$langs->trans('to').' ';
+	echo $html->select_date('','date_end',$usehm,$usehm,1,"addline");
+	?>
+	</td>
+</tr>
+<?php } ?>
 
 </form>
 

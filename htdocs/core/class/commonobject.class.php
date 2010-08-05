@@ -1153,7 +1153,7 @@ class CommonObject
 	/**
 	 *	Show add free products/services form
 	 */
-	function showAddFreeProductForm($object)
+	function showAddFreeProductForm($dateSelector=0)
 	{
 		global $conf,$langs;
 		global $html,$bc,$var;
@@ -1164,7 +1164,7 @@ class CommonObject
 	/**
 	 *	Show add predefined products/services form
 	 */
-	function showAddPredefinedProductForm($object)
+	function showAddPredefinedProductForm($dateSelector=0)
 	{
 		global $conf,$langs;
 		global $html,$bc,$var;

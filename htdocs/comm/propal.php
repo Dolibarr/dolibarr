@@ -1447,13 +1447,13 @@ if ($id > 0 || ! empty($ref))
 	{
 		$var=true;
 
-		$propal->showAddFreeProductForm($propal);
+		$propal->showAddFreeProductForm();
 
 		// Add predefined products/services
 		if ($conf->product->enabled || $conf->service->enabled)
 		{
 			$var=!$var;
-			$propal->showAddPredefinedProductForm($propal);
+			$propal->showAddPredefinedProductForm();
 		}
 		
 		// Add hook of other modules

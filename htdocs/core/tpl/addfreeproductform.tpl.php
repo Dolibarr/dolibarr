@@ -35,10 +35,10 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 	<td colspan="4">&nbsp;</td>
 </tr>
 
-<form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>#add" method="POST">
+<form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="addline">
-<input type="hidden" name="id" value="<?php echo $object->id; ?>">
+<input type="hidden" name="id" value="<?php echo $this->id; ?>">
 
 <tr <?php echo $bc[$var]; ?>>
 	<td <?php echo $colspan; ?>>
@@ -75,6 +75,19 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 	<td align="right" nowrap><input type="text" size="1" value="<?php echo $societe->remise_client; ?>" name="remise_percent">%</td>
 	<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
 </tr>
+
+<?php if ($conf->service->enabled && $dateSelector) {?>
+<tr <?php echo $bc[$var]; ?>>
+	<td colspan="9">
+	<?php
+	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+	echo $html->select_date('','date_start',$usehm,$usehm,1,"addline");
+	echo ' '.$langs->trans('to').' ';
+	echo $html->select_date('','date_end',$usehm,$usehm,1,"addline");
+	?>
+	</td>
+</tr>
+<?php } ?>
 
 </form>
 
