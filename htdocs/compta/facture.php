@@ -1434,8 +1434,10 @@ if ($_GET['action'] == 'create')
 	// Factures predefinies
 	if (empty($_GET['propalid']) && empty($_GET['commandeid']) && empty($_GET['contratid']) && empty($_GET['originid']))
 	{
-		$sql = 'SELECT r.rowid, r.titre, r.total_ttc FROM '.MAIN_DB_PREFIX.'facture_rec as r';
+		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as r';
 		$sql.= ' WHERE r.fk_soc = '.$soc->id;
+		
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -1452,7 +1454,7 @@ if ($_GET['action'] == 'create')
 					$objp = $db->fetch_object($resql);
 					print '<option value="'.$objp->rowid.'"';
 					if ($_POST["fac_rec"] == $objp->rowid) print ' selected="true"';
-					print '>'.$objp->titre.' ('.$objp->total_ttc.' '.$langs->trans("TTC").')</option>';
+					print '>'.$objp->titre.' ('.price($objp->total_ttc).' '.$langs->trans("TTC").')</option>';
 					$i++;
 				}
 				print '</select></td></tr>';
