@@ -22,13 +22,13 @@ create table llx_extra_fields_values
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
-  entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
+  entity                integer  DEFAULT 1 NOT NULL,	 -- multi company id
   
   datec					datetime,
   datem					datetime,
-  fk_object 			integer NOT NULL,
-  fk_extra_fields		integer NOT NULL,
-  value					varchar(255),
+  fk_object 			integer NOT NULL,                -- id of object (rowid of proposal, order, invoice...)
+  fk_extra_fields		integer NOT NULL,                -- key to attribute definition
+  value					varchar(255),                    -- value of attribute
 
   fk_user_create 		integer,
   fk_user_modif 		integer

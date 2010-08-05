@@ -24,14 +24,14 @@ create table llx_extra_fields
   tms                   timestamp,
   entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
   
-  object 				varchar(64) NOT NULL,
-  assign 				integer,
-  name 					varchar(64) NOT NULL,
+  object 				varchar(64) NOT NULL,           -- type of link 'invoice', 'order', 'proposal', 'supplier_invoice', 'supplier_order'
+  name 					varchar(64) NOT NULL,           -- code name of field
   label					varchar(64) NOT NULL,
-  format				varchar(8) 	NOT NULL,
+  format				varchar(8) 	NOT NULL,           -- date, string, integer, float
   fieldsize 			integer,
   maxlength 			integer,
-  options 				varchar(45),
-  rank 					integer
+  options 				varchar(255),
+  rank 					integer,
   
+  assign                integer         -- ???
 )type=innodb;
