@@ -311,3 +311,6 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2312', 'Sociedad Anónima con Participación Estatal Mayoritaria', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2313', 'Sociedad en Comandita por Acciones (arts. 315 a 324, LSC)', 1);
 
+
+delete from llx_const where name='USER_PASSWORD_GENERATED' and value='default';
+
