@@ -2998,143 +2998,18 @@ else
 			 */
 			if ($fac->statut == 0 && $user->rights->facture->creer && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
 			{
-				// Free zone form
-				print '<tr class="liste_titre">';
-				print '<td>';
-				print '<a name="add"></a>'; // ancre
-				print $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone").'</td>';
-				print '<td align="right">'.$langs->trans('VAT').'</td>';
-				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-				print '<td align="right">'.$langs->trans('Qty').'</td>';
-				print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-				print '<td colspan="4">&nbsp;</td>';
-				print "</tr>\n";
-
-				// Add free products/services form
-				print '<form name="addline" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-				print '<input type="hidden" name="action" value="addline">';
-
 				$var=true;
-				print '<tr '.$bc[$var].'>';
-				print '<td>';
-
-				print $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
-				if (($conf->product->enabled && $conf->service->enabled)
-				|| (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
-
-				// Editor wysiwyg
-				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],100,'dolibarr_details');
-					$doleditor->Create();
-				}
-				else
-				{
-					$nbrows=ROWS_2;
-					if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-					print '<textarea class="flat" cols="70" name="dp_desc" rows="'.$nbrows.'">'.$_POST["dp_desc"].'</textarea>';
-				}
-				print '</td>';
-				print '<td align="right">';
-				if($soc->tva_assuj == "0")
-				print '<input type="hidden" name="tva_tx" value="0">0';
-				else
-				$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
-				print '</td>';
-				print '<td align="right"><input type="text" name="pu" size="6"></td>';
-				print '<td align="right"><input type="text" name="qty" value="'.($fac->type==2?'-1':'1').'" size="2"></td>';
-				print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
-				print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-				print '</tr>';
-				if ($conf->service->enabled)
-				{
-					print '<tr '.$bc[$var].'>';
-					print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-					print $html->select_date('','date_start',$usehm,$usehm,1,"addline");
-					print ' '.$langs->trans('to').' ';
-					print $html->select_date('','date_end',$usehm,$usehm,1,"addline");
-					print '</td>';
-					print '</tr>';
-				}
-				print '</form>';
-
-
-				// Predefined services/products form
+				
+				$fac->showAddFreeProductForm(1);
+				
+				// Add predefined products/services
 				if ($conf->product->enabled || $conf->service->enabled)
 				{
-					print '<tr class="liste_titre">';
-					print '<td colspan="3">';
-					print $langs->trans("AddNewLine").' - ';
-					if ($conf->service->enabled)
-					{
-						print $langs->trans('RecordedProductsAndServices');
-					}
-					else
-					{
-						print $langs->trans('RecordedProducts');
-					}
-					print '</td>';
-					print '<td align="right">'.$langs->trans('Qty').'</td>';
-					print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-					print '<td colspan="4">&nbsp;</td>';
-					print '</tr>';
-
-					print '<form id="addpredefinedproduct" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-					print '<input type="hidden" name="action" value="addline_predef">';
-
-					$var=! $var;
-					print '<tr '.$bc[$var].'>';
-					print '<td colspan="3">';
-					// multiprix
-					if($conf->global->PRODUIT_MULTIPRICES)
-					{
-						$html->select_produits((! empty($_POST['idprod'])?$_POST['idprod']:''),'idprod','',$conf->product->limit_size,$soc->price_level);
-					}
-					else
-					{
-						$html->select_produits((! empty($_POST['idprod'])?$_POST['idprod']:''),'idprod','',$conf->product->limit_size);
-					}
-
-					if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
-
-					// Editor wysiwyg
-					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-					{
-						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-						$doleditor=new DolEditor('np_desc',$_POST["np_desc"],100,'dolibarr_details');
-						$doleditor->Create();
-					}
-					else
-					{
-						$nbrows=ROWS_2;
-						if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-						print '<textarea cols="70" name="np_desc" rows="'.$nbrows.'" class="flat">'.$_POST["np_desc"].'</textarea>';
-					}
-
-					print '</td>';
-					print '<td align="right"><input type="text" name="qty" value="'.($fac->type==2?'-1':'1').'" size="2"></td>';
-					print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
-					print '<td align="center" valign="middle" colspan="5"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-					print '</tr>';
-					if ($conf->service->enabled)
-					{
-						print '<tr '.$bc[$var].'>';
-						print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-						print $html->select_date('','date_start_predef',$usehm,$usehm,1,"addline_predef");
-						print ' '.$langs->trans('to').' ';
-						print $html->select_date('','date_end_predef',$usehm,$usehm,1,"addline_predef");
-						print '</td>';
-						print '</tr>';
-					}
-					print '</form>';
+					$var=!$var;
+					$fac->showAddPredefinedProductForm(1);
 				}
-
 			}
+			
 			print "</table>\n";
 
 			print "</div>\n";

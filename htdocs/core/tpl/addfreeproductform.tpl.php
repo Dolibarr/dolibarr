@@ -64,15 +64,15 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 
 	<td align="right">
 	<?php
-	if ($societe->tva_assuj == "0")
+	if ($soc->tva_assuj == "0")
 	echo '<input type="hidden" name="np_tva_tx" value="0">0';
 	else
-	$html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $societe);
+	$html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $soc);
 	?>
 	</td>
 	<td align="right"><input type="text" size="5" name="np_price"></td>
 	<td align="right"><input type="text" size="2" name="qty" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>"></td>
-	<td align="right" nowrap><input type="text" size="1" value="<?php echo $societe->remise_client; ?>" name="remise_percent">%</td>
+	<td align="right" nowrap><input type="text" size="1" value="<?php echo $soc->remise_client; ?>" name="remise_percent">%</td>
 	<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
 </tr>
 

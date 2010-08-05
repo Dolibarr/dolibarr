@@ -1021,8 +1021,8 @@ if ($id > 0 || ! empty($ref))
 	$propal = new Propal($db);
 	$propal->fetch($id,$ref);
 
-	$societe = new Societe($db);
-	$societe->fetch($propal->socid);
+	$soc = new Societe($db);
+	$soc->fetch($propal->socid);
 
 	$head = propal_prepare_head($propal);
 	dol_fiche_head($head, 'comm', $langs->trans('Proposal'), 0, 'propal');
@@ -1129,16 +1129,16 @@ if ($id > 0 || ! empty($ref))
 	$rowspan=9;
 
 	// Company
-	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td>';
+	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 	print '</tr>';
 
 	// Ligne info remises tiers
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
-	if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
+	if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	print '. ';
-	$absolute_discount=$societe->getAvailableDiscounts('','fk_facture_source IS NULL');
-	$absolute_creditnote=$societe->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
+	$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
+	$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
 	$absolute_discount=price2num($absolute_discount,'MT');
 	$absolute_creditnote=price2num($absolute_creditnote,'MT');
 	if ($absolute_discount)
@@ -1152,7 +1152,7 @@ if ($id > 0 || ! empty($ref))
 			// Remise dispo de type non avoir
 			$filter='fk_facture_source IS NULL';
 			print '<br>';
-			$html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$propal->id,0,'remise_id',$societe->id,$absolute_discount,$filter);
+			$html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$propal->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
 		}
 	}
 	if ($absolute_creditnote)
@@ -1575,7 +1575,7 @@ if ($id > 0 || ! empty($ref))
 
 		$var=true;
 
-		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf,1,0,0,28,0,'',0,'',$societe->default_lang);
+		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf,1,0,0,28,0,'',0,'',$soc->default_lang);
 
 
 		/*
@@ -1623,7 +1623,7 @@ if ($id > 0 || ! empty($ref))
 		$formmail->frommail = $user->email;
 		$formmail->withfrom=1;
 		$formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
-		$formmail->withtosocid=$societe->id;
+		$formmail->withtosocid=$soc->id;
 		$formmail->withtocc=1;
 		$formmail->withtoccsocid=0;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
