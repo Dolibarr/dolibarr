@@ -6,14 +6,45 @@
 -- when current version is 2.8.0 or higher. 
 --
 
+-- Add unique key
+ALTER TABLE llx_product_stock ADD UNIQUE INDEX uk_product_stock (fk_product,fk_entrepot);
+
+ALTER TABLE llx_product_stock drop column location;
+
+-- Add missing table llx_product_association
+create table llx_product_association
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  fk_product_pere       integer NOT NULL DEFAULT 0, -- id du produit maitre
+  fk_product_fils       integer NOT NULL DEFAULT 0, -- id du sous-produit
+  qty                   double NULL
+)type=innodb;
+
+
+ALTER TABLE llx_product_association ADD UNIQUE INDEX uk_product_association (fk_product_pere, fk_product_fils);
+
+ALTER TABLE llx_product_association ADD INDEX idx_product_association_fils (fk_product_fils);
+
+
+
+ALTER TABLE llx_product ADD INDEX idx_product_label (label);
 
 -- V4.1 DELETE FROM llx_projet_task WHERE fk_projet NOT IN (SELECT rowid from llx_projet);
 -- V4.1 UPDATE llx_projet_task set fk_user_creat=NULL WHERE fk_user_creat IS NOT NULL AND fk_user_creat NOT IN (SELECT rowid from llx_user);
 -- V4.1 UPDATE llx_projet_task set fk_user_valid=NULL WHERE fk_user_valid IS NOT NULL AND fk_user_valid NOT IN (SELECT rowid from llx_user);
 
--- rename llx_product_det
+ALTER table llx_bank_account ADD COLUMN fk_pays        integer        DEFAULT 0 NOT NULL after domiciliation;
+ALTER TABLE llx_bank_account ADD COLUMN fk_departement integer        DEFAULT NULL after domiciliation;
+ALTER TABLE llx_socpeople ADD COLUMN fk_departement integer        DEFAULT NULL after ville;
+ALTER TABLE llx_adherent  ADD COLUMN fk_departement integer        DEFAULT NULL after ville;
+ALTER TABLE llx_entrepot  ADD COLUMN fk_departement integer        DEFAULT NULL after ville;
+
+ALTER TABLE llx_bookmark ADD COLUMN position integer        DEFAULT 0;
+
+-- Rename llx_product_det
 ALTER TABLE llx_product_det RENAME TO llx_product_lang;
 ALTER TABLE llx_product_lang ADD UNIQUE INDEX uk_product_lang (fk_product, lang);
+-- V4.1 DELETE FROM llx_product_lang WHERE fk_product NOT IN (SELECT rowid from llx_product);
 ALTER TABLE llx_product_lang ADD CONSTRAINT fk_product_lang_fk_product 	FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 
 ALTER TABLE llx_product ADD COLUMN virtual tinyint DEFAULT 0 NOT NULL AFTER tms;
@@ -33,7 +64,7 @@ update llx_facture_fourn set fk_statut=2 where fk_statut=1 AND paye=1;
 alter table llx_facture_fourn add column close_code          varchar(16) after remise;
 alter table llx_facture_fourn add column close_note          varchar(128) after close_code;
 
---add local taxes
+-- Add local taxes
 alter table llx_facture add column localtax1 double(24,8) DEFAULT 0 after tva;
 alter table llx_facture add column localtax2 double(24,8) DEFAULT 0 after localtax1;
 alter table llx_facturedet add column localtax1_tx double(6,3) DEFAULT 0 after tva_tx;
@@ -84,6 +115,11 @@ alter table llx_product add column localtax2_tx double(6,3) DEFAULT 0 after loca
 alter table llx_product_price add column localtax1_tx double(6,3) DEFAULT 0 after tva_tx;
 alter table llx_product_price add column localtax2_tx double(6,3) DEFAULT 0 after localtax1_tx;
 
+alter table llx_contratdet add column localtax1_tx double(6,3) DEFAULT 0 after tva_tx;
+alter table llx_contratdet add column localtax2_tx double(6,3) DEFAULT 0 after localtax1_tx;
+alter table llx_contratdet add column total_localtax1 double(24,8) DEFAULT 0 after total_tva;
+alter table llx_contratdet add column total_localtax2 double(24,8) DEFAULT 0 after total_localtax1;
+
 alter table llx_product add column   hidden             tinyint      DEFAULT 0;
 
 alter table llx_product add column   length             float        DEFAULT NULL after weight_units;
@@ -99,9 +135,13 @@ ALTER TABLE llx_product_stock add column location        varchar(32);
 
 ALTER TABLE llx_expedition ADD COLUMN ref_customer varchar(30) AFTER entity;
 ALTER TABLE llx_expedition ADD COLUMN date_delivery date DEFAULT NULL AFTER date_expedition;
+ALTER TABLE llx_expedition CHANGE COLUMN fk_adresse_livraison fk_address integer DEFAULT NULL;
 
 ALTER TABLE llx_livraison change ref_client ref_customer varchar(30);
 ALTER TABLE llx_livraison change date_livraison date_delivery date		DEFAULT NULL;
+ALTER TABLE llx_livraison CHANGE COLUMN fk_adresse_livraison fk_address integer DEFAULT NULL;
+
+ALTER TABLE llx_c_actioncomm MODIFY libelle    varchar(48) NOT NULL;
 
 ALTER TABLE llx_facture MODIFY tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_facture MODIFY total double(24,8) DEFAULT 0;
@@ -132,7 +172,7 @@ ALTER TABLE llx_adherent ADD COLUMN civilite varchar(6) after entity;
 
 ALTER TABLE llx_deplacement ADD COLUMN fk_projet integer DEFAULT 0 after fk_soc;
 
--- custom list
+-- Custom list
 DROP TABLE llx_c_field_list;
 create table llx_c_field_list
 (
@@ -150,7 +190,7 @@ create table llx_c_field_list
   rang      	integer 		DEFAULT 0
 )type=innodb;
 
-INSERT INTO `llx_c_field_list` (`rowid`, `element`, `entity`, `name`, `alias`, `title`, `align`, `sort`, `search`, `enabled`, `rang`) VALUES
+INSERT INTO llx_c_field_list (rowid, element, entity, name, alias, title, align, sort, search, enabled, rang) VALUES
 (1, 'product_default', 1, 'p.ref', 'ref', 'Ref', 'left', 1, 1, '1', 1),
 (2, 'product_default', 1, 'p.label', 'label', 'Label', 'left', 1, 1, '1', 2),
 (3, 'product_default', 1, 'p.barcode', 'barcode', 'BarCode', 'center', 1, 1, '$conf->barcode->enabled', 3),
@@ -161,39 +201,12 @@ INSERT INTO `llx_c_field_list` (`rowid`, `element`, `entity`, `name`, `alias`, `
 (8, 'product_default', 1, 'p.envente', 'status', 'Status', 'right', 1, 0, '1', 8);
 
 
-UPDATE llx_adherent SET pays = null where pays <= 0 and pays != '0';
+UPDATE llx_adherent SET pays = null where pays <= '0' and pays != '0';
 ALTER table llx_adherent MODIFY pays integer;
 
--- add milestone module
+-- Drop old tables
 DROP TABLE llx_projet_milestone;
-create table llx_milestone
-(
-  rowid					integer AUTO_INCREMENT PRIMARY KEY,
-  label					varchar(255) NOT NULL,
-  description			text,
-  datec					datetime,
-  tms					timestamp,
-  dateo					datetime,
-  datee					datetime,
-  priority				integer	DEFAULT 0,
-  fk_user_creat			integer,
-  rang					integer	DEFAULT 0
-)type=innodb;
-
-ALTER TABLE llx_milestone ADD INDEX idx_milestone_fk_user_creat (fk_user_creat);
-ALTER TABLE llx_milestone ADD CONSTRAINT fk_milestone_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user (rowid);
-
-create table llx_element_milestone
-(
-  rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
-  fk_element		integer NOT NULL,
-  elementtype		varchar(16) NOT NULL,
-  fk_milestone		integer NOT NULL
-) type=innodb;
-
-ALTER TABLE llx_element_milestone ADD UNIQUE INDEX idx_element_milestone_idx1 (fk_element, elementtype, fk_milestone);
-ALTER TABLE llx_element_milestone ADD INDEX idx_element_milestone_fk_milestone (fk_milestone);
-ALTER TABLE llx_element_milestone ADD CONSTRAINT fk_element_milestone_fk_milestone FOREIGN KEY (fk_milestone) REFERENCES llx_milestone(rowid);
+ALTER TABLE llx_projet drop column fk_milestone;
 
 ALTER TABLE llx_deplacement ADD COLUMN fk_statut INTEGER DEFAULT 1  NOT NULL after type;
 
@@ -213,3 +226,91 @@ ALTER TABLE llx_categorie_member ADD INDEX idx_categorie_member_fk_member (fk_me
 
 ALTER TABLE llx_categorie_member ADD CONSTRAINT fk_categorie_member_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_member ADD CONSTRAINT fk_categorie_member_member_rowid   FOREIGN KEY (fk_member) REFERENCES llx_adherent (rowid);
+
+ALTER TABLE llx_product ADD COLUMN    canvas varchar(32) DEFAULT 'default@product';
+ALTER TABLE llx_product MODIFY COLUMN canvas varchar(32) DEFAULT 'default@product';
+UPDATE llx_product SET canvas = 'default@product' WHERE fk_product_type = 0 AND (canvas = '' OR canvas = 'default');
+UPDATE llx_product SET canvas = 'service@product' WHERE fk_product_type = 1 AND (canvas = '' OR canvas = 'service');
+UPDATE llx_product SET canvas = 'livre@droitpret' WHERE canvas = 'livre';
+UPDATE llx_product SET canvas = 'livrecontrat@droitpret' WHERE canvas = 'livrecontrat';
+UPDATE llx_product SET canvas = 'livrecouverture@droitpret' WHERE canvas = 'livrecouverture';
+
+
+ALTER TABLE llx_menu DROP INDEX idx_menu_uk_menu; 
+
+ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, position, url, entity);
+
+UPDATE llx_const SET name = 'MAIN_MODULE_PRODUCT' WHERE name = 'MAIN_MODULE_PRODUIT';
+
+UPDATE llx_expedition set ref_customer = NULL where ref_customer = '';
+
+-- Add more predefined action codes --
+insert into llx_c_actioncomm (id, code, type, libelle, module) values (30, 'AC_SUP_ORD',  'system', 'Send supplier invoice by email'      ,'supplier_order');
+insert into llx_c_actioncomm (id, code, type, libelle, module) values (31, 'AC_SUP_INV',  'system', 'Send supplier invoice by email'      ,'supplier_invoice');
+
+-- Rename llx_societe_adresse_livraison
+ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_adresse_livraison;
+ALTER TABLE llx_expedition DROP INDEX idx_expedition_fk_adresse_livraison;
+ALTER TABLE llx_livraison DROP FOREIGN KEY fk_livraison_fk_adresse_livraison;
+ALTER TABLE llx_livraison DROP INDEX idx_livraison_fk_adresse_livraison;
+ALTER TABLE llx_societe_adresse_livraison RENAME TO llx_societe_address;
+ALTER TABLE llx_societe_address CHANGE nom name varchar(60);
+ALTER TABLE llx_societe_address CHANGE fk_societe fk_soc integer DEFAULT 0;
+
+-- Add new spanish VAT from July 2010
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 45, 4,  '18','0','4','VAT standard rate from July 2010',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 46, 4,   '8','0','1','VAT reduced rate from July 2010',1);
+
+-- Add Argentina Data
+-- Regions Argentina (id pays=23)
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2301, 23, 2301, '', 0, 'Norte', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2302, 23, 2302, '', 0, 'Litoral', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2303, 23, 2303, '', 0, 'Cuyana', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2304, 23, 2304, '', 0, 'Central', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2305, 23, 2305, '', 0, 'Patagonia', 1);
+
+-- Provinces Argentina
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2301', 2301, '', 01, 'CATAMARCA', 'Catamarca', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2302', 2301, '', 02, 'YUJUY', 'Yujuy', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2303', 2301, '', 03, 'TUCAMAN', 'Tucamán', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2304', 2301, '', 04, 'SANTIAGO DEL ESTERO', 'Santiago del Estero', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2305', 2301, '', 05, 'SALTA', 'Salta', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2306', 2302, '', 06, 'CHACO', 'Chaco', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2307', 2302, '', 07, 'CORRIENTES', 'Corrientes', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2308', 2302, '', 08, 'ENTRE RIOS', 'Entre Ríos', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2309', 2302, '', 09, 'FORMOSA MISIONES', 'Formosa Misiones', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2310', 2302, '', 10, 'SANTA FE', 'Santa Fe', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2311', 2303, '', 11, 'LA RIOJA', 'La Rioja', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2312', 2303, '', 12, 'MENDOZA', 'Mendoza', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2313', 2303, '', 13, 'SAN JUAN', 'San Juan', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2314', 2303, '', 14, 'SAN LUIS', 'San Luis', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2315', 2304, '', 15, 'CORDOBA', 'Córdoba', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2316', 2304, '', 16, 'BUENOS AIRES', 'Buenos Aires', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2317', 2304, '', 17, 'CABA', 'Caba', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2318', 2305, '', 18, 'LA PAMPA', 'La Pampa', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2319', 2305, '', 19, 'NEUQUEN', 'Neuquén', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2320', 2305, '', 20, 'RIO NEGRO', 'Río Negro', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2321', 2305, '', 21, 'CHUBUT', 'Chubut', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2322', 2305, '', 22, 'SANTA CRUZ', 'Santa Cruz', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2323', 2305, '', 23, 'TIERRA DEL FUEGO', 'Tierra del Fuego', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2324', 2305, '', 24, 'ISLAS MALVINAS', 'Islas Malvinas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2325', 2305, '', 25, 'ANTARTIDA', 'Antártida', 1);
+
+-- Juridical status Argentina
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2301', 'Monotributista', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2302', 'Sociedad Civil', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2303', 'Sociedades Comerciales', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2304', 'Sociedades de Hecho', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2305', 'Sociedades Irregulares', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2306', 'Sociedad Colectiva', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2307', 'Sociedad en Comandita Simple', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2308', 'Sociedad de Capital e Industria', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2309', 'Sociedad Accidental o en participación', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2310', 'Sociedad de Responsabilidad Limitada', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2311', 'Sociedad Anónima', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2312', 'Sociedad Anónima con Participación Estatal Mayoritaria', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2313', 'Sociedad en Comandita por Acciones (arts. 315 a 324, LSC)', 1);
+
+
+delete from llx_const where name='USER_PASSWORD_GENERATED' and value='default';
+
