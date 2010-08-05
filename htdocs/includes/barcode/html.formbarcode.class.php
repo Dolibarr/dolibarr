@@ -50,10 +50,12 @@ class FormBarCode
 
 
 	/**
-	 *    \brief      Liste de s�lection du g�n�rateur de codes barres
-	 *    \param      selected          Id code pr�-s�lectionn�
-	 *    \param      code_id           Id du code barre
-	 *    \param      idForm            Id du formulaire
+	 *	Return HTML select with list of bar code generators
+	 *  @param      selected        Id code pre-selected
+	 *  @param 		barcodelist		Array of barcodes generators
+	 *  @param      code_id         Id du code barre
+	 *  @param      idForm			Id du formulaire
+	 * 	@return		string			HTML select string
 	 */
 	function setBarcodeEncoder($selected=0,$barcodelist,$code_id,$idForm='formbarcode')
 	{
@@ -86,7 +88,7 @@ class FormBarCode
 
    /**
      *    \brief      Retourne la liste des types de codes barres
-     *    \param      selected          Id code pr�-s�lectionn�
+     *    \param      selected          Id code pre-selected
      *    \param      htmlname          Nom de la zone select
      *    \param      useempty          Affiche valeur vide dans liste
      */
