@@ -166,31 +166,39 @@ if ($resql)
 		print '<td align="center">';
 		if ($obj->coder && $obj->coder != -1)
 		{
+			$result=0;
 			// Chargement de la classe de codage
 			foreach ($conf->file->dol_document_root as $dirroot)
 			{
 				$dir=$dirroot . "/includes/modules/barcode/";
 				$result=@include_once($dir.$obj->coder.".modules.php");
+				//print $dir.$obj->coder.".modules.php - ".$result;
 				if ($result) break;
 			}
 			if ($result)
 			{
 				$classname = "mod".ucfirst($obj->coder);
-				$module = new $classname($db);
-
-				if ($module->encodingIsSupported($obj->encoding))
+				if (class_exists($classname))
 				{
-					// Build barcode on disk (not used, this is done to make debug easier)
-					$result=$module->writeBarCode($obj->example,$obj->encoding,'Y');
+					$module = new $classname($db);
+					if ($module->encodingIsSupported($obj->encoding))
+					{
+						// Build barcode on disk (not used, this is done to make debug easier)
+						$result=$module->writeBarCode($obj->example,$obj->encoding,'Y');
 
-					// Generate on the fly and output barcode with generator
-					$url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($obj->coder).'&code='.urlencode($obj->example).'&encoding='.urlencode($obj->encoding);
-					//print $url;
-					print '<img src="'.$url.'" title="'.$obj->example.'" border="0">';
+						// Generate on the fly and output barcode with generator
+						$url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($obj->coder).'&code='.urlencode($obj->example).'&encoding='.urlencode($obj->encoding);
+						//print $url;
+						print '<img src="'.$url.'" title="'.$obj->example.'" border="0">';
+					}
+					else
+					{
+						print $langs->trans("FormatNotSupportedByGenerator");
+					}
 				}
 				else
 				{
-					print $langs->trans("FormatNotSupportedByGenerator");
+					print 'ErrorClassNotFoundInModule '.$classname.' '.$obj->coder;
 				}
 			}
 		}
