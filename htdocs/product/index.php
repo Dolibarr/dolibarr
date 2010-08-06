@@ -26,7 +26,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/product/product.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 
 $type=isset($_GET["type"])?$_GET["type"]:(isset($_POST["type"])?$_POST["type"]:'');
 if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only
@@ -60,7 +60,7 @@ if ((isset($_GET["type"]) && $_GET["type"] == 0) || empty($conf->service->enable
 	$transAreaType = $langs->trans("ProductsArea");
 	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->produit->enabled))
+if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enabled))
 {
 	$transAreaType = $langs->trans("ServicesArea");
 	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
@@ -119,7 +119,7 @@ while ($objp = $db->fetch_object($result))
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-if ($conf->produit->enabled)
+if ($conf->product->enabled)
 {
 	$statProducts = "<tr $bc[0]>";
 	$statProducts.= '<td><a href="liste.php?type=0&amp;envente=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
@@ -167,11 +167,15 @@ $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.envente,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk_product_subproduct";
-$sql.= " WHERE sp.fk_product_subproduct IS NULL";
-$sql.= " AND p.entity = ".$conf->entity;
-if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk_product_subproduct";	// Exclude record that are subproduct for module ???
+//$sql.= " WHERE sp.fk_product_subproduct IS NULL";
+$sql.= " WHERE p.entity = ".$conf->entity;
+if (empty($user->rights->produit->hidden) && empty($user->rights->service->hidden)) $sql.=' AND p.hidden=0';
+else
+{
+	if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+	if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+}
 if ($type != '') $sql.= " AND p.fk_product_type = ".$type;
 $sql.= $db->order("p.tms","DESC");
 $sql.= $db->plimit($max,0);
@@ -226,7 +230,7 @@ if ($result)
 			print "</td>\n";
 			print '<td>'.dol_trunc($objp->label,32).'</td>';
 			print "<td>";
-			print dol_print_date($objp->datem,'day');
+			print dol_print_date($db->jdate($objp->datem),'day');
 			print "</td>";
 			print '<td align="right" nowrap="nowrap">';
 			print $product_static->LibStatut($objp->envente,5);
