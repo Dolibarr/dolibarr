@@ -37,11 +37,6 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
-if ($conf->milestone->enabled)
-{
-	require_once(DOL_DOCUMENT_ROOT.'/milestone/lib/milestone.lib.php');
-	require_once(DOL_DOCUMENT_ROOT.'/milestone/class/milestone.class.php');
-}
 
 $langs->load('companies');
 $langs->load('propal');
@@ -76,6 +71,13 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
+
+// Instantiate hooks of thirdparty module
+if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+{
+	$hooks = new Propal($db);
+	$hooks->callHooks('objectcard');
+}
 
 
 /******************************************************************************/

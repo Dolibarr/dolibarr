@@ -33,6 +33,9 @@
 
 class CommonObject
 {
+	// Instantiate classes of thirdparty module
+	var $objModules=array();
+	
 	/**
 	 *      \brief      Check if ref is used.
 	 * 		\return		int			<0 if KO, 0 if not found, >0 if found
@@ -1142,14 +1145,31 @@ class CommonObject
 	}
 	
 	/**
-	 *	Show add free products/services form
+	 *	Instantiate hooks of thirdparty module
+	 *	@param	$type	Type of hook
 	 */
-	function showAddFreeProductForm($dateSelector=0)
+	function callHooks($type='objectcard')
 	{
-		global $conf,$langs;
-		global $html,$bc,$var;
-
-		include(DOL_DOCUMENT_ROOT.'/core/tpl/addfreeproductform.tpl.php');
+		global $conf;
+		
+		foreach($conf->hooks_modules as $module => $hooks)
+		{
+			if ($conf->$module->enabled && in_array($type,$hooks))
+			{
+				// Include class and library of thirdparty module
+				if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/class/'.$module.'.class.php'))
+				{
+					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/class/'.$module.'.class.php');
+				}
+				if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php'))
+				{
+					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php');
+				}
+				
+				$classname = ucfirst($module);
+				$this->objModules[] = new $classname($this->db);
+			}
+		}
 	}
 	
 	/**
@@ -1161,6 +1181,17 @@ class CommonObject
 		global $html,$bc,$var;
 
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/addpredefinedproductform.tpl.php');
+	}
+	
+	/**
+	 *	Show add free products/services form
+	 */
+	function showAddFreeProductForm($dateSelector=0)
+	{
+		global $conf,$langs;
+		global $html,$bc,$var;
+
+		include(DOL_DOCUMENT_ROOT.'/core/tpl/addfreeproductform.tpl.php');
 	}
 
 	/**

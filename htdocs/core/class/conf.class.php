@@ -131,10 +131,20 @@ class Conf
 							//print 'xxx'.$params[0].'-'.$value;
 						}
 						// If this is constant for triggers activated by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$regs))
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$reg))
 						{
-							$modulename = strtolower($regs[1]);
+							$modulename = strtolower($reg[1]);
 							$this->triggers_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
+						}
+						// If this is constant for hook activated by a module
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_HOOKS$/i',$key,$reg))
+						{
+							$modulename = strtolower($reg[1]);
+							$params=explode(':',$value);
+							foreach($params as $value)
+							{
+								$this->hooks_modules[$modulename][]=$value;
+							}
 						}
 						// If this is constant to force a module directories (used to manage some exceptions)
 						// Should not be used by modules
