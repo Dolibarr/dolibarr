@@ -1411,24 +1411,26 @@ if ($id > 0 || ! empty($ref))
 	 */
 	print '<table class="noborder" width="100%">';
 
-	// Milestone module
-	if ($conf->milestone->enabled)
+	// Hook of thirdparty module
+	if (! empty($hooks->objModules))
 	{
-		$lines = $propal->getLinesArray(1);
-
-		$milestone = new Milestone($db);
-		$milestone->getObjectMilestones($propal);
-		$sublines = $propal->getLinesArray(2);
-
-		if (! empty($milestone->lines))
+		foreach($hooks->objModules as $module)
 		{
-			print_title_list();
-			print_milestone_list($milestone, $sublines, $propal, $lines);
-		}
-		else if (! empty($lines) )
-		{
-			print_title_list();
-			print_lines_list($propal, $lines);
+			$lines = $propal->getLinesArray(1);
+			
+			$module->getObjectList($propal);
+			$sublines = $propal->getLinesArray(2);
+			
+			if (! empty($module->lines))
+			{
+				print_title_list();
+				$module->printObjectList($module, $sublines, $propal, $lines);
+			}
+			else if (! empty($lines) )
+			{
+				print_title_list();
+				print_lines_list($propal, $lines);
+			}
 		}
 	}
 	else
@@ -1461,11 +1463,14 @@ if ($id > 0 || ! empty($ref))
 				$propal->showAddPredefinedProductForm();
 			}
 			
-			// Add hook of other modules
-			if ($conf->milestone->enabled)
+			// Hook of thirdparty module
+			if (! empty($hooks->objModules))
 			{
-				$var=!$var;
-				formAddMilestone($propal);
+				foreach($hooks->objModules as $module)
+				{
+					$var=!$var;
+					$module->formAddObject($propal);
+				}
 			}
 		}
 	}

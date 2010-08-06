@@ -1161,10 +1161,12 @@ class CommonObject
 				{
 					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/class/'.$module.'.class.php');
 				}
+				/*
 				if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php'))
 				{
 					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php');
 				}
+				*/
 				
 				$classname = ucfirst($module);
 				$this->objModules[] = new $classname($this->db);
