@@ -1424,7 +1424,7 @@ if ($id > 0 || ! empty($ref))
 			if (! empty($module->lines))
 			{
 				print_title_list();
-				$module->printObjectList($module, $sublines, $propal, $lines);
+				$module->printObjectList($propal, $lines, $sublines);
 			}
 			else if (! empty($lines) )
 			{
