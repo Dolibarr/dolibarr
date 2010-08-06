@@ -2,6 +2,7 @@
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Cyrille de Lambert <info@auguria.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,8 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
 
 require('../main.inc.php');
 
@@ -45,19 +48,25 @@ if (! empty($_POST['newcompany']) || ! empty($_POST['socid']) || ! empty($_POST[
 	$socid = $_POST['newcompany']?$_POST['newcompany']:'';
 	if (! $socid) $socid = $_POST['socid']?$_POST['socid']:'';
 	if (! $socid) $socid = $_POST['id_fourn']?$_POST['id_fourn']:'';
-
 	$sql = "SELECT rowid, nom";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= " WHERE nom LIKE '%" . $socid . "%'";
+	$sql.= " WHERE 1=1";
+	if ($socid){
+		$sql.=" AND (rowid LIKE '%" . $socid . "%'";
+		$sql.=" OR nom  LIKE '%" . $socid . "%'";
+		$sql.=" OR code_fournisseur LIKE '%" . $socid . "%')";
+	}
 	if (! empty($_GET["filter"])) $sql.= " AND ".$_GET["filter"]; // Add other filters
 	$sql.= " ORDER BY nom ASC";
 
-	//dol_syslog("ajaxcompanies sql=".$sql);
+	dol_syslog("requete sql = ".$sql);
 	$resql=$db->query($sql);
+	
 	if ($resql)
 	{
+		dol_syslog("resulat OK");
 		print '<ul>';
-		while ($company = $db->fetch_object($resql))
+		while ($company = $resql->fetch_object())
 		{
 			print '<li>';
 			print $company->nom;
