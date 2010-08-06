@@ -139,7 +139,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 	{
 		$propal = new Propal($db);
 		$propal->fetch($_GET["id"]);
-		$propal->fetch_client();
+		$propal->fetch_thirdparty();
 		$result = $propal->delete_product($_GET['lineid']);
 		// reorder lines
 		if ($result) $propal->line_order(true);
@@ -167,7 +167,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
-	$propal->fetch_client();
+	$propal->fetch_thirdparty();
 
 	$result=$propal->valid($user);
 	if ($result >= 0)
@@ -272,7 +272,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
 	$propal->socid=$_POST['socid'];
-	$propal->fetch_client();
+	$propal->fetch_thirdparty();
 
 	$db->begin();
 
@@ -623,7 +623,7 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 	 */
 	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
-	$propal->fetch_client();
+	$propal->fetch_thirdparty();
 	$propal->set_draft($user);
 
 	// Define output language
@@ -689,7 +689,7 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 			dol_print_error($db,$propal->error);
 			exit;
 		}
-		$ret=$propal->fetch_client();
+		$ret=$propal->fetch_thirdparty();
 
 		$price_base_type = 'HT';
 
@@ -815,7 +815,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 		dol_print_error($db,$propal->error);
 		exit;
 	}
-	$propal->fetch_client();
+	$propal->fetch_thirdparty();
 
 	// Define info_bits
 	$info_bits=0;
@@ -872,7 +872,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
-	$propal->fetch_client();
+	$propal->fetch_thirdparty();
 
 	if ($_REQUEST['model'])
 	{
@@ -952,7 +952,7 @@ if ($_GET['action'] == 'up' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db, '', $_GET["id"]);
 	$propal->fetch($_GET["id"]);
-	$propal->fetch_client();
+	$propal->fetch_thirdparty();
 	$propal->line_up($_GET['rowid']);
 
 	// Define output language
@@ -975,7 +975,7 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db, '', $_GET["id"]);
 	$propal->fetch($_GET['id']);
-	$propal->fetch_client();
+	$propal->fetch_thirdparty();
 	$propal->line_down($_GET['rowid']);
 
 	// Define output language
@@ -1449,6 +1449,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			$var=true;
 			
+			// Add free products/services
 			$propal->showAddFreeProductForm();
 			
 			// Add predefined products/services
