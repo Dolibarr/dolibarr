@@ -110,7 +110,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				}
 			}
 
-			$object->fetch_client();
+			$object->fetch_thirdparty();
 
 			$nblignes = sizeof($object->lignes);
 

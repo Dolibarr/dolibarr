@@ -230,7 +230,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 	{
 		global $user,$conf,$langs;
 
-		$object->fetch_client();
+		$object->fetch_thirdparty();
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO

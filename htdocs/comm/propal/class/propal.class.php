@@ -575,7 +575,7 @@ class Propal extends CommonObject
 
 		$this->db->begin();
 
-		$this->fetch_client();
+		$this->fetch_thirdparty();
 
 		// Insertion dans la base
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (";

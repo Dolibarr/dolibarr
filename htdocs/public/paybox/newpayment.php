@@ -248,7 +248,7 @@ if ($_REQUEST["amount"] == 'order')
 	}
 	else
 	{
-		$result=$order->fetch_client($order->socid);
+		$result=$order->fetch_thirdparty($order->socid);
 	}
 
 	$amount=$order->total_ttc;
@@ -322,7 +322,7 @@ if ($_REQUEST["amount"] == 'invoice')
 	}
 	else
 	{
-		$result=$invoice->fetch_client($invoice->socid);
+		$result=$invoice->fetch_thirdparty($invoice->socid);
 	}
 
 	$amount=$invoice->total_ttc - $invoice->getSommePaiement();
@@ -401,7 +401,7 @@ if ($_REQUEST["amount"] == 'contractline')
 			$result=$contract->fetch($contractline->fk_contrat);
 			if ($result > 0)
 			{
-				$result=$contract->fetch_client($contract->socid);
+				$result=$contract->fetch_thirdparty($contract->socid);
 			}
 			else
 			{

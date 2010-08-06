@@ -189,7 +189,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 			dol_print_error($db,$commande->error);
 			exit;
 		}
-		$ret=$contrat->fetch_client();
+		$ret=$contrat->fetch_thirdparty();
 
 		$date_start='';
 		$date_end='';

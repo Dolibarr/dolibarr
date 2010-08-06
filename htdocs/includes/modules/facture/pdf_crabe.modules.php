@@ -132,7 +132,7 @@ class pdf_crabe extends ModelePDFFactures
 				$ret=$fac->fetch($id);
 			}
 
-			$fac->fetch_client();
+			$fac->fetch_thirdparty();
 
 			$deja_regle = $fac->getSommePaiement();
 			$amount_credit_notes_included = $fac->getSumCreditNotesUsed();

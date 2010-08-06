@@ -1321,7 +1321,7 @@ class Facture extends CommonObject
 
 		$this->db->begin();
 
-		$this->fetch_client();
+		$this->fetch_thirdparty();
 		$this->fetch_lines();
 
 		// Check parameters

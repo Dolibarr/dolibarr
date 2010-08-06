@@ -104,7 +104,7 @@ if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $
 {
 	$delivery = new Livraison($db);
 	$delivery->fetch($_GET["id"]);
-	$delivery->fetch_client();
+	$delivery->fetch_thirdparty();
 
 	$result = $delivery->valid($user);
 
@@ -392,7 +392,7 @@ else
 	{
 		$delivery = new Livraison($db);
 		$result = $delivery->fetch($_GET["id"]);
-		$delivery->fetch_client();
+		$delivery->fetch_thirdparty();
 
 		$expedition=new Expedition($db);
 		$result = $expedition->fetch($delivery->expedition_id);

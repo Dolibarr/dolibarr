@@ -118,7 +118,7 @@ if ($_GET["action"] == 'create')
 
 		print '<table class="border" width="100%">';
 
-		$facture->fetch_client();
+		$facture->fetch_thirdparty();
 
 		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$facture->client->getNomUrl(1).'</td>';
 		print '<td>';

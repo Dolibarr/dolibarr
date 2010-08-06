@@ -174,7 +174,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Customer
 		if ( is_null($propal->client) )
-			$propal->fetch_client();
+			$propal->fetch_thirdparty();
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">'.$propal->client->getNomUrl(1).'</td></tr>';
 

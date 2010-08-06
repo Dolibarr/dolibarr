@@ -202,7 +202,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Customer
 		if ( is_null($commande->client) )
-			$commande->fetch_client();
+			$commande->fetch_thirdparty();
 
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">'.$commande->client->getNomUrl(1).'</td></tr>';

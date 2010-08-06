@@ -187,7 +187,7 @@ if ($id > 0)
 
 		// Customer
 		if ( is_null($fichinter->client) )
-			$fichinter->fetch_client();
+			$fichinter->fetch_thirdparty();
 
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">'.$fichinter->client->getNomUrl(1).'</td></tr>';

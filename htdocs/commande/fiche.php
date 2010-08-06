@@ -139,7 +139,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 	{
 		$commande = new Commande($db);
 		$commande->fetch($_GET['id']);
-		$commande->fetch_client();
+		$commande->fetch_thirdparty();
 
 		$result = $commande->delete_line($_GET['lineid']);
 		if ($result > 0)
@@ -182,7 +182,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 
 	$commande = new Commande($db);
 	$commande->socid=$_POST['socid'];
-	$commande->fetch_client();
+	$commande->fetch_thirdparty();
 
 	$db->begin();
 
@@ -377,7 +377,7 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 			dol_print_error($db,$commande->error);
 			exit;
 		}
-		$ret=$commande->fetch_client();
+		$ret=$commande->fetch_thirdparty();
 
 		// Clean parameters
 		$suffixe = $_POST['idprod'] ? '_prod' : '';
@@ -514,7 +514,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 {
 	$commande = new Commande($db,'',$_POST['id']);
 	if (! $commande->fetch($_POST['id']) > 0) dol_print_error($db);
-	$commande->fetch_client();
+	$commande->fetch_thirdparty();
 
 	// Clean parameters
 	$date_start='';
@@ -613,7 +613,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);	// Load order and lines
-	$commande->fetch_client();
+	$commande->fetch_thirdparty();
 
 	$result=$commande->valid($user);
 	if ($result	>= 0)
@@ -655,7 +655,7 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 	 */
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);		// Load order and lines
-	$commande->fetch_client();
+	$commande->fetch_thirdparty();
 
 	$result = $commande->set_draft($user);
 	if ($result	>= 0)
@@ -682,7 +682,7 @@ if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db,'',$_GET['id']);
 	$commande->fetch($_GET['id']);
-	$commande->fetch_client();
+	$commande->fetch_thirdparty();
 	$commande->line_up($_GET['rowid']);
 
 	// Define output language
@@ -706,7 +706,7 @@ if ($_GET['action'] == 'down' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db,'',$_GET['id']);
 	$commande->fetch($_GET['id']);
-	$commande->fetch_client();
+	$commande->fetch_thirdparty();
 	$commande->line_down($_GET['rowid']);
 
 	// Define output language
@@ -735,7 +735,7 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 	// Sauvegarde le dernier modele choisi pour generer un document
 	$commande = new Commande($db, 0, $_REQUEST['id']);
 	$result=$commande->fetch($_REQUEST['id']);
-	$commande->fetch_client();
+	$commande->fetch_thirdparty();
 
 	if ($_REQUEST['model'])
 	{

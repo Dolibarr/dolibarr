@@ -307,7 +307,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 
 		$soc = new Societe($db);
 		$soc->fetch($socid);
-		$soc->fetch_client();
+		$soc->fetch_thirdparty();
 
 		/*if ($_REQUEST['model'])
 		{

@@ -168,7 +168,7 @@ if ($id > 0)
 	$facture = new FactureFournisseur($db);
 	if ($facture->fetch($_GET['facid'], $user->societe_id) > 0)
 	{
-		$facture->fetch_client();
+		$facture->fetch_thirdparty();
 
 		$head = facturefourn_prepare_head($facture);
 

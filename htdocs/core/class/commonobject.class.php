@@ -454,15 +454,6 @@ class CommonObject
 	}
 
 	/**
-	 * @deprecated Replaced by fetch_thirdparty
-	 * Kept for backward compatibility
-	 */
-	function fetch_client()
-	{
-		return $this->fetch_thirdparty();
-	}
-
-	/**
 	 *		\brief      Charge le projet d'id $this->fk_project dans this->projet
 	 *		\return		int			<0 if KO, >=0 if OK
 	 */

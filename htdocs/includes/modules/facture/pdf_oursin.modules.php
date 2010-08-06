@@ -128,7 +128,7 @@ class pdf_oursin extends ModelePDFFactures
 				$fac = new Facture($this->db);
 				$ret=$fac->fetch($id);
 			}
-			$fac->fetch_client();
+			$fac->fetch_thirdparty();
 
 			$deja_regle = $fac->getSommePaiement();
 			$amount_credit_notes_included = $fac->getSumCreditNotesUsed();

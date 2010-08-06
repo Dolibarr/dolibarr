@@ -905,7 +905,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(102,$posy-5);
 			$pdf->MultiCell(80, 4, $outputlangs->transnoentities("BillTo").":");
-			$object->fetch_client();
+			$object->fetch_thirdparty();
 
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);

@@ -225,7 +225,7 @@ function facture_meta_create($db, $facid, $message="")
 
 	$fac = new Facture($db,"",$facid);
 	$fac->fetch($facid);
-	$fac->fetch_client();
+	$fac->fetch_thirdparty();
 
 	if ($conf->facture->dir_output)
 	{

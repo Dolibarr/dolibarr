@@ -95,7 +95,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Verification de la configuration
 		if ($conf->expedition->dir_output."/sending")
 		{
-			$object->fetch_client();
+			$object->fetch_thirdparty();
 
 			//Creation de l expediteur
 			$this->expediteur = $mysoc;
@@ -478,7 +478,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$blSocY = 1;
 		$pdf->Rect($blExpX, $Yoff, $blW, 20);
 
-		$object->fetch_client();
+		$object->fetch_thirdparty();
 
 		// If SHIPPING contact defined on order, we use it
 		$usecontact=false;

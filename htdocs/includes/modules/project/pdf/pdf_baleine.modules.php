@@ -452,7 +452,7 @@ class pdf_baleine extends ModelePDFProjects
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);
 
-			$object->fetch_client();
+			$object->fetch_thirdparty();
 
 			// Recipient name
 			if (! empty($usecontact))

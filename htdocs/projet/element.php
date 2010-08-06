@@ -195,7 +195,7 @@ foreach ($listofreferent as $key => $value)
 			{
 				$element = new $classname($db);
 				$element->fetch($elementarray[$i]);
-				$element->fetch_client();
+				$element->fetch_thirdparty();
 				//print $classname;
 
 				$var=!$var;

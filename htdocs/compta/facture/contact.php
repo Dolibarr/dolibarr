@@ -168,7 +168,7 @@ if ($id > 0 || ! empty($ref))
 	$facture = new Facture($db);
 	if ($facture->fetch($id, $ref) > 0)
 	{
-		$facture->fetch_client();
+		$facture->fetch_thirdparty();
 
 		$head = facture_prepare_head($facture);
 

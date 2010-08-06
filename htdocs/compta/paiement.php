@@ -178,7 +178,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 						$facid = $key;
 						$fac = new Facture($db);
 						$fac->fetch($facid);
-						$fac->fetch_client();
+						$fac->fetch_thirdparty();
 						$acc->add_url_line($bank_line_id,
 						$paiement_id,
 						DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
@@ -241,7 +241,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 	if ($result >= 0)
 	{
-		$facture->fetch_client();
+		$facture->fetch_thirdparty();
 
 		$title='';
 		if ($facture->type != 2) $title.=$langs->trans("EnterPaymentReceivedFromCustomer");

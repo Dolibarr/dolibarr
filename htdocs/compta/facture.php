@@ -142,7 +142,7 @@ if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] =
 	{
 		$fac = new Facture($db);
 		$fac->fetch($_GET['facid']);
-		$fac->fetch_client();
+		$fac->fetch_thirdparty();
 
 		$result = $fac->deleteline($_GET['rowid'], $user);
 		if ($result > 0)
@@ -306,7 +306,7 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
-	$fac->fetch_client();
+	$fac->fetch_thirdparty();
 
 	$result = $fac->validate($user);
 	if ($result >= 0)
@@ -334,7 +334,7 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->unvalidate)
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
-	$fac->fetch_client();
+	$fac->fetch_thirdparty();
 
 	// On verifie si la facture a des paiements
 	$sql = 'SELECT pf.amount';
@@ -430,7 +430,7 @@ if ($_REQUEST['action'] == 'confirm_converttoreduc' && $_REQUEST['confirm'] == '
 
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
-	$fac->fetch_client();
+	$fac->fetch_thirdparty();
 	$fac->fetch_lines();
 
 	if (! $fac->paye)	// protection against multiple submit
@@ -529,7 +529,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		{
 			// This is a replacement invoice
 			$result=$facture->fetch($_POST['fac_replacement']);
-			$facture->fetch_client();
+			$facture->fetch_thirdparty();
 
 			$facture->date           = $datefacture;
 			$facture->note_public    = trim($_POST['note_public']);
@@ -820,7 +820,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 			dol_print_error($db,$fac->error);
 			exit;
 		}
-		$ret=$fac->fetch_client();
+		$ret=$fac->fetch_thirdparty();
 
 		$suffixe = $_POST['idprod'] ? '_predef' : '';
 		$date_start=dol_mktime($_POST['date_start'.$suffixe.'hour'],$_POST['date_start'.$suffixe.'min'],$_POST['date_start'.$suffixe.'sec'],$_POST['date_start'.$suffixe.'month'],$_POST['date_start'.$suffixe.'day'],$_POST['date_start'.$suffixe.'year']);
@@ -956,7 +956,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 {
 	$fac = new Facture($db,'',$_POST['facid']);
 	if (! $fac->fetch($_POST['facid']) > 0) dol_print_error($db);
-	$fac->fetch_client();
+	$fac->fetch_thirdparty();
 
 	// Clean parameters
 	$date_start='';
@@ -1054,7 +1054,7 @@ if ($_GET['action'] == 'up' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db,'',$_GET['facid']);
 	$fac->fetch($_GET['facid']);
-	$fac->fetch_client();
+	$fac->fetch_thirdparty();
 	$fac->line_up($_GET['rowid']);
 
 	// Define output language
@@ -1077,7 +1077,7 @@ if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db,'',$_GET['facid']);
 	$fac->fetch($_GET['facid']);
-	$fac->fetch_client();
+	$fac->fetch_thirdparty();
 	$fac->line_down($_GET['rowid']);
 
 	// Define output language
@@ -1306,7 +1306,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	$fac = new Facture($db, 0, $_GET['facid']);
 	$fac->fetch($_GET['facid']);
-	$fac->fetch_client();
+	$fac->fetch_thirdparty();
 
 	if ($_REQUEST['model'])
 	{
@@ -1383,7 +1383,7 @@ if ($_GET['action'] == 'create')
 		$classname = ucfirst($subelement);
 		$object = new $classname($db);
 		$object->fetch($_GET['originid']);
-		$object->fetch_client();
+		$object->fetch_thirdparty();
 
 		$projectid			= (!empty($object->fk_project)?$object->fk_project:'');
 		$ref_client			= (!empty($object->ref_client)?$object->ref_client:'');
@@ -1930,7 +1930,7 @@ else
 		{
 			if ($user->societe_id>0 && $user->societe_id!=$fac->socid)  accessforbidden('',0);
 
-			$result=$fac->fetch_client();
+			$result=$fac->fetch_thirdparty();
 
 			$soc = new Societe($db, $fac->socid);
 			$soc->fetch($fac->socid);

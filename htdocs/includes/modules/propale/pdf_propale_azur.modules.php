@@ -130,7 +130,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				$propale = new Propal($this->db,"",$id);
 				$ret=$propale->fetch($id);
 			}
-			$propale->fetch_client();
+			$propale->fetch_thirdparty();
 			$deja_regle = "";
 
 			// Definition de $dir et $file

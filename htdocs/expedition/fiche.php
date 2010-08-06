@@ -149,7 +149,7 @@ if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $
 {
 	$expedition = new Expedition($db);
 	$expedition->fetch($_GET["id"]);
-	$expedition->fetch_client();
+	$expedition->fetch_thirdparty();
 
 	$result = $expedition->valid($user);
 
@@ -266,7 +266,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	// Sauvegarde le dernier modele choisi pour generer un document
 	$shipment = new Expedition($db, 0, $_REQUEST['id']);
 	$shipment->fetch($_REQUEST['id']);
-	$shipment->fetch_client();
+	$shipment->fetch_thirdparty();
 
 	if ($_REQUEST['model'])
 	{

@@ -86,7 +86,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
 {
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET["id"]);
-	$fichinter->fetch_client();
+	$fichinter->fetch_thirdparty();
 
 	$result = $fichinter->setValid($user, $conf->fichinter->outputdir);
 	if ($result >= 0)
@@ -115,7 +115,7 @@ if ($_REQUEST['action'] == 'confirm_modify' && $_REQUEST['confirm'] == 'yes')
 {
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET["id"]);
-	$fichinter->fetch_client();
+	$fichinter->fetch_thirdparty();
 
 	$result = $fichinter->setDraft($user);
 	if ($result >= 0)
@@ -196,7 +196,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
-	$fichinter->fetch_client();
+	$fichinter->fetch_thirdparty();
 	$fichinter->fetch_lines();
 
 	if ($_REQUEST['model'])
@@ -258,7 +258,7 @@ if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
 	{
 		$fichinter = new Fichinter($db);
 		$ret=$fichinter->fetch($_POST['fichinterid']);
-		$fichinter->fetch_client();
+		$fichinter->fetch_thirdparty();
 
 		$desc=$_POST['np_desc'];
 		$date_intervention = dol_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
@@ -305,7 +305,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 		dol_print_error($db);
 		exit;
 	}
-	$fichinter->fetch_client();
+	$fichinter->fetch_thirdparty();
 
 	$desc=$_POST['np_desc'];
 	$date_intervention = dol_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
@@ -390,7 +390,7 @@ if ($_GET['action'] == 'up' && $user->rights->ficheinter->creer)
 {
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
-	$fichinter->fetch_client();
+	$fichinter->fetch_thirdparty();
 	$fichinter->line_up($_GET['rowid']);
 
 	// Define output language
@@ -412,7 +412,7 @@ if ($_GET['action'] == 'down' && $user->rights->ficheinter->creer)
 {
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
-	$fichinter->fetch_client();
+	$fichinter->fetch_thirdparty();
 	$fichinter->line_down($_GET['rowid']);
 
 	// Define output language
@@ -549,7 +549,7 @@ elseif ($fichinterid)
 	/*
 	 * Affichage en mode visu
 	 */
-	$fichinter->fetch_client();
+	$fichinter->fetch_thirdparty();
 
 	$societe=new Societe($db);
 	$societe->fetch($fichinter->socid);

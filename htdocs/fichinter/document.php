@@ -109,7 +109,7 @@ llxHeader("","",$langs->trans("InterventionCard"));
 
 if ($object->id)
 {
-	$object->fetch_client();
+	$object->fetch_thirdparty();
 
     $soc = new Societe($db, $object->societe->id);
     $soc->fetch($object->societe->id);

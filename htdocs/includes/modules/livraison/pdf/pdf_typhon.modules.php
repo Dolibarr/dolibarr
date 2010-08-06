@@ -132,7 +132,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				}
 			}
 
-			$object->fetch_client();
+			$object->fetch_thirdparty();
 
 			$nblignes = sizeof($object->lignes);
 
