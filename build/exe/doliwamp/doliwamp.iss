@@ -18,13 +18,14 @@
 ; ----- Change this -----
 AppName=DoliWamp
 ; DoliWamp-x.x.x or DoliWamp-x.x.x-dev or DoliWamp-x.x.x-beta
-AppVerName=DoliWamp-2.9.0-alpha
+AppVerName=DoliWamp-2.9.0
 ; DoliWamp-x.x x or DoliWamp-x.x.x-dev or DoliWamp-x.x.x-beta
-OutputBaseFilename=DoliWamp-2.9.0-alpha
+OutputBaseFilename=DoliWamp-2.9.0
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
-SourceDir=D:\Mes developpements\dolibarr
+SourceDir=D:\Mes developpements\dolibarrold
 ; ----- End of change
+;OutputManifestFile=build\doliwampbuild.log
 AppId=doliwamp
 AppPublisher=NLTechno
 AppPublisherURL=http://www.nltechno.com
@@ -41,17 +42,40 @@ SolidCompression=yes
 WizardImageFile=build\exe\doliwamp\doliwamp.bmp
 WizardSmallImageFile=build\exe\doliwamp\doliwampsmall.bmp
 SetupIconFile=doc\images\dolibarr.ico
-PrivilegesRequired=poweruser
+PrivilegesRequired=admin
 DisableProgramGroupPage=yes
 ChangesEnvironment=no
 CreateUninstallRegKey=yes
+;UseSetupLdr=no
 ;UninstallDisplayIcon={app}\bidon
 OutputDir=build
+ShowLanguageDialog=auto
+ShowUndisplayableLanguages=no
+;LanguageDetectionMethod=none
+LanguageDetectionMethod=uilanguage
+;SignedUninstaller=yes
+
+[Languages]
+Name: "en"; MessagesFile: "compiler:Default.isl,build\exe\doliwamp\Languages\MyEnglish.isl"
+Name: "br"; MessagesFile: "compiler:Languages\Portuguese.isl,build\exe\doliwamp\Languages\MyBrazilianPortuguese.isl"
+Name: "ca"; MessagesFile: "compiler:Languages\Catalan.isl,build\exe\doliwamp\Languages\MyCatalan.isl"
+Name: "da"; MessagesFile: "compiler:Languages\Danish.isl,build\exe\doliwamp\Languages\MyDanish.isl"
+Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl,build\exe\doliwamp\Languages\MySpanish.isl"
+Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl,build\exe\doliwamp\Languages\MyDutch.isl"
+Name: "fi"; MessagesFile: "compiler:Languages\Finnish.isl,build\exe\doliwamp\Languages\MyFinnish.isl"
+Name: "fr"; MessagesFile: "compiler:Languages\French.isl,build\exe\doliwamp\Languages\MyFrench.isl"
+Name: "ge"; MessagesFile: "compiler:Languages\German.isl,build\exe\doliwamp\Languages\MyGerman.isl"
+Name: "it"; MessagesFile: "compiler:Languages\Italian.isl,build\exe\doliwamp\Languages\MyItalian.isl"
+Name: "nb"; MessagesFile: "compiler:Languages\Norwegian.isl,build\exe\doliwamp\Languages\MyNorwegian.isl"
+Name: "po"; MessagesFile: "compiler:Languages\Polish.isl,build\exe\doliwamp\Languages\MyPolish.isl"
+Name: "pt"; MessagesFile: "compiler:Languages\Portuguese.isl,build\exe\doliwamp\Languages\MyPortuguese.isl"
+Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl,build\exe\doliwamp\Languages\MyRussian.isl"
+Name: "sv"; MessagesFile: "compiler:Languages\Slovenian.isl,build\exe\doliwamp\Languages\MySlovenian.isl"
 
 [Tasks]
 ;Name: "autostart"; Description: "Automatically launch DoliWamp server on startup. If you check this option, Services will be installed as automatic. Otherwise, services will be installed as manual and will start and stop with the service manager."; GroupDescription: "Auto Start:" ;Flags: unchecked;
-Name: quicklaunchicon; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Flags: unchecked
-Name: "desktopicon"; Description: "Create a &Desktop icon"; GroupDescription: "Additional icons:"; Flags: unchecked
+Name: "quicklaunchicon"; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
+Name: "desktopicon"; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Dirs]
 Name: "{app}\logs"
@@ -163,7 +187,7 @@ var value: String;
 //procedures lancees au debut de l'installation
 function InitializeSetup(): Boolean;
 begin
-  Result := MsgBox('You will install or upgrade DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This assistant installs or upgrades Dolibarr ERP-CRM and all required third party softwares (Apache, Mysql and PHP) optimized for a Dolibarr usage.' #13#13 'If you have technical knowledge and plan to share your Apache, Mysql and PHP with other projects than Dolibarr, you should not use this assistant and make a manual installation of Dolibarr on your existing Apache, Mysql and PHP installation.' #13#13 'But if you look for an automatic setup, you''re on the good way...' #13#13 'Do you want to start installation/upgrade process ?', mbConfirmation, MB_YESNO) = IDYES;
+  Result := MsgBox(CustomMessage('YouWillInstallDoliWamp')+#13#13+CustomMessage('ThisAssistantInstallOrUpgrade')+#13#13+CustomMessage('IfYouHaveTechnicalKnowledge')+#13#13+CustomMessage('ButIfYouLook')+#13#13+CustomMessage('DoYouWantToStart'), mbConfirmation, MB_YESNO) = IDYES;
 end;
 
 procedure InitializeWizard();
@@ -230,24 +254,24 @@ begin
   // Prepare an object calle "Page" of type wpInstalling.
   // Object will be show later in NextButtonClick function.
   Page := CreateInputQueryPage(wpInstalling,
-  'Technical parameters', '',
-  'If first install, please specify some technical parameters. If you don''t understand, are not sure, or are doing an upgrade, just leave the default values.');
+  CustomMessage('TechnicalParameters'), '',
+  CustomMessage('IfFirstInstall'));
 
   // TODO Add control differently if first install or update
   if firstinstall
   then
   begin
-    Page.Add('SMTP server (your own or ISP SMTP server, first install only) :', False);
-    Page.Add('Apache port (first install only, common choice is 80) :', False);
-    Page.Add('Mysql port (first install only, common choice is 3306) :', False);
-    Page.Add('Mysql server and database password you want for root (first install only):', False);
+    Page.Add(CustomMessage('SMTPServer'), False);
+    Page.Add(CustomMessage('ApachePort'), False);
+    Page.Add(CustomMessage('MySqlPort'), False);
+    Page.Add(CustomMessage('MySqlPassword'), False);
   end
   else
   begin
-    Page.Add('SMTP server (your own or ISP SMTP server, first install only) :', False);
-    Page.Add('Apache port (first install only, common choice is 80) :', False);
-    Page.Add('Mysql port (first install only, common choice is 3306) :', False);
-    Page.Add('Mysql server and database password you want for root (first install only):', False);
+    Page.Add(CustomMessage('SMTPServer'), False);
+    Page.Add(CustomMessage('ApachePort'), False);
+    Page.Add(CustomMessage('MySqlPort'), False);
+    Page.Add(CustomMessage('MySqlPassword'), False);
   end;
   
   // Default values
@@ -292,7 +316,6 @@ begin
 
   if CurPageID = Page.ID then
   begin
-
 
     // This must be in if curpage.id = page.id, otherwise it is executed after each Next button
 
@@ -343,10 +366,9 @@ begin
     lockfile := pathWithSlashes+'/www/dolibarr/install.lock';
     if FileExists (lockfile) and not DeleteFile(lockfile) then
     begin
-      themessage := 'Failed to delete file '+pathWithSlashes+'/www/dolibarr/install.lock. You may have to remove it manually later when asked. Click OK to continue...';
- 		  MsgBox(themessage,mbInformation,MB_OK)
+      themessage := FmtMessage(CustomMessage('FailedToDeleteLock'),[pathWithSlashes]);
+ 		  MsgBox(themessage,mbInformation,MB_OK);
     end
-
 
 
 		// Check if parameters already defined in conf.php file
@@ -393,7 +415,7 @@ begin
 //  		    paramok := False;
 //  		  end;
 //	    end;
-	    
+	
       if paramok then
       begin
   		  // Test port Apache
@@ -401,7 +423,7 @@ begin
     		//MsgBox('batFile = '+batFile,mbConfirmation,MB_YESNO)
     		Exec(batFile, '-s localhost -p '+myporta, path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
         //themessage := 'Le port '+myporta+' semble deja pris. Revenez en arriere pour choisir une autre valeur pour le port Apache.';
-        themessage := 'Port '+myporta+' seems to be already in use. Go back to choose another value for Apache port. Cancel choice and choose another value ?';
+        themessage := FmtMessage(CustomMessage('PortAlreadyInUse'),[myporta,'Apache']);
     		if ((IntToStr(myResult) = '0') and (MsgBox(themessage,mbConfirmation,MB_YESNO) = IDYES)) then
         begin
     		  paramok := False;
@@ -415,7 +437,7 @@ begin
     		//MsgBox('batFile = '+batFile,mbConfirmation,MB_YESNO)
     		Exec(batFile, '-s localhost -p '+myport, path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
         //themessage := 'Le port '+myport+' semble deja pris. Revenez en arriere pour choisir une autre valeur pour le port MySQL.';
-        themessage := 'Port '+myport+' seems to be already in use. Go back to choose another value for MySQL port. Cancel choice and choose another value ?';
+        themessage := FmtMessage(CustomMessage('PortAlreadyInUse'),[myport,'MySql']);
     		if ((IntToStr(myResult) = '0') and (MsgBox(themessage,mbConfirmation,MB_YESNO) = IDYES)) then
     		begin
       		paramok := False;
@@ -469,37 +491,37 @@ begin
 	      browser := 'iexplore.exe';
 	      if FileExists (pfPath+'/Mozilla Firefox/firefox.exe')  then
 	      begin
-	        if MsgBox('Firefox has been detected on your computer. Would you like to use it as the default browser for Dolibarr ?',mbConfirmation,MB_YESNO) = IDYES then
+	        if MsgBox(CustomMessage('FirefoxDetected'),mbConfirmation,MB_YESNO) = IDYES then
 	        begin
 	          browser := pfPath+'/Mozilla Firefox/firefox.exe';
 	        end;
 	      end;
 	      if browser = 'iexplore.exe' then
 	      begin
-	        GetOpenFileName('Please choose your default browser. If you are not sure, just click Open :', browser, winPath,'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
+	        GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, winPath,'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
 	      end;
 	
 	      LoadStringFromFile (srcFile, srcContents);
-	      StringChange (srcContents, 'WAMPBROWSER', browser);
-	      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-	      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+	      StringChangeEx (srcContents, 'WAMPBROWSER', browser, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 	      SaveStringToFile(destFile,srcContents, False);
 	
 	      LoadStringFromFile (srcFileH, srcContents);
-	      StringChange (srcContents, 'WAMPBROWSER', browser);
-	      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-	      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+	      StringChangeEx (srcContents, 'WAMPBROWSER', browser, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 	      SaveStringToFile(destFileH,srcContents, False);
 	
 	      LoadStringFromFile (srcFileA, srcContents);
-	      StringChange (srcContents, 'WAMPBROWSER', browser);
-	      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-	      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+	      StringChangeEx (srcContents, 'WAMPBROWSER', browser, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+	      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 	      SaveStringToFile(destFileA,srcContents, False);
 	    end
 
 
-      if MsgBox('DoliWamp installer will now start or restart Apache and Mysql, this may last from several seconds to one minute after this confirmation.' #13#13 'Start to install or upgrade the web server and database server required by Dolibarr ?',mbConfirmation,MB_YESNO) = IDYES then
+      if MsgBox(CustomMessage('DoliWampWillStartApacheMysql'),mbConfirmation,MB_YESNO) = IDYES then
       begin
 
 		
@@ -515,8 +537,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //installDir et version de phpmyadmin
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPPHPMYADMINVERSION', phpmyadminVersion);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPPHPMYADMINVERSION', phpmyadminVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -535,8 +557,8 @@ begin
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
 		
 		      SaveStringToFile(destFile, srcContents, False);
 		    end
@@ -556,7 +578,8 @@ begin
 		    begin
 	        // sinon on prends le fichier par defaut
 	        LoadStringFromFile (srcFile, srcContents);
-	        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
+	        StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
+	        StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
 	        SaveStringToFile(destFile,srcContents, False);
 		    end
 		
@@ -574,10 +597,10 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //installDir et version de php
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
-		      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-		      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPPHPVERSION', phpVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -597,8 +620,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //installDir et version de php
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -616,22 +639,22 @@ begin
 		    if not FileExists (destFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
-		      StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-		      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-		      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+		      StringChangeEx (srcContents, 'WAMPPHPVERSION', phpVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 		      SaveStringToFile(destFile, srcContents, False);
 		    end
 		    else
 		    begin
 		      RenameFile(destFile, destFile+'.old');
 		      LoadStringFromFile (srcFile, srcContents);
-		      StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-		      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
-		      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
+		      StringChangeEx (srcContents, 'WAMPPHPVERSION', phpVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 		      SaveStringToFile(destFile, srcContents, False);
 		    end
 		
@@ -650,10 +673,10 @@ begin
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
-		      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -672,8 +695,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -692,8 +715,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -713,8 +736,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -733,9 +756,9 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
-		      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -753,10 +776,10 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -774,10 +797,10 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-		      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-		      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -795,8 +818,8 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -812,8 +835,8 @@ begin
 		    if not FileExists (destFile) and FileExists(srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPSMTP', mysmtp);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPSMTP', mysmtp, True);
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
 		
@@ -827,8 +850,8 @@ begin
 		    if not FileExists (destFile) and FileExists(srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
-		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-		      StringChange (srcContents, 'WAMPSMTP', mysmtp);
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		      StringChangeEx (srcContents, 'WAMPSMTP', mysmtp, True);
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
 		
@@ -925,13 +948,13 @@ begin
   pathWithSlashes := path;
   StringChange (pathWithSlashes, '\','/');
 
-  MsgBox('Dolibarr program files have been removed. However, all your old data files are still in directory '+path+'. You must remove this directory manually for a complete uninstall.',mbInformation,MB_OK);
+  MsgBox(FmtMessage(CustomMessage('ProgramHasBeenRemoved'),[path]),mbInformation,MB_OK);
 end;
 
 
 [Run]
 ; Launch Dolibarr in browser. This is run after Wizard because of postinstall flag
-Filename: "{app}\rundoliwamp.bat"; Description: "Launch Dolibarr now"; Flags: shellexec postinstall skipifsilent runhidden
+Filename: "{app}\rundoliwamp.bat"; Description: {cm:LaunchNow}; Flags: shellexec postinstall skipifsilent runhidden
 
 
 [UninstallDelete]
