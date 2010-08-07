@@ -84,6 +84,15 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /*                     Actions                                                */
 /******************************************************************************/
 
+// Hook of thirdparty module
+if (! empty($hooks->objModules))
+{
+	foreach($hooks->objModules as $module)
+	{
+		$module->getObjectActions($hooks);
+	}
+}
+
 // Action clone object
 if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 {
@@ -228,43 +237,6 @@ if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
 	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
 	$propal->set_ref_client($user, $_POST['ref_client']);
-}
-
-// Add milestone
-if ($_POST['action'] == 'addmilestone')
-{
-	$propal = new Propal($db);
-	$propal->fetch($_GET["id"]);
-
-	$milestone_error=0;
-
-	if ($_POST['milestone_label'] == $langs->trans('Label') || $_POST['milestone_desc'] == $langs->trans('Description'))
-	{
-		$milestone_error++;
-		$mesg = '<div class="error">'.$langs->trans("MilestoneFieldsIsRequired").'</div>';
-	}
-	else
-	{
-		$milestone = new Milestone($db);
-
-		$milestone->label 		= $_POST['milestone_label'];
-		$milestone->description = $_POST['milestone_desc'];
-		$milestone->elementtype = $propal->element;
-		$milestone->elementid	= $propal->id;
-
-		$ret = $milestone->create($user);
-
-		if ($ret < 0)
-		{
-			$milestone_error++;
-			$mesg = '<div class="error">'.$milestone->error.'</div>';
-		}
-		else
-		{
-			Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$propal->id);
-			exit;
-		}
-	}
 }
 
 /*
