@@ -90,6 +90,7 @@ if (! empty($hooks->objModules))
 	foreach($hooks->objModules as $module)
 	{
 		$module->getObjectActions($hooks);
+		$mesg = $module->error;
 	}
 }
 
