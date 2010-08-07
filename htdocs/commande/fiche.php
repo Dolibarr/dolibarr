@@ -311,7 +311,7 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 	}
 }
 
-if ($_POST['action'] == 'setdeliveryadress' && $user->rights->commande->creer)
+if ($_POST['action'] == 'setaddress' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);

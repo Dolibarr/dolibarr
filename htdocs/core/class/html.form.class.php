@@ -2097,7 +2097,7 @@ class Form
 	}
 
 	/**
-	 *    	\brief      Affiche formulaire de selection de l'adresse de livraison
+	 *    	\brief      Affiche formulaire de selection de l'adresse
 	 *    	\param      page        	Page
 	 *    	\param      selected    	Id condition pre-selectionne
 	 *    	\param      htmlname    	Nom du formulaire select
@@ -2110,7 +2110,7 @@ class Form
 		if ($htmlname != "none")
 		{
 			print '<form method="post" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="setdeliveryadress">';
+			print '<input type="hidden" name="action" value="setaddress">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
