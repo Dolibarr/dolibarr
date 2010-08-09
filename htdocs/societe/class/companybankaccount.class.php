@@ -150,10 +150,9 @@ class CompanyBankAccount
 		if ($socid) $sql.= " WHERE fk_soc  = ".$socid;
 
 		$result = $this->db->query($sql);
-
 		if ($result)
 		{
-			if ($this->db->num_rows())
+			if ($this->db->num_rows($result))
 			{
 				$obj = $this->db->fetch_object($result);
 
@@ -172,7 +171,7 @@ class CompanyBankAccount
 				$this->proprio         = $obj->proprio;
 				$this->adresse_proprio = $obj->adresse_proprio;
 			}
-			$this->db->free();
+			$this->db->free($resql);
 
 			return 1;
 		}

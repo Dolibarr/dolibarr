@@ -2531,15 +2531,44 @@ function get_localtax($tva, $local, $societe_acheteuse="")
  */
 function get_product_vat_for_country($idprod, $countrycode)
 {
-	global $db;
+	global $db,$mysoc;
 
+    $ret=0;
+
+    // Load product
 	$product=new Product($db);
 	$product->fetch($idprod);
 
-	// \TODO Read default product vat according to countrycode
-	// For the moment only one rate supported
+	if ($mysoc->pays_code == $countrycode) // If selling country is ours
+	{
+        $ret=$product->tva_tx;    // Default vat of product we defined
+	}
+	else
+	{
+        // TODO Read default product vat according to countrycode
 
-	return $product->tva_tx;
+
+        // If vat of product for the country not found or not defined, we return higher vat of country.
+        $sql.="SELECT taux as vat_rate";
+        $sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+        $sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$countrycode."'";
+        $sql.=" ORDER BY t.taux DESC, t.recuperableonly ASC";
+        $sql.=$db->plimit(1);
+
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $obj=$db->fetch_object($resql);
+            if ($obj)
+            {
+                $ret=$obj->vat_rate;
+            }
+        }
+        else dol_print_error($db);
+	}
+
+	//print "ret=".$ret;exit;
+	return $ret;
 }
 
 /**
@@ -2574,6 +2603,8 @@ function get_product_localtax_for_country($idprod, $local, $countrycode)
  */
 function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 {
+	global $conf;
+
 	if (!is_object($societe_vendeuse)) return -1;
 	if (!is_object($societe_acheteuse)) return -1;
 
@@ -2599,12 +2630,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
 	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()))
 	{
-		// Define if third party is treated as company of not when nature is unknown
-		$isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1;	// 0 by default
-		if (! empty($societe_acheteuse->tva_intra)) $isacompany=1;
-		else if (! empty($societe_acheteuse->typent_code) && in_array($societe_acheteuse->typent_code,array('TE_PRIVATE'))) $isacompany=0;
-		else if (! empty($societe_acheteuse->typent_code) && in_array($societe_acheteuse->typent_code,array('TE_SMALL','TE_MEDIUM','TE_LARGE'))) $isacompany=1;
-
+		$isacompany=$societe_acheteuse->isACompany();
 		if ($isacompany)
 		{
 			return 0;
@@ -2614,6 +2640,17 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 			if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
             return -1;  // Si produit absent, on ne peut determiner taux tva
 		}
+	}
+
+    // If services are eServices according to EU Council Directive 2002/38/EC (ec.europa.eu/taxation_customs/taxation/v.../article_1610_en.htm)
+    // we use the buyer VAT.
+	if (! empty($conf->global->MAIN_SERVICES_ARE_ECOMMERCE_200238EC))
+	{
+		//print "eee".$societe_acheteuse->isACompany();exit;
+        if (! $societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())
+        {
+        	return get_product_vat_for_country($idprod,$societe_acheteuse->pays_code);
+        }
 	}
 
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
