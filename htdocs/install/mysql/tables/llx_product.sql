@@ -39,8 +39,9 @@ create table llx_product
   price_min_ttc				double(24,8) DEFAULT 0,
   price_base_type			varchar(3)   DEFAULT 'HT',
   tva_tx					double(6,3),
-  localtax1_tx				double(6,3)  DEFAULT 0,
-  localtax2_tx				double(6,3)  DEFAULT 0,
+  recuperableonly           integer NOT NULL DEFAULT '0',   -- Franch NPR VAT
+  localtax1_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 1 
+  localtax2_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 2
   fk_user_author			integer,
   envente					tinyint      DEFAULT 1,
   fk_product_type			integer      DEFAULT 0,			-- Type 0 for regular product, 1 for service

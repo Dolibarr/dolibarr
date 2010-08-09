@@ -32,7 +32,7 @@
  *  \version    $Id$
  */
 
-define('DOL_VERSION','2.9.0');	// Also defined in htdocs/install/inc.php
+define('DOL_VERSION','3.0.0-alpha');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
 define('EURO',chr(128));
 
 // Definition des constantes syslog

@@ -86,7 +86,7 @@ if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && ($user->rights->
 		$newvat=str_replace('*','',$_POST["tva_tx"]);
 	}
 
-	if ($product->update_price($product->id, $newprice, $newpricebase, $user, $newvat, $newprice_min, $level) > 0)
+	if ($product->update_price($product->id, $newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr) > 0)
 	{
 		$_GET["action"] = '';
 		$mesg = '<div class="ok">'.$langs->trans("RecordSaved").'</div>';
@@ -425,7 +425,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 
 
 // Liste des evolutions du prix
-$sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx,";
+$sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.recuperableonly,";
 $sql.= " p.price_level, p.price_min, p.price_min_ttc,";
 $sql.= " p.date_price as dp, u.rowid as user_id, u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."product_price as p,";
@@ -494,7 +494,7 @@ if ($result)
 			}
 
 			print '<td align="center">'.$langs->trans($objp->price_base_type)."</td>";
-			print '<td align="right">'.vatrate($objp->tva_tx,true)."</td>";
+			print '<td align="right">'.vatrate($objp->tva_tx,true,$objp->recuperableonly)."</td>";
 			print '<td align="right">'.price($objp->price)."</td>";
 			print '<td align="right">'.price($objp->price_ttc)."</td>";
 			print '<td align="right">'.price($objp->price_min).'</td>';
