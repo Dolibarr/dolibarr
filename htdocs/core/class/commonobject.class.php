@@ -1161,12 +1161,10 @@ class CommonObject
 				{
 					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/class/'.$module.'.class.php');
 				}
-				/*
 				if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php'))
 				{
 					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php');
 				}
-				*/
 				
 				$classname = ucfirst($module);
 				$this->objModules[] = new $classname($this->db);
@@ -1225,6 +1223,7 @@ class CommonObject
 	
 	/**
 	 * 	Return HTML table with title list
+	 * 	TODO mettre le html dans un template 
 	 */
 	function print_title_list()
 	{
@@ -1265,6 +1264,7 @@ class CommonObject
 	/**
 	 * 	Return HTML with selected object line
 	 * 	@param		line		Selected object line
+	 * 	TODO mettre le html dans un template 
 	 */
 	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0)
 	{
