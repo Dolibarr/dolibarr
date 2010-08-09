@@ -1602,11 +1602,12 @@ class Facture extends CommonObject
 			$this->db->begin();
 
 			// Clean parameters
-			$remise_percent=price2num($remise_percent);
-			$qty=price2num($qty);
-			if (! $qty) $qty=0;
-			if (! $ventil) $ventil=0;
-			if (! $info_bits) $info_bits=0;
+            if (empty($remise_percent)) $remise_percent=0;
+			if (empty($qty)) $qty=0;
+			if (empty($ventil)) $ventil=0;
+			if (empty($info_bits)) $info_bits=0;
+            $remise_percent=price2num($remise_percent);
+            $qty=price2num($qty);
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);
