@@ -2388,6 +2388,72 @@ class Commande extends CommonObject
 			return -1;
 		}
 	}
+	
+	/**
+	 * 	\brief		Return an array of order lines
+	 * 	\param		option		0=No filter on rang, 1=filter on rang <> 0, 2=filter on rang=0
+	 */
+	function getLinesArray($option=0)
+	{
+		$lines = array();
+
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.description, l.price, l.qty, l.tva_tx, ';
+		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,l.rang,';
+		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
+		$sql.= ' l.date_start,';
+		$sql.= ' l.date_end,';
+		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, ';
+		$sql.= ' p.description as product_desc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
+		$sql.= ' WHERE l.fk_commande = '.$this->id;
+		if ($option == 1) $sql.= ' AND l.rang <> 0';
+		if ($option == 2) $sql.= ' AND l.rang = 0';
+		$sql.= ' ORDER BY l.rang ASC, l.rowid';
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$lines[$i]->id					= $obj->rowid;
+				$lines[$i]->description 		= $obj->description;
+				$lines[$i]->fk_product			= $obj->fk_product;
+				$lines[$i]->ref					= $obj->ref;
+				$lines[$i]->product_label		= $obj->product_label;
+				$lines[$i]->product_desc		= $obj->product_desc;
+				$lines[$i]->fk_product_type		= $obj->fk_product_type;
+				$lines[$i]->product_type		= $obj->product_type;
+				$lines[$i]->qty					= $obj->qty;
+				$lines[$i]->subprice			= $obj->subprice;
+				$lines[$i]->fk_remise_except 	= $obj->fk_remise_except;
+				$lines[$i]->remise_percent		= $obj->remise_percent;
+				$lines[$i]->tva_tx				= $obj->tva_tx;
+				$lines[$i]->info_bits			= $obj->info_bits;
+				$lines[$i]->total_ht			= $obj->total_ht;
+				$lines[$i]->total_tva			= $obj->total_tva;
+				$lines[$i]->total_ttc			= $obj->total_ttc;
+				$lines[$i]->special_code		= $obj->special_code;
+				$lines[$i]->rang				= $obj->rang;
+				$lines[$i]->date_start			= $this->db->jdate($obj->date_start);
+				$lines[$i]->date_end			= $this->db->jdate($obj->date_end);
+
+				$i++;
+			}
+			$this->db->free($resql);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+
+		return $lines;
+	}
 
 }
 

@@ -60,10 +60,27 @@ $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 $mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
 
+// Instantiate hooks of thirdparty module
+if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+{
+	$hooks = new Commande($db);
+	$hooks->callHooks('objectcard');
+}
+
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
+
+// Hook of thirdparty module
+if (! empty($hooks->objModules))
+{
+	foreach($hooks->objModules as $module)
+	{
+		$module->getObjectActions($hooks);
+		$mesg = $module->error;
+	}
+}
 
 // Action clone object
 if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
@@ -380,7 +397,7 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 		$ret=$commande->fetch_thirdparty();
 
 		// Clean parameters
-		$suffixe = $_POST['idprod'] ? '_prod' : '';
+		$suffixe = $_POST['idprod'] ? '_predef' : '';
 		$date_start=dol_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
 		$date_end=dol_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
 		$price_base_type = 'HT';
@@ -1657,6 +1674,44 @@ else
 			/*
 			 * Lines
 			 */
+			
+			print '<table class="noborder" width="100%">';
+			
+			// Hook of thirdparty module
+			if (! empty($hooks->objModules))
+			{
+				foreach($hooks->objModules as $module)
+				{
+					$lines = $commande->getLinesArray(1);
+
+					$module->getObjectList($commande);
+					$sublines = $commande->getLinesArray(2);
+
+					if (! empty($module->lines))
+					{
+						$commande->print_title_list();
+						$module->printObjectList($commande, $lines, $sublines,1);
+					}
+					else if (! empty($lines) )
+					{
+						$commande->print_title_list();
+						$commande->printLinesList($lines,1);
+					}
+				}
+			}
+			else
+			{
+				$lines = $commande->getLinesArray(0);
+				
+				if (! empty($lines) )
+				{
+					$commande->print_title_list();
+					$commande->printLinesList($lines,1);
+				}
+			}
+			
+			
+			/*
 			$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.description, l.price, l.qty, l.tva_tx, ';
 			$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,';
 			$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
@@ -1931,21 +1986,35 @@ else
 			{
 				dol_print_error($db);
 			}
+			*/
 
 			/*
 			 * Form to add new line
 			 */
-			if ($commande->statut == 0 && $user->rights->commande->creer && $_GET["action"] <> 'editline')
+			if ($commande->statut == 0 && $user->rights->commande->creer)
 			{
-				$var=true;
-
-				$commande->showAddFreeProductForm(1);
-
-				// Add predefined products/services
-				if ($conf->product->enabled || $conf->service->enabled)
+				if (! preg_match('/editline|edit_/',$_GET["action"]))
 				{
-					$var=!$var;
-					$commande->showAddPredefinedProductForm(1);
+					$var=true;
+					
+					$commande->showAddFreeProductForm(1);
+					
+					// Add predefined products/services
+					if ($conf->product->enabled || $conf->service->enabled)
+					{
+						$var=!$var;
+						$commande->showAddPredefinedProductForm(1);
+					}
+					
+					// Hook of thirdparty module
+					if (! empty($hooks->objModules))
+					{
+						foreach($hooks->objModules as $module)
+						{
+							$var=!$var;
+							$module->formAddObject($commande);
+						}
+					}
 				}
 			}
 			print '</table>';

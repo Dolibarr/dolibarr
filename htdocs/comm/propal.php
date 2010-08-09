@@ -1396,13 +1396,13 @@ if ($id > 0 || ! empty($ref))
 			
 			if (! empty($module->lines))
 			{
-				print_title_list();
+				$propal->print_title_list();
 				$module->printObjectList($propal, $lines, $sublines);
 			}
 			else if (! empty($lines) )
 			{
-				print_title_list();
-				print_lines_list($propal, $lines);
+				$propal->print_title_list();
+				$propal->printLinesList($lines);
 			}
 		}
 	}
@@ -1412,8 +1412,8 @@ if ($id > 0 || ! empty($ref))
 
 		if (! empty($lines) )
 		{
-			print_title_list();
-			print_lines_list($propal, $lines);
+			$propal->print_title_list();
+			$propal->printLinesList($lines);
 		}
 	}
 
