@@ -408,13 +408,14 @@ class UserGroup extends CommonObject
 		$sql.= " AND r.entity = ".$conf->entity;
 		$sql.= " AND u.fk_usergroup = ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
-		if ($this->db->query($sql))
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
 			{
-				$row = $this->db->fetch_row();
+				$row = $this->db->fetch_row($resql);
 
 				if (strlen($row[1]) > 0)
 				{

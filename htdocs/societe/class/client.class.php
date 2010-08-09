@@ -58,15 +58,15 @@ class Client extends Societe
         $sql .= " WHERE f.fk_soc = ".$this->id;
         $sql .= " ORDER BY datef DESC";
 
-        $result = $this->db->query($sql) ;
         $i = 0;
-        if ( $result )
+        $resql = $this->db->query($sql);
+        if ($resql)
         {
-            $num = $this->db->num_rows();
+            $num = $this->db->num_rows($resql);
 
             while ($i < $num )
             {
-                $row = $this->db->fetch_row();
+                $row = $this->db->fetch_row($resql);
 
                 $this->factures[$i][0] = $row[0];
                 $this->factures[$i][1] = $row[1];

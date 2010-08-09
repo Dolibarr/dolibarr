@@ -972,7 +972,7 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ( $result )
 		{
-			$result = $this->db->fetch_array();
+			$result = $this->db->fetch_array($result);
 
 			$this->id                 = $result["rowid"];
 			$this->ref                = $result["ref"];

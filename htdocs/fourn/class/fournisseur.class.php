@@ -65,15 +65,14 @@ class Fournisseur extends Societe
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 		$sql .= " WHERE cf.fk_soc = ".$this->id;
 
-		$result = $this->db->query($sql) ;
-
-		if ( $result )
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 
 			if ($num == 1)
 			{
-				$row = $this->db->fetch_row();
+				$row = $this->db->fetch_row($resql);
 
 				$this->single_open_commande = $row[0];
 			}

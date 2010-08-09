@@ -391,7 +391,7 @@ class ProductFournisseur extends Product
 		$result = $this->db->query($sql) ;
 		if ($result)
 		{
-			$result = $this->db->fetch_array();
+			$result = $this->db->fetch_array($result);
 			$this->ref_fourn = $result["ref_fourn"];
 			$this->product_fourn_id = $result["rowid"];
 			return 1;

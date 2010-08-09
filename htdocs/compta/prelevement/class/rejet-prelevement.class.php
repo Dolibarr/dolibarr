@@ -261,22 +261,22 @@ class RejetPrelevement
 		$sql.= " AND pf.fk_facture = f.rowid";
 		$sql.= " AND f.entity = ".$conf->entity;
 
-		$result=$this->db->query($sql);
-		if ($result)
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 
 			if ($num)
-	  {
-	  	$i = 0;
-	  	while ($i < $num)
-	  	{
-	  		$row = $this->db->fetch_row();
-	  		$arr[$i] = $row[0];
-	  		$i++;
-	  	}
-	  }
-	  $this->db->free();
+			{
+				$i = 0;
+				while ($i < $num)
+				{
+					$row = $this->db->fetch_row($resql);
+					$arr[$i] = $row[0];
+					$i++;
+				}
+			}
+			$this->db->free($resql);
 		}
 		else
 		{
@@ -304,22 +304,22 @@ class RejetPrelevement
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))
-			  {
-			  	$obj = $this->db->fetch_object($resql);
+			{
+				$obj = $this->db->fetch_object($resql);
 
-			  	$this->id             = $rowid;
-			  	$this->date_rejet     = $this->db->jdate($obj->dr);
-			  	$this->motif          = $this->motifs[$obj->motif];
+				$this->id             = $rowid;
+				$this->date_rejet     = $this->db->jdate($obj->dr);
+				$this->motif          = $this->motifs[$obj->motif];
 
-			  	$this->db->free($resql);
+				$this->db->free($resql);
 
-			  	return 0;
-			  }
-			  else
-			  {
-			  	dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid numrows=0");
-			  	return -1;
-			  }
+				return 0;
+			}
+			else
+			{
+				dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid numrows=0");
+				return -1;
+			}
 		}
 		else
 		{

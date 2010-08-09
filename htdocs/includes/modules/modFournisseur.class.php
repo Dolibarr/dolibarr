@@ -288,13 +288,14 @@ class modFournisseur extends DolibarrModules
 	{
 		$sql = "SELECT count(rowid) FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
 
-		if ($this->db->query($sql))
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			$row = $this->db->fetch_row();
+			$row = $this->db->fetch_row($resql);
 
 			if ($row[0] == 0)
 			{
-				$this->db->free();
+				$this->db->free($resql);
 
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
 				$sql .= " (code,libelle) VALUES ('OrderByMail','Courrier')";

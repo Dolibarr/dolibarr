@@ -759,10 +759,9 @@ class Account extends CommonObject
 		$sql.= " WHERE rowid = ".$rowid;
 
 		$result = $this->db->query($sql);
-
 		if ($result)
 		{
-			if ($this->db->affected_rows())
+			if ($this->db->affected_rows($result))
 			{
 				return 1;
 			}
@@ -784,10 +783,9 @@ class Account extends CommonObject
 		$sql.= " WHERE rowid = ".$rowid;
 
 		$result = $this->db->query($sql);
-
 		if ($result)
 		{
-			if ($this->db->affected_rows())
+			if ($this->db->affected_rows($result))
 			{
 				return 1;
 			}

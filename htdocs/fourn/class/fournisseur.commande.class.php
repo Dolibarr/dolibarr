@@ -50,9 +50,9 @@ class CommandeFournisseur extends Commande
 	var $ref;
 	var $brouillon;
 	var $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
-	 						//                                                          -> 7=Canceled/Never received -> (reopen) 3=Process runing
-							//										-> 6=Canceled -> (reopen) 2=Approved
-							//  		              -> 9=Refused  -> (reopen) 1=Validated
+	//                                                          -> 7=Canceled/Never received -> (reopen) 3=Process runing
+	//										-> 6=Canceled -> (reopen) 2=Approved
+	//  		              -> 9=Refused  -> (reopen) 1=Validated
 
 
 	/**   \brief      Constructeur
@@ -1079,20 +1079,21 @@ class CommandeFournisseur extends Commande
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
 		$sql.= " WHERE active = 1";
 
-		if ($this->db->query($sql))
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			$i = 0;
 			$num = $this->db->num_rows();
 			$this->methodes_commande = array();
 			while ($i < $num)
-	  {
-	  	$row = $this->db->fetch_row();
+			{
+				$row = $this->db->fetch_row($resql);
 
-	  	$this->methodes_commande[$row[0]] = $row[1];
+				$this->methodes_commande[$row[0]] = $row[1];
 
-	  	$i++;
-	  }
-	  return 0;
+				$i++;
+			}
+			return 0;
 		}
 		else
 		{

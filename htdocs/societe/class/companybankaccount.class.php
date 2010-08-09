@@ -67,9 +67,10 @@ class CompanyBankAccount
 	function create()
 	{
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec) values ($this->socid, ".$this->db->idate(mktime()).")";
-		if ($this->db->query($sql))
+        $resql=$this->db->query($sql);
+		if ($resql)
 		{
-			if ($this->db->affected_rows())
+			if ($this->db->affected_rows($resql))
 			{
 				return 1;
 			}

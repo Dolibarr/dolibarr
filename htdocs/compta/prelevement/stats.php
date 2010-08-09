@@ -23,7 +23,7 @@
  *       \file       htdocs/compta/prelevement/stats.php
  *       \brief      Page de stats des prelevements
  *       \version    $Id$
-*/
+ */
 
 require('../../main.inc.php');
 
@@ -52,17 +52,18 @@ $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE pl.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
 
-if ($db->query($sql))
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-  if ( $num >0 )
-    {
-      $row = $db->fetch_row();
-      $total = $row[0];
-      $nbtotal = $row[1];
-    }
+	if ( $num >0 )
+	{
+		$row = $db->fetch_row($resql);
+		$total = $row[0];
+		$nbtotal = $row[1];
+	}
 }
 
 /*
@@ -76,59 +77,60 @@ $sql.= " WHERE pl.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " GROUP BY pl.statut";
 
-if ($db->query($sql))
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-  print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td align="right">%</td>';
-  print '<td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
+	print"\n<!-- debut table -->\n";
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td align="right">%</td>';
+	print '<td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
 
-  $var=True;
+	$var=True;
 
-  $st[0]  = $langs->trans("StatusWaiting");
-  $st[1]  = $langs->trans("StatusWaiting");
-  $st[2] = $langs->trans("StatusCredited");
-  $st[3] = $langs->trans("StatusRefused");
+	$st[0]  = $langs->trans("StatusWaiting");
+	$st[1]  = $langs->trans("StatusWaiting");
+	$st[2] = $langs->trans("StatusCredited");
+	$st[3] = $langs->trans("StatusRefused");
 
-  while ($i < $num)
-    {
-      $row = $db->fetch_row();
+	while ($i < $num)
+	{
+		$row = $db->fetch_row($resql);
 
-      print "<tr $bc[$var]><td>";
+		print "<tr $bc[$var]><td>";
 
-      print $st[$row[2]];
-      print '</td><td align="center">';
-      print $row[1];
+		print $st[$row[2]];
+		print '</td><td align="center">';
+		print $row[1];
 
-      print '</td><td align="right">';
-      print round($row[1]/$nbtotal*100,2)." %";
+		print '</td><td align="right">';
+		print round($row[1]/$nbtotal*100,2)." %";
 
-      print '</td><td align="right">';
+		print '</td><td align="right">';
 
-      print price($row[0]);
+		print price($row[0]);
 
-      print '</td><td align="right">';
-      print round($row[0]/$total*100,2)." %";
-      print '</td></tr>';
+		print '</td><td align="right">';
+		print round($row[0]/$total*100,2)." %";
+		print '</td></tr>';
 
-      $var=!$var;
-      $i++;
-    }
+		$var=!$var;
+		$i++;
+	}
 
-  print '<tr class="liste_total"><td align="right">'.$langs->trans("Total").'</td>';
-  print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td align="right">';
-  print price($total);
-  print '</td><td align="right">&nbsp;</td>';
-  print "</tr></table>";
-  $db->free();
+	print '<tr class="liste_total"><td align="right">'.$langs->trans("Total").'</td>';
+	print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td align="right">';
+	print price($total);
+	print '</td><td align="right">&nbsp;</td>';
+	print "</tr></table>";
+	$db->free();
 }
 else
 {
-  dol_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -147,17 +149,18 @@ $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE pl.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " WHERE pl.statut = 3";
-if ($db->query($sql))
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-  if ( $num > 0 )
-    {
-      $row = $db->fetch_row();
-      $total = $row[0];
-      $nbtotal = $row[1];
-    }
+	if ( $num > 0 )
+	{
+		$row = $db->fetch_row($resql);
+		$total = $row[0];
+		$nbtotal = $row[1];
+	}
 }
 
 /*
@@ -175,57 +178,58 @@ $sql.= " AND pr.fk_prelevement_lignes = pl.rowid";
 $sql.= " GROUP BY pr.motif";
 $sql.= " ORDER BY cc DESC";
 
-if ($db->query($sql))
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-  print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td>';
-  print '<td align="right">%</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
+	print"\n<!-- debut table -->\n";
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td>';
+	print '<td align="right">%</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
 
-  $var=True;
+	$var=True;
 
-  require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php";
-  $Rejet = new RejetPrelevement($db, $user);
+	require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php";
+	$Rejet = new RejetPrelevement($db, $user);
 
-  while ($i < $num)
-    {
-      $row = $db->fetch_row();
+	while ($i < $num)
+	{
+		$row = $db->fetch_row($resql);
 
-      print "<tr $bc[$var]><td>";
-      print $Rejet->motifs[$row[2]];
+		print "<tr $bc[$var]><td>";
+		print $Rejet->motifs[$row[2]];
 
-      print '</td><td align="center">'.$row[1];
+		print '</td><td align="center">'.$row[1];
 
-      print '</td><td align="right">';
-      print round($row[1]/$nbtotal*100,2)." %";
+		print '</td><td align="right">';
+		print round($row[1]/$nbtotal*100,2)." %";
 
-      print '</td><td align="right">';
-      print price($row[0]);
+		print '</td><td align="right">';
+		print price($row[0]);
 
-      print '</td><td align="right">';
-      print round($row[0]/$total*100,2)." %";
+		print '</td><td align="right">';
+		print round($row[0]/$total*100,2)." %";
 
 
-      print '</td></tr>';
+		print '</td></tr>';
 
-      $var=!$var;
-      $i++;
-    }
+		$var=!$var;
+		$i++;
+	}
 
-  print '<tr class="liste_total"><td align="right">'.$langs->trans("Total").'</td><td align="center">'.$nbtotal.'</td>';
-  print '<td>&nbsp;</td><td align="right">';
-  print price($total);
-  print '</td><td align="right">&nbsp;</td>';
-  print "</tr></table>";
-  $db->free();
+	print '<tr class="liste_total"><td align="right">'.$langs->trans("Total").'</td><td align="center">'.$nbtotal.'</td>';
+	print '<td>&nbsp;</td><td align="right">';
+	print price($total);
+	print '</td><td align="right">&nbsp;</td>';
+	print "</tr></table>";
+	$db->free();
 }
 else
 {
-  dol_print_error($db);
+	dol_print_error($db);
 }
 
 

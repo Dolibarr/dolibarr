@@ -149,9 +149,10 @@ class AdherentType extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type WHERE rowid = $rowid";
 
-		if ( $this->db->query( $sql) )
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			if ( $this->db->affected_rows() )
+			if ( $this->db->affected_rows($resql) )
 			{
 				return 1;
 			}

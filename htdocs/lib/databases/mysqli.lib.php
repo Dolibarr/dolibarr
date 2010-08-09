@@ -461,7 +461,7 @@ class DoliDb
 	 *	\return     int		    Nombre de lignes
 	 */
 
-	function affected_rows($resultset=0)
+	function affected_rows($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_object($resultset)) { $resultset=$this->results; }

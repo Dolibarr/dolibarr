@@ -401,9 +401,10 @@ class Don extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
 
-		if ( $this->db->query( $sql) )
+        $resql=$this->db->query($sql);
+		if ($resql)
 		{
-			if ( $this->db->affected_rows() )
+			if ( $this->db->affected_rows($resql) )
 			  {
 			  	return 1;
 			  }
@@ -486,9 +487,10 @@ class Don extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0;";
 
-		if ( $this->db->query( $sql) )
+        $resql=$this->db->query($sql);
+		if ($resql)
 		{
-			if ( $this->db->affected_rows() )
+			if ( $this->db->affected_rows($resql) )
 	  {
 	  	return 1;
 	  }
@@ -519,9 +521,10 @@ class Don extends CommonObject
 		}
 		$sql .=  " WHERE rowid = $rowid AND fk_statut = 1;";
 
-		if ( $this->db->query( $sql) )
+        $resql=$this->db->query($sql);
+		if ($resql)
 		{
-			if ( $this->db->affected_rows() )
+			if ($this->db->affected_rows($resql))
 			{
 				return 1;
 			}
@@ -548,9 +551,10 @@ class Don extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2;";
 
-		if ( $this->db->query( $sql) )
+        $resql=$this->db->query($sql);
+		if ($resql)
 		{
-			if ( $this->db->affected_rows() )
+			if ( $this->db->affected_rows($resql) )
 			{
 				return 1;
 			}
