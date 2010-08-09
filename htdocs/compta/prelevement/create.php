@@ -194,9 +194,10 @@ $sql.= " AND pfd.traite = 0";
 $sql.= " AND pfd.fk_facture = f.rowid";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows();
+	$num = $db->num_rows($resql);
 	$i = 0;
 
 	if ($num)
@@ -207,7 +208,7 @@ if ( $db->query($sql) )
 		$var = True;
 		while ($i < $num && $i < 20)
 		{
-			  $obj = $db->fetch_object();
+			  $obj = $db->fetch_object($resql);
 			  $var=!$var;
 			  print '<tr '.$bc[$var].'><td>';
 				$invoicestatic->id=$obj->rowid;

@@ -326,9 +326,10 @@ print "</table>";
  }
  $sql .= " GROUP BY f.facnumber,f.rowid,s.nom, s.rowid, f.total_ttc";
 
- if ( $db->query($sql) )
+ $resql=$db->query($sql);
+ if ($resql)
  {
- $num = $db->num_rows();
+ $num = $db->num_rows($resql);
  $i = 0;
 
  if ($num)
@@ -337,7 +338,7 @@ print "</table>";
  $total_ttc_Rac = $totalam_Rac = $total_Rac = 0;
  while ($i < $num)
  {
- $obj = $db->fetch_object();
+ $obj = $db->fetch_object($resql);
  $total_ttc_Rac +=  $obj->total_ttc;
  $totalam_Rac +=  $obj->am;
  $i++;
@@ -346,7 +347,7 @@ print "</table>";
  print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r�gl� des factures partiellement r�gl�es</td></tr>";
  $total_CA +=$total_ttc_Rac;
  }
- $db->free();
+ $db->free($resql);
  }
  else
  {
@@ -377,9 +378,10 @@ print "</table>";
  }
  $sql .= " GROUP BY p.rowid";
 
- if ( $db->query($sql) )
+ $resql=$db->query($sql);
+ if ($resql)
  {
- $num = $db->num_rows();
+ $num = $db->num_rows($resql);
  $i = 0;
 
  if ($num)
@@ -388,7 +390,7 @@ print "</table>";
  $total_pr = 0;
  while ($i < $num)
  {
- $obj = $db->fetch_object();
+ $obj = $db->fetch_object($resql);
  $total_pr +=  $obj->total_ttc-$obj->tot_fttc;
  $i++;
  }
@@ -396,7 +398,7 @@ print "</table>";
  print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td align=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
  $total_CA += $total_pr;
  }
- $db->free();
+ $db->free($resql);
  }
  else
  {

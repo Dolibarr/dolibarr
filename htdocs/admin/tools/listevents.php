@@ -155,7 +155,7 @@ if ($result)
 
 	while ($i < min($num,$conf->liste_limit))
 	{
-		$obj = $db->fetch_object();
+		$obj = $db->fetch_object($result);
 
 		$var=!$var;
 

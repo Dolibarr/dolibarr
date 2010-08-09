@@ -79,9 +79,10 @@ if ($mode == 'search') {
 		$sql.= " AND s.entity = ".$conf->entity;
 	}
 
-	if ( $db->query($sql) ) {
-		if ( $db->num_rows() == 1) {
-			$obj = $db->fetch_object();
+	$resql=$db->query($sql);
+	if ($resql) {
+		if ( $db->num_rows($resql) == 1) {
+			$obj = $db->fetch_object($resql);
 			$socid = $obj->rowid;
 		}
 		$db->free();
@@ -143,10 +144,10 @@ if ($socid)
 
 $sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows();
+	$num = $db->num_rows($resql);
 	$i = 0;
 
 	if ($action == 'facturer') {
@@ -193,7 +194,7 @@ if ($result)
 
 	while ($i < min($num,$conf->liste_limit))
 	{
-		$obj = $db->fetch_object();
+		$obj = $db->fetch_object($resql);
 
 		$var=!$var;
 
@@ -212,7 +213,7 @@ if ($result)
 
 	print '</form>';
 
-	$db->free();
+	$db->free($resql);
 }
 else
 {

@@ -1475,16 +1475,17 @@ class Propal extends CommonObject
 		$sql.= " AND sourcetype = '".$this->element."'";
 		$sql.= " AND targettype = 'commande'";
 
-		if ($this->db->query($sql) )
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			$nump = $this->db->num_rows();
+			$nump = $this->db->num_rows($resql);
 
 			if ($nump)
 			{
 				$i = 0;
 				while ($i < $nump)
 				{
-					$obj = $this->db->fetch_object();
+					$obj = $this->db->fetch_object($resql);
 
 					$ga[$i] = $obj->fk_target;
 					$i++;

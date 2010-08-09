@@ -58,9 +58,10 @@ $sql .= " AND p.language_id = ".$conf->global->OSC_LANGUAGE_ID;
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $dbosc->plimit( $limit ,$offset);
 
-if ( $dbosc->query($sql) )
+$resql=$dbosc->query($sql);
+if ($resql)
 {
-  $num = $dbosc->num_rows();
+  $num = $dbosc->num_rows($resql);
   $i = 0;
   print "<table class=\noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
@@ -70,7 +71,7 @@ if ( $dbosc->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $dbosc->fetch_object();
+      $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->customers_firstname $objp->customers_lastname</a></TD>\n";
@@ -79,7 +80,7 @@ if ( $dbosc->query($sql) )
       $i++;
     }
   print "</table>";
-  $dbosc->free();
+  $dbosc->free($resql);
 }
 else
 {

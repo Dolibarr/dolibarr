@@ -59,14 +59,15 @@ $sql = "SELECT sum(t.value) as value";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
 $sql .= " WHERE t.class = 'ot_subtotal'";
 
-if ( $dbosc->query($sql) )
+$resql=$dbosc->query($sql);
+if ($resql)
 {
-  $num = $dbosc->num_rows();
+  $num = $dbosc->num_rows($resql);
 
   $var=True;
   if ($num > 0)
     {
-      $objp = $dbosc->fetch_object();
+      $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td>Somme des commandes</td>';
@@ -86,15 +87,15 @@ else
 $sql = "SELECT sum(t.value) as value";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
 $sql .= " WHERE t.class = 'ot_shipping'";
-
-if ( $dbosc->query($sql) )
+$resql=$dbosc->query($sql);
+if ($resql)
 {
-  $num = $dbosc->num_rows();
+  $num = $dbosc->num_rows($resql);
 
   $var=True;
   if ($num > 0)
     {
-      $objp = $dbosc->fetch_object();
+      $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td>Somme des frais de port</td>';

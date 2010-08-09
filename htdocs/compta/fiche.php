@@ -54,11 +54,12 @@ if ($mode == 'search')
 		$sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
 	}
 
-	if ( $db->query($sql) )
+    $resql=$db->query($sql);
+	if ($resql)
 	{
-		if ( $db->num_rows() == 1)
+		if ( $db->num_rows($resql) == 1)
 		{
-			$obj = $db->fetch_object();
+			$obj = $db->fetch_object($resql);
 			$socid = $obj->rowid;
 		}
 		$db->free();

@@ -55,9 +55,10 @@ $sql .= " WHERE o.orders_id = t.orders_id AND t.class = 'ot_total'";
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $dbosc->plimit( $limit ,$offset);
 
-if ( $dbosc->query($sql) )
+$resql=$dbosc->query($sql);
+if ($resql)
 {
-  $num = $dbosc->num_rows();
+  $num = $dbosc->num_rows($resql);
   $i = 0;
   print "<table class=\"noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
@@ -69,7 +70,7 @@ if ( $dbosc->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $dbosc->fetch_object();
+      $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
 

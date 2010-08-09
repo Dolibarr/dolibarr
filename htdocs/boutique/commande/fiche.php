@@ -75,39 +75,40 @@ if ($_GET['id'])
 		$sql .= " WHERE orders_id = " . $_GET['id'];
 		//$commande->id;
 		//	echo $sql;
-		if ( $dbosc->query($sql) )
+		$resql=$dbosc->query($sql);
+		if ($resql)
 		{
-	  $num = $dbosc->num_rows();
-	  $i = 0;
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td align="left" width="40%">'.$langs->trans("Products").'</td>';
-	  print '<td align="center">'.$langs->trans("Number").'</td><td align="right">'.$langs->trans("Price").'</td><td align="right">Prix final</td>';
-	  print "</tr>\n";
-	  $var=True;
-	  while ($i < $num)
-	  {
-	  	$objp = $dbosc->fetch_object();
-	  	$var=!$var;
-	  	print "<tr $bc[$var]>";
-	  	print '<td align="left" width="40%">';
-	  	print '<a href="fiche.php?id='.$objp->products_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" width="16" height="16" alt="Fiche livre"></a>';
+			$num = $dbosc->num_rows($resql);
+			$i = 0;
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre"><td align="left" width="40%">'.$langs->trans("Products").'</td>';
+			print '<td align="center">'.$langs->trans("Number").'</td><td align="right">'.$langs->trans("Price").'</td><td align="right">Prix final</td>';
+			print "</tr>\n";
+			$var=True;
+			while ($i < $num)
+			{
+				$objp = $dbosc->fetch_object($resql);
+				$var=!$var;
+				print "<tr $bc[$var]>";
+				print '<td align="left" width="40%">';
+				print '<a href="fiche.php?id='.$objp->products_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" width="16" height="16" alt="Fiche livre"></a>';
 
-	  	print '<a href="fiche.php?id='.$objp->products_id.'">'.$objp->products_name.'</a>';
-	  	print "</td>";
+				print '<a href="fiche.php?id='.$objp->products_id.'">'.$objp->products_name.'</a>';
+				print "</td>";
 
-	  	print '<td align="center"><a href="fiche.php?id='.$objp->rowid."\">$objp->products_quantity</a></TD>\n";
-	  	print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->products_price)."</a></TD>\n";
-	  	print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->final_price)."</a></TD>\n";
+				print '<td align="center"><a href="fiche.php?id='.$objp->rowid."\">$objp->products_quantity</a></TD>\n";
+				print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->products_price)."</a></TD>\n";
+				print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->final_price)."</a></TD>\n";
 
-	  	print "</tr>\n";
-	  	$i++;
-	  }
-	  print "</table>";
-	  $dbosc->free();
+				print "</tr>\n";
+				$i++;
+			}
+			print "</table>";
+			$dbosc->free();
 		}
 		else
 		{
-	  print $dbosc->error();
+			print $dbosc->error();
 		}
 
 		/*

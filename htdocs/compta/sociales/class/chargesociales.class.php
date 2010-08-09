@@ -210,10 +210,9 @@ class ChargeSociales extends CommonObject
 		}
 
 		$result = $this->db->query($sql);
-
 		if ($result) {
-			if ($this->db->num_rows()) {
-				$obj = $this->db->fetch_object();
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
 				return $obj->amount;
 			} else {
 				return 0;

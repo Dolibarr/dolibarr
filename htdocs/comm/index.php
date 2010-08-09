@@ -498,9 +498,10 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // \todo A REF
 	$sql.= " ORDER BY c.tms DESC";
 	$sql.= $db->plimit(5, 0);
 
-	if ( $db->query($sql) )
+	$resql=$db->query($sql);
+	if ($resql)
 	{
-		$num = $db->num_rows();
+		$num = $db->num_rows($resql);
 
 		if ($num > 0)
 		{
@@ -513,8 +514,8 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // \todo A REF
 			$var=false;
 			while ($i < $num)
 			{
-				$obj = $db->fetch_object();
-				print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
+				$obj = $db->fetch_object($resql);
+				print "<tr ".$bc[$var]."><td><a href=\"../contrat/fiche.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
 				print "<td><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany","company"))." ".$obj->nom."</a></td>\n";
 				print "<td align=\"right\">".$staticcontrat->LibStatut($obj->statut,3)."</td></tr>\n";
 				$var=!$var;

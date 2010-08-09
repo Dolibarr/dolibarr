@@ -65,9 +65,10 @@ $sql .= " WHERE s.rowid = c.fk_soc";
 $sql .= " AND c.email IS NOT NULL";
 $sql .= " ORDER BY c.email ASC";
 
-if ($db->query($sql))
+$resql=$db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows();
+	$num = $db->num_rows($resql);
 
 	print "Lines ".$num."\n";
 
@@ -83,18 +84,17 @@ if ($db->query($sql))
 
 	while ($i < $num)
 	{
-		$obj = $db->fetch_object();
+		$obj = $db->fetch_object($resql);
 
 		if ($obj->email <> $oldemail)
 		{
+			$page->write_string($j, 0,  $obj->nom);
+			$page->write_string($j, 1,  $obj->firstname);
+			$page->write_string($j, 2,  $obj->name);
+			$page->write_string($j, 3,  $obj->email);
+			$j++;
 
-	  $page->write_string($j, 0,  $obj->nom);
-	  $page->write_string($j, 1,  $obj->firstname);
-	  $page->write_string($j, 2,  $obj->name);
-	  $page->write_string($j, 3,  $obj->email);
-	  $j++;
-
-	  $oldemail = $obj->email;
+			$oldemail = $obj->email;
 		}
 
 		$i++;

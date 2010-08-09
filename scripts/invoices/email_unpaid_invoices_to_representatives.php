@@ -59,9 +59,10 @@ $sql .= " AND sc.fk_soc = s.rowid";
 $sql .= " AND sc.fk_user = u.rowid";
 $sql .= " ORDER BY u.email ASC, s.rowid ASC";
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-    $num = $db->num_rows();
+    $num = $db->num_rows($resql);
     $i = 0;
     $oldemail = '';
     $message = '';
@@ -72,7 +73,7 @@ if ( $db->query($sql) )
     {
         while ($i < $num)
         {
-            $obj = $db->fetch_object();
+            $obj = $db->fetch_object($resql);
 
             if ($obj->email <> $oldemail)
             {

@@ -165,13 +165,14 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 	$sql.= " ORDER BY u.name ASC";
 
-	if ($db->query($sql))
+	$resql=$db->query($sql);
+	if ($resql)
 	{
-		$num = $db->num_rows();
+		$num = $db->num_rows($resql);
 		$i = 0;
 		while ($i < $num)
 		{
-		 	$obj = $db->fetch_object();
+		 	$obj = $db->fetch_object($resql);
 		  	print '<option value="'.$obj->rowid.'">'.$obj->firstname." ".$obj->name;
 		  	$i++;
 		}

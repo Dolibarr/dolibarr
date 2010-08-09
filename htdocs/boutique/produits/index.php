@@ -54,9 +54,10 @@ $sql .= " FROM ".DB_NAME_OSC.".customers as c";
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $dbosc->plimit( $limit ,$offset);
 
-if ( $dbosc->query($sql) )
+$resql=$dbosc->query($sql);
+if ($resql)
 {
-  $num = $dbosc->num_rows();
+  $num = $dbosc->num_rows($resql);
   $i = 0;
   print "<table class=\"noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
@@ -67,7 +68,7 @@ if ( $dbosc->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $dbosc->fetch_object();
+      $objp = $dbosc->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_firstname."</a></td>\n";
@@ -78,7 +79,7 @@ if ( $dbosc->query($sql) )
       $i++;
     }
   print "</table>";
-  $dbosc->free();
+  $dbosc->free($resql);
 }
 else
 {

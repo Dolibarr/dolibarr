@@ -140,19 +140,20 @@ else
 
 
 /*
- * Derniers groupes cr��s
+ * Derniers groupes crees
  */
 $max=5;
 
 $sql = "SELECT g.rowid, g.nom, g.note, g.entity, g.datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " WHERE g.entity IN (0,".$conf->entity.")";
-$sql.= " ORDER BY g.datec DESC";
-if ($max) $sql.= " LIMIT $max";
+$sql.= $db->order("g.datec","DESC");
+$sql.= $db->limit($max);
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows();
+	$num = $db->num_rows($resql);
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
 	$var = true;
@@ -160,7 +161,7 @@ if ( $db->query($sql) )
 
 	while ($i < $num && (! $max || $i < $max))
 	{
-		$obj = $db->fetch_object();
+		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
 		print "<tr $bc[$var]>";
@@ -176,7 +177,7 @@ if ( $db->query($sql) )
 	}
 	print "</table><br>";
 
-	$db->free();
+	$db->free($resql);
 }
 else
 {

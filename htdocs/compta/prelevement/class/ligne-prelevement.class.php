@@ -21,11 +21,11 @@
  */
 
 /*
-        \file       htdocs/compta/prelevement/ligne-prelevement.class.php
-        \ingroup    prelevement
-        \brief      Fichier de la classe des lignes de prelevements
-        \version    $Revision$
-*/
+ \file       htdocs/compta/prelevement/ligne-prelevement.class.php
+ \ingroup    prelevement
+ \brief      Fichier de la classe des lignes de prelevements
+ \version    $Revision$
+ */
 
 
 /**
@@ -35,77 +35,77 @@
 
 class LignePrelevement
 {
-  var $id;
-  var $db;
+	var $id;
+	var $db;
 
-  var $statuts = array();
+	var $statuts = array();
 
 
-  /**
-   *    \brief      Constructeur de la classe
-   *    \param      DB          Handler acces base de donnees
-   *    \param      user        Objet user
-   */
-  function LignePrelevement($DB, $user)
-  {
-    $this->db = $DB ;
-    $this->user = $user;
+	/**
+	 *    \brief      Constructeur de la classe
+	 *    \param      DB          Handler acces base de donnees
+	 *    \param      user        Objet user
+	 */
+	function LignePrelevement($DB, $user)
+	{
+		$this->db = $DB ;
+		$this->user = $user;
 
-    // List of language codes for status
-    /*$this->statuts[0] = "Waiting";
-    $this->statuts[2] = "Credited";
-    $this->statuts[3] = "Refused";*/
-  }
+		// List of language codes for status
+		/*$this->statuts[0] = "Waiting";
+		$this->statuts[2] = "Credited";
+		$this->statuts[3] = "Refused";*/
+	}
 
-  /**
-   *    \brief      Recupere l'objet prelevement
-   *    \param      rowid       id de la facture a recuperer
-   */
-  function fetch($rowid)
-  {
-  	global $conf;
+	/**
+	 *    \brief      Recupere l'objet prelevement
+	 *    \param      rowid       id de la facture a recuperer
+	 */
+	function fetch($rowid)
+	{
+		global $conf;
 
-    $result = 0;
+		$result = 0;
 
-    $sql = "SELECT pl.rowid, pl.amount, p.ref, p.rowid as bon_rowid";
-    $sql.= ", pl.statut, pl.fk_soc";
-    $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-    $sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as p";
-    $sql.= " WHERE pl.rowid=".$rowid;
-    $sql.= " AND p.rowid = pl.fk_prelevement_bons";
-    $sql.= " AND p.entity = ".$conf->entity;
+		$sql = "SELECT pl.rowid, pl.amount, p.ref, p.rowid as bon_rowid";
+		$sql.= ", pl.statut, pl.fk_soc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+		$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as p";
+		$sql.= " WHERE pl.rowid=".$rowid;
+		$sql.= " AND p.rowid = pl.fk_prelevement_bons";
+		$sql.= " AND p.entity = ".$conf->entity;
 
-    if ($this->db->query($sql))
-      {
-	if ($this->db->num_rows())
-	  {
-	    $obj = $this->db->fetch_object();
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
 
-	    $this->id              = $obj->rowid;
-	    $this->amount          = $obj->amount;
-	    $this->socid           = $obj->fk_soc;
-	    $this->statut          = $obj->statut;
-	    $this->bon_ref         = $obj->ref;
-	    $this->bon_rowid       = $obj->bon_rowid;
-	  }
-	else
-	  {
-	    $result++;
-	    dol_syslog("LignePrelevement::Fetch rowid=$rowid numrows=0");
-	  }
+				$this->id              = $obj->rowid;
+				$this->amount          = $obj->amount;
+				$this->socid           = $obj->fk_soc;
+				$this->statut          = $obj->statut;
+				$this->bon_ref         = $obj->ref;
+				$this->bon_rowid       = $obj->bon_rowid;
+			}
+			else
+			{
+				$result++;
+				dol_syslog("LignePrelevement::Fetch rowid=$rowid numrows=0");
+			}
 
-	$this->db->free();
-      }
-    else
-      {
-	$result++;
-	dol_syslog("LignePrelevement::Fetch rowid=$rowid");
-	dol_syslog($this->db->error());
-      }
+			$this->db->free($resql);
+		}
+		else
+		{
+			$result++;
+			dol_syslog("LignePrelevement::Fetch rowid=$rowid");
+			dol_syslog($this->db->error());
+		}
 
-    return $result;
-
-  }
+		return $result;
+	}
 }
 
 ?>

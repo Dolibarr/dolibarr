@@ -1245,13 +1245,14 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				$sql = 'SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt  WHERE  pt.fk_propal = '.$propalid.' AND pt.fk_product = 0';
 				$sql .= ' ORDER BY pt.rowid ASC';
-				if ($db->query($sql))
+				$resql=$db->query($sql);
+				if ($resql)
 				{
-					$num = $db->num_rows();
+					$num = $db->num_rows($resql);
 					$i = 0;
 					while ($i < $num)
 					{
-						$objp = $db->fetch_object();
+						$objp = $db->fetch_object($resql);
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>&nbsp;</td>';
 						print '<td>'.img_object($langs->trans('ShowProduct'),'product').' '.$objp->product.'</td>';
@@ -1937,9 +1938,9 @@ else
 			if ($commande->statut == 0 && $user->rights->commande->creer && $_GET["action"] <> 'editline')
 			{
 				$var=true;
-				
+
 				$commande->showAddFreeProductForm(1);
-				
+
 				// Add predefined products/services
 				if ($conf->product->enabled || $conf->service->enabled)
 				{

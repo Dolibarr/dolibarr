@@ -123,14 +123,15 @@ if ($mode == 'search')
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	}
 
-	if ( $db->query($sql) )
+	$resql=$db->query($sql);
+	if ($resql)
 	{
-		if ( $db->num_rows() == 1)
+		if ( $db->num_rows($resql) == 1)
 		{
-			$obj = $db->fetch_object();
+			$obj = $db->fetch_object($resql);
 			$socid = $obj->rowid;
 		}
-		$db->free();
+		$db->free($resql);
 	}
 }
 

@@ -703,7 +703,7 @@ else
 		$result=$db->query($sql);
 		if ($result)
 		{
-			$obj = $db->fetch_object();
+			$obj = $db->fetch_object($result);
 			if ($obj->code) $code_pays=$obj->code;
 		}
 		else {
