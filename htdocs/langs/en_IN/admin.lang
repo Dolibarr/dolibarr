@@ -1,0 +1,20 @@
+# Dolibarr language file - en_IN - admin
+CHARSET=UTF-8
+Module20Name=Quotations
+Module20Desc=Quotation's management
+Permission21=Read quotations
+Permission22=Create/modify quotations
+Permission24=Validate quotations
+Permission25=Send quotations
+Permission26=Close quotations
+Permission27=Delete quotations
+Permission28=Export quotations
+WebCalAddEventOnStatusPropal=Add calendar event on quotations status change
+##### Proposals #####
+PropalSetup=Quotations module setup
+ProposalsNumberingModules=Quotations numbering modules
+ProposalsPDFModules=Quotations documents models
+ClassifiedInvoicedWithOrder=Classify invoiced quotations at the same time as the order
+HideTreadedPropal=Hide the treated quotations in the list
+FreeLegalTextOnProposal=Free text on quotations
+WatermarkOnDraftProposal=Watermark on draft quotations (any if empty)
