@@ -1896,11 +1896,6 @@ class Commande extends CommonObject
 			$price    = price2num($price);
 			$subprice  = price2num($subprice);
 
-
-			// TODO: utile ?
-			$LigneOld = new OrderLine($this->db);
-			$LigneOld->fetch($rowid);
-
 			// Mise a jour ligne en base
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
 			$sql.= " description='".addslashes($desc)."'";
