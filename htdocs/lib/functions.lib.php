@@ -2644,7 +2644,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 
     // If services are eServices according to EU Council Directive 2002/38/EC (ec.europa.eu/taxation_customs/taxation/v.../article_1610_en.htm)
     // we use the buyer VAT.
-	if (! empty($conf->global->MAIN_SERVICES_ARE_ECOMMERCE_200238EC))
+	if (! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC))
 	{
 		//print "eee".$societe_acheteuse->isACompany();exit;
         if (! $societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())
