@@ -64,10 +64,8 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 
 	<td align="right">
 	<?php
-	if ($soc->tva_assuj == "0")
-	echo '<input type="hidden" name="np_tva_tx" value="0">0';
-	else
-	$html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $soc);
+	if ($soc->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
+	else $html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $soc);
 	?>
 	</td>
 	<td align="right"><input type="text" size="5" name="np_price"></td>
