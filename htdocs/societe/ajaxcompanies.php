@@ -52,10 +52,13 @@ if (! empty($_POST['newcompany']) || ! empty($_POST['socid']) || ! empty($_POST[
 	$sql = "SELECT rowid, nom";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= " WHERE 1=1";
-	if ($socid){
-	$sql.=" AND (rowid LIKE '%" . $socid . "%'";
-	$sql.=" OR nom  LIKE '%" . $socid . "%'";
-	$sql.=" OR code_fournisseur LIKE '%" . $socid . "%')";
+	if ($socid)
+	{
+		$sql.=" AND (nom LIKE '%" . $socid . "%'";
+		$sql.=" OR code_client LIKE '%" . $socid . "%'";
+		$sql.=" OR code_fournisseur LIKE '%" . $socid . "%'";
+		if ($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID) $sql.=" OR rowid = '" . $socid . "'";
+		$sql.=")";
 	}
 	if (! empty($_GET["filter"])) $sql.= " AND ".$_GET["filter"]; // Add other filters
 	$sql.= " ORDER BY nom ASC";
