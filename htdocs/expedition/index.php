@@ -126,9 +126,10 @@ if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " ORDER BY c.rowid ASC";
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows();
+	$num = $db->num_rows($resql);
 	if ($num)
 	{
 		$langs->load("orders");
@@ -141,7 +142,7 @@ if ( $db->query($sql) )
 		while ($i < $num)
 		{
 			$var=!$var;
-			$obj = $db->fetch_object();
+			$obj = $db->fetch_object($resql);
 			print "<tr $bc[$var]>";
 			print '<td nowrap="nowrap">';
 			$orderstatic->id=$obj->rowid;

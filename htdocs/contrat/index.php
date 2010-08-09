@@ -319,9 +319,10 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= " ORDER BY cd.tms DESC";
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows();
+	$num = $db->num_rows($resql);
 	$i = 0;
 
 	print '<table class="noborder" width="100%">';
@@ -332,7 +333,7 @@ if ( $db->query($sql) )
 	$var=True;
 	while ($i < $num)
 	{
-		$obj = $db->fetch_object();
+		$obj = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]>";
 

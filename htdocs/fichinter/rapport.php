@@ -91,7 +91,8 @@ $sql .= " AND datei >= '".$start."' AND datei < '".$end."'" ;
 
 $sql .= " ORDER BY $sortfield $sortorder ";
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
 	$num = $db->num_rows();
 	$title = $langs->trans("Report")." ".dol_print_date(strtotime($start),"%B %Y");
@@ -112,7 +113,7 @@ if ( $db->query($sql) )
 	$DureeTotal = 0;
 	while ($i < $num)
 	{
-		$objp = $db->fetch_object();
+		$objp = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]>";
 		print '<td><a href="fiche.php?id='.$objp->fichid.'">'.$objp->ref.'</a></td>\n';
@@ -132,7 +133,7 @@ if ( $db->query($sql) )
 		$i++;
 	}
 	print "</table>";
-	$db->free();
+	$db->free($resql);
 	print "<br>".$langs->trans("Total")." $DureeTotal jour[s]";
 }
 else

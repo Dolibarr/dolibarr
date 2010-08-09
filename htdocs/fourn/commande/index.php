@@ -127,13 +127,14 @@ if ($conf->fournisseur->enabled)
 	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-	if ( $db->query($sql) )
+    $resql=$db->query($sql);
+	if ($resql)
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
 		$langs->load("orders");
-		$num = $db->num_rows();
+		$num = $db->num_rows($resql);
 		if ($num)
 		{
 			$i = 0;
@@ -141,7 +142,7 @@ if ($conf->fournisseur->enabled)
 			while ($i < $num)
 			{
 				$var=!$var;
-				$obj = $db->fetch_object();
+				$obj = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
 				print '<td nowrap="nowrap">';
 				print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";

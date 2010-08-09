@@ -1309,17 +1309,18 @@ class Form
 		$sql .= " ORDER BY a.label ASC";
 
 		dol_syslog("Form::select_address sql=".$sql);
-		if ($this->db->query($sql))
+		$resql=$db->query($sql);
+		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
 			if ($showempty) print '<option value="0">&nbsp;</option>';
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
 			{
 				while ($i < $num)
 				{
-					$obj = $this->db->fetch_object();
+					$obj = $this->db->fetch_object($resql);
 
 					if ($selected && $selected == $obj->rowid)
 					{
@@ -1553,17 +1554,18 @@ class Form
 		$sql .= " WHERE active = 1";
 
 		dol_syslog("Form::select_propal_statut sql=".$sql);
-		if ($this->db->query($sql))
+        $resql=$db->query($sql);
+		if ($resql)
 		{
 			print '<select class="flat" name="propal_statut">';
 			print '<option value="">&nbsp;</option>';
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
 			{
 				while ($i < $num)
 				{
-					$obj = $this->db->fetch_object();
+					$obj = $this->db->fetch_object($resql);
 					if ($selected == $obj->id)
 					{
 						print '<option value="'.$obj->id.'" selected="true">';

@@ -164,17 +164,18 @@ class FormOther
 		$sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
 		$sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
 
-		if ($this->db->query($sql))
+        $resql=$db->query($sql);
+		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			print '<option value="-1">&nbsp;</option>'."\n";
 			if ($num)
 			{
 				while ($i < $num)
 				{
-					$obj = $this->db->fetch_object();
+					$obj = $this->db->fetch_object($resql);
 					if ($selected && $selected == $obj->rowid)
 					{
 						print '<option value="'.$obj->rowid.'" selected="true">';

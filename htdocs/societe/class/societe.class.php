@@ -941,14 +941,15 @@ class Societe extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = '".$this->id . "'";
 		$sql .= " AND f.fk_statut = '1' AND f.paye = '0'";
 
-		if ($this->db->query($sql))
+        $resql=$this->db->query($sql);
+		if ($resql)
 		{
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 
 			while ($i < $num)
 	  {
-	  	$objp = $this->db->fetch_object();
+	  	$objp = $this->db->fetch_object($resql);
 	  	$array_push($facimp, $objp->rowid);
 	  	$i++;
 	  	print $i;
@@ -1441,14 +1442,15 @@ class Societe extends CommonObject
 
 		$sql = "SELECT rowid, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE rowid = '".$rowid."'";
 
-		if ($this->db->query($sql) )
+        $resql=$this->db->query($sql);
+		if ($resql)
 		{
-			$nump = $this->db->num_rows();
+			$nump = $this->db->num_rows($resql);
 
 			if ($nump)
 			{
 
-				$obj = $this->db->fetch_object();
+				$obj = $this->db->fetch_object($resql);
 
 				$contact_email = "$obj->firstname $obj->name <$obj->email>";
 
@@ -1828,7 +1830,7 @@ class Societe extends CommonObject
 		if ($resql)
 		{
 			$nump = $this->db->num_rows($resql);
-			$obj = $this->db->fetch_object();
+			$obj = $this->db->fetch_object($resql);
 			$count = $obj->numproj;
 		}
 		else

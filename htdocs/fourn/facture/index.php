@@ -72,14 +72,15 @@ if ($_POST["mode"] == 'search')
 		$sql.= " WHERE s.nom like '%".addslashes(strtolower($socname))."%'";
 	}
 
-	if ( $db->query($sql) )
+    $resql=$db->query($sql);
+	if ($resql)
 	{
-		if ( $db->num_rows() == 1)
+		if ( $db->num_rows($resql) == 1)
 		{
-			$obj = $db->fetch_object();
+			$obj = $db->fetch_object($resql);
 			$socid = $obj->rowid;
 		}
-		$db->free();
+		$db->free($resql);
 	}
 }
 
