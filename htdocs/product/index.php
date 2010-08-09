@@ -46,8 +46,6 @@ $langs->load("products");
  * View
  */
 
-
-
 $transAreaType = $langs->trans("ProductsAndServicesArea");
 $helpurl='';
 if (! isset($_GET["type"]))
@@ -167,8 +165,6 @@ $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.envente,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk_product_subproduct";	// Exclude record that are subproduct for module ???
-//$sql.= " WHERE sp.fk_product_subproduct IS NULL";
 $sql.= " WHERE p.entity = ".$conf->entity;
 if (empty($user->rights->produit->hidden) && empty($user->rights->service->hidden)) $sql.=' AND p.hidden=0';
 else
