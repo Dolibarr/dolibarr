@@ -582,7 +582,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 
 	if ($result >= 0)
 	{
-		$result = $commande->updateline($_POST['elrowid'],
+		$result = $commande->updateline($_POST['lineid'],
 		$description,
 		$_POST['pu'],
 		$_POST['qty'],
