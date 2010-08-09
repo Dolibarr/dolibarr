@@ -2631,9 +2631,10 @@ class Facture extends CommonObject
 			$sql.= ' WHERE fk_facture = '.$this->id;
 			$sql.= ' AND traite = 0';
 
-			if ( $this->db->query( $sql) )
+            $resql=$this->db->query($sql);
+ 			if ($resql)
 			{
-				$row = $this->db->fetch_row();
+				$row = $this->db->fetch_row($resql);
 				if ($row[0] == 0)
 				{
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
@@ -2645,7 +2646,7 @@ class Facture extends CommonObject
 					$sql .= ",'".$soc->bank_account->code_guichet."'";
 					$sql .= ",'".$soc->bank_account->number."'";
 					$sql .= ",'".$soc->bank_account->cle_rib."')";
-					if ( $this->db->query( $sql) )
+					if ( $this->db->query($sql))
 					{
 						return 1;
 					}

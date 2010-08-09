@@ -47,9 +47,9 @@ $h++;
 
 if ($conf->use_preview_tabs)
 {
-    $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans("Preview");
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
+	$head[$h][1] = $langs->trans("Preview");
+	$h++;
 }
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
@@ -73,86 +73,87 @@ $prev_id = $_GET["id"];
 
 if ($prev_id)
 {
-  $bon = new BonPrelevement($db,"");
+	$bon = new BonPrelevement($db,"");
 
-  if ($bon->fetch($_GET["id"]) == 0)
-    {
-      dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
-
-      print '<table class="border" width="100%">';
-
-      print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
-
-      print '</table>';
-
-      print '</div>';
-    }
-  else
-    {
-      print "Erreur";
-    }
-
-  /*
-   * Stats
-   *
-   */
-  $sql = "SELECT sum(pl.amount), pl.statut";
-  $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-  $sql.= " WHERE pl.fk_prelevement_bons = ".$prev_id;
-  $sql.= " GROUP BY pl.statut";
-
-  if ($db->query($sql))
-    {
-      $num = $db->num_rows();
-      $i = 0;
-
-      print"\n<!-- debut table -->\n";
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-      print '<tr class="liste_titre">';
-      print '<td>'.$langs->trans("Status").'</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
-
-      $var=false;
-
-      while ($i < $num)
+	if ($bon->fetch($_GET["id"]) == 0)
 	{
-	  $row = $db->fetch_row();
+		dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
 
-	  print "<tr $bc[$var]><td>";
+		print '<table class="border" width="100%">';
 
-	  if ($row[1] == 2)
-	    {
-	      print $langs->trans("StatusCredited");
-	    }
-	  elseif ($row[1] == 3)
-	    {
-	      print $langs->trans("StatusRefused");
-	    }
-	  elseif ($row[1] == 1)
-	    {
-	      print $langs->trans("StatusWaiting");
-	    }
-	    else print $langs->trans("StatusUnknown");
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
 
-	  print '</td><td align="right">';
-	  print price($row[0]);
+		print '</table>';
 
-	  print '</td><td align="right">';
-	  print round($row[0]/$bon->amount*100,2)." %";
-	  print '</td>';
-
-	  print "</tr>\n";
-
-	  $var=!$var;
-	  $i++;
+		print '</div>';
+	}
+	else
+	{
+		print "Erreur";
 	}
 
-      print "</table>";
-      $db->free();
-    }
-  else
-    {
-      print $db->error() . ' ' . $sql;
-    }
+	/*
+	 * Stats
+	 *
+	 */
+	$sql = "SELECT sum(pl.amount), pl.statut";
+	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+	$sql.= " WHERE pl.fk_prelevement_bons = ".$prev_id;
+	$sql.= " GROUP BY pl.statut";
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+
+		print"\n<!-- debut table -->\n";
+		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Status").'</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
+
+		$var=false;
+
+		while ($i < $num)
+		{
+			$row = $db->fetch_row($resql);
+
+			print "<tr $bc[$var]><td>";
+
+			if ($row[1] == 2)
+			{
+				print $langs->trans("StatusCredited");
+			}
+			elseif ($row[1] == 3)
+			{
+				print $langs->trans("StatusRefused");
+			}
+			elseif ($row[1] == 1)
+			{
+				print $langs->trans("StatusWaiting");
+			}
+			else print $langs->trans("StatusUnknown");
+
+			print '</td><td align="right">';
+			print price($row[0]);
+
+			print '</td><td align="right">';
+			print round($row[0]/$bon->amount*100,2)." %";
+			print '</td>';
+
+			print "</tr>\n";
+
+			$var=!$var;
+			$i++;
+		}
+
+		print "</table>";
+		$db->free($resql);
+	}
+	else
+	{
+		print $db->error() . ' ' . $sql;
+	}
 }
 
 $db->close();

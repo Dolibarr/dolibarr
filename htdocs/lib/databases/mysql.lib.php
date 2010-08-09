@@ -421,7 +421,7 @@ class DoliDb
 	 *	\param      resultset   Curseur de la requete voulue
 	 *	\return	    array
 	 */
-	function fetch_row($resultset=0)
+	function fetch_row($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
@@ -434,7 +434,7 @@ class DoliDb
 	 *	\param      resultset   Curseur de la requete voulue
 	 *	\return     int		    Nombre de lignes
 	 */
-	function num_rows($resultset=0)
+	function num_rows($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }

@@ -66,10 +66,9 @@ class BoutiqueCommande
 		$sql.= " WHERE orders_id = ".$id;
 
 		$result = $this->db->query($sql) ;
-
 		if ( $result )
 		{
-			$array = $this->db->fetch_array();
+			$array = $this->db->fetch_array($result);
 
 			$this->id          = $array["orders_id"];
 			$this->client_id   = stripslashes($array["customers_id"]);
