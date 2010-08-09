@@ -19,7 +19,7 @@
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE addfreeproductform.tpl.php -->
 
 <?php
 // TODO à déplacer
@@ -35,7 +35,7 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 	<td colspan="4">&nbsp;</td>
 </tr>
 
-<form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
+<form name="addproduct" id="addproduct" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="addline">
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
@@ -81,9 +81,9 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 	<td colspan="9">
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-	echo $html->select_date('','date_start',$usehm,$usehm,1,"addline");
+	echo $html->select_date('','date_start',$usehm,$usehm,1,"addproduct");
 	echo ' '.$langs->trans('to').' ';
-	echo $html->select_date('','date_end',$usehm,$usehm,1,"addline");
+	echo $html->select_date('','date_end',$usehm,$usehm,1,"addproduct");
 	?>
 	</td>
 </tr>
@@ -91,4 +91,4 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 
 </form>
 
-<!-- END PHP TEMPLATE -->
+<!-- END PHP TEMPLATE addfreeproductform.tpl.php -->
