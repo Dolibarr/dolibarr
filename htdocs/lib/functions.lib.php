@@ -194,9 +194,9 @@ function dol_escape_js($stringtoescape)
 function dol_escape_htmltag($stringtoescape)
 {
 	// escape quotes and backslashes, newlines, etc.
-	$tmp=@html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
+	$tmp=dol_html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
 	$tmp=strtr($tmp, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
-	return @htmlentities($tmp,ENT_COMPAT,'UTF-8');
+	return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
 }
 
 
@@ -2888,17 +2888,16 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 {
 	if (dol_textishtml($stringtoencode))
 	{
-		//$trans = get_html_translation_table(HTML_ENTITIES, ENT_COMPAT); var_dump($trans);
 		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$stringtoencode);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		$newstring=preg_replace('/<br>$/i','',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		$newstring=strtr($newstring,array('&'=>'__and__','<'=>'__lt__','>'=>'__gt__','"'=>'__dquot__'));
-		$newstring=@htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
+		$newstring=dol_htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
 		$newstring=strtr($newstring,array('__and__'=>'&','__lt__'=>'<','__gt__'=>'>','__dquot__'=>'"'));
 		// If already HTML, CR should be <br> so we don't change \n
 	}
 	else {
 		// We use @ to avoid warning on PHP4 that does not support entity encoding from UTF8;
-		$newstring=dol_nl2br(@htmlentities($stringtoencode,ENT_COMPAT,$pagecodefrom),$nl2brmode);
+		$newstring=dol_nl2br(dol_htmlentities($stringtoencode,ENT_COMPAT,$pagecodefrom),$nl2brmode);
 	}
 	// Other substitutions that htmlentities does not do
 	$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.
@@ -2911,8 +2910,7 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
  */
 function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 {
-	// We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
-	$ret=@html_entity_decode($stringtodecode,ENT_COMPAT,$pagecodeto);
+	$ret=dol_html_entity_decode($stringtodecode,ENT_COMPAT,$pagecodeto);
 	$ret=preg_replace('/'."\r\n".'<br(\s[\sa-zA-Z_="]*)?\/?>/i',"<br>",$ret);
 	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\r\n".'/i',"\r\n",$ret);
 	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\n".'/i',"\n",$ret);
@@ -2937,10 +2935,36 @@ function dol_htmlcleanlastbr($stringtodecode)
  */
 function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 {
-	// We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
-	$ret=@html_entity_decode($stringhtml,ENT_COMPAT,$pagecodeto);
+	$ret=dol_html_entity_decode($stringhtml,ENT_COMPAT,$pagecodeto);
 	return $ret;
 }
+
+/**
+ * Replace html_entity_decode functions to manage errors
+ * @param unknown_type $a
+ * @param unknown_type $b
+ * @param unknown_type $c
+ */
+function dol_html_entity_decode($a,$b,$c)
+{
+    // We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
+    $ret=@html_entity_decode($a,$b,$c);
+	return $ret;
+}
+
+/**
+ * Replace htmlentities functions to manage errors
+ * @param unknown_type $a
+ * @param unknown_type $b
+ * @param unknown_type $c
+ */
+function dol_htmlentities($a,$b,$c)
+{
+    // We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
+    $ret=@htmlentities($a,$b,$c);
+    return $ret;
+}
+
 
 /**
  *	\brief		Check if a string is a correct iso string

@@ -107,7 +107,7 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 
 
 /**
- * Show an LDAP array in an HTML to records.
+ * Show a LDAP array into an HTML output array.
  *
  * @param   $result	    Array to show. This array is already encoded into charset_output
  * @param   $level
@@ -151,7 +151,7 @@ function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 		else if ($subcount)
 		{
 			$subcount--;
-			$newstring=@htmlentities($val,ENT_COMPAT,'UTF-8');	// Make entity encoding
+			$newstring=dol_htmlentitiesbr($val);
 			if ($hide) print preg_replace('/./i','*',$newstring);
 			else print $newstring;
 			print '<br>';
