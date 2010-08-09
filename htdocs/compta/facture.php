@@ -25,7 +25,7 @@
 /**
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
- *	\brief      Page to cree=ate/see an invoice
+ *	\brief      Page to create/see an invoice
  *	\version    $Id$
  */
 
@@ -52,7 +52,9 @@ $projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
 
 // Security check
 $socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
-$facid = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+$facid = isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+if (empty($facid)) $facid=isset($_GET["ref"])?$_GET["ref"]:$_POST["ref"];
+if (empty($facid)) $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];    // For backward compatibility
 $fieldid = isset($_GET["ref"])?'facnumber':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $facid,'','','fk_soc',$fieldid);
@@ -78,7 +80,7 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 	else
 	{
 		$object=new Facture($db);
-		$result=$object->createFromClone($_REQUEST['facid']);
+		$result=$object->createFromClone($facid);
 		if ($result > 0)
 		{
 			header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
@@ -88,7 +90,6 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 		{
 			$mesg=$object->error;
 			$_GET['action']='';
-			$_GET['id']=$_REQUEST['id'];
 		}
 	}
 }
@@ -96,14 +97,14 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 if ($_GET['action'] == 'reopen' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db);
-	$result = $fac->fetch($_GET['facid']);
+	$result = $fac->fetch($facid);
 	if ($fac->statut == 2
 	|| ($fac->statut == 3 && $fac->close_code != 'replaced'))
 	{
 		$result = $fac->set_unpaid($user);
 		if ($result > 0)
 		{
-			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
+			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
 			exit;
 		}
 		else
@@ -119,7 +120,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 	if ($user->rights->facture->supprimer)
 	{
 		$fac = new Facture($db);
-		$result = $fac->fetch($_GET['facid']);
+		$result = $fac->fetch($facid);
 		$result = $fac->delete();
 		if ($result > 0)
 		{
@@ -141,7 +142,7 @@ if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] =
 	if ($user->rights->facture->creer)
 	{
 		$fac = new Facture($db);
-		$fac->fetch($_GET['facid']);
+		$fac->fetch($facid);
 		$fac->fetch_thirdparty();
 
 		$result = $fac->deleteline($_GET['rowid'], $user);
@@ -160,7 +161,7 @@ if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] =
 			$result=facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 			if ($result > 0)
 			{
-				Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
+				Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
 				exit;
 			}
 		}
@@ -187,7 +188,7 @@ if ($_GET['action'] == 'unlinkdiscount')
 if ($_GET['action'] == 'valid')
 {
 	$facture = new Facture($db);
-	$facture->fetch($_GET['facid']);
+	$facture->fetch($facid);
 
 	// On verifie signe facture
 	if ($facture->type == 2)
@@ -213,14 +214,14 @@ if ($_GET['action'] == 'valid')
 if ($_POST['action'] == 'classin')
 {
 	$facture = new Facture($db);
-	$facture->fetch($_GET['facid']);
+	$facture->fetch($facid);
 	$facture->setProject($_POST['projectid']);
 }
 
 if ($_POST['action'] == 'setmode')
 {
 	$facture = new Facture($db);
-	$facture->fetch($_GET['facid']);
+	$facture->fetch($facid);
 	$result=$facture->mode_reglement($_POST['mode_reglement_id']);
 	if ($result < 0) dol_print_error($facture->db,$facture->error);
 }
@@ -228,7 +229,7 @@ if ($_POST['action'] == 'setmode')
 if ($_POST['action'] == 'setpaymentterm')
 {
 	$facture = new Facture($db);
-	$facture->fetch($_GET['facid']);
+	$facture->fetch($facid);
 	$date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
 	$result=$facture->cond_reglement($facture->cond_reglement_id,$date_lim_reglement);
 	if ($result < 0) dol_print_error($facture->db,$facture->error);
@@ -237,7 +238,7 @@ if ($_POST['action'] == 'setpaymentterm')
 if ($_POST['action'] == 'setinvoicedate')
 {
 	$facture = new Facture($db);
-	$facture->fetch($_GET['facid']);
+	$facture->fetch($facid);
 	$facture->date=dol_mktime(12,0,0,$_POST['invoicedatemonth'],$_POST['invoicedateday'],$_POST['invoicedateyear']);
 	$result=$facture->update($user);
 	if ($result < 0) dol_print_error($facture->db,$facture->error);
@@ -246,7 +247,7 @@ if ($_POST['action'] == 'setinvoicedate')
 if ($_POST['action'] == 'setconditions')
 {
 	$facture = new Facture($db);
-	$facture->fetch($_GET['facid']);
+	$facture->fetch($facid);
 	$result=$facture->cond_reglement($_POST['cond_reglement_id']);
 	if ($result < 0) dol_print_error($facture->db,$facture->error);
 }
@@ -254,9 +255,8 @@ if ($_POST['action'] == 'setconditions')
 if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db);
-	$fac->fetch($_REQUEST['facid']);
+	$fac->fetch($facid);
 	$result = $fac->set_remise($user, $_POST['remise_percent']);
-	$_GET['facid']=$_REQUEST['facid'];
 }
 
 if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
@@ -265,8 +265,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 	if (! empty($_POST["remise_id"]))
 	{
 		$fac = new Facture($db);
-		$fac->id=$_GET['facid'];
-		$ret=$fac->fetch($_GET['facid']);
+		$ret=$fac->fetch($facid);
 		if ($ret > 0)
 		{
 			$result=$fac->insert_discount($_POST["remise_id"]);
@@ -286,7 +285,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 		$discount = new DiscountAbsolute($db);
 		$discount->fetch($_POST["remise_id_for_payment"]);
 
-		$result=$discount->link_to_invoice(0,$_GET['facid']);
+		$result=$discount->link_to_invoice(0,$facid);
 		if ($result < 0)
 		{
 			$mesg='<div class="error">'.$discount->error.'</div>';
@@ -297,7 +296,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 if ($_POST['action'] == 'set_ref_client')
 {
 	$facture = new Facture($db);
-	$facture->fetch($_GET['facid']);
+	$facture->fetch($facid);
 	$facture->set_ref_client($_POST['ref_client']);
 }
 
@@ -305,7 +304,7 @@ if ($_POST['action'] == 'set_ref_client')
 if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->valider)
 {
 	$fac = new Facture($db);
-	$fac->fetch($_GET['facid']);
+	$fac->fetch($facid);
 	$fac->fetch_thirdparty();
 
 	$result = $fac->validate($user);
@@ -333,7 +332,7 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 if ($_GET['action'] == 'modif' && $user->rights->facture->unvalidate)
 {
 	$fac = new Facture($db);
-	$fac->fetch($_GET['facid']);
+	$fac->fetch($facid);
 	$fac->fetch_thirdparty();
 
 	// On verifie si la facture a des paiements
@@ -387,14 +386,14 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->unvalidate)
 if ($_REQUEST['action'] == 'confirm_paid' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$fac = new Facture($db);
-	$fac->fetch($_GET['facid']);
+	$fac->fetch($facid);
 	$result = $fac->set_paid($user);
 }
 // Classif  "paid partialy"
 if ($_REQUEST['action'] == 'confirm_paid_partially' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$fac = new Facture($db);
-	$fac->fetch($_GET['facid']);
+	$fac->fetch($facid);
 	$close_code=$_POST["close_code"];
 	$close_note=$_POST["close_note"];
 	if ($close_code)
@@ -410,7 +409,7 @@ if ($_REQUEST['action'] == 'confirm_paid_partially' && $_REQUEST['confirm'] == '
 if ($_REQUEST['action'] == 'confirm_canceled' && $_REQUEST['confirm'] == 'yes')
 {
 	$fac = new Facture($db);
-	$fac->fetch($_GET['facid']);
+	$fac->fetch($facid);
 	$close_code=$_POST["close_code"];
 	$close_note=$_POST["close_note"];
 	if ($close_code)
@@ -429,7 +428,7 @@ if ($_REQUEST['action'] == 'confirm_converttoreduc' && $_REQUEST['confirm'] == '
 	$db->begin();
 
 	$fac = new Facture($db);
-	$fac->fetch($_GET['facid']);
+	$fac->fetch($facid);
 	$fac->fetch_thirdparty();
 	$fac->fetch_lines();
 
@@ -797,7 +796,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
 		$result = -1 ;
 	}
-	if (empty($_POST['idprod']) && (! isset($_POST["pu"]) || $_POST["pu"]==''))	// Unit price can be 0 but not ''
+	if (empty($_POST['idprod']) && (! isset($_POST["np_price"]) || $_POST["np_price"]==''))	// Unit price can be 0 but not ''
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")).'</div>';
 		$result = -1 ;
@@ -812,9 +811,9 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Qty')).'</div>';
 		$result = -1 ;
 	}
-	if ($result >= 0 && ( ($_POST['pu']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod'] ) )
+	if ($result >= 0 && ( ($_POST['np_price']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod'] ) )
 	{
-		$ret=$fac->fetch($_POST['facid']);
+		$ret=$fac->fetch($facid);
 		if ($ret < 0)
 		{
 			dol_print_error($db,$fac->error);
@@ -875,9 +874,9 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 		}
 		else
 		{
-			$pu_ht=$_POST['pu'];
-			$tva_tx=str_replace('*','',$_POST['tva_tx']);
-			$tva_npr=preg_match('/\*/',$_POST['tva_tx'])?1:0;
+			$pu_ht=$_POST['np_price'];
+			$tva_tx=str_replace('*','',$_POST['np_tva_tx']);
+			$tva_npr=preg_match('/\*/',$_POST['np_tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
 			$type=$_POST["type"];
 		}
@@ -899,7 +898,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 			{
 				// Insert line
 				$result = $fac->addline(
-				$_POST['facid'],
+				$facid,
 				$desc,
 				$pu_ht,
 				$_POST['qty'],
@@ -941,21 +940,21 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 		unset($_POST['remmise_percent']);
 		unset($_POST['dp_desc']);
 		unset($_POST['np_desc']);
-		unset($_POST['pu']);
-		unset($_POST['tva_tx']);
+		unset($_POST['np_price']);
+		unset($_POST['np_tva_tx']);
 	}
 	else
 	{
 		if (empty($mesg)) $mesg='<div class="error">'.$fac->error.'</div>';
 	}
 
-	$_GET['facid']=$_POST['facid'];   // Pour reaffichage de la fiche en cours d'edition
+	$_POST["action"]='';
 }
 
 if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST['save'] == $langs->trans('Save'))
 {
-	$fac = new Facture($db,'',$_POST['facid']);
-	if (! $fac->fetch($_POST['facid']) > 0) dol_print_error($db);
+	$fac = new Facture($db);
+	if (! $fac->fetch($facid) > 0) dol_print_error($db);
 	$fac->fetch_thirdparty();
 
 	// Clean parameters
@@ -967,10 +966,10 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 
 	// Define info_bits
 	$info_bits=0;
-	if (preg_match('/\*/',$_POST['tva_tx'])) $info_bits |= 0x01;
+	if (preg_match('/\*/',$_POST['np_tva_tx'])) $info_bits |= 0x01;
 
 	// Define vat_rate
-	$vat_rate=$_POST['tva_tx'];
+	$vat_rate=$_POST['np_tva_tx'];
 	$vat_rate=str_replace('*','',$vat_rate);
 	$localtax1_rate=get_localtax($vat_rate,1,$fac->client);
 	$localtax2_rate=get_localtax($vat_rate,2,$fac->client);
@@ -1035,13 +1034,11 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		}
 		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
-
-	$_GET['facid']=$_POST['facid'];   // Pour reaffichage de la fiche en cours d'edition
 }
 
 if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST['cancel'] == $langs->trans('Cancel'))
 {
-	Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_POST['facid']);   // Pour reaffichage de la fiche en cours d'edition
+	Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);   // Pour reaffichage de la fiche en cours d'edition
 	exit;
 }
 
@@ -1052,8 +1049,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 
 if ($_GET['action'] == 'up' && $user->rights->facture->creer)
 {
-	$fac = new Facture($db,'',$_GET['facid']);
-	$fac->fetch($_GET['facid']);
+	$fac = new Facture($db);
+	$fac->fetch($facid);
 	$fac->fetch_thirdparty();
 	$fac->line_up($_GET['rowid']);
 
@@ -1069,14 +1066,14 @@ if ($_GET['action'] == 'up' && $user->rights->facture->creer)
 	}
 	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 
-	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET["facid"].'#'.$_GET['rowid']);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'#'.$_GET['rowid']);
 	exit;
 }
 
 if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 {
-	$fac = new Facture($db,'',$_GET['facid']);
-	$fac->fetch($_GET['facid']);
+	$fac = new Facture($db);
+	$fac->fetch($facid);
 	$fac->fetch_thirdparty();
 	$fac->line_down($_GET['rowid']);
 
@@ -1092,7 +1089,7 @@ if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 	}
 	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 
-	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET["facid"].'#'.$_GET['rowid']);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'#'.$_GET['rowid']);
 	exit;
 }
 
@@ -1137,8 +1134,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 {
 	$langs->load('mails');
 
-	$fac = new Facture($db,'',$_POST['facid']);
-	$result=$fac->fetch($_POST['facid']);
+	$fac = new Facture($db,'',$facid);
+	$result=$fac->fetch($facid);
 	$result=$fac->fetch_thirdparty();
 
 	if ($result > 0)
@@ -1304,8 +1301,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-	$fac = new Facture($db, 0, $_GET['facid']);
-	$fac->fetch($_GET['facid']);
+	$fac = new Facture($db);
+	$fac->fetch($facid);
 	$fac->fetch_thirdparty();
 
 	if ($_REQUEST['model'])
@@ -1437,7 +1434,7 @@ if ($_GET['action'] == 'create')
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as r';
 		$sql.= ' WHERE r.fk_soc = '.$soc->id;
-		
+
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -1917,7 +1914,7 @@ else
 
 	$now=dol_now();
 
-	$id = $_REQUEST['facid'];
+	$id = $facid;
 	$ref= $_REQUEST['ref'];
 
 	if ($id > 0 || ! empty($ref))
@@ -2156,7 +2153,7 @@ else
 				print '</td><td colspan="5">';
 				if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
 				{
-					print '<form action="facture.php?facid='.$id.'" method="post">';
+					print '<form action="facture.php?facid='.$fac->id.'" method="post">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="set_ref_client">';
 					print '<input type="text" class="flat" size="20" name="ref_client" value="'.$fac->ref_client.'">';
@@ -2943,7 +2940,7 @@ else
 
 						// VAT
 						print '<td align="right">';
-						print $html->select_tva('tva_tx',$objp->tva_tx,$mysoc,$soc,'',$objp->info_bits);
+						print $html->select_tva('np_tva_tx',$objp->tva_tx,$mysoc,$soc,'',$objp->info_bits);
 						print '</td>';
 
 						// Unit price
@@ -2999,9 +2996,9 @@ else
 			if ($fac->statut == 0 && $user->rights->facture->creer && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
 			{
 				$var=true;
-				
+
 				$fac->showAddFreeProductForm(1);
-				
+
 				// Add predefined products/services
 				if ($conf->product->enabled || $conf->service->enabled)
 				{
@@ -3009,7 +3006,7 @@ else
 					$fac->showAddPredefinedProductForm(1);
 				}
 			}
-			
+
 			print "</table>\n";
 
 			print "</div>\n";
