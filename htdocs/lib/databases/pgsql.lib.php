@@ -491,7 +491,7 @@ class DoliDb
 	 *	\param      resultset   Curseur de la requete voulue
 	 *	\return	    object 		Object result line or false if KO or end of cursor
 	 */
-	function fetch_object($resultset=0)
+	function fetch_object($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
@@ -503,7 +503,7 @@ class DoliDb
 	 * \param      resultset   Curseur de la requete voulue
 	 * \return		array
 	 */
-	function fetch_array($resultset=0)
+	function fetch_array($resultset)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
