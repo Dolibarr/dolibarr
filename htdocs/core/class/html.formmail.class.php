@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010 Juanjo Menent			    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -468,7 +469,7 @@ class FormMail
 			if ($this->param["models"]=='facture_relance') 	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
 			if ($this->param["models"]=='propal_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
 			if ($this->param["models"]=='order_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
-
+			if ($this->param["models"]=='supplier_order_send') { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
 			$defaultmessage=make_substitutions($defaultmessage,$this->substit,$langs);
 			if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 			$defaultmessage=str_replace('\n',"\n",$defaultmessage);

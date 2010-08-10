@@ -46,6 +46,7 @@ PredefinedMailContentSendInvoice=Us adjuntem la factura __FACREF__\n\nCordialmen
 PredefinedMailContentSendInvoiceReminder=Posem en el seu coneixement que la factura __FACREF__ sembla no estar pagada. Se l'adjuntem doncs, perquè pugui revisar-la.\n nCordialment\n\n
 PredefinedMailContentSendProposal=Us adjuntem el pressupost __PROPREF__ \n\nCordialment\n\n
 PredefinedMailContentSendOrder=Us adjuntem la comanda __ORDERREF__ \n\nCordialment\n\n
+PredefinedMailContentSendSupplierOrder=Us adjuntem la nostra comanda __ORDERREF__ \n\nCordialment\n\n
 DemoDesc=Dolibarr és un programari per a la gestió de negocis (professionals o associacions), compost de mòduls funcionals independents i opcionals. Una demostració que inclogui tots aquests mòduls no té sentit perquè no utilitzarà tots els mòduls. A més, té disponibles diversos tipus de perfils de demostració.
 ChooseYourDemoProfil=Voleu veure el perfil de demostració que millor correspongui a la seva activitat ... 
 DemoFundation=Gestió de membres d'una associació
