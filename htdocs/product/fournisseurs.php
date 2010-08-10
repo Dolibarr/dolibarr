@@ -295,7 +295,7 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<td><input class="flat" name="price" size="8" value="'.($_POST["price"]?$_POST["price"]:price($product->fourn_price)).'">';
 				print '&nbsp;';
 				print $html->select_PriceBaseType(($_POST["price_base_type"]?$_POST["price_base_type"]:$product->price_base_type), "price_base_type");
-				print '</td>';
+                print '</td>';
 				print '</tr>';
 
 				print '<tr><td colspan="4" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';

@@ -272,23 +272,28 @@ class ProductFournisseur extends Product
 			$sql.= " AND quantity = ".$qty;
 		}
 
-		if ($this->db->query($sql))
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			if ($price_base_type == 'TTC')
 			{
-				$ttx = get_default_tva($fourn,$mysoc,($this->tva_tx?$this->tva_tx:0));
+				$ttx = get_default_tva($fourn,$mysoc,$this->id);
 				$buyprice = $buyprice/(1+($ttx/100));
 			}
 			$unitBuyPrice = price2num($buyprice/$qty,'MU');
 
+			$now=dol_now();
+
 			// Ajoute prix courant du fournisseur pour cette quantite
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price";
-			$sql.= " SET datec = ".$this->db->idate(mktime());
-			$sql.= " ,fk_product_fournisseur = ".$this->product_fourn_id;
-			$sql.= " ,fk_user = ".$user->id;
-			$sql.= " ,price = ".price2num($buyprice);
-			$sql.= " ,quantity = ".$qty;
-			$sql.= " ,unitprice = ".$unitBuyPrice;
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
+			$sql.= "datec, fk_product_fournisseur, fk_user, price, quantity, unitprice)";
+			$sql.= " values('".$this->db->idate($now)."',";
+			$sql.= " ".$this->product_fourn_id.",";
+			$sql.= " ".$user->id.",";
+			$sql.= " ".price2num($buyprice).",";
+			$sql.= " ".$qty.",";
+			$sql.= " ".$unitBuyPrice;
+            $sql.=")";
 
 			dol_syslog("ProductFournisseur::update_buyprice sql=".$sql);
 			if (! $this->db->query($sql))
@@ -299,14 +304,17 @@ class ProductFournisseur extends Product
 			if (! $error)
 			{
 				// Ajoute modif dans table log
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log ";
-				$sql .= " SET datec = ".$this->db->idate(mktime());
-				$sql .= " ,fk_product_fournisseur = ".$this->product_fourn_id;
-				$sql .= " ,fk_user = ".$user->id;
-				$sql .= " ,price = ".price2num($buyprice);
-				$sql .= " ,quantity = ".$qty;
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log(";
+				$sql.= "datec, fk_product_fournisseur,fk_user,price,quantity)";
+				$sql.= "values('".$this->db->idate($now)."',";
+				$sql.= " ".$this->product_fourn_id.",";
+				$sql.= " ".$user->id.",";
+				$sql.= " ".price2num($buyprice).",";
+				$sql.= " ".$qty;
+                $sql.=")";
 
-				if (! $this->db->query($sql))
+				$resql=$this->db->query($sql);
+				if (! $resql)
 				{
 					$error++;
 				}
