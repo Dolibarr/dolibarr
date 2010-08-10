@@ -44,6 +44,7 @@ create table llx_product
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 2
   fk_user_author			integer,
   envente					tinyint      DEFAULT 1,
+  tobuy						tinyint      DEFAULT 1,
   fk_product_type			integer      DEFAULT 0,			-- Type 0 for regular product, 1 for service
   duration					varchar(6),
   seuil_stock_alerte		integer      DEFAULT 0,
