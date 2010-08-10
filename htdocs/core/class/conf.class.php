@@ -207,6 +207,9 @@ class Conf
 		// Load translation object with current language
 		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="en_US";
 
+        // By default, we repeat info on all tabs
+		if (! isset($this->global->MAIN_REPEATCONTACTTASKONEACHTAB)) $this->global->MAIN_REPEATCONTACTTASKONEACHTAB=1;
+
 		$rootfordata = DOL_DATA_ROOT;
 		$rootforuser = DOL_DATA_ROOT;
 		// If multicompany module is enabled, we redefine the root of data
