@@ -50,9 +50,11 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
 
+$comid = isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:'');
+if (empty($comid)) $comid=isset($_GET["orderid"])?$_GET["orderid"]:(isset($_POST["orderid"])?$_POST["orderid"]:'');
+
 // Security check
 $socid=0;
-$comid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$comid,'');
 
@@ -92,7 +94,7 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 	else
 	{
 		$object=new Commande($db);
-		$result=$object->createFromClone($_REQUEST['id']);
+		$result=$object->createFromClone($comid);
 		if ($result > 0)
 		{
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -102,7 +104,6 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 		{
 			$mesg=$object->error;
 			$_GET['action']='';
-			$_GET['id']=$_REQUEST['id'];
 		}
 	}
 }
@@ -111,13 +112,13 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 if ($_GET['action'] == 'reopen' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($comid);
 	if ($commande->statut == 3)
 	{
 		$result = $commande->set_reopen($user);
 		if ($result > 0)
 		{
-			Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET['id']);
+			Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid);
 			exit;
 		}
 		else
@@ -133,7 +134,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 	if ($user->rights->commande->supprimer)
 	{
 		$commande = new Commande($db);
-		$commande->fetch($_GET['id']);
+		$commande->fetch($comid);
 		$result=$commande->delete($user);
 		if ($result > 0)
 		{
@@ -147,15 +148,13 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 	}
 }
 
-/*
- *  Remove a product line
- */
+// Remove a product line
 if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes')
 {
 	if ($user->rights->commande->creer)
 	{
 		$commande = new Commande($db);
-		$commande->fetch($_GET['id']);
+		$commande->fetch($comid);
 		$commande->fetch_thirdparty();
 
 		$result = $commande->delete_line($_GET['lineid']);
@@ -171,14 +170,14 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			commande_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
+			commande_pdf_create($db, $comid, $commande->modelpdf, $outputlangs);
 		}
 		else
 		{
 			print $commande->error;
 		}
 	}
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET['id']);
+	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid);
 	exit;
 }
 
@@ -186,7 +185,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 if ($_POST['action'] == 'classin')
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($comid);
 	$commande->setProject($_POST['projectid']);
 }
 
@@ -248,7 +247,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 			}
 		}
 
-		$_GET['id'] = $commande_id;
+		$comid = $commande_id;
 		$action = '';
 	}
 
@@ -271,14 +270,14 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 if ($_POST['action'] == 'set_ref_client' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($comid);
 	$commande->set_ref_client($user, $_POST['ref_client']);
 }
 
 if ($_POST['action'] == 'setremise' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($comid);
 	$commande->set_remise($user, $_POST['remise']);
 }
 
@@ -287,8 +286,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->commande->creer)
 	if ($_POST["remise_id"])
 	{
 		$com = new Commande($db);
-		$com->id=$_GET['id'];
-		$ret=$com->fetch($_GET['id']);
+		$ret=$com->fetch($comid);
 		if ($ret > 0)
 		{
 	  		$com->insert_discount($_POST["remise_id"]);
@@ -306,7 +304,7 @@ if ($_POST['action'] == 'setdate' && $user->rights->commande->creer)
 	$date=dol_mktime(0, 0, 0, $_POST['order_month'], $_POST['order_day'], $_POST['order_year']);
 
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($comid);
 	$result=$commande->set_date($user,$date);
 	if ($result < 0)
 	{
@@ -320,7 +318,7 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 	$datelivraison=dol_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($comid);
 	$result=$commande->set_date_livraison($user,$datelivraison);
 	if ($result < 0)
 	{
@@ -331,14 +329,14 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 if ($_POST['action'] == 'setaddress' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($comid);
 	$commande->set_adresse_livraison($user,$_POST['fk_address']);
 }
 
 if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($comid);
 	$result=$commande->mode_reglement($_POST['mode_reglement_id']);
 	if ($result < 0) dol_print_error($db,$commande->error);
 }
@@ -346,7 +344,7 @@ if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
 if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($comid);
 	$result=$commande->cond_reglement($_POST['cond_reglement_id']);
 	if ($result < 0) dol_print_error($db,$commande->error);
 }
@@ -354,17 +352,15 @@ if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_REQUEST['id']);
+	$commande->fetch($comid);
 	$result = $commande->set_remise($user, $_POST['remise_percent']);
-	$_GET['id']=$_REQUEST['id'];
 }
 
 if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_REQUEST['id']);
+	$commande->fetch($comid);
 	$result = $commande->set_remise_absolue($user, $_POST['remise_absolue']);
-	$_GET['id']=$_REQUEST['id'];
 }
 
 /*
@@ -380,15 +376,15 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 		$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
 		$result = -1 ;
 	}
-	if (empty($_POST['idprod']) && (! isset($_POST["pu"]) || $_POST["pu"]==''))	// Unit price can be 0 but not ''
+	if (empty($_POST['idprod']) && (! isset($_POST["np_price"]) || $_POST["np_price"]==''))	// Unit price can be 0 but not ''
 	{
 		$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")).'</div>';
 		$result = -1 ;
 	}
 
-	if ($result >= 0 && $_POST['qty'] && (($_POST['pu'] != '' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
+	if ($result >= 0 && $_POST['qty'] && (($_POST['np_price'] != '' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
-		$ret=$commande->fetch($_POST['id']);
+		$ret=$commande->fetch($comid);
 		if ($ret < 0)
 		{
 			dol_print_error($db,$commande->error);
@@ -448,9 +444,9 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 		}
 		else
 		{
-			$pu_ht=$_POST['pu'];
-			$tva_tx=str_replace('*','',$_POST['tva_tx']);
-			$tva_npr=preg_match('/\*/',$_POST['tva_tx'])?1:0;
+			$pu_ht=$_POST['np_price'];
+			$tva_tx=str_replace('*','',$_POST['np_tva_tx']);
+			$tva_npr=preg_match('/\*/',$_POST['np_tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
 			$type=$_POST["type"];
 		}
@@ -474,7 +470,7 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 			{
 				// Insert line
 				$result = $commande->addline(
-				$_POST['id'],
+				$comid,
 				$desc,
 				$pu_ht,
 				$_POST['qty'],
@@ -509,11 +505,11 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 					unset($_POST['qty']);
 					unset($_POST['type']);
 					unset($_POST['idprod']);
-					unset($_POST['remmise_percent']);
+					unset($_POST['remise_percent']);
 					unset($_POST['dp_desc']);
 					unset($_POST['np_desc']);
-					unset($_POST['pu']);
-					unset($_POST['tva_tx']);
+					unset($_POST['np_price']);
+					unset($_POST['np_tva_tx']);
 				}
 				else
 				{
@@ -529,8 +525,8 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
 {
-	$commande = new Commande($db,'',$_POST['id']);
-	if (! $commande->fetch($_POST['id']) > 0) dol_print_error($db);
+	$commande = new Commande($db);
+	if (! $commande->fetch($comid) > 0) dol_print_error($db);
 	$commande->fetch_thirdparty();
 
 	// Clean parameters
@@ -617,19 +613,18 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 			exit;
 		}
 	}
-	$_GET['id']=$_POST['id'];   // Pour reaffichage de la fiche en cours d'edition
 }
 
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['cancel'] == $langs->trans('Cancel'))
 {
-	Header('Location: fiche.php?id='.$_POST['id']);   // Pour reaffichage de la fiche en cours d'edition
+	Header('Location: fiche.php?id='.$comid);   // Pour reaffichage de la fiche en cours d'edition
 	exit;
 }
 
 if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);	// Load order and lines
+	$commande->fetch($comid);	// Load order and lines
 	$commande->fetch_thirdparty();
 
 	$result=$commande->valid($user);
@@ -652,7 +647,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 if ($_REQUEST['action'] == 'confirm_close' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->cloturer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);		// Load order and lines
+	$commande->fetch($comid);		// Load order and lines
 
 	$result = $commande->cloture($user);
 }
@@ -660,7 +655,7 @@ if ($_REQUEST['action'] == 'confirm_close' && $_REQUEST['confirm'] == 'yes' && $
 if ($_REQUEST['action'] == 'confirm_cancel' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);		// Load order and lines
+	$commande->fetch($comid);		// Load order and lines
 
 	$result = $commande->cancel($user);
 }
@@ -671,7 +666,7 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 	 *  Repasse la commande en mode brouillon
 	 */
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);		// Load order and lines
+	$commande->fetch($comid);		// Load order and lines
 	$commande->fetch_thirdparty();
 
 	$result = $commande->set_draft($user);
@@ -697,8 +692,8 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 
 if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db,'',$_GET['id']);
-	$commande->fetch($_GET['id']);
+	$commande = new Commande($db);
+	$commande->fetch($comid);
 	$commande->fetch_thirdparty();
 	$commande->line_up($_GET['rowid']);
 
@@ -715,14 +710,14 @@ if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 
 	commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 
-	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid.'#'.$_GET['rowid']);
 	exit;
 }
 
 if ($_GET['action'] == 'down' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db,'',$_GET['id']);
-	$commande->fetch($_GET['id']);
+	$commande = new Commande($db);
+	$commande->fetch($comid);
 	$commande->fetch_thirdparty();
 	$commande->line_down($_GET['rowid']);
 
@@ -738,7 +733,7 @@ if ($_GET['action'] == 'down' && $user->rights->commande->creer)
 	}
 	commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 
-	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid.'#'.$_GET['rowid']);
 	exit;
 }
 
@@ -750,8 +745,8 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 	 */
 
 	// Sauvegarde le dernier modele choisi pour generer un document
-	$commande = new Commande($db, 0, $_REQUEST['id']);
-	$result=$commande->fetch($_REQUEST['id']);
+	$commande = new Commande($db);
+	$result=$commande->fetch($comid);
 	$commande->fetch_thirdparty();
 
 	if ($_REQUEST['model'])
@@ -1302,7 +1297,7 @@ else
 	/* *************************************************************************** */
 	$now=dol_now();
 
-	$id = $_GET['id'];
+	$id = $comid;
 	$ref= $_GET['ref'];
 
 	if ($id > 0 || ! empty($ref))
@@ -1312,7 +1307,7 @@ else
 		$product_static=new Product($db);
 
 		$commande = new Commande($db);
-		$result=$commande->fetch($_GET['id'],$_GET['ref']);
+		$result=$commande->fetch($comid,$ref);
 		if ($result > 0)
 		{
 			$soc = new Societe($db);
@@ -1674,9 +1669,10 @@ else
 			/*
 			 * Lines
 			 */
-			
+            $numlines=0;
+
 			print '<table class="noborder" width="100%">';
-			
+
 			// Hook of thirdparty module
 			if (! empty($hooks->objModules))
 			{
@@ -1702,13 +1698,15 @@ else
 			else
 			{
 				$lines = $commande->getLinesArray(0);
-				
+
 				if (! empty($lines) )
 				{
 					$commande->print_title_list();
 					$commande->printLinesList($lines,1);
 				}
 			}
+
+			$numlines=sizeof($lines);
 
 			/*
 			 * Form to add new line
@@ -1718,16 +1716,16 @@ else
 				if (! preg_match('/editline|edit_/',$_GET["action"]))
 				{
 					$var=true;
-					
+
 					$commande->showAddFreeProductForm(1);
-					
+
 					// Add predefined products/services
 					if ($conf->product->enabled || $conf->service->enabled)
 					{
 						$var=!$var;
 						$commande->showAddPredefinedProductForm(1);
 					}
-					
+
 					// Hook of thirdparty module
 					if (! empty($hooks->objModules))
 					{
@@ -1793,13 +1791,13 @@ else
 								/*$error = $user->load_entrepots();	deprecated
 								if (sizeof($user->entrepots) === 1)
 								{
-									print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$_GET['id'].'&amp;action=create&amp;commande_id='.$_GET["id"].'&entrepot_id='.$user->entrepots[0]['id'].'">';
+									print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$comid.'&amp;action=create&amp;commande_id='.$comid.'&entrepot_id='.$user->entrepots[0]['id'].'">';
 									print $langs->trans('ShipProduct').'</a>';
 
 								}
 								else
 								{*/
-									print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
+									print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$comid.'">'.$langs->trans('ShipProduct').'</a>';
 								//}
 							}
 							else

@@ -585,10 +585,10 @@ else
 	$sql.= " ORDER BY $sortfield $sortorder, p.rowid DESC ";
 	$sql.= $db->plimit($limit + 1,$offset);
 
-	if ( $result = $db->query($sql) )
+	$result = $db->query($sql);
+	if ($result)
 	{
-		$num = $db->num_rows();
-
+		$num = $db->num_rows($result);
 
 		print_barre_liste($langs->trans("Proposals"), $page, "propal.php","&socid=$socid&month=$month&year=$year&search_ref=$search_ref&search_societe=$search_societe&search_montant_ht=$search_montant_ht".'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
 

@@ -835,10 +835,12 @@ class Commande extends CommonObject
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		// Clean parameters
+		if (empty($remise_percent)) $remise_percent=0;
+        if (empty($qty)) $qty=0;
+        if (empty($info_bits)) $info_bits=0;
+
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
-		if (! $qty) $qty=0;
-		if (! $info_bits) $info_bits=0;
 		$pu_ht=price2num($pu_ht);
 		$pu_ttc=price2num($pu_ttc);
 		$txtva = price2num($txtva);
@@ -2383,7 +2385,7 @@ class Commande extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * 	\brief		Return an array of order lines
 	 * 	\param		option		0=No filter on rang, 1=filter on rang <> 0, 2=filter on rang=0

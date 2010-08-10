@@ -1554,7 +1554,7 @@ class Form
 		$sql .= " WHERE active = 1";
 
 		dol_syslog("Form::select_propal_statut sql=".$sql);
-        $resql=$db->query($sql);
+        $resql=$this->db->query($sql);
 		if ($resql)
 		{
 			print '<select class="flat" name="propal_statut">';
