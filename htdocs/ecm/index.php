@@ -231,7 +231,10 @@ $head = ecm_prepare_head_fm($fac);
 dol_fiche_head($head, 'file_manager', '', 1);
 
 
-print '<table class="border" width="100%"><tr><td width="40%" valign="top" style="background: #FFFFFF">';
+print '<table class="border" width="100%">';
+print '<tr>';
+
+print '<td width="40%" valign="top" style="background: #FFFFFF" rowspan="2">';
 
 // Left area
 
@@ -251,13 +254,33 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	// Construit liste des repertoires
 	print '<table width="100%" class="nobordernopadding">';
 
-	//print '<tr class="liste_titre" style="height: 30px !important">';
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" align="left">'.$langs->trans("ECMSections").'</td>';
-	print '<td class="liste_titre" colspan="5" align="right">';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
-	print '</td>';
+	print '<tr class="liste_titre" style="height: 24px !important">';
+	print '<td class="liste_titre" align="left" colspan="6">';
+    if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action))
+    {
+        if ($user->rights->ecm->setup)
+        {
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.$langs->trans('ECMAddSection').'</a>';
+        }
+        else
+        {
+            print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
+        }
+    }
+	//print '</td>';
+	//print '<td class="liste_titre" colspan="5" align="right">';
+	//print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.$langs->trans('Refresh').'</a>';
+    print '</td>';
+
 	print '</tr>';
+
+    print '<tr class="liste_titre"';
+    print '<td class="liste_titre" align="left" colspan="6">';
+    print '&nbsp;'.$langs->trans("ECMSections");
+	print '</td></tr>';
+
+    $showonrightsize='';
 
 	if (sizeof($sectionauto))
 	{
@@ -354,7 +377,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 					}
 					else
 					{
-						print '<tr><td colspan="6">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+						$showonrightsize='featurenotyetavailable';
 					}
 				}
 
@@ -572,14 +595,21 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	// ----- End of section -----
 	// --------------------------
 
-
 	print "</table>";
 	// Fin de zone Ajax
+
+
 
 }
 
 
 print '</td><td valign="top" style="background: #FFFFFF">';
+
+print '<table width="100%" class="nobordernopadding">';
+print '<tr class="liste_titre" style="height: 24px !important"><td>';
+//print $langs->trans("Filter").': ';
+print '</td></tr>';
+print '</table>';
 
 // Right area
 $relativepath=$ecmdir->getRelativePath();
@@ -588,7 +618,7 @@ $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolowe
 
 $formfile=new FormFile($db);
 $param='&amp;section='.$section;
-$textifempty=($section?$langs->trans("NoFileFound"):$langs->trans("ECMSelectASection"));
+$textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
 $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,40);
 
 //	print '<table width="100%" class="border">';
@@ -601,22 +631,13 @@ print '</td></tr>';
 
 
 // Actions buttons
-print '<tr height="22"><td align="center">';
-if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action))
-{
-	if ($user->rights->ecm->setup)
-	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.$langs->trans('ECMAddSection').'</a>';
-	}
-	else
-	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
-	}
-}
-print '</td><td>';
+print '<tr height="22">';
+//print '<td align="center">';
+//print '</td>';
+print '<td>';
 if (! empty($section))
 {
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php','',0,$section,$user->rights->ecm->upload);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php','none',0,$section,$user->rights->ecm->upload);
 }
 else print '&nbsp;';
 print '</td></tr>';

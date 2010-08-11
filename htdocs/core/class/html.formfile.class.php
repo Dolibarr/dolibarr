@@ -48,7 +48,7 @@ class FormFile
 	/**
 	 *    	\brief      Show file add form
 	 *    	\param      url				Url
-	 *    	\param      title			Title zone
+	 *    	\param      title			Title zone (Title or '' or 'none')
 	 *    	\param      addcancel		1=Add 'Cancel' button
 	 *		\param		sectionid		If upload must be done inside a particular ECM section
 	 * 		\param		perm			Value of permission to allow upload
@@ -58,10 +58,12 @@ class FormFile
 	{
 		global $conf,$langs;
 
+		$maxlength=62;
+
 		print "\n\n<!-- Start form attach new file -->\n";
 
-		if (! $title) $title=$langs->trans("AttachANewFile");
-		print_titre($title);
+		if (empty($title)) $title=$langs->trans("AttachANewFile");
+		if ($title != 'none') print_titre($title);
 
 		print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
 		print '<input type="hidden" name="section" value="'.$sectionid.'">';
@@ -81,7 +83,7 @@ class FormFile
 		{
 			print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
 		}
-		print '<input class="flat" type="file" name="userfile" size="70"';
+		print '<input class="flat" type="file" name="userfile" size="'.$maxlength.'"';
 		print (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled="true"':'');
 		print '>';
 		print ' &nbsp; ';
