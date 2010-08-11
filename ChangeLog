@@ -1,5 +1,16 @@
 English Dolibarr ChangeLog
 
+***** ChangeLog for 3.0 compared to 2.9 *****
+
+For users:
+- New: When sending supplier orders by mail, a text is predefined.
+- New: Upgrade process works with Postgresql.
+
+For developer:
+- Qual: Renamed some fields into database to be more internationnal.
+
+
+
 ***** ChangeLog for 2.9 compared to 2.8 *****
 
 For users:

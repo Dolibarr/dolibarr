@@ -211,7 +211,14 @@ class DoliDb
 			# We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
 			$line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
 
-			# alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
+            # Translate order to rename fields
+            if (preg_match('/ALTER TABLE ([a-z0-9_]+) CHANGE COLUMN ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
+            {
+            	$line = "-- ".$line." replaced by --\n";
+                $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
+            }
+
+            # alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
 			# ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
 			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+PRIMARY\s+KEY\s*(.*)\s*\((.*)$/i',$line,$reg))
 			{
