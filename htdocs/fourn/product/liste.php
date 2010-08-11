@@ -161,7 +161,7 @@ if ($resql)
 	llxHeader("","",$texte);
 
 
-	$param="&envente=$envente&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"");
+	$param="&tosell=$tosell&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"");
 	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
 
 

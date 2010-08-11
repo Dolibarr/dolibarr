@@ -915,7 +915,7 @@ CREATE TABLE `llx_c_field_list` (
 
 LOCK TABLES `llx_c_field_list` WRITE;
 /*!40000 ALTER TABLE `llx_c_field_list` DISABLE KEYS */;
-INSERT INTO `llx_c_field_list` VALUES (1,'2010-07-21 23:19:49','product_default',1,'p.ref','ref','Ref','left',1,1,'1',1),(2,'2010-07-21 23:19:49','product_default',1,'p.label','label','Label','left',1,1,'1',2),(3,'2010-07-21 23:19:49','product_default',1,'p.barcode','barcode','BarCode','center',1,1,'$conf->barcode->enabled',3),(4,'2010-07-21 23:19:49','product_default',1,'p.tms','datem','DateModification','center',1,0,'1',4),(5,'2010-07-21 23:19:49','product_default',1,'p.price','price','SellingPriceHT','right',1,0,'1',5),(6,'2010-07-21 23:19:49','product_default',1,'p.price_ttc','price_ttc','SellingPriceTTC','right',1,0,'1',6),(7,'2010-07-21 23:19:49','product_default',1,'p.stock','stock','Stock','right',0,0,'$conf->stock->enabled',7),(8,'2010-07-21 23:19:49','product_default',1,'p.envente','status','Status','right',1,0,'1',8);
+INSERT INTO `llx_c_field_list` VALUES (1,'2010-07-21 23:19:49','product_default',1,'p.ref','ref','Ref','left',1,1,'1',1),(2,'2010-07-21 23:19:49','product_default',1,'p.label','label','Label','left',1,1,'1',2),(3,'2010-07-21 23:19:49','product_default',1,'p.barcode','barcode','BarCode','center',1,1,'$conf->barcode->enabled',3),(4,'2010-07-21 23:19:49','product_default',1,'p.tms','datem','DateModification','center',1,0,'1',4),(5,'2010-07-21 23:19:49','product_default',1,'p.price','price','SellingPriceHT','right',1,0,'1',5),(6,'2010-07-21 23:19:49','product_default',1,'p.price_ttc','price_ttc','SellingPriceTTC','right',1,0,'1',6),(7,'2010-07-21 23:19:49','product_default',1,'p.stock','stock','Stock','right',0,0,'$conf->stock->enabled',7),(8,'2010-07-21 23:19:49','product_default',1,'p.tosell','status','Status','right',1,0,'1',8);
 /*!40000 ALTER TABLE `llx_c_field_list` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3840,7 +3840,7 @@ CREATE TABLE `llx_product` (
   `localtax1_tx` double(6,3) DEFAULT '0.000',
   `localtax2_tx` double(6,3) DEFAULT '0.000',
   `fk_user_author` int(11) DEFAULT NULL,
-  `envente` tinyint(4) DEFAULT '1',
+  `tosell` tinyint(4) DEFAULT '1',
   `fk_product_type` int(11) DEFAULT '0',
   `duration` varchar(6) DEFAULT NULL,
   `seuil_stock_alerte` int(11) DEFAULT '0',
@@ -4082,7 +4082,7 @@ CREATE TABLE `llx_product_price` (
   `localtax1_tx` double(6,3) DEFAULT '0.000',
   `localtax2_tx` double(6,3) DEFAULT '0.000',
   `fk_user_author` int(11) DEFAULT NULL,
-  `envente` tinyint(4) DEFAULT '1',
+  `tosell` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`rowid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -105,14 +105,14 @@ print "</table></form><br>";
 $prodser = array();
 $prodser[0][0]=$prodser[0][1]=$prodser[1][0]=$prodser[1][1]=0;
 
-$sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.envente";
+$sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.tosell";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.entity = ".$conf->entity;
-$sql.= " GROUP BY p.fk_product_type, p.envente";
+$sql.= " GROUP BY p.fk_product_type, p.tosell";
 $result = $db->query($sql);
 while ($objp = $db->fetch_object($result))
 {
-	$prodser[$objp->fk_product_type][$objp->envente]=$objp->total;
+	$prodser[$objp->fk_product_type][$objp->tosell]=$objp->total;
 }
 
 print '<table class="noborder" width="100%">';
@@ -120,19 +120,19 @@ print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</
 if ($conf->product->enabled)
 {
 	$statProducts = "<tr $bc[0]>";
-	$statProducts.= '<td><a href="liste.php?type=0&amp;envente=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
+	$statProducts.= '<td><a href="liste.php?type=0&amp;tosell=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
 	$statProducts.= "</tr>";
 	$statProducts.= "<tr $bc[1]>";
-	$statProducts.= '<td><a href="liste.php?type=0&amp;envente=1">'.$langs->trans("ProductsOnSell").'</a></td><td align="right">'.round($prodser[0][1]).'</td>';
+	$statProducts.= '<td><a href="liste.php?type=0&amp;tosell=1">'.$langs->trans("ProductsOnSell").'</a></td><td align="right">'.round($prodser[0][1]).'</td>';
 	$statProducts.= "</tr>";
 }
 if ($conf->service->enabled)
 {
 	$statServices = "<tr $bc[0]>";
-	$statServices.= '<td><a href="liste.php?type=1&amp;envente=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
+	$statServices.= '<td><a href="liste.php?type=1&amp;tosell=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
 	$statServices.= "</tr>";
 	$statServices.= "<tr $bc[1]>";
-	$statServices.= '<td><a href="liste.php?type=1&amp;envente=1">'.$langs->trans("ServicesOnSell").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
+	$statServices.= '<td><a href="liste.php?type=1&amp;tosell=1">'.$langs->trans("ServicesOnSell").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
 	$statServices.= "</tr>";
 }
 $total=0;
@@ -162,7 +162,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  * Derniers produits/services en vente
  */
 $max=15;
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.envente,";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.entity = ".$conf->entity;
@@ -229,7 +229,7 @@ if ($result)
 			print dol_print_date($db->jdate($objp->datem),'day');
 			print "</td>";
 			print '<td align="right" nowrap="nowrap">';
-			print $product_static->LibStatut($objp->envente,5);
+			print $product_static->LibStatut($objp->tosell,5);
 			print "</td>";
 			print "</tr>\n";
 			$i++;

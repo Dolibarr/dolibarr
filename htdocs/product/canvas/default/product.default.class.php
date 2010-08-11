@@ -224,9 +224,9 @@ class ProductDefault extends Product
 			}
 		}
 
-		if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
+		if (isset($_GET["tosell"]) && strlen($_GET["tosell"]) > 0)
 		{
-			$sql.= " AND p.envente = ".addslashes($_GET["envente"]);
+			$sql.= " AND p.tosell = ".addslashes($_GET["tosell"]);
 		}
 		if (isset($_GET["canvas"]) && strlen($_GET["canvas"]) > 0)
 		{

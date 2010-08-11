@@ -56,7 +56,7 @@ $db->free();
 
 $sql = "SELECT count(*)";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql.= " WHERE p.envente = 0";
+$sql.= " WHERE p.tosell = 0";
 if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
 if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 $sql.= " AND p.fk_product_type <> '1'";
@@ -116,7 +116,7 @@ if ($conf->service->enabled)
 
   $sql = "SELECT count(*)";
   $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-  $sql.= " WHERE p.envente = 0";
+  $sql.= " WHERE p.tosell = 0";
   if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
   if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
   $sql.= " AND p.fk_product_type = '1'";

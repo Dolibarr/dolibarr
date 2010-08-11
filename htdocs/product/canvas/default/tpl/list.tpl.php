@@ -50,10 +50,10 @@
  		if ($field['enabled']) {
  			if ($field['sort'])	{ ?>
  				<td class="liste_titre" align="<?php echo $field['align']; ?>"><?php echo $field['title']; ?>
- 					<a href="<?php echo $_SERVER["PHP_SELF"];?>?sortfield=<?php echo $field['name']; ?>&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+ 					<a href="<?php echo $_SERVER["PHP_SELF"];?>?sortfield=<?php echo $field['name']; ?>&amp;sortorder=asc&amp;begin=&amp;tosell=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
  						<img src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
  					</a>
-  					<a href="<?php echo $_SERVER["PHP_SELF"];?>?sortfield=<?php echo $field['name']; ?>&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+  					<a href="<?php echo $_SERVER["PHP_SELF"];?>?sortfield=<?php echo $field['name']; ?>&amp;sortorder=desc&amp;begin=&amp;tosell=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
   						<img src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
   					</a>
   				</td>

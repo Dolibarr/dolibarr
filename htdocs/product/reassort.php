@@ -81,7 +81,7 @@ $htmlother=new FormOther($db);
 $title=$langs->trans("ProductsAndServices");
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, p.tms as datem,';
-$sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte,';
+$sql.= ' p.duration, p.tosell as statut, p.seuil_stock_alerte,';
 $sql.= ' SUM(s.reel) as stock_physique';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock as s,';
 $sql.= ' '.MAIN_DB_PREFIX.'product as p';
@@ -124,9 +124,9 @@ if ($snom)
 {
 	$sql.= " AND p.label like '%".addslashes($snom)."%'";
 }
-if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
+if (isset($_GET["tosell"]) && strlen($_GET["tosell"]) > 0)
 {
-	$sql.= " AND p.envente = ".$_GET["envente"];
+	$sql.= " AND p.tosell = ".$_GET["tosell"];
 }
 if($catid)
 {
@@ -159,9 +159,9 @@ if ($resql)
 		exit;
 	}
 
-	if (isset($_GET["envente"]) || isset($_POST["envente"]))
+	if (isset($_GET["tosell"]) || isset($_POST["tosell"]))
 	{
-		$envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
+		$tosell = (isset($_GET["tosell"])?$_GET["tosell"]:$_POST["tosell"]);
 	}
 
 
@@ -183,7 +183,7 @@ if ($resql)
 
 	if ($sref || $snom || $sall || $_POST["search"])
 	{
-		print_barre_liste($texte, $page, "reassort.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
+		print_barre_liste($texte, $page, "reassort.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$_POST["tosell"], $sortfield, $sortorder,'',$num);
 	}
 	else
 	{
@@ -225,15 +225,15 @@ if ($resql)
 
 	// Lignes des titres
 	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"reassort.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
-	if ($conf->service->enabled && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("MininumStock"),"reassort.php", "p.seuil_stock_alerte","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock_physique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),"reassort.php", "p.ref","&amp;tosell=$tosell".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label","&tosell=$tosell&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
+	if ($conf->service->enabled && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&tosell=$tosell&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("MininumStock"),"reassort.php", "p.seuil_stock_alerte","&tosell=$tosell&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock_physique","&tosell=$tosell&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
 	// TODO Add info of running suppliers/customers orders
-	//print_liste_field_titre($langs->trans("TheoreticalStock"),"reassort.php", "stock_theorique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+	//print_liste_field_titre($langs->trans("TheoreticalStock"),"reassort.php", "stock_theorique","&tosell=$tosell&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';
-	print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.tosell","&tosell=$tosell&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -318,7 +318,7 @@ if ($resql)
 	{
 		if ($sref || $snom || $sall || $_POST["search"])
 		{
-	  		print_barre_liste('', $page, "reassort.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num, 0, '');
+	  		print_barre_liste('', $page, "reassort.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$_POST["tosell"], $sortfield, $sortorder,'',$num, 0, '');
 		}
 		else
 		{

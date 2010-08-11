@@ -141,7 +141,7 @@ class ProductService extends Product
 		
 		$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 		$sql.= ' p.fk_product_type, p.tms as datem,';
-		$sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte';
+		$sql.= ' p.duration, p.tosell as statut, p.seuil_stock_alerte';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 		// We'll need this table joined to the select in order to filter by categ
 		if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
@@ -160,9 +160,9 @@ class ProductService extends Product
 		if ($sref)     $sql.= " AND p.ref like '%".$sref."%'";
 		if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
 		if ($snom)     $sql.= " AND p.label like '%".addslashes($snom)."%'";
-		if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
+		if (isset($_GET["tosell"]) && strlen($_GET["tosell"]) > 0)
 		{
-			$sql.= " AND p.envente = ".addslashes($_GET["envente"]);
+			$sql.= " AND p.tosell = ".addslashes($_GET["tosell"]);
 		}
 		if (isset($_GET["canvas"]) && strlen($_GET["canvas"]) > 0)
 		{

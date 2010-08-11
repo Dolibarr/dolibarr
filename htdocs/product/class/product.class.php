@@ -445,7 +445,7 @@ class Product extends CommonObject
 		$sql.= ",localtax1_tx = " . $this->localtax1_tx;
 		$sql.= ",localtax2_tx = " . $this->localtax2_tx;
 
-		$sql.= ",envente = " . $this->status;
+		$sql.= ",tosell = " . $this->status;
 		$sql.= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
 		$sql.= ",hidden = " . ($this->hidden<0 ? "null" : $this->hidden);
 		$sql.= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
@@ -704,7 +704,7 @@ class Product extends CommonObject
 		$now=dol_now();
 
 		// Add new price
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx,recuperableonly,";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,tosell,tva_tx,recuperableonly,";
 		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc) ";
 		$sql.= " VALUES(".($level?$level:1).", ".$this->db->idate($now).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.",".$this->tva_npr.",";
 		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc;
@@ -967,7 +967,7 @@ class Product extends CommonObject
 		}
 
 		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc,";
-		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, envente,";
+		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
@@ -1000,7 +1000,7 @@ class Product extends CommonObject
 			$this->localtax2_tx       = $result["localtax2_tx"];
 
 			$this->type               = $result["fk_product_type"];
-			$this->status             = $result["envente"];
+			$this->status             = $result["tosell"];
 			$this->finished           = $result["finished"];
 			$this->hidden             = $result["hidden"];
 			$this->duration           = $result["duration"];
@@ -1067,7 +1067,7 @@ class Product extends CommonObject
 				for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 				{
 					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
-					$sql.= " price_base_type, tva_tx, envente";
+					$sql.= " price_base_type, tva_tx, tosell";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
 					$sql.= " where price_level=".$i." and";
 					$sql.= " fk_product = '".$this->id."'";
@@ -1876,8 +1876,8 @@ class Product extends CommonObject
 
 		// les prix
 		$sql = "INSERT ".MAIN_DB_PREFIX."product_price ("
-		. " fk_product, date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, envente )"
-		. " SELECT ".$toId . ", date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, envente "
+		. " fk_product, date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell )"
+		. " SELECT ".$toId . ", date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell "
 		. " FROM ".MAIN_DB_PREFIX."product_price "
 		. " WHERE fk_product = ". $fromId;
 

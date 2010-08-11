@@ -779,7 +779,7 @@ class Livraison extends CommonObject
 
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE envente = 1";
+		$sql.= " WHERE tosell = 1";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);

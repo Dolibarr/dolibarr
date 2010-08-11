@@ -732,7 +732,7 @@ class Fichinter extends CommonObject
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " WHERE envente = 1";
+		$sql.= " WHERE tosell = 1";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

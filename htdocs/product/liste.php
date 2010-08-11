@@ -123,7 +123,7 @@ else
 
 $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 $sql.= ' p.fk_product_type, p.tms as datem,';
-$sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte';
+$sql.= ' p.duration, p.tosell as statut, p.seuil_stock_alerte';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
@@ -152,9 +152,9 @@ if (strlen($_GET["type"]) || strlen($_POST["type"]))
 if ($sref)     $sql.= " AND p.ref like '%".$sref."%'";
 if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
 if ($snom)     $sql.= " AND p.label like '%".addslashes($snom)."%'";
-if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
+if (isset($_GET["tosell"]) && strlen($_GET["tosell"]) > 0)
 {
-	$sql.= " AND p.envente = ".addslashes($_GET["envente"]);
+	$sql.= " AND p.tosell = ".addslashes($_GET["tosell"]);
 }
 if (isset($_GET["canvas"]) && strlen($_GET["canvas"]) > 0)
 {
@@ -190,9 +190,9 @@ if ($resql)
 		exit;
 	}
 
-	if (isset($_GET["envente"]) || isset($_POST["envente"]))
+	if (isset($_GET["tosell"]) || isset($_POST["tosell"]))
 	{
-		$envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
+		$tosell = (isset($_GET["tosell"])?$_GET["tosell"]:$_POST["tosell"]);
 	}
 
 	$helpurl='';
@@ -213,7 +213,7 @@ if ($resql)
 		print '<div class="warning">'.$langs->trans("ProductDeleted",$_GET['delprod']).'</div><br>';
 	}
 
-	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$envente;
+	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell;
 	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
 	$param.=isset($type)?"&amp;type=".$type:"";
 	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
@@ -309,7 +309,7 @@ if ($resql)
 		if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"liste.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price",$param,"",'align="right"',$sortfield,$sortorder);
 		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("Stock").'</td>';
-		print_liste_field_titre($langs->trans("Status"),"liste.php", "p.envente",$param,"",'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Status"),"liste.php", "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
 
 		// Lignes des champs de filtre
@@ -449,11 +449,11 @@ if ($resql)
 		{
 			if ($sref || $snom || $sall || $sbarcode || $_POST["search"])
 			{
-				print_barre_liste('', $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$envente, $sortfield, $sortorder,'',$num);
+				print_barre_liste('', $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell, $sortfield, $sortorder,'',$num);
 			}
 			else
 			{
-				print_barre_liste('', $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"")."&amp;envente=".$envente, $sortfield, $sortorder,'',$num);
+				print_barre_liste('', $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"")."&amp;tosell=".$tosell, $sortfield, $sortorder,'',$num);
 			}
 		}
 

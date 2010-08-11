@@ -78,7 +78,7 @@ else { print "err"; }
 
 
 $prodids = array();
-$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE tosell=1";
 $resql = $db->query($sql);
 if ($resql) 
 {

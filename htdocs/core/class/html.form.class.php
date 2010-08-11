@@ -907,11 +907,11 @@ class Form
 		elseif($finished == 1)
 		{
 			$sql.= " AND p.finished = ".$finished;
-			if ($status >= 0)  $sql.= " AND p.envente = ".$status;
+			if ($status >= 0)  $sql.= " AND p.tosell = ".$status;
 		}
 		elseif($status >= 0)
 		{
-			$sql.= " AND p.envente = ".$status;
+			$sql.= " AND p.tosell = ".$status;
 		}
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		// Add criteria on ref/label
@@ -1113,7 +1113,7 @@ class Form
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pf.fk_soc = s.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
 		$sql.= " WHERE p.entity = ".$conf->entity;
-		$sql.= " AND p.envente = 1";
+		$sql.= " AND p.tosell = 1";
 		if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if (! empty($filtre)) $sql.=" ".$filtre;
@@ -1226,7 +1226,7 @@ class Form
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pf.fk_soc";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
-		$sql.= " WHERE p.envente = 1";
+		$sql.= " WHERE p.tosell = 1";
 		$sql.= " AND s.fournisseur = 1";
 		$sql.= " AND p.rowid = ".$productid;
 		$sql.= " ORDER BY s.nom, pf.ref_fourn DESC";

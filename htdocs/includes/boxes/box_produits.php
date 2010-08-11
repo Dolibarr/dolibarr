@@ -71,7 +71,7 @@ class box_produits extends ModeleBoxes {
 
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
-			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.envente";
+			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= " WHERE p.entity = ".$conf->entity;
 			if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
@@ -136,7 +136,7 @@ class box_produits extends ModeleBoxes {
                     'text' => dol_print_date($datem,'day'));
 
 					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
-                    'text' => $productstatic->LibStatut($objp->envente,3));
+                    'text' => $productstatic->LibStatut($objp->tosell,3));
 
 					$i++;
 				}
