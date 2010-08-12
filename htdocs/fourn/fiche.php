@@ -334,39 +334,6 @@ if ( $societe->fetch($socid) )
 		show_actions_done($conf,$langs,$db,$societe);
 	}
 
-
-	// deprecated
-	/*
-	print '<table class="border" width="100%">';
-	print '<tr><td valign="top" width="50%">';
-
-	$file = get_exdir($societe->id, 3) . "ca_genere-".$societe->id.".png";
-	if (file_exists($conf->fournisseur->dir_temp.'/'.$file))
-	{
-		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_fourn&amp;file='.$file;
-		print '<img src="'.$url.'" alt="CA genere">';
-	}
-	else
-	{
-		print $langs->trans("NoneOrBatchFileNeverRan",'batch_fournisseur_updateturnover.php, batch_fournisseur_buildgraph.php');
-	}
-
-	print '</td><td valign="top" width="50%">';
-
-	$file = get_exdir($societe->id, 3) . "ca_achat-".$societe->id.".png";
-	if (file_exists($conf->fournisseur->dir_temp.'/'.$file))
-	{
-		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_fourn&amp;file='.$file;
-		print '<img src="'.$url.'" alt="CA">';
-	}
-	else
-	{
-		print $langs->trans("NoneOrBatchFileNeverRan",'batch_fournisseur_updateturnover.php, batch_fournisseur_buildgraph.php');
-	}
-
-	print '</td></tr>';
-	print '</table>' . "\n";
-	*/
 }
 else
 {
