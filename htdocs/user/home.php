@@ -85,8 +85,8 @@ $sql.= " u.entity, u.ldap_sid, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
 $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
-$sql.= " ORDER BY u.datec";
-$sql.= " DESC limit $max";
+$sql.= $db->order("u.datec","DESC");
+$sql.= $db->plimit($max);
 
 $resql=$db->query($sql);
 if ($resql)
@@ -148,7 +148,7 @@ $sql = "SELECT g.rowid, g.nom, g.note, g.entity, g.datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 $sql.= $db->order("g.datec","DESC");
-$sql.= $db->limit($max);
+$sql.= $db->plimit($max);
 
 $resql=$db->query($sql);
 if ($resql)
