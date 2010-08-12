@@ -212,10 +212,22 @@ class DoliDb
 			$line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
 
             # Translate order to rename fields
-            if (preg_match('/ALTER TABLE ([a-z0-9_]+) CHANGE COLUMN ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
+            if (preg_match('/ALTER TABLE ([a-z0-9_]+) CHANGE(?: COLUMN)? ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
             {
             	$line = "-- ".$line." replaced by --\n";
                 $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
+            }
+
+            # Translate order to modify field format
+            if (preg_match('/ALTER TABLE ([a-z0-9_]+) MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i',$line,$reg))
+            {
+                $line = "-- ".$line." replaced by --\n";
+                $newreg3=$reg[3];
+                $newreg3=preg_replace('/ NOT NULL/i','',$newreg3);
+                $newreg3=preg_replace('/ NULL/i','',$newreg3);
+                $newreg3=preg_replace('/ DEFAULT 0/i','',$newreg3);
+                $newreg3=preg_replace('/ DEFAULT \'[0-9a-zA-Z_@]*\'/i','',$newreg3);
+                $line.= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." TYPE ".$newreg3;
             }
 
             # alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
@@ -261,6 +273,7 @@ class DoliDb
 
 			// Replace espacing \' by ''
 			$line=preg_replace("/\\\'/","''",$line);
+
 			//print $line."\n";
 		}
 
@@ -741,7 +754,7 @@ class DoliDb
 			42701=> 'DB_ERROR_COLUMN_ALREADY_EXISTS',
 			'42710' => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			'23505' => 'DB_ERROR_RECORD_ALREADY_EXISTS',
-			'42704' => 'DB_ERROR_SYNTAX',
+			'42704' => 'DB_ERROR_NO_INDEX_TO_DROP',
 			'42601' => 'DB_ERROR_SYNTAX',
 			'42P16' => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
 			1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
