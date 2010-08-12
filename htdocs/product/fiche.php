@@ -675,7 +675,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		
 		// To buy
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
-		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
 		$html->select_array('statut_buy',$statutarray,$_POST["statut_buy"]);
 		print '</td></tr>';
 
@@ -910,13 +910,13 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<select class="flat" name="statut_buy">';
 			if ($product->status_buy)
 			{
-				print '<option value="1" selected="true">'.$langs->trans("OnSell").'</option>';
-				print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
+				print '<option value="1" selected="true">'.$langs->trans("ProductStatusOnBuy").'</option>';
+				print '<option value="0">'.$langs->trans("ProductStatusNotOnBuy").'</option>';
 			}
 			else
 			{
-				print '<option value="1">'.$langs->trans("OnSell").'</option>';
-				print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
+				print '<option value="1">'.$langs->trans("ProductStatusOnBuy").'</option>';
+				print '<option value="0" selected="true">'.$langs->trans("ProductStatusNotOnBuy").'</option>';
 			}
 			print '</select>';
 			print '</td></tr>';
