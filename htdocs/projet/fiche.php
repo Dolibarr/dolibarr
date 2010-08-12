@@ -269,7 +269,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 		$defaultref = $modProject->getNextValue($soc,$project);
 	}
 
-	if ($defaultref <= 0) $defaultref='';
+    if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
 
 	// Ref
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
