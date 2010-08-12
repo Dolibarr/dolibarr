@@ -273,7 +273,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			$sql .= ' WHERE f.fk_soc = '.$facture->socid;
 			$sql .= ' AND f.paye = 0';
 			$sql .= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-			$sql .= ' GROUP BY f.facnumber';
+			$sql .= ' GROUP BY f.rowid,f.facnumber,f.total_ttc,f.datef';
 			$resql = $db->query($sql);
 			if ($resql)
 			{
