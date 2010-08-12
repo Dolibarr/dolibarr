@@ -156,6 +156,7 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 
 		$product->type               	= $_POST["type"];
 		$product->status             	= $_POST["statut"];
+		$product->status_buy           	= $_POST["statut_buy"];
 		$product->description        	= dol_htmlcleanlastbr($_POST["desc"]);
 		$product->note               	= dol_htmlcleanlastbr($_POST["note"]);
 		$product->duration_value     	= $_POST["duration_value"];
@@ -234,6 +235,7 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 			$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
 			$product->note               = dol_htmlcleanlastbr($_POST["note"]);
 			$product->status             = $_POST["statut"];
+			$product->status_buy         = $_POST["statut_buy"];
 			$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
 			$product->duration_value     = $_POST["duration_value"];
 			$product->duration_unit      = $_POST["duration_unit"];
@@ -665,10 +667,16 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$_POST["libelle"].'"></td></tr>';
 
-		// Status
-		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
+		// On sell
+		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
 		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 		$html->select_array('statut',$statutarray,$_POST["statut"]);
+		print '</td></tr>';
+		
+		// To buy
+		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
+		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+		$html->select_array('statut_buy',$statutarray,$_POST["statut_buy"]);
 		print '</td></tr>';
 
 		// Stock min level
@@ -882,9 +890,25 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
 			// Status
-			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td colspan="2">';
 			print '<select class="flat" name="statut">';
 			if ($product->status)
+			{
+				print '<option value="1" selected="true">'.$langs->trans("OnSell").'</option>';
+				print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
+			}
+			else
+			{
+				print '<option value="1">'.$langs->trans("OnSell").'</option>';
+				print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
+			}
+			print '</select>';
+			print '</td></tr>';
+			
+			// To Buy
+			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td colspan="2">';
+			print '<select class="flat" name="statut_buy">';
+			if ($product->status_buy)
 			{
 				print '<option value="1" selected="true">'.$langs->trans("OnSell").'</option>';
 				print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
@@ -1075,8 +1099,13 @@ if ($_GET["id"] || $_GET["ref"])
 			print '</td></tr>';
 
 			// Statut
-			print '<tr><td>'.$langs->trans("Status").'</td><td>';
-			print $product->getLibStatut(2);
+			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
+			print $product->getLibStatut(2,0);
+			print '</td></tr>';
+			
+			// To buy
+			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
+			print $product->getLibStatut(2,1);
 			print '</td></tr>';
 
 			// Description

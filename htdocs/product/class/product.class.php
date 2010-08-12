@@ -86,6 +86,8 @@ class Product extends CommonObject
 	var $duration_unit;
 	// Statut indique si le produit est en vente '1' ou non '0'
 	var $status;
+	// Status indicate whether the product is available for purchase '1' or not '0'
+	var $status_buy; 
 	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
 	var $finished;
 
@@ -148,6 +150,7 @@ class Product extends CommonObject
 		$this->db = $DB;
 		$this->id = $id ;
 		$this->status = 0;
+		$this->status_buy = 0;
 		$this->nbphoto = 0;
 		$this->stock_reel = 0;
 		$this->seuil_stock_alerte = 0;
@@ -207,6 +210,7 @@ class Product extends CommonObject
 		if (empty($this->price))     	$this->price = 0;
 		if (empty($this->price_min)) 	$this->price_min = 0;
 		if (empty($this->status))    	$this->status = 0;
+		if (empty($this->status_buy))    	$this->status_buy = 0;
 		if (empty($this->finished))  	$this->finished = 0;
 		if (empty($this->hidden))    	$this->hidden = 0;
 
@@ -446,6 +450,7 @@ class Product extends CommonObject
 		$sql.= ",localtax2_tx = " . $this->localtax2_tx;
 
 		$sql.= ",tosell = " . $this->status;
+		$sql.= ",tobuy = " . $this->status_buy;
 		$sql.= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
 		$sql.= ",hidden = " . ($this->hidden<0 ? "null" : $this->hidden);
 		$sql.= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
@@ -968,7 +973,7 @@ class Product extends CommonObject
 
 		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
-		$sql.= " fk_product_type, duration, seuil_stock_alerte, canvas,";
+		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " import_key";
@@ -1001,6 +1006,7 @@ class Product extends CommonObject
 
 			$this->type               = $result["fk_product_type"];
 			$this->status             = $result["tosell"];
+			$this->status_buy         = $result["tobuy"];
 			$this->finished           = $result["finished"];
 			$this->hidden             = $result["hidden"];
 			$this->duration           = $result["duration"];
@@ -2185,11 +2191,15 @@ class Product extends CommonObject
 	/**
 	 *    	\brief      Return label of status of object
 	 *    	\param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *      \param      type        0=Shell, 1=Buy
 	 *    	\return     string      Label of status
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode=0, $type=0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		if($type==0)
+			return $this->LibStatut($this->status,$mode,$type);
+		else
+			return $this->LibStatut($this->status_buy,$mode,$type);
 	}
 
 	/**
@@ -2198,24 +2208,25 @@ class Product extends CommonObject
 	 *    	\param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *    	\return     string      Label of status
 	 */
-	function LibStatut($status,$mode=0)
+	function LibStatut($status,$mode=0,$type=0)
 	{
 		global $langs;
 		$langs->load('products');
+		
 		if ($mode == 0)
 		{
-			if ($status == 0) return $langs->trans('ProductStatusNotOnSellShort');
-			if ($status == 1) return $langs->trans('ProductStatusOnSellShort');
+			if ($status == 0) return ($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort'));
+			if ($status == 1) return ($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuyShort'));
 		}
 		if ($mode == 1)
 		{
-			if ($status == 0) return $langs->trans('ProductStatusNotOnSell');
-			if ($status == 1) return $langs->trans('ProductStatusOnSell');
+			if ($status == 0) return ($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy'));
+			if ($status == 1) return ($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy'));
 		}
 		if ($mode == 2)
 		{
-			if ($status == 0) return img_picto($langs->trans('ProductStatusNotOnSell'),'statut5').' '.$langs->trans('ProductStatusNotOnSell');
-			if ($status == 1) return img_picto($langs->trans('ProductStatusOnSell'),'statut4').' '.$langs->trans('ProductStatusOnSell');
+			if ($status == 0) return img_picto($langs->trans('ProductStatusNotOnSell'),'statut5').' '.($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuy'));
+			if ($status == 1) return img_picto($langs->trans('ProductStatusOnSell'),'statut4').' '.($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuy'));
 		}
 		if ($mode == 3)
 		{
@@ -2224,13 +2235,13 @@ class Product extends CommonObject
 		}
 		if ($mode == 4)
 		{
-			if ($status == 0) return img_picto($langs->trans('ProductStatusNotOnSell'),'statut5').' '.$langs->trans('ProductStatusNotOnSell');
-			if ($status == 1) return img_picto($langs->trans('ProductStatusOnSell'),'statut4').' '.$langs->trans('ProductStatusOnSell');
+			if ($status == 0) return img_picto($langs->trans('ProductStatusNotOnSell'),'statut5').' '.($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy'));
+			if ($status == 1) return img_picto($langs->trans('ProductStatusOnSell'),'statut4').' '.($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy'));
 		}
 		if ($mode == 5)
 		{
-			if ($status == 0) return $langs->trans('ProductStatusNotOnSell').' '.img_picto($langs->trans('ProductStatusNotOnSell'),'statut5');
-			if ($status == 1) return $langs->trans('ProductStatusOnSell').' '.img_picto($langs->trans('ProductStatusOnSell'),'statut4');
+			if ($status == 0) return $langs->trans('ProductStatusNotOnSellShort').' '.img_picto($langs->trans('ProductStatusNotOnSell'),'statut5');
+			if ($status == 1) return $langs->trans('ProductStatusOnSellShort').' '.img_picto($langs->trans('ProductStatusOnSell'),'statut4');
 		}
 		return $langs->trans('Unknown');
 	}
@@ -2848,7 +2859,11 @@ class Product extends CommonObject
 			// Status
 			$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 			$this->tpl['status'] = $html->selectarray('statut',$statutarray,$this->status);
-
+			
+			//To Buy
+			$statutarray=array('1' => $langs->trans("Yes"), '0' => $langs->trans("No"));
+			$this->tpl['tobuy'] = $html->selectarray('tobuy',$statutarray,$this->status_buy);
+			
 			// Hidden
 			if ($this->user->rights->produit->hidden)
 			{
