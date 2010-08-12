@@ -3021,6 +3021,8 @@ class FactureLigne
 		if (empty($this->subprice)) $this->subprice=0;
 		if (empty($this->price))    $this->price=0;
 		if (empty($this->tva_tx))   $this->tva_tx=0;
+        if (empty($this->localtax1_tx))   $this->localtax1_tx=0;
+		if (empty($this->localtax2_tx))   $this->localtax2_tx=0;
 
 		// Check parameters
 		if ($this->product_type < 0) return -1;
