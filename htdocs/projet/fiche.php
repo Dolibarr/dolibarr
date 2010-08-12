@@ -26,9 +26,9 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");
 
 $langs->load("projects");
@@ -47,9 +47,15 @@ if (! empty($_REQUEST['socid_id']))
 
 if ($projectid == '' && $projectref == '' && ($_GET['action'] != "create" && $_POST['action'] != "add" && $_POST["action"] != "update" && !$_POST["cancel"])) accessforbidden();
 
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
+
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+$socid=0;
+if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
+
+
 
 
 /*
@@ -229,13 +235,14 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && 
  *	View
  */
 
+$html = new Form($db);
+$formfile = new FormFile($db);
+$userstatic = new User($db);
+
+
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Projects"),$help_url);
 
-$html = new Form($db);
-$formfile = new FormFile($db);
-
-$userstatic=new User($db);
 
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
@@ -262,7 +269,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 		$defaultref = $modProject->getNextValue($soc,$project);
 	}
 
-	if ($defaultref <= 0) $defaultref='';
+    if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
 
 	// Ref
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
@@ -403,11 +410,13 @@ else
 	}
 	else
 	{
-
 		print '<table class="border" width="100%">';
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+		// Define a complementary filter for search of next/prev ref.
+		$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+		$project->next_prev_filter=" rowid in (".$projectsListId.")";
 		print $html->showrefnav($project,'ref','',1,'ref','ref');
 		print '</td></tr>';
 
@@ -547,7 +556,7 @@ else
 		print '</td><td valign="top" width="50%">';
 
 		// List of actions on element
-		include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
 		$formactions=new FormActions($db);
 		$somethingshown=$formactions->showactions($project,'project',$socid);
 
