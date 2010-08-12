@@ -162,7 +162,6 @@ class mailing_framboise extends MailingTargets
 
 		$s='';
 		$s.='<select name="filter" class="flat">';
-		$s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
 
 		# Show categories
 		$sql = "SELECT rowid, label, type, visible";
@@ -177,6 +176,10 @@ class mailing_framboise extends MailingTargets
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
+
+			if ($num) $s.='<option value="0">&nbsp;</option>';
+			else $s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
+
 			$i = 0;
 			while ($i < $num)
 			{

@@ -623,7 +623,7 @@ class DoliDb
 	 */
 	function escape($stringtoencode)
 	{
-		return addslashes($stringtoencode);
+		return pg_escape_string($stringtoencode);
 	}
 
 

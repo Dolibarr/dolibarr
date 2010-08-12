@@ -196,10 +196,12 @@ class mailing_dolibarr_services_expired extends MailingTargets
 	*/
 	function formFilter()
 	{
+        global $langs;
 
 		$s='';
         $s.='<select name="filter" class="flat">';
-        $s.='<option value="0">&nbsp;</option>';
+        if (sizeof($this->arrayofproducts)) $s.='<option value="0">&nbsp;</option>';
+        else $s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
         foreach($this->arrayofproducts as $key => $val)
         {
         	$s.='<option value="'.$key.'">'.$val.'</option>';

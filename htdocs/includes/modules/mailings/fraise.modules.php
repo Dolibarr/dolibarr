@@ -21,16 +21,17 @@
 /**
        	\file       htdocs/includes/modules/mailings/fraise.modules.php
 		\ingroup    mailing
-		\brief      Fichier de la classe permettant de g�n�rer la liste de destinataires Fraise
+		\brief      File of class to generate target according to rule Fraise
 		\version    $Id$
 */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
  *	    \class      mailing_fraise
- *		\brief      Classe permettant de generer la liste des destinataires Fraise
+ *		\brief      Class to generate target according to rule Fraise
  */
 class mailing_fraise extends MailingTargets
 {
@@ -97,13 +98,23 @@ class mailing_fraise extends MailingTargets
         global $langs;
         $langs->load("members");
 
+        $form=new Form($this->db);
+
         $s='';
+        $s.=$langs->trans("Status").': ';
         $s.='<select name="filter" class="flat">';
+        $s.='<option value="none">&nbsp;</option>';
         $s.='<option value="-1">'.$langs->trans("MemberStatusDraft").'</option>';
         $s.='<option value="1a">'.$langs->trans("MemberStatusActiveShort").' ('.$langs->trans("MemberStatusPaidShort").')</option>';
         $s.='<option value="1b">'.$langs->trans("MemberStatusActiveShort").' ('.$langs->trans("MemberStatusActiveLateShort").')</option>';
         $s.='<option value="0">'.$langs->trans("MemberStatusResiliatedShort").'</option>';
         $s.='</select>';
+        $s.='<br>';
+        $s.=$langs->trans("DateEndSubscription").': ';
+        $s.=$langs->trans("After").' > '.$form->select_date(-1,'subscriptionafter',0,0,1,'fraise',1,0,1,0);
+        $s.=' &nbsp; ';
+        $s.=$langs->trans("Before").' < '.$form->select_date(-1,'subscriptionbefore',0,0,1,'fraise',1,0,1,0);
+
         return $s;
     }
 
@@ -120,16 +131,20 @@ class mailing_fraise extends MailingTargets
 
     /**
      *    \brief      Ajoute destinataires dans table des cibles
-     *    \param      mailing_id    Id du mailing concern�
-     *    \param      filterarray   Requete sql de selection des destinataires
+     *    \param      mailing_id    Id du mailing concerne
+     *    \param      filterarray   Param to filter sql request. Deprecated. Should use $_POST instead.
      *    \return     int           < 0 si erreur, nb ajout si ok
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
-    	global $langs;
+    	global $langs,$_POST;
 		$langs->load("members");
 
     	$cibles = array();
+        $now=dol_now();
+
+        $dateendsubscriptionafter=dol_mktime($_POST['subscriptionafterhour'],$_POST['subscriptionaftermin'],$_POST['subscriptionaftersec'],$_POST['subscriptionaftermonth'],$_POST['subscriptionafterday'],$_POST['subscriptionafteryear']);
+        $dateendsubscriptionbefore=dol_mktime($_POST['subscriptionbeforehour'],$_POST['subscriptionbeforemin'],$_POST['subscriptionbeforesec'],$_POST['subscriptionbeforemonth'],$_POST['subscriptionbeforeday'],$_POST['subscriptionbeforeyear']);
 
         // La requete doit retourner: id, email, fk_contact, name, firstname
         $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, ";
@@ -137,16 +152,17 @@ class mailing_fraise extends MailingTargets
         $sql.= " a.datefin";	// Other fields
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
         $sql.= " WHERE a.email IS NOT NULL";
-        foreach($filtersarray as $key)
-        {
-            if ($key == '-1') $sql.= " AND a.statut=-1";
-            if ($key == '1a')  $sql.= " AND a.statut=1 AND datefin >= ".$this->db->idate(mktime());
-            if ($key == '1b')  $sql.= " AND a.statut=1 AND datefin < ".$this->db->idate(mktime());
-            if ($key == '0')  $sql.= " AND a.statut=0";
-        }
+        if (isset($_POST["filter"]) && $_POST["filter"] == '-1') $sql.= " AND a.statut=-1";
+        if (isset($_POST["filter"]) && $_POST["filter"] == '1a') $sql.= " AND a.statut=1 AND datefin >= '".$this->db->idate($now)."'";
+        if (isset($_POST["filter"]) && $_POST["filter"] == '1b') $sql.= " AND a.statut=1 AND datefin < '".$this->db->idate($now)."'";
+        if (isset($_POST["filter"]) && $_POST["filter"] == '0')  $sql.= " AND a.statut=0";
+        if ($dateendsubscriptionafter > 0)  $sql.=" AND datefin > '".$this->db->idate($dateendsubscriptionafter)."'";
+        if ($dateendsubscriptionbefore > 0) $sql.=" AND datefin < '".$this->db->idate($dateendsubscriptionbefore)."'";
         $sql.= " ORDER BY a.email";
+        //print $sql;
 
-        // Stocke destinataires dans cibles
+        // Add targets into table
+        dol_syslog("fraise.modules.php sql=".$sql);
         $result=$this->db->query($sql);
         if ($result)
         {

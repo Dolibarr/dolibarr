@@ -5,6 +5,9 @@ English Dolibarr ChangeLog
 For users:
 - New: When sending supplier orders by mail, a text is predefined.
 - New: Upgrade process works with Postgresql.
+- New: Task #10538: Add filter on expiration date of subscription for
+       foundation module email selector.
+- Fix: Better Postgresql compatibility.
 
 For developer:
 - Qual: Renamed some fields into database to be more internationnal.
@@ -20,7 +23,7 @@ For users:
 - New: Can reopen a refused/canceled supplier order.
 - New: Add Gant diagramm on project module.
 - New: Add a new mode for automatic stock increase: Can be increased
-  on dispatching of products from a supplier order receipt.
+       on dispatching of products from a supplier order receipt.
 - New: Can set a past delay to limit calendar export.
 - New: Can attach files on emailing campaigns.
 - New: Add statistics on trips and expenses module.

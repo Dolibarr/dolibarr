@@ -83,9 +83,12 @@ if ($_GET["action"] == 'add')
 			{
 				require_once($file);
 
+				// We fill $filtersarray. Using this variable is now deprecated.
+				// Kept for backward compatibility.
 				$filtersarray=array();
 				if (isset($_POST["filter"])) $filtersarray[0]=$_POST["filter"];
 
+				// Add targets into database
 				$obj = new $classname($db);
 				$result=$obj->add_to_target($_GET["rowid"],$filtersarray);
 			}

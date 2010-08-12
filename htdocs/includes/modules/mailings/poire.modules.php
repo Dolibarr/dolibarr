@@ -109,8 +109,6 @@ class mailing_poire extends MailingTargets
 
 		$s='';
 		$s.='<select name="filter" class="flat">';
-		$s.='<option value="all">'.$langs->trans("ContactsAllShort").'</option>';
-		$s.='<option value="prospects">'.$langs->trans("ThirdPartyProspects").'</option>';
 		# Add prospect of a particular level
 		$sql = "SELECT code, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
@@ -120,6 +118,10 @@ class mailing_poire extends MailingTargets
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
+			if ($num) $s.='<option value="all">&nbsp;</option>';
+			else $s.='<option value="all">'.$langs->trans("ContactsAllShort").'</option>';
+            $s.='<option value="prospects">'.$langs->trans("ThirdPartyProspects").'</option>';
+
 			$i = 0;
 			while ($i < $num)
 			{
