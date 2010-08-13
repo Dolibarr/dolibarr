@@ -314,3 +314,6 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '
 
 delete from llx_const where name='USER_PASSWORD_GENERATED' and value='default';
 
+ALTER TABLE llx_boxes_def DROP INDEX uk_boxes_def;
+ALTER TABLE llx_boxes_def MODIFY note varchar(255);
+ALTER TABLE llx_boxes_def ADD UNIQUE INDEX uk_boxes_def (file, entity, note);

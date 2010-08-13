@@ -25,11 +25,11 @@ create table llx_boxes_def
   file        varchar(255) NOT NULL,
   entity      integer DEFAULT 1 NOT NULL,	-- multi company id
   tms         timestamp,
-  note        text
+  note        varchar(255)
 )type=innodb;
 
 -- 
--- List of codes for the field entity
+-- List of codes for the field "entity"
 --
 -- 1 : first company boxes
 -- 2 : second company boxes
