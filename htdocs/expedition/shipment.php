@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,15 +27,16 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
-if ($conf->produit->enabled || $conf->service->enabled)  require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
-if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
-if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-if ($conf->stock->enabled)    require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+if ($conf->product->enabled || $conf->service->enabled)  require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+if ($conf->stock->enabled)    require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
 
 $langs->load('orders');
 $langs->load("companies");
@@ -52,8 +53,6 @@ $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$id);
 
-// Chargement des permissions
-$error = $user->load_entrepots();
 
 /*
  * Actions
@@ -121,6 +120,7 @@ if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 
 
 $html = new Form($db);
+$formproduct = new FormProduct($db);
 $formfile = new FormFile($db);
 
 
@@ -147,8 +147,7 @@ if ($id > 0 || ! empty($ref))
 		$soc->fetch($commande->socid);
 
 		$author = new User($db);
-		$author->id = $commande->user_author_id;
-		$author->fetch();
+		$author->fetch($commande->user_author_id);
 
 		$head = commande_prepare_head($commande);
 		dol_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), 0, 'order');
@@ -243,18 +242,18 @@ if ($id > 0 || ! empty($ref))
 			// Si source = propal
 			$propal = new Propal($db);
 			$propal->fetch($commande->propale_id);
-			print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+			print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$propal->id.'">'.$propal->ref.'</a>';
 		}
 		print '</td>';
 		print '</tr>';
 
-		// Date de livraison
+		// Delivery date planed
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('DeliveryDate');
+		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+		if ($_GET['action'] != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($_GET['action'] == 'editdate_livraison')
@@ -262,7 +261,7 @@ if ($id > 0 || ! empty($ref))
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdatedelivery">';
-			$html->select_date($commande->date_livraison,'liv_','','','',"setdatedelivery");
+			$html->select_date($commande->date_livraison>0?$commande->date_livraison:-1,'liv_','','','',"setdatedelivery");
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
@@ -290,11 +289,11 @@ if ($id > 0 || ! empty($ref))
 
 			if ($_GET['action'] == 'editdelivery_adress')
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'delivery_address_id','commande',$commande->id);
+				$html->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'delivery_address_id','commande',$commande->id);
 			}
 			else
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'none','commande',$commande->id);
+				$html->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'none','commande',$commande->id);
 			}
 			print '</td></tr>';
 		}
@@ -387,17 +386,18 @@ if ($id > 0 || ! empty($ref))
 		 */
 		print '<table class="liste" width="100%">';
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type, cd.description, cd.price, cd.tva_tx, cd.subprice,";
+		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type, cd.description,";
+		$sql.= " cd.price, cd.tva_tx, cd.subprice,";
 		$sql.= " cd.qty,";
-		$sql.= ' '.$db->pdate('cd.date_start').' as date_start,';
-		$sql.= ' '.$db->pdate('cd.date_end').' as date_end,';
+		$sql.= ' cd.date_start,';
+		$sql.= ' cd.date_end,';
 		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
-		$sql.= ' p.description as product_desc';
+		$sql.= ' p.description as product_desc, p.fk_product_type as product_type';
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql.= " WHERE cd.fk_commande = ".$commande->id;
 		// $sql.= " AND p.fk_product_type <> 1";		Why this line ?
-		$sql.= " GROUP by cd.rowid, cd.fk_product";
+		//$sql.= " GROUP by cd.rowid, cd.fk_product";
 		$sql.= " ORDER BY cd.rang, cd.rowid";
 
 		//print $sql;
@@ -438,6 +438,8 @@ if ($id > 0 || ! empty($ref))
 				if (! empty($objp->date_end)) $type=1;
 
 				print "<tr ".$bc[$var].">";
+
+				// Product label
 				if ($objp->fk_product > 0)
 				{
 					print '<td>';
@@ -454,7 +456,7 @@ if ($id > 0 || ! empty($ref))
 					print $html->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
-					print_date_range($objp->date_start,$objp->date_end);
+					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 
 					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
@@ -472,12 +474,14 @@ if ($id > 0 || ! empty($ref))
 					print $text.' '.nl2br($objp->description);
 
 					// Show range
-					print_date_range($objp->date_start,$objp->date_end);
+					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 					print "</td>\n";
 				}
 
+				// Qty ordered
 				print '<td align="center">'.$objp->qty.'</td>';
 
+				// Qty already shipped
 				$qtyProdCom=$objp->qty;
 				print '<td align="center">';
 				// Nb of sending products for this line of order
@@ -485,10 +489,18 @@ if ($id > 0 || ! empty($ref))
 				print $quantite_livree;
 				print '</td>';
 
-				$reste_a_livrer[$objp->fk_product] = $objp->qty - $quantite_livree;
-				$reste_a_livrer_total += $reste_a_livrer[$objp->fk_product];
+				// Qty remains to ship
 				print '<td align="center">';
-				print $reste_a_livrer[$objp->fk_product];
+				if ($type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+				{
+					$reste_a_livrer[$objp->fk_product] = $objp->qty - $quantite_livree;
+					$reste_a_livrer_total += $reste_a_livrer[$objp->fk_product];
+					print $reste_a_livrer[$objp->fk_product];
+				}
+				else
+				{
+					print '0 ('.$langs->trans("Service").')';
+				}
 				print '</td>';
 
 				if ($objp->fk_product > 0)
@@ -572,8 +584,8 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<div class="tabsAction">';
 
-			// Bouton expedier sans gestion des stocks
-			if (! $conf->stock->enabled && ! $commande->brouillon)
+	        // Bouton expedier sans gestion des stocks
+	        if (! $conf->stock->enabled && ($commande->statut > 0 && $commande->statut < 3))
 			{
 				if ($user->rights->expedition->creer)
 				{
@@ -591,9 +603,8 @@ if ($id > 0 || ! empty($ref))
 			print "</div>";
 		}
 
-
-		// Bouton expedier avec gestion des stocks
-		if ($conf->stock->enabled && $commande->statut > 0 && $commande->statut < 3)
+        // Bouton expedier avec gestion des stocks
+        if ($conf->stock->enabled && ($commande->statut > 0 && $commande->statut < 3))
 		{
 			if ($user->rights->expedition->creer)
 			{
@@ -606,29 +617,22 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="origin_id" value="'.$commande->id.'">';
 				print '<table class="border" width="100%">';
 
-				$entrepot = new Entrepot($db);
 				$langs->load("stocks");
 
 				print '<tr>';
-				print '<td>'.$langs->trans("Warehouse").'</td>';
-				print '<td>';
 
-				if (sizeof($user->entrepots) === 1)
+				if ($conf->stock->enabled)
 				{
-					$uentrepot = array();
-					$uentrepot[$user->entrepots[0]['id']] = $user->entrepots[0]['label'];
-					$html->select_array("entrepot_id",$uentrepot);
+					print '<td>'.$langs->trans("WarehouseSource").'</td>';
+					print '<td>';
+					$result=$formproduct->selectWarehouses(-1,'entrepot_id','',1);
+					if ($result <= 0)
+					{
+						print ' &nbsp; No warehouse defined, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">add one</a>';
+					}
+					print '</td>';
 				}
-				else
-				{
-					$html->select_array("entrepot_id",$entrepot->list_array());
-				}
-
-				if (sizeof($entrepot->list_array()) <= 0)
-				{
-					print ' &nbsp; No warehouse defined, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">add one</a>';
-				}
-				print '</td><td align="center">';
+				print '<td align="center">';
 				print '<input type="submit" class="button" named="save" value="'.$langs->trans("NewSending").'">';
 				if ($reste_a_livrer_total <= 0)
 				{
