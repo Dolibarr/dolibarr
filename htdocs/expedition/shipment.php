@@ -584,8 +584,8 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<div class="tabsAction">';
 
-			// Bouton expedier sans gestion des stocks
-			if (! $conf->stock->enabled && ! $commande->brouillon)
+            // Bouton expedier sans gestion des stocks
+            if (! $conf->stock->enabled && ($commande->statut > 0 && $commande->statut < 3))
 			{
 				if ($user->rights->expedition->creer)
 				{
@@ -604,8 +604,8 @@ if ($id > 0 || ! empty($ref))
 		}
 
 
-		// Bouton expedier avec gestion des stocks
-		if ($commande->statut > 0 && $commande->statut < 3)
+        // Bouton expedier avec gestion des stocks
+        if ($conf->stock->enabled && ($commande->statut > 0 && $commande->statut < 3))
 		{
 			if ($user->rights->expedition->creer)
 			{
