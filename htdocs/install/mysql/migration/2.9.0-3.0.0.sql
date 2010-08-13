@@ -19,3 +19,7 @@ alter table llx_product change column envente tosell tinyint DEFAULT 1;
 alter table llx_product add column tobuy tinyint DEFAULT 1 after tosell;
 alter table llx_product_price change column envente tosell tinyint DEFAULT 1;
  
+
+ALTER TABLE llx_boxes_def DROP INDEX uk_boxes_def;
+ALTER TABLE llx_boxes_def MODIFY note varchar(255);
+ALTER TABLE llx_boxes_def ADD UNIQUE INDEX uk_boxes_def (file, entity, note);
