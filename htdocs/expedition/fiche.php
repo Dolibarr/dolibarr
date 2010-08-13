@@ -48,12 +48,11 @@ $langs->load('stocks');
 $langs->load('other');
 $langs->load('propal');
 
-$origin = "expedition";
+$origin = $_GET["origin"]?$_GET["origin"]:$_POST["origin"];                // Example: commande, propal
 $origin_id = isset($_REQUEST["id"])?$_REQUEST["id"]:'';
+if (empty($origin_id)) $origin_id  = $_GET["origin_id"]?$_GET["origin_id"]:$_POST["origin_id"];    // Id of order or propal
+if (empty($origin_id)) $origin_id  = $_GET["object_id"]?$_GET["object_id"]:$_POST["object_id"];    // Id of order or propal
 $id = $origin_id;
-
-$origin     = $_GET["origin"]?$_GET["origin"]:$_POST["origin"];				// Example: commande, propal
-$origin_id  = $_GET["origin_id"]?$_GET["origin_id"]:$_POST["origin_id"];	// Id of order or propal
 
 
 // Security check
@@ -539,58 +538,53 @@ if ($_GET["action"] == 'create')
 				$quantityAsked = $line->qty;
 				$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 
-				if ($conf->stock->enabled
-				 //&& $line->product_type == 0
-				 )
+				$defaultqty=0;
+				if ($_REQUEST["entrepot_id"])
 				{
-					$defaultqty=0;
-					if ($_REQUEST["entrepot_id"])
-					{
-						//var_dump($product);
-						$stock = $product->stock_warehouse[$_REQUEST["entrepot_id"]]->real;
-						$stock+=0;  // Convertit en numerique
-						$defaultqty=min($quantityToBeDelivered, $stock);
-						if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
-					}
+					//var_dump($product);
+					$stock = $product->stock_warehouse[$_REQUEST["entrepot_id"]]->real;
+					$stock+=0;  // Convertit en numerique
+					$defaultqty=min($quantityToBeDelivered, $stock);
+					if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
+				}
 
-					// Quantity to send
+				// Quantity to send
+				print '<td align="left">';
+				if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+				{
+					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+					print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
+				}
+				else print '0';
+				print '</td>';
+
+				// Stock
+				if ($conf->stock->enabled)
+				{
 					print '<td align="left">';
 					if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 					{
-						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-						print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
-					}
-					else print '0';
-					print '</td>';
-
-					// Stock
-					if ($conf->stock->enabled)
-					{
-						print '<td align="left">';
-						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+						// Show warehous
+						if ($_REQUEST["entrepot_id"])
 						{
-							// Show warehous
-							if ($_REQUEST["entrepot_id"])
+							$formproduct->selectWarehouses($_REQUEST["entrepot_id"],'entl'.$indiceAsked,'',1,0,$line->fk_product);
+							//print $stock.' '.$quantityToBeDelivered;
+							//if ($stock >= 0 && $stock < $quantityToBeDelivered)
+							if ($stock < $quantityToBeDelivered)
 							{
-								$formproduct->selectWarehouses($_REQUEST["entrepot_id"],'entl'.$indiceAsked,'',1,0,$line->fk_product);
-								//print $stock.' '.$quantityToBeDelivered;
-								//if ($stock >= 0 && $stock < $quantityToBeDelivered)
-								if ($stock < $quantityToBeDelivered)
-								{
-									print ' '.img_warning($langs->trans("StockTooLow"));
-								}
-							}
-							else
-							{
-								$formproduct->selectWarehouses('','entl'.$indiceAsked,'',1,0,$line->fk_product);
+								print ' '.img_warning($langs->trans("StockTooLow"));
 							}
 						}
 						else
 						{
-							print $langs->trans("Service");
+							$formproduct->selectWarehouses('','entl'.$indiceAsked,'',1,0,$line->fk_product);
 						}
-						print '</td>';
 					}
+					else
+					{
+						print $langs->trans("Service");
+					}
+					print '</td>';
 				}
 				/*else
 				{
