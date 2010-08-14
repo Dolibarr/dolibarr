@@ -24,25 +24,28 @@
  */
 
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/tasks/task.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
-if (!$user->rights->projet->lire) accessforbidden();
 
 $langs->load('projects');
 $langs->load('other');
 
-$id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
+
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
+
+$id = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
 $socid=0;
-$id = isset($_GET["id"])?$_GET["id"]:'';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result=restrictedArea($user,'projet',$id,'');
+if (!$user->rights->projet->lire) accessforbidden();
 
 // Get parameters
 $page=$_GET["page"];
@@ -66,9 +69,9 @@ if ($task->fetch($id,$ref) > 0)
 {
 	$projectstatic = new Project($db);
 	$projectstatic->fetch($task->fk_project);
-	
+
 	if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
-	
+
 	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($task->ref);
 }
 else
@@ -84,27 +87,30 @@ else
 // Envoi fichier
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	if (! is_dir($upload_dir)) create_exdir($upload_dir);
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-	if (is_dir($upload_dir))
+	if (create_exdir($upload_dir) >= 0)
 	{
-		$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
-    	if ($result > 0)
-        {
-            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-            //print_r($_FILES);
-        }
-        else if ($result == -99)
-        {
-        	// Files infected by a virus
-		    $langs->load("errors");
-            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-        }
-		else if ($result < 0)
+		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
+		if (is_numeric($resupload) && $resupload > 0)
 		{
-			// Echec transfert (fichier depassant la limite ?)
-			$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-			// print_r($_FILES);
+			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+		}
+		else
+		{
+			$langs->load("errors");
+			if ($resupload < 0)	// Unknown error
+			{
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			}
+			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+			{
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+			}
+			else	// Known error
+			{
+				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+			}
 		}
 	}
 }
@@ -122,14 +128,19 @@ if ($action=='delete')
  * View
  */
 
-llxHeader('',$langs->trans('Project'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
-
 $form = new Form($db);
+$project = new Project($db);
+
+llxHeader('',$langs->trans('Project'));
 
 if ($id > 0 || ! empty($ref))
-{		
-	// To verify role of users
-	$userAccess = $projectstatic->restrictedProjectArea($user);
+{
+    $project = new Project($db);
+    $project->fetch($task->fk_project);
+
+    // To verify role of users
+	//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
+	//$arrayofuseridoftask=$task->getListContactId('internal');
 
 	$head = task_prepare_head($task);
 	dol_fiche_head($head, 'document', $langs->trans("Task"), 0, 'projecttask');
@@ -143,11 +154,13 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	print '<table class="border" width="100%">';
-	
+
 	// Ref
 	print '<tr><td width="30%">';
 	print $langs->trans("Ref");
 	print '</td><td colspan="3">';
+	$projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+	$task->next_prev_filter=" fk_projet in (".$projectsListId.")";
 	print $form->showrefnav($task,'id','',1,'rowid','ref','','');
 	print '</td>';
 	print '</tr>';
@@ -165,11 +178,11 @@ if ($id > 0 || ! empty($ref))
 	if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td></tr>';
-	
+
 	// Files infos
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-	
+
 	print "</table>\n";
 	print "</div>\n";
 
@@ -183,7 +196,7 @@ if ($id > 0 || ! empty($ref))
 
 	// List of document
 	$param='&id='.$task->id;
-	$formfile->list_of_documents($filearray,$task,'projet',$param);
+	$formfile->list_of_documents($filearray,$task,'projet',$param,0,dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($task->ref).'/');
 
 }
 else
