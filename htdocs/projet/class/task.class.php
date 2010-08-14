@@ -111,12 +111,12 @@ class Task extends CommonObject
         $sql.= ") VALUES (";
 		$sql.= $this->fk_project;
 		$sql.= ", ".$this->fk_task_parent;
-		$sql.= ", '".addslashes($this->label)."'";
-		$sql.= ", '".addslashes($this->description)."'";
-		$sql.= ", ".$this->db->idate($this->date_c);
+		$sql.= ", '".$this->db->escape($this->label)."'";
+		$sql.= ", '".$this->db->escape($this->description)."'";
+		$sql.= ", '".$this->db->idate($this->date_c)."'";
 		$sql.= ", ".$user->id;
-		$sql.= ", ".($this->date_start!=''?$this->db->idate($this->date_start):'null');
-		$sql.= ", ".($this->date_end!=''?$this->db->idate($this->date_end):'null');
+		$sql.= ", ".($this->date_start!=''?"'".$this->db->idate($this->date_start)."'":'null');
+		$sql.= ", ".($this->date_end!=''?"'".$this->db->idate($this->date_end)."'":'null');
 		$sql.= ", ".($this->progress!=''?$this->progress:0);
 		$sql.= ")";
 
