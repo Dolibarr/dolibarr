@@ -180,22 +180,22 @@ class pdf_baleine extends ModelePDFProjects
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 50;
-				$tab_height = 210;
+				$tab_height = 200;
+				$tab_top_newpage = 40;
+                $tab_height_newpage = 210;
 
 				// Affiche notes
 				if (! empty($object->note_public))
 				{
-					$tab_top = 48;
-
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
-					$pdf->SetXY ($this->posxref-1, $tab_top);
+					$pdf->SetFont('Arial','', 9);
+					$pdf->SetXY ($this->posxref-1, $tab_top-2);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
-					$height_note=$nexY-$tab_top;
+					$height_note=$nexY-($tab_top-2);
 
 					// Rect prend une longueur en 3eme param
 					$pdf->SetDrawColor(192,192,192);
-					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+					$pdf->Rect($this->marge_gauche, $tab_top-3, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY+6;
@@ -268,7 +268,10 @@ class pdf_baleine extends ModelePDFProjects
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
-						$nexY = $tab_top_newpage + 7;
+						$tab_top=$tab_top_newpage;
+						$tab_height=$tab_height_newpage;
+
+						$nexY = $tab_top + 7;
 					}
 				}
 
@@ -365,7 +368,7 @@ class pdf_baleine extends ModelePDFProjects
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
-		else $pdf->MultiCell(100, 4, $this->emetteur->nom, 0, 'L');
+		else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->nom), 0, 'L');
 
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY(100,$posy);
@@ -411,73 +414,6 @@ class pdf_baleine extends ModelePDFProjects
 				}
 			}
 		}
-
-		if ($showadress)
-		{
-			// Emetteur
-/*			$posy=42;
-			$hautcadre=40;
-			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('Arial','',8);
-			$pdf->SetXY($this->marge_gauche,$posy-5);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
-
-
-			$pdf->SetXY($this->marge_gauche,$posy);
-			$pdf->SetFillColor(230,230,230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-
-
-			$pdf->SetXY($this->marge_gauche+2,$posy+3);
-
-			// Nom emetteur
-			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('Arial','B',11);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
-
-			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
-
-			$pdf->SetFont('Arial','',9);
-			$pdf->SetXY($this->marge_gauche+2,$posy+9);
-			$pdf->MultiCell(80, 3, $carac_emetteur);
-
-			// Client destinataire
-			$posy=42;
-			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('Arial','',8);
-			$pdf->SetXY(102,$posy-5);
-			$pdf->MultiCell(80,5, $outputlangs->transnoentities("DeliveryAddress").":");
-
-			// Cadre client destinataire
-			$pdf->rect(100, $posy, 100, $hautcadre);
-
-			$object->fetch_thirdparty();
-
-			// Recipient name
-			if (! empty($usecontact))
-			{
-				// On peut utiliser le nom de la societe du contact
-				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
-				else $socname = $object->client->nom;
-				$carac_client_name=$outputlangs->convToOutputCharset($socname);
-			}
-			else
-			{
-				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
-			}
-
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
-
-			// Show customer/recipient
-			$pdf->SetXY(102,$posy+3);
-			$pdf->SetFont('Arial','B',11);
-			$pdf->MultiCell(106,4, $carac_client_name, 0, 'L');
-
-			$pdf->SetFont('Arial','',9);
-			$pdf->SetXY(102,$posy+8);
-			$pdf->MultiCell(86,4, $carac_client);
-*/		}
 
 	}
 
