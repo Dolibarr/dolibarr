@@ -135,7 +135,10 @@ llxHeader('',$langs->trans('Project'));
 
 if ($id > 0 || ! empty($ref))
 {
-	// To verify role of users
+    $project = new Project($db);
+    $project->fetch($task->fk_project);
+
+    // To verify role of users
 	//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
 	//$arrayofuseridoftask=$task->getListContactId('internal');
 
@@ -193,7 +196,7 @@ if ($id > 0 || ! empty($ref))
 
 	// List of document
 	$param='&id='.$task->id;
-	$formfile->list_of_documents($filearray,$task,'projet',$param);
+	$formfile->list_of_documents($filearray,$task,'projet',$param,0,dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($task->ref).'/');
 
 }
 else
