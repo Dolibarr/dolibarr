@@ -51,7 +51,7 @@ if ($result)
 
 
   $var=True;
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0; $total = 0;
 
   $sep = 0;

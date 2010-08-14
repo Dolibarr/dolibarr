@@ -104,7 +104,7 @@ $sql.= " ORDER BY label";
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0; $total = 0;
 
   $var=True;
@@ -119,7 +119,7 @@ if ($result)
       print "</tr>";
       $i++;
     }
-  $db->free();
+  $db->free($result);
 }
 
 /*

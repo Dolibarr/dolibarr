@@ -34,7 +34,7 @@ $langs->load("sendings");
 llxHeader();
 
 print_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
-      
+
 print '<table class="border" width="100%">';
 print '<tr><td align="center">'.$langs->trans("Year").'</td>';
 print '<td width="40%" align="center">'.$langs->trans("NbOfSendings").'</td></tr>';
@@ -45,13 +45,14 @@ $sql.= " WHERE fk_statut > 0";
 $sql.= " AND entity = ".$conf->entity;
 $sql.= " GROUP BY dm DESC ";
 
-if ($db->query($sql))
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   while ($i < $num)
     {
-      $row = $db->fetch_row($i);
+      $row = $db->fetch_row($resql);
       $nbproduct = $row[0];
       $year = $row[1];
       print "<tr>";

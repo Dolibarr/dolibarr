@@ -61,17 +61,18 @@ print "</table></form><br>\n";
  */
 $prodser = array();
 $sql = "SELECT count(*), fk_product_type  FROM ".MAIN_DB_PREFIX."product as p GROUP BY fk_product_type";
-if ($db->query($sql))
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   while ($i < $num)
     {
-      $row = $db->fetch_row($i);
+      $row = $db->fetch_row($resql);
       $prodser[$row[1]] = $row[0];
       $i++;
     }
-  $db->free();
+  $db->free($resql);
 }
 
 print '<table class="noborder" width="100%">';

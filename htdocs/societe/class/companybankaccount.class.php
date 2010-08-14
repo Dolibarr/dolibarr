@@ -93,22 +93,20 @@ class CompanyBankAccount
 		$sql .= " WHERE fk_soc = ".$this->socid;
 
 		$result = $this->db->query($sql);
-
 		if ($result)
 		{
-			if ($this->db->num_rows() == 0)
+			if ($this->db->num_rows($result) == 0)
 			{
 				$this->create();
 			}
 		}
 		else
 		{
-			print $this->db->error();
+			dol_print_error($this->db);
 			return 0;
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET ";
-
 		$sql .= " bank = '" .addslashes($this->bank)."'";
 		$sql .= ",code_banque='".$this->code_banque."'";
 		$sql .= ",code_guichet='".$this->code_guichet."'";
@@ -119,11 +117,9 @@ class CompanyBankAccount
 		$sql .= ",domiciliation='".addslashes($this->domiciliation)."'";
 		$sql .= ",proprio = '".addslashes($this->proprio)."'";
 		$sql .= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
-
 		$sql .= " WHERE fk_soc = ".$this->socid;
 
 		$result = $this->db->query($sql);
-
 		if ($result)
 		{
 			return 1;

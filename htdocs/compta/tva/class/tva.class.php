@@ -360,7 +360,7 @@ class Tva extends CommonObject
 
         if ($result)
         {
-            if ($this->db->num_rows())
+            if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
                 return $obj->amount;
@@ -370,7 +370,7 @@ class Tva extends CommonObject
                 return 0;
             }
 
-            $this->db->free();
+            $this->db->free($result);
 
         }
         else
@@ -399,7 +399,7 @@ class Tva extends CommonObject
 
         if ($result)
         {
-            if ($this->db->num_rows())
+            if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
                 return $obj->total_tva;
@@ -441,7 +441,7 @@ class Tva extends CommonObject
 
         if ($result)
         {
-            if ($this->db->num_rows())
+            if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
                 return $obj->amount;

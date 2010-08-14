@@ -51,18 +51,19 @@ class ExpeditionStats
     $sql.= " AND entity = ".$conf->entity;
     $sql.= " GROUP BY dm DESC";
 
-    if ($this->db->query($sql))
+    $resql=$this->db->query($sql);
+    if ($resql)
     {
-    	$num = $this->db->num_rows();
+    	$num = $this->db->num_rows($resql);
     	$i = 0;
     	while ($i < $num)
     	{
-    		$row = $this->db->fetch_row($i);
+    		$row = $this->db->fetch_row($resql);
     		$result[$i] = $row;
 
     		$i++;
     	}
-    	$this->db->free();
+    	$this->db->free($resql);
     }
     return $result;
   }
@@ -82,18 +83,19 @@ class ExpeditionStats
     $sql.= " AND entity = ".$conf->entity;
     $sql.= " GROUP BY dm DESC";
 
-    if ($this->db->query($sql))
+    $resql=$this->db->query($sql);
+    if ($resql)
     {
-    	$num = $this->db->num_rows();
+    	$num = $this->db->num_rows($resql);
     	$i = 0;
     	while ($i < $num)
     	{
-    		$row = $this->db->fetch_row($i);
+    		$row = $this->db->fetch_row($resql);
     		$j = $row[0] * 1;
     		$result[$j] = $row[1];
     		$i++;
     	}
-    	$this->db->free();
+    	$this->db->free($resql);
     }
     for ($i = 1 ; $i < 13 ; $i++)
     {

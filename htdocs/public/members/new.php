@@ -91,7 +91,7 @@ if ($_POST["action"] == 'add')
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$num = $db->num_rows();
+		$num = $db->num_rows($result);
 	}
 	if (!isset($_POST["nom"]) || !isset($_POST["prenom"]) || $_POST["prenom"]=='' || $_POST["nom"]=='')
 	{

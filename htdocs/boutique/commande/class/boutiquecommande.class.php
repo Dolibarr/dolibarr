@@ -98,30 +98,29 @@ class BoutiqueCommande
 			$sql = "SELECT value, class ";
 			$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total WHERE orders_id = $id";
 
-			$result = $this->db->query($sql)  ;
-
+			$result = $this->db->query($sql);
 			if ( $result )
-	  {
-	  	$num = $this->db->num_rows();
+			{
+				$num = $this->db->num_rows($result);
 
-	  	while ($i < $num)
-	  	{
-	  		$array = $this->db->fetch_array($i);
-	  		if ($array["class"] == 'ot_total')
-	  		{
-		    $this->total_ot_total = $array["value"];
-	  		}
-	  		if ($array["class"] == 'ot_shipping')
-	  		{
-		    $this->total_ot_shipping = $array["value"];
-	  		}
-	  		$i++;
-	  	}
-	  }
-	  else
-	  {
-	  	print $this->db->error();
-	  }
+				while ($i < $num)
+				{
+					$array = $this->db->fetch_array($result);
+					if ($array["class"] == 'ot_total')
+					{
+						$this->total_ot_total = $array["value"];
+					}
+					if ($array["class"] == 'ot_shipping')
+					{
+						$this->total_ot_shipping = $array["value"];
+					}
+					$i++;
+				}
+			}
+			else
+			{
+				print $this->db->error();
+			}
 
 		}
 		else

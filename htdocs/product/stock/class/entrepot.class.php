@@ -331,17 +331,17 @@ class Entrepot extends CommonObject
 
 		$result = $this->db->query($sql) ;
 		$i = 0;
-		$num = $this->db->num_rows();
+		$num = $this->db->num_rows($result);
 
 		if ( $result )
 		{
 			while ($i < $num)
 			{
-				$row = $this->db->fetch_row($i);
+				$row = $this->db->fetch_row($result);
 				$liste[$row[0]] = $row[1];
 				$i++;
 			}
-			$this->db->free();
+			$this->db->free($result);
 		}
 		return $liste;
 	}

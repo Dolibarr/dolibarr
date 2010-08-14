@@ -156,13 +156,14 @@ $sql = "SELECT p.label, sum(f.qty) as sumf, sum(pr.qty) as sumpr FROM ".MAIN_DB_
 $sql.=" left join ".MAIN_DB_PREFIX."facturedet as f on p.rowid = f.fk_product";
 $sql.=" left join ".MAIN_DB_PREFIX."propaldet as pr on p.rowid = pr.fk_product";
 $sql.=" group by p.label";
-if ($db->query($sql))
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
       while ($i < $num)
 	{
-		$obj = $db->fetch_object( $i);
+		$obj = $db->fetch_object($resql);
 		print "<tr ".$bc[$var].">";
 		print "<td>".$obj->label."</td>";
 		print "<td>".$obj->sumf."</td>";
@@ -175,7 +176,7 @@ else {
 	dol_print_error($db);
 }
 print "</table>\n";
-$db->free();
+$db->free($resql);
 */
 
 

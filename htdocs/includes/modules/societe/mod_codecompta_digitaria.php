@@ -19,94 +19,95 @@
  */
 
 /**
-        \file       htdocs/includes/modules/societe/mod_codecompta_digitaria.php
-        \ingroup    societe
-        \brief      Fichier de la classe des gestion digitaria des codes compta des societes clientes
-        \version    $Id$
-*/
+ \file       htdocs/includes/modules/societe/mod_codecompta_digitaria.php
+ \ingroup    societe
+ \brief      Fichier de la classe des gestion digitaria des codes compta des societes clientes
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
 
 /**
-        \class 		mod_codecompta_digitaria
-        \brief 		Classe permettant la gestion digitaria des codes compta des societes clients
-*/
+ \class 		mod_codecompta_digitaria
+ \brief 		Classe permettant la gestion digitaria des codes compta des societes clients
+ */
 
 class mod_codecompta_digitaria extends ModeleAccountancyCode
 {
 	var $nom;
 
 
-  function mod_codecompta_digitaria()
-  {
-    $this->nom = "Digitaria";
-  }
+	function mod_codecompta_digitaria()
+	{
+		$this->nom = "Digitaria";
+	}
 
 	function info($langs)
 	{
 		return $langs->trans("ModuleCompanyCode".$this->nom);
 	}
 
-  /**
-   *    \brief      Renvoi code
-   *    \param      DB              Handler d'acc�s base
-   *    \param      societe         Objet societe
-   */
-  function get_code($DB, $societe)
-  {
-    $i = 0;
-    $this->db = $DB;
+	/**
+	 *    \brief      Renvoi code
+	 *    \param      DB              Handler d'acc�s base
+	 *    \param      societe         Objet societe
+	 */
+	function get_code($DB, $societe)
+	{
+		$i = 0;
+		$this->db = $DB;
 
-    $this->code = "C".substr($societe->code_client,0,5);
+		$this->code = "C".substr($societe->code_client,0,5);
 
-    $is_dispo = $this->verif($DB, $this->code);
+		$is_dispo = $this->verif($DB, $this->code);
 
-    while ( $is_dispo <> 0 && $i < 37)
-      {
-	$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		while ( $is_dispo <> 0 && $i < 37)
+		{
+			$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-	$this->code = substr($this->code,0,5) . substr($arr, $i, 1);
+			$this->code = substr($this->code,0,5) . substr($arr, $i, 1);
 
-	$is_dispo = $this->verif($DB, $this->code);
+			$is_dispo = $this->verif($DB, $this->code);
 
-	$i++;
-      }
+			$i++;
+		}
 
 
-    if ($is_dispo == 0)
-      {
-	return 0;
-      }
-    else
-      {
-	return -1;
-      }
+		if ($is_dispo == 0)
+		{
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
 
-  }
+	}
 
-  function verif($db, $code)
-  {
-    $sql = "SELECT code_compta FROM ".MAIN_DB_PREFIX."societe";
-    $sql .= " WHERE code_compta = '".$code."'";
+	function verif($db, $code)
+	{
+		$sql = "SELECT code_compta FROM ".MAIN_DB_PREFIX."societe";
+		$sql .= " WHERE code_compta = '".$code."'";
 
-    if ($db->query($sql))
-      {
-	if ($db->num_rows() == 0)
-	  {
-	    return 0;
-	  }
-	else
-	  {
-	    return -1;
-	  }
-      }
-    else
-      {
-	return -2;
-      }
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			if ($db->num_rows($resql) == 0)
+			{
+				return 0;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			return -2;
+		}
 
-  }
+	}
 }
 
 ?>

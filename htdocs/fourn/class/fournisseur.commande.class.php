@@ -1083,7 +1083,7 @@ class CommandeFournisseur extends Commande
 		if ($resql)
 		{
 			$i = 0;
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$this->methodes_commande = array();
 			while ($i < $num)
 			{

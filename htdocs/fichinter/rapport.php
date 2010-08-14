@@ -94,7 +94,7 @@ $sql .= " ORDER BY $sortfield $sortorder ";
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows();
+	$num = $db->num_rows($resql);
 	$title = $langs->trans("Report")." ".dol_print_date(strtotime($start),"%B %Y");
 	print_barre_liste($title, $page, "rapport.php","&socid=".$socid,$sortfield,$sortorder,'',$num);
 

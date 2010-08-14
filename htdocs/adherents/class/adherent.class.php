@@ -1534,16 +1534,16 @@ class Adherent extends CommonObject
 
 				if ($result)
 				{
-					if ($mydb->num_rows())
+					if ($mydb->num_rows($result))
 					{
 						# nous avons au moins une reponse
-						$mydb->close();
+						$mydb->close($result);
 						return 1;
 					}
 					else
 					{
 						# nous n'avons pas de reponse => n'existe pas
-						$mydb->close();
+						$mydb->close($result);
 						return 0;
 					}
 				}

@@ -55,7 +55,7 @@ function propals ($db, $year, $month)
 	$sql .= " ORDER BY p.fk_statut";
 
 	$result = $db->query($sql);
-	$num = $db->num_rows();
+	$num = $db->num_rows($result);
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 	print "<tr class=\"liste_titre\"><td colspan=\"5\"><b>Propal</b></td></tr>";
@@ -131,7 +131,7 @@ function factures ($db, $year, $month, $paye)
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$num = $db->num_rows();
+		$num = $db->num_rows($result);
 		if ($num > 0)
 		{
 	  $i = 0;
@@ -192,7 +192,7 @@ function pt ($db, $sql, $year)
 
 	$result = $db->query($sql);
 	if ($result) {
-		$num = $db->num_rows();
+		$num = $db->num_rows($result);
 		$i = 0; $total = 0 ;
 		print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 		print "<tr class=\"liste_titre\">";

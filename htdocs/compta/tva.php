@@ -34,7 +34,7 @@ function pt ($db, $sql, $date) {
 
   $result = $db->query($sql);
   if ($result) {
-    $num = $db->num_rows();
+    $num = $db->num_rows($result);
     $i = 0; $total = 0 ;
     print "<TABLE border=\"1\" width=\"100%\">";
     print "<TR class=\"liste_titre\">";

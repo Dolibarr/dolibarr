@@ -923,18 +923,19 @@ class User extends CommonObject
 		$sql.= " WHERE bydefault = 1";
 		$sql.= " AND entity = ".$conf->entity;
 
-		if ($this->db->query($sql))
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			$rd = array();
 			while ($i < $num)
 			{
-				$row = $this->db->fetch_row($i);
+				$row = $this->db->fetch_row($resql);
 				$rd[$i] = $row[0];
 				$i++;
 			}
-			$this->db->free();
+			$this->db->free($resql);
 		}
 		$i = 0;
 		while ($i < $num)

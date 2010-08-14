@@ -63,17 +63,25 @@ $user->getrights();
 
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
-if ($db->query($sql)) {
-  $num = $db->num_rows(); $i = 0;
-  while ($i < $num) {      $row = $db->fetch_row($i);      $productsid[$i] = $row[0];      $i++; } }
+$resql=$db->query($sql);
+if ($resql) {
+  $num = $db->num_rows($resql); $i = 0;
+  while ($i < $num) {      $row = $db->fetch_row($resql);      $productsid[$i] = $row[0];      $i++; }
+}
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
-if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
-while ($i < $num) { $row = $db->fetch_row($i);      $societesid[$i] = $row[0];      $i++; } } else { print "err"; }
+$resql=$db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql); $i = 0;
+    while ($i < $num) { $row = $db->fetch_row($resql);      $societesid[$i] = $row[0];      $i++; }
+} else { print "err"; }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
-if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
-while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0];      $i++; } } else { print "err"; }
+$resql=$db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql); $i = 0;
+    while ($i < $num) { $row = $db->fetch_row($resql);      $commandesid[$i] = $row[0];      $i++; }
+} else { print "err"; }
 
 
 

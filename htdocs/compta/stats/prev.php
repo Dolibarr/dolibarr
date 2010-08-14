@@ -42,7 +42,7 @@ function pt ($db, $sql, $title) {
   $result = $db->query($sql);
   if ($result)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($result);
       $i = 0; $total = 0 ;
 
       $var=True;

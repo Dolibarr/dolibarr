@@ -53,10 +53,10 @@ $sql = "SELECT d.datedon as datedon, d.nom, d.prenom, d.amount, d.public, d.soci
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
 $sql.= " WHERE d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
 
-if ( $db->query( $sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows();
-
+	$num = $db->num_rows($resql);
 	if ($num)
 	{
 
@@ -73,7 +73,7 @@ if ( $db->query( $sql) )
 		$bc[0]='bgcolor="#f0f0f0"';
 		while ($i < $num)
 		{
-			$objp = $db->fetch_object( $i);
+			$objp = $db->fetch_object($resql);
 
 			$var=!$var;
 			print "<TR $bc[$var]>";

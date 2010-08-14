@@ -147,9 +147,10 @@ class BonPrelevement extends CommonObject
             $sql.= " AND code_guichet ='".$code_guichet."'";
             $sql.= " AND number ='".$number."'";
 
-            if ($this->db->query($sql))
+            $resql=$this->db->query($sql);
+            if ($resql)
             {
-                $num = $this->db->num_rows();
+                $num = $this->db->num_rows($resql);
             }
             else
             {

@@ -108,12 +108,12 @@ else
 		$result = $db->query($sql);
 		if ($result)
 		{
-			$num = $db->num_rows();
+			$num = $db->num_rows($result);
 			$var=True;
 			$i=0;
 			while ($i < $num)
 			{
-				$row = $db->fetch_row($i);
+				$row = $db->fetch_row($result);
 				$var=!$var;
 				print "<tr $bc[$var]>";
 
