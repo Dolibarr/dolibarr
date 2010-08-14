@@ -162,18 +162,18 @@ class Paiement
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount)';
 						$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\')';
 
-						dol_syslog("Paiement::Create insert paiement_facture sql=".$sql);
+						dol_syslog("Paiement::Create Amount line '.$key.' insert paiement_facture sql=".$sql);
 						$resql=$this->db->query($sql);
 						if (! $resql)
 						{
-							$this->error=$this->db->error();
+							$this->error=$this->db->lasterror();
 							dol_syslog('Paiement::Create insert paiement_facture error='.$this->error, LOG_ERR);
 							$error++;
 						}
 					}
 					else
 					{
-						dol_syslog('Paiement::Create Montant non numerique');
+						dol_syslog('Paiement::Create Amount line '.$key.' not a number. We discard it.');
 					}
 				}
 

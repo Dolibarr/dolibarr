@@ -94,7 +94,7 @@ if ($_POST['action'] == 'add_paiement' || ($_POST['action'] == 'confirm_paiement
 		// d'un paiement
 		if (! $_POST['accountid'])
 		{
-	  		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
+			$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
 			$error++;
 		}
 	}
@@ -153,7 +153,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 		{
 			if ($conf->banque->enabled)
 			{
-				// Insertion dans llx_bank
+				// Insert payment into llx_bank
 				$label = "(CustomerInvoicePayment)";
 				$acc = new Account($db, $_POST['accountid']);
 
@@ -162,7 +162,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 				$label,
 				$totalpaiement,
 				$paiement->num_paiement,
-	      															'',
+	      		'',
 				$user,
 				$_POST['chqemetteur'],
 				$_POST['chqbank']);
@@ -171,24 +171,30 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 				// On connait ainsi le paiement qui a genere l'ecriture bancaire
 				if ($bank_line_id > 0)
 				{
-					$paiement->update_fk_bank($bank_line_id);
-					// Mise a jour liens (pour chaque facture concernees par le paiement)
-					foreach ($paiement->amounts as $key => $value)
-					{
-						$facid = $key;
+					$result=$paiement->update_fk_bank($bank_line_id);
+					if ($result <= 0) dol_print_error($db);
+                    // Add link in bank_url between payment and bank transaction
+					$result=$acc->add_url_line($bank_line_id,
+                        $paiement_id,
+                        DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
+                                                     '(paiement)',
+                                                     'payment');
+					// Add link in bank_url between invoice and bank transaction (for each invoice concerned by payment)
+                    $linkaddedforthirdparty=array();
+                    foreach ($paiement->amounts as $key => $value)
+                    {
 						$fac = new Facture($db);
-						$fac->fetch($facid);
+						$fac->fetch($key);
 						$fac->fetch_thirdparty();
-						$acc->add_url_line($bank_line_id,
-						$paiement_id,
-						DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
-		        									 '(paiement)',
-		        									 'payment');
-						$acc->add_url_line($bank_line_id,
-						$fac->client->id,
-						DOL_URL_ROOT.'/compta/fiche.php?socid=',
-						$fac->client->nom,
-		       										'company');
+						if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+						{
+							$result=$acc->add_url_line($bank_line_id,
+							$fac->client->id,
+							DOL_URL_ROOT.'/compta/fiche.php?socid=',
+							$fac->client->nom,
+			       			'company');
+							$linkaddedforthirdparty[$fac->client->id]=$fac->client->id;  // Mark as done for this thirdparty
+						}
 					}
 				}
 				else
@@ -464,9 +470,9 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		// Bouton Enregistrer
 		if ($_POST["action"] != 'add_paiement')
 		{
-//			print '<tr><td colspan="3" align="center">';
+			//			print '<tr><td colspan="3" align="center">';
 			print '<br><center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
-//			print '</td></tr>';
+			//			print '</td></tr>';
 		}
 
 

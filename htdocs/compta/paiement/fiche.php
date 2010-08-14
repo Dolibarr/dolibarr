@@ -81,7 +81,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 	{
 		$db->commit();
 
-		// \TODO Boucler sur les facture liees a ce paiement et regenerer le pdf
+		// Loop on each invoice linked to this payment to rebuild PDF
 		$factures=array();
 		foreach($factures as $id)
 		{
@@ -169,8 +169,9 @@ print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan
 // Date
 print '<tr><td valign="top" width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($paiement->date,'day').'</td></tr>';
 
-// Mode
-print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$paiement->type_code).'</td></tr>';
+// Payment type (VIR, LIQ, ...)
+$labeltype=$langs->trans("PaymentType".$paiement->type_code)!=("PaymentType".$paiement->type_code)?$langs->trans("PaymentType".$paiement->type_code):$paiement->type_libelle;
+print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
 
 // Numero
 //if ($paiement->montant)
@@ -178,7 +179,7 @@ print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$lan
 	print '<tr><td valign="top">'.$langs->trans('Numero').'</td><td colspan="3">'.$paiement->numero.'</td></tr>';
 //}
 
-// Montant
+// Amount
 print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 

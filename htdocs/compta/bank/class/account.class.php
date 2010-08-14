@@ -140,7 +140,8 @@ class Account extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
+			dol_syslog("Account:add_url_line ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -186,7 +187,7 @@ class Account extends CommonObject
 	/**
 	 *  \brief     	Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
 	 *  \param		$date			Date operation
-	 *  \param		$oper			1,2,3,4... or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
+	 *  \param		$oper			1,2,3,4... (deprecated) or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
 	 *  \param		$label			Descripton
 	 *  \param		$amount			Montant
 	 *  \param		$num_chq		Numero cheque ou virement
@@ -201,29 +202,21 @@ class Account extends CommonObject
 		// Clean parameters
 		$emetteur=trim($emetteur);
 		$banque=trim($banque);
-		switch ($oper)
+		if (is_numeric($oper))    // Clean oper to have a code instead of a rowid
 		{
-			case 1:
-				$oper = 'TIP';
-				break;
-			case 2:
-				$oper = 'VIR';
-				break;
-			case 3:
-				$oper = 'PRE';
-				break;
-			case 4:
-				$oper = 'LIQ';
-				break;
-			case 5:
-				$oper = 'VAD';
-				break;
-			case 6:
-				$oper = 'CB';
-				break;
-			case 7:
-				$oper = 'CHQ';
-				break;
+			$sql ="SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
+			$sql.=" WHERE id=".$oper;
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$obj=$this->db->fetch_object($resql);
+				$oper=$obj->code;
+			}
+			else
+			{
+				dol_print_error($this->db,'Failed to get payment type code');
+				return -1;
+			}
 		}
 
 		// Check parameters
