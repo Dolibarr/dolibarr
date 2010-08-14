@@ -28,10 +28,10 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
-if ($conf->banque->enabled) require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
+if ($conf->banque->enabled) require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 
 $langs->load('bills');
 $langs->load('banks');
@@ -169,8 +169,9 @@ print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan
 // Date
 print '<tr><td valign="top" width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($paiement->date,'day').'</td></tr>';
 
-// Mode
-print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$paiement->type_code).'</td></tr>';
+// Payment type (VIR, LIQ, ...)
+$labeltype=$langs->trans("PaymentType".$paiement->type_code)!=("PaymentType".$paiement->type_code)?$langs->trans("PaymentType".$paiement->type_code):$paiement->type_libelle;
+print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
 
 // Numero
 //if ($paiement->montant)
