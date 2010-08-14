@@ -2417,7 +2417,7 @@ else
 						print '<tr '.$bc[$var].'><td>';
 						print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
 						print dol_print_date($db->jdate($objp->dp),'day').'</a></td>';
-						$label=($langs->trans("PaymentType".$objp->payment_code)!=("PaymentType".$objp->payment_code))?$langs->trans("PaymentType".$objp->payment_code):$obj->payment_label;
+						$label=($langs->trans("PaymentType".$objp->payment_code)!=("PaymentType".$objp->payment_code))?$langs->trans("PaymentType".$objp->payment_code):$objp->payment_label;
 						print '<td>'.$label.' '.$objp->num_paiement.'</td>';
 						print '<td align="right">'.price($objp->amount).'</td>';
 						print '<td>&nbsp;</td>';
