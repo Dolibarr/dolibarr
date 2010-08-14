@@ -1309,7 +1309,7 @@ class Form
 		$sql .= " ORDER BY a.label ASC";
 
 		dol_syslog("Form::select_address sql=".$sql);
-		$resql=$db->query($sql);
+		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
