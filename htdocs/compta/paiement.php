@@ -179,6 +179,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
                         DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
                                                      '(paiement)',
                                                      'payment');
+                    if ($result <= 0) dol_print_error($db);
 					// Add link in bank_url between invoice and bank transaction (for each invoice concerned by payment)
                     $linkaddedforthirdparty=array();
                     foreach ($paiement->amounts as $key => $value)
@@ -193,6 +194,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 							DOL_URL_ROOT.'/compta/fiche.php?socid=',
 							$fac->client->nom,
 			       			'company');
+                            if ($result <= 0) dol_print_error($db);
 							$linkaddedforthirdparty[$fac->client->id]=$fac->client->id;  // Mark as done for this thirdparty
 						}
 					}
