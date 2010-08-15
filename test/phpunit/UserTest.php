@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/AdherentTest.php
+ *      \file       test/phpunit/UserTest.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -27,8 +27,8 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/adherents/class/adherent.class.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/user/class/user.class.php';
 
 if (empty($user->id))
 {
@@ -47,10 +47,10 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @covers Conf
  * @covers Interfaces
  * @covers CommonObject
- * @covers Adherent
+ * @covers User
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class AdherentTest extends PHPUnit_Framework_TestCase
+class UserTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -61,9 +61,9 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return AdherentTest
+	 * @return UserTest
 	 */
-	function AdherentTest()
+	function UserTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -114,7 +114,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testAdherentCreate()
+    public function testUserCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -122,7 +122,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Adherent($this->savdb);
+		$localobject=new User($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
@@ -132,10 +132,10 @@ class AdherentTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testAdherentCreate
+     * @depends	testUserCreate
      * The depends says test is run only if previous is ok
      */
-    public function testAdherentFetch($id)
+    public function testUserFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -143,7 +143,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Adherent($this->savdb);
+		$localobject=new User($this->savdb);
     	$result=$localobject->fetch($id);
 
     	$this->assertLessThan($result, 0);
@@ -152,10 +152,10 @@ class AdherentTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testAdherentFetch
+     * @depends	testUserFetch
      * The depends says test is run only if previous is ok
      */
-    public function testAdherentUpdate($localobject)
+    public function testUserUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -172,10 +172,10 @@ class AdherentTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testAdherentUpdate
+     * @depends	testUserUpdate
      * The depends says test is run only if previous is ok
      */
-    public function testAdherentValid($localobject)
+    public function testUserDisable($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -183,7 +183,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->validate($user);
+    	$result=$localobject->setstatus(0);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
     	$this->assertLessThan($result, 0);
@@ -191,10 +191,10 @@ class AdherentTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
-     * @depends	testAdherentValid
+     * @depends	testUserDisable
      * The depends says test is run only if previous is ok
      */
-    public function testAdherentDelete($id)
+    public function testUserDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -202,7 +202,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Adherent($this->savdb);
+		$localobject=new User($this->savdb);
     	$result=$localobject->fetch($id);
 		$result=$localobject->delete($id);
 
@@ -222,7 +222,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Adherent($this->savdb);
+		$localobject=new User($this->savdb);
     	$result=$localobject->ref='refthatdoesnotexists';
 		$result=$localobject->VerifyNumRef();
 
@@ -230,5 +230,6 @@ class AdherentTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals($result, 0);
     	return $result;
     }*/
+
 }
 ?>

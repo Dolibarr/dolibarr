@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/MyTestSuite.php
+ *      \file       test/phpunit/MyTestSuite.php
  *		\ingroup    test
  *      \brief      This file is a test suite to run all unit tests
  *      \version    $Id$
@@ -29,7 +29,7 @@ print "Memory: ". ini_get('memory_limit')."\n";
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__).'/../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
 if (empty($user->id))
 {

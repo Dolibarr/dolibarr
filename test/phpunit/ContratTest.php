@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/FactureTest.php
+ *      \file       test/phpunit/ContratTest.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -27,8 +27,8 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/contrat/class/contrat.class.php';
 
 if (empty($user->id))
 {
@@ -43,17 +43,15 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @covers DoliDb
- * @covers User
  * @covers Translate
  * @covers Conf
  * @covers Interfaces
  * @covers CommonObject
- * @covers Facture
- * @covers FactureLigne
- * @covers ModeleNumRefFactures
+ * @covers Contrat
+ * @covers ContratLigne
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FactureTest extends PHPUnit_Framework_TestCase
+class ContratTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -64,9 +62,9 @@ class FactureTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return FactureTest
+	 * @return ContratTest
 	 */
-	function FactureTest()
+	function ContratTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -117,7 +115,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testFactureCreate()
+    public function testContratCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -125,9 +123,9 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Contrat($this->savdb);
     	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+    	$result=$localobject->create($user,$langs,$conf);
 
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
@@ -135,10 +133,10 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testFactureCreate
+     * @depends	testContratCreate
      * The depends says test is run only if previous is ok
      */
-    public function testFactureFetch($id)
+    public function testContratFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -146,7 +144,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Contrat($this->savdb);
     	$result=$localobject->fetch($id);
 
     	$this->assertLessThan($result, 0);
@@ -155,10 +153,10 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testFactureFetch
+     * @depends	testContratFetch
      * The depends says test is run only if previous is ok
      */
-    public function testFactureUpdate($localobject)
+/*    public function testContratUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -173,12 +171,13 @@ class FactureTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0);
     	return $localobject;
     }
+*/
 
     /**
-     * @depends	testFactureUpdate
+     * @depends	testContratFetch
      * The depends says test is run only if previous is ok
      */
-    public function testFactureValid($localobject)
+    public function testContratValid($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -186,7 +185,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->validate($user);
+    	$result=$localobject->update_statut($user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
     	$this->assertLessThan($result, 0);
@@ -194,10 +193,10 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
-     * @depends	testFactureValid
+     * @depends	testContratValid
      * The depends says test is run only if previous is ok
      */
-    public function testFactureDelete($id)
+    public function testContratDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -205,7 +204,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Contrat($this->savdb);
     	$result=$localobject->fetch($id);
 		$result=$localobject->delete($id);
 
@@ -214,10 +213,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
     	return $result;
     }
 
+
     /**
      *
      */
-    /*public function testVerifyNumRef()
+    public function testVerifyNumRef()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -225,13 +225,14 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Contrat($this->savdb);
     	$result=$localobject->ref='refthatdoesnotexists';
 		$result=$localobject->VerifyNumRef();
 
 		print __METHOD__." result=".$result."\n";
     	$this->assertEquals($result, 0);
     	return $result;
-    }*/
+    }
+
 }
 ?>

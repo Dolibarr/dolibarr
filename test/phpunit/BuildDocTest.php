@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/CompanyBankAccount.php
+ *      \file       test/phpunit/BuildDocTest.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -27,8 +27,8 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/societe/class/companybankaccount.class.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 
 if (empty($user->id))
 {
@@ -42,11 +42,14 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers Commande
- * @covers OrderLine
+ * @covers DoliDb
+ * @covers User
+ * @covers Translate
+ * @covers Conf
+ * @covers CommonObject
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
+class BuildDocTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -57,9 +60,9 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return CompanyBankAccountTest
+	 * @return BuildDocTest
 	 */
-	function CompanyBankAccountTest()
+	function BuildDocTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -100,7 +103,6 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-		//print $db->getVersion()."\n";
     }
 	/**
 	 */
@@ -110,8 +112,11 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers	ModelePDFFactures
+     * @covers	pdf_crabe
+     * @covers	pdf_oursin
      */
-    public function testCompanyBankAccountCreate()
+    public function testFactureBuild()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -119,75 +124,28 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new CompanyBankAccount($this->savdb);
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+		$conf->facture->dir_output.='/temp';
+		$localobject=new Facture($this->savdb);
     	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+    	$localobject->socid=1;
+
+    	// Crabe
+    	$localobject->modelpdf='crabe';
+    	$result=facture_pdf_create($db, $localobject, '', $localobject->modelpdf, $langs);
 
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
-    	return $result;
-    }
 
-    /**
-     * @depends	testCompanyBankAccountCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testCompanyBankAccountFetch($id)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new CompanyBankAccount($this->savdb);
-    	$result=$localobject->fetch($id);
+    	// Oursin
+    	$localobject->modelpdf='oursin';
+    	$result=facture_pdf_create($db, $localobject, '', $localobject->modelpdf, $langs);
 
     	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
+    	print __METHOD__." result=".$result."\n";
+
+    	return 0;
     }
 
-    /**
-     * @depends	testCompanyBankAccountFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testCompanyBankAccountUpdate($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject->owner='New owner';
-    	$result=$localobject->update($user);
-
-	   	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $localobject->id;
-    }
-
-    /**
-     * @depends	testCompanyBankAccountUpdate
-     * The depends says test is run only if previous is ok
-     */
-/*    public function testCompanyBankAccountDelete($id)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new CompanyBankAccount($this->savdb);
-    	$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
-
-		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
-    }
-*/
 }
 ?>

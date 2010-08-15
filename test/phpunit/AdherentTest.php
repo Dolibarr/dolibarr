@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/UserGroupTest.php
+ *      \file       test/phpunit/AdherentTest.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -27,8 +27,8 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/user/class/usergroup.class.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/adherents/class/adherent.class.php';
 
 if (empty($user->id))
 {
@@ -47,10 +47,10 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @covers Conf
  * @covers Interfaces
  * @covers CommonObject
- * @covers UserGroup
+ * @covers Adherent
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class UserGroupTest extends PHPUnit_Framework_TestCase
+class AdherentTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -61,9 +61,9 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return UserGroupTest
+	 * @return AdherentTest
 	 */
-	function UserGroupTest()
+	function AdherentTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -114,7 +114,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testUserGroupCreate()
+    public function testAdherentCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -122,7 +122,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new UserGroup($this->savdb);
+		$localobject=new Adherent($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
@@ -132,10 +132,10 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testUserGroupCreate
+     * @depends	testAdherentCreate
      * The depends says test is run only if previous is ok
      */
-    public function testUserGroupFetch($id)
+    public function testAdherentFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -143,7 +143,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new UserGroup($this->savdb);
+		$localobject=new Adherent($this->savdb);
     	$result=$localobject->fetch($id);
 
     	$this->assertLessThan($result, 0);
@@ -152,10 +152,10 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testUserGroupFetch
+     * @depends	testAdherentFetch
      * The depends says test is run only if previous is ok
      */
-    public function testUserGroupUpdate($localobject)
+    public function testAdherentUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -172,10 +172,10 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testUserGroupUpdate
+     * @depends	testAdherentUpdate
      * The depends says test is run only if previous is ok
      */
-    public function testUserGroupAddRight($localobject)
+    public function testAdherentValid($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -183,26 +183,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->addrights(1,'bookmarks');
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-
-    	$this->assertLessThan($result, 0);
-    	return $localobject;
-    }
-
-    /**
-     * @depends	testUserGroupAddRight
-     * The depends says test is run only if previous is ok
-     */
-    public function testUserGroupDelRight($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-    	$result=$localobject->delrights(1,'bookmarks');
+    	$result=$localobject->validate($user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
     	$this->assertLessThan($result, 0);
@@ -210,10 +191,10 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
-     * @depends	testUserGroupDelRight
+     * @depends	testAdherentValid
      * The depends says test is run only if previous is ok
      */
-    public function testUserGroupDelete($id)
+    public function testAdherentDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -221,7 +202,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new UserGroup($this->savdb);
+		$localobject=new Adherent($this->savdb);
     	$result=$localobject->fetch($id);
 		$result=$localobject->delete($id);
 
@@ -241,7 +222,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new UserGroup($this->savdb);
+		$localobject=new Adherent($this->savdb);
     	$result=$localobject->ref='refthatdoesnotexists';
 		$result=$localobject->VerifyNumRef();
 

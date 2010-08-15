@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/ContratTest.php
+ *      \file       test/phpunit/CommandeTest.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -27,8 +27,8 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/contrat/class/contrat.class.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 
 if (empty($user->id))
 {
@@ -42,16 +42,11 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers DoliDb
- * @covers Translate
- * @covers Conf
- * @covers Interfaces
- * @covers CommonObject
- * @covers Contrat
- * @covers ContratLigne
+ * @covers Commande
+ * @covers OrderLine
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ContratTest extends PHPUnit_Framework_TestCase
+class CommandeTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -62,9 +57,9 @@ class ContratTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return ContratTest
+	 * @return CommandeTest
 	 */
-	function ContratTest()
+	function CommandeTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -105,6 +100,7 @@ class ContratTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
+		//print $db->getVersion()."\n";
     }
 	/**
 	 */
@@ -115,7 +111,7 @@ class ContratTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testContratCreate()
+    public function testCommandeCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -123,9 +119,9 @@ class ContratTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Contrat($this->savdb);
+		$localobject=new Commande($this->savdb);
     	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user,$langs,$conf);
+    	$result=$localobject->create($user);
 
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
@@ -133,10 +129,10 @@ class ContratTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testContratCreate
+     * @depends	testCommandeCreate
      * The depends says test is run only if previous is ok
      */
-    public function testContratFetch($id)
+    public function testCommandeFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -144,7 +140,7 @@ class ContratTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Contrat($this->savdb);
+		$localobject=new Commande($this->savdb);
     	$result=$localobject->fetch($id);
 
     	$this->assertLessThan($result, 0);
@@ -153,10 +149,10 @@ class ContratTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testContratFetch
+     * @depends	testCommandeFetch
      * The depends says test is run only if previous is ok
      */
-/*    public function testContratUpdate($localobject)
+/*    public function testCommandeUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -167,17 +163,35 @@ class ContratTest extends PHPUnit_Framework_TestCase
 		$localobject->note='New note after update';
     	$result=$localobject->update($user);
 
+	   	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+    	return $localobject->id;
+    }
+*/
+    /**
+     * @depends	testCommandeFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testCommandeValid($localobject)
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+    	$result=$localobject->valid($user);
+
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
     	return $localobject;
     }
-*/
 
     /**
-     * @depends	testContratFetch
+     * @depends	testCommandeValid
      * The depends says test is run only if previous is ok
      */
-    public function testContratValid($localobject)
+    public function testCommandeCancel($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -185,18 +199,18 @@ class ContratTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->update_statut($user);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$result=$localobject->cancel($user);
 
+    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
     	return $localobject->id;
     }
 
-	/**
-     * @depends	testContratValid
+    /**
+     * @depends	testCommandeCancel
      * The depends says test is run only if previous is ok
      */
-    public function testContratDelete($id)
+    public function testCommandeDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -204,15 +218,14 @@ class ContratTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Contrat($this->savdb);
+		$localobject=new Commande($this->savdb);
     	$result=$localobject->fetch($id);
-		$result=$localobject->delete($id);
+		$result=$localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
     	return $result;
     }
-
 
     /**
      *
@@ -225,7 +238,7 @@ class ContratTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Contrat($this->savdb);
+		$localobject=new Commande($this->savdb);
     	$result=$localobject->ref='refthatdoesnotexists';
 		$result=$localobject->VerifyNumRef();
 
@@ -233,6 +246,5 @@ class ContratTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals($result, 0);
     	return $result;
     }
-
 }
 ?>

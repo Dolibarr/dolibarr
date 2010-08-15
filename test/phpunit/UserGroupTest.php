@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/CommandeTest.php
+ *      \file       test/phpunit/UserGroupTest.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -27,8 +27,8 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/commande/class/commande.class.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/user/class/usergroup.class.php';
 
 if (empty($user->id))
 {
@@ -42,11 +42,15 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers Commande
- * @covers OrderLine
+ * @covers DoliDb
+ * @covers Translate
+ * @covers Conf
+ * @covers Interfaces
+ * @covers CommonObject
+ * @covers UserGroup
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommandeTest extends PHPUnit_Framework_TestCase
+class UserGroupTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -57,9 +61,9 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return CommandeTest
+	 * @return UserGroupTest
 	 */
-	function CommandeTest()
+	function UserGroupTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -100,7 +104,6 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-		//print $db->getVersion()."\n";
     }
 	/**
 	 */
@@ -111,7 +114,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testCommandeCreate()
+    public function testUserGroupCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -119,7 +122,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new UserGroup($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
@@ -129,10 +132,10 @@ class CommandeTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testCommandeCreate
+     * @depends	testUserGroupCreate
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeFetch($id)
+    public function testUserGroupFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -140,7 +143,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new UserGroup($this->savdb);
     	$result=$localobject->fetch($id);
 
     	$this->assertLessThan($result, 0);
@@ -149,10 +152,10 @@ class CommandeTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testCommandeFetch
+     * @depends	testUserGroupFetch
      * The depends says test is run only if previous is ok
      */
-/*    public function testCommandeUpdate($localobject)
+    public function testUserGroupUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -163,35 +166,16 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 		$localobject->note='New note after update';
     	$result=$localobject->update($user);
 
-	   	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $localobject->id;
-    }
-*/
-    /**
-     * @depends	testCommandeFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeValid($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-    	$result=$localobject->valid($user);
-
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
     	return $localobject;
     }
 
     /**
-     * @depends	testCommandeValid
+     * @depends	testUserGroupUpdate
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeCancel($localobject)
+    public function testUserGroupAddRight($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -199,18 +183,37 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->cancel($user);
-
+    	$result=$localobject->addrights(1,'bookmarks');
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+
+    	$this->assertLessThan($result, 0);
+    	return $localobject;
+    }
+
+    /**
+     * @depends	testUserGroupAddRight
+     * The depends says test is run only if previous is ok
+     */
+    public function testUserGroupDelRight($localobject)
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+    	$result=$localobject->delrights(1,'bookmarks');
+    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+
     	$this->assertLessThan($result, 0);
     	return $localobject->id;
     }
 
-    /**
-     * @depends	testCommandeCancel
+	/**
+     * @depends	testUserGroupDelRight
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeDelete($id)
+    public function testUserGroupDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -218,9 +221,9 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new UserGroup($this->savdb);
     	$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$result=$localobject->delete($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
@@ -230,7 +233,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
     /**
      *
      */
-    public function testVerifyNumRef()
+    /*public function testVerifyNumRef()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -238,13 +241,13 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new UserGroup($this->savdb);
     	$result=$localobject->ref='refthatdoesnotexists';
 		$result=$localobject->VerifyNumRef();
 
 		print __METHOD__." result=".$result."\n";
     	$this->assertEquals($result, 0);
     	return $result;
-    }
+    }*/
 }
 ?>

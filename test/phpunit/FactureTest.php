@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/PropalTest.php
+ *      \file       test/phpunit/FactureTest.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -27,8 +27,8 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/comm/propal/class/propal.class.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 
 if (empty($user->id))
 {
@@ -42,11 +42,18 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers Propal
- * @covers PropaleLigne
+ * @covers DoliDb
+ * @covers User
+ * @covers Translate
+ * @covers Conf
+ * @covers Interfaces
+ * @covers CommonObject
+ * @covers Facture
+ * @covers FactureLigne
+ * @covers ModeleNumRefFactures
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PropalTest extends PHPUnit_Framework_TestCase
+class FactureTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -57,9 +64,9 @@ class PropalTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return PropalTest
+	 * @return FactureTest
 	 */
-	function PropalTest()
+	function FactureTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -100,7 +107,6 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-		//print $db->getVersion()."\n";
     }
 	/**
 	 */
@@ -111,7 +117,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testPropalCreate()
+    public function testFactureCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -119,7 +125,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new Facture($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
@@ -129,10 +135,10 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testPropalCreate
+     * @depends	testFactureCreate
      * The depends says test is run only if previous is ok
      */
-    public function testPropalFetch($id)
+    public function testFactureFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -140,7 +146,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new Facture($this->savdb);
     	$result=$localobject->fetch($id);
 
     	$this->assertLessThan($result, 0);
@@ -149,10 +155,10 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testPropalFetch
+     * @depends	testFactureFetch
      * The depends says test is run only if previous is ok
      */
-/*    public function testPropalUpdate($localobject)
+    public function testFactureUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -165,14 +171,14 @@ class PropalTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-    	return $localobject->id;
+    	return $localobject;
     }
-*/
+
     /**
-     * @depends	testPropalFetch
+     * @depends	testFactureUpdate
      * The depends says test is run only if previous is ok
      */
-    public function testPropalValid($localobject)
+    public function testFactureValid($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -180,18 +186,18 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->valid($user);
-
+    	$result=$localobject->validate($user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+
     	$this->assertLessThan($result, 0);
     	return $localobject->id;
     }
 
-    /**
-     * @depends	testPropalValid
+	/**
+     * @depends	testFactureValid
      * The depends says test is run only if previous is ok
      */
-    public function testPropalDelete($id)
+    public function testFactureDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -199,9 +205,9 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new Facture($this->savdb);
     	$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$result=$localobject->delete($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
@@ -211,7 +217,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
     /**
      *
      */
-    public function testVerifyNumRef()
+    /*public function testVerifyNumRef()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -219,14 +225,13 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new Facture($this->savdb);
     	$result=$localobject->ref='refthatdoesnotexists';
 		$result=$localobject->VerifyNumRef();
 
 		print __METHOD__." result=".$result."\n";
     	$this->assertEquals($result, 0);
     	return $result;
-    }
-
+    }*/
 }
 ?>

@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/BuildDocTest.php
+ *      \file       test/phpunit/CommonObjectTest.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -27,8 +27,9 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
+require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 
 if (empty($user->id))
 {
@@ -49,7 +50,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @covers CommonObject
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BuildDocTest extends PHPUnit_Framework_TestCase
+class CommonObjectTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -60,9 +61,9 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return BuildDocTest
+	 * @return CommonObjectTest
 	 */
-	function BuildDocTest()
+	function CommonObjectTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -111,12 +112,11 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     	print __METHOD__."\n";
     }
 
+
     /**
-     * @covers	ModelePDFFactures
-     * @covers	pdf_crabe
-     * @covers	pdf_oursin
+     *
      */
-    public function testFactureBuild()
+    public function testVerifyNumRef()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -124,28 +124,76 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
-		$conf->facture->dir_output.='/temp';
-		$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->socid=1;
+		$localobject=new Commande($this->savdb);
+    	$result=$localobject->ref='refthatdoesnotexists';
+		$result=$localobject->VerifyNumRef();
 
-    	// Crabe
-    	$localobject->modelpdf='crabe';
-    	$result=facture_pdf_create($db, $localobject, '', $localobject->modelpdf, $langs);
-
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
-
-    	// Oursin
-    	$localobject->modelpdf='oursin';
-    	$result=facture_pdf_create($db, $localobject, '', $localobject->modelpdf, $langs);
-
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
-
-    	return 0;
+		print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, 0);
+    	return $result;
     }
 
+    /**
+     *
+     */
+    public function testFetchUser()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new Commande($this->savdb);
+		$localobject->fetch(1);
+
+    	$result=$localobject->fetch_user(1);
+
+		print __METHOD__." result=".$result."\n";
+    	$this->assertLessThan($localobject->user->id, 0);
+    	return $result;
+    }
+
+    /**
+     *
+     */
+    public function testFetchProjet()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new Commande($this->savdb);
+		$localobject->fetch(1);
+
+    	$result=$localobject->fetch_projet();
+
+		print __METHOD__." result=".$result."\n";
+    	$this->assertLessThanOrEqual($result,0);
+    	return $result;
+    }
+
+    /**
+     *
+     */
+    public function testFetchClient()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new Commande($this->savdb);
+		$localobject->fetch(1);
+
+    	$result=$localobject->fetch_thirdparty();
+
+		print __METHOD__." result=".$result."\n";
+    	$this->assertLessThanOrEqual($result,0);
+    	return $result;
+    }
 }
 ?>

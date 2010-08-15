@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/CommonObjectTest.php
+ *      \file       test/phpunit/CompanyBankAccount.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -27,9 +27,8 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/commande/class/commande.class.php';
-require_once dirname(__FILE__).'/../htdocs/projet/class/project.class.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/companybankaccount.class.php';
 
 if (empty($user->id))
 {
@@ -43,14 +42,11 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers DoliDb
- * @covers User
- * @covers Translate
- * @covers Conf
- * @covers CommonObject
+ * @covers Commande
+ * @covers OrderLine
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommonObjectTest extends PHPUnit_Framework_TestCase
+class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -61,9 +57,9 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return CommonObjectTest
+	 * @return CompanyBankAccountTest
 	 */
-	function CommonObjectTest()
+	function CompanyBankAccountTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -104,6 +100,7 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
+		//print $db->getVersion()."\n";
     }
 	/**
 	 */
@@ -112,11 +109,9 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
     	print __METHOD__."\n";
     }
 
-
     /**
-     *
      */
-    public function testVerifyNumRef()
+    public function testCompanyBankAccountCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -124,19 +119,20 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
-    	$result=$localobject->ref='refthatdoesnotexists';
-		$result=$localobject->VerifyNumRef();
+		$localobject=new CompanyBankAccount($this->savdb);
+    	$localobject->initAsSpecimen();
+    	$result=$localobject->create($user);
 
-		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
+    	$this->assertLessThan($result, 0);
+    	print __METHOD__." result=".$result."\n";
     	return $result;
     }
 
     /**
-     *
+     * @depends	testCompanyBankAccountCreate
+     * The depends says test is run only if previous is ok
      */
-    public function testFetchUser()
+    public function testCompanyBankAccountFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -144,20 +140,19 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
-		$localobject->fetch(1);
+		$localobject=new CompanyBankAccount($this->savdb);
+    	$result=$localobject->fetch($id);
 
-    	$result=$localobject->fetch_user(1);
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertLessThan($localobject->user->id, 0);
-    	return $result;
+    	$this->assertLessThan($result, 0);
+    	print __METHOD__." id=".$id." result=".$result."\n";
+    	return $localobject;
     }
 
     /**
-     *
+     * @depends	testCompanyBankAccountFetch
+     * The depends says test is run only if previous is ok
      */
-    public function testFetchProjet()
+    public function testCompanyBankAccountUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -165,20 +160,19 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
-		$localobject->fetch(1);
+		$localobject->owner='New owner';
+    	$result=$localobject->update($user);
 
-    	$result=$localobject->fetch_projet();
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result,0);
-    	return $result;
+	   	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+    	return $localobject->id;
     }
 
     /**
-     *
+     * @depends	testCompanyBankAccountUpdate
+     * The depends says test is run only if previous is ok
      */
-    public function testFetchClient()
+/*    public function testCompanyBankAccountDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -186,14 +180,14 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
-		$localobject->fetch(1);
+		$localobject=new CompanyBankAccount($this->savdb);
+    	$result=$localobject->fetch($id);
+		$result=$localobject->delete($user);
 
-    	$result=$localobject->fetch_thirdparty();
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result,0);
+		print __METHOD__." id=".$id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
     	return $result;
     }
+*/
 }
 ?>
