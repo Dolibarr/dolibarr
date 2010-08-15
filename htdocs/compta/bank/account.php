@@ -581,11 +581,11 @@ if ($account || $_GET["ref"])
 						{
 							// Label generique car entre parentheses. On l'affiche en le traduisant
 							if ($reg[1]=='paiement') $reg[1]='Payment';
-							print $langs->trans($reg[1]);
+							print ' '.$langs->trans($reg[1]);
 						}
 						else
 						{
-							print $links[$key]['label'];
+							print ' '.$links[$key]['label'];
 						}
 						print '</a>';
 					}
