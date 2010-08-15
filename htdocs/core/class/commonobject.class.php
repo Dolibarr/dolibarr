@@ -1329,7 +1329,7 @@ class CommonObject
 					{
 						if ($line->description == '(CREDIT_NOTE)')
 						{
-							$discount=new DiscountAbsolute($db);
+							$discount=new DiscountAbsolute($this->db);
 							$discount->fetch($line->fk_remise_except);
 							print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
 						}
