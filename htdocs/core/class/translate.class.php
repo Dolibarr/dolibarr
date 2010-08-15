@@ -176,8 +176,8 @@ class Translate {
 
 		foreach($this->dir as $searchdir)
 		{
-			// If $domain is @xxx instead of xxx then we look for module lang file htdocs/xxx/langs/code_CODE/xxx.lang
-			// instead of global lang file htdocs/langs/code_CODE/xxx.lang
+			// If $domain is "file@module" instead of "file" then we look for module lang file htdocs/module/langs/code_CODE/file.lang
+			// instead of file htdocs/langs/code_CODE/filelang
 			if (preg_match('/@/',$domain))	$searchdir = $searchdir."/".(!empty($modulename)?$modulename:$newdomain)."/langs";
 			else $searchdir=$searchdir."/langs";
 
