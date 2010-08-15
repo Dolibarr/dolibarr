@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copytight (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@
 
 require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/chargesociales.class.php");
-require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/facture/paiementfourn.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/class/paiementfourn.class.php");
 
 $langs->load("bills");
 
@@ -290,6 +290,8 @@ if ($account || $_GET["ref"])
 	/**
 	 * Search form
 	 */
+	$param.='&amp;account='.$acct->id;
+
 
 	// Define transaction list navigation string
 	$navig='';
@@ -297,7 +299,7 @@ if ($account || $_GET["ref"])
 	$nbpage=floor($total_lines/$viewline)+($total_lines % $viewline > 0?1:0);  // Nombre de page total
 	if ($limitsql > $viewline)
 	{
-		$navig.='<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).$param.'">'.img_previous().'</a>';
+		$navig.='<a href="account.php?'.$param.'&amp;page='.($page+1).'">'.img_previous().'</a>';
 	}
 	$navig.= ' Page ';
 	$navig.='<input type="text" name="negpage" size="1" class="flat" value="'.($nbpage-$page).'">';
@@ -311,7 +313,7 @@ if ($account || $_GET["ref"])
 	$navig.='/'.$nbpage.' ';
 	if ($total_lines > $limitsql )
 	{
-		$navig.= '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).$param.'">'.img_next().'</a>';
+		$navig.= '<a href="account.php?'.$param.'&amp;page='.($page-1).'">'.img_next().'</a>';
 	}
 	$navig.='</form>';
 
@@ -344,13 +346,14 @@ if ($account || $_GET["ref"])
 		print '<input type="hidden" name="account" value="' . $acct->id . '">';
 
 		print '<tr>';
-		print '<td align="left" colspan="9"><b>'.$langs->trans("AddBankRecordLong").'</b></td>';
+		print '<td align="left" colspan="10"><b>'.$langs->trans("AddBankRecordLong").'</b></td>';
 		print '</tr>';
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>&nbsp;</td>';
 		print '<td>'.$langs->trans("Type").'</td>';
+		print '<td>'.$langs->trans("Numero").'</td>';
 		print '<td colspan="2">'.$langs->trans("Description").'</td>';
 		print '<td align=right>'.$langs->trans("Debit").'</td>';
 		print '<td align=right>'.$langs->trans("Credit").'</td>';
@@ -363,9 +366,10 @@ if ($account || $_GET["ref"])
 		print '</td>';
 		print '<td nowrap="nowrap">';
 		$html->select_types_paiements((isset($_POST["operation"])?$_POST["operation"]:''),'operation','1,2',2,1);
+		print '</td><td>';
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.(isset($_POST["num_chq"])?$_POST["num_chq"]:'').'"></td>';
 		print '<td colspan="2">';
-		print '<input name="label" class="flat" type="text" size="32"  value="'.(isset($_POST["label"])?$_POST["label"]:'').'">';
+		print '<input name="label" class="flat" type="text" size="24"  value="'.(isset($_POST["label"])?$_POST["label"]:'').'">';
 		if ($nbcategories)
 		{
 			print '<br>'.$langs->trans("Category").': <select class="flat" name="cat1">'.$options.'</select>';
@@ -403,7 +407,7 @@ if ($account || $_GET["ref"])
 	else print '&nbsp;';
 	print '</td></tr>';
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" name="search" method="POST">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" name="search" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="search">';
 	print '<input type="hidden" name="account" value="' . $acct->id . '">';
@@ -461,7 +465,7 @@ if ($account || $_GET["ref"])
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= $sql_rech;
-	$sql.= $db->order("b.datev", "ASC");
+	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 	$sql.= $db->plimit($limitsql, 0);
 
 	dol_syslog("account.php get transactions - sql=".$sql);
@@ -469,7 +473,12 @@ if ($account || $_GET["ref"])
 	if ($result)
 	{
 		$total = 0;
-		$time = dol_now('tzserver');
+
+		$now=dol_now('tzserver');
+		$nows=dol_date('Ymd',$now);
+
+		//$html->load_cache_types_paiements();
+		//$html->cache_types_paiements
 
 		$var=true;
 
@@ -485,10 +494,12 @@ if ($account || $_GET["ref"])
 				$var=!$var;
 
 				// Is it a transaction in future ?
-				if ($db->jdate($objp->do) > $time && !$sep)		// Yes, we show a subtotal
+				$dos=dol_date('Ymd',$db->jdate($objp->do));
+				//print "dos=".$dos." nows=".$nows;
+				if ($dos > $nows && !$sep)		// Yes, we show a subtotal
 				{
 					$sep = 1 ;
-					print '<tr class="liste_total"><td colspan="7">';
+					print '<tr class="liste_total"><td colspan="8">';
 					print $langs->trans("CurrentBalance");
 					print '</td>';
 					print "<td align=\"right\" nowrap><b>".price($total - $objp->amount)."</b></td>";
@@ -502,7 +513,12 @@ if ($account || $_GET["ref"])
 
 				print "<td nowrap>".dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
 
-				print "<td nowrap>".$langs->trans($objp->fk_type)."</td>\n";
+				// Payment type
+				print "<td nowrap>";
+				$label=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
+				if ($objp->fk_type == 'SOLD') $label='&nbsp;';
+				print $label;
+				print "</td>\n";
 				print '<td nowrap>'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
 
 				// Description
@@ -565,11 +581,11 @@ if ($account || $_GET["ref"])
 						{
 							// Label generique car entre parentheses. On l'affiche en le traduisant
 							if ($reg[1]=='paiement') $reg[1]='Payment';
-							print $langs->trans($reg[1]);
+							print ' '.$langs->trans($reg[1]);
 						}
 						else
 						{
-							print $links[$key]['label'];
+							print ' '.$links[$key]['label'];
 						}
 						print '</a>';
 					}
@@ -680,7 +696,7 @@ if ($account || $_GET["ref"])
 		// Show total
 		if ($page == 0 && ! $mode_search)
 		{
-			print '<tr class="liste_total"><td align="left" colspan="7">';
+			print '<tr class="liste_total"><td align="left" colspan="8">';
 			if ($sep) print '&nbsp;';
 			else print $langs->trans("CurrentBalance");
 			print '</td>';
