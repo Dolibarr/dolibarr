@@ -10,6 +10,9 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
 --
 
+-- Fix bad old data
+UPDATE llx_bank_url SET type='payment' WHERE type='?' AND label='(payment)' AND url LIKE '%compta/paiement/fiche.php%'
+
 -- Add recuperableonly field
 alter table llx_product       add column recuperableonly integer NOT NULL DEFAULT '0' after tva_tx;
 alter table llx_product_price add column recuperableonly integer NOT NULL DEFAULT '0' after tva_tx;
