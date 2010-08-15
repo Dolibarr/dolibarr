@@ -278,9 +278,11 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 			migrate_shipping_delivery2($db,$langs,$conf);
 		}
 
+		// Reload modules
 		migrate_reload_modules($db,$langs,$conf);
 
-		migrate_reload_menu($db,$langs,$conf);
+		// Reload menus
+		migrate_reload_menu($db,$langs,$conf,$versionto);
 
 		// On commit dans tous les cas.
 		// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
@@ -295,6 +297,7 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 
 	print '</table>';
 
+	//print $langs->trans("Done");
 }
 else
 {
@@ -3211,18 +3214,30 @@ function migrate_reload_modules($db,$langs,$conf)
 
 
 /**
- * Reload menu if dynamic menus
+ * Reload menu if dynamic menus, if modified by version
  * @param       $db
  * @param       $langs
  * @param       $conf
+ * @param		$versionto
  */
-function migrate_reload_menu($db,$langs,$conf)
+function migrate_reload_menu($db,$langs,$conf,$versionto)
 {
     global $conf;
     dolibarr_install_syslog("upgrade2::migrate_reload_menu");
 
     // Define list of menu handlers to initialize
-    $listofmenuhandler=array('auguria');   // We set here only dinamic menu handlers
+    $listofmenuhandler=array();
+
+    $versiontoarray=explode('.',$versionto);
+
+    // Script for VX (X<2.9) -> V2.9
+	$afterversionarray=explode('.','2.8.9');
+	$beforeversionarray=explode('.','2.9.9');
+	if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+	{
+	    $listofmenuhandler[]='auguria';   // We set here only dinamic menu handlers
+	}
+
     foreach ($listofmenuhandler as $key)
     {
         print '<tr><td colspan="4">';
