@@ -11,7 +11,7 @@ For users:
 
 For developer:
 - Qual: Renamed some fields into database to be more internationnal.
-
+- New: Add first Selenium GUI tests.
 
 
 ***** ChangeLog for 2.9 compared to 2.8 *****
