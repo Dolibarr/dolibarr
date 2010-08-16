@@ -242,7 +242,7 @@ if (! empty($_SESSION["disablemodules"]))
 }
 
 // Init Smarty (used by some modules like multicompany)
-if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
+if (sizeof($conf->need_smarty) > 0)
 {
 	// Usage of const in conf.php file (deprecated) can overwrite default dir.
 	$dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
