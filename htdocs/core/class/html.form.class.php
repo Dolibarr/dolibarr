@@ -9,6 +9,7 @@
  * Copyright (C) 2006      Marc Barilley/Ocebo   <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin        <patrick.raguin@gmail.com>
+ * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1113,7 +1114,7 @@ class Form
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pf.fk_soc = s.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
 		$sql.= " WHERE p.entity = ".$conf->entity;
-		$sql.= " AND p.tosell = 1";
+		$sql.= " AND p.tobuy = 1";
 		if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if (! empty($filtre)) $sql.=" ".$filtre;
@@ -1226,7 +1227,7 @@ class Form
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pf.fk_soc";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
-		$sql.= " WHERE p.tosell = 1";
+		$sql.= " WHERE p.tobuy = 1";
 		$sql.= " AND s.fournisseur = 1";
 		$sql.= " AND p.rowid = ".$productid;
 		$sql.= " ORDER BY s.nom, pf.ref_fourn DESC";
