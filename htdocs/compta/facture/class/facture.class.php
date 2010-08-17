@@ -1589,7 +1589,7 @@ class Facture extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0)
+	function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1)
 	{
 		dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -1633,6 +1633,14 @@ class Facture extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
+			
+			// Rang to use
+			$rangtouse = $rang;
+			if ($rangtouse == -1)
+			{
+				$rangmax = $this->line_max();
+				$rangtouse = $rangmax + 1;
+			}
 
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
@@ -1667,7 +1675,7 @@ class Facture extends CommonObject
 			$ligne->date_start=$date_start;
 			$ligne->date_end=$date_end;
 			$ligne->ventil=$ventil;
-			$ligne->rang=-1;
+			$ligne->rang=$rangtouse;
 			$ligne->info_bits=$info_bits;
 			$ligne->fk_remise_except=$fk_remise_except;
 			$ligne->total_ht=$total_ht;
@@ -3029,26 +3037,6 @@ class FactureLigne
 
 		$this->db->begin();
 
-		$rangtouse=$this->rang;
-		if ($rangtouse == -1)
-		{
-			// Recupere rang max de la facture dans $rangmax
-			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'facturedet';
-			$sql.= ' WHERE fk_facture ='.$this->fk_facture;
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$obj = $this->db->fetch_object($resql);
-				$rangtouse = $obj->max + 1;
-			}
-			else
-			{
-				dol_print_error($this->db);
-				$this->db->rollback();
-				return -1;
-			}
-		}
-
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' (fk_facture, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
@@ -3077,7 +3065,7 @@ class FactureLigne
 		else { $sql.='null,'; }
 		$sql.= ' '.$this->fk_code_ventilation.',';
 		$sql.= ' '.$this->fk_export_compta.',';
-		$sql.= ' '.$rangtouse.',';
+		$sql.= ' '.$this->rang.',';
 		$sql.= " '".$this->info_bits."',";
 		$sql.= " ".price2num($this->total_ht).",";
 		$sql.= " ".price2num($this->total_tva).",";

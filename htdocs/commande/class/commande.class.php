@@ -828,7 +828,7 @@ class Commande extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0)
+	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1)
 	{
 		dol_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
 
@@ -873,6 +873,14 @@ class Commande extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
+			
+			// Rang to use
+			$rangtouse = $rang;
+			if ($rangtouse == -1)
+			{
+				$rangmax = $this->line_max();
+				$rangtouse = $rangmax + 1;
+			}
 
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
@@ -897,7 +905,7 @@ class Commande extends CommonObject
 			$line->fk_remise_except=$fk_remise_except;
 			$line->remise_percent=$remise_percent;
 			$line->subprice=$pu_ht;
-			$line->rang=-1;
+			$line->rang=$rangtouse;
 			$line->info_bits=$info_bits;
 			$line->total_ht=$total_ht;
 			$line->total_tva=$total_tva;
@@ -2619,26 +2627,6 @@ class OrderLine
 
 		$this->db->begin();
 
-		$rangtouse=$this->rang;
-		if ($rangtouse == -1)
-		{
-			// Recupere rang max de la commande dans $rangmax
-			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'commandedet';
-			$sql.= ' WHERE fk_commande ='.$this->fk_commande;
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$obj = $this->db->fetch_object($resql);
-				$rangtouse = $obj->max + 1;
-			}
-			else
-			{
-				dol_print_error($this->db);
-				$this->db->rollback();
-				return -1;
-			}
-		}
-
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
 		$sql.= ' (fk_commande, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
@@ -2662,7 +2650,7 @@ class OrderLine
 		$sql.= " '".price2num($this->remise)."',";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
-		$sql.= ' '.$rangtouse.',';
+		$sql.= ' '.$this->rang.',';
 		if (isset($this->marge_tx)) $sql.= ' '.$this->marge_tx.',';
 		else $sql.= ' null,';
 		if (isset($this->marque_tx)) $sql.= ' '.$this->marque_tx.',';
