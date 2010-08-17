@@ -1980,8 +1980,7 @@ class Societe extends CommonObject
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_societe) ";
 			$sql.= " VALUES ('".$categorie_id."','".$this->id."');";
 
-			if ($resql=$this->db->query($sql))
-	  return 0;
+			if ($resql=$this->db->query($sql)) return 0;
 		}
 		else
 		{
