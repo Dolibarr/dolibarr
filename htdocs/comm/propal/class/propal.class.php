@@ -1461,98 +1461,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    \brief        Renvoie un tableau contenant les numeros de commandes associees
-	 *    \remarks      Fonction plus light que associated_orders
-	 *    \sa           loadOrders
-	 *    \TODO doublon avec loadOrders() ?
-	 */
-	function getOrderArrayList()
-	{
-		$ga = array();
-
-		$sql = "SELECT fk_target FROM ".MAIN_DB_PREFIX."element_element";
-		$sql.= " WHERE fk_source = ".$this->id;
-		$sql.= " AND sourcetype = '".$this->element."'";
-		$sql.= " AND targettype = 'commande'";
-
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$nump = $this->db->num_rows($resql);
-
-			if ($nump)
-			{
-				$i = 0;
-				while ($i < $nump)
-				{
-					$obj = $this->db->fetch_object($resql);
-
-					$ga[$i] = $obj->fk_target;
-					$i++;
-				}
-			}
-			return $ga;
-		}
-		else
-		{
-			dol_print_error($this->db);
-		}
-	}
-
-	/**
-	 *		\brief      Charge tableau contenant les commandes associees
-	 *  	\remarks    Fonction plus lourde que getOrderArrayList
-	 *		\return		int 				<0 si ko, >0 si ok
-	 *		\sa         getOrdersArrayList
-	 *      \TODO doublon avec getOrderArrayList() ?
-	 */
-	function loadOrders()
-	{
-		$this->commandes = array();
-
-		$ga = array();
-
-		$sql = "SELECT fk_target FROM ".MAIN_DB_PREFIX."element_element";
-		$sql.= " WHERE fk_source = " . $this->id;
-		$sql.= " AND sourcetype = '".$this->element."'";
-		$sql.= " AND targettype = 'commande'";
-
-		$result=$this->db->query($sql);
-		if ($result)
-		{
-			$nump = $this->db->num_rows($result);
-
-			if ($nump)
-			{
-				$i = 0;
-				while ($i < $nump)
-				{
-					$obj = $this->db->fetch_object($result);
-					$order=new Commande($this->db);
-
-					if ($obj->fk_target)
-					{
-						$order->fetch($obj->fk_target);
-						$ga[$i] = $order;
-					}
-					$i++;
-				}
-			}
-			$this->commandes=$ga;
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			return -1;
-		}
-	}
-
-	/**
 	 *    	\brief      Renvoie un tableau contenant les numeros de factures associees
 	 *		\return		array		Tableau des id de factures
 	 */
-	function getInvoiceArrayList ()
+	function getInvoiceArrayList()
 	{
 		return $this->InvoiceArrayList($this->id);
 	}
