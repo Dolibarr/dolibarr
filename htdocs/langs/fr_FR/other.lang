@@ -133,7 +133,8 @@ NewLength=Nouvelle largeur
 NewHeight=Nouvelle hauteur
 NewSizeAfterCropping=Nouvelles dimensions après recadrage
 DefineNewAreaToPick=Définissez la zone d'image à conserver (clic gauche sur l'image puis drag vers les coins opposés)
-CurrentInformationOnImage=Informations courantes sur l'image
+CurrentInformationOnImage=Cette page permet de redimensionner ou recadrer un image. Voici les informations sur l'image courante en cours d'édition
+ImageEditor=Editeur d'image
 YouReceiveMailBecauseOfNotification=Vous recevez ce message car votre email a été abonnée à certaines notifications automatiques pour vous informer d'évenements particuliers issus du logiciel %s de %s.
 YouReceiveMailBecauseOfNotification2=L'évenement en question est le suivant:
 

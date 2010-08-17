@@ -17,6 +17,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
+//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
+//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
+//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
+if (! defined("DISABLE_PROTOTYPE"))     define("DISABLE_PROTOTYPE",'1');     // If this page is public (can be called outside logged session)
+if (! defined("DISABLE_SCRIPTACULOUS")) define("DISABLE_SCRIPTACULOUS",'1'); // If this page is public (can be called outside logged session)
+if (! defined("DISABLE_PWC"))           define("DISABLE_PWC",'1');           // If this page is public (can be called outside logged session)
+
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
@@ -98,10 +112,10 @@ if ($_POST["action"] == 'confirm_crop')
  * View
  */
 
-llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('includes/jcrop/js/jquery.min.js','includes/jcrop/js/jquery.Jcrop.min.js','lib/lib_photosresize.js'), array(DOL_URL_ROOT.'/includes/jcrop/css/jquery.Jcrop.css'));
+llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jcrop/js/jquery.Jcrop.min.js','/lib/lib_photosresize.js'), array('/includes/jcrop/css/jquery.Jcrop.css'));
 
 
-print_fiche_titre($langs->trans("Image"));
+print_fiche_titre($langs->trans("ImageEditor"));
 
 if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
@@ -114,8 +128,9 @@ print '<ul>
    <li>'.$langs->trans("Height").': '.$height.' px</li>
    </ul>';
 
-print '<br>';
+print '<br>'."\n";
 
+print '<!-- Form to resize -->'."\n";
 print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$_GET['id'].'" method="POST">';
 
 print '<fieldset id="redim_file">';
@@ -135,17 +150,19 @@ print '<br></form>';
  * Recadrage d'une image
  */
 
-print '<br>';
+print '<br>'."\n";
 
-print '<fieldset id="redim_file">';
-print '<legend>'.$langs->trans("Recenter").'</legend>';
-print $langs->trans("DefineNewAreaToPick").'...<br>';
-print '<br>';
-print '<img style="border: 1px solid #888888;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.$original_file.'" alt="Taille origine" id="cropbox" />';
-print '<br>';
 $infoarray=dol_getImageSize($conf->product->dir_output."/".urldecode($_GET["file"]));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
+
+print '<!-- Form to crop -->'."\n";
+print '<fieldset id="redim_file">';
+print '<legend>'.$langs->trans("Recenter").'</legend>';
+print $langs->trans("DefineNewAreaToPick").'...<br>';
+print '<br><center>';
+print '<div style="border: 1px solid #888888; width: '.$width.'px;"><img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.$original_file.'" alt="" id="cropbox" /></div>';
+print '</center><br>';
 print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$_GET['id'].'" method="post" onsubmit="return checkCoords();">
       <div class="jc_coords">
          '.$langs->trans("NewSizeAfterCropping").':
