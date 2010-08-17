@@ -30,16 +30,18 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/product/html.formproduct.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
-$langs->load("bills");
+$langs->load("products");
 $langs->load("other");
-$langs->load("stocks");
+if ($conf->stock->enabled) $langs->load("stocks");
+if ($conf->facture->enabled) $langs->load("bills");
 
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
@@ -49,6 +51,13 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 $socid=$user->societe_id?$user->societe_id:0;
 $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
+
+// For canvas usage
+if (empty($_GET["canvas"]))
+{
+	$_GET["canvas"] = 'default@product';
+	if ($_GET["type"] == 1) $_GET["canvas"] = 'service@product';
+}
 
 $mesg = '';
 
@@ -106,32 +115,32 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 	{
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')).'</div>';
 		$_GET["action"] = "create";
-		$_GET["canvas"] = $product->canvas;
-		$_GET["type"] = $_POST["type"];
+		$_GET["canvas"] = $_POST["canvas"];
+		$_GET["type"] 	= $_POST["type"];
 		$error++;
 	}
 	if (empty($_POST["ref"]))
 	{
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
 		$_GET["action"] = "create";
-		$_GET["canvas"] = $product->canvas;
-		$_GET["type"] = $_POST["type"];
+		$_GET["canvas"] = $_POST["canvas"];
+		$_GET["type"] 	= $_POST["type"];
 		$error++;
+	}
+
+	$product=new Product($db);
+
+	$usecanvas=$_POST["canvas"];
+	if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
+
+	if (! empty($usecanvas))	// Overwrite product here
+	{
+		$canvas = new Canvas($db,$user);
+		$product = $canvas->load_canvas('product',$_POST["canvas"]);
 	}
 
 	if (! $error)
 	{
-		if ($_POST["canvas"] <> '' && file_exists('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php') )
-		{
-			$classname = 'Product'.ucfirst($_POST["canvas"]);
-			include_once('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php');
-			$product = new $classname($db);
-		}
-		else
-		{
-			$product = new Product($db);
-		}
-
 		$product->ref                = $_POST["ref"];
 		$product->libelle            = $_POST["libelle"];
 		$product->price_base_type    = $_POST["price_base_type"];
@@ -140,29 +149,29 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		if ($product->price_base_type == 'TTC') $product->price_min_ttc = $_POST["price_min"];
 		else $product->price_min = $_POST["price_min"];
 		$product->tva_tx             = $_POST["tva_tx"];
-		
+
 		// local taxes.
-		$product->localtax1_tx = get_localtax($product->tva_tx,1);
-		$product->localtax2_tx = get_localtax($product->tva_tx,2);
-		
-		$product->type               = $_POST["type"];
-		$product->status             = $_POST["statut"];
-		$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
-		$product->note               = dol_htmlcleanlastbr($_POST["note"]);
-		$product->duration_value     = $_POST["duration_value"];
-		$product->duration_unit      = $_POST["duration_unit"];
-		$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-		$product->canvas             = $_POST["canvas"];
-		$product->weight             = $_POST["weight"];
-		$product->weight_units       = $_POST["weight_units"];
-		$product->length             = $_POST["size"];
-		$product->length_units       = $_POST["size_units"];
-		$product->surface            = $_POST["surface"];
-		$product->surface_units      = $_POST["surface_units"];
-		$product->volume             = $_POST["volume"];
-		$product->volume_units       = $_POST["volume_units"];
-		$product->finished           = $_POST["finished"];
-		$product->hidden             = $_POST["hidden"]=='yes'?1:0;
+		$product->localtax1_tx 			= get_localtax($product->tva_tx,1);
+		$product->localtax2_tx 			= get_localtax($product->tva_tx,2);
+
+		$product->type               	= $_POST["type"];
+		$product->status             	= $_POST["statut"];
+		$product->description        	= dol_htmlcleanlastbr($_POST["desc"]);
+		$product->note               	= dol_htmlcleanlastbr($_POST["note"]);
+		$product->duration_value     	= $_POST["duration_value"];
+		$product->duration_unit      	= $_POST["duration_unit"];
+		$product->seuil_stock_alerte 	= $_POST["seuil_stock_alerte"]?$_POST["seuil_stock_alerte"]:0;
+		$product->canvas             	= $_POST["canvas"];
+		$product->weight             	= $_POST["weight"];
+		$product->weight_units       	= $_POST["weight_units"];
+		$product->length             	= $_POST["size"];
+		$product->length_units       	= $_POST["size_units"];
+		$product->surface            	= $_POST["surface"];
+		$product->surface_units      	= $_POST["surface_units"];
+		$product->volume             	= $_POST["volume"];
+		$product->volume_units       	= $_POST["volume_units"];
+		$product->finished           	= $_POST["finished"];
+		$product->hidden             	= $_POST["hidden"]=='yes'?1:0;
 
 		// MultiPrix
 		if($conf->global->PRODUIT_MULTIPRICES)
@@ -180,8 +189,6 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 				}
 			}
 		}
-
-		if ( $value != $current_lang ) $e_product = $product;
 
 		$id = $product->create($user);
 
@@ -209,7 +216,17 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 	}
 	else
 	{
-		$product = new Product($db);
+		$product=new Product($db);
+
+		$usecanvas=$_POST["canvas"];
+		if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
+
+		if (! empty($usecanvas))	// Overwrite product here
+		{
+			$canvas = new Canvas($db,$user);
+			$product = $canvas->load_canvas('product',$_POST["canvas"]);
+		}
+
 		if ($product->fetch($_POST["id"]))
 		{
 			$product->ref                = $_POST["ref"];
@@ -251,19 +268,6 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 				$_GET["action"] = 'edit';
 				$_GET["id"] = $_POST["id"];
 				$mesg = $langs->trans("ErrorProductBadRefOrLabel");
-			}
-
-			// Specific product
-			if ($product->canvas <> '' && file_exists('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php') )
-			{
-				$classname = 'Product'.ucfirst($product->canvas);
-				include_once('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
-
-				$product = new $classname($db);
-				if ($product->FetchCanvas($_POST["id"]))
-				{
-					$product->UpdateCanvas($_POST);
-				}
 			}
 		}
 	}
@@ -359,7 +363,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
  */
 if ($_POST["action"] == 'addinpropal')
 {
-	$propal = New Propal($db);
+	$propal = new Propal($db);
 	$result=$propal->fetch($_POST["propalid"]);
 	if ($result <= 0)
 	{
@@ -384,22 +388,21 @@ if ($_POST["action"] == 'addinpropal')
 	}
 
 	$desc = $prod->description;
-	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 
-	$price_base_type = 'HT';
+	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
+	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
+	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
 
-	// multiprix
+    $pu_ht = $prod->price;
+    $pu_ttc = $prod->price_ttc;
+    $price_base_type = $prod->price_base_type;
+
+	// If multiprice
 	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
 	{
 		$pu_ht = $prod->multiprices[$soc->price_level];
 		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
 		$price_base_type = $prod->multiprices_base_type[$soc->price_level];
-	}
-	else
-	{
-		$pu_ht = $prod->price;
-		$pu_ttc = $prod->price_ttc;
-		$price_base_type = $prod->price_base_type;
 	}
 
 	// On reevalue prix selon taux tva car taux tva transaction peut etre different
@@ -421,6 +424,8 @@ if ($_POST["action"] == 'addinpropal')
 	$pu_ht,
 	$_POST["qty"],
 	$tva_tx,
+	$localtax1_tx, // localtax1
+	$localtax2_tx, // localtax2
 	$prod->id,
 	$_POST["remise_percent"],
 	$price_base_type,
@@ -428,7 +433,7 @@ if ($_POST["action"] == 'addinpropal')
 	);
 	if ($result > 0)
 	{
-		Header("Location: ".DOL_URL_ROOT."/comm/propal.php?propalid=".$propal->id);
+		Header("Location: ".DOL_URL_ROOT."/comm/propal.php?id=".$propal->id);
 		return;
 	}
 
@@ -465,21 +470,23 @@ if ($_POST["action"] == 'addincommande')
 	}
 
 	$desc = $prod->description;
-	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 
-	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-	{
-		$pu_ht = $prod->multiprices[$soc->price_level];
-		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
-		$price_base_type = $prod->multiprices_base_type[$soc->price_level];
-	}
-	else
-	{
-		$pu_ht = $prod->price;
-		$pu_ttc = $prod->price_ttc;
-		$price_base_type = $prod->price_base_type;
-	}
+	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
+	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
+	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
+
+
+    $pu_ht = $prod->price;
+    $pu_ttc = $prod->price_ttc;
+    $price_base_type = $prod->price_base_type;
+
+    // If multiprice
+    if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
+    {
+        $pu_ht = $prod->multiprices[$soc->price_level];
+        $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
+        $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+    }
 
 	// On reevalue prix selon taux tva car taux tva transaction peut etre different
 	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
@@ -500,6 +507,8 @@ if ($_POST["action"] == 'addincommande')
 	$pu_ht,
 	$_POST["qty"],
 	$tva_tx,
+	$localtax1_tx, // localtax1
+	$localtax2_tx, // localtax2
 	$prod->id,
 	$_POST["remise_percent"],
 				'',
@@ -545,21 +554,22 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 	}
 
 	$desc = $prod->description;
-	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 
-	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-	{
-		$pu_ht = $prod->multiprices[$soc->price_level];
-		$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
-		$price_base_type = $prod->multiprices_base_type[$soc->price_level];
-	}
-	else
-	{
-		$pu_ht = $prod->price;
-		$pu_ttc = $prod->price_ttc;
-		$price_base_type = $prod->price_base_type;
-	}
+	$tva_tx = get_default_tva($mysoc, $soc, $prod->id);
+	$localtax1_tx= get_localtax($tva_tx, 1, $soc);
+	$localtax2_tx= get_localtax($tva_tx, 2, $soc);
+
+    $pu_ht = $prod->price;
+    $pu_ttc = $prod->price_ttc;
+    $price_base_type = $prod->price_base_type;
+
+    // If multiprice
+    if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
+    {
+        $pu_ht = $prod->multiprices[$soc->price_level];
+        $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
+        $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+    }
 
 	// On reevalue prix selon taux tva car taux tva transaction peut etre different
 	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
@@ -580,6 +590,8 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 	$pu_ht,
 	$_POST["qty"],
 	$tva_tx,
+	$localtax1_tx,
+	$localtax2_tx,
 	$prod->id,
 	$_POST["remise_percent"],
 		    '',
@@ -601,7 +613,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
 	$action = '';
-	Header("Location: fiche.php?id=".$_POST["id"]);
+	Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST["id"]);
 	exit;
 }
 
@@ -619,51 +631,16 @@ $formproduct = new FormProduct($db);
  */
 if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
-	{
-		if (! isset($product))
-		{
-			$filecanvas = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php';
-			$classname = 'Product'.ucfirst($_GET["canvas"]);
-			
-			include_once($filecanvas);
-			
-			$product = new $classname($db,0,$user);
-		}
-
-		$product->assign_smarty_values($smarty, 'create');
-
-		if ($_error == 1)
-		{
-			$product = $e_product;
-		}
-	}
-
 	$helpurl='';
-	if (isset($_GET["type"]) && $_GET["type"] == 0)
-	{
-		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-	}
-	if (isset($_GET["type"]) && $_GET["type"] == 1)
-	{
-		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-	}
+	if (isset($_GET["type"]) && $_GET["type"] == 0) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	if (isset($_GET["type"]) && $_GET["type"] == 1)	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
-	llxHeader("",$helpurl,$langs->trans("CardProduct".$product->type));
+	llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 
-	if ($mesg) print $mesg."\n";
+	$usecanvas=$_GET["canvas"];
+	if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
 
-	if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
-	{
-		// On assigne les valeurs meme en creation car elles sont definies si
-		// on revient en erreur
-		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/tpl/';
-		$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'');
-		$smarty->assign('tva_taux_value', $tvaarray['value']);
-		$smarty->assign('tva_taux_libelle', $tvaarray['label']);
-		$smarty->display($_GET["canvas"].'-create.tpl');
-	}
-	else
+	if (empty($usecanvas))
 	{
 		print '<form action="fiche.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -673,6 +650,8 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		if ($_GET["type"]==1) $title=$langs->trans("NewService");
 		else $title=$langs->trans("NewProduct");
 		print_fiche_titre($title);
+
+		if ($mesg) print $mesg."\n";
 
 		print '<table class="border" width="100%">';
 		print '<tr>';
@@ -835,235 +814,64 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 
 		print '</form>';
 	}
+	else
+	{
+		$canvas = new Canvas($db,$user);
+		$product = $canvas->load_canvas('product',$_GET["canvas"]);
+
+		$canvas->assign_values('create');
+		$canvas->display_canvas();
+	}
 }
 
 /**
- *
- * Fiche produit
- *
+ * Product card
  */
+
 if ($_GET["id"] || $_GET["ref"])
 {
-	$product = new Product($db);
+	$product=new Product($db);
 
-	if ($_GET["ref"])
+	// TODO en attendant d'inclure le nom du canvas dans les liens
+	$productstatic = new Product($db);
+	$result = $productstatic->getCanvas($_GET["id"],$_GET["ref"]);
+	$usecanvas=$productstatic->canvas;
+	if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
+
+	if (empty($usecanvas))
 	{
-		$result = $product->fetch('',$_GET["ref"]);
-		$_GET["id"] = $product->id;
+		$product->fetch($_GET["id"],$_GET["ref"]);
 	}
-	elseif ($_GET["id"])
+	else 	// Gestion des produits specifiques
 	{
-		$result = $product->fetch($_GET["id"]);
-	}
+		$canvas = new Canvas($db,$user);
 
-	// Gestion des produits specifiques
-	if ($product->canvas <> '' && file_exists('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php') )
-	{
-		$classname = 'Product'.ucfirst($product->canvas);
-		include_once('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
-		$product = new $classname($db);
+		$product = $canvas->load_canvas('product',$productstatic->canvas);
+		if (! $product) dol_print_error('','Faled to load canvas product-'.$productstatic->canvas);
 
-		$result = $product->fetchCanvas($_GET["id"],'',$_GET["action"]);
-
-		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/tpl/';
-
-		$product->assign_smarty_values($smarty,$_GET["action"]);
+		$canvas->fetch($productstatic->id,'',$_GET["action"]);
 	}
 
-
-	llxHeader("","",$langs->trans("CardProduct".$product->type));
-
-	if ( $result )
-	{
-		if ($_GET["action"] <> 'edit')
-		{
-			$head=product_prepare_head($product, $user);
-			$titre=$langs->trans("CardProduct".$product->type);
-			$picto=($product->type==1?'service':'product');
-			dol_fiche_head($head, 'card', $titre, 0, $picto);
-			print "\n<!-- CUT HERE -->\n";
-			// Confirmation de la suppression de la facture
-			if ($_GET["action"] == 'delete')
-			{
-				$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,2);
-				if ($ret == 'html') print '<br>';
-			}
-
-			print($mesg);
-		}
-		if ($_GET["action"] <> 'edit' && $product->canvas <> '')
-		{
-			/*
-			 *  Smarty en mode visu
-			 */
-			$smarty->assign('fiche_cursor_prev',$previous_ref);
-			$smarty->assign('fiche_cursor_next',$next_ref);
-
-			// Photo
-			//$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
-
-			$smarty->display($product->canvas.'-view.tpl');
-
-			print "</div>\n<!-- CUT HERE -->\n";
-		}
-
-		if ($_GET["action"] <> 'edit' && $product->canvas == '')
-		{
-			// En mode visu
-			print '<table class="border" width="100%"><tr>';
-
-			// Ref
-			print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-			print $html->showrefnav($product,'ref','',1,'ref');
-			print '</td>';
-
-			print '</tr>';
-
-			// Label
-			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
-
-			$nblignes=4;
-			if ($product->is_photo_available($conf->produit->dir_output))
-			{
-				// Photo
-				print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
-				$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0,0,0,80);
-				print '</td>';
-			}
-
-			print '</tr>';
-
-			// Accountancy buy code
-			print '<tr><td>'.$html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer).'</td><td>';
-			print $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer);
-			print '</td></tr>';
-
-			// Accountancy sell code
-			print '<tr><td>'.$html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer).'</td><td>';
-			print $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer);
-			print '</td></tr>';
-
-			// Statut
-			print '<tr><td>'.$langs->trans("Status").'</td><td>';
-			print $product->getLibStatut(2);
-			print '</td></tr>';
-
-			// Description
-			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.nl2br($product->description).'</td></tr>';
-
-			// Nature
-			if($product->type!=1)
-			{
-				print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
-				print $product->getLibFinished();
-				print '</td></tr>';
-			}
-
-			if ($product->isservice())
-			{
-				// Duration
-				print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2">'.$product->duration_value.'&nbsp;';
-				if ($product->duration_value > 1)
-				{
-					$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
-				}
-				else if ($product->duration_value > 0)
-				{
-					$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-				}
-				print $langs->trans($dur[$product->duration_unit])."&nbsp;";
-
-				print '</td></tr>';
-			}
-			else
-			{
-				// Weight
-				print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="2">';
-				if ($product->weight != '')
-				{
-					print $product->weight." ".measuring_units_string($product->weight_units,"weight");
-				}
-				else
-				{
-					print '&nbsp;';
-				}
-				print "</td></tr>\n";
-				// Length
-				print '<tr><td>'.$langs->trans("Length").'</td><td colspan="2">';
-				if ($product->length != '')
-				{
-					print $product->length." ".measuring_units_string($product->length_units,"size");
-				}
-				else
-				{
-					print '&nbsp;';
-				}
-				print "</td></tr>\n";
-				// Surface
-				print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
-				if ($product->surface != '')
-				{
-					print $product->surface." ".measuring_units_string($product->surface_units,"surface");
-				}
-				else
-				{
-					print '&nbsp;';
-				}
-				print "</td></tr>\n";
-				// Volume
-				print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
-				if ($product->volume != '')
-				{
-					print $product->volume." ".measuring_units_string($product->volume_units,"volume");
-				}
-				else
-				{
-					print '&nbsp;';
-				}
-				print "</td></tr>\n";
-			}
-
-			// Hidden
-			if ((! $product->isservice() && $user->rights->produit->hidden)
-			|| ($product->isservice() && $user->rights->service->hidden))
-			{
-				print '<tr><td>'.$langs->trans("Hidden").'</td><td colspan="2">';
-				print yn($product->hidden);
-				print "</td></tr>\n";
-			}
-			else
-			{
-				print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
-				print yn("No");
-				print '</td></tr>';
-			}
-
-			// Note
-			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.nl2br($product->note).'</td></tr>';
-
-			print "</table>\n";
-			print "</div>\n<!-- CUT HERE -->\n";
-		}
-	}
+	llxHeader('',$langs->trans("CardProduct".$product->type));
 
 	/*
 	 * Fiche en mode edition
 	 */
 	if ($_GET["action"] == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
-		if ($product->isservice()) {
-			print_fiche_titre($langs->trans('Modify').' '.$langs->trans('Service').' : '.$product->ref, "");
-		} else {
-			print_fiche_titre($langs->trans('Modify').' '.$langs->trans('Product').' : '.$product->ref, "");
-		}
-
-		if ($mesg) {
-			print '<br><div class="error">'.$mesg.'</div><br>';
-		}
-
-		if ( $product->canvas == '')
+		if (empty($usecanvas))
 		{
-			print "<!-- CUT HERE -->\n";
+			if ($product->isservice()) {
+				print_fiche_titre($langs->trans('Modify').' '.$langs->trans('Service').' : '.$product->ref, "");
+			} else {
+				print_fiche_titre($langs->trans('Modify').' '.$langs->trans('Product').' : '.$product->ref, "");
+			}
+
+			if ($mesg) {
+				print '<br><div class="error">'.$mesg.'</div><br>';
+			}
+
+			// Main official, simple, and not duplicated code
 			print "<form action=\"fiche.php\" method=\"post\">\n";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
@@ -1206,16 +1014,175 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
 			print '</form>';
-			print "<!-- CUT HERE -->\n";
 		}
 		else
 		{
-			$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'','');
-			$smarty->assign('tva_taux_value', $tvaarray['value']);
-			$smarty->assign('tva_taux_libelle', $tvaarray['label']);
-			$smarty->display($product->canvas.'-edit.tpl');
+			$canvas->assign_values('edit');
+			$canvas->display_canvas();
 		}
 	}
+	/*
+	 * Fiche en mode visu
+	 */
+	else
+	{
+		$head=product_prepare_head($product, $user);
+		$titre=$langs->trans("CardProduct".$product->type);
+		$picto=($product->type==1?'service':'product');
+		dol_fiche_head($head, 'card', $titre, 0, $picto);
+
+		// Confirmation de la suppression de la facture
+		if ($_GET["action"] == 'delete')
+		{
+			$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,2);
+			if ($ret == 'html') print '<br>';
+		}
+
+		if (empty($usecanvas))
+		{
+			// En mode visu
+			print '<table class="border" width="100%"><tr>';
+
+			// Ref
+			print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
+			print $html->showrefnav($product,'ref','',1,'ref');
+			print '</td>';
+
+			print '</tr>';
+
+			// Label
+			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+
+			$nblignes=4;
+			if ($product->is_photo_available($conf->product->dir_output))
+			{
+				// Photo
+				print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
+				print $product->show_photos($conf->product->dir_output,1,1,0,0,0,80);
+				print '</td>';
+			}
+
+			print '</tr>';
+
+			// Accountancy buy code
+			print '<tr><td>'.$html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer).'</td><td>';
+			print $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer);
+			print '</td></tr>';
+
+			// Accountancy sell code
+			print '<tr><td>'.$html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer).'</td><td>';
+			print $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer);
+			print '</td></tr>';
+
+			// Statut
+			print '<tr><td>'.$langs->trans("Status").'</td><td>';
+			print $product->getLibStatut(2);
+			print '</td></tr>';
+
+			// Description
+			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.nl2br($product->description).'</td></tr>';
+
+			// Nature
+			if($product->type!=1)
+			{
+				print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
+				print $product->getLibFinished();
+				print '</td></tr>';
+			}
+
+			if ($product->isservice())
+			{
+				// Duration
+				print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2">'.$product->duration_value.'&nbsp;';
+				if ($product->duration_value > 1)
+				{
+					$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+				}
+				else if ($product->duration_value > 0)
+				{
+					$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+				}
+				print $langs->trans($dur[$product->duration_unit])."&nbsp;";
+
+				print '</td></tr>';
+			}
+			else
+			{
+				// Weight
+				print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="2">';
+				if ($product->weight != '')
+				{
+					print $product->weight." ".measuring_units_string($product->weight_units,"weight");
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print "</td></tr>\n";
+				// Length
+				print '<tr><td>'.$langs->trans("Length").'</td><td colspan="2">';
+				if ($product->length != '')
+				{
+					print $product->length." ".measuring_units_string($product->length_units,"size");
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print "</td></tr>\n";
+				// Surface
+				print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
+				if ($product->surface != '')
+				{
+					print $product->surface." ".measuring_units_string($product->surface_units,"surface");
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print "</td></tr>\n";
+				// Volume
+				print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
+				if ($product->volume != '')
+				{
+					print $product->volume." ".measuring_units_string($product->volume_units,"volume");
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print "</td></tr>\n";
+			}
+
+			// Hidden
+			if ((! $product->isservice() && $user->rights->produit->hidden)
+			|| ($product->isservice() && $user->rights->service->hidden))
+			{
+				print '<tr><td>'.$langs->trans("Hidden").'</td><td colspan="2">';
+				print yn($product->hidden);
+				print "</td></tr>\n";
+			}
+			else
+			{
+				print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
+				print yn("No");
+				print '</td></tr>';
+			}
+
+			// Note
+			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.nl2br($product->note).'</td></tr>';
+
+			print "</table>\n";
+		}
+		else
+		{
+			$canvas->assign_values('view');
+			$canvas->display_canvas();
+		}
+
+		dol_fiche_end();
+	}
+
 }
 else if (!$_GET["action"] == 'create')
 {
@@ -1253,18 +1220,19 @@ if ($_GET["action"] == '')
 	if ($user->rights->produit->creer || $user->rights->service->creer)
 	{
 		if ($product->no_button_edit <> 1)
-		print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Modify").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$product->id.'">'.$langs->trans("Modify").'</a>';
 
 		if ($product->no_button_copy <> 1)
-		print '<a class="butAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("ToClone").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$product->id.'">'.$langs->trans("ToClone").'</a>';
 	}
 
 	$product_is_used = $product->verif_prod_use($product->id);
-	if ($user->rights->produit->supprimer)
+    if (($product->type == 0 && $user->rights->produit->supprimer)
+     || ($product->type == 1 && $user->rights->service->supprimer))
 	{
 		if (! $product_is_used && $product->no_button_delete <> 1)
 		{
-			print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
 		}
 		else
 		{
@@ -1284,36 +1252,36 @@ print "\n</div><br>\n";
  * All the "Add to" areas
  */
 
-if ($_GET["id"] && $_GET["action"] == '' && $product->status)
+if ($product->id && $_GET["action"] == '' && $product->status)
 {
-	$propal = New Propal($db);
-
 	print '<table width="100%" class="noborder">';
 
 	// Propals
 	if($conf->propal->enabled && $user->rights->propale->creer)
 	{
+		$propal = new Propal($db);
+
 		$langs->load("propal");
 
-		print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
+		print '<tr class="liste_titre"><td width="50%" class="liste_titre">';
 		print $langs->trans("AddToMyProposals") . '</td>';
 
 		if ($user->rights->societe->client->voir)
 		{
-			print '<td width="50%" valign="top" class="liste_titre">';
+			print '<td width="50%" class="liste_titre">';
 			print $langs->trans("AddToOtherProposals").'</td>';
 		}
 		else
 		{
-			print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
+			print '<td width="50%" class="liste_titre">&nbsp;</td>';
 		}
 
 		print '</tr>';
 
 		// Liste de "Mes propals"
-		print '<tr><td width="50%" valign="top">';
+		print '<tr><td'.($user->rights->societe->client->voir?' width="50%"':'').' valign="top">';
 
-		$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.ref,".$db->pdate("p.datep")." as dp";
+		$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.ref, p.datep as dp";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
 		$sql.= " WHERE p.fk_soc = s.rowid";
 		$sql.= " AND p.entity = ".$conf->entity;
@@ -1334,12 +1302,12 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				{
 					$objp = $db->fetch_object($result);
 					$var=!$var;
-					print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+					print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="addinpropal">';
-					print "<tr $bc[$var]>";
-					print "<td nowrap>";
-					print "<a href=\"../comm/propal.php?propalid=".$objp->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
+					print "<tr ".$bc[$var].">";
+					print '<td nowrap="nowrap">';
+					print "<a href=\"../comm/propal.php?id=".$objp->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
 					print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
 					print "<td nowrap=\"nowrap\">".dol_print_date($objp->dp,"%d %b")."</td>\n";
 					print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
@@ -1371,8 +1339,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 			print '<td width="50%" valign="top">';
 
 			$var=true;
-			$otherprop = $propal->liste_array(1, ' <> '.$user->id);
-			print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+			$otherprop = $propal->liste_array(1,1,1);
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" width="100%">';
 			if (is_array($otherprop) && sizeof($otherprop))
@@ -1405,33 +1373,32 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		print '</tr>';
 	}
 
-	$commande = New Commande($db);
-
-
 	// Commande
 	if($conf->commande->enabled && $user->rights->commande->creer)
 	{
+		$commande = new Commande($db);
+
 		$langs->load("orders");
 
-		print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
+		print '<tr class="liste_titre"><td width="50%" class="liste_titre">';
 		print $langs->trans("AddToMyOrders").'</td>';
 
 		if ($user->rights->societe->client->voir)
 		{
-			print '<td width="50%" valign="top" class="liste_titre">';
+			print '<td width="50%" class="liste_titre">';
 			print $langs->trans("AddToOtherOrders").'</td>';
 		}
 		else
 		{
-			print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
+			print '<td width="50%" class="liste_titre">&nbsp;</td>';
 		}
 
 		print '</tr>';
 
 		// Liste de "Mes commandes"
-		print '<tr><td width="50%" valign="top">';
+		print '<tr><td'.($user->rights->societe->client->voir?' width="50%"':'').' valign="top">';
 
-		$sql = "SELECT s.nom, s.rowid as socid, c.rowid as commandeid, c.ref,".$db->pdate("c.date_commande")." as dc";
+		$sql = "SELECT s.nom, s.rowid as socid, c.rowid as commandeid, c.ref, c.date_commande as dc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql.= " WHERE c.fk_soc = s.rowid";
 		$sql.= " AND c.entity = ".$conf->entity;
@@ -1452,14 +1419,14 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				{
 					$objc = $db->fetch_object($result);
 					$var=!$var;
-					print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+					print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="addincommande">';
-					print "<tr $bc[$var]>";
-					print "<td nowrap>";
+					print "<tr ".$bc[$var].">";
+					print '<td nowrap="nowrap">';
 					print "<a href=\"../commande/fiche.php?id=".$objc->commandeid."\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
 					print "<td><a href=\"../comm/fiche.php?socid=".$objc->socid."\">".dol_trunc($objc->nom,18)."</a></td>\n";
-					print "<td nowrap=\"nowrap\">".dol_print_date($objc->dc,"%d %b")."</td>\n";
+					print "<td nowrap=\"nowrap\">".dol_print_date($db->jdate($objc->dc),"%d %b")."</td>\n";
 					print '<td><input type="hidden" name="commandeid" value="'.$objc->commandeid.'">';
 					print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
 					print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
@@ -1490,8 +1457,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 			print '<td width="50%" valign="top">';
 
 			$var=true;
-			$othercom = $commande->liste_array(1, ' <> '.$user->id);
-			print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+			$othercom = $commande->liste_array(1, $user);
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" width="100%">';
 			if (is_array($othercom) && sizeof($othercom))
@@ -1517,34 +1484,35 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 			}
 			print '</table>';
 			print '</form>';
+
+			print '</td>';
 		}
-		print '</td>';
 
 		print '</tr>';
 	}
 
 	// Factures
-	if($conf->facture->enabled && $user->rights->facture->creer)
+	if ($conf->facture->enabled && $user->rights->facture->creer)
 	{
-		print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
+		print '<tr class="liste_titre"><td width="50%" class="liste_titre">';
 		print $langs->trans("AddToMyBills").'</td>';
 
 		if ($user->rights->societe->client->voir)
 		{
-			print '<td width="50%" valign="top" class="liste_titre">';
+			print '<td width="50%" class="liste_titre">';
 			print $langs->trans("AddToOtherBills").'</td>';
 		}
 		else
 		{
-			print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
+			print '<td width="50%" class="liste_titre">&nbsp;</td>';
 		}
 
 		print '</tr>';
 
 		// Liste de Mes factures
-		print '<tr><td width="50%" valign="top">';
+		print '<tr><td'.($user->rights->societe->client->voir?' width="50%"':'').' valign="top">';
 
-		$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
+		$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber, f.datef as df";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " WHERE f.fk_soc = s.rowid";
 		$sql.= " AND f.entity = ".$conf->entity;
@@ -1565,14 +1533,14 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				{
 					$objp = $db->fetch_object($result);
 					$var=!$var;
-					print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+					print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="addinfacture">';
 					print "<tr $bc[$var]>";
 					print "<td nowrap>";
 					print "<a href=\"../compta/facture.php?facid=".$objp->factureid."\">".img_object($langs->trans("ShowBills"),"bill")." ".$objp->facnumber."</a></td>\n";
 					print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
-					print "<td nowrap=\"nowrap\">".dol_print_date($objp->df,"%d %b")."</td>\n";
+					print "<td nowrap=\"nowrap\">".dol_print_date($db->jdate($objp->df),"%d %b")."</td>\n";
 					print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
 					print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
 					print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
@@ -1601,12 +1569,14 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 		if ($user->rights->societe->client->voir)
 		{
+            $facture = new Facture($db);
+
 			print '<td width="50%" valign="top">';
 
-			// Liste de Autres factures
+            // Liste de Autres factures
 			$var=true;
 
-			$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
+			$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber, f.datef as df";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 			$sql.= " WHERE f.fk_soc = s.rowid";
 			$sql.= " AND f.entity = ".$conf->entity;
@@ -1620,17 +1590,18 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				$num = $db->num_rows($result);
 				$var=true;
 				print '<table class="nobordernopadding" width="100%">';
-				if ($num) {
+				if ($num)
+				{
 					$i = 0;
 					while ($i < $num)
 					{
 						$objp = $db->fetch_object($result);
 
 						$var=!$var;
-						print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+						print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 						print '<input type="hidden" name="action" value="addinfacture">';
-						print "<tr $bc[$var]>";
+						print "<tr ".$bc[$var].">";
 						print "<td><a href=\"../compta/facture.php?facid=".$objp->factureid."\">$objp->facnumber</a></td>\n";
 						print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,24)."</a></td>\n";
 						print "<td colspan=\"2\">".$langs->trans("Qty");
@@ -1646,7 +1617,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 						$i++;
 					}
 				}
-				else {
+				else
+				{
 					print "<tr ".$bc[!$var]."><td>";
 					print $langs->trans("NoOtherDraftBills");
 					print '</td></tr>';
@@ -1658,9 +1630,11 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 			{
 				dol_print_error($db);
 			}
+
+			print '</td>';
 		}
 
-		print '</td></tr>';
+		print '</tr>';
 	}
 
 	print '</table>';
@@ -1674,60 +1648,4 @@ $db->close();
 
 llxFooter('$Date$ - $Revision$');
 
-
-/**
- *		\brief		Load tva_taux_value and tva_taux_libelle array
- *		\remarks	Ne sert que pour smarty
- *      \ TODO  deplacer dans une classe
- */
-function load_tva($db,$name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
-{
-	global $langs,$conf,$mysoc;
-
-	$retarray=array();
-
-	if (is_object($societe_vendeuse->pays_code))
-	{
-		$code_pays=$societe_vendeuse->pays_code;
-	}
-	else
-	{
-		$code_pays=$mysoc->pays_code;	// Pour compatibilite ascendente
-	}
-
-	// Recherche liste des codes TVA du pays vendeur
-	$sql  = "SELECT t.taux,t.recuperableonly";
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
-	$sql .= " AND t.active = 1";
-	$sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
-
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		for ($i = 0; $i < $num; $i++)
-		{
-			$obj = $db->fetch_object($resql);
-			$txtva[ $i ] = $obj->taux;
-			$libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
-		}
-	}
-
-	// Definition du taux a pre-selectionner
-	if ($defaulttx == '') $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
-	// Si taux par defaut n'a pu etre trouve, on prend dernier.
-	// Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
-	if ($defaulttx == '') $defaulttx = $txtva[sizeof($txtva)-1];
-
-	$nbdetaux = sizeof($txtva);
-
-	for ($i = 0 ; $i < $nbdetaux ; $i++)
-	{
-		$retarray['value'][$i] = $txtva[$i];
-		$retarray['label'][$i] = $libtva[$i];
-	}
-
-	return $retarray;
-}
 ?>
