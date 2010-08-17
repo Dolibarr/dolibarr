@@ -164,7 +164,7 @@ class FormOther
 		$sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
 		$sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
 
-        $resql=$db->query($sql);
+        $resql=$this->db->query($sql);
 		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
