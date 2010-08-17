@@ -393,7 +393,7 @@ class Societe extends CommonObject
 		$this->forme_juridique_code=trim($this->forme_juridique_code);
 
 		//Gencod
-        $this->gencod=trim($this->gencod);
+		$this->gencod=trim($this->gencod);
 
 		// For automatic creation
 		if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
@@ -458,8 +458,8 @@ class Societe extends CommonObject
 
 			$sql .= ",client = " . $this->client;
 			$sql .= ",fournisseur = " . $this->fournisseur;
-            $sql .= ",gencod = ".($this->gencod?"'".$this->gencod."'":"null");
-            $sql .= ",default_lang = ".($this->default_lang?"'".$this->default_lang."'":"null");
+			$sql .= ",gencod = ".($this->gencod?"'".$this->gencod."'":"null");
+			$sql .= ",default_lang = ".($this->default_lang?"'".$this->default_lang."'":"null");
 
 
 			if ($allowmodcodeclient)
@@ -941,7 +941,7 @@ class Societe extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = '".$this->id . "'";
 		$sql .= " AND f.fk_statut = '1' AND f.paye = '0'";
 
-        $resql=$this->db->query($sql);
+		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
@@ -1442,7 +1442,7 @@ class Societe extends CommonObject
 
 		$sql = "SELECT rowid, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE rowid = '".$rowid."'";
 
-        $resql=$this->db->query($sql);
+		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$nump = $this->db->num_rows($resql);
@@ -1901,22 +1901,22 @@ class Societe extends CommonObject
 		}
 	}
 
-    /**
-     *       \brief     Return if third party is a company (Business) or an end user (Consumer)
-     *       \param     boolean     true=is a company, false=a and user
-     */
-    function isACompany()
-    {
-    	global $conf;
+	/**
+	 *       \brief     Return if third party is a company (Business) or an end user (Consumer)
+	 *       \param     boolean     true=is a company, false=a and user
+	 */
+	function isACompany()
+	{
+		global $conf;
 
-    	// Define if third party is treated as company of not when nature is unknown
-        $isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1; // 0 by default
-        if (! empty($this->tva_intra)) $isacompany=1;
-        else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_PRIVATE'))) $isacompany=0;
-        else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_SMALL','TE_MEDIUM','TE_LARGE'))) $isacompany=1;
+		// Define if third party is treated as company of not when nature is unknown
+		$isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1; // 0 by default
+		if (! empty($this->tva_intra)) $isacompany=1;
+		else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_PRIVATE'))) $isacompany=0;
+		else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_SMALL','TE_MEDIUM','TE_LARGE'))) $isacompany=1;
 
-        return $isacompany;
-    }
+		return $isacompany;
+	}
 
 
 	/**
@@ -1950,14 +1950,14 @@ class Societe extends CommonObject
 			'LV',	// Latvia
 			'MC',	// Monaco 		Seems to use same IntraVAT than France (http://www.gouv.mc/devwww/wwwnew.nsf/c3241c4782f528bdc1256d52004f970b/9e370807042516a5c1256f81003f5bb3!OpenDocument)
 			'MT',	// Malta
-			//'NO',	// Norway
+		//'NO',	// Norway
 			'PL',	// Poland
 			'PT',	// Portugal
 			'RO',	// Romania
 			'SE',	// Sweden
 			'SK',	// Slovakia
 			'SI',	// Slovenia
-			//'CH',	// Switzerland - No. Swizerland in not in EEC
+		//'CH',	// Switzerland - No. Swizerland in not in EEC
 		);
 		//print "dd".$this->pays_code;
 		return in_array($this->pays_code,$country_code_in_EEC);
@@ -1977,15 +1977,15 @@ class Societe extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-	  while ($obj = $this->db->fetch_object($resql) )
-	  {
-	  	$this->SupplierCategories[$obj->rowid] = $obj->label;
-	  }
-	  return 0;
+			while ($obj = $this->db->fetch_object($resql) )
+			{
+				$this->SupplierCategories[$obj->rowid] = $obj->label;
+			}
+			return 0;
 		}
 		else
 		{
-	  return -1;
+			return -1;
 		}
 	}
 
@@ -2000,8 +2000,7 @@ class Societe extends CommonObject
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_societe) ";
 			$sql.= " VALUES ('".$categorie_id."','".$this->id."');";
 
-			if ($resql=$this->db->query($sql))
-	  return 0;
+			if ($resql=$this->db->query($sql)) return 0;
 		}
 		else
 		{
@@ -2024,15 +2023,15 @@ class Societe extends CommonObject
 		$sql.= "'".addslashes($user->login)."',";
 		$sql.= "'Change statut from ".$oldstcomm." to ".$stcommid."'";
 		$sql.= ")";
-		$result = $db->query($sql);
+		$result = $thi->db->query($sql);
 		if ($result)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$stcommid." WHERE rowid=".$socid;
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 		}
 		else
 		{
-			$errmesg = $db->error;
+			$errmesg = $this->db->lasterror();
 		}
 	}
 
