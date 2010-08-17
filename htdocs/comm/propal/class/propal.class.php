@@ -286,7 +286,7 @@ class Propal extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0)
+	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1)
 	{
 		global $conf;
 
@@ -325,6 +325,14 @@ class Propal extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
+			
+			// Rang to use
+			$rangtouse = $rang;
+			if ($rangtouse == -1)
+			{
+				$rangmax = $this->line_max();
+				$rangtouse = $rangmax + 1;
+			}
 
 			// TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
@@ -348,7 +356,7 @@ class Propal extends CommonObject
 			$ligne->fk_product=$fk_product;
 			$ligne->remise_percent=$remise_percent;
 			$ligne->subprice=$pu_ht;
-			$ligne->rang=-1;
+			$ligne->rang=$rangtouse;
 			$ligne->info_bits=$info_bits;
 			$ligne->fk_remise_except=$fk_remise_except;
 			$ligne->total_ht=$total_ht;
@@ -2266,26 +2274,6 @@ class PropaleLigne
 		// Check parameters
 		if ($this->type < 0) return -1;
 
-		$rangtouse=$this->rang;
-		if ($rangtouse == -1)
-		{
-			// Get max value for rang
-			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'propaldet';
-			$sql.= ' WHERE fk_propal ='.$this->fk_propal;
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$obj = $this->db->fetch_object($resql);
-				$rangtouse = $obj->max + 1;
-			}
-			else
-			{
-				dol_print_error($this->db);
-				$this->db->rollback();
-				return -1;
-			}
-		}
-
 		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
 		$sql.= ' (fk_propal, description, fk_product, product_type, fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
@@ -2315,7 +2303,7 @@ class PropaleLigne
 		else $sql.= ' null,';
 		if (isset($this->special_code)) $sql.= ' '.$this->special_code.',';
 		else $sql.= ' 0,';
-		$sql.= ' '.$rangtouse;
+		$sql.= ' '.$this->rang;
 		$sql.= ')';
 
 		dol_syslog("PropaleLigne::insert sql=$sql");
