@@ -672,7 +672,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 		$html->select_array('statut',$statutarray,$_POST["statut"]);
 		print '</td></tr>';
-		
+
 		// To buy
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
 		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
@@ -904,7 +904,7 @@ if ($_GET["id"] || $_GET["ref"])
 			}
 			print '</select>';
 			print '</td></tr>';
-			
+
 			// To Buy
 			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td colspan="2">';
 			print '<select class="flat" name="statut_buy">';
@@ -1102,7 +1102,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
 			print $product->getLibStatut(2,0);
 			print '</td></tr>';
-			
+
 			// To buy
 			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
 			print $product->getLibStatut(2,1);
@@ -1256,7 +1256,8 @@ if ($_GET["action"] == '')
 	}
 
 	$product_is_used = $product->verif_prod_use($product->id);
-	if ($user->rights->produit->supprimer)
+	if (($product->type == 0 && $user->rights->produit->supprimer)
+	 || ($product->type == 1 && $user->rights->service->supprimer))
 	{
 		if (! $product_is_used && $product->no_button_delete <> 1)
 		{

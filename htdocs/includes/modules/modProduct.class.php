@@ -96,40 +96,40 @@ class modProduct extends DolibarrModules
 		$this->rights_class = 'produit';
 		$r=0;
 
-		$r++;
 		$this->rights[$r][0] = 31; // id de la permission
 		$this->rights[$r][1] = 'Lire les produits'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
-
 		$r++;
+
 		$this->rights[$r][0] = 32; // id de la permission
 		$this->rights[$r][1] = 'Creer/modifier les produits'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
-
 		$r++;
+
 		$this->rights[$r][0] = 34; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les produits'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
+        $r++;
 
-		$this->rights[$r][0] = 36; // id de la permission
+        $this->rights[$r][0] = 36; // id de la permission
 		$this->rights[$r][1] = 'Voir/gérer les produits cachés'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'hidden';
-		$r++;
+        $r++;
 
-		$r++;
 		$this->rights[$r][0] = 38;	// Must be same permission than in service module
 		$this->rights[$r][1] = 'Exporter les produits';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
+        $r++;
 
 
 		// Exports
