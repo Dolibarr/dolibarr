@@ -534,12 +534,12 @@ class DoliDb
 
 
 	/**
-	 *   \brief      	Formatage (par la base de donnees) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
-	 *               	afin de retourner une donnee toujours au format universel date TMS unix.
-	 *               	Fonction a utiliser pour generer les SELECT.
-	 *   \param	    	param       Nom champ base de type date ou chaine 'YYYY-MM-DD HH:MM:SS'
-	 *   \return	    date        Date au format TMS.
-	 *	 \deprecated	Remove unix_timestamp functions so use jdate instead
+	 *   Formatage (par la base de donnees) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
+	 *   afin de retourner une donnee toujours au format universel date TMS unix.
+	 *   Fonction a utiliser pour generer les SELECT.
+	 *   @param	    	param       Nom champ base de type date ou chaine 'YYYY-MM-DD HH:MM:SS'
+	 *   @return	    date        Date au format TMS.
+	 *	 @deprecated	Remove unix_timestamp functions so use jdate instead
 	 */
 	function pdate($param)
 	{
@@ -554,7 +554,6 @@ class DoliDb
 	 */
 	function idate($param)
 	{
-		//return "dbo.from_unixtime(".$param.")";
 		return adodb_strftime("%Y-%m-%d %H:%M:%S",$param);
 	}
 
