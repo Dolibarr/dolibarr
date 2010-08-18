@@ -312,8 +312,8 @@ function dolibarr_del_const($db, $name, $entity=1)
 	global $conf;
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql.= " WHERE (".$db->decrypt('name')." = '".addslashes($name)."'";
-	if (is_numeric($name)) $sql.= " OR rowid = '".addslashes($name)."'";
+	$sql.= " WHERE (".$db->decrypt('name')." = '".$db->escape($name)."'";
+	if (is_numeric($name)) $sql.= " OR rowid = '".$db->escape($name)."'";
 	$sql.= ")";
 	if ($entity >= 0) $sql.= " AND entity = ".$entity;
 
@@ -346,7 +346,7 @@ function dolibarr_get_const($db, $name, $entity=1)
 
 	$sql = "SELECT ".$db->decrypt('value')." as value";
 	$sql.= " FROM ".MAIN_DB_PREFIX."const";
-	$sql.= " WHERE ".$db->decrypt('name')." = '".addslashes($name)."'";
+	$sql.= " WHERE name = ".$db->encrypt($db->escape($name),1);
 	$sql.= " AND entity = ".$entity;
 
 	dol_syslog("admin.lib::dolibarr_get_const sql=".$sql);
@@ -391,7 +391,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql.= " WHERE ".$db->decrypt('name')." = '".addslashes($name)."'";
+	$sql.= " WHERE name = ".$db->encrypt($db->escape($name),1);
 	$sql.= " AND entity = ".$entity;
 
 	dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
@@ -401,9 +401,11 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 	{
 		$sql = "INSERT INTO llx_const(name,value,type,visible,note,entity)";
 		$sql.= " VALUES (";
-		$sql.= $db->encrypt($name,1);
-		$sql.= ", ".$db->encrypt($value,1);
-		$sql.= ",'".$type."',".$visible.",'".addslashes($note)."',".$entity.")";
+		$sql.= $db->encrypt($db->escape($name),1);
+		$sql.= ", ".$db->encrypt($db->escape($value),1);
+		$sql.= ",'".$type."',".$visible.",'".$db->escape($note)."',".$entity.")";
+
+		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
 		dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 	}
