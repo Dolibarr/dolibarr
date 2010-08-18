@@ -67,8 +67,7 @@ $arrayofcss=array(
 
 $arrayofjs=array(
 '/includes/jsgantt/jsgantt.js',
-'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang,
-'/includes/jquery/jquery.min.js',
+'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
 );
 
 
