@@ -1972,11 +1972,11 @@ else
 				if ($ret == 'html') print '<br>';
 			}
 
-			// Confirmation de la suppression de la facture
+			// Confirmation to delete invoice
 			if ($_GET['action'] == 'delete')
 			{
 				$text=$langs->trans('ConfirmDeleteBill');
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('DeleteBill'),$text,'confirm_delete','',0,2);
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('DeleteBill'),$text,'confirm_delete','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -3187,7 +3187,7 @@ else
 					}
 
 					// Delete
-					if ($fac->is_erasable() && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
+					if ($fac->is_erasable() && $user->rights->facture->supprimer)
 					{
 						if ($facidnext)
 						{
