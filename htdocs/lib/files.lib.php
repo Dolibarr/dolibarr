@@ -205,8 +205,8 @@ function dol_mimetype($file,$default='application/octet-stream')
 	// Scripts
     if (preg_match('/\.bat$/i',$file))                      $mime='text/x-bat';
     if (preg_match('/\.sh$/i',$file))                       $mime='text/x-sh';
-    if (preg_match('/\.ksh)$/i',$file))                     $mime='text/x-ksh';
-    if (preg_match('/\.bash)$/i',$file))                    $mime='text/x-bash';
+    if (preg_match('/\.ksh$/i',$file))                     $mime='text/x-ksh';
+    if (preg_match('/\.bash$/i',$file))                    $mime='text/x-bash';
 	// Images
     if (preg_match('/\.ico$/i',$file))                      $mime='image/x-icon';
 	if (preg_match('/\.(jpg|jpeg)$/i',$file))				$mime='image/jpeg';
