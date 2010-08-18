@@ -241,6 +241,14 @@ class DoliDb
 				$line.= "ALTER TABLE ".$reg[1]." ADD PRIMARY KEY (".$reg[3];
 			}
 
+            # Translate order to drop foreign keys
+            # ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx;
+            if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
+            {
+                $line = "-- ".$line." replaced by --\n";
+                $line.= "ALTER TABLE ".$reg[1]." DROP CONSTRAINT ".$reg[2];
+            }
+
 			# alter table add [unique] [index] (field1, field2 ...)
 			# ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
 			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+(UNIQUE INDEX|INDEX|UNIQUE)\s+(.*)\s*\(([\w,\s]+)\)/i',$line,$reg))
