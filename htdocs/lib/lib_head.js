@@ -649,6 +649,7 @@ function cleanSerialize(expr) {
 	Author:   Regis Houssin, Laurent Destailleur
 	Licence:  GPL
 ==================================================================*/
+/* @deprecated Replaced by jquery code
 function dialogConfirm(title,linkurlyes,linkurlno,message,ok,cancel,objectID) {
 	Dialog.confirm(message, {
 		width:560,
@@ -661,6 +662,7 @@ function dialogConfirm(title,linkurlyes,linkurlno,message,ok,cancel,objectID) {
 		cancel:function(win) { if (linkurlno!='') { window.location.href=linkurlno; return true; } }
 	});
 }
+*/
 
 /*=================================================================
 	Purpose:  Affiche une fenetre (Use PWC)
@@ -668,6 +670,7 @@ function dialogConfirm(title,linkurlyes,linkurlno,message,ok,cancel,objectID) {
 	Author:   Regis Houssin
 	Licence:  GPL
 ==================================================================*/
+/* @deprecated Replaced by jquery code
 function dialogWindow(message,windowTitle) {
 var win = new Window({className: "dialog",  
 	                    width:600,
@@ -679,11 +682,10 @@ var win = new Window({className: "dialog",
 	                    hideEffect: Effect.SwitchOff,
 	                    draggable:true
                     })
-/*win.setHTMLContent(message);*/
-/*win.getContent().innerHTML = message;*/
 win.getContent().update(message);
 win.showCenter();
 }
+*/
 
 
 /*=================================================================

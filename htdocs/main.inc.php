@@ -799,12 +799,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 		}
 
-		if (! defined('DISABLE_JQUERY') && $conf->global->MAIN_USE_JQUERY)
+		if (! defined('DISABLE_JQUERY'))
 		{
 			print '<!-- Includes for JQuery (Ajax library) -->'."\n";
-			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/themes/base/jquery-ui.css" type="text/css" />'."\n";
-			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/themes/base/jquery.ui.all.css" type="text/css" />'."\n";
-			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/themes/base/jquery.ui.autocomplete.css" type="text/css" />'."\n";
+			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/smoothness/jquery-ui-1.8.4.custom.css" type="text/css" />'."\n";
 		}
 
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
@@ -829,26 +827,18 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // This one is required for all Ajax features
 			if (! defined('DISABLE_PROTOTYPE'))
 			{
-                print '<!-- Includes for Prototype (Used by Scriptaculous and PWC) -->'."\n";
+                print '<!-- Includes for Prototype (Used by Scriptaculous) -->'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype'.$mini.$ext.'"></script>'."\n";
 			}
 			// This one is required for boxes
 			if (! defined('DISABLE_SCRIPTACULOUS'))
 			{
-				print '<!-- Includes for Scriptaculous (Used by Drag and drop and PWC) -->'."\n";
+				print '<!-- Includes for Scriptaculous (Used by Drag and Drop) -->'."\n";
 				//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
 				//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js?load=builder,effects,dragdrop,controls,slider,sound"></script>'."\n";
 				$listofscripts='effects,dragdrop';
 				if ($conf->global->COMPANY_USE_SEARCH_TO_SELECT) $listofscripts.=',controls';	// For Ajax.Autocompleter
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js?load='.$listofscripts.'"></script>'."\n";
-			}
-
-			// Those ones are required only with option "confirm by ajax popup"
-			if (! defined('DISABLE_PWC') && $conf->global->MAIN_CONFIRM_AJAX)
-			{
-				print '<!-- Includes for PWC (Used for confirm popup) -->'."\n";
-				// PWC js
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window'.$mini.$ext.'"></script>'."\n";
 			}
 		}
 
