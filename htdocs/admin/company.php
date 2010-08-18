@@ -48,7 +48,7 @@ $quality = 80;
  * Actions
  */
 
-if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
+if ( (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["cancel"]))
 || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
@@ -301,6 +301,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<input name="web" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
 	print '</td></tr>'."\n";
 
+	// Barcode
 	if ($conf->barcode->enabled)
 	{
 		$var=!$var;
@@ -309,9 +310,10 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '</td></tr>';
 	}
 
+	// Logo
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
-	print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
+	print '<table width="100%" class="nocellnopadd"><tr><td valign="center">';
 	print '<input type="file" class="flat" name="logo" size="50">';
 	print '</td><td valign="middle" align="right">';
 	if ($mysoc->logo_mini)
@@ -566,7 +568,11 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 	}
 
 
-	print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+	print '<br><center>';
+    print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+    print ' &nbsp; &nbsp; ';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</center>';
 	print '<br>';
 
 	print '</form>';
@@ -648,16 +654,18 @@ else
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_SOCIETE_WEB,'_blank',80) . '</td></tr>';
 
+	// Barcode
 	if ($conf->barcode->enabled)
 	{
 		$var=!$var;
 		print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Gencod").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_GENCOD . '</td></tr>';
 	}
 
+	// Logo
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>';
 
-	print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
+	print '<table width="100%" class="nocellnopadd"><tr><td valign="center">';
 	print $mysoc->logo;
 	print '</td><td valign="center" align="right">';
 
