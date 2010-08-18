@@ -54,6 +54,9 @@ class DoliDb
 	var $lastquery;
 	var $lastqueryerror;		// Ajout d'une variable en cas d'erreur
 
+	var $unescapeslashquot=0;              // By default we do not force the unescape of \'. This is used only to process sql with mysql escaped data.
+	var $standard_conforming_strings=1;    // Database has option standard_conforming_strings to on
+
 	var $ok;
 	var $error;
 	var $lasterror;
@@ -271,8 +274,18 @@ class DoliDb
 			$line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2, \\3',$line);
 			//print $line."\n";
 
-			// Replace espacing \' by ''
-			$line=preg_replace("/\\\'/","''",$line);
+			// Replace espacing \' by ''.
+			// By default we do not (should be already done by db->escape function if required)
+			if (! empty($this->unescapeslashquot))
+			{
+                // Except for sql insert in data file that
+                // are mysql escaped so we removed them to be compatible with standard_conforming_strings=on
+                // that considers \ as ordinary character).
+                if ($this->standard_conforming_strings)
+                {
+				    $line=preg_replace("/\\\'/","''",$line);
+                }
+			}
 
 			//print $line."\n";
 		}
@@ -639,20 +652,7 @@ class DoliDb
 		return pg_escape_string($stringtoencode);
 	}
 
-
-	/**
-	 *   \brief      Formatage (par la base de donnees) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
-	 *               afin de retourner une donnee toujours au format universel date tms unix.
-	 *               Fonction a utiliser pour generer les SELECT.
-	 *   \param	    param       Date au format text a convertir
-	 *   \return	    date        Date au format tms.
-	 */
-	function pdate($param)
-	{
-		return "unix_timestamp(".$param.")";
-	}
-
-	/**
+    /**
 	 *   \brief     Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
 	 *              Function to use to build INSERT, UPDATE or WHERE predica
 	 *   \param	    param       Date TMS to convert

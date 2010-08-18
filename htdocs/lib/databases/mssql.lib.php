@@ -534,19 +534,6 @@ class DoliDb
 
 
 	/**
-	 *   Formatage (par la base de donnees) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
-	 *   afin de retourner une donnee toujours au format universel date TMS unix.
-	 *   Fonction a utiliser pour generer les SELECT.
-	 *   @param	    	param       Nom champ base de type date ou chaine 'YYYY-MM-DD HH:MM:SS'
-	 *   @return	    date        Date au format TMS.
-	 *	 @deprecated	Remove unix_timestamp functions so use jdate instead
-	 */
-	function pdate($param)
-	{
-		return "dbo.unix_timestamp(".$param.")";
-	}
-
-	/**
 	 *   \brief     Convert (by PHP) a GM Timestamp date into a PHP server TZ to insert into a date field.
 	 *              Function to use to build INSERT, UPDATE or WHERE predica
 	 *   \param	    param       Date TMS to convert
