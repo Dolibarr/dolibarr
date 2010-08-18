@@ -10,6 +10,13 @@
 // \version    $Id$
 //
 
+
+/*=================================================================
+	Purpose:  Resubmit page when type of third party (company/individual) is changed
+	Input:    param
+	Author:   Laurent Destailleur
+	Licence:  GPL
+==================================================================*/
 function dolibarr_type_reload(param)
 {
     document.formsoc.action.value='create';
@@ -18,6 +25,12 @@ function dolibarr_type_reload(param)
     document.formsoc.submit();
 }
 
+/*=================================================================
+	Purpose:  Resubmit page when barcode choice is changed (admin page)
+	Input:    formNameID
+	Author:   Laurent Destailleur
+	Licence:  GPL
+==================================================================*/
 function barcode_coder_save(formNameID)
 {
     var formName = document.getElementById(formNameID);
@@ -25,13 +38,13 @@ function barcode_coder_save(formNameID)
     formName.submit();
 }
 
+
 /*=================================================================
 	Purpose:  Pour la fonction de saisie auto des villes
 	Input:    postalcode,objecttown,objectcountry,objectstate
 	Author:   Eric Seigne
 	Licence:  GPL
 ==================================================================*/
-
 function autofilltownfromzip_PopupPostalCode(url_root, postalcode,objecttown,objectcountry,objectstate)
 {
     var url = url_root + '/core/searchpostalcode.php?cp=' + postalcode;
@@ -43,6 +56,13 @@ function autofilltownfromzip_PopupPostalCode(url_root, postalcode,objecttown,obj
     if((document.window != null) && (!hWnd.opener)) hWnd.opener = document.window;
 }
 
+
+/*=================================================================
+Purpose:  To resubmit pages when country is changed
+Input:    postalcode,objecttown,objectcountry,objectstate
+Author:   Eric Seigne
+Licence:  GPL
+==================================================================*/
 function company_save_refresh_edit()
 {
     document.formsoc.action.value="edit";
@@ -66,10 +86,9 @@ function company_save_refresh()
 /*=================================================================
 	Purpose:  Pour la saisie des dates par calendrier
 	Input:    base			   "/theme/eldy"
-					  dateFieldID  "dateo"			  Nom du champ
-				    format			 "dd/MM/yyyy"   Format issu de Dolibarr de SimpleDateFormat a utiliser pour retour
+	          dateFieldID      "dateo"        Nom du champ
+              format           "dd/MM/yyyy"   Format issu de Dolibarr de SimpleDateFormat a utiliser pour retour
 ==================================================================*/
-
 function showDP(base,dateFieldID,format)
 {
 	//check to see if another box is already showing
@@ -551,7 +570,25 @@ function getIntegerInString(str,i,minlength,maxlength)
 
 
 /*=================================================================
-	Purpose:  Fonction pour champ saisie en mode ajax
+Purpose:  Show a popup HTML page.
+Input:    url,title
+Author:   Laurent Destailleur
+Licence:  GPL
+==================================================================*/
+function newpopup(url,title) {
+var argv = newpopup.arguments;
+var argc = newpopup.arguments.length;
+tmp=url;
+var l = (argc > 2) ? argv[2] : 600;
+var h = (argc > 3) ? argv[3] : 400;
+var wfeatures="directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width="+l+",height="+h+",left=" + eval("(screen.width - l)/2") + ",top=" + eval("(screen.height - h)/2");
+fen=window.open(tmp,title,wfeatures);
+return false;
+}
+
+
+/*=================================================================
+	Purpose:  Fonction pour champ saisie en mode ajax. Used for autocompletion of products.
 	Author:   Laurent Destailleur
 	Licence:  GPL
 ==================================================================*/
@@ -560,25 +597,7 @@ function publish_selvalue(obj) { $(obj.name).value = obj.options[obj.selectedInd
 
 
 /*=================================================================
-	Purpose:  Affiche popup
-	Input:    url,title
-	Author:   Laurent Destailleur
-	Licence:  GPL
-==================================================================*/
-function newpopup(url,title) {
-	var argv = newpopup.arguments;
-	var argc = newpopup.arguments.length;
-	tmp=url;
-	var l = (argc > 2) ? argv[2] : 600;
-	var h = (argc > 3) ? argv[3] : 400;
-	var wfeatures="directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width="+l+",height="+h+",left=" + eval("(screen.width - l)/2") + ",top=" + eval("(screen.height - h)/2");
-	fen=window.open(tmp,title,wfeatures);
-	return false;
-}
-
-
-/*=================================================================
-	Purpose:  Set value of a field after return of Ajax call
+	Purpose:  Set value of a field after return of Ajax call. Used for autocompletion.
 	Input:    HTML field name, val
 	Author:   Regis Houssin
 	Licence:  GPL
@@ -598,7 +617,7 @@ function ac_return(field, val){
 }
 
 /*=================================================================
-	Purpose:  Applique un delai avant execution
+	Purpose:  Applique un delai avant execution. Used for autocompletion of companies.
 	Input:    funct, delay
 	Author:   Regis Houssin
 	Licence:  GPL
@@ -608,8 +627,9 @@ function ac_return(field, val){
   	setTimeout(funct,delay);
 }
 
+ 
 /*=================================================================
-	Purpose:  Nettoie les valeurs d'un "Sortable.serialize"
+	Purpose:  Clean values of a "Sortable.serialize". Used by drag and drop.
 	Input:    expr
 	Author:   Regis Houssin
 	Licence:  GPL
@@ -622,8 +642,9 @@ function cleanSerialize(expr) {
 	return liste;
 }
 
+
 /*=================================================================
-	Purpose:  Show a confim popup
+	Purpose:  Show a confim popup (Use PWC)
 	Input:    title,linkurlyes,linkurlno,message,ok,cancel,objectID
 	Author:   Regis Houssin, Laurent Destailleur
 	Licence:  GPL
@@ -642,17 +663,7 @@ function dialogConfirm(title,linkurlyes,linkurlno,message,ok,cancel,objectID) {
 }
 
 /*=================================================================
-	Purpose:  Affiche un message d'information
-	Input:    message
-	Author:   Regis Houssin
-	Licence:  GPL
-==================================================================*/
-function dialogInfo(message) {
-	Dialog.info(message, {width:700});
-}
-
-/*=================================================================
-	Purpose:  Affiche une fenetre
+	Purpose:  Affiche une fenetre (Use PWC)
 	Input:    message
 	Author:   Regis Houssin
 	Licence:  GPL
@@ -674,21 +685,9 @@ win.getContent().update(message);
 win.showCenter();
 }
 
-/*=================================================================
-Purpose:  Hide a temporary message in input text fields
-Input:    fiedId
-Input:    message
-Author:   Regis Houssin
-Licence:  GPL
-==================================================================*/
-function hideMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	textbox.style.color = 'black';
-	if (textbox.value == message) textbox.value = '';
-}
 
 /*=================================================================
-Purpose:  Display a temporary message in input text fields
+Purpose:  Display a temporary message in input text fields (For showing help message on input field).
 Input:    fieldId
 Input:    message
 Author:   Regis Houssin
@@ -703,7 +702,20 @@ function displayMessage(fieldId,message) {
 }
 
 /*=================================================================
-Purpose:  To show an element
+Purpose:  Hide a temporary message in input text fields (For showing help message on input field).
+Input:    fiedId
+Input:    message
+Author:   Regis Houssin
+Licence:  GPL
+==================================================================*/
+function hideMessage(fieldId,message) {
+	var textbox = document.getElementById(fieldId);
+	textbox.style.color = 'black';
+	if (textbox.value == message) textbox.value = '';
+}
+
+/*=================================================================
+Purpose:  To show an element (To support multiselect of checkboxes in some pages)
 Input:    fieldId
 Author:   Regis Houssin
 Licence:  GPL
@@ -716,7 +728,7 @@ function displayElement(fieldId) {
 }
 
 /*=================================================================
-Purpose:  To hide an element
+Purpose:  To hide an element (To support multiselect of checkboxes in some pages)
 Input:    fieldId
 Author:   Regis Houssin
 Licence:  GPL
@@ -729,7 +741,7 @@ function hideElement(fieldId) {
 }
 
 /*=================================================================
-Purpose:  To check a checkbox
+Purpose:  To check a checkbox (To support multiselect of checkboxes in some pages)
 Input:    fieldId
 Author:   Regis Houssin
 Licence:  GPL
@@ -742,7 +754,7 @@ function checkBox(boxId) {
 }
 
 /*=================================================================
-Purpose:  To uncheck a checkbox
+Purpose:  To uncheck a checkbox (To support multiselect of checkboxes in some pages)
 Input:    fieldId
 Author:   Regis Houssin
 Licence:  GPL
