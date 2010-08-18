@@ -804,27 +804,28 @@ class Commande extends CommonObject
 
 
 	/**
-	 *    	\brief     	Add a line
-	 * 		\param    	commandeid      	Id de la commande
-	 * 		\param    	desc            	Description de la ligne
-	 * 		\param    	pu_ht              	Prix unitaire HT
-	 * 		\param    	qty             	Quantite
-	 * 		\param    	txtva           	Taux de tva force, sinon -1
-	 * 		\param		txlocaltax1			Local tax 1 rate
-	 *  	\param		txlocaltax2			Local tax 2 rate
-	 *		\param    	fk_product      	Id du produit/service predefini
-	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
-	 * 		\param    	info_bits			Bits de type de lignes
-	 *		\param    	fk_remise_except	Id remise
-	 *		\param		price_base_type		HT or TTC
-	 * 		\param    	pu_ttc             	Prix unitaire TTC
-	 * 		\param    	date_start          Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	 * 		\param    	date_end            End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	 * 		\param		type				Type of line (0=product, 1=service)
-	 *    	\return    	int             	>0 si ok, <0 si ko
-	 *    	\see       	add_product
-	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
+	 *     Add an order line into database (linked to product/service or not)
+	 *     @param      commandeid      	Id of line
+	 * 	   @param      desc            	Description of line
+	 * 	   @param      pu_ht            Unit price (without tax)
+	 * 	   @param      qty             	Quantite
+	 * 	   @param      txtva           	Taux de tva force, sinon -1
+	 * 	   @param      txlocaltax1		Local tax 1 rate
+	 *     @param      txlocaltax2		Local tax 2 rate
+	 *	   @param      fk_product      	Id du produit/service predefini
+	 * 	   @param      remise_percent  	Pourcentage de remise de la ligne
+	 * 	   @param      info_bits		Bits de type de lignes
+	 *	   @param      fk_remise_except	Id remise
+	 *	   @param      price_base_type	HT or TTC
+	 * 	   @param      pu_ttc           Prix unitaire TTC
+	 * 	   @param      date_start       Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 * 	   @param      date_end         End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 * 	   @param      type				Type of line (0=product, 1=service)
+	 *     @param      rang             Position of line
+	 *     @return     int             	>0 si ok, <0 si ko
+	 *     @see        add_product
+	 * 	   @remarks	   Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+	 *		           	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
@@ -838,6 +839,7 @@ class Commande extends CommonObject
 		if (empty($remise_percent)) $remise_percent=0;
         if (empty($qty)) $qty=0;
         if (empty($info_bits)) $info_bits=0;
+        if (empty($rang)) $rang=0;
 
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
@@ -873,7 +875,7 @@ class Commande extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
-			
+
 			// Rang to use
 			$rangtouse = $rang;
 			if ($rangtouse == -1)
@@ -2624,8 +2626,15 @@ class OrderLine
 		if (empty($this->tva_tx)) $this->tva_tx=0;
 		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
 		if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
+        if (empty($this->rang)) $this->rang=0;
+        if (empty($this->remise)) $this->remise=0;
+        if (empty($this->remise_percent)) $this->remise_percent=0;
+        if (empty($this->info_bits)) $this->info_bits=0;
 
-		$this->db->begin();
+        // Check parameters
+        if ($this->product_type < 0) return -1;
+
+        $this->db->begin();
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';

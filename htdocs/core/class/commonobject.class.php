@@ -35,7 +35,7 @@ class CommonObject
 {
 	// Instantiate classes of thirdparty module
 	var $objModules=array();
-	
+
 	/**
 	 *      \brief      Check if ref is used.
 	 * 		\return		int			<0 if KO, 0 if not found, >0 if found
@@ -802,7 +802,8 @@ class CommonObject
 	}
 
 	/**
-	 * 	\brief		Get max value for rang
+	 * 	   Get max value used for position of line (rang)
+	 *     @result     int     Max value of rang in table of lines
 	 */
 	function line_max()
 	{
@@ -1143,7 +1144,7 @@ class CommonObject
 			print $sql;
 		}
 	}
-	
+
 	/**
 	 *	Instantiate hooks of thirdparty module
 	 *	@param	$type	Type of hook
@@ -1151,7 +1152,7 @@ class CommonObject
 	function callHooks($type='objectcard')
 	{
 		global $conf;
-		
+
 		foreach($conf->hooks_modules as $module => $hooks)
 		{
 			if ($conf->$module->enabled && in_array($type,$hooks))
@@ -1165,13 +1166,13 @@ class CommonObject
 				{
 					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php');
 				}
-				
+
 				$classname = ucfirst($module);
 				$this->objModules[] = new $classname($this->db);
 			}
 		}
 	}
-	
+
 	/**
 	 *	Show add predefined products/services form
 	 */
@@ -1182,7 +1183,7 @@ class CommonObject
 
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/addpredefinedproductform.tpl.php');
 	}
-	
+
 	/**
 	 *	Show add free products/services form
 	 */
@@ -1220,15 +1221,15 @@ class CommonObject
 			return $num;
 		}
 	}
-	
+
 	/**
 	 * 	Return HTML table with title list
-	 * 	TODO mettre le html dans un template 
+	 * 	TODO mettre le html dans un template
 	 */
 	function print_title_list()
 	{
 		global $conf,$langs;
-		
+
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Description').'</td>';
 		if ($conf->global->PRODUIT_USE_MARKUP) print '<td align="right" width="80">'.$langs->trans('Markup').'</td>';
@@ -1240,7 +1241,7 @@ class CommonObject
 		print '<td width="48" colspan="3">&nbsp;</td>';
 		print "</tr>\n";
 	}
-	
+
 	/**
 	 * 	Return HTML with object lines list
 	 * 	@param		lines		Object lines
@@ -1250,51 +1251,51 @@ class CommonObject
 		$num = count($lines);
 		$var = true;
 		$i	 = 0;
-		
+
 		foreach ($lines as $line)
 		{
 			$var=!$var;
-			
+
 			$this->printLine($line,$var,$num,$i,$dateSelector);
-			
+
 			$i++;
 		}
 	}
-	
+
 	/**
 	 * 	Return HTML with selected object line
 	 * 	@param		line		Selected object line
-	 * 	TODO mettre le html dans un template 
+	 * 	TODO mettre le html dans un template
 	 */
 	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0)
 	{
 		global $conf,$langs,$user;
 		global $html,$bc;
-		
+
 		$element = $this->element;
 		// TODO uniformiser
 		if ($element == 'propal') $element = 'propale';
-		
+
 		// Show product and description
 		$type=$line->product_type?$line->product_type:$line->fk_product_type;
 		// Try to enhance type detection using date_start and date_end for free lines where type
 		// was not saved.
 		if (! empty($line->date_start)) $type=1;
 		if (! empty($line->date_end)) $type=1;
-		
+
 		// Ligne en mode visu
 		if ($_GET['action'] != 'editline' || $_GET['lineid'] != $line->id)
 		{
 			print '<tr '.$bc[$var].'>';
-			
+
 			// Produit
 			if ($line->fk_product > 0)
 			{
 				$product_static = new Product($db);
-				
+
 				print '<td>';
 				print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne;
-				
+
 				// Show product and description
 				$product_static->type=$line->fk_product_type;
 				$product_static->id=$line->fk_product;
@@ -1304,16 +1305,16 @@ class CommonObject
 				$text.= ' - '.$line->product_label;
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
 				print $html->textwithtooltip($text,$description,3,'','',$i);
-				
+
 				// Show range
 				print_date_range($line->date_start, $line->date_end);
-				
+
 				// Add description in form
 				if ($conf->global->PRODUIT_DESC_IN_FORM)
 				{
 					print ($line->description && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 				}
-				
+
 				print '</td>';
 			}
 			else
@@ -1349,7 +1350,7 @@ class CommonObject
 				}
 				print "</td>\n";
 			}
-		
+
 		// TODO a déplacer dans classe module marge
 		/*
 		if ($conf->global->PRODUIT_USE_MARKUP && $conf->use_javascript_ajax)
@@ -1408,10 +1409,10 @@ class CommonObject
 
 			// VAT Rate
 			print '<td align="right" nowrap="nowrap">'.vatrate($line->tva_tx,'%',$line->info_bits).'</td>';
-			
+
 			// U.P HT
 			print '<td align="right" nowrap="nowrap">'.price($line->subprice)."</td>\n";
-			
+
 			// Qty
 			print '<td align="right" nowrap="nowrap">';
 			if ((($line->info_bits & 2) != 2) && $line->special_code != 3)
@@ -1420,7 +1421,7 @@ class CommonObject
 			}
 			else print '&nbsp;';
 			print '</td>';
-			
+
 			// Remise percent (negative or positive)
 			if (!empty($line->remise_percent) && $line->special_code != 3)
 			{
@@ -1430,7 +1431,7 @@ class CommonObject
 			{
 				print '<td>&nbsp;</td>';
 			}
-			
+
 			// Montant total HT
 			if ($line->special_code == 3)
 			{
@@ -1441,7 +1442,7 @@ class CommonObject
 			{
 				print '<td align="right" nowrap="nowrap">'.price($line->total_ht)."</td>\n";
 			}
-			
+
 			// Icone d'edition et suppression
 			if ($this->statut == 0  && $user->rights->$element->creer)
 			{
@@ -1483,10 +1484,10 @@ class CommonObject
 			{
 				print '<td colspan="3">&nbsp;</td>';
 			}
-			
+
 			print '</tr>';
 		}
-		
+
 		// Ligne en mode update
 		if ($this->statut == 0 && $_GET["action"] == 'editline' && $user->rights->propale->creer && $_GET["lineid"] == $line->id)
 		{
@@ -1525,10 +1526,10 @@ class CommonObject
 				}
 			}
 			print '</td>';
-			
+
 			// TODO a déplacer dans classe module marge
 			//if ($conf->global->PRODUIT_USE_MARKUP) print '<td align="right">'.vatrate($line->marge_tx).'%</td>';
-			
+
 			print '<td align="right">';
 			print $html->select_tva('tva_tx',$line->tva_tx,$mysoc,$societe,'',$line->info_bits);
 			print '</td>';
@@ -1550,7 +1551,7 @@ class CommonObject
 			print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 			print '</tr>' . "\n";
-			
+
 			// Start and end dates selector
 			if ($conf->service->enabled && $dateSelector)
 			{
@@ -1562,7 +1563,7 @@ class CommonObject
 				print '</td>';
 				print '</tr>';
 			}
-			
+
 			print "</form>\n";
 		}
 	}

@@ -266,7 +266,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief     	Add new line in database
+	 *    	Add a proposal line into database (linked to product/service or not)
 	 * 		\param    	propalid        	Id de la propale
 	 * 		\param    	desc            	Description de la ligne
 	 * 		\param    	pu_ht              	Prix unitaire
@@ -279,8 +279,10 @@ class Propal extends CommonObject
 	 * 		\param    	price_base_type		HT or TTC
 	 * 		\param    	pu_ttc             	Prix unitaire TTC
 	 * 		\param    	info_bits			Bits de type de lignes
+	 *      \param      type                Type of line (product, service)
+	 *      \param      rang                Position of line
 	 *    	\return    	int             	>0 if OK, <0 if KO
-	 *    	\see       	add_product
+	 *    	@see       	add_product
 	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
@@ -293,27 +295,34 @@ class Propal extends CommonObject
 		dol_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
+		// Clean parameters
+		if (empty($remise_percent)) $remise_percent=0;
+		if (empty($qty)) $qty=0;
+		if (empty($info_bits)) $info_bits=0;
+		if (empty($rang)) $rang=0;
+
+		$remise_percent=price2num($remise_percent);
+		$qty=price2num($qty);
+		$pu_ht=price2num($pu_ht);
+		$pu_ttc=price2num($pu_ttc);
+		$txtva=price2num($txtva);
+		$txlocaltax1=price2num($txlocaltax1);
+		$txlocaltax2=price2num($txlocaltax2);
+		if ($price_base_type=='HT')
+		{
+			$pu=$pu_ht;
+		}
+		else
+		{
+			$pu=$pu_ttc;
+		}
+
+		// Check parameters
+		if ($type < 0) return -1;
+
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
-
-			// Clean parameters
-			$remise_percent=price2num($remise_percent);
-			$qty=price2num($qty);
-			if (empty($qty)) $qty=0;	// If qty=''
-			$pu_ht=price2num($pu_ht);
-			$pu_ttc=price2num($pu_ttc);
-			$txtva=price2num($txtva);
-			$txlocaltax1=price2num($txlocaltax1);
-			$txlocaltax2=price2num($txlocaltax2);
-			if ($price_base_type=='HT')
-			{
-				$pu=$pu_ht;
-			}
-			else
-			{
-				$pu=$pu_ttc;
-			}
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -325,7 +334,7 @@ class Propal extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
-			
+
 			// Rang to use
 			$rangtouse = $rang;
 			if ($rangtouse == -1)
@@ -423,28 +432,17 @@ class Propal extends CommonObject
 		dol_syslog("Propal::UpdateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
+		// Clean parameters
+		$remise_percent=price2num($remise_percent);
+		$qty=price2num($qty);
+		$pu = price2num($pu);
+		$txtva = price2num($txtva);
+		$txlocaltax1=price2num($txlocaltax1);
+		$txlocaltax2=price2num($txlocaltax2);
+
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
-
-			// Nettoyage param�tres
-			$remise_percent=price2num($remise_percent);
-			$qty=price2num($qty);
-			/*
-			if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
-			{
-				$qty=0;
-				$remise_percent=0;
-			}
-			else if (! $qty)
-			{
-				$qty=1;
-			}
-			*/
-			$pu = price2num($pu);
-			$txtva = price2num($txtva);
-			$txlocaltax1=price2num($txlocaltax1);
-			$txlocaltax2=price2num($txlocaltax2);
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -502,7 +500,7 @@ class Propal extends CommonObject
 					// Fin appel triggers
 				}
 
-                $this->db->commit();
+				$this->db->commit();
 				return $result;
 			}
 			else
@@ -1414,7 +1412,7 @@ class Propal extends CommonObject
 	 *    \param       limit           For pagination
 	 *    \param       offset          For pagination
 	 *    \param       sortfield       Sort criteria
-     *    \param       sortorder       Sort order
+	 *    \param       sortorder       Sort order
 	 *    \return      int		       -1 if KO, array with result if OK
 	 */
 	function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datep', $sortorder='DESC')
@@ -1463,7 +1461,7 @@ class Propal extends CommonObject
 		}
 		else
 		{
-            dol_print_error($this->db);
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -2260,19 +2258,23 @@ class PropaleLigne
 	 */
 	function insert()
 	{
-        global $conf;
+		global $conf;
 
 		dol_syslog("PropaleLigne::insert rang=".$this->rang);
-		$this->db->begin();
 
 		// Clean parameters
-		if (! $this->remise) $this->remise=0;
-		if (! $this->remise_percent) $this->remise_percent=0;
-		if (! $this->info_bits) $this->info_bits=0;
 		if (empty($this->tva_tx)) $this->tva_tx=0;
+		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
+		if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
+		if (empty($this->rang)) $this->rang=0;
+		if (empty($this->remise)) $this->remise=0;
+		if (empty($this->remise_percent)) $this->remise_percent=0;
+		if (empty($this->info_bits)) $this->info_bits=0;
 
 		// Check parameters
-		if ($this->type < 0) return -1;
+		if ($this->product_type < 0) return -1;
+
+		$this->db->begin();
 
 		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';

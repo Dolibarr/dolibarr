@@ -1565,7 +1565,7 @@ class Facture extends CommonObject
 
 
 	/**
-	 * 		\brief    	Add an invoice line into database (linked to product/service or not)
+	 * 		Add an invoice line into database (linked to product/service or not)
 	 * 		\param    	facid           	Id de la facture
 	 * 		\param    	desc            	Description de la ligne
 	 * 		\param    	pu_ht              	Prix unitaire HT
@@ -1583,6 +1583,7 @@ class Facture extends CommonObject
 	 *		\param		price_base_type		HT or TTC
 	 * 		\param    	pu_ttc             	Prix unitaire TTC
 	 * 		\param		type				Type of line (0=product, 1=service)
+	 *      \param      rang                Position of line
 	 *    	\return    	int             	>0 if OK, <0 if KO
 	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
@@ -1594,34 +1595,36 @@ class Facture extends CommonObject
 		dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
+		// Clean parameters
+		if (empty($remise_percent)) $remise_percent=0;
+		if (empty($qty)) $qty=0;
+		if (empty($info_bits)) $info_bits=0;
+		if (empty($rang)) $rang=0;
+		if (empty($ventil)) $ventil=0;
+
+		$remise_percent=price2num($remise_percent);
+		$qty=price2num($qty);
+		$pu_ht=price2num($pu_ht);
+		$pu_ttc=price2num($pu_ttc);
+		$txtva=price2num($txtva);
+		$txlocaltax1=price2num($txlocaltax1);
+		$txlocaltax2=price2num($txlocaltax2);
+
+		if ($price_base_type=='HT')
+		{
+			$pu=$pu_ht;
+		}
+		else
+		{
+			$pu=$pu_ttc;
+		}
+
 		// Check parameters
 		if ($type < 0) return -1;
 
 		if ($this->brouillon)
 		{
 			$this->db->begin();
-
-			// Clean parameters
-            if (empty($remise_percent)) $remise_percent=0;
-			if (empty($qty)) $qty=0;
-			if (empty($ventil)) $ventil=0;
-			if (empty($info_bits)) $info_bits=0;
-            $remise_percent=price2num($remise_percent);
-            $qty=price2num($qty);
-			$pu_ht=price2num($pu_ht);
-			$pu_ttc=price2num($pu_ttc);
-			$txtva=price2num($txtva);
-			$txlocaltax1=price2num($txlocaltax1);
-			$txlocaltax2=price2num($txlocaltax2);
-
-			if ($price_base_type=='HT')
-			{
-				$pu=$pu_ht;
-			}
-			else
-			{
-				$pu=$pu_ttc;
-			}
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -1633,7 +1636,7 @@ class Facture extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
-			
+
 			// Rang to use
 			$rangtouse = $rang;
 			if ($rangtouse == -1)
@@ -2640,8 +2643,8 @@ class Facture extends CommonObject
 			$sql.= ' WHERE fk_facture = '.$this->id;
 			$sql.= ' AND traite = 0';
 
-            $resql=$this->db->query($sql);
- 			if ($resql)
+			$resql=$this->db->query($sql);
+			if ($resql)
 			{
 				$row = $this->db->fetch_row($resql);
 				if ($row[0] == 0)
@@ -3024,16 +3027,20 @@ class FactureLigne
 
 		dol_syslog("FactureLigne::Insert rang=".$this->rang, LOG_DEBUG);
 
-		// Clean parameters
-		$this->desc=trim($this->desc);
-		if (empty($this->subprice)) $this->subprice=0;
-		if (empty($this->price))    $this->price=0;
-		if (empty($this->tva_tx))   $this->tva_tx=0;
-        if (empty($this->localtax1_tx))   $this->localtax1_tx=0;
-		if (empty($this->localtax2_tx))   $this->localtax2_tx=0;
+        // Clean parameters
+        $this->desc=trim($this->desc);
+		if (empty($this->tva_tx)) $this->tva_tx=0;
+        if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
+        if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
+        if (empty($this->rang)) $this->rang=0;
+        if (empty($this->remise)) $this->remise=0;
+        if (empty($this->remise_percent)) $this->remise_percent=0;
+        if (empty($this->info_bits)) $this->info_bits=0;
+        if (empty($this->subprice)) $this->subprice=0;
+        if (empty($this->price))    $this->price=0;
 
-		// Check parameters
-		if ($this->product_type < 0) return -1;
+        // Check parameters
+        if ($this->product_type < 0) return -1;
 
 		$this->db->begin();
 
