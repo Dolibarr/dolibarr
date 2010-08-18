@@ -52,7 +52,7 @@ function printBoxesArea($user,$areacode)
 		print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr>';
 
 		// Affichage colonne gauche
-		print '<td width="50%" valign="top">'."\n";
+		print '<td width="50%" valign="top" style="padding-right: 4px;">'."\n";
 
 		print "\n<!-- Box left container -->\n";
 		print '<div id="left">'."\n";
@@ -73,21 +73,21 @@ function printBoxesArea($user,$areacode)
 		}
 
 		// If no box on left, we add an invisible empty box
-		if ($ii==0)
-		{
+//		if ($ii==0)
+//		{
 			$emptybox=new ModeleBoxes($db);
 			$emptybox->box_id='A';
 			$emptybox->info_box_head=array();
 			$emptybox->info_box_contents=array();
 			$emptybox->showBox(array(),array());
-		}
+//		}
 
 		print "</div>\n";
 		print "<!-- End box container -->\n";
 
 		print "</td>\n";
 		// Affichage colonne droite
-		print '<td width="50%" valign="top">';
+		print '<td width="50%" valign="top" style="padding-right: 2px;">';
 
 		print "\n<!-- Box right container -->\n";
 		print '<div id="right">'."\n";
@@ -108,14 +108,14 @@ function printBoxesArea($user,$areacode)
 		}
 
 		// If no box on right, we show add an invisible empty box
-		if ($ii==0)
-		{
+//		if ($ii==0)
+//		{
 			$emptybox=new ModeleBoxes($db);
 			$emptybox->box_id='B';
 			$emptybox->info_box_head=array();
 			$emptybox->info_box_contents=array();
 			$emptybox->showBox(array(),array());
-		}
+//		}
 
 		print "</div>\n";
 		print "<!-- End box container -->\n";
@@ -349,7 +349,8 @@ class InfoBox
 
 		if (! $userid || $userid == 0) return 0;
 
-		$user = new User($this->db,$userid);
+        $user = new User($this->db);
+        $user->id=$userid;
 
 		$this->db->begin();
 
