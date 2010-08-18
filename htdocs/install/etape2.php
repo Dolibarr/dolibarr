@@ -116,6 +116,11 @@ if ($_POST["action"] == "set")
 	$createfunctions=1;
 	$createdata=1;
 
+
+	// To say sql requests are escaped for mysql so we need to unescape them
+	$db->unescapeslashquot=1;
+
+
 	/**************************************************************************************
 	 *
 	 * Chargement fichiers tables/*.sql (non *.key.sql)
@@ -194,7 +199,7 @@ if ($_POST["action"] == "set")
 						print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
 						print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
 						print "\n</td>";
-						print "<td>".$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td></tr>";
+						print "<td>".$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error()."</td></tr>";
 						$error++;
 					}
 				}
@@ -336,7 +341,7 @@ if ($_POST["action"] == "set")
 								print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
 								print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$db->lastqueryerror();
 								print "\n</td>";
-								print "<td>".$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td></tr>";
+								print "<td>".$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error()."</td></tr>";
 								$error++;
 							}
 						}
@@ -420,7 +425,12 @@ if ($_POST["action"] == "set")
 						else
 						{
 							$ok = 0;
-							print $langs->trans("ErrorSQL")." : ".$db->errno()." - '".$buffer."'<br>\n";
+
+                            print "<tr><td>".$langs->trans("FunctionsCreation");
+                            print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
+                            print "\n</td>";
+                            print "<td>".$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error()."</td></tr>";
+                            $error++;
 						}
 					}
 				}
