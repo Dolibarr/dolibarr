@@ -20,5 +20,5 @@
 -- ===========================================================================
 
 
-        -- We need to include note to allow several entries for external rss module
-        ALTER TABLE llx_boxes_def ADD UNIQUE INDEX uk_boxes_def (file, entity, note);
+-- We need to include note to allow several entries for external rss module
+ALTER TABLE llx_boxes_def ADD UNIQUE INDEX uk_boxes_def (file, entity, note);
