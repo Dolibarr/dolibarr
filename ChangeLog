@@ -8,10 +8,12 @@ For users:
 - New: Task #10538: Add filter on expiration date of subscription for
        foundation module email selector.
 - Fix: Better Postgresql compatibility.
+- Fix: Box order is saved when moved.
 
-For developer:
-- Qual: Renamed some fields into database to be more internationnal.
+For developers:
+- New: Add jquery by default
 - New: Add first Selenium GUI tests.
+- Qual: Renamed some fields into database to be more internationnal.
 
 
 ***** ChangeLog for 2.9 compared to 2.8 *****
