@@ -3070,15 +3070,16 @@ function migrate_delete_old_files($db,$langs,$conf)
     foreach ($filetodeletearray as $filetodelete)
     {
         //print '<b>'.$filetodelete."</b><br>\n";
-        if (file_exists($filetodelete))
+        $result=1;
+    	if (file_exists($filetodelete))
         {
             $result=dol_delete_file($filetodelete);
-        }
-        if (! $result)
-        {
-            $langs->load("errors");
-            print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile",$filetodelete);
-            print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
+	        if (! $result)
+	        {
+	            $langs->load("errors");
+	            print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile",$filetodelete);
+	            print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
+	        }
         }
     }
     return $result;
