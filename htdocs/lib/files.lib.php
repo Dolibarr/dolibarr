@@ -159,18 +159,39 @@ function dol_compare_file($a, $b)
 }
 
 /**
- *	\brief      Return mime type of a file
- *	\param      file		Filename
- *	\return     string     	Return mime type
+ *	Return mime type of a file
+ *	@param      file		Filename
+ *  @param      default     Default mime type if extension not found in known list
+ *	@return     string     	Return a mime type family
+ *                          (text/xxx, application/xxx, image/xxx, audio, video, archive)
  */
-function dol_mimetype($file)
+function dol_mimetype($file,$default='application/octet-stream')
 {
-	$mime='application/octet-stream';
+	$mime=$default;
 	// Text files
-	if (preg_match('/\.txt$/i',$file))						$mime='text/plain';
+	if (preg_match('/\.txt$/i',$file))         				$mime='text/plain';
+    if (preg_match('/\.rtx$/i',$file))                      $mime='text/richtext';
 	if (preg_match('/\.csv$/i',$file))						$mime='text/csv';
 	if (preg_match('/\.tsv$/i',$file))						$mime='text/tab-separated-values';
-	// MS office
+    if (preg_match('/\.(cf|conf|ini|log)$/i',$file))        $mime='text/plain';
+    if (preg_match('/\.css$/i',$file))                      $mime='text/css';
+    // Certificate files
+    if (preg_match('/\.(crt|cer|key|pub)$/i',$file))        $mime='text/plain';
+    // HTML
+    if (preg_match('/\.(html|htm|shtml)$/i',$file))         $mime='text/html';
+    // Languages
+    if (preg_match('/\.bas$/i',$file))                      $mime='text/plain';
+    if (preg_match('/\.(c|cpp|h)$/i',$file))                $mime='text/plain';
+    if (preg_match('/\.(java|jsp)$/i',$file))               $mime='text/plain';
+    if (preg_match('/\.php$/i',$file))                      $mime='text/plain';
+    if (preg_match('/\.(pl|pm)$/i',$file))                  $mime='text/plain';
+    if (preg_match('/\.sql$/i',$file))                      $mime='text/plain';
+    if (preg_match('/\.js$/i',$file))                       $mime='text/x-javascript';
+    // Open office
+    if (preg_match('/\.odp$/i',$file))                      $mime='application/vnd.oasis.opendocument.presentation';
+    if (preg_match('/\.ods$/i',$file))                      $mime='application/vnd.oasis.opendocument.spreadsheet';
+    if (preg_match('/\.odt$/i',$file))                      $mime='application/vnd.oasis.opendocument.text';
+    // MS Office
 	if (preg_match('/\.mdb$/i',$file))						$mime='application/msaccess';
 	if (preg_match('/\.doc(x|m)?$/i',$file))				$mime='application/msword';
 	if (preg_match('/\.dot(x|m)?$/i',$file))				$mime='application/msword';
@@ -179,18 +200,16 @@ function dol_mimetype($file)
 	if (preg_match('/\.xla(m)?$/i',$file))					$mime='application/vnd.ms-excel';
 	if (preg_match('/\.pps(m|x)?$/i',$file))				$mime='application/vnd.ms-powerpoint';
 	if (preg_match('/\.ppt(m|x)?$/i',$file))				$mime='application/x-mspowerpoint';
-	// Open office
-	if (preg_match('/\.odp$/i',$file))						$mime='application/vnd.oasis.opendocument.presentation';
-	if (preg_match('/\.ods$/i',$file))						$mime='application/vnd.oasis.opendocument.spreadsheet';
-	if (preg_match('/\.odt$/i',$file))						$mime='application/vnd.oasis.opendocument.text';
-	// Mix
-	if (preg_match('/\.(html|htm)$/i',$file))				$mime='text/html';
-	if (preg_match('/\.pdf$/i',$file))						$mime='application/pdf';
-	if (preg_match('/\.sql$/i',$file))						$mime='text/plain';
-	if (preg_match('/\.(sh|ksh|bash)$/i',$file))			$mime='text/plain';
+    // Other
+    if (preg_match('/\.pdf$/i',$file))                      $mime='application/pdf';
+	// Scripts
+    if (preg_match('/\.bat$/i',$file))                      $mime='text/x-bat';
+    if (preg_match('/\.sh$/i',$file))                       $mime='text/x-sh';
+    if (preg_match('/\.ksh)$/i',$file))                     $mime='text/x-ksh';
+    if (preg_match('/\.bash)$/i',$file))                    $mime='text/x-bash';
 	// Images
-	if (preg_match('/\.jpg$/i',$file))						$mime='image/jpeg';
-	if (preg_match('/\.jpeg$/i',$file))						$mime='image/jpeg';
+    if (preg_match('/\.ico$/i',$file))                      $mime='image/x-icon';
+	if (preg_match('/\.(jpg|jpeg)$/i',$file))				$mime='image/jpeg';
 	if (preg_match('/\.png$/i',$file))						$mime='image/png';
 	if (preg_match('/\.gif$/i',$file))						$mime='image/gif';
 	if (preg_match('/\.bmp$/i',$file))						$mime='image/bmp';
@@ -201,11 +220,12 @@ function dol_mimetype($file)
 	// Other
 	if (preg_match('/\.torrent$/i',$file))					$mime='application/x-bittorrent';
 	// Audio
-	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i',$file))			$mime='audio';
+	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i',$file))            $mime='audio';
 	// Video
-	if (preg_match('/\.(avi|divx|xvid|wmv|mpg|mpeg)$/i',$file))		$mime='video';
+	if (preg_match('/\.(avi|divx|xvid|wmv|mpg|mpeg)$/i',$file))        $mime='video';
 	// Archive
-	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z)$/i',$file))	$mime='archive';
+	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i',$file))   $mime='archive';    // application/xxx where zzz is zip, ...
+
 	return $mime;
 }
 
