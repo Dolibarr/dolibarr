@@ -36,6 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 // Registering the location of boxes
 if((isset($_GET['boxorder']) && !empty($_GET['boxorder'])) && (isset($_GET['userid']) && !empty($_GET['userid'])))
 {
+	// boxorder value is the target order: "A:idboxA1,idboxA2,A-B:idboxB1,idboxB2,B"
 	dol_syslog("AjaxBox boxorder=".$_GET['boxorder']." userid=".$_GET['userid'], LOG_DEBUG);
 
 	$infobox=new InfoBox($db);

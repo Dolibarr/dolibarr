@@ -349,7 +349,8 @@ class InfoBox
 
 		if (! $userid || $userid == 0) return 0;
 
-		$user = new User($this->db,$userid);
+		$user = new User($this->db);
+        $user->id=$userid;
 
 		$this->db->begin();
 
