@@ -116,13 +116,13 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 	}
 }
 
-if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes')
+if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] == 'yes')
 {
 	if ($user->rights->fournisseur->facture->creer)
 	{
 		$facturefourn = new FactureFournisseur($db);
-		$facturefourn->fetch($_GET['facid']);
-		$facturefourn->deleteline($_GET['ligne_id']);
+		$facturefourn->fetch($facid);
+		$facturefourn->deleteline($_REQUEST['ligne_id']);
 		$_GET['action'] = '';
 	}
 }
@@ -665,7 +665,7 @@ else
 			// Confirmation de la suppression d'une ligne produit
 			if ($_GET['action'] == 'confirm_delete_line')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline', '', 0, 0);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline', '', 1, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
