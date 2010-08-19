@@ -1555,7 +1555,7 @@ class Form
 		$sql .= " WHERE active = 1";
 
 		dol_syslog("Form::select_propal_statut sql=".$sql);
-        $resql=$this->db->query($sql);
+		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			print '<select class="flat" name="propal_statut">';
@@ -1695,15 +1695,15 @@ class Form
 
 
 	/**
-	 *    	\brief  Show a confirmation HTML form or AJAX popup
-	 *    	\param  page        	page		Url of page to call if confirmation is OK
-	 *    	\param  title       	title
-	 *    	\param  question    	question
-	 *    	\param  action      	action
-	 *		\param	formquestion	an array with forms complementary inputs
-	 * 		\param	selectedchoice	"" or "no" or "yes"
-	 * 		\param	useajax			0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
-	 * 		\param	string			'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
+	 *     Show a confirmation HTML form or AJAX popup
+	 *     @param  page        	   Url of page to call if confirmation is OK
+	 *     @param  title       	   title
+	 *     @param  question    	   question
+	 *     @param  action      	   action
+	 *	   @param  formquestion	   an array with forms complementary inputs
+	 * 	   @param  selectedchoice  "" or "no" or "yes"
+	 * 	   @param  useajax		   0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
+	 *     @return string          'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
 	 */
 	function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0)
 	{
@@ -1773,7 +1773,7 @@ class Form
 
 			// New code using jQuery only
 			print '<div id="dialog-confirm" title="'.dol_escape_htmltag($title).'">';
-            print img_help('','').' '.$more.$question;
+			print img_help('','').' '.$more.$question;
 			print '</div>'."\n";
 			print '<script type="text/javascript">
                 var choice=\'ko\';
@@ -1789,11 +1789,11 @@ class Form
                          '.($pageno?'if (choice == \'ko\') location.href=\''.$pageno.'\';':'').'
 		              },
 			        buttons: {
-			            \''.dol_escape_js($langs->trans("Yes")).'\': function() {
+			            \''.dol_escape_js($langs->transnoentities("Yes")).'\': function() {
 			                 choice=\'ok\';
 			                jQuery(this).dialog(\'close\');
 			            },
-			            \''.dol_escape_js($langs->trans("No")).'\': function() {
+			            \''.dol_escape_js($langs->transnoentities("No")).'\': function() {
 			                 choice=\'ko\';
 			                jQuery(this).dialog(\'close\');
 			            }
