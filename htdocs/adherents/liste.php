@@ -230,7 +230,7 @@ if ($resql)
 
 	print '<td class="liste_titre">';
 	$listetype=$membertypestatic->liste_array();
-	$form->select_array("type", $listetype, $_REQUEST["type"], 1, 0, 0, 0, '', 0, 12);
+	$form->selectarray("type", $listetype, $_REQUEST["type"], 1, 0, 0, '', 0, 12);
 	print '</td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';

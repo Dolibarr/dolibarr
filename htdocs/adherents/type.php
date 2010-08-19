@@ -457,13 +457,6 @@ if ($rowid > 0)
 			print '<td class="liste_titre" align="left">';
 			print '<input class="flat" type="text" name="search_login" value="'.$_REQUEST["search_login"].'" size="7"></td>';
 
-			// Type
-			/*print '<td class="liste_titre">';
-		    $listetype=$membertypestatic->liste_array();
-		    $form->select_array("type", $listetype, $_REQUEST["type"], 1, 0, 0, 0, '', 0, 12);
-		    print '</td>';
-			*/
-
 			print '<td class="liste_titre">&nbsp;</td>';
 
 			print '<td class="liste_titre" align="left">';

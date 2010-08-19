@@ -2727,21 +2727,13 @@ class Form
 	 * 	\param	disabled		Html select box is disabled
 	 * 	\return	string			HTML select string
 	 */
-	function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0, $maxlen=0, $disabled=0)
+	function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0)
 	{
 		global $langs;
 
 		$out='';
 
-		// \TODO Simplify optionType and option (only one should be necessary)
-		if ($optionType == 1 && $option != '')
-		{
-			$out.='<select '.($disabled?'disabled="true"':'').' class="flat" name="'.$htmlname.'" '.$option.'>';
-		}
-		else
-		{
-			$out.='<select '.($disabled?'disabled="true"':'').' class="flat" name="'.$htmlname.'">';
-		}
+		$out.='<select '.($disabled?'disabled="true"':'').' class="flat" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
 
 		if ($show_empty)
 		{
@@ -2796,9 +2788,9 @@ class Form
 	 * 	\param	maxlen			Length maximum for labels
 	 * 	\deprecated				Use selectarray instead
 	 */
-	function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0, $maxlen=0)
+	function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0)
 	{
-		print $this->selectarray($htmlname, $array, $id, $show_empty, $key_in_label, $value_as_key, $optionType, $option, $translate, $maxlen);
+		print $this->selectarray($htmlname, $array, $id, $show_empty, $key_in_label, $value_as_key, $option, $translate, $maxlen);
 	}
 
 

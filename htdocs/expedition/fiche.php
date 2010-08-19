@@ -426,7 +426,7 @@ if ($_GET["action"] == 'create')
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
 			print '<td colspan="3">';
 			$expe->fetch_delivery_methods();
-			$html->select_array("expedition_method_id",$expe->meths,$_POST["expedition_method_id"],1,0,0,0,"",1);
+			$html->selectarray("expedition_method_id",$expe->meths,$_POST["expedition_method_id"],1,0,0,"",1);
 			print "</td></tr>\n";
 
 			// Tracking number
@@ -875,7 +875,7 @@ else
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setexpedition_method_id">';
 				$expedition->fetch_delivery_methods();
-				$html->select_array("expedition_method_id",$expedition->meths,$expedition->expedition_method_id,1,0,0,0,"",1);
+				$html->selectarray("expedition_method_id",$expedition->meths,$expedition->expedition_method_id,1,0,0,"",1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
