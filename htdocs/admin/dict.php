@@ -840,7 +840,7 @@ function fieldList($fieldlist,$obj='')
 			"facture"=>$langs->trans("Bill"),
 			"facture_fourn"=>$langs->trans("SupplierBill"),
 			"fichinter"=>$langs->trans("InterventionCard"));
-			$html->selectarray('element', $elementList,$obj->$fieldlist[$field]);
+			print $html->selectarray('element', $elementList,$obj->$fieldlist[$field]);
 			print '</td>';
 		}
 		// La source de l'element (pour les type de contact).'
@@ -849,7 +849,7 @@ function fieldList($fieldlist,$obj='')
 			print '<td>';
 			$elementList = array("internal"=>$langs->trans("Internal"),
 			"external"=>$langs->trans("External"));
-			$html->selectarray('source', $elementList,$obj->$fieldlist[$field]);
+			print $html->selectarray('source', $elementList,$obj->$fieldlist[$field]);
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'type' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX."c_actioncomm")
@@ -874,7 +874,7 @@ function fieldList($fieldlist,$obj='')
 		}
 		elseif ($fieldlist[$field]=='unit') {
 			print '<td>';
-			$html->selectarray('unit',array('mm','cm','point','inch'),$obj->$fieldlist[$field],0,0,1);
+			print $html->selectarray('unit',array('mm','cm','point','inch'),$obj->$fieldlist[$field],0,0,1);
 			print '</td>';
 		}
 		else

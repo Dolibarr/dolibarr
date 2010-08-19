@@ -735,7 +735,7 @@ if ($action == 'edit')
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Person").'</span></td><td colspan="2">';
-	$html->selectarray("morphy",  $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$adh->morphy);
+	print $html->selectarray("morphy",  $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$adh->morphy);
 	print "</td></tr>";
 
 	// Societe
@@ -777,7 +777,7 @@ if ($action == 'edit')
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Type").'</span></td><td>';
 	if ($user->rights->adherent->creer)
 	{
-		$html->selectarray("typeid",  $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$adh->typeid));
+		print $html->selectarray("typeid",  $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$adh->typeid));
 	}
 	else
 	{
@@ -921,7 +921,7 @@ if ($action == 'create')
     $morphys["phy"] = $langs->trans("Physical");
     $morphys["mor"] = $langs->trans("Moral");
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Person")."</span></td><td>\n";
-    $html->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$adh->morphy, 1);
+    print $html->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$adh->morphy, 1);
     print "</td>\n";
 
     // Company
@@ -963,7 +963,7 @@ if ($action == 'create')
     $listetype=$adht->liste_array();
     if (sizeof($listetype))
     {
-        $html->selectarray("typeid", $listetype, isset($_POST["typeid"])?$_POST["typeid"]:$typeid, 1);
+        print $html->selectarray("typeid", $listetype, isset($_POST["typeid"])?$_POST["typeid"]:$typeid, 1);
     } else {
         print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
     }

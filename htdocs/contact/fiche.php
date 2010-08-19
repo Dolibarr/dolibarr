@@ -381,7 +381,7 @@ if ($user->rights->societe->contact->creer)
 		// Visibility
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
 		$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-		$form->selectarray('priv',$selectarray,(isset($_POST["priv"])?$_POST["priv"]:$contact->priv),0);
+		print $form->selectarray('priv',$selectarray,(isset($_POST["priv"])?$_POST["priv"]:$contact->priv),0);
 		print '</td></tr>';
 
 		// Note
@@ -495,7 +495,7 @@ if ($user->rights->societe->contact->creer)
 		// Visibility
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
 		$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-		$form->selectarray('priv',$selectarray,$contact->priv,0);
+		print $form->selectarray('priv',$selectarray,$contact->priv,0);
 		print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';

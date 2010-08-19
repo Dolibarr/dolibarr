@@ -1630,7 +1630,7 @@ if ($_GET['action'] == 'create')
 	include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 	$model=new ModelePDFFactures();
 	$liste=$model->liste_modeles($db);
-	$html->selectarray('model',$liste,$conf->global->FACTURE_ADDON_PDF);
+	print $html->selectarray('model',$liste,$conf->global->FACTURE_ADDON_PDF);
 	print "</td></tr>";
 
 	// Note publique

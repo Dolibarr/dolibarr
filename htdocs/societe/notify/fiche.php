@@ -187,10 +187,10 @@ if ( $soc->fetch($soc->id) )
 
 		print '<input type="hidden" name="action" value="add">';
 		print '<tr '.$bc[$var].'><td>';
-		$html->selectarray("contactid",$soc->contact_email_array());
+		print $html->selectarray("contactid",$soc->contact_email_array());
 		print '</td>';
 		print '<td>';
-		$html->selectarray("actionid",$actions);
+		print $html->selectarray("actionid",$actions);
 		print '</td>';
 		print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';

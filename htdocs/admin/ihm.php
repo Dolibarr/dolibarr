@@ -179,7 +179,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 		//'eldy'=>$langs->trans("Yes").' (style eldy)',
 		//'andre'=>$langs->trans("Yes").' (style andre)'
 		);
-    $html->selectarray('main_popup_calendar',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
+    print $html->selectarray('main_popup_calendar',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
     print ' ('.$langs->trans("AvailableOnlyIfJavascriptNotDisabled").')';
     print '</td>';
 	print '<td width="20">&nbsp;</td>';

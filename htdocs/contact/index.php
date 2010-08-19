@@ -273,7 +273,7 @@ if ($result)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="center">';
 	$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-	$form->selectarray('search_priv',$selectarray,$search_priv,1);
+	print $form->selectarray('search_priv',$selectarray,$search_priv,1);
 	print '</td>';
     print '<td class="liste_titre" align="right">';
     print '<input type="image" value="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';

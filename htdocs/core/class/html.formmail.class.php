@@ -354,7 +354,7 @@ class FormMail
 						$liste[$key]=$value;
 					}
 					print " ".$langs->trans("or")." ";
-					$form->selectarray("receivercc", $liste, isset($_REQUEST["receivercc"])?$_REQUEST["receivercc"]:0);
+					print $form->selectarray("receivercc", $liste, isset($_REQUEST["receivercc"])?$_REQUEST["receivercc"]:0);
 				}
 			}
 			print "</td></tr>\n";
@@ -384,7 +384,7 @@ class FormMail
 						$liste[$key]=$value;
 					}
 					print " ".$langs->trans("or")." ";
-					$form->selectarray("receiverccc", $liste, isset($_REQUEST["receiverccc"])?$_REQUEST["receiverccc"]:0);
+					print $form->selectarray("receiverccc", $liste, isset($_REQUEST["receiverccc"])?$_REQUEST["receiverccc"]:0);
 				}
 			}
 			print "</td></tr>\n";
