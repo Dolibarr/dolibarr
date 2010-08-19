@@ -162,8 +162,9 @@ class CommActionRapport
 		$sql.= " u.login";
 		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE a.fk_soc = s.rowid AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
-		$sql.= " AND date_format(a.datep, '%m') = ".$this->month;
-		$sql.= " AND date_format(a.datep, '%Y') = ".$this->year;
+        // TODO remove usage of date_format
+		$sql.= " AND date_format(a.datep, '%m') = '".$this->month."'";
+		$sql.= " AND date_format(a.datep, '%Y') = '".$this->year."'";
 		$sql.= " ORDER BY a.datep DESC";
 
 		dol_syslog("Rapport.pdf::_page sql=".$sql);
