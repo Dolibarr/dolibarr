@@ -105,10 +105,10 @@ print "</table></form><br>";
 $prodser = array();
 $prodser[0][0]=$prodser[0][1]=$prodser[1][0]=$prodser[1][1]=0;
 
-$sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.tosell";
+$sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.tosell, p.tobuy";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.entity = ".$conf->entity;
-$sql.= " GROUP BY p.fk_product_type, p.tosell";
+$sql.= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 $result = $db->query($sql);
 while ($objp = $db->fetch_object($result))
 {
@@ -162,7 +162,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  * Derniers produits/services en vente
  */
 $max=15;
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell,";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.entity = ".$conf->entity;
@@ -192,7 +192,7 @@ if ($result)
 
 		print '<table class="noborder" width="100%">';
 
-		print '<tr class="liste_titre"><td colspan="4">'.$transRecordedType.'</td></tr>';
+		print '<tr class="liste_titre"><td colspan="5">'.$transRecordedType.'</td></tr>';
 
 		$var=True;
 
@@ -229,8 +229,11 @@ if ($result)
 			print dol_print_date($db->jdate($objp->datem),'day');
 			print "</td>";
 			print '<td align="right" nowrap="nowrap">';
-			print $product_static->LibStatut($objp->tosell,5);
+			print $product_static->LibStatut($objp->tosell,5,0);
 			print "</td>";
+            print '<td align="right" nowrap="nowrap">';
+            print $product_static->LibStatut($objp->tobuy,5,1);
+            print "</td>";
 			print "</tr>\n";
 			$i++;
 		}

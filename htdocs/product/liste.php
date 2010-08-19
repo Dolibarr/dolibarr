@@ -123,7 +123,7 @@ else
 
 $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 $sql.= ' p.fk_product_type, p.tms as datem,';
-$sql.= ' p.duration, p.tosell as statut, p.seuil_stock_alerte';
+$sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
@@ -194,6 +194,10 @@ if ($resql)
 	{
 		$tosell = (isset($_GET["tosell"])?$_GET["tosell"]:$_POST["tosell"]);
 	}
+    if (isset($_GET["tobuy"]) || isset($_POST["tobuy"]))
+    {
+        $tosell = (isset($_GET["tobuy"])?$_GET["tobuy"]:$_POST["tobuy"]);
+    }
 
 	$helpurl='';
 	if (isset($_GET["type"]) && $_GET["type"] == 0)
@@ -213,7 +217,7 @@ if ($resql)
 		print '<div class="warning">'.$langs->trans("ProductDeleted",$_GET['delprod']).'</div><br>';
 	}
 
-	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell;
+	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy;
 	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
 	$param.=isset($type)?"&amp;type=".$type:"";
 	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
@@ -309,7 +313,8 @@ if ($resql)
 		if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"liste.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price",$param,"",'align="right"',$sortfield,$sortorder);
 		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("Stock").'</td>';
-		print_liste_field_titre($langs->trans("Status"),"liste.php", "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Sell"),"liste.php", "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Buy"),"liste.php", "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
 
 		// Lignes des champs de filtre
@@ -344,6 +349,9 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 		}
+        print '<td class="liste_titre">';
+        print '&nbsp;';
+        print '</td>';
 		print '<td class="liste_titre" align="right">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
@@ -438,10 +446,13 @@ if ($resql)
 				}
 			}
 
-			// Statut
-			print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
+			// Status (to buy)
+			print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->tosell,5,0).'</td>';
 
-			print "</tr>\n";
+            // Status (to sell)
+            print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
+
+            print "</tr>\n";
 			$i++;
 		}
 
@@ -449,11 +460,11 @@ if ($resql)
 		{
 			if ($sref || $snom || $sall || $sbarcode || $_POST["search"])
 			{
-				print_barre_liste('', $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell, $sortfield, $sortorder,'',$num);
+				print_barre_liste('', $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num);
 			}
 			else
 			{
-				print_barre_liste('', $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"")."&amp;tosell=".$tosell, $sortfield, $sortorder,'',$num);
+				print_barre_liste('', $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"")."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num);
 			}
 		}
 
