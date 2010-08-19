@@ -31,6 +31,7 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 
 require('../main.inc.php');
 
+
 /*
  * View
  */

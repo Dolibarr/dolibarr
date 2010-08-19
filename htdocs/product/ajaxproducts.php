@@ -41,14 +41,16 @@ require('../main.inc.php');
 $langs->load("products");
 $langs->load("main");
 
+
 /*
  * View
  */
 
-
 //top_htmlhead("", "", 1);  // Disabled. An ajax return must not include html header.
 
 //print '<body class="nocellnopadd">'."\n";
+
+dol_syslog(join(',',$_POST));
 
 // Generation liste de produits
 if (! empty($_GET['keysearch']) || ! empty($_GET['term']))

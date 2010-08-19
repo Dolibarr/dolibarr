@@ -35,6 +35,11 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
 
 require('../main.inc.php');
 
+
+/*
+ * View
+ */
+
 //top_htmlhead("", "", 1, 1);  // Disabled. An ajax return must not include html header.
 
 //print '<body id="mainbody">';
