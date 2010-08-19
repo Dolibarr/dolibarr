@@ -288,9 +288,10 @@ if ($_POST["action"] == "set")
 			$fp = @fopen($lockfile, "w");
 			if ($fp)
 			{
-				fwrite($fp, "This is a lock file to prevent use of install pages");
+                if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
+                fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
 				fclose($fp);
-				@chmod($lockfile, octdec(444));
+				@chmod($lockfile, octdec($force_install_lockinstall));
 				$createlock=1;
 			}
 		}
@@ -337,9 +338,10 @@ elseif (preg_match('/upgrade/i',$_POST["action"]))
 			$fp = @fopen($lockfile, "w");
 			if ($fp)
 			{
-				fwrite($fp, "This is a lock file to prevent use of install pages");
+                if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
+				fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
 				fclose($fp);
-				@chmod($lockfile, octdec(444));
+                @chmod($lockfile, octdec($force_install_lockinstall));
 				$createlock=1;
 			}
 		}
