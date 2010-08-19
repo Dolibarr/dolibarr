@@ -152,6 +152,9 @@ print '<br></form>';
 
 print '<br>'."\n";
 
+if (! empty($conf->use_javascript_ajax))
+{
+
 $infoarray=dol_getImageSize($conf->product->dir_output."/".urldecode($_GET["file"]));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
@@ -181,6 +184,9 @@ print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$_GET['id'].'" method="post" 
       <br><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
    </form>';
 print '</fieldset>';
+
+}
+
 
 llxFooter('$Date$ - $Revision$');
 ?>

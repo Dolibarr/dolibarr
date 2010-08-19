@@ -65,11 +65,13 @@ $arrayofcss=array(
 '/includes/jsgantt/jsgantt.css'
 );
 
-$arrayofjs=array(
-'/includes/jsgantt/jsgantt.js',
-'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
-);
-
+if (! empty($conf->use_javascript_ajax))
+{
+	$arrayofjs=array(
+	'/includes/jsgantt/jsgantt.js',
+	'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
+	);
+}
 
 $form=new Form($db);
 $formother=new FormOther($db);
@@ -236,9 +238,18 @@ if (sizeof($tasksarray)>0)
 	//var_dump($tasks);
 
 	print "\n";
-	print '<div id="tabs" style="border: 1px solid #ACACAC;">'."\n";
-	include_once(DOL_DOCUMENT_ROOT.'/projet/ganttchart.php');
-	print '</div>'."\n";
+
+	if (! empty($conf->use_javascript_ajax))
+	{
+		print '<div id="tabs" style="border: 1px solid #ACACAC;">'."\n";
+		include_once(DOL_DOCUMENT_ROOT.'/projet/ganttchart.php');
+		print '</div>'."\n";
+	}
+	else
+	{
+		$langs->load("admin");
+		print $langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled");
+	}
 }
 else
 {
