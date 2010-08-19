@@ -647,15 +647,15 @@ class ActionComm extends CommonObject
 			$sql.= " u.firstname, u.name,";
 			$sql.= " s.nom as socname,";
 			$sql.= " c.id as type_id, c.code as type_code, c.libelle";
-			$sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c)";
+			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
         	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
 			$sql.= " WHERE a.fk_action=c.id";
 			foreach ($filters as $key => $value)
 			{
 				if ($key == 'notolderthan') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";
-				if ($key == 'year')     $sql.=" AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($value,1))."' AND '".$this->db->idate(dol_get_last_day($value,12))."'";
-				if ($key == 'idaction') $sql.=' AND a.id='.$value;
+				if ($key == 'year')         $sql.=" AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($value,1))."' AND '".$this->db->idate(dol_get_last_day($value,12))."'";
+				if ($key == 'id')           $sql.=' AND a.id='.$value;
 				if ($key == 'login')
 				{
 					$login=$value;
