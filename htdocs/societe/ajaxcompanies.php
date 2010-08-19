@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,9 +35,9 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
 
 require('../main.inc.php');
 
-top_htmlhead("", "", 1, 1);
+//top_htmlhead("", "", 1, 1);  // Disabled. An ajax return must not include html header.
 
-print '<body id="mainbody">';
+//print '<body id="mainbody">';
 
 dol_syslog(join(',',$_POST));
 
@@ -84,6 +84,6 @@ else
 
 }
 
-print "</body>";
-print "</html>";
+//print "</body>";
+//print "</html>";
 ?>

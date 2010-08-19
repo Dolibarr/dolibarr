@@ -31,9 +31,15 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 
 require('../main.inc.php');
 
-top_htmlhead("", "", 1, 1);
+/*
+ * View
+ */
 
-print '<body id="mainbody">';
+//top_htmlhead("", "", 1, 1);  // Disabled. An ajax return must not include html header.
+
+//print '<body id="mainbody">';
+
+dol_syslog(join(',',$_POST));
 
 // Generation liste des pays
 if(isset($_POST['pays']) && !empty($_POST['pays']))
@@ -62,6 +68,6 @@ if(isset($_POST['pays']) && !empty($_POST['pays']))
 	}
 }
 
-print "</body>";
-print "</html>";
+//print "</body>";
+//print "</html>";
 ?>
