@@ -504,14 +504,14 @@ class DoliDb
 
 		$ret = @pg_query($this->db, $query);
 		//print $query;
-		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
+		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query)) // Si requete utilisateur, on la sauvegarde ainsi que son resultset
 		{
-			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
 			if (! $ret)
 			{
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
+				dol_syslog("Postgresql request error: ".$query, LOG_ERR);
 				//print "\n>> ".$query."<br>\n";
 				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
 

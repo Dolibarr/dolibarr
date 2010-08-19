@@ -655,8 +655,10 @@ class ActionComm extends CommonObject
 			{
 				if ($key == 'notolderthan') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";
 				if ($key == 'year')         $sql.=" AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($value,1))."' AND '".$this->db->idate(dol_get_last_day($value,12))."'";
-				if ($key == 'id')           $sql.=' AND a.id='.$value;
-				if ($key == 'login')
+				if ($key == 'id')           $sql.=" AND a.id=".(is_numeric($value)?$value:0);
+                if ($key == 'idfrom')       $sql.=" AND a.id >= ".(is_numeric($value)?$value:0);
+                if ($key == 'idto')         $sql.=" AND a.id <= ".(is_numeric($value)?$value:0);
+                if ($key == 'login')
 				{
 					$login=$value;
 					$userforfilter=new User($this->db);
