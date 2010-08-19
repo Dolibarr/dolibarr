@@ -48,6 +48,7 @@ Movements=Mouvements
 Sell=Vente
 Buy=Achat
 OnSell=En vente
+OnBuy=En achat
 NotOnSell=Hors vente
 ProductStatusOnSell=En vente
 ProductStatusNotOnSell=Hors vente
