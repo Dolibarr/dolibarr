@@ -574,7 +574,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 	$message='';
 
 	// Install lock missing
-	if (is_dir(DOL_DOCUMENT_ROOT."/install") && ! file_exists('../install.lock'))
+	if (! file_exists('../install.lock') && is_dir(DOL_DOCUMENT_ROOT."/install"))
 	{
 		$langs->load("other");
 		//if (! empty($message)) $message.='<br>';
