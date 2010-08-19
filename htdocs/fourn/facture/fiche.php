@@ -49,7 +49,7 @@ $langs->load('bills');
 $langs->load('suppliers');
 $langs->load('companies');
 
-$facid = isset($_GET["facid"])?$_GET["facid"]:'';
+$facid = isset($_GET["facid"])?$_GET["facid"]:(isset($_POST["facid"])?$_POST["facid"]:'');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -135,11 +135,12 @@ if ($_REQUEST['action'] == 'confirm_paid' && $_REQUEST['confirm'] == 'yes' && $u
 }
 
 // Set supplier ref
-if ($_POST['action'] == 'set_ref_supplier' && $user->rights->fournisseur->facture->creer)
+if (($_POST['action'] == 'setref_supplier' || $_POST['action'] == 'set_ref_supplier') && $user->rights->fournisseur->facture->creer)
 {
 	$facturefourn = new FactureFournisseur($db);
-	$facturefourn->fetch($_GET['facid']);
+	$facturefourn->fetch($facid);
 	$result=$facturefourn->set_ref_supplier($user, $_POST['ref_supplier']);
+	$_GET['facid']=$facid;
 }
 
 if($_GET['action'] == 'deletepaiement')
@@ -156,8 +157,8 @@ if($_GET['action'] == 'deletepaiement')
 
 if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 {
-	$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-	$date_echeance = dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
+	$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+	$date_echeance = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
 
 	$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set ';
 	$sql .= " facnumber='".addslashes(trim($_POST['facnumber']))."'";
@@ -166,7 +167,7 @@ if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 	$sql .= ", datef = '".$db->idate($datefacture)."'";
 	$sql .= ", date_lim_reglement = '".$db->idate($date_echeance)."'";
 	$sql .= ' WHERE rowid = '.$_GET['facid'].' ;';
-	$result = $db->query( $sql);
+	$result = $db->query($sql);
 }
 /*
  * Action creation
@@ -716,29 +717,10 @@ else
 			print '</td>';
 			print "</tr>\n";
 
-			// Ref supplier
-			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-			print $langs->trans('RefSupplier').'</td><td align="left">';
-			print '</td>';
-			if ($_GET['action'] != 'refsupplier' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refsupplier&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="5">';
-			if ($user->rights->fournisseur->facture->creer && $_GET['action'] == 'refsupplier')
-			{
-				print '<form action="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'" method="post">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="set_ref_supplier">';
-				print '<input type="text" class="flat" size="20" name="ref_supplier" value="'.$fac->ref_supplier.'">';
-				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-				print '</form>';
-			}
-			else
-			{
-				print $fac->ref_supplier;
-			}
-			print '</td>';
-			print '</tr>';
+            // Ref supplier
+            print '<tr><td>'.$html->editfieldkey("RefSupplier",'ref_supplier',$fac->ref_supplier,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
+            print $html->editfieldval("RefSupplier",'ref_supplier',$fac->ref_supplier,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer));
+            print '</td></tr>';
 
 			// Third party
 			print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1);
