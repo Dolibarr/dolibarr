@@ -2231,8 +2231,8 @@ class Product extends CommonObject
 		}
 		if ($mode == 3)
 		{
-			if ($status == 0) return img_picto($langs->trans('ProductStatusNotOnSell'),'statut5');
-			if ($status == 1) return img_picto($langs->trans('ProductStatusOnSell'),'statut4');
+			if ($status == 0) return img_picto(($type==0 ? $langs->trans('ProductStatusNotOnSell') : $langs->trans('ProductStatusNotOnBuy')),'statut5');
+			if ($status == 1) return img_picto(($type==0 ? $langs->trans('ProductStatusOnSell') : $langs->trans('ProductStatusOnBuy')),'statut4');
 		}
 		if ($mode == 4)
 		{
