@@ -12,5 +12,5 @@ $force_install_databaserootlogin='root';
 $force_install_databaserootpass='WAMPMYSQLNEWPASSWORD';
 $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
-$force_install_lockinstall='1';
+$force_install_lockinstall='644';
 ?>
