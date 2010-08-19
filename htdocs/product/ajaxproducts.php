@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,14 @@ require('../main.inc.php');
 $langs->load("products");
 $langs->load("main");
 
-top_htmlhead("", "", 1);
+/*
+ * View
+ */
 
-print '<body class="nocellnopadd">'."\n";
+
+//top_htmlhead("", "", 1);  // Disabled. An ajax return must not include html header.
+
+//print '<body class="nocellnopadd">'."\n";
 
 // Generation liste de produits
 if (! empty($_GET['keysearch']) || ! empty($_GET['term']))
@@ -79,6 +84,6 @@ else if (! empty($_GET['selling']))
 
 $db->close();
 
-print "</body>";
-print "</html>";
+//print "</body>";
+//print "</html>";
 ?>
