@@ -431,7 +431,7 @@ else
                 print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
                 //print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("UsersToAdd").'</td>'."\n";
                 print '<td>';
-                print $form->select_array("user",$uss,'',1);
+                print $form->selectarray("user",$uss,'',1);
                 print ' &nbsp; ';
                 print '<input type="submit" class=button value="'.$langs->trans("Add").'">';
                 print '</td></tr>'."\n";

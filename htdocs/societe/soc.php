@@ -540,7 +540,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-					$form->select_array("fournisseur_categorie",$soc->SupplierCategories,$_POST["fournisseur_categorie"],1);
+					$form->selectarray("fournisseur_categorie",$soc->SupplierCategories,$_POST["fournisseur_categorie"],1);
 					print '</td></tr>';
 				}
 			}
@@ -648,11 +648,11 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
-		$form->select_array("typent_id",$formcompany->typent_array(0), $soc->typent_id);
+		$form->selectarray("typent_id",$formcompany->typent_array(0), $soc->typent_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td>';
 		print '<td>'.$langs->trans("Staff").'</td><td>';
-		$form->select_array("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
+		$form->selectarray("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
@@ -943,7 +943,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-					$form->select_array("fournisseur_categorie",$soc->SupplierCategories,'',1);
+					$form->selectarray("fournisseur_categorie",$soc->SupplierCategories,'',1);
 					print '</td></tr>';
 				}
 			}
@@ -1092,11 +1092,11 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Type").'</td><td>';
-		$form->select_array("typent_id",$formcompany->typent_array(0), $soc->typent_id);
+		$form->selectarray("typent_id",$formcompany->typent_array(0), $soc->typent_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td>';
 		print '<td>'.$langs->trans("Staff").'</td><td>';
-		$form->select_array("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
+		$form->selectarray("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 

@@ -163,14 +163,14 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
-	print $form->select_array('filter_op1',$arrayofoperators,$_REQUEST['filter_op1'],1);
+	print $form->selectarray('filter_op1',$arrayofoperators,$_REQUEST['filter_op1'],1);
 	print ' ';
 	$filter_date1=dol_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['"op1year']);
 	print $form->select_date($filter_date1,'op1',0,0,1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
-	print $form->select_array('filter_op2',$arrayofoperators,$_REQUEST['filter_op2'],1);
+	print $form->selectarray('filter_op2',$arrayofoperators,$_REQUEST['filter_op2'],1);
 	print ' ';
 	$filter_date2=dol_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
 	print $form->select_date($filter_date2,'op2',0,0,1);

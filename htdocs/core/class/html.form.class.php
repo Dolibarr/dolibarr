@@ -2720,7 +2720,6 @@ class Form
 	 *	\param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
 	 *	\param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
 	 *	\param	value_as_key    1 to use value as key
-	 *	\param	optionType      Type de l'option: 1 pour des fonctions javascript
 	 *	\param  option          Valeur de l'option en fonction du type choisi
 	 *	\param  translate       Traduire la valeur
 	 * 	\param	maxlen			Length maximum for labels
@@ -2782,7 +2781,6 @@ class Form
 	 *	\param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
 	 *	\param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
 	 *	\param	value_as_key    1 to use value as key
-	 *	\param	optionType      Type de l'option: 1 pour des fonctions javascript
 	 *	\param  option          Valeur de l'option en fonction du type choisi
 	 *	\param  translate       Traduire la valeur
 	 * 	\param	maxlen			Length maximum for labels

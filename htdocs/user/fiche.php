@@ -550,7 +550,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			print '</td>';
 			print '<td>';
 			print '<input type="hidden" name="action" value="adduserldap">';
-			print $html->select_array('users', $liste, '', 1);
+			print $html->selectarray('users', $liste, '', 1);
 			print '</td><td align="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans('Get').'">';
 			print '</td></tr></table>';
@@ -1265,7 +1265,7 @@ else
 				print '<table class="noborder" width="100%">'."\n";
 				print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
 				print '<td>';
-				print $form->select_array("group",$uss);
+				print $form->selectarray("group",$uss);
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 				print '</td></tr>'."\n";

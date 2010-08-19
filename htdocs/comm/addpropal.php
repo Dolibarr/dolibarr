@@ -198,7 +198,7 @@ if ($_GET["action"] == 'create')
 	print '<td colspan="2">';
 	$model=new ModelePDFPropales();
 	$liste=$model->liste_modeles($db);
-	$html->select_array('model',$liste,$conf->global->PROPALE_ADDON_PDF);
+	$html->selectarray('model',$liste,$conf->global->PROPALE_ADDON_PDF);
 	print "</td></tr>";
 
 	// Project
@@ -261,7 +261,7 @@ if ($_GET["action"] == 'create')
 				$liste_propal[$row[0]]=$propalRefAndSocName;
 				$i++;
 			}
-			$html->select_array("copie_propal",$liste_propal, 0);
+			$html->selectarray("copie_propal",$liste_propal, 0);
 		}
 		else
 		{

@@ -174,7 +174,7 @@ class FormActions
 		$arraylist[0]='&nbsp;';
 		asort($arraylist);
 
-		$form->select_array($htmlname, $arraylist, $selected);
+		$form->selectarray($htmlname, $arraylist, $selected);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	}
 

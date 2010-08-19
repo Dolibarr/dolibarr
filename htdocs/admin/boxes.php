@@ -317,7 +317,7 @@ if ($resql)
 			// Pour chaque position possible, on affiche un lien
 			// d'activation si boite non deja active pour cette position
 			print '<td align="center">';
-			print $html->select_array("pos",$pos_name);
+			print $html->selectarray("pos",$pos_name);
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
 			print ' <input type="submit" class="button" name="button" value="'.$langs->trans("Activate").'">';

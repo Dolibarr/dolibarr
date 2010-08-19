@@ -1141,7 +1141,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
 			$model=new ModelePDFCommandes();
 			$liste=$model->liste_modeles($db);
-			$html->select_array('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
+			$html->selectarray('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
 			print "</td></tr>";
 
 			// Note publique

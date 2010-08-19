@@ -679,7 +679,7 @@ if ($_GET["id"])
 
 		// Contact
 		print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-		$html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
+		$html->selectarray("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
 		print '</td></tr>';
 
 		// Project

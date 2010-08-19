@@ -207,7 +207,7 @@ if ($_GET["id"])
 			print $html->select_date('','','','','',"userfile");
 			print '</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
-			print $html->select_array("methode",$bon->methodes_trans);
+			print $html->selectarray("methode",$bon->methodes_trans);
 			print '</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 			print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';

@@ -249,14 +249,14 @@ print '<input type="hidden" name="action" value="add">';
 print '<table cellspacing="0" border="1" width="100%" cellpadding="3">'."\n";
 
 print '<tr><td width="15%">'.$langs->trans("Type").'</td><td width="35%">';
-$html->select_array("type",  $adht->liste_array());
+$html->selectarray("type",  $adht->liste_array());
 print "</td>\n";
 print '</tr>'."\n";
 
 $morphys["phy"] = $langs->trans("Physical");
 $morphys["mor"] = $langs->trans("Moral");
 print '<tr><td>'.$langs->trans("MorPhy")."</td><td>\n";
-$html->select_array("morphy",  $morphys);
+$html->selectarray("morphy",  $morphys);
 print "</td>\n";
 print '</tr>';
 

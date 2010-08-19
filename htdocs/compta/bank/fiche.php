@@ -226,7 +226,7 @@ if ($_REQUEST["action"] == 'create')
 	// Status
     print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Status").'</td>';
     print '<td colspan="3">';
-    $form->select_array("clos",array(0=>$account->status[0],1=>$account->status[1]),(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+    $form->selectarray("clos",array(0=>$account->status[0],1=>$account->status[1]),(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
     print '</td></tr>';
 
 	// Country
@@ -484,7 +484,7 @@ else
 		// Status
         print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Status").'</td>';
         print '<td colspan="3">';
-        $form->select_array("clos",array(0=>$account->status[0],1=>$account->status[1]),(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+        $form->selectarray("clos",array(0=>$account->status[0],1=>$account->status[1]),(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
         print '</td></tr>';
 
 		// Country

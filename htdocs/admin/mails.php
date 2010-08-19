@@ -287,7 +287,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	// SuperAdministrator access only
 	if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
 	{
-		print $html->select_array('MAIN_MAIL_SENDMODE',$listofmethods,$conf->global->MAIN_MAIL_SENDMODE);
+		print $html->selectarray('MAIN_MAIL_SENDMODE',$listofmethods,$conf->global->MAIN_MAIL_SENDMODE);
 	}
 	else
 	{

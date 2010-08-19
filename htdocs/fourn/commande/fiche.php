@@ -1385,7 +1385,7 @@ if ($id > 0 || ! empty($ref))
 				$liv['nev']	= $langs->trans("NeverReceived");
 				$liv['can']	= $langs->trans("Canceled");
 
-				print $html->select_array("type",$liv);
+				print $html->selectarray("type",$liv);
 
 				print '</td></tr>';
 				print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';

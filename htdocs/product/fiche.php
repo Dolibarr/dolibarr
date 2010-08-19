@@ -670,13 +670,13 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		// On sell
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
 		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-		$html->select_array('statut',$statutarray,$_POST["statut"]);
+		$html->selectarray('statut',$statutarray,$_POST["statut"]);
 		print '</td></tr>';
 
 		// To buy
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
 		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-		$html->select_array('statut_buy',$statutarray,$_POST["statut_buy"]);
+		$html->selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
 		print '</td></tr>';
 
 		// Stock min level
@@ -714,7 +714,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		{
 			print '<tr><td>'.$langs->trans("Nature").'</td><td>';
 			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-			$html->select_array('finished',$statutarray,$_POST["finished"]);
+			$html->selectarray('finished',$statutarray,$_POST["finished"]);
 			print '</td></tr>';
 		}
 
@@ -944,7 +944,7 @@ if ($_GET["id"] || $_GET["ref"])
 			{
 				print '<tr><td>'.$langs->trans("Nature").'</td><td>';
 				$statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-				$html->select_array('finished',$statutarray,$product->finished);
+				$html->selectarray('finished',$statutarray,$product->finished);
 				print '</td></tr>';
 			}
 
@@ -1378,7 +1378,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 				print '<tr '.$bc[$var].'><td colspan="3">';
 				print '<input type="hidden" name="action" value="addinpropal">';
 				print $langs->trans("OtherPropals").'</td><td>';
-				$html->select_array("propalid", $otherprop);
+				$html->selectarray("propalid", $otherprop);
 				print '</td></tr>';
 				print '<tr '.$bc[$var].'><td nowrap="nowrap" colspan="2">'.$langs->trans("Qty");
 				print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
@@ -1496,7 +1496,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 				print '<tr '.$bc[$var].'><td colspan="3">';
 				print '<input type="hidden" name="action" value="addincommande">';
 				print $langs->trans("OtherOrders").'</td><td>';
-				$html->select_array("commandeid", $othercom);
+				$html->selectarray("commandeid", $othercom);
 				print '</td></tr>';
 				print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("Qty");
 				print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");

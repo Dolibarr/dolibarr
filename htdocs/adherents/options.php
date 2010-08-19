@@ -175,7 +175,7 @@ if ($_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40"></td></tr>';
 	print '<tr><td>'.$langs->trans("AttributeCode").' ('.$langs->trans("AlphaNumOnlyCharsAndNoSpace").')</td><td class="valeur"><input type="text" name="attrname" size="10"></td></tr>';
 	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">';
-	$form->select_array('type',array('varchar'=>$langs->trans('String'),
+	$form->selectarray('type',array('varchar'=>$langs->trans('String'),
 	'text'=>$langs->trans('Text'),
 	'int'=>$langs->trans('Int'),
 	'date'=>$langs->trans('Date'),
@@ -226,7 +226,7 @@ if ($_GET["attrname"] && $_GET["action"] == 'edit')
 	'int'=>$langs->trans('Int'),
 	'date'=>$langs->trans('Date'),
 	'datetime'=>$langs->trans('DateAndTime'));
-	//$form->select_array('type',$type2label,$type);
+	//$form->selectarray('type',$type2label,$type);
 	print $type2label[$type];
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	print '</td></tr>';
