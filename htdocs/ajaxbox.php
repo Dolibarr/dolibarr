@@ -33,6 +33,11 @@ if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 require('./main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
+
+/*
+ * View
+ */
+
 // Registering the location of boxes
 if((isset($_GET['boxorder']) && !empty($_GET['boxorder'])) && (isset($_GET['userid']) && !empty($_GET['userid'])))
 {
