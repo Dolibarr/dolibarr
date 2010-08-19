@@ -63,7 +63,7 @@ if ($_GET["action"] == 'builddoc')
 
 
 /*
- * Affichage liste
+ * View
  */
 
 llxHeader();
@@ -85,12 +85,15 @@ $sql.= " ORDER BY year DESC, month DESC, df DESC";
 $sql.= $db->plimit($limit+1,$offset);
 
 //print $sql;
+dol_syslog("select sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 
 	print_barre_liste($langs->trans("DoneActions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
+
+	if ($mesg) print $mesg.'<br>';
 
 	$i = 0;
 	print '<table class="noborder" width="100%">';
@@ -110,9 +113,9 @@ if ($resql)
 		if ($obj)
 		{
 			$var=!$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 
-			print "<td>$obj->df</td>\n";
+			print "<td>".$obj->df."</td>\n";
 			print '<td align="center">'.$obj->cc.'</td>';
 
 			print '<td>';
@@ -140,7 +143,7 @@ if ($resql)
 		$i++;
 	}
 	print "</table>";
-	$db->free();
+	$db->free($resql);
 }
 else
 {
