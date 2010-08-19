@@ -49,7 +49,7 @@ class box_clients extends ModeleBoxes {
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxLastModifiedCustomers");
+		$this->boxlabel=$langs->trans("BoxLastCustomers");
 	}
 
 	/**
