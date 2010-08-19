@@ -2774,17 +2774,8 @@ class Form
 	}
 
 	/**
-	 *	\brief  Show a select form from an array
-	 *	\param	htmlname        Nom de la zone select
-	 *	\param	array           Tableau de key+valeur
-	 *	\param	id              Preselected key
-	 *	\param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
-	 *	\param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
-	 *	\param	value_as_key    1 to use value as key
-	 *	\param  option          Valeur de l'option en fonction du type choisi
-	 *	\param  translate       Traduire la valeur
-	 * 	\param	maxlen			Length maximum for labels
-	 * 	\deprecated				Use selectarray instead
+	 *	Show a select form from an array
+	 * 	@deprecated				Use selectarray instead
 	 */
 	function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0)
 	{
