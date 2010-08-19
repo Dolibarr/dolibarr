@@ -1077,7 +1077,7 @@ if ($_GET["id"] || $_GET["ref"])
 			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 
-			$nblignes=4;
+			$nblignes=5;
 			if ($product->is_photo_available($conf->product->dir_output))
 			{
 				// Photo
@@ -1098,12 +1098,12 @@ if ($_GET["id"] || $_GET["ref"])
 			print $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer);
 			print '</td></tr>';
 
-			// Statut
+			// Status (to sell)
 			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
 			print $product->getLibStatut(2,0);
 			print '</td></tr>';
 
-			// To buy
+			// Status (to buy)
 			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
 			print $product->getLibStatut(2,1);
 			print '</td></tr>';
