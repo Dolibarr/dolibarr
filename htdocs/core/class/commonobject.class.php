@@ -763,6 +763,19 @@ class CommonObject
 	}
 	
 	/**
+	 * 	   Update position of line (rang)
+	 */
+	function updateRangOfLine($rowid,$rang)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.$rang;
+		$sql.= ' WHERE rowid = '.$rowid;
+		if (! $this->db->query($sql) )
+		{
+			dol_print_error($this->db);
+		}
+	}
+	
+	/**
 	 * 	   Update position of line up (rang)
 	 */
 	function updateLineUp($rowid,$rang)
