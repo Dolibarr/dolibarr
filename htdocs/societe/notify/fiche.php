@@ -153,15 +153,17 @@ if ( $soc->fetch($soc->id) )
 	// Ligne de titres
 	print '<table width="100%" class="noborder">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'"width="45%"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'"width="45%"',$sortfield,$sortorder);
+	$param="&socid=".$socid;
+	print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',$param,'"width="45%"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),"fiche.php","",'',$param,'"width="10%"',$sortfield,$sortorder);
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
 	$var=false;
 	if (count($soc->contact_email_array()) > 0)
 	{
-		// Charge tableau $actions
+		// Load array of notifications type available
 		$sql = "SELECT a.rowid, a.code, a.titre";
 		$sql.= " FROM ".MAIN_DB_PREFIX."action_def as a";
 
@@ -192,6 +194,10 @@ if ( $soc->fetch($soc->id) )
 		print '<td>';
 		print $html->selectarray("actionid",$actions);
 		print '</td>';
+        print '<td>';
+        $type=array('email'=>$langs->trans("EMail"));
+        print $html->selectarray("typeid",$type);
+        print '</td>';
 		print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';
 	}
@@ -215,15 +221,19 @@ if ( $soc->fetch($soc->id) )
 	// Ligne de titres
 	print '<table width="100%" class="noborder">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'"width="45%"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'"width="45%"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',$param,'"width="45%"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),"fiche.php","",'',$param,'"width="10%"',$sortfield,$sortorder);
 	print_liste_field_titre('','','');
 	print '</tr>';
 
-	// Liste
-	$sql = "SELECT c.rowid as id, c.name, c.firstname, c.email, a.code, a.titre, n.rowid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n";
-	$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action AND n.fk_soc = ".$soc->id;
+	// List of notifications for contacts
+	$sql = "SELECT n.rowid, n.type,";
+	$sql.= " a.code, a.titre,";
+    $sql.= " c.rowid as id, c.name, c.firstname, c.email";
+	$sql.= " FROM ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n,";
+	$sql.= " ".MAIN_DB_PREFIX."socpeople c";
+	$sql.= " WHERE a.rowid = n.fk_action AND c.rowid = n.fk_contact AND c.fk_soc = ".$soc->id;
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -243,13 +253,28 @@ if ( $soc->fetch($soc->id) )
 			$contactstatic->name=$obj->name;
 			$contactstatic->firstname=$obj->firstname;
 			print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
-			print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
+			if ($obj->type == 'email')
+			{
+				if (isValidEmail($obj->email))
+				{
+					print ' &lt;'.$obj->email.'&gt;';
+				}
+				else
+				{
+					$langs->load("errors");
+					print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail",$obj->email);
+				}
+			}
 			print '</td>';
 			print '<td>';
 			$libelle=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
 			print $libelle;
 			print '</td>';
-			print '<td align="right"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
+            print '<td>';
+            if ($obj->type == 'email') print $langs->trans("Email");
+            if ($obj->type == 'sms') print $langs->trans("SMS");
+            print '</td>';
+            print '<td align="right"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
 			print '</tr>';
 			$i++;
 		}
@@ -280,8 +305,9 @@ if ( $soc->fetch($soc->id) )
 	$sql = "SELECT n.rowid, n.daten, n.email, n.objet_type, n.objet_id,";
 	$sql.= " c.rowid as id, c.name, c.firstname, c.email,";
 	$sql.= " a.code, a.titre";
-	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify as n";
-	$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+	$sql.= " FROM ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify as n, ";
+    $sql.= " ".MAIN_DB_PREFIX."socpeople as c";
+    $sql.= " WHERE a.rowid = n.fk_action AND c.rowid = n.fk_contact AND c.fk_soc = ".$soc->id;
 
 	$resql=$db->query($sql);
 	if ($resql)

@@ -26,3 +26,11 @@ alter table llx_product_price change column envente tosell tinyint DEFAULT 1;
 ALTER TABLE llx_boxes_def DROP INDEX uk_boxes_def;
 ALTER TABLE llx_boxes_def MODIFY note varchar(255);
 ALTER TABLE llx_boxes_def ADD UNIQUE INDEX uk_boxes_def (file, entity, note);
+
+ALTER TABLE llx_notify_def MODIFY fk_contact integer NULL;
+ALTER TABLE llx_notify_def ADD COLUMN fk_user integer NULL after fk_contact;
+ALTER TABLE llx_notify_def ADD COLUMN type varchar(16) DEFAULT 'email';
+
+ALTER TABLE llx_notify MODIFY fk_contact integer NULL;
+ALTER TABLE llx_notify ADD COLUMN fk_user integer NULL after fk_contact;
+ALTER TABLE llx_notify ADD COLUMN type varchar(16) DEFAULT 'email';

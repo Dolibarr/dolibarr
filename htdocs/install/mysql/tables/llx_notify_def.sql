@@ -25,5 +25,7 @@ create table llx_notify_def
   datec           date,             -- date de creation
   fk_action       integer NOT NULL,
   fk_soc          integer NOT NULL,
-  fk_contact      integer NOT NULL
+  fk_contact      integer,
+  fk_user		  integer,
+  type            varchar(16) DEFAULT 'email';
 )type=innodb;
