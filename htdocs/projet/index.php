@@ -26,18 +26,18 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+
+
+$langs->load("projects");
+$langs->load("companies");
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
-$langs->load("projects");
-
 // Security check
-if ($user->societe_id > 0)
-{
-	$socid = $user->societe_id;
-}
+$socid=0;
+if ($user->societe_id > 0) $socid=$user->societe_id;
 if (!$user->rights->projet->lire) accessforbidden();
 
 
@@ -49,6 +49,7 @@ $socstatic=new Societe($db);
 $projectstatic=new Project($db);
 
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+//var_dump($projectsListId);
 
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
@@ -57,6 +58,7 @@ if ($mine) $text=$langs->trans("MyProjects");
 
 print_fiche_titre($text);
 
+// Show description of content
 if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
 else
 {
@@ -82,8 +84,8 @@ $sql.= ", s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
-if (!$user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
-if ($socid) $sql.= " AND s.rowid = ".$socid;
+if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 $sql.= " GROUP BY s.nom, s.rowid";
 
 $var=true;
