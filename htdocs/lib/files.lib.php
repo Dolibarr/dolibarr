@@ -162,12 +162,14 @@ function dol_compare_file($a, $b)
  *	Return mime type of a file
  *	@param      file		Filename
  *  @param      default     Default mime type if extension not found in known list
+ * 	@param		shortmime	Return short mime, otherwise full mime string
  *	@return     string     	Return a mime type family
  *                          (text/xxx, application/xxx, image/xxx, audio, video, archive)
  */
-function dol_mimetype($file,$default='application/octet-stream')
+function dol_mimetype($file,$default='application/octet-stream',$shortmime=0)
 {
 	$mime=$default;
+
 	// Text files
 	if (preg_match('/\.txt$/i',$file))         				$mime='text/plain';
     if (preg_match('/\.rtx$/i',$file))                      $mime='text/richtext';
@@ -205,8 +207,8 @@ function dol_mimetype($file,$default='application/octet-stream')
 	// Scripts
     if (preg_match('/\.bat$/i',$file))                      $mime='text/x-bat';
     if (preg_match('/\.sh$/i',$file))                       $mime='text/x-sh';
-    if (preg_match('/\.ksh$/i',$file))                     $mime='text/x-ksh';
-    if (preg_match('/\.bash$/i',$file))                    $mime='text/x-bash';
+    if (preg_match('/\.ksh$/i',$file))                      $mime='text/x-ksh';
+    if (preg_match('/\.bash$/i',$file))                     $mime='text/x-bash';
 	// Images
     if (preg_match('/\.ico$/i',$file))                      $mime='image/x-icon';
 	if (preg_match('/\.(jpg|jpeg)$/i',$file))				$mime='image/jpeg';
@@ -225,8 +227,20 @@ function dol_mimetype($file,$default='application/octet-stream')
 	if (preg_match('/\.(avi|divx|xvid|wmv|mpg|mpeg)$/i',$file))        $mime='video';
 	// Archive
 	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i',$file))   $mime='archive';    // application/xxx where zzz is zip, ...
+	// Exe
+	if (preg_match('/\.(exe|com)$/i',$file))               $mime='application';
+	// Exe
+	if (preg_match('/\.(dll|lib|o|so|a)$/i',$file))               $mime='library';
 
-	return $mime;
+	if ($shortmime)
+	{
+		$tmp=explode('/',$mime);
+		return $tmp[1];
+	}
+	else
+	{
+		return $mime;
+	}
 }
 
 
