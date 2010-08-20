@@ -829,6 +829,23 @@ class CommonObject
 			return $row[0];
 		}
 	}
+	
+	/**
+	 * 	   Get rowid of the line relative to its position
+	 *     @result     int     Rowid of the line
+	 */
+	function getIdOfLine($rang)
+	{
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+		$sql.= ' AND rang = '.$rang;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			return $row[0];
+		}
+	}
 
 	/**
 	 * 	   Get max value used for position of line (rang)
