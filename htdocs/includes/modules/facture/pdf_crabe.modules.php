@@ -45,8 +45,8 @@ class pdf_crabe extends ModelePDFFactures
 
 
 	/**
-	 *		\brief  Constructor
-	 *		\param	db		Database handler
+	 *		Constructor
+	 *		@param		db		Database access handler
 	 */
 	function pdf_crabe($db)
 	{
@@ -181,7 +181,6 @@ class pdf_crabe extends ModelePDFFactures
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetDrawColor(128,128,128);
 				$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
@@ -609,7 +608,7 @@ class pdf_crabe extends ModelePDFFactures
 				$posy=$pdf->GetY()+1;
 			}
 
-			// Sown payment mode
+			// Show payment mode
 			if ($object->mode_reglement_code
 			&& $object->mode_reglement_code != 'CHQ'
 			&& $object->mode_reglement_code != 'VIR')
@@ -919,9 +918,9 @@ class pdf_crabe extends ModelePDFFactures
 
 		$pdf->SetDrawColor(128,128,128);
 
-		// Rect prend une longueur en 3eme param
+		// Rect prend une longueur en 3eme param et 4eme param
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
-		// line prend une position y en 3eme param
+		// line prend une position y en 3eme param et 4eme param
 		$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
 
 		$pdf->SetFont('Arial','',9);
@@ -1242,7 +1241,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *   	\brief      Show footer of page
 	 *   	\param      pdf     		PDF factory
 	 * 		\param		object			Object invoice
-	 *      \param      outputlang		Object lang for output
+	 *      \param      outputlangs		Object lang for output
 	 * 		\remarks	Need this->emetteur object
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)

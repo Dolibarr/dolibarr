@@ -44,8 +44,8 @@ class pdf_einstein extends ModelePDFCommandes
 
 
 	/**
-	 *	\brief      Constructeur
-	 *	\param	    db		Handler acces base de donnee
+	 *		Constructor
+	 *		@param		db		Database access handler
 	 */
 	function pdf_einstein($db)
 	{
@@ -75,15 +75,15 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_escompte = 1;                // Affiche si il y a eu escompte
-		$this->option_credit_note = 1;             // Gere les avoirs
-		$this->option_freetext = 1;					// Support add of a personalised text
+		$this->option_credit_note = 1;             // Support credit notes
+		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
 		$this->franchise=!$mysoc->tva_assuj;
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -130,9 +130,12 @@ class pdf_einstein extends ModelePDFCommandes
 				$com = new Commande($this->db,"",$id);
 				$ret=$com->fetch($id);
 			}
-			$deja_regle = "";
 
-			// Definition de $dir et $file
+            $com->fetch_thirdparty();
+
+            $deja_regle = "";
+
+            // Definition de $dir et $file
 			if ($com->specimen)
 			{
 				$dir = $conf->commande->dir_output;
@@ -164,7 +167,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
+					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -237,25 +240,26 @@ class pdf_einstein extends ModelePDFCommandes
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
-				// Boucle sur les lignes
+				// Loop on each lines
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
 
-					// Description de la ligne produit
+					// Description of product line
 					$libelleproduitservice=pdf_getlinedesc($com->lignes[$i],$outputlangs);
+
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
-					// Description
 					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
-					//if ($i==1) { print $outputlangs->convToOutputCharset($libelleproduitservice);exit; }
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
-
 					$nexY = $pdf->GetY();
 
 					// TVA
-					$pdf->SetXY ($this->posxtva, $curY);
-					$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($com->lignes[$i]->tva_tx,1,$com->lignes[$i]->info_bits), 0, 'R');
+					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+					{
+						$pdf->SetXY ($this->posxtva, $curY);
+						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($com->lignes[$i]->tva_tx,1,$com->lignes[$i]->info_bits), 0, 'R');
+					}
 
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->posxup, $curY);
@@ -294,13 +298,18 @@ class pdf_einstein extends ModelePDFCommandes
 
 					$nexY+=2;    // Passe espace entre les lignes
 
-					// cherche nombre de lignes a venir pour savoir si place suffisante
+					// Cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
 						$follow_descproduitservice = $outputlangs->convToOutputCharset($com->lignes[$i+1]->desc);
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4);
+						// Et si on affiche dates de validite, on ajoute encore une ligne
+						if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
+						{
+							$nblineFollowDesc += 4;
+						}
 					}
 					else	// If it's last line
 					{
@@ -357,6 +366,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 				// Affiche zone infos
 				$posy=$this->_tableau_info($pdf, $com, $bottomlasttab, $outputlangs);
+
 				// Affiche zone totaux
 				$posy=$this->_tableau_tot($pdf, $com, $deja_regle, $bottomlasttab, $outputlangs);
 
@@ -476,7 +486,6 @@ class pdf_einstein extends ModelePDFCommandes
 
 	            $pdf->SetFont('Arial','',8);
 	            $pdf->SetXY(50, $posy);
-	            //print "xxx".$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code);exit;
 	            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
 	            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
 
@@ -561,6 +570,9 @@ class pdf_einstein extends ModelePDFCommandes
 		// Tableau total
 		$lltot = 200; $col1x = 120; $col2x = 170; $largcol2 = $lltot - $col2x;
 
+		$useborder=0;
+		$index = 0;
+
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY ($col1x, $tab2_top + 0);
@@ -569,11 +581,12 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetXY ($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
 
-		$index = 0;
-
-		// Affichage des totaux de TVA par taux (conform�ment � r�glementation)
+		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
 
+		$this->atleastoneratenotnull=0;
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+		{
 		foreach( $this->tva as $tvakey => $tvaval )
 		{
 			if ($tvakey)    // On affiche pas taux 0
@@ -684,9 +697,11 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 			}
 		}
+		}
 
-		$useborder=0;
-
+		// Total TTC
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+		{
 		$index++;
 		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 		$pdf->SetTextColor(0,0,60);
@@ -695,15 +710,16 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
+		}
 		$pdf->SetTextColor(0,0,0);
 
 		if ($deja_regle > 0)
 		{
+			// Already paid + Deposits
 			$index++;
 
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPaid"), 0, 'L', 0);
-
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
@@ -736,7 +752,7 @@ class pdf_einstein extends ModelePDFCommandes
 	{
 		global $conf;
 
-		// Montants exprimes en     (en tab_top - 1)
+		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
@@ -754,9 +770,12 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
 		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 
-		$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxtva-1, $tab_top+2);
-		$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+		{
+			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
+			$pdf->SetXY ($this->posxtva-1, $tab_top+2);
+			$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
+		}
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxup-1, $tab_top+2);
@@ -783,13 +802,13 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/**
-	 *   	\brief      Affiche en-tete commande
+	 *   	\brief      Show header of page
 	 *   	\param      pdf     		Objet PDF
-	 *   	\param      com     		Objet commande
-	 *      \param      showadress      0=non, 1=oui
-	 *      \param      outputlang		Objet lang cible
+	 *   	\param      object     		Objet commande
+	 *      \param      showaddress      0=no, 1=yes
+	 *      \param      outputlangs		Object lang for output
 	 */
-	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
 		global $conf,$langs;
 
@@ -832,7 +851,7 @@ class pdf_einstein extends ModelePDFCommandes
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);	// width=0 (auto), max height=24
 			}
 			else
 			{
@@ -861,56 +880,48 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
 
-		$posy+=1;
-		$pdf->SetFont('Arial','',10);
+		$posy+=2;
+		$pdf->SetFont('Arial','',9);
 
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true), '', 'R');
 
-		if ($showadress)
+		if ($showaddress)
 		{
-			// Emetteur
-			$posy=42;
-			$hautcadre=40;
-			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('Arial','',8);
-			$pdf->SetXY($this->marge_gauche,$posy-5);
-			$pdf->MultiCell(66, 4, $outputlangs->transnoentities("BillFrom").":");
-
-
-			$pdf->SetXY($this->marge_gauche,$posy);
-			$pdf->SetFillColor(230,230,230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-
-
-			$pdf->SetXY($this->marge_gauche+2,$posy+3);
-
-			// Sender name
-			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('Arial','B',11);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
-
 			// Sender properties
 			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
-			$pdf->SetFont('Arial','',9);
-			$pdf->SetXY(12,$posy+7);
-			$pdf->MultiCell(80, 4, $carac_emetteur);
-
-			// Client destinataire
+			// Show sender
 			$posy=42;
+			$posx=$this->marge_gauche;
+			$hautcadre=40;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
+
+			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
-			$pdf->SetXY(102,$posy-5);
-			$pdf->MultiCell(80, 4, $outputlangs->transnoentities("BillTo").":");
-			$object->fetch_thirdparty();
+			$pdf->SetXY($posx,$posy-5);
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetFillColor(230,230,230);
+			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			$pdf->SetTextColor(0,0,60);
 
-			// Cadre client destinataire
-			$pdf->rect(100, $posy, 100, $hautcadre);
+			// Show sender name
+			$pdf->SetXY($posx+2,$posy+3);
+			$pdf->SetFont('Arial','B',11);
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
-			// If CUSTOMER contact defined on invoice, we use it
+			// Show sender information
+			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetFont('Arial','',9);
+			$pdf->MultiCell(80, 4, $carac_emetteur);
+
+
+
+			// If CUSTOMER contact defined on order, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
 			if (sizeof($arrayidcontact) > 0)
@@ -934,14 +945,27 @@ class pdf_einstein extends ModelePDFCommandes
 
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
-			// Show customer/recipient
-			$pdf->SetXY(102,$posy+3);
+			// Show recipient
+			$posy=42;
+			$posx=100;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+
+			// Show recipient frame
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('Arial','',8);
+			$pdf->SetXY($posx+2,$posy-5);
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
+			$pdf->rect($posx, $posy, 100, $hautcadre);
+
+			// Show recipient name
+			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
 
+			// Show recipient information
 			$pdf->SetFont('Arial','',9);
 			$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
-			$pdf->SetXY(102,$posy+6);
+			$pdf->SetXY($posx+2,$posy+6);
 			$pdf->MultiCell(86,4, $carac_client);
 		}
 	}
