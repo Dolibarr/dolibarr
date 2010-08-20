@@ -198,6 +198,15 @@ print $langs->trans("Examples").":<br>";
 </ul>
 </tr>
 
+<tr>
+<td valign="top" class="label">
+<?php echo $langs->trans("ForceHttps"); ?>
+<td class="label" valign="top"><input type="checkbox" name="main_force_https"<?php if (! empty($force_install_mainforcehttps)) print ' checked="on"'; ?>></td>
+<td class="comment">
+<?php echo $langs->trans("CheckToForceHttps"); ?>
+</td>
+</tr>
+
 <!-- Dolibarr database -->
 
 <tr>
@@ -394,7 +403,7 @@ while (($file = readdir($handle))!==false)
 <script type="text/javascript" language="javascript">
 
 function checkDatabaseName(databasename) {
-	if (databasename.match(/[-;\.]/)) { return false; }
+	if (databasename.match(/[;\.]/)) { return false; }
 	return true;
 }
 
