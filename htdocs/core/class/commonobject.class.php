@@ -672,9 +672,8 @@ class CommonObject
 
 
 	/**
-	 *      \brief      Stocke un numero de rang pour toutes les lignes de
-	 *                  detail d'une facture qui n'en ont pas.
-	 * 		\param		renum		true to renum all already ordered lines, false to renum only not already ordered lines.
+	 *      Stocke un numero de rang pour toutes les lignes de detail d'un element qui n'en ont pas.
+	 * 		@param		renum		true to renum all already ordered lines, false to renum only not already ordered lines.
 	 */
 	function line_order($renum=false)
 	{
@@ -728,6 +727,11 @@ class CommonObject
 		}
 	}
 
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param unknown_type $rowid
+	 */
 	function line_up($rowid)
 	{
 		$this->line_order();
@@ -735,6 +739,34 @@ class CommonObject
 		// Get rang of line
 		$rang = $this->getRangOfLine($rowid);
 
+		// Update position of line
+		$this->updateLineUp($rowid, $rang);
+	}
+
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param unknown_type $rowid
+	 */
+	function line_down($rowid)
+	{
+		$this->line_order();
+
+		// Get rang of line
+		$rang = $this->getRangOfLine($rowid);
+
+		// Get max value for rang
+		$max = $this->line_max();
+
+		// Update position of line
+		$this->updateLineDown($rowid, $rang, $max);
+	}
+	
+	/**
+	 * 	   Update position of line up (rang)
+	 */
+	function updateLineUp($rowid,$rang)
+	{
 		if ($rang > 1 )
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.$rang ;
@@ -755,17 +787,12 @@ class CommonObject
 			}
 		}
 	}
-
-	function line_down($rowid)
+	
+	/**
+	 * 	   Update position of line down (rang)
+	 */
+	function updateLineDown($rowid,$rang,$max)
 	{
-		$this->line_order();
-
-		// Get rang of line
-		$rang = $this->getRangOfLine($rowid);
-
-		// Get max value for rang
-		$max = $this->line_max();
-
 		if ($rang < $max)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.$rang;
