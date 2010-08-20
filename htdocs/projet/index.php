@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 
 $langs->load("projects");
+$langs->load("companies");
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
