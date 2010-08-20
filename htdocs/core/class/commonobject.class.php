@@ -732,15 +732,8 @@ class CommonObject
 	{
 		$this->line_order();
 
-		/* Lecture du rang de la ligne */
-		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql.= ' WHERE rowid ='.$rowid;
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$row = $this->db->fetch_row($resql);
-			$rang = $row[0];
-		}
+		// Get rang of line
+		$rang = $this->getRangOfLine($rowid);
 
 		if ($rang > 1 )
 		{
@@ -767,15 +760,8 @@ class CommonObject
 	{
 		$this->line_order();
 
-		/* Lecture du rang de la ligne */
-		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql.= ' WHERE rowid ='.$rowid;
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$row = $this->db->fetch_row($resql);
-			$rang = $row[0];
-		}
+		// Get rang of line
+		$rang = $this->getRangOfLine($rowid);
 
 		// Get max value for rang
 		$max = $this->line_max();
@@ -798,6 +784,22 @@ class CommonObject
 			{
 				dol_print_error($this->db);
 			}
+		}
+	}
+	
+	/**
+	 * 	   Get position of line (rang)
+	 *     @result     int     Value of rang in table of lines
+	 */
+	function getRangOfLine($rowid)
+	{
+		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql.= ' WHERE rowid ='.$rowid;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			return $row[0];
 		}
 	}
 
