@@ -128,8 +128,8 @@ else
 
 
 // Check memory
-$memrequiredorig='24M';
-$memrequired=24*1024*1024;
+$memrequiredorig='32M';
+$memrequired=32*1024*1024;
 $memmaxorig=@ini_get("memory_limit");
 $memmax=@ini_get("memory_limit");
 if ($memmaxorig != '')
