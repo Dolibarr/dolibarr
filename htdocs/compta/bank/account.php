@@ -636,7 +636,7 @@ if ($account || $_GET["ref"])
 				// Balance
 				if ($action != 'search')
 				{
-					if ($total >= 0)
+					if (price2num($total,'MT') >= 0)
 					{
 						print '<td align="right" nowrap>&nbsp;'.price($total).'</td>';
 					}
