@@ -35,97 +35,97 @@
  */
 function societe_prepare_head($objsoc)
 {
-	global $langs, $conf, $user;
-	$h = 0;
-	$head = array();
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$objsoc->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'company';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$objsoc->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'company';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$objsoc->id;
-	$head[$h][1] = $langs->trans("Agenda");
-	$head[$h][2] = 'agenda';
-	$h++;
-
-
-	if ($objsoc->client==1 || $objsoc->client==3)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Customer");
-		$head[$h][2] = 'customer';
-		$h++;
-	}
-	if ($objsoc->client==2 || $objsoc->client==3)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Prospect");
-		$head[$h][2] = 'prospect';
-		$h++;
-	}
-	if ($objsoc->fournisseur)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Supplier");
-		$head[$h][2] = 'supplier';
-		$h++;
-	}
-	if ($conf->facture->enabled || $conf->compta->enabled || $conf->accounting->enabled)
-	{
-		$langs->load("compta");
-		$head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Accountancy");
-		$head[$h][2] = 'compta';
-		$h++;
-	}
-
-	//show categorie tab
-	if ($conf->categorie->enabled)
-	{
-		$type = 2;
-		if ($objsoc->fournisseur) $type = 1;
-		$head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$objsoc->id."&type=".$type;
-		$head[$h][1] = $langs->trans('Categories');
-		$head[$h][2] = 'category';
-		$h++;
-	}
-	if ($user->societe_id == 0)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/societe/socnote.php?socid='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Note");
-		$head[$h][2] = 'note';
-		$h++;
-	}
-	if ($user->societe_id == 0)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Documents");
-		$head[$h][2] = 'document';
-		$h++;
-	}
-
-	if ($conf->notification->enabled && $user->societe_id == 0)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Notifications");
-		$head[$h][2] = 'notify';
-		$h++;
-	}
-
-	if ($user->societe_id == 0)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Info");
-		$head[$h][2] = 'info';
-		$h++;
-	}
+    $head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$objsoc->id;
+    $head[$h][1] = $langs->trans("Agenda");
+    $head[$h][2] = 'agenda';
+    $h++;
 
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
-	if (is_array($conf->tabs_modules['thirdparty']))
+    if ($objsoc->client==1 || $objsoc->client==3)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
+        $head[$h][1] = $langs->trans("Customer");
+        $head[$h][2] = 'customer';
+        $h++;
+    }
+    if ($objsoc->client==2 || $objsoc->client==3)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objsoc->id;
+        $head[$h][1] = $langs->trans("Prospect");
+        $head[$h][2] = 'prospect';
+        $h++;
+    }
+    if ($objsoc->fournisseur)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
+        $head[$h][1] = $langs->trans("Supplier");
+        $head[$h][2] = 'supplier';
+        $h++;
+    }
+    if ($conf->facture->enabled || $conf->compta->enabled || $conf->accounting->enabled)
+    {
+        $langs->load("compta");
+        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
+        $head[$h][1] = $langs->trans("Accountancy");
+        $head[$h][2] = 'compta';
+        $h++;
+    }
+
+    //show categorie tab
+    if ($conf->categorie->enabled)
+    {
+        $type = 2;
+        if ($objsoc->fournisseur) $type = 1;
+        $head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$objsoc->id."&type=".$type;
+        $head[$h][1] = $langs->trans('Categories');
+        $head[$h][2] = 'category';
+        $h++;
+    }
+    if ($user->societe_id == 0)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/societe/socnote.php?socid='.$objsoc->id;
+        $head[$h][1] = $langs->trans("Note");
+        $head[$h][2] = 'note';
+        $h++;
+    }
+    if ($user->societe_id == 0)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$objsoc->id;
+        $head[$h][1] = $langs->trans("Documents");
+        $head[$h][2] = 'document';
+        $h++;
+    }
+
+    if ($conf->notification->enabled && $user->societe_id == 0)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
+        $head[$h][1] = $langs->trans("Notifications");
+        $head[$h][2] = 'notify';
+        $h++;
+    }
+
+    if ($user->societe_id == 0)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$objsoc->id;
+        $head[$h][1] = $langs->trans("Info");
+        $head[$h][2] = 'info';
+        $h++;
+    }
+
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
+    if (is_array($conf->tabs_modules['thirdparty']))
     {
         $i=0;
         foreach ($conf->tabs_modules['thirdparty'] as $value)
@@ -139,7 +139,7 @@ function societe_prepare_head($objsoc)
         }
     }
 
-	return $head;
+    return $head;
 }
 
 
@@ -151,68 +151,72 @@ function societe_prepare_head($objsoc)
  */
 function societe_prepare_head2($objsoc)
 {
-	global $langs, $conf, $user;
-	$h = 0;
-	$head = array();
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$objsoc->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'company';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$objsoc->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'company';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$objsoc->id;
-	$head[$h][1] = $langs->trans("BankAccount")." $account->number";
-	$head[$h][2] = 'rib';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$objsoc->id;
+    $head[$h][1] = $langs->trans("BankAccount")." $account->number";
+    $head[$h][2] = 'rib';
+    $h++;
 
-	$head[$h][0] = 'lien.php?socid='.$objsoc->id;
-	$head[$h][1] = $langs->trans("Links");
-	$head[$h][2] = 'links';
-	$h++;
+    $head[$h][0] = 'lien.php?socid='.$objsoc->id;
+    $head[$h][1] = $langs->trans("Links");
+    $head[$h][2] = 'links';
+    $h++;
 
-	$head[$h][0] = 'commerciaux.php?socid='.$objsoc->id;
-	$head[$h][1] = $langs->trans("SalesRepresentative");
-	$head[$h][2] = 'salesrepresentative';
-	$h++;
+    $head[$h][0] = 'commerciaux.php?socid='.$objsoc->id;
+    $head[$h][1] = $langs->trans("SalesRepresentative");
+    $head[$h][2] = 'salesrepresentative';
+    $h++;
 
-	return $head;
+    return $head;
 }
 
 
 /**
  *    \brief      Return country translated from an id or a code
  *    \param      id          id or code of country
- *    \param      withcode    0=Return label, 1=Return code + label, 2=Return code
+ *    \param      withcode    0=Return label, 1=Return code + label, 2=Return code from id
  *    \return     string      String with country code or translated country name
  */
 function getCountry($id,$withcode=0)
 {
-	global $db,$langs;
+    global $db,$langs;
 
-	// TODO Optimize: Try translate and make SQL request only if it fails
-	$sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
-	if (is_numeric($id)) $sql.= " WHERE rowid=".$id;
-	else $sql.= " WHERE code='".$id."'";
+    // TODO Optimize: Try to translate and make SQL request only if it fails
+    $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
+    if (is_numeric($id)) $sql.= " WHERE rowid=".$id;
+    else $sql.= " WHERE code='".$id."'";
 
-	dol_syslog("Company.lib::getCountry sql=".$sql);
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$obj = $db->fetch_object($resql);
-		if ($obj)
-		{
-			$langs->load("dict");
-			$label=($obj->code && ($langs->trans("Country".$obj->code)!="Country".$obj->code))?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'');
-			if ($withcode == 1) return $label?"$obj->code - $label":"$obj->code";
-			else if ($withcode == 2) return $obj->code;
-			else return $label;
-		}
-		else
-		{
-			return $langs->trans("NotDefined");
-		}
-	}
-	else dol_print_error($db,'');
+    dol_syslog("Company.lib::getCountry sql=".$sql);
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj = $db->fetch_object($resql);
+        if ($obj)
+        {
+            $label=((! empty($obj->libelle) && $obj->libelle!='-')?$obj->libelle:'');
+            if (is_object($langs))
+            {
+                $langs->load("dict");
+                $label=($obj->code && ($langs->trans("Country".$obj->code)!="Country".$obj->code))?$langs->trans("Country".$obj->code):$label;
+            }
+            if ($withcode == 1) return $label?"$obj->code - $label":"$obj->code";
+            else if ($withcode == 2) return $obj->code;
+            else return $label;
+        }
+        else
+        {
+            return "NotDefined";
+        }
+    }
+    else dol_print_error($db,'');
 }
 
 /**
@@ -223,29 +227,29 @@ function getCountry($id,$withcode=0)
  */
 function getState($id,$withcode=0)
 {
-	global $db,$langs;
+    global $db,$langs;
 
-	$sql = "SELECT rowid, code_departement as code, nom as label FROM ".MAIN_DB_PREFIX."c_departements";
-	$sql.= " WHERE rowid=".$id;
+    $sql = "SELECT rowid, code_departement as code, nom as label FROM ".MAIN_DB_PREFIX."c_departements";
+    $sql.= " WHERE rowid=".$id;
 
-	dol_syslog("Company.lib::getState sql=".$sql);
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$obj = $db->fetch_object($resql);
-		if ($obj)
-		{
-			$label=$obj->label;
-			if ($withcode == 1) return $label=$obj->code?"$obj->code":"$obj->code - $label";
-			else if ($withcode == 2) return $label=$obj->code;
-			else return $label;
-		}
-		else
-		{
-			return $langs->trans("NotDefined");
-		}
-	}
-	else dol_print_error($db,'');
+    dol_syslog("Company.lib::getState sql=".$sql);
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj = $db->fetch_object($resql);
+        if ($obj)
+        {
+            $label=$obj->label;
+            if ($withcode == 1) return $label=$obj->code?"$obj->code":"$obj->code - $label";
+            else if ($withcode == 2) return $label=$obj->code;
+            else return $label;
+        }
+        else
+        {
+            return $langs->trans("NotDefined");
+        }
+    }
+    else dol_print_error($db,'');
 }
 
 /**
@@ -256,36 +260,36 @@ function getState($id,$withcode=0)
  */
 function currency_name($code_iso,$withcode=0)
 {
-	global $langs,$db;
+    global $langs,$db;
 
-	// Si il existe une traduction, on peut renvoyer de suite le libelle
-	if ($langs->trans("Currency".$code_iso)!="Currency".$code_iso)
-	{
-		return $langs->trans("Currency".$code_iso);
-	}
+    // Si il existe une traduction, on peut renvoyer de suite le libelle
+    if ($langs->trans("Currency".$code_iso)!="Currency".$code_iso)
+    {
+        return $langs->trans("Currency".$code_iso);
+    }
 
-	// Si pas de traduction, on consulte le libelle par defaut en table
-	$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
-	$sql.= " WHERE code_iso='".$code_iso."'";
+    // Si pas de traduction, on consulte le libelle par defaut en table
+    $sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
+    $sql.= " WHERE code_iso='".$code_iso."'";
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
 
-		if ($num)
-		{
-			$obj = $db->fetch_object($resql);
-			$label=($obj->label!='-'?$obj->label:'');
-			if ($withcode) return ($label==$code_iso)?"$code_iso":"$code_iso - $label";
-			else return $label;
-		}
-		else
-		{
-			return $code_iso;
-		}
+        if ($num)
+        {
+            $obj = $db->fetch_object($resql);
+            $label=($obj->label!='-'?$obj->label:'');
+            if ($withcode) return ($label==$code_iso)?"$code_iso":"$code_iso - $label";
+            else return $label;
+        }
+        else
+        {
+            return $code_iso;
+        }
 
-	}
+    }
 }
 
 /**
@@ -295,31 +299,31 @@ function currency_name($code_iso,$withcode=0)
  */
 function getFormeJuridiqueLabel($code)
 {
-	global $db,$langs;
+    global $db,$langs;
 
-	if (! $code) return '';
+    if (! $code) return '';
 
-	$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
-	$sql.= " WHERE code='$code'";
+    $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+    $sql.= " WHERE code='$code'";
 
-	dol_syslog("Company.lib::getFormeJuridiqueLabel sql=".$sql);
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
+    dol_syslog("Company.lib::getFormeJuridiqueLabel sql=".$sql);
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
 
-		if ($num)
-		{
-			$obj = $db->fetch_object($resql);
-			$label=($obj->libelle!='-' ? $obj->libelle : '');
-			return $label;
-		}
-		else
-		{
-			return $langs->trans("NotDefined");
-		}
+        if ($num)
+        {
+            $obj = $db->fetch_object($resql);
+            $label=($obj->libelle!='-' ? $obj->libelle : '');
+            return $label;
+        }
+        else
+        {
+            return $langs->trans("NotDefined");
+        }
 
-	}
+    }
 }
 
 
@@ -333,83 +337,83 @@ function getFormeJuridiqueLabel($code)
  */
 function show_projects($conf,$langs,$db,$objsoc)
 {
-	global $user;
+    global $user;
 
-	$i = -1 ;
+    $i = -1 ;
 
-	if ($conf->projet->enabled && $user->rights->projet->lire)
-	{
-		$langs->load("projects");
+    if ($conf->projet->enabled && $user->rights->projet->lire)
+    {
+        $langs->load("projects");
 
-		print "\n";
-		print_titre($langs->trans("ProjectsDedicatedToThisThirdParty"));
-		print "\n".'<table class="noborder" width=100%>';
+        print "\n";
+        print_titre($langs->trans("ProjectsDedicatedToThisThirdParty"));
+        print "\n".'<table class="noborder" width=100%>';
 
-		$sql  = "SELECT p.rowid,p.title,p.ref,p.public, p.dateo as do, p.datee as de";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-		$sql .= " WHERE p.fk_soc = ".$objsoc->id;
-		$sql .= " ORDER BY p.dateo DESC";
+        $sql  = "SELECT p.rowid,p.title,p.ref,p.public, p.dateo as do, p.datee as de";
+        $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+        $sql .= " WHERE p.fk_soc = ".$objsoc->id;
+        $sql .= " ORDER BY p.dateo DESC";
 
-		$result=$db->query($sql);
-		if ($result)
-		{
-			$num = $db->num_rows($result);
+        $result=$db->query($sql);
+        if ($result)
+        {
+            $num = $db->num_rows($result);
 
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Name").'</td><td align="center">'.$langs->trans("DateStart").'</td><td align="center">'.$langs->trans("DateEnd").'</td>';
-			print '</tr>';
+            print '<tr class="liste_titre">';
+            print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Name").'</td><td align="center">'.$langs->trans("DateStart").'</td><td align="center">'.$langs->trans("DateEnd").'</td>';
+            print '</tr>';
 
-			if ($num > 0)
-			{
-				require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+            if ($num > 0)
+            {
+                require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
-				$projectstatic = new Project($db);
+                $projectstatic = new Project($db);
 
-				$i=0;
-				$var=true;
-				while ($i < $num)
-				{
-					$obj = $db->fetch_object($result);
-					$projectstatic->fetch($obj->rowid);
+                $i=0;
+                $var=true;
+                while ($i < $num)
+                {
+                    $obj = $db->fetch_object($result);
+                    $projectstatic->fetch($obj->rowid);
 
-					// To verify role of users
-					$userAccess = $projectstatic->restrictedProjectArea($user,1);
+                    // To verify role of users
+                    $userAccess = $projectstatic->restrictedProjectArea($user,1);
 
-					if ($user->rights->projet->lire && $userAccess > 0)
-					{
-						$var = !$var;
-						print "<tr $bc[$var]>";
+                    if ($user->rights->projet->lire && $userAccess > 0)
+                    {
+                        $var = !$var;
+                        print "<tr $bc[$var]>";
 
-						// Ref
-						print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
-						// Label
-						print '<td>'.$obj->title.'</td>';
-						// Date start
-						print '<td align="center">'.dol_print_date($db->jdate($obj->do),"day").'</td>';
-						// Date end
-						print '<td align="center">'.dol_print_date($db->jdate($obj->de),"day").'</td>';
+                        // Ref
+                        print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
+                        // Label
+                        print '<td>'.$obj->title.'</td>';
+                        // Date start
+                        print '<td align="center">'.dol_print_date($db->jdate($obj->do),"day").'</td>';
+                        // Date end
+                        print '<td align="center">'.dol_print_date($db->jdate($obj->de),"day").'</td>';
 
-						print '</tr>';
-					}
-					$i++;
-				}
-			}
-			else
-			{
-				print '<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
-			}
-			$db->free($result);
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-		print "</table>";
+                        print '</tr>';
+                    }
+                    $i++;
+                }
+            }
+            else
+            {
+                print '<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
+            }
+            $db->free($result);
+        }
+        else
+        {
+            dol_print_error($db);
+        }
+        print "</table>";
 
-		print "<br>\n";
-	}
+        print "<br>\n";
+    }
 
-	return $i;
+    return $i;
 }
 
 
@@ -422,99 +426,99 @@ function show_projects($conf,$langs,$db,$objsoc)
  */
 function show_contacts($conf,$langs,$db,$objsoc)
 {
-	global $user;
-	global $bc;
+    global $user;
+    global $bc;
 
-	$i=-1;
+    $i=-1;
 
-	$contactstatic = new Contact($db);
+    $contactstatic = new Contact($db);
 
-	if ($conf->clicktodial->enabled)
-	{
-		$user->fetch_clicktodial(); // lecture des infos de clicktodial
-	}
+    if ($conf->clicktodial->enabled)
+    {
+        $user->fetch_clicktodial(); // lecture des infos de clicktodial
+    }
 
-	print "\n";
-	print_titre($langs->trans("ContactsForCompany"));
-	print "\n".'<table class="noborder" width="100%">'."\n";
+    print "\n";
+    print_titre($langs->trans("ContactsForCompany"));
+    print "\n".'<table class="noborder" width="100%">'."\n";
 
-	print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
-	print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
-	print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
-	print "<td>&nbsp;</td>";
-	if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-	{
-		print '<td>&nbsp;</td>';
-	}
-	print "</tr>";
+    print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
+    print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
+    print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
+    print "<td>&nbsp;</td>";
+    if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+    {
+        print '<td>&nbsp;</td>';
+    }
+    print "</tr>";
 
-	$sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note ";
-	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-	$sql .= " WHERE p.fk_soc = ".$objsoc->id;
-	$sql .= " ORDER by p.datec";
+    $sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+    $sql .= " WHERE p.fk_soc = ".$objsoc->id;
+    $sql .= " ORDER by p.datec";
 
-	$result = $db->query($sql);
-	$num = $db->num_rows($result);
+    $result = $db->query($sql);
+    $num = $db->num_rows($result);
 
-	if ($num)
-	{
-		$i=0;
-		$var=true;
+    if ($num)
+    {
+        $i=0;
+        $var=true;
 
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($result);
-			$var = !$var;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($result);
+            $var = !$var;
 
-			print "<tr ".$bc[$var].">";
+            print "<tr ".$bc[$var].">";
 
-			print '<td>';
-			$contactstatic->id = $obj->rowid;
-			$contactstatic->name = $obj->name;
-			$contactstatic->firstname = $obj->firstname;
-			print $contactstatic->getNomUrl(1);
-			print '</td>';
+            print '<td>';
+            $contactstatic->id = $obj->rowid;
+            $contactstatic->name = $obj->name;
+            $contactstatic->firstname = $obj->firstname;
+            print $contactstatic->getNomUrl(1);
+            print '</td>';
 
-			print '<td>'.$obj->poste.'</td>';
+            print '<td>'.$obj->poste.'</td>';
 
-			// Lien click to dial
-			print '<td>';
-			print dol_print_phone($obj->phone,$obj->pays_code,$obj->rowid,$objsoc->id,'AC_TEL');
-			print '</td>';
-			print '<td>';
-			print dol_print_phone($obj->fax,$obj->pays_code,$obj->rowid,$objsoc->id,'AC_FAX');
-			print '</td>';
-			print '<td>';
-			print dol_print_email($obj->email,$obj->rowid,$objsoc->id,'AC_EMAIL');
-			print '</td>';
+            // Lien click to dial
+            print '<td>';
+            print dol_print_phone($obj->phone,$obj->pays_code,$obj->rowid,$objsoc->id,'AC_TEL');
+            print '</td>';
+            print '<td>';
+            print dol_print_phone($obj->fax,$obj->pays_code,$obj->rowid,$objsoc->id,'AC_FAX');
+            print '</td>';
+            print '<td>';
+            print dol_print_email($obj->email,$obj->rowid,$objsoc->id,'AC_EMAIL');
+            print '</td>';
 
-			print '<td align="center">';
-			print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?action=edit&amp;id='.$obj->rowid.'">';
-			print img_edit();
-			print '</a></td>';
+            print '<td align="center">';
+            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?action=edit&amp;id='.$obj->rowid.'">';
+            print img_edit();
+            print '</a></td>';
 
-			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-			{
-				print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
-				print img_object($langs->trans("Rendez-Vous"),"action");
-				print '</a></td>';
-			}
+            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+            {
+                print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+                print img_object($langs->trans("Rendez-Vous"),"action");
+                print '</a></td>';
+            }
 
-			print "</tr>\n";
-			$i++;
-		}
-	}
-	else
-	{
-		//print "<tr ".$bc[$var].">";
-		//print '<td>'.$langs->trans("NoContactsYetDefined").'</td>';
-		//print "</tr>\n";
-	}
-	print "\n</table>\n";
+            print "</tr>\n";
+            $i++;
+        }
+    }
+    else
+    {
+        //print "<tr ".$bc[$var].">";
+        //print '<td>'.$langs->trans("NoContactsYetDefined").'</td>';
+        //print "</tr>\n";
+    }
+    print "\n</table>\n";
 
-	print "<br>\n";
+    print "<br>\n";
 
-	return $i;
+    return $i;
 }
 
 
@@ -528,126 +532,126 @@ function show_contacts($conf,$langs,$db,$objsoc)
  */
 function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 {
-	global $bc;
+    global $bc;
 
-	if ($conf->agenda->enabled)
-	{
-		require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
-		$actionstatic=new ActionComm($db);
-		$userstatic=new User($db);
-		$contactstatic = new Contact($db);
+    if ($conf->agenda->enabled)
+    {
+        require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
+        $actionstatic=new ActionComm($db);
+        $userstatic=new User($db);
+        $contactstatic = new Contact($db);
 
-		print "\n";
-		if (is_object($objcon) && $objcon->id) print_titre($langs->trans("TasksHistoryForThisContact"));
-		else print_titre($langs->trans("ActionsOnCompany"));
+        print "\n";
+        if (is_object($objcon) && $objcon->id) print_titre($langs->trans("TasksHistoryForThisContact"));
+        else print_titre($langs->trans("ActionsOnCompany"));
 
-		print '<table width="100%" class="noborder">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="7"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$objsoc->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
-		print '</tr>';
+        print '<table width="100%" class="noborder">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="7"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$objsoc->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
+        print '</tr>';
 
-		$sql = "SELECT a.id, a.label,";
-		$sql.= " a.datep as dp,";
-		$sql.= " a.datea as da,";
-		$sql.= " a.percent,";
-		$sql.= " a.propalrowid, a.fk_user_author, a.fk_contact,";
-		$sql.= " c.code as acode, c.libelle,";
-		$sql.= " u.login, u.rowid,";
-		$sql.= " sp.name, sp.firstname";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-		$sql.= " WHERE u.rowid = a.fk_user_author";
-		if ($objsoc->id) $sql.= " AND a.fk_soc = ".$objsoc->id;
-		if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
-		$sql.= " AND c.id=a.fk_action AND a.percent < 100";
-		$sql.= " ORDER BY a.datep DESC, a.id DESC";
+        $sql = "SELECT a.id, a.label,";
+        $sql.= " a.datep as dp,";
+        $sql.= " a.datea as da,";
+        $sql.= " a.percent,";
+        $sql.= " a.propalrowid, a.fk_user_author, a.fk_contact,";
+        $sql.= " c.code as acode, c.libelle,";
+        $sql.= " u.login, u.rowid,";
+        $sql.= " sp.name, sp.firstname";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+        $sql.= " WHERE u.rowid = a.fk_user_author";
+        if ($objsoc->id) $sql.= " AND a.fk_soc = ".$objsoc->id;
+        if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
+        $sql.= " AND c.id=a.fk_action AND a.percent < 100";
+        $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
-		dol_syslog("company.lib::show_actions_todo sql=".$sql);
-		$result=$db->query($sql);
-		if ($result)
-		{
-			$i = 0 ;
-			$num = $db->num_rows($result);
-			$var=true;
+        dol_syslog("company.lib::show_actions_todo sql=".$sql);
+        $result=$db->query($sql);
+        if ($result)
+        {
+            $i = 0 ;
+            $num = $db->num_rows($result);
+            $var=true;
 
-			if ($num)
-			{
-				while ($i < $num)
-				{
-					$var = !$var;
+            if ($num)
+            {
+                while ($i < $num)
+                {
+                    $var = !$var;
 
-					$datep=$obj->dp;
+                    $datep=$obj->dp;
 
-					$obj = $db->fetch_object($result);
-					print "<tr ".$bc[$var].">";
+                    $obj = $db->fetch_object($result);
+                    print "<tr ".$bc[$var].">";
 
-					print '<td width="100" align="left" nowrap="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
+                    print '<td width="100" align="left" nowrap="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
 
-					// Picto warning
-					print '<td width="16">';
-					if ($datep && $datep < time()) print ' '.img_warning("Late");
-					else print '&nbsp;';
-					print '</td>';
+                    // Picto warning
+                    print '<td width="16">';
+                    if ($datep && $datep < time()) print ' '.img_warning("Late");
+                    else print '&nbsp;';
+                    print '</td>';
 
-					if ($obj->propalrowid)
-					{
-						print '<td width="140"><a href="propal.php?id='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
-						$transcode=$langs->trans("Action".$obj->acode);
-						$libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-						print $libelle;
-						print '</a></td>';
-					}
-					else
-					{
-						$actionstatic->type_code=$obj->acode;
-						$actionstatic->libelle=$obj->libelle;
-						$actionstatic->id=$obj->id;
-						print '<td width="140">'.$actionstatic->getNomUrl(1,16).'</td>';
-					}
+                    if ($obj->propalrowid)
+                    {
+                        print '<td width="140"><a href="propal.php?id='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
+                        $transcode=$langs->trans("Action".$obj->acode);
+                        $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                        print $libelle;
+                        print '</a></td>';
+                    }
+                    else
+                    {
+                        $actionstatic->type_code=$obj->acode;
+                        $actionstatic->libelle=$obj->libelle;
+                        $actionstatic->id=$obj->id;
+                        print '<td width="140">'.$actionstatic->getNomUrl(1,16).'</td>';
+                    }
 
-					print '<td colspan="2">'.$obj->label.'</td>';
+                    print '<td colspan="2">'.$obj->label.'</td>';
 
-					// Contact pour cette action
-					if (! $objcon->id && $obj->fk_contact > 0)
-					{
-						$contactstatic->name=$obj->name;
-						$contactstatic->firstname=$obj->firstname;
-						$contactstatic->id=$obj->fk_contact;
-						print '<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
-					}
-					else
-					{
-						print '<td>&nbsp;</td>';
-					}
+                    // Contact pour cette action
+                    if (! $objcon->id && $obj->fk_contact > 0)
+                    {
+                        $contactstatic->name=$obj->name;
+                        $contactstatic->firstname=$obj->firstname;
+                        $contactstatic->id=$obj->fk_contact;
+                        print '<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
+                    }
+                    else
+                    {
+                        print '<td>&nbsp;</td>';
+                    }
 
-					print '<td width="80" nowrap="nowrap">';
-					$userstatic->id=$obj->fk_user_author;
-					$userstatic->login=$obj->login;
-					print $userstatic->getLoginUrl(1);
-					print '</td>';
+                    print '<td width="80" nowrap="nowrap">';
+                    $userstatic->id=$obj->fk_user_author;
+                    $userstatic->login=$obj->login;
+                    print $userstatic->getLoginUrl(1);
+                    print '</td>';
 
-					// Statut
-					print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+                    // Statut
+                    print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
 
-					print "</tr>\n";
-					$i++;
-				}
-			}
-			else
-			{
-				// Aucun action a faire
+                    print "</tr>\n";
+                    $i++;
+                }
+            }
+            else
+            {
+                // Aucun action a faire
 
-			}
-			$db->free($result);
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-		print "</table>\n";
+            }
+            $db->free($result);
+        }
+        else
+        {
+            dol_print_error($db);
+        }
+        print "</table>\n";
 
-		print "<br>\n";
-	}
+        print "<br>\n";
+    }
 }
 
 /**
@@ -660,203 +664,203 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
  */
 function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 {
-	global $bc;
+    global $bc;
 
-	$histo=array();
-	$numaction = 0 ;
+    $histo=array();
+    $numaction = 0 ;
 
-	if ($conf->agenda->enabled)
-	{
-		// Recherche histo sur actioncomm
-		$sql = "SELECT a.id, a.label,";
-		$sql.= " a.datep as dp,";
-		$sql.= " a.datep2 as dp2,";
-		$sql.= " a.note, a.percent,";
-		$sql.= " a.propalrowid as pid, a.fk_commande as oid, a.fk_facture as fid,";
-		$sql.= " a.fk_user_author, a.fk_contact,";
-		$sql.= " c.code as acode, c.libelle,";
-		$sql.= " u.login, u.rowid as user_id,";
-		$sql.= " sp.name, sp.firstname";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-		$sql.= " WHERE u.rowid = a.fk_user_author";
-		if ($objsoc->id) $sql.= " AND a.fk_soc = ".$objsoc->id;
-		if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
-		$sql.= " AND c.id=a.fk_action";
-		$sql.= " AND a.percent = 100";
-		$sql.= " ORDER BY a.datep DESC, a.id DESC";
+    if ($conf->agenda->enabled)
+    {
+        // Recherche histo sur actioncomm
+        $sql = "SELECT a.id, a.label,";
+        $sql.= " a.datep as dp,";
+        $sql.= " a.datep2 as dp2,";
+        $sql.= " a.note, a.percent,";
+        $sql.= " a.propalrowid as pid, a.fk_commande as oid, a.fk_facture as fid,";
+        $sql.= " a.fk_user_author, a.fk_contact,";
+        $sql.= " c.code as acode, c.libelle,";
+        $sql.= " u.login, u.rowid as user_id,";
+        $sql.= " sp.name, sp.firstname";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+        $sql.= " WHERE u.rowid = a.fk_user_author";
+        if ($objsoc->id) $sql.= " AND a.fk_soc = ".$objsoc->id;
+        if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
+        $sql.= " AND c.id=a.fk_action";
+        $sql.= " AND a.percent = 100";
+        $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
-		dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$i = 0 ;
-			$num = $db->num_rows($resql);
-			$var=true;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				$histo[$numaction]=array('type'=>'action','id'=>$obj->id,'date'=>$db->jdate($obj->dp2),'note'=>$obj->label,'percent'=>$obj->percent,
+        dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $i = 0 ;
+            $num = $db->num_rows($resql);
+            $var=true;
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                $histo[$numaction]=array('type'=>'action','id'=>$obj->id,'date'=>$db->jdate($obj->dp2),'note'=>$obj->label,'percent'=>$obj->percent,
 				'acode'=>$obj->acode,'libelle'=>$obj->libelle,
 				'userid'=>$obj->user_id,'login'=>$obj->login,
 				'contact_id'=>$obj->fk_contact,'name'=>$obj->name,'firstname'=>$obj->firstname,
 				'pid'=>$obj->pid,'oid'=>$obj->oid,'fid'=>$obj->fid);
-				$numaction++;
-				$i++;
-			}
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-	}
+                $numaction++;
+                $i++;
+            }
+        }
+        else
+        {
+            dol_print_error($db);
+        }
+    }
 
-	if ($conf->mailing->enabled && $objcon->email)
-	{
-		$langs->load("mails");
+    if ($conf->mailing->enabled && $objcon->email)
+    {
+        $langs->load("mails");
 
-		// Recherche histo sur mailing
-		$sql = "SELECT m.rowid as id, mc.date_envoi as da, m.titre as note, '100' as percentage,";
-		$sql.= " 'AC_EMAILING' as acode,";
-		$sql.= " u.rowid as user_id, u.login";	// User that valid action
-		$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE mc.email = '".addslashes($objcon->email)."'";	// Search is done on email.
-		$sql.= " AND mc.statut = 1";
-		$sql.= " AND u.rowid = m.fk_user_valid";
-		$sql.= " AND mc.fk_mailing=m.rowid";
-		$sql.= " ORDER BY mc.date_envoi DESC, m.rowid DESC";
+        // Recherche histo sur mailing
+        $sql = "SELECT m.rowid as id, mc.date_envoi as da, m.titre as note, '100' as percentage,";
+        $sql.= " 'AC_EMAILING' as acode,";
+        $sql.= " u.rowid as user_id, u.login";	// User that valid action
+        $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u";
+        $sql.= " WHERE mc.email = '".addslashes($objcon->email)."'";	// Search is done on email.
+        $sql.= " AND mc.statut = 1";
+        $sql.= " AND u.rowid = m.fk_user_valid";
+        $sql.= " AND mc.fk_mailing=m.rowid";
+        $sql.= " ORDER BY mc.date_envoi DESC, m.rowid DESC";
 
-		dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$i = 0 ;
-			$num = $db->num_rows($resql);
-			$var=true;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				$histo[$numaction]=array('type'=>'mailing','id'=>$obj->id,'date'=>$db->jdate($obj->da),'note'=>$obj->note,'percent'=>$obj->percentage,
+        dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $i = 0 ;
+            $num = $db->num_rows($resql);
+            $var=true;
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                $histo[$numaction]=array('type'=>'mailing','id'=>$obj->id,'date'=>$db->jdate($obj->da),'note'=>$obj->note,'percent'=>$obj->percentage,
 				'acode'=>$obj->acode,'libelle'=>$obj->libelle,
 				'userid'=>$obj->user_id,'login'=>$obj->login,
 				'contact_id'=>$obj->contact_id);
-				$numaction++;
-				$i++;
-			}
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-	}
+                $numaction++;
+                $i++;
+            }
+        }
+        else
+        {
+            dol_print_error($db);
+        }
+    }
 
 
-	if ($conf->agenda->enabled || ($conf->mailing->enabled && $objcon->email))
-	{
-		require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
-		require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-		require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-		require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-		$actionstatic=new ActionComm($db);
-		$userstatic=new User($db);
-		$contactstatic = new Contact($db);
-		$propalstatic=new Propal($db);
-		$orderstatic=new Commande($db);
-		$facturestatic=new Facture($db);
+    if ($conf->agenda->enabled || ($conf->mailing->enabled && $objcon->email))
+    {
+        require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
+        require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+        require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+        require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+        $actionstatic=new ActionComm($db);
+        $userstatic=new User($db);
+        $contactstatic = new Contact($db);
+        $propalstatic=new Propal($db);
+        $orderstatic=new Commande($db);
+        $facturestatic=new Facture($db);
 
-		print "\n";
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="8"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$objsoc->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
-		print '</tr>';
+        print "\n";
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="8"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$objsoc->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
+        print '</tr>';
 
-		foreach ($histo as $key=>$value)
-		{
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+        foreach ($histo as $key=>$value)
+        {
+            $var=!$var;
+            print "<tr ".$bc[$var].">";
 
-			// Champ date
-			print '<td width="120" nowrap="nowrap">'.dol_print_date($histo[$key]['date'],'dayhour')."</td>\n";
+            // Champ date
+            print '<td width="120" nowrap="nowrap">'.dol_print_date($histo[$key]['date'],'dayhour')."</td>\n";
 
-			// Picto
-			print '<td width="16">&nbsp;</td>';
+            // Picto
+            print '<td width="16">&nbsp;</td>';
 
-			// Action
-			print '<td width="140">';
-			if ($histo[$key]['type']=='action')
-			{
-				$actionstatic->type_code=$histo[$key]['acode'];
-				$actionstatic->libelle=$histo[$key]['libelle'];
-				$actionstatic->id=$histo[$key]['id'];
-				print $actionstatic->getNomUrl(1,16);
-			}
-			if ($histo[$key]['type']=='mailing')
-			{
-				print '<a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
-				$transcode=$langs->trans("Action".$histo[$key]['acode']);
-				$libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
-				print dol_trunc($libelle,30);
-			}
-			print '</td>';
+            // Action
+            print '<td width="140">';
+            if ($histo[$key]['type']=='action')
+            {
+                $actionstatic->type_code=$histo[$key]['acode'];
+                $actionstatic->libelle=$histo[$key]['libelle'];
+                $actionstatic->id=$histo[$key]['id'];
+                print $actionstatic->getNomUrl(1,16);
+            }
+            if ($histo[$key]['type']=='mailing')
+            {
+                print '<a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
+                $transcode=$langs->trans("Action".$histo[$key]['acode']);
+                $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
+                print dol_trunc($libelle,30);
+            }
+            print '</td>';
 
-			// Note
-			print '<td>'.dol_trunc($histo[$key]['note'], 30).'</td>';
+            // Note
+            print '<td>'.dol_trunc($histo[$key]['note'], 30).'</td>';
 
-			// Objet lie
-			print '<td>';
-			if ($histo[$key]['pid'] && $conf->propal->enabled)
-			{
-				$propalstatic->ref=$langs->trans("ProposalShort");
-				$propalstatic->id=$histo[$key]['pid'];
-				print $propalstatic->getNomUrl(1);
-			}
-			elseif ($histo[$key]['oid'] && $conf->commande->enabled)
-			{
-				$orderstatic->ref=$langs->trans("Order");
-				$orderstatic->id=$histo[$key]['oid'];
-				print $orderstatic->getNomUrl(1);
-			}
-			elseif ($histo[$key]['fid'] && $conf->facture->enabled)
-			{
-				$facturestatic->ref=$langs->trans("Invoice");
-				$facturestatic->id=$histo[$key]['fid'];
-				$facturestatic->type=$histo[$key]['ftype'];
-				print $facturestatic->getNomUrl(1,'compta');
-			}
-			else print '&nbsp;';
-			print '</td>';
+            // Objet lie
+            print '<td>';
+            if ($histo[$key]['pid'] && $conf->propal->enabled)
+            {
+                $propalstatic->ref=$langs->trans("ProposalShort");
+                $propalstatic->id=$histo[$key]['pid'];
+                print $propalstatic->getNomUrl(1);
+            }
+            elseif ($histo[$key]['oid'] && $conf->commande->enabled)
+            {
+                $orderstatic->ref=$langs->trans("Order");
+                $orderstatic->id=$histo[$key]['oid'];
+                print $orderstatic->getNomUrl(1);
+            }
+            elseif ($histo[$key]['fid'] && $conf->facture->enabled)
+            {
+                $facturestatic->ref=$langs->trans("Invoice");
+                $facturestatic->id=$histo[$key]['fid'];
+                $facturestatic->type=$histo[$key]['ftype'];
+                print $facturestatic->getNomUrl(1,'compta');
+            }
+            else print '&nbsp;';
+            print '</td>';
 
-			// Contact pour cette action
-			if (! $objcon->id && $histo[$key]['contact_id'] > 0)
-			{
-				$contactstatic->name=$histo[$key]['name'];
-				$contactstatic->firstname=$histo[$key]['firstname'];
-				$contactstatic->id=$histo[$key]['contact_id'];
-				print '<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
-			}
-			else
-			{
-				print '<td>&nbsp;</td>';
-			}
+            // Contact pour cette action
+            if (! $objcon->id && $histo[$key]['contact_id'] > 0)
+            {
+                $contactstatic->name=$histo[$key]['name'];
+                $contactstatic->firstname=$histo[$key]['firstname'];
+                $contactstatic->id=$histo[$key]['contact_id'];
+                print '<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
+            }
+            else
+            {
+                print '<td>&nbsp;</td>';
+            }
 
-			// Auteur
-			print '<td nowrap="nowrap" width="80">';
-			$userstatic->id=$histo[$key]['userid'];
-			$userstatic->login=$histo[$key]['login'];
-			print $userstatic->getLoginUrl(1);
-			print '</td>';
+            // Auteur
+            print '<td nowrap="nowrap" width="80">';
+            $userstatic->id=$histo[$key]['userid'];
+            $userstatic->login=$histo[$key]['login'];
+            print $userstatic->getLoginUrl(1);
+            print '</td>';
 
-			// Statut
-			print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($histo[$key]['percent'],3).'</td>';
+            // Statut
+            print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($histo[$key]['percent'],3).'</td>';
 
-			print "</tr>\n";
-			$i++;
-		}
-		print "</table>\n";
-		print "<br>\n";
+            print "</tr>\n";
+            $i++;
+        }
+        print "</table>\n";
+        print "<br>\n";
 
-		$db->free($result);
-	}
+        $db->free($result);
+    }
 
 }
 

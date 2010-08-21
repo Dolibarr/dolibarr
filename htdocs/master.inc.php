@@ -351,38 +351,27 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->town=$conf->global->MAIN_INFO_SOCIETE_VILLE;
 	$mysoc->departement_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
 	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
-	// For backwar compatibility: Si dans MAIN_INFO_SOCIETE_PAYS on a un id de pays, on recupere code
-	if (is_numeric($conf->global->MAIN_INFO_SOCIETE_PAYS))
-	{
-		$sql  = "SELECT rowid, code, libelle as label from ".MAIN_DB_PREFIX."c_pays";
-		$sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
-			$mysoc->pays_id=$obj->rowid;
-			$mysoc->pays_code=$obj->code;
-			if (is_object($langs))
-			{
-				$mysoc->country=$obj->code?($langs->trans('Country'.$obj->code)!='Country'.$obj->code?$langs->trans('Country'.$obj->code):$obj->label):'';
-			    $mysoc->pays=$mysoc->country;    // deprecated
-			}
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-	}
-	// Si dans MAIN_INFO_SOCIETE_PAYS on a deja un code, tout est fait
-	else
-	{
-		$mysoc->pays_code=$conf->global->MAIN_INFO_SOCIETE_PAYS;
-		if (is_object($langs))
-		{
-			$mysoc->country=$conf->global->MAIN_INFO_SOCIETE_PAYS?$langs->trans('Country'.$conf->global->MAIN_INFO_SOCIETE_PAYS):'';
-			$mysoc->pays=$mysoc->country;     // deprecated
-		}
-	}
+
+    // We define pays_id, pays_code and pays_label
+    $tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_PAYS);
+    $pays_id=$tmp[0];
+    if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_PAYS is "id:code:label"
+    {
+        $pays_code=$tmp[1];
+        $pays_label=$tmp[2];
+    }
+    else                    // For backward compatibility
+    {
+        include(DOL_DOCUMENT_ROOT.'/lib/company.lib.php');
+        $pays_code=getCountry($pays_id,2);  // This need a SQL request, but it's the old feature
+        $pays_label=getCountry($pays_id,0);  // This need a SQL request, but it's the old feature
+    }
+    $mysoc->pays_id=$pays_id;
+    $mysoc->pays_code=$pays_code;
+    $mysoc->country=$pays_label;
+    if (is_object($langs)) $mysoc->country=($langs->trans('Country'.$pays_code)!='Country'.$pays_code)?$langs->trans('Country'.$pays_code):$pays_label;
+    $mysoc->pays=$mysoc->country;    // deprecated
+
 	$mysoc->tel=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;   // deprecated
 	$mysoc->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
 	$mysoc->fax=empty($conf->global->MAIN_INFO_SOCIETE_FAX)?'':$conf->global->MAIN_INFO_SOCIETE_FAX;
