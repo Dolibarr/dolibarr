@@ -362,10 +362,14 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 			$obj = $db->fetch_object($resql);
 			$mysoc->pays_id=$obj->rowid;
 			$mysoc->pays_code=$obj->code;
-			$mysoc->pays=$obj->code?($langs->trans('Country'.$obj->code)!='Country'.$obj->code?$langs->trans('Country'.$obj->code):$obj->label):'';	// deprecated
-			$mysoc->country=$obj->code?($langs->trans('Country'.$obj->code)!='Country'.$obj->code?$langs->trans('Country'.$obj->code):$obj->label):'';
+			if (is_object($langs))
+			{
+				$mysoc->country=$obj->code?($langs->trans('Country'.$obj->code)!='Country'.$obj->code?$langs->trans('Country'.$obj->code):$obj->label):'';
+			    $mysoc->pays=$mysoc->country;    // deprecated
+			}
 		}
-		else {
+		else
+		{
 			dol_print_error($db);
 		}
 	}
@@ -373,8 +377,11 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	else
 	{
 		$mysoc->pays_code=$conf->global->MAIN_INFO_SOCIETE_PAYS;
-		$mysoc->pays=$conf->global->MAIN_INFO_SOCIETE_PAYS?$langs->trans('Country'.$conf->global->MAIN_INFO_SOCIETE_PAYS):'';	// deprecated
-		$mysoc->country=$conf->global->MAIN_INFO_SOCIETE_PAYS?$langs->trans('Country'.$conf->global->MAIN_INFO_SOCIETE_PAYS):'';
+		if (is_object($langs))
+		{
+			$mysoc->country=$conf->global->MAIN_INFO_SOCIETE_PAYS?$langs->trans('Country'.$conf->global->MAIN_INFO_SOCIETE_PAYS):'';
+			$mysoc->pays=$mysoc->country;     // deprecated
+		}
 	}
 	$mysoc->tel=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;   // deprecated
 	$mysoc->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
@@ -405,7 +412,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->localtax1_assuj=((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')?1:0);
 	$mysoc->localtax2_assuj=((isset($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')?1:0);
 
-    // For some countries, we need to invert our address with customer address
+	// For some countries, we need to invert our address with customer address
 	if ($mysoc->pays_code == 'DE' && ! isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $conf->global->MAIN_INVERT_SENDER_RECIPIENT=1;
 }
 
