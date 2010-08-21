@@ -61,12 +61,12 @@ $formfile = new FormFile($db);
 
 print_fiche_titre($langs->trans("Backup"),'','setup');
 
-/**
- * Increase time limit for script execution and initializes some variables
- */
-@set_time_limit($cfg['ExecTimeLimit']);
-if (!empty($cfg['MemoryLimit'])) {
-    @ini_set('memory_limit', $cfg['MemoryLimit']);
+// TODO Define ExecTimeLimit and MemoryLimit
+if (!empty($ExecTimeLimit)) {
+@set_time_limit($ExecTimeLimit);
+}
+if (!empty($MemoryLimit)) {
+@ini_set('memory_limit', $MemoryLimit);
 }
 
 // Start with empty buffer

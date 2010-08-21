@@ -60,7 +60,6 @@ class AntiVir
 
 		$return = 0;
 
-		@set_time_limit($cfg['ExecTimeLimit']);
 		$outputfile=$conf->admin->dir_temp.'/dol_avscan_file.out.'.session_id();
 
 		$fullcommand=$this->getCliCommand($file);
