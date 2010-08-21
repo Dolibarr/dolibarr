@@ -1014,7 +1014,7 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
  * 				If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
  *	\param      string				String to truncate
  *	\param      size				Max string size. 0 for no limit.
- *	\param		trunc				Where to trunc: right, left, middle
+ *	\param		trunc				Where to trunc: right, left, middle, wrap
  * 	\param		stringencoding		Tell what is source string encoding
  *	\return     string				Truncated string
  *	\remarks	MAIN_DISABLE_TRUNC=1 can disable all truncings
@@ -1055,6 +1055,14 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
 			else
 			return $string;
 		}
+        if ($trunc == 'wrap')
+        {
+            $newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
+            if (dol_strlen($newstring,$stringencoding) > ($size+1))
+            return dol_substr($newstring,0,$size,$stringencoding)."\n".dol_trunc(dol_substr($newstring,$size,dol_strlen($newstring,$stringencoding)-$size,$stringencoding),$size,$trunc);
+            else
+            return $string;
+        }
 	}
 	else
 	{
@@ -2858,15 +2866,16 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
  *	\brief		Replace CRLF in string with a HTML BR tag.
  *	\param		string2encode		String to encode
  *	\param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br
+ *  \param      forxml              false=Use <br>, true=Use <br />
  *	\return		string				String encoded
  */
-function dol_nl2br($stringtoencode,$nl2brmode=0)
+function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 {
-	if (! $nl2brmode) return nl2br($stringtoencode);
+	if (! $nl2brmode) return nl2br($stringtoencode,$forxml);
 	else
 	{
 		$ret=str_replace("\r","",$stringtoencode);
-		$ret=str_replace("\n","<br>",$ret);
+		$ret=str_replace("\n",($forxml?'<br />':'<br>'),$ret);
 		return $ret;
 	}
 }
