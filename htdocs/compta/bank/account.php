@@ -472,8 +472,6 @@ if ($account || $_GET["ref"])
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$total = 0;
-
 		$now=dol_now('tzserver');
 		$nows=dol_date('Ymd',$now);
 
@@ -488,7 +486,7 @@ if ($account || $_GET["ref"])
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
-			$total = $total + $objp->amount;
+            $total = price2num($total + $objp->amount,'MT');
 			if ($i >= ($nbline - $viewline))
 			{
 				$var=!$var;
