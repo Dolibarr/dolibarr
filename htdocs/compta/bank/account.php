@@ -488,7 +488,7 @@ if ($account || $_GET["ref"])
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
-			$total = $total + $objp->amount;
+			$total = $total + price2num($objp->amount,'MT');
 			if ($i >= ($nbline - $viewline))
 			{
 				$var=!$var;
@@ -636,7 +636,7 @@ if ($account || $_GET["ref"])
 				// Balance
 				if ($action != 'search')
 				{
-					if (price2num($total,'MT') >= 0)
+					if ($total >= 0)
 					{
 						print '<td align="right" nowrap>&nbsp;'.price($total).'</td>';
 					}
