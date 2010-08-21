@@ -189,7 +189,6 @@ function getCountry($id,$withcode=0)
 {
     global $db,$langs;
 
-    // TODO Optimize: Try to translate and make SQL request only if it fails
     $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
     if (is_numeric($id)) $sql.= " WHERE rowid=".$id;
     else $sql.= " WHERE code='".$id."'";

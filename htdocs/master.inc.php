@@ -362,7 +362,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
     }
     else                    // For backward compatibility
     {
-        include(DOL_DOCUMENT_ROOT.'/lib/company.lib.php');
+        include_once(DOL_DOCUMENT_ROOT.'/lib/company.lib.php');
         $pays_code=getCountry($pays_id,2);  // This need a SQL request, but it's the old feature
         $pays_label=getCountry($pays_id,0);  // This need a SQL request, but it's the old feature
     }

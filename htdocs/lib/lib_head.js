@@ -570,6 +570,17 @@ function getIntegerInString(str,i,minlength,maxlength)
 
 
 /*=================================================================
+Purpose:  Clean string to have it url encoded
+Input:    s
+Author:   Laurent Destailleur
+Licence:  GPL
+==================================================================*/
+function urlencode(s) {
+	return s.replace(/\+/gi,'%2B');
+}
+
+
+/*=================================================================
 Purpose:  Show a popup HTML page.
 Input:    url,title
 Author:   Laurent Destailleur
@@ -767,3 +778,5 @@ function uncheckBox(boxId) {
 		elementId.checked = false;
 	}
 }
+
+

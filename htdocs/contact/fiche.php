@@ -276,7 +276,7 @@ if ($user->rights->societe->contact->creer)
 		$contact->fk_departement = $_POST["departement_id"];
 
 		// We set pays_id, pays_code and label for the selected country
-		$contact->fk_pays=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
+		$contact->fk_pays=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
 		if ($contact->fk_pays)
 		{
 			$sql = "SELECT code, libelle";

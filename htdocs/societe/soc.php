@@ -428,7 +428,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$soc->default_lang=$_POST["default_lang"];
 
 		// We set pays_id, pays_code and label for the selected country
-		$soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
+		$soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
 		if ($soc->pays_id)
 		{
 			$sql = "SELECT code, libelle";
@@ -802,7 +802,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 			$soc->address=$_POST["adresse"];
 			$soc->cp=$_POST["cp"];
 			$soc->ville=$_POST["ville"];
-			$soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
+			$soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
 			$soc->departement_id=$_POST["departement_id"];
 			$soc->tel=$_POST["tel"];
 			$soc->fax=$_POST["fax"];

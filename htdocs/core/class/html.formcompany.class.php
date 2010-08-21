@@ -228,7 +228,7 @@ class FormCompany
 							// Affiche la rupture si on est en mode liste multipays
 							if (! $pays_code && $obj->code_pays)
 							{
-								print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
+								print '<option value="-1" disabled="true">----- '.$obj->libelle_pays." -----</option>\n";
 								$pays=$obj->libelle_pays;
 							}
 						}

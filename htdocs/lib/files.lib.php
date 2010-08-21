@@ -245,6 +245,19 @@ function dol_mimetype($file,$default='application/octet-stream',$shortmime=0)
 
 
 /**
+ *  \brief      Test if filename is a directory
+ *  \param      folder      Name of folder
+ *  \return     boolean     True if it's a directory, False if not found
+ */
+function dol_is_dir($folder)
+{
+    $newfolder=dol_osencode($folder);
+    if (is_dir($newfolder)) return true;
+    else return false;
+}
+
+
+/**
  * 	\brief		Test if a folder is empty
  * 	\param		folder		Name of folder
  * 	\return 	boolean		True if dir is empty or non-existing, False if it contains files

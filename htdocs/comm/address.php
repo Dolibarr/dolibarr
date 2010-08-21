@@ -193,7 +193,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         }
 
         // On positionne pays_id, pays_code et libelle du pays choisi
-        $address->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
+        $address->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
         if ($address->pays_id)
         {
             $sql = "SELECT code, libelle";
@@ -296,7 +296,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $address->address	=	$_POST["address"];
             $address->zip		=	$_POST["zip"];
             $address->ville		=	$_POST["ville"];
-            $address->pays_id	=	$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
+            $address->pays_id	=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
             $address->tel		=	$_POST["tel"];
             $address->fax		=	$_POST["fax"];
             $address->note		=	$_POST["note"];
