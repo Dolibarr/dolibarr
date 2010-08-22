@@ -97,6 +97,9 @@ if ($_POST["action"] == 'add_paiement')
 		$paiement->note         = $_POST["note"];
 		$paymentid = $paiement->create($user);
 
+		$socialcontrib = new ChargeSociales($db);
+		$socialcontrib->fetch($paiement->chid);
+
 		if ($paymentid > 0)
 		{
 			// On determine le montant total du paiement
@@ -123,7 +126,7 @@ if ($_POST["action"] == 'add_paiement')
 				// Mise a jour liens (pour chaque charge concernee par le paiement)
 				foreach ($paiement->amounts as $key => $value)
 				{
-					//$acc->add_url_line($bank_line_id, $chid, DOL_URL_ROOT.'/compta/charges.php?id=', '(socialcontribution)','payment_sc');
+					$acc->add_url_line($bank_line_id, $chid, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''),'sc');
 					$acc->add_url_line($bank_line_id, $paymentid, DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id=', '(paiement)','payment_sc');
 				}
 

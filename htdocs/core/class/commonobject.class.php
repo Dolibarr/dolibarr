@@ -728,7 +728,7 @@ class CommonObject
 	}
 
 	/**
-	 * 
+	 *
 	 * Enter description here ...
 	 * @param unknown_type $rowid
 	 */
@@ -744,7 +744,7 @@ class CommonObject
 	}
 
 	/**
-	 * 
+	 *
 	 * Enter description here ...
 	 * @param unknown_type $rowid
 	 */
@@ -761,7 +761,7 @@ class CommonObject
 		// Update position of line
 		$this->updateLineDown($rowid, $rang, $max);
 	}
-	
+
 	/**
 	 * 	   Update position of line (rang)
 	 */
@@ -774,7 +774,7 @@ class CommonObject
 			dol_print_error($this->db);
 		}
 	}
-	
+
 	/**
 	 * 	   Update position of line up (rang)
 	 */
@@ -800,7 +800,7 @@ class CommonObject
 			}
 		}
 	}
-	
+
 	/**
 	 * 	   Update position of line down (rang)
 	 */
@@ -826,7 +826,7 @@ class CommonObject
 			}
 		}
 	}
-	
+
 	/**
 	 * 	   Get position of line (rang)
 	 *     @result     int     Value of rang in table of lines
@@ -842,7 +842,7 @@ class CommonObject
 			return $row[0];
 		}
 	}
-	
+
 	/**
 	 * 	   Get rowid of the line relative to its position
 	 *     @result     int     Rowid of the line

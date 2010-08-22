@@ -903,10 +903,12 @@ class Account extends CommonObject
  *	\class      AccountLine
  *	\brief      Classe permettant la gestion des lignes de transactions bancaires
  */
-class AccountLine
+class AccountLine extends CommonObject
 {
 	var $error;
 	var $db;
+    var $element='bank';
+    var $table_element='bank';
 
 	var $id;
 	var $ref;
@@ -940,15 +942,19 @@ class AccountLine
 	}
 
 	/**
-	 *      \brief      Charge en memoire depuis la base, une ecriture sur le compte
-	 *      \param      id      Id de la ligne ecriture a recuperer
-	 *		\return		int		<0 if KO, >0 if OK
+	 *  \brief      Charge en memoire depuis la base, une ecriture sur le compte
+	 *  \param      id      Id de la ligne ecriture a recuperer
+     *  \param      ref     Ref of object
+	 *	\return		int		<0 if KO, >0 if OK
 	 */
-	function fetch($rowid)
+	function fetch($rowid,$ref='')
 	{
 		global $conf;
 
-		$sql = "SELECT b.datec, b.datev, b.dateo, b.amount, b.label as label, b.fk_account,";
+        // Check parameters
+        if (empty($rowid) && empty($ref)) return -1;
+
+		$sql = "SELECT b.rowid, b.datec, b.datev, b.dateo, b.amount, b.label as label, b.fk_account,";
 		$sql.= " b.fk_user_author, b.fk_user_rappro,";
 		$sql.= " b.fk_type, b.num_releve, b.num_chq, b.rappro, b.note,";
 		$sql.= " ba.label as bank_account_label";
@@ -956,19 +962,19 @@ class AccountLine
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
 		$sql.= " AND ba.entity = ".$conf->entity;
-		$sql.= " AND b.rowid  = ".$rowid;
+        if ($ref) $sql.= " AND b.rowid='".$ref."'";
+        else $sql.= " AND b.rowid=".$rowid;
 
 		dol_syslog("AccountLine::fetch sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			if ($this->db->num_rows($result))
-			{
-				$obj = $this->db->fetch_object($result);
-
-				$this->id            = $rowid;
-				$this->rowid         = $rowid;
-				$this->ref           = $rowid;
+		    $obj = $this->db->fetch_object($result);
+            if ($obj)
+            {
+				$this->id            = $obj->rowid;
+				$this->rowid         = $obj->rowid;
+				$this->ref           = $obj->rowid;
 
 				$this->datec         = $obj->datec;
 				$this->datev         = $obj->datev;
