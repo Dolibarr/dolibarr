@@ -381,13 +381,13 @@ class DoliDb
 			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
 			if (! $ret)
 			{
-				$this->lastqueryerror = $query;
-
 				$result = mssql_query("SELECT @@ERROR as code", $this->db);
 				$row = mssql_fetch_array($result);
 
+                $this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $row["code"];
+                dol_syslog("Mssql.lib::query SQL error: ".$query, LOG_ERR);
 			}
 			$this->lastquery=$query;
 			$this->results = $ret;

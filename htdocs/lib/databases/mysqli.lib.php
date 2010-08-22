@@ -388,6 +388,7 @@ class DoliDb
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
+                dol_syslog("Mysqli.lib::query SQL error: ".$query, LOG_ERR);
 			}
 			$this->lastquery=$query;
 			$this->results = $ret;
