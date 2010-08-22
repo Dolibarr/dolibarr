@@ -26,9 +26,9 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/dons/modules_don.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/dons/don.class.php");
-require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 
 $langs->load("companies");
@@ -250,7 +250,8 @@ if ($_GET["action"] == 'create')
 
 	print '<input type="hidden" name="action" value="add">';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>'.$donation_date;
+	// Date
+	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$html->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
 	print '</td>';
 
