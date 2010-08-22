@@ -109,12 +109,13 @@ if ($year > 0)
 	$sql .= " AND (";
 	// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
 	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-	$sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = $year) ";
-	$sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = $year)";
+	$sql .= "   (s.periode is not null and s.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+	$sql .= "or (s.periode is null     and s.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= ")";
 }
 $sql.= $db->order($sortfield,$sortorder);
 //$sql.= $db->plimit($limit+1,$offset);
+//print $sql;
 
 dol_syslog("compta/charges/index.php: select payment sql=".$sql);
 $resql=$db->query($sql);
