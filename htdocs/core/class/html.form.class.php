@@ -874,10 +874,10 @@ class Form
 	 *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
 	 *	\param      limit           Limite sur le nombre de lignes retournees
 	 *	\param      price_level     Level of price to show
-	 * 	\param      ajaxkeysearch   Filter on product if ajax is used
+	 * 	\param      filterkey   Filter on product
 	 *	\param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
 	 */
-	function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$ajaxkeysearch='',$status=1,$finished=2)
+	function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2)
 	{
 		global $langs,$conf,$user,$db;
 
@@ -918,19 +918,19 @@ class Form
 		// Add criteria on ref/label
 		if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 		{
-			if ($ajaxkeysearch && $ajaxkeysearch != '')
+			if ($filterkey && $filterkey != '')
 			{
-				$sql.=" AND (p.ref like '".$ajaxkeysearch."%' OR p.label like '".$ajaxkeysearch."%'";
-				if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label like '".$ajaxkeysearch."%'";
+				$sql.=" AND (p.ref like '".$filterkey."%' OR p.label like '".$filterkey."%'";
+				if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label like '".$filterkey."%'";
 				$sql.=")";
 			}
 		}
 		else
 		{
-			if ($ajaxkeysearch && $ajaxkeysearch != '')
+			if ($filterkey && $filterkey != '')
 			{
-				$sql.=" AND (p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%'";
-				if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label like '%".$ajaxkeysearch."%'";
+				$sql.=" AND (p.ref like '%".$filterkey."%' OR p.label like '%".$filterkey."%'";
+				if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label like '%".$filterkey."%'";
 				$sql.=")";
 			}
 		}
@@ -1097,9 +1097,9 @@ class Form
 	 *	\param      htmlname        Nom de la zone select
 	 *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
 	 *	\param      filtre          Pour filtre sql
-	 *	\param      ajaxkeysearch   Filtre des produits si ajax est utilise
+	 *	\param      filterkey   Filtre des produits si ajax est utilise
 	 */
-	function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$ajaxkeysearch='')
+	function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='')
 	{
 		global $langs,$conf;
 
@@ -1121,11 +1121,11 @@ class Form
 		// Add criteria on ref/label
 		if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 		{
-			if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
+			if ($filterkey && $filterkey != '') $sql.=" AND (pf.ref_fourn like '%".$filterkey."%' OR p.ref like '%".$filterkey."%' OR p.label like '%".$filterkey."%')";
 		}
 		else
 		{
-			if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '".$ajaxkeysearch."%' OR p.ref like '".$ajaxkeysearch."%' OR p.label like '".$ajaxkeysearch."%')";
+			if ($filterkey && $filterkey != '') $sql.=" AND (pf.ref_fourn like '".$filterkey."%' OR p.ref like '".$filterkey."%' OR p.label like '".$filterkey."%')";
 		}
 		$sql.= " ORDER BY pf.ref_fourn DESC";
 
