@@ -156,23 +156,22 @@ function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
  */
 function ajax_autocompleter2($selected='', $htmlname, $url, $option='')
 {
-	$script = '<input type="hidden" name="'.$htmlname.'_id" id="'.$htmlname.'_id" value="'.$selected.'" />';
+	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
 
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(function() {
-					jQuery("input#'.$htmlname.'").autocomplete({
+					jQuery("input#'.$htmlname.'free").autocomplete({
                         source: "'.$url.($option?'?'.$option:'').'",
 					    delay: 300,
 						minLength: 1,
                         select: function(event, ui) {
-                            alert(\'ee\');
-                            jQuery("#state_id").val(ui.item.id);
-                         }
+                            /* jQuery("#'.$htmlname.'free") is automatically affected with ui.item.key */
+                            /* jQuery("#'.$htmlname.'free").val(ui.item.fulltext); */
+                            jQuery("#'.$htmlname.'").val(ui.item.key);
+                            /* alert(ui.item.key); */
+                        }
 					});
 				});';
-//                      source: ["c++", "java", "php", "coldfusion", "javascript", "asp", "ruby"],
-
-
 	$script.= '</script>';
 
 	return $script;

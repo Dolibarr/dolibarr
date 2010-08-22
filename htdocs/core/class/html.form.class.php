@@ -835,13 +835,14 @@ class Form
 
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
-            if ($conf->global->MAIN_USE_JQUERY)
+            if ($conf->global->MAIN_USE_NEW_JQUERY)
             {
-                print ajax_autocompleter2('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');
+                // mode=1 means customers products
+                print ajax_autocompleter2('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');
 
                 print '<div class="ui-widget">';
-                print '<label for="'.$htmlname.'">'.$langs->trans("RefOrLabel").':</label>';
-                print '<input id="'.$htmlname.'" />';
+                print '<label for="'.$htmlname.'free">'.$langs->trans("RefOrLabel").':</label>';
+                print '<input id="'.$htmlname.'free" />';
                 print '</div>';
             }
             else
@@ -863,7 +864,7 @@ class Form
         }
         else
         {
-            $this->select_produits_do($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished);
+            $this->select_produits_do($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0);
         }
     }
 
@@ -876,8 +877,11 @@ class Form
      *	\param      price_level     Level of price to show
      * 	\param      filterkey       Filter on product
      *	\param		status          -1=Return all products, 0=Products not on sell, 1=Products on sell
+     *  \param      finished        Filter on finished field: 2=No filter
+     *  \param      disableout      Disable print output
+     *  \return     array           Array of keys for json
      */
-    function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2)
+    function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$disableout=0)
     {
         global $langs,$conf,$user,$db;
 
@@ -940,7 +944,7 @@ class Form
 
         // Build output string
         $outselect='';
-        $outjson='';
+        $outjson=array();
 
         dol_syslog("Form::select_produits_do search product sql=".$sql, LOG_DEBUG);
         $result=$this->db->query($sql);
@@ -951,7 +955,7 @@ class Form
             $outselect.='<select class="flat" name="'.$htmlname.'"';
 			if ($conf->use_javascript_ajax && $num && $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) $outselect.=' onchange="publish_selvalue(this);"';
             $outselect.='>';
-			
+
             if ($conf->use_javascript_ajax)
             {
                 if (! $num)
@@ -971,10 +975,17 @@ class Form
             $i = 0;
             while ($num && $i < $num)
             {
+                $outkey='';
+                $outval='';
+                $outref='';
+
                 $objp = $this->db->fetch_object($result);
 
                 $label=$objp->label;
                 if (! empty($objp->label_translated)) $label=$objp->label_translated;
+
+                $outkey=$objp->rowid;
+                $outref=$objp->ref;
 
                 $opt = '<option value="'.$objp->rowid.'"';
                 $opt.= ($objp->rowid == $selected)?' selected="true"':'';
@@ -989,12 +1000,15 @@ class Form
                         $opt.= ' style="background-color:#FF0000; color:#F5F5F5;"';
                     }
                 }
-                $opt.= '>'.$objp->ref.' - ';
-                $opt.= dol_trunc($label,32).' - ';
+                $opt.= '>';
+                $opt.= $langs->convToOutputCharset($objp->ref).' - '.$langs->convToOutputCharset(dol_trunc($label,32)).' - ';
+                $outval.=$objp->ref.' - '.dol_trunc($label,32).' - ';
 
                 $found=0;
                 $currencytext=$langs->trans("Currency".$conf->monnaie);
+                $currencytextnoent=$langs->transnoentities("Currency".$conf->monnaie);
                 if (strlen($currencytext) > 10) $currencytext=$conf->monnaie;	// If text is too long, we use the short code
+                if (strlen($currencytextnoent) > 10) $currencytextnoent=$conf->monnaie;   // If text is too long, we use the short code
 
                 // Multiprice
                 if ($price_level >= 1)		// If we need a particular price level (from 1 to 6)
@@ -1015,9 +1029,15 @@ class Form
                         {
                             $found=1;
                             if ($objp2->price_base_type == 'HT')
-                            $opt.= price($objp2->price,1).' '.$currencytext.' '.$langs->trans("HT");
+                            {
+                                $opt.= price($objp2->price,1).' '.$currencytext.' '.$langs->trans("HT");
+                                $outval.= price($objp2->price,1).' '.$currencytextnoent.' '.$langs->transnoentities("HT");
+                            }
                             else
-                            $opt.= price($objp2->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
+                            {
+                                $opt.= price($objp2->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
+                                $outval.= price($objp2->price_ttc,1).' '.$currencytextnoent.' '.$langs->transnoentities("TTC");
+                            }
                         }
                     }
                     else
@@ -1030,14 +1050,21 @@ class Form
                 if (! $found)
                 {
                     if ($objp->price_base_type == 'HT')
-                    $opt.= price($objp->price,1).' '.$currencytext.' '.$langs->trans("HT");
+                    {
+                        $opt.= price($objp->price,1).' '.$currencytext.' '.$langs->trans("HT");
+                        $outval.= price($objp->price,1).' '.$currencytextnoent.' '.$langs->transnoentities("HT");
+                    }
                     else
-                    $opt.= price($objp->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
+                    {
+                        $opt.= price($objp->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
+                        $outval.= price($objp->price_ttc,1).' '.$currencytextnoent.' '.$langs->transnoentities("TTC");
+                    }
                 }
 
                 if ($conf->stock->enabled && isset($objp->stock) && $objp->fk_product_type == 0)
                 {
                     $opt.= ' - '.$langs->trans("Stock").':'.$objp->stock;
+                    $outval.=' - '.$langs->transnoentities("Stock").':'.$objp->stock;
                 }
 
                 if ($objp->duration)
@@ -1053,10 +1080,17 @@ class Form
                         $dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
                     }
                     $opt.= ' - '.$duration_value.' '.$langs->trans($dur[$duration_unit]);
+                    $outval.=' - '.$duration_value.' '.$langs->transnoentities($dur[$duration_unit]);
                 }
 
                 $opt.= "</option>\n";
+
+                // Add new entry
+                // "key" value of json key array is used by jQuery automatically as selected value
+                // "label" value of json key array is used by jQuery automatically as text for combo box
                 $outselect.=$opt;
+                array_push($outjson,array('key'=>$outkey,'value'=>$outref,'label'=>$outval));
+
                 $i++;
             }
 
@@ -1064,7 +1098,8 @@ class Form
 
             $this->db->free($result);
 
-            print $outselect;
+            if (empty($disableout)) print $outselect;
+            return $outjson;
         }
         else
         {
@@ -1085,12 +1120,25 @@ class Form
         global $langs,$conf;
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
-            print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
-            print ajax_updater($htmlname,'keysearch',DOL_URL_ROOT.'/product/ajaxproducts.php','&socid='.$socid.'&type='.$filtertype.'&mode=2','working');
+            if ($conf->global->MAIN_USE_NEW_JQUERY)
+            {
+                // mode=2 means suppliers products
+                print ajax_autocompleter2('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished,'');
+
+                print '<div class="ui-widget">';
+                print '<label for="'.$htmlname.'free">'.$langs->trans("RefOrLabel").':</label>';
+                print '<input id="'.$htmlname.'free" />';
+                print '</div>';
+            }
+            else
+            {
+                print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
+                print ajax_updater($htmlname,'keysearch',DOL_URL_ROOT.'/product/ajaxproducts.php','&socid='.$socid.'&type='.$filtertype.'&mode=2','working');
+            }
         }
         else
         {
-            $this->select_produits_fournisseurs_do($socid,$selected,$htmlname,$filtertype,$filtre,'');
+            $this->select_produits_fournisseurs_do($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0);
         }
     }
 
@@ -1101,9 +1149,12 @@ class Form
      *	\param      htmlname        Nom de la zone select
      *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
      *	\param      filtre          Pour filtre sql
-     *	\param      filterkey   Filtre des produits si ajax est utilise
+     *	\param      filterkey       Filtre des produits
+     *  \param      status          -1=Return all products, 0=Products not on sell, 1=Products on sell
+     *  \param      disableout      Disable print output
+     *  \return     array           Array of keys for json
      */
-    function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='')
+    function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$disableout=0)
     {
         global $langs,$conf;
 
@@ -1135,7 +1186,7 @@ class Form
 
         // Build output string
         $outselect='';
-        $outjson='';
+        $outjson=array();
 
         dol_syslog("Form::select_produits_fournisseurs_do sql=".$sql,LOG_DEBUG);
         $result=$this->db->query($sql);
@@ -1168,44 +1219,72 @@ class Form
             $i = 0;
             while ($i < $num)
             {
+                $outkey='';
+                $outval='';
+                $outref='';
+
                 $objp = $this->db->fetch_object($result);
+
+                $outkey=$objp->idprodfournprice;
+                $outref=$objp->ref;
 
                 $opt = '<option value="'.$objp->idprodfournprice.'"';
                 if ($selected == $objp->idprodfournprice) $opt.= ' selected="true"';
                 if ($objp->fprice == '') $opt.=' disabled="disabled"';
-                $opt.= '>'.$objp->ref.' ('.$objp->ref_fourn.') - ';
-                $opt.= dol_trunc($objp->label,18).' - ';
+                $opt.= '>';
+
+                $opt.=$langs->convToOutputCharset($objp->ref).' ('.$langs->convToOutputCharset($objp->ref_fourn).') - ';
+                $outval.=$objp->ref.' ('.$objp->ref_fourn.') - ';
+                $opt.=$langs->convToOutputCharset(dol_trunc($objp->label,18)).' - ';
+                $outval.=dol_trunc($objp->label,18).' - ';
+
                 if ($objp->fprice != '') 	// Keep != ''
                 {
                     $currencytext=$langs->trans("Currency".$conf->monnaie);
-                    if (strlen($currencytext) > 10) $currencytext=$conf->monnaie;	// If text is too long, we use the short code
+                    $currencytextnoent=$langs->transnoentities("Currency".$conf->monnaie);
+                    if (strlen($currencytext) > 10) $currencytext=$conf->monnaie;   // If text is too long, we use the short code
+                    if (strlen($currencytextnoent) > 10) $currencytextnoent=$conf->monnaie;   // If text is too long, we use the short code
 
-                    $opt.= price($objp->fprice);
-                    $opt.= ' '.$currencytext."/".$objp->quantity;
+                    $opt.= price($objp->fprice).' '.$currencytext."/".$objp->quantity;
+                    $outval.= price($objp->fprice).' '.$currencytextnoent."/".$objp->quantity;
                     if ($objp->quantity == 1)
                     {
                         $opt.= strtolower($langs->trans("Unit"));
+                        $outval.=strtolower($langs->transnoentities("Unit"));
                     }
                     else
                     {
                         $opt.= strtolower($langs->trans("Units"));
+                        $outval.=strtolower($langs->transnoentities("Units"));
                     }
                     if ($objp->quantity >= 1)
                     {
-                        $opt.=" (";
-                        $opt.= price($objp->unitprice).' '.$currencytext."/".strtolower($langs->trans("Unit"));
-                        $opt.=")";
+                        $opt.=" (".price($objp->unitprice).' '.$currencytext."/".strtolower($langs->trans("Unit")).")";
+                        $outval.=" (".price($objp->unitprice).' '.$currencytextnoent."/".strtolower($langs->transnoentities("Unit")).")";
                     }
-                    if ($objp->duration) $opt .= " - ".$objp->duration;
-                    if (! $socid) $opt .= " - ".dol_trunc($objp->nom,8);
+                    if ($objp->duration)
+                    {
+                        $opt .= " - ".$objp->duration;
+                        $outval.=" - ".$objp->duration;
+                    }
+                    if (! $socid)
+                    {
+                        $opt .= " - ".dol_trunc($objp->nom,8);
+                        $outval.=" - ".dol_trunc($objp->nom,8);
+                    }
                 }
                 else
                 {
                     $opt.= $langs->trans("NoPriceDefinedForThisSupplier");
+                    $outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
                 }
                 $opt .= "</option>\n";
 
+                // Add new entry
+                // "key" value of json key array is used by jQuery automatically as selected value
+                // "label" value of json key array is used by jQuery automatically as text for combo box
                 $outselect.=$opt;
+                array_push($outjson,array('key'=>$outkey,'value'=>$outref,'label'=>$outval));
 
                 $i++;
             }
@@ -1213,7 +1292,8 @@ class Form
 
             $this->db->free($result);
 
-            print $outselect;
+            if (empty($disableout)) print $outselect;
+            return $outjson;
         }
         else
         {

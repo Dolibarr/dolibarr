@@ -1196,3 +1196,16 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  margin : 0px;
 }
 
+
+/* Style to overwrites JQuery styles */
+.ui-menu .ui-menu-item a {
+    text-decoration:none;
+    display:block;
+    padding:.2em .4em;
+    line-height:1.5;
+    zoom:1;
+    font-weight: normal;
+    font-family:Verdana,Arial,sans-serif;
+    font-size:1em;
+}
+

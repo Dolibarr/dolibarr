@@ -777,7 +777,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		else print "<title>".$appli."</title>";
 		print "\n";
 
-		// Output style sheets (optioncss='print' or '')
+        if (! defined('DISABLE_JQUERY'))
+        {
+            print '<!-- Includes for JQuery (Ajax library) -->'."\n";
+            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/smoothness/jquery-ui-1.8.4.custom.css" type="text/css" />'."\n";
+        }
+
+        print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
+        // Output style sheets (optioncss='print' or '')
 		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 		// CSS forced by modules (relative url starting with /)
 		if (is_array($conf->css_modules))
@@ -794,12 +801,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			{
 				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 			}
-		}
-
-		if (! defined('DISABLE_JQUERY'))
-		{
-			print '<!-- Includes for JQuery (Ajax library) -->'."\n";
-			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/smoothness/jquery-ui-1.8.4.custom.css" type="text/css" />'."\n";
 		}
 
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";

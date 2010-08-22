@@ -55,39 +55,31 @@ $langs->load("main");
 
 dol_syslog(join(',',$_POST));
 
-// Generation liste de produits
-if (! empty($_GET['keysearch']) || ! empty($_GET['term']))
+if (! isset($_GET['keysearch']) && ! isset($_GET['term'])) return;
+
+// When used from jQuery, the search term is added as GET param "term".
+$searchkey=isset($_GET['keysearch'])?$_GET['keysearch']:$_GET['term'];
+$outjson=isset($_GET['outjson'])?$_GET['outjson']:0;
+
+// Get list of product.
+//var_dump($_GET); exit;
+//print $_GET["price_level"]; exit;
+$status=-1;
+if (isset($_GET['status'])) $status=$_GET['status'];
+
+$form = new Form($db);
+if (empty($_GET['mode']) || $_GET['mode'] == 1)
 {
-	//var_dump($_GET); exit;
-	//print $_GET["price_level"]; exit;
-	$status=-1;
-	if (isset($_GET['status'])) $status=$_GET['status'];
-	$form = new Form($db);
-	if (empty($_GET['mode']) || $_GET['mode'] == 1)
-	{
-		$form->select_produits_do("",$_GET["htmlname"],$_GET["type"],"",$_GET["price_level"],$_GET["keysearch"],$status);
-	}
-	if ($_GET['mode'] == 2)
-	{
-		$form->select_produits_fournisseurs_do($_GET["socid"],"",$_GET["htmlname"],$_GET["type"],"",$_GET["keysearch"]);
-	}
+	$arrayresult=$form->select_produits_do("",$_GET["htmlname"],$_GET["type"],"",$_GET["price_level"],$searchkey,$status,2,$outjson);
 }
-else if (! empty($_GET['markup']))
+if ($_GET['mode'] == 2)
 {
-	print $_GET['markup'];
-	//print $_GET['count'];
-	//$field = "<input size='10' type='text' class='flat' id='sellingdata_ht".$_GET['count']."' name='sellingdata_ht".$_GET['count']."' value='".$_GET['markup']."'>";
-	//print '<input size="10" type="text" class="flat" id="sellingdata_ht'.$_GET['count'].'" name="sellingdata_ht'.$_GET['count'].'" value="'.$field.'">';
-	//print $field;
-}
-else if (! empty($_GET['selling']))
-{
-	//print $_GET['markup'];
-	//print $_GET['count'];
-	print '<input size="10" type="text" class="flat" name="cashflow'.$_GET['count'].'" value="'.$_GET['selling'].'">';
+	$arrayresult=$form->select_produits_fournisseurs_do($_GET["socid"],"",$_GET["htmlname"],$_GET["type"],"",$searchkey,$statut,$outjson);
 }
 
 $db->close();
+
+if ($outjson) print json_encode($arrayresult);
 
 //print "</body>";
 //print "</html>";
