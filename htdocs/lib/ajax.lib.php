@@ -147,9 +147,11 @@ function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 }
 
 /**
- *	\brief     	Get value of field, do Ajax process and return result
- *	\param	    htmlname            nom et id du champ
- *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
+ *	\brief     	Get value of field, do Ajax process and return result. Use jQuery.
+ *  \param      selected            Preselected value
+ *	\param	    htmlname            Name of html field
+ *	\param	    url                 Path of source file to get values: /path/ajaxpage.php
+ *  \param      option              Not used
  *	\return    	string              script complet
  */
 function ajax_autocompleter2($selected='', $htmlname, $url, $option='')
@@ -157,15 +159,20 @@ function ajax_autocompleter2($selected='', $htmlname, $url, $option='')
 	$script = '<input type="hidden" name="'.$htmlname.'_id" id="'.$htmlname.'_id" value="'.$selected.'" />';
 
 	$script.= '<script type="text/javascript">';
-	$script.= '$(function() {
-					$("#birds").autocomplete({
-						source: "'.$url.'",
-						minLength: 2,
-						extraParams: {
-							'.$htmlname.': function() { return $("#birds").val(); }
-						}
+	$script.= 'jQuery(function() {
+					jQuery("input#'.$htmlname.'").autocomplete({
+                        source: "'.$url.($option?'?'.$option:'').'",
+					    delay: 300,
+						minLength: 1,
+                        select: function(event, ui) {
+                            alert(\'ee\');
+                            jQuery("#state_id").val(ui.item.id);
+                         }
 					});
 				});';
+//                      source: ["c++", "java", "php", "coldfusion", "javascript", "asp", "ruby"],
+
+
 	$script.= '</script>';
 
 	return $script;

@@ -24,19 +24,16 @@
  *       \version    $Id$
  */
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
-
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 
 require('../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php');
 
 $langs->load("products");
 $langs->load("main");
@@ -45,6 +42,12 @@ $langs->load("main");
 /*
  * View
  */
+
+// Ajout directives pour resoudre bug IE
+//header('Cache-Control: Public, must-revalidate');
+//header('Pragma: public');
+
+//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 //top_htmlhead("", "", 1);  // Disabled. An ajax return must not include html header.
 
