@@ -640,7 +640,8 @@ function ac_return(field, val){
 
  
 /*=================================================================
-	Purpose:  Clean values of a "Sortable.serialize". Used by drag and drop.
+	Purpose:  Clean values of a "Sortable.serialize". 
+	          Used by drag and drop. Works for Scriptaculous and jQuery.
 	Input:    expr
 	Author:   Regis Houssin
 	Licence:  GPL
@@ -652,51 +653,6 @@ function cleanSerialize(expr) {
 	var liste = liste1.replace(reg2, "");
 	return liste;
 }
-
-
-/*=================================================================
-	Purpose:  Show a confim popup (Use PWC)
-	Input:    title,linkurlyes,linkurlno,message,ok,cancel,objectID
-	Author:   Regis Houssin, Laurent Destailleur
-	Licence:  GPL
-==================================================================*/
-/* @deprecated Replaced by jquery code
-function dialogConfirm(title,linkurlyes,linkurlno,message,ok,cancel,objectID) {
-	Dialog.confirm(message, {
-		width:560,
-		okLabel: ok,
-		cancelLabel: cancel,
-		buttonClass: "buttonajax",
-		id: objectID,
-		destroyOnClose: true,
-		ok:function(win) {window.location.href=linkurlyes; return true;},
-		cancel:function(win) { if (linkurlno!='') { window.location.href=linkurlno; return true; } }
-	});
-}
-*/
-
-/*=================================================================
-	Purpose:  Affiche une fenetre (Use PWC)
-	Input:    message
-	Author:   Regis Houssin
-	Licence:  GPL
-==================================================================*/
-/* @deprecated Replaced by jquery code
-function dialogWindow(message,windowTitle) {
-var win = new Window({className: "dialog",  
-	                    width:600,
-	                    height:400,
-	                    zIndex: 100,
-	                    resizable: false,
-	                    title: windowTitle,
-	                    showEffect:Effect.BlindDown,
-	                    hideEffect: Effect.SwitchOff,
-	                    draggable:true
-                    })
-win.getContent().update(message);
-win.showCenter();
-}
-*/
 
 
 /*=================================================================

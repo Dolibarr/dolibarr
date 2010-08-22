@@ -55,7 +55,7 @@ function printBoxesArea($user,$areacode)
 		print '<td width="50%" valign="top" style="padding-right: 4px;">'."\n";
 
 		print "\n<!-- Box left container -->\n";
-		print '<div id="left">'."\n";
+		print '<div id="left" class="connectedSortable">'."\n";
 
 		$ii=0;
 		foreach ($boxarray as $key => $box)
@@ -90,7 +90,7 @@ function printBoxesArea($user,$areacode)
 		print '<td width="50%" valign="top" style="padding-right: 2px;">';
 
 		print "\n<!-- Box right container -->\n";
-		print '<div id="right">'."\n";
+		print '<div id="right" class="connectedSortable">'."\n";
 
 		$ii=0;
 		foreach ($boxarray as $key => $box)
@@ -130,38 +130,29 @@ function printBoxesArea($user,$areacode)
 		{
 			print "\n";
 			print '<script type="text/javascript" language="javascript">';
-			print 'function updateOrder(){';
-		    print 'var left_list = cleanSerialize(Sortable.serialize(\'left\'));';
-		    print 'var right_list = cleanSerialize(Sortable.serialize(\'right\'));';
-		    print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;';
-		    //alert( \'boxorder=\' + boxorder );
-		    print 'var userid = \''.$user->id.'\';';
-		    print 'var url = "ajaxbox.php";';
-		    print 'o_options = new Object();';
-		    print 'o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&userid=\' + userid};';
-		    print 'var myAjax = new Ajax.Request(url, o_options);';
-		  	print '}';
-		  	print "\n";
-
-		  	print '// <![CDATA['."\n";
-
-		  	print 'Sortable.create(\'left\', {'."\n";
-			print ' tag:\'div\', '."\n";
-			print ' containment:["left","right"], '."\n";
-			print ' constraint:false, '."\n";
-			print " handle: 'boxhandle',"."\n";
-			print ' onUpdate:updateOrder';
-			print " });\n";
-
-			print 'Sortable.create(\'right\', {'."\n";
-			print ' tag:\'div\', '."\n";
-			print ' containment:["right","left"], '."\n";
-			print ' constraint:false, '."\n";
-			print " handle: 'boxhandle',"."\n";
-			print ' onUpdate:updateOrder';
-			print " });\n";
-
-			print '// ]]>'."\n";
+            print 'jQuery(function() {
+                        jQuery("#left, #right").sortable({
+                            /* placeholder: \'ui-state-highlight\', */
+                            handle: \'.boxhandle\',
+                            revert: \'invalid\',
+                            items: \'.box\',
+                            containment: \'.fiche\',
+                            connectWith: \'.connectedSortable\',
+                            stop: function(event, ui) {
+                                updateOrder();
+                            }
+                        });
+                    });
+            ';
+            print "\n";
+            print 'function updateOrder(){'."\n";
+		    print 'var left_list = cleanSerialize(jQuery("#left").sortable( "serialize" ));'."\n";
+		    print 'var right_list = cleanSerialize(jQuery("#right").sortable( "serialize" ));'."\n";
+		    print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
+		    //print 'alert( \'boxorder=\' + boxorder );';
+		    print 'var userid = \''.$user->id.'\';'."\n";
+		    print 'jQuery.get(\'ajaxbox.php?boxorder=\'+boxorder+\'&userid=\'+'.$user->id.');'."\n";
+		  	print '}'."\n";
 			print '</script>'."\n";
 		}
 	}
