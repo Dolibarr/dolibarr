@@ -250,7 +250,8 @@ if ($_GET["action"] == 'create')
 
 	print '<input type="hidden" name="action" value="add">';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>'.$donation_date;
+	// Date
+	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$html->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
 	print '</td>';
 
