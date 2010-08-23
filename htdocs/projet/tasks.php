@@ -111,6 +111,15 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 			}
 		}
 	}
+	else
+	{
+        if (empty($_GET["id"]) && empty($_POST["id"]))
+        {
+            // We go back on task list
+            Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($_REQUEST["mode"])?'':'?mode='.$_REQUEST["mode"]));
+            exit;
+        }
+	}
 }
 
 /*
@@ -125,7 +134,7 @@ llxHeader("",$langs->trans("Tasks"),$help_url);
 
 $task = new Task($db);
 
-$id = $_REQUEST['id'];
+$id = (! empty($_GET['id']))?$_GET['id']:$_POST['id'];
 $ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
