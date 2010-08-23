@@ -233,8 +233,8 @@ $tabcond[8] = $conf->societe->enabled;
 $tabcond[9] = true;
 $tabcond[10]= true;
 $tabcond[11]= true;
-$tabcond[12]= $conf->facture->enabled||$conf->fournisseur->enabled;
-$tabcond[13]= $conf->facture->enabled||$conf->fournisseur->enabled;
+$tabcond[12]= $conf->commande->enabled||$conf->propale->enabled||$conf->facture->enabled||$conf->fournisseur->enabled;
+$tabcond[13]= $conf->commande->enabled||$conf->propale->enabled||$conf->facture->enabled||$conf->fournisseur->enabled;
 $tabcond[14]= $conf->product->enabled&&$conf->ecotax->enabled;
 $tabcond[15]= true;
 $tabcond[16]= $conf->societe->enabled;
@@ -737,7 +737,7 @@ if ($_GET["id"])
 else
 {
 	/*
-	 * Affichage de la liste des dictionnaires
+	 * Show list of dictionnary to show
 	 */
 
 	$var=true;
@@ -745,19 +745,35 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("Module").'</td>';
-	print '<td>'.$langs->trans("Dictionnary").'</td>';
+	print '<td colspan="2">'.$langs->trans("Dictionnary").'</td>';
 	print '<td>'.$langs->trans("Table").'</td>';
 	print '</tr>';
 
 	foreach ($taborder as $i)
 	{
-		if ($tabname[$i] && ! $tabcond[$i]) continue;	// If dictionnary and condition not true
+	    if ($tabname[$i] && empty($tabcond[$i])) continue;
 
 		if ($i)
 		{
 			$var=!$var;
 			$value=$tabname[$i];
-			print '<tr '.$bc[$var].'><td width="30%"><a href="dict.php?id='.$i.'">'.$tablib[$i].'</a></td><td>'.$tabname[$i].'</td></tr>';
+			print '<tr '.$bc[$var].'><td width="30%">';
+            if (! empty($tabcond[$i]))
+            {
+			 print '<a href="dict.php?id='.$i.'">'.$tablib[$i].'</a>';
+            }
+            else
+            {
+             print $tablib[$i];
+            }
+			print '</td>';
+            print '<td>';
+            /*if (empty($tabcond[$i]))
+            {
+              print info_admin($langs->trans("DictionnaryDisabledSinceNoModuleNeedIt"),1);
+            }*/
+            print '</td>';
+			print '<td>'.$tabname[$i].'</td></tr>';
 			$lastlineisempty=false;
 		}
 		else
@@ -765,7 +781,7 @@ else
 			if (! $lastlineisempty)
 			{
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td></tr>';
+				print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
 				$lastlineisempty=true;
 			}
 		}
