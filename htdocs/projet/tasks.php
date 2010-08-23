@@ -157,7 +157,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer && (empty($proje
 
 	// List of projects
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfTask").'</td><td>';
-	print $formother->selectProjectTasks('',$projectid, 'task_parent', 0, 0, 1, 1);
+	print $formother->selectProjectTasks('',$projectid?$projectid:$_GET["id"], 'task_parent', 0, 0, 1, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';

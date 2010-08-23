@@ -314,14 +314,15 @@ class FormOther
 
 	/**
 	 *	\brief     	Retourn list of project and tasks
-	 *	\param     	selected    	Pre-selected value
+	 *	\param     	selectedtask   	Pre-selected task
 	 *  \param      projectid       Project id
 	 * 	\param     	htmlname    	Name of html select
 	 * 	\param		modeproject		1 to restrict on projects owned by user
 	 * 	\param		modetask		1 to restrict on tasks associated to user
 	 * 	\param		mode			0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+	 *  \param      useempty        0=Allow empty values
 	 */
-	function selectProjectTasks($selected='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0)
+	function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0)
 	{
 		global $user, $langs;
 
@@ -332,11 +333,11 @@ class FormOther
 		$tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $projectid, 0, $mode);
 		if ($tasksarray)
 		{
-			print '<select class="flat" name="'.$htmlname.'">';
-			if ($useempty) print '<option value="0" selected="true">&nbsp;</option>';
+		    print '<select class="flat" name="'.$htmlname.'">';
+			if ($useempty) print '<option value="0">&nbsp;</option>';
 			$j=0;
 			$level=0;
-			PLineSelect($j, 0, $tasksarray, $level, $selected);
+			PLineSelect($j, 0, $tasksarray, $level, $selectedtask, $projectid);
 			print '</select>';
 		}
 		else
@@ -468,7 +469,7 @@ class FormOther
  * @param 	$level
  * @param 	$selected
  */
-function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
+function PLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selectedproject=0)
 {
 	global $langs, $user, $conf;
 
@@ -486,7 +487,9 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 				if ($lines[$i]->fk_project != $lastprojectid)
 				{
 					if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="true">----------</option>';
-					print '<option value="'.$lines[$i]->fk_project.'_0">';	// Project -> Task
+					print '<option value="'.$lines[$i]->fk_project.'_0"';
+					if ($selectedproject == $lines[$i]->fk_project) print ' selected="true"';
+					print '>';	// Project -> Task
 					print $langs->trans("Project").' '.$lines[$i]->projectref;
 					if (empty($lines[$i]->public))
 					{
@@ -508,7 +511,7 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 			if ($lines[$i]->id > 0)
 			{
 				print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
-				if ($lines[$i]->id == $selected) print ' selected="true"';
+				if ($lines[$i]->id == $selectedtask) print ' selected="true"';
 				print '>';
 				print $langs->trans("Project").' '.$lines[$i]->projectref;
 				if (empty($lines[$i]->public))
@@ -529,7 +532,7 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 			}
 
 			$level++;
-			if ($lines[$i]->id) PLineSelect($inc, $lines[$i]->id, $lines, $level, $selected);
+			if ($lines[$i]->id) PLineSelect($inc, $lines[$i]->id, $lines, $level, $selectedtask, $selectedproject);
 			$level--;
 		}
 	}
