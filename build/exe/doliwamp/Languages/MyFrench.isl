@@ -26,7 +26,7 @@ ApachePort=Port Apache (première install uniquement, le choix standard est 80) :
 MySqlPort=Port Mysql (première install uniquement, le choix standard est 3306) :
 MySqlPassword=Mot de passe du serveur et base MySql pour root (première install uniquement):
 
-FailedToDeleteLock=Eched de la suppression du fichier %1/www/dolibarr/install.lock. Vous pouvez ignorer l'avertissement mais il est possible que vous deviez le supprimer manuellement plus tard. Dans ce cas, cela vous sera signalé. Cliquer sur OK pour continuer...
+FailedToDeleteLock=Echec de la suppression du fichier %1/www/dolibarr/install.lock. Vous pouvez ignorer l'avertissement mais il est possible que vous deviez le supprimer manuellement plus tard. Dans ce cas, cela vous sera signalé. Cliquer sur OK pour continuer...
 
 PortAlreadyInUse=Le port %1 semble déjà utilisé. Il est recommandé d'annuler pour revenir en arrière et spécifier une autre valeur pour le port %2. Annuler le choix et choisir une autre valeur ?
 
