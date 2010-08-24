@@ -957,22 +957,12 @@ function isValidEmail($address)
  * @param   $stringencoding
  * @return  int
  */
-function dol_strlen($string,$stringencoding='')
+function dol_strlen($string,$stringencoding='UTF-8')
 {
-	global $langs;
-
-	if (empty($stringencoding)) $stringencoding=(empty($langs->charset_output)?'UTF-8':$langs->charset_output);
-
-	$ret='';
-	if (function_exists('mb_strlen'))
-	{
-		$ret=mb_strlen($string,$stringencoding);
-	}
-	else
-	{
-		$ret=strlen($string);
-	}
-	return $ret;
+//    print $stringencoding."xxx";
+//    $stringencoding='rrr';
+	if (function_exists('mb_strlen')) return mb_strlen($string,$stringencoding);
+	else return strlen($string);
 }
 
 /**
@@ -1019,7 +1009,7 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
  *	\return     string				Truncated string
  *	\remarks	MAIN_DISABLE_TRUNC=1 can disable all truncings
  */
-function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
+function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
 {
 	global $conf;
 
