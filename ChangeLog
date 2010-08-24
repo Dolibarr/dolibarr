@@ -7,17 +7,30 @@ For users:
 - New: Upgrade process works with Postgresql.
 - New: Task #10538: Add filter on expiration date of subscription for
        foundation module email selector.
+- New: Task #9643: Add 2 status (tosell/tobuy) on products instead of only
+       1 status for both selling and buying.       
 - New: Can input payment conditions on several lines.
 - New: Add hidden option MAIN_LOGOUT_GOTO_URL to set the exit url after
        a logout.
+- New: For germany, we invert order of address.
+- New: Add hidden option MAIN_SERVICES_ARE_ECOMMERCE_200238EC.
+- New: Support NPR in customer product prices.
+- Perf: Avoid reading database to determine country code after each
+        page call.
 - Fix: Better Postgresql compatibility.
 - Fix: Box order is saved when moved.
 - Fix: Database name can contains "-" characters.
+- Fix: In coloring negative amounts.
 
 For developers:
 - New: Add jquery by default.
+- New: Removed PWC libraries.
 - New: Add first Selenium GUI tests.
+- New: Enhance a lot of internal function to build external modules
+       more easily.
+- Qual: Mutualize some duplicate code.
 - Qual: Renamed some fields into database to be more internationnal.
+- Qual: Removed deprecated code.
 
 
 ***** ChangeLog for 2.9 compared to 2.8 *****
