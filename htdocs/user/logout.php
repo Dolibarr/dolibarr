@@ -41,6 +41,13 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
    die("Disconnection does not work when connection was made in mode ".$_SESSION["dol_authmode"]);
 }
 
+// Appel des triggers
+include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+$interface=new Interfaces($db);
+$result=$interface->run_triggers('USER_LOGOUT',$user,$user,$langs,$conf,$conf->entity);
+if ($result < 0) { $error++; }
+// Fin appel triggers
+
 // Define url to go after disconnect
 $urlfrom=empty($_SESSION["urlfrom"])?'':$_SESSION["urlfrom"];
 

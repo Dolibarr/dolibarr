@@ -336,10 +336,7 @@ if (! defined('NOLOGIN'))
 		if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
 		{
 			$login = getLoginMethod();
-			if ($login)
-			{
-				$test=false;
-			}
+			if ($login)	$test=false;
 		}
 
 		// Validation tests user / password
@@ -485,6 +482,15 @@ if (! defined('NOLOGIN'))
 
 			header('Location: '.DOL_URL_ROOT.'/index.php');
 			exit;
+		}
+		else
+		{
+			// Call triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf,(isset($_POST["entity"])?$_POST["entity"]:0));
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 	}
 
