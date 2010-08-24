@@ -232,7 +232,7 @@ function SaveToFile($file,$s,$mode='t')
 	$f=fopen($file,'w'.$mode);
 	if(!$f)
 		die('Can\'t write to file '.$file);
-	fwrite($f,$s,dol_strlen($s));
+	fwrite($f,$s,strlen($s));
 	fclose($f);
 }
 
