@@ -787,7 +787,7 @@ if ($step == 4 && $datatoimport)
 	}
 
 	print "\n<!-- Box left container -->\n";
-	print '<div id="left">'."\n";
+	print '<div id="left" class="connectedSortable">'."\n";
 
 	// List of source fields
 	$var=true;
@@ -907,7 +907,7 @@ if ($step == 4 && $datatoimport)
 	print '<tr valign="top"><td width="50%">';
 
 	print "\n<!-- Box ignore container -->\n";
-	print '<div id="right">'."\n";
+	print '<div id="right" class="connectedSortable">'."\n";
 
 	$nbofnotimportedfields=0;
 	foreach ($fieldssource as $key => $val)
@@ -950,47 +950,39 @@ if ($step == 4 && $datatoimport)
 
 	if ($conf->use_javascript_ajax)
 	{
-		print "\n";
-		print '<script type="text/javascript" language="javascript">'."\n";
-		print 'function updateOrder(){'."\n";
-		print 'var left_list = cleanSerialize(Sortable.serialize(\'left\'));'."\n";
-	    //print 'var right_list = cleanSerialize(Sortable.serialize(\'right\'));'."\n";
-	    print 'var boxorder = \'A:\' + left_list;'."\n";
-	    //print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
-	    //alert( \'boxorder=\' + boxorder )."\n";
-	    //print 'var userid = \''.$user->id.'\';'."\n";
-	    //print 'var url = "ajaximport.php";'."\n";
-	    //print 'var datatoimport = "'.$datatoimport.'";'."\n";
-	    print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&filetoimport='.urlencode($filetoimport).'&action=saveorder&boxorder=\' + boxorder;'."\n";
-	    //print 'alert(newlocation);';
-	    //print 'o_options = new Object();'."\n";
-	    //print 'o_options = {asynchronous:false,method: \'get\',parameters: \'step=4&boxorder=\' + boxorder + \'&userid=\' + userid + \'&datatoimport=\' + datatoimport};'."\n";
-	    //print 'var myAjax = new Ajax.Request(url, o_options);'."\n";
-	    // Now reload page
-	    print 'window.location.href=newlocation;'."\n";
-	    print '}'."\n";
-	  	print "\n";
-
-	  	print '// <![CDATA['."\n";
-
-	  	print 'Sortable.create(\'left\', {'."\n";
-		print 'tag:\'div\', '."\n";
-		print 'containment:["left","right"], '."\n";
-		print 'constraint:false, '."\n";
-		print "handle: 'boxhandle',"."\n";
-		print 'onUpdate:updateOrder';
-		print "});\n";
-
-		print 'Sortable.create(\'right\', {'."\n";
-		print 'tag:\'div\', '."\n";
-		print 'containment:["right","left"], '."\n";
-		print 'constraint:false, '."\n";
-		print "handle: 'boxhandle',"."\n";
-		print 'onUpdate:updateOrder';
-		print "});\n";
-
-		print '// ]]>'."\n";
-		print '</script>'."\n";
+        print '<script type="text/javascript" language="javascript">';
+        print 'jQuery(function() {
+                    jQuery("#left, #right").sortable({
+                        /* placeholder: \'ui-state-highlight\', */
+                        handle: \'.boxhandle\',
+                        revert: \'invalid\',
+                        items: \'.box\',
+                        containment: \'.fiche\',
+                        connectWith: \'.connectedSortable\',
+                        stop: function(event, ui) {
+                            updateOrder();
+                        }
+                    });
+                });
+        ';
+        print "\n";
+        print 'function updateOrder(){'."\n";
+        print 'var left_list = cleanSerialize(jQuery("#left").sortable( "serialize" ));'."\n";
+        //print 'var right_list = cleanSerialize(jQuery("#right").sortable( "serialize" ));'."\n";
+        print 'var boxorder = \'A:\' + left_list;'."\n";
+        //print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
+        //print 'alert( \'boxorder=\' + boxorder );';
+        //print 'var userid = \''.$user->id.'\';'."\n";
+        //print 'var datatoimport = "'.$datatoimport.'";'."\n";
+        // print 'jQuery.ajax({ url: "ajaximport.php?step=4&boxorder=" + boxorder + "&userid=" + userid + "&datatoimport=" + datatoimport,
+        //                    async: false
+        //        });'."\n";
+        // Now reload page
+        print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&action=saveorder&boxorder=\' + boxorder;'."\n";
+        //print 'alert(newlocation);';
+        print 'window.location.href=newlocation;'."\n";
+        print '}'."\n";
+        print '</script>'."\n";
 	}
 
 
@@ -1885,8 +1877,8 @@ function show_elem($fieldssource,$i,$pos,$key,$var,$nostyle='')
 {
 	global $langs,$bc;
 
-	print "\n\n<!-- Box start -->\n";
-	print '<div style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
+	print "\n\n<!-- Box ".$pos." start -->\n";
+	print '<div class="box" style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
 	if ($pos && $pos > sizeof($fieldssource))	// No fields
