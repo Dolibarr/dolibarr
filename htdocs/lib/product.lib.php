@@ -271,20 +271,13 @@ function show_stats_for_company($product,$socid)
 
 
 /**
- *	\brief   Renvoi le texte d'une unite
- *	\param   int                 Unit
- *	\param   measuring_style     Le style de mesure : weight, volume,...
- *	\return  string	            Unite
- *	\TODO gerer les autres unites de mesure comme la livre, le gallon, le litre, ...
+ *	Return translation label of a unit key
+ *	@param   int                 Unit key (-3,0,3,98,99...)
+ *	@param   measuring_style     Style of unit: weight, volume,...
+ *	@return  string	             Unit string
  */
 function measuring_units_string($unit,$measuring_style='')
 {
-	/* Note Rodo aux dev :)
-	 * Ne pas inserer dans la base de donnees ces valeurs
-	 * cela surchagerait inutilement d'une requete supplementaire
-	 * pour quelque chose qui est somme toute peu variable
-	 */
-
 	global $langs;
 
 	if ($measuring_style == 'weight')
@@ -293,6 +286,7 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[0] = $langs->trans("WeightUnitkg");
 		$measuring_units[-3] = $langs->trans("WeightUnitg");
 		$measuring_units[-6] = $langs->trans("WeightUnitmg");
+        $measuring_units[99] = $langs->trans("WeightUnitpound");
 	}
 	else if ($measuring_style == 'size')
 	{
@@ -300,6 +294,8 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[-1] = $langs->trans("SizeUnitdm");
 		$measuring_units[-2] = $langs->trans("SizeUnitcm");
 		$measuring_units[-3] = $langs->trans("SizeUnitmm");
+        $measuring_units[99] = $langs->trans("SizeUnitinch");
+        $measuring_units[98] = $langs->trans("SizeUnitfoot");
 	}
 	else if ($measuring_style == 'surface')
 	{
@@ -314,6 +310,8 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[-3] = $langs->trans("VolumeUnitdm3");
 		$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
 		$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
+        $measuring_units[98] = $langs->trans("VolumeUnitlitre");
+        $measuring_units[99] = $langs->trans("VolumeUnitgallon");
 	}
 
 	return $measuring_units[$unit];

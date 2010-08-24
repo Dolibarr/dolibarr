@@ -163,34 +163,11 @@ class FormProduct
 
 		$return='';
 
-		if ($measuring_style == 'weight')
-		{
-			$measuring_units[3] = $langs->trans("WeightUnitton");
-			$measuring_units[0] = $langs->trans("WeightUnitkg");
-			$measuring_units[-3] = $langs->trans("WeightUnitg");
-			$measuring_units[-6] = $langs->trans("WeightUnitmg");
-		}
-		else if ($measuring_style == 'size')
-		{
-			$measuring_units[0] = $langs->trans("SizeUnitm");
-			$measuring_units[-1] = $langs->trans("SizeUnitdm");
-			$measuring_units[-2] = $langs->trans("SizeUnitcm");
-			$measuring_units[-3] = $langs->trans("SizeUnitmm");
-		}
-		else if ($measuring_style == 'surface')
-		{
-			$measuring_units[0] = $langs->trans("SurfaceUnitm2");
-			$measuring_units[-2] = $langs->trans("SurfaceUnitdm2");
-			$measuring_units[-4] = $langs->trans("SurfaceUnitcm2");
-			$measuring_units[-6] = $langs->trans("SurfaceUnitmm2");
-		}
-		else if ($measuring_style == 'volume')
-		{
-			$measuring_units[0] = $langs->trans("VolumeUnitm3");
-			$measuring_units[-3] = $langs->trans("VolumeUnitdm3");
-			$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
-			$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
-		}
+		$measuring_units=array();
+		if ($measuring_style == 'weight') $measuring_units=array(-6=>1,-3=>1,0=>1,3=>1,99=>1);
+		else if ($measuring_style == 'size') $measuring_units=array(-3=>1,-2=>1,-1=>1,0=>1,99=>1,98=>1);
+        else if ($measuring_style == 'surface') $measuring_units=array(-6=>1,-4=>1,-2=>1,0=>1);
+		else if ($measuring_style == 'volume') $measuring_units=array(-9=>1,-6=>1,-3=>1,0=>1,99=>1,/* 98=>1 */);  // Liter is not used as already available with dm3
 
 		$return.= '<select class="flat" name="'.$name.'">';
 		if ($adddefault) $return.= '<option value="0">'.$langs->trans("Default").'</option>';
@@ -202,7 +179,8 @@ class FormProduct
 			{
 				$return.= ' selected="true"';
 			}
-			$return.= '>'.$value.'</option>';
+			//$return.= '>'.$value.'</option>';
+			$return.= '>'.measuring_units_string($key,$measuring_style).'</option>';
 		}
 		$return.= '</select>';
 
