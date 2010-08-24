@@ -211,7 +211,7 @@ if ($_REQUEST["search_montant_ttc"])
 	$sql .= " AND f.total_ttc = '".$_REQUEST["search_montant_ttc"]."'";
 }
 
-if (strlen($_POST["sf_ref"]) > 0)
+if (dol_strlen($_POST["sf_ref"]) > 0)
 {
 	$sql .= " AND f.facnumber like '%".$_POST["sf_ref"] . "%'";
 }

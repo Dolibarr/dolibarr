@@ -81,7 +81,7 @@ print '<td valign="top" class="label"><b>';
 print $langs->trans("WebPagesDirectory");
 print "</b></td>";
 
-if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
+if(! isset($dolibarr_main_url_root) || dol_strlen($dolibarr_main_url_root) == 0)
 {
     //print "x".$_SERVER["SCRIPT_FILENAME"]." y".$_SERVER["DOCUMENT_ROOT"];
 
@@ -98,7 +98,7 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
     }
     else
     {
-        $dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,strlen($_SERVER["SCRIPT_FILENAME"]) - 21);
+        $dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,dol_strlen($_SERVER["SCRIPT_FILENAME"]) - 21);
         // Nettoyage du path propose
         // Gere les chemins windows avec double "\"
         $dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);

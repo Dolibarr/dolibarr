@@ -434,7 +434,7 @@ class FactureRec extends Facture
 
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			if (trim(strlen($remise_percent)) > 0)
+			if (trim(dol_strlen($remise_percent)) > 0)
 			{
 				$remise = round(($pu * $remise_percent / 100), 2);
 				$price = $pu - $remise;

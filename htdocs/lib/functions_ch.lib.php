@@ -160,7 +160,7 @@ function dol_ch_controle_bvrb ($bvrb)
 
 	// Make control
 	$report=0;
-	while (strlen($bv)>1)
+	while (dol_strlen($bv)>1)
 	{
 		$match=substr($bv,0,1);
 		$report=$tableau[$report][$match];

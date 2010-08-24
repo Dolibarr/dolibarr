@@ -182,8 +182,8 @@ while (($file = readdir($handle))!==false)
     if (preg_match('/\.modules\.php$/i',$file))
     {
         $var = !$var;
-        $name = substr($file, 0, strlen($file) -12);
-        $classname = substr($file, 0, strlen($file) -12);
+        $name = substr($file, 0, dol_strlen($file) -12);
+        $classname = substr($file, 0, dol_strlen($file) -12);
 
 		require_once($dir.'/'.$file);
 		$module=new $classname($db);

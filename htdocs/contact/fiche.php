@@ -334,17 +334,17 @@ if ($user->rights->societe->contact->creer)
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$contact->poste).'"></td>';
 
 		// Address
-		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->address)) == 0) $contact->address = $objsoc->address;	// Predefined with third party
+		if (($objsoc->typent_code == 'TE_PRIVATE') && dol_strlen(trim($contact->address)) == 0) $contact->address = $objsoc->address;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$contact->address).'</textarea></td>';
 
 		// Zip / Town
-		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->cp)) == 0) $contact->cp = $objsoc->cp;			// Predefined with third party
-		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->ville)) == 0) $contact->ville = $objsoc->ville;	// Predefined with third party
+		if (($objsoc->typent_code == 'TE_PRIVATE') && dol_strlen(trim($contact->cp)) == 0) $contact->cp = $objsoc->cp;			// Predefined with third party
+		if (($objsoc->typent_code == 'TE_PRIVATE') && dol_strlen(trim($contact->ville)) == 0) $contact->ville = $objsoc->ville;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.(isset($_POST["cp"])?$_POST["cp"]:$contact->cp).'">&nbsp;';
 		print '<input name="ville" type="text" size="20" value="'.(isset($_POST["ville"])?$_POST["ville"]:$contact->ville).'" maxlength="80"></td></tr>';
 
 		// Country
-		if (strlen(trim($contact->fk_pays)) == 0) $contact->fk_pays = $objsoc->pays_id;	// Predefined with third party
+		if (dol_strlen(trim($contact->fk_pays)) == 0) $contact->fk_pays = $objsoc->pays_id;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
 		$form->select_pays((isset($_POST["pays_id"])?$_POST["pays_id"]:$contact->fk_pays),'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_create()"':'');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
@@ -363,16 +363,16 @@ if ($user->rights->societe->contact->creer)
 		print '</td></tr>';
 
 		// Phone / Fax
-		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->phone_pro)) == 0) $contact->phone_pro = $objsoc->tel;	// Predefined with third party
+		if (($objsoc->typent_code == 'TE_PRIVATE') && dol_strlen(trim($contact->phone_pro)) == 0) $contact->phone_pro = $objsoc->tel;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_pro"])?$_POST["phone_pro"]:$contact->phone_pro).'"></td>';
 		print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$contact->phone_perso).'"></td></tr>';
 
-		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->fax)) == 0) $contact->fax = $objsoc->fax;	// Predefined with third party
+		if (($objsoc->typent_code == 'TE_PRIVATE') && dol_strlen(trim($contact->fax)) == 0) $contact->fax = $objsoc->fax;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$contact->phone_mobile).'"></td>';
 		print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.(isset($_POST["fax"])?$_POST["fax"]:$contact->fax).'"></td></tr>';
 
 		// EMail
-		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->email)) == 0) $contact->email = $objsoc->email;	// Predefined with third party
+		if (($objsoc->typent_code == 'TE_PRIVATE') && dol_strlen(trim($contact->email)) == 0) $contact->email = $objsoc->email;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("Email").'</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$contact->email).'"></td></tr>';
 
 		// Jabberid

@@ -455,7 +455,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 	if ($format == 'dayhourxcard')      $format='%Y%m%dT%H%M%SZ';
 
 	// If date undefined or "", we return ""
-	if (strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
+	if (dol_strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
 
 	//print 'x'.$time;
 
@@ -845,22 +845,22 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 	if (strtoupper($country) == "FR")
 	{
 		// France
-		if (strlen($phone) == 10) {
+		if (dol_strlen($phone) == 10) {
 			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,2).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2);
 		}
-		elseif (strlen($newphone) == 7)
+		elseif (dol_strlen($newphone) == 7)
 		{
 			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2);
 		}
-		elseif (strlen($newphone) == 9)
+		elseif (dol_strlen($newphone) == 9)
 		{
 			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,3).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2);
 		}
-		elseif (strlen($newphone) == 11)
+		elseif (dol_strlen($newphone) == 11)
 		{
 			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
 		}
-		elseif (strlen($newphone) == 12)
+		elseif (dol_strlen($newphone) == 12)
 		{
 			$newphone=substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
@@ -2091,7 +2091,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
-	if (strlen($mesg))
+	if (dol_strlen($mesg))
 	{
 		$return.= '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
 	}
@@ -2384,7 +2384,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1)
 	$end='';
 
 	// We increase nbdecimal if there is more decimal than asked (to not loose information)
-	if (strlen($decpart) > $nbdecimal) $nbdecimal=strlen($decpart);
+	if (dol_strlen($decpart) > $nbdecimal) $nbdecimal=dol_strlen($decpart);
 	// Si on depasse max
 	if ($trunc && $nbdecimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN)
 	{
@@ -2448,7 +2448,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
 			$temps=sprintf("%0.10F",$amount-intval($amount));	// temps=0.0000000000 or 0.0000200000 or 9999.1000000000
 			$temps=preg_replace('/([\.1-9])0+$/','\\1',$temps); // temps=0. or 0.00002 or 9999.1
-			$nbofdec=max(0,strlen($temps)-2);	// -2 to remove "0."
+			$nbofdec=max(0,dol_strlen($temps)-2);	// -2 to remove "0."
 			$amount=number_format($amount,$nbofdec,$dec,$thousand);
 		}
 		//print "QQ".$amount.'<br>';
@@ -2469,7 +2469,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 		elseif ($rounding == 'MS') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
 		elseif ($rounding == '2')  $nbofdectoround=2; 	// For admin info page
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
-		if (strlen($nbofdectoround)) $amount = round($amount,$nbofdectoround);	// $nbofdectoround can be 0.
+		if (dol_strlen($nbofdectoround)) $amount = round($amount,$nbofdectoround);	// $nbofdectoround can be 0.
 		else return 'ErrorBadParameterProvidedToFunction';
 		//print 'SS'.$amount.' - '.$nbofdec.' - '.$dec.' - '.$thousand.' - '.$nbofdectoround.'<br>';
 
@@ -2480,7 +2480,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
 			$temps=sprintf("%0.10F",$amount-intval($amount));	// temps=0.0000000000 or 0.0000200000 or 9999.1000000000
 			$temps=preg_replace('/([\.1-9])0+$/','\\1',$temps); // temps=0. or 0.00002 or 9999.1
-			$nbofdec=max(0,strlen($temps)-2);	// -2 to remove "0."
+			$nbofdec=max(0,dol_strlen($temps)-2);	// -2 to remove "0."
 			$amount=number_format($amount,min($nbofdec,$nbofdectoround),$dec,$thousand);		// Convert amount to format with dolibarr dec and thousand
 		}
 		//print "TT".$amount.'<br>';
@@ -2984,7 +2984,7 @@ function dol_htmlentities($a,$b,$c)
  */
 function dol_string_is_good_iso($s)
 {
-	$len=strlen($s);
+	$len=dol_strlen($s);
 	$ok=1;
 	for($scursor=0;$scursor<$len;$scursor++)
 	{
@@ -3034,11 +3034,11 @@ function dol_nboflines_bis($texte,$maxlinesize=0,$charset='UTF-8')
 	{
 		foreach ($a as $line)
 		{
-			if (strlen($line)>$maxlinesize)
+			if (dol_strlen($line)>$maxlinesize)
 			{
 				//$line_dec = html_entity_decode(strip_tags($line));
 				$line_dec = html_entity_decode($line);
-				if(strlen($line_dec)>$maxlinesize)
+				if(dol_strlen($line_dec)>$maxlinesize)
 				{
 					$line_dec=wordwrap($line_dec,$maxlinesize,'\n',true);
 					$nblines+=substr_count($line_dec,'\n');
@@ -3284,7 +3284,7 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort, $case_sensitive
  */
 function utf8_check($Str)
 {
-	for ($i=0; $i<strlen($Str); $i++)
+	for ($i=0; $i<dol_strlen($Str); $i++)
 	{
 		if (ord($Str[$i]) < 0x80) continue; # 0bbbbbbb
 		elseif ((ord($Str[$i]) & 0xE0) == 0xC0) $n=1; # 110bbbbb
@@ -3294,7 +3294,7 @@ function utf8_check($Str)
 		elseif ((ord($Str[$i]) & 0xFE) == 0xFC) $n=5; # 1111110b
 		else return false; # Does not match any model
 		for ($j=0; $j<$n; $j++) { # n bytes matching 10bbbbbb follow ?
-			if ((++$i == strlen($Str)) || ((ord($Str[$i]) & 0xC0) != 0x80))
+			if ((++$i == dol_strlen($Str)) || ((ord($Str[$i]) & 0xC0) != 0x80))
 			return false;
 		}
 	}

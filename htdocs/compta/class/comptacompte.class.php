@@ -55,7 +55,7 @@ class ComptaCompte
 
   function create($user)
     {
-      if (strlen(trim($this->numero)) && strlen(trim($this->intitule)))
+      if (dol_strlen(trim($this->numero)) && dol_strlen(trim($this->intitule)))
 	{
 	  $sql = "SELECT count(*)";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."compta_compte_generaux ";

@@ -355,7 +355,7 @@ class DolGraph
 	{
 		$max = $this->GetMaxValueInData();
 		if ($max != 0) $max++;
-		$size=strlen(abs(ceil($max)));
+		$size=dol_strlen(abs(ceil($max)));
 		$factor=1;
 		for ($i=0; $i < ($size-1); $i++)
 		{
@@ -378,7 +378,7 @@ class DolGraph
 	{
 		$min = $this->GetMinValueInData();
 		if ($min != 0) $min--;
-		$size=strlen(abs(floor($min)));
+		$size=dol_strlen(abs(floor($min)));
 		$factor=1;
 		for ($i=0; $i < ($size-1); $i++)
 		{
@@ -452,7 +452,7 @@ class DolGraph
 
 		$paddleft=50;
 		$paddright=10;
-		$strl=strlen(max(abs($this->MaxValue),abs($this->MinValue)));
+		$strl=dol_strlen(max(abs($this->MaxValue),abs($this->MinValue)));
 		if ($strl > 6) $paddleft += ($strln * 4);
 		$group->setPadding($paddleft, $paddright);		// Width on left and right for Y axis values
 		$group->legend->setSpace(0);

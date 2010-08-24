@@ -50,12 +50,12 @@ $sql = "SELECT cg.rowid, cg.numero, cg.intitule, cg.date_creation as dc";
 
 $sql .= " FROM ".MAIN_DB_PREFIX."compta_compte_generaux as cg";
 
-if (strlen(trim($_GET["search_numero"])) )
+if (dol_strlen(trim($_GET["search_numero"])) )
 {
 
   $sql .= " WHERE cg.numero LIKE '%".$_GET["search_numero"]."%'";
 
-  if ( strlen(trim($_GET["search_intitule"])))
+  if ( dol_strlen(trim($_GET["search_intitule"])))
     {
       $sql .= " AND cg.intitule LIKE '%".$_GET["search_intitule"]."%'";
     }
@@ -63,7 +63,7 @@ if (strlen(trim($_GET["search_numero"])) )
 }
 else
 {
-  if ( strlen(trim($_GET["search_intitule"])))
+  if ( dol_strlen(trim($_GET["search_intitule"])))
     {
       $sql .= " WHERE cg.intitule LIKE '%".$_GET["search_intitule"]."%'";
     }

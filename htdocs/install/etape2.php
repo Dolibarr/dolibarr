@@ -151,7 +151,7 @@ if ($_POST["action"] == "set")
 		sort($tabledata);
 		foreach($tabledata as $file)
 		{
-			$name = substr($file, 0, strlen($file) - 4);
+			$name = substr($file, 0, dol_strlen($file) - 4);
 			$buffer = '';
 			$fp = fopen($dir.$file,"r");
 			if ($fp)
@@ -261,7 +261,7 @@ if ($_POST["action"] == "set")
 		sort($tabledata);
 		foreach($tabledata as $file)
 		{
-			$name = substr($file, 0, strlen($file) - 4);
+			$name = substr($file, 0, dol_strlen($file) - 4);
 			//print "<tr><td>Creation de la table $name</td>";
 			$buffer = '';
 			$fp = fopen($dir.$file,"r");
@@ -480,7 +480,7 @@ if ($_POST["action"] == "set")
 		sort($tabledata);
 		foreach($tabledata as $file)
 		{
-			$name = substr($file, 0, strlen($file) - 4);
+			$name = substr($file, 0, dol_strlen($file) - 4);
 			$fp = fopen($dir.$file,"r");
 			dolibarr_install_syslog("Open data file ".$dir.$file." handle=".$fp,LOG_DEBUG);
 			if ($fp)

@@ -212,9 +212,9 @@ if ($handle)
     $var=true;
     while (($file = readdir($handle))!==false)
     {
-        if (substr($file, 0, 14) == 'mod_livraison_' && substr($file, strlen($file)-3, 3) == 'php')
+        if (substr($file, 0, 14) == 'mod_livraison_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 		{
-			$file = substr($file, 0, strlen($file)-4);
+			$file = substr($file, 0, dol_strlen($file)-4);
 
 			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/livraison/".$file.".php");
 
@@ -331,10 +331,10 @@ if(is_dir($dir))
 
 	while (($file = readdir($handle))!==false)
 	{
-		if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
+		if (substr($file, dol_strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
 		{
-			$name = substr($file, 4, strlen($file) - 16);
-			$classname = substr($file, 0, strlen($file) - 12);
+			$name = substr($file, 4, dol_strlen($file) - 16);
+			$classname = substr($file, 0, dol_strlen($file) - 12);
 
 			$var=!$var;
 			print "<tr $bc[$var]><td>";

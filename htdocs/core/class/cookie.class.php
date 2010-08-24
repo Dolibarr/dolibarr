@@ -62,7 +62,7 @@ class DolCookie
 		if (!empty($this->myKey))
 		{
 			$valuecrypt = base64_encode($this->myValue);
-			for ($f=0 ; $f<=strlen($valuecrypt)-1; $f++)
+			for ($f=0 ; $f<=dol_strlen($valuecrypt)-1; $f++)
 			{
 				$this->cookie .= intval(ord($valuecrypt[$f]))*$this->myKey."|";
 			}
@@ -191,7 +191,7 @@ class DolCookie
 			$file=DOL_DOCUMENT_ROOT.'/conf/conf.php';
 			if ($fp = @fopen($file,'w'))
 			{
-				fputs($fp, $config, strlen($config));
+				fputs($fp, $config, dol_strlen($config));
 				fclose($fp);
 				// It's config file, so we set permission for creator only
 				// @chmod($file, octdec('0600'));

@@ -90,7 +90,7 @@ $filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 
 
 Header("Content-Disposition: attachment; filename=\"".$filename."\"");
-Header("Content-Length: ".strlen($output));
+Header("Content-Length: ".dol_strlen($output));
 Header("Connection: close");
 Header("Content-Type: text/x-vcard; name=\"".$filename."\"");
 

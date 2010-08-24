@@ -306,10 +306,10 @@ if(is_dir($dir))
 
 	while (($file = readdir($handle))!==false)
 	{
-		if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,15) == 'pdf_expedition_')
+		if (substr($file, dol_strlen($file) -12) == '.modules.php' && substr($file,0,15) == 'pdf_expedition_')
 		{
-			$name = substr($file, 15, strlen($file) - 27);
-			$classname = substr($file, 0, strlen($file) - 12);
+			$name = substr($file, 15, dol_strlen($file) - 27);
+			$classname = substr($file, 0, dol_strlen($file) - 12);
 
 			$var=!$var;
 			print "<tr $bc[$var]><td>";

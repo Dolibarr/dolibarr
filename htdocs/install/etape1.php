@@ -54,15 +54,15 @@ $error = 0;
 $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 
 // On supprime /  de fin dans main_dir
-if (substr($main_dir, strlen($main_dir) -1) == "/")
+if (substr($main_dir, dol_strlen($main_dir) -1) == "/")
 {
-	$main_dir = substr($main_dir, 0, strlen($main_dir)-1);
+	$main_dir = substr($main_dir, 0, dol_strlen($main_dir)-1);
 }
 
 // On supprime /  de fin dans main_url
-if (substr($_POST["main_url"], strlen($_POST["main_url"]) -1) == "/")
+if (substr($_POST["main_url"], dol_strlen($_POST["main_url"]) -1) == "/")
 {
-	$_POST["main_url"] = substr($_POST["main_url"], 0, strlen($_POST["main_url"])-1);
+	$_POST["main_url"] = substr($_POST["main_url"], 0, dol_strlen($_POST["main_url"])-1);
 }
 
 // Directory for generated documents (invoices, orders, ecm, etc...)

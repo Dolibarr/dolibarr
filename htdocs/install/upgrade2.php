@@ -2673,7 +2673,7 @@ function migrate_project_task_time($db,$langs,$conf)
 			{
 				$obj = $db->fetch_object($resql);
 
-				if ($obj->task_duration > 0 && strlen($obj->task_duration) < 3)
+				if ($obj->task_duration > 0 && dol_strlen($obj->task_duration) < 3)
 				{
 					$newtime = $obj->task_duration*60*60;
 

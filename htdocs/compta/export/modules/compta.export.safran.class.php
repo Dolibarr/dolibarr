@@ -47,7 +47,7 @@ class ComptaExportTableur extends ComptaExport
 
       $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->datef.".xls";
 
-      if (strlen(trim($this->fournisseur->email_commande)) == 0)
+      if (dol_strlen(trim($this->fournisseur->email_commande)) == 0)
         {
 	  return -3;
         }

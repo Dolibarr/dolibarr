@@ -216,9 +216,9 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		{
 			while (($file = readdir($handle))!==false)
 			{
-				if (substr($file, 0, 12) == 'mod_propale_' && substr($file, strlen($file)-3, 3) == 'php')
+				if (substr($file, 0, 12) == 'mod_propale_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
-					$file = substr($file, 0, strlen($file)-4);
+					$file = substr($file, 0, dol_strlen($file)-4);
 
 					require_once($dir.$file.".php");
 
@@ -335,10 +335,10 @@ $handle=opendir($dir);
 $var=true;
 while (($file = readdir($handle))!==false)
 {
-	if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,12) == 'pdf_propale_')
+	if (substr($file, dol_strlen($file) -12) == '.modules.php' && substr($file,0,12) == 'pdf_propale_')
 	{
-		$name = substr($file, 12, strlen($file) - 24);
-		$classname = substr($file, 0, strlen($file) -12);
+		$name = substr($file, 12, dol_strlen($file) - 24);
+		$classname = substr($file, 0, dol_strlen($file) -12);
 
 		$var=!$var;
 		print "<tr ".$bc[$var].">\n  <td>";

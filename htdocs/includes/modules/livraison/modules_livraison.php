@@ -147,7 +147,7 @@ function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs=''
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/livraison/pdf/";
 
 	// Positionne modele sur le nom du modele de bon de livraison a utiliser
-	if (! strlen($modele))
+	if (! dol_strlen($modele))
 	{
 		if ($conf->global->LIVRAISON_ADDON_PDF)
 		{

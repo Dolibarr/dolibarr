@@ -209,34 +209,34 @@ class Don extends CommonObject
 	{
 		$err = 0;
 
-		if (strlen(trim($this->societe)) == 0)
+		if (dol_strlen(trim($this->societe)) == 0)
 		{
-			if ((strlen(trim($this->nom)) + strlen(trim($this->prenom))) == 0)
+			if ((dol_strlen(trim($this->nom)) + dol_strlen(trim($this->prenom))) == 0)
 			{
 				$error_string[$err] = "Vous devez saisir vos nom et prenom ou le nom de votre societe.";
 				$err++;
 			}
 		}
 
-		if (strlen(trim($this->adresse)) == 0)
+		if (dol_strlen(trim($this->adresse)) == 0)
 		{
 			$error_string[$err] = "L'adresse saisie est invalide";
 			$err++;
 		}
 
-		if (strlen(trim($this->cp)) == 0)
+		if (dol_strlen(trim($this->cp)) == 0)
 		{
 			$error_string[$err] = "Le code postal saisi est invalide";
 			$err++;
 		}
 
-		if (strlen(trim($this->ville)) == 0)
+		if (dol_strlen(trim($this->ville)) == 0)
 		{
 			$error_string[$err] = "La ville saisie est invalide";
 			$err++;
 		}
 
-		if (strlen(trim($this->email)) == 0)
+		if (dol_strlen(trim($this->email)) == 0)
 		{
 			$error_string[$err] = "L'email saisi est invalide";
 			$err++;
@@ -245,7 +245,7 @@ class Don extends CommonObject
 		$this->amount = trim($this->amount);
 
 		$map = range(0,9);
-		for ($i = 0; $i < strlen($this->amount) ; $i++)
+		for ($i = 0; $i < dol_strlen($this->amount) ; $i++)
 		{
 			if (!isset($map[substr($this->amount, $i, 1)] ))
 			{

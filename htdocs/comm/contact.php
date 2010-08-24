@@ -87,12 +87,12 @@ if ($type == "p") $sql.= " AND s.client IN (2, 3)";
 if ($type == "f") $sql.= " AND s.fournisseur = 1";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
-if (strlen($stcomm))
+if (dol_strlen($stcomm))
 {
   $sql.= " AND s.fk_stcomm=$stcomm";
 }
 
-if (strlen($begin)) // filtre sur la premiere lettre du nom
+if (dol_strlen($begin)) // filtre sur la premiere lettre du nom
 {
   $sql.= " AND upper(p.name) like '$begin%'";
 }

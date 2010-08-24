@@ -272,7 +272,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						$classname = "mod_facture_".$file;
 					}
 					//print "x".$dir."-".$filebis."-".$classname;
-					if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, strlen($filebis)-3, 3) == 'php')
+					if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, dol_strlen($filebis)-3, 3) == 'php')
 					{
 						// Chargement de la classe de numerotation
 						require_once($dir.$filebis);
@@ -418,8 +418,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
 				if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
 				{
 					$var = !$var;
-					$name = substr($file, 4, strlen($file) -16);
-					$classname = substr($file, 0, strlen($file) -12);
+					$name = substr($file, 4, dol_strlen($file) -16);
+					$classname = substr($file, 0, dol_strlen($file) -12);
 
 					require_once($dir.$file);
 					$module = new $classname($db);

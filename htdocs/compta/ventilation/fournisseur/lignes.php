@@ -55,7 +55,7 @@ $sql .= " , ".MAIN_DB_PREFIX."compta_compte_generaux as c";
 $sql .= " WHERE f.rowid = l.fk_facture_fourn AND f.fk_statut = 1 AND l.fk_code_ventilation <> 0 ";
 $sql .= " AND c.rowid = l.fk_code_ventilation";
 
-if (strlen(trim($_GET["search_facture"])))
+if (dol_strlen(trim($_GET["search_facture"])))
 {
   $sql .= " AND f.facnumber like '%".$_GET["search_facture"]."%'";
 }

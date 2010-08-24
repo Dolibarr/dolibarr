@@ -322,7 +322,7 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 			print '<tr><td nowrap>';
 			print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>'."\n";
 
-			$name = substr($file, 0, strlen($file) - 4);
+			$name = substr($file, 0, dol_strlen($file) - 4);
 
 			// Run sql script
 			$ok=run_sql($dir.$file, 0, '', 1);

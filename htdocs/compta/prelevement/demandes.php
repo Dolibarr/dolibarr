@@ -79,7 +79,7 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 if (!$statut) $sql.= " AND pfd.traite = 0";
 if ($statut) $sql.= " AND pfd.traite = ".$statut;
 $sql.= " AND pfd.fk_facture = f.rowid";
-if (strlen(trim($_GET["search_societe"])))
+if (dol_strlen(trim($_GET["search_societe"])))
 {
 	$sql.= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";
 }

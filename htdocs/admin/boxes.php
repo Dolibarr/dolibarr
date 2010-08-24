@@ -206,7 +206,7 @@ if ($resql)
 		{
 			while ($record = $db->fetch_array($result))
 			{
-				if (strlen($record['box_order']) == 1)
+				if (dol_strlen($record['box_order']) == 1)
 				{
 					if (preg_match("/[13579]{1}/",substr($record['box_order'],-1)))
 					{
@@ -221,7 +221,7 @@ if ($resql)
 						$resql = $db->query($sql);
 					}
 				}
-				else if (strlen($record['box_order']) == 2)
+				else if (dol_strlen($record['box_order']) == 2)
 				{
 					if (preg_match("/[13579]{1}/",substr($record['box_order'],-1)))
 					{

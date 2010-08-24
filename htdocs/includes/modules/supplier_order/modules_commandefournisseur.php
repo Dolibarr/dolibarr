@@ -148,7 +148,7 @@ function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/supplier_order/pdf/";
 
 	// Positionne modele sur le nom du modele de commande fournisseur a utiliser
-	if (! strlen($modele))
+	if (! dol_strlen($modele))
 	{
 		if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF))
 		{

@@ -667,7 +667,7 @@ else
 				$expedition->fetch_object();
 			}
 
-			if (strlen($expedition->tracking_number))
+			if (dol_strlen($expedition->tracking_number))
 			{
 				$expedition->GetUrlTrackingStatus();
 			}

@@ -226,12 +226,12 @@ class ImportCsv extends ModeleImports
 		    		if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8')
 		    		{
 		    			$newarrayres[$key]['val']=$val;
-		    			$newarrayres[$key]['type']=(strlen($val)?1:-1);	// If empty we considere it's null
+		    			$newarrayres[$key]['type']=(dol_strlen($val)?1:-1);	// If empty we considere it's null
 		    		}
 		    		else
 		    		{
 		    			$newarrayres[$key]['val']=utf8_encode($val);
-		    			$newarrayres[$key]['type']=(strlen($val)?1:-1);	// If empty we considere it's null
+		    			$newarrayres[$key]['type']=(dol_strlen($val)?1:-1);	// If empty we considere it's null
 		    		}
 		    	}
 		    	else	// Autodetect format (UTF8 or ISO)
@@ -239,12 +239,12 @@ class ImportCsv extends ModeleImports
 					if (utf8_check($val))
 					{
 						$newarrayres[$key]['val']=$val;
-						$newarrayres[$key]['type']=(strlen($val)?1:-1);	// If empty we considere it's null
+						$newarrayres[$key]['type']=(dol_strlen($val)?1:-1);	// If empty we considere it's null
 					}
 					else
 					{
 						$newarrayres[$key]['val']=utf8_encode($val);
-						$newarrayres[$key]['type']=(strlen($val)?1:-1);	// If empty we considere it's null
+						$newarrayres[$key]['type']=(dol_strlen($val)?1:-1);	// If empty we considere it's null
 					}
 		    	}
 			}

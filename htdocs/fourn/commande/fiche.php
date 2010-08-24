@@ -614,7 +614,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 				}
 			}
 
-			if (strlen($sendto))
+			if (dol_strlen($sendto))
 			{
 				$langs->load("commercial");
 
@@ -626,7 +626,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 
 				if ($_POST['action'] == 'send')
 				{
-					if (strlen($_POST['subject'])) $subject=$_POST['subject'];
+					if (dol_strlen($_POST['subject'])) $subject=$_POST['subject'];
 					else $subject = $langs->transnoentities('CustomerOrder').' '.$commande->ref;
 					$actiontypecode='AC_SUP_ORD';
 					$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";

@@ -106,7 +106,7 @@ if ($sall)
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
-if (strlen($_GET["statut"]))
+if (dol_strlen($_GET["statut"]))
 {
 	$sql .= " AND fk_statut =".$_GET["statut"];
 }

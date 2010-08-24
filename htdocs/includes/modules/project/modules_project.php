@@ -149,7 +149,7 @@ function project_pdf_create($db, $comid, $modele,$outputlangs)
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/project/pdf/";
 
 	// Positionne modele sur le nom du modele de projet a utiliser
-	if (! strlen($modele))
+	if (! dol_strlen($modele))
 	{
 		if (! empty($conf->global->PROJECT_ADDON_PDF))
 		{

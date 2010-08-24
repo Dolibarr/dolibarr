@@ -68,11 +68,11 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFI
 $sql .= " WHERE s.fk_stcomm = st.id AND s.fournisseur = 1 AND s.rowid = p.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-if (strlen($stcomm)) {
+if (dol_strlen($stcomm)) {
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
-if (strlen($begin)) {
+if (dol_strlen($begin)) {
   $sql .= " AND p.name like '$begin%'";
 }
 

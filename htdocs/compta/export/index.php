@@ -138,7 +138,7 @@ if ($handle)
 {
   while (($file = readdir($handle))!==false)
     {
-      if (is_readable($updir.$file) && is_dir($updir.$file) && strlen($file) == 4)
+      if (is_readable($updir.$file) && is_dir($updir.$file) && dol_strlen($file) == 4)
 	{
 	  $var=!$var;
 	  print '<tr '.$bc[$var].'><td><a href="index.php?year='.$file.'">'.$file.'</a><td></tr>';

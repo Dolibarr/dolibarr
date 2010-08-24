@@ -1007,8 +1007,8 @@ class Form
                 $found=0;
                 $currencytext=$langs->trans("Currency".$conf->monnaie);
                 $currencytextnoent=$langs->transnoentities("Currency".$conf->monnaie);
-                if (strlen($currencytext) > 10) $currencytext=$conf->monnaie;	// If text is too long, we use the short code
-                if (strlen($currencytextnoent) > 10) $currencytextnoent=$conf->monnaie;   // If text is too long, we use the short code
+                if (dol_strlen($currencytext) > 10) $currencytext=$conf->monnaie;	// If text is too long, we use the short code
+                if (dol_strlen($currencytextnoent) > 10) $currencytextnoent=$conf->monnaie;   // If text is too long, we use the short code
 
                 // Multiprice
                 if ($price_level >= 1)		// If we need a particular price level (from 1 to 6)
@@ -1069,7 +1069,7 @@ class Form
 
                 if ($objp->duration)
                 {
-                    $duration_value = substr($objp->duration,0,strlen($objp->duration)-1);
+                    $duration_value = substr($objp->duration,0,dol_strlen($objp->duration)-1);
                     $duration_unit = substr($objp->duration,-1);
                     if ($duration_value > 1)
                     {
@@ -1242,8 +1242,8 @@ class Form
                 {
                     $currencytext=$langs->trans("Currency".$conf->monnaie);
                     $currencytextnoent=$langs->transnoentities("Currency".$conf->monnaie);
-                    if (strlen($currencytext) > 10) $currencytext=$conf->monnaie;   // If text is too long, we use the short code
-                    if (strlen($currencytextnoent) > 10) $currencytextnoent=$conf->monnaie;   // If text is too long, we use the short code
+                    if (dol_strlen($currencytext) > 10) $currencytext=$conf->monnaie;   // If text is too long, we use the short code
+                    if (dol_strlen($currencytextnoent) > 10) $currencytextnoent=$conf->monnaie;   // If text is too long, we use the short code
 
                     $opt.= price($objp->fprice).' '.$currencytext."/".$objp->quantity;
                     $outval.= price($objp->fprice).' '.$currencytextnoent."/".$objp->quantity;
@@ -2427,14 +2427,14 @@ class Form
         }
 
         // Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
-        if ($defaulttx < 0 || strlen($defaulttx) == 0)
+        if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
         {
             $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$idprod);
             $defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$idprod);
         }
         // Si taux par defaut n'a pu etre determine, on prend dernier de la liste.
         // Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
-        if ($defaulttx < 0 || strlen($defaulttx) == 0)
+        if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
         {
             $defaulttx = $txtva[sizeof($txtva)-1];
         }
@@ -2676,7 +2676,7 @@ class Form
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($hour = 0; $hour < 24; $hour++)
             {
-                if (strlen($hour) < 2)
+                if (dol_strlen($hour) < 2)
                 {
                     $hour = "0" . $hour;
                 }
@@ -2702,7 +2702,7 @@ class Form
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($min = 0; $min < 60 ; $min++)
             {
-                if (strlen($min) < 2)
+                if (dol_strlen($min) < 2)
                 {
                     $min = "0" . $min;
                 }

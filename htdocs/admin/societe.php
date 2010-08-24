@@ -196,7 +196,7 @@ if ($handle)
 	{
 		if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php')
 		{
-			$file = substr($file, 0, strlen($file)-4);
+			$file = substr($file, 0, dol_strlen($file)-4);
 
 			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
 
@@ -265,7 +265,7 @@ if ($handle)
 	{
 		if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php')
 		{
-			$file = substr($file, 0, strlen($file)-4);
+			$file = substr($file, 0, dol_strlen($file)-4);
 
 			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
 
@@ -355,8 +355,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
 				if (preg_match('/\.modules\.php$/i',$file))
 				{
 					$var = !$var;
-					$name = substr($file, 4, strlen($file) -16);
-					$classname = substr($file, 0, strlen($file) -12);
+					$name = substr($file, 4, dol_strlen($file) -16);
+					$classname = substr($file, 0, dol_strlen($file) -12);
 
 					require_once($dir.'/'.$file);
 					$module = new $classname($db);

@@ -611,7 +611,7 @@ class EcmDirectory // extends CommonObject
 			$this->cats[$id_categ]['fulllabel']=$this->cats[$id_categ]['label'];
 		}
 		// We count number of _ to have level
-		$this->cats[$id_categ]['level']=strlen(preg_replace('/([^_])/i','',$this->cats[$id_categ]['fullpath']));
+		$this->cats[$id_categ]['level']=dol_strlen(preg_replace('/([^_])/i','',$this->cats[$id_categ]['fullpath']));
 
 		// Traite ces enfants
 		$protection++;

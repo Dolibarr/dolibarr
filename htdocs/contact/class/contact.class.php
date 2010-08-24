@@ -306,7 +306,7 @@ class Contact extends CommonObject
 			$info["phpgwContactCatId"] = 0;
 			$info["phpgwContactAccess"] = "public";
 
-			if (strlen($this->egroupware_id) == 0)
+			if (dol_strlen($this->egroupware_id) == 0)
 			{
 				$this->egroupware_id = 1;
 			}

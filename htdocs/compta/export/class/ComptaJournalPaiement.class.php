@@ -164,7 +164,7 @@ class ComptaJournalPaiement
 					$socnom = $obj->nom;
 					$libelle = $obj->libelle;
 
-					if (strlen($obj->nom) > 31)
+					if (dol_strlen($obj->nom) > 31)
 					{
 						$socnom = substr($obj->nom, 0 , 31);
 					}
@@ -190,7 +190,7 @@ class ComptaJournalPaiement
 					$s = $socnom . ' '.$libelle;
 
 					$facnumber = $obj->facnumber;
-					if (strlen(trim($obj->increment)) > 0)
+					if (dol_strlen(trim($obj->increment)) > 0)
 					{
 						$facnumber = $obj->increment;
 					}

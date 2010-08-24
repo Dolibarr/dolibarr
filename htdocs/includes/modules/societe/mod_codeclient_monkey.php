@@ -177,7 +177,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 			}
 			else
 			{
-				if (strlen($code) == 0)
+				if (dol_strlen($code) == 0)
 				{
 					$result=-2;
 				}
@@ -235,7 +235,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	{
 		$res = 0;
 
-		if (strlen($code) < 11)
+		if (dol_strlen($code) < 11)
 		{
 			$res = -1;
 		}

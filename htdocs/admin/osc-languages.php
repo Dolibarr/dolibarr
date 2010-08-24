@@ -34,7 +34,7 @@ accessforbidden();
 llxHeader();
 
 
-if (! strlen(OSC_DB_NAME))
+if (! dol_strlen(OSC_DB_NAME))
 {
 	print "Non dispo";
 	llxFooter();

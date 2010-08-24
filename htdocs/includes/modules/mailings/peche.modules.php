@@ -143,7 +143,7 @@ class mailing_peche extends MailingTargets
 				        $other=$tab[3];
 				        if (! empty($buffer))
 				        {
-			        		//print 'xx'.strlen($buffer).empty($buffer)."<br>\n";
+			        		//print 'xx'.dol_strlen($buffer).empty($buffer)."<br>\n";
 				        	$id=$cpt;
 					        if (isValidEMail($email))
 					        {

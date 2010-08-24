@@ -149,7 +149,7 @@ function facture_pdf_create($db, $id, $message, $modele, $outputlangs)
 	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
 
 	// Positionne modele sur le nom du modele a utiliser
-	if (! strlen($modele))
+	if (! dol_strlen($modele))
 	{
 		if ($conf->global->FACTURE_ADDON_PDF)
 		{

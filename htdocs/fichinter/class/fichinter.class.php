@@ -174,7 +174,7 @@ class Fichinter extends CommonObject
 		global $conf;
 
 		if (! is_numeric($this->duree)) { $this->duree = 0; }
-		if (! strlen($this->fk_project)) { $this->fk_project = 0; }
+		if (! dol_strlen($this->fk_project)) { $this->fk_project = 0; }
 
 		/*
 		 *  Insertion dans la base

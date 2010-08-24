@@ -82,13 +82,13 @@ if ($_POST["action"] == "set")
 		exit;
 	}
 
-	if (strlen(trim($_POST["pass"])) == 0)
+	if (dol_strlen(trim($_POST["pass"])) == 0)
 	{
 		Header("Location: etape4.php?error=2&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
 		exit;
 	}
 
-	if (strlen(trim($_POST["login"])) == 0)
+	if (dol_strlen(trim($_POST["login"])) == 0)
 	{
 		Header("Location: etape4.php?error=3&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
 		exit;

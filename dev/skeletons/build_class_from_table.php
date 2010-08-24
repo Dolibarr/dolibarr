@@ -230,7 +230,7 @@ foreach($property as $key => $prop)
 		$varprop.="\t\t\$sql.= \" ";
 		if ($prop['istime'])
 		{
-			$varprop.='".(! isset($this->'.$prop['field'].') || strlen($this->'.$prop['field'].')==0?\'NULL\':$this->db->idate(';
+			$varprop.='".(! isset($this->'.$prop['field'].') || dol_strlen($this->'.$prop['field'].')==0?\'NULL\':$this->db->idate(';
 			$varprop.="\$this->".$prop['field']."";
 			$varprop.='))."';
 			if ($i < sizeof($property)) $varprop.=",";
@@ -271,8 +271,8 @@ foreach($property as $key => $prop)
 		$varprop.=$prop['field'].'=';
 		if ($prop['istime'])
 		{
-			// (strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null')
-			$varprop.='".(strlen($this->'.$prop['field'].')!=0 ? "\'".$this->db->idate(';
+			// (dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null')
+			$varprop.='".(dol_strlen($this->'.$prop['field'].')!=0 ? "\'".$this->db->idate(';
 			$varprop.='$this->'.$prop['field'];
 			$varprop.=')."\'" : \'null\').';
 			$varprop.='"';

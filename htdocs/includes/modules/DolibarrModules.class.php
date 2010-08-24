@@ -885,9 +885,9 @@ class DolibarrModules
 
 					if (empty($r_type)) $r_type='w';
 
-					if (strlen($r_perms) )
+					if (dol_strlen($r_perms) )
 					{
-						if (strlen($r_subperms) )
+						if (dol_strlen($r_subperms) )
 						{
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
 							$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";

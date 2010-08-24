@@ -85,7 +85,7 @@ if (isset($_GET["afacturer"]) && $_GET['afacturer'] == 1)
 {
     $sql.= " AND fk_statut >=1	AND c.facture = 0";
 }
-if (strlen($_POST["sf_ref"]) > 0)
+if (dol_strlen($_POST["sf_ref"]) > 0)
 {
     $sql.= " AND c.ref like '%".$_POST["sf_ref"] . "%'";
 }

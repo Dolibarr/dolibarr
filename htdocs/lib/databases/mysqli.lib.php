@@ -261,10 +261,10 @@ class DoliDb
 	{
 		$version=	$this->getVersion();
 		$vlist=preg_split('/[.-]/',$version);
-		if (strlen($vlist[1])==1){
+		if (dol_strlen($vlist[1])==1){
 			$vlist[1]="0".$vlist[1];
 		}
-		if (strlen($vlist[2])==1){
+		if (dol_strlen($vlist[2])==1){
 			$vlist[2]="0".$vlist[2];
 		}
 		return $vlist[0].$vlist[1].$vlist[2];

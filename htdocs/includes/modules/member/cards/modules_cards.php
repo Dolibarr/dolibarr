@@ -77,7 +77,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs)
 	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/member/cards/";
 
 	// Positionne modele sur le nom du modele a utiliser
-	if (! strlen($modele))
+	if (! dol_strlen($modele))
 	{
 		if ($conf->global->ADHERENT_CARDS_ADDON_PDF)
 		{

@@ -1166,7 +1166,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 				}
 			}
 
-			if (strlen($sendto))
+			if (dol_strlen($sendto))
 			{
 				$langs->load("commercial");
 
@@ -1178,7 +1178,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 
 				if ($_POST['action'] == 'send')
 				{
-					if (strlen($_POST['subject'])) $subject = $_POST['subject'];
+					if (dol_strlen($_POST['subject'])) $subject = $_POST['subject'];
 					else $subject = $langs->transnoentities('Bill').' '.$fac->ref;
 					$actiontypecode='AC_FAC';
 					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
@@ -1192,7 +1192,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 				}
 				if ($_POST['action'] == 'relance')
 				{
-					if (strlen($_POST['subject'])) $subject = $_POST['subject'];
+					if (dol_strlen($_POST['subject'])) $subject = $_POST['subject'];
 					else $subject = $langs->transnoentities('Relance facture '.$fac->ref);
 					$actiontypecode='AC_FAC';
 					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";

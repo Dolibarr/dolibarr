@@ -179,9 +179,9 @@ if ($handle)
 
 	while (($file = readdir($handle))!==false)
 	{
-		if (substr($file, 0, 12) == 'mod_project_' && substr($file, strlen($file)-3, 3) == 'php')
+		if (substr($file, 0, 12) == 'mod_project_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 		{
-			$file = substr($file, 0, strlen($file)-4);
+			$file = substr($file, 0, dol_strlen($file)-4);
 
 			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/project/".$file.".php");
 
@@ -298,8 +298,8 @@ while (($file = readdir($handle))!==false)
 {
 	if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
 	{
-		$name = substr($file, 4, strlen($file) -16);
-		$classname = substr($file, 0, strlen($file) -12);
+		$name = substr($file, 4, dol_strlen($file) -16);
+		$classname = substr($file, 0, dol_strlen($file) -12);
 
 		$var=!$var;
 		print "<tr ".$bc[$var].">\n  <td>$name";

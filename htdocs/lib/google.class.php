@@ -70,7 +70,7 @@ class GoogleAPI
 		//print $code;
 		//print "<br>";
 		$latitude = substr($code, 0, strpos($code, ","));
-		$longitude = substr($code, strpos($code, ",")+1, strlen(strpos($code, ","))-3);
+		$longitude = substr($code, strpos($code, ",")+1, dol_strlen(strpos($code, ","))-3);
 
 		// Output the coordinates
 		//echo "Longitude: $longitude ',' Latitude: $latitude";

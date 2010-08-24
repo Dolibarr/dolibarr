@@ -178,7 +178,7 @@ class ComptaExport
 	  	$this->linep[$i][5] = $obj->amount;
 	  	$this->linep[$i][6] = $obj->libelle;
 
-	  	if (strlen(trim( $obj->increment)) > 0)
+	  	if (dol_strlen(trim( $obj->increment)) > 0)
 	  	{
 	  		$this->linep[$i][7] = $obj->increment;
 	  	}

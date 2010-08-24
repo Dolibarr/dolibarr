@@ -104,8 +104,8 @@ class Contrat extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4,";
-		$sql.= " date_ouverture = ".(strlen($date)!=0?"'".$this->db->idate($date)."'":"null").",";
-		$sql.= " date_fin_validite = ".(strlen($date_end)!=0?"'".$this->db->idate($date_end)."'":"null").",";
+		$sql.= " date_ouverture = ".(dol_strlen($date)!=0?"'".$this->db->idate($date)."'":"null").",";
+		$sql.= " date_fin_validite = ".(dol_strlen($date_end)!=0?"'".$this->db->idate($date_end)."'":"null").",";
 		$sql.= " fk_user_ouverture = ".$user->id.",";
 		$sql.= " date_cloture = null,";
 		$sql.= " commentaire = '".addslashes($comment)."'";
@@ -562,7 +562,7 @@ class Contrat extends CommonObject
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
 		$sql.= ",".($this->commercial_suivi_id>0?$this->commercial_suivi_id:"NULL");
 		$sql.= ",".($this->fk_projet>0?$this->fk_projet:"NULL");
-		$sql .= ", " . (strlen($this->ref)<=0 ? "null" : "'".$this->ref."'");
+		$sql .= ", " . (dol_strlen($this->ref)<=0 ? "null" : "'".$this->ref."'");
 		$sql.= ")";
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -805,7 +805,7 @@ class Contrat extends CommonObject
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
 			$price = price2num(round($pu_ht, 2));
-			if (strlen($remise_percent) > 0)
+			if (dol_strlen($remise_percent) > 0)
 			{
 				$remise = round(($pu_ht * $remise_percent / 100), 2);
 				$price = $pu_ht - $remise;
@@ -899,7 +899,7 @@ class Contrat extends CommonObject
 		$localtax2tx = price2num($localtax2tx);
 		$subprice = $price;
 		$remise = 0;
-		if (strlen($remise_percent) > 0)
+		if (dol_strlen($remise_percent) > 0)
 		{
 			$remise = round(($pu * $remise_percent / 100), 2);
 			$price = $pu - $remise;

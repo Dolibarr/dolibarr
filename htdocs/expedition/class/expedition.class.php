@@ -604,16 +604,16 @@ class Expedition extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
 
-		$sql.= " tms=".(strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql.= " ref=".(isset($this->ref)?"'".addslashes($this->ref)."'":"null").",";
 		$sql.= " ref_customer=".(isset($this->ref_customer)?"'".addslashes($this->ref_customer)."'":"null").",";
 		$sql.= " fk_soc=".(isset($this->socid)?$this->socid:"null").",";
-		$sql.= " date_creation=".(strlen($this->date_creation)!=0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
+		$sql.= " date_creation=".(dol_strlen($this->date_creation)!=0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
 		$sql.= " fk_user_author=".(isset($this->fk_user_author)?$this->fk_user_author:"null").",";
-		$sql.= " date_valid=".(strlen($this->date_valid)!=0 ? "'".$this->db->idate($this->date_valid)."'" : 'null').",";
+		$sql.= " date_valid=".(dol_strlen($this->date_valid)!=0 ? "'".$this->db->idate($this->date_valid)."'" : 'null').",";
 		$sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
-		$sql.= " date_expedition=".(strlen($this->date_expedition)!=0 ? "'".$this->db->idate($this->date_expedition)."'" : 'null').",";
-		$sql.= " date_delivery=".(strlen($this->date_delivery)!=0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
+		$sql.= " date_expedition=".(dol_strlen($this->date_expedition)!=0 ? "'".$this->db->idate($this->date_expedition)."'" : 'null').",";
+		$sql.= " date_delivery=".(dol_strlen($this->date_delivery)!=0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
 		$sql.= " fk_address=".(isset($this->fk_adresse_livraison)?$this->fk_adresse_livraison:"null").",";
 		$sql.= " fk_expedition_methode=".(isset($this->expedition_method_id)?$this->expedition_method_id:"null").",";
 		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".addslashes($this->tracking_number)."'":"null").",";

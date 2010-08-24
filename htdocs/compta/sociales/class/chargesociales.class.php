@@ -556,9 +556,9 @@ class PaiementCharge extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET";
 
 		$sql.= " fk_charge=".(isset($this->fk_charge)?$this->fk_charge:"null").",";
-		$sql.= " datec=".(strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql.= " tms=".(strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-		$sql.= " datep=".(strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
+		$sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
+		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql.= " datep=".(dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";
 		$sql.= " fk_typepaiement=".(isset($this->fk_typepaiement)?$this->fk_typepaiement:"null").",";
 		$sql.= " num_paiement=".(isset($this->num_paiement)?"'".addslashes($this->num_paiement)."'":"null").",";

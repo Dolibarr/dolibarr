@@ -152,7 +152,7 @@ class Notify
                 $sendto = $obj->firstname . " " . $obj->name . " <".$obj->email.">";
 				$actiondefid = $obj->adid;
 
-                if (strlen($sendto))
+                if (dol_strlen($sendto))
                 {
                 	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
                 	$application=($conf->global->MAIN_APPLICATION_TITLE?$conf->global->MAIN_APPLICATION_TITLE:'Dolibarr ERP/CRM');
