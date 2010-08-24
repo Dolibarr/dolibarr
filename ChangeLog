@@ -7,11 +7,15 @@ For users:
 - New: Upgrade process works with Postgresql.
 - New: Task #10538: Add filter on expiration date of subscription for
        foundation module email selector.
+- New: Can input payment conditions on several lines.
+- New: Add hidden option MAIN_LOGOUT_GOTO_URL to set the exit url after
+       a logout.
 - Fix: Better Postgresql compatibility.
 - Fix: Box order is saved when moved.
+- Fix: Database name can contains "-" characters.
 
 For developers:
-- New: Add jquery by default
+- New: Add jquery by default.
 - New: Add first Selenium GUI tests.
 - Qual: Renamed some fields into database to be more internationnal.
 

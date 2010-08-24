@@ -266,10 +266,16 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
 		{
 			if (in_array('region_id',$listfield)) { continue; }		// For region page, we do not require the country input
 		}
-		if (! isset($_POST[$value]) || $_POST[$value]=='')
+		if ((! isset($_POST[$value]) || $_POST[$value]=='')
+		&& $listfield[$f] != 'decalage')   // Fields that are not mandatory
 		{
 			$ok=0;
-			$msg.=$langs->trans("ErrorFieldRequired",$listfield[$f]).'<br>';
+			$fieldnamekey=$listfield[$f];
+			// We take translate key of field
+            if ($fieldnamekey == 'libelle') $fieldnamekey='Label';
+			if ($fieldnamekey == 'nbjour') $fieldnamekey='NbOfDays';
+            if ($fieldnamekey == 'decalage') $fieldnamekey='Offset';
+			$msg.=$langs->trans("ErrorFieldRequired",$langs->transnoentities($fieldnamekey)).'<br>';
 		}
 	}
 	// Autres verif
@@ -317,7 +323,8 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
 		{
 			if ($value == 'price') { $_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU'); }
 			if ($i) $sql.=",";
-			$sql.="'".addslashes($_POST[$listfieldvalue[$i]])."'";
+			if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";
+			else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
 			$i++;
 		}
 		$sql.=",1)";
@@ -361,7 +368,8 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
 			if ($field == 'price') { $_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU'); }
 			if ($i) $sql.=",";
 			$sql.= $field."=";
-			$sql.= "'".addslashes($_POST[$listfieldvalue[$i]])."'";
+            if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";
+            else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
 			$i++;
 		}
 		$sql.= " WHERE ".$rowidcol." = '".$_POST["rowid"]."'";
@@ -641,7 +649,7 @@ if ($_GET["id"])
 			print '<td colspan="2"  class="liste_titre">&nbsp;</td>';
 			print '</tr>';
 
-			// Lignes de valeurs
+			// Lines with values
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
@@ -687,6 +695,9 @@ if ($_GET["id"])
 						else if ($fieldlist[$field]=='price') {
 							$valuetoshow=price($valuetoshow);
 						}
+                        else if ($fieldlist[$field]=='libelle_facture') {
+                            $valuetoshow=nl2br($valuetoshow);
+                        }
 						else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]=='llx_c_pays') {
 							$key=$langs->trans("Country".strtoupper($obj->code));
 							$valuetoshow=($obj->code && $key != "Country".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
@@ -882,6 +893,9 @@ function fieldList($fieldlist,$obj='')
 		elseif ($fieldlist[$field] == 'nbjour' || $fieldlist[$field] == 'decalage' || $fieldlist[$field] == 'taux') {
 			print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" size="3" name="'.$fieldlist[$field].'"></td>';
 		}
+        elseif ($fieldlist[$field] == 'libelle_facture') {
+            print '<td><textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.$obj->$fieldlist[$field].'</textarea></td>';
+        }
 		elseif ($fieldlist[$field] == 'price') {
 			print '<td><input type="text" class="flat" value="'.price($obj->$fieldlist[$field]).'" size="8" name="'.$fieldlist[$field].'"></td>';
 		}
