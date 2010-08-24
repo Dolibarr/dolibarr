@@ -56,6 +56,8 @@ class Conf
 	var $css_modules		= array();
 	var $tabs_modules		= array();
 	var $triggers_modules	= array();
+	var $hooks_modules		= array();
+	var $logins_modules		= array();
 	var $need_smarty		= array();
 	var $modules			= array();
 
@@ -135,6 +137,12 @@ class Conf
 						{
 							$modulename = strtolower($reg[1]);
 							$this->triggers_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
+						}
+						// If this is constant for login method activated by a module
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_LOGIN_METHOD$/i',$key,$reg))
+						{
+							$modulename = strtolower($reg[1]);
+							$this->login_method_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/login/';
 						}
 						// If this is constant for hook activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_HOOKS$/i',$key,$reg))
