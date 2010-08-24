@@ -208,7 +208,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				// Sender name
 				$pdf->SetTextColor(0,0,60);
-				$pdf->SetFont('Arial','B',11);
+				$pdf->SetFont('Arial','B',10);
 				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 				// Sender properties
@@ -237,11 +237,11 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				// Client destinataire
 				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','B',12);
+				$pdf->SetFont('Arial','B',10);
 				$fichinter->fetch_thirdparty();
 				$pdf->SetXY(102,42);
 				$pdf->MultiCell(86,5, $outputlangs->convToOutputCharset($carac_client_name));
-				$pdf->SetFont('Arial','B',11);
+				$pdf->SetFont('Arial','B',9);
 				$pdf->SetXY(102,$pdf->GetY());
 				$pdf->MultiCell(66,5, $outputlangs->convToOutputCharset($carac_client));
 				$pdf->rect(100, 40, 100, 40);

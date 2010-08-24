@@ -603,7 +603,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			// Nom emetteur
 			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('Arial','B',11);
+			$pdf->SetFont('Arial','B',10);
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 			// Sender properties
@@ -649,7 +649,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			// Show customer/recipient
 			$pdf->SetXY(102,$posy+3);
-			$pdf->SetFont('Arial','B',11);
+			$pdf->SetFont('Arial','B',10);
 			$pdf->MultiCell(106,4, $carac_client_name, 0, 'L');
 
 			$pdf->SetFont('Arial','',9);

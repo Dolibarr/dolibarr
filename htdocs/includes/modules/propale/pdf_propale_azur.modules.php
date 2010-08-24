@@ -973,7 +973,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Show sender name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('Arial','B',11);
+			$pdf->SetFont('Arial','B',10);
 			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 			// Show sender information
@@ -1021,8 +1021,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
-			$pdf->SetFont('Arial','B',11);
-//print $carac_client;exit;
+			$pdf->SetFont('Arial','B',10);
 			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
 
 			// Show recipient information

@@ -509,7 +509,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 		// Sender name
 		$pdf->SetTextColor(0,0,00);
-		$pdf->SetFont('Arial','B',11);
+		$pdf->SetFont('Arial','B',10);
 		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 		// Sender properties
@@ -609,7 +609,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 		// Show recipient
 		$pdf->SetXY(102,$posy+3);
-		$pdf->SetFont('Arial','B',11);
+		$pdf->SetFont('Arial','B',10);
 		$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($carac_client_name), 0, 'L');
 
 		// Show address

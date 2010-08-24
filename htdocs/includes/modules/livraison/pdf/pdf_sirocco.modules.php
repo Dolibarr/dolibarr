@@ -407,11 +407,11 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('Arial','B',12);
+		$pdf->SetFont('Arial','B',11);
 
 		$pdf->SetXY(102,42);
 		$pdf->MultiCell(96,5, $carac_client_name);
-		$pdf->SetFont('Arial','B',11);
+		$pdf->SetFont('Arial','B',10);
 		$pdf->SetXY(102,47);
 		$pdf->MultiCell(96,5, $carac_client);
 		$pdf->rect(100, 40, 100, 40);

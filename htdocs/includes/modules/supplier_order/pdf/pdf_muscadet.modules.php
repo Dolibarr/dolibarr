@@ -646,7 +646,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			// Nom emetteur
 			$carac_emetteur_name=$outputlangs->convToOutputCharset($mysoc->nom);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('Arial','B',11);
+			$pdf->SetFont('Arial','B',10);
 			$pdf->SetXY($this->marge_gauche+2,$posy+3);
 			$pdf->MultiCell(80, 4, $carac_emetteur_name, 0, 'L');
 
@@ -689,7 +689,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			// Show customer/recipient
 			$pdf->SetXY(102,$posy+3);
-			$pdf->SetFont('Arial','B',11);
+			$pdf->SetFont('Arial','B',10);
 			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
 
 			$pdf->SetFont('Arial','',9);

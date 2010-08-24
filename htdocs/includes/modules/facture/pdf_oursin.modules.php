@@ -855,7 +855,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		// Sender name
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('Arial','B',12);
+		$pdf->SetFont('Arial','B',10);
 		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 		// Sender properties
@@ -871,7 +871,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetXY($this->marges['g']+100,$posy-5);
-		$pdf->SetFont('Arial','B',11);
+		$pdf->SetFont('Arial','B',10);
 
 		// If BILLING contact defined on invoice, we use it
 		$usecontact=false;
@@ -898,11 +898,11 @@ class pdf_oursin extends ModelePDFFactures
 		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 		// Show customer/recipient
-		$pdf->SetFont('Arial','B',11);
+		$pdf->SetFont('Arial','B',10);
 		$pdf->SetXY($this->marges['g']+100,$posy+4);
 		$pdf->MultiCell(86,4, $carac_client_name, 0, 'L');
 
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('Arial','B',9);
 		$pdf->SetXY($this->marges['g']+100,$posy+10);
 		$pdf->MultiCell(86,4, $carac_client);
 

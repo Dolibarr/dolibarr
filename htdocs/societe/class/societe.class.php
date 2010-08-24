@@ -194,7 +194,7 @@ class Societe extends CommonObject
 		if ($result >= 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat)";
-			$sql.= " VALUES ('".$db->escape($this->nom)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."',";
+			$sql.= " VALUES ('".$this->db->escape($this->nom)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."',";
 			$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null");
 			$sql.= ")";
 
