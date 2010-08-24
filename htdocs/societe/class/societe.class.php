@@ -186,13 +186,15 @@ class Societe extends CommonObject
 		if ($this->code_client == -1)      $this->get_codeclient($this->prefix_comm,0);
 		if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
 
+		$now=dol_now();
+
 		// Check more parameters
 		$result = $this->verify();
 
 		if ($result >= 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat)";
-			$sql.= " VALUES ('".addslashes($this->nom)."', ".$conf->entity.", ".$this->db->idate(gmmktime()).", ".$this->db->idate(gmmktime()).",";
+			$sql.= " VALUES ('".$db->escape($this->nom)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."',";
 			$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null");
 			$sql.= ")";
 

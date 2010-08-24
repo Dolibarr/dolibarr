@@ -105,8 +105,8 @@ class ActionComm extends CommonObject
 		$now=dol_now('tzserver');
 
 		// Clean parameters
-		$this->label=trim($this->label);
-		$this->location=trim($this->location);
+		$this->label=dol_trunc(trim($this->label),128);
+		$this->location=dol_trunc(trim($this->location),128);
 		$this->note=dol_htmlcleanlastbr(trim($this->note));
         if (! $this->percentage) $this->percentage = 0;
         if (! $this->priority)   $this->priority = 0;

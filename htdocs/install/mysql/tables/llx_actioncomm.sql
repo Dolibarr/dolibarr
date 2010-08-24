@@ -30,7 +30,7 @@ create table llx_actioncomm
   datea2         datetime,             -- deprecated
 
   fk_action      integer,              -- type de l'action
-  label          varchar(50) NOT NULL, -- libelle de l'action
+  label          varchar(128) NOT NULL, -- libelle de l'action
 
   datec          datetime,             -- date creation
   tms            timestamp,            -- date modif
