@@ -488,7 +488,7 @@ if (! defined('NOLOGIN'))
 			// Call triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf,(isset($_POST["entity"])?$_POST["entity"]:0));
+			$result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf,$conf->entity);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
