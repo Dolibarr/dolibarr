@@ -53,15 +53,15 @@ class Conf
 	//! Used to store entity for multi-company (default 1)
 	var $entity=1;
 
-	var $css_modules		= array();
-	var $tabs_modules		= array();
-	var $triggers_modules	= array();
-	var $hooks_modules		= array();
-	var $logins_modules		= array();
-	var $need_smarty		= array();
-	var $modules			= array();
+	var $css_modules			= array();
+	var $tabs_modules			= array();
+	var $triggers_modules		= array();
+	var $hooks_modules			= array();
+	var $login_method_modules	= array();
+	var $need_smarty			= array();
+	var $modules				= array();
 
-	var $logbuffer			= array();
+	var $logbuffer				= array();
 
 	/**
 	 * Constructor

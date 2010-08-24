@@ -92,6 +92,9 @@ class DolibarrModules
 
 		// Insert activation triggers
 		if (! $err) $err+=$this->insert_triggers();
+		
+		// Insert activation login method
+		if (! $err) $err+=$this->insert_login_method();
 
 		// Insere les constantes associees au module dans llx_const
 		if (! $err) $err+=$this->insert_const();
@@ -187,6 +190,9 @@ class DolibarrModules
 
 		// Remove activation of module's triggers (MAIN_MODULE_MYMODULE_TRIGGERS in llx_const)
 		if (! $err) $err+=$this->delete_triggers();
+		
+		// Remove activation of module's authentification method (MAIN_MODULE_MYMODULE_LOGIN_METHOD in llx_const)
+		if (! $err) $err+=$this->delete_login_method();
 
 		// Remove list of module's available boxes (entry in llx_boxes)
 		if (! $err && $options != 'noboxes') $err+=$this->delete_boxes();
@@ -1259,6 +1265,71 @@ class DolibarrModules
 		{
 			$this->error=$this->db->lasterror();
 			dol_syslog("DolibarrModules::delete_triggers ".$this->error, LOG_ERR);
+			$err++;
+		}
+
+		return $err;
+	}
+	
+	/**
+	 *	\brief      Insert activation login method from modules in llx_const
+	 *	\return     int             Number of errors (0 if ok)
+	 */
+	function insert_login_method()
+	{
+		global $conf;
+
+		$err=0;
+
+		if (! empty($this->login_method))
+		{
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
+			$sql.= "name";
+			$sql.= ", type";
+			$sql.= ", value";
+			$sql.= ", note";
+			$sql.= ", visible";
+			$sql.= ", entity";
+			$sql.= ")";
+			$sql.= " VALUES (";
+			$sql.= $this->db->encrypt($this->const_name."_LOGIN_METHOD",1);
+			$sql.= ", 'chaine'";
+			$sql.= ", ".$this->db->encrypt($this->login_method,1);
+			$sql.= ", null";
+			$sql.= ", '0'";
+			$sql.= ", ".$conf->entity;
+			$sql.= ")";
+
+			dol_syslog("DolibarrModules::insert_login_method sql=".$sql);
+			$resql=$this->db->query($sql);
+            if (! $resql)
+            {
+                $this->error=$this->db->lasterror();
+            	dol_syslog("DolibarrModules::insert_login_method ".$this->error);
+            }
+		}
+		return $err;
+	}
+
+	/**
+	 *	\brief      Remove activation login method from modules in llx_const
+	 *	\return     int     Nombre d'erreurs (0 si ok)
+	 */
+	function delete_login_method()
+	{
+		global $conf;
+
+		$err=0;
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_LOGIN_METHOD'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		dol_syslog("DolibarrModules::delete_login_method sql=".$sql);
+		if (! $this->db->query($sql))
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("DolibarrModules::delete_login_method ".$this->error, LOG_ERR);
 			$err++;
 		}
 
