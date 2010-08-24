@@ -31,14 +31,14 @@
 function make_alpha_from_numbers($number)
 {
 	$numeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	if($number<strlen($numeric))
+	if($number<dol_strlen($numeric))
 	{
 		return $numeric[$number];
 	}
 	else
 	{
-		$dev_by = floor($number/strlen($numeric));
-		return "" . make_alpha_from_numbers($dev_by-1) . make_alpha_from_numbers($number-($dev_by*strlen($numeric)));
+		$dev_by = floor($number/dol_strlen($numeric));
+		return "" . make_alpha_from_numbers($dev_by-1) . make_alpha_from_numbers($number-($dev_by*dol_strlen($numeric)));
 	}
 }
 

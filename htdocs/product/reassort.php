@@ -124,11 +124,11 @@ if ($snom)
 {
 	$sql.= " AND p.label like '%".addslashes($snom)."%'";
 }
-if (isset($_GET["tosell"]) && strlen($_GET["tosell"]) > 0)
+if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 {
 	$sql.= " AND p.tosell = ".$_GET["tosell"];
 }
-if (isset($_GET["tobuy"]) && strlen($_GET["tobuy"]) > 0)
+if (isset($_GET["tobuy"]) && dol_strlen($_GET["tobuy"]) > 0)
 {
     $sql.= " AND p.tobuy = ".$_GET["tobuy"];
 }

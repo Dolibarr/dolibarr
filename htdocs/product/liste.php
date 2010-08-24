@@ -141,7 +141,7 @@ if ($sall)
 	$sql.= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
 }
 # if the type is not 1, we show all products (type = 0,2,3)
-if (strlen($_GET["type"]) || strlen($_POST["type"]))
+if (dol_strlen($_GET["type"]) || dol_strlen($_POST["type"]))
 {
 	if ($type==1) {
 		$sql.= " AND p.fk_product_type = '1'";
@@ -152,11 +152,11 @@ if (strlen($_GET["type"]) || strlen($_POST["type"]))
 if ($sref)     $sql.= " AND p.ref like '%".$sref."%'";
 if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
 if ($snom)     $sql.= " AND p.label like '%".addslashes($snom)."%'";
-if (isset($_GET["tosell"]) && strlen($_GET["tosell"]) > 0)
+if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 {
 	$sql.= " AND p.tosell = ".addslashes($_GET["tosell"]);
 }
-if (isset($_GET["canvas"]) && strlen($_GET["canvas"]) > 0)
+if (isset($_GET["canvas"]) && dol_strlen($_GET["canvas"]) > 0)
 {
 	$sql.= " AND p.canvas = '".addslashes($_GET["canvas"])."'";
 }

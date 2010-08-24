@@ -77,7 +77,7 @@ if ($resql)
 
             if ($obj->email <> $oldemail)
             {
-                if (strlen($oldemail))
+                if (dol_strlen($oldemail))
                 {
                     envoi_mail($oldemail,$message,$total);
                 }

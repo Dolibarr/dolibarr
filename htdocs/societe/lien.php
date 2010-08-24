@@ -188,7 +188,7 @@ if($_GET["socid"])
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 			$sql.= " ".MAIN_DB_PREFIX."c_typent as te";
 			$sql.= " WHERE s.fk_typent = te.id";
-			if (strlen(trim($_GET["search_nom"])))
+			if (dol_strlen(trim($_GET["search_nom"])))
 			{
 				$sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
 			}

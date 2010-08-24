@@ -388,11 +388,11 @@ function CalEncode($line)
 	}
 	else
 	{
-		for ($j = 0; $j <= strlen($line) - 1; $j++)
+		for ($j = 0; $j <= dol_strlen($line) - 1; $j++)
 		{
 			$char = substr ( $line, $j, 1 );	// Take char at position $j
 
-			if ( ( strlen ( $newpara ) + strlen ( $char ) ) >= 75 )
+			if ( ( dol_strlen ( $newpara ) + dol_strlen ( $char ) ) >= 75 )
 			{
 				$out .= $newpara . "\r\n ";	// CRLF + Space for cal
 				$newpara = '';
@@ -415,7 +415,7 @@ function QPEncode($str,$forcal=0)
 	{
 		$newpara = '';
 
-		for ($j = 0; $j <= strlen($line) - 1; $j++)
+		for ($j = 0; $j <= dol_strlen($line) - 1; $j++)
 		{
 			$char = substr ( $line, $j, 1 );
 			$ascii = ord ( $char );
@@ -423,7 +423,7 @@ function QPEncode($str,$forcal=0)
 			if ( $ascii < 32 || $ascii == 61 || $ascii > 126 )
 			$char = '=' . strtoupper ( sprintf("%02X", $ascii ) );
 
-			if ( ( strlen ( $newpara ) + strlen ( $char ) ) >= 76 )
+			if ( ( dol_strlen ( $newpara ) + dol_strlen ( $char ) ) >= 76 )
 			{
 				$out .= $newpara . '=' . "\r\n";	// CRLF
 				if ($forcal) $out .= " ";		// + Space for cal

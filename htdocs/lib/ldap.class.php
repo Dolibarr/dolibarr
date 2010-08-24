@@ -1030,7 +1030,7 @@ class Ldap
 	 *	Indispensable pour Active Directory
 	 */
 	function littleEndian($hex) {
-		for ($x=strlen($hex)-2; $x >= 0; $x=$x-2) {
+		for ($x=dol_strlen($hex)-2; $x >= 0; $x=$x-2) {
 			$result .= substr($hex,$x,2);
 		}
 		return $result;
@@ -1250,11 +1250,11 @@ class Ldap
 	function setDn($peopleOrGroups) {
 
 		if ($peopleOrGroups) {
-			if ( isset($this->people) && (strlen($this->people) > 0) ) {
+			if ( isset($this->people) && (dol_strlen($this->people) > 0) ) {
 				$checkDn = "ou=" .$this->people. ", " .$this->dn;
 			}
 		} else {
-			if ( isset($this->groups) && (strlen($this->groups) > 0) ) {
+			if ( isset($this->groups) && (dol_strlen($this->groups) > 0) ) {
 				$checkDn = "ou=" .$this->groups. ", " .$this->dn;
 			}
 		}

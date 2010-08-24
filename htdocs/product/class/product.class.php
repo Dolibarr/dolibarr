@@ -168,10 +168,10 @@ class Product extends CommonObject
 		$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
 
 		$err = 0;
-		if (strlen(trim($this->ref)) == 0)
+		if (dol_strlen(trim($this->ref)) == 0)
 		$err++;
 
-		if (strlen(trim($this->libelle)) == 0)
+		if (dol_strlen(trim($this->libelle)) == 0)
 		$err++;
 
 		if ($err > 0)
@@ -1010,7 +1010,7 @@ class Product extends CommonObject
 			$this->finished           = $result["finished"];
 			$this->hidden             = $result["hidden"];
 			$this->duration           = $result["duration"];
-			$this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
+			$this->duration_value     = substr($result["duration"],0,dol_strlen($result["duration"])-1);
 			$this->duration_unit      = substr($result["duration"],-1);
 			$this->seuil_stock_alerte = $result["seuil_stock_alerte"];
 			$this->canvas             = $result["canvas"];
@@ -1441,7 +1441,7 @@ class Product extends CommonObject
 			//            $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
 
 			$month = "0".($month - 1);
-			if (strlen($month) == 3)
+			if (dol_strlen($month) == 3)
 			{
 				$month = substr($month,1);
 			}

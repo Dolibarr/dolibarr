@@ -368,7 +368,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
 		{
-			$module = substr($module, 0, strlen($module)-4);
+			$module = substr($module, 0, dol_strlen($module)-4);
 		}
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 		$modCodeClient = new $module;
@@ -376,7 +376,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
 		{
-			$module = substr($module, 0, strlen($module)-4);
+			$module = substr($module, 0, dol_strlen($module)-4);
 		}
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 		$modCodeFournisseur = new $module;
@@ -761,7 +761,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
 		{
-			$module = substr($module, 0, strlen($module)-4);
+			$module = substr($module, 0, dol_strlen($module)-4);
 		}
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 		$modCodeClient = new $module;
@@ -774,7 +774,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
 		{
-			$module = substr($module, 0, strlen($module)-4);
+			$module = substr($module, 0, dol_strlen($module)-4);
 		}
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 		$modCodeFournisseur = new $module;

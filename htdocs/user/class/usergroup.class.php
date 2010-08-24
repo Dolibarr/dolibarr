@@ -417,10 +417,10 @@ class UserGroup extends CommonObject
 			{
 				$row = $this->db->fetch_row($resql);
 
-				if (strlen($row[1]) > 0)
+				if (dol_strlen($row[1]) > 0)
 				{
 
-					if (strlen($row[2]) > 0)
+					if (dol_strlen($row[2]) > 0)
 					{
 						$this->rights->$row[0]->$row[1]->$row[2] = 1;
 					}

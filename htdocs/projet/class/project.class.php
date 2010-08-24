@@ -151,7 +151,7 @@ class Project extends CommonObject
 		$this->title = trim($this->title);
 		$this->description = trim($this->description);
 
-		if (strlen(trim($this->ref)) > 0)
+		if (dol_strlen(trim($this->ref)) > 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet SET";
 			$sql.= " ref='".$this->ref."'";

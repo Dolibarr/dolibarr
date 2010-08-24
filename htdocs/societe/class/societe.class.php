@@ -390,7 +390,7 @@ class Societe extends CommonObject
 		$this->localtax2_assuj=trim($this->localtax2_assuj);
 
 		$this->capital=trim($this->capital);
-		if (strlen($this->capital) == 0) $this->capital = 0;
+		if (dol_strlen($this->capital) == 0) $this->capital = 0;
 
 		$this->effectif_id=trim($this->effectif_id);
 		$this->forme_juridique_code=trim($this->forme_juridique_code);
@@ -1769,7 +1769,7 @@ class Societe extends CommonObject
 			$chaine=trim($this->siren);
 			$chaine=preg_replace('/(\s)/','',$chaine);
 
-			if (strlen($chaine) != 9) return -1;
+			if (dol_strlen($chaine) != 9) return -1;
 
 			$sum = 0;
 
@@ -1798,7 +1798,7 @@ class Societe extends CommonObject
 			$chaine=trim($this->siret);
 			$chaine=preg_replace('/(\s)/','',$chaine);
 
-			if (strlen($chaine) != 14) return -1;
+			if (dol_strlen($chaine) != 14) return -1;
 		}
 
 		return $ok;

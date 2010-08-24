@@ -93,9 +93,9 @@ if ($_GET["id"])
 		{
 		    while (($file = readdir($handle))!==false)
 		    {
-		        if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
+		        if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
 		        {
-		            $modName = substr($file, 0, strlen($file) - 10);
+		            $modName = substr($file, 0, dol_strlen($file) - 10);
 
 		            if ($modName)
 		            {

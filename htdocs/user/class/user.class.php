@@ -538,10 +538,10 @@ class User extends CommonObject
 			{
 				$row = $this->db->fetch_row($result);
 
-				if (strlen($row[1]) > 0)
+				if (dol_strlen($row[1]) > 0)
 				{
 
-					if (strlen($row[2]) > 0)
+					if (dol_strlen($row[2]) > 0)
 					{
 						$this->rights->$row[0]->$row[1]->$row[2] = 1;
 					}
@@ -1688,7 +1688,7 @@ class User extends CommonObject
 			$info["phpgwContactCatId"] = 0;
 			$info["phpgwContactAccess"] = "public";
 
-			if (strlen($this->egroupware_id) == 0)
+			if (dol_strlen($this->egroupware_id) == 0)
 			{
 				$this->egroupware_id = 1;
 			}

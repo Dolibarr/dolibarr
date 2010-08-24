@@ -237,7 +237,7 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 		$saltlen=2; $saltprefix=''; $saltsuffix=''; break;
 	}
 	$salt='';
-	while(strlen($salt) < $saltlen) $salt.=chr(mt_rand(64,126));
+	while(dol_strlen($salt) < $saltlen) $salt.=chr(mt_rand(64,126));
 
 	$result=$saltprefix.$salt.$saltsuffix;
 	dol_syslog("security.lib.php::makesalt return=".$result);
@@ -325,7 +325,7 @@ function encodedecode_dbpassconf($level=0)
 		$file=DOL_DOCUMENT_ROOT.'/conf/conf.php';
 		if ($fp = @fopen($file,'w'))
 		{
-			fputs($fp, $config, strlen($config));
+			fputs($fp, $config, dol_strlen($config));
 			fclose($fp);
 			// It's config file, so we set read permission for creator only.
 			// Should set permission to web user and groups for users used by batch
@@ -353,7 +353,7 @@ function encodedecode_dbpassconf($level=0)
  */
 function dol_encode($chain)
 {
-	for($i=0;$i<strlen($chain);$i++)
+	for($i=0;$i<dol_strlen($chain);$i++)
 	{
 		$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
 	}
@@ -371,7 +371,7 @@ function dol_decode($chain)
 {
 	$chain = base64_decode($chain);
 
-	for($i=0;$i<strlen($chain);$i++)
+	for($i=0;$i<dol_strlen($chain);$i++)
 	{
 		$output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
 	}
@@ -472,7 +472,7 @@ function dol_efc_config()
               foreach ($available["$avCipher"] as $avMode)
                   $v .= " '".$avMode."', ";
 
-                  $i = strlen($v) - 2;
+                  $i = dol_strlen($v) - 2;
                   if ($v[$i] == ",")
                     $v = substr($v, 2, $i - 3);
            }
@@ -480,8 +480,8 @@ function dol_efc_config()
            $strAv .= "'".$avCipher."' => Array (".$v."),\n                    ";
        }
        $strAv = rtrim($strAv);
-       if ($strAv[strlen($strAv) - 1] == ",")
-          $strAv = substr($strAv, 0, strlen($strAv) - 1);
+       if ($strAv[dol_strlen($strAv) - 1] == ",")
+          $strAv = substr($strAv, 0, dol_strlen($strAv) - 1);
        $strAv .= " );\n\n";
        $strAv .= "?>";
 
