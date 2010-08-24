@@ -331,6 +331,16 @@ if (! defined('NOLOGIN'))
 				// Fin appel triggers
 			}
 		}
+		
+		// Validation of third party module login method
+		if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
+		{
+			$login = getLoginMethod();
+			if ($login)
+			{
+				$test=false;
+			}
+		}
 
 		// Validation tests user / password
 		// If ok, the variable will be initialized login
@@ -1233,6 +1243,57 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 	return $ret;
 }
 
+/**
+ *   Return list of login method of third party module.
+ *   @return	array
+ */
+function getLoginMethod()
+{
+	global $conf,$langs;
+	
+	$login = '';
+
+	foreach($conf->login_method_modules as $dir)
+	{
+		// Check if directory exists
+		if (!is_dir($dir)) continue;
+		
+		$handle=opendir($dir);
+		
+		while (($file = readdir($handle))!==false)
+		{
+			if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
+			{
+				$authfile = $dir.'/'.$file;
+				$mode = $reg[1];
+				
+				$result=include_once($authfile);
+				if ($result)
+				{
+					// Call function to check user/password
+					$usertotest=$_POST["username"];
+					$passwordtotest=$_POST["password"];
+					$function='check_user_password_'.$mode;
+					$login=$function($usertotest,$passwordtotest);
+					if ($login)
+					{
+						$conf->authmode=$mode;	// This properties is defined only when logged
+					}
+				}
+				else
+				{
+					dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
+					sleep(1);
+					$langs->load('main');
+					$langs->load('other');
+					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
+				}
+			}
+		}
+		closedir($handle);
+	}
+	return $login;
+}
 
 /**
  *		\brief   	Show HTML footer DIV + BODY + HTML
