@@ -3,7 +3,8 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.9.1 compared to 2.9 *****
 
 For users:
-- Fix: Only few bug fixes.
+- Fix: Only few bug fixes in GUI.
+- Fix: Fix: Error when deleting lock file by doliwamp.
 
 
 ***** ChangeLog for 2.9 compared to 2.8 *****
