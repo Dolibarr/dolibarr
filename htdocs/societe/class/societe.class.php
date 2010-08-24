@@ -249,6 +249,7 @@ class Societe extends CommonObject
 				}
 				else
 				{
+				    $this->error=$this->db->lasterror();
 					dol_syslog("Societe::Create echec insert sql=".$sql);
 				}
 				$this->db->rollback();
