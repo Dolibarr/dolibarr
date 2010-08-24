@@ -287,7 +287,7 @@ if (! defined('NOLOGIN'))
 	$authmode=explode(',',$dolibarr_main_authentication);
 
 	// No authentication mode
-	if (! sizeof($authmode))
+	if (! sizeof($authmode) && is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
 	{
 		$langs->load('main');
 		dol_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
