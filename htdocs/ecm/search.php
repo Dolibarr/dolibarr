@@ -117,17 +117,18 @@ if ($conf->fournisseur->enabled) { $rowspan++; $sectionauto[]=array('level'=>1, 
 //***********************
 // List
 //***********************
-print_fiche_titre($langs->trans("ECMArea"));
+print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("Search"));
 
-print $langs->trans("ECMAreaDesc")."<br>";
-print $langs->trans("ECMAreaDesc2")."<br>";
-print "<br>\n";
+//print $langs->trans("ECMAreaDesc")."<br>";
+//print $langs->trans("ECMAreaDesc2")."<br>";
+//print "<br>\n";
+print $langs->trans("FeatureNotYetAvailable").'.<br><br>';
 
 if ($mesg) { print $mesg."<br>"; }
 
 // Tool bar
 $head = ecm_prepare_head_fm($fac);
-dol_fiche_head($head, 'search_form', '', 1);
+//dol_fiche_head($head, 'search_form', '', 1);
 
 
 print '<table class="border" width="100%"><tr><td width="40%" valign="top">';

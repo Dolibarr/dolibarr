@@ -211,7 +211,7 @@ if ($conf->fournisseur->enabled) { $rowspan++; $sectionauto[]=array('level'=>1, 
 //***********************
 // List
 //***********************
-print_fiche_titre($langs->trans("ECMArea"));
+print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("FileManager"));
 
 print $langs->trans("ECMAreaDesc")."<br>";
 print $langs->trans("ECMAreaDesc2")."<br>";
@@ -228,10 +228,35 @@ if ($mesg) { print $mesg."<br>"; }
 
 // Tool bar
 $head = ecm_prepare_head_fm($fac);
-dol_fiche_head($head, 'file_manager', '', 1);
+//dol_fiche_head($head, 'file_manager', '', 1);
 
 
 print '<table class="border" width="100%">';
+
+// Toolbar
+print '<tr><td colspan="2" style="background: #FFFFFF" style="height: 24px !important">';
+
+	// Construit liste des repertoires
+    if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action))
+    {
+        if ($user->rights->ecm->setup)
+        {
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.$langs->trans('ECMAddSection').'</a>';
+        }
+        else
+        {
+            print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
+        }
+    }
+	//print '</td>';
+	//print '<td class="liste_titre" colspan="5" align="right">';
+	//print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.$langs->trans('Refresh').'</a>';
+
+print '</td></tr>';
+
+
+
 print '<tr>';
 
 print '<td width="40%" valign="top" style="background: #FFFFFF" rowspan="2">';
@@ -251,31 +276,9 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		if ($ret == 'html') print '<br>';
 	}
 
-	// Construit liste des repertoires
 	print '<table width="100%" class="nobordernopadding">';
 
-	print '<tr class="liste_titre" style="height: 24px !important">';
-	print '<td class="liste_titre" align="left" colspan="6">';
-    if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action))
-    {
-        if ($user->rights->ecm->setup)
-        {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.$langs->trans('ECMAddSection').'</a>';
-        }
-        else
-        {
-            print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
-        }
-    }
-	//print '</td>';
-	//print '<td class="liste_titre" colspan="5" align="right">';
-	//print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.$langs->trans('Refresh').'</a>';
-    print '</td>';
-
-	print '</tr>';
-
-    print '<tr class="liste_titre"';
+	print '<tr class="liste_titre"';
     print '<td class="liste_titre" align="left" colspan="6">';
     print '&nbsp;'.$langs->trans("ECMSections");
 	print '</td></tr>';
@@ -604,12 +607,6 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 print '</td><td valign="top" style="background: #FFFFFF">';
-
-print '<table width="100%" class="nobordernopadding">';
-print '<tr class="liste_titre" style="height: 24px !important"><td>';
-//print $langs->trans("Filter").': ';
-print '</td></tr>';
-print '</table>';
 
 // Right area
 $relativepath=$ecmdir->getRelativePath();
