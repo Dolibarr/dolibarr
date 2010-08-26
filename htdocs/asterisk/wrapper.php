@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,23 +30,44 @@
  * 				write = system,call,log,verbose,command,agent,user
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
+if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN','1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK','1');
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL','1');
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
-require_once("../master.inc.php");
+// C'est un wrapper, donc header vierge
+function llxHeader() {
+	print '<html>'."\n";
+	print '<head>'."\n";
+	print '<title>Asterisk redirection from Dolibarr...</title>'."\n";
+	print '</head>'."\n";
+}
+
+require_once("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
-dol_syslog("Call Dolibarr Asterisk interface");
+// Security check
+if (! $conf->clicktodial->enabled)
+{
+    accessforbidden();
+    exit;
+}
 
-// TODO Enable and test if module Asterisk is enabled
 
+// Define Asterisk setup
+if (! isset($conf->global->ASTERISK_HOST))      $conf->global->ASTERISK_HOST="127.0.0.1";
+if (! isset($conf->global->ASTERISK_TYPE))      $conf->global->ASTERISK_TYPE="SIP/";
+if (! isset($conf->global->ASTERISK_INDICATIF)) $conf->global->ASTERISK_INDICATIF="0";
+if (! isset($conf->global->ASTERISK_PORT))      $conf->global->ASTERISK_PORT=5038;
+if ($conf->global->ASTERISK_INDICATIF=='NONE')  $conf->global->ASTERISK_INDICATIF='';
 
-$conf->global->ASTERISK_HOST="127.0.0.1";
-$conf->global->ASTERISK_TYPE="SIP/";
-$conf->global->ASTERISK_INDICATIF="0";
-$conf->global->ASTERISK_PORT=5038;
 
 $login = $_GET['login'];
 $password = $_GET['password'];
@@ -55,36 +76,29 @@ $called = $_GET['called'];
 
 # Adresse IP du serveur Asterisk
 $strHost = $conf->global->ASTERISK_HOST;
-
-#Context ( generalement from-internal )
-$strContext = "from-internal";
-
 #Spécifiez le type d'extension par laquelle vous poste est connecte.
 #ex: SIP/, IAX2/, ZAP/, etc
 $channel = $conf->global->ASTERISK_TYPE;
-
+#Indicatif de la ligne sortante
+$prefix = $conf->global->ASTERISK_INDICATIF;
+#Port
+$port = $conf->global->ASTERISK_PORT;
+#Context ( generalement from-internal )
+$strContext = "from-internal";
 
 #Delai d'attente avant de raccrocher
 $strWaitTime = "30";
-
 #Priority
 $strPriority = "1";
-
 #Nomber of try
 $strMaxRetry = "2";
 
-#Indicatif de la ligne sortante
-$prefix = $conf->global->ASTERISK_INDICATIF;
 
-#Port
-$port = $conf->global->ASTERISK_PORT;
+/*
+ * View
+ */
 
-
-print '<html>'."\n";
-print '<head>'."\n";
-print '<title>Asterisk redirection ...</title>'."\n";
-print '</head>'."\n";
-
+llxHeader();
 
 $number=strtolower($called) ;
 $pos=strpos ($number,"local");
@@ -93,21 +107,25 @@ if (! empty($number))
 	if ($pos===false) :
 	$errno=0 ;
 	$errstr=0 ;
-	$strCallerId = "Dolibarr <$number>" ;
+	$strCallerId = "Dolibarr <".strtolower($caller).">" ;
 	$oSocket = @fsockopen ($strHost, $port, $errno, $errstr, 10) ;
 	if (!$oSocket)
 	{
-		echo '<body>'."\n";
+		print '<body>'."\n";
 		$txt="Failed to execute fsockopen($strHost, $port, \$errno, \$errstr, 10)<br>\n";
-		echo $txt;
+		print $txt;
 		dol_syslog($txt,LOG_ERR);
 		$txt=$errstr." (".$errno.")<br>\n";
-		echo $txt;
+		print $txt;
 		dol_syslog($txt,LOG_ERR);
+        print '</body>'."\n";
 	}
 	else
 	{
-		echo '<body onload="javascript:history.go(-1);">'."\n";
+		$txt="Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
+		dol_syslog($txt);
+		print '<body onload="javascript:history.go(-1);">'."\n";
+		print '<!-- '.$txt.' -->';
 		fputs($oSocket, "Action: login\r\n" ) ;
 		fputs($oSocket, "Events: off\r\n" ) ;
 		fputs($oSocket, "Username: $login\r\n" ) ;
@@ -122,9 +140,12 @@ if (! empty($number))
 		fputs($oSocket, "Action: Logoff\r\n\r\n" ) ;
 		sleep(2) ;
 		fclose($oSocket) ;
+        print '</body>'."\n";
 	}
 	endif ;
 }
+else {
+    print 'Bad parameters in URL. Must be http://MYDOLIBARR/asterisk/wrapper.php?caller=99999&called=99999&login=xxxxx&password=xxxxx';
+}
 
-print '</body>'."\n";
 print '</html>'."\n";
