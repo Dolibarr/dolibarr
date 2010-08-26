@@ -183,12 +183,50 @@ if ($_REQUEST['action'] == 'confirm_deletesection' && $_REQUEST['confirm'] == 'y
 
 
 /*******************************************************************
- * PAGE
- *
- * Put here all code to do according to value of "action" parameter
+ * View
  ********************************************************************/
 
-llxHeader();
+$morejs=array(
+"/includes/jquery/js/jquery.layout-latest.js"
+);
+$morehead="<style type=\"text/css\">
+html, body {
+        width:      100%;
+        height:     100%;
+        padding:    0;
+        margin:     0;
+        overflow:   auto; /* when page gets too small */
+    }
+    #containerlayout {
+        background: #999;
+        height:     660px;
+        margin:     0 auto;
+        width:      100%;
+        min-width:  700px;
+        _width:     700px; /* min-width for IE6 */
+    }
+    .pane {
+        display:    none; /* will appear when layout inits */
+    }
+</style>
+<SCRIPT type=\"text/javascript\">
+    jQuery(document).ready(function () {
+        jQuery('#containerlayout').layout({
+            resizable: true
+        ,   north__size:        34
+        ,   north__resizable:   false
+        ,   north__closable:    false
+        ,   west__size:         320
+        ,   west__minSize:      280
+        ,   west__slidable:     true
+        ,   west__resizable:    true
+        ,   west__togglerLength_closed: '100%'
+        ,   useStateCookie:     false  /* Put this to false for dev */
+            });
+    });
+</SCRIPT>";
+
+llxHeader($morehead,$langs->trans("ECM"),'','','','',$morejs,'',0,0);
 
 $form=new Form($db);
 $ecmdirstatic = new ECMDirectory($db);
@@ -231,35 +269,67 @@ $head = ecm_prepare_head_fm($fac);
 //dol_fiche_head($head, 'file_manager', '', 1);
 
 
-print '<table class="border" width="100%">';
+//$conf->use_javascript_ajax=0;
 
-// Toolbar
-print '<tr><td colspan="2" style="background: #FFFFFF" style="height: 24px !important">';
 
-	// Construit liste des repertoires
-    if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action))
+if ($conf->use_javascript_ajax)
+{
+?>
+<div id="containerlayout">
+    <div class="pane ui-layout-north filetoolbar">
+<?php
+}
+else
+{
+    print '<table class="border" width="100%">';
+
+    // Toolbar
+    print '<tr><td colspan="2" style="background: #FFFFFF" style="height: 24px !important">';
+}
+
+// Construit liste des repertoires
+if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action))
+{
+    if ($user->rights->ecm->setup)
     {
-        if ($user->rights->ecm->setup)
-        {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.$langs->trans('ECMAddSection').'</a>';
-        }
-        else
-        {
-            print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
-        }
+        print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+        //print $langs->trans('ECMAddSection');
+        print '<img width="32" height="32" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+        print '</a>';
     }
-	//print '</td>';
-	//print '<td class="liste_titre" colspan="5" align="right">';
-	//print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.$langs->trans('Refresh').'</a>';
+    else
+    {
+        print '<a href="#" title="'.$langs->trans("NotAllowed").'">';
+        //print $langs->trans('ECMAddSection');
+        print '<img width="32" height="32" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+        print '</a>';
+    }
+}
+//print '</td>';
+//print '<td class="liste_titre" colspan="5" align="right">';
+//print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
+print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'"  title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
+print '<img width="32" height="32" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
+//print $langs->trans('Refresh');
+print '</a>';
 
-print '</td></tr>';
 
+if ($conf->use_javascript_ajax)
+{
+?>
+   </div>
 
+    <div class="pane ui-layout-west">
+<?php
+}
+else
+{
+    print '</td></tr>';
+    print '<tr>';
 
-print '<tr>';
+    print '<td width="40%" valign="top" style="background: #FFFFFF" rowspan="2">';
+}
 
-print '<td width="40%" valign="top" style="background: #FFFFFF" rowspan="2">';
 
 // Left area
 
@@ -605,8 +675,18 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 }
 
+if ($conf->use_javascript_ajax)
+{
+?>
+    </div>
 
-print '</td><td valign="top" style="background: #FFFFFF">';
+    <div class="pane ui-layout-center">
+<?php
+}
+else
+{
+    print '</td><td valign="top" style="background: #FFFFFF">';
+}
 
 // Right area
 $relativepath=$ecmdir->getRelativePath();
@@ -623,24 +703,47 @@ $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->r
 //	print '<tr><td> </td></tr></table>';
 
 
+if ($conf->use_javascript_ajax)
+{
+}
+else
+{
+    print '</td></tr>';
 
-print '</td></tr>';
+    // Actions attach new file
+    print '<tr height="22">';
+    //print '<td align="center">';
+    //print '</td>';
+    print '<td>';
+}
 
-
-// Actions buttons
-print '<tr height="22">';
-//print '<td align="center">';
-//print '</td>';
-print '<td>';
 if (! empty($section))
 {
 	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php','none',0,$section,$user->rights->ecm->upload);
 }
 else print '&nbsp;';
-print '</td></tr>';
 
-print '</table>';
 
+if ($conf->use_javascript_ajax)
+{
+?>
+    </div>
+
+<!--    <div class="pane ui-layout-east"></div> -->
+
+<!--    <div class="pane ui-layout-south"></div> -->
+
+</div>
+
+
+<?php
+}
+else
+{
+    print '</td></tr>';
+
+    print '</table>';
+}
 
 print '<br>';
 
