@@ -104,6 +104,7 @@ UserWithApproveOrderGrant=Utilisateurs habilités à approuver les commandes
 PaymentOrderRef=Paiement commande %s
 CloneOrder=Cloner commande
 ConfirmCloneOrder=Êtes-vous sûr de vouloir cloner cette commande <b>%s</b> ?
+DispatchSupplierOrder=Réception de la commande fournisseur %s
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Reponsable suivi commande client
 TypeContact_commande_internal_SHIPPING=Reponsable envoi commande client

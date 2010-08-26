@@ -17,6 +17,7 @@ For users:
 - New: Support NPR in customer product prices.
 - New: Add more volume units (ounce, gallon, inch, feet, ...)
 - New: Delivery date accepts hours and minutes.
+- New: Can add a comment on stock dispatching to be save into stock movements.
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Better Postgresql compatibility.

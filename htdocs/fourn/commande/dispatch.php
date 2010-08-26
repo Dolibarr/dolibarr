@@ -76,7 +76,7 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 			$pu = "pu_".$reg[1];
 			if ($_POST[$ent] > 0)
 			{
-				$result = $commande->DispatchProduct($user, $_POST[$prod], $_POST[$qty], $_POST[$ent], $_POST[$pu], $_POST["label"]);
+				$result = $commande->DispatchProduct($user, $_POST[$prod], $_POST[$qty], $_POST[$ent], $_POST[$pu], $_POST["comment"]);
 			}
 			else
 			{
@@ -307,6 +307,12 @@ if ($id > 0 || ! empty($ref))
 
 			if ($nbproduct)
 			{
+				print $langs->trans("Comment").' : ';
+				print '<input type="text" size="60" maxlength="128" name="comment" value="';
+				print $_POST["comment"]?$_POST["comment"]:$langs->trans("DispatchSupplierOrder",$commande->ref);
+				// print ' / '.$commande->ref_supplier;	// Not yet available
+				print '" class="flat">';
+
 				print '<center><input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"';
 				if (sizeof($listwarehouses) <= 0) print ' disabled="true"';
 				print '></center>';

@@ -124,7 +124,7 @@ class CommandeFournisseur extends Commande
 			$this->note_public         = $obj->note_public;
 			$this->modelpdf            = $obj->model_pdf;
 
-			$this->db->free();
+			$this->db->free($resql);
 
 			if ($this->statut == 0) $this->brouillon = 1;
 
@@ -968,7 +968,7 @@ class CommandeFournisseur extends Commande
 			if (!$error && $entrepot > 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
 			{
 				$mouv = new MouvementStock($this->db);
-				$result=$mouv->reception($user, $product, $entrepot, $qty, $price);
+				$result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment);
 				if ($result < 0)
 				{
 					$this->error=$mouv->error;
