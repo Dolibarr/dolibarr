@@ -27,7 +27,7 @@
 
 /**
  *	\class      MouvementStock
- *	\brief      Classe permettant la gestion des mouvements de stocks
+ *	\brief      Class to manage stock movements
  */
 class MouvementStock
 {
@@ -47,7 +47,7 @@ class MouvementStock
 	 * 								0=input (stock increase after stock transfert), 1=output (stock decrease after stock transfer),
 	 * 								2=output (stock decrease), 3=input (stock increase)
 	 * 		\param		price		Unit price HT of product
-	 * 		\pamam		label		Label of stock movement
+	 * 		\param		label		Label of stock movement
 	 *      \return     int     	<0 if KO, >0 if OK
 	 */
 	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='')
@@ -197,13 +197,13 @@ class MouvementStock
 		// Add movement for sub products
 		if (! $error && $conf->global->PRODUIT_SOUSPRODUITS)
 		{
-			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0);	// pmp is not change for subproduct
+			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// pmp is not change for subproduct
 		}
 
 		// composition module (this is a non official external module)
 		if (! $error && $qty < 0 && $conf->global->MAIN_MODULE_COMPOSITION)
 		{
-			$error = $this->_createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, 0);	// pmp is not change for subproduct
+			$error = $this->_createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// pmp is not change for subproduct
 		}
 
 		if (! $error)
@@ -221,10 +221,11 @@ class MouvementStock
 
 
 	/**
-	 *      \brief      Create movement in database for all subproducts
-	 *      \return     int     <0 si ko, 0 si ok
+	 *  Create movement in database for all subproducts
+	 * 	@param 		label		Label of stock movement
+	 * 	@return 	int     	<0 if KO, 0 if OK
 	 */
-	function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price=0)
+	function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price=0, $label='')
 	{
 		$error = 0;
 		$pids = array();
@@ -256,7 +257,7 @@ class MouvementStock
 		// Create movement for each subproduct
 		foreach($pids as $key => $value)
 		{
-			$this->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0);
+			$this->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label);
 		}
 
 		return $error;
@@ -264,12 +265,13 @@ class MouvementStock
 
 
 	/**
-	 *      \brief      Cree un mouvement en base pour toutes les compositions de produits
-	 *      \return     int     <0 si ko, 0 si ok
+	 *      Cree un mouvement en base pour toutes les compositions de produits
+	 * 		@param 		label		Label of stock movement
+	 * 	 	@return     int     	<0 if KO, 0 if OK
 	 */
-	function _createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
+	function _createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='')
 	{
-		dol_syslog("MouvementStock::_createProductComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
+		dol_syslog("MouvementStock::_createProductComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price, $label");
 		$products_compo = array();
 
 		$sql = "SELECT fk_product_composition, qte, etat_stock";
@@ -295,7 +297,7 @@ class MouvementStock
 		// Create movement for each subproduct
 		foreach($products_compo as $product)
 		{
-			$this->_create($user, $product->fk_product_composition, $entrepot_id, ($qty*$product->qte), $type, 0);
+			$this->_create($user, $product->fk_product_composition, $entrepot_id, ($qty*$product->qte), $type, 0, $label);
 		}
 
 		return 0;
@@ -303,12 +305,13 @@ class MouvementStock
 
 
 	/**
-	 *	\brief		Decrease stock for product and subproducts
-	 *	\return		int		<0 if KO, >0 if OK
+	 *	Decrease stock for product and subproducts
+	 * 	@param 		label		Label of stock movement
+	 * 	@return		int			<0 if KO, >0 if OK
 	 */
-	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0)
+	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price);
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label);
 	}
 
 
@@ -316,9 +319,9 @@ class MouvementStock
 	 *	\brief		Increase stock for product and subproducts
 	 *	\return		int		<0 if KO, >0 if OK
 	 */
-	function reception($user, $fk_product, $entrepot_id, $qty, $price=0)
+	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price);
+		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label);
 	}
 
 

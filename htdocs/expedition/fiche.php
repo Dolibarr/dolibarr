@@ -713,21 +713,44 @@ else
 				if ($ret == 'html') print '<br>';
 			}
 
-			// Calcul du poids total et du volume total des produits
+			// Calculate ture totalVeight and totalVolume for all products
+			// by adding weight and volume of each line.
 			$totalWeight = '';
 			$totalVolume = '';
+			$weightUnit=0;
+			$volumeUnit=0;
 			for ($i = 0 ; $i < $num_prod ; $i++)
 			{
 				$weightUnit=0;
 				$volumeUnit=0;
 				if (! empty($lignes[$i]->weight_units)) $weightUnit = $lignes[$i]->weight_units;
-				$trueWeightUnit=pow(10,$weightUnit);
-				$totalWeight += $lignes[$i]->weight*$lignes[$i]->qty_shipped*$trueWeightUnit;
 				if (! empty($lignes[$i]->volume_units)) $volumeUnit = $lignes[$i]->volume_units;
-				$trueVolumeUnit=pow(10,$volumeUnit);
-				$totalVolume += $lignes[$i]->volume*$lignes[$i]->qty_shipped*$trueVolumeUnit;
+				// TODO Use a function addvalueunits(val1,unit1,val2,unit2)=>(val,unit)
+				if ($lignes[$i]->weight_units < 50)
+				{
+					$trueWeightUnit=pow(10,$weightUnit);
+					$totalWeight += $lignes[$i]->weight*$lignes[$i]->qty_shipped*$trueWeightUnit;
+				}
+				else
+				{
+					$trueWeightUnit=$weightUnit;
+					$totalWeight += $lignes[$i]->weight*$lignes[$i]->qty_shipped;
+				}
+				if ($lignes[$i]->volume_units < 50)
+				{
+					//print $lignes[$i]->volume."x".$lignes[$i]->volume_units."x".($lignes[$i]->volume_units < 50)."x".$volumeUnit;
+					$trueVolumeUnit=pow(10,$volumeUnit);
+					//print $lignes[$i]->volume;
+					$totalVolume += $lignes[$i]->volume*$lignes[$i]->qty_shipped*$trueVolumeUnit;
+				}
+				else
+				{
+					$trueVolumeUnit=$volumeUnit;
+					$totalVolume += $lignes[$i]->volume*$lignes[$i]->qty_shipped;
+				}
 			}
 			$totalVolume=$totalVolume;
+			//print "totalVolume=".$totalVolume." volumeUnit=".$volumeUnit;
 
 			print '<table class="border" width="100%">';
 
@@ -831,8 +854,12 @@ else
 			else
 			{
 				// If sending volume not defined we use sum of products
-				// TODO Show in best unit
-				if ($totalVolume > 0) print $totalVolume.' '.measuring_units_string(0,"volume");
+				if ($totalVolume > 0)
+				{
+					print $totalVolume.' ';
+					if ($volumeUnit < 50) print measuring_units_string(0,"volume");
+					else print measuring_units_string($volumeUnit,"volume");
+				}
 				else print '&nbsp;';
 			}
 			print "</td>\n";

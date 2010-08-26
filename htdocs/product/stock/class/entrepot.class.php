@@ -319,20 +319,20 @@ class Entrepot extends CommonObject
 
 
 	/**
-	 *    \brief      Renvoie la liste des entrep�ts ouverts
+	 *  Return list of all warehouses
+	 * 	@return 	array		Array list of warehouses
 	 */
-	function list_array()
+	function list_array($status=1)
 	{
 		$liste = array();
 
 		$sql = "SELECT rowid, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot";
-		$sql.= " WHERE statut = 1";
+		$sql.= " WHERE statut = ".$status;
 
 		$result = $this->db->query($sql) ;
 		$i = 0;
 		$num = $this->db->num_rows($result);
-
 		if ( $result )
 		{
 			while ($i < $num)

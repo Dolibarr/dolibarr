@@ -293,7 +293,7 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 
 	$commande->fetch($id);
 
-	$commande->date_commande=time();
+	$commande->date_commande=dol_now();
 	$result = $commande->valid($user);
 	if ($result	>= 0)
 	{
@@ -812,7 +812,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action']	== 'approve')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder"),"confirm_approve", '', 1, 1);
+			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$commande->ref),"confirm_approve", '', 1, 1);
 			if ($ret == 'html') print '<br>';
 		}
 		/*
@@ -820,7 +820,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action']	== 'refuse')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder"),"confirm_refuse", '', 0, 1);
+			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$commande->ref),"confirm_refuse", '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 		/*
@@ -828,7 +828,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET['action']	== 'cancel')
 		{
-			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder"),"confirm_cancel", '', 0, 1);
+			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder",$commande->ref),"confirm_cancel", '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 

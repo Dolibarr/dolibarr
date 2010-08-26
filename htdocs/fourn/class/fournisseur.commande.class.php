@@ -925,22 +925,30 @@ class CommandeFournisseur extends Commande
 	/**
 	 * Add a product into a stock warehouse.
 	 *
-	 * @param 	$user
-	 * @param 	$product
-	 * @param 	$qty
+	 * @param 	$user		User object making change
+	 * @param 	$product	Product object to dispatch
+	 * @param 	$qty		Qty to dispatch
 	 * @param 	$entrepot	Id of warehouse to add product
-	 * @param 	$price
-	 * @return 	int			<0 if KO, =0 if OK
+	 * @param 	$price		Price for PMP value calculation
+	 * @param	$comment	Comment for stock movement
+	 * @return 	int			<0 if KO, >0 if OK
 	 */
-	function DispatchProduct($user, $product, $qty, $entrepot, $price=0)
+	function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='')
 	{
 		global $conf;
 		$error = 0;
 		require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
 
+		// Check parameters
+		if ($entrepot <= 0 || $qty <= 0)
+		{
+			$this->error='BadValueForParameter';
+			return -1;
+		}
+
 		$now=dol_now();
 
-		if ( ($this->statut == 3 || $this->statut == 4 || $this->statut == 5) && $qty > 0)
+		if (($this->statut == 3 || $this->statut == 4 || $this->statut == 5))
 		{
 			$this->db->begin();
 
@@ -973,7 +981,7 @@ class CommandeFournisseur extends Commande
 			if ($error == 0)
 			{
 				$this->db->commit();
-				return 0;
+				return 1;
 			}
 			else
 			{
@@ -983,6 +991,7 @@ class CommandeFournisseur extends Commande
 		}
 		else
 		{
+			$this->error='BadStatusForObject';
 			return -2;
 		}
 	}

@@ -46,11 +46,17 @@ $id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
+if (empty($conf->stock->enabled))
+{
+	accessforbidden();
+}
+
 // Recuperation	de l'id	de projet
 $projectid =	0;
 if ($_GET["projectid"]) $projectid = $_GET["projectid"];
 
 $mesg='';
+
 
 /*
  * Actions
@@ -68,7 +74,14 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 			$qty = "qty_".$reg[1];
 			$ent = "entrepot_".$reg[1];
 			$pu = "pu_".$reg[1];
-			$result = $commande->DispatchProduct($user, $_POST[$prod], $_POST[$qty], $_POST[$ent], $_POST[$pu]);
+			if ($_POST[$ent] > 0)
+			{
+				$result = $commande->DispatchProduct($user, $_POST[$prod], $_POST[$qty], $_POST[$ent], $_POST[$pu], $_POST["label"]);
+			}
+			else
+			{
+				dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
+			}
 		}
 	}
 
@@ -79,10 +92,9 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 	}
 	else
 	{
-		$mesg=$commande->error;
+		$mesg='<div class="error">'.$langs->trans($commande->error).'</div>';
 	}
 }
-
 
 
 /*
@@ -182,6 +194,9 @@ if ($id > 0 || ! empty($ref))
 
 		if ($commande->statut == 3 || $commande->statut == 4 || $commande->statut == 5)
 		{
+			$entrepot = new Entrepot($db);
+			$listwarehouses=$entrepot->list_array(1);
+
 			print '<form method="POST" action="dispatch.php?id='.$commande->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="dispatch">';
@@ -229,7 +244,6 @@ if ($id > 0 || ! empty($ref))
 					print "</tr>\n";
 				}
 
-				$entrepot = new Entrepot($db);
 				$nbfreeproduct=0;
 				$nbproduct=0;
 
@@ -268,8 +282,14 @@ if ($id > 0 || ! empty($ref))
 
 						// Warehouse
 						print '<td align="right">';
-						print $html->selectarray("entrepot_".$i, $entrepot->list_array(), '', $disabled, 0, 0, '', 0, 0, $disabled);
-
+						if (sizeof($listwarehouses))
+						{
+							print $html->selectarray("entrepot_".$i, $listwarehouses, '', $disabled, 0, 0, '', 0, 0, $disabled);
+						}
+						else
+						{
+							print $langs->trans("NoWarehouseDefined");
+						}
 						print "</td>\n";
 						print "</tr>\n";
 					}
@@ -287,7 +307,9 @@ if ($id > 0 || ! empty($ref))
 
 			if ($nbproduct)
 			{
-				print '<center><input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"></center>';
+				print '<center><input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"';
+				if (sizeof($listwarehouses) <= 0) print ' disabled="true"';
+				print '></center>';
 			}
 			if (! $nbproduct && $nbfreeproduct)
 			{
