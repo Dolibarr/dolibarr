@@ -1293,7 +1293,7 @@ class Societe extends CommonObject
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 *		\param		withpicto		Inclut le picto dans le lien
-	 *		\param		option			Sur quoi pointe le lien
+	 *		\param		option			Sur quoi pointe le lien ('', 'customer', 'supplier', 'compta')
 	 *		\param		maxlen			Longueur max libelle
 	 *		\return		string			Chaine avec URL
 	 */
@@ -1327,12 +1327,12 @@ class Societe extends CommonObject
 			$lien = '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$this->id.'">';
 			$lienfin='</a>';
 		}
-
 		if (empty($lien))
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id.'">';
 			$lienfin='</a>';
 		}
+
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->nom,'company').$lienfin.' ');
 		$result.=$lien.($maxlen?dol_trunc($this->nom,$maxlen):$this->nom).$lienfin;
 

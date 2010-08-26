@@ -338,6 +338,7 @@ if ($_GET['action'] == 'addline')
 		if ($idprod == -1)
 		{
 			// Quantity too low
+			$langs->load("errors");
 			$mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
 		}
 	}

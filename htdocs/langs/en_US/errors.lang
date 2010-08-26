@@ -71,4 +71,4 @@ ErrorSpecialCharNotAllowedForField=Special characters are not allowed for field 
 WarningNoDocumentModelActivated=No model, for document generation, has been activated. A model will be choosed by default until you check your module setup.
 ErrorDatabaseParameterWrong=Database setup parameter '<b>%s</b>' has a value not compatible to use Dolibarr (must have value '<b>%s</b>').
 ErrorNumRefModel=A reference exists into database (%s) and is not compatible with this numbering rule. Remove record or renamed reference to activate this module.
-
+ErrorQtyTooLowForThisSupplier=Quantity too low for this supplier or no price defined on this product for this supplier

@@ -118,6 +118,7 @@ if ($result)
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
 	print "</tr>\n";
 
+	$companystatic=new Societe($db);
 
 	$var=True;
 	$total = 0;
@@ -132,7 +133,11 @@ if ($result)
 		$interventionstatic->ref=$objp->ref;
 		print $interventionstatic->getNomUrl(1);
 		print "</td>\n";
-		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44)."</a></td>\n";
+		print '<td>';
+		$companystatic->nom=$objp->nom;
+		$companystatic->socid=$objp->socid;
+		$companystatic->client=$objp->client;
+		print $companystatic->getNomUrl(1,'',44);
 		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
 		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
 		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
