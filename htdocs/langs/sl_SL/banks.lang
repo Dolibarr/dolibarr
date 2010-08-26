@@ -42,12 +42,11 @@ LastAccountStatements=Zadnji izpiski računa
 Rapprochement=Uskladitev
 IOMonthlyReporting=Mesečno poročilo
 BankAccountDomiciliation=Naslov računa
+BankAccountCountry=Država računa
 BankAccountOwner=Ime lastnika računa
 BankAccountOwnerAddress=Naslov lastnika računa
 RIBControlError=Napaka pri kontroli integritete vrednosti. To pomeni, da informacije za to številko računa niso popolne ali so napačne (preverite državo, številke in IBAN).
 CreateAccount=Kreiranje računa
-StandingOrderToProcess=Za procesiranje
-StandingOrderProcessed=Procesirano
 NewAccount=Nov račun
 NewBankAccount=Nov bančni račun
 NewFinancialAccount=Nov finančni račun
@@ -138,21 +137,3 @@ BankTransactionLine=Bančna transakcija
 AllAccounts=Vsi bančno/gotovinski računi
 BackToAccount=Nazaj na račun
 ShowAllAccounts=Prikaži vse račune
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-BankAccountCountry=Konto landet
-ListTransactions=Liste transaksjoner
-ListTransactionsByCategory=Liste transaksjon / kategori
-AllAccounts=Alle bank / cash kontoer
-BackToAccount=Tilbake til kontoen
-ShowAllAccounts=Vis for alle kontoer
-BankAccountCountry=Account land
-BankAccountCountry=Account land
-BankAccountCountry=Konto kraju
-BankAccountCountry=Conta do país
-BankAccountCountry=Счет страны
-BankAccountCountry=Račun državi
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:19).

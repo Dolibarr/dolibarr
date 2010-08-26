@@ -25,6 +25,9 @@ For users:
 - Fix: Database name can contains "-" characters.
 - Fix: In coloring negative amounts.
 
+For translators:
+- New: Update and complete slovenian language sl_SL.
+
 For developers:
 - New: Add jquery by default.
 - New: Removed PWC libraries.

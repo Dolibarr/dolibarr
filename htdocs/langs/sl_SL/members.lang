@@ -139,58 +139,15 @@ DescADHERENT_MAIL_RESIL_SUBJECT=E-Mail obrazec za obnovitev članstva
 DescADHERENT_MAIL_RESIL=E-Mail za obnovitev članstva
 DescADHERENT_MAIL_FROM=Pošiljateljev E-Mail za avtomatsko pošto
 DescADHERENT_ETIQUETTE_TYPE=Format nalepk
+DescADHERENT_CARD_TYPE=Format kartic
 DescADHERENT_CARD_HEADER_TEXT=Tekst v glavi članske kartice
 DescADHERENT_CARD_TEXT=Tekst na članski kartici
+DescADHERENT_CARD_TEXT_RIGHT=Tekst na članski kartici (desna poravnava)
 DescADHERENT_CARD_FOOTER_TEXT=Tekst na dnu članske kartice
+DescADHERENT_MAILMAN_LISTS=Seznam(i) za avtomatski vpis novih članov (ločeno z vejico)
 ShowTypeCard=Prikaži tip '%s'
 HTPasswordExport=Ustvarjanje htpassword datoteke
 NoThirdPartyAssociatedToMember=Noben partner ni povezan s tem članom
 ThirdPartyDolibarr=Dolibarr partner
 MembersAndSubscriptions = Člani in naročnine
 
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-FundationMembers=Stiftelsen medlemmer
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Et annet medlem (navn: <b>%s,</b> innlogging: <b>%s)</b> er allerede koblet til en tredje part <b>%s.</b> Fjern denne linken først fordi en tredjepart ikke kan knyttes til bare ett medlem (og vice versa).
-ErrorUserPermissionAllowsToLinksToItselfOnly=Av sikkerhetsgrunner må du få tilgang til å redigere alle brukere skal kunne knytte et medlem til en bruker som ikke er ditt.
-ThisIsContentOfYourCard=Dette er detaljer på kortet
-CardContent=Innholdet av medlem-kortet
-SetLinkToUser=Link til en Dolibarr bruker
-SetLinkToThirdParty=Link til en Dolibarr tredjepart
-SubscriptionId=Abonnement id
-MemberId=Medlem id
-PaymentSubscription=Nye bidrag betaling
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=E-post emne for medlem autosubscription
-DescADHERENT_AUTOREGISTER_MAIL=E-post for medlem autosubscription
-DescADHERENT_CARD_TYPE=Format på kortene siden
-DescADHERENT_CARD_TEXT_RIGHT=Tekst trykt på kort medlem (justere på høyre)
-DescADHERENT_MAILMAN_LISTS=Liste (er) for automatisk insription av nye medlemmer (separert med komma)
-NoThirdPartyAssociatedToMember=Ingen tredjepart knyttet til dette medlemmet
-ThirdPartyDolibarr=Dolibarr tredjepart
-MembersAndSubscriptions=Medlemmer og Suscriptions
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Email onderwerp voor de autosubscription
-DescADHERENT_AUTOREGISTER_MAIL=E-mail voor member autosubscription
-DescADHERENT_CARD_TYPE=Formaat van de kaarten pagina
-DescADHERENT_CARD_TEXT_RIGHT=Tekst gedrukt op lidkaarten (aanpassing aan de rechterkant)
-DescADHERENT_MAILMAN_LISTS=Lijst (en) voor automatische insription leden van nieuwe (gescheiden door een komma)
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Temat wiadomości dla członka autosubscription
-DescADHERENT_AUTOREGISTER_MAIL=E-mail dotyczące członka autosubscription
-DescADHERENT_CARD_TYPE=Format karty stronę
-DescADHERENT_CARD_TEXT_RIGHT=Tekst wydrukowany na członka karty (dostosowanie po prawej)
-DescADHERENT_MAILMAN_LISTS=Wykaz (y) do automatycznego insription nowych członków (oddzielone przecinkiem)
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=EMail assunto para autosubscription membro
-DescADHERENT_AUTOREGISTER_MAIL=E-mail para autosubscription membro
-DescADHERENT_CARD_TYPE=Formato de cartões de página
-DescADHERENT_CARD_TEXT_RIGHT=Texto impresso em cartões de membro (alinhar à direita)
-DescADHERENT_MAILMAN_LISTS=Lista (s) para insription automática de novos membros (separadas por vírgula)
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Тема сообщения для государств-членов autosubscription
-DescADHERENT_AUTOREGISTER_MAIL=EMail для государств-членов autosubscription
-DescADHERENT_CARD_TYPE=Формат карт страницы
-DescADHERENT_CARD_TEXT_RIGHT=Текст печатается на члена карты (выравнивание справа)
-DescADHERENT_MAILMAN_LISTS=Список (ы) для автоматического insription новых членов (через запятую)
-DescADHERENT_CARD_TYPE=Format kartic strani
-DescADHERENT_CARD_TEXT_RIGHT=Besedilo, ki ga natisne na člana kartice (prilagajanje na desni strani)
-DescADHERENT_MAILMAN_LISTS=Seznam (-e) za avtomatsko insription novih članov (ločene z vejico)
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:35).

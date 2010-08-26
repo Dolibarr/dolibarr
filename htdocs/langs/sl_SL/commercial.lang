@@ -70,34 +70,11 @@ ActionAC_FAX=Poslati faks
 ActionAC_PROP=Poslati ponudbo
 ActionAC_EMAIL=Poslati e-mail
 ActionAC_RDV=Sestanek
-ActionAC_FAC=Poslati račun
-ActionAC_REL=Poslati račun (opomin)
+ActionAC_FAC=Poslati račun kupcu po pošti
+ActionAC_REL=Poslati račun kupcu po pošti(opomin)
 ActionAC_CLO=Zapreti
 ActionAC_EMAILING=Poslati skupinski e-mail
-ActionAC_COM=Poslati naročilo po pošti
+ActionAC_COM=Poslati naročilo kupca po pošti
+ActionAC_SUP_ORD=Poslati naročilo dobavitelju po pošti 
+ActionAC_SUP_INV=Poslati račun dobavitelja po pošti
 
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-Rendez-Vous=Rendezvous
-ActionAC_SUP_ORD=Send leverandør bestill ved mail
-ActionAC_SUP_INV=Send leverandør faktura i posten
-ActionAC_SUP_ORD=Stuur leverancier bestellen via e-mail
-ActionAC_SUP_INV=Stuur factuur van de leverancier via e-mail
-Rendez-Vous=Rendez-vous
-ActionAC_SUP_ORD=Stuur leverancier bestellen via e-mail
-ActionAC_SUP_INV=Stuur factuur van de leverancier via e-mail
-ToDoActions=Niekompletne działań
-ToDoActionsFor=Niekompletne działań na rzecz sssss
-ActionAC_SUP_ORD=aby dostawca przesłać pocztą
-ActionAC_SUP_INV=fakturze dostawcy przesłać pocztą
-ActionAC_SUP_ORD=Enviar por e-mail para fornecedor
-ActionAC_SUP_INV=Enviar fatura do fornecedor por e-mail
-ToDoActions=Неполные действия
-ToDoActionsFor=Неполные действия %s
-ActionAC_SUP_ORD=Отправить поставщиком заказы по почте
-ActionAC_SUP_INV=Отправить поставщиком счета по почте
-ActionAC_SUP_ORD=Pošlji dobavitelja, da po pošti
-ActionAC_SUP_INV=Pošlji dobavitelj na računu po pošti
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:16).

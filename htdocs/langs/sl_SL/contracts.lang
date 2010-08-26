@@ -84,33 +84,11 @@ ConfirmMoveToAnotherContract=Izbral sem novo ciljno pogodbo in potrjujem premik 
 ConfirmMoveToAnotherContractQuestion=Izberite, na katero obstoječo pogodbo (istega partnerja), želite premakniti to storitev ?
 PaymentRenewContractId=Obnovi pogodbeno vrstico (številka %s)
 ExpiredSince=Datum poteka
+RelatedContracts=Pogodbe, ki se nanašajo na to
 ##### Vrste kontaktov #####
-TypeContact_contrat_internal_SALESREPSIGN=Pogodba, podpisana s strani prodajnega predstavnika
-TypeContact_contrat_internal_SALESREPFOLL=Nadaljnja pogodba s strani prodajnega predstavnika
+TypeContact_contrat_internal_SALESREPSIGN=Podpisnik pogodbe
+TypeContact_contrat_internal_SALESREPFOLL=Referent za sledenje pogodbe
 TypeContact_contrat_external_BILLING=Kontakt v računovodstvu kupca
-TypeContact_contrat_external_CUSTOMER=Kontakt za nadaljnje stike pri kupcu
-TypeContact_contrat_external_SALESREPSIGN=Kontakt za podpis pogodbe pri kupcu
+TypeContact_contrat_external_CUSTOMER=Kontakt pri kupcu za sledenje pogodbe
+TypeContact_contrat_external_SALESREPSIGN=Kontakt pri kupcu za podpis pogodbe
 
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-CHARSET=UTF-8
-ServiceStatusNotLate=Running, ikke er utløpt
-ServiceStatusNotLateShort=Ikke er utløpt
-ServiceStatusLateShort=Utløpt
-ListOfInactiveServices=Liste over ikke aktive tjenester
-ListOfExpiredServices=Liste over utløpt aktive tjenester
-ListOfClosedServices=Liste over lukkede tjenester
-DeleteContractLine=Slette en kontrakt linje
-ConfirmDeleteContractLine=Er du sikker på at du vil slette denne kontrakten linje?
-PaymentRenewContractId=Forny kontrakt linje (antall %s)
-ExpiredSince=Utløpsdato
-RelatedContracts=Relaterte kontrakter
-RelatedContracts=Gerelateerde contracten
-RelatedContracts=Gerelateerde contracten
-RelatedContracts=Związane z nimi umowy
-RelatedContracts=contratos relacionados
-RelatedContracts=Связанные контрактов
-RelatedContracts=Podobni pogodbe
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:41).

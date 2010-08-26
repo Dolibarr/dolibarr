@@ -20,7 +20,6 @@ ECMSections=Mape
 ECMRoot=Korenska mapa
 ECMNewSection=Nova mapa
 ECMAddSection=Dodaj ročno mapo
-ECMNewSection=Nova ročna mapa
 ECMNewDocument=Nov dokument
 ECMCreationDate=Datum kreiranja
 ECMNbOfFilesInDir=Število datotek v mapi
@@ -51,3 +50,4 @@ ECMDirectoryForFiles=Odvisna mapa za datoteke
 CannotRemoveDirectoryContainsFiles=Odstranitev ni možna, ker mapa vsebuje datoteke
 ECMFileManager=Upravljanje z datotekami
 ECMSelectASection=Izberite mapo na levi drevesni strukturi...
+
