@@ -655,6 +655,8 @@ class Propal extends CommonObject
 					$this->products[$i]->subprice,
 					$this->products[$i]->qty,
 					$this->products[$i]->tva_tx,
+					$this->products[$i]->localtax1_tx,
+                    $this->products[$i]->localtax2_tx,
 					$this->products[$i]->fk_product,
 					$this->products[$i]->remise_percent,
 						'HT'
