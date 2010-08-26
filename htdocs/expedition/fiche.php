@@ -81,6 +81,8 @@ if ($_POST["action"] == 'add')
 	$expedition->size_units			= $_POST["size_units"];
 	$expedition->weight_units		= $_POST["weight_units"];
 
+	$date_delivery = dol_mktime($_POST["date_deliveryhour"], $_POST["date_deliverymin"], 0, $_POST["date_deliverymonth"], $_POST["date_deliveryday"], $_POST["date_deliveryyear"]);
+
 	// On va boucler sur chaque ligne du document d'origine pour completer objet expedition
 	// avec info diverses + qte a livrer
 	$classname = ucfirst($expedition->origin);
@@ -90,7 +92,7 @@ if ($_POST["action"] == 'add')
 
 	$expedition->socid					= $object->socid;
 	$expedition->ref_customer			= $object->ref_client;
-	$expedition->date_delivery			= $object->date_livraison;	// Date delivery planed
+	$expedition->date_delivery			= $date_delivery;	// Date delivery planed
 	$expedition->fk_delivery_address	= $object->fk_delivery_address;
 	$expedition->expedition_method_id	= $_POST["expedition_method_id"];
 	$expedition->tracking_number		= $_POST["tracking_number"];
@@ -206,7 +208,7 @@ if ($_REQUEST["action"] == 'open')
 if ($_POST['action'] == 'setdate_livraison' && $user->rights->expedition->creer)
 {
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-	$datelivraison=dol_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+	$datelivraison=dol_mktime($_POST['liv_hour'], $_POST['liv_min'], 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 
 	$shipping = new Expedition($db);
 	$shipping->fetch($_GET['id']);
@@ -382,8 +384,8 @@ if ($_GET["action"] == 'create')
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">';
-			print dol_print_date($object->date_livraison,"day");
-			//$html->select_date($object->date_livraison,'date_delivery');
+			//print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
+			print $html->select_date($object->date_livraison?$object->date_livraison:-1,'date_delivery',1,1);
 			print "</td>\n";
 			print '</tr>';
 
@@ -400,12 +402,14 @@ if ($_GET["action"] == 'create')
 				print '</td></tr>'."\n";
 			}
 
+			// Note
 			if ($object->note && ! $user->societe_id)
 			{
 				print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 				print '<td colspan="3">'.nl2br($object->note)."</td></tr>";
 			}
 
+			// Weight
 			print '<tr><td>';
 			print $langs->trans("Weight");
 			print '</td><td><input name="weight" size="4" value="'.$_POST["weight"].'"></td><td>';
@@ -685,7 +689,6 @@ else
 
 			/*
 			 * Confirmation de la suppression
-			 *
 			 */
 			if ($_GET["action"] == 'delete')
 			{
@@ -695,7 +698,6 @@ else
 
 			/*
 			 * Confirmation de la validation
-			 *
 			 */
 			if ($_GET["action"] == 'valid')
 			{
@@ -704,7 +706,6 @@ else
 			}
 			/*
 			 * Confirmation de l'annulation
-			 *
 			 */
 			if ($_GET["action"] == 'annuler')
 			{
@@ -789,13 +790,13 @@ else
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$expedition->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
-				$html->select_date($expedition->date_delivery?$expedition->date_delivery:-1,'liv_','','','',"setdate_livraison");
+				$html->select_date($expedition->date_delivery?$expedition->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
 			else
 			{
-				print $expedition->date_delivery ? dol_print_date($expedition->date_delivery,'daytext') : '&nbsp;';
+				print $expedition->date_delivery ? dol_print_date($expedition->date_delivery,'dayhourtext') : '&nbsp;';
 			}
 			print '</td>';
 			print '</tr>';

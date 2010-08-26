@@ -53,11 +53,13 @@ class MenuTop {
 
         print_start_menu_array_empty();
 
-		$idsel='none';
+		$idsel='home';
         $classname='class="tmenu"';
 
 		print_start_menu_entry_empty($idsel);
-		print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+		print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '</a>';
 		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
 		print_text_menu_entry_empty($langs->trans("Home"));
 		print '</a>';

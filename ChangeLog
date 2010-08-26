@@ -16,6 +16,7 @@ For users:
 - New: Add hidden option MAIN_SERVICES_ARE_ECOMMERCE_200238EC.
 - New: Support NPR in customer product prices.
 - New: Add more volume units (ounce, gallon, inch, feet, ...)
+- New: Delivery date accepts hours and minutes.
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Better Postgresql compatibility.
