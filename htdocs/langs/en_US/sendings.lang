@@ -3,9 +3,10 @@ CHARSET=UTF-8
 RefSending=Ref. shipment
 Sending=Shipment
 Sendings=Shipments
+Shipments=Shipments
 Receivings=Receivings
 SendingsArea=Shipments area
-ListOfSendings=List of sendings
+ListOfSendings=List of shipments
 SendingMethod=Shipping method
 SendingReceipt=Shipping receipt
 LastSendings=Last %s shipments
@@ -26,7 +27,7 @@ DateSending=Date sending order
 DateSendingShort=Date sending order
 SendingsForSameOrder=Shipments for this order
 SendingsAndReceivingForSameOrder=Shipments and receivings for this order
-SendingsToValidate=Sending to validate
+SendingsToValidate=Shipments to validate
 StatusSendingCanceled=Canceled
 StatusSendingDraft=Draft
 StatusSendingValidated=Validated (products to ship or already shipped)
@@ -44,16 +45,16 @@ ConfirmCancelSending=Are you sure you want to cancel this shipment ?
 GenericTransport=Generic transport
 Enlevement=Gotten by customer
 DocumentModelSimple=Simple document model
+DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
 StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated
+DateDeliveryPlanned=Planed date of delivery
+DateReceived=Date delivery received
 
 # Sending methods
 SendingMethodCATCH=Catch by customer
 SendingMethodTRANS=Transporter
 SendingMethodCOLSUI=Colissimo
-
-# NumRef
-NumRefModelJade=Return a reference number with format BLYY00001, ... where YY is year. Number at end is never reset to zero.
 
 # ModelDocument
 DocumentModelSirocco=Simple document model for delivery receipts
