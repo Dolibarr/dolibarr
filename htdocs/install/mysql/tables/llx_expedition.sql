@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2003-2010 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008-2010 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -32,8 +32,8 @@ create table llx_expedition
   fk_user_author        integer,						-- createur
   date_valid            datetime,						-- date de validation
   fk_user_valid         integer,						-- valideur
-  date_expedition       date,							-- shipping date
-  date_delivery			date 		DEFAULT NULL,		-- delivery date
+  date_expedition       datetime,						-- shipping date
+  date_delivery			datetime	DEFAULT NULL,		-- delivery date
   fk_address  			integer		DEFAULT NULL, 		-- delivery address (deprecated)
   fk_expedition_methode integer,
   tracking_number       varchar(50),
