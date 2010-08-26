@@ -36,16 +36,16 @@ class DolEditor
 
 
     /**
-     *      \brief 	DolEditor
-     *      \param 	htmlname		        Nom formulaire html WYSIWIG
-     *      \param 	content			        Contenu edition WYSIWIG
-     *      \param 	height			        Hauteur en pixel de la zone edition
-     *      \param 	toolbarname		        Nom barre de menu editeur
-     *      \param  toolbarlocation       	Emplacement de la barre de menu :
+     *      DolEditor                       Create an object to build an HTML area to edit a large string content
+     *      @param 	htmlname		        Nom formulaire html WYSIWIG
+     *      @param 	content			        Contenu edition WYSIWIG
+     *      @param 	height			        Hauteur en pixel de la zone edition
+     *      @param 	toolbarname		        Nom barre de menu editeur
+     *      @param  toolbarlocation       	Emplacement de la barre de menu :
      *                                    	'In' chaque fenetre d'edition a la propre barre d'outils
      *                                    	'Out:nom' partage de la barre d'outils ou 'nom' est le nom du DIV qui affiche la barre
-     *      \param  toolbarstartexpanded  	visible ou non au demarrage
-	 *		\param	uselocalbrowser			Enabled to add links to local object with local browsers. If false, only external images can be added in content.
+     *      @param  toolbarstartexpanded  	visible ou non au demarrage
+	 *		@param	uselocalbrowser			Enabled to add links to local object with local browsers. If false, only external images can be added in content.
 	 */
     function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true)
     {
@@ -86,7 +86,7 @@ class DolEditor
 
 
     /**
-     *		\brief 	Show edit area
+     *		Output edit area inside the HTML stream
      */
     function Create()
     {
