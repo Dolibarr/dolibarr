@@ -1014,7 +1014,7 @@ if ($id > 0 || ! empty($ref))
 
 					$product_static=new ProductFournisseur($db);
 					$product_static->fetch($commandline->fk_product);
-					$text=$product_static->getNomUrl(1);
+					$text=$product_static->getNomUrl(1,'supplier');
 					$text.= ' - '.$product_static->libelle;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($commandline->description));
 					print $html->textwithtooltip($text,$description,3,'','',$i);
@@ -1089,7 +1089,7 @@ if ($id > 0 || ! empty($ref))
 				{
 					$product_static=new ProductFournisseur($db);
 					$product_static->fetch($commandline->fk_product);
-					$text=$product_static->getNomUrl(1);
+					$text=$product_static->getNomUrl(1,'supplier');
 					$text.= ' - '.$product_static->libelle;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($commandline->description));
 					print $html->textwithtooltip($text,$description,3,'','',$i);
