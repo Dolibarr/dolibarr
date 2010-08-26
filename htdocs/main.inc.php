@@ -331,7 +331,7 @@ if (! defined('NOLOGIN'))
 				// Fin appel triggers
 			}
 		}
-		
+
 		// Validation of third party module login method
 		if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
 		{
@@ -801,13 +801,13 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
         // Output style sheets (optioncss='print' or '')
-		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
+		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 		// CSS forced by modules (relative url starting with /)
 		if (is_array($conf->css_modules))
 		{
 			foreach($conf->css_modules as $cssfile)
 			{	// cssfile is an absolute path
-				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 			}
 		}
 		// CSS forced by page in top_htmlhead call (relative url starting with /)
@@ -815,7 +815,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		{
 			foreach($arrayofcss as $cssfile)
 			{
-				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 			}
 		}
 
@@ -1256,23 +1256,23 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 function getLoginMethod()
 {
 	global $conf,$langs;
-	
+
 	$login = '';
 
 	foreach($conf->login_method_modules as $dir)
 	{
 		// Check if directory exists
 		if (!is_dir($dir)) continue;
-		
+
 		$handle=opendir($dir);
-		
+
 		while (($file = readdir($handle))!==false)
 		{
 			if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
 			{
 				$authfile = $dir.'/'.$file;
 				$mode = $reg[1];
-				
+
 				$result=include_once($authfile);
 				if ($result)
 				{

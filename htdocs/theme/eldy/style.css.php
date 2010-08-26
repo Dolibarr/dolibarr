@@ -334,6 +334,10 @@ div.mainmenu.tools {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/tools.png' ?>);
 }
 
+div.mainmenu.ftp {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/tools.png' ?>);
+}
+
 div.mainmenu.members {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/members.png' ?>);
 }
@@ -420,6 +424,13 @@ foreach($mainmenuusedarray as $key => $val)
 <?php
 }	// End test if not phone
 ?>
+
+.tmenuimage {
+    padding:0 0 0 0 !important;
+    margin:0 0px 0 0 !important;
+}
+
+
 
 /* Login */
 

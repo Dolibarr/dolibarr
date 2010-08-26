@@ -46,7 +46,9 @@ class Conf
 	//! Used to store current currency
 	var $monnaie;
 	//! Used to store current css (from theme)
-	var $css;
+	var $theme;        // Contains current theme ("eldy", "auguria", ...)
+	var $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
+    //! Used to store current menu handlers
 	var $top_menu;
 	var $left_menu;
 

@@ -401,6 +401,12 @@ foreach($mainmenuusedarray as $key => $val)
 .tmenudisabled {
     color: #D0D0D0 !important;
 }
+
+.tmenuimage {
+    padding:0 0 0 0 !important;
+    margin:0 0px 0 0 !important;
+}
+
 /* --- end nav --- */
 
 
