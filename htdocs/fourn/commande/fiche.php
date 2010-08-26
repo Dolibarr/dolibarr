@@ -1087,12 +1087,22 @@ if ($id > 0 || ! empty($ref))
 				print '<a name="'.$commandline->id.'"></a>'; // ancre pour retourner sur la ligne
 				if (($conf->product->enabled || $conf->service->enabled) && $commandline->fk_product > 0)
 				{
+					$product_static=new ProductFournisseur($db);
+					$product_static->fetch($commandline->fk_product);
+					$text=$product_static->getNomUrl(1);
+					$text.= ' - '.$product_static->libelle;
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($commandline->description));
+					print $html->textwithtooltip($text,$description,3,'','',$i);
+
+					// Show range
+					print_date_range($commandline->date_start,$commandline->date_end);
+				/*
 					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$commandline->fk_product.'">';
 					print img_object($langs->trans('ShowProduct'),'product');
 					print ' '.$commandline->ref_fourn.'</a>';
 					print ' ('.$commandline->ref.')';
 					print ' - '.nl2br($commandline->product);
-					print '<br>';
+					print '<br>';*/
 				}
 				else
 				{
