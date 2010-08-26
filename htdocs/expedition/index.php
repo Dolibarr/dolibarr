@@ -21,12 +21,13 @@
 /**
  *       \file       htdocs/expedition/index.php
  *       \ingroup    expedition
- *       \brief      Page accueil du module expedition
+ *       \brief      Home page of shipping area.
  *       \version    $Id$
  */
 
 require("../main.inc.php");
-require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+require(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 
 $langs->load("orders");
 $langs->load("sendings");
@@ -37,6 +38,7 @@ $langs->load("sendings");
 
 $orderstatic=new Commande($db);
 $companystatic=new Societe($db);
+$shipment=new Expedition($db);
 
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('',$langs->trans("Sendings"),$helpurl);
@@ -92,9 +94,17 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr $bc[$var]><td nowrap=\"nowrap\"><a href=\"fiche.php?id=".$obj->rowid."\">".$obj->ref."</a></td>";
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a></td></tr>';
+			print "<tr ".$bc[$var]."><td nowrap=\"nowrap\">";
+			$shipment->id=$obj->rowid;
+			$shipment->ref=$obj->ref;
+			print $shipment->getNomUrl(1);
+			print "</td>";
+			print '<td>';
+			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a>';
+			print '</td>';
+			print '<td>';
+			if ($obj->commande_id) print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
+			print '</td></tr>';
 			$i++;
 		}
 		print "</table><br>";
@@ -139,7 +149,9 @@ if ( $db->query($sql) )
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,20).'</a>';
+			$companystatic->nom=$obj->nom;
+			$companystatic->id=$obj->socid;
+			print $companystatic->getNomUrl(1,'customer');
 			print '</td></tr>';
 			$i++;
 		}
@@ -189,7 +201,11 @@ if ( $resql )
 			$orderstatic->ref=$obj->ref;
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td></tr>';
+			print '<td>';
+			$companystatic->nom=$obj->nom;
+			$companystatic->id=$obj->socid;
+			print $companystatic->getNomUrl(1,'customer');
+			print '</td></tr>';
 			$i++;
 		}
 		print "</table><br>";
@@ -206,7 +222,7 @@ $sql = "SELECT e.rowid, e.ref";
 $sql.= ", s.nom, s.rowid as socid";
 $sql.= ", c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.sourcetype in ('commande')";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid)
@@ -218,7 +234,7 @@ if (!$user->rights->societe->client->voir && !$socid)
 $sql.= $clause." e.fk_statut = 1";
 $sql.= " AND e.entity = ".$conf->entity;
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-$sql.= " ORDER BY e.date_expedition DESC";
+$sql.= " ORDER BY e.date_delivery DESC";
 $sql.= $db->plimit(5, 0);
 
 $resql = $db->query($sql);
