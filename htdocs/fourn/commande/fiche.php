@@ -1096,13 +1096,7 @@ if ($id > 0 || ! empty($ref))
 
 					// Show range
 					print_date_range($commandline->date_start,$commandline->date_end);
-				/*
-					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$commandline->fk_product.'">';
-					print img_object($langs->trans('ShowProduct'),'product');
-					print ' '.$commandline->ref_fourn.'</a>';
-					print ' ('.$commandline->ref.')';
-					print ' - '.nl2br($commandline->product);
-					print '<br>';*/
+                    print '<br>';
 				}
 				else
 				{
