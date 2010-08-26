@@ -149,12 +149,12 @@ class FormProduct
 	}
 
 	/**
-	 *  \brief      Return a combo box with list of units
-	 *  \param      name                Name of HTML field
-	 *  \param      measuring_style     Unit to show: weight, size, surface, volume
-	 *  \param      default             Force unit
-	 * 	\param		adddefault			Add empty unit called "Default"
-	 *  \remarks pour l'instant on ne definit pas les unites dans la base
+	 *  Return a combo box with list of units
+	 *  @param  name                Name of HTML field
+	 *  @param  measuring_style     Unit to show: weight, size, surface, volume
+	 *  @param  default             Force unit
+	 * 	@param	adddefault			Add empty unit called "Default"
+	 *  @see 	For the moment, units labels are defined in measuring_units_string
 	 */
 	function load_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
 	{
@@ -167,7 +167,7 @@ class FormProduct
 		if ($measuring_style == 'weight') $measuring_units=array(-6=>1,-3=>1,0=>1,3=>1,99=>1);
 		else if ($measuring_style == 'size') $measuring_units=array(-3=>1,-2=>1,-1=>1,0=>1,99=>1,98=>1);
         else if ($measuring_style == 'surface') $measuring_units=array(-6=>1,-4=>1,-2=>1,0=>1);
-		else if ($measuring_style == 'volume') $measuring_units=array(-9=>1,-6=>1,-3=>1,0=>1,99=>1,/* 98=>1 */);  // Liter is not used as already available with dm3
+		else if ($measuring_style == 'volume') $measuring_units=array(-9=>1,-6=>1,-3=>1,0=>1,97=>1,99=>1,/* 98=>1 */);  // Liter is not used as already available with dm3
 
 		$return.= '<select class="flat" name="'.$name.'">';
 		if ($adddefault) $return.= '<option value="0">'.$langs->trans("Default").'</option>';

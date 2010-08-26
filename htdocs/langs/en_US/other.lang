@@ -96,6 +96,7 @@ VolumeUnitm3=m3
 VolumeUnitdm3=dm3
 VolumeUnitcm3=cm3
 VolumeUnitmm3=mm3
+VolumeUnitounce=ounce
 VolumeUnitlitre=litre
 VolumeUnitgallon=gallon
 Size=size

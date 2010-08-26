@@ -272,9 +272,10 @@ function show_stats_for_company($product,$socid)
 
 /**
  *	Return translation label of a unit key
- *	@param   int                 Unit key (-3,0,3,98,99...)
- *	@param   measuring_style     Style of unit: weight, volume,...
- *	@return  string	             Unit string
+ *	@param  int                 Unit key (-3,0,3,98,99...)
+ *	@param  measuring_style     Style of unit: weight, volume,...
+ *	@return	string	             Unit string
+ * 	@see	load_measuring_units
  */
 function measuring_units_string($unit,$measuring_style='')
 {
@@ -310,7 +311,8 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[-3] = $langs->trans("VolumeUnitdm3");
 		$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
 		$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
-        $measuring_units[98] = $langs->trans("VolumeUnitlitre");
+        $measuring_units[97] = $langs->trans("VolumeUnitounce");
+		$measuring_units[98] = $langs->trans("VolumeUnitlitre");
         $measuring_units[99] = $langs->trans("VolumeUnitgallon");
 	}
 
