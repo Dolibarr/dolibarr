@@ -30,16 +30,22 @@ class MenuLeft {
 
     var $require_top=array("empty");     // If this top menu handler must be used with a particular left menu handler
 
+    var $db;
+    var $menu_array;
+    var $menu_array_after;
+
 
     /**
-     *    \brief      Constructor
-     *    \param      db      		Dabatase handler
-     *    \param      menu_array    Menu array that you will override in showmenu() function
+     *  \brief      Constructor
+     *  \param      db                  Database handler
+     *  \param      menu_array          Table of menu entries to show before entries of menu handler
+     *  \param      menu_array_after    Table of menu entries to show after entries of menu handler
      */
-    function MenuLeft($db,&$menu_array='')
+    function MenuLeft($db,&$menu_array,&$menu_array_after)
     {
         $this->db=$db;
         $this->menu_array=$menu_array;
+        $this->menu_array_after=$menu_array_after;
     }
 
 
@@ -55,7 +61,7 @@ class MenuLeft {
 	    // ***** START *****
 
 		$langs->load("admin");	// Load translation file admin.lang
-		$newmenu->add(DOL_URL_ROOT."/admin/index.php?leftmenu=setup", $langs->trans("Setup"));
+		$newmenu->add(DOL_URL_ROOT."/admin/index.php?leftmenu=setup", $langs->trans("Setup"),0);
 		$newmenu->add(DOL_URL_ROOT."/admin/company.php", $langs->trans("MenuCompanySetup"),1);
 		$newmenu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"),1);
 		$newmenu->add(DOL_URL_ROOT."/admin/menus.php", $langs->trans("Menus"),1);
@@ -79,7 +85,8 @@ class MenuLeft {
         for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++)
         {
             $alt++;
-            if ($this->menu_array[$i]['level']==0) {
+            if (empty($this->menu_array[$i]['level']))
+            {
                 if (($alt%2==0))
                 {
                     print '<div class="blockvmenuimpair">'."\n";
@@ -90,36 +97,47 @@ class MenuLeft {
                 }
             }
 
-            if ($this->menu_array[$i]['level']==0) {
-                if ($this->menu_array[$i]['enabled'])
-                    print '<a class="vmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                else
-                    print '<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-            }
-            if ($this->menu_array[$i]['level']==1) {
-                if ($this->menu_array[$i]['enabled'])
-                    print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                else
-                    print '<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-            }
-            if ($this->menu_array[$i]['level']==2) {
-                if ($this->menu_array[$i]['enabled'])
-                    print '&nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                else
-                    print '&nbsp; &nbsp; <font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-            }
-            if ($this->menu_array[$i]['level']==3) {
-                if ($this->menu_array[$i]['enabled'])
-                    print '&nbsp; &nbsp; &nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                else
-                    print '&nbsp; &nbsp; &nbsp; &nbsp; <font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+        	// Place tabulation
+			$tabstring='';
+			$tabul=($this->menu_array[$i]['level'] - 1);
+			if ($tabul > 0)
+			{
+				for ($j=0; $j < $tabul; $j++)
+				{
+					$tabstring.='&nbsp; &nbsp;';
+				}
+			}
+
+			if ($this->menu_array[$i]['level'] == 0) {
+				if ($this->menu_array[$i]['enabled'])
+				{
+					print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>'."\n";
+				}
+				else
+				{
+					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font></div>'."\n";
+				}
+				print '<div class="menu_top"></div>'."\n";
             }
 
-            if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)  {
-                print "</div>\n";
-            }
-        }
+            if ($this->menu_array[$i]['level'] > 0) {
+				print '<div class="menu_contenu">';
 
+            	if ($this->menu_array[$i]['enabled'])
+                    print $tabstring.'<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
+                else
+                    print $tabstring.'<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+
+				print '</div>'."\n";
+            }
+
+			// If next is a new block or end
+			if (empty($this->menu_array[$i+1]['level']))
+			{
+				print '<div class="menu_end"></div>'."\n";
+				print "</div>\n";
+			}
+		}
     }
 
 }
