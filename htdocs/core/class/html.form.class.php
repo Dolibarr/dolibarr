@@ -559,7 +559,7 @@ class Form
                 print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
                 print '</td>';
                 print '<td class="nobordernopadding" align="left" width="16">';
-                print ajax_indicator($htmlname,'working');
+                print ajax_indicator($htmlname,'working');  // Indicator is here
                 print '</td></tr>';
                 print '</table>';
             }
@@ -851,7 +851,7 @@ class Form
                 print '<td class="nobordernopadding" nowrap="nowrap" width="80">';
                 print $langs->trans("RefOrLabel").':</td>';
                 print '<td class="nobordernopadding" width="16">';
-                print ajax_indicator($htmlname,'working');	// Indicator is et here
+                print ajax_indicator($htmlname,'working');	// Indicator is here
                 print '</td>';
                 print '<td><input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'"></td>';
                 print '</tr>';
