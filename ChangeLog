@@ -24,6 +24,7 @@ For users:
 - Fix: Box order is saved when moved.
 - Fix: Database name can contains "-" characters.
 - Fix: In coloring negative amounts.
+- Fix: Date input use date format of user and not dd/mm/yyyy format.
 
 For translators:
 - New: Update and complete slovenian language sl_SL.
@@ -31,6 +32,7 @@ For translators:
 For developers:
 - New: Add jquery by default.
 - New: Removed PWC libraries.
+- New: Removed Scriptaculous libraries.
 - New: Add first Selenium GUI tests.
 - New: Enhance a lot of internal function to build external modules
        more easily.

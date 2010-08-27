@@ -11,7 +11,6 @@ Composant         Version  License                     Compatible GPL   Usage
 In alphabetical order of includes directory:
 AdoDb-Date        0.21     Modified BSD License        Yes              Date convertion
 ArtiChow          1.07     Public Domain               Yes              Graphics
-Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code generation
 EFC/XFSS		  1.0.1	   LGPL 3.0					   Yes				Enhanced File Crypt/Extended File Stealth System
 FCKEditor         2.6.4    LGPL 2.1 or Mozilla PL 1.0  Yes              Editor WYSIWYG
 FPDF              1.6      Public domain               Yes              PDF generation (original code is modified)
@@ -26,10 +25,10 @@ JSGantt           1.2      BSD Licence
 MagPieRss         0.72     GPL 2.0                     Yes              Load RSS
 NuSoap            0.9.5    LGPL 2.1                    Yes              Interfaces with third tools
 OdtPHP            1.0.1    GPL 2.0                     Yes              Library to build/edit ODT files
+Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code generation
 PHP_WriteExcel    0.3.0    LGPL 2.1                    Yes              Excel files generation
 PHP_ExcelReader   2.21     MIT License                 Yes              Parse and retrieve information from XLS files
 Prototype         1.6.1    MIT License                 Yes              Ajax library
-Scriptaculous     1.8.3    MIT License                 Yes              Ajax library
 Smarty            2.6.26   LGPL 2.1                    Yes              Templates engine used by some pages
 SMTPs             1.15     GPL                         Yes              SMTPS library
 VCard             2.0      GPL 2.0                     Yes              VCard library
