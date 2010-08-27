@@ -583,6 +583,121 @@ td.photo {
 /*    background: #FFFFFF;*/
 }
 
+/*
+ *  PANES & CONTENT-DIVs
+ */
+.ui-layout-pane { /* all 'panes' */
+    background: #FFF;
+    border:     1px solid #BBB;
+    /* DO NOT add scrolling (or padding) to 'panes' that have a content-div,
+       otherwise you may get double-scrollbars - on the pane AND on the content-div
+    */
+    padding:    0px;
+    overflow:   auto;
+    }
+    /* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
+    .ui-layout-content {
+        padding:    10px;
+        position:   relative; /* contain floated or positioned elements */
+        overflow:   auto; /* add scrolling to content-div */
+    }
+
+/*
+ *  RESIZER-BARS
+ */
+.ui-layout-resizer  { /* all 'resizer-bars' */
+    background:     #EEE;
+    border:         1px solid #BBB;
+    border-width:   0;
+    }
+    .ui-layout-resizer-drag {       /* REAL resizer while resize in progress */
+    }
+    .ui-layout-resizer-hover    {   /* affects both open and closed states */
+    }
+    /* NOTE: It looks best when 'hover' and 'dragging' are set to the same color,
+        otherwise color shifts while dragging when bar can't keep up with mouse */
+    .ui-layout-resizer-open-hover , /* hover-color to 'resize' */
+    .ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
+        background: #AAA;
+    }
+    .ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
+        border-left:  1px solid #BBB;
+        border-right: 1px solid #BBB;
+    }
+    /* NOTE: Add a 'dragging-limit' color to provide visual feedback when resizer hits min/max size limits */
+    .ui-layout-resizer-dragging-limit { /* CLONED resizer at min or max size-limit */
+        background: #E1A4A4; /* red */
+    }
+
+    .ui-layout-resizer-closed-hover { /* hover-color to 'slide open' */
+        background: #EBD5AA;
+    }
+    .ui-layout-resizer-sliding {    /* resizer when pane is 'slid open' */
+        opacity: .10; /* show only a slight shadow */
+        filter:  alpha(opacity=10);
+        }
+        .ui-layout-resizer-sliding-hover {  /* sliding resizer - hover */
+            opacity: 1.00; /* on-hover, show the resizer-bar normally */
+            filter:  alpha(opacity=100);
+        }
+        /* sliding resizer - add 'outside-border' to resizer on-hover
+         * this sample illustrates how to target specific panes and states */
+        .ui-layout-resizer-north-sliding-hover  { border-bottom-width:  1px; }
+        .ui-layout-resizer-south-sliding-hover  { border-top-width:     1px; }
+        .ui-layout-resizer-west-sliding-hover   { border-right-width:   1px; }
+        .ui-layout-resizer-east-sliding-hover   { border-left-width:    1px; }
+
+/*
+ *  TOGGLER-BUTTONS
+ */
+.ui-layout-toggler {
+    border: 1px solid #BBB; /* match pane-border */
+    background-color: #BBB;
+    }
+    .ui-layout-resizer-hover .ui-layout-toggler {
+        opacity: .60;
+        filter:  alpha(opacity=60);
+    }
+    .ui-layout-resizer-hover .ui-layout-toggler-hover { /* need specificity */
+        background-color: #FC6;
+        opacity: 1.00;
+        filter:  alpha(opacity=100);
+    }
+    .ui-layout-toggler-north ,
+    .ui-layout-toggler-south {
+        border-width: 0 1px; /* left/right borders */
+    }
+    .ui-layout-toggler-west ,
+    .ui-layout-toggler-east {
+        border-width: 1px 0; /* top/bottom borders */
+    }
+    /* hide the toggler-button when the pane is 'slid open' */
+    .ui-layout-resizer-sliding  ui-layout-toggler {
+        display: none;
+    }
+    /*
+     *  style the text we put INSIDE the togglers
+     */
+    .ui-layout-toggler .content {
+        color:          #666;
+        font-size:      12px;
+        font-weight:    bold;
+        width:          100%;
+        padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
+    }
+
+.ui-in-layout-center {
+    border-left: 0px !important;
+    border-right: 0px !important;
+    border-top: 0px !important;
+}
+
+.ui-in-layout-south {
+    border-left: 0px !important;
+    border-right: 0px !important;
+    border-bottom: 0px !important;
+    padding: 4px 0 4px 4px !important;
+}
 
 
 /* ============================================================================== */
