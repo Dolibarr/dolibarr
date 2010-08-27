@@ -583,6 +583,11 @@ td.photo {
 /*    background: #FFFFFF;*/
 }
 
+
+/* ============================================================================== */
+/* Panes for ECM or Filemanager                                                   */
+/* ============================================================================== */
+
 /*
  *  PANES & CONTENT-DIVs
  */
@@ -616,7 +621,7 @@ td.photo {
     }
     /* NOTE: It looks best when 'hover' and 'dragging' are set to the same color,
         otherwise color shifts while dragging when bar can't keep up with mouse */
-    .ui-layout-resizer-open-hover , /* hover-color to 'resize' */
+    /*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
     .ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
         background: #AAA;
     }
