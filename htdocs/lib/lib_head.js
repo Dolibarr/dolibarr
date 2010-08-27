@@ -89,13 +89,13 @@ function company_save_refresh()
 	          dateFieldID      "dateo"        Nom du champ
               format           "dd/MM/yyyy"   Format issu de Dolibarr de SimpleDateFormat a utiliser pour retour
 ==================================================================*/
-function showDP(base,dateFieldID,format)
+function showDP(base,dateFieldID,format,codelang)
 {
 	//check to see if another box is already showing
 	var alreadybox=getObjectFromID("DPCancel");
 	if (alreadybox) closeDPBox();	// This erase value of showDP.datefieldID
 
-	//alert("showDP "+dateFieldID);
+	//alert("showDP "+codelang);
 	showDP.datefieldID=dateFieldID;	// Must be after the close
 
 	var dateField=getObjectFromID(dateFieldID);
@@ -154,25 +154,26 @@ function showDP(base,dateFieldID,format)
 		datetime=selDate.getTime();
 		ymd=formatDate(selDate,'yyyyMMdd');
 	}
-	loadMonth(base,month,year,ymd);
+	loadMonth(base,month,year,ymd,codelang);
 	hideSelectBoxes();
 	document.body.appendChild(showDP.box);
 }
 
-function resetDP(base,dateFieldID,format)
+function resetDP(base,dateFieldID,format,codelang)
 {
 	var dateField=getObjectFromID(dateFieldID);
 	dateField.value = formatDate(new Date(), format);
-	dpChangeDay(dateFieldID, format);
+	dpChangeDay(dateFieldID,format);
 	
 	var alreadybox=getObjectFromID("DPCancel");
-	if (alreadybox) showDP(base,dateFieldID,format);
+	if (alreadybox) showDP(base,dateFieldID,format,codelang);
 }
 
-function loadMonth(base,month,year,ymd)
+function loadMonth(base,month,year,ymd,codelang)
 {
 	/*showDP.box.innerHTML="Loading...";*/
-	var theURL=base+"datepicker.php?cm=shw";
+	//alert(codelang);
+	var theURL=base+"datepicker.php?cm=shw&lang="+codelang;
 	theURL+="&m="+encodeURIComponent(month);
 	theURL+="&y="+encodeURIComponent(year);
 	if (selDate)

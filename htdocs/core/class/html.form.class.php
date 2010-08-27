@@ -2541,7 +2541,8 @@ class Form
                 //print "e".$set_time." t ".$conf->format_date_short;
                 if (strval($set_time) != '' && $set_time != -1)
                 {
-                    $formated_date=dol_print_date($set_time,$conf->format_date_short);
+                    //$formated_date=dol_print_date($set_time,$conf->format_date_short);
+                    $formated_date=dol_print_date($set_time,$langs->trans("FormatDateShort"));  // FormatDateShort for dol_print_date/FormatDateShortJava that is same for javascript
                 }
 
                 // Calendrier popup version eldy
@@ -2550,7 +2551,7 @@ class Form
                     // Zone de saisie manuelle de la date
                     $retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
                     $retstring.=($disabled?' disabled="true"':'');
-                    $retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\'); "';
+                    $retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\'); "';  // FormatDateShort for dol_print_date/FormatDateShortJava that is same for javascript
                     $retstring.='>';
 
                     // Icone calendrier
@@ -2558,7 +2559,7 @@ class Form
                     {
                         $retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
                         $base=DOL_URL_ROOT.'/lib/';
-                        $retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$conf->format_date_short_java.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
+                        $retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
                     }
 
                     $retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
@@ -2567,7 +2568,9 @@ class Form
                 }
                 else
                 {
+                    print "Bad value of calendar";
                     // Calendrier popup version defaut
+                    /*
                     if ($langs->defaultlang != "")
                     {
                         $retstring.='<script type="text/javascript">';
@@ -2576,7 +2579,7 @@ class Form
                     }
                     $retstring.='<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';
                     $retstring.='<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="9" value="'.$formated_date.'"';
-                    $retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
+                    $retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\')"';
                     $retstring.='> ';
                     $retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
                     $retstring.='<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
@@ -2593,6 +2596,7 @@ class Form
                         $retstring.='<img style="vertical-align:middle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calendar.png" border="0" alt="" title="">';
                         $retstring.='</a>';
                     }
+                    */
                 }
             }
 
@@ -2730,7 +2734,7 @@ class Form
             if ($conf->use_popup_calendar)
             {
                 $base=DOL_URL_ROOT.'/lib/';
-                $reset_scripts .= 'resetDP(\''.$base.'\',\''.$prefix.'\',\''.$conf->format_date_short_java.'\');';
+                $reset_scripts .= 'resetDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');';
             }
             else
             {

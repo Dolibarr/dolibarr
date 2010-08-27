@@ -27,25 +27,26 @@
  *       \version    $Id$
  */
 
-//if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
+if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
+if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
-//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
+if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU',1);
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
 require_once("../main.inc.php");
-
-//var_dump($langs);
 
 if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
 $langs->load("main");
 $right=($langs->direction=='rtl'?'left':'right');
 $left=($langs->direction=='rtl'?'right':'left');
 
+//var_dump($langs->defaultlang);
+//var_dump($conf->format_date_short_java);
+//var_dump($langs->trans("FormatDateShortJava"));
 
 
 // URL http://mydolibarr/lib/datepicker.php?mode=test&m=10&y=2038 can be used for tests
@@ -158,15 +159,15 @@ function displayBox($selectedDate,$month,$year){
 	</tr>
 	<tr>
 		<td class="dpButtons"
-			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php echo $month?>','<?php echo $year-1?>','<?php echo $xyz ?>')">&lt;&lt;</td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php echo $month?>','<?php echo $year-1?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&lt;&lt;</td>
 		<td class="dpButtons"
-			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php if($month==1) echo "12"; else echo $month-1?>','<?php if($month==1) echo $year-1; else echo $year?>','<?php echo $xyz ?>')">&lt;</td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php if($month==1) echo "12"; else echo $month-1?>','<?php if($month==1) echo $year-1; else echo $year?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&lt;</td>
 		<td colspan="3" class="dpButtons"
-			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php echo dol_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>')"><?php echo $langs->trans("MonthOfDay") ?></td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php echo dol_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')"><?php echo $langs->trans("CurrentMonth") ?></td>
 		<td class="dpButtons"
-			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php if($month==12) echo "1"; else echo $month+1?>','<?php if($month==12) echo $year+1; else echo $year;?>','<?php echo $xyz ?>')">&gt;</td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php if($month==12) echo "1"; else echo $month+1?>','<?php if($month==12) echo $year+1; else echo $year;?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&gt;</td>
 		<td class="dpButtons"
-			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>')">&gt;&gt;</td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&gt;&gt;</td>
 	</tr>
 	<tr class="dpDayNames">
 		<td width="14%"><?php echo $langs->trans("ShortSunday") ?></td>
@@ -210,10 +211,16 @@ function displayBox($selectedDate,$month,$year){
 		if($thedate==$selDate) $dayclass="dpSelected";
 		elseif($thedate==$today) $dayclass="dpToday";
 
+		if ($langs->trans("FormatDateShortJava")=="FormatDateShortJava")
+		{
+		    print "ERROR FormatDateShortJava not defined for language ".$langs->defaultlang;
+		    exit;
+		}
+
 		// Sur click dans calendrier, appelle fonction dpClickDay
 		echo "<TD class=\"".$dayclass."\"";
 		echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".dol_date("n",$thedate).",".$mydate["mday"].",tradMonths)\"";
-		echo " onClick=\"dpClickDay(".$mydate["year"].",".dol_date("n",$thedate).",".$mydate["mday"].",'".$conf->format_date_short_java."')\"";
+		echo " onClick=\"dpClickDay(".$mydate["year"].",".dol_date("n",$thedate).",".$mydate["mday"].",'".$langs->trans("FormatDateShortJava")."')\"";
 		echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
 		$cols++;
 

@@ -727,7 +727,7 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
-		
+
 		// Rang to use
 		$rang = (!empty($module->rangtouse)?$module->rangtouse:-1);
 
@@ -1394,10 +1394,10 @@ if ($id > 0 || ! empty($ref))
 		foreach($hooks->objModules as $module)
 		{
 			$lines = $propal->getLinesArray(1);
-			
+
 			$module->getObjectList($propal);
 			$sublines = $propal->getLinesArray(2);
-			
+
 			if (! empty($module->lines))
 			{
 				$propal->print_title_list();
@@ -1429,17 +1429,17 @@ if ($id > 0 || ! empty($ref))
 		if (! preg_match('/editline|edit_/',$_GET["action"]))
 		{
 			$var=true;
-			
+
 			// Add free products/services
 			$propal->showAddFreeProductForm();
-			
+
 			// Add predefined products/services
 			if ($conf->product->enabled || $conf->service->enabled)
 			{
 				$var=!$var;
 				$propal->showAddPredefinedProductForm();
 			}
-			
+
 			// Hook of thirdparty module
 			if (! empty($hooks->objModules))
 			{
