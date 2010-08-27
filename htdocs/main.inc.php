@@ -728,6 +728,8 @@ else
 $heightforframes=48;
 
 
+
+
 // Functions
 
 
@@ -838,25 +840,16 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			$mini='';$ext='.js';
 			if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) { $mini='_mini'; $ext='.jgz'; }	// mini='_mini', ext='.gz'
 
-			print '<!-- Includes for JQuery (must be before prototype/scriptaculous) -->'."\n";
+			// JQuery. Must be before other includes (prototype/scriptaculous)
+			print '<!-- Includes for JQuery -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-1.4.2.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-1.8.4.custom.min'.$ext.'"></script>'."\n";
 
-            // This one is required for all Ajax features
+            // This one is required for lot of Ajax features
 			if (! defined('DISABLE_PROTOTYPE'))
 			{
                 print '<!-- Includes for Prototype (Used by Scriptaculous) -->'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype'.$mini.$ext.'"></script>'."\n";
-			}
-			// This one is required for boxes
-			if (! defined('DISABLE_SCRIPTACULOUS'))
-			{
-				print '<!-- Includes for Scriptaculous (Used by Drag and Drop) -->'."\n";
-				//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
-				//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js?load=builder,effects,dragdrop,controls,slider,sound"></script>'."\n";
-				$listofscripts='effects,dragdrop';
-				if ($conf->global->COMPANY_USE_SEARCH_TO_SELECT) $listofscripts.=',controls';	// For Ajax.Autocompleter
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js?load='.$listofscripts.'"></script>'."\n";
 			}
 		}
 
