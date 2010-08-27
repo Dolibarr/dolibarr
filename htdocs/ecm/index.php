@@ -212,7 +212,10 @@ html, body {
 <SCRIPT type=\"text/javascript\">
     jQuery(document).ready(function () {
         jQuery('#containerlayout').layout({
-            resizable: true
+            center__paneSelector:   \".ui-layout-center\"
+        ,   north__paneSelector:    \".ui-layout-north\"
+        ,   west__paneSelector:     \".ui-layout-west\"
+        ,   resizable: true
         ,   north__size:        34
         ,   north__resizable:   false
         ,   north__closable:    false
@@ -221,6 +224,16 @@ html, body {
         ,   west__slidable:     true
         ,   west__resizable:    true
         ,   west__togglerLength_closed: '100%'
+        ,   useStateCookie:     false  /* Put this to false for dev */
+            });
+
+        jQuery('div.ui-layout-center').layout({
+            center__paneSelector:   \".ui-in-layout-center\"
+        ,   south__paneSelector:    \".ui-in-layout-south\"
+        ,   resizable: false
+        ,   south__miSize:      34
+        ,   south__resizable:   false
+        ,   south__closable:    false
         ,   useStateCookie:     false  /* Put this to false for dev */
             });
     });
@@ -276,7 +289,7 @@ if ($conf->use_javascript_ajax)
 {
 ?>
 <div id="containerlayout">
-    <div class="pane ui-layout-north filetoolbar">
+    <div class="pane ui-layout-north toolbar">
 <?php
 }
 else
@@ -681,6 +694,8 @@ if ($conf->use_javascript_ajax)
     </div>
 
     <div class="pane ui-layout-center">
+
+        <div class="pane-in ui-in-layout-center">
 <?php
 }
 else
@@ -703,8 +718,13 @@ $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->r
 //	print '<tr><td> </td></tr></table>';
 
 
+
 if ($conf->use_javascript_ajax)
 {
+?>
+        </div>
+        <div class="pane-in ui-in-layout-south">
+<?php
 }
 else
 {
@@ -727,6 +747,7 @@ else print '&nbsp;';
 if ($conf->use_javascript_ajax)
 {
 ?>
+        </div>
     </div>
 
 <!--    <div class="pane ui-layout-east"></div> -->
