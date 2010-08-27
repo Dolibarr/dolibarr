@@ -163,7 +163,7 @@ function displayBox($selectedDate,$month,$year){
 		<td class="dpButtons"
 			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php if($month==1) echo "12"; else echo $month-1?>','<?php if($month==1) echo $year-1; else echo $year?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&lt;</td>
 		<td colspan="3" class="dpButtons"
-			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php echo dol_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')"><?php echo $langs->trans("CurrentMonth") ?></td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php echo dol_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')"><?php echo '-' ?></td>
 		<td class="dpButtons"
 			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php if($month==12) echo "1"; else echo $month+1?>','<?php if($month==12) echo $year+1; else echo $year;?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&gt;</td>
 		<td class="dpButtons"
