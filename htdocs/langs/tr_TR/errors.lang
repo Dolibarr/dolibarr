@@ -63,8 +63,8 @@ ErrorModuleRequireJavascript=Javascript bu özelliği çalışma için devre dı
 ErrorPasswordsMustMatch=Her iki yazdığınız şifreler birbiriyle eşleşmesi gerekir
 ErrorContactEMail=Teknik bir hata oluştu. Lütfen, en hata <b>kodu% email%</b> folowwing sağlamak için iletişim yöneticisi mesajınızı, hatta bu sayfanın bir ekran kopyasını ekleyerek daha iyi <b>s.</b>
 ErrorWrongValueForField=Alan <b>numarası%</b> için yanlış değer <b>'ler)</b> regex <b>kural%</b> uymuyor <b>s (değeri' %s </b>
-ErrorsOnXLines=<b>%</b> Doğum Hatalar kaynak hatları <b>var</b>
-WarningsOnXLines=<b>%</b> Uyarıları kaynak hatları <b>var</b>
+ErrorsOnXLines=<b>%s</b> Doğum Hatalar kaynak hatları <b>var</b>
+WarningsOnXLines=<b>%s</b> Uyarıları kaynak hatları <b>var</b>
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
