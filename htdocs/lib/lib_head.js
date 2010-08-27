@@ -171,7 +171,7 @@ function resetDP(base,dateFieldID,format)
 
 function loadMonth(base,month,year,ymd)
 {
-	showDP.box.innerHTML="Loading...";
+	/*showDP.box.innerHTML="Loading...";*/
 	var theURL=base+"datepicker.php?cm=shw";
 	theURL+="&m="+encodeURIComponent(month);
 	theURL+="&y="+encodeURIComponent(year);
