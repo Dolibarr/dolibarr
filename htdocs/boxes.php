@@ -151,7 +151,7 @@ function printBoxesArea($user,$areacode)
 		    print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
 		    //print 'alert( \'boxorder=\' + boxorder );';
 		    print 'var userid = \''.$user->id.'\';'."\n";
-		    print 'jQuery.get(\'ajaxbox.php?boxorder=\'+boxorder+\'&userid=\'+'.$user->id.');'."\n";
+		    print 'jQuery.get(\'core/ajaxbox.php?boxorder=\'+boxorder+\'&userid=\'+'.$user->id.');'."\n";
 		  	print '}'."\n";
 			print '</script>'."\n";
 		}

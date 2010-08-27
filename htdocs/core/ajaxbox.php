@@ -18,7 +18,7 @@
  */
 
 /**
- *       \file       htdocs/ajaxbox.php
+ *       \file       htdocs/core/ajaxbox.php
  *       \brief      File to return Ajax response on Box move
  *       \version    $Id$
  */
