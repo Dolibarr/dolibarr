@@ -55,7 +55,7 @@ $left=($langs->direction=='rtl'?'right':'left');
 ?>
 
 /* ============================================================================== */
-/* Styles par d�faut                                                              */
+/* Styles by default                                                              */
 /* ============================================================================== */
 
 body {
@@ -329,6 +329,10 @@ li.tmenu a:link
 	font-weight: normal;
 }
 
+.tmenuimage {
+    padding:0 0 0 0 !important;
+    margin:0 0px 0 0 !important;
+}
 
 
 /* Login */
