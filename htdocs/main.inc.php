@@ -607,10 +607,14 @@ if (! defined('NOLOGIN'))
 		$conf->css  = "/theme/".$conf->theme."/style.css.php";
 	}
 	// Set javascript option
-	if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
-	{
-		$conf->use_javascript_ajax=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
-	}
+    if (empty($_GET["nojs"]))   // If javascript was not disabled on URL
+    {
+    	if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
+    	{
+    		$conf->use_javascript_ajax=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
+    	}
+    }
+    else $conf->use_javascript_ajax=0;
 }
 
 
