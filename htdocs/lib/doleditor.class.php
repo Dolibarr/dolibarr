@@ -32,7 +32,16 @@
  */
 class DolEditor
 {
+    var $tool;      // Store the selected tool
+
+	// If using fckeditor
 	var $editor;
+
+	// If not using fckeditor
+	var $content;
+	var $htmlname;
+	var $rows;
+	var $cols;
 
 
     /**
@@ -46,42 +55,63 @@ class DolEditor
      *                                    	'Out:nom' partage de la barre d'outils ou 'nom' est le nom du DIV qui affiche la barre
      *      @param  toolbarstartexpanded  	visible ou non au demarrage
 	 *		@param	uselocalbrowser			Enabled to add links to local object with local browsers. If false, only external images can be added in content.
+	 *      @param  tool                    fckeditor or textarea or xxx
+     *      @param  rows                    Size of rows for textarea tool
+	 *      @param  cols                    Size of cols for textarea tool
 	 */
-    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true)
+    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforfckeditor=true,$rows=0,$cols=0)
     {
     	global $conf,$langs;
 
-    	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname);
+    	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." tool=".$tool);
 
-    	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+        $this->tool='fckeditor';    // By default
+
+        // Check fckeditor is ok
+        if ($this->tool == 'fckeditor' && (empty($conf->fckeditor->enabled) || ! $okforfckeditor))
+        {
+            $this->tool = 'textarea';
+        }
 
 
-		$content=dol_htmlentitiesbr($content);	// If content is not HTML, we convert to HTML.
-
-    	$this->editor = new FCKeditor($htmlname);
-    	$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/' ;
-    	$this->editor->Value	= $content;
-    	$this->editor->Height   = $height;
-    	$this->editor->ToolbarSet = $toolbarname;
-    	$this->editor->Config['AutoDetectLanguage'] = 'true';
-    	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
-    	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
-
-		// Rem: Le forcage de ces 2 parametres ne semble pas fonctionner.
-		// Dolibarr utilise toujours liens avec modulepart='fckeditor' quelque soit modulepart.
-		// Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
-    	$modulepart='fckeditor';
-		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&file=';
-		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DATA_ROOT.'/'.$modulepart.'/' ;
-
-    	$this->editor->Config['LinkBrowser']=($uselocalbrowser?'true':'false');
-    	$this->editor->Config['ImageBrowser']=($uselocalbrowser?'true':'false');
-
-    	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js'))
+    	if ($this->tool == 'fckeditor')
     	{
-    		$this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
-    		$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
-		}
+        	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+
+    		$content=dol_htmlentitiesbr($content);	// If content is not HTML, we convert to HTML.
+
+        	$this->editor = new FCKeditor($htmlname);
+        	$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/' ;
+        	$this->editor->Value	= $content;
+        	$this->editor->Height   = $height;
+        	$this->editor->ToolbarSet = $toolbarname;
+        	$this->editor->Config['AutoDetectLanguage'] = 'true';
+        	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
+        	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
+
+    		// Rem: Le forcage de ces 2 parametres ne semble pas fonctionner.
+    		// Dolibarr utilise toujours liens avec modulepart='fckeditor' quelque soit modulepart.
+    		// Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
+        	$modulepart='fckeditor';
+    		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&file=';
+    		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DATA_ROOT.'/'.$modulepart.'/' ;
+
+        	$this->editor->Config['LinkBrowser']=($uselocalbrowser?'true':'false');
+        	$this->editor->Config['ImageBrowser']=($uselocalbrowser?'true':'false');
+
+        	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js'))
+        	{
+        		$this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
+        		$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
+    		}
+    	}
+        if ($this->tool == 'textarea')
+        {
+    	    $this->content = $content;
+    	    $this->htmlname = $htmlname;
+            $this->rows=max(4,$rows);
+            $this->cols=max(40,$cols);
+    	}
     }
 
 
@@ -90,7 +120,25 @@ class DolEditor
      */
     function Create()
     {
-    	$this->editor->Create();
+        $found=0;
+
+        if ($this->tool == 'fckeditor')
+        {
+            $found=1;
+    	   $this->editor->Create();
+        }
+        if ($this->tool == 'textarea')
+        {
+            $found=1;
+            print '<textarea name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="flat">';
+            print $this->content;
+            print '</textarea>';
+        }
+
+        if (empty($found))
+        {
+            print 'Error, unknown value for tool in DolEditor constructor.';
+        }
     }
 
 }
