@@ -49,7 +49,8 @@ else header('Cache-Control: no-cache');
 // On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
 if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
 
-if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
+if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL
+if (! empty($_GET["theme"])) $conf->theme=$_GET["theme"];  // If theme was forced on URL
 $langs->load("main",0,1);
 $right=($langs->direction=='rtl'?'left':'right');
 $left=($langs->direction=='rtl'?'right':'left');
@@ -561,6 +562,25 @@ td.photo {
 	background: #F4F4F4;
 	color: #000000;
     border: 1px solid #b3c5cc;
+}
+
+
+/* ============================================================================== */
+/* Toolbar for ECM or Filemanager                                                 */
+/* ============================================================================== */
+
+.toolbar {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.png' ?>) !important;
+    background-repeat: repeat-x !important;
+}
+
+.toolbarbutton {
+    margin-top: 2px;
+    margin-left: 4px;
+/*    border: solid 1px #AAAAAA;
+    width: 34px;*/
+    height: 34px;
+/*    background: #FFFFFF;*/
 }
 
 
