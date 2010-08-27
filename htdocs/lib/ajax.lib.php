@@ -75,48 +75,6 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 }
 
 /**
- *	\brief     	Get value of a field, do Ajax process and show result
- *	\param		htmlname            nom et id du champ
- *	\param     	keysearch           nom et id complementaire du champ de collecte
- *	\param     	id                  ID du champ a modifier
- *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
- *	\param     	option              champ supplementaire de recherche dans les parametres
- *	\param     	indicator           Nom de l'image gif sans l'extension
- *	\return    	string              script complet
- */
-function ajax_updaterWithID($htmlname,$keysearch,$id,$url,$option='',$indicator='working')
-{
-	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
-	if ($indicator) $script.=ajax_indicator($htmlname,$indicator);
-	$script.='<script type="text/javascript">';
-	$script.='var myIndicator'.$htmlname.' = {
-                     onCreate: function(){
-                            if($F("'.$keysearch.$htmlname.'")){
-                                  Element.show(\'indicator'.$htmlname.'\');
-                            }
-                     },
-
-                     onComplete: function() {
-                            if(Ajax.activeRequestCount == 0){
-                                  Element.hide(\'indicator'.$htmlname.'\');
-                            }
-                     }
-             };';
-	$script.='Ajax.Responders.register(myIndicator'.$htmlname.');';
-	$script.='new Form.Element.DelayedObserver($("'.$keysearch.$htmlname.'"), 1,
-			   function(){
-			   var elementHTML = $(\''.$id.'\');
-			   var url = \''.$url.'\';
-			   o_options = new Object();
-			   o_options = {method: \'get\',parameters: "'.$keysearch.'="+$F("'.$keysearch.$htmlname.'")+"'.$option.'"};
-				 var myAjax = new Ajax.Updater(elementHTML,url,o_options);
-				 });';
-	$script.='</script>';
-
-	return $script;
-}
-
-/**
  *	\brief     	Get value of field, do Ajax process and return result
  *	\param	    htmlname            nom et id du champ
  *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
