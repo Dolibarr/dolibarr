@@ -48,7 +48,6 @@ class langAutoParser {
 			if ($this->limittofile && $this->limittofile != $file) continue;
 			$counter++;
 			$fileContent = null;
-			$this->translatedFiles = array();
 			$refPath = $this->langDir.$this->refLang.self::DIR_SEPARATOR.$file;
 			$fileContent = file($refPath,FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
 			print "Processing file " . $file . ", with ".sizeof($fileContent)." lines<br>\n";
@@ -80,6 +79,7 @@ class langAutoParser {
 			// Process translation of source file for each target languages
 			foreach($targetlangs as $mydestLang)
 			{
+				$this->translatedFiles = array();
 
 				$destPath = $this->langDir.$mydestLang.self::DIR_SEPARATOR.$file;
 				// Check destination file presence
