@@ -1,0 +1,71 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-28 13:09:36
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
+// Reference language: en_US
+CHARSET=UTF-8
+BoxLastRssInfos=RSS-information
+BoxLastProducts=Senaste %s produkter / tjänster
+BoxLastProductsInContract=Senaste %s avtalade produkter / tjänster
+BoxLastSupplierBills=Senaste leverantörens fakturor
+BoxLastCustomerBills=Senaste kundens fakturor
+BoxOldestUnpaidCustomerBills=Äldsta obetalda kundens fakturor
+BoxOldestUnpaidSupplierBills=Äldsta obetalda leverantörs fakturor
+BoxLastProposals=Senaste kommersiella förslag
+BoxLastProspects=Senast uppdaterad framtidsutsikter
+BoxLastCustomers=Senast uppdaterad kunder
+BoxLastSuppliers=Senast uppdaterad leverantörer
+BoxLastCustomerOrders=Senaste kundorder
+BoxLastBooks=Senast böcker
+BoxLastActions=Senaste åtgärder
+BoxLastContracts=Senaste kontrakt
+BoxCurrentAccounts=Löpande räkningar balans
+BoxSalesTurnover=Omsättningen
+BoxTotalUnpaidCustomerBills=Totalt obetalda kundens fakturor
+BoxTotalUnpaidSuppliersBills=Totalt obetalda leverantörs fakturor
+BoxTitleLastBooks=Senaste %s inspelade böcker
+BoxTitleNbOfCustomers=Nombre de klient
+BoxTitleLastRssInfos=Senaste %s nyheter från %s
+BoxTitleLastProducts=Senast %s modifierade produkter / tjänster
+BoxTitleLastCustomerOrders=Senast %s uppdaterad kundorder
+BoxTitleLastSuppliers=Senaste %s registreras leverantörer
+BoxTitleLastCustomers=Senaste %s registreras kunder
+BoxTitleLastModifiedSuppliers=Senast %s uppdaterad leverantörer
+BoxTitleLastModifiedCustomers=Senast %s uppdaterad kunder
+BoxTitleLastCustomersOrProspects=Senast %s modifierade eller tilltänkta kunder
+BoxTitleLastPropals=Senaste %s registreras förslag
+BoxTitleLastCustomerBills=Senaste %s kundens fakturor
+BoxTitleLastSupplierBills=Senaste %s leverantörens fakturor
+BoxTitleLastProspects=Senaste %s registreras framtidsutsikter
+BoxTitleLastModifiedProspects=Senast %s uppdaterad framtidsutsikter
+BoxTitleLastProductsInContract=Senaste %s produkter / tjänster i ett avtal
+BoxTitleOldestUnpaidCustomerBills=Äldsta %s obetalda kundens fakturor
+BoxTitleOldestUnpaidSupplierBills=Äldsta %s obetalda leverantörs fakturor
+BoxTitleCurrentAccounts=Bytesbalans: s tillgodohavanden
+BoxTitleSalesTurnover=Omsättningen
+BoxTitleTotalUnpaidCustomerBills=Obetalda kundens fakturor
+BoxTitleTotalUnpaidSuppliersBills=Obetalda leverantörs fakturor
+BoxMyLastBookmarks=Min sista %s bokmärken
+FailedToRefreshDataInfoNotUpToDate=Misslyckades med att uppdatera RSS-flöde. Senaste framgångsrika uppdatera datum: %s
+LastRefreshDate=Senaste uppdateringen datum
+NoRecordedBookmarks=Inga bokmärken definieras. Klicka <a href="%s">här</a> för att lägga till bokmärken.
+NoRecordedCustomers=Inga registrerade kunder
+BoxTitleLastActionsToDo=Senaste %s åtgärder för att göra
+BoxTitleLastContracts=Senaste %s kontrakt
+NoActionsToDo=Inga åtgärder för att göra
+NoRecordedOrders=Inga registrerade kundens order
+NoRecordedProposals=Inga registrerade förslag
+NoRecordedInvoices=Inga registrerade kundens fakturor
+NoUnpaidCustomerBills=Inga obetalda kundens fakturor
+NoRecordedSupplierInvoices=Inga registrerade leverantörens fakturor
+NoUnpaidSupplierBills=Inga obetalda leverantörs fakturor
+NoModifiedSupplierBills=Inga registrerade leverantörens fakturor
+NoRecordedProducts=Inga registrerade produkter / tjänster
+NoRecordedProspects=Inga registrerade framtidsutsikter
+NoContractedProducts=Inga produkter / tjänster avtalade
+NoRecordedContracts=Inga registrerade kontrakt
+// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:13:03).

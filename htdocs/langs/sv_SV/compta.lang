@@ -1,0 +1,133 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 09:14:50
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 09:14:50).
+// Reference language: en_US
+CHARSET=UTF-8
+Accountancy=Bokföring
+AccountancyCard=Bokföring kort
+Treasury=Treasury
+MenuFinancial=Finansiella
+TaxModuleSetupToModifyRules=Gå till <a href="%s">modulen setup</a> att ändra regler för beräkning
+OptionMode=Alternativ för bokföring
+OptionModeTrue=Alternativ Input-Output
+OptionModeVirtual=Alternativ Credits-Utdebitering
+OptionModeTrueDesc=I detta sammanhang skall omsättningen beräknas över utbetalningar (datum för betalningar). \ NDet giltighet siffror endast kan uppnås om den bokföring granskas genom input / output på konton via fakturor.
+OptionModeVirtualDesc=I detta sammanhang skall omsättningen beräknas på fakturor (datum för godkännandet). När dessa fakturor betalas, om de har betalats eller inte, de är förtecknade i omsättning produktionen.
+FeatureIsSupportedInInOutModeOnly=Funktionen bara tillgänglig i PROV-FORDRINGAR bokförings-läge (Se redovisning modul konfiguration)
+VATReportBuildWithOptionDefinedInModule=Belopp som anges här beräknas enligt regler som fastställts av Skatteverket modul setup.
+Param=Setup
+AccountsGeneral=Konton
+Account=Konto
+Accounts=Konton
+BillsForSuppliers=Räkningar för leverantörer
+Income=Inkomst
+Outcome=Expense
+ReportInOut=Intäkter / kostnader
+ReportTurnover=Omsättning
+PaymentsNotLinkedToInvoice=Betalningar inte kopplade till någon faktura, så inte är kopplade till någon tredje part
+PaymentsNotLinkedToUser=Betalningar inte är kopplade till alla användare
+Profit=Resultat
+Balance=Balans
+Debit=Debet
+Credit=Credit
+Withdrawal=Återkallande
+Withdrawals=Uttag
+AmountHTVATRealReceived=Net insamlade
+AmountHTVATRealPaid=Net betalas
+VATToPay=Moms säljer
+VATReceived=Mervärdesskatt som
+VATToCollect=Moms inköp
+VATSummary=Moms Balance
+VATPaid=Mervärdesskatten
+VATCollected=Momsintäkterna
+ToPay=Att betala
+ToGet=För att komma tillbaka
+TaxAndDividendsArea=Skatt, sociala avgifter och utdelningar område
+SocialContribution=Sociala avgifter
+SocialContributions=Sociala avgifter
+MenuTaxAndDividends=Skatter och utdelning
+MenuSocialContributions=Sociala avgifter
+MenuNewSocialContribution=Nya bidrag
+NewSocialContribution=Nya sociala bidrag
+ContributionsToPay=Bidrag till lön
+AccountancyTreasuryArea=Bokföring / Treasury område
+AccountancySetup=Bokföring setup
+NewPayment=Ny betalning
+Payments=Betalningar
+PaymentCustomerInvoice=Kundfaktura betalning
+PaymentSupplierInvoice=Leverantörsfaktura betalning
+PaymentSocialContribution=Sociala avgifter betalas
+PaymentVat=Moms betalning
+ListPayment=Lista över betalningar
+ListOfPayments=Lista över betalningar
+ListOfCustomerPayments=Förteckning över kundbetalningar
+ListOfSupplierPayments=Förteckning över leverantörsbetalningar
+DatePayment=Betalningsdag
+NewVATPayment=Ny moms betalning
+VATPayment=Moms Betalning
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 09:18:38).
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
+// Reference language: en_US
+VATPayments=Momsbetalningar
+SocialContributionsPayments=Sociala avgifter betalningar
+ShowVatPayment=Visa mervärdesskatteskäl
+TotalToPay=Totalt att betala
+TotalVATReceived=Total moms fått
+CustomerAccountancyCode=Kunden bokföring kod
+SupplierAccountancyCode=Leverantör bokföring kod
+AlreadyPaid=Redan betalats ut
+AccountNumberShort=Kontonummer
+AccountNumber=Kontonummer
+NewAccount=Nytt konto
+SalesTurnover=Omsättningen
+ByThirdParties=Bu tredje part
+ByUserAuthorOfInvoice=Mot faktura författare
+AccountancyExport=Bokföring export
+ErrorWrongAccountancyCodeForCompany=Bad kund bokföring kod för %s
+SuppliersProductsSellSalesTurnover=Den omsättning som försäljningen av leverantörens produkter.
+CheckReceipt=Kontrollera insättning
+CheckReceiptShort=Kontrollera insättning
+NewCheckReceipt=Ny rabatt
+NewCheckDeposit=Nya kontrollera insättning
+NewCheckDepositOn=Skapa kvitto för insättning på konto: %s
+NoWaitingChecks=Inga kontroller väntar på insättning.
+DateChequeReceived=Kontrollera datum mottagning ingång
+NbOfCheques=Nb av kontroller
+PaySocialContribution=Betala en social avgift
+ConfirmPaySocialContribution=Är du säker på att du vill klassificera denna sociala bidrag som betalas ut?
+DeleteSocialContribution=Ta bort en social avgift
+ConfirmDeleteSocialContribution=Är du säker på att du vill ta bort denna sociala avgifter?
+ExportDataset_tax_1=Sociala avgifter och betalningar
+AnnualSummaryDueDebtMode=Överskott av intäkter och kostnader, årliga sammanfattningar, mode <b>%sClaims-Debts%s</b> sa <b>Åtagande redovisning.</b>
+AnnualSummaryInputOutputMode=Överskott av intäkter och kostnader, årliga sammanfattningar, mode <b>%sRevenues-Expensens%s</b> sa <b>redovisning enligt kontantmetoden.</b>
+AnnualByCompaniesDueDebtMode=Överskott av intäkter och kostnader, detalj av tredje part, mode <b>%sClaims-Debts%s</b> sa <b>Åtagande redovisning.</b>
+AnnualByCompaniesInputOutputMode=Överskott av intäkter och kostnader, detalj av tredje part, mode <b>%sRevenues-Expenses%s</b> sa <b>redovisning enligt kontantmetoden.</b>
+SeeReportInInputOutputMode=Se rapporten <b>%sIncomes-Expenses%s</b> sa <b>kontanter står</b> för en beräkning på faktiska betalningar
+SeeReportInDueDebtMode=Se rapporten <b>%sClaims-Debts%s</b> sa <b>åtagande står</b> för en beräkning på utfärdade fakturor
+RulesResultDue=- Belopp som anges är med alla skatter inkluderade <br> - Det omfattar utestående fakturor, utlägg och mervärdesskatt oavsett om de betalas eller inte. <br> - Den bygger på validering datum för fakturor och moms och på förfallodagen för kostnader.
+RulesResultInOut=- Belopp som anges är med alla skatter inkluderade <br> - Den omfattar den verkliga betalningar som gjorts på fakturor, kostnader och moms. <br> - Den bygger på de datum för fakturor, utgifter ANF moms. <br>
+RulesCADue=- Det omfattar kundens förfallna fakturor oavsett om de betalas eller inte. <br> - Den bygger på valideringen dagen för dessa fakturor. <br>
+RulesCAIn=- Den innehåller alla faktiska utbetalningar av fakturor från kunder. <br> - Den bygger på betalningsdagen för dessa fakturor <br>
+VATReportByCustomersInInputOutputMode=Rapport från insamlade kunden moms och betalas (moms kvitto)
+VATReportByCustomersInDueDebtMode=Rapport från insamlade kunden moms och betalas (moms)
+VATReportByQuartersInInputOutputMode=Rapport från graden av de insamlade moms och betalas (moms kvitto)
+VATReportByQuartersInDueDebtMode=Rapport från graden av de insamlade moms och betalas (moms)
+SeeVATReportInInputOutputMode=Se rapporten <b>%sVAT encasement%s</b> en vanlig beräkning
+SeeVATReportInDueDebtMode=Se rapporten <b>%sVAT om flow%s</b> för en beräkning med en option på flödet
+RulesVATIn=För tjänster, omfattar rapporten moms föreskrifter faktiskt mottogs eller utfärdades på grundval av dagen för betalning. <br> - För materiella tillgångar, inkluderas de mervärdesskattefakturor på grundval av valideringen fakturans datum.
+RulesVATDue=För tjänster, omfattar rapporten mervärdesskattefakturor grund, betald eller inte, baserat på datum för godkännandet av dessa räkningar. <br> - För materiella tillgångar, inkluderas de mervärdesskattefakturor, baserat på datum för godkännandet av fakturan.
+OptionVatInfoModuleComptabilite=Anmärkning: För materiella tillgångar, bör det använda dagen för leverans att vara mer rättvis.
+PercentOfInvoice=%% / Faktura
+NotUsedForGoods=Inte används på varor
+Dispatch=Inmatningsordning
+Dispatched=Sänds
+ToDispatch=Avsändandet
+ThirdPartyMustBeEditAsCustomer=Tredje part skall definieras som en kund
+// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:10:37).

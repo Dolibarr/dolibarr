@@ -1,0 +1,102 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 08:47:44
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
+// Reference language: en_US
+CHARSET=UTF-8
+Category=Kategori
+Categories=Kategorier
+Rubrique=Kategori
+Rubriques=Kategorier
+categories=kategorier
+TheCategorie=I kategorin
+NoCategoryYet=Ingen kategori av detta skapade typ
+In=I
+AddIn=Lägg till i
+modify=modifiera
+Classify=Klassificera
+CategoriesArea=Kategorier område
+ProductsCategoriesArea=Produkter / tjänster kategorier område
+SuppliersCategoriesArea=Leverantörer kategorier område
+CustomersCategoriesArea=Kunder kategorier område
+ThirdPartyCategoriesArea=Tredje part kategorier område
+MembersCategoriesArea=Medlemmar kategorier område
+MainCats=Huvudkategorier
+SubCats=Underkategorier
+CatStatistics=Statistik
+CatList=Lista över kategorier
+AllCats=Alla kategorier
+ViewCat=Visa kategori
+NewCat=Lägg till kategori
+NewCategory=Ny kategori
+ModifCat=Ändra kategori
+CatCreated=Kategori skapade
+CreateCat=Skapa kategori
+CreateThisCat=Skapa denna kategori
+ValidateFields=Validera fält
+NoSubCat=Inga underkategori.
+SubCatOf=Underkategori
+FoundCats=Hittade kategorier
+FoundCatsForName=Kategorier hittades för namnet:
+FoundSubCatsIn=Underkategorier finns i kategorin
+ErrSameCatSelected=Du har valt samma kategori flera gånger
+ErrForgotCat=Du glömde att välja kategori
+ErrForgotField=Du glömde att informera fält
+ErrCatAlreadyExists=Detta namn används redan
+AddProductToCat=Lägg till denna produkt till en kategori?
+ImpossibleAddCat=Omöjligt att lägga till kategorin
+ImpossibleAssociateCategory=Omöjligt att associera den kategori
+WasAddedSuccessfully=<b>%s</b> har lagts till.
+ObjectAlreadyLinkedToCategory=Element är redan kopplad till denna kategori.
+CategorySuccessfullyCreated=Denna kategori %s har lagts med framgång.
+ProductIsInCategories=Produkt / tjänst äger till följande kategorier
+SupplierIsInCategories=Tredje part är att följande leverantörer kategorier
+CompanyIsInCustomersCategories=Denna tredje part äger att följande kunder / utsikter kategorier
+CompanyIsInSuppliersCategories=Denna tredje part äger att följande leverantörer kategorier
+MemberIsInCategories=Denna medlem äger till följande medlemmar kategorier
+ProductHasNoCategory=Denna produkt / tjänst är inte på något kategorier
+SupplierHasNoCategory=Denna leverantör är inte på något kategorier
+CompanyHasNoCategory=Detta företag är inte på något kategorier
+MemberHasNoCategory=Denna medlem är inte på något kategorier
+ClassifyInCategory=Klassificera i kategorin
+NoneCategory=Ingen
+CategoryExistsAtSameLevel=Denna kategori finns redan med denna ref
+ReturnInProduct=Tillbaka till produkt / tjänst kort
+ReturnInSupplier=Tillbaka till leverantör kort
+ReturnInCompany=Tillbaka till kund / prospektering kort
+ContentsVisibleByAll=Innehållet kommer att vara synlig för alla
+ContentsVisibleByAllShort=Innehållsförteckning synlig för alla
+ContentsNotVisibleByAllShort=Innehåll inte synlig för alla
+CategoriesTree=Kategorier träd
+DeleteCategory=Ta bort kategori
+ConfirmDeleteCategory=Är du säker på att du vill ta bort denna kategori?
+RemoveFromCategory=Ta bort kopplingen till Categorie
+RemoveFromCategoryConfirm=Är du säker på att du vill ta bort koppling mellan transaktionen och den kategorin?
+NoCategoriesDefined=Ingen kategori som definieras
+SuppliersCategoryShort=Leverantörer kategori
+CustomersCategoryShort=Kunder kategori
+ProductsCategoryShort=Produkter kategori
+MembersCategoryShort=Medlemmar kategori
+SuppliersCategoriesShort=Leverantörer kategorier
+CustomersCategoriesShort=Kunder kategorier
+CustomersProspectsCategoriesShort=Custo. / kommande utvecklingen. kategorier
+ProductsCategoriesShort=Produkter kategorier
+MembersCategoriesShort=Medlemmar kategorier
+ThisCategoryHasNoProduct=Denna kategori innehåller inte någon produkt.
+ThisCategoryHasNoSupplier=Denna kategori innehåller inte någon leverantör.
+ThisCategoryHasNoCustomer=Denna kategori innehåller inte någon kund.
+ThisCategoryHasNoMember=Denna kategori innehåller inte någon medlem.
+AssignedToCustomer=Avsatta till en kund
+AssignedToTheCustomer=Avsatta till kunden
+InternalCategory=Intern kategori
+CategoryContents=Kategori innehåll
+CategId=Kategori id
+CatSupList=Lista över leverantör kategorier
+CatCusList=Förteckning över kund / utsikterna kategorier
+CatProdList=Förteckning över produkter kategorier
+CatMemberList=Förteckning över medlemmar kategorier
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:48:54).

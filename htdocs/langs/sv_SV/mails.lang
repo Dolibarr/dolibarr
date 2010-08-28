@@ -1,0 +1,116 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 08:47:44
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
+// Reference language: en_US
+CHARSET=UTF-8
+Mailing=E-post
+EMailing=E-post
+Mailings=EMailings
+EMailings=EMailings
+AllEMailings=Alla eMailings
+MailCard=E-post kort
+MailTargets=Mål
+MailRecipients=Mottagare
+MailRecipient=Mottagare
+MailTitle=Beskrivning
+MailFrom=Avsändare
+MailErrorsTo=Fel på
+MailReply=Svara
+MailTo=Mottagare (s)
+MailCC=Kopiera till
+MailCCC=Cachad kopia till
+MailTopic=EMail ämne
+MailText=Meddelande
+MailFile=Bifogade filer
+MailMessage=EMail kropp
+ShowEMailing=Visa e-post
+ListOfEMailings=Lista över emailings
+NewMailing=Ny e-post
+EditMailing=Redigera e-post
+ResetMailing=Skicka om e-post
+DeleteMailing=Radera e-post
+DeleteAMailing=Radera ett e-post
+PreviewMailing=Förhandsgranska e-post
+PrepareMailing=Förbered e-post
+CreateMailing=Skapa e-post
+MailingDesc=Denna sida låter dig skicka emailings till en grupp människor.
+MailingResult=Att skicka e-post resultat
+TestMailing=Testa e-post
+ValidMailing=Gäller e-post
+ApproveMailing=Godkänn e-post
+MailingStatusDraft=Förslag
+MailingStatusValidated=Validerad
+MailingStatusApproved=Godkänd
+MailingStatusSent=Skickat
+MailingStatusSentPartialy=Skickat delvis
+MailingStatusSentCompletely=Skickade helt
+MailingStatusError=Fel
+MailingStatusNotSent=Skickas inte
+MailSuccessfulySent=E-post skickad (från %s till %s)
+ErrorMailRecipientIsEmpty=E-postmottagare är tom
+WarningNoEMailsAdded=Inga nya E-posta lägga till mottagarens lista.
+ConfirmValidMailing=Är du säker på att du vill godkänna denna e-post?
+ConfirmResetMailing=Varning, genom reinitializing skicka e-post <b>%s,</b> kan du göra en massa utskick av detta e-postmeddelande annan gång. Är du säker på att du detta är vad du vill göra?
+ConfirmDeleteMailing=Är du säker på att du vill ta bort denna emailling?
+NbOfRecipients=Antal mottagare
+NbOfUniqueEMails=Nb av unika e-post
+NbOfEMails=Nb av e-post
+TotalNbOfDistinctRecipients=Antal skilda mottagare
+NoTargetYet=Inga stödmottagare ännu (Gå på fliken &quot;mottagare&quot;)
+AddRecipients=Lägg till mottagare
+RemoveRecipient=Ta bort mottagare
+CommonSubstitutions=Vanliga substitutioner
+YouCanAddYourOwnPredefindedListHere=Om du vill skapa din modul e väljare, se htdocs / includes / modules / utskick / README.
+EMailTestSubstitutionReplacedByGenericValues=När du använder testläge är substitutioner variabler ersättas med allmänna värden
+MailingAddFile=Bifoga filen
+NoAttachedFiles=Inga bifogade filer
+BadEMail=Dåligt värde för e-post
+CloneEMailing=Klon Email
+ConfirmCloneEMailing=Är du säker på att du vill klona denna e-post?
+CloneContent=Klon meddelande
+CloneReceivers=Cloner mottagare
+DateLastSend=Datum för senaste sändning
+DateSending=Datum skicka
+SentTo=Skickat till <b>%s</b>
+MailingModuleDescContactCompanies=Kontakter av alla tredje parter (kund, prospekt, leverantör, ...)
+MailingModuleDescDolibarrUsers=Alla Dolibarr användare med e-post
+MailingModuleDescFundationMembers=Stiftelsen medlemmar med e-post
+MailingModuleDescEmailsFromFile=E-post från en textfil (email, namn, efternamn, kommentarer)
+MailingModuleDescContactsCategories=Tredje part med e-post (per kategori)
+MailingModuleDescDolibarrContractsLinesExpired=Tredje part med utgångna avtalets linjer
+LineInFile=Line %s i filen
+RecipientSelectionModules=Definierade krav på mottagarens val
+MailSelectedRecipients=Valda mottagare
+MailingArea=EMailings område
+LastMailings=Senaste %s emailings
+TargetsStatistics=Mål statistik
+NbOfCompaniesContacts=Unika kontakter av företag
+MailNoChangePossible=Mottagare för validerade e-post kan inte ändras
+SearchAMailing=Sök utskick
+SendMailing=Skicka e-post
+SendMail=Skicka e-post
+SentBy=Skickat av
+MailingNeedCommand=För värdepapper Därför bör skicka ett e-post utföras från kommandoraden. Fråga administratören att lansera följande kommando för att skicka e-post till alla mottagare:
+MailingNeedCommand2=Du kan dock skicka dem online genom att lägga till parametern MAILING_LIMIT_SENDBYWEB med värde av maximalt antal e-postmeddelanden du vill skicka genom sessionen. För detta, gå hem - Setup - Annat.
+ConfirmSendingEmailing=Är du säker på att du vill skicka post?
+LimitSendingEmailing=På rad skicka emailings är begränsade för säkerhets-och timeout till <b>%s</b> mottagare genom att skicka session.
+TargetsReset=Rensa lista
+ToClearAllRecipientsClickHere=Klicka här för att rensa listor över mottagare av detta e-post
+ToAddRecipientsChooseHere=Lägg till mottagare genom att välja från listorna
+NbOfEMailingsReceived=Massa emailings fått
+IdRecord=ID rekord
+DeliveryReceipt=Leveranskvitto
+YouCanUseCommaSeparatorForSeveralRecipients=Du kan använda <b>kommateckenavgränsare</b> att ange flera mottagare.
+Notifications=Anmälningar
+NoNotificationsWillBeSent=Inga e-postmeddelanden planeras för detta evenemang och företag
+ANotificationsWillBeSent=En anmälan kommer att skickas via e-post
+SomeNotificationsWillBeSent=%s anmälningar kommer att skickas via e-post
+AddNewNotification=Aktivera en ny e-post meddelande begära
+ListOfActiveNotifications=Lista alla aktiva e ansökningsmeddelanden
+ListOfNotificationsDone=Lista alla e-postmeddelanden skickas
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:48:37).

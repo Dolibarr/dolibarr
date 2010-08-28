@@ -1,0 +1,66 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 08:47:44
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
+// Reference language: en_US
+CHARSET=UTF-8
+RefSending=Ref. transporten
+Sending=Sändning
+Sendings=Transporter
+Shipments=Transporter
+Receivings=Receivings
+SendingsArea=Transporter område
+ListOfSendings=Lista över transporter
+SendingMethod=Frakt metod
+SendingReceipt=Frakt kvitto
+LastSendings=Senaste %s transporter
+SearchASending=Sök efter transport
+StatisticsOfSendings=Statistik för transporter
+NbOfSendings=Antal transporter
+SendingCard=Frakt-kort
+NewSending=Ny leverans
+CreateASending=Skapa en sändning
+CreateSending=Skapa leverans
+QtyOrdered=Antal beställda
+QtyShipped=Antal sändas
+QtyToShip=Antal till-fartyg
+QtyReceived=Antal mottagna
+KeepToShip=Håll dig till fartyg
+OtherSendingsForSameOrder=Andra sändningar för denna beställning
+DateSending=Datum skicka ordning
+DateSendingShort=Datum skicka ordning
+SendingsForSameOrder=Transporter för denna beställning
+SendingsAndReceivingForSameOrder=Transporter och receivings för denna order
+SendingsToValidate=Transporter för att validera
+StatusSendingCanceled=Annullerad
+StatusSendingDraft=Förslag
+StatusSendingValidated=Validerad (produkter till ett fartyg eller som redan sänts)
+StatusSendingCanceledShort=Annullerad
+StatusSendingDraftShort=Förslag
+StatusSendingValidatedShort=Validerad
+SendingSheet=Att skicka ark
+Carriers=Bärare
+Carrier=Carrier
+CarriersArea=Bärare område
+NewCarrier=Ny transportör
+ConfirmDeleteSending=Är du säker på att du vill ta bort denna leverans?
+ConfirmValidateSending=Är du säker på att du vill godkänna denna försändelse?
+ConfirmCancelSending=Är du säker på att du vill avbryta sändningen?
+GenericTransport=Generic transport
+Enlevement=Fått av kunden
+DocumentModelSimple=Enkel förlagan
+DocumentModelMerou=Merou A5-modellen
+WarningNoQtyLeftToSend=Varning, att inga produkter väntar sändas.
+StatsOnShipmentsOnlyValidated=Statistik som gjorts på transporter enda validerade
+DateDeliveryPlanned=Hyvlat leveransdatum
+DateReceived=Datum leverans fick
+SendingMethodCATCH=Fångst av kunden
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=Enkel handling modell för leverans kvitton
+DocumentModelTyphon=Mer komplett dokument modell för leverans intäkter (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:50:37).

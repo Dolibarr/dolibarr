@@ -1,0 +1,34 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 09:14:50
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 09:14:50).
+// Reference language: en_US
+CHARSET=UTF-8
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 09:20:45).
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
+// Reference language: en_US
+Trip=Trip
+Trips=Resor
+TripsAndExpenses=Resor och kostnader
+TripsAndExpensesStatistics=Resor och kostnader statistik
+TripCard=Trip-kort
+AddTrip=Lägg resa
+ListOfTrips=Förteckning över resor
+ListOfFees=Prislista för
+NewTrip=Ny resa
+CompanyVisited=Företag / stiftelse besökt
+Kilometers=Kilometer
+FeesKilometersOrAmout=Belopp eller kilometer
+DeleteTrip=Radera resa
+ConfirmDeleteTrip=Är du säker på att du vill ta bort denna resa?
+TF_OTHER=Andra
+TF_LUNCH=Lunch
+TF_TRIP=Trip
+ListTripsAndExpenses=Förteckning över resor och kostnader
+// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:11:17).

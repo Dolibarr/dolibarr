@@ -1,0 +1,87 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 08:47:44
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
+// Reference language: en_US
+CHARSET=UTF-8
+WarehouseCard=Warehouse kort
+Warehouse=Warehouse
+NewWarehouse=Nytt lager / Lager område
+WarehouseEdit=Ändra lager
+MenuNewWarehouse=Nya lager
+WarehouseOpened=Warehouse öppnade
+WarehouseClosed=Lager stängt
+WarehouseSource=Källa lager
+WarehouseTarget=Mål lager
+ValidateSending=Radera skicka
+CancelSending=Avbryt sändning
+DeleteSending=Radera skicka
+Stock=Lager
+Stocks=Lager
+Movement=Movement
+Movements=Rörelser
+ErrorWarehouseRefRequired=Warehouse hänvisning namn behövs
+ErrorWarehouseLabelRequired=Warehouse etikett föreskrivs
+CorrectStock=Rätt lager
+ListOfWarehouses=Lista över lager
+ListOfStockMovements=Lista över lageromsättningen
+StocksArea=Lager område
+Location=Läge
+LocationSummary=Kortnamn plats
+NumberOfProducts=Totalt antal produkter
+LastMovement=Sista satsen
+LastMovements=Senaste rörelser
+Units=Enheter
+Unit=Enhet
+StockCorrection=Rätt lager
+StockMovement=Överföring
+StockMovements=Stock överföringar
+NumberOfUnit=Antal enheter
+TotalStock=Totalt finns i lager
+StockTooLow=Lager för låg
+EnhancedValue=Värde
+PMPValue=Vägda genomsnittliga priset
+PMPValueShort=WAP
+EnhancedValueOfWarehouses=Lager värde
+UserWarehouseAutoCreate=Skapa ett lager automatiskt när du skapar en användare
+QtyDispatched=Kvantitet sänds
+OrderDispatch=Stock avsändning
+RuleForStockManagementDecrease=Regel för lagerhantering minska
+RuleForStockManagementIncrease=Regel för lagerhantering öka
+DeStockOnBill=Minska riktiga lager kunder fakturor / kreditnotor validering (varning, i denna version, det är bara i lager nummer 1 att materielen är modifierad)
+DeStockOnValidateOrder=Minska riktiga lager på kunder order validering (varning, i denna version, det är bara i lager nummer 1 att materielen är modifierad)
+DeStockOnShipment=Minska riktiga lager på transporten validering
+ReStockOnBill=Reell ökning av lager på leverantörer fakturor / kreditnotor validering (varning, i denna version, det är bara i lager nummer 1 att materielen är modifierad)
+ReStockOnValidateOrder=Reell ökning av lagren av leverantörer order gillande (varning, i denna version, det är bara i lager nummer 1 att materielen är modifierad)
+ReStockOnDispatchOrder=Reell ökning av lagren på manuell distributionscentraler i lager, efter leverantör för mottagande
+OrderStatusNotReadyToDispatch=Beställ ännu inte eller inte mer en ställning som innebär sändningar av produkter i lager lager.
+StockDiffPhysicTeoric=Orsak till skillnad lager fysiska och teoretiska
+NoPredefinedProductToDispatch=Inga fördefinierade produkter för det här objektet. Så ingen distributionscentraler i lager krävs.
+DispatchVerb=Dispatch
+StockLimitShort=Gräns
+StockLimit=Lager gräns för aviseringar
+PhysicalStock=Fysisk lager
+RealStock=Real Stock
+TheoreticalStock=Therocial lager
+VirtualStock=Virtuellt lager
+MininumStock=Minimilager
+StockUp=Bygg upp
+MininumStockShort=Stock min
+StockUpShort=Bygg upp
+IdWarehouse=Id lager
+DescWareHouse=Beskrivning lager
+LieuWareHouse=Lokalisering lager
+WarehousesAndProducts=Lager och produkter
+AverageUnitPricePMPShort=Vägt genomsnittligt ingång pris
+AverageUnitPricePMP=Vägt genomsnittligt ingång pris
+EstimatedStockValueShort=Uppskattat värde av lager
+EstimatedStockValue=Uppskattat värde av lager
+DeleteAWarehouse=Ta bort ett lager
+ConfirmDeleteWarehouse=Är du säker på att du vill ta bort lagret <b>%s?</b>
+PersonalStock=Personlig lager %s
+ThisWarehouseIsPersonalStock=Detta lager representerar personliga beståndet av %s %s
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:49:30).

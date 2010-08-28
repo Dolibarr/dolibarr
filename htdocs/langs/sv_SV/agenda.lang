@@ -1,0 +1,58 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 08:47:44
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
+// Reference language: en_US
+CHARSET=UTF-8
+Actions=Åtgärder
+ActionsArea=Åtgärder område (händelser och uppgifter)
+Agenda=Agenda
+Agendas=Dagordningar
+Calendar=Kalender
+Calendars=Kalendrar
+AffectedTo=Påverkas i
+DoneBy=Utfärdat av
+Events=Evenemang
+ListOfActions=Lista över evenemang
+Location=Läge
+SearchAnAction=Sök en handling / uppgift
+MenuToDoActions=Alla ofullständiga handlingar
+MenuDoneActions=Alla avslutade åtgärder
+MenuToDoMyActions=Min ofullständiga handlingar
+MenuDoneMyActions=Min avslutas åtgärder
+ListOfEvents=Lista över Dolibarr händelser
+ActionsAskedBy=Åtgärder som registrerats av
+ActionsToDoBy=Åtgärder påverkas
+ActionsDoneBy=Åtgärder som utförs av
+AllMyActions=Alla mina handlingar och uppgifter
+AllActions=Alla åtgärder / uppgifter
+ViewList=Visa lista
+ViewCal=Visa kalender
+ViewWithPredefinedFilters=Visa med fördefinierade filter
+AutoActions=Automatisk fyllning av dagordning
+AgendaAutoActionDesc=Här definierar du händelser som du vill Dolibarr att automatiskt skapa en talan i dagordningen. Om ingenting är markerad (som standard), kommer endast manuella, skall ingå i dagordningen.
+AgendaSetupOtherDesc=Denna sida tillåter dig att ändra andra parametrar i dagordningen modul.
+ActionsEvents=Händelser som Dolibarr kommer att skapa en talan i agenda automatiskt
+PropalValidatedInDolibarr=Förslag %s validerade
+InvoiceValidatedInDolibarr=Faktura %s validerade
+OrderValidatedInDolibarr=Beställ %s validerade
+InterventionValidatedInDolibarr=Intervention %s validerade
+NewCompanyToDolibarr=Tredje part har skapats
+DateActionPlannedStart=Planerat startdatum
+DateActionPlannedEnd=Planerat slutdatum
+DateActionDoneStart=Real startdatum
+DateActionDoneEnd=Real slutdatum
+DateActionStart=Startdatum
+DateActionEnd=Slutdatum
+AgendaUrlOptions1=Du kan också lägga till följande parametrar för att filtrera utgång:
+AgendaUrlOptions2=<b>login = %s</b> att begränsa produktionen till åtgärder inrättade av, påverkas eller göras av användaren <b>%s.</b>
+AgendaUrlOptions3=<b>logina = %s</b> att begränsa produktionen till åtgärder som skapats av användaren <b>%s.</b>
+AgendaUrlOptions4=<b>logint = %s</b> att begränsa produktionen till handlande påverkade användarnas <b>%s.</b>
+AgendaUrlOptions5=<b>logind = %s</b> att begränsa produktionen till åtgärder som utförts av användaren <b>%s.</b>
+AgendaShowBirthdayEvents=Visa födelsedag kontakter
+AgendaHideBirthdayEvents=Dölj födelsedag kontakter
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:50:28).

@@ -1,0 +1,34 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 08:47:44
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
+// Reference language: en_US
+CHARSET=UTF-8
+Donation=Donation
+Donations=Donationer
+Donor=Givare
+Donors=Givare
+AddDonation=Lägg till en donation
+NewDonation=Ny donation
+DonationPromise=Gift löfte
+PromisesNotValid=Inte validerade löften
+PromisesValid=Validerad löften
+DonationsPaid=Donationer betalas
+DonationsReceived=Donationerna
+PublicDonation=Offentliga donation
+DonationsNumber=Donation nummer
+DonationsArea=Donationer område
+DonationStatusPromiseNotValidated=Förslag löfte
+DonationStatusPromiseValidated=Validerad löfte
+DonationStatusPaid=Donation fått
+DonationStatusPromiseNotValidatedShort=Förslag
+DonationStatusPromiseValidatedShort=Validerad
+DonationStatusPaidShort=Mottagna
+ValidPromess=Validate löfte
+BuildDonationReceipt=Bygg kvitto
+DonationsModels=Dokument modeller för donation kvitton
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:52:36).

@@ -1,0 +1,100 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 08:47:44
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
+// Reference language: en_US
+CHARSET=UTF-8
+Project=Projekt
+Projects=Projekt
+SharedProject=Alla
+PrivateProject=Kontakter av projekt
+MyProjectsDesc=Denna syn är begränsad till projekt du en kontakt för (allt som är &quot;typ&quot;).
+ProjectsPublicDesc=Denna uppfattning presenterar alla projekt du har rätt att läsa.
+ProjectsDesc=Denna uppfattning presenterar alla projekt (din användarbehörighet tillåta dig att visa allt).
+MyTasksDesc=Denna syn är begränsad till projekt eller uppdrag du en kontakt för (allt som är &quot;typ&quot;).
+TasksPublicDesc=Denna uppfattning presenterar alla projekt och uppgifter som du får läsa.
+TasksDesc=Denna uppfattning presenterar alla projekt och uppgifter (din användarbehörighet tillåta dig att visa allt).
+Myprojects=Mina projekt
+ProjectsArea=Projekt område
+NewProject=Nytt projekt
+AddProject=Lägg till projektet
+DeleteAProject=Ta bort ett projekt
+DeleteATask=Ta bort en uppgift
+ConfirmDeleteAProject=Är du säker på att du vill ta bort detta projekt?
+ConfirmDeleteATask=Är du säker på att du vill ta bort denna uppgift?
+OfficerProject=Officer projekt
+LastProjects=Senaste %s projekt
+AllProjects=Alla projekt
+ProjectsList=Förteckning över projekt
+ShowProject=Visa projekt
+SetProject=Ställ projekt
+NoProject=Inget projekt definieras eller ägs
+NbOpenTasks=Nb i öppnade uppgifter
+NbOfProjects=Nb av projekt
+TimeSpent=Tid som tillbringas
+RefTask=Ref. uppgift
+LabelTask=Label uppgift
+NewTimeSpent=Ny tid
+MyTimeSpent=Min tid
+MyTasks=Mina uppgifter
+Tasks=Uppgifter
+Task=Uppgift
+NewTask=Ny uppgift
+AddTask=Lägg till uppgift
+AddDuration=Lägg varaktighet
+Activity=Aktivitet
+Activities=Uppgifter / aktiviteter
+MyActivity=Min verksamhet
+MyActivities=Mina uppgifter / aktiviteter
+MyProjects=Mina projekt
+DurationEffective=Effektiv längd
+Progress=Framsteg
+Time=Tid
+ListProposalsAssociatedProject=Förteckning över de kommersiella förslag i samband med projektet
+ListOrdersAssociatedProject=Förteckning över kundens order i samband med projektet
+ListInvoicesAssociatedProject=Förteckning över kundens fakturor i samband med projektet
+ListPredefinedInvoicesAssociatedProject=Förteckning över kundens fördefinierade fakturor i samband med projektet
+ListSupplierOrdersAssociatedProject=Lista över leverantörens order i samband med projektet
+ListSupplierInvoicesAssociatedProject=Lista över leverantörens fakturor i samband med projektet
+ListContractAssociatedProject=Förteckning över avtal i samband med projektet
+ListFichinterAssociatedProject=Lista över åtgärder i samband med projektet
+ListTripAssociatedProject=Förteckning över resor och kostnader i samband med projektet
+ListActionsAssociatedProject=Förteckning över åtgärder i samband med projektet
+ActivityOnProjectThisWeek=Aktivitet på projekt den här veckan
+ActivityOnProjectThisMonth=Aktivitet på projekt denna månad
+ActivityOnProjectThisYear=Aktivitet på projekt i år
+ChildOfTask=Barn av projekt / uppdrag
+NotOwnerOfProject=Inte ägaren av denna privata projekt
+AffectedTo=Påverkas i
+CantRemoveProject=Projektet kan inte tas bort eftersom den refereras till av något annat föremål (faktura, order eller annat). Se Referer fliken.
+ValidateProject=Validate projet
+ConfirmValidateProject=Är du säker på att du vill godkänna detta projekt?
+CloseAProject=Stäng projekt
+ConfirmCloseAProject=Är du säker på att du vill avsluta projektet?
+ReOpenAProject=Öppna projekt
+ConfirmReOpenAProject=Är du säker på att du vill att åter öppna detta projekt?
+ProjectContact=Projekt kontakter
+ActionsOnProject=Åtgärder för projektet
+YouAreNotContactOfProject=Du är inte en kontakt på denna privata projekt
+DeleteATimeSpent=Ta bort tid
+ConfirmDeleteATimeSpent=Är du säker på att du vill ta bort denna tid?
+DoNotShowMyTasksOnly=Se även uppgifter jag er inte påverkas i
+ShowMyTasksOnly=Se bara uppgifter jag påverkas
+TaskRessourceLinks=Resurser
+ProjectsDedicatedToThisThirdParty=Projekt som arbetat med denna tredje part
+NoTasks=Inga uppgifter för detta projekt
+LinkedToAnotherCompany=Kopplat till annan tredje part
+TypeContact_project_internal_PROJECTLEADER=Projektledare
+TypeContact_project_external_PROJECTLEADER=Projektledare
+TypeContact_project_internal_CONTRIBUTOR=Medarbetare
+TypeContact_project_external_CONTRIBUTOR=Medarbetare
+TypeContact_project_task_internal_TASKEXECUTIVE=Uppgift verkställande
+TypeContact_project_task_external_TASKEXECUTIVE=Uppgift verkställande
+TypeContact_project_task_internal_CONTRIBUTOR=Medarbetare
+TypeContact_project_task_external_CONTRIBUTOR=Medarbetare
+DocumentModelBaleine=En fullständig projektets rapport modellen (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:50:19).

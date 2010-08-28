@@ -3512,7 +3512,7 @@ function picto_from_langcode($codelang)
     	if ($codelang == 'auto') $ret=img_picto('',DOL_URL_ROOT.'/theme/common/flags/int.png','',1);
     	else {
     		//print $codelang;
-    		$langtocountryflag=array('da_DA'=>'dk','fr_CA'=>'mq','ca_ES'=>'catalonia','ar_AR'=>'');
+    		$langtocountryflag=array('ar_AR'=>'','ca_ES'=>'catalonia','da_DA'=>'dk','fr_CA'=>'mq','sv_SV'=>'se');
     		$tmpcode='';
     		if (isset($langtocountryflag[$codelang])) $tmpcode=$langtocountryflag[$codelang];
     		else

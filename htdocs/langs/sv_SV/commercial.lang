@@ -1,0 +1,93 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 09:14:50
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 09:14:50).
+// Reference language: en_US
+CHARSET=UTF-8
+TasksHistoryForThisContact=Aktiviteter för denna kontakt
+LastProspectDoNotContact=Kontakta inte
+LastProspectNeverContacted=Aldrig kontaktat
+LastProspectToContact=För att kontakta
+LastProspectContactInProcess=Kontakta i processen
+LastProspectContactDone=Kontakta gjort
+DateActionPlanned=Datum planerade åtgärder för
+DateActionDone=Datum insatser görs
+ActionAskedBy=Åtgärd bad
+ActionAffectedTo=Åtgärd påverkas
+ActionDoneBy=Åtgärder som utförs av
+ActionUserAsk=Registrerats av
+ErrorStatusCantBeZeroIfStarted=Om fältet <b>&quot;Datum gjort&quot;</b> är fylld, är arbetet igång (eller färdiga), så fältet <b>&quot;Status&quot;</b> kan inte 0%%.
+ActionAC_TEL=Telefonsamtal
+ActionAC_FAX=Skicka fax
+ActionAC_PROP=Skicka förslag via e-post
+ActionAC_EMAIL=Skicka e-post
+ActionAC_RDV=Möten
+ActionAC_FAC=Skicka kundfaktura med post
+ActionAC_REL=Skicka kundfaktura via post (påminnelse)
+ActionAC_CLO=Stäng
+ActionAC_EMAILING=Skicka massa e-post
+ActionAC_COM=Skicka kundorder per post
+ActionAC_SUP_ORD=Skicka leverantör beställning av e-post
+ActionAC_SUP_INV=Skicka leverantörsfaktura med post
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 09:19:30).
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
+// Reference language: en_US
+Commercial=Kommersiella
+CommercialArea=Kommersiella område
+CommercialCard=Kommersiella kort
+CustomerArea=Kundarea
+Customer=Kunden
+Customers=Kunder
+Prospect=Prospect
+Prospects=Framtidsutsikter
+DeleteAction=Ta bort en handling / uppgift
+NewAction=Ny åtgärd / uppgift
+AddAction=Lägg till åtgärd / uppgift
+AddAnAction=Lägg till en handling / uppgift
+AddActionRendezVous=Lägg till en Rendezvous uppgift
+Rendez-Vous=Rendezvous
+ConfirmDeleteAction=Är du säker på att du vill ta bort denna uppgift?
+CardAction=Action-kort
+PercentDone=Andel komplett
+ActionOnCompany=Uppgift om företaget
+ActionOnContact=Uppgift om kontakt
+TaskRDV=Möten
+TaskRDVWith=Möte med %s
+ShowTask=Visa uppgift
+ShowAction=Visa åtgärder
+ActionsReport=Åtgärder rapport
+SalesRepresentative=Säljare
+SalesRepresentatives=Säljare
+SalesRepresentativeFollowUp=Försäljare (uppföljning)
+SalesRepresentativeSignature=Försäljare (underskrift)
+CommercialInterlocutor=Kommersiella samtalspartner
+ErrorWrongCode=Fel kod
+NoSalesRepresentativeAffected=Ingen särskild säljare påverkas
+ShowCustomer=Visa kund
+ShowProspect=Visa utsikter
+ListOfProspects=Lista över framtidsutsikter
+ListOfCustomers=Lista över kunder
+LastDoneTasks=Senaste %s slutförda uppgifter
+LastRecordedTasks=Senaste registrerade uppgifter
+LastActionsToDo=Senaste %s äldsta åtgärder som genomförts inte
+DoneAndToDoActionsFor=Slutföras och att göra uppgifter för %s
+DoneAndToDoActions=Slutföras och att göra uppgifter
+DoneActions=Genomförda åtgärder
+DoneActionsFor=Genomförda åtgärder för %s
+ToDoActions=Ofullständig åtgärder
+ToDoActionsFor=Ofullständiga åtgärder för %s
+SendPropalRef=Skicka kommersiella förslag %s
+SendOrderRef=Skicka beställningen %s
+StatusActionToDo=För att göra
+StatusActionDone=Komplett
+MyActionsAsked=Åtgärderna jag har spelat in
+MyActionsToDo=Åtgärder skall jag göra
+MyActionsDone=Handlande påverkade mig
+StatusActionInProcess=I processen
+// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:10:53).

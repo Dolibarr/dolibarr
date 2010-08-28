@@ -1,0 +1,31 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 08:47:44
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
+// Reference language: en_US
+CHARSET=UTF-8
+Delivery=Leverans
+Deliveries=Leveranser
+DeliveryCard=Leverans kort
+DeliveryOrder=Leveransorder
+DeliveryOrders=Leveransorder
+DeliveryDate=Leveransdatum
+DeliveryDateShort=Leve. datum
+CreateDeliveryOrder=Generera leveransorder
+QtyDelivered=Antal levererade
+SetDeliveryDate=Ställ in leveransdatum
+ValidateDeliveryReceipt=Validate kvitto
+ValidateDeliveryReceiptConfirm=Är du säker på att du vill godkänna detta kvitto?
+DeliveryMethod=Leveransmetod
+TrackingNumber=Spårningsnummer
+NameAndSignature=Namn och namnteckning:
+ToAndDate=To___________________________________ den ____ / _____ / __________
+GoodStatusDeclaration=Har tagit emot varan ovan i gott skick,
+Deliverer=Befriare:
+Sender=Avsändare
+Recipient=Mottagare
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:51:45).

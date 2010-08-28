@@ -1,0 +1,18 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 08:47:44
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
+// Reference language: en_US
+CHARSET=UTF-8
+OSCommerce=OS Commerce
+OSCommerceSetup=OS Commerce modul setup
+OSCommerceSetupSaved=OS Commerce setup sparas
+OSCommerceServer=OS Commerce Server värd / ip
+OSCommerceDatabaseName=OS Commerce databasnamn
+OSCommercePrefix=OS Commerce tabeller prefix
+OSCommerceUser=OS Commerce databas login
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:49:15).

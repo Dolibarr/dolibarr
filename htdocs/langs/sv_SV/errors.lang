@@ -1,0 +1,83 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 08:47:44
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
+// Reference language: en_US
+CHARSET=UTF-8
+MenuManager=Meny chef
+Error=Fel
+Errors=Fel
+ErrorBadEMail=EMail %s är fel
+ErrorBadUrl=Url %s är fel
+ErrorLoginAlreadyExists=Logga %s finns redan.
+ErrorGroupAlreadyExists=Grupp %s finns redan.
+ErrorRecordNotFound=Spela in hittades inte.
+ErrorFailToDeleteFile=Misslyckades med att ta bort filen <b>&quot;%s&quot;.</b>
+ErrorFailToCreateFile=Misslyckades med att skapa filen <b>&quot;%s&quot;.</b>
+ErrorFailToRenameDir=Misslyckades med att byta namn på katalogen <b>&quot;%s&quot;</b> till <b>&quot;%s&quot;.</b>
+ErrorFailToCreateDir=Det gick inte att skapa katalogen <b>&quot;%s&quot;.</b>
+ErrorFailToDeleteDir=Det gick inte att ta bort katalogen <b>&quot;%s&quot;.</b>
+ErrorFailedToDeleteJoinedFiles=Kan inte ta bort enheten eftersom det inte finns några gick filer. Ta bort gå filer.
+ErrorThisContactIsAlreadyDefinedAsThisType=Denna kontakt redan har definierats som kontaktperson för denna typ.
+ErrorCashAccountAcceptsOnlyCashMoney=Detta bankkonto är en kontant-konto, så det tar emot betalningar av typ kontanter endast.
+ErrorFromToAccountsMustDiffers=Källa och mål bankkonton måste vara olika.
+ErrorBadThirdPartyName=Felaktigt värde för tredje part namn
+ErrorBadCustomerCodeSyntax=Dålig syntax för kundkod
+ErrorCustomerCodeRequired=Kunden som erfordras
+ErrorCustomerCodeAlreadyUsed=Kund-kod som används redan
+ErrorPrefixRequired=Prefix krävs
+ErrorUrlNotValid=Webbplatsen adressen är felaktig
+ErrorBadSupplierCodeSyntax=Bad syntax för leverantör kod
+ErrorSupplierCodeRequired=Leverantör som erfordras
+ErrorSupplierCodeAlreadyUsed=Leverantör kod som används redan
+ErrorBadParameters=Bad parametrar
+ErrorFailedToWriteInDir=Misslyckades med att skriva i katalogen %s
+ErrorFoundBadEmailInFile=Hittade felaktig e-syntax för %s rader i filen (t.ex. linje %s med email = %s)
+ErrorUserCannotBeDelete=Användaren kan inte tas bort. Får den hör samman på Dolibarr enheter.
+ErrorFieldsRequired=Vissa obligatoriska fält inte fylls.
+ErrorFailedToCreateDir=Misslyckades med att skapa en katalog. Kontrollera att webbservern användaren har rättigheter att skriva till Dolibarr dokument katalogen. Om parametern <b>safe_mode</b> är aktiv på PHP, kontrollera att Dolibarr php-filer äger till webbserver användare (eller grupp).
+ErrorNoMailDefinedForThisUser=Ingen post definierats för denna användare
+ErrorFeatureNeedJavascript=Denna funktion måste ha Javascript vara aktiverat för att arbeta. Ändra detta i setup - displayen.
+ErrorTopMenuMustHaveAParentWithId0=En meny av typen &quot;Top&quot; kan inte ha en förälder meny. Sätt 0 i överordnade menyn eller välja en meny av typen &quot;Vänster&quot;.
+ErrorLeftMenuMustHaveAParentId=En meny av typen &quot;Vänster&quot; måste ha en förälder id.
+ErrorFileNotFound=Arkiv <b>%s</b> inte hittas (Bad väg, fel behörigheter eller åtkomst nekad av PHP openbasedir eller safe_mode parameter)
+ErrorDirNotFound=Nummer <b>%s</b> inte hittat (Bad väg, fel behörighet eller åtkomst nekad av PHP openbasedir eller safe_mode parameter)
+ErrorFunctionNotAvailableInPHP=Funktion <b>%s</b> krävs för denna funktion, men finns inte i denna version och konfigureringen av PHP.
+ErrorDirAlreadyExists=En katalog med detta namn finns redan.
+ErrorFileAlreadyExists=En fil med detta namn finns redan.
+ErrorPartialFile=Handlingar den mottagit inte helt av server.
+ErrorNoTmpDir=Tillfälliga directy %s inte existerar.
+ErrorUploadBlockedByAddon=Ladda upp blockeras av en PHP / Apache plugin.
+ErrorFileSizeTooLarge=Filen är för stor.
+ErrorFieldCanNotContainSpecialCharacters=Fält <b>%s</b> inte innehåller specialtecken.
+WarningSafeModeOnCheckExecDir=Varning, PHP alternativ <b>safe_mode</b> är på så kommando måste stoppas in i en katalog som deklarerats av php parameter <b>safe_mode_exec_dir.</b>
+WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopenär</b> måste vara <b>aktiverat</b> i filer <b>php.ini</b> för att ha den här modulen att fungera. Du måste ändra denna fil manuellt.
+WarningBuildScriptNotRunned=Script <b>%s</b> ännu inte sprang för att bygga grafik eller det inte finns några data att visa.
+WarningBookmarkAlreadyExists=Ett bokmärke med denna avdelning eller detta mål (URL) finns redan.
+WarningPassIsEmpty=Varning, är databasen lösenord tom. Detta är ett säkerhetshål. Du bör lägga till ett lösenord till din databas och ändra din conf.php fil som återspeglar detta.
+ErrorNoAccountancyModuleLoaded=Ingen bokföring modul aktiverad
+ErrorExportDuplicateProfil=Denna profil namn redan finns för denna export uppsättning.
+ErrorLDAPSetupNotComplete=Dolibarr-LDAP matchning inte är fullständig.
+ErrorLDAPMakeManualTest=A. LDIF filen har genererats i katalogen %s. Försök att läsa in den manuellt från kommandoraden för att få mer information om fel.
+ErrorCantSaveADoneUserWithZeroPercentage=Kan inte spara en åtgärd med &quot;inte Statut startade&quot; om fältet &quot;görs av&quot; är också fylld.
+ErrorRefAlreadyExists=Ref används för att skapa finns redan.
+ErrorPleaseTypeBankTransactionReportName=Skriv namn bank kvitto där transaktionen rapporteras (Format ÅÅÅÅMM eller ÅÅÅÅMMDD)
+ErrorRecordHasChildren=Misslyckades med att radera poster eftersom det har några barns.
+WarningConfFileMustBeReadOnly=Varning, konfigurationsfilen <b>(htdocs / conf / conf.php)</b> kan din skrivas över av den webbserver. Detta är ett allvarligt säkerhetshål. Ändra behörigheter på fil för att vara i skrivskyddat läge för operativsystem som användare som används av webbservern. Om du använder Windows och FAT format för din disk, måste du veta att det här filsystemet inte är möjligt att lägga till behörigheter för filen, så kan inte vara helt säker.
+ErrorModuleRequireJavascript=Javascript måste inte avaktiveras att ha denna funktion fungerar. Aktivera / inaktivera Javascript, gå till menyn Hem-&gt; Inställningar-&gt; Display.
+ErrorPasswordsMustMatch=Båda skrivit lösenord måste matcha varandra
+ErrorContactEMail=Ett tekniskt fel uppstod. Vänligen administratören att kontakta folowwing e <b>%s</b> sv Ange kod <b>%s</b> fel i ditt meddelande, eller ännu bättre genom att lägga till en skärm kopia av denna sida.
+ErrorWrongValueForField=Felaktigt värde för antalet <b>%s</b> området (värde <b>&quot;%s&quot;</b> inte matchar regex regel <b>%s)</b>
+ErrorsOnXLines=Fel på <b>%s</b> källrader
+WarningsOnXLines=Varningar om <b>%s</b> källrader
+ErrorFileIsInfectedWithAVirus=Antivirusprogrammet inte har kunnat validera (fil kan vara smittade av ett virus)
+ErrorSpecialCharNotAllowedForField=Speciella tecken är inte tillåtna för användning i fält &quot;%s&quot;
+WarningNoDocumentModelActivated=Ingen modell för handling generation, har aktiverats. En modell kommer att valde som standard tills du kontrollera din modul konfiguration.
+ErrorDatabaseParameterWrong=Database setup parameter <b>&quot;%s&quot;</b> har ett värde som inte är förenligt att använda Dolibarr (måste ha värdet <b>&quot;%s).</b>
+ErrorNumRefModel=En hänvisning finns i databasen (%s) och är inte förenligt med denna numrering regel. Ta bort post eller bytt namn hänvisning till aktivera den här modulen.
+ErrorQtyTooLowForThisSupplier=Kvantitet för låg för denna leverantör eller något pris som anges på denna produkt för denna leverantör
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:54:05).

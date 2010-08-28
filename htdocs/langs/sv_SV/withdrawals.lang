@@ -1,0 +1,80 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-28 13:09:36
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
+// Reference language: en_US
+CHARSET=UTF-8
+StandingOrdersArea=Stående order område
+CustomersStandingOrdersArea=Kunder stående order område
+StandingOrders=Stående order
+StandingOrder=Stående order
+NewStandingOrder=Nya stående order
+StandingOrderToProcess=För att kunna behandla
+StandingOrderProcessed=Bearbetade
+Withdrawals=Uttag
+Withdrawal=Återkallande
+WithdrawalsReceipts=Återkallelse kvitton
+WithdrawalReceipt=Återkallelse kvitto
+WithdrawalReceiptShort=Kvitto
+LastWithdrawalReceipts=Senaste %s tillbakadragande kvitton
+WithdrawedBills=Indragna fakturor
+WithdrawalsLines=Återkallelse linjer
+RequestStandingOrderToTreat=Begäran om stående order att behandla
+RequestStandingOrderTreated=Begäran om stående behandlas order
+CustomersStandingOrders=Kunden stående order
+CustomerStandingOrder=Kunden stående order
+NbOfInvoiceToWithdraw=Nb av fakturan med dra tillbaka begäran
+InvoiceWaitingWithdraw=Faktura väntar på återkalla
+AmountToWithdraw=Belopp att dra tillbaka
+WithdrawsRefused=Återkallar vägrade
+NoInvoiceToWithdraw=Ingen kund faktura betalning läge &quot;tillbaka&quot; väntar. Gå på &quot;Uttag&quot;-fliken på faktura kort att göra en förfrågan.
+ResponsibleUser=Ansvarig användare
+WithdrawalsSetup=Återkallelse setup
+WithdrawStatistics=Dra statistik
+WithdrawRejectStatistics=Dra avvisa statistik
+LastWithdrawalReceipt=Senaste %s återkalla kvitton
+MakeWithdrawRequest=Gör en återkalla begäran
+ThirdPartyBankCode=Tredje part bankkod
+ThirdPartyDeskCode=Tredje part skrivbord kod
+NoInvoiceCouldBeWithdrawed=Ingen faktura withdrawed med framgång. Kontrollera att fakturan på företag med en giltig förbud.
+ClassCredited=Klassificera krediteras
+ClassCreditedConfirm=Är du säker på att du vill klassificera detta tillbakadragande mottagande som krediteras på ditt bankkonto?
+TransData=Datum Transmission
+TransMetod=Metod Transmission
+Send=Skicka
+Lines=Linjer
+StandingOrderReject=Utfärda ett förkasta
+WithdrawalRefused=Uttag Refuseds
+WithdrawalRefusedConfirm=Är du säker på att du vill ange ett tillbakadragande avslag för samhället
+RefusedData=Datum för avslag
+RefusedReason=Orsak till avslag
+RefusedInvoicing=Fakturering avslaget
+NoInvoiceRefused=Ladda inte avslaget
+InvoiceRefused=Ladda avvisande till kund
+Status=Status
+StatusUnknown=Okänd
+StatusWaiting=Väntar
+StatusCredited=Krediteras
+StatusRefused=Refused
+StatusMotif0=Ospecificerat
+StatusMotif1=Bestämmelse insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=Inga uttag för
+StatusMotif4=Kundorder
+StatusMotif5=RIB inexploitable
+StatusMotif6=Konto utan balans
+StatusMotif7=Rättsligt beslut
+StatusMotif8=Annan orsak
+CreateAll=Återta alla
+CreateGuichet=Endast kontor
+CreateBanque=Endast bank
+OrderWaiting=Plats för en ny behandling
+NotifyTransmision=Återkallelse Transmission
+NotifyEmision=Återkallelse utsläpp
+NotifyCredit=Återkallelse Credit
+NumeroNationalEmetter=Nationella sändare Antal
+// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:13:15).

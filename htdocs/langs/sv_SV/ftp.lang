@@ -1,0 +1,21 @@
+/*
+ * Language code: sv_SV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-08-27 09:14:50
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-08-27 09:14:50).
+// Reference language: en_US
+CHARSET=UTF-8
+FTPClientSetup=FTP-klient modul setup
+NewFTPClient=Ny FTP-anslutning
+FTPArea=FTP-området
+FTPAreaDesc=Den här skärmen visar innehållet i en FTP-server visa
+SetupOfFTPClientModuleNotComplete=Inställning av FTP-klient modul verkar vara ofullständig
+FTPFeatureNotSupportedByYourPHP=Din PHP stöder inte FTP funktioner
+FailedToConnectToFTPServer=Misslyckades att ansluta till FTP-server (%s server port %s)
+FailedToConnectToFTPServerWithCredentials=Det gick inte att logga in på FTP-servern med definierade login / lösenord
+FTPFailedToRemoveFile=Misslyckades med att ta bort fil <b>%s.</b>
+FTPFailedToRemoveDir=Misslyckades med att ta bort katalogen <b>%s</b> (Kontrollera behörigheter och att katalogen är tom).
+// STOP - Lines generated via autotranslator.php tool (2010-08-27 09:19:41).
