@@ -1682,12 +1682,12 @@ class Form
 
 
     /**
-     *    \brief      Retourne la liste des comptes
-     *    \param      selected          Id compte pre-selectionne
-     *    \param      htmlname          Nom de la zone select
-     *    \param      statut            Statut des comptes recherches (0=open, 1=closed)
-     *    \param      filtre            Pour filtre sur la liste
-     *    \param      useempty          Affiche valeur vide dans liste
+     *    \brief      Return list of bank accounts
+     *    \param      selected          Id account pre-selected
+     *    \param      htmlname          Name of select zone
+     *    \param      statut            Status of searched accounts (0=open, 1=closed)
+     *    \param      filtre            To filter list
+     *    \param      useempty          Add an empty value in list
      */
     function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0)
     {
@@ -1700,7 +1700,7 @@ class Form
         $sql.= " WHERE clos = '".$statut."'";
         $sql.= " AND entity = ".$conf->entity;
         if ($filtre) $sql.=" AND ".$filtre;
-        $sql.= " ORDER BY rowid";
+        $sql.= " ORDER BY label";
 
         dol_syslog("Form::select_comptes sql=".$sql);
         $result = $this->db->query($sql);
