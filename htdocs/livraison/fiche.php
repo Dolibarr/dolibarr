@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
@@ -28,13 +28,13 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
+require_once(DOL_DOCUMENT_ROOT."/livraison/class/livraison.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
-if ($conf->produit->enabled || $conf->service->enabled) require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
-if ($conf->expedition_bon->enabled) require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
-if ($conf->stock->enabled) require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+if ($conf->product->enabled || $conf->service->enabled) require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+if ($conf->expedition_bon->enabled) require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
+if ($conf->stock->enabled) require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
 
 if (!$user->rights->expedition->livraison->lire) accessforbidden();
 
@@ -46,6 +46,7 @@ $langs->load('deliveries');
 $id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'expedition',$id,'livraison','livraison');
+
 
 
 /*
@@ -136,14 +137,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 	if ($result > 0)
 	{
 		$db->commit();
-		if ($conf->expedition_bon->enabled)
-		{
-			Header("Location: ".DOL_URL_ROOT.'/expedition/fiche.php?id='.$delivery->origin_id);
-		}
-		else
-		{
-			Header("Location: liste.php");
-		}
+		Header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
 		exit;
 	}
 	else
@@ -175,6 +169,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
+
 	$result=delivery_order_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
 	if ($result <= 0)
 	{
@@ -216,8 +211,7 @@ if ($_GET["action"] == 'create')
 		$soc = new Societe($db);
 		$soc->fetch($commande->socid);
 		$author = new User($db);
-		$author->id = $commande->user_author_id;
-		$author->fetch();
+		$author->fetch($commande->user_author_id);
 
 		if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
 		{
@@ -260,7 +254,7 @@ if ($_GET["action"] == 'create')
 			print '</td>';
 		}
 
-		print "<td>".$langs->trans("Author")."</td><td>$author->fullname</td>\n";
+		print "<td>".$langs->trans("Author")."</td><td>".$author->getFullName($langs)."</td>\n";
 
 		if ($commande->note)
 		{
@@ -298,13 +292,15 @@ if ($_GET["action"] == 'create')
 		$var=true;
 		while ($i < $num)
 		{
+			$product = new Product($db);
+
 			$ligne = $commande->lignes[$i];
 			$var=!$var;
 			print "<tr $bc[$var]>\n";
 			if ($ligne->fk_product > 0)
 			{
-				$product = new Product($db);
 				$product->fetch($ligne->fk_product);
+				$product->load_stock();
 
 				print '<td>';
 				print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
@@ -330,7 +326,7 @@ if ($_GET["action"] == 'create')
 
 			if ($conf->stock->enabled)
 			{
-				$stock = $product->stock_entrepot[$_GET["entrepot_id"]];
+				$stock = $product->stock_warehouse[$_GET["entrepot_id"]]->real;
 				$stock+=0;  // Convertit en numerique
 
 				// Quantite a livrer
@@ -471,12 +467,13 @@ else
 			print '</tr>';
 
 			// Date
-			print '<tr><td>'.$langs->trans("Date").'</td>';
+			print '<tr><td>'.$langs->trans("DateCreation").'</td>';
 			print '<td colspan="3">'.dol_print_date($delivery->date_creation,'daytext')."</td>\n";
 			print '</tr>';
 
-			// Date delivery planned
-			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
+			// Date delivery real / Received
+			// TODO Can edit this date, even if validated.
+			print '<tr><td>'.$langs->trans("DateReceived").'</td>';
 			print '<td colspan="3">'.dol_print_date($delivery->date_delivery,'daytext')."</td>\n";
 			print '</tr>';
 
