@@ -24,7 +24,7 @@
 
 /**
  *      \file       htdocs/lib/CMailFile.class.php
- *      \brief      Fichier de la classe permettant d'envoyer des mail avec attachements
+ *      \brief      File of class to send emails (with attachments or not)
  *		\version    $Id$
  *      \author     Dan Potter.
  *      \author	    Eric Seigne
@@ -33,7 +33,7 @@
 
 /**
  *      \class      CMailFile
- *      \brief      Classe d'envoi de mails et pieces jointes. Encapsule mail() avec d'eventuels attachements.
+ *      \brief      Class to send emails (with attachments or not)
  *      \remarks    Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to);
  *      \remarks           $mailfile->sendfile();
  */
@@ -164,6 +164,9 @@ class CMailFile
 				dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i], LOG_DEBUG);
 			}
 		}
+
+		// Add autocopy to
+		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc.=($addr_bcc?', ':'').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 
 		// Action according to choosed sending method
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')

@@ -19,7 +19,7 @@
 
 /**
  *       \file       htdocs/admin/mails.php
- *       \brief      Page de configuration des emails
+ *       \brief      Page to setup emails sending
  *       \version    $Id$
  */
 
@@ -31,6 +31,7 @@ $langs->load("products");
 $langs->load("admin");
 $langs->load("mails");
 $langs->load("other");
+$langs->load("errors");
 
 if (!$user->admin)
 accessforbidden();
@@ -57,6 +58,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	if (isset($_POST["MAIN_MAIL_SMTPS_PW"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",  $_POST["MAIN_MAIL_SMTPS_PW"],'chaine',0,'',0);
 	if (isset($_POST["MAIN_MAIL_EMAIL_TLS"])) dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", $_POST["MAIN_MAIL_EMAIL_TLS"],'chaine',0,'',0);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     $_POST["MAIN_MAIL_EMAIL_FROM"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    $_POST["MAIN_MAIL_AUTOCOPY_TO"],'chaine',0,'',$conf->entity);
 
 	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -280,6 +282,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print $html->selectyesno('MAIN_DISABLE_ALL_MAILS',$conf->global->MAIN_DISABLE_ALL_MAILS,1);
 	print '</td></tr>';
 
+	// Separator
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+
 	// Method
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
@@ -409,10 +415,21 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
+	// Separator
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+
 	// From
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td><td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . $conf->global->MAIN_MAIL_EMAIL_FROM . '"></td></tr>';
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
+	print '<td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . $conf->global->MAIN_MAIL_EMAIL_FROM;
+	print '"></td></tr>';
 
+	// Autocopy to
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
+	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="' . $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+	print '"></td></tr>';
 	print '</table>';
 
 	print '<br><center>';
@@ -432,6 +449,10 @@ else
 	// Disable
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_MAILS).'</td></tr>';
+
+	// Separator
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
 
 	// Method
 	$var=!$var;
@@ -491,9 +512,23 @@ else
 	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
+	// Separator
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+
 	// From
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td><td>'.$conf->global->MAIN_MAIL_EMAIL_FROM.'</td></tr>';
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
+	print '<td>'.$conf->global->MAIN_MAIL_EMAIL_FROM;
+	if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && ! isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
+	print '</td></tr>';
+
+	// Autocopy to
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
+	print '<td>'.$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+	if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && ! isValidEmail($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print img_warning($langs->trans("ErrorBadEMail"));
+	print '</td></tr>';
 
 	print '</table>';
 

@@ -387,6 +387,7 @@ class FormMail
 					print $form->selectarray("receiverccc", $liste, isset($_REQUEST["receiverccc"])?$_REQUEST["receiverccc"]:0);
 				}
 			}
+			//if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print ' '.info_admin("+ ".$conf->global->MAIN_MAIL_AUTOCOPY_TO,1);
 			print "</td></tr>\n";
 		}
 

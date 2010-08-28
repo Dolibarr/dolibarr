@@ -213,6 +213,7 @@ MAIN_MAIL_SMTP_SERVER=SMTP/SMTPS Host (By default in php.ini: <b>%s</b>)
 MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=SMTP/SMTPS Port (Not defined into PHP on Unix like systems)
 MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=SMTP/SMTPS Host (Not defined into PHP on Unix like systems)
 MAIN_MAIL_EMAIL_FROM=Sender e-mail for automatic emails (By default in php.ini: <b>%s</b>)
+MAIN_MAIL_AUTOCOPY_TO= Send systematically a hidden carbon-copy of all sent emails to
 MAIN_DISABLE_ALL_MAILS=Disable all e-mails sendings (for test purposes or demos)
 MAIN_MAIL_SENDMODE=Method to use to send EMails
 MAIN_MAIL_SMTPS_ID=SMTP ID if authentication required

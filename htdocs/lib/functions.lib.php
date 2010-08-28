@@ -1512,7 +1512,7 @@ function img_mime($file,$alt='')
 /**
  *	\brief      Show information for admin users
  *	\param      text			Text info
- *	\param      infoonimgalt	Info is shown on alt of star picto, otherwise it is show on output
+ *	\param      infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	\return		string			String with info text
  */
 function info_admin($texte,$infoonimgalt=0)
