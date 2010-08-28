@@ -307,14 +307,14 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     {
         print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
         //print $langs->trans('ECMAddSection');
-        print '<img width="32" height="32" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+        print '<img width="32" height="32" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
         print '</a>';
     }
     else
     {
         print '<a href="#" title="'.$langs->trans("NotAllowed").'">';
         //print $langs->trans('ECMAddSection');
-        print '<img width="32" height="32" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+        print '<img width="32" height="32" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
         print '</a>';
     }
 }
@@ -322,7 +322,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 //print '<td class="liste_titre" colspan="5" align="right">';
 //print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
 print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'"  title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
-print '<img width="32" height="32" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
+print '<img width="32" height="32" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 //print $langs->trans('Refresh');
 print '</a>';
 
