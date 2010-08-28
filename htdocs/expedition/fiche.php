@@ -181,7 +181,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 		$result = $expedition->delete();
 		if ($result > 0)
 		{
-			Header("Location: liste.php");
+			Header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
 			exit;
 		}
 		else
@@ -357,7 +357,7 @@ if ($_GET["action"] == 'create')
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td width="30%">';
+			print '<tr><td width="30%" class="fieldrequired">';
 			if ($origin == 'commande' && $conf->commande->enabled)
 			{
 				print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$object->ref;
@@ -377,12 +377,12 @@ if ($_GET["action"] == 'create')
 			print '</tr>';
 
 			// Tiers
-			print '<tr><td>'.$langs->trans('Company').'</td>';
+			print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td>';
 			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 			print '</tr>';
 
 			// Date delivery planned
-			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">';
 			//print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
 			print $html->select_date($object->date_livraison?$object->date_livraison:-1,'date_delivery',1,1);
