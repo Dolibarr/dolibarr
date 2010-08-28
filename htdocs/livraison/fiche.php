@@ -137,16 +137,8 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 	if ($result > 0)
 	{
 		$db->commit();
-		if ($conf->expedition_bon->enabled)
-		{
-			Header("Location: ".DOL_URL_ROOT.'/expedition/fiche.php?id='.$delivery->origin_id);
-			exit;
-		}
-		else
-		{
-			Header("Location: ".DOL_URL_ROOT."/livraison/liste.php");
-			exit;
-		}
+		Header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
+		exit;
 	}
 	else
 	{
