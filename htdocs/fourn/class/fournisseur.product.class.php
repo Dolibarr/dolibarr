@@ -256,6 +256,7 @@ class ProductFournisseur extends Product
 		global $mysoc;
 
 		$buyprice=price2num($buyprice);
+		$qty=price2num($qty);
 
 		$error=0;
 		$this->db->begin();

@@ -112,7 +112,9 @@ $sql.= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 $result = $db->query($sql);
 while ($objp = $db->fetch_object($result))
 {
-	$prodser[$objp->fk_product_type][$objp->tosell]=$objp->total;
+	$status=1;
+	if (! $objp->tosell && ! $objp->tobuy) $status=0;
+	$prodser[$objp->fk_product_type][$status]=$objp->total;
 }
 
 print '<table class="noborder" width="100%">';
