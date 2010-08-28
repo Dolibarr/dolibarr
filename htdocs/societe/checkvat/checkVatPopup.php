@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,14 @@ else
 
 	// Set the WebService URL
 	dol_syslog("Create soapclient_nusoap for URL=".$WS_DOL_URL);
-	$soapclient = new soapclient_nusoap($WS_DOL_URL);
+	$soapclient = new soapclient_nusoap($WS_DOL_URL.'?wsdl',true);
+
+	// Check for an error
+	$err = $soapclient->getError();
+	if ($err)
+	{
+		dol_syslog("Constructor error ".$WS_DOL_URL, LOG_ERR);
+	}
 
 	// Call the WebService and store its result in $result.
 	dol_syslog("Call method ".$WS_METHOD);
@@ -92,6 +99,11 @@ else
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
 	}
+	elseif ($result['faultstring'])
+	{
+		print '<font class="error">'.$langs->trans("Error").'</font><br>';
+		$messagetoshow=$result['faultstring'];
+	}
 	// Syntaxe ko
 	elseif (preg_match('/INVALID_INPUT/i',$result['faultstring'])
 	|| ($result['requestDate'] && ! $result['valid']))
@@ -113,7 +125,7 @@ else
 		}
 		else
 		{
-			if ($result['valid'])
+			if (! empty($result['valid']) && ($result['valid']==1 || $result['valid']=='true'))
 			{
 				print '<font class="ok">'.$langs->trans("Yes").'</font>';
 				print '<br>';
@@ -123,10 +135,16 @@ else
 			else
 			{
 				print '<font class="error">'.$langs->trans("No").'</font>';
-				print '<br>';
+				print '<br>'."\n";
 			}
 		}
 	}
+
+	// Show log data into page
+	print "\n";
+	print '<!-- ';
+	var_dump($result);
+	print '-->';
 }
 
 print '<br>';
@@ -136,7 +154,8 @@ print '<center><input type="button" class="button" value="'.$langs->trans("Close
 
 if ($messagetoshow)
 {
-	print '<br><br>Error returned:<br>';
+	print '<br><br>';
+	print "\n".'Error returned:<br>';
 	print nl2br($messagetoshow);
 }
 
