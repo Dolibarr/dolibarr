@@ -48,7 +48,7 @@ $substitutionarrayfortest=array(
  * Actions
  */
 
-if (isset($_POST["action"]) && $_POST["action"] == 'update')
+if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["cancel"]))
 {
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",   $_POST["MAIN_DISABLE_ALL_MAILS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",       $_POST["MAIN_MAIL_SENDMODE"],'chaine',0,'',0);
@@ -433,7 +433,9 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '</table>';
 
 	print '<br><center>';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; &nbsp; ';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</center>';
 
 	print '</form>';
