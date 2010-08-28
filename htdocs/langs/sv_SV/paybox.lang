@@ -28,6 +28,6 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL för att erbjuda en %s online gränssn
 ToOfferALinkForOnlinePaymentOnContractLine=URL för att erbjuda en %s online gränssnitt betalning användare för ett kontrakt linje
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL för att erbjuda en %s online gränssnitt betalning användare för en fri belopp
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL för att erbjuda en %s online gränssnitt betalning användare för en medlem prenumeration
-YouCanAddTagOnUrl=Du kan också lägga till url parameter <b>&amp; tag = <i>värde</i></b> för någon av dessa URL (krävs endast för gratis betalning) för att lägga till din egen kommentar tagg betalning.
+YouCanAddTagOnUrl=Du kan också lägga till url parameter <b>&tag = <i>värde</i></b> för någon av dessa URL (krävs endast för gratis betalning) för att lägga till din egen kommentar tagg betalning.
 SetupPayBoxToHavePaymentCreatedAutomatically=Konfigurera din PayBox med url <b>%s</b> ha betalning skapas automatiskt när validerats av paybox.
 // STOP - Lines generated via autotranslator.php tool (2010-08-27 08:47:50).

@@ -282,7 +282,7 @@ ListOfDirectoriesForModelGenODT=Lista över kataloger som innehåller mallar fil
 NumberOfModelFilesFound=Antal ODT mallar filerna i dessa kataloger
 ExampleOfDirectoriesForModelGen=Exempel på syntax: <br> C: \ Mydir <br> / Home / Mydir <br> DOL_DATA_ROOT / ECM / ecmdir
 FirstnameNamePosition=Ståndpunkt av förnamn / namn
-Module0Name=Användare &amp; grupper
+Module0Name=Användare & grupper
 Module0Desc=Användare och ledningsgrupper
 Module1Name=Tredje part
 Module1Desc=Företag och kontakt ledning
@@ -746,7 +746,7 @@ TriggerActiveAsModuleActive=Triggers i denna fil är verksamma som modul <b>%s</
 GeneratedPasswordDesc=Ange här vilken regel du vill använda för att generera nytt lösenord om du begära att få automatiskt genererat lösenord
 DictionnaryDesc=Ange här alla hänvisningar data seten. Du kan fylla i fördefinierade värde med din.
 ConstDesc=Denna sida kan du redigera alla andra parametrar som inte fanns i tidigare sidor. De är reserverade parametrar för avancerade utvecklare eller troubleshouting.
-OnceSetupFinishedCreateUsers=Varning, du är en Dolibarr administratör. Administratör användare används för att ställa in Dolibarr. För en vanlig användning av Dolibarr, rekommenderas att använda en icke administratör skapas från Användare &amp; Grupper menyn.
+OnceSetupFinishedCreateUsers=Varning, du är en Dolibarr administratör. Administratör användare används för att ställa in Dolibarr. För en vanlig användning av Dolibarr, rekommenderas att använda en icke administratör skapas från Användare & Grupper menyn.
 MiscellanousDesc=Ange här alla andra parametrar som rör säkerhet.
 LimitsSetup=Gränser / Precision setup
 LimitsDesc=Du kan definiera gränser, preciseringar och optimeringar som används av Dolibarr här
@@ -952,7 +952,7 @@ LDAPLdapMapping=LDAP-Mapping
 LDAPFieldLoginUnix=Logga in (unix)
 LDAPFieldLoginExample=Exempel: uid
 LDAPFilterConnection=Sökfilter
-LDAPFilterConnectionExample=Exempel: &amp; (objektklassen = inetOrgPerson)
+LDAPFilterConnectionExample=Exempel: &(objektklassen = inetOrgPerson)
 LDAPFieldLoginSamba=Logga in (samba, ActiveDirectory)
 LDAPFieldLoginSambaExample=Exempel: samaccountname
 LDAPFieldFullname=Förnamn Namn
