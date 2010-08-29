@@ -3355,28 +3355,6 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 }
 
 /**
- *  Return an help message in input field
- *  @param		inputId			Id of input field
- *  @param		message			Help message
- *  @return     include			Code to include if javascript is enable
- */
-function addHelpMessage($inputId,$message)
-{
-	global $conf;
-
-	$helpMessage = '';
-
-	if ($conf->use_javascript_ajax)
-	{
-		$helpMessage.= 'style="color: grey;" ';
-		$helpMessage.= 'onFocus="hideMessage(\''.$inputId.'\',\''.$message.'\');" ';
-		$helpMessage.= 'onBlur="displayMessage(\''.$inputId.'\',\''.$message.'\');"';
-	}
-
-	return $helpMessage;
-}
-
-/**
  * Verify if condition in string is ok or not
  *
  * @param 	string 		$strRights

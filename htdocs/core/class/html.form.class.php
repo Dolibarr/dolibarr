@@ -1195,7 +1195,7 @@ class Form
 
             $num = $this->db->num_rows($result);
 
-            $outselect.='<select class="flat" name="'.$htmlname.'"';
+            $outselect.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'"';
             if ($conf->use_javascript_ajax && $num) $outselect.=' onchange="publish_selvalue(this);"';
             $outselect.='>';
 

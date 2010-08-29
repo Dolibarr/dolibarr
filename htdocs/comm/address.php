@@ -223,6 +223,31 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             print '</div>';
         }
 
+        // If javascript enabled, we add interactivity on mandatory fields
+        if ($conf->use_javascript_ajax)
+        {
+            print "\n".'<script type="text/javascript" language="javascript">';
+            print 'jQuery(document).ready(function () {
+                        jQuery("#label").focus(function() {
+                            hideMessage("label","'.$langs->trans('RequiredField').'");
+                        });
+                        jQuery("#label").blur(function() {
+                            displayMessage("label","'.$langs->trans('RequiredField').'");
+                        });
+                        jQuery("#name").focus(function() {
+                            hideMessage("name","'.$langs->trans('RequiredField').'");
+                        });
+                        jQuery("#name").blur(function() {
+                            displayMessage("name","'.$langs->trans('RequiredField').'");
+                        });
+                        displayMessage("label","'.$langs->trans('RequiredField').'");
+                        displayMessage("name","'.$langs->trans('RequiredField').'");
+                        jQuery("#label").css("color","grey");
+                        jQuery("#name").css("color","grey");
+                    })';
+            print '</script>'."\n";
+        }
+
         print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="formsoc">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="socid" value="'.$socid.'">';
@@ -232,8 +257,8 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 
         print '<table class="border" width="100%">';
 
-        print '<tr><td>'.$langs->trans('AddressLabel').'</td><td><input type="text" size="30" name="label" id="label" value="'.($address->label?$address->label:$langs->trans('RequiredField')).'" '.addHelpMessage("label",$langs->trans('RequiredField')).'></td></tr>';
-        print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="name" id="name" value="'.($address->name?$address->name:$langs->trans('RequiredField')).'" '.addHelpMessage("name",$langs->trans('RequiredField')).'></td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans('AddressLabel').'</td><td><input type="text" size="30" name="label" id="label" value="'.($address->label?$address->label:$langs->trans('RequiredField')).'"></td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans('Name').'</td><td><input type="text" size="30" name="name" id="name" value="'.($address->name?$address->name:$langs->trans('RequiredField')).'"></td></tr>';
 
         print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
         print $address->address;
