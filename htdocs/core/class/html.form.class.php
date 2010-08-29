@@ -121,8 +121,8 @@ class Form
     }
 
     /**
-     *	\brief	Old version of textwithtooltip. Kept for backward compatibility with modules for 2.6.
-     *	\deprecated
+     *	Old version of textwithtooltip. Kept for backward compatibility with modules for 2.6.
+     *	@deprecated
      */
     function textwithhelp($text,$htmltext,$tooltipon=1)
     {
@@ -130,17 +130,17 @@ class Form
     }
 
     /**
-     *	\brief	Show a text and picto with tooltip on text or picto
-     *	\param  text				Texte to show
-     *	\param  htmltext	    	Contenu html du tooltip, code en Html / UTF8
-     *	\param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et force en Ajax
-     *	\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
-     *	\param	img					Code img du picto
-     * 	\param	i					Numero of tooltip
-     * 	\param	width				Width of tooltip
-     * 	\param	shiftX				Shift of tooltip
-     *	\return	string				Code html du tooltip (texte+picto)
-     * 	\remarks	Use function textwithpicto if you can.
+     *	Show a text and picto with tooltip on text or picto
+     *	@param  text				Texte to show
+     *	@param  htmltext	    	Contenu html du tooltip, code en Html / UTF8
+     *	@param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et force en Ajax
+     *	@param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
+     *	@param	img					Code img du picto (use img_xxx() function to get it)
+     * 	@param	i					Numero of tooltip
+     * 	@param	width				Width of tooltip
+     * 	@param	shiftX				Shift of tooltip
+     *	@return	string				Code html du tooltip (texte+picto)
+     * 	@see	Use function textwithpicto if you can.
      */
     function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$i=1,$width='200',$shiftX='10')
     {

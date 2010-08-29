@@ -99,7 +99,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 	$emetteur_nom=$_POST["chqemetteur"];
 	$emetteur_banque=$_POST["chqbank"];
 
-
+	// Check if a payment is mandatory or not
 	if ($adht->cotisation)	// Type adherent soumis a cotisation
 	{
 		if (! is_numeric($_POST["cotisation"]))
@@ -137,10 +137,13 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 		{
 			$db->commit();
 
-			// Envoi mail
-			if ($_POST["sendmail"])
+			// Send confirmation Email
+			if ($adh->email && $_POST["sendmail"])
 			{
-				$result=$adh->send_an_email($conf->global->ADHERENT_MAIL_COTIS,$conf->global->ADHERENT_MAIL_COTIS_SUBJECT,array(),array(),array(),"","",0,-1);
+                $subjecttosend=$adh->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
+                $texttosend=$adh->makeSubstitution($adht->getMailOnSubscription());
+
+				$result=$adh->send_an_email($texttosend,$subjecttosend,array(),array(),array(),"","",0,-1);
 				if ($result < 0) $errmsg=$adh->error;
 			}
 
@@ -367,7 +370,7 @@ print '</table>';
 
 
 /*
- * Ajout d'une nouvelle cotisation
+ * Add new subscription
  */
 if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 {
@@ -473,11 +476,23 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	}
 	else
 	{
-		$s1='<input name="sendmail" type="checkbox"'.($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?' checked="true"':'').'>';
-		$s2=$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b><br>';
-		$s2.=$langs->trans("MailRecipient").': <b>'.$adh->email.'</b>';
-		//$s2.='<br>'.$langs->trans("Content").': '.nl2br($conf->global->ADHERENT_MAIL_COTIS);
-		print $html->textwithpicto($s1,$s2,1);
+        $adht = new AdherentType($db);
+        $adht->fetch($adh->typeid);
+
+        $subjecttosend=$adh->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
+        $texttosend=$adh->makeSubstitution($adht->getMailOnSubscription());
+
+        $tmp='<input name="sendmail" type="checkbox"'.($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?' checked="true"':'').'>';
+        $helpcontent='';
+        $helpcontent.='<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+        $helpcontent.='<b>'.$langs->trans("MailRecipient").'</b>: '.$adh->email.'<br>'."\n";
+        $helpcontent.='<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
+        $helpcontent.=$subjecttosend."\n";
+        $helpcontent.="<br>";
+        $helpcontent.='<b>'.$langs->trans("Content").'</b>:<br>';
+        $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
+
+		print $html->textwithpicto($tmp,$helpcontent,1,'help');
 	}
 	print '</td></tr>';
 

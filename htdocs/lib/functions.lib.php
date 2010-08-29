@@ -2853,15 +2853,16 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
 
 
 /**
- *	\brief		Replace CRLF in string with a HTML BR tag.
- *	\param		string2encode		String to encode
- *	\param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br
- *  \param      forxml              false=Use <br>, true=Use <br />
- *	\return		string				String encoded
+ *	Replace CRLF in string with a HTML BR tag.
+ *	@param		string2encode		String to encode
+ *	@param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br
+ *  @param      forxml              false=Use <br>, true=Use <br />
+ *	@return		string				String encoded
  */
 function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 {
-	if (! $nl2brmode) return nl2br($stringtoencode,$forxml);
+    // We use @ to avoid warning on PHP4 that does not support entity encoding from UTF8;
+    if (! $nl2brmode) return @nl2br($stringtoencode,$forxml);
 	else
 	{
 		$ret=str_replace("\r","",$stringtoencode);
@@ -2887,7 +2888,7 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 {
 	if (dol_textishtml($stringtoencode))
 	{
-		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$stringtoencode);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
+	    $newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$stringtoencode);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		$newstring=preg_replace('/<br>$/i','',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		$newstring=strtr($newstring,array('&'=>'__and__','<'=>'__lt__','>'=>'__gt__','"'=>'__dquot__'));
 		$newstring=dol_htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
@@ -2895,7 +2896,6 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 		// If already HTML, CR should be <br> so we don't change \n
 	}
 	else {
-		// We use @ to avoid warning on PHP4 that does not support entity encoding from UTF8;
 		$newstring=dol_nl2br(dol_htmlentities($stringtoencode,ENT_COMPAT,$pagecodefrom),$nl2brmode);
 	}
 	// Other substitutions that htmlentities does not do
@@ -3083,33 +3083,37 @@ function dol_textishtml($msg,$option=0)
 }
 
 /**
- *    	\brief      Add substitution required by external modules then make substitutions.
+ *    	Add substitution required by external modules then make substitutions.
  * 					There is two type of substitions:
- * 					From substitutionarray (oldval=>newval)
- * 					From special constants (__XXX__=>f(objet->xxx))
- *    	\param      chaine      			Source string in which we must do substitution
- *    	\param      substitutionarray		Array substitution old value => new value value
- * 		\param		outputlangs				If we want substitution from special constants, we provide a language
- * 		\param		object					If we want substitution from special constants, we provide data in a source object
- *    	\return     string      			Output string after subsitutions
+ * 					- From $substitutionarray (oldval=>newval)
+ * 					- From special constants (__XXX__=>f(objet->xxx)) by substitutions modules
+ *    	@param      chaine      			Source string in which we must do substitution
+ *    	@param      substitutionarray		Array substitution old value => new value value
+ * 		@param		outputlangs				If we want substitution from special constants, we provide a language
+ * 		@param		object					If we want substitution from special constants, we provide data in a source object
+ *    	@return     string      			Output string after subsitutions
  */
 function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
 {
 	global $conf,$user;
 
-	// Check if there is external substitution to do asked by plugins
-	// We look files into the includes/modules/substitutions directory
-	// By default, there is no such external plugins.
-	foreach ($conf->file->dol_document_root as $dirroot)
-	{
-		$dir=$dirroot."/includes/modules/substitutions";
-		$fonc='numberwords';	// For the moment only one file scan
-		if ($conf->$fonc->enabled && file_exists($dir.'/functions_'.$fonc.'.lib.php'))
-		{
-			dol_syslog("Library functions_".$fonc.".lib.php found into ".$dir);
-			require_once($dir."/functions_".$fonc.".lib.php");
-			numberwords_completesubstitutionarray($substitutionarray,$outputlangs,$object);
-			break;
+    $dir=$dirroot."/includes/modules/substitutions";
+    $listfonc=array('numberwords'); // For the moment only one substitution module to search
+    foreach($listfonc as $fonc)
+    {
+        // Check if there is external substitution to do asked by plugins
+        // We look files into the includes/modules/substitutions directory
+        // By default, there is no such external plugins.
+        foreach ($conf->file->dol_document_root as $dirroot)
+	    {
+	        // If module enabled and complete
+    		if (! empty($conf->$fonc->enabled) && file_exists($dir.'/functions_'.$fonc.'.lib.php'))
+    		{
+    			dol_syslog("Library functions_".$fonc.".lib.php found into ".$dir);
+    			require_once($dir."/functions_".$fonc.".lib.php");
+    			numberwords_completesubstitutionarray($substitutionarray,$outputlangs,$object);
+    			break;
+    		}
 		}
 	}
 
@@ -3123,12 +3127,10 @@ function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
 
 
 /**
- *    \brief      	Format output for start and end date
- *    \param      	date_start    Start date
- *    \param      	date_end      End date
- *    \param      	format        Output format
- *    \remarks   	Updated by Matelli : added format paramter
- *    \remarks   	See http://matelli.fr/showcases/patchs-dolibarr/update-date-range-format.html for details
+ *    Format output for start and end date
+ *    @param      	date_start    Start date
+ *    @param      	date_end      End date
+ *    @param      	format        Output format
  */
 function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 {

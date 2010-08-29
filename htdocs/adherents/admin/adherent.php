@@ -253,14 +253,9 @@ print_fiche_titre($langs->trans("MembersTickets"),'','');
 
 form_constantes($constantes);
 
-print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%, ';
-print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
-print '%YEAR%, %MONTH%, %DAY%';
-//print '%INFOS%'; Deprecated
 print '<br>';
 
-print '<br>';
+
 /*
  * Edition des variables globales non rattache a un theme specifique
  */

@@ -19,6 +19,7 @@ For users:
 - New: Delivery date accepts hours and minutes.
 - New: Can add a comment on stock dispatching to be save into stock movements.
 - New: Add option to send all emails sent to a bulk carbon copy.
+- New: Preview of emails sent by member module is shown.
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Better Postgresql compatibility.
