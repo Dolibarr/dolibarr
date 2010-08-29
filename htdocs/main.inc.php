@@ -57,7 +57,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 	{
 		$_GET     = array_map('stripslashes_deep', $_GET);
 		$_POST    = array_map('stripslashes_deep', $_POST);
-		$_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+//		$_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
 	}
 	@set_magic_quotes_runtime(0);
@@ -231,7 +231,8 @@ if (! empty($conf->global->MAIN_SECURITY_CSRF))	// Check validity of token, only
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
-if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
+if (! empty($_GET["disablemodules"]))  $_SESSION["disablemodules"]=$_GET["disablemodules"];
+if (! empty($_POST["disablemodules"])) $_SESSION["disablemodules"]=$_POST["disablemodules"];
 if (! empty($_SESSION["disablemodules"]))
 {
 	$disabled_modules=explode(',',$_SESSION["disablemodules"]);
