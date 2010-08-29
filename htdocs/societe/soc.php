@@ -451,14 +451,30 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 		if ($conf->use_javascript_ajax)
 		{
+		    print "\n";
+            print '<script type="text/javascript" language="javascript">';
+            print 'jQuery(document).ready(function () {
+		              jQuery("#radiocompany").click(function() {
+                            document.formsoc.action.value="create";
+                            document.formsoc.private.value=0;
+                            document.formsoc.cleartype.value=1;
+                            document.formsoc.submit();
+		              });
+		               jQuery("#radioprivate").click(function() {
+                            document.formsoc.action.value="create";
+                            document.formsoc.private.value=1;
+                            document.formsoc.cleartype.value=1;
+                            document.formsoc.submit();
+                      });
+		      });';
+		    print '</script>'."\n";
+
 			print "<br>\n";
 			print $langs->trans("ThirdPartyType").': &nbsp; ';
-			print '<input type="radio" class="flat" name="private" value="0"'.(! $_REQUEST["private"]?' checked="true"':'');
-			print 'onclick="dolibarr_type_reload(0)"';
+			print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.(! $_REQUEST["private"]?' checked="true"':'');
 			print '> '.$langs->trans("Company/Fundation");
 			print ' &nbsp; &nbsp; ';
-			print '<input type="radio" class="flat" name="private" value="1"'.(! $_REQUEST["private"]?'':' checked="true"');
-			print 'onclick="dolibarr_type_reload(1)"';
+			print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.(! $_REQUEST["private"]?'':' checked="true"');
 			print '> '.$langs->trans("Individual");
 			print ' ('.$langs->trans("ToCreateContactWithSameName").')';
 			print "<br>\n";
@@ -1138,7 +1154,7 @@ else
 	$head = societe_prepare_head($soc);
 
 	dol_fiche_head($head, 'company', $langs->trans("ThirdParty"),0,'company');
-	
+
 	$html = new Form($db);
 
 
@@ -1149,7 +1165,7 @@ else
 		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
 		if ($ret == 'html') print '<br>';
 	}
-	
+
 	// Template
 	// TODO utiliser la classe canvas
 	include(DOL_DOCUMENT_ROOT."/societe/canvas/default/tpl/view.tpl.php");

@@ -12,20 +12,6 @@
 
 
 /*=================================================================
-	Purpose:  Resubmit page when type of third party (company/individual) is changed
-	Input:    param
-	Author:   Laurent Destailleur
-	Licence:  GPL
-==================================================================*/
-function dolibarr_type_reload(param)
-{
-    document.formsoc.action.value='create';
-    document.formsoc.private.value=param;
-    document.formsoc.cleartype.value=1;
-    document.formsoc.submit();
-}
-
-/*=================================================================
 	Purpose:  Resubmit page when barcode choice is changed (admin page)
 	Input:    formNameID
 	Author:   Laurent Destailleur
