@@ -23,38 +23,40 @@ function autofilltownfromzip_PopupPostalCode(url_root, postalcode,objecttown,obj
     url = url + '&targettown=window.opener.document.formsoc.' + objecttown.name;
     url = url + '&targetcountry=window.opener.document.formsoc.' + objectcountry.name;
     url = url + '&targetstate=window.opener.document.formsoc.' + objectstate.name;
-    //  alert(url);
+    // alert(url);
     var hWnd = window.open(url, "SearchPostalCodeWindow", "width=" + 300 + ",height=" + 150 + ",resizable=yes,scrollbars=yes");
     if((document.window != null) && (!hWnd.opener)) hWnd.opener = document.window;
 }
 
 
-/*=================================================================
-	Purpose:  Pour la saisie des dates par calendrier
-	Input:    base			   "/theme/eldy"
-	          dateFieldID      "dateo"        Nom du champ
-              format           "dd/MM/yyyy"   Format issu de Dolibarr de SimpleDateFormat a utiliser pour retour
-==================================================================*/
+/*
+ * ================================================================= 
+ * Purpose:
+ * Pour la saisie des dates par calendrier Input: base "/theme/eldy" dateFieldID
+ * "dateo" Nom du champ format "dd/MM/yyyy" Format issu de Dolibarr de
+ * SimpleDateFormat a utiliser pour retour
+ * ==================================================================
+ */
 function showDP(base,dateFieldID,format,codelang)
 {
-	//check to see if another box is already showing
+	// check to see if another box is already showing
 	var alreadybox=getObjectFromID("DPCancel");
 	if (alreadybox) closeDPBox();	// This erase value of showDP.datefieldID
 
-	//alert("showDP "+codelang);
+	// alert("showDP "+codelang);
 	showDP.datefieldID=dateFieldID;	// Must be after the close
 
 	var dateField=getObjectFromID(dateFieldID);
 	
-	//get positioning
+	// get positioning
 	var thetop=getTop(dateField)+dateField.offsetHeight;
 
-//	var xxx=getObjectFromID('bottompage');
-//alert(xxx.style.pixelTop);
-//alert(document.body.clientHeight);
-//alert(document.body.style.offsetTop);
-//alert(thetop);
-//alert(window.innerHeight);
+// var xxx=getObjectFromID('bottompage');
+// alert(xxx.style.pixelTop);
+// alert(document.body.clientHeight);
+// alert(document.body.style.offsetTop);
+// alert(thetop);
+// alert(window.innerHeight);
 	if (thetop+160 > window.innerHeight)
 		thetop=thetop-160-20;
 	var theleft=getLeft(dateField);
@@ -117,8 +119,8 @@ function resetDP(base,dateFieldID,format,codelang)
 
 function loadMonth(base,month,year,ymd,codelang)
 {
-	/*showDP.box.innerHTML="Loading...";*/
-	//alert(codelang);
+	/* showDP.box.innerHTML="Loading..."; */
+	// alert(codelang);
 	var theURL=base+"datepicker.php?cm=shw&lang="+codelang;
 	theURL+="&m="+encodeURIComponent(month);
 	theURL+="&y="+encodeURIComponent(year);
@@ -131,7 +133,8 @@ function loadMonth(base,month,year,ymd,codelang)
 	
 	req=loadXMLDoc(theURL,null,false);
 	if (req.responseText == '') alert('Failed to get URL '.theURL);
- 	//alert(theURL+' - '+req.responseText);  // L'url doit avoir la meme racine que la pages et elements sinon pb de securite.
+ 	// alert(theURL+' - '+req.responseText); // L'url doit avoir la meme racine
+	// que la pages et elements sinon pb de securite.
 	showDP.box.innerHTML=req.responseText;	
 }
 
@@ -201,7 +204,7 @@ function dpHighlightDay(year,month,day,tradMonths){
 	displayinfo.innerHTML=months[month-1]+" "+day+", "+year;
 }
 
-//Returns an object given an id
+// Returns an object given an id
 function getObjectFromID(id){
 	var theObject;
 	if(document.getElementById)
@@ -244,16 +247,16 @@ function getLeft(theitem){
 function loadXMLDoc(url,readyStateFunction,async) 
 {
 	// req must be defined by caller with
-	// var req = false; 
+	// var req = false;
  
 	// branch for native XMLHttpRequest object (Mozilla, Safari...)
 	if (window.XMLHttpRequest)
 	{
 		req = new XMLHttpRequest();
 		
-//		if (req.overrideMimeType) {
-//      		req.overrideMimeType('text/xml');
-//    	}
+// if (req.overrideMimeType) {
+// req.overrideMimeType('text/xml');
+// }
 	}
 	// branch for IE/Windows ActiveX version
 	else if (window.ActiveXObject)
@@ -281,22 +284,23 @@ function loadXMLDoc(url,readyStateFunction,async)
 	// Exemple of function for readyStateFuncyion:
 	// function ()
        // {
-       //     if ( (req.readyState == 4) && (req.status == 200) ) {
-       //        if (req.responseText == 1) { newStatus = 'AAA'; }
-       //        if (req.responseText == 0) { newStatus = 'BBB'; }
-       //        if (currentStatus != newStatus) {
-       //            if (newStatus == "AAA") { obj.innerHTML = 'AAA'; }
-       //            else { obj.innerHTML = 'BBB'; }
-       //            currentStatus = newStatus;
-       //        }
-       //    }
+       // if ( (req.readyState == 4) && (req.status == 200) ) {
+       // if (req.responseText == 1) { newStatus = 'AAA'; }
+       // if (req.responseText == 0) { newStatus = 'BBB'; }
+       // if (currentStatus != newStatus) {
+       // if (newStatus == "AAA") { obj.innerHTML = 'AAA'; }
+       // else { obj.innerHTML = 'BBB'; }
+       // currentStatus = newStatus;
+       // }
+       // }
        // }
 	req.open("GET", url, async);
 	req.send(null);
 	return req;
 }
 
-// To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and not put popup completely on the front)
+// To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
+// not put popup completely on the front)
 function hideSelectBoxes() {
 	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
 	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1) 
@@ -324,26 +328,22 @@ function displaySelectBoxes() {
 
 
 
-/*=================================================================
-	Function: formatDate (javascript object Date(), format)
-	Purpose:  Returns a date in the output format specified.
-              The format string can use the following tags:
-				 Field        | Tags
-				 -------------+-------------------------------
-				 Year         | yyyy (4 digits), yy (2 digits)
-				 Month        | MM (2 digits)
-				 Day of Month | dd (2 digits)
-				 Hour (1-12)  | hh (2 digits)
-				 Hour (0-23)  | HH (2 digits)
-				 Minute       | mm (2 digits)
-				 Second       | ss (2 digits)
-	Author:   Laurent Destailleur
-	Author:   Matelli (see http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
-	Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Function:
+ * formatDate (javascript object Date(), format) Purpose: Returns a date in the
+ * output format specified. The format string can use the following tags: Field |
+ * Tags -------------+------------------------------- Year | yyyy (4 digits), yy
+ * (2 digits) Month | MM (2 digits) Day of Month | dd (2 digits) Hour (1-12) |
+ * hh (2 digits) Hour (0-23) | HH (2 digits) Minute | mm (2 digits) Second | ss
+ * (2 digits) Author: Laurent Destailleur Author: Matelli (see
+ * http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
+ * Licence: GPL
+ * ==================================================================
+ */
 function formatDate(date,format)
 {
-	//alert('formatDate date='+date+' format='+format);
+	// alert('formatDate date='+date+' format='+format);
 	
 	// Force parametres en chaine
 	format=format+"";
@@ -363,12 +363,14 @@ function formatDate(date,format)
 		c=format.charAt(i);	// Recupere char du format
 		substr="";
 		j=i;
-		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char successif identiques
+		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char
+																// successif
+																// identiques
 		{
 			substr += format.charAt(j++);
 		}
 
-		//alert('substr='+substr);
+		// alert('substr='+substr);
 		if (substr == 'yyyy')      { result=result+year; }
 		else if (substr == 'yy')   { result=result+year.substring(2,4); }
 		else if (substr == 'M')    { result=result+month; }
@@ -384,33 +386,27 @@ function formatDate(date,format)
 		i+=substr.length;
 	}
 
-	//alert(result);
+	// alert(result);
 	return result;
 }
 
 
-/*=================================================================
-	Function: getDateFromFormat(date_string, format_string)
-	Purpose:  This function takes a date string and a format string.
-			  It parses the date string with format and it returns
-			  the date as a javascript Date() object.
-			  If date does not match format, it returns 0.
-              The format string can use the following tags:
-				 Field        | Tags
-				 -------------+-------------------------------
-				 Year         | yyyy (4 digits), yy (2 digits)
-				 Month        | MM (2 digits)
-				 Day of Month | dd (2 digits)
-				 Hour (1-12)  | hh (2 digits)
-				 Hour (0-23)  | HH (2 digits)
-				 Minute       | mm (2 digits)
-				 Second       | ss (2 digits)
-	Author:   Laurent Destailleur
-	Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Function:
+ * getDateFromFormat(date_string, format_string) Purpose: This function takes a
+ * date string and a format string. It parses the date string with format and it
+ * returns the date as a javascript Date() object. If date does not match
+ * format, it returns 0. The format string can use the following tags: Field |
+ * Tags -------------+------------------------------- Year | yyyy (4 digits), yy
+ * (2 digits) Month | MM (2 digits) Day of Month | dd (2 digits) Hour (1-12) |
+ * hh (2 digits) Hour (0-23) | HH (2 digits) Minute | mm (2 digits) Second | ss
+ * (2 digits) Author: Laurent Destailleur Licence: GPL
+ * ==================================================================
+ */
 function getDateFromFormat(val,format)
 {
-	//alert('getDateFromFormat val='+val+' format='+format);
+	// alert('getDateFromFormat val='+val+' format='+format);
 
 	// Force parametres en chaine
 	val=val+"";
@@ -425,19 +421,22 @@ function getDateFromFormat(val,format)
 	var seconde=now.getSeconds();
 
 	var i=0;
-	var d=0;    // -d- follows the date string while -i- follows the format string 
+	var d=0;    // -d- follows the date string while -i- follows the format
+				// string
 
 	while (i < format.length)
 	{
 		c=format.charAt(i);	// Recupere char du format
 		substr="";
 		j=i;
-		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char successif identiques
+		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char
+																// successif
+																// identiques
 		{
 			substr += format.charAt(j++);
 		}
 
-		//alert('substr='+substr);
+		// alert('substr='+substr);
         if (substr == "yyyy") year=getIntegerInString(val,d,4,4); 
         if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900); 
         if (substr == "MM" ||substr == "M") 
@@ -477,16 +476,18 @@ function getDateFromFormat(val,format)
 	if (minute==null||(minute<0)||(minute>60)) { return 0; }
 	if (seconde==null||(seconde<0)||(seconde>60)) { return 0; }
 		
-	//alert(year+' '+month+' '+day+' '+hour+' '+minute+' '+seconde);
+	// alert(year+' '+month+' '+day+' '+hour+' '+minute+' '+seconde);
 	var newdate=new Date(year,month-1,day,hour,minute,seconde);
 
 	return newdate;
 }
 
-/*=================================================================
-	Function: stringIsInteger(string)
-	Purpose:  Return true if string is an integer
-==================================================================*/
+/*
+ * ================================================================= 
+ * Function:
+ * stringIsInteger(string) Purpose: Return true if string is an integer
+ * ==================================================================
+ */
 function stringIsInteger(str)
 {
 	var digits="1234567890";
@@ -500,10 +501,13 @@ function stringIsInteger(str)
 	return true;
 }
 
-/*=================================================================
-	Function: getIntegerInString(string,pos,minlength,maxlength)
-	Purpose:  Return part of string from position i that is integer
-==================================================================*/
+/*
+ * ================================================================= 
+ * Function:
+ * getIntegerInString(string,pos,minlength,maxlength) Purpose: Return part of
+ * string from position i that is integer
+ * ==================================================================
+ */
 function getIntegerInString(str,i,minlength,maxlength)
 {
 	for (var x=maxlength; x>=minlength; x--)
@@ -516,83 +520,88 @@ function getIntegerInString(str,i,minlength,maxlength)
 }
 
 
-/*=================================================================
-Purpose:  Clean string to have it url encoded
-Input:    s
-Author:   Laurent Destailleur
-Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Purpose:
+ * Clean string to have it url encoded Input: s Author: Laurent Destailleur
+ * Licence: GPL
+ * ==================================================================
+ */
 function urlencode(s) {
 	return s.replace(/\+/gi,'%2B');
 }
 
 
-/*=================================================================
-Purpose:  Show a popup HTML page.
-Input:    url,title
-Author:   Laurent Destailleur
-Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Purpose:
+ * Show a popup HTML page. Input: url,title Author: Laurent Destailleur Licence:
+ * GPL ==================================================================
+ */
 function newpopup(url,title) {
-var argv = newpopup.arguments;
-var argc = newpopup.arguments.length;
-tmp=url;
-var l = (argc > 2) ? argv[2] : 600;
-var h = (argc > 3) ? argv[3] : 400;
-var wfeatures="directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width="+l+",height="+h+",left=" + eval("(screen.width - l)/2") + ",top=" + eval("(screen.height - h)/2");
-fen=window.open(tmp,title,wfeatures);
-return false;
+	var argv = newpopup.arguments;
+	var argc = newpopup.arguments.length;
+	tmp=url;
+	var l = (argc > 2) ? argv[2] : 600;
+	var h = (argc > 3) ? argv[3] : 400;
+	var wfeatures="directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width="+l+",height="+h+",left=" + eval("(screen.width - l)/2") + ",top=" + eval("(screen.height - h)/2");
+	fen=window.open(tmp,title,wfeatures);
+	return false;
 }
 
 
-/*=================================================================
-	Purpose:  Fonction pour champ saisie en mode ajax. Used for autocompletion of products.
-	Author:   Laurent Destailleur
-	Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Purpose:
+ * Fonction pour champ saisie en mode ajax. Used for autocompletion of products.
+ * Author: Laurent Destailleur Licence: GPL
+ * ==================================================================
+ */
 function publish_selvalue(obj) { $(obj.name).value = obj.options[obj.selectedIndex].value; }
 
 
 
-/*=================================================================
-	Purpose:  Set value of a field after return of Ajax call. Used for autocompletion.
-	Input:    HTML field name, val
-	Author:   Regis Houssin
-	Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Purpose:
+ * Set value of a field after return of Ajax call. Used for autocompletion.
+ * Input: HTML field name, val Author: Regis Houssin Licence: GPL
+ * ==================================================================
+ */
 function ac_return(field, val){
-/*        alert('field.name='+field.name+'-'+val.innerHTML); */
+/* alert('field.name='+field.name+'-'+val.innerHTML); */
         /* on met en place l'expression reguliere */
         var regex = new RegExp('[0123456789]*-idcache', 'i');
         /* on l'applique au contenu */
         var idCache = regex.exec(val.innerHTML);
         /* on recupere id */
         id = idCache[0].replace('-idcache', '');
-/*        alert('field.name='+field.name+'-'+idCache[0]+'-'+id); */ 
+/* alert('field.name='+field.name+'-'+idCache[0]+'-'+id); */ 
         /* et on l'affecte au champ cache */
-/*        alert('field.name='+field.name+'-'+val.innerHTML+'-id='+id); */
+/* alert('field.name='+field.name+'-'+val.innerHTML+'-id='+id); */
         $(field.name+'_id').value = id;
 }
 
-/*=================================================================
-	Purpose:  Applique un delai avant execution. Used for autocompletion of companies.
-	Input:    funct, delay
-	Author:   Regis Houssin
-	Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Purpose:
+ * Applique un delai avant execution. Used for autocompletion of companies.
+ * Input: funct, delay Author: Regis Houssin Licence: GPL
+ * ==================================================================
+ */
  function ac_delay(funct,delay) {
  	// delay before start of action
   	setTimeout(funct,delay);
 }
 
- 
-/*=================================================================
-	Purpose:  Clean values of a "Sortable.serialize". 
-	          Used by drag and drop. Works for Scriptaculous and jQuery.
-	Input:    expr
-	Author:   Regis Houssin
-	Licence:  GPL
-==================================================================*/
+
+/*
+ * ================================================================= 
+ * Purpose:
+ * Clean values of a "Sortable.serialize". Used by drag and drop. Works for
+ * Scriptaculous and jQuery. Input: expr Author: Regis Houssin Licence: GPL
+ * ==================================================================
+ */
 function cleanSerialize(expr) {
 	var reg = new RegExp("(&)", "g");
 	var reg2 = new RegExp("[^A-Z0-9,]", "g");
@@ -602,13 +611,13 @@ function cleanSerialize(expr) {
 }
 
 
-/*=================================================================
-Purpose:  Display a temporary message in input text fields (For showing help message on input field).
-Input:    fieldId
-Input:    message
-Author:   Regis Houssin
-Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Purpose:
+ * Display a temporary message in input text fields (For showing help message on
+ * input field). Input: fieldId Input: message Author: Regis Houssin Licence:
+ * GPL ==================================================================
+ */
 function displayMessage(fieldId,message) {
 	var textbox = document.getElementById(fieldId);
 	if (textbox.value == '') {
@@ -617,25 +626,27 @@ function displayMessage(fieldId,message) {
 	}
 }
 
-/*=================================================================
-Purpose:  Hide a temporary message in input text fields (For showing help message on input field).
-Input:    fiedId
-Input:    message
-Author:   Regis Houssin
-Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Purpose:
+ * Hide a temporary message in input text fields (For showing help message on
+ * input field). Input: fiedId Input: message Author: Regis Houssin Licence: GPL
+ * ==================================================================
+ */
 function hideMessage(fieldId,message) {
 	var textbox = document.getElementById(fieldId);
 	textbox.style.color = 'black';
 	if (textbox.value == message) textbox.value = '';
 }
 
-/*=================================================================
-Purpose:  To show an element (To support multiselect of checkboxes in some pages)
-Input:    fieldId
-Author:   Regis Houssin
-Licence:  GPL
-==================================================================*/
+
+/*
+ * ================================================================= 
+ * Purpose: To
+ * show an element (To support multiselect of checkboxes in some pages) Input:
+ * fieldId Author: Regis Houssin Licence: GPL
+ * ==================================================================
+ */
 function displayElement(fieldId) {
 	var elementId = document.getElementById(fieldId);
 	if (elementId.style.visibility == 'hidden') {
@@ -643,12 +654,13 @@ function displayElement(fieldId) {
 	}
 }
 
-/*=================================================================
-Purpose:  To hide an element (To support multiselect of checkboxes in some pages)
-Input:    fieldId
-Author:   Regis Houssin
-Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Purpose: To
+ * hide an element (To support multiselect of checkboxes in some pages) Input:
+ * fieldId Author: Regis Houssin Licence: GPL
+ * ==================================================================
+ */
 function hideElement(fieldId) {
 	var elementId = document.getElementById(fieldId);
 	if (elementId.style.visibility == 'visible') {
@@ -656,12 +668,13 @@ function hideElement(fieldId) {
 	}
 }
 
-/*=================================================================
-Purpose:  To check a checkbox (To support multiselect of checkboxes in some pages)
-Input:    fieldId
-Author:   Regis Houssin
-Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Purpose: To
+ * check a checkbox (To support multiselect of checkboxes in some pages) Input:
+ * fieldId Author: Regis Houssin Licence: GPL
+ * ==================================================================
+ */
 function checkBox(boxId) {
 	var elementId = document.getElementById(boxId);
 	if (elementId.checked == false) {
@@ -669,17 +682,17 @@ function checkBox(boxId) {
 	}
 }
 
-/*=================================================================
-Purpose:  To uncheck a checkbox (To support multiselect of checkboxes in some pages)
-Input:    fieldId
-Author:   Regis Houssin
-Licence:  GPL
-==================================================================*/
+/*
+ * ================================================================= 
+ * Purpose: To
+ * uncheck a checkbox (To support multiselect of checkboxes in some pages)
+ * Input: fieldId Author: Regis Houssin Licence: GPL
+ * ==================================================================
+ */
 function uncheckBox(boxId) {
 	var elementId = document.getElementById(boxId);
 	if (elementId.checked == true) {
 		elementId.checked = false;
 	}
 }
-
 
