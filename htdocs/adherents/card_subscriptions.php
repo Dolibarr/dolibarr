@@ -378,7 +378,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 
 	if ($conf->use_javascript_ajax)
 	{
-        print '<script type="text/javascript" language="javascript">';
+        print "\n".'<script type="text/javascript" language="javascript">';
         print 'jQuery(document).ready(function () {
                     jQuery(".bankswitchclass").'.($bankdirect||$bankviainvoice?'show()':'hide()').';
                     jQuery("#none").click(function() {
@@ -394,7 +394,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
                         jQuery(".bankswitchclass").show();
                     });
 	       });';
-    	print '</script>';
+    	print '</script>'."\n";
 	}
 
 	print '<form name="cotisation" method="post" action="'.$_SERVER["PHP_SELF"].'">';

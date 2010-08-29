@@ -665,6 +665,20 @@ if ($action == 'create')
     }
     if ($mesg) print '<div class="ok">'.$mesg.'</div>';
 
+
+    if ($conf->use_javascript_ajax)
+    {
+        print "\n".'<script type="text/javascript" language="javascript">';
+        print 'jQuery(document).ready(function () {
+                    jQuery("#selectpays_id").change(function() {
+                        document.formsoc.action.value="create";
+                        document.formsoc.submit();
+                    });
+               })';
+        print '</script>'."\n";
+    }
+
+
     print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
@@ -733,7 +747,7 @@ if ($action == 'create')
     // Country
     $adh->pays_id=$adh->pays_id?$adh->pays_id:$mysoc->pays_id;
     print '<tr><td>'.$langs->trans("Country").'</td><td>';
-    $html->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$adh->pays_id,'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_create()"':'');
+    $html->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$adh->pays_id,'pays_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>';
 
@@ -850,6 +864,18 @@ if ($action == 'edit')
 	if ($mesg) print '<div class="ok">'.$mesg.'</div>';
 
 
+	if ($conf->use_javascript_ajax)
+	{
+        print "\n".'<script type="text/javascript" language="javascript">';
+        print 'jQuery(document).ready(function () {
+                    jQuery("#selectpays").change(function() {
+	               	    document.formsoc.action.value="edit";
+                        document.formsoc.submit();
+                    });
+               })';
+        print '</script>'."\n";
+	}
+
 	$rowspan=17;
 	$rowspan+=sizeof($adho->attribute_label);
 	if ($conf->societe->enabled) $rowspan++;
@@ -929,7 +955,7 @@ if ($action == 'edit')
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td>';
-	$html->select_pays(isset($_POST["pays"])?$_POST["pays"]:$adh->pays_id,'pays',$conf->use_javascript_ajax?' onChange="company_save_refresh_edit()"':'');
+	$html->select_pays(isset($_POST["pays"])?$_POST["pays"]:$adh->pays_id,'pays');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	print '</td></tr>';
 

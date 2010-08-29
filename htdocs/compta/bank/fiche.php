@@ -181,6 +181,18 @@ if ($_REQUEST["action"] == 'create')
 
 	if ($message) { print "$message<br>\n"; }
 
+    if ($conf->use_javascript_ajax)
+    {
+        print "\n".'<script type="text/javascript" language="javascript">';
+        print 'jQuery(document).ready(function () {
+                    jQuery("#selectaccount_country_id").change(function() {
+                        document.formsoc.action.value="create";
+                        document.formsoc.submit();
+                    });
+               })';
+        print '</script>'."\n";
+    }
+
 	print '<form action="'.$_SERVER["PHP_SELF"].'" name="formsoc" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -238,7 +250,7 @@ if ($_REQUEST["action"] == 'create')
 		$selectedcode=$_POST["account_country_id"]?$_POST["account_country_id"]:$account->pays_code;
 	}
 	else if (empty($selectedcode)) $selectedcode=$mysoc->pays_code;
-	$form->select_pays($selectedcode,'account_country_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_create()"':'');
+	$form->select_pays($selectedcode,'account_country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	print '</td></tr>';
 
@@ -448,6 +460,18 @@ else
 
         if ($message) { print "$message<br>\n"; }
 
+        if ($conf->use_javascript_ajax)
+        {
+            print "\n".'<script type="text/javascript" language="javascript">';
+            print 'jQuery(document).ready(function () {
+                        jQuery("#selectaccount_country_id").change(function() {
+                            document.formsoc.action.value="edit";
+                            document.formsoc.submit();
+                        });
+                   })';
+            print '</script>'."\n";
+        }
+
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$account->id.'" method="post" name="formsoc">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="update">';
@@ -494,7 +518,7 @@ else
 		$selectedcode=$account->pays_code;
 		if (isset($_POST["account_country_id"])) $selectedcode=$_POST["account_country_id"];
 		else if (empty($selectedcode)) $selectedcode=$mysoc->pays_code;
-		$form->select_pays($selectedcode,'account_country_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_edit()"':'');
+		$form->select_pays($selectedcode,'account_country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 

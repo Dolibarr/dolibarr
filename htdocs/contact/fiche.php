@@ -300,6 +300,18 @@ if ($user->rights->societe->contact->creer)
 		// Affiche les erreurs
 		dol_htmloutput_errors($mesg,$errors);
 
+	    if ($conf->use_javascript_ajax)
+        {
+            print "\n".'<script type="text/javascript" language="javascript">';
+            print 'jQuery(document).ready(function () {
+                        jQuery("#selectpays_id").change(function() {
+                            document.formsoc.action.value="create";
+                            document.formsoc.submit();
+                        });
+                   })';
+            print '</script>'."\n";
+        }
+
 		print '<br>';
 		print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -346,7 +358,7 @@ if ($user->rights->societe->contact->creer)
 		// Country
 		if (dol_strlen(trim($contact->fk_pays)) == 0) $contact->fk_pays = $objsoc->pays_id;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-		$form->select_pays((isset($_POST["pays_id"])?$_POST["pays_id"]:$contact->fk_pays),'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_create()"':'');
+		$form->select_pays((isset($_POST["pays_id"])?$_POST["pays_id"]:$contact->fk_pays),'pays_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
@@ -418,6 +430,18 @@ if ($user->rights->societe->contact->creer)
 		// Affiche les erreurs
 		dol_htmloutput_errors($mesg,$errors);
 
+        if ($conf->use_javascript_ajax)
+        {
+            print "\n".'<script type="text/javascript" language="javascript">';
+            print 'jQuery(document).ready(function () {
+                        jQuery("#selectpays_id").change(function() {
+                            document.formsoc.action.value="edit";
+                            document.formsoc.submit();
+                        });
+                   })';
+            print '</script>'."\n";
+        }
+
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$_REQUEST["id"].'" name="formsoc">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
@@ -459,7 +483,7 @@ if ($user->rights->societe->contact->creer)
 
 		// Country
 		print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-		$form->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$contact->fk_pays,'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_edit()"':'');
+		$form->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$contact->fk_pays,'pays_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 

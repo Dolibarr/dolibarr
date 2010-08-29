@@ -267,6 +267,14 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     /**
      * Edition des parametres
      */
+    print "\n".'<script type="text/javascript" language="javascript">';
+    print 'jQuery(document).ready(function () {
+              jQuery("#selectpays_id").change(function() {
+                document.form_index.action.value="updateedit";
+                document.form_index.submit();
+              });
+          });';
+    print '</script>'."\n";
 
     print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -292,11 +300,12 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyTown").'</td><td>';
     print '<input name="ville" size="30" value="'. ($conf->global->MAIN_INFO_SOCIETE_VILLE?$conf->global->MAIN_INFO_SOCIETE_VILLE:$_POST["ville"]) . '"></td></tr>'."\n";
 
+    // Country
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
     $pays_selected=$pays_id;
     //if (empty($pays_selected)) $pays_selected=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
-    $form->select_pays($pays_selected,'pays_id',($conf->use_javascript_ajax?' onChange="company_save_refresh()"':''));
+    $form->select_pays($pays_selected,'pays_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>'."\n";
 
@@ -362,8 +371,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '</td></tr></table>';
     print '</td></tr>';
 
-
-
+    // Note
     $var=!$var;
     print '<tr '.$bc[$var].'><td valign="top">'.$langs->trans("Note").'</td><td>';
     print '<textarea class="flat" name="note" cols="80" rows="'.ROWS_5.'">'.$conf->global->MAIN_INFO_SOCIETE_NOTE.'</textarea></td></tr>';

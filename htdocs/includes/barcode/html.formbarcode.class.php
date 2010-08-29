@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,16 @@
  */
 
 /**
-        \file       htdocs/core/class/html.form.class.php
-        \brief      Fichier de la classe des fonctions pr�d�finie de composants html
+        \file       htdocs/includes/barcode/html.formbarcode.class.php
+        \brief      Fichier de la classe des fonctions predefinie de composants html
         \version    $Revision$
 */
 
 
 /**
         \class      Form
-        \brief      Classe permettant la g�n�ration de composants html
+        \brief      Classe permettant la generation de composants html
 */
-
 class FormBarCode
 {
 	var $db;
@@ -63,6 +62,20 @@ class FormBarCode
 
 		$disable = '';
 
+		if ($conf->use_javascript_ajax)
+		{
+            print "\n".'<script type="text/javascript" language="javascript">';
+            print 'jQuery(document).ready(function () {
+                        jQuery("#select'.$idForm.'").change(function() {
+                            var formName = document.getElementById("form'.$idForm.'");
+                            formName.action.value="setcoder";
+                            formName.submit();
+                        });
+               });';
+            print '</script>'."\n";
+    		 //onChange="barcode_coder_save(\''.$idForm.'\')
+		}
+
 		// We check if barcode is already selected by default
 		if ((($conf->product->enabled || $conf->service->enabled) && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
 		    ($conf->societe->enabled && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id))
@@ -70,11 +83,11 @@ class FormBarCode
 			$disable = 'disabled="disabled"';
 		}
 
-		$select_encoder = '<form action="barcode.php" method="post" id="'.$idForm.'">';
+		$select_encoder = '<form action="'.DOL_URL_ROOT.'/includes/modules/barcode/admin/barcode.php" method="post" id="form'.$idForm.'">';
 		$select_encoder.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$select_encoder.= '<input type="hidden" name="action" value="update">';
 		$select_encoder.= '<input type="hidden" name="code_id" value="'.$code_id.'">';
-		$select_encoder.= '<select class="flat" name="coder" onChange="barcode_coder_save(\''.$idForm.'\')">';
+		$select_encoder.= '<select id="select'.$idForm.'" class="flat" name="coder">';
 		$select_encoder.= '<option value="0"'.($selected==0?' selected="true"':'').' '.$disable.'>'.$langs->trans('Disable').'</option>';
 		$select_encoder.= '<option value="-1" disabled="disabled">--------------------</option>';
 		foreach($barcodelist as $key => $value)
@@ -100,7 +113,7 @@ class FormBarCode
         $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
         $sql.= " WHERE coder <> '0'";
         $sql.= " AND entity = ".$conf->entity;
-        $sql.= " ORDER BY rowid";
+        $sql.= " ORDER BY code";
 
         $result = $this->db->query($sql);
         if ($result)

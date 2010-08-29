@@ -12,20 +12,6 @@
 
 
 /*=================================================================
-	Purpose:  Resubmit page when barcode choice is changed (admin page)
-	Input:    formNameID
-	Author:   Laurent Destailleur
-	Licence:  GPL
-==================================================================*/
-function barcode_coder_save(formNameID)
-{
-    var formName = document.getElementById(formNameID);
-    formName.action.value='setcoder';
-    formName.submit();
-}
-
-
-/*=================================================================
 	Purpose:  Pour la fonction de saisie auto des villes
 	Input:    postalcode,objecttown,objectcountry,objectstate
 	Author:   Eric Seigne
@@ -41,32 +27,6 @@ function autofilltownfromzip_PopupPostalCode(url_root, postalcode,objecttown,obj
     var hWnd = window.open(url, "SearchPostalCodeWindow", "width=" + 300 + ",height=" + 150 + ",resizable=yes,scrollbars=yes");
     if((document.window != null) && (!hWnd.opener)) hWnd.opener = document.window;
 }
-
-
-/*=================================================================
-Purpose:  To resubmit pages when country is changed
-Input:    postalcode,objecttown,objectcountry,objectstate
-Author:   Eric Seigne
-Licence:  GPL
-==================================================================*/
-function company_save_refresh_edit()
-{
-    document.formsoc.action.value="edit";
-    document.formsoc.submit();
-}
-
-function company_save_refresh_create()
-{
-    document.formsoc.action.value="create";
-    document.formsoc.submit();
-}
-
-function company_save_refresh()
-{
-    document.form_index.action.value="updateedit";
-    document.form_index.submit();
-}
-
 
 
 /*=================================================================
