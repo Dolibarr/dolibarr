@@ -38,6 +38,16 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 
 
 /**
+ *  \brief          Return value of a param into get or post variable
+ *  \param          paramname   Name of parameter to found
+ *  \return         string      Value found
+ */
+function GETPOST($paramname)
+{
+    return isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
+}
+
+/**
  *	\brief          Create a clone of instance of object (new instance with same properties)
  * 					This function works for both PHP4 and PHP5
  * 	\param			object		Object to clone
@@ -261,7 +271,7 @@ function dol_syslog($message, $level=LOG_INFO)
 		{
 			$filelog=SYSLOG_FILE;
 			$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
-			//print $filelog;
+			//print "filelog=".$filelog."\n";
 			if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen($filelog,"a+");
 			else $file=fopen($filelog,"a+");
 
@@ -382,6 +392,15 @@ function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 	if (! $notab) print "\n".'<div class="tabBar">'."\n";
 }
 
+/**
+ *	\brief      Show tab footer of a card
+ *	\param      notab		0=Add tab footer, 1=no tab footer
+ */
+function dol_fiche_end($notab=0)
+{
+	if (! $notab) print "\n</div>\n";
+}
+
 
 /**
  *	\brief      Add a delay to a date
@@ -425,17 +444,22 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 {
 	global $conf,$langs;
 
+    if (! is_object($outputlangs)) $outputlangs=$langs;
+
 	// Si format non defini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
 	if (! $format) $format=(isset($conf->format_date_text_short) ? $conf->format_date_text_short : '%Y-%m-%d %H:%M:%S');
 
-	if ($format == 'day')               $format=$conf->format_date_short;
-	if ($format == 'hour')              $format=$conf->format_hour_short;
-	if ($format == 'daytext')           $format=$conf->format_date_text;
-	if ($format == 'daytextshort')      $format=$conf->format_date_text_short;
-	if ($format == 'dayhour')           $format=$conf->format_date_hour_short;
-	if ($format == 'dayhourtext')       $format=$conf->format_date_hour_text;
-	if ($format == 'dayhourtextshort')  $format=$conf->format_date_hour_text_short;
+	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
+	if ($format == 'day')               $format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
+	if ($format == 'hour')              $format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
+	if ($format == 'hourduration')      $format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
+	if ($format == 'daytext')           $format=($outputlangs->trans("FormatDateText")!="FormatDateText"?$outputlangs->trans("FormatDateText"):$conf->format_date_text);
+	if ($format == 'daytextshort')      $format=($outputlangs->trans("FormatDateTextShort")!="FormatDateTextShort"?$outputlangs->trans("FormatDateTextShort"):$conf->format_date_text_short);
+	if ($format == 'dayhour')           $format=($outputlangs->trans("FormatDateHourShort")!="FormatDateHourShort"?$outputlangs->trans("FormatDateHourShort"):$conf->format_date_hour_short);
+	if ($format == 'dayhourtext')       $format=($outputlangs->trans("FormatDateHourText")!="FormatDateHourText"?$outputlangs->trans("FormatDateHourText"):$conf->format_date_hour_text);
+	if ($format == 'dayhourtextshort')  $format=($outputlangs->trans("FormatDateHourTextShort")!="FormatDateHourTextShort"?$outputlangs->trans("FormatDateHourTextShort"):$conf->format_date_hour_text_short);
 
+	// Format not sensitive to language
 	if ($format == 'dayhourlog')        $format='%Y%m%d%H%M%S';
 	if ($format == 'dayhourldap')       $format='%Y%m%d%H%M%SZ';
 	if ($format == 'dayhourxcard')      $format='%Y%m%dT%H%M%SZ';
@@ -485,8 +509,6 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 		else $ret='Bad value '.$time.' for date';
 	}
 
-	if (! is_object($outputlangs)) $outputlangs=$langs;
-
 	if (preg_match('/__b__/i',$format))
 	{
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
@@ -535,7 +557,7 @@ function dol_stringtotime($string)
 	if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$string,$reg))
 	{
 		// This part of code should not be used.
-		dol_syslog("Functions.lib::dol_stringtotime call to function with deprecated parameter", LOG_WARN);
+		dol_syslog("Functions.lib::dol_stringtotime call to function with deprecated parameter", LOG_WARNING);
 		// Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
 		// Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
 		$sday = $reg[1];
@@ -939,17 +961,17 @@ function isValidEmail($address)
 
 
 /**
- * Make a strlen call. Works even in mbstring module not enabled
+ * Make a strlen call. Works even if mbstring module not enabled.
  *
- * @param unknown_type $string
- * @param unknown_type $stringencoding
- * @return unknown
+ * @param   $string
+ * @param   $stringencoding
+ * @return  int
  */
 function dol_strlen($string,$stringencoding='')
 {
 	global $langs;
 
-	if (empty($stringencoding)) $stringencoding=$langs->charset_output;
+	if (empty($stringencoding)) $stringencoding=(empty($langs->charset_output)?'UTF-8':$langs->charset_output);
 
 	$ret='';
 	if (function_exists('mb_strlen'))
@@ -966,11 +988,11 @@ function dol_strlen($string,$stringencoding='')
 /**
  * Make a substring. Works even in mbstring module not enabled
  *
- * @param unknown_type $string
- * @param unknown_type $start
- * @param unknown_type $length
- * @param unknown_type $stringencoding
- * @return unknown
+ * @param   $string
+ * @param   $start
+ * @param   $length
+ * @param   $stringencoding
+ * @return  string
  */
 function dol_substr($string,$start,$length,$stringencoding='')
 {
@@ -1530,7 +1552,7 @@ function info_admin($texte,$infoonimgalt=0)
  * 				If $_REQUEST['action'] defined, we also check write permission.
  *	\param      user      	  	User to check
  *	\param      features	    Features to check (in most cases, it's module name)
- *	\param      objectid      	Object ID if we want to check permission on on object (optionnal)
+ *	\param      objectid      	Object ID if we want to check permission on a particular record (optionnal)
  *	\param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnal)
  *	\param      feature2		Feature to check (second level of permission)
  *  \param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
@@ -1801,7 +1823,7 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
 	global $conf, $db, $user, $langs;
 	if (! is_object($langs))
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/core/translate.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/class/translate.class.php');
 		$langs=new Translate('',$conf);
 	}
 
@@ -1857,11 +1879,12 @@ function dol_print_error($db='',$error='')
 	// Si erreur intervenue avant chargement langue
 	if (! $langs)
 	{
-		require_once(DOL_DOCUMENT_ROOT ."/core/translate.class.php");
+		require_once(DOL_DOCUMENT_ROOT ."/core/class/translate.class.php");
 		$langs = new Translate("", $conf);
 		$langs->load("main");
 	}
-	$langs->load("errors");
+	$langs->load("main");
+    $langs->load("errors");
 
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
@@ -1870,13 +1893,19 @@ function dol_print_error($db='',$error='')
 		$out.="You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n";
 		$out.=$langs->trans("InformationToHelpDiagnose").":<br>\n";
 
+        $out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";;
 		$out.="<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;
-		$out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";;
 		if (isset($conf->global->MAIN_FEATURES_LEVEL)) $out.="<b>".$langs->trans("LevelOfFeature").":</b> ".$conf->global->MAIN_FEATURES_LEVEL."<br>\n";;
+        if (function_exists("phpversion"))
+        {
+        	$out.="<b>".$langs->trans("PHP").":</b> ".phpversion()."<br>\n";
+        	//phpinfo();       // This is to show location of php.ini file
+        }
 		$out.="<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
-		$out.="<b>".$langs->trans("Referer").":</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
+        $out.="<br>\n";
 		$out.="<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
-		$out.="<b>".$langs->trans("MenuManager").":</b> ".$conf->left_menu.'/'.$conf->top_menu."<br>\n";
+        $out.="<b>".$langs->trans("Referer").":</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
+		$out.="<b>".$langs->trans("MenuManager").":</b> ".$conf->top_menu.($conf->top_menu||$conf->left_menu?'/':'').$conf->left_menu."<br>\n";
 		$out.="<br>\n";
 		$syslog.="url=".$_SERVER["REQUEST_URI"];
 		$syslog.=", query_string=".$_SERVER["QUERY_STRING"];
@@ -1955,95 +1984,6 @@ function dol_print_error_email()
 
 	$langs->load("errors");
 	print '<br><div class="error">'.$langs->trans("ErrorContactEMail",$conf->global->MAIN_INFO_SOCIETE_MAIL,'ERRORNEWPAYMENT'.dol_print_date(mktime(),'%Y%m%d')).'</div>';
-}
-
-
-
-/**
- *	\brief  Move an uploaded file after some controls.
- * 			If there is errors (virus found, antivir in error, bad filename), file is not moved.
- *	\param	src_file			Source filename
- *	\param	dest_file			Target filename
- * 	\param	allowoverwrite		Overwrite if exists
- * 	\param	disablevirusscan	Disable virus scan
- *	\return int         		>0 if OK, <0 if KO (an array with virus or errors if virus found or errors)
- */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0)
-{
-	global $conf;
-
-	$file_name = $dest_file;
-
-	// If we need to make a virus scan
-	if (empty($disablevirusscan) && file_exists($src_file) && $conf->global->MAIN_ANTIVIRUS_COMMAND)
-	{
-		require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
-		require_once(DOL_DOCUMENT_ROOT.'/lib/antivir.class.php');
-		$antivir=new AntiVir($db);
-		$result = $antivir->dol_avscan_file($src_file);
-		if ($result < 0)	// If virus or error, we stop here
-		{
-			$reterrors=$antivir->errors;
-			dol_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." KO with antivir", LOG_WARNING);
-			//return $reterrors;
-			return -99;
-		}
-	}
-
-	// Security:
-	// Disallow file with some extensions. We renamed them.
-	// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
-	if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$file_name))
-	{
-		$file_name.= '.noexe';
-	}
-
-	// Security:
-	// On interdit fichiers caches, remontees de repertoire ainsi que les pipes dans les noms de fichiers.
-	if (preg_match('/^\./',$src_file) || preg_match('/\.\./',$src_file) || preg_match('/[<>|]/',$src_file))
-	{
-		dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
-		return -1;
-	}
-
-	// Security:
-	// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans
-	// les noms de fichiers.
-	if (preg_match('/^\./',$dest_file) || preg_match('/\.\./',$dest_file) || preg_match('/[<>|]/',$dest_file))
-	{
-		dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
-		return -2;
-	}
-
-	// The file functions must be in OS filesystem encoding.
-	$src_file_osencoded=dol_osencode($src_file);
-	$file_name_osencoded=dol_osencode($file_name);
-
-	// Check if destination file already exists
-	if (! $allowoverwrite)
-	{
-		if (file_exists($file_name_osencoded))
-		{
-			dol_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." already exists", LOG_WARNING);
-			return -3;
-		}
-	}
-
-	// Move file
-	$return=move_uploaded_file($src_file_osencoded, $file_name_osencoded);
-	if ($return)
-	{
-		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
-		dol_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
-		return 1;
-	}
-	else
-	{
-		dol_syslog("Functions.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);
-		return -4;
-	}
-
-	return 1;
 }
 
 
@@ -2127,22 +2067,39 @@ function print_titre($titre)
  */
 function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
+	print load_fiche_titre($titre, $mesg, $picto, $pictoisfullpath, $id);
+}
+
+/**
+ *	\brief  Load a title with picto
+ *	\param	titre				Title to show
+ *	\param	mesg				Added message to show on right
+ *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
+ * 	\param	id					To force an id on html objects
+ */
+function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
+{
 	global $conf;
+
+	$return='';
 
 	if ($picto == 'setup') $picto='title.png';
 	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
 
-	print "\n";
-	print '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
-	if (empty($conf->browser->phone) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
-	print '<td class="nobordernopadding" valign="middle">';
-	print '<div class="titre">'.$titre.'</div>';
-	print '</td>';
+	$return.= "\n";
+	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
+	if (empty($conf->browser->phone) && $picto && $titre) $return.= '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+	$return.= '<td class="nobordernopadding" valign="middle">';
+	$return.= '<div class="titre">'.$titre.'</div>';
+	$return.= '</td>';
 	if (strlen($mesg))
 	{
-		print '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
+		$return.= '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
 	}
-	print '</tr></table>'."\n";
+	$return.= '</tr></table>'."\n";
+
+	return $return;
 }
 
 /**
@@ -2545,13 +2502,20 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  *	\brief		Return localtaxe rate for a particular tva
  * 	\param      tva			Vat taxe
  * 	\param      local		Local taxe to search and return
- * 	\return		int			<0 if KO, localtax if found
+ * 	\return		int			0 if not found, localtax if found
  */
-function get_localtax($tva, $local)
+function get_localtax($tva, $local, $societe_acheteuse="")
 {
 	global $db, $conf, $mysoc;
 
 	$code_pays=$mysoc->pays_code;
+
+	if (is_object($societe_acheteuse))
+	{
+		if ($code_pays!=$societe_acheteuse->pays_code) return 0;
+		if ($local==1 && !$societe_acheteuse->localtax1_assuj) return 0;
+		elseif ($local==2 && !$societe_acheteuse->localtax2_assuj) return 0;
+	}
 
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax2";
@@ -2568,11 +2532,11 @@ function get_localtax($tva, $local)
 		elseif ($local==2) return $obj->localtax2;
 	}
 
-	return -1;
+	return 0;
 }
 
 /**
- *	\brief	Return vat rate of a product in a particular selling country
+ *	Return vat rate of a product in a particular selling country.
  *	TODO May be this should be better as a method of product class
  */
 function get_product_vat_for_country($idprod, $countrycode)
@@ -2589,7 +2553,7 @@ function get_product_vat_for_country($idprod, $countrycode)
 }
 
 /**
- *	\brief	Return localtax rate of a product in a particular selling country
+ *	Return localtax rate of a product in a particular selling country
  *	TODO May be this should be better as a method of product class
  */
 function get_product_localtax_for_country($idprod, $local, $countrycode)
@@ -2615,16 +2579,15 @@ function get_product_localtax_for_country($idprod, $local, $countrycode)
  *					Sinon TVA proposee par defaut=0. Fin de regle.
  *	\param      	societe_vendeuse    	Objet societe vendeuse
  *	\param      	societe_acheteuse   	Objet societe acheteuse
- *	\param      	taux_produit        	Taux par defaut du produit vendu (old way to get product vat rate)
- *	\param      	idprod					Id product (new way to get product vat rate)
+ *	\param      	idprod					Id product
  *	\return     	float               	Taux de tva a appliquer, -1 si ne peut etre determine
  */
-function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $idprod=0)
+function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 {
 	if (!is_object($societe_vendeuse)) return -1;
 	if (!is_object($societe_acheteuse)) return -1;
 
-	dol_syslog("get_default_tva vendeur_assujeti=".$societe_vendeuse->tva_assuj." pays_vendeur=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", pays_acheteur=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", taux_produit(deprecated)=".$taux_produit.", idprod=".$idprod);
+	dol_syslog("get_default_tva seller use vat=".$societe_vendeuse->tva_assuj." seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod);
 
 	// Si vendeur non assujeti a TVA (tva_assuj vaut 0/1 ou franchise/reel)
 	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
@@ -2632,29 +2595,35 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
 
 	// Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
 	//if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && ($societe_acheteuse->tva_assuj == 1 || $societe_acheteuse->tva_assuj == 'reel'))
-	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concercne si le test suivant n'est pas suffisant.
-	if ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id)
+	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concerne si le test suivant n'est pas suffisant.
+	if ($societe_vendeuse->pays_code == $societe_acheteuse->pays_code) // Warning ->pays_id not always defined
 	{
 		if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
-		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut determiner taux tva
-		return $taux_produit;
+		return -1;	// Si produit absent, on ne peut determiner taux tva
 	}
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
 	// Non gere
 
-	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
-	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && ! $societe_acheteuse->tva_intra)
+	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
+	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()))
 	{
-		if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
-		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut determiner taux tva
-		return $taux_produit;
-	}
+		// Define if third party is treated as company of not when nature is unknown
+		$isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1;	// 0 by default
+		if (! empty($societe_acheteuse->tva_intra)) $isacompany=1;
+		else if (! empty($societe_acheteuse->typent_code) && in_array($societe_acheteuse->typent_code,array('TE_PRIVATE'))) $isacompany=0;
+		else if (! empty($societe_acheteuse->typent_code) && in_array($societe_acheteuse->typent_code,array('TE_SMALL','TE_MEDIUM','TE_LARGE'))) $isacompany=1;
 
-	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA intra) alors TVA par defaut=0. Fin de regle
-	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_intra)
-	{
-		return 0;
+		if ($isacompany)
+		{
+			return 0;
+		}
+		else
+		{
+			if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
+            return -1;  // Si produit absent, on ne peut determiner taux tva
+		}
 	}
 
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
@@ -2673,10 +2642,10 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
  *					Sinon TVA proposee par defaut=0. Fin de regle.
  *	\param      	societe_vendeuse    	Objet societe vendeuse
  *	\param      	societe_acheteuse   	Objet societe acheteuse
- *	\param      	taux_produit        	Taux par defaut du produit vendu
+ *  \param          idprod                  Id product
  *	\return     	float               	0 or 1
  */
-function get_default_npr($societe_vendeuse, $societe_acheteuse, $taux_produit)
+function get_default_npr($societe_vendeuse, $societe_acheteuse, $idprod)
 {
 	return 0;
 }
@@ -2685,8 +2654,8 @@ function get_default_npr($societe_vendeuse, $societe_acheteuse, $taux_produit)
  *	\brief      	Function that return localtax of a product line (according to seller, buyer and product vat rate)
  *	\param      	societe_vendeuse    	Objet societe vendeuse
  *	\param      	societe_acheteuse   	Objet societe acheteuse
- *  \param			local					Localtax a traiter
- *	\param      	idprod					Id product (way to get product localtax1 rate)
+ *  \param			local					Localtax to process (1 or 2)
+ *	\param      	idprod					Id product
  *	\return     	float               	Taux de localtax appliquer, -1 si ne peut etre determine
  */
 function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $idprod=0)
@@ -3408,5 +3377,116 @@ function dol_eval($s)
 	return 1;
 }
 
+/**
+ * 	\brief		For replace glob() function
+ */
+if (! function_exists('glob'))
+{
+	function glob($pattern)
+	{
+		#get pathname (everything up until the last / or \)
+		$path=$output=null;
+		if(PHP_OS=='WIN32') $slash='\\';
+		else $slash='/';
+		$lastpos=strrpos($pattern,$slash);
+
+		if(!($lastpos===false))
+		{
+			$path=substr($pattern,0,-$lastpos-1);
+			$pattern=substr($pattern,$lastpos);
+		}
+		else
+		{
+			#no dir info, use current dir
+			$path=getcwd();
+		}
+
+		$handle=@opendir($path);
+		if($handle===false) return false;
+
+		while($dir=readdir($handle))
+		{
+			if(pattern_match($pattern,$dir)) $output[]=$dir;
+		}
+
+		closedir($handle);
+
+		if(is_array($output)) return $output;
+		return false;
+	}
+}
+
+/**
+ * 	\brief		For dol_glob() function
+ */
+function pattern_match($pattern,$string)
+{
+	#basically prepare a regular expression
+	$out=null;
+	$chunks=explode(';',$pattern);
+	foreach($chunks as $pattern)
+	{
+		$escape=array('$','^','.','{','}','(',')','[',']','|');
+		while(strpos($pattern,'**')!==false) $pattern=str_replace('**','*',$pattern);
+
+		foreach($escape as $probe) $pattern=str_replace($probe,"\\$probe",$pattern);
+
+		$pattern=str_replace('?*','*',str_replace('*?','*',str_replace('*',".*",str_replace('?','.{1,1}',$pattern))));
+		$out[]=$pattern;
+	}
+
+	if(count($out)==1)
+	{
+		return(preg_match('/^'.$out[0].'$/i',$string));
+	}
+	else
+	{
+		foreach($out as $tester)
+		{
+			if(preg_match('/^'.$tester.'$/i',$string)) return true;
+			return false;
+		}
+	}
+}
+
+/**
+ * 	\brief		Return img flag of country for a language code or country code
+ * 	\param		codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
+ * 	\return		string		HTML img string with flag.
+ */
+function picto_from_langcode($codelang)
+{
+	$ret='';
+    if (! empty($codelang))
+    {
+    	if ($codelang == 'auto') $ret=img_picto('',DOL_URL_ROOT.'/theme/common/flags/int.png','',1);
+    	else {
+    		//print $codelang;
+    		$langtocountryflag=array('da_DA'=>'dk','fr_CA'=>'mq','ca_ES'=>'catalonia','ar_AR'=>'');
+    		$tmpcode='';
+    		if (isset($langtocountryflag[$codelang])) $tmpcode=$langtocountryflag[$codelang];
+    		else
+    		{
+    			$tmparray=explode('_',$codelang);
+    			$tmpcode=empty($tmparray[1])?$tmparray[0]:$tmparray[1];
+    		}
+    		if ($tmpcode) $ret.=img_picto($codelang,DOL_URL_ROOT.'/theme/common/flags/'.strtolower($tmpcode).'.png','',1);
+    	}
+    }
+    return $ret;
+}
+
+/**
+ * 	\brief		Define the style of background color of line
+ */
+function bcStyle($impair='impair', $pair='pair')
+{
+	$bc=array();
+
+	$bc[0]='class="'.$impair.'"';
+	$bc[1]='class="'.$pair.'"';
+
+	return $bc;
+}
 
 ?>
