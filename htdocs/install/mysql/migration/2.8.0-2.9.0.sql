@@ -261,7 +261,10 @@ ALTER TABLE llx_societe_address CHANGE fk_societe fk_soc integer DEFAULT 0;
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 45, 4,  '18','0','4','VAT standard rate from July 2010',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,note,active) values ( 46, 4,   '8','0','1','VAT reduced rate from July 2010',1);
 
+
 -- Add Argentina Data
+insert into llx_c_pays (rowid,code,libelle) values (23, 'AR', 'Argentine'      );
+
 -- Regions Argentina (id pays=23)
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2301, 23, 2301, '', 0, 'Norte', 1);
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (2302, 23, 2302, '', 0, 'Litoral', 1);
@@ -321,3 +324,7 @@ ALTER TABLE llx_boxes_def ADD UNIQUE INDEX uk_boxes_def (file, entity, note);
 
 -- Fix bad old data
 UPDATE llx_bank_url SET type='payment' WHERE type='?' AND label='(payment)' AND url LIKE '%compta/paiement/fiche.php%';
+
+
+update llx_const set value ='eldy' where name = 'MAIN_THEME' and (value= 'rodolphe' or value='dev' or value='bluelagoon');
+
