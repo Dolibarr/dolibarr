@@ -44,16 +44,15 @@ $langs->load("orders");
 $langs->load("agenda");
 
 // If socid provided by ajax company selector
-if (! empty($_REQUEST['socid_id']))
+if (GETPOST('socid_id'))
 {
-	$_GET['socid'] = $_GET['socid_id'];
-	$_POST['socid'] = $_POST['socid_id'];
-	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+	$_GET['socid'] = GETPOST('socid_id');
+	$_POST['socid'] = GETPOST('socid_id');
 }
 
 // Security check
-$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
-$id = isset($_GET["id"])?$_GET["id"]:'';
+$socid = GETPOST('socid');
+$id = GETPOST('id');
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO: revoir les droits car pas clair
 //$result = restrictedArea($user, 'agenda', $id, 'actioncomm', 'actions', '', 'id');
@@ -423,17 +422,31 @@ $htmlactions = new FormActions($db);
  * Affichage fiche en mode creation
  */
 
-if ($_GET["action"] == 'create')
+if (GETPOST('action') == 'create')
 {
 	$contact = new Contact($db);
 
 	if ($_REQUEST["contactid"])
 	{
-		$result=$contact->fetch($_REQUEST["contactid"]);
+		$result=$contact->fetch(GETPOST("contactid"));
 		if ($result < 0) dol_print_error($db,$contact->error);
 	}
 
-	print '<form name="formaction" action="fiche.php" method="post">';
+    if ($conf->use_javascript_ajax)
+    {
+    /*
+        print "\n".'<script type="text/javascript" language="javascript">';
+        print 'jQuery(document).ready(function () {
+                    jQuery("#selectsocid").change(function() {
+                        document.formaction.action.value="create";
+                        document.formaction.submit();
+                    });
+               })';
+        print '</script>'."\n";
+    */
+    }
+
+	print '<form name="formaction" action="fiche.php" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add_action">';
 	if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="backtopage" value="'.($_REQUEST["backtopage"] != 1 ? $_REQUEST["backtopage"] : $_SERVER["HTTP_REFERER"]).'">';
@@ -448,10 +461,10 @@ if ($_GET["action"] == 'create')
 
 	// Type d'action actifs
 	print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-	if ($_GET["actioncode"])
+	if (GETPOST("actioncode"))
 	{
 		print '<input type="hidden" name="actioncode" value="'.$_GET["actioncode"].'">'."\n";
-		$cactioncomm->fetch($_GET["actioncode"]);
+		$cactioncomm->fetch(GETPOST("actioncode"));
 		print $cactioncomm->getNomUrl();
 	}
 	else
@@ -468,12 +481,12 @@ if ($_GET["action"] == 'create')
 
 	// Societe, contact
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
-	if ($_REQUEST["socid"] > 0)
+	if (GETPOST("socid") > 0)
 	{
 		$societe = new Societe($db);
-		$societe->fetch($_REQUEST["socid"]);
+		$societe->fetch(GETPOST("socid"));
 		print $societe->getNomUrl(1);
-		print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
+		print '<input type="hidden" name="socid" value="'.GETPOST("socid").'">';
 	}
 	else
 	{
@@ -482,10 +495,10 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
 	// If company is forced, we propose contacts (may be contact is also forced)
-	if ($_REQUEST["socid"] > 0)
+	if (GETPOST("socid") > 0)
 	{
 		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
-		$html->select_contacts($_REQUEST["socid"],$_REQUEST['contactid'],'contactid',1,1);
+		$html->select_contacts(GETPOST("socid"),GETPOST('contactid'),'contactid',1,1);
 		print '</td></tr>';
 	}
 
@@ -496,7 +509,7 @@ if ($_GET["action"] == 'create')
 		$langs->load("project");
 
 		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-		$numproject=select_projects($societe->id,$_REQUEST["projectid"]?$_REQUEST["projectid"]:$projectid,'projectid');
+		$numproject=select_projects($societe->id,GETPOST("projectid")?GETPOST("projectid"):$projectid,'projectid');
 		if ($numproject==0)
 		{
 			print ' &nbsp; <a href="../../projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -511,33 +524,33 @@ if ($_GET["action"] == 'create')
 	// Affected by
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	//	$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:$actioncomm->usertodo,'affectedto',1);
-	$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
+	$html->select_users(GETPOST("affectedto")?GETPOST("affectedto"):($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
 	print '</td></tr>';
 
 	// Realised by
 	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-	$html->select_users($_REQUEST["doneby"]?$_REQUEST["doneby"]:$actioncomm->userdone,'doneby',1);
+	$html->select_users(GETPOST("doneby")?GETPOST("doneby"):$actioncomm->userdone,'doneby',1);
 	print '</td></tr>';
 
 	print '</table>';
 	print '<br>';
 	print '<table class="border" width="100%">';
 
-	if (! empty($_GET["datep"]) && preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/',$_GET["datep"],$reg))
+	if (GETPOST("datep") && preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/',GETPOST("datep"),$reg))
 	{
 		$actioncomm->datep=dol_mktime(0,0,0,$reg[2],$reg[3],$reg[1]);
 	}
 
 	// Date start
 	print '<tr><td width="30%" nowrap="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
-	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action",1,1);
-	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
+	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action",1,1);
+	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
 	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
 	print '</td></tr>';
 	// Date end
 	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
-	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
+	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
+	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
 	else $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
 	print '</td></tr>';
 
@@ -545,14 +558,14 @@ if ($_GET["action"] == 'create')
 	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent=0;
-	if (isset($_POST['percentage']))
+	if (GETPOST('percentage'))
 	{
-		$percent=$_POST['percentage'];
+		$percent=GETPOST('percentage');
 	}
 	else
 	{
-		if ($_REQUEST["afaire"] == 1) $percent=0;
-		if ($_REQUEST["afaire"] == 2) $percent=100;
+		if (GETPOST("afaire") == 1) $percent=0;
+		if (GETPOST("afaire") == 2) $percent=100;
 	}
 	print $htmlactions->form_select_status_action('formaction',$percent,1);
 	print '</td></tr>';
@@ -642,19 +655,19 @@ if ($_GET["id"])
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
 	// Confirmation suppression action
-	if ($_GET["action"] == 'delete')
+	if (GETPOST("action") == 'delete')
 	{
 		$ret=$html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
 		if ($ret == 'html') print '<br>';
 	}
 
-	if ($_REQUEST["action"] == 'edit')
+	if (GETPOST("action") == 'edit')
 	{
 		// Fiche action en mode edition
 		print '<form name="formaction" action="fiche.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
+		print '<input type="hidden" name="id" value="'.GETPOST("id").'">';
 		if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
 
 		print '<table class="border" width="100%">';
@@ -674,7 +687,7 @@ if ($_GET["id"])
 		// Company
 		print '<tr><td>'.$langs->trans("Company").'</td>';
 		print '<td>';
-		print $html->select_societes($act->societe->id,'socid',1,1);
+		print $html->select_societes($act->societe->id,'socid','',1,1);
 		print '</td>';
 
 		// Contact
