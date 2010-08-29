@@ -137,14 +137,14 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// Solde actuel
 	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
 	print '<td align="right" nowrap>'.price($solde).'</td>';
 	print '</tr>';
 
 	$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").':</td>';
+	print '<tr class="liste_total">';
+	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="right" nowrap>&nbsp;</td>';
 	print '</tr>';
 
@@ -252,7 +252,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			$ref = '';
 			$refcomp = '';
 
-			$var=!$var;
 			//$obj = $db->fetch_object($result);
 			$obj = array_shift($tab_sqlobj);
 
@@ -302,14 +301,25 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			if ($paiement) $total_ttc = $obj->total_ttc - $paiement;
 			$solde += $total_ttc;
 
-			print "<tr $bc[$var]>";
-			print '<td>'.dol_print_date($db->jdate($obj->dlr),"day")."</td>";
-			print "<td>".$ref."</td>";
-			print "<td>".$refcomp."</td>";
-			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price($total_ttc)."</td><td>&nbsp;</td>"; };
-			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td align=\"right\">".price($total_ttc)."</td>"; };
-			print "<td align=\"right\">".price($solde)."</td>";
-			print "</tr>";
+			// We discard with a remain to pay to 0
+			if (price2num($total_ttc) != 0)
+			{
+                $var=!$var;
+
+    			// Show line
+    			print "<tr ".$bc[$var].">";
+    			print '<td>';
+    			if ($obj->dlr) print dol_print_date($db->jdate($obj->dlr),"day");
+    			else print $langs->trans("NotDefined");
+    			print "</td>";
+    			print "<td>".$ref."</td>";
+    			print "<td>".$refcomp."</td>";
+    			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price($total_ttc)."</td><td>&nbsp;</td>"; };
+    			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td align=\"right\">".price($total_ttc)."</td>"; };
+    			print '<td align="right">'.price($solde).'</td>';
+    			print "</tr>";
+			}
+
 			$i++;
 		}
 	}
