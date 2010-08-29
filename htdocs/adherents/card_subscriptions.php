@@ -63,7 +63,6 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 {
 	$langs->load("banks");
 
-	$adh->id = $rowid;
 	$result=$adh->fetch($rowid);
 	$result=$adht->fetch($adh->typeid);
 

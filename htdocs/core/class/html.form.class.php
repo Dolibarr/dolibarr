@@ -3143,7 +3143,7 @@ class Form
         if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
-            $file=get_exdir($object->id,2).$object->photo;
+            $file=get_exdir($object->id,2).'photos/'.$object->photo;
             $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }

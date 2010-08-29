@@ -289,7 +289,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		{
 			if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 			{
-				$dir= $conf->adherent->dir_output . '/' . get_exdir($adh->id,2,0,1);
+				$dir= $conf->adherent->dir_output . '/' . get_exdir($adh->id,2,0,1).'/photos/';
 
 				create_exdir($dir);
 

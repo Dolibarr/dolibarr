@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,12 @@ function member_prepare_head($member)
 	$head[$h][2] = 'note';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/info.php?id='.$member->id;
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$member->id;
+    $head[$h][1] = $langs->trans("Documents");
+    $head[$h][2] = 'document';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/info.php?id='.$member->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;

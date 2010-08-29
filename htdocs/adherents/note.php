@@ -27,6 +27,7 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/member.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php');
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
 $action=isset($_GET["action"])?$_GET["action"]:(isset($_POST["action"])?$_POST["action"]:"");
 $id=isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:"");
@@ -39,8 +40,12 @@ if (!$user->rights->adherent->lire)
   accessforbidden();
 
 $adh = new Adherent($db);
-$adh->id = $id;
-$adh->fetch($id);
+$result=$adh->fetch($id);
+if ($result > 0)
+{
+    $adht = new AdherentType($db);
+    $result=$adht->fetch($adh->typeid);
+}
 
 
 /******************************************************************************/
@@ -103,7 +108,13 @@ if ($id)
     // Login
     print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$adh->login.'&nbsp;</td></tr>';
 
-	// Note
+    // Type
+    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+
+    // Status
+    print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
+
+    // Note
     print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
 	print '<td valign="top" colspan="3">';
 	if ($action == 'edit' && $user->rights->adherent->creer)
