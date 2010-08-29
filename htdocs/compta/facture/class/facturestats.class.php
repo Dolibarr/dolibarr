@@ -27,6 +27,7 @@
 include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";
 include_once DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php";
 include_once DOL_DOCUMENT_ROOT . "/fourn/class/fournisseur.facture.class.php";
+include_once DOL_DOCUMENT_ROOT . "/lib/date.lib.php";
 
 /**
  *       \class      FactureStats
@@ -81,32 +82,34 @@ class FactureStats extends Stats
 
 
 	/**
-	 * 	\brief		Renvoie le nombre de facture par annee
-	 *	\return		array	Array of values
+	 * 	Renvoie le nombre de facture par annee
+	 *	@return		array	Array of values
 	 */
 	function getNbByYear()
 	{
-		$sql = "SELECT YEAR(datef) as dm, count(*)";
+		$sql = "SELECT YEAR(datef) as dm, COUNT(*)";
 		$sql.= " FROM ".$this->from;
-		$sql.= " GROUP BY dm DESC";
-		$sql.= " WHERE ".$this->where;
+        $sql.= " WHERE ".$this->where;
+		$sql.= " GROUP BY dm";
+        $sql.= " ORDER BY dm DESC";
 
 		return $this->_getNbByYear($sql);
 	}
 
 
 	/**
-	 * 	\brief	Renvoie le nombre de facture par mois pour une annee donnee
-	 *	\param	year	Year to scan
-	 *	\return	array	Array of values
+	 * 	Renvoie le nombre de facture par mois pour une annee donnee
+	 *	@param	year	Year to scan
+	 *	@return	array	Array of values
 	 */
 	function getNbByMonth($year)
 	{
-		$sql = "SELECT MONTH(datef) as dm, count(*)";
+		$sql = "SELECT MONTH(datef) as dm, COUNT(*)";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE YEAR(datef) = ".$year;
+		$sql.= " WHERE datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm DESC";
+		$sql.= " GROUP BY dm";
+		$sql.= " ORDER BY dm DESC";
 
 		$res=$this->_getNbByMonth($year, $sql);
 		//var_dump($res);print '<br>';
@@ -115,17 +118,18 @@ class FactureStats extends Stats
 
 
 	/**
-	 * 	\brief	Renvoie le montant de facture par mois pour une annee donnee
-	 *	\param	year	Year to scan
-	 *	\return	array	Array of values
+	 * 	Renvoie le montant de facture par mois pour une annee donnee
+	 *	@param	year	Year to scan
+	 *	@return	array	Array of values
 	 */
 	function getAmountByMonth($year)
 	{
-		$sql = "SELECT date_format(datef,'%m') as dm, sum(".$this->field.")";
+		$sql = "SELECT date_format(datef,'%m') as dm, SUM(".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE date_format(datef,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm DESC";
+        $sql.= " GROUP BY dm";
+        $sql.= " ORDER BY dm DESC";
 
 		$res=$this->_getAmountByMonth($year, $sql);
 		//var_dump($res);print '<br>';
@@ -139,11 +143,12 @@ class FactureStats extends Stats
 	 */
 	function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(datef,'%m') as dm, avg(".$this->field.")";
+		$sql = "SELECT date_format(datef,'%m') as dm, AVG(".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(datef,'%Y') = ".$year;
+        $sql.= " WHERE datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm DESC";
+        $sql.= " GROUP BY dm";
+        $sql.= " ORDER BY dm DESC";
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -154,10 +159,11 @@ class FactureStats extends Stats
 	 */
 	function getAllByYear()
 	{
-		$sql = "SELECT date_format(datef,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+		$sql = "SELECT date_format(datef,'%Y') as year, COUNT(*) as nb, SUM(".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY year DESC";
+		$sql.= " GROUP BY year";
+		$sql.= " ORDER BY year DESC";
 
 		return $this->_getAllByYear($sql);
 	}
