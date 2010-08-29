@@ -396,13 +396,21 @@ if (! $_GET['action'] && ! $_POST['action'])
 	{
 	  $sql .=" AND p.rowid=".$_REQUEST["search_ref"];
 	}
+    if ($_REQUEST["search_account"])
+    {
+        $sql .=" AND b.fk_account=".$_REQUEST["search_account"];
+    }
+	if ($_REQUEST["search_paymenttype"])
+    {
+        $sql .=" AND c.code='".$_REQUEST["search_paymenttype"]."'";
+    }
 	if ($_REQUEST["search_amount"])
 	{
 	  $sql .=" AND p.amount=".price2num($_REQUEST["search_amount"]);
 	}
 	if ($_REQUEST["search_company"])
 	{
-	  $sql .=" AND s.nom like '%".addslashes($_REQUEST["search_company"])."%'";
+	  $sql .=" AND s.nom LIKE '%".addslashes($_REQUEST["search_company"])."%'";
 	}
 	$sql.= $db->order($sortfield,$sortorder);
 	$sql.= $db->plimit($limit + 1 ,$offset);
@@ -442,7 +450,12 @@ if (! $_GET['action'] && ! $_POST['action'])
 		print '<td align="left">';
 		print '<input class="fat" type="text" size="6" name="search_company" value="'.$_REQUEST["search_company"].'">';
 		print '</td>';
-		print '<td colspan="2">&nbsp;</td>';
+		print '<td>';
+        $html->select_types_paiements($_REQUEST["search_paymenttype"],'search_paymenttype','',2,1,1);
+        print '</td>';
+        print '<td>';
+        $html->select_comptes($_REQUEST["search_account"],'search_account',0,'',1);
+		print '</td>';
 		print '<td align="right">';
 		print '<input class="fat" type="text" size="4" name="search_amount" value="'.$_REQUEST["search_amount"].'">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';

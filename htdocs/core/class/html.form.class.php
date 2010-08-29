@@ -1551,7 +1551,7 @@ class Form
      *      \brief      Retourne la liste des modes de paiements possibles
      *      \param      selected        Id du mode de paiement pre-selectionne
      *      \param      htmlname        Nom de la zone select
-     *      \param      filtertype      Pour filtre
+     *      \param      filtertype      To filter on field type in llx_c_paiement
      *      \param      format          0=id+libelle, 1=code+code, 2=code+libelle
      *      \param      empty			1=peut etre vide, 0 sinon
      * 		\param		noadmininfo		0=Add admin info, 1=Disable admin info
@@ -1575,6 +1575,9 @@ class Form
         {
             // On passe si on a demande de filtrer sur des modes de paiments particuliers
             if (sizeof($filterarray) && ! in_array($arraytypes['type'],$filterarray)) continue;
+
+            // We discard empty line if showempty is on because an empty line has already been output.
+            if ($empty && empty($arraytypes['code'])) continue;
 
             if ($format == 0) print '<option value="'.$id.'"';
             if ($format == 1) print '<option value="'.$arraytypes['code'].'"';
@@ -1682,12 +1685,12 @@ class Form
 
 
     /**
-     *    \brief      Return list of bank accounts
-     *    \param      selected          Id account pre-selected
-     *    \param      htmlname          Name of select zone
-     *    \param      statut            Status of searched accounts (0=open, 1=closed)
-     *    \param      filtre            To filter list
-     *    \param      useempty          Add an empty value in list
+     *    Return list of bank accounts
+     *    @param      selected          Id account pre-selected
+     *    @param      htmlname          Name of select zone
+     *    @param      statut            Status of searched accounts (0=open, 1=closed)
+     *    @param      filtre            To filter list
+     *    @param      useempty          Add an empty value in list
      */
     function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0)
     {

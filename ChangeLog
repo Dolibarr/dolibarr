@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.0 compared to 2.9 *****
 
 For users:
+- New: Can filter on payment type and bank account in payment lists.
 - New: When sending supplier orders by mail, a text is predefined.
 - New: Upgrade process works with Postgresql.
 - New: Task #10538: Add filter on expiration date of subscription for

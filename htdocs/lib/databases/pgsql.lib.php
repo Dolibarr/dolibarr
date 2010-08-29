@@ -208,6 +208,9 @@ class DoliDb
 				$line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i','UNIQUE\(\\1\)',$line);
 			}
 
+            // To have postgresql case sensitive
+            $line=str_replace(' LIKE \'',' ILIKE \'',$line);
+
 			# We remove end of requests "AFTER fieldxxx"
 			$line=preg_replace('/AFTER [a-z0-9_]+/i','',$line);
 

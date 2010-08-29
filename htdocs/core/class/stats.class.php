@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,9 +137,9 @@ class Stats
 	}
 
 	/**
-	 * 	\brief  	Return nb of elements, total amount and avg amount by year
-	 *	\param		sql		SQL request
-	 * 	\return		array
+	 * 	Return nb of elements, total amount and avg amount by year
+	 *	@param		sql		SQL request
+	 * 	@return		array
 	 */
 	function _getAllByYear($sql)
 	{
@@ -169,8 +169,9 @@ class Stats
 	}
 
 	/**
-	 * \brief  Renvoie le nombre de proposition par mois pour une annee donnee
-	 *
+	 *     Renvoie le nombre de proposition par mois pour une annee donnee
+     *     @param      year        Year
+     *     @param      sql         SQL
 	 */
 	function _getNbByMonth($year, $sql)
 	{
@@ -215,8 +216,9 @@ class Stats
 
 
 	/**
-	 * \brief  Renvoie le nombre d'element par mois pour une annee donnee
-	 *
+	 *     Renvoie le nombre d'element par mois pour une annee donnee
+	 *     @param      year        Year
+	 *     @param      sql         SQL
 	 */
 	function _getAmountByMonth($year, $sql)
 	{
@@ -256,8 +258,9 @@ class Stats
 	}
 
 	/**
-	 *	\brief  Renvoie le montant moyen par mois pour une annee donnee
-	 *
+	 *	    Renvoie le montant moyen par mois pour une annee donnee
+     *      @param      year        Year
+     *      @param      sql         SQL
 	 */
 	function _getAverageByMonth($year, $sql)
 	{
