@@ -63,7 +63,7 @@ if ($user->societe_id > 0)
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 
-if ($_REQUEST["action"] == 'add')
+if ($_GET["action"] == 'add' || $_POST["action"] == 'add')
 {
 	$myobject=new Skeleton_class($db);
 	$myobject->prop1=$_POST["field1"];
