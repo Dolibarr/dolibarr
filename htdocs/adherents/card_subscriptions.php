@@ -65,8 +65,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 
 	$adh->id = $rowid;
 	$result=$adh->fetch($rowid);
-
-	$adht->fetch($adh->typeid);
+	$result=$adht->fetch($adh->typeid);
 
 	// Subscription informations
 	$datecotisation=0;
@@ -98,6 +97,8 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 	$num_chq=$_POST["num_chq"];
 	$emetteur_nom=$_POST["chqemetteur"];
 	$emetteur_banque=$_POST["chqbank"];
+    $option=$_POST["paymentsave"];
+    if (empty($option)) $option='none';
 
 	// Check if a payment is mandatory or not
 	if ($adht->cotisation)	// Type adherent soumis a cotisation
@@ -110,9 +111,9 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 		}
 		else
 		{
-			if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
+			if ($conf->banque->enabled && $_POST["paymentsave"] != 'none')
 			{
-				if ($_POST["cotisation"])
+			    if ($_POST["cotisation"])
 				{
 					if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
 					if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
@@ -131,7 +132,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 	{
 		$db->begin();
 
-		$crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
+		$crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend, $option);
 
 		if ($crowid > 0)
 		{
@@ -181,9 +182,6 @@ $adht->fetch($adh->typeid);
 $adho->fetch_optionals();
 
 
-/*
- * Affichage onglets
- */
 $head = member_prepare_head($adh);
 
 dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
@@ -219,7 +217,7 @@ print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLib
 print "</table>\n";
 print '</form>';
 
-print "</div>\n";
+dol_fiche_end();
 
 
 if ($errmsg)
@@ -236,7 +234,6 @@ if ($errmsg)
 
 /*
  * Barre d'actions
- *
  */
 print '<div class="tabsAction">';
 
@@ -253,129 +250,152 @@ print "<br>\n";
 
 
 
-/*
- * Bandeau des cotisations
- *
- */
-
-print '<table border=0 width="100%">';
-
-print '<tr>';
-print '<td valign="top" width="50%">';
-
-
-/*
- * Liste des cotisations
- *
- */
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
-$sql.= " c.rowid as crowid, c.cotisation,";
-$sql.= " c.dateadh,";
-$sql.= " c.datef,";
-$sql.= " c.fk_bank,";
-$sql.= " b.rowid as bid,";
-$sql.= " ba.rowid as baid, ba.label, ba.bank";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-$sql.= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
-
-$result = $db->query($sql);
-if ($result)
-{
-	$cotisationstatic=new Cotisation($db);
-	$accountstatic=new Account($db);
-
-	$num = $db->num_rows($result);
-	$i = 0;
-
-	print "<table class=\"noborder\" width=\"100%\">\n";
-
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Ref").'</td>';
-	print '<td align="center">'.$langs->trans("DateSubscription").'</td>';
-	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-	print '<td align="right">'.$langs->trans("Amount").'</td>';
-	if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
-	{
-		print '<td align="right">'.$langs->trans("Account").'</td>';
-	}
-	print "</tr>\n";
-
-	$var=True;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		$cotisationstatic->ref=$objp->crowid;
-		$cotisationstatic->id=$objp->crowid;
-		print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
-		print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
-		print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
-		print '<td align="right">'.price($objp->cotisation).'</td>';
-		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
-		{
-			print '<td align="right">';
-			if ($objp->bid)
-			{
-				$accountstatic->label=$objp->label;
-				$accountstatic->id=$objp->baid;
-				print $accountstatic->getNomUrl(1);
-			}
-			else
-			{
-				print '&nbsp;';
-			}
-			print '</td>';
-		}
-		print "</tr>";
-		$i++;
-	}
-	print "</table>";
-}
-else
-{
-	dol_print_error($db);
-}
-
-print '</td><td valign="top">';
-
-
 // Date fin cotisation
-print "<table class=\"border\" width=\"100%\">\n";
+print "<table class=\"border\" width=\"50%\">\n";
 print '<tr><td>'.$langs->trans("SubscriptionEndDate");
 print '</td>';
 print '<td>';
 if ($adh->datefin)
 {
-	if ($adh->datefin < time())
-	{
-		print dol_print_date($adh->datefin,'day');
-		if ($adh->statut > 0) print " ".img_warning($langs->trans("Late"));	// Affiche picto retard uniquement si non brouillon et non resilie
-	}
-	else
-	{
-		print dol_print_date($adh->datefin,'day');
-	}
+    if ($adh->datefin < time())
+    {
+        print dol_print_date($adh->datefin,'day');
+        if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+    }
+    else
+    {
+        print dol_print_date($adh->datefin,'day');
+    }
 }
 else
 {
-	print $langs->trans("SubscriptionNotReceived");
-	if ($adh->statut > 0) print " ".img_warning($langs->trans("Late"));	// Affiche picto retard uniquement si non brouillon et non resilie
+    print $langs->trans("SubscriptionNotReceived");
+    if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
 }
 print '</td>';
 print '</tr>';
 print '</table>';
+print '<br>';
 
 
 /*
- * Add new subscription
+ * List of subscriptions
+ */
+if ($action != 'addsubscription')
+{
+    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
+    $sql.= " c.rowid as crowid, c.cotisation,";
+    $sql.= " c.dateadh,";
+    $sql.= " c.datef,";
+    $sql.= " c.fk_bank,";
+    $sql.= " b.rowid as bid,";
+    $sql.= " ba.rowid as baid, ba.label, ba.bank";
+    $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+    $sql.= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
+
+    $result = $db->query($sql);
+    if ($result)
+    {
+    	$cotisationstatic=new Cotisation($db);
+    	$accountstatic=new Account($db);
+
+    	$num = $db->num_rows($result);
+    	$i = 0;
+
+    	print "<table class=\"noborder\" width=\"100%\">\n";
+
+    	print '<tr class="liste_titre">';
+    	print '<td>'.$langs->trans("Ref").'</td>';
+    	print '<td align="center">'.$langs->trans("DateSubscription").'</td>';
+    	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
+    	print '<td align="right">'.$langs->trans("Amount").'</td>';
+    	if ($conf->banque->enabled)
+    	{
+    		print '<td align="right">'.$langs->trans("Account").'</td>';
+    	}
+    	print "</tr>\n";
+
+    	$var=True;
+    	while ($i < $num)
+    	{
+    		$objp = $db->fetch_object($result);
+    		$var=!$var;
+    		print "<tr $bc[$var]>";
+    		$cotisationstatic->ref=$objp->crowid;
+    		$cotisationstatic->id=$objp->crowid;
+    		print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
+    		print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
+    		print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
+    		print '<td align="right">'.price($objp->cotisation).'</td>';
+    		if ($conf->banque->enabled)
+    		{
+    			print '<td align="right">';
+    			if ($objp->bid)
+    			{
+    				$accountstatic->label=$objp->label;
+    				$accountstatic->id=$objp->baid;
+    				print $accountstatic->getNomUrl(1);
+    			}
+    			else
+    			{
+    				print '&nbsp;';
+    			}
+    			print '</td>';
+    		}
+    		print "</tr>";
+    		$i++;
+    	}
+    	print "</table>";
+    }
+    else
+    {
+    	dol_print_error($db);
+    }
+}
+
+
+
+/*
+ * Add new subscription form
  */
 if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 {
 	print '<br>';
+
+	print_fiche_titre($langs->trans("NewCotisation"));
+
+    $bankdirect=0;        // Option to write to bank is on by default
+    $bankviainvoice=0;    // Option to write via invoice is on by default
+    $invoiceonly=0;
+    if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && (empty($_POST['paymentsave']) || $_POST["paymentsave"] == 'bankdirect')) $bankdirect=1;
+    if ($conf->banque->enabled && $conf->societe->enabled && $conf->facture->enabled && $adh->fk_soc) $bankviainvoice=1;
+    // TODO A virer
+    $bankviainvoice=0;
+
 	print "\n\n<!-- Form add subscription -->\n";
+
+	if ($conf->use_javascript_ajax)
+	{
+        print '<script type="text/javascript" language="javascript">';
+        print 'jQuery(document).ready(function () {
+                    jQuery(".bankswitchclass").'.($bankdirect||$bankviainvoice?'show()':'hide()').';
+                    jQuery("#none").click(function() {
+                        jQuery(".bankswitchclass").hide();
+                    });
+                    jQuery("#bankdirect").click(function() {
+                        jQuery(".bankswitchclass").show();
+                    });
+                    jQuery("#bankdviainvoice").click(function() {
+                        jQuery(".bankswitchclass").show();
+                    });
+	                jQuery("#invoiceonly").click(function() {
+                        jQuery(".bankswitchclass").show();
+                    });
+	       });';
+    	print '</script>';
+	}
 
 	print '<form name="cotisation" method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -383,15 +403,12 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 	print "<table class=\"border\" width=\"100%\">\n";
 
-	// Title subscription
-	print '<tr><td colspan="2"><b>'.$langs->trans("NewCotisation").'</b></td></tr>';
-
 	$today=mktime();
 	$datefrom=0;
 	$dateto=0;
 
 	// Date start subscription
-	print '<tr><td>'.$langs->trans("DateSubscription").'</td><td>';
+	print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
 	if ($_POST["reday"])
 	{
 		$datefrom=dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
@@ -427,48 +444,85 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	if ($adht->cotisation)
 	{
 		// Amount
-		print '<tr><td>'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
 		print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
 		print dol_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
 
-		// Bank account
-		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
+		// Bank account transaction
+		if ($conf->banque->enabled || $conf->facture->enabled)
 		{
-			// Title payments
-			print '<tr><td colspan="2"><b>'.$langs->trans("Payment").'</b></td></tr>';
+            $company=new Societe($db);
+            if ($adh->fk_soc)
+            {
+                $result=$company->fetch($adh->fk_soc);
+            }
+
+            // Title payments
+            //print '<tr><td colspan="2"><b>'.$langs->trans("Payment").'</b></td></tr>';
+
+            // Define a way to write payment
+            print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('MoreActions');
+            print '</td>';
+            print '<td>';
+            print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(!$bankdirect&&!$bankviainvoice?' checked="true"':'').'> '.$langs->trans("None").'<br>';
+            if ($conf->banque->enabled)
+            {
+                print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.($bankdirect?' checked="true"':'');
+                print '> '.$langs->trans("MoreActionBankDirect").'<br>';
+            }
+            if ($conf->banque->enabled && $conf->societe->enabled && $conf->facture->enabled)
+            {
+                print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.($bankviainvoice?' checked="true"':'');
+                if (empty($adh->fk_soc) || empty($bankviainvoice)) print ' disabled="true"';
+                print '> '.$langs->trans("MoreActionBankViaInvoice");
+                if ($adh->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
+                else print ' ('.$langs->trans("NoThirdPartyAssociatedToMember").')';
+                print '<br>';
+            }
+            if ($conf->societe->enabled && $conf->facture->enabled)
+            {
+                print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.($invoiceonly?' checked="true"':'');
+                if (empty($adh->fk_soc) || empty($bankviainvoice)) print ' disabled="true"';
+                print '> '.$langs->trans("MoreActionInvoiceOnly");
+                if ($adh->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
+                else print ' ('.$langs->trans("NoThirdPartyAssociatedToMember").')';
+                print '<br>';
+            }
+            print '</td></tr>';
 
 			// Bank account
-			print '<tr><td>'.$langs->trans("FinancialAccount").'</td><td>';
+			print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
 			$html->select_comptes($_POST["accountid"],'accountid',0,'',1);
 			print "</td></tr>\n";
 
 			// Payment mode
-			print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
+			print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
 			$html->select_types_paiements($_POST["operation"],'operation');
 			print "</td></tr>\n";
 
-			print '<tr><td>'.$langs->trans('Numero');
+			print '<tr class="bankswitchclass"><td>'.$langs->trans('Numero');
 			print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 			print '</td>';
-			print '<td><input name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
+			print '<td><input id="fieldnum_chq" name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans('CheckTransmitter');
+			print '<tr class="bankswitchclass"><td>'.$langs->trans('CheckTransmitter');
 			print ' <em>('.$langs->trans("ChequeMaker").')</em>';
 			print '</td>';
-			print '<td><input name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
+			print '<td><input id="fieldchqemetteur" name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans('Bank');
+			print '<tr class="bankswitchclass"><td>'.$langs->trans('Bank');
 			print ' <em>('.$langs->trans("ChequeBank").')</em>';
 			print '</td>';
-			print '<td><input name="chqbank" size="32" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
-
+			print '<td><input id="chqbank" name="chqbank" size="32" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
 		}
 	}
 
-	print '<tr><td>'.$langs->trans("SendAcknowledgementByMail").'</td>';
+    print '<tr><td colspan="2">&nbsp;</td>';
+
+    print '<tr><td width="30%">'.$langs->trans("SendAcknowledgementByMail").'</td>';
 	print '<td>';
 	if (! $adh->email)
 	{
@@ -495,23 +549,22 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 		print $html->textwithpicto($tmp,$helpcontent,1,'help');
 	}
 	print '</td></tr>';
+    print '</table>';
+    print '<br>';
 
-
-	print '<tr><td colspan="2" align="center">';
+	print '<center>';
 	print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
 	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</td></tr>';
+	print '</center>';
 
-	print '</table>';
 	print '</form>';
 
 	print "\n<!-- End form subscription -->\n\n";
 }
 
-print '</td></tr>';
-print '</table>';
-
+//print '</td></tr>';
+//print '</table>';
 
 
 $db->close();

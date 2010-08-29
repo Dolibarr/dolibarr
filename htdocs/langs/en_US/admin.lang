@@ -880,7 +880,7 @@ InterventionsSetup=Interventions module setup
 ##### Members #####
 MembersSetup=Members module setup
 MemberMainOptions=Main options
-AddSubscriptionIntoAccount=Add subscriptions into bank or cash account, of bank module
+AddSubscriptionIntoAccount=Suggest by default to create a bank transaction, in bank module, when adding a new payed subscription 
 AdherentMailRequired=EMail required to create a new member
 MemberSendInformationByMailByDefault=Checkbox to send mail confirmation to members (validation or new subscription) is on by default
 ##### LDAP setup #####

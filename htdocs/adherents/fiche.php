@@ -466,39 +466,6 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
         $result=$adh->create($user);
 		if ($result > 0)
         {
-			if ($cotisation > 0)
-            {
-                $crowid=$adh->cotisation($datecotisation, $cotisation);
-
-                // insertion dans la gestion banquaire si configure pour
-                if ($global->conf->ADHERENT_BANK_USE)
-                {
-                    $dateop=time();
-                    $amount=$cotisation;
-                    $acct=new Account($db,$_POST["accountid"]);
-                    $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"], '', $user);
-                    if ($insertid == '')
-                    {
-                        dol_print_error($db);
-                    }
-                    else
-                    {
-                        // met a jour la table cotisation
-                        $sql ="UPDATE ".MAIN_DB_PREFIX."cotisation";
-                        $sql.=" SET fk_bank=$insertid WHERE rowid=$crowid ";
-                        $result = $db->query($sql);
-                        if ($result)
-                        {
-                            //Header("Location: fiche.php");
-                        }
-                        else
-                        {
-                            dol_print_error($db);
-                        }
-                    }
-                }
-            }
-
 			$db->commit();
 			$rowid=$adh->id;
 			$action='';
@@ -1101,7 +1068,7 @@ if ($rowid && $action != 'edit')
 		$formquestion=array(
 		array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
 
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion);
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -1132,7 +1099,7 @@ if ($rowid && $action != 'edit')
         // Cree un tableau formulaire
         $formquestion=array();
 		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
-        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion);
+        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);
         if ($ret == 'html') print '<br>';
     }
 
@@ -1486,21 +1453,6 @@ if ($rowid && $action != 'edit')
 
     print '</div>';
     print "<br>\n";
-
-
-    /*
-     * Bandeau des cotisations
-     */
-
-    print '<table border=0 width="100%">';
-
-    print '<tr>';
-    print '<td valign="top" width="50%">';
-
-    print '</td><td valign="top">';
-
-    print '</td></tr>';
-    print '</table>';
 
 }
 

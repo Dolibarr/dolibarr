@@ -1143,9 +1143,10 @@ class Adherent extends CommonObject
      *	\param		emetteur_nom	Nom emetteur cheque
      *	\param		emetteur_banque	Nom banque emetteur cheque
      *	\param		datesubend		Date fin adhesion
+     *  \param      option          'none'=No more action, 'bankdirect'=Add direct bank transaction, 'bankviainvoice'=Add bank transaction via invoice and payment
      *	\return     int         	rowid de l'entree ajoutee, <0 si erreur
      */
-    function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
+    function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0, $option='none')
     {
         global $conf,$langs,$user;
 
@@ -1174,7 +1175,6 @@ class Adherent extends CommonObject
         $cotisation->note=$label;
 
         $rowid=$cotisation->create($user);
-
         if ($rowid > 0)
         {
             // Update denormalized subscription end date (read database subscription to find values)
@@ -1189,7 +1189,7 @@ class Adherent extends CommonObject
                 }
 
                 // Insertion dans la gestion bancaire si configure pour
-                if ($conf->global->ADHERENT_BANK_USE && $accountid)
+                if ($option == 'bankdirect' && $accountid)
                 {
                     $acct=new Account($this->db);
                     $result=$acct->fetch($accountid);
@@ -1227,6 +1227,12 @@ class Adherent extends CommonObject
                         $this->db->rollback();
                         return -3;
                     }
+                }
+
+                // Create invoice and payment
+                if ($option == 'bankviainvoice' && $accountid)
+                {
+                    // TODO
                 }
 
                 // Change properties of object (used by triggers)

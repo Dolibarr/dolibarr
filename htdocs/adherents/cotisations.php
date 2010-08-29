@@ -48,91 +48,13 @@ $pagenext = $page + 1;
 $msg='';
 $date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_select"];
 
-// Desactivation fonctions insertions en banque apres coup
-// Cette fonction me semble pas utile. Si on a fait des adhesions alors que module banque
-// pas actif c'est qu'on voulait pas d'insertion en banque.
-// si on active apres coup, on va pas modifier toutes les adhesions pour avoir une ecriture
-// en banque mais on va mettre le solde banque direct a la valeur apres toutes les adh�sions.
-$allowinsertbankafter=0;
-
 if (! $user->rights->adherent->cotisation->lire)
-	 accessforbidden();
+accessforbidden();
 
 
 /*
-*	Actions
-*/
-
-// Insertion de la cotisation dans le compte banquaire
-if ($allowinsertbankafter && $_POST["action"] == '2bank' && $_POST["rowid"] !='')
-{
-    if ($conf->global->ADHERENT_BANK_USE)
-    {
-		if (! $_POST["accountid"])
-		{
-			$msg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("BankAccount")).'</div>';
-		}
-		if (! $_POST["paymenttypeid"])
-		{
-			$msg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("OperationType")).'</div>';
-		}
-
-		// Cr�er un tiers + facture et enregistrer son paiement ? -> Non requis avec module compta expert
-		// Eventuellement offrir option a la creation adhesion
-
-		if (! $msg)
-		{
-			$db->begin();
-
-	        $dateop=time();
-
-			$cotisation=new Cotisation($db);
-			$result=$cotisation->fetch($_POST["rowid"]);
-			$adherent=new Adherent($db);
-			$result=$adherent->fetch($cotisation->fk_adherent);
-
-			if ($result > 0)
-	        {
-				$amount=$cotisation->amount;
-
-				$acct=new Account($db);
-				$acct->fetch($_POST["accountid"]);
-				$insertid=$acct->addline($dateop, $_POST["paymenttypeid"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE,$user);
-				if ($insertid < 0)
-				{
-					dol_print_error($db,$acct->error);
-				}
-				else
-				{
-        			$inserturlid=$acct->add_url_line($insertid, $adherent->rowid, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $adherent->getFullname($langs), 'member');
-
-					// Met a jour la table cotisation
-					$sql="UPDATE ".MAIN_DB_PREFIX."cotisation";
-					$sql.=" SET fk_bank=".$insertid.",";
-					$sql.=" note='".addslashes($_POST["label"])."'";
-					$sql.=" WHERE rowid=".$_POST["rowid"];
-					dol_syslog("cotisations sql=".$sql);
-					$result = $db->query($sql);
-					if ($result)
-					{
-						//Header("Location: cotisations.php");
-						$db->commit();
-					}
-					else
-					{
-						$db->rollback();
-						dol_print_error($db);
-					}
-				}
-	        }
-	        else
-	        {
-				$db->rollback();
-	            dol_print_error($db,$cotisation->error);
-	        }
-		}
-    }
-}
+ *	Actions
+ */
 
 
 /*
@@ -155,7 +77,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql.= " WHERE d.rowid = c.fk_adherent";
 if (isset($date_select) && $date_select != '')
 {
-  $sql.= " AND dateadh LIKE '$date_select%'";
+    $sql.= " AND dateadh LIKE '$date_select%'";
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
@@ -169,7 +91,7 @@ if ($result)
     $title=$langs->trans("ListOfSubscriptions");
     if (! empty($date_select)) $title.=' ('.$langs->trans("Year").' '.$date_select.')';
     $param.="&amp;statut=$statut&amp;date_select=$date_select";
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
 
     print '<table class="noborder" width="100%">';
@@ -179,21 +101,21 @@ if ($result)
     print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Login"),"cotisations.php","d.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"cotisations.php","c.note",$param,"",'align="left"',$sortfield,$sortorder);
-    if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
+    if ($conf->banque->enabled)
     {
-        print_liste_field_titre($langs->trans("Bank"),"cotisations.php","b.fk_account",$pram,"","",$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Account"),"cotisations.php","b.fk_account",$pram,"","",$sortfield,$sortorder);
     }
     print_liste_field_titre($langs->trans("Date"),"cotisations.php","c.dateadh",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateEnd"),"cotisations.php","c.datef",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Amount"),"cotisations.php","c.cotisation",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
-	// Static objects
+    // Static objects
     $cotisation=new Cotisation($db);
     $adherent=new Adherent($db);
     $accountstatic=new Account($db);
 
-	$var=true;
+    $var=true;
     $total=0;
     while ($i < $num && $i < $conf->liste_limit)
     {
@@ -209,39 +131,29 @@ if ($result)
 
         $var=!$var;
 
-        if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
-		{
-			print "<form method=\"post\" action=\"cotisations.php\">";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		}
+        if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $objp->cotisation)
+        {
+            print "<form method=\"post\" action=\"cotisations.php\">";
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        }
         print "<tr $bc[$var]>";
 
-		// Ref
-		print '<td>'.$cotisation->getNomUrl(1).'</td>';
+        // Ref
+        print '<td>'.$cotisation->getNomUrl(1).'</td>';
 
-		// Nom
-		print '<td>'.$adherent->getNomUrl(1).'</td>';
+        // Nom
+        print '<td>'.$adherent->getNomUrl(1).'</td>';
 
-		// Login
-		print '<td>'.$adherent->login.'</td>';
+        // Login
+        print '<td>'.$adherent->login.'</td>';
 
-		// Libelle
-		print '<td>';
-        if ($allowinsertbankafter && $user->rights->banque->modifier && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
-		{
-			print "<input name=\"label\" type=\"text\" class=\"flat\" size=\"30\" value=\"".$langs->trans("Subscriptions").' '.dol_print_date($db->jdate($objp->dateadh),"%Y")."\" >\n";
-	                //	print "<td><input name=\"debit\" type=\"text\" size=8></td>";
-	                //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-		}
-		else
-		{
-			print dol_trunc($objp->note,32);
-		}
-		print '</td>';
+        // Libelle
+        print '<td>';
+        print dol_trunc($objp->note,32);
+        print '</td>';
 
-		// Banque
-        if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
+        // Banque
+        if ($conf->banque->enabled)
         {
             if ($objp->fk_account)
             {
@@ -252,40 +164,40 @@ if ($result)
             }
             else
             {
-				print "<td>";
+                print "<td>";
                 if ($allowinsertbankafter && $objp->cotisation)
-				{
-	                print '<input type="hidden" name="action" value="2bank">';
-	                print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
-	                $html = new Form($db);
-	                $html->select_comptes('','accountid',0,'',1);
-					print '<br>';
-	                $html->select_types_paiements('','paymenttypeid');
-	                print '<input name="num_chq" type="text" class="flat" size="5">';
-				}
-				else
-				{
-					print '&nbsp;';
-				}
-				print "</td>\n";
+                {
+                    print '<input type="hidden" name="action" value="2bank">';
+                    print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
+                    $html = new Form($db);
+                    $html->select_comptes('','accountid',0,'',1);
+                    print '<br>';
+                    $html->select_types_paiements('','paymenttypeid');
+                    print '<input name="num_chq" type="text" class="flat" size="5">';
+                }
+                else
+                {
+                    print '&nbsp;';
+                }
+                print "</td>\n";
             }
         }
 
-		// Date start
-		print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
+        // Date start
+        print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
 
-		// Date end
-		print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
+        // Date end
+        print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
 
-		// Price
-		print '<td align="right">'.price($objp->cotisation).'</td>';
+        // Price
+        print '<td align="right">'.price($objp->cotisation).'</td>';
 
         print "</tr>";
-        if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
-		{
-			print "</form>\n";
-		}
-		$i++;
+        if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $objp->cotisation)
+        {
+            print "</form>\n";
+        }
+        $i++;
     }
 
     // Total
@@ -295,9 +207,9 @@ if ($result)
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
-    if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
+    if ($conf->banque->enabled)
     {
-    	print '<td>&nbsp;</td>';
+        print '<td>&nbsp;</td>';
     }
    	print '<td>&nbsp;</td>';
    	print '<td>&nbsp;</td>';
@@ -311,7 +223,7 @@ if ($result)
 }
 else
 {
-  dol_print_error($db);
+    dol_print_error($db);
 }
 
 

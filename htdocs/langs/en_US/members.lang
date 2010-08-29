@@ -150,3 +150,7 @@ HTPasswordExport=htpassword file generation
 NoThirdPartyAssociatedToMember=No third party associated to this member
 ThirdPartyDolibarr=Dolibarr third party
 MembersAndSubscriptions= Members and Suscriptions
+MoreActions=Complementary action on recording
+MoreActionBankDirect=Create a direct transaction record on account
+MoreActionBankViaInvoice=Create an invoice and payment on account
+MoreActionInvoiceOnly=Create an invoice with no payment

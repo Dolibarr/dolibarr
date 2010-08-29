@@ -1569,7 +1569,7 @@ class Form
 
         $this->load_cache_types_paiements();
 
-        print '<select class="flat" name="'.$htmlname.'">';
+        print '<select id="selectpaymenttypes" class="flat" name="'.$htmlname.'">';
         if ($empty) print '<option value="">&nbsp;</option>';
         foreach($this->cache_types_paiements as $id => $arraytypes)
         {
@@ -1710,7 +1710,7 @@ class Form
             $i = 0;
             if ($num)
             {
-                print '<select class="flat" name="'.$htmlname.'">';
+                print '<select id="selectbankaccount" class="flat" name="'.$htmlname.'">';
                 if ($useempty)
                 {
                     print '<option value="'.$obj->rowid.'">&nbsp;</option>';
