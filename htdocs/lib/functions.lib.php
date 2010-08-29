@@ -3407,12 +3407,13 @@ function dol_eval($s)
 	return 1;
 }
 
-/**
- * 	\brief		For replace glob() function
- */
+
 if (! function_exists('glob'))
 {
-	function glob($pattern)
+    /**
+     *  \brief      For replace glob() function
+     */
+    function glob($pattern)
 	{
 		#get pathname (everything up until the last / or \)
 		$path=$output=null;
@@ -3480,9 +3481,9 @@ function pattern_match($pattern,$string)
 }
 
 /**
- * 	\brief		Return img flag of country for a language code or country code
- * 	\param		codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
- * 	\return		string		HTML img string with flag.
+ * 	Return img flag of country for a language code or country code
+ * 	@param		codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
+ * 	@return		string		HTML img string with flag.
  */
 function picto_from_langcode($codelang)
 {
@@ -3504,19 +3505,6 @@ function picto_from_langcode($codelang)
     	}
     }
     return $ret;
-}
-
-/**
- * 	\brief		Define the style of background color of line
- */
-function bcStyle($impair='impair', $pair='pair')
-{
-	$bc=array();
-
-	$bc[0]='class="'.$impair.'"';
-	$bc[1]='class="'.$pair.'"';
-
-	return $bc;
 }
 
 ?>
