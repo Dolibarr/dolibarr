@@ -327,4 +327,4 @@ UPDATE llx_bank_url SET type='payment' WHERE type='?' AND label='(payment)' AND 
 
 
 update llx_const set value ='eldy' where name = 'MAIN_THEME' and (value= 'rodolphe' or value='dev' or value='bluelagoon');
-
+update llx_user_param set value ='eldy' where param = 'MAIN_THEME' and (value= 'rodolphe' or value='dev' or value='bluelagoon');
