@@ -183,7 +183,7 @@ foreach ($listofreferent as $key => $value)
 		print '<td width="100">'.$langs->trans("Ref").'</td>';
 		print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
-		if (empty($value['disableamount'])) print '<td align="right">'.$langs->trans("Amount").'</td>';
+		if (empty($value['disableamount'])) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 		$elementarray = $project->get_element_list($key);
@@ -214,7 +214,7 @@ foreach ($listofreferent as $key => $value)
 
 				// Third party
                 print '<td align="left">';
-                if (is_object($element->client)) print $element->client->getNomUrl(1);
+                if (is_object($element->client)) print $element->client->getNomUrl(1,'',48);
 				print '</td>';
 
                 // Amount
