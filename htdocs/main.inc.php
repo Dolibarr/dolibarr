@@ -757,6 +757,21 @@ if (! function_exists("llxHeader"))
 
 
 /**
+ *  Show HTML header
+ */
+function top_httphead()
+{
+    global $conf;
+
+    //header("Content-type: text/html; charset=UTF-8");
+    header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+    // On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
+    if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
+}
+
+
+/**
  *  \brief      Show HTML header
  *  \param      head    	Optionnal head lines
  *  \param      title   	Web page title
@@ -769,13 +784,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 {
 	global $user, $conf, $langs, $db;
 
+	top_httphead();
+
 	if (empty($conf->css)) $conf->css = '/theme/eldy/style.css.php';	// If not defined, eldy by default
-
-	//header("Content-type: text/html; charset=UTF-8");
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
-	// On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
-	if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
 
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';

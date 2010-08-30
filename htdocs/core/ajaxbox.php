@@ -30,13 +30,22 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
-require('./main.inc.php');
+require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
 
 /*
  * View
  */
+
+// Ajout directives pour resoudre bug IE
+//header('Cache-Control: Public, must-revalidate');
+//header('Pragma: public');
+
+//top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
+top_httphead();
+
+print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Registering the location of boxes
 if((isset($_GET['boxorder']) && !empty($_GET['boxorder'])) && (isset($_GET['userid']) && !empty($_GET['userid'])))

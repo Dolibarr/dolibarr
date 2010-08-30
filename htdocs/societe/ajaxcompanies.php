@@ -40,12 +40,14 @@ require('../main.inc.php');
  */
 
 // Ajout directives pour resoudre bug IE
-header('Cache-Control: Public, must-revalidate');
-header('Pragma: public');
+//header('Cache-Control: Public, must-revalidate');
+//header('Pragma: public');
+
+//top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
+top_httphead();
 
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-//top_htmlhead("", "", 1, 1);  // Disabled. An ajax return must not include html header.
 
 //print '<body id="mainbody">';
 
