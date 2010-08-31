@@ -27,7 +27,8 @@ if (defined('DOL_URL_ROOT')) define ("K_PATH_URL_CACHE", DOL_URL_ROOT."/document
 /* End DOLCHANGE Added by Regis */
 
 // DOLCHANGE
-require_once(FPDF_PATH."fpdf.php");
+require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdf/fpdf.php');
+//require_once(DOL_DOCUMENT_ROOT.'/includes/tcpdf/tcpdf.php');
 
 
 
