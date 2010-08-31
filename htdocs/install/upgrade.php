@@ -27,7 +27,7 @@
 include_once("./inc.php");
 if (! file_exists($conffile))
 {
-	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/install.php" instead of "/install/upgrade.php").';
+	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
 require_once($conffile); if (! isset($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
 require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
@@ -67,7 +67,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
  * View
  */
 
-pHeader('',"upgrade2",$_REQUEST['action'],'versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('',"upgrade2",isset($_REQUEST['action'])?$_REQUEST['action']:'','versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 $actiondone=0;
 
@@ -80,7 +80,7 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 
 	if (! $versionfrom && ! $versionto)
 	{
-		print '<div class="error">Parameter versionfrom or version to missing.</div>';
+		print '<div class="error">Parameter versionfrom or version to missing. Upgrade is launched from page install/index.php (like a first install) instead of install/upgrade.php</div>';
 		exit;
 	}
 
@@ -112,13 +112,13 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 	if ($db->connected == 1)
 	{
 		print '<tr><td nowrap="nowrap">';
-		print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+		print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
 		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
 		$ok = 1;
 	}
 	else
 	{
-		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>\n";
 		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
 		$ok = 0;
 	}
@@ -128,13 +128,13 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 		if($db->database_selected == 1)
 		{
 			print '<tr><td nowrap="nowrap">';
-			print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+			print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
 			dolibarr_install_syslog("upgrade: Database connection successfull : $dolibarr_main_db_name");
 			$ok=1;
 		}
 		else
 		{
-			print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
+			print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
 			dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
 			$ok=0;
 		}
@@ -224,9 +224,9 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 	}
 
 	/*
-	 * Remove deprecated indexes and constraints
+	 * Remove deprecated indexes and constraints for Mysql
 	 */
-	if ($ok)
+	if ($ok && preg_match('/mysql/',$db->type))
 	{
 		$versioncommande=explode('.','4.0');
 		if (sizeof($versioncommande) && sizeof($versionarray)
@@ -279,9 +279,7 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 	 */
 	if ($ok)
 	{
-		if ($choix==1) $dir = "mysql/migration/";
-		elseif ($choix==2) $dir = "pgsql/migration/";
-		else $dir = "mssql/migration/";
+		$dir = "mysql/migration/";		// We use mysql migration scripts whatever is database driver
 
 		$filelist=array();
 		$i = 0;
@@ -292,11 +290,18 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 		# Recupere list fichier
 		$filesindir=array();
 		$handle=opendir($dir);
-		while (($file = readdir($handle))!==false)
+		if ($handle)
 		{
-			if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
+			while (($file = readdir($handle))!==false)
+			{
+				if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
+			}
+			sort($filesindir);
 		}
-		sort($filesindir);
+		else
+		{
+			print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$dir).'</div>';
+		}
 
 		# Define which file to run
 		foreach($filesindir as $file)
@@ -315,12 +320,12 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 		foreach($filelist as $file)
 		{
 			print '<tr><td nowrap>';
-			print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>';
+			print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>'."\n";
 
 			$name = substr($file, 0, strlen($file) - 4);
 
 			// Run sql script
-			$ok=run_sql($dir.$file, 0);
+			$ok=run_sql($dir.$file, 0, '', 1);
 		}
 	}
 
