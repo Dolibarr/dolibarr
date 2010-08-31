@@ -74,13 +74,13 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
 
 
 /*
- * Actions
+ * View
  */
 
-pHeader('','etape5',$_REQUEST["action"],'versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('','etape5',GETPOST("action"),'versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 
-if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
+if (GETPOST('action') && preg_match('/upgrade/i',GETPOST("action")))
 {
 	print '<h3>'.$langs->trans('DataMigration').'</h3>';
 
@@ -172,7 +172,6 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 		// dans la 1ere colonne, la description de l'action a faire
 		// dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
 
-
 		$versiontoarray=explode('.',$versionto);
 
 		$afterversionarray=explode('.','2.0.0');
@@ -237,6 +236,12 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 			migrate_directories($db,$langs,$conf,'/compta','/banque');
 
 			migrate_directories($db,$langs,$conf,'/societe','/mycompany');
+
+			// Reload modules
+            migrate_reload_modules($db,$langs,$conf);
+
+            // Reload menus
+            migrate_reload_menu($db,$langs,$conf,$versionto);
 		}
 
 		// Script for VX (X<2.8) -> V2.8
@@ -262,6 +267,12 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 			migrate_project_user_resp($db,$langs,$conf);
 
 			migrate_project_task_actors($db,$langs,$conf);
+
+			// Reload modules
+            migrate_reload_modules($db,$langs,$conf);
+
+            // Reload menus
+            migrate_reload_menu($db,$langs,$conf,$versionto);
 		}
 
 		// Script for VX (X<2.9) -> V2.9
@@ -276,13 +287,21 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 			migrate_shipping_delivery($db,$langs,$conf);
 
 			migrate_shipping_delivery2($db,$langs,$conf);
+
+			// Reload modules
+            migrate_reload_modules($db,$langs,$conf);
+
+            // Reload menus
+            migrate_reload_menu($db,$langs,$conf,$versionto);
 		}
 
-		// Reload modules
-		migrate_reload_modules($db,$langs,$conf);
-
-		// Reload menus
-		migrate_reload_menu($db,$langs,$conf,$versionto);
+        // Script for VX (X<2.9) -> V2.9
+        $afterversionarray=explode('.','2.9.9');
+        $beforeversionarray=explode('.','3.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+            print $langs->trans("AlreadyDone");
+        }
 
 		// On commit dans tous les cas.
 		// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
@@ -296,8 +315,6 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 	}
 
 	print '</table>';
-
-	//print $langs->trans("Done");
 }
 else
 {
@@ -945,7 +962,7 @@ function migrate_contracts_date3($db,$langs,$conf)
 	dolibarr_install_syslog("upgrade2::migrate_contracts_date3 sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
-	if ($db->affected_rows() > 0)
+	if ($db->affected_rows($resql) > 0)
 	print $langs->trans('MigrationContractsIncoherentCreationDateUpdateSuccess')."<br>\n";
 	else
 	print $langs->trans('MigrationContractsIncoherentCreationDateNothingToUpdate')."<br>\n";
@@ -968,7 +985,7 @@ function migrate_contracts_open($db,$langs,$conf)
 	dolibarr_install_syslog("upgrade2::migrate_contracts_open sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
-	if ($db->affected_rows() > 0) {
+	if ($db->affected_rows($resql) > 0) {
 		$i = 0;
 		$row = array();
 		$num = $db->num_rows($resql);
