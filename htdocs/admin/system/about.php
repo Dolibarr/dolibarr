@@ -80,6 +80,9 @@ print '</li>';
 print '<li>';
 print '<a target="blank" href="http://demo.dolibarr.org/public/demo">'.$langs->trans("OfficialDemo").'</a>';
 print '</li>';
+print '<li>';
+print '<a target="blank" href="http://www.dolistore.com">'.$langs->trans("OfficialMarketPlace").'</a>';
+print '</li>';
 
 if (preg_match('/^fr_/i',$langs->getDefaultLang()))
 {

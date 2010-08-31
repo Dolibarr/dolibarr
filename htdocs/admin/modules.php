@@ -291,16 +291,17 @@ asort($orders);
 
 // Affichage debut page
 
-if ($mode==0) { $tagmode = 'common';     print $langs->trans("ModulesDesc")."<br>\n"; }
-if ($mode==2) { $tagmode = 'other';      print $langs->trans("ModulesSpecialDesc")."<br>\n"; }
-if ($mode==1) { $tagmode = 'interfaces'; print $langs->trans("ModulesInterfaceDesc")."<br>\n"; }
-if ($mode==3) { $tagmode = 'functional'; print $langs->trans("ModulesJobDesc")."<br>\n"; }
+if ($mode==0) { $tagmode = 'common';      print $langs->trans("ModulesDesc")."<br>\n"; }
+if ($mode==2) { $tagmode = 'other';       print $langs->trans("ModulesSpecialDesc")."<br>\n"; }
+if ($mode==1) { $tagmode = 'interfaces';  print $langs->trans("ModulesInterfaceDesc")."<br>\n"; }
+if ($mode==3) { $tagmode = 'functional';  print $langs->trans("ModulesJobDesc")."<br>\n"; }
+if ($mode==4) { $tagmode = 'marketplace'; print $langs->trans("ModulesMarketPlaceDesc")."<br>\n"; }
 print "<br>\n";
 
 
 $h = 0;
 
-$categidx=0;
+$categidx=0;    // Main
 if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
@@ -309,7 +310,7 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
-$categidx=2;
+$categidx=2;    // Other
 if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
@@ -318,7 +319,7 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
-$categidx=1;
+$categidx=1;    // Interfaces
 if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
@@ -327,7 +328,7 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
-$categidx=3;
+$categidx=3;    // Not used
 if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
@@ -336,194 +337,242 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
+$categidx=4;
+//if (! empty($categ[$categidx]))
+//{
+    $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
+    $head[$h][1] = $langs->trans("ModulesMarketPlaces");
+    $head[$h][2] = 'marketplace';
+    $h++;
+//}
+
+
 dol_fiche_head($head, $tagmode, $langs->trans("Modules"));
 
 
 if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
-print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print "  <td>".$langs->trans("Family")."</td>\n";
-print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
-print "  <td>".$langs->trans("Description")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
-//print "  <td align=\"center\">".$langs->trans("DbVersion")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("Status")."</td>\n";
-print "  <td>".$langs->trans("SetupShort")."</td>\n";
-print "</tr>\n";
 
-
-// Affichage liste modules
-
-$var=true;
-$oldfamily='';
-
-$familylib=array(
-'base'=>$langs->trans("ModuleFamilyBase"),
-'crm'=>$langs->trans("ModuleFamilyCrm"),
-'products'=>$langs->trans("ModuleFamilyProducts"),
-'hr'=>$langs->trans("ModuleFamilyHr"),
-'projects'=>$langs->trans("ModuleFamilyProjects"),
-'financial'=>$langs->trans("ModuleFamilyFinancial"),
-'ecm'=>$langs->trans("ModuleFamilyECM"),
-'technic'=>$langs->trans("ModuleFamilyTechnic"),
-'other'=>$langs->trans("ModuleFamilyOther")
-);
-foreach ($orders as $key => $value)
+if ($mode != 4)
 {
-    $tab=explode('_',$value);
-    $family=$tab[0]; $numero=$tab[1];
+    print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
+    //print "<tr class=\"liste_titre\">\n";
+    print '<tr class="liste_total">'."\n";
+    //print "  <td>".$langs->trans("Family")."</td>\n";
+    print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
+    print "  <td>".$langs->trans("Description")."</td>\n";
+    print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
+    //print "  <td align=\"center\">".$langs->trans("DbVersion")."</td>\n";
+    print "  <td align=\"center\">".$langs->trans("Status")."</td>\n";
+    print "  <td align=\"right\">".$langs->trans("SetupShort")."</td>\n";
+    print "</tr>\n";
 
-    $modName = $filename[$key];
-	$objMod  = $modules[$key];
 
-    $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+    // Affichage liste modules
 
-    // Load all lang files of module
-    if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+    $var=true;
+    $oldfamily='';
+
+    $familylib=array(
+    'base'=>$langs->trans("ModuleFamilyBase"),
+    'crm'=>$langs->trans("ModuleFamilyCrm"),
+    'products'=>$langs->trans("ModuleFamilyProducts"),
+    'hr'=>$langs->trans("ModuleFamilyHr"),
+    'projects'=>$langs->trans("ModuleFamilyProjects"),
+    'financial'=>$langs->trans("ModuleFamilyFinancial"),
+    'ecm'=>$langs->trans("ModuleFamilyECM"),
+    'technic'=>$langs->trans("ModuleFamilyTechnic"),
+    'other'=>$langs->trans("ModuleFamilyOther")
+    );
+    foreach ($orders as $key => $value)
     {
-    	foreach($objMod->langfiles as $domain)
-    	{
-    		$langs->load($domain);
-    	}
-    }
+        $tab=explode('_',$value);
+        $family=$tab[0]; $numero=$tab[1];
 
-    // Print a separator if we change family
-    //print "<tr><td>xx".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
-    if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
-        print "<tr class=\"liste_titre\">\n  <td colspan=\"9\"></td>\n</tr>\n";
-        $atleastoneforfamily=0;
-        //print "<tr><td>yy".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
-    }
+        $modName = $filename[$key];
+    	$objMod  = $modules[$key];
 
-    if ($objMod->special == $mode)
-    {
-        $atleastoneforfamily++;
-        $var=!$var;
+        if ($objMod->special != $mode) continue;    // Discard if not for tab
 
-        print "<tr $bc[$var]>\n";
+        $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
 
-        print "  <td valign=\"top\">";
-        if ($family!=$oldfamily)
+        // Load all lang files of module
+        if (isset($objMod->langfiles) && is_array($objMod->langfiles))
         {
+        	foreach($objMod->langfiles as $domain)
+        	{
+        		$langs->load($domain);
+        	}
+        }
+
+        // Print a separator if we change family
+        //print "<tr><td>xx".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
+        //if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
+        if ($family!=$oldfamily) {
+            print "<tr class=\"liste_titre\">\n  <td colspan=\"6\">";
             $familytext=empty($familylib[$family])?$family:$familylib[$family];
             print $familytext;
-            $oldfamily=$family;
+            print "</td>\n</tr>\n";
+            $atleastoneforfamily=0;
+            //print "<tr><td>yy".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
         }
-        else
+
+        if ($objMod->special == $mode)
         {
-            print '&nbsp;';
-        }
-        print "</td>\n";
+            $atleastoneforfamily++;
+            $var=!$var;
 
-        // Picto
-        print '  <td valign="top" width="14" align="center">';
-        if (! empty($objMod->picto))
-        {
-        	if (preg_match('/^\//i',$objMod->picto)) print img_picto('',$objMod->picto,'',1);
-        	else print img_object('',$objMod->picto);
-        }
-        else
-        {
-        	print img_object('','generic');
-        }
-        print '</td>';
+            print "<tr ".$bc[$var].">\n";
 
-        // Name
-        print '<td valign="top">'.$objMod->getName();
-        print "</td>\n";
-
-        // Desc
-        print "<td valign=\"top\">";
-        print nl2br($objMod->getDesc());
-        print "</td>\n";
-
-        // Version
-        print "<td align=\"center\" valign=\"top\" nowrap=\"nowrap\">";
-        print $objMod->getVersion();
-        print "</td>\n";
-
-        // Activate/Disable and Setup
-        print "<td align=\"center\" valign=\"top\">";
-        if (! empty($conf->global->$const_name))
-        {
-            $disableSetup = 0;
-
-        	// Module actif
-            if (! empty($objMod->always_enabled) || (($conf->global->MAIN_MODULE_MULTICOMPANY && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
+            //print '  <td valign="top" nowrap="nowrap">';
+            if ($family!=$oldfamily)
             {
-            	print $langs->trans("Required");
-            	if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity) $disableSetup++;
+                $familytext=empty($familylib[$family])?$family:$familylib[$family];
+                //print $familytext;
+                $oldfamily=$family;
             }
             else
             {
-            	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-            	print img_picto($langs->trans("Activated"),'on');
-            	print '</a></td>'."\n";
+                //print '&nbsp;';
             }
+            //print "</td>\n";
 
-            if (! empty($objMod->config_page_url) && !$disableSetup)
+            // Picto
+            print '  <td valign="top" width="14" align="center">';
+            if (! empty($objMod->picto))
             {
-                if (is_array($objMod->config_page_url))
+            	if (preg_match('/^\//i',$objMod->picto)) print img_picto('',$objMod->picto,'',1);
+            	else print img_object('',$objMod->picto);
+            }
+            else
+            {
+            	print img_object('','generic');
+            }
+            print '</td>';
+
+            // Name
+            print '<td valign="top">'.$objMod->getName();
+            print "</td>\n";
+
+            // Desc
+            print "<td valign=\"top\">";
+            print nl2br($objMod->getDesc());
+            print "</td>\n";
+
+            // Version
+            print "<td align=\"center\" valign=\"top\" nowrap=\"nowrap\">";
+            print $objMod->getVersion();
+            print "</td>\n";
+
+            // Activate/Disable and Setup (2 columns)
+            if (! empty($conf->global->$const_name))
+            {
+                $disableSetup = 0;
+
+                print "<td align=\"center\" valign=\"top\">";
+
+            	// Module actif
+                if (! empty($objMod->always_enabled) || (($conf->global->MAIN_MODULE_MULTICOMPANY && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
                 {
-                    print '  <td align="center" valign="top">';
-                    $i=0;
-                    foreach ($objMod->config_page_url as $page)
-                    {
-						$urlpage=$page;
-                        if ($i++)
-                        {
-                            print '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>&nbsp;';
-                        //    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
-                        }
-                        else
-                        {
-                        	if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
-                        	{
-                        		print '<a href="'.DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
-                        	}
-                        	else
-                        	{
-                        		print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
-                        	}
-                        }
-                    }
-                    print "</td>\n";
-                }
-                else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
-                {
-                   	print '<td align="center" valign="top"><a href="'.DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+                	print $langs->trans("Required");
+                	if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity) $disableSetup++;
+                	print '</td>'."\n";
                 }
                 else
                 {
-                    print '<td align="center" valign="top"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+                	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+                	print img_picto($langs->trans("Activated"),'on');
+                	print '</a></td>'."\n";
                 }
+
+                if (! empty($objMod->config_page_url) && !$disableSetup)
+                {
+                    if (is_array($objMod->config_page_url))
+                    {
+                        print '  <td align="right" valign="top">';
+                        $i=0;
+                        foreach ($objMod->config_page_url as $page)
+                        {
+    						$urlpage=$page;
+                            if ($i++)
+                            {
+                                print '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>&nbsp;';
+                            //    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
+                            }
+                            else
+                            {
+                            	if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
+                            	{
+                            		print '<a href="'.DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+                            	}
+                            	else
+                            	{
+                            		print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+                            	}
+                            }
+                        }
+                        print "</td>\n";
+                    }
+                    else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
+                    {
+                       	print '<td align="right" valign="top"><a href="'.DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+                    }
+                    else
+                    {
+                        print '<td align="right" valign="top"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+                    }
+                }
+                else
+                {
+                    print "<td>&nbsp;</td>";
+                }
+
             }
             else
             {
-                print "<td>&nbsp;</td>";
+                print "<td align=\"center\" valign=\"top\">";
+
+                if (! empty($objMod->always_enabled))
+                {
+                    // Ne devrait pas arriver.
+                }
+
+                // Module non actif
+               	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+               	print img_picto($langs->trans("Disabled"),'off');
+               	print "</a></td>\n  <td>&nbsp;</td>\n";
             }
 
-        }
-        else
-        {
-            if (! empty($objMod->always_enabled))
-            {
-                // Ne devrait pas arriver.
-            }
-
-            // Module non actif
-           	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-           	print img_picto($langs->trans("Disabled"),'off');
-           	print "</a></td>\n  <td>&nbsp;</td>\n";
+            print "</tr>\n";
         }
 
-        print "</tr>\n";
     }
-
+    print "</table>\n";
 }
-print "</table></div>\n";
+else
+{
+    // Marketplace
+    print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
+    print "<tr class=\"liste_titre\">\n";
+    //print '<td>'.$langs->trans("Logo").'</td>';
+    print '<td colspan="2">'.$langs->trans("WebSiteDesc").'</td>';
+    print '<td>'.$langs->trans("URL").'</td>';
+    print '</tr>';
 
+    $var=!$var;
+    print "<tr ".$bc[$var].">\n";
+    $url='http://www.dolistore.com';
+    print '<td align="left"><a href="'.$url.'" target="_blank"><img border="0" src="'.DOL_URL_ROOT.'/theme/common/dolistore.jpg"></a></td>';
+    print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
+    print '<td><a href="'.$url.'" target="_blank">'.$url.'</a></td>';
+    print '</tr>';
+
+
+    print "</table>\n";
+}
+
+
+dol_fiche_end();
 
 // Pour eviter bug mise en page IE
 print '<div class="tabsAction">';
