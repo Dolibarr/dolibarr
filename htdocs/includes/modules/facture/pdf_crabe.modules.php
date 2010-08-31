@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2010 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin          <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010      Juanjo Menent		  <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
-require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
@@ -94,6 +95,8 @@ class pdf_crabe extends ModelePDFFactures
 		$this->postotalht=174;
 
 		$this->tva=array();
+		$this->localtax1=array();
+		$this->localtax2=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}
@@ -101,7 +104,7 @@ class pdf_crabe extends ModelePDFFactures
 
 	/**
 	 *		\brief      Fonction generant la facture sur le disque
-	 *		\param	    fac				Objet facture a generer (ou id si ancienne methode)
+	 *		\param	    fac				Objet invoice to build (or id if old method)
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int     		1=ok, 0=ko
 	 */
@@ -125,7 +128,7 @@ class pdf_crabe extends ModelePDFFactures
 			if (! is_object($fac))
 			{
 				$id = $fac;
-				$fac = new Facture($this->db,"",$id);
+				$fac = new Facture($this->db);
 				$ret=$fac->fetch($id);
 			}
 
@@ -147,7 +150,6 @@ class pdf_crabe extends ModelePDFFactures
 				$dir = $conf->facture->dir_output . "/" . $facref;
 				$file = $dir . "/" . $facref . ".pdf";
 			}
-
 			if (! file_exists($dir))
 			{
 				if (create_exdir($dir) < 0)
@@ -183,7 +185,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($fac->ref)." ".$outputlangs->transnoentities("Invoice"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
@@ -282,10 +284,21 @@ class pdf_crabe extends ModelePDFFactures
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$fac->lignes[$i]->total_tva;
+					$localtax1ligne=$fac->lignes[$i]->total_localtax1;
+					$localtax2ligne=$fac->lignes[$i]->total_localtax2;
+
 					if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
+					if ($fac->remise_percent) $localtax1ligne-=($localtax1ligne*$fac->remise_percent)/100;
+					if ($fac->remise_percent) $localtax2ligne-=($localtax2ligne*$fac->remise_percent)/100;
+
 					$vatrate=(string) $fac->lignes[$i]->tva_tx;
+					$localtax1rate=(string) $fac->lignes[$i]->localtax1_tx;
+					$localtax2rate=(string) $fac->lignes[$i]->localtax2_tx;
+
 					if (($fac->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
+					$this->localtax1[$localtax1rate]+=$localtax1ligne;
+					$this->localtax2[$localtax2rate]+=$localtax2ligne;
 
 					$nexY+=2;    // Passe espace entre les lignes
 
@@ -476,7 +489,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		// Loop on each payment
-		$sql = "SELECT ".$this->db->pdate("p.datep")."as date, pf.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
+		$sql = "SELECT p.datep as date, pf.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
 		$sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
 		$sql.= "WHERE pf.fk_paiement = p.rowid and pf.fk_facture = ".$fac->id." ";
 		$sql.= "ORDER BY p.datep";
@@ -490,7 +503,7 @@ class pdf_crabe extends ModelePDFFactures
 				$row = $this->db->fetch_row($resql);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 3, dol_print_date($row[0],'day',false,$outputlangs,true), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row[0]),'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($row[1]), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
@@ -644,7 +657,7 @@ class pdf_crabe extends ModelePDFFactures
 
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('Arial','',8);
-						$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->adresse_full), 0, 'L', 0);
+						$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
 						$posy=$pdf->GetY()+2;
 					}
 				}
@@ -683,7 +696,7 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
-		global $conf;
+		global $conf,$mysoc;
 
 		$tab2_top = $posy;
 		$tab2_hl = 5;
@@ -738,6 +751,84 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
 				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
+
+				// Total LocalTax1
+				if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on' && $object->total_localtax1>0)
+				{
+					$index++;
+					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code), $useborder, 'L', 1);
+					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
+				}
+
+				// Total LocalTax2
+				if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on' && $object->total_localtax2>0)
+				{
+					$index++;
+					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code), $useborder, 'L', 1);
+					$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), $useborder, 'R', 1);
+				}
+			}
+			else
+			{
+				if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
+				{
+					//Local tax 1
+					foreach( $this->localtax1 as $tvakey => $tvaval )
+					{
+						if ($tvakey>0)    // On affiche pas taux 0
+						{
+							//$this->atleastoneratenotnull++;
+
+							$index++;
+							$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+
+							$tvacompl='';
+							if (preg_match('/\*/',$tvakey))
+							{
+								$tvakey=str_replace('*','',$tvakey);
+								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+							}
+							$totalvat =$outputlangs->transnoentities("TotalLT1".$mysoc->pays_code).' ';
+							$totalvat.=vatrate($tvakey,1).$tvacompl;
+							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+							$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+						}
+					}
+				}
+
+				if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+				{
+					//Local tax 2
+					foreach( $this->localtax2 as $tvakey => $tvaval )
+					{
+						if ($tvakey>0)    // On affiche pas taux 0
+						{
+						//$this->atleastoneratenotnull++;
+
+							$index++;
+							$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+
+							$tvacompl='';
+							if (preg_match('/\*/',$tvakey))
+							{
+								$tvakey=str_replace('*','',$tvakey);
+								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+							}
+							$totalvat =$outputlangs->transnoentities("TotalLT2".$mysoc->pays_code).' ';
+							$totalvat.=vatrate($tvakey,1).$tvacompl;
+							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+							$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+						}
+					}
+				}
 			}
 		}
 
@@ -990,7 +1081,7 @@ class pdf_crabe extends ModelePDFFactures
 		$posy+=4;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dol_print_date($object->date,"day",false,$outpulangs), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dol_print_date($object->date,"day",false,$outputlangs), '', 'R');
 
 		if ($object->type != 2)
 		{
@@ -1014,6 +1105,8 @@ class pdf_crabe extends ModelePDFFactures
 
 	    if ($conf->propal->enabled)
 		{
+			require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+
 			$outputlangs->load('propal');
 			foreach($object->linked_object as $key => $val)
 			{
@@ -1038,6 +1131,8 @@ class pdf_crabe extends ModelePDFFactures
 	    // TODO mutualiser
 		if ($conf->commande->enabled)
 		{
+			require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
