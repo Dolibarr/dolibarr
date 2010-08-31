@@ -38,4 +38,4 @@ ALTER TABLE llx_notify ADD COLUMN type varchar(16) DEFAULT 'email';
 ALTER TABLE llx_actioncomm MODIFY label varchar(128) NOT NULL;
 
 ALTER TABLE llx_expedition MODIFY date_expedition datetime;
-ALTER TABLE llx_expedition MODIFY date_delivery datetime DEFAULT NULL;
+ALTER TABLE llx_expedition MODIFY date_delivery datetime NULL;
