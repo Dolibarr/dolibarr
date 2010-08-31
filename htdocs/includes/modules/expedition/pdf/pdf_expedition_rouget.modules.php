@@ -78,7 +78,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		global $conf,$langs,$mysoc;
 		$langs->load("orders");
 
-		pdf_pagehead($pdf,$outputlangs,$pdf->page_hauteur);
+		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
 		if($object->statut==0 && (! empty($conf->global->SENDING_DRAFT_WATERMARK)) )

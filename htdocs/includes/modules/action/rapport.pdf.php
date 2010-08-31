@@ -233,7 +233,7 @@ class CommActionRapport
 		global $conf,$langs;
 
 		// Do not add the BACKGROUND as this is a report
-		//pdf_pagehead($pdf,$outputlangs,$pdf->page_hauteur);
+		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		// New page
 		$pdf->AddPage();

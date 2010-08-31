@@ -576,7 +576,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$outputlangs->load("companies");
 
 		// Do not add the BACKGROUND as this is for suppliers
-		//pdf_pagehead($pdf,$outputlangs,$pdf->page_hauteur);
+		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('Arial','B',13);

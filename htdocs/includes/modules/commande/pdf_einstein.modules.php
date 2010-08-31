@@ -817,7 +817,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("propal");
 		$outputlangs->load("companies");
 
-		pdf_pagehead($pdf,$outputlangs,$pdf->page_hauteur);
+		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
 		if($object->statut==0 && (! empty($conf->global->COMMANDE_DRAFT_WATERMARK)) )

@@ -849,7 +849,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		$outputlangs->load("propal");
 		$outputlangs->load("companies");
 
-		pdf_pagehead($pdf,$outputlangs,$pdf->page_hauteur);
+		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
 		if($object->statut==0 && (! empty($conf->global->PROPALE_DRAFT_WATERMARK)) )

@@ -343,7 +343,7 @@ class pdf_baleine extends ModelePDFProjects
 	{
 		global $langs,$conf,$mysoc;
 
-		pdf_pagehead($pdf,$outputlangs,$pdf->page_hauteur);
+		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('Arial','B',13);

@@ -326,7 +326,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	{
 		global $conf, $langs;
 
-		pdf_pagehead($pdf,$outputlangs,$pdf->page_hauteur);
+		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 			//Affiche le filigrane brouillon - Print Draft Watermark
 		if($object->statut==0 && (! empty($conf->global->SENDING_DRAFT_WATERMARK)) )
