@@ -133,21 +133,24 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 				}
 			}
 
-			// Ajout ligne si non commentaire
-			if (! preg_match('/^--/',$buf)) $buffer .= $buf;
+			// Add line buf to buffer if not a comment
+			if (! preg_match('/^--/',$buf))
+			{
+			    $buffer .= trim($buf);
+			}
 
 			//          print $buf.'<br>';
 
 			if (preg_match('/;/',$buffer))
 			{
 				// Found new request
-				$arraysql[$i]=trim($buffer);
+				if ($buffer) $arraysql[$i]=$buffer;
 				$i++;
 				$buffer='';
 			}
 		}
 
-		if ($buffer) $arraysql[$i]=trim($buffer);
+		if ($buffer) $arraysql[$i]=$buffer;
 		fclose($fp);
 	}
 	else
@@ -159,42 +162,39 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 	$listofmaxrowid=array();	// This is a cache table
 	foreach($arraysql as $i => $sql)
 	{
-		if ($sql)
+		$newsql=$sql;
+
+		// Replace __+MAX_table__ with max of table
+		while (preg_match('/__\+MAX_([A-Za-z_]+)__/i',$newsql,$reg))
 		{
-			$newsql=$sql;
-
-			// Replace __+MAX_table__ with max of table
-			while (preg_match('/__\+MAX_([A-Za-z_]+)__/i',$newsql,$reg))
+			$table=$reg[1];
+			if (! isset($listofmaxrowid[$table]))
 			{
-				$table=$reg[1];
-				if (! isset($listofmaxrowid[$table]))
+				//var_dump($db);
+				$sqlgetrowid='SELECT MAX(rowid) as max from '.$table;
+				$resql=$db->query($sqlgetrowid);
+				if ($resql)
 				{
-					//var_dump($db);
-					$sqlgetrowid='SELECT MAX(rowid) as max from '.$table;
-					$resql=$db->query($sqlgetrowid);
-					if ($resql)
-					{
-						$obj=$db->fetch_object($resql);
-						$listofmaxrowid[$table]=$obj->max;
-						if (empty($listofmaxrowid[$table])) $listofmaxrowid[$table]=0;
-					}
-					else
-					{
-						dol_syslog('Admin.lib::run_sql Failed to get max rowid for '.$table.' '.$db->lasterror().' sql='.$sqlgetrowid, LOG_ERR);
-						if (! $silent) print '<tr><td valign="top" colspan="2">';
-						if (! $silent) print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
-						if (! $silent) print '</tr>';
-						$error++;
-						break;
-					}
+					$obj=$db->fetch_object($resql);
+					$listofmaxrowid[$table]=$obj->max;
+					if (empty($listofmaxrowid[$table])) $listofmaxrowid[$table]=0;
 				}
-				$from='__+MAX_'.$table.'__';
-				$to='+'.$listofmaxrowid[$table];
-				$newsql=str_replace($from,$to,$newsql);
-				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.') sql='.$newsql, LOG_DEBUG);
-
-				$arraysql[$i]=$newsql;
+				else
+				{
+					dol_syslog('Admin.lib::run_sql Failed to get max rowid for '.$table.' '.$db->lasterror().' sql='.$sqlgetrowid, LOG_ERR);
+					if (! $silent) print '<tr><td valign="top" colspan="2">';
+					if (! $silent) print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
+					if (! $silent) print '</tr>';
+					$error++;
+					break;
+				}
 			}
+			$from='__+MAX_'.$table.'__';
+			$to='+'.$listofmaxrowid[$table];
+			$newsql=str_replace($from,$to,$newsql);
+			dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.') sql='.$newsql, LOG_DEBUG);
+
+			$arraysql[$i]=$newsql;
 		}
 	}
 
