@@ -107,10 +107,10 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 
 /**
- *   	\brief      Show header of page for PDF generation
- *   	\param      pdf     		Object PDF
- *      \param      outputlang		Object lang for output
- * 		\param		page_height
+ *   	Show header of page for PDF generation
+ *   	@param      pdf     		Object PDF
+ *      @param      outputlang		Object lang for output
+ * 		@param		page_height
  */
 function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 {
@@ -125,7 +125,7 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 
 
 /**
- *   	\brief      Show bank informations for PDF generation
+ *   	Show bank informations for PDF generation
  */
 function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 {
