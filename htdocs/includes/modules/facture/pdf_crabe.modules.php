@@ -1080,7 +1080,7 @@ class pdf_crabe extends ModelePDFFactures
 		$posy+=4;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dol_print_date($object->date,"day",false,$outpulangs), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dol_print_date($object->date,"day",false,$outputlangs), '', 'R');
 
 		if ($object->type != 2)
 		{
