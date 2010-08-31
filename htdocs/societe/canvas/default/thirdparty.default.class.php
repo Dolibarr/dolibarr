@@ -50,8 +50,6 @@ class ThirdPartyDefault extends Societe
 		$this->name 			= "default";
 		$this->definition 		= "Canvas des tiers (défaut)";
 		$this->fieldListName    = "thirdparty_default";
-
-		$this->next_prev_filter = "canvas='default'";
 	}
 
 	function getTitle()
@@ -73,13 +71,12 @@ class ThirdPartyDefault extends Societe
 	}
 
 	/**
-	 *    \brief      Assigne les valeurs pour les templates
-	 *    \param      object     object
+	 *    \brief      Assigne les valeurs complementaires pour le canvas
+	 *    \param      action     Type of action
 	 */
 	function assign_values($action='')
 	{
-		global $conf,$langs;
-
+		parent::assign_values($action);
 	}
 
 	/**

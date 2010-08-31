@@ -49,22 +49,21 @@ function societe_prepare_head($objsoc)
     $head[$h][2] = 'agenda';
     $h++;
 
-
-    if ($objsoc->client==1 || $objsoc->client==3)
+    if ($objsoc->client==1 || $objsoc->client==3 || $objsoc->object->client==1 || $objsoc->object->client==3)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
         $head[$h][1] = $langs->trans("Customer");
         $head[$h][2] = 'customer';
         $h++;
     }
-    if ($objsoc->client==2 || $objsoc->client==3)
+    if ($objsoc->client==2 || $objsoc->client==3 || $objsoc->object->client==2 || $objsoc->object->client==3)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objsoc->id;
         $head[$h][1] = $langs->trans("Prospect");
         $head[$h][2] = 'prospect';
         $h++;
     }
-    if ($objsoc->fournisseur)
+    if ($objsoc->fournisseur || $objsoc->object->fournisseur)
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
         $head[$h][1] = $langs->trans("Supplier");

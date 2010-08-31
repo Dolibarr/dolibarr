@@ -2127,6 +2127,166 @@ class Societe extends CommonObject
 			return $result;
 		}
 	}
+	
+	/**
+	 *    \brief      Assigne les valeurs par defaut pour le canvas
+	 *    \param      action     Type of template
+	 */
+	function assign_values($action='')
+	{
+		global $conf,$langs,$user;
+		global $formcompany;
+			
+		$form = new Form($db);
+		
+		foreach($this as $key => $value)
+		{
+			$this->tpl[$key] = $value;
+		}
+		
+		if ($action == 'view')
+		{
+			$this->tpl['showrefnav'] 		= $form->showrefnav($this,'socid','',($user->societe_id?0:1),'rowid','nom');
+			
+			$this->tpl['checkcustomercode'] = $this->check_codeclient();
+			$this->tpl['checksuppliercode'] = $this->check_codefournisseur();
+			$this->tpl['address'] 			= dol_nl2br($this->address);
+			
+			$img=picto_from_langcode($this->pays_code);
+			if ($this->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->pays,$langs->trans("CountryIsInEEC"),1,0);
+			$this->tpl['country'] = ($img?$img.' ':'').$this->pays;
+			
+			$this->tpl['phone'] 	= dol_print_phone($this->tel,$this->pays_code,0,$this->id,'AC_TEL');
+			$this->tpl['fax'] 		= dol_print_phone($this->fax,$this->pays_code,0,$this->id,'AC_FAX');
+			$this->tpl['email'] 	= dol_print_email($this->email,0,$this->id,'AC_EMAIL');
+			$this->tpl['url'] 		= dol_print_url($this->url);
+			
+			$this->tpl['profid1'] 	= $this->siren;
+			$this->tpl['profid2'] 	= $this->siret;
+			$this->tpl['profid3'] 	= $this->ape;
+			$this->tpl['profid4'] 	= $this->idprof4;
+			
+			for ($i=1; $i<=4; $i++)
+			{
+				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->pays_code);
+				$this->tpl['checkprofid'.$i]	= $this->id_prof_check($i,$this);
+				$this->tpl['urlprofid'.$i]		= $this->id_prof_url($i,$this);
+			}
+			
+			$this->tpl['tva_assuj']		= yn($this->tpl['tva_assuj']);
+			
+			// TVA intra
+			if ($this->tva_intra)
+			{
+				$s='';
+				$s.=$this->tva_intra;
+				$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$this->tva_intra.'">';
+				$s.=' &nbsp; ';
+				if ($conf->use_javascript_ajax)
+				{
+					$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+					$this->tpl['tva_intra'] = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+				}
+				else 
+				{
+					$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+				}
+			}
+			else
+			{
+				$this->tpl['tva_intra'] = '&nbsp;';
+			}
+			
+			// Third party type
+			$arr = $formcompany->typent_array(1);
+			$this->tpl['typent'] = $arr[$this->typent_code];
+			
+			if ($conf->global->MAIN_MULTILANGS)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+				//$s=picto_from_langcode($this->default_lang);
+				//print ($s?$s.' ':'');
+				$langs->load("languages");
+				$this->tpl['default_lang'] = ($this->default_lang?$langs->trans('Language_'.$this->default_lang):'');
+			}
+			
+			$this->tpl['image_edit']	= img_edit();
+			
+			$this->tpl['display_rib']	= $this->display_rib();
+			
+			// Parent company
+			if ($this->parent)
+			{
+				$socm = new Societe($this->db);
+				$socm->fetch($this->parent);
+				$this->tpl['parent_company'] = $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
+				$this->tpl['parent_company'].= $socm->ville?' - '.$socm->ville:'';
+			}
+			else
+			{
+				$this->tpl['parent_company'] = $langs->trans("NoParentCompany");
+			}
+			
+			// Sales representatives
+			$sql = "SELECT count(sc.rowid) as nb";
+			$sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= " WHERE sc.fk_soc =".$this->id;
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+				$obj = $this->db->fetch_object($resql);
+				$this->tpl['sales_representatives'] = $obj->nb?($obj->nb):$langs->trans("NoSalesRepresentativeAffected");
+			}
+			else 
+			{
+				dol_print_error($this->db);
+			}
+			
+			// Linked member
+			if ($conf->adherent->enabled)
+			{
+				$langs->load("members");
+				$adh=new Adherent($this->db);
+				$result=$adh->fetch('','',$this->id);
+				if ($result > 0) 
+				{
+					$adh->ref=$adh->getFullName($langs);
+					$this->tpl['linked_member'] = $adh->getNomUrl(1);
+				}
+				else 
+				{
+					$this->tpl['linked_member'] = $langs->trans("UserNotLinkedToMember");
+				}
+			}
+			
+			// Local Tax
+			// TODO mettre dans une classe propre au pays
+			if($mysoc->pays_code=='ES')
+			{
+				$this->tpl['localtax'] = '';
+				
+				if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+				{
+					$this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
+					$this->tpl['localtax'].= '<td>'.yn($this->localtax1_assuj).'</td>';
+					$this->tpl['localtax'].= '<td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
+					$this->tpl['localtax'].= '<td>'.yn($this->localtax2_assuj).'</td></tr>';
+				}
+				elseif($mysoc->localtax1_assuj=="1")
+				{
+					$this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
+					$this->tpl['localtax'].= '<td colspan="3">'.yn($this->localtax1_assuj).'</td></tr>';
+				}
+				elseif($mysoc->localtax2_assuj=="1")
+				{
+					$this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
+					$this->tpl['localtax'].= '<td colspan="3">'.yn($this->localtax2_assuj).'</td></tr>';
+				}
+			}
+		}
+
+	}
 
 }
 

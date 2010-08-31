@@ -50,27 +50,34 @@ class Canvas
 	}
 
 	/**
-	 * 	\brief 		Load canvas
-	 * 	\param		Name of first part of canvas
-	 * 	\canvas		Name of second part of canvas
+	 * 	Load canvas
+	 * 	@param		$element 	Element of canvas
+	 * 	@param		$canvas		Name of canvas
 	 */
-	function load_canvas($object,$canvas)
+	function load_canvas($element,$canvas)
 	{
 		global $langs;
 
-		$part1=$object;
+		$part1=$part3=$element;
 		$part2=$canvas;
+		
+		// For compatibility
+		if (preg_match('/^([^@]+)@([^@]+)$/i',$element,$regs))
+		{
+			$part1=$regs[2];
+			$part3=$regs[1];
+		}
 
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
 		{
-			$part1=$regs[2];
+			$part1=$part3=$regs[2];
 			$part2=$regs[1];
 		}
 
-		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/'.$part1.'.'.$part2.'.class.php'))
+		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/'.$part3.'.'.$part2.'.class.php'))
 		{
-			$filecanvas = DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/'.$part1.'.'.$part2.'.class.php';
-			$classname = ucfirst($part1).ucfirst($part2);
+			$filecanvas = DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/'.$part3.'.'.$part2.'.class.php';
+			$classname = ucfirst($part3).ucfirst($part2);
 			$this->template_dir = DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/tpl/';
 
 			include_once($filecanvas);
@@ -121,7 +128,7 @@ class Canvas
 	 */
 	function display_canvas()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		if (!empty($this->smarty))
 		{

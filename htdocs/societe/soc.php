@@ -30,6 +30,7 @@
  */
 
 require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
@@ -1157,7 +1158,13 @@ else
     /*
      * Company Fact Sheet mode visu
      */
-    $soc = new Societe($db);
+	
+	// Call canvas
+	if (empty($_GET["canvas"])) $_GET["canvas"]='default';
+	
+	$soc = new Canvas($db,$user);
+	$soc->load_canvas('thirdparty@societe',$_GET["canvas"]);
+
     $soc->id = $socid;
     $result=$soc->fetch($socid);
     if ($result < 0)
@@ -1170,9 +1177,6 @@ else
 
     dol_fiche_head($head, 'company', $langs->trans("ThirdParty"),0,'company');
 
-    $html = new Form($db);
-
-
     // Confirm delete third party
     if ($_GET["action"] == 'delete')
     {
@@ -1180,10 +1184,9 @@ else
         $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
         if ($ret == 'html') print '<br>';
     }
-
-    // Template
-    // TODO utiliser la classe canvas
-    include(DOL_DOCUMENT_ROOT."/societe/canvas/default/tpl/view.tpl.php");
+    
+	$soc->assign_values('view');
+	$soc->display_canvas();
 
     /*
      *	Actions
