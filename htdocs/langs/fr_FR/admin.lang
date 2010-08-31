@@ -195,8 +195,7 @@ Developpers= Développeurs/contributeurs
 OtherDeveloppers= Autres développeurs/contributeurs
 OfficialWebSite= Site web officiel internationnal
 OfficialWebSiteFr= Site web officiel francophone
-OfficialWikiFr= Wiki francophone
-OfficialWiki= Wiki Dolibarr
+OfficialWiki= Wiki de documentation Dolibarr
 OfficialDemo= Démo en ligne Dolibarr
 ForDocumentationSeeWiki= Pour la documentation utilisateur, développeur ou les FAQs,<br>consultez le wiki Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum= Pour tout autre question/aide, vous pouvez utiliser le forum Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
