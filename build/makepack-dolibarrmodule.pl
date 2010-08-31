@@ -202,7 +202,7 @@ if ($nboftargetok) {
     		print "Remove target $FILENAMETGZ.tgz...\n";
     		unlink("$DESTI/$FILENAMETGZ.tgz");
     		print "Compress $BUILDROOT/* into $FILENAMETGZ.tgz...\n";
-   		    $cmd="tar --exclude-vcs --exclude *.tgz --directory \"$BUILDROOT\" --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" .";
+   		    $cmd="tar --exclude-vcs --exclude *.tgz --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" .";
    		    $ret=`$cmd`;
             if ($OS =~ /windows/i) {
         		print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";

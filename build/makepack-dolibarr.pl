@@ -261,7 +261,7 @@ if ($nboftargetok) {
 
     		print "Compress $BUILDROOT into $FILENAMESNAPSHOT.tgz...\n";
    		    #$cmd="tar --exclude \"$BUILDROOT/tgz/tar_exclude.txt\" --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
-   		    $cmd="tar --exclude .cache --exclude .settings --exclude conf.php --exclude conf.php.mysql --exclude conf.php.old --exclude conf.php.postgres --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
+   		    $cmd="tar --exclude .cache --exclude .settings --exclude conf.php --exclude conf.php.mysql --exclude conf.php.old --exclude conf.php.postgres --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
 			print $cmd."\n";
 			$ret=`$cmd`;
             if ($OS =~ /windows/i)
@@ -283,7 +283,7 @@ if ($nboftargetok) {
     		print "Remove target $FILENAMETGZ.tgz...\n";
     		unlink("$FILENAMETGZ.tgz");
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-   		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
+   		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
    		    $ret=`$cmd`;
             if ($OS =~ /windows/i)
             {
