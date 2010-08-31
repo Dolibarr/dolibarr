@@ -17,10 +17,24 @@
 *                                                                           *
 ****************************************************************************/
 
+/* Begin DOLCHANGE Added by Regis */
+// height of cell repect font height
+define("K_CELL_HEIGHT_RATIO", 1.25);
+// Repertoire des documents de fckeditor
+if (! empty($conf->fckeditor->dir_output)) define ("K_PATH_CACHE", $conf->fckeditor->dir_output);
+// url qui sera substituer par le K_PATH_CACHE lorsqu'une image sera integree au pdf
+if (defined('DOL_URL_ROOT')) define ("K_PATH_URL_CACHE", DOL_URL_ROOT."/document.php?modulepart=editor&amp;file=");
+/* End DOLCHANGE Added by Regis */
+
+// DOLCHANGE
+require_once(FPDF_PATH."fpdf.php");
+
+
+
 require_once('fpdi.php');
 
 class FPDI_Protection extends FPDI {
-	
+
 	var $encrypted = false;         //whether document is protected
     var $Uvalue;                    //U entry in pdf document
     var $Ovalue;                    //O entry in pdf document
@@ -29,21 +43,21 @@ class FPDI_Protection extends FPDI {
     var $last_rc4_key = '';         //last RC4 key encrypted (cached for optimisation)
     var $last_rc4_key_c;            //last RC4 computed key
     var $padding = "\x28\xBF\x4E\x5E\x4E\x75\x8A\x41\x64\x00\x4E\x56\xFF\xFA\x01\x08\x2E\x2E\x00\xB6\xD0\x68\x3E\x80\x2F\x0C\xA9\xFE\x64\x53\x69\x7A";
-    
+
 	// DOL_CHANGE
 /*
     function FPDI_Protection($orientation='P',$unit='mm',$format='A4')
     {
         parent::FPDI($orientation,$unit,$format);
         $this->_current_obj_id =& $this->current_obj_id; // for FPDI 1.1 compatibility
-        
+
         $this->encrypted=false;
         $this->last_rc4_key = '';
         $this->padding = "\x28\xBF\x4E\x5E\x4E\x75\x8A\x41\x64\x00\x4E\x56\xFF\xFA\x01\x08".
                          "\x2E\x2E\x00\xB6\xD0\x68\x3E\x80\x2F\x0C\xA9\xFE\x64\x53\x69\x7A";
     }
 */
-    
+
     /**
     * Function to set permissions as well as user and owner passwords
     *
@@ -169,7 +183,7 @@ class FPDI_Protection extends FPDI {
 
         return $out;
     }
-    
+
 
     /**
     * Get MD5 as binary string
@@ -214,7 +228,7 @@ class FPDI_Protection extends FPDI {
         $this->Pvalue = -(($protection^255)+1);
     }
 
-    
+
     function pdf_write_value(&$value) {
     	switch ($value[0]) {
     		case PDF_TYPE_STRING :
@@ -222,39 +236,39 @@ class FPDI_Protection extends FPDI {
                     $value[1] = $this->_unescape($value[1]);
                     $value[1] = $this->_RC4($this->_objectkey($this->_current_obj_id), $value[1]);
                  	$value[1] = $this->_escape($value[1]);
-                } 
+                }
     			break;
-    			
+
 			case PDF_TYPE_STREAM :
 				if ($this->encrypted) {
                     $value[2][1] = $this->_RC4($this->_objectkey($this->_current_obj_id), $value[2][1]);
                 }
                 break;
-                
+
             case PDF_TYPE_HEX :
-				
+
             	if ($this->encrypted) {
                 	$value[1] = $this->hex2str($value[1]);
                 	$value[1] = $this->_RC4($this->_objectkey($this->_current_obj_id), $value[1]);
-                    
+
                 	// remake hexstring of encrypted string
     				$value[1] = $this->str2hex($value[1]);
                 }
                 break;
-    	}	
-    	
+    	}
+
     	parent::pdf_write_value($value);
     }
-    
-    
+
+
     function hex2str($hex) {
     	return pack('H*', str_replace(array("\r","\n",' '),'', $hex));
     }
-    
+
     function str2hex($str) {
         return current(unpack('H*',$str));
     }
-    
+
     /**
      * Deescape special characters
      */
@@ -296,17 +310,17 @@ class FPDI_Protection extends FPDI {
                         if (ord($s[$count]) >= ord('0') &&
                             ord($s[$count]) <= ord('9')) {
                             $oct = ''. $s[$count];
-                                
+
                             if (ord($s[$count+1]) >= ord('0') &&
                                 ord($s[$count+1]) <= ord('9')) {
                                 $oct .= $s[++$count];
-                                
+
                                 if (ord($s[$count+1]) >= ord('0') &&
                                     ord($s[$count+1]) <= ord('9')) {
-                                    $oct .= $s[++$count];    
-                                }                            
+                                    $oct .= $s[++$count];
+                                }
                             }
-                            
+
                             $out .= chr(octdec($oct));
                         } else {
                             $out .= $s[$count];

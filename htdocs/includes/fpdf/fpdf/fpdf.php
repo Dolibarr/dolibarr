@@ -8,16 +8,6 @@
 *******************************************************************************/
 
 
-/* Begin DOLCHANGE Added by Regis */
-// height of cell repect font height
-define("K_CELL_HEIGHT_RATIO", 1.25);
-// Repertoire des documents de fckeditor
-if (! empty($conf->fckeditor->dir_output)) define ("K_PATH_CACHE", $conf->fckeditor->dir_output);
-// url qui sera substituer par le K_PATH_CACHE lorsqu'une image sera integree au pdf
-if (defined('DOL_URL_ROOT')) define ("K_PATH_URL_CACHE", DOL_URL_ROOT."/document.php?modulepart=editor&amp;file=");
-/* End DOLCHANGE Added by Regis */
-
-
 define('FPDF_VERSION','1.6');
 
 class FPDF
