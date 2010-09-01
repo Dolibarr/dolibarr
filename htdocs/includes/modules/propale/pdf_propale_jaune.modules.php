@@ -490,19 +490,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		//Affiche le filigrane brouillon - Print Draft Watermark
 		if($object->statut==0 && ! empty($conf->global->PROPALE_DRAFT_WATERMARK))
 		{
-			$watermark_angle=deg2rad(55);
-			$watermark_x=5;
-			$watermark_y=$this->page_hauteur-50;
-			$watermark_width=300;
-			$pdf->SetFont('Arial','B',50);
-			$pdf->SetTextColor(255,192,203);
-			//rotate
-			$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$pdf->k,($pdf->h-$watermark_y)*$pdf->k,-$watermark_x*$pdf->k,-($pdf->h-$watermark_y)*$pdf->k));
-			//print watermark
-			$pdf->SetXY($watermark_x,$watermark_y);
-			$pdf->Cell($watermark_width,25,$outputlangs->convToOutputCharset($conf->global->PROPALE_DRAFT_WATERMARK),0,2,"C",0);
-			//antirotate
-			$pdf->_out('Q');
+            pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->PROPALE_DRAFT_WATERMARK);
 		}
 
 		$posy=42;

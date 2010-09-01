@@ -107,6 +107,8 @@ class pdf_soleil extends ModelePDFFicheinter
 				}
 			}
 
+            $fichinter->fetch_thirdparty();
+
 			$fichref = dol_sanitizeFileName($fichinter->ref);
 			$dir = $conf->ficheinter->dir_output;
 			if (! preg_match('/specimen/i',$fichref)) $dir.= "/" . $fichref;
@@ -150,7 +152,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->AddPage();
 				$pagenb++;
 				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','', 9);
+				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 4
 
 				// Pagehead
@@ -158,21 +160,8 @@ class pdf_soleil extends ModelePDFFicheinter
 				//Affiche le filigrane brouillon - Print Draft Watermark
 				if($fichinter->statut==0 && (! empty($conf->global->FICHINTER_DRAFT_WATERMARK)) )
 				{
-					$watermark_angle=atan($this->page_hauteur/$this->page_largeur);
-					$watermark_x=5;
-					$watermark_y=$this->page_hauteur-50;
-					$watermark_width=$this->page_hauteur;
-					$pdf->SetFont('Arial','B',50);
-					$pdf->SetTextColor(255,192,203);
-					//rotate
-					$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$pdf->k,($pdf->h-$watermark_y)*$pdf->k,-$watermark_x*$pdf->k,-($pdf->h-$watermark_y)*$pdf->k));
-					//print watermark
-					$pdf->SetXY($watermark_x,$watermark_y);
-					$pdf->Cell($watermark_width,25,$outputlangs->convToOutputCharset($conf->global->FICHINTER_DRAFT_WATERMARK),0,2,"C",0);
-					//antirotate
-					$pdf->_out('Q');
+                    pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->FICHINTER_DRAFT_WATERMARK);
 				}
-				//Print content
 
 				$posy=$this->marge_haute;
 
@@ -189,7 +178,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					else
 					{
 						$pdf->SetTextColor(200,0,0);
-						$pdf->SetFont('Arial','B',8);
+						$pdf->SetFont('','B',8);
 						$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
 						$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 					}
@@ -199,7 +188,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$posy=40;
 				$hautcadre=40;
 				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','',8);
+				$pdf->SetFont('','',8);
 
 				$pdf->SetXY($this->marge_gauche,$posy);
 				$pdf->SetFillColor(230,230,230);
@@ -210,15 +199,15 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				// Sender name
 				$pdf->SetTextColor(0,0,60);
-				$pdf->SetFont('Arial','B',10);
+				$pdf->SetFont('','B',10);
 				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 				// Sender properties
 				$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
-				$pdf->SetFont('Arial','',9);
+				$pdf->SetFont('','',9);
 				$pdf->SetXY($this->marge_gauche+2,$posy+9);
-				$pdf->MultiCell(80, 4, $carac_emetteur);
+				$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 				$object=$fichinter;
 
@@ -239,23 +228,23 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				// Client destinataire
 				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','B',10);
+				$pdf->SetFont('','B',10);
 				$fichinter->fetch_thirdparty();
 				$pdf->SetXY(102,42);
-				$pdf->MultiCell(86,5, $outputlangs->convToOutputCharset($carac_client_name));
-				$pdf->SetFont('Arial','B',9);
+				$pdf->MultiCell(86,4, $outputlangs->convToOutputCharset($carac_client_name), 0, 'L');
+				$pdf->SetFont('','',9);
 				$pdf->SetXY(102,$pdf->GetY());
-				$pdf->MultiCell(66,5, $outputlangs->convToOutputCharset($carac_client));
+				$pdf->MultiCell(66,4, $outputlangs->convToOutputCharset($carac_client), 0, 'L');
 				$pdf->rect(100, 40, 100, 40);
 
 
 				$pdf->SetTextColor(0,0,100);
-				$pdf->SetFont('Arial','B',14);
+				$pdf->SetFont('','B',14);
 				$pdf->Text(11, 94, $outputlangs->transnoentities("InterventionCard")." : ".$outputlangs->convToOutputCharset($fichinter->ref));
 
 				$pdf->SetFillColor(220,220,220);
 				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','',10);
+				$pdf->SetFont('','',10);
 
 
 				$tab_top = 100;
@@ -268,7 +257,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				{
 					$tab_top = 98;
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($fichinter->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
@@ -290,7 +279,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 				$pdf->line(10, $tab_top + 8, 200, $tab_top + 8 );
 
-				$pdf->SetFont('Arial','', 9);
+				$pdf->SetFont('','', 9);
 
 				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
 				$pdf->SetXY (10, $tab_top + 8 );
@@ -349,7 +338,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetXY(110,225);
 				$pdf->MultiCell(80,30, '', 1);
 
-				$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
+				$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 
 				$this->_pagefoot($pdf,$fichinter,$outputlangs);
 				$pdf->AliasNbPages();

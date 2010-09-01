@@ -125,7 +125,45 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 
 
 /**
+ *      Add a draft watermark on PDF files
+ *      @param      pdf             Object PDF
+ *      @param      outputlangs     Object lang
+ *      @param      height          Height of PDF
+ *      @param      width           Width of PDF
+ *      @param      unit            Unit of height (mmn, pt, ...)
+ *      @param      text            Text to show
+ */
+function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
+{
+    // Print Draft Watermark
+    if ($unit=='pt') $k=1;
+    elseif ($unit=='mm') $k=72/25.4;
+    elseif ($unit=='cm') $k=72/2.54;
+    elseif ($unit=='in') $k=72;
+
+    $watermark_angle=atan($h/$w);
+    $watermark_x=5;
+    $watermark_y=$h-25; //Set to $this->page_hauteur-50 or less if problems
+    $watermark_width=$h;
+    $pdf->SetFont('','B',50);
+    $pdf->SetTextColor(255,192,203);
+    //rotate
+    $pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$k,($h-$watermark_y)*$k,-$watermark_x*$k,-($h-$watermark_y)*$k));
+    //print watermark
+    $pdf->SetXY($watermark_x,$watermark_y);
+    $pdf->Cell($watermark_width,25,$outputlangs->convToOutputCharset($text),0,2,"C",0);
+    //antirotate
+    $pdf->_out('Q');
+}
+
+
+/**
  *   	Show bank informations for PDF generation
+ *      @param      pdf             Object PDF
+ *      @param      outputlangs     Object lang
+ *      @param      curx            X
+ *      @param      cury            Y
+ *      @param      account         Bank account object
  */
 function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 {
