@@ -882,6 +882,7 @@ ClickToDialUrlDesc=Url called when a click on phone picto is done.  Dans l'url, 
 Bookmark4uSetup=Bookmark4u module setup
 ##### Interventions #####
 InterventionsSetup=Interventions module setup
+FreeLegalTextOnInterventions=Free text on intervention documents
 ##### Members #####
 MembersSetup=Members module setup
 MemberMainOptions=Main options
