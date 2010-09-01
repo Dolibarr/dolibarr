@@ -40,11 +40,13 @@ class langAutoParser {
 
 	}
 
-	private function parseRefLangTranslationFiles(){
+	private function parseRefLangTranslationFiles()
+	{
 
 		$files = $this->getTranslationFilesArray($this->refLang);
 		$counter = 1;
-		foreach($files as $file) {
+		foreach($files as $file)
+		{
 			if ($this->limittofile && $this->limittofile != $file) continue;
 			$counter++;
 			$fileContent = null;
@@ -69,6 +71,7 @@ class langAutoParser {
 					if (preg_match('/^es/i',$dirtmp['name']))  continue;	// We discard es_* languages
 					if (preg_match('/ca_ES/i',$dirtmp['name']))  continue;	// We discard es_CA language
 					if (preg_match('/pt_BR/i',$dirtmp['name']))  continue;	// We discard pt_BR language
+                    if (preg_match('/nl_BE/i',$dirtmp['name']))  continue;  // We discard nl_BE language
 					if (preg_match('/^\./i',$dirtmp['name']))  continue;	// We discard files .*
 					if (preg_match('/^CVS/i',$dirtmp['name']))  continue;	// We discard CVS
 					$targetlangs[]=$dirtmp['name'];
@@ -105,7 +108,7 @@ class langAutoParser {
 					}
 				}
 
-				$this->updateTranslationFile($destPath,$file);
+				$this->updateTranslationFile($destPath,$file,$mydestLang);
 				echo "New translated lines: " . $newlines . "<br>\n";
 				#if ($counter ==3) die('fim');
 			}
@@ -113,7 +116,7 @@ class langAutoParser {
 	}
 
 
-	private function updateTranslationFile($destPath,$file)
+	private function updateTranslationFile($destPath,$file,$mydestLang)
 	{
 		$this->time_end = date('Y-m-d H:i:s');
 
@@ -123,7 +126,7 @@ class langAutoParser {
 			fwrite($fp, "\r\n");
 			fwrite($fp, "\r\n");
 			fwrite($fp, "// START - Lines generated via autotranslator.php tool (".$this->time.").\r\n");
-			fwrite($fp, "// Reference language: {$this->refLang}\r\n");
+			fwrite($fp, "// Reference language: ".$this->refLang." -> ".$mydestLang."\r\n");
 			foreach( $this->translatedFiles[$file] as $line) {
 				fwrite($fp, $line . "\r\n");
 			}
