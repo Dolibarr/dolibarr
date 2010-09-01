@@ -390,7 +390,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 				$pdf->Close();
 
-				$pdf->Output($file);
+				$pdf->Output($file,'F');
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -399,7 +399,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				//$pdfConcat->setFiles(array($file, DOL_DOCUMENT_ROOT."/includes/modules/propale/morefile.pdf"));
 				//$pdfConcat->concat();
 				//$pdf->AliasNbPages();
-				//$pdfConcat->Output($file);
+				//$pdfConcat->Output($file,'F');
 
 				$outputlangs->charset_output=$sav_charset_output;
 				return 1;   // Pas d'erreur

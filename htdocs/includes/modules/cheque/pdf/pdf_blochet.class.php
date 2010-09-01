@@ -169,7 +169,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->Close();
 
-		$pdf->Output($_file);
+		$pdf->Output($_file,'F');
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 

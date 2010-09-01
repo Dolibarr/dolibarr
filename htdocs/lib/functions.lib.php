@@ -3094,10 +3094,10 @@ function dol_textishtml($msg,$option=0)
 }
 
 /**
- *    	Add substitution required by external modules then make substitutions.
- * 					There is two type of substitions:
- * 					- From $substitutionarray (oldval=>newval)
- * 					- From special constants (__XXX__=>f(objet->xxx)) by substitutions modules
+ *    	Make substition into a string
+ *      There is two type of substitions:
+ * 		- From $substitutionarray (oldval=>newval)
+ * 		- From special constants (__XXX__=>f(objet->xxx)) by substitutions modules
  *    	@param      chaine      			Source string in which we must do substitution
  *    	@param      substitutionarray		Array substitution old value => new value value
  * 		@param		outputlangs				If we want substitution from special constants, we provide a language

@@ -30,28 +30,6 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/cards/modules_cards.php");
 
 
-// liste des patterns remplacable dans le texte a imprimer
-$patterns = array (
-'/%PRENOM%/',
-'/%NOM%/',
-'/%LOGIN%/',
-'/%SERVEUR%/',
-'/%SOCIETE%/',
-'/%ADRESSE%/',
-'/%CP%/',
-'/%VILLE%/',
-'/%PAYS%/',
-'/%EMAIL%/',
-'/%NAISS%/',
-'/%TYPE%/',
-'/%ID%/',
-'/%ANNEE%/',	// For backward compatibility
-'/%YEAR%/',
-'/%MONTH%/',
-'/%DAY%/'
-);
-
-
 // Choix de l'annee d'impression ou annee courante.
 $now = dol_now();
 $year=dol_print_date($now,'%Y');
@@ -83,30 +61,30 @@ if ($result)
 		if ($objp->pays == '-') $objp->pays='';
 
 		// List of values to scan for a replacement
-		$replace = array (
-		$objp->prenom,
-		$objp->nom,
-		$objp->login,
-		"http://".$_SERVER["SERVER_NAME"]."/",
-		$objp->societe,
-		$objp->adresse,
-		$objp->cp,
-		$objp->ville,
-		$objp->pays,
-		$objp->email,
-		$objp->naiss,
-		$objp->type,
-		$objp->rowid,
-		$year,
-		$year,
-		$month,
-		$day
-		);
+        $substitutionarray = array (
+        '%PRENOM%'=>$objp->prenom,
+        '%NOM%'=>$objp->nom,
+        '%LOGIN%'=>$objp->login,
+        '%SERVEUR%'=>"http://".$_SERVER["SERVER_NAME"]."/",
+        '%SOCIETE%'=>$objp->societe,
+        '%ADRESSE%'=>$objp->adresse,
+        '%CP%'=>$objp->cp,
+        '%VILLE%'=>$objp->ville,
+        '%PAYS%'=>$objp->pays,
+        '%EMAIL%'=>$objp->email,
+        '%NAISS%'=>$objp->naiss,
+        '%TYPE%'=>$objp->type,
+        '%ID%'=>$objp->rowid,
+        '%ANNEE%'=>$year,    // For backward compatibility
+        '%YEAR%'=>$year,
+        '%MONTH%'=>$month,
+        '%DAY%'=>$day
+        );
 
-		$textleft=preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_TEXT);
-		$textheader=preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_HEADER_TEXT);
-		$textfooter=preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_FOOTER_TEXT);
-		$textright=preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_TEXT_RIGHT);
+        $textleft=make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray, $langs);
+        $textheader=make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray, $langs);
+        $textfooter=make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray, $langs);
+        $textright=make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray, $langs);
 
 		$arrayofmembers[]=array('textleft'=>$textleft,
 								'textheader'=>$textheader,

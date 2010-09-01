@@ -54,7 +54,7 @@
 ////////////////////////////////////////////////////
 
 /**
- *	\file       htdocs/includes/modules/member/cards/pdf_standard.class.php
+ *	\file       htdocs/includes/modules/member/pdf_standardlabel.class.php
  *	\ingroup    member
  *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  *	\author     Steve Dillon
@@ -70,10 +70,10 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
- *	\class      pdf_standard
- *	\brief      Classe afin d'editer au format PDF des cartes de visite au format Avery ou personnalise
+ *	\class      pdf_standardlabel
+ *	\brief      Classe afin d'editer au format PDF des pages d'etiquette adresse au format Avery ou personnalise
  */
-class pdf_standard {
+class pdf_standardlabel {
 
 	var $code;		// Code of format
 	var $format;	// Array with informations
@@ -98,6 +98,7 @@ class pdf_standard {
 	var $_First = 1;
 
 
+
 	/**
 	 * Constructor
 	 */
@@ -105,7 +106,6 @@ class pdf_standard {
 	{
 		$this->db = $db;
 	}
-
 
 	//Methode qui permet de modifier la taille des caracteres
 	// Cela modiera aussi l'espace entre chaque ligne
@@ -119,7 +119,7 @@ class pdf_standard {
 
 
 	// On imprime une etiquette
-	function Add_PDF_card(&$pdf,$textleft,$header='',$footer='',$outputlangs,$textright='',$idmember,$photomember)
+	function Add_PDF_card(&$pdf,$textleft,$header='',$footer='',$outputlangs,$textright='')
 	{
 		global $mysoc,$conf,$langs;
 
@@ -146,19 +146,6 @@ class pdf_standard {
 			}
 		}
 
-		// Define photo
-		$dir=$conf->adherent->dir_output;
-		$file=get_exdir($idmember,2).$photomember;
-		$photo=$dir.'/'.$file;
-		if (! is_readable($photo)) $photo='';
-
-		// Define background image
-		$backgroundimage='';
-		if(! empty($conf->global->ADHERENT_CARD_BACKGROUND) && file_exists($conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND))
-		{
-			$backgroundimage=$conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND;
-		}
-
 		// Print lines
 		if ($this->code == "CARD")
 		{
@@ -166,13 +153,7 @@ class pdf_standard {
 			//$this->_Pointille($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
 			$this->_Croix($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.1,10);
 		}
-
-		// Background
-		if ($backgroundimage)
-		{
-			$pdf->image($backgroundimage,$_PosX,$_PosY,$this->_Width,$this->_Height);
-		}
-
+		
 		// Top
 		if ($header!='')
 		{
@@ -220,7 +201,6 @@ class pdf_standard {
 				$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
 				$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 			}
-
 		}
 		else	// Only a right part
 		{
@@ -246,7 +226,7 @@ class pdf_standard {
 			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
 		}
 		//print "$_PosY+$this->_Height-$this->_Line_Height-1<br>\n";
-
+			
 		$this->_COUNTY++;
 
 		if ($this->_COUNTY == $this->_Y_Number) {
@@ -277,16 +257,16 @@ class pdf_standard {
 		for($i=$x1;$i<=$x2;$i+=$Pointilles+$Pointilles) {
 			for($j=$i;$j<=($i+$Pointilles);$j++) {
 				if($j<=($x2-1)) {
-	    $pdf->Line($j,$y1,$j+1,$y1); // on trace le pointill? du haut, point par point
-	    $pdf->Line($j,$y2,$j+1,$y2); // on trace le pointill? du bas, point par point
+		$pdf->Line($j,$y1,$j+1,$y1); // on trace le pointill? du haut, point par point
+		$pdf->Line($j,$y2,$j+1,$y2); // on trace le pointill? du bas, point par point
 				}
 			}
 		}
 		for($i=$y1;$i<=$y2;$i+=$Pointilles+$Pointilles) {
 			for($j=$i;$j<=($i+$Pointilles);$j++) {
 				if($j<=($y2-1)) {
-	    $pdf->Line($x1,$j,$x1,$j+1); // on trace le pointill? du haut, point par point
-	    $pdf->Line($x2,$j,$x2,$j+1); // on trace le pointill? du bas, point par point
+		$pdf->Line($x1,$j,$x1,$j+1); // on trace le pointill? du haut, point par point
+		$pdf->Line($x2,$j,$x2,$j+1); // on trace le pointill? du bas, point par point
 				}
 			}
 		}
@@ -341,7 +321,6 @@ class pdf_standard {
 	}
 
 	function _Set_Format(&$pdf, $format) {
-
 		$this->_Metric 	= $format['metric'];
 		$this->_Avery_Name 	= $format['name'];
 		$this->_Avery_Code	= $format['code'];
@@ -357,126 +336,125 @@ class pdf_standard {
 	}
 
 
-	/**
-	 *		\brief      Function to build PDF on disk, then output on HTTP strem.
-	 *		\param	    arrayofmembers	Array of members informations
-	 *		\param		outputlangs		Lang object for output language
-	 *		\return	    int     		1=ok, 0=ko
-	 */
-	function write_file($arrayofmembers,$outputlangs)
-	{
-		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
+    /**
+     *      \brief      Function to build PDF on disk, then output on HTTP strem.
+     *      \param      arrayofmembers  Array of members informations
+     *      \param      outputlangs     Lang object for output language
+     *      \return     int             1=ok, 0=ko
+     */
+    function write_file($arrayofmembers,$outputlangs)
+    {
+        global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
-		// Choose type (CARD by default)
-		$this->code=empty($conf->global->ADHERENT_CARD_TYPE)?'CARD':$conf->global->ADHERENT_CARD_TYPE;
-		$this->Tformat = $_Avery_Labels[$this->code];
-		if (empty($this->Tformat)) { dol_print_error('','ErrorBadTypeForCard'.$this->code); exit; }
-		$this->type = 'pdf';
-		$this->format = $this->Tformat['paper-size'];
+        // Choose type (L7163 by default)
+        $this->code=empty($conf->global->ADHERENT_ETIQUETTE_TYPE)?'L7163':$conf->global->ADHERENT_ETIQUETTE_TYPE;
+        $this->Tformat = $_Avery_Labels[$this->code];
+        if (empty($this->Tformat)) { dol_print_error('','ErrorBadTypeForCard'.$this->code); exit; }
+        $this->type = 'pdf';
+        $this->format = $this->Tformat['paper-size'];
 
-		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expect text encoded in ISO
-		$outputlangs->charset_output='ISO-8859-1';
+        if (! is_object($outputlangs)) $outputlangs=$langs;
+        // Force output charset to ISO, because, FPDF expect text encoded in ISO
+        $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("members");
-		$outputlangs->load("admin");
-
-
-		$dir = $conf->adherent->dir_temp;
-		$file = $dir . "/tmpcards.pdf";
-
-		if (! file_exists($dir))
-		{
-			if (create_exdir($dir) < 0)
-			{
-				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-				return 0;
-			}
-		}
+        $outputlangs->load("main");
+        $outputlangs->load("dict");
+        $outputlangs->load("companies");
+        $outputlangs->load("members");
+        $outputlangs->load("admin");
 
 
-		// Protection et encryption du pdf
-		if ($conf->global->PDF_SECURITY_ENCRYPTION)
-		{
-			$pdf=new FPDI_Protection('P',$this->Tformat['metric'],$this->format);
-			$pdfrights = array('print'); // Ne permet que l'impression du document
-			$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-			$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
-			$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-		}
-		else
-		{
-			$pdf=new FPDI('P',$this->Tformat['metric'],$this->format);
-		}
+        $dir = $conf->adherent->dir_temp;
+        $file = $dir . "/tmplabels.pdf";
 
-		$pdf->SetTitle($outputlangs->transnoentities('MembersCards'));
-		$pdf->SetSubject($outputlangs->transnoentities("MembersCards"));
-		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-		$pdf->SetKeyWords($outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->nom));
-		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
-
-		$pdf->SetMargins(0,0);
-		$pdf->SetAutoPageBreak(false);
-
-		$this->_Metric_Doc = $this->Tformat['metric'];
-		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
-		$posX=1;
-		$posY=1;
-		if ($posX > 0) $posX--; else $posX=0;
-		if ($posY > 0) $posY--; else $posY=0;
-		$this->_COUNTX = $posX;
-		$this->_COUNTY = $posY;
-		$this->_Set_Format($pdf, $this->Tformat);
+        if (! file_exists($dir))
+        {
+            if (create_exdir($dir) < 0)
+            {
+                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                return 0;
+            }
+        }
 
 
-		$pdf->Open();
-		$pdf->AddPage();
+        // Protection et encryption du pdf
+        if ($conf->global->PDF_SECURITY_ENCRYPTION)
+        {
+            $pdf=new FPDI_Protection('P',$this->Tformat['metric'],$this->format);
+            $pdfrights = array('print'); // Ne permet que l'impression du document
+            $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+            $pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
+            $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+        }
+        else
+        {
+            $pdf=new FPDI('P',$this->Tformat['metric'],$this->format);
+        }
+
+        $pdf->SetTitle($outputlangs->transnoentities('MembersLabels'));
+        $pdf->SetSubject($outputlangs->transnoentities("MembersLabels"));
+        $pdf->SetCreator("Dolibarr ".DOL_VERSION);
+        $pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+        $pdf->SetKeyWords($outputlangs->transnoentities('MembersLabels')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->nom));
+        if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+
+        $pdf->SetMargins(0,0);
+        $pdf->SetAutoPageBreak(false);
+
+        $this->_Metric_Doc = $this->Tformat['metric'];
+        // Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
+        $posX=1;
+        $posY=1;
+        if ($posX > 0) $posX--; else $posX=0;
+        if ($posY > 0) $posY--; else $posY=0;
+        $this->_COUNTX = $posX;
+        $this->_COUNTY = $posY;
+        $this->_Set_Format($pdf, $this->Tformat);
 
 
-		// Add each record
-		foreach($arrayofmembers as $val)
-		{
-			// imprime le texte specifique sur la carte
-			$this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['id'],$val['photo']);
-		}
-
-		//$pdf->SetXY(10, 295);
-		//$pdf->Cell($this->_Width, $this->_Line_Height, 'XXX',0,1,'C');
+        $pdf->Open();
+        $pdf->AddPage();
 
 
-		// Output to file
-		$pdf->Output($file,'F');
+        // Add each record
+        foreach($arrayofmembers as $val)
+        {
+            // imprime le texte specifique sur la carte
+            $this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['id'],$val['photo']);
+        }
 
-		if (! empty($conf->global->MAIN_UMASK))
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
+        //$pdf->SetXY(10, 295);
+        //$pdf->Cell($this->_Width, $this->_Line_Height, 'XXX',0,1,'C');
+
+
+        // Output to file
+        $pdf->Output($file,'F');
+
+        if (! empty($conf->global->MAIN_UMASK))
+            @chmod($file, octdec($conf->global->MAIN_UMASK));
 
 
 
-		// Output to http stream
-		clearstatcache();
+        // Output to http stream
+        clearstatcache();
 
-		$attachment=true;
-		if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
-		$filename='tmpcards.pdf';
-		$type=dol_mimetype($filename);
+        $attachment=true;
+        if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
+        $filename='tmplabels.pdf';
+        $type=dol_mimetype($filename);
 
-		if ($encoding)   header('Content-Encoding: '.$encoding);
-		if ($type)       header('Content-Type: '.$type);
-		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-		else header('Content-Disposition: inline; filename="'.$filename.'"');
+        if ($encoding)   header('Content-Encoding: '.$encoding);
+        if ($type)       header('Content-Type: '.$type);
+        if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+        else header('Content-Disposition: inline; filename="'.$filename.'"');
 
-		// Ajout directives pour resoudre bug IE
-		header('Cache-Control: Public, must-revalidate');
-		header('Pragma: public');
+        // Ajout directives pour resoudre bug IE
+        header('Cache-Control: Public, must-revalidate');
+        header('Pragma: public');
 
-		readfile($file);
+        readfile($file);
 
-		return 1;
-	}
-
+        return 1;
+    }
 }
 ?>

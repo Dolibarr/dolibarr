@@ -101,7 +101,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		if ($pagecount)
 		{
 			$file=$diroutputpdf.'/'.$filename.'_'.dol_print_date(mktime(),'dayhourlog').'.pdf';
-			$pdf->Output($file);
+			$pdf->Output($file,'F');
 			if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 		}

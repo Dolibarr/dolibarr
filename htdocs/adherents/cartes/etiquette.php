@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,43 +21,28 @@
 /**
  *	\file 		htdocs/adherents/cartes/etiquette.php
  *	\ingroup    member
- *	\brief      Page de creation d'etiquettes
+ *	\brief      Page to output members labels sheets
  *	\version    $Id$
  */
-
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/includes/modules/member/PDF_card.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/includes/modules/member/labels/modules_labels.php');
 
-
-$dir = $conf->adherent->dir_temp;
-$file = $dir . "/tmplabel.pdf";
-
-if (! file_exists($dir))
-{
-	if (create_exdir($dir) < 0)
-	{
-		$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-		return 0;
-	}
-}
-
-
-if (empty($conf->global->ADHERENT_ETIQUETTE_TYPE)) $conf->global->ADHERENT_ETIQUETTE_TYPE='L7163';
-$pdf = new PDF_card($conf->global->ADHERENT_ETIQUETTE_TYPE, 1, 1);
-
-$pdf->Open();
-$pdf->AddPage();
+//if (empty($conf->global->ADHERENT_ETIQUETTE_TYPE)) $conf->global->ADHERENT_ETIQUETTE_TYPE='L7163';
+//$pdf = new PDF_card($conf->global->ADHERENT_ETIQUETTE_TYPE, 1, 1);
 
 // Choix de l'annee d'impression ou annee courante.
-if (!isset($annee)){
-	$now = getdate();
-	$annee=$now['year'];
-}
+$now = dol_now();
+$year=dol_print_date($now,'%Y');
+$month=dol_print_date($now,'%m');
+$day=dol_print_date($now,'%d');
+
+
+$arrayofmembers=array();
 
 // requete en prenant que les adherents a jour de cotisation
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.datefin,";
+$sql = "SELECT d.rowid, d.prenom, d.nom, d.login, d.societe, d.datefin,";
 $sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email, d.photo,";
 $sql.= " t.libelle as type,";
 $sql.= " p.libelle as pays";
@@ -73,15 +58,60 @@ if ($result)
 	$i = 0;
 	while ($i < $num)
 	{
-		$objp = $db->fetch_object($result);
-		// imprime le texte specifique sur la carte
-		$message=sprintf("%s\n%s\n%s %s\n%s", $objp->prenom." ".$objp->nom, $objp->adresse, $objp->cp, $objp->ville, $objp->pays);
-		$pdf->Add_PDF_card($message,'','',$langs);
-		$i++;
+        $objp = $db->fetch_object($result);
+
+        if ($objp->pays == '-') $objp->pays='';
+
+        // List of values to scan for a replacement
+        $substitutionarray = array (
+        '%PRENOM%'=>$objp->prenom,
+        '%NOM%'=>$objp->nom,
+        '%LOGIN%'=>$objp->login,
+        '%SERVEUR%'=>"http://".$_SERVER["SERVER_NAME"]."/",
+        '%SOCIETE%'=>$objp->societe,
+        '%ADRESSE%'=>$objp->adresse,
+        '%CP%'=>$objp->cp,
+        '%VILLE%'=>$objp->ville,
+        '%PAYS%'=>$objp->pays,
+        '%EMAIL%'=>$objp->email,
+        '%NAISS%'=>$objp->naiss,
+        '%TYPE%'=>$objp->type,
+        '%ID%'=>$objp->rowid,
+        '%ANNEE%'=>$year,    // For backward compatibility
+        '%YEAR%'=>$year,
+        '%MONTH%'=>$month,
+        '%DAY%'=>$day
+        );
+
+        $conf->global->ADHERENT_ETIQUETTE_TEXT="%PRENOM% %NOM%\n%ADRESSE%\n%CP% %VILLE%\n%PAYS%";
+        $textleft=make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray, $langs);
+        $textheader='';
+        $textfooter='';
+        $textright='';
+
+        $arrayofmembers[]=array('textleft'=>$textleft,
+                                'textheader'=>$textheader,
+                                'textfooter'=>$textfooter,
+                                'textright'=>$textright,
+                                'id'=>$objp->rowid,
+                                'photo'=>$objp->photo);
+
+        $i++;
+
+//		$message=sprintf("%s\n%s\n%s %s\n%s", $objp->prenom." ".$objp->nom, $objp->adresse, $objp->cp, $objp->ville, $objp->pays);
+//		$pdf->Add_PDF_card($message,'','',$langs);
 	}
 
-	// Output to http strem
-	$pdf->Output($file);
+    // Build and output PDF
+    $result=members_label_pdf_create($db, $arrayofmembers, '', $outputlangs);
+    if ($result <= 0)
+    {
+        dol_print_error($db,$result);
+        exit;
+    }
+
+    /*
+	$pdf->Output($file,'F');
 
 	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -105,6 +135,7 @@ if ($result)
 	header('Pragma: public');
 
 	readfile($file);
+	*/
 }
 else
 {

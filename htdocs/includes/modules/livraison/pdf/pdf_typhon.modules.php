@@ -419,7 +419,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				$pdf->Close();
 
-				$pdf->Output($file);
+				$pdf->Output($file,'F');
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
