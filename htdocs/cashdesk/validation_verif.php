@@ -153,7 +153,8 @@ switch ( $_GET['action'] )
 		}
 		$tab_liste = $ret;
 		// Loop on each product
-		for ($i = 0; $i < count ($tab_liste); $i++)
+		$tab_liste_size=count($tab_liste);
+		for($i=0;$i < $tab_liste_size;$i++)
 		{
 			// Recuperation de l'article
 			$res = $db->query (

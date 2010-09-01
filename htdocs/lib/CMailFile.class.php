@@ -554,7 +554,8 @@ class CMailFile
 
 		if ($filename_list)
 		{
-			for ($i = 0; $i < count($filename_list); $i++)
+			$filename_list_size=count($filename_list);
+			for($i=0;$i < $filename_list_size;$i++)
 			{
 				if ($filename_list[$i])
 				{
@@ -677,7 +678,8 @@ class CMailFile
 	{
 		$out = '';
 
-		for ($i = 0; $i < count($filename_list); $i++)
+		$filename_list_size=count($filename_list);
+		for($i=0;$i < $filename_list_size;$i++)
 		{
 			if ($filename_list[$i])
 			{

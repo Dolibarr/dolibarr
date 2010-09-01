@@ -44,7 +44,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 		}
 		$tab = $ret;
 
-		for ( $i = 0; $i < count($tab); $i++ ) {
+		$tab_size=count($tab);
+		for($i=0;$i < $tab_size;$i++) {
 
 			echo ('<div class="cadre_article">'."\n");
 				echo ('<p><a href="facturation_verif.php?action=suppr_article&suppr_id='.$tab[$i]['id'].'" title="Cliquez pour enlever cet article">'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</a></p>'."\n");

@@ -81,7 +81,8 @@ if ( dol_strlen ($_GET["code"]) >= 0 )	// If search criteria is on char length a
 			}
 			$tab=$ret;
 
-			for ( $i = 0; $i < count ($tab); $i++ )
+			$tab_size=count($tab);
+			for($i=0;$i < $tab_size;$i++)
 			{
 				$resultat .= '
 					<li class="dhtml_defaut" title="'.$tab[$i]['ref'].'"

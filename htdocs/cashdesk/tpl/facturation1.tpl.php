@@ -116,7 +116,8 @@ $Id$
 					<?php
 
 						$tva_tx = $obj_facturation->tva();
-						for ($i = 0; $i < count ($tab_tva); $i++) {
+						$tab_tva_size=count($tab_tva);
+						for($i=0;$i < $tab_tva_size;$i++) {
 
 							if ( $tva_tx == $tab_tva[$i]['taux'] )
 								$selected = 'selected="selected"';

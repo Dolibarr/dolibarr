@@ -200,7 +200,8 @@ class Facturation {
 			}
 			$tab=$ret;
 
-			for ( $i = 0; $i < count($tab); $i++ ) {
+			$tab_size=count($tab);
+			for($i=0;$i < $tab_size;$i++) {
 
 				// Total HT
 				$remise = $tab[$i]['remise'];

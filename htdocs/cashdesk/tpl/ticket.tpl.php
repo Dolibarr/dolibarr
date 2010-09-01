@@ -133,7 +133,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 			}
 			$tab = $ret;
 
-			for ( $i = 0; $i < count($tab); $i++ ) {
+			$tab_size=count($tab);
+			for($i=0;$i < $tab_size;$i++) {
 
 				$remise = $tab[$i]['remise'];
 				echo ('<tr><td>'.$tab[$i]['ref'].'</td><td>'.$tab[$i]['label'].'</td><td>'.$tab[$i]['qte'].'</td><td>'.$tab[$i]['remise_percent'].'</td><td class="total">'.price2num($tab[$i]['total_ht'],'MT').' '.$conf->monnaie.'</td></tr>'."\n");

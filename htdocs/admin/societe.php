@@ -79,7 +79,8 @@ if ($_POST["action"] == 'usesearchtoselectcompany')
 // define constants for models generator that need parameters
 if ($_POST["action"] == 'setModuleOptions')
 {
-	for($i=0;$i < count($_POST);$i++)
+	$post_size=count($_POST);
+	for($i=0;$i < $post_size;$i++)
     {
     	if (array_key_exists('param'.$i,$_POST))
     	{
