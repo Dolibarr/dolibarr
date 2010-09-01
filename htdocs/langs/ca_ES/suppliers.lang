@@ -14,7 +14,6 @@ OrderDate= Data comanda
 BuyingPrice= Preu de compra
 AddSupplierPrice= Afegir preu de proveïdor
 ChangeSupplierPrice= Canviar preu de proveïdor
-ErrorQtyTooLowForThisSupplier= Quantitat insuficient per aquest proveïdor
 ErrorSupplierCountryIsNotDefined= El país d'aquest proveïdor no està definit, arregle-ho a la seva fitxa
 ProductHasAlreadyReferenceInThisSupplier= Aquest producte ja té una referència en aquest proveïdor
 ReferenceSupplierIsAlreadyAssociatedWithAProduct= Aquesta referència de proveïdor ja està associada a la referència: %s 

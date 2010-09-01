@@ -14,7 +14,6 @@ OrderDate= Data pedido
 BuyingPrice= Precio de compra
 AddSupplierPrice= Añadir precio de proveedor
 ChangeSupplierPrice= Modificar precio de proveedor
-ErrorQtyTooLowForThisSupplier= Cantidad insuficiente para este proveedor
 ErrorSupplierCountryIsNotDefined= El país de este proveedor no está definido, corrígalo en su ficha
 ProductHasAlreadyReferenceInThisSupplier= Este producto ya tiene una referencia en este proveedor
 ReferenceSupplierIsAlreadyAssociatedWithAProduct= Esta referencia de proveedor ya está asociada a la referencia: %s
