@@ -173,6 +173,8 @@ class pdf_propale_azur extends ModelePDFPropales
 					$pdf=new FPDI('P','mm',$this->format);
 				}
 
+                $pdf->SetFont('Helvetica');
+
 				$pdf->Open();
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);

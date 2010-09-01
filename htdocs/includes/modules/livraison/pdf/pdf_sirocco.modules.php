@@ -144,6 +144,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					$pdf=new FPDI('P','mm',$this->format);
 				}
 
+				$pdf->SetFont('Helvetica');
 
 				// Complete object by loading several other informations
 				$expedition=new Expedition($this->db);

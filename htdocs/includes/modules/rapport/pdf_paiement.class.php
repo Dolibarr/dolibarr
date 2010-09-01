@@ -117,6 +117,7 @@ class pdf_paiement
 			$pdf=new FPDI('P','mm',$this->format);
 		}
 
+        $pdf->SetFont('Helvetica');
 
 		$sql = "SELECT p.datep as dp, f.facnumber";
 		//$sql .= ", c.libelle as paiement_type, p.num_paiement";

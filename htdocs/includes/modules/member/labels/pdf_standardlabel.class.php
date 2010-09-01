@@ -153,7 +153,7 @@ class pdf_standardlabel {
 			//$this->_Pointille($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
 			$this->_Croix($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.1,10);
 		}
-		
+
 		// Top
 		if ($header!='')
 		{
@@ -226,7 +226,7 @@ class pdf_standardlabel {
 			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
 		}
 		//print "$_PosY+$this->_Height-$this->_Line_Height-1<br>\n";
-			
+
 		$this->_COUNTY++;
 
 		if ($this->_COUNTY == $this->_Y_Number) {
@@ -390,6 +390,8 @@ class pdf_standardlabel {
         {
             $pdf=new FPDI('P',$this->Tformat['metric'],$this->format);
         }
+
+        $pdf->SetFont('Helvetica');
 
         $pdf->SetTitle($outputlangs->transnoentities('MembersLabels'));
         $pdf->SetSubject($outputlangs->transnoentities("MembersLabels"));

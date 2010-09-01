@@ -150,6 +150,8 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf=new FPDI('P','mm',$this->format);
 				}
 
+                $pdf->SetFont('Helvetica');
+
 				// Complete object by loading several other informations
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0,0,$object->id);

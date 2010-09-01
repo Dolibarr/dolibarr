@@ -72,6 +72,8 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 		//$pdf->SetCompression(false);
 
+		$pdf->SetFont('Helvetica');
+
 		//$pdf->Open();
 		//$pdf->AddPage();
 		//$title=$langs->trans("BillsCustomersUnpaid");

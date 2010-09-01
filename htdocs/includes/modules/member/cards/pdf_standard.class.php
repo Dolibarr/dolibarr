@@ -412,6 +412,8 @@ class pdf_standard {
 			$pdf=new FPDI('P',$this->Tformat['metric'],$this->format);
 		}
 
+        $pdf->SetFont('Helvetica');
+
 		$pdf->SetTitle($outputlangs->transnoentities('MembersCards'));
 		$pdf->SetSubject($outputlangs->transnoentities("MembersCards"));
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
