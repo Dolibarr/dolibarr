@@ -29,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/cards/modules_cards.php");
 
+$langs->load("members");
 
 // Choix de l'annee d'impression ou annee courante.
 $now = dol_now();
@@ -36,95 +37,133 @@ $year=dol_print_date($now,'%Y');
 $month=dol_print_date($now,'%m');
 $day=dol_print_date($now,'%d');
 $foruserid=GETPOST('foruserid');
+$foruserlogin=GETPOST('foruserlogin');
 
-$arrayofmembers=array();
 
-// requete en prenant que les adherents a jour de cotisation
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.login, d.societe, d.datefin,";
-$sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email, d.photo,";
-$sql.= " t.libelle as type,";
-$sql.= " p.libelle as pays";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
-$sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
-if ($foruserid) $sql.=" AND d.rowid=".$foruserid;
-$sql.= " ORDER BY d.rowid ASC";
+/*
+ * View
+ */
 
-$result = $db->query($sql);
-if ($result)
+if (empty($foruserid) && empty($foruserlogin))
 {
-	$num = $db->num_rows($result);
-	$i = 0;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
+    llxHeader('',$langs->trans("MembersCards"));
 
-		if ($objp->pays == '-') $objp->pays='';
+    print_fiche_titre($langs->trans("LinkToGeneratedPages"));
+    print '<br>';
 
-		// List of values to scan for a replacement
-        $substitutionarray = array (
-        '%PRENOM%'=>$objp->prenom,
-        '%NOM%'=>$objp->nom,
-        '%LOGIN%'=>$objp->login,
-        '%SERVEUR%'=>"http://".$_SERVER["SERVER_NAME"]."/",
-        '%SOCIETE%'=>$objp->societe,
-        '%ADRESSE%'=>$objp->adresse,
-        '%CP%'=>$objp->cp,
-        '%VILLE%'=>$objp->ville,
-        '%PAYS%'=>$objp->pays,
-        '%EMAIL%'=>$objp->email,
-        '%NAISS%'=>$objp->naiss,
-        '%TYPE%'=>$objp->type,
-        '%ID%'=>$objp->rowid,
-        '%ANNEE%'=>$year,    // For backward compatibility
-        '%YEAR%'=>$year,
-        '%MONTH%'=>$month,
-        '%DAY%'=>$day
-        );
+    print $langs->trans("LinkToGeneratedPagesDesc").'<br>';
+    print '<br>';
 
-        $textleft=make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray, $langs);
-        $textheader=make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray, $langs);
-        $textfooter=make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray, $langs);
-        $textright=make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray, $langs);
+    print $langs->trans("PDFForAllMembersCards",$conf->global->ADHERENT_CARD_TYPE).' ';
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    print '<input type="hidden" name="foruserid" value="all">';
+    print ' <input class="button" type="submit" value="'.$langs->trans("BuildCards").'">';
+    print '</form>';
+    print '<br>';
 
-        if ($foruserid)
-        {
-            for($j=0;$j<100;$j++)
-            {
-                $arrayofmembers[]=array('textleft'=>$textleft,
-                                'textheader'=>$textheader,
-                                'textfooter'=>$textfooter,
-                                'textright'=>$textright,
-                                'id'=>$objp->rowid,
-                                'photo'=>$objp->photo);
-            }
-        }
-        else
-        {
-            $arrayofmembers[]=array('textleft'=>$textleft,
-                                'textheader'=>$textheader,
-                                'textfooter'=>$textfooter,
-                                'textright'=>$textright,
-                                'id'=>$objp->rowid,
-                                'photo'=>$objp->photo);
-        }
+    print $langs->trans("PDFForOneMemberCards",$conf->global->ADHERENT_CARD_TYPE).' ';
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    print $langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="">';
+    print ' <input class="button" type="submit" value="'.$langs->trans("BuildCards").'">';
+    print '</form>';
+    print '<br>';
 
-        $i++;
-	}
 
-	// Build and output PDF
-	$result=members_card_pdf_create($db, $arrayofmembers, '', $outputlangs);
-	if ($result <= 0)
-	{
-		dol_print_error($db,$result);
-		exit;
-	}
+    llxFooter('$Date$ - $Revision$');
 }
 else
 {
-	dol_print_error($db);
 
-	llxFooter('$Date$ - $Revision$');
+    $arrayofmembers=array();
+
+    // requete en prenant que les adherents a jour de cotisation
+    $sql = "SELECT d.rowid, d.prenom, d.nom, d.login, d.societe, d.datefin,";
+    $sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email, d.photo,";
+    $sql.= " t.libelle as type,";
+    $sql.= " p.libelle as pays";
+    $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
+    $sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
+    if (is_numeric($foruserid)) $sql.=" AND d.rowid=".$foruserid;
+    if ($foruserlogin) $sql.=" AND d.login='".$db->escape($foruserlogin)."'";
+    $sql.= " ORDER BY d.rowid ASC";
+
+    $result = $db->query($sql);
+    if ($result)
+    {
+    	$num = $db->num_rows($result);
+    	$i = 0;
+    	while ($i < $num)
+    	{
+    		$objp = $db->fetch_object($result);
+
+    		if ($objp->pays == '-') $objp->pays='';
+
+    		// List of values to scan for a replacement
+            $substitutionarray = array (
+            '%PRENOM%'=>$objp->prenom,
+            '%NOM%'=>$objp->nom,
+            '%LOGIN%'=>$objp->login,
+            '%SERVEUR%'=>"http://".$_SERVER["SERVER_NAME"]."/",
+            '%SOCIETE%'=>$objp->societe,
+            '%ADRESSE%'=>$objp->adresse,
+            '%CP%'=>$objp->cp,
+            '%VILLE%'=>$objp->ville,
+            '%PAYS%'=>$objp->pays,
+            '%EMAIL%'=>$objp->email,
+            '%NAISS%'=>$objp->naiss,
+            '%TYPE%'=>$objp->type,
+            '%ID%'=>$objp->rowid,
+            '%ANNEE%'=>$year,    // For backward compatibility
+            '%YEAR%'=>$year,
+            '%MONTH%'=>$month,
+            '%DAY%'=>$day
+            );
+
+            $textleft=make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray, $langs);
+            $textheader=make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray, $langs);
+            $textfooter=make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray, $langs);
+            $textright=make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray, $langs);
+
+            if (is_numeric($foruserid) || $foruserlogin)
+            {
+                for($j=0;$j<100;$j++)
+                {
+                    $arrayofmembers[]=array('textleft'=>$textleft,
+                                    'textheader'=>$textheader,
+                                    'textfooter'=>$textfooter,
+                                    'textright'=>$textright,
+                                    'id'=>$objp->rowid,
+                                    'photo'=>$objp->photo);
+                }
+            }
+            else
+            {
+                $arrayofmembers[]=array('textleft'=>$textleft,
+                                    'textheader'=>$textheader,
+                                    'textfooter'=>$textfooter,
+                                    'textright'=>$textright,
+                                    'id'=>$objp->rowid,
+                                    'photo'=>$objp->photo);
+            }
+
+            $i++;
+    	}
+
+    	// Build and output PDF
+    	$result=members_card_pdf_create($db, $arrayofmembers, '', $outputlangs);
+    	if ($result <= 0)
+    	{
+    		dol_print_error($db,$result);
+    		exit;
+    	}
+    }
+    else
+    {
+    	dol_print_error($db);
+
+    	llxFooter('$Date$ - $Revision$');
+    }
 }
 
 ?>
