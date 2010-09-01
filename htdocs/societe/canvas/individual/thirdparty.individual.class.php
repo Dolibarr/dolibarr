@@ -39,11 +39,10 @@ class ThirdPartyIndividual extends Societe
 	 *    \param      DB          Handler acces base de donnees
 	 *    \param      id          Id produit (0 par defaut)
 	 */
-	function ThirdPartyIndividual($DB=0, $id=0, $user=0)
+	function ThirdPartyIndividual($DB)
 	{
 		$this->db 				= $DB;
-		$this->id 				= $id ;
-		$this->user 			= $user;
+
 		$this->smarty			= 0;
 		$this->module 			= "societe";
 		$this->canvas 			= "individual";
@@ -60,10 +59,11 @@ class ThirdPartyIndividual extends Societe
 	}
 
 	/**
-	 *    \brief      Lecture des donnees dans la base
-	 *    \param      id          Product id
+	 *    Lecture des donnees dans la base
+	 *    @param	id          Element id
+	 *    @param	action		Type of action
 	 */
-	function fetch($id='', $ref='', $action='')
+	function fetch($id='', $action='')
 	{
 		$result = parent::fetch($id);
 
@@ -76,18 +76,24 @@ class ThirdPartyIndividual extends Societe
 	 */
 	function assign_values($action='')
 	{
-		global $langs;
+		global $conf, $langs, $user, $mysoc;
+		global $form, $formadmin, $formcompany;
 			
 		parent::assign_values($action);
 		
 		$form = new Form($db);
+		
+		if ($action == 'create')
+		{
+			$this->tpl['select_civility'] = $formcompany->select_civility($contact->civilite_id);
+		}
 		
 		if ($action == 'view')
 		{
 			// Confirm delete third party
 			if ($_GET["action"] == 'delete')
 			{
-				$this->tpl['action_delete']=$form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->id,$langs->trans("DeleteAnIndividual"),$langs->trans("ConfirmDeleteIndividual"),"confirm_delete",'',0,2);
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->id,$langs->trans("DeleteAnIndividual"),$langs->trans("ConfirmDeleteIndividual"),"confirm_delete",'',0,2);
 			}
 		}
 	}

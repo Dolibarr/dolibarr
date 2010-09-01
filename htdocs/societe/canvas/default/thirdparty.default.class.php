@@ -35,15 +35,13 @@ class ThirdPartyDefault extends Societe
 	var $tpl = array();
 
 	/**
-	 *    \brief      Constructeur de la classe
-	 *    \param      DB          Handler acces base de donnees
-	 *    \param      id          Id produit (0 par defaut)
+	 *    Constructeur de la classe
+	 *    @param	DB		Handler acces base de donnees
 	 */
-	function ThirdPartyDefault($DB=0, $id=0, $user=0)
+	function ThirdPartyDefault($DB)
 	{
 		$this->db 				= $DB;
-		$this->id 				= $id ;
-		$this->user 			= $user;
+		
 		$this->smarty			= 0;
 		$this->module 			= "societe";
 		$this->canvas 			= "default";
@@ -60,10 +58,10 @@ class ThirdPartyDefault extends Societe
 	}
 
 	/**
-	 *    \brief      Lecture des donnees dans la base
-	 *    \param      id          Product id
+	 *    Lecture des donnees dans la base
+	 *    @param      id          Product id
 	 */
-	function fetch($id='', $ref='', $action='')
+	function fetch($id='', $action='')
 	{
 		$result = parent::fetch($id);
 
@@ -76,71 +74,102 @@ class ThirdPartyDefault extends Societe
 	 */
 	function assign_values($action='')
 	{
-		global $langs;
+		global $conf, $langs, $user, $mysoc;
+		global $form, $formadmin, $formcompany;
 			
 		parent::assign_values($action);
 		
-		$form = new Form($db);
+		$this->tpl['profid1'] 	= $this->siren;
+		$this->tpl['profid2'] 	= $this->siret;
+		$this->tpl['profid3'] 	= $this->ape;
+		$this->tpl['profid4'] 	= $this->idprof4;
+		
+		if ($action == 'create')
+		{
+			for ($i=1; $i<=4; $i++)
+			{
+				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->pays_code);
+				$this->tpl['showprofid'.$i]		= $this->get_input_id_prof($i,'idprof'.$i,$this->tpl['profid'.$i]);
+			}
+			
+			// Type
+			$this->tpl['select_companytype']	= $form->selectarray("typent_id",$formcompany->typent_array(0), $this->typent_id);
+			
+			// Juridical Status
+			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->forme_juridique_code,$this->pays_code);
+			
+			// Workforce
+			$this->tpl['select_workforce'] = $form->selectarray("effectif_id",$formcompany->effectif_array(0), $this->effectif_id);
+			
+			// VAT intra
+			$s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->tva_intra.'">';
+			$s.=' ';
+			if ($conf->use_javascript_ajax)
+			{
+				$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+				$this->tpl['tva_intra'] =  $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+			}
+			else
+			{
+				$this->tpl['tva_intra'] =  $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+			}
+			
+		}
 		
 		if ($action == 'view')
 		{
 			// Confirm delete third party
 			if ($_GET["action"] == 'delete')
 			{
-				$this->tpl['action_delete']=$form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
 			}
-		}
-		
-		$this->tpl['profid1'] 	= $this->siren;
-		$this->tpl['profid2'] 	= $this->siret;
-		$this->tpl['profid3'] 	= $this->ape;
-		$this->tpl['profid4'] 	= $this->idprof4;
 			
-		for ($i=1; $i<=4; $i++)
-		{
-			$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->pays_code);
-			$this->tpl['checkprofid'.$i]	= $this->id_prof_check($i,$this);
-			$this->tpl['urlprofid'.$i]		= $this->id_prof_url($i,$this);
-		}
-		
-		// TVA intra
-		if ($this->tva_intra)
-		{
-			$s='';
-			$s.=$this->tva_intra;
-			$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$this->tva_intra.'">';
-			$s.=' &nbsp; ';
-			if ($conf->use_javascript_ajax)
+			for ($i=1; $i<=4; $i++)
 			{
-				$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-				$this->tpl['tva_intra'] = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->pays_code);
+				$this->tpl['checkprofid'.$i]	= $this->id_prof_check($i,$this);
+				$this->tpl['urlprofid'.$i]		= $this->id_prof_url($i,$this);
 			}
-			else 
+			
+			// TVA intra
+			if ($this->tva_intra)
 			{
-				$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+				$s='';
+				$s.=$this->tva_intra;
+				$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$this->tva_intra.'">';
+				$s.=' &nbsp; ';
+				if ($conf->use_javascript_ajax)
+				{
+					$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+					$this->tpl['tva_intra'] = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+				}
+				else
+				{
+					$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+				}
 			}
-		}
-		else
-		{
-			$this->tpl['tva_intra'] = '&nbsp;';
-		}
-		
-		// Parent company
-		if ($this->parent)
-		{
-			$socm = new Societe($this->db);
-			$socm->fetch($this->parent);
-			$this->tpl['parent_company'] = $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
-			$this->tpl['parent_company'].= $socm->ville?' - '.$socm->ville:'';
-		}
-		else
-		{
-			$this->tpl['parent_company'] = $langs->trans("NoParentCompany");
+			else
+			{
+				$this->tpl['tva_intra'] = '&nbsp;';
+			}
+			
+			// Parent company
+			if ($this->parent)
+			{
+				$socm = new Societe($this->db);
+				$socm->fetch($this->parent);
+				$this->tpl['parent_company'] = $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
+				$this->tpl['parent_company'].= $socm->ville?' - '.$socm->ville:'';
+			}
+			else
+			{
+				$this->tpl['parent_company'] = $langs->trans("NoParentCompany");
+			}
 		}
 	}
 
 	/**
-	 * 	\brief	Fetch datas list
+	 * 	Fetch datas list
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{

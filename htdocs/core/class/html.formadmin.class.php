@@ -44,8 +44,7 @@ class FormAdmin
 
 		return 1;
 	}
-
-
+	
 	/**
 	 *    	\brief      Retourne la liste deroulante des langues disponibles
 	 *    	\param      selected        Langue pre-selectionnee
@@ -56,22 +55,37 @@ class FormAdmin
 	 */
 	function select_lang($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0)
 	{
+		print $this->select_language($selected,$htmlname,$showauto,$filter,$showempty);
+	}
+
+	/**
+	 *    	\brief      Retourne la liste deroulante des langues disponibles
+	 *    	\param      selected        Langue pre-selectionnee
+	 *    	\param      htmlname        Nom de la zone select
+	 *    	\param      showauto        Affiche choix auto
+	 * 		\param		filter			Array of keys to exclude in list
+	 * 		\param		showempty		Add empty value
+	 */
+	function select_language($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0)
+	{
 		global $langs;
 
 		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT,12);
+		
+		$out='';
 
-		print '<select class="flat" name="'.$htmlname.'">';
+		$out.= '<select class="flat" name="'.$htmlname.'">';
 		if ($showempty)
 		{
-			print '<option value=""';
-			if ($selected == '') print ' selected="true"';
-			print '>&nbsp;</option>';
+			$out.= '<option value=""';
+			if ($selected == '') $out.= ' selected="true"';
+			$out.= '>&nbsp;</option>';
 		}
 		if ($showauto)
 		{
-			print '<option value="auto"';
-			if ($selected == 'auto') print ' selected="true"';
-			print '>'.$langs->trans("AutoDetectLang").'</option>';
+			$out.= '<option value="auto"';
+			if ($selected == 'auto') $out.= ' selected="true"';
+			$out.= '>'.$langs->trans("AutoDetectLang").'</option>';
 		}
 
 		asort($langs_available);
@@ -82,19 +96,21 @@ class FormAdmin
 			{
 				if ( ! array_key_exists($key, $filter))
 				{
-					print '<option value="'.$key.'">'.$value.'</option>';
+					$out.= '<option value="'.$key.'">'.$value.'</option>';
 				}
 			}
 			else if ($selected == $key)
 			{
-				print '<option value="'.$key.'" selected="true">'.$value.'</option>';
+				$out.= '<option value="'.$key.'" selected="true">'.$value.'</option>';
 			}
 			else
 			{
-				print '<option value="'.$key.'">'.$value.'</option>';
+				$out.= '<option value="'.$key.'">'.$value.'</option>';
 			}
 		}
-		print '</select>';
+		$out.= '</select>';
+		
+		return $out;
 	}
 
 	/**

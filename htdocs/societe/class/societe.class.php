@@ -2042,7 +2042,7 @@ class Societe extends CommonObject
 			$errmesg = $this->db->lasterror();
 		}
 	}
-
+	
 	/**
 	 *      \brief      Retourne le formulaire de saisie d'un identifiant professionnel (siren, siret, etc...)
 	 *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
@@ -2050,6 +2050,17 @@ class Societe extends CommonObject
 	 * 		\param		preselected		Default value to show
 	 */
 	function show_input_id_prof($idprof,$htmlname,$preselected)
+	{
+		print $this->get_input_id_prof($idprof, $htmlname, $preselected);
+	}
+
+	/**
+	 *      \brief      Retourne le formulaire de saisie d'un identifiant professionnel (siren, siret, etc...)
+	 *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+	 *      \param      htmlname        Nom de la zone input
+	 * 		\param		preselected		Default value to show
+	 */
+	function get_input_id_prof($idprof,$htmlname,$preselected)
 	{
 		global $langs;
 
@@ -2067,7 +2078,9 @@ class Societe extends CommonObject
 		if (! $selected && $idprof==3) $selected=$this->ape;
 		if (! $selected && $idprof==4) $selected=$this->idprof4;
 
-		print '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
+		$out = '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
+		
+		return $out;
 	}
 
 	/**
@@ -2139,14 +2152,107 @@ class Societe extends CommonObject
 	 */
 	function assign_values($action='')
 	{
-		global $conf,$langs,$user;
-		global $formcompany;
-			
-		$form = new Form($db);
+		global $conf, $langs, $user, $mysoc;
+		global $form, $formadmin, $formcompany;
 		
 		foreach($this as $key => $value)
 		{
 			$this->tpl[$key] = $value;
+		}
+		
+		if ($action == 'create')
+		{
+			// Load object modCodeTiers
+			$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+			if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
+			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+			{
+				$module = substr($module, 0, dol_strlen($module)-4);
+			}
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+			$modCodeClient = new $module;
+			$module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+			if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+			{
+				$module = substr($module, 0, dol_strlen($module)-4);
+			}
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+			$modCodeFournisseur = new $module;
+			
+			// TODO create a function
+			$this->tpl['select_customertype'] = '<select class="flat" name="client">';
+			$this->tpl['select_customertype'].= '<option value="2"'.($this->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
+			$this->tpl['select_customertype'].= '<option value="3"'.($this->client==3?' selected="true"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+			$this->tpl['select_customertype'].= '<option value="1"'.($this->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
+			$this->tpl['select_customertype'].= '<option value="0"'.($this->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
+			$this->tpl['select_customertype'].= '</select>';
+			
+			// Customer
+			$this->tpl['customercode'] = $this->code_client;
+			if ($modCodeClient->code_auto) $this->tpl['customercode'] = $modCodeClient->getNextValue($this,0);
+			$s=$modCodeClient->getToolTip($langs,$this,0);
+			$this->tpl['help_customercode'] = $form->textwithpicto('',$s,1);
+			
+			// Supplier
+			$this->tpl['yn_supplier'] = $form->selectyesno("fournisseur",$this->fournisseur,1);
+			$this->tpl['suppliercode'] = $this->code_fournisseur;
+			if ($modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this,1);
+			$s=$modCodeFournisseur->getToolTip($langs,$this,1);
+			$this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
+			$this->LoadSupplierCateg();
+			$this->tpl['suppliercategory'] = $this->SupplierCategories;
+			$this->tpl['select_suppliercategory'] = $form->selectarray("fournisseur_categorie",$this->SupplierCategories,$_POST["fournisseur_categorie"],1);
+			
+			if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) $this->tpl['autofilltownfromzip'] = '<input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(\''.DOL_URL_ROOT.'\',cp.value,ville,pays_id,departement_id)">';
+
+			// Country
+			$this->tpl['select_country'] = $form->select_country($this->pays_id,'pays_id');
+			$countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
+			
+			if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			
+			// State
+			if ($this->pays_id) $this->tpl['select_state'] = $formcompany->select_state($this->departement_id,$this->pays_code);
+			else $this->tpl['select_state'] = $countrynotdefined;
+			
+			// Language
+			if ($conf->global->MAIN_MULTILANGS) $this->tpl['select_lang'] = $formadmin->select_language(($this->default_lang?$this->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
+			
+			// VAT
+			$this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value',1,1);	// Assujeti par defaut en creation
+		
+			// Select users
+			$this->tpl['select_users'] = $form->select_dolusers($this->commercial_id,'commercial_id',1);
+			
+			// Local Tax
+			// TODO mettre dans une classe propre au pays
+			if($mysoc->pays_code=='ES')
+			{
+				$this->tpl['localtax'] = '';
+				
+				if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+				{
+					$this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
+					$this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',0,1);
+					$this->tpl['localtax'].= '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
+					$this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',0,1);
+					$this->tpl['localtax'].= '</td></tr>';
+				}
+				elseif($mysoc->localtax1_assuj=="1")
+				{
+					$this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+					$this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',0,1);
+					$this->tpl['localtax'].= '</td><tr>';
+				}
+				elseif($mysoc->localtax2_assuj=="1")
+				{
+					$this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+					$this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',0,1);
+					$this->tpl['localtax'].= '</td><tr>';
+				}
+			}
+			
 		}
 		
 		if ($action == 'view')

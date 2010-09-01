@@ -251,8 +251,7 @@ class Form
 
         return $this->textwithtooltip($text,$htmltext,2,$direction,$img);
     }
-
-
+    
     /**
      *    \brief     Return combo list of activated countries, into language of user
      *    \param     selected         Id or Code or Label of preselected country
@@ -262,8 +261,22 @@ class Form
      */
     function select_pays($selected='',$htmlname='pays_id',$htmloption='')
     {
+    	print $this->select_country($selected,$htmlname,$htmloption);
+    }
+
+    /**
+     *    \brief     Return combo list of activated countries, into language of user
+     *    \param     selected         Id or Code or Label of preselected country
+     *    \param     htmlname         Name of html select object
+     *    \param     htmloption       Options html on select object
+     *    \TODO      trier liste sur noms apres traduction plutot que avant
+     */
+    function select_country($selected='',$htmlname='pays_id',$htmloption='')
+    {
         global $conf,$langs;
         $langs->load("dict");
+        
+        $out='';
 
         $sql = "SELECT rowid, code, libelle, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
@@ -274,7 +287,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            print '<select id="select'.$htmlname.'" class="flat selectpays" name="'.$htmlname.'" '.$htmloption.'>';
+            $out.= '<select id="select'.$htmlname.'" class="flat selectpays" name="'.$htmlname.'" '.$htmloption.'>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -287,27 +300,27 @@ class Form
                     ($selected == $obj->rowid || $selected == $obj->code || $selected == $obj->libelle) )
                     {
                         $foundselected=true;
-                        print '<option value="'.$obj->rowid.'" selected="true">';
+                        $out.= '<option value="'.$obj->rowid.'" selected="true">';
                     }
                     else
                     {
-                        print '<option value="'.$obj->rowid.'">';
+                        $out.= '<option value="'.$obj->rowid.'">';
                     }
                     // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                    if ($obj->code) { print $obj->code . ' - '; }
-                    print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
-                    print '</option>';
+                    if ($obj->code) { $out.= $obj->code . ' - '; }
+                    $out.= ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
+                    $out.= '</option>';
                     $i++;
                 }
             }
-            print '</select>';
-            return 0;
+            $out.= '</select>';
         }
         else
         {
             dol_print_error($this->db);
-            return 1;
         }
+        
+        return $out;
     }
 
 
@@ -746,8 +759,7 @@ class Form
             return -1;
         }
     }
-
-
+    
     /**
      *	\brief      Return select list of users
      *  \param      selected        Id user preselected
@@ -760,12 +772,29 @@ class Form
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
     {
+    	print select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly);
+    }
+
+    /**
+     *	\brief      Return select list of users
+     *  \param      selected        Id user preselected
+     *  \param      htmlname        Field name in form
+     *  \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *  \param      exclude         Array list of users id to exclude
+     * 	\param		disabled		If select list must be disabled
+     *  \param      include         Array list of users id to include
+     * 	\param		enableonly		Array list of users id to be enabled. All other must be disabled
+     */
+    function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
+    {
         global $conf;
 
         // Permettre l'exclusion d'utilisateurs
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
         // Permettre l'inclusion d'utilisateurs
         if (is_array($include))	$includeUsers = implode("','",$include);
+        
+        $out='';
 
         // On recherche les utilisateurs
         $sql = "SELECT u.rowid, u.name, u.firstname, u.login, u.admin";
@@ -779,8 +808,8 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            print '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
-            if ($show_empty) print '<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
+            $out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
+            if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -793,29 +822,31 @@ class Form
 
                     if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
                     {
-                        print '<option value="'.$obj->rowid.'"';
-                        if ($disableline) print ' disabled="true"';
-                        print ' selected="true">';
+                        $out.= '<option value="'.$obj->rowid.'"';
+                        if ($disableline) $out.= ' disabled="true"';
+                        $out.= ' selected="true">';
                     }
                     else
                     {
-                        print '<option value="'.$obj->rowid.'"';
-                        if ($disableline) print ' disabled="true"';
-                        print '>';
+                        $out.= '<option value="'.$obj->rowid.'"';
+                        if ($disableline) $out.= ' disabled="true"';
+                        $out.= '>';
                     }
-                    print $obj->name.($obj->name && $obj->firstname?' ':'').$obj->firstname;
-                    //if ($obj->admin) print ' *';
-                    if ($conf->global->MAIN_SHOW_LOGIN) print ' ('.$obj->login.')';
-                    print '</option>';
+                    $out.= $obj->name.($obj->name && $obj->firstname?' ':'').$obj->firstname;
+                    //if ($obj->admin) $out.= ' *';
+                    if ($conf->global->MAIN_SHOW_LOGIN) $out.= ' ('.$obj->login.')';
+                    $out.= '</option>';
                     $i++;
                 }
             }
-            print '</select>';
+            $out.= '</select>';
         }
         else
         {
             dol_print_error($this->db);
         }
+        
+        return $out;
     }
 
 

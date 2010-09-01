@@ -117,12 +117,12 @@ for ($i=1; $i<=4; $i++) {
 			else echo ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
 		}
 		echo '</td>';
-		if ($i==2 || $i==4) echo '<tr>';
+		if ($i==2 || $i==4) echo '</tr>';
 	} else {
 		if ($i==1 || $i==3) echo '<tr>';
 		echo '<td>&nbsp;</td>';
 		echo '<td>&nbsp;</td>';
-		if ($i==2 || $i==4) echo '<tr>';
+		if ($i==2 || $i==4) echo '</tr>';
 	} 
 }
 ?>

@@ -41,18 +41,16 @@ class Canvas
    /**
 	*   Constructor.
 	*   @param     DB      Database handler
-	*   @param     user    User
 	*/
-	function Canvas($DB,$user)
+	function Canvas($DB)
 	{
 		$this->db = $DB;
-		$this->user = $user;
 	}
 
 	/**
 	 * 	Load canvas
-	 * 	@param		$element 	Element of canvas
-	 * 	@param		$canvas		Name of canvas
+	 * 	@param		element 	Element of canvas
+	 * 	@param		canvas		Name of canvas
 	 */
 	function load_canvas($element,$canvas)
 	{
@@ -81,7 +79,7 @@ class Canvas
 			$this->template_dir = DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/tpl/';
 
 			include_once($filecanvas);
-			$this->object = new $classname($this->db,0,$this->user);
+			$this->object = new $classname($this->db);
 			$this->smarty = $this->object->smarty;
 
 			return $this->object;
@@ -94,16 +92,19 @@ class Canvas
 	}
 
 	/**
-	 * 	\brief 		Fetch object values
+	 * 	Fetch object values
+	 * 	@param		id			Element id
+	 * 	@param		action		Type of action
 	 */
-	function fetch($id,$ref='',$action='')
+	function fetch($id,$action='')
 	{
-		$ret = $this->object->fetch($id,$ref,$action);
+		$ret = $this->object->fetch($id,$action);
 		return $ret;
 	}
 
 	/**
-	 * 	\brief 		Assign templates values
+	 * 	Assign templates values
+	 * 	@param	action	Type of action
 	 */
 	function assign_values($action='')
 	{
@@ -124,7 +125,7 @@ class Canvas
 	}
 
 	/**
-	 * 	\brief 		Display canvas
+	 * 	Display canvas
 	 */
 	function display_canvas()
 	{

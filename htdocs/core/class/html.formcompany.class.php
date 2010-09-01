@@ -174,8 +174,7 @@ class FormCompany
 		print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 		print '</tr></table></form>';
 	}
-
-
+	
 	/**
 	 *    \brief      Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
 	 *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
@@ -188,11 +187,28 @@ class FormCompany
 	 */
 	function select_departement($selected='',$pays_code=0, $htmlname='departement_id')
 	{
+		print $this->select_state($selected,$pays_code, $htmlname);
+	}
+
+	/**
+	 *    \brief      Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
+	 *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
+	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entree pour
+	 *                un code donnee mais dans ce cas, le champ pays differe).
+	 *                Ainsi les liens avec les departements se font sur un departement independemment de son nom.
+	 *    \param      selected        	Code state preselected
+	 *    \param      pays_code       	0=list for all countries, otherwise country code or country rowid to show
+	 *    \param      departement_id	Id of department
+	 */
+	function select_state($selected='',$pays_code=0, $htmlname='departement_id')
+	{
 		global $conf,$langs,$user;
 
 		dol_syslog("FormCompany::select_departement selected=$selected, pays_code=$pays_code",LOG_DEBUG);
 
 		$langs->load("dict");
+		
+		$out='';
 
 		// On recherche les departements/cantons/province active d'une region et pays actif
 		$sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM";
@@ -207,8 +223,8 @@ class FormCompany
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			print '<select class="flat" name="'.$htmlname.'">';
-			if ($pays_code) print '<option value="0">&nbsp;</option>';
+			$out.= '<select class="flat" name="'.$htmlname.'">';
+			if ($pays_code) $out.= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			dol_syslog("FormCompany::select_departement num=$num",LOG_DEBUG);
@@ -220,7 +236,7 @@ class FormCompany
 					$obj = $this->db->fetch_object($result);
 					if ($obj->code == '0')		// Le code peut etre une chaine
 					{
-						print '<option value="0">&nbsp;</option>';
+						$out.= '<option value="0">&nbsp;</option>';
 					}
 					else {
 						if (! $pays || $pays != $obj->libelle_pays)
@@ -228,33 +244,35 @@ class FormCompany
 							// Affiche la rupture si on est en mode liste multipays
 							if (! $pays_code && $obj->code_pays)
 							{
-								print '<option value="-1" disabled="true">----- '.$obj->libelle_pays." -----</option>\n";
+								$out.= '<option value="-1" disabled="true">----- '.$obj->libelle_pays." -----</option>\n";
 								$pays=$obj->libelle_pays;
 							}
 						}
 
 						if ($selected > 0 && $selected == $obj->rowid)
 						{
-							print '<option value="'.$obj->rowid.'" selected="true">';
+							$out.= '<option value="'.$obj->rowid.'" selected="true">';
 						}
 						else
 						{
-							print '<option value="'.$obj->rowid.'">';
+							$out.= '<option value="'.$obj->rowid.'">';
 						}
-						// Si traduction existe, on l'utilise, sinon on prend le libell� par d�faut
-						print $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
-						print '</option>';
+						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+						$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+						$out.= '</option>';
 					}
 					$i++;
 				}
 			}
-			print '</select>';
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			$out.= '</select>';
+			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		}
 		else
 		{
 			dol_print_error($this->db);
 		}
+		
+		return $out;
 	}
 
 
@@ -318,8 +336,7 @@ class FormCompany
 			dol_print_error($this->db);
 		}
 	}
-
-
+	
 	/**
 	 *    	\brief      Retourne la liste deroulante des civilite actives
 	 *    	\param      selected    civilite pre-selectionnee
@@ -327,8 +344,20 @@ class FormCompany
 	 */
 	function select_civilite($selected='',$htmlname='civilite_id')
 	{
+		print $this->select_civility($selected,$htmlname);
+	}
+
+	/**
+	 *    	\brief      Retourne la liste deroulante des civilite actives
+	 *    	\param      selected    civilite pre-selectionnee
+	 * 		\param		htmlname	Name of HTML select combo field
+	 */
+	function select_civility($selected='',$htmlname='civilite_id')
+	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
+		
+		$out='';
 
 		$sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
 		$sql.= " WHERE active = 1";
@@ -337,8 +366,8 @@ class FormCompany
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			print '<select class="flat" name="'.$htmlname.'">';
-			print '<option value="">&nbsp;</option>';
+			$out.= '<select class="flat" name="'.$htmlname.'">';
+			$out.= '<option value="">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
@@ -348,28 +377,29 @@ class FormCompany
 					$obj = $this->db->fetch_object($resql);
 					if ($selected == $obj->code)
 					{
-						print '<option value="'.$obj->code.'" selected="true">';
+						$out.= '<option value="'.$obj->code.'" selected="true">';
 					}
 					else
 					{
-						print '<option value="'.$obj->code.'">';
+						$out.= '<option value="'.$obj->code.'">';
 					}
 					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-					print ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite!='-'?$obj->civilite:''));
-					print '</option>';
+					$out.= ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite!='-'?$obj->civilite:''));
+					$out.= '</option>';
 					$i++;
 				}
 			}
-			print '</select>';
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			$out.= '</select>';
+			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		}
 		else
 		{
 			dol_print_error($this->db);
 		}
+		
+		return $out;
 	}
-
-
+	
 	/**
 	 *    \brief      Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
 	 *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
@@ -378,8 +408,21 @@ class FormCompany
 	 */
 	function select_forme_juridique($selected='',$pays_code=0)
 	{
+		print $this->select_juridicalstatus($selected,$pays_code);
+	}
+
+	/**
+	 *    \brief      Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
+	 *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
+	 *    \param      selected        Code forme juridique a pre-selectionne
+	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays a afficher
+	 */
+	function select_juridicalstatus($selected='',$pays_code=0)
+	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
+		
+		$out='';
 
 		// On recherche les formes juridiques actives des pays actifs
 		$sql  = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays";
@@ -393,9 +436,9 @@ class FormCompany
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			print '<div id="particulier2" class="visible">';
-			print '<select class="flat" name="forme_juridique_code">';
-			if ($pays_code) print '<option value="0">&nbsp;</option>';
+			$out.= '<div id="particulier2" class="visible">';
+			$out.= '<select class="flat" name="forme_juridique_code">';
+			if ($pays_code) $out.= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			if ($num)
@@ -405,41 +448,43 @@ class FormCompany
 				{
 					$obj = $this->db->fetch_object($result);
 					if ($obj->code == 0) {
-						print '<option value="0">&nbsp;</option>';
+						$out.= '<option value="0">&nbsp;</option>';
 					}
 					else {
 						if (! $pays || $pays != $obj->libelle_pays) {
 							// Affiche la rupture si on est en mode liste multipays
 							if (! $pays_code && $obj->code_pays) {
-								print '<option value="0">----- '.$obj->libelle_pays." -----</option>\n";
+								$out.= '<option value="0">----- '.$obj->libelle_pays." -----</option>\n";
 								$pays=$obj->libelle_pays;
 							}
 						}
 
 						if ($selected > 0 && $selected == $obj->code)
 						{
-							print '<option value="'.$obj->code.'" selected="true">';
+							$out.= '<option value="'.$obj->code.'" selected="true">';
 						}
 						else
 						{
-							print '<option value="'.$obj->code.'">';
+							$out.= '<option value="'.$obj->code.'">';
 						}
 						// Si translation exists, we use it, otherwise we use default label in database
-						print $obj->code . ' - ';
-						print ($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code?$langs->trans("JuridicalStatus".$obj->code):($obj->nom!='-'?$obj->nom:''));	// $obj->nom is alreay in output charset (converted by database driver)
-						print '</option>';
+						$out.= $obj->code . ' - ';
+						$out.= ($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code?$langs->trans("JuridicalStatus".$obj->code):($obj->nom!='-'?$obj->nom:''));	// $obj->nom is alreay in output charset (converted by database driver)
+						$out.= '</option>';
 					}
 					$i++;
 				}
 			}
-			print '</select>';
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-			print '</div>';
+			$out.= '</select>';
+			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			$out.= '</div>';
 		}
 		else
 		{
 			dol_print_error($this->db);
 		}
+		
+		return $out;
 	}
 
 
