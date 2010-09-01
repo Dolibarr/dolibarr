@@ -363,7 +363,7 @@ class FormFile
 			print ' type="submit" value="'.$buttonlabel.'"';
 			if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) print ' disabled="true"';
 			print '>';
-			if ($allowgenifempty && ! is_array($modellist) && empty($modellist))
+			if ($allowgenifempty && ! is_array($modellist) && empty($modellist) && $modulepart != 'unpaid')
 			{
 				$langs->load("errors");
 				print ' '.img_warning($langs->trans("WarningNoDocumentModelActivated"));
