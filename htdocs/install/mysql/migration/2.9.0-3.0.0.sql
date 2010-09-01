@@ -43,4 +43,4 @@ ALTER TABLE llx_expedition MODIFY date_delivery datetime NULL;
 ALTER TABLE llx_societe ADD COLUMN canvas varchar(32) DEFAULT 'default' AFTER default_lang;
 UPDATE llx_societe SET canvas='default' WHERE canvas IS NULL;
 --UPDATE llx_societe SET canvas='default' WHERE fk_typent <> 8;
-UPDATE llx_societe SET canvas='individual' WHERE fk_typent = 8;
+--UPDATE llx_societe SET canvas='individual' WHERE fk_typent = 8;
