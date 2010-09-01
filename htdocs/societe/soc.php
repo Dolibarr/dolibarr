@@ -91,6 +91,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
         $soc->nom_particulier       = $_POST["nom"];
         $soc->prenom                = $_POST["prenom"];
         $soc->civilite_id           = $_POST["civilite_id"];
+        $soc->canvas				= 'individual';
     }
     else
     {
@@ -1160,10 +1161,13 @@ else
      */
 	
 	// Call canvas
-	if (empty($_GET["canvas"])) $_GET["canvas"]='default';
+	//if (empty($_GET["canvas"])) $_GET["canvas"]='default';
+	
+	$socstatic = new Societe($db);
+	$socstatic->getCanvas($socid);
 	
 	$soc = new Canvas($db,$user);
-	$soc->load_canvas('thirdparty@societe',$_GET["canvas"]);
+	$soc->load_canvas('thirdparty@societe',$socstatic->canvas);
 
     $soc->id = $socid;
     $result=$soc->fetch($socid);

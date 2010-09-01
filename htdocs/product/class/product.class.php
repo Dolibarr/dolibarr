@@ -2773,39 +2773,6 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  \brief 		Load type of canvas
-	 *  \param		id		product id
-	 *  \param		ref		product ref
-	 */
-	function getCanvas($id, $ref)
-	{
-		global $conf;
-
-		$sql = "SELECT rowid, ref, canvas";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity = ".$conf->entity;
-		if (!empty($id)) $sql.= " AND rowid = ".$id;
-		if (!empty($ref)) $sql.= " AND ref = '".$ref."'";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$obj = $this->db->fetch_object($resql);
-
-			$this->id 		= $obj->rowid;
-			$this->ref 		= $obj->ref;
-			$this->canvas 	= $obj->canvas;
-
-			return 1;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
 	 *  \brief 		Affecte les valeurs communes
 	 */
 	function assign_values($action='')

@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -76,14 +76,7 @@ create table llx_societe
   localtax2_assuj          tinyint        DEFAULT 0,	        -- assujeti ou non a local tax 2
   gencod                   varchar(255),                        -- barcode
   price_level              integer NULL,                        -- level of price for multiprices
-  default_lang             varchar(6),
+  default_lang             varchar(6),							-- default language
+  canvas				   varchar(32)	  DEFAULT 'default',	-- type of canvas
   import_key               varchar(14)                          -- import key
 )type=innodb;
-
--- 
--- List of codes for the field entity
---
--- 1 : first company customers/suppliers
--- 2 : second company customers/suppliers
--- 3 : etc...
---

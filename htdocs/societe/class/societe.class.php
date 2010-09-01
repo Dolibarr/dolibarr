@@ -125,6 +125,8 @@ class Societe extends CommonObject
 
 	var $commercial_id; //Id du commercial affecte
 	var $default_lang;
+	
+	var $canvas;
 
 	var $import_key;
 
@@ -179,6 +181,8 @@ class Societe extends CommonObject
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
+		
+		if (empty($this->canvas)) $this->canvas = 'default'; 
 
 		$this->db->begin();
 
@@ -193,9 +197,10 @@ class Societe extends CommonObject
 
 		if ($result >= 0)
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat)";
-			$sql.= " VALUES ('".$this->db->escape($this->nom)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."',";
-			$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null");
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas)";
+			$sql.= " VALUES ('".$this->db->escape($this->nom)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."'";
+			$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
+			$sql.= ", '".$this->canvas."'";
 			$sql.= ")";
 
 			dol_syslog("Societe::create sql=".$sql);
@@ -2161,41 +2166,7 @@ class Societe extends CommonObject
 			$this->tpl['email'] 	= dol_print_email($this->email,0,$this->id,'AC_EMAIL');
 			$this->tpl['url'] 		= dol_print_url($this->url);
 			
-			$this->tpl['profid1'] 	= $this->siren;
-			$this->tpl['profid2'] 	= $this->siret;
-			$this->tpl['profid3'] 	= $this->ape;
-			$this->tpl['profid4'] 	= $this->idprof4;
-			
-			for ($i=1; $i<=4; $i++)
-			{
-				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->pays_code);
-				$this->tpl['checkprofid'.$i]	= $this->id_prof_check($i,$this);
-				$this->tpl['urlprofid'.$i]		= $this->id_prof_url($i,$this);
-			}
-			
 			$this->tpl['tva_assuj']		= yn($this->tpl['tva_assuj']);
-			
-			// TVA intra
-			if ($this->tva_intra)
-			{
-				$s='';
-				$s.=$this->tva_intra;
-				$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$this->tva_intra.'">';
-				$s.=' &nbsp; ';
-				if ($conf->use_javascript_ajax)
-				{
-					$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-					$this->tpl['tva_intra'] = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
-				}
-				else 
-				{
-					$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
-				}
-			}
-			else
-			{
-				$this->tpl['tva_intra'] = '&nbsp;';
-			}
 			
 			// Third party type
 			$arr = $formcompany->typent_array(1);
@@ -2213,19 +2184,6 @@ class Societe extends CommonObject
 			$this->tpl['image_edit']	= img_edit();
 			
 			$this->tpl['display_rib']	= $this->display_rib();
-			
-			// Parent company
-			if ($this->parent)
-			{
-				$socm = new Societe($this->db);
-				$socm->fetch($this->parent);
-				$this->tpl['parent_company'] = $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
-				$this->tpl['parent_company'].= $socm->ville?' - '.$socm->ville:'';
-			}
-			else
-			{
-				$this->tpl['parent_company'] = $langs->trans("NoParentCompany");
-			}
 			
 			// Sales representatives
 			$sql = "SELECT count(sc.rowid) as nb";

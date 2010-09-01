@@ -90,6 +90,53 @@ class ThirdPartyDefault extends Societe
 				$this->tpl['action_delete']=$form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
 			}
 		}
+		
+		$this->tpl['profid1'] 	= $this->siren;
+		$this->tpl['profid2'] 	= $this->siret;
+		$this->tpl['profid3'] 	= $this->ape;
+		$this->tpl['profid4'] 	= $this->idprof4;
+			
+		for ($i=1; $i<=4; $i++)
+		{
+			$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->pays_code);
+			$this->tpl['checkprofid'.$i]	= $this->id_prof_check($i,$this);
+			$this->tpl['urlprofid'.$i]		= $this->id_prof_url($i,$this);
+		}
+		
+		// TVA intra
+		if ($this->tva_intra)
+		{
+			$s='';
+			$s.=$this->tva_intra;
+			$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$this->tva_intra.'">';
+			$s.=' &nbsp; ';
+			if ($conf->use_javascript_ajax)
+			{
+				$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+				$this->tpl['tva_intra'] = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+			}
+			else 
+			{
+				$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+			}
+		}
+		else
+		{
+			$this->tpl['tva_intra'] = '&nbsp;';
+		}
+		
+		// Parent company
+		if ($this->parent)
+		{
+			$socm = new Societe($this->db);
+			$socm->fetch($this->parent);
+			$this->tpl['parent_company'] = $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
+			$this->tpl['parent_company'].= $socm->ville?' - '.$socm->ville:'';
+		}
+		else
+		{
+			$this->tpl['parent_company'] = $langs->trans("NoParentCompany");
+		}
 	}
 
 	/**

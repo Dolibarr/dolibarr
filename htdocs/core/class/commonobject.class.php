@@ -1570,6 +1570,36 @@ class CommonObject
 			print "</form>\n";
 		}
 	}
+	
+	/**
+	 *  \brief 		Load type of canvas
+	 *  \param		id		element id
+	 */
+	function getCanvas($id)
+	{
+		global $conf;
+
+		$sql = "SELECT rowid, canvas";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " AND rowid = ".$id;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+
+			$this->id 		= $obj->rowid;
+			$this->canvas 	= $obj->canvas;
+
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
 
 }
 
