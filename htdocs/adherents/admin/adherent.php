@@ -51,7 +51,6 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 	if (in_array($const,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $value=$_POST["constvalue".$const];
 	$type=$_POST["consttype"];
 	$constnote=isset($_POST["constnote"])?$_POST["constnote"]:'';
-
 	$result=dolibarr_set_const($db,$const,$value,$typeconst[$type],0,$constnote,$conf->entity);
 	if ($result < 0)
 	{
@@ -371,19 +370,9 @@ function form_constantes($tableau)
 				}
 				else if (in_array($const,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
 				{
-				    // Editor wysiwyg
-					if ($conf->fckeditor->enabled)
-					{
-						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-						$doleditor=new DolEditor('constvalue'.$const,$obj->value,160,'dolibarr_notes','',false,false);
-						$doleditor->Create();
-					}
-					else
-					{
-						print '<textarea class="flat" name="constvalue'.$const.'" cols="60" rows="5" wrap="soft">';
-						print dol_htmlentitiesbr_decode($obj->value);
-						print '</textarea>';
-					}
+                    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				    $doleditor=new DolEditor('constvalue'.$const,$obj->value,160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
+                    $doleditor->Create();
 
 					print '</td><td>';
 					print '<input type="hidden" name="consttype" value="texte">';

@@ -1514,7 +1514,8 @@ class CommonObject
 			}
 			if ($_GET["action"] == 'editline')
 			{
-				// editeur wysiwyg
+                require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			    // editeur wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1570,7 +1571,7 @@ class CommonObject
 			print "</form>\n";
 		}
 	}
-	
+
 	/**
 	 *  \brief 		Load type of canvas
 	 *  \param		id		element id
