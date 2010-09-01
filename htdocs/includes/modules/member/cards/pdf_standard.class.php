@@ -54,8 +54,8 @@
 ////////////////////////////////////////////////////
 
 /**
- *	\file       htdocs/includes/modules/member/card/pdf_standard.class.php
- *	\ingroup    adherent
+ *	\file       htdocs/includes/modules/member/cards/pdf_standard.class.php
+ *	\ingroup    member
  *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  *	\author     Steve Dillon
  *	\author	    Laurent Passebecq
@@ -150,7 +150,7 @@ class pdf_standard {
 		$dir=$conf->adherent->dir_output;
 		$file=get_exdir($idmember,2).$photomember;
 		$photo=$dir.'/'.$file;
-		if (! is_readable($photo)) $photo='';
+		if (empty($photomember) || ! is_readable($photo)) $photo='';
 
 		// Define background image
 		$backgroundimage='';
@@ -415,7 +415,7 @@ class pdf_standard {
 		$pdf->SetTitle($outputlangs->transnoentities('MembersCards'));
 		$pdf->SetSubject($outputlangs->transnoentities("MembersCards"));
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->nom));
 		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
