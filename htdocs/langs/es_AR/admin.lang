@@ -171,6 +171,11 @@ ModulesDesc=Los módulos Dolibarr definen las funcionalidades disponibles en la 
 ModulesInterfaceDesc=Los módulos de interfaz son módulos que permiten vincular a Dolibarr con sistemas, aplicaciones o servicios externos.
 ModulesSpecialDesc=Los módulos complementarios son módulos de uso muy específico o menos corriente que los módulos normales.
 ModulesJobDesc=Los módulos específicos permiten una preconfiguración simplificada de Dolibarr para un negocio en concreto.
+ModulesMarketPlaceDesc=Hay disponbiles para su descarga en sitios externos en internet otros módulos / extensiones...
+ModulesMarketPlaces=Más módulos...
+DoliStoreDesc=DoliStore, el sitio oficial de módulos complementarios y para Dolibarr ERP/CRM
+WebSiteDesc=Sitios proveedores a consultar para encontrar más módulos
+URL=Enlace
 BoxesAvailable=Paneles disponibles
 BoxesActivated=Paneles activados
 ActivateOn=Activar en
@@ -195,9 +200,9 @@ Developpers=Desarrolladores/contribuidores
 OtherDeveloppers=Otros desarrolladores/contribuidores
 OfficialWebSite=Sitio web oficial internacional
 OfficialWebSiteFr=sitio web oficial habla francesa
-OfficialWikiFr=Wiki habla francesa
 OfficialWiki=Wiki Dolibarr
 OfficialDemo=Demo en línea Dolibarr
+OfficialMarketPlace=Sitio oficial de módulos complementarios y extensiones
 ForDocumentationSeeWiki=Para la documentación de usuario, desarrollador o Preguntas Frecuentes (FAQ), consulte el wiki Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=Para otras cuestiones o realizar sus propias consultas, puede utilizar el foro Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Esta aplicación, independiente de Dolibarr, le permite ayudarle a obtener un servicio de soporte de Dolibarr.
@@ -213,13 +218,14 @@ MAIN_MAIL_SMTP_SERVER=Nombre host o ip del servidor SMTP (Por defecto en php.ini
 MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=Puerto del servidor SMTP (No definido en PHP en sistemas de tipo Unix)
 MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=Nombre servidor o ip del servidor SMTP (No definido en PHP en sistemas de tipo Unix)
 MAIN_MAIL_EMAIL_FROM=E-Mail del emisor para envíos E-Mail automáticos (Por defecto en php.ini: <b>%s</b>)
+MAIN_MAIL_AUTOCOPY_TO=Enviar automáticamente copia oculta de los e-mails enviados a
 MAIN_DISABLE_ALL_MAILS=Desactivar globalmente todo envío de correos electrónicos (para modo de pruebas)
 MAIN_MAIL_SENDMODE=Método de envío de e-mails
 MAIN_MAIL_SMTPS_ID=ID de autentificación SMTP  si se requiere autenticación SMTP
 MAIN_MAIL_SMTPS_PW=Contraseña autentificación SMTP si se requiere autentificación SMTP
 MAIN_MAIL_EMAIL_TLS=Uso de encriptación TLS (SSL)
-	 SubmitTranslation=Si la traducción de este idioma no está completa o encuentra errores, puede corregirlos editando los archivos del directorio <b>langs/%s</b> y enviando los archivos modificados al foro de www.dolibarr.es.
 FeatureNotAvailableOnLinux=Funcionalidad no disponible en sistemas  Unix. Pruebe su sendmail localmente.
+SubmitTranslation=Si la traducción de este idioma es incompleta o si encuentra errores, puede corregirlos mediante la edición de los archivos en el directorio <b>langs/%s</b> y envíe los cambios al foro www.dolibarr.es.
 ModuleSetup=Configuración del módulo
 ModulesSetup=configuración de los módulos
 ModuleFamilyBase=Sistema
@@ -231,7 +237,7 @@ ModuleFamilyOther=Otro
 ModuleFamilyTechnic=Módulos herramientas o Sistema
 ModuleFamilyExperimental=Módulos experimentales (no utilizar en producción)
 ModuleFamilyFinancial=Módulos financieros (Contabilidad/tesorería)
-ModuleFamilyECM=GED
+ModuleFamilyECM=Gestió Electrònica de Documents (GED)
 MenuHandlers=Gestores menú
 MenuAdmin=Editor menú
 ThisIsProcessToFollow=He aquí el procedimiento a seguir:
@@ -785,7 +791,7 @@ SimpleNumRefModelDesc=Devuelve el número bajo el formato %syymm-nnnn donde yy e
 ListOfEntities=Listado de entidades
 AddEntity=Añadir entidad
 EditEntity=Editar entidad
-##### Module password generation
+##### Module password generation= undefined=
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
@@ -889,7 +895,7 @@ FreeLegalTextOnInterventions=Texto adicional en las fichas de intervención
 ##### Members #####
 MembersSetup=Configuración del módulo Asociaciones
 MemberMainOptions=Opciones principales
-AddSubscriptionIntoAccount=Registrar cotizaciones en cuenta bancaria o caja del módulo bancario
+AddSubscriptionIntoAccount=Proponer por defecto la creación de un movimiento, en el módulo bancos, en el registro de un pago de cotización
 AdherentMailRequired=E-Mail obligatorio para crear un miembro nuevo
 MemberSendInformationByMailByDefault=Casilla de verificación para enviar el correo de confirmación (validación ó nueva cotización) a los miembros es por defecto "sí"
 ##### LDAP setup #####
@@ -1164,13 +1170,13 @@ PastDelayVCalExport=No exportar los eventos de más de
 ClickToDialDesc=Este módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
 ##### Point Of Sales (CashDesk) #####
 CashDesk=Caja registradora
-CashDeskSetup=Configuración del módulo de Caja registradora
+CashDeskSetup=Configuración del módulo TPV/Caja registradora
 CashDeskThirdPartyForSell=Tercero genérico a usar para la venta
 CashDeskBankAccountForSell=Cuenta a utilizar para los cobros en efectivo (caja)
 CashDeskBankAccountForCheque=Cuenta a utilizar para los cobros con cheques
 CashDeskBankAccountForCB=Cuenta a utilizar para los cobros con tarjeta de crédito
 CashDeskIdWareHouse=Almacén que se utiliza para las ventas
-##### Bookmark #####= undefined=
+##### Bookmark #####
 BookmarkSetup=Configuración del módulo Marcadores
 BookmarkDesc=Este módulo le permite gestionar los enlaces y accesos directos. También permite añadir cualquier página de Dolibarr o enlace web en el menú de acceso rápido de la izquierda.
 NbOfBoomarkToShow=Número máximo de marcadores que se mostrará en el menú
