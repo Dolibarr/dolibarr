@@ -71,12 +71,22 @@ class ThirdPartyDefault extends Societe
 	}
 
 	/**
-	 *    \brief      Assigne les valeurs complementaires pour le canvas
-	 *    \param      action     Type of action
+	 *    Assign custom values for canvas
+	 *    @param      action     Type of action
 	 */
 	function assign_values($action='')
 	{
+		global $langs;
+			
 		parent::assign_values($action);
+		
+		$form = new Form($db);
+		
+		// Confirm delete third party
+		if ($_GET["action"] == 'delete')
+		{
+			$this->tpl['action_delete']=$form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
+		}
 	}
 
 	/**
