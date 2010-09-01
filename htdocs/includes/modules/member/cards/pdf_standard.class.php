@@ -148,9 +148,9 @@ class pdf_standard {
 
 		// Define photo
 		$dir=$conf->adherent->dir_output;
-		$file=get_exdir($idmember,2).$photomember;
+		$file=get_exdir($idmember,2).'photos/'.$photomember;
 		$photo=$dir.'/'.$file;
-		if (! is_readable($photo)) $photo='';
+		if (empty($photomember) || ! is_readable($photo)) $photo='';
 
 		// Define background image
 		$backgroundimage='';
@@ -194,7 +194,7 @@ class pdf_standard {
 			else
 			{
 				$pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
 		}
 		else if ($textleft!='' && $textright!='')	//
@@ -211,12 +211,12 @@ class pdf_standard {
 				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
 				else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
 				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+				$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
 			else
 			{
 				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+				$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 				$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
 				$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 			}
@@ -277,16 +277,16 @@ class pdf_standard {
 		for($i=$x1;$i<=$x2;$i+=$Pointilles+$Pointilles) {
 			for($j=$i;$j<=($i+$Pointilles);$j++) {
 				if($j<=($x2-1)) {
-	    $pdf->Line($j,$y1,$j+1,$y1); // on trace le pointill? du haut, point par point
-	    $pdf->Line($j,$y2,$j+1,$y2); // on trace le pointill? du bas, point par point
+            	    $pdf->Line($j,$y1,$j+1,$y1); // on trace le pointill? du haut, point par point
+            	    $pdf->Line($j,$y2,$j+1,$y2); // on trace le pointill? du bas, point par point
 				}
 			}
 		}
 		for($i=$y1;$i<=$y2;$i+=$Pointilles+$Pointilles) {
 			for($j=$i;$j<=($i+$Pointilles);$j++) {
 				if($j<=($y2-1)) {
-	    $pdf->Line($x1,$j,$x1,$j+1); // on trace le pointill? du haut, point par point
-	    $pdf->Line($x2,$j,$x2,$j+1); // on trace le pointill? du bas, point par point
+            	    $pdf->Line($x1,$j,$x1,$j+1); // on trace le pointill? du haut, point par point
+            	    $pdf->Line($x2,$j,$x2,$j+1); // on trace le pointill? du bas, point par point
 				}
 			}
 		}

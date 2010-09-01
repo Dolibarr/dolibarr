@@ -35,7 +35,7 @@ $now = dol_now();
 $year=dol_print_date($now,'%Y');
 $month=dol_print_date($now,'%m');
 $day=dol_print_date($now,'%d');
-
+$foruserid=GETPOST('foruserid');
 
 $arrayofmembers=array();
 
@@ -47,6 +47,7 @@ $sql.= " p.libelle as pays";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
 $sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
+if ($foruserid) $sql.=" AND d.rowid=".$foruserid;
 $sql.= " ORDER BY d.rowid ASC";
 
 $result = $db->query($sql);
@@ -86,14 +87,29 @@ if ($result)
         $textfooter=make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray, $langs);
         $textright=make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray, $langs);
 
-		$arrayofmembers[]=array('textleft'=>$textleft,
-								'textheader'=>$textheader,
-								'textfooter'=>$textfooter,
-								'textright'=>$textright,
-								'id'=>$objp->rowid,
-								'photo'=>$objp->photo);
+        if ($foruserid)
+        {
+            for($j=0;$j<100;$j++)
+            {
+                $arrayofmembers[]=array('textleft'=>$textleft,
+                                'textheader'=>$textheader,
+                                'textfooter'=>$textfooter,
+                                'textright'=>$textright,
+                                'id'=>$objp->rowid,
+                                'photo'=>$objp->photo);
+            }
+        }
+        else
+        {
+            $arrayofmembers[]=array('textleft'=>$textleft,
+                                'textheader'=>$textheader,
+                                'textfooter'=>$textfooter,
+                                'textright'=>$textright,
+                                'id'=>$objp->rowid,
+                                'photo'=>$objp->photo);
+        }
 
-		$i++;
+        $i++;
 	}
 
 	// Build and output PDF

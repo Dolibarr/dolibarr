@@ -283,7 +283,7 @@ if ( $resql=$db->query($sql) )
 		if ($pagecount)
 		{
 			$file=$diroutputpdf.'/'.$filename.'.pdf';
-			$pdf->Output($file);
+			$pdf->Output($file,'F');
 			if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 		}
