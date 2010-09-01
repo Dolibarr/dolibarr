@@ -132,7 +132,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 	global $mysoc;
 
 	$pdf->SetXY ($curx, $cury);
-	$pdf->SetFont('Arial','B',8);
+	$pdf->SetFont('','B',8);
 	$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
 	$cury+=4;
 
@@ -143,12 +143,12 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 
 	if ($usedetailedbban)
 	{
-		$pdf->SetFont('Arial','',6);
+		$pdf->SetFont('','',6);
 		$pdf->SetXY ($curx, $cury);
 		$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Bank").': ' . $outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
 		$cury+=3;
 
-		$pdf->SetFont('Arial','B',6);
+		$pdf->SetFont('','B',6);
 		$pdf->line($curx+1, $cury+1, $curx+1, $cury+10 );
 		$pdf->SetXY ($curx, $cury+1);
 		$pdf->MultiCell(18, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
@@ -163,7 +163,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 		$pdf->MultiCell(13, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
 		$pdf->line($curx+73, $cury+1, $curx+73, $cury+10 );
 
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('','',8);
 		$pdf->SetXY ($curx, $cury+6);
 		$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
 		$pdf->SetXY ($curx+18, $cury+6);
@@ -175,12 +175,12 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 	}
 	else
 	{
-		$pdf->SetFont('Arial','B',6);
+		$pdf->SetFont('','B',6);
 		$pdf->SetXY ($curx, $cury);
 		$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Bank").': ' . $outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
 		$cury+=3;
 
-		$pdf->SetFont('Arial','B',6);
+		$pdf->SetFont('','B',6);
 		$pdf->SetXY ($curx, $cury);
 		$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
 		$cury-=9;
@@ -192,7 +192,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
-	$pdf->SetFont('Arial','',6);
+	$pdf->SetFont('','',6);
 	$pdf->SetXY ($curx, $cury+12);
 	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
 	$pdf->SetXY ($curx, $cury+22);
@@ -288,7 +288,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		$ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$outputlangs->convToOutputCharset($fromcompany->tva_intra);
 	}
 
-	$pdf->SetFont('Arial','',7);
+	$pdf->SetFont('','',7);
 	$pdf->SetDrawColor(224,224,224);
 
 	// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
