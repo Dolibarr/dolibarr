@@ -2146,12 +2146,6 @@ class Societe extends CommonObject
 		
 		if ($action == 'view')
 		{
-			// Confirm delete third party
-			if ($_GET["action"] == 'delete')
-			{
-				$this->tpl['action_delete']=$form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
-			}
-			
 			$this->tpl['showrefnav'] 		= $form->showrefnav($this,'socid','',($user->societe_id?0:1),'rowid','nom');
 			
 			$this->tpl['checkcustomercode'] = $this->check_codeclient();

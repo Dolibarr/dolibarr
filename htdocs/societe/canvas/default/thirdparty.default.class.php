@@ -82,10 +82,13 @@ class ThirdPartyDefault extends Societe
 		
 		$form = new Form($db);
 		
-		// Confirm delete third party
-		if ($_GET["action"] == 'delete')
+		if ($action == 'view')
 		{
-			$this->tpl['action_delete']=$form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
+			// Confirm delete third party
+			if ($_GET["action"] == 'delete')
+			{
+				$this->tpl['action_delete']=$form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
+			}
 		}
 	}
 
