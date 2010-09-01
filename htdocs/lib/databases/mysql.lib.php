@@ -694,10 +694,11 @@ class DoliDb
 	//---------------------------------------------------------------
 
 	/**
-	 *	\brief          Encrypt sensitive data in database
-	 *	\param	        fieldorvalue	Field name or value to encrypt
-	 * 	\param			withQuotes		Return string with quotes
-	 * 	\return	        return			XXX(field) or XXX('value') or field or 'value'
+     *  Encrypt sensitive data in database
+     *  Warning: This function includes the escape, so it must use direct value
+     *  @param          fieldorvalue    Field name or value to encrypt
+     *  @param          withQuotes      Return string with quotes
+     *  @return         return          XXX(field) or XXX('value') or field or 'value'
 	 */
 	function encrypt($fieldorvalue, $withQuotes=0)
 	{
@@ -709,7 +710,7 @@ class DoliDb
 		//Encryption key
 		$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey)?$conf->db->dolibarr_main_db_cryptkey:'');
 
-		$return = ($withQuotes?"'":"").addslashes($fieldorvalue).($withQuotes?"'":"");
+		$return = ($withQuotes?"'":"").$this->escape($fieldorvalue).($withQuotes?"'":"");
 
 		if ($cryptType && !empty($cryptKey))
 		{
