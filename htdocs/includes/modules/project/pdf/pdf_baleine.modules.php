@@ -150,7 +150,12 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf=new FPDI('P','mm',$this->format);
 				}
 
-                $pdf->SetFont('Helvetica');
+                if (class_exists('TCPDF'))
+                {
+                    $pdf->setPrintHeader(false);
+                    $pdf->setPrintFooter(false);
+                }
+				$pdf->SetFont('Helvetica');
 
 				// Complete object by loading several other informations
 				$task = new Task($this->db);

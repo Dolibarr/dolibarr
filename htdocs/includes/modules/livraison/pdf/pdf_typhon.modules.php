@@ -166,7 +166,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf=new FPDI('P','mm',$this->format);
 				}
 
-                $pdf->SetFont('Helvetica');
+                if (class_exists('TCPDF'))
+                {
+                    $pdf->setPrintHeader(false);
+                    $pdf->setPrintFooter(false);
+                }
+				$pdf->SetFont('Helvetica');
 
 				// Complete object by loading several other informations
 				$expedition=new Expedition($this->db);

@@ -391,6 +391,11 @@ class pdf_standardlabel {
             $pdf=new FPDI('P',$this->Tformat['metric'],$this->format);
         }
 
+        if (class_exists('TCPDF'))
+        {
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+        }
         $pdf->SetFont('Helvetica');
 
         $pdf->SetTitle($outputlangs->transnoentities('MembersLabels'));

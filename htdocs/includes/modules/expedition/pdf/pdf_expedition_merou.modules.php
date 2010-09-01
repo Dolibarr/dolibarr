@@ -152,7 +152,12 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					$pdf=new FPDI('l','mm',$this->format);
 				}
 
-                $pdf->SetFont('Helvetica');
+                if (class_exists('TCPDF'))
+                {
+                    $pdf->setPrintHeader(false);
+                    $pdf->setPrintFooter(false);
+                }
+				$pdf->SetFont('Helvetica');
 
 				$pdf->Open();
 				$pagenb=0;

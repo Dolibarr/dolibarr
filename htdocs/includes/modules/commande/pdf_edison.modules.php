@@ -153,7 +153,12 @@ class pdf_edison extends ModelePDFCommandes
 					$pdf=new FPDI('P','mm',$this->format);
 				}
 
-                $pdf->SetFont('Helvetica');
+                if (class_exists('TCPDF'))
+                {
+                    $pdf->setPrintHeader(false);
+                    $pdf->setPrintFooter(false);
+                }
+				$pdf->SetFont('Helvetica');
 
 				$pdf->Open();
 				$pagenb=0;

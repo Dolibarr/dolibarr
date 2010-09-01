@@ -250,7 +250,12 @@ if ( $resql=$db->query($sql) )
 		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 		//$pdf->SetCompression(false);
 
-        $pdf->SetFont('Helvetica');
+        if (class_exists('TCPDF'))
+        {
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+        }
+		$pdf->SetFont('Helvetica');
 
 		//$pdf->Open();
 		//$pdf->AddPage();

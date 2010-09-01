@@ -144,6 +144,11 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					$pdf=new FPDI('P','mm',$this->format);
 				}
 
+                if (class_exists('TCPDF'))
+                {
+                    $pdf->setPrintHeader(false);
+                    $pdf->setPrintFooter(false);
+                }
 				$pdf->SetFont('Helvetica');
 
 				// Complete object by loading several other informations

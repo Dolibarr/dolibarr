@@ -178,8 +178,11 @@ class pdf_crabe extends ModelePDFFactures
 					//$pdf=new TCPDF('P','mm','A4');
 				}
 
-                //$pdf->setPrintHeader(false);
-                //$pdf->setPrintFooter(false);
+                if (class_exists('TCPDF'))
+                {
+                    $pdf->setPrintHeader(false);
+                    $pdf->setPrintFooter(false);
+                }
 				$pdf->SetFont('Helvetica');
 
 				$pdf->Open();
