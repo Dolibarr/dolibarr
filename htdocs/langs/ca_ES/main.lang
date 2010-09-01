@@ -6,6 +6,7 @@ SeparatorThousand=
 FormatDateShort=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
 FormatHourShort=%H:%M
+FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y
 FormatDateHourShort=%d/%m/%Y %H:%M
@@ -110,7 +111,7 @@ AddActionDone=Afegir acció realitzada
 Close=Tancar
 Close2=Tancar
 Confirm=Confirmar
-ConfirmSendCardByMail=Voleu enviar aquesta fitxa per e-mail?
+ConfirmSendCardByMail=ConfirmSendCardByMail=Vol enviar el contingut d'aquesta fitxa per e-mail a l'adreça <b>%s</b>?
 Delete=Eliminar
 Remove=Retirar
 Resiliate=Cancel·lar
