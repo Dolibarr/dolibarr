@@ -1800,9 +1800,7 @@ class Form
      *     @return string          'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
      */
     function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0)
-    {
-    	global $langs,$conf;
-    	
+    {	
     	print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax);
     }
 
