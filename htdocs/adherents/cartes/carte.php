@@ -28,8 +28,10 @@ require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/cards/modules_cards.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/labels/modules_labels.php");
 
 $langs->load("members");
+$langs->load("errors");
 
 // Choix de l'annee d'impression ou annee courante.
 $now = dol_now();
@@ -38,13 +40,20 @@ $month=dol_print_date($now,'%m');
 $day=dol_print_date($now,'%d');
 $foruserid=GETPOST('foruserid');
 $foruserlogin=GETPOST('foruserlogin');
+$mode=GETPOST('mode');
 
+$mesg='';
 
 /*
  * View
  */
 
-if (empty($foruserid) && empty($foruserlogin))
+if ($mode == 'cardlogin' && empty($foruserlogin))
+{
+    $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Login"));
+}
+
+if ((empty($foruserid) && empty($foruserlogin) && empty($mode)) || $mesg)
 {
     llxHeader('',$langs->trans("MembersCards"));
 
@@ -54,20 +63,30 @@ if (empty($foruserid) && empty($foruserlogin))
     print $langs->trans("LinkToGeneratedPagesDesc").'<br>';
     print '<br>';
 
-    print $langs->trans("PDFForAllMembersCards",$conf->global->ADHERENT_CARD_TYPE).' ';
+    if ($mesg) print '<div class="error">'.$mesg.'</div><br>';
+
+    print $langs->trans("DocForAllMembersCards",$conf->global->ADHERENT_CARD_TYPE).' ';
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="foruserid" value="all">';
-    print ' <input class="button" type="submit" value="'.$langs->trans("BuildCards").'">';
+    print '<input type="hidden" name="mode" value="card">';
+    print ' <input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
     print '</form>';
     print '<br>';
 
-    print $langs->trans("PDFForOneMemberCards",$conf->global->ADHERENT_CARD_TYPE).' ';
+    print $langs->trans("DocForOneMemberCards",$conf->global->ADHERENT_CARD_TYPE).' ';
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    print '<input type="hidden" name="mode" value="cardlogin">';
     print $langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="">';
-    print ' <input class="button" type="submit" value="'.$langs->trans("BuildCards").'">';
+    print ' <input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
     print '</form>';
     print '<br>';
 
+    print $langs->trans("DocForLabels",$conf->global->ADHERENT_ETIQUETTE_TYPE).' ';
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    print '<input type="hidden" name="mode" value="label">';
+    print ' <input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
+    print '</form>';
+    print '<br>';
 
     llxFooter('$Date$ - $Revision$');
 }
@@ -120,38 +139,68 @@ else
             '%DAY%'=>$day
             );
 
-            $textleft=make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray, $langs);
-            $textheader=make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray, $langs);
-            $textfooter=make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray, $langs);
-            $textright=make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray, $langs);
 
-            if (is_numeric($foruserid) || $foruserlogin)
+            // For business cards
+            if (empty($mode) || $mode=='card' || $mode=='cardlogin')
             {
-                for($j=0;$j<100;$j++)
+                $textleft=make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray, $langs);
+                $textheader=make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray, $langs);
+                $textfooter=make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray, $langs);
+                $textright=make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray, $langs);
+
+                if (is_numeric($foruserid) || $foruserlogin)
+                {
+                    for($j=0;$j<100;$j++)
+                    {
+                        $arrayofmembers[]=array('textleft'=>$textleft,
+                                        'textheader'=>$textheader,
+                                        'textfooter'=>$textfooter,
+                                        'textright'=>$textright,
+                                        'id'=>$objp->rowid,
+                                        'photo'=>$objp->photo);
+                    }
+                }
+                else
                 {
                     $arrayofmembers[]=array('textleft'=>$textleft,
-                                    'textheader'=>$textheader,
-                                    'textfooter'=>$textfooter,
-                                    'textright'=>$textright,
-                                    'id'=>$objp->rowid,
-                                    'photo'=>$objp->photo);
+                                        'textheader'=>$textheader,
+                                        'textfooter'=>$textfooter,
+                                        'textright'=>$textright,
+                                        'id'=>$objp->rowid,
+                                        'photo'=>$objp->photo);
                 }
             }
-            else
+
+            // For labels
+            if ($mode == 'label')
             {
+                $conf->global->ADHERENT_ETIQUETTE_TEXT="%PRENOM% %NOM%\n%ADRESSE%\n%CP% %VILLE%\n%PAYS%";
+                $textleft=make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray, $langs);
+                $textheader='';
+                $textfooter='';
+                $textright='';
+
                 $arrayofmembers[]=array('textleft'=>$textleft,
-                                    'textheader'=>$textheader,
-                                    'textfooter'=>$textfooter,
-                                    'textright'=>$textright,
-                                    'id'=>$objp->rowid,
-                                    'photo'=>$objp->photo);
+                                        'textheader'=>$textheader,
+                                        'textfooter'=>$textfooter,
+                                        'textright'=>$textright,
+                                        'id'=>$objp->rowid,
+                                        'photo'=>$objp->photo);
             }
 
             $i++;
     	}
 
     	// Build and output PDF
-    	$result=members_card_pdf_create($db, $arrayofmembers, '', $outputlangs);
+        if (empty($mode) || $mode=='card' || $mode='cardlogin')
+        {
+        	$result=members_card_pdf_create($db, $arrayofmembers, '', $outputlangs);
+        }
+        if ($mode == 'label')
+        {
+            $result=members_label_pdf_create($db, $arrayofmembers, '', $outputlangs);
+        }
+
     	if ($result <= 0)
     	{
     		dol_print_error($db,$result);

@@ -156,7 +156,7 @@ MoreActionBankViaInvoice=Create an invoice and payment on account
 MoreActionInvoiceOnly=Create an invoice with no payment
 LinkToGeneratedPages=Generate visit cards
 LinkToGeneratedPagesDesc=This screen allows you to generate PDF files with business cards for all your members or a particular member.
-PDFForAllMembersCards=Generate PDF of business cards for all members (Format for PDF actually setup : <b>%s</b>)
-PDFForOneMemberCards=Generate PDF of business cards for a particular member (Format for PDF actually setup: <b>%s</b>)
-BuildCards=Build PDF file
+DocForAllMembersCards=Generate business cards for all members (Format for output actually setup : <b>%s</b>)
+DocForOneMemberCards=Generate business cards for a particular member (Format for output actually setup: <b>%s</b>)
+DocForLabels=Generate address sheets (Format for output actually setup: <b>%s</b>)
 
