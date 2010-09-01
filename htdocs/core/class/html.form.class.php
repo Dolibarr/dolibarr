@@ -1787,9 +1787,8 @@ class Form
         $output.= "\n";
         return $output;
     }
-
-
-    /**
+    
+	/**
      *     Show a confirmation HTML form or AJAX popup
      *     @param  page        	   Url of page to call if confirmation is OK
      *     @param  title       	   title
@@ -1802,9 +1801,29 @@ class Form
      */
     function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0)
     {
+    	global $langs,$conf;
+    	
+    	print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax);
+    }
+
+    /**
+     *     Show a confirmation HTML form or AJAX popup
+     *     @param  page        	   Url of page to call if confirmation is OK
+     *     @param  title       	   title
+     *     @param  question    	   question
+     *     @param  action      	   action
+     *	   @param  formquestion	   an array with forms complementary inputs
+     * 	   @param  selectedchoice  "" or "no" or "yes"
+     * 	   @param  useajax		   0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
+     *     @return string          'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
+     */
+    function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0)
+    {
         global $langs,$conf;
 
         $more='';
+        $formconfirm='';
+        
         if ($formquestion)
         {
             $more.='<tr class="valid"><td class="valid" colspan="3">'."\n";
@@ -1859,7 +1878,7 @@ class Form
             $more.='</td></tr>'."\n";
         }
 
-        print "\n<!-- begin form_confirm -->\n";
+        $formconfirm.= "\n<!-- begin form_confirm -->\n";
 
         if ($useajax && $conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
         {
@@ -1867,10 +1886,10 @@ class Form
             $pageno=($useajax == 2?$page.'&confirm=no':'');
 
             // New code using jQuery only
-            print '<div id="dialog-confirm" title="'.dol_escape_htmltag($title).'">';
-            print img_help('','').' '.$more.$question;
-            print '</div>'."\n";
-            print '<script type="text/javascript">
+            $formconfirm.= '<div id="dialog-confirm" title="'.dol_escape_htmltag($title).'">';
+            $formconfirm.= img_help('','').' '.$more.$question;
+            $formconfirm.= '</div>'."\n";
+            $formconfirm.= '<script type="text/javascript">
                 var choice=\'ko\';
 			    jQuery("#dialog-confirm").dialog({
 			        autoOpen: true,
@@ -1896,49 +1915,48 @@ class Form
 			    });
 			</script>';
 
-            print "\n";
-            $ret='ajax';
+            $formconfirm.= "\n";
         }
         else
         {
-            print '<form method="post" action="'.$page.'" class="notoptoleftroright">'."\n";
-            print '<input type="hidden" name="action" value="'.$action.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+            $formconfirm.= '<form method="post" action="'.$page.'" class="notoptoleftroright">'."\n";
+            $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">';
+            $formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
-            print '<table width="100%" class="valid">'."\n";
+            $formconfirm.= '<table width="100%" class="valid">'."\n";
 
             // Ligne titre
-            print '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>'."\n";
+            $formconfirm.= '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>'."\n";
 
             // Ligne formulaire
-            print $more;
+            $formconfirm.= $more;
 
             // Ligne message
-            print '<tr class="valid">';
-            print '<td class="valid">'.$question.'</td>';
-            print '<td class="valid">';
+            $formconfirm.= '<tr class="valid">';
+            $formconfirm.= '<td class="valid">'.$question.'</td>';
+            $formconfirm.= '<td class="valid">';
             $newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
-            print $this->selectyesno("confirm",$newselectedchoice);
-            print '</td>';
-            print '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
-            print '</tr>'."\n";
+            $formconfirm.= $this->selectyesno("confirm",$newselectedchoice);
+            $formconfirm.= '</td>';
+            $formconfirm.= '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
+            $formconfirm.= '</tr>'."\n";
 
-            print '</table>'."\n";
+            $formconfirm.= '</table>'."\n";
 
             if (is_array($formquestion))
             {
                 foreach ($formquestion as $key => $input)
                 {
-                    if ($input['type'] == 'hidden') print '<input type="hidden" name="'.$input['name'].'" value="'.$input['value'].'">';
+                    if ($input['type'] == 'hidden') $formconfirm.= '<input type="hidden" name="'.$input['name'].'" value="'.$input['value'].'">';
                 }
             }
 
-            print "</form>\n";
-            $ret='html';
+            $formconfirm.= "</form>\n";
+            $formconfirm.= '<br>';
         }
 
-        print "<!-- end form_confirm -->\n";
-        return $ret;
+        $formconfirm.= "<!-- end form_confirm -->\n";
+        return $formconfirm;
     }
 
 

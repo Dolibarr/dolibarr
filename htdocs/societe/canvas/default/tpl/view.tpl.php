@@ -21,6 +21,8 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
+<?php if ($this->object->tpl['action_delete']) echo $this->object->tpl['action_delete']; ?>
+
 <?php if ($mesg) { ?>
 <div class="error"><?php echo $mesg; ?></div>
 <?php } ?>

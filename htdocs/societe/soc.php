@@ -1176,14 +1176,6 @@ else
     $head = societe_prepare_head($soc);
 
     dol_fiche_head($head, 'company', $langs->trans("ThirdParty"),0,'company');
-
-    // Confirm delete third party
-    if ($_GET["action"] == 'delete')
-    {
-        $html = new Form($db);
-        $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
-        if ($ret == 'html') print '<br>';
-    }
     
 	$soc->assign_values('view');
 	$soc->display_canvas();
