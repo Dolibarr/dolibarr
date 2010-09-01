@@ -98,25 +98,3 @@ PercentOfInvoice=%%/factuur
 Dispatch=Verzending
 Dispatched=Verzonden
 ToDispatch=Te verzenden
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
-// Reference language: en_US
-ReportTurnover=Omzet
-ToGet=Om terug te
-AnnualSummaryInputOutputMode=Saldo van inkomsten en uitgaven, jaarlijks overzicht, <b>mode %sRevenues-Expensens %s</b> zei <b>kasboekhouding.</b>
-AnnualByCompaniesDueDebtMode=Saldo van baten en lasten, detail door derden, <b>mode %sClaims-Schulden %s</b> zei <b>Vastleggings boekhouding.</b>
-AnnualByCompaniesInputOutputMode=Saldo van baten en lasten, detail door derden, <b>mode %sRevenues-Uitgaven %s</b> zei <b>kasboekhouding.</b>
-SeeReportInInputOutputMode=Zie <b>verslag %sIncomes-Uitgaven %s</b> zei <b>kasstelsel</b> voor een berekening op de werkelijke betalingen
-SeeReportInDueDebtMode=Zie <b>verslag %sClaims-Schulden %s</b> zei <b>toezegging goed</b> voor een berekening over afgegeven facturen
-VATReportByCustomersInDueDebtMode=Verslag van de klant de BTW geïnd en betaald (BTW-tarief)
-VATReportByQuartersInInputOutputMode=Kwartaalverslag van de geïnde BTW en betaald (BTW ontvangst)
-VATReportByQuartersInDueDebtMode=Kwartaalverslag van de geïnde BTW en betaald (BTW-tarief)
-SeeVATReportInInputOutputMode=Zie <b>verslag %sVAT beschoeien %s</b> voor een standaard berekening
-SeeVATReportInDueDebtMode=Zie <b>verslag %sVAT op stroom %s</b> voor een berekening met een optie op de stroming
-RulesVATIn=Voor diensten, het verslag bevat de BTW-regelgeving daadwerkelijk ontvangen of afgegeven op basis van de datum van betaling. <br> - Voor de materiële activa, maar ook de BTW-facturen op basis van de validatie datum van de factuur.
-RulesVATDue=Voor diensten, het verslag is inclusief BTW facturen verschuldigd, betaald of niet, gebaseerd op de datum van validering van deze rekeningen. <br> - Voor de materiële activa, maar ook de BTW-facturen, gebaseerd op de datum van validering van de factuur.
-OptionVatInfoModuleComptabilite=Opmerking: Voor materiële activa, zij moeten gebruik maken van de datum van levering te zijn eerlijk.
-NotUsedForGoods=Niet gebruikt voor goederen
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
-

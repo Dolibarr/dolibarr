@@ -78,14 +78,3 @@ ClonePropal=Kloon offerte
 ConfirmClonePropal=Weet u zeker dat u de offerte <b>%s</b> wilt klonen?
 DocModelAzurDescription=Een compleet model van een offerte (logo,...)
 DocModelJauneDescription=Jaune offerte model
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
-// Reference language: en_US
-ProposalShort=Voorstel
-LastModifiedProposals=Last %s gewijzigde voorstellen
-DatePropal=Datum van het voorstel
-ProposalsAndProposalsLines=Commerciële voorstel en lijnen
-ProposalLine=Voorstel lijn
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
-

@@ -46,11 +46,3 @@ ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "statut not s
 ErrorRefAlreadyExists=Ref gebruikt voor de oprichting bestaat al.
 ErrorPleaseTypeBankTransactionReportName=Vul bankontvangst naam in waar transactie wordt gemeld (Formaat YYYYMM of JJJJMMDD)
 ErrorRecordHasChildren=Mislukt om records te verwijderen omdat er nog gelinkte bestanden zijn.
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
-// Reference language: en_US
-MenuManager=Menu manager
-ErrorUrlNotValid=Het adres van de website is onjuist
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
-
