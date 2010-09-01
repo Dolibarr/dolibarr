@@ -97,9 +97,6 @@ if ($result)
                                 'photo'=>$objp->photo);
 
         $i++;
-
-//		$message=sprintf("%s\n%s\n%s %s\n%s", $objp->prenom." ".$objp->nom, $objp->adresse, $objp->cp, $objp->ville, $objp->pays);
-//		$pdf->Add_PDF_card($message,'','',$langs);
 	}
 
     // Build and output PDF
@@ -109,33 +106,6 @@ if ($result)
         dol_print_error($db,$result);
         exit;
     }
-
-    /*
-	$pdf->Output($file,'F');
-
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($file, octdec($conf->global->MAIN_UMASK));
-
-	$db->close();
-
-	clearstatcache();
-
-	$attachment=true;
-	if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
-	$filename='tmplabels.pdf';
-	$type=dol_mimetype($filename);
-
-	if ($encoding)   header('Content-Encoding: '.$encoding);
-	if ($type)       header('Content-Type: '.$type);
-	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-	else header('Content-Disposition: inline; filename="'.$filename.'"');
-
-	// Ajout directives pour resoudre bug IE
-	header('Cache-Control: Public, must-revalidate');
-	header('Pragma: public');
-
-	readfile($file);
-	*/
 }
 else
 {
