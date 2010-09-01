@@ -39,10 +39,11 @@ class ThirdPartyIndividual extends Societe
 	 *    \param      DB          Handler acces base de donnees
 	 *    \param      id          Id produit (0 par defaut)
 	 */
-	function ThirdPartyIndividual($DB)
+	function ThirdPartyIndividual($DB=0, $id=0, $user=0)
 	{
 		$this->db 				= $DB;
-
+		$this->id 				= $id ;
+		$this->user 			= $user;
 		$this->smarty			= 0;
 		$this->module 			= "societe";
 		$this->canvas 			= "individual";
@@ -59,11 +60,10 @@ class ThirdPartyIndividual extends Societe
 	}
 
 	/**
-	 *    Lecture des donnees dans la base
-	 *    @param	id          Element id
-	 *    @param	action		Type of action
+	 *    \brief      Lecture des donnees dans la base
+	 *    \param      id          Product id
 	 */
-	function fetch($id='', $action='')
+	function fetch($id='', $ref='', $action='')
 	{
 		$result = parent::fetch($id);
 
