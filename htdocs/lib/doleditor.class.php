@@ -130,7 +130,7 @@ class DolEditor
         if ($this->tool == 'textarea')
         {
             $found=1;
-            print '<textarea name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="flat">';
+            print '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="flat">';
             print $this->content;
             print '</textarea>';
         }
