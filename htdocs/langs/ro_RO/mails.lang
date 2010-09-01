@@ -126,35 +126,3 @@ SentTo=Trimis la <b>%s</b>
 LimitSendingEmailing=Pe linia trimiterea emailings sunt limitate pentru motive de securitate şi timeout destinatarilor <b>%s</b> prin trimiterea sesiune.
 ListOfNotificationsDone=Lista toate notificările e-mail trimis
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:51).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-AllEMailings=Alle eMailings
-ResetMailing=Send e-post
-ConfirmResetMailing=Advarsel ved reinitializing emailing <b>%s,</b> kan du gjøre en masse sending av denne e-en annen gang. Er du sikker på at du dette er hva du vil gjøre?
-BadEMail=Ugyldig verdi for Email
-CloneEMailing=Clone Emailing
-ConfirmCloneEMailing=Er du sikker på at du vil klone denne e-post?
-CloneContent=Clone melding
-CloneReceivers=Cloner mottakere
-DateLastSend=Dato for siste sending
-DateSending=Dato sending
-SentTo=Sendt til <b>%s</b>
-MailingModuleDescDolibarrContractsLinesExpired=Tredjeparter med utløpte kontraktens linjer
-LimitSendingEmailing=Ny sending av emailings er begrenset for sikkerhet og tidsavbrudd grunner til å <b>%s</b> mottakere ved å sende økt.
-YouCanUseCommaSeparatorForSeveralRecipients=Du kan bruke <b>komma</b> skilletegn for å angi flere mottakere.
-ListOfNotificationsDone=List alle e-postmeldinger sendt
-DateSending=Datum verzenden
-SentTo=Verzonden naar <b>sssss</b>
-LimitSendingEmailing=On line verzenden van e-mailings zijn beperkt voor de veiligheid en time-out redenen om <b>sssss</b> ontvangers door het sturen van sessie.
-ListOfNotificationsDone=Lijst van alle verzonden e-mailberichten
-DateSending=Data wysłania
-SentTo=Wysłane do <b>sssss</b>
-LimitSendingEmailing=On line wysyłanie wysyłanie wiadomości pocztowych są ograniczone ze względów bezpieczeństwa i timeout do odbiorców <b>sssss</b> wysyłając sesji.
-ListOfNotificationsDone=Lista wszystkich powiadomień e-mail wysłany
-DateSending=Data de envio
-SentTo=Enviado para <b>%s</b>
-LimitSendingEmailing=Na linha de envio de emailings são limitadas por motivos de segurança e limite de destinatários <b>%s</b> enviando sessão.
-ListOfNotificationsDone=Lista de todas as notificações de e-mail enviado
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:46:04).

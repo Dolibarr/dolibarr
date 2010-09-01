@@ -47,10 +47,3 @@ PacificNumRefModelError=Вмешательство карточки начина
 // Reference language: en_US
 ModifyIntervention=Изменить вмешательства
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-ModifyIntervention=Endre intervensjon
-DocumentModelStandard=Standard dokumentet modell for intervensjoner
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:47:07).

@@ -147,21 +147,3 @@ AllAccounts=Tüm banka / nakit hesapları
 BackToAccount=Geri hesabınıza
 ShowAllAccounts=Tüm hesaplar için
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-BankAccountCountry=Konto landet
-ListTransactions=Liste transaksjoner
-ListTransactionsByCategory=Liste transaksjon / kategori
-AllAccounts=Alle bank / cash kontoer
-BackToAccount=Tilbake til kontoen
-ShowAllAccounts=Vis for alle kontoer
-BankAccountCountry=Account land
-BankAccountCountry=Account land
-BankAccountCountry=Konto kraju
-BankAccountCountry=Conta do país
-BankAccountCountry=Счет страны
-BankAccountCountry=Račun državi
-BankAccountCountry=Hesap ülke
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:19).

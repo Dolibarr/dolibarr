@@ -39,11 +39,3 @@ ListOfSupplierProductForSupplier=Lijst van producten en de prijzen van <b>levera
 // Reference language: en_US
 NoneOrBatchFileNeverRan=Geen of <b>partij %s</b> niet liep onlangs
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Denne referansen leverandøren er allerede tilknyttet en referanse: %s
-NoneOrBatchFileNeverRan=Ingen eller batch <b>%s</b> ikke løp nylig
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Deze verwijzing leverancier is al gekoppeld aan een referentie: sssss
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:52:11).

@@ -28,10 +28,3 @@ MemberSynchronized=Lidmaatschap gesynchroniseerd
 ContactSynchronized=Contact gesynchroniseerd
 ForceSynchronize=Forceer synchronisatie Dolibarr - LDAP
 ErrorFailedToReadLDAP=Failed to read LDAP-database. Controleer LDAP module setup en database toegankelijkheid.
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-GroupSynchronized=Gruppe synkronisert
-MemberSynchronized=Medlem synkronisert
-ContactSynchronized=Kontakt synkronisert
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:11).

@@ -50,10 +50,3 @@ PacificNumRefModelError=Uma factura que começa por # $$syymm existe na base e �
 // Reference language: en_US
 ModifyIntervention=Modificar intervenção
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-ModifyIntervention=Endre intervensjon
-DocumentModelStandard=Standard dokumentet modell for intervensjoner
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:47:07).

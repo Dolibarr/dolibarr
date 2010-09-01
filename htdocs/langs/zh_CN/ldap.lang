@@ -37,11 +37,3 @@ ContactSynchronized=联系同步
 ForceSynchronize=力同步Dolibarr - &gt;的LDAP
 ErrorFailedToReadLDAP=无法读取LDAP数据库。检查的LDAP模块设置和数据库获取。
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-GroupSynchronized=Gruppe synkronisert
-MemberSynchronized=Medlem synkronisert
-ContactSynchronized=Kontakt synkronisert
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:11).

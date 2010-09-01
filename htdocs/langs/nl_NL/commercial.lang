@@ -75,15 +75,3 @@ ActionAC_REL=Stuur factuur (herinnering)
 ActionAC_CLO=Sluiten
 ActionAC_EMAILING=Stuur bulkmail
 ActionAC_COM=Verstuur order per mail
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-Rendez-Vous=Rendezvous
-ActionAC_SUP_ORD=Send leverandør bestill ved mail
-ActionAC_SUP_INV=Send leverandør faktura i posten
-ActionAC_SUP_ORD=Stuur leverancier bestellen via e-mail
-ActionAC_SUP_INV=Stuur factuur van de leverancier via e-mail
-Rendez-Vous=Rendez-vous
-ActionAC_SUP_ORD=Stuur leverancier bestellen via e-mail
-ActionAC_SUP_INV=Stuur factuur van de leverancier via e-mail
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:14).

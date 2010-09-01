@@ -153,30 +153,3 @@ HTPasswordExport=htpassword bestand generatie
 MembersAndSubscriptions=Leden en Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
 
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-FundationMembers=Stiftelsen medlemmer
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Et annet medlem (navn: <b>%s,</b> innlogging: <b>%s)</b> er allerede koblet til en tredje part <b>%s.</b> Fjern denne linken først fordi en tredjepart ikke kan knyttes til bare ett medlem (og vice versa).
-ErrorUserPermissionAllowsToLinksToItselfOnly=Av sikkerhetsgrunner må du få tilgang til å redigere alle brukere skal kunne knytte et medlem til en bruker som ikke er ditt.
-ThisIsContentOfYourCard=Dette er detaljer på kortet
-CardContent=Innholdet av medlem-kortet
-SetLinkToUser=Link til en Dolibarr bruker
-SetLinkToThirdParty=Link til en Dolibarr tredjepart
-SubscriptionId=Abonnement id
-MemberId=Medlem id
-PaymentSubscription=Nye bidrag betaling
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=E-post emne for medlem autosubscription
-DescADHERENT_AUTOREGISTER_MAIL=E-post for medlem autosubscription
-DescADHERENT_CARD_TYPE=Format på kortene siden
-DescADHERENT_CARD_TEXT_RIGHT=Tekst trykt på kort medlem (justere på høyre)
-DescADHERENT_MAILMAN_LISTS=Liste (er) for automatisk insription av nye medlemmer (separert med komma)
-NoThirdPartyAssociatedToMember=Ingen tredjepart knyttet til dette medlemmet
-ThirdPartyDolibarr=Dolibarr tredjepart
-MembersAndSubscriptions=Medlemmer og Suscriptions
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Email onderwerp voor de autosubscription
-DescADHERENT_AUTOREGISTER_MAIL=E-mail voor member autosubscription
-DescADHERENT_CARD_TYPE=Formaat van de kaarten pagina
-DescADHERENT_CARD_TEXT_RIGHT=Tekst gedrukt op lidkaarten (aanpassing aan de rechterkant)
-DescADHERENT_MAILMAN_LISTS=Lijst (en) voor automatische insription leden van nieuwe (gescheiden door een komma)
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:28).

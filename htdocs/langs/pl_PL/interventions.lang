@@ -49,10 +49,3 @@ PacificNumRefModelError=Interwencja karty zaczynające się od $ syymm już istn
 // Reference language: en_US
 ModifyIntervention=Modyfikuj interwencji
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-ModifyIntervention=Endre intervensjon
-DocumentModelStandard=Standard dokumentet modell for intervensjoner
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:47:07).

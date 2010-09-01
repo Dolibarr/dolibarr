@@ -51,13 +51,3 @@ ListOfSupplierProductForSupplier=Перечень продукции и цен �
 NoneOrBatchFileNeverRan=Ни одна партия <b>или% не</b> побежал в последнее время
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Denne referansen leverandøren er allerede tilknyttet en referanse: %s
-NoneOrBatchFileNeverRan=Ingen eller batch <b>%s</b> ikke løp nylig
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Deze verwijzing leverancier is al gekoppeld aan een referentie: sssss
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=To dostawca odniesienia jest już powiązany z odniesieniem: sssss
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Este fornecedor de referência já está associado com uma referência: %s
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Эта ссылка поставщиком уже связан с ссылкой: %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:52:12).
