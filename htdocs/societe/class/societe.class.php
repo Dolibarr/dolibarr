@@ -2408,7 +2408,7 @@ class Societe extends CommonObject
         $this->default_lang			=	$_POST["default_lang"];
         $this->commercial_id		=	$_POST["commercial_id"];
 
-        $this->tva_assuj 			= 	$_POST["assujtva_value"];
+        $this->tva_assuj 			= 	$_POST["assujtva_value"]?$_POST["assujtva_value"]:1;
         $this->tva_intra			=	$_POST["tva_intra"];
 
         //Local Taxes
