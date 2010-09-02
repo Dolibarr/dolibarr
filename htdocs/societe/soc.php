@@ -1568,8 +1568,8 @@ else
     // When used with CANVAS
     // -----------------------------------------
 
-    //$_GET["canvas"] = 'default';
-	//if ($_REQUEST["private"]==1) $_GET["canvas"] = 'individual';
+    $_GET["canvas"] = 'default';
+	//if ($_REQUEST["private"]==1) $_GET["canvas"] = 'individual'; To switch to other canvas, we must use another value for canvas
 
 	// Get object canvas
 	$socstatic = new Societe($db);
@@ -1577,7 +1577,7 @@ else
 
 
     // Initialization Company Canvas
-    $canvas = (!empty($socstatic->canvas)?$socstatic->canvas:$_GET["canvas"]);
+    $canvas = (!empty($socstatic->canvas)?$socstatic->canvas:GETPOST("canvas"));
     $soccanvas = new Canvas($db);
     $soccanvas->load_canvas('thirdparty@societe',$canvas);
 
@@ -1874,7 +1874,6 @@ else
     /*
      *	View
      */
-
     $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
     llxHeader('','',$help_url);
 
@@ -1972,17 +1971,17 @@ else
 
             if ($user->rights->societe->creer)
             {
-                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans("Modify").'</a>';
             }
 
             if ($user->rights->societe->contact->creer)
             {
-                print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create&amp;canvas='.$canvas.'">'.$langs->trans("AddContact").'</a>';
             }
 
             if ($user->rights->societe->supprimer)
             {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
             }
 
             print '</div>';

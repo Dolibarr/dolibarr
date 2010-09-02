@@ -58,7 +58,7 @@ class Canvas
 
 		$part1=$part3=$element;
 		$part2=$canvas;
-		
+
 		// For compatibility
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$element,$regs))
 		{
@@ -99,7 +99,7 @@ class Canvas
 	function fetch($id,$action='')
 	{
 		$this->action = $action;
-		
+
 		$ret = $this->object->fetch($id,$action);
 		return $ret;
 	}
@@ -131,7 +131,7 @@ class Canvas
 	 */
 	function display_canvas()
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $canvas;
 
 		if (!empty($this->smarty))
 		{

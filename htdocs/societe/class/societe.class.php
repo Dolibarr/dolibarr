@@ -2160,7 +2160,7 @@ class Societe extends CommonObject
      */
     function assign_values($action='')
     {
-        global $conf, $langs, $user, $mysoc;
+        global $conf, $langs, $user, $mysoc, $canvas;
         global $form, $formadmin, $formcompany;
 
         if ($_GET["type"]=='f')  		{ $this->fournisseur=1; }
@@ -2177,8 +2177,8 @@ class Societe extends CommonObject
         if ($action == 'create' || $action == 'edit')
         {
             // Chargement ajax
-            $this->tpl['ajax_select_thirdpartytype'] = $this->ajax_selectThirdPartyType();
-            $this->tpl['ajax_select_country'] = $this->ajax_selectCountry($action);
+            $this->tpl['ajax_select_thirdpartytype'] = $this->ajax_selectThirdPartyType($canvas);
+            $this->tpl['ajax_select_country'] = $this->ajax_selectCountry($action,$canvas);
 
             // Load object modCodeClient
             $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
@@ -2446,7 +2446,7 @@ class Societe extends CommonObject
      *    FIXME        Do not use presentation code on a business class
      *                  This code is used by non standard feature of canvas
      */
-    function ajax_selectThirdPartyType()
+    function ajax_selectThirdPartyType($canvas)
     {
         global $conf, $langs;
 
@@ -2458,12 +2458,14 @@ class Societe extends CommonObject
             $out.= 'jQuery(document).ready(function () {
 		              jQuery("#radiocompany").click(function() {
                             document.formsoc.action.value="create";
+                            document.formsoc.canvas.value="'.$canvas.'";
                             document.formsoc.private.value=0;
                             document.formsoc.cleartype.value=1;
                             document.formsoc.submit();
 		              });
 		               jQuery("#radioprivate").click(function() {
                             document.formsoc.action.value="create";
+                            document.formsoc.canvas.value="'.$canvas.'";
                             document.formsoc.private.value=1;
                             document.formsoc.cleartype.value=1;
                             document.formsoc.submit();
@@ -2490,7 +2492,7 @@ class Societe extends CommonObject
      *    FIXME        Do not use presentation code on a business class
      *                  This code is used by non standard feature of canvas
      */
-    function ajax_selectCountry($action)
+    function ajax_selectCountry($action,$canvas)
     {
         global $conf;
 
@@ -2502,6 +2504,7 @@ class Societe extends CommonObject
             $out.= 'jQuery(document).ready(function () {
                         jQuery("#selectpays_id").change(function() {
                             document.formsoc.action.value="'.$action.'";
+                            document.formsoc.canvas.value="'.$canvas.'";
                             document.formsoc.submit();
                         });
                    })';
