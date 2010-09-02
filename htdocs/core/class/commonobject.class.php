@@ -1324,7 +1324,7 @@ class CommonObject
 	/**
 	 * 	Return HTML with selected object line
 	 * 	@param		line		Selected object line
-	 * 	TODO mettre le html dans un template
+	 * 	TODO Move this into a html class, not a business class
 	 */
 	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0)
 	{
@@ -1514,20 +1514,12 @@ class CommonObject
 			}
 			if ($_GET["action"] == 'editline')
 			{
-                require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 			    // editeur wysiwyg
-				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('desc',$line->description,164,'dolibarr_details');
-					$doleditor->Create();
-				}
-				else
-				{
-					$nbrows=ROWS_2;
-					if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-					print '<textarea name="desc" cols="70" class="flat" rows="'.$nbrows.'">'.dol_htmlentitiesbr_decode($line->description).'</textarea>';
-				}
+                $nbrows=ROWS_2;
+                if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+        	    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		  	    $doleditor=new DolEditor('desc',$line->description,164,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+			 	$doleditor->Create();
 			}
 			print '</td>';
 

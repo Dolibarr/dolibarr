@@ -119,19 +119,11 @@ if ($id)
 	print '<td valign="top" colspan="3">';
 	if ($action == 'edit' && $user->rights->adherent->creer)
 	{
-		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+	    print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$adh->id."\">";
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MEMBER)
-	    {
-		    // Editeur wysiwyg
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note',$adh->note,280,'dolibarr_notes','In',true);
-			$doleditor->Create();
-	    }
-	    else
-	    {
-			print '<textarea name="note" cols="80" rows="10">'.dol_htmlentitiesbr_decode($adh->note).'</textarea>';
-	    }
+        require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+        $doleditor=new DolEditor('note',$adh->note,280,'dolibarr_notes','',true,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MEMBER,10,80);
+        $doleditor->Create();
 	}
 	else
 	{

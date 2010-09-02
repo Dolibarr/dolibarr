@@ -485,20 +485,10 @@ class FormMail
 			}
 			else
 			{
-				if ($this->withfckeditor)
-				{
-					// Editeur wysiwyg
-					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('message',$defaultmessage,280,'dolibarr_notes','In',true);
-					$doleditor->Create();
-				}
-				else
-				{
-					print '<textarea cols="72" rows="8" name="message">';
-					print $defaultmessage;
-					print '</textarea>';
-				}
-
+				// Editeur wysiwyg
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				$doleditor=new DolEditor('message',$defaultmessage,280,'dolibarr_notes','In',true,false,$this->withfckeditor,8,72);
+				$doleditor->Create();
 			}
 			print "</td></tr>\n";
 		}

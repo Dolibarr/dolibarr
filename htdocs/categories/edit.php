@@ -134,20 +134,9 @@ print '</tr>';
 print '<tr>';
 print '<td width="25%">'.$langs->trans("Description").'</td>';
 print '<td>';
-
-if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
-{
- 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-	$doleditor=new DolEditor('description',$categorie->description,200,'dolibarr_notes');
-	$doleditor->Create();
-}
-else
-{
-	print '<textarea name="description" rows="'.ROWS_6.'" cols="50">';
-	print dol_htmlentitiesbr_decode($categorie->description);
-	print '</textarea>';
-}
-
+require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+$doleditor=new DolEditor('description',$categorie->description,200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
+$doleditor->Create();
 print '</td></tr>';
 print '</table>';
 print '<br>';

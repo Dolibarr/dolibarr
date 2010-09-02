@@ -231,20 +231,9 @@ if ($user->rights->categorie->creer)
 		print '<td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input name="nom" size="25" value="'.$categorie->label.'">';
 		print'</td></tr>';
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
-		{
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('description',$categorie->description,200,'dolibarr_notes');
-			$doleditor->Create();
-		}
-		else
-		{
-			print '<textarea name="description" rows="'.ROWS_6.'" cols="50">';
-			print dol_htmlentitiesbr_decode($categorie->description);
-			print '</textarea>';
-		}
-
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('description',$categorie->description,200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,50);
+		$doleditor->Create();
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';

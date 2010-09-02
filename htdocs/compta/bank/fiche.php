@@ -274,18 +274,9 @@ if ($_REQUEST["action"] == 'create')
 	print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 	print '<td colspan="3">';
     // Editor wysiwyg
-	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
-	{
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('account_comment',$account->comment,200,'dolibarr_notes','',false);
-		$doleditor->Create();
-	}
-	else
-	{
-		print '<textarea class="flat" name="account_comment" cols="70" rows="10">';
-		print dol_htmlentitiesbr_decode($account->comment);
-		print '</textarea>';
-	}
+	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	$doleditor=new DolEditor('account_comment',$account->comment,200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
+	$doleditor->Create();
 	print '</td></tr>';
 
 	// Sold
@@ -567,17 +558,9 @@ else
 		print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 		print '<td colspan="3">';
 	   // Editor wysiwyg
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
-		{
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('account_comment',(isset($_POST["account_comment"])?$_POST["account_comment"]:$account->comment),200,'dolibarr_notes','',false);
-			$doleditor->Create();
-		}
-		else
-		{
-			print '<textarea class="flat" name="account_comment" cols="70" rows="10">';
-			print dol_htmlentitiesbr_decode(isset($_POST["account_comment"])?$_POST["account_comment"]:$account->comment).'</textarea>';
-		}
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('account_comment',(isset($_POST["account_comment"])?$_POST["account_comment"]:$account->comment),200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
+		$doleditor->Create();
 		print '</td></tr>';
 
         print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Modify").'" type="submit" class="button">';

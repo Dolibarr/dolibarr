@@ -228,18 +228,9 @@ if ($_GET["action"] == 'create')
 	print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
 
 	print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
-	if ($conf->fckeditor->enabled)
-	{
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('mail_valid',$adht->mail_valid,280,'dolibarr_notes','',false);
-		$doleditor->Create();
-	}
-	else
-	{
-		print '<textarea class="flat" name="mail_valid" rows="15" cols="90">';
-		print dol_htmlentitiesbr_decode($adht->mail_valid);
-		print '</textarea>';
-	}
+	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	$doleditor=new DolEditor('mail_valid',$adht->mail_valid,280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
+	$doleditor->Create();
 	print '</td></tr>';
 
 	print "</table>\n";
@@ -616,18 +607,9 @@ if ($rowid > 0)
 		print "<textarea name=\"comment\" wrap=\"soft\" cols=\"90\" rows=\"3\">".$adht->note."</textarea></td></tr>";
 
 		print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
-		if ($conf->fckeditor->enabled)
-		{
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('mail_valid',$adht->mail_valid,280,'dolibarr_notes','',false);
-			$doleditor->Create();
-		}
-		else
-		{
-			print '<textarea class="flat" name="mail_valid" rows="15" cols="90">';
-			print dol_htmlentitiesbr_decode($adht->mail_valid);
-			print '</textarea>';
-		}
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('mail_valid',$adht->mail_valid,280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
+		$doleditor->Create();
 		print "</td></tr>";
 
 		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp;';

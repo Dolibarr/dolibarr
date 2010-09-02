@@ -60,18 +60,11 @@ $colspan = 'colspan="3"';
 	if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 
 	// Editor wysiwyg
-	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-	{
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('np_desc',$_POST["np_desc"],100,'dolibarr_details');
-		$doleditor->Create();
-	}
-	else
-	{
-		$nbrows=ROWS_2;
-		if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-		echo '<textarea cols="70" name="np_desc" rows="'.$nbrows.'" class="flat">'.$_POST["np_desc"].'</textarea>';
-	}
+	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+    $nbrows=ROWS_2;
+    if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+    $doleditor=new DolEditor('np_desc',$_POST["np_desc"],100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+	$doleditor->Create();
 	?>
 	</td>
 	<td align="right"><input type="text" size="2" name="qty" value="1"></td>

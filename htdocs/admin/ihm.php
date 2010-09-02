@@ -258,33 +258,18 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     // Message on login page
 	$var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
-	if ($conf->fckeditor->enabled)
-	{
-		// Editeur wysiwyg
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('main_home',$conf->global->MAIN_HOME,158,'dolibarr_notes','In',false);
-		$doleditor->Create();
-	}
-	else
-	{
-		print '<textarea name="main_home" cols="90" rows="'.ROWS_5.'">'.dol_htmlentitiesbr_decode($conf->global->MAIN_HOME).'</textarea>';
-	}
+	// Editeur wysiwyg
+	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	$doleditor=new DolEditor('main_home',$conf->global->MAIN_HOME,158,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,ROWS_5,90);
+	$doleditor->Create();
 	print '</td></tr>';
 
 	// Message of the day on home page
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
-	if ($conf->fckeditor->enabled)
-	{
-		// Editeur wysiwyg
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('main_motd',$conf->global->MAIN_MOTD,158,'dolibarr_notes','In',false);
-		$doleditor->Create();
-	}
-	else
-	{
-		print '<textarea name="main_motd" cols="90" rows="'.ROWS_5.'">'.dol_htmlentitiesbr_decode($conf->global->MAIN_MOTD).'</textarea>';
-	}
+	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	$doleditor=new DolEditor('main_motd',$conf->global->MAIN_MOTD,158,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,ROWS_5,90);
+	$doleditor->Create();
 	print '</td></tr>';
 
 	/*

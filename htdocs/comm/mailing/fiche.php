@@ -625,16 +625,9 @@ if ($_GET["action"] == 'create')
 	print '</i></td>';
 	print '<td>';
 	// Editeur wysiwyg
-	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
-	{
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('body',$_POST['body'],320,'dolibarr_mailings','',true,true);
-		$doleditor->Create();
-	}
-	else
-	{
-		print '<textarea cols="70" rows="20" name="body" value="'.$_POST['body'].'"></textarea>';
-	}
+	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	$doleditor=new DolEditor('body',$_POST['body'],320,'dolibarr_mailings','',true,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING,20,70);
+	$doleditor->Create();
 	print '</td></tr>';
 	print '</table>';
 
@@ -1014,17 +1007,9 @@ else
 			print '</i></td>';
 			print '<td colspan="3">';
 			// Editeur wysiwyg
-			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
-			{
-				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('body',$mil->body,320,'dolibarr_mailings','',true,true);
-				$doleditor->Create();
-			}
-			else
-			{
-				print '<textarea class="flat" name="body" cols="70" rows="20">';
-				print dol_htmlentitiesbr_decode($mil->body).'</textarea>';
-			}
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('body',$mil->body,320,'dolibarr_mailings','',true,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING,20,70);
+			$doleditor->Create();
 			print '</td></tr>';
 
 			print '<tr><td colspan="4" align="center">';

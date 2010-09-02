@@ -2922,20 +2922,10 @@ else
 						}
 
 						// Description - Editor wysiwyg
-						if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-						{
-							require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-							$doleditor=new DolEditor('desc',$objp->description,164,'dolibarr_details');
-							$doleditor->Create();
-						}
-						else
-						{
-							$nbrows=ROWS_2;
-							if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-							print '<textarea name="desc" class="flat" cols="70" rows="'.$nbrows.'">';
-							print dol_htmlentitiesbr_decode($objp->description);
-							print '</textarea>';
-						}
+                        $nbrows=ROWS_2;
+					    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+						$doleditor=new DolEditor('desc',$objp->description,164,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+						$doleditor->Create();
 						print '</td>';
 
 						// VAT
