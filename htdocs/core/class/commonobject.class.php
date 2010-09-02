@@ -728,9 +728,8 @@ class CommonObject
 	}
 
 	/**
-	 *
-	 * Enter description here ...
-	 * @param unknown_type $rowid
+	 * Update a line to have a lower rank
+	 * @param $rowid
 	 */
 	function line_up($rowid)
 	{
@@ -744,9 +743,8 @@ class CommonObject
 	}
 
 	/**
-	 *
-	 * Enter description here ...
-	 * @param unknown_type $rowid
+     * Update a line to have a higher rank
+	 * @param $rowid
 	 */
 	function line_down($rowid)
 	{
@@ -829,7 +827,7 @@ class CommonObject
 
 	/**
 	 * 	   Get position of line (rang)
-	 *     @result     int     Value of rang in table of lines
+	 *     @return     int     Value of rang in table of lines
 	 */
 	function getRangOfLine($rowid)
 	{
@@ -845,7 +843,7 @@ class CommonObject
 
 	/**
 	 * 	   Get rowid of the line relative to its position
-	 *     @result     int     Rowid of the line
+	 *     @return     int     Rowid of the line
 	 */
 	function getIdOfLine($rang)
 	{
@@ -1204,6 +1202,37 @@ class CommonObject
 		}
 	}
 
+    /**
+     *  Load type of canvas of an object
+     *  @param      id      element id
+     */
+    function getCanvas($id)
+    {
+        global $conf;
+
+        $sql = "SELECT rowid, canvas";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " AND rowid = ".$id;
+
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+
+            $this->id       = $obj->rowid;
+            $this->canvas   = $obj->canvas;
+
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+
+
 	/**
 	 *	Instantiate hooks of thirdparty module
 	 *	@param	$type	Type of hook
@@ -1232,8 +1261,15 @@ class CommonObject
 		}
 	}
 
+
+
+    // All functions here must be moved into a hhtml class file
+
+
+
 	/**
 	 *	Show add predefined products/services form
+	 *  FIXME This must be moved into a html.class file instead of a business class.
 	 */
 	function showAddPredefinedProductForm($dateSelector=0)
 	{
@@ -1245,6 +1281,7 @@ class CommonObject
 
 	/**
 	 *	Show add free products/services form
+     *  FIXME This must be moved into a html.class file instead of a business class.
 	 */
 	function showAddFreeProductForm($dateSelector=0)
 	{
@@ -1259,6 +1296,7 @@ class CommonObject
 	 *	@param	$object
 	 *	@param	$objectid
 	 *	@param	$somethingshown
+     *  FIXME This must be moved into a html.class file instead of a business class.
 	 */
 	function showLinkedObjectBlock($object,$objectid,$somethingshown=0)
 	{
@@ -1283,7 +1321,7 @@ class CommonObject
 
 	/**
 	 * 	Return HTML table with title list
-	 * 	TODO mettre le html dans un template
+     *  FIXME This must be moved into a html.class file instead of a business class.
 	 */
 	function print_title_list()
 	{
@@ -1304,6 +1342,7 @@ class CommonObject
 	/**
 	 * 	Return HTML with object lines list
 	 * 	@param		lines		Object lines
+     *  FIXME This must be moved into a html.class file instead of a business class.
 	 */
 	function printLinesList($lines,$dateSelector=0)
 	{
@@ -1324,7 +1363,7 @@ class CommonObject
 	/**
 	 * 	Return HTML with selected object line
 	 * 	@param		line		Selected object line
-	 * 	TODO Move this into a html class, not a business class
+     *  FIXME This must be moved into a html.class file instead of a business class.
 	 */
 	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0)
 	{
@@ -1561,36 +1600,6 @@ class CommonObject
 			}
 
 			print "</form>\n";
-		}
-	}
-
-	/**
-	 *  \brief 		Load type of canvas
-	 *  \param		id		element id
-	 */
-	function getCanvas($id)
-	{
-		global $conf;
-
-		$sql = "SELECT rowid, canvas";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " AND rowid = ".$id;
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$obj = $this->db->fetch_object($resql);
-
-			$this->id 		= $obj->rowid;
-			$this->canvas 	= $obj->canvas;
-
-			return 1;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
 		}
 	}
 
