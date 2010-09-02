@@ -51,8 +51,17 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid);
 
 
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+$socstatic = new Societe($db);
+if (!empty($socid)) $socstatic->getCanvas($socid);
+$canvas = (!empty($socstatic->canvas)?$socstatic->canvas:GETPOST("canvas"));
 
-if (! GETPOST("canvas"))
+
+// If canvas is defined, because on url, or because company was created with canvas feature on,
+// we use the canvas feature.
+// If canvas is not defined, we use standard feature.
+
+if (empty($canvas))
 {
     // -----------------------------------------
     // When used in standard mode
@@ -60,7 +69,6 @@ if (! GETPOST("canvas"))
 
     // Initialization Company Object
     $soc = new Societe($db);
-
 
     /*
      * Actions
@@ -1579,16 +1587,9 @@ else
     // When used with CANVAS
     // -----------------------------------------
 
-    $_GET["canvas"] = 'default';
+    //$_GET["canvas"] = 'default';
 	//if ($_REQUEST["private"]==1) $_GET["canvas"] = 'individual'; To switch to other canvas, we must use another value for canvas
 
-	// Get object canvas
-	$socstatic = new Societe($db);
-	if (!empty($socid)) $socstatic->getCanvas($socid);
-
-
-    // Initialization Company Canvas
-    $canvas = (!empty($socstatic->canvas)?$socstatic->canvas:GETPOST("canvas"));
     $soccanvas = new Canvas($db);
     $soccanvas->load_canvas('thirdparty@societe',$canvas);
 
