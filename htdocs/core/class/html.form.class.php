@@ -2876,9 +2876,7 @@ class Form
     {
         global $langs;
 
-        $out='';
-
-        $out.='<select id="'.$htmlname.'" '.($disabled?'disabled="true" ':'').'class="flat" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
+        $out='<select id="'.$htmlname.'" '.($disabled?'disabled="true" ':'').'class="flat" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
 
         if ($show_empty)
         {
