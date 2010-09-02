@@ -416,8 +416,8 @@ if (! GETPOST("canvas"))
             $soc->siret=$_POST["idprof2"];
             $soc->ape=$_POST["idprof3"];
             $soc->idprof4=$_POST["idprof4"];
-            $soc->typent_id=($_POST["typent_id"]&&!$_POST["cleartype"])?$_POST["typent_id"]:($_REQUEST["private"]?'TE_PRIVATE':'');
-            $soc->effectif_id=($_POST["effectif_id"]&&!$_POST["cleartype"])?$_POST["effectif_id_id"]:($_REQUEST["private"]?'EF1-5':'');
+            $soc->typent_id=$_POST["typent_id"];
+            $soc->effectif_id=$_POST["effectif_id"];
 
             $soc->tva_assuj = $_POST["assujtva_value"];
 
@@ -450,23 +450,29 @@ if (! GETPOST("canvas"))
                 $soc->pays=$obj->libelle;
             }
 
+
+            /* Show create form */
+
             print_fiche_titre($langs->trans("NewCompany"));
 
             if ($conf->use_javascript_ajax)
             {
                 print "\n".'<script type="text/javascript" language="javascript">';
                 print 'jQuery(document).ready(function () {
+                          id_te_private=8;
+                          id_ef15=1;
+                          jQuery("#individualline").hide();
                           jQuery("#radiocompany").click(function() {
-                                document.formsoc.action.value="create";
+                                jQuery("#individualline").hide();
+                                jQuery("#typent_id").val(0);
+                                jQuery("#effectif_id").val(0);
                                 document.formsoc.private.value=0;
-                                document.formsoc.cleartype.value=1;
-                                document.formsoc.submit();
                           });
                            jQuery("#radioprivate").click(function() {
-                                document.formsoc.action.value="create";
+                                jQuery("#individualline").show();
+                                jQuery("#typent_id").val(id_te_private);
+                                jQuery("#effectif_id").val(id_ef15);
                                 document.formsoc.private.value=1;
-                                document.formsoc.cleartype.value=1;
-                                document.formsoc.submit();
                           });
                           jQuery("#selectpays_id").change(function() {
                             document.formsoc.action.value="create";
@@ -487,13 +493,13 @@ if (! GETPOST("canvas"))
                 print "<br>\n";
             }
 
+
             dol_htmloutput_errors($soc->error,$soc->errors);
 
             print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
 
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="cleartype" value="0">';
             print '<input type="hidden" name="private" value='.$soc->particulier.'>';
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
@@ -504,16 +510,20 @@ if (! GETPOST("canvas"))
             {
                 print '<tr><td><span class="fieldrequired">'.$langs->trans('LastName').'</span></td><td><input type="text" size="30" maxlength="60" name="nom" value="'.$soc->nom.'"></td>';
                 print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
-                print '<tr><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$soc->firstname.'"></td>';
-                print '<td colspan=2>&nbsp;</td></tr>';
-                print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-                print $formcompany->select_civilite($contact->civilite_id).'</td>';
-                print '<td colspan=2>&nbsp;</td></tr>';
             }
             else
             {
                 print '<tr><td><span class="fieldrequired">'.$langs->trans('Name').'</span></td><td><input type="text" size="30" maxlength="60" name="nom" value="'.$soc->nom.'"></td>';
                 print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
+            }
+            // If javascript on, we show option individual
+            if ($conf->use_javascript_ajax)
+            {
+                print '<tr id="individualline"><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$soc->firstname.'"></td>';
+                print '<td colspan=2>&nbsp;</td></tr>';
+                print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
+                print $formcompany->select_civilite($contact->civilite_id).'</td>';
+                print '<td colspan=2>&nbsp;</td></tr>';
             }
 
             // Prospect/Customer
@@ -670,6 +680,7 @@ if (! GETPOST("canvas"))
             }
             print '</td></tr>';
 
+            // Type
             print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
             print $form->selectarray("typent_id",$formcompany->typent_array(0), $soc->typent_id);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);

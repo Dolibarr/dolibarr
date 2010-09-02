@@ -2460,14 +2460,12 @@ class Societe extends CommonObject
                             document.formsoc.action.value="create";
                             document.formsoc.canvas.value="'.$canvas.'";
                             document.formsoc.private.value=0;
-                            document.formsoc.cleartype.value=1;
                             document.formsoc.submit();
 		              });
 		               jQuery("#radioprivate").click(function() {
                             document.formsoc.action.value="create";
                             document.formsoc.canvas.value="'.$canvas.'";
                             document.formsoc.private.value=1;
-                            document.formsoc.cleartype.value=1;
                             document.formsoc.submit();
                       });
 		          });';
