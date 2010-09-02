@@ -39,11 +39,10 @@ class ThirdPartyIndividual extends Societe
 	 *    \param      DB          Handler acces base de donnees
 	 *    \param      id          Id produit (0 par defaut)
 	 */
-	function ThirdPartyIndividual($DB=0, $id=0, $user=0)
+	function ThirdPartyIndividual($DB)
 	{
 		$this->db 				= $DB;
-		$this->id 				= $id ;
-		$this->user 			= $user;
+
 		$this->smarty			= 0;
 		$this->module 			= "societe";
 		$this->canvas 			= "individual";
@@ -60,10 +59,11 @@ class ThirdPartyIndividual extends Societe
 	}
 
 	/**
-	 *    \brief      Lecture des donnees dans la base
-	 *    \param      id          Product id
+	 *    Lecture des donnees dans la base
+	 *    @param	id          Element id
+	 *    @param	action		Type of action
 	 */
-	function fetch($id='', $ref='', $action='')
+	function fetch($id='', $action='')
 	{
 		$result = parent::fetch($id);
 
@@ -81,9 +81,7 @@ class ThirdPartyIndividual extends Societe
 			
 		parent::assign_values($action);
 		
-		$form = new Form($db);
-		
-		if ($action == 'create')
+		if ($action == 'create' || $action == 'edit')
 		{
 			$this->tpl['select_civility'] = $formcompany->select_civility($contact->civilite_id);
 		}

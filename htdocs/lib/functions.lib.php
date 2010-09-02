@@ -3209,9 +3209,10 @@ function monthArrayOrSelected($selected=0)
 
 
 /**
- *	\brief  	Returns formated reduction
- *	\param		reduction		Reduction percentage
- *	\return		int				Return number of error messages shown
+ *	Returns formated errors messages
+ *	@param		mesgstring		Error message
+ *	@param		mesgarray		Error messages array
+ *	@return		html			Return html output
  */
 function dol_htmloutput_errors($mesgstring='',$mesgarray='')
 {

@@ -2160,9 +2160,15 @@ class Societe extends CommonObject
 			$this->tpl[$key] = $value;
 		}
 		
-		if ($action == 'create')
+		if ($action == 'create' || $action == 'edit')
 		{
-			// Load object modCodeTiers
+			if ($_GET["type"]=='f')  		{ $this->fournisseur=1; }
+			if ($_GET["type"]=='c')  		{ $this->client=1; }
+			if ($_GET["type"]=='p')  		{ $this->client=2; }
+			if ($_GET["type"]=='cp') 		{ $this->client=3; }
+			if ($_REQUEST["private"]==1) 	{ $this->particulier=1;	}
+			
+			// Load object modCodeClient
 			$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
 			if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
 			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
@@ -2171,6 +2177,11 @@ class Societe extends CommonObject
 			}
 			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 			$modCodeClient = new $module;
+			$this->tpl['auto_customercode'] = $modCodeClient->code_auto;
+			// We verified if the tag prefix is used
+			if ($modCodeClient->code_auto) $this->tpl['prefix_customercode'] = $modCodeClient->verif_prefixIsUsed();
+			
+			// Load object modCodeFournisseur
 			$module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
 			if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
 			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
@@ -2179,6 +2190,9 @@ class Societe extends CommonObject
 			}
 			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 			$modCodeFournisseur = new $module;
+			$this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
+			// We verified if the tag prefix is used
+			if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
 			
 			// TODO create a function
 			$this->tpl['select_customertype'] = '<select class="flat" name="client">';
@@ -2190,16 +2204,19 @@ class Societe extends CommonObject
 			
 			// Customer
 			$this->tpl['customercode'] = $this->code_client;
-			if ($modCodeClient->code_auto) $this->tpl['customercode'] = $modCodeClient->getNextValue($this,0);
+			if ((!$this->code_client || $this->code_client == -1) && $modCodeClient->code_auto) $this->tpl['customercode'] = $modCodeClient->getNextValue($this,0);
+			$this->tpl['ismodifiable_customercode'] = $this->codeclient_modifiable();
 			$s=$modCodeClient->getToolTip($langs,$this,0);
 			$this->tpl['help_customercode'] = $form->textwithpicto('',$s,1);
 			
 			// Supplier
 			$this->tpl['yn_supplier'] = $form->selectyesno("fournisseur",$this->fournisseur,1);
 			$this->tpl['suppliercode'] = $this->code_fournisseur;
-			if ($modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this,1);
+			if ((!$this->code_fournisseur || $this->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this,1);
+			$this->tpl['ismodifiable_suppliercode'] = $this->codefournisseur_modifiable();
 			$s=$modCodeFournisseur->getToolTip($langs,$this,1);
 			$this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
+			
 			$this->LoadSupplierCateg();
 			$this->tpl['suppliercategory'] = $this->SupplierCategories;
 			$this->tpl['select_suppliercategory'] = $form->selectarray("fournisseur_categorie",$this->SupplierCategories,$_POST["fournisseur_categorie"],1);
@@ -2220,7 +2237,7 @@ class Societe extends CommonObject
 			if ($conf->global->MAIN_MULTILANGS) $this->tpl['select_lang'] = $formadmin->select_language(($this->default_lang?$this->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
 			
 			// VAT
-			$this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value',1,1);	// Assujeti par defaut en creation
+			$this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value',$this->tpl['tva_assuj'],1);	// Assujeti par defaut en creation
 		
 			// Select users
 			$this->tpl['select_users'] = $form->select_dolusers($this->commercial_id,'commercial_id',1);
@@ -2234,21 +2251,21 @@ class Societe extends CommonObject
 				if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
 				{
 					$this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-					$this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',0,1);
+					$this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->localtax1_assuj,1);
 					$this->tpl['localtax'].= '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-					$this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',0,1);
+					$this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->localtax1_assuj,1);
 					$this->tpl['localtax'].= '</td></tr>';
 				}
 				elseif($mysoc->localtax1_assuj=="1")
 				{
 					$this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-					$this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',0,1);
+					$this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->localtax1_assuj,1);
 					$this->tpl['localtax'].= '</td><tr>';
 				}
 				elseif($mysoc->localtax2_assuj=="1")
 				{
 					$this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-					$this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',0,1);
+					$this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->localtax1_assuj,1);
 					$this->tpl['localtax'].= '</td><tr>';
 				}
 			}
@@ -2349,7 +2366,65 @@ class Societe extends CommonObject
 				}
 			}
 		}
+	}
+	
+	/**
+	 *    Assigne les valeurs POST dans l'objet
+	 */
+	function assign_post()
+	{
+		$this->id					=	$_POST["socid"];
+        $this->nom					=	$_POST["nom"];
+        $this->prefix_comm			=	$_POST["prefix_comm"];
+        $this->client				=	$_POST["client"];
+        $this->code_client			=	$_POST["code_client"];
+        $this->fournisseur			=	$_POST["fournisseur"];
+        $this->code_fournisseur		=	$_POST["code_fournisseur"];
+        $this->adresse				=	$_POST["adresse"]; // TODO obsolete
+        $this->address				=	$_POST["adresse"];
+        $this->cp					=	$_POST["cp"];
+        $this->ville				=	$_POST["ville"];
+        $this->pays_id				=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
+        $this->departement_id		=	$_POST["departement_id"];
+        $this->tel					=	$_POST["tel"];
+        $this->fax					=	$_POST["fax"];
+        $this->email				=	$_POST["email"];
+        $this->url					=	$_POST["url"];
+        $this->capital				=	$_POST["capital"];
+        $this->siren				=	$_POST["idprof1"];
+        $this->siret				=	$_POST["idprof2"];
+        $this->ape					=	$_POST["idprof3"];
+        $this->idprof4				=	$_POST["idprof4"];
+        $this->typent_id			=	$_POST["typent_id"];
+        $this->effectif_id			=	$_POST["effectif_id"];
+        $this->gencod				=	$_POST["gencod"];
+        $this->forme_juridique_code	=	$_POST["forme_juridique_code"];
+        $this->default_lang			=	$_POST["default_lang"];
+        $this->commercial_id		=	$_POST["commercial_id"];
 
+        $this->tva_assuj 			= 	$_POST["assujtva_value"];
+        $this->tva_intra			=	$_POST["tva_intra"];
+
+        //Local Taxes
+        $this->localtax1_assuj		= 	$_POST["localtax1assuj_value"];
+        $this->localtax2_assuj		= 	$_POST["localtax2assuj_value"];
+
+        // We set pays_id, and pays_code label of the chosen country
+        if ($this->pays_id)
+        {
+            $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_pays WHERE rowid = ".$this->pays_id;
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                $obj = $this->db->fetch_object($resql);
+            }
+            else
+            {
+                dol_print_error($db);
+            }
+            $this->pays_code	=	$obj->code;
+            $this->pays			=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+        }
 	}
 
 }

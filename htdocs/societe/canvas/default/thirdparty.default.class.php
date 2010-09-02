@@ -84,7 +84,7 @@ class ThirdPartyDefault extends Societe
 		$this->tpl['profid3'] 	= $this->ape;
 		$this->tpl['profid4'] 	= $this->idprof4;
 		
-		if ($action == 'create')
+		if ($action == 'create' || $action == 'edit')
 		{
 			for ($i=1; $i<=4; $i++)
 			{

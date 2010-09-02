@@ -268,7 +268,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
             if (empty($soc->object->fournisseur)&& empty($oldsoc->code_fournisseur)) $soc->object->code_fournisseur='';
             //var_dump($soc);exit;
 
-            $result = $soc->object->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
+            $result = $soc->object->update($socid,$user,1,$oldsoc->object->codeclient_modifiable(),$oldsoc->object->codefournisseur_modifiable());
             if ($result >= 0)
             {
                 Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
@@ -375,73 +375,12 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
      */
     if ($user->rights->societe->creer)
     {
-        /*
-         * Company Fact creation mode
-         */
-        if ($_GET["type"]=='f')  { $soc->object->fournisseur=1; }
-        if ($_GET["type"]=='c')  { $soc->object->client=1; }
-        if ($_GET["type"]=='p')  { $soc->object->client=2; }
-        if ($_GET["type"]=='cp') { $soc->object->client=3; }
-        if ($_REQUEST["private"]==1) { $soc->object->particulier=1;	}
-
-        $soc->object->nom=$_POST["nom"];
-        $soc->object->prenom=$_POST["prenom"];
-        $soc->object->particulier=$_REQUEST["private"];
-        $soc->object->prefix_comm=$_POST["prefix_comm"];
-        $soc->object->client=$_POST["client"]?$_POST["client"]:$soc->object->client;
-        $soc->object->code_client=$_POST["code_client"];
-        $soc->object->fournisseur=$_POST["fournisseur"]?$_POST["fournisseur"]:$soc->object->fournisseur;
-        $soc->object->code_fournisseur=$_POST["code_fournisseur"];
-        $soc->object->adresse=$_POST["adresse"];
-        $soc->object->address=$_POST["adresse"]; // TODO obsolete
-        $soc->object->cp=$_POST["cp"];
-        $soc->object->ville=$_POST["ville"];
-        $soc->object->departement_id=$_POST["departement_id"];
-        $soc->object->tel=$_POST["tel"];
-        $soc->object->fax=$_POST["fax"];
-        $soc->object->email=$_POST["email"];
-        $soc->object->url=$_POST["url"];
-        $soc->object->capital=$_POST["capital"];
-        $soc->object->gencod=$_POST["gencod"];
-        $soc->object->siren=$_POST["idprof1"];
-        $soc->object->siret=$_POST["idprof2"];
-        $soc->object->ape=$_POST["idprof3"];
-        $soc->object->idprof4=$_POST["idprof4"];
-        $soc->object->typent_id=($_POST["typent_id"]&&!$_POST["cleartype"])?$_POST["typent_id"]:($_REQUEST["private"]?'TE_PRIVATE':'');
-        $soc->object->effectif_id=($_POST["effectif_id"]&&!$_POST["cleartype"])?$_POST["effectif_id_id"]:($_REQUEST["private"]?'EF1-5':'');
-
-        $soc->object->tva_assuj = $_POST["assujtva_value"];
-
-        //Local Taxes
-        $soc->object->localtax1_assuj		= $_POST["localtax1assuj_value"];
-        $soc->object->localtax2_assuj		= $_POST["localtax2assuj_value"];
-
-        $soc->object->tva_intra=$_POST["tva_intra"];
-
-        $soc->object->commercial_id=$_POST["commercial_id"];
-        $soc->object->default_lang=$_POST["default_lang"];
-
-        // We set pays_id, pays_code and label for the selected country
-        $soc->object->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
-        if ($soc->object->pays_id)
-        {
-            $sql = "SELECT code, libelle";
-            $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-            $sql.= " WHERE rowid = ".$soc->object->pays_id;
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $obj = $db->fetch_object($resql);
-            }
-            else
-            {
-                dol_print_error($db);
-            }
-            $soc->object->pays_code=$obj->code;
-            $soc->object->pays=$obj->libelle;
-        }
-
         print_fiche_titre($langs->trans("NewCompany"));
+        
+        $soc->object->assign_post();
+        
+        // Assign values
+        $soc->assign_values('create');
 
         if ($conf->use_javascript_ajax)
         {
@@ -479,9 +418,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
         }
 
         dol_htmloutput_errors($soc->object->error,$soc->object->errors);
-       
-        // Assign values
-        $soc->assign_values('create');
+
         // Display canvas
         $soc->display_canvas();
 
@@ -496,96 +433,19 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
     if ($socid)
     {
-        // Load object modCodeTiers
-        $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-        if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
-        if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+    	if ($reload || ! $_POST["nom"])
         {
-            $module = substr($module, 0, dol_strlen($module)-4);
-        }
-        require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
-        $modCodeClient = new $module;
-        // We verified if the tag prefix is used
-        if ($modCodeClient->code_auto)
-        {
-            $prefixCustomerIsUsed = $modCodeClient->verif_prefixIsUsed();
-        }
-        $module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
-        if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-        if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
-        {
-            $module = substr($module, 0, dol_strlen($module)-4);
-        }
-        require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
-        $modCodeFournisseur = new $module;
-        // On verifie si la balise prefix est utilisee
-        if ($modCodeFournisseur->code_auto)
-        {
-            $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
-        }
-
-        if ($reload || ! $_POST["nom"])
-        {
-            $soc = new Societe($db);
-            $soc->id = $socid;
-            $soc->fetch($socid);
+            $soc = new Canvas($db);
+            $soc->load_canvas('thirdparty@societe',$canvas);
+            $soc->object->id = $socid;
+            $soc->fetch($socid, $_GET["action"]);
         }
         else
         {
-            $soc->id=$_POST["socid"];
-            $soc->nom=$_POST["nom"];
-            $soc->prefix_comm=$_POST["prefix_comm"];
-            $soc->client=$_POST["client"];
-            $soc->code_client=$_POST["code_client"];
-            $soc->fournisseur=$_POST["fournisseur"];
-            $soc->code_fournisseur=$_POST["code_fournisseur"];
-            $soc->adresse=$_POST["adresse"]; // TODO obsolete
-            $soc->address=$_POST["adresse"];
-            $soc->cp=$_POST["cp"];
-            $soc->ville=$_POST["ville"];
-            $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
-            $soc->departement_id=$_POST["departement_id"];
-            $soc->tel=$_POST["tel"];
-            $soc->fax=$_POST["fax"];
-            $soc->email=$_POST["email"];
-            $soc->url=$_POST["url"];
-            $soc->capital=$_POST["capital"];
-            $soc->siren=$_POST["idprof1"];
-            $soc->siret=$_POST["idprof2"];
-            $soc->ape=$_POST["idprof3"];
-            $soc->idprof4=$_POST["idprof4"];
-            $soc->typent_id=$_POST["typent_id"];
-            $soc->effectif_id=$_POST["effectif_id"];
-            $soc->gencod=$_POST["gencod"];
-            $soc->forme_juridique_code=$_POST["forme_juridique_code"];
-            $soc->default_lang=$_POST["default_lang"];
-
-            $soc->tva_assuj = $_POST["assujtva_value"];
-            $soc->tva_intra=$_POST["tva_intra"];
-
-            //Local Taxes
-            $soc->localtax1_assuj		= $_POST["localtax1assuj_value"];
-            $soc->localtax2_assuj		= $_POST["localtax2assuj_value"];
-
-            // We set pays_id, and pays_code label of the chosen country
-            if ($soc->pays_id)
-            {
-                $sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$soc->pays_id;
-                $resql=$db->query($sql);
-                if ($resql)
-                {
-                    $obj = $db->fetch_object($resql);
-                }
-                else
-                {
-                    dol_print_error($db);
-                }
-                $soc->pays_code=$obj->code;
-                $soc->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
-            }
+        	$soc->object->assign_post();
         }
 
-        dol_htmloutput_errors($soc->error,$soc->errors);
+        dol_htmloutput_errors($soc->object->error,$soc->object->errors);
 
         if ($conf->use_javascript_ajax)
         {
@@ -598,279 +458,12 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
                    })';
             print '</script>'."\n";
         }
-
-        print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'" method="post" name="formsoc">';
-        print '<input type="hidden" name="action" value="update">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="socid" value="'.$soc->id.'">';
-        if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
-
-        print '<table class="border" width="100%">';
-
-        // Name
-        print '<tr><td><span class="fieldrequired">'.$langs->trans('Name').'</span></td><td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="'.$soc->nom.'"></td></tr>';
-
-        // Prefix
-        print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-        // It does not change the prefix mode using the auto numbering prefix
-        if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $soc->prefix_comm)
-        {
-            print '<input type="hidden" name="prefix_comm" value="'.$soc->prefix_comm.'">';
-            print $soc->prefix_comm;
-        }
-        else
-        {
-            print '<input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'">';
-        }
-        print '</td>';
-
-        // Prospect/Customer
-        print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%"><select class="flat" name="client">';
-        print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
-        print '<option value="3"'.($soc->client==3?' selected="true"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-        print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
-        print '<option value="0"'.($soc->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
-        print '</select></td>';
-        print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
-
-        print '<table class="nobordernopadding"><tr><td>';
-        if ((!$soc->code_client || $soc->code_client == -1) && $modCodeClient->code_auto)
-        {
-            $tmpcode=$soc->code_client;
-            if (empty($tmpcode) && $modCodeClient->code_auto) $tmpcode=$modCodeClient->getNextValue($soc,0);
-            print '<input type="text" name="code_client" size="16" value="'.$tmpcode.'" maxlength="15">';
-        }
-        else if ($soc->codeclient_modifiable())
-        {
-            print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
-        }
-        else
-        {
-            print $soc->code_client;
-            print '<input type="hidden" name="code_client" value="'.$soc->code_client.'">';
-        }
-        print '</td><td>';
-        $s=$modCodeClient->getToolTip($langs,$soc,0);
-        print $form->textwithpicto('',$s,1);
-        print '</td></tr></table>';
-
-        print '</td></tr>';
-
-        // Supplier
-        print '<tr>';
-        print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
-        print $form->selectyesno("fournisseur",$soc->fournisseur,1);
-        print '</td>';
-        print '<td>'.$langs->trans('SupplierCode').'</td><td>';
-
-        print '<table class="nobordernopadding"><tr><td>';
-        if ((!$soc->code_fournisseur || $soc->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
-        {
-            $tmpcode=$soc->code_fournisseur;
-            if (empty($tmpcode) && $modCodeFournisseur->code_auto) $tmpcode=$modCodeFournisseur->getNextValue($soc,1);
-            print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
-        }
-        else if ($soc->codefournisseur_modifiable())
-        {
-            print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
-        }
-        else
-        {
-            print $soc->code_fournisseur;
-            print '<input type="hidden" name="code_fournisseur" value="'.$soc->code_fournisseur.'">';
-        }
-        print '</td><td>';
-        $s=$modCodeFournisseur->getToolTip($langs,$soc,1);
-        print $form->textwithpicto('',$s,1);
-        print '</td></tr></table>';
-
-        print '</td></tr>';
-
-        // Category
-        if ($soc->fournisseur)
-        {
-            $load = $soc->LoadSupplierCateg();
-            if ( $load == 0)
-            {
-                if (sizeof($soc->SupplierCategories) > 0)
-                {
-                    print '<tr>';
-                    print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-                    print $form->selectarray("fournisseur_categorie",$soc->SupplierCategories,'',1);
-                    print '</td></tr>';
-                }
-            }
-        }
-
-        if ($conf->global->MAIN_MODULE_BARCODE)
-        {
-            print '<tr><td valign="top">'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod" value="'.$soc->gencod.'">';
-            print '</td></tr>';
-        }
-
-        // Address
-        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
-        print $soc->address;
-        print '</textarea></td></tr>';
-
-        // Zip / Town
-        print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">';
-        if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(\''.DOL_URL_ROOT.'\',cp.value,ville,pays_id,departement_id)">';
-        print '</td>';
-        print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
-
-        // Country
-        print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($soc->pays_id,'pays_id');
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-        print '</td></tr>';
-
-        // Department
-        print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-        $formcompany->select_departement($soc->departement_id,$soc->pays_code);
-        print '</td></tr>';
-
-        // Phone / Fax
-        print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
-        print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
-
-        // EMail / Web
-        print '<tr><td>'.$langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
-        print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
-
-        print '<tr>';
-        // IdProf1 (SIREN for France)
-        $idprof=$langs->transcountry('ProfId1',$soc->pays_code);
-        if ($idprof!='-')
-        {
-            print '<td>'.$idprof.'</td><td>';
-            $soc->show_input_id_prof(1,'idprof1',$soc->siren);
-            print '</td>';
-        }
-        else print '<td>&nbsp;</td><td>&nbsp;</td>';
-        // IdProf2 (SIRET for France)
-        $idprof=$langs->transcountry('ProfId2',$soc->pays_code);
-        if ($idprof!='-')
-        {
-            print '<td>'.$idprof.'</td><td>';
-            $soc->show_input_id_prof(2,'idprof2',$soc->siret);
-            print '</td>';
-        }
-        else print '<td>&nbsp;</td><td>&nbsp;</td>';
-        print '</tr>';
-        print '<tr>';
-        // IdProf3 (APE for France)
-        $idprof=$langs->transcountry('ProfId3',$soc->pays_code);
-        if ($idprof!='-')
-        {
-            print '<td>'.$idprof.'</td><td>';
-            $soc->show_input_id_prof(3,'idprof3',$soc->ape);
-            print '</td>';
-        }
-        else print '<td>&nbsp;</td><td>&nbsp;</td>';
-        // IdProf4 (NU for France)
-        $idprof=$langs->transcountry('ProfId4',$soc->pays_code);
-        if ($idprof!='-')
-        {
-            print '<td>'.$idprof.'</td><td>';
-            $soc->show_input_id_prof(4,'idprof4',$soc->idprof4);
-            print '</td>';
-        }
-        else print '<td>&nbsp;</td><td>&nbsp;</td>';
-        print '</tr>';
-
-        // VAT payers
-        print '<tr><td>'.$langs->trans('VATIsUsed').'</td><td>';
-        print $form->selectyesno('assujtva_value',$soc->tva_assuj,1);
-        print '</td>';
-
-        // VAT Code
-        if ($conf->use_javascript_ajax)
-        {
-            print "\n";
-            print '<script language="JavaScript" type="text/javascript">';
-            print "function CheckVAT(a) {\n";
-            print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,260);\n";
-            print "}\n";
-            print '</script>';
-            print "\n";
-        }
-        print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
-        print '<td nowrap="nowrap">';
-        $s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
-        $s.=' ';
-        if ($conf->use_javascript_ajax)
-        {
-            $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-            print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
-        }
-        else
-        {
-            print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
-        }
-        print '</td>';
-        print '</tr>';
-
-        // Local Taxes
-        if($mysoc->pays_code=='ES')
-        {
-            if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                print $form->selectyesno('localtax1assuj_value',$soc->localtax1_assuj,1);
-                print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                print $form->selectyesno('localtax2assuj_value',$soc->localtax2_assuj,1);
-                print '</td></tr>';
-
-            }
-            elseif($mysoc->localtax1_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                print $form->selectyesno('localtax1assuj_value',$soc->localtax1_assuj,1);
-                print '</td></tr>';
-
-            }
-            elseif($mysoc->localtax2_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                print $form->selectyesno('localtax2assuj_value',$soc->localtax2_assuj,1);
-                print '</td></tr>';
-            }
-        }
-
-        print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
-        $formcompany->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
-        print '</td></tr>';
-
-        print '<tr><td>'.$langs->trans("Type").'</td><td>';
-        print $form->selectarray("typent_id",$formcompany->typent_array(0), $soc->typent_id);
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-        print '</td>';
-        print '<td>'.$langs->trans("Staff").'</td><td>';
-        print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-        print '</td></tr>';
-
-        if ($conf->global->MAIN_MULTILANGS)
-        {
-            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
-            $formadmin->select_lang($soc->default_lang,'default_lang',0,0,1);
-            print '</td>';
-            print '</tr>';
-        }
-
-        print '</table>';
-        print '<br>';
-
-        print '<center>';
-        print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-        print ' &nbsp; &nbsp; ';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-        print '</center>';
-
-        print '</form>';
+        
+        // Assign values
+        $soc->assign_values('edit');
+        
+        // Display canvas
+        $soc->display_canvas();  
     }
 }
 else

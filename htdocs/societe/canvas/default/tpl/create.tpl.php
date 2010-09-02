@@ -27,7 +27,7 @@
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="cleartype" value="0">
 <input type="hidden" name="private" value="<?php echo $this->object->tpl['particulier']; ?>">
-<?php if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) { ?>
+<?php if ($this->object->tpl['auto_customercode'] || $this->object->tpl['auto_suppliercode']) { ?>
 <input type="hidden" name="code_auto" value="1">
 <?php } ?>
 

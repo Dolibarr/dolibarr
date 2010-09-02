@@ -98,6 +98,8 @@ class Canvas
 	 */
 	function fetch($id,$action='')
 	{
+		$this->action = $action;
+		
 		$ret = $this->object->fetch($id,$action);
 		return $ret;
 	}
