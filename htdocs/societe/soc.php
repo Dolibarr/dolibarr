@@ -50,462 +50,1982 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid);
 
-// For canvas usage
-if (empty($_GET["canvas"]))
+
+
+if (! GETPOST("canvas"))
 {
-	$_GET["canvas"] = 'default';
-	if ($_REQUEST["private"]==1) $_GET["canvas"] = 'individual';
-	
-	// Get object canvas
-	$socstatic = new Societe($db);
-	if (!empty($socid)) $socstatic->getCanvas($socid);
-}
+    // -----------------------------------------
+    // When used in standard mode
+    // -----------------------------------------
 
-// Initialization Company Canvas
-$canvas = (!empty($socstatic->canvas)?$socstatic->canvas:$_GET["canvas"]);
-$soc = new Canvas($db);
-$soc->load_canvas('thirdparty@societe',$canvas);
+    // Initialization Company Object
+    $soc = new Societe($db);
 
-/*
- * Actions
- */
 
-if ($_POST["getcustomercode"])
-{
-    // We defined value code_client
-    $_POST["code_client"]="Acompleter";
-}
+    /*
+     * Actions
+     */
 
-if ($_POST["getsuppliercode"])
-{
-    // We defined value code_fournisseur
-    $_POST["code_fournisseur"]="Acompleter";
-}
-
-// Add new third party
-if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
-&& ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
-{
-    require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-    $error=0;
-
-    if ($_POST["action"] == 'update')
+    if ($_POST["getcustomercode"])
     {
-        // Load properties of company
-        $soc->fetch($socid);
+        // We defined value code_client
+        $_POST["code_client"]="Acompleter";
     }
 
-    if ($_REQUEST["private"] == 1)
+    if ($_POST["getsuppliercode"])
     {
-        $soc->object->particulier           = $_REQUEST["private"];
-
-        $soc->object->nom                   = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
-        $soc->object->nom_particulier       = $_POST["nom"];
-        $soc->object->prenom                = $_POST["prenom"];
-        $soc->object->civilite_id           = $_POST["civilite_id"];
+        // We defined value code_fournisseur
+        $_POST["code_fournisseur"]="Acompleter";
     }
-    else
+
+    // Add new third party
+    if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
+    && ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
     {
-        $soc->object->nom                   = $_POST["nom"];
-    }
-    $soc->object->address               = $_POST["adresse"];
-    $soc->object->adresse               = $_POST["adresse"]; // TODO obsolete
-    $soc->object->cp                    = $_POST["cp"];
-    $soc->object->ville                 = $_POST["ville"];
-    $soc->object->pays_id               = $_POST["pays_id"];
-    $soc->object->departement_id        = $_POST["departement_id"];
-    $soc->object->tel                   = $_POST["tel"];
-    $soc->object->fax                   = $_POST["fax"];
-    $soc->object->email                 = trim($_POST["email"]);
-    $soc->object->url                   = $_POST["url"];
-    $soc->object->siren                 = $_POST["idprof1"];
-    $soc->object->siret                 = $_POST["idprof2"];
-    $soc->object->ape                   = $_POST["idprof3"];
-    $soc->object->idprof4               = $_POST["idprof4"];
-    $soc->object->prefix_comm           = $_POST["prefix_comm"];
-    $soc->object->code_client           = $_POST["code_client"];
-    $soc->object->code_fournisseur      = $_POST["code_fournisseur"];
-    $soc->object->capital               = $_POST["capital"];
-    $soc->object->gencod                = $_POST["gencod"];
-    $soc->object->canvas				= $_GET["canvas"];
+        require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+        $error=0;
 
-    $soc->object->tva_assuj             = $_POST["assujtva_value"];
-
-    // Local Taxes
-    $soc->object->localtax1_assuj		= $_POST["localtax1assuj_value"];
-    $soc->object->localtax2_assuj		= $_POST["localtax2assuj_value"];
-
-    $soc->object->tva_intra             = $_POST["tva_intra"];
-
-    $soc->object->forme_juridique_code  = $_POST["forme_juridique_code"];
-    $soc->object->effectif_id           = $_POST["effectif_id"];
-    if ($_REQUEST["private"] == 1)
-    {
-        $soc->object->typent_id             = 8; // TODO predict another method if the field "special" change of rowid
-    }
-    else
-    {
-        $soc->object->typent_id             = $_POST["typent_id"];
-    }
-    $soc->object->client                = $_POST["client"];
-    $soc->object->fournisseur           = $_POST["fournisseur"];
-    $soc->object->fournisseur_categorie = $_POST["fournisseur_categorie"];
-
-    $soc->object->commercial_id         = $_POST["commercial_id"];
-    $soc->object->default_lang          = $_POST["default_lang"];
-
-    // Check parameters
-    if (empty($_POST["cancel"]))
-    {
-        if (! empty($soc->object->email) && ! isValidEMail($soc->object->email))
+        if ($_POST["action"] == 'update')
         {
-            $error = 1;
-            $langs->load("errors");
-            $soc->object->error = $langs->trans("ErrorBadEMail",$soc->object->email);
-            $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
+            // Load properties of company
+            $soc->fetch($socid);
         }
-        if (! empty($soc->object->url) && ! isValidUrl($soc->object->url))
+
+        if ($_REQUEST["private"] == 1)
         {
-            $error = 1;
-            $langs->load("errors");
-            $soc->object->error = $langs->trans("ErrorBadUrl",$soc->object->url);
-            $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
+            $soc->particulier           = $_REQUEST["private"];
+
+            $soc->nom                   = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
+            $soc->nom_particulier       = $_POST["nom"];
+            $soc->prenom                = $_POST["prenom"];
+            $soc->civilite_id           = $_POST["civilite_id"];
         }
-        if ($soc->object->fournisseur && ! $conf->fournisseur->enabled)
+        else
         {
-            $error = 1;
-            $langs->load("errors");
-            $soc->object->error = $langs->trans("ErrorSupplierModuleNotEnabled");
-            $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
+            $soc->nom                   = $_POST["nom"];
         }
-    }
+        $soc->address               = $_POST["adresse"];
+        $soc->adresse               = $_POST["adresse"]; // TODO obsolete
+        $soc->cp                    = $_POST["cp"];
+        $soc->ville                 = $_POST["ville"];
+        $soc->pays_id               = $_POST["pays_id"];
+        $soc->departement_id        = $_POST["departement_id"];
+        $soc->tel                   = $_POST["tel"];
+        $soc->fax                   = $_POST["fax"];
+        $soc->email                 = trim($_POST["email"]);
+        $soc->url                   = $_POST["url"];
+        $soc->siren                 = $_POST["idprof1"];
+        $soc->siret                 = $_POST["idprof2"];
+        $soc->ape                   = $_POST["idprof3"];
+        $soc->idprof4               = $_POST["idprof4"];
+        $soc->prefix_comm           = $_POST["prefix_comm"];
+        $soc->code_client           = $_POST["code_client"];
+        $soc->code_fournisseur      = $_POST["code_fournisseur"];
+        $soc->capital               = $_POST["capital"];
+        $soc->gencod                = $_POST["gencod"];
 
-    if (! $error)
-    {
-        if ($_POST["action"] == 'add')
+        $soc->tva_assuj             = $_POST["assujtva_value"];
+
+        // Local Taxes
+        $soc->localtax1_assuj       = $_POST["localtax1assuj_value"];
+        $soc->localtax2_assuj       = $_POST["localtax2assuj_value"];
+
+        $soc->tva_intra             = $_POST["tva_intra"];
+
+        $soc->forme_juridique_code  = $_POST["forme_juridique_code"];
+        $soc->effectif_id           = $_POST["effectif_id"];
+        if ($_REQUEST["private"] == 1)
         {
-            $db->begin();
+            $soc->typent_id             = 8; // TODO predict another method if the field "special" change of rowid
+        }
+        else
+        {
+            $soc->typent_id             = $_POST["typent_id"];
+        }
+        $soc->client                = $_POST["client"];
+        $soc->fournisseur           = $_POST["fournisseur"];
+        $soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
 
-            if (empty($soc->object->client))      $soc->object->code_client='';
-            if (empty($soc->object->fournisseur)) $soc->object->code_fournisseur='';
+        $soc->commercial_id         = $_POST["commercial_id"];
+        $soc->default_lang          = $_POST["default_lang"];
 
-            $result = $soc->object->create($user);
-            if ($result >= 0)
+        // Check parameters
+        if (empty($_POST["cancel"]))
+        {
+            if (! empty($soc->email) && ! isValidEMail($soc->email))
             {
-                if ($soc->object->particulier)
-                {
-                    dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
-                    $contact=new Contact($db);
-
-                    $contact->civilite_id = $soc->object->civilite_id;
-                    $contact->name=$soc->object->nom_particulier;
-                    $contact->firstname=$soc->object->prenom;
-                    $contact->address=$soc->object->address;
-                    $contact->cp=$soc->object->cp;
-                    $contact->ville=$soc->object->ville;
-                    $contact->fk_pays=$soc->object->fk_pays;
-                    $contact->socid=$soc->object->id;					// fk_soc
-                    $contact->status=1;
-                    $contact->email=$soc->object->email;
-                    $contact->priv=0;
-
-                    $result=$contact->create($user);
-                }
+                $error = 1;
+                $langs->load("errors");
+                $soc->error = $langs->trans("ErrorBadEMail",$soc->email);
+                $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
             }
-            else
+            if (! empty($soc->url) && ! isValidUrl($soc->url))
             {
-                $mesg=$soc->object->error;
+                $error = 1;
+                $langs->load("errors");
+                $soc->error = $langs->trans("ErrorBadUrl",$soc->url);
+                $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
             }
-
-            if ($result >= 0)
+            if ($soc->fournisseur && ! $conf->fournisseur->enabled)
             {
-                $db->commit();
+                $error = 1;
+                $langs->load("errors");
+                $soc->error = $langs->trans("ErrorSupplierModuleNotEnabled");
+                $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
+            }
+        }
 
-                if ( $soc->object->client == 1 )
+        if (! $error)
+        {
+            if ($_POST["action"] == 'add')
+            {
+                $db->begin();
+
+                if (empty($soc->client))      $soc->code_client='';
+                if (empty($soc->fournisseur)) $soc->code_fournisseur='';
+
+                $result = $soc->create($user);
+                if ($result >= 0)
                 {
-                    Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$soc->object->id);
-                    return;
+                    if ($soc->particulier)
+                    {
+                        dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
+                        $contact=new Contact($db);
+
+                        $contact->civilite_id = $soc->civilite_id;
+                        $contact->name=$soc->nom_particulier;
+                        $contact->firstname=$soc->prenom;
+                        $contact->address=$soc->address;
+                        $contact->cp=$soc->cp;
+                        $contact->ville=$soc->ville;
+                        $contact->fk_pays=$soc->fk_pays;
+                        $contact->socid=$soc->id;                   // fk_soc
+                        $contact->status=1;
+                        $contact->email=$soc->email;
+                        $contact->priv=0;
+
+                        $result=$contact->create($user);
+                    }
                 }
                 else
                 {
-                    if (  $soc->object->fournisseur == 1 )
+                    $mesg=$soc->error;
+                }
+
+                if ($result >= 0)
+                {
+                    $db->commit();
+
+                    if ( $soc->client == 1 )
                     {
-                        Header("Location: ".DOL_URL_ROOT."/fourn/fiche.php?socid=".$soc->object->id);
+                        Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$soc->id);
                         return;
                     }
                     else
                     {
-                        Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$soc->object->id);
-                        return;
+                        if (  $soc->fournisseur == 1 )
+                        {
+                            Header("Location: ".DOL_URL_ROOT."/fourn/fiche.php?socid=".$soc->id);
+                            return;
+                        }
+                        else
+                        {
+                            Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$soc->id);
+                            return;
+                        }
                     }
+                    exit;
                 }
-                exit;
-            }
-            else
-            {
-                $db->rollback();
+                else
+                {
+                    $db->rollback();
 
-                $langs->load("errors");
-                $mesg=$langs->trans($soc->object->error);
-                $_GET["action"]='create';
-            }
-        }
-
-        if ($_POST["action"] == 'update')
-        {
-            if ($_POST["cancel"])
-            {
-                Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
-                exit;
+                    $langs->load("errors");
+                    $mesg=$langs->trans($soc->error);
+                    $_GET["action"]='create';
+                }
             }
 
-            $oldsoc = new Canvas($db);
-            $oldsoc->load_canvas('thirdparty@societe',$canvas);
-            $result=$oldsoc->fetch($socid);
-
-            // To not set code if third party is not concerned. But if it had values, we keep them.
-            if (empty($soc->object->client) && empty($oldsoc->code_client))          $soc->object->code_client='';
-            if (empty($soc->object->fournisseur)&& empty($oldsoc->code_fournisseur)) $soc->object->code_fournisseur='';
-            //var_dump($soc);exit;
-
-            $result = $soc->object->update($socid,$user,1,$oldsoc->object->codeclient_modifiable(),$oldsoc->object->codefournisseur_modifiable());
-            if ($result >= 0)
+            if ($_POST["action"] == 'update')
             {
-                Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
-                exit;
-            }
-            else
-            {
-                $soc->object->id = $socid;
-                $reload = 0;
+                if ($_POST["cancel"])
+                {
+                    Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
+                    exit;
+                }
 
-                $mesg = $soc->object->error;
-                $_GET["action"]= "edit";
+                $oldsoc=new Societe($db);
+                $result=$oldsoc->fetch($socid);
+
+                // To not set code if third party is not concerned. But if it had values, we keep them.
+                if (empty($soc->client) && empty($oldsoc->code_client))          $soc->code_client='';
+                if (empty($soc->fournisseur)&& empty($oldsoc->code_fournisseur)) $soc->code_fournisseur='';
+                //var_dump($soc);exit;
+
+                $result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
+                if ($result >= 0)
+                {
+                    Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
+                    exit;
+                }
+                else
+                {
+                    $soc->id = $socid;
+                    $reload = 0;
+
+                    $mesg = $soc->error;
+                    $_GET["action"]= "edit";
+                }
             }
         }
     }
-}
 
-if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->supprimer)
-{
-    $soc = new Societe($db);
-    $soc->fetch($socid);
-    $result = $soc->delete($socid);
-
-    if ($result >= 0)
+    if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->supprimer)
     {
-        Header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$soc->nom."");
-        exit;
-    }
-    else
-    {
-        $reload = 0;
-        $langs->load("errors");
-        $mesg=$langs->trans($soc->error);
-        $_GET["action"]='';
-    }
-}
-
-
-/*
- * Generate document
- */
-if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
-{
-    if (is_numeric($_REQUEST['model']))
-    {
-        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
-    }
-    else
-    {
-        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
-
         $soc = new Societe($db);
         $soc->fetch($socid);
-        $soc->fetch_thirdparty();
+        $result = $soc->delete($socid);
 
-        /*if ($_REQUEST['model'])
-         {
-         $fac->setDocModel($user, $_REQUEST['model']);
-         }
+        if ($result >= 0)
+        {
+            Header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$soc->nom."");
+            exit;
+        }
+        else
+        {
+            $reload = 0;
+            $langs->load("errors");
+            $mesg=$langs->trans($soc->error);
+            $_GET["action"]='';
+        }
+    }
+
+
+    /*
+     * Generate document
+     */
+    if ($_REQUEST['action'] == 'builddoc')  // En get ou en post
+    {
+        if (is_numeric($_REQUEST['model']))
+        {
+            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
+        }
+        else
+        {
+            require_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
+
+            $soc = new Societe($db);
+            $soc->fetch($socid);
+            $soc->fetch_thirdparty();
+
+            // Define output language
+            $outputlangs = $langs;
+            $newlang='';
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+            if (! empty($newlang))
+            {
+                $outputlangs = new Translate("",$conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
+            $result=thirdparty_doc_create($db, $soc->id, '', $_REQUEST['model'], $outputlangs);
+            if ($result <= 0)
+            {
+                dol_print_error($db,$result);
+                exit;
+            }
+            else
+            {
+                Header ('Location: '.$_SERVER["PHP_SELF"].'?socid='.$soc->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+                exit;
+            }
+        }
+    }
+
+
+    /*
+     *  View
+     */
+
+    $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+    llxHeader('','',$help_url);
+
+    $form = new Form($db);
+    $formfile = new FormFile($db);
+    $formadmin = new FormAdmin($db);
+    $formcompany = new FormCompany($db);
+
+    $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
+
+
+    if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
+    $_GET["action"] == 'create' || $_POST["action"] == 'create')
+    {
+        /*
+         *  Sheet mode creation
          */
+        if ($user->rights->societe->creer)
+        {
+            // Load object modCodeTiers
+            $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+            if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
+            if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+            {
+                $module = substr($module, 0, dol_strlen($module)-4);
+            }
+            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+            $modCodeClient = new $module;
+            $module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+            if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+            if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+            {
+                $module = substr($module, 0, dol_strlen($module)-4);
+            }
+            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+            $modCodeFournisseur = new $module;
 
-        // Define output language
-        $outputlangs = $langs;
-        $newlang='';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
-        if (! empty($newlang))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($newlang);
+            /*
+             * Company Fact creation mode
+             */
+            if ($_GET["type"]=='f')  { $soc->fournisseur=1; }
+            if ($_GET["type"]=='c')  { $soc->client=1; }
+            if ($_GET["type"]=='p')  { $soc->client=2; }
+            if ($_GET["type"]=='cp') { $soc->client=3; }
+            if ($_REQUEST["private"]==1) { $soc->particulier=1; }
+
+            $soc->nom=$_POST["nom"];
+            $soc->prenom=$_POST["prenom"];
+            $soc->particulier=$_REQUEST["private"];
+            $soc->prefix_comm=$_POST["prefix_comm"];
+            $soc->client=$_POST["client"]?$_POST["client"]:$soc->client;
+            $soc->code_client=$_POST["code_client"];
+            $soc->fournisseur=$_POST["fournisseur"]?$_POST["fournisseur"]:$soc->fournisseur;
+            $soc->code_fournisseur=$_POST["code_fournisseur"];
+            $soc->adresse=$_POST["adresse"];
+            $soc->address=$_POST["adresse"]; // TODO obsolete
+            $soc->cp=$_POST["cp"];
+            $soc->ville=$_POST["ville"];
+            $soc->departement_id=$_POST["departement_id"];
+            $soc->tel=$_POST["tel"];
+            $soc->fax=$_POST["fax"];
+            $soc->email=$_POST["email"];
+            $soc->url=$_POST["url"];
+            $soc->capital=$_POST["capital"];
+            $soc->gencod=$_POST["gencod"];
+            $soc->siren=$_POST["idprof1"];
+            $soc->siret=$_POST["idprof2"];
+            $soc->ape=$_POST["idprof3"];
+            $soc->idprof4=$_POST["idprof4"];
+            $soc->typent_id=($_POST["typent_id"]&&!$_POST["cleartype"])?$_POST["typent_id"]:($_REQUEST["private"]?'TE_PRIVATE':'');
+            $soc->effectif_id=($_POST["effectif_id"]&&!$_POST["cleartype"])?$_POST["effectif_id_id"]:($_REQUEST["private"]?'EF1-5':'');
+
+            $soc->tva_assuj = $_POST["assujtva_value"];
+
+            //Local Taxes
+            $soc->localtax1_assuj       = $_POST["localtax1assuj_value"];
+            $soc->localtax2_assuj       = $_POST["localtax2assuj_value"];
+
+            $soc->tva_intra=$_POST["tva_intra"];
+
+            $soc->commercial_id=$_POST["commercial_id"];
+            $soc->default_lang=$_POST["default_lang"];
+
+            // We set pays_id, pays_code and label for the selected country
+            $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
+            if ($soc->pays_id)
+            {
+                $sql = "SELECT code, libelle";
+                $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+                $sql.= " WHERE rowid = ".$soc->pays_id;
+                $resql=$db->query($sql);
+                if ($resql)
+                {
+                    $obj = $db->fetch_object($resql);
+                }
+                else
+                {
+                    dol_print_error($db);
+                }
+                $soc->pays_code=$obj->code;
+                $soc->pays=$obj->libelle;
+            }
+
+            print_fiche_titre($langs->trans("NewCompany"));
+
+            if ($conf->use_javascript_ajax)
+            {
+                print "\n".'<script type="text/javascript" language="javascript">';
+                print 'jQuery(document).ready(function () {
+                          jQuery("#radiocompany").click(function() {
+                                document.formsoc.action.value="create";
+                                document.formsoc.private.value=0;
+                                document.formsoc.cleartype.value=1;
+                                document.formsoc.submit();
+                          });
+                           jQuery("#radioprivate").click(function() {
+                                document.formsoc.action.value="create";
+                                document.formsoc.private.value=1;
+                                document.formsoc.cleartype.value=1;
+                                document.formsoc.submit();
+                          });
+                          jQuery("#selectpays_id").change(function() {
+                            document.formsoc.action.value="create";
+                            document.formsoc.submit();
+                          });
+                      });';
+                print '</script>'."\n";
+
+                print "<br>\n";
+                print $langs->trans("ThirdPartyType").': &nbsp; ';
+                print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.(! $_REQUEST["private"]?' checked="true"':'');
+                print '> '.$langs->trans("Company/Fundation");
+                print ' &nbsp; &nbsp; ';
+                print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.(! $_REQUEST["private"]?'':' checked="true"');
+                print '> '.$langs->trans("Individual");
+                print ' ('.$langs->trans("ToCreateContactWithSameName").')';
+                print "<br>\n";
+                print "<br>\n";
+            }
+
+            dol_htmloutput_errors($soc->error,$soc->errors);
+
+            print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+
+            print '<input type="hidden" name="action" value="add">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="cleartype" value="0">';
+            print '<input type="hidden" name="private" value='.$soc->particulier.'>';
+            if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
+
+            print '<table class="border" width="100%">';
+
+            // Name, firstname
+            if ($soc->particulier)
+            {
+                print '<tr><td><span class="fieldrequired">'.$langs->trans('LastName').'</span></td><td><input type="text" size="30" maxlength="60" name="nom" value="'.$soc->nom.'"></td>';
+                print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
+                print '<tr><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$soc->firstname.'"></td>';
+                print '<td colspan=2>&nbsp;</td></tr>';
+                print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
+                print $formcompany->select_civilite($contact->civilite_id).'</td>';
+                print '<td colspan=2>&nbsp;</td></tr>';
+            }
+            else
+            {
+                print '<tr><td><span class="fieldrequired">'.$langs->trans('Name').'</span></td><td><input type="text" size="30" maxlength="60" name="nom" value="'.$soc->nom.'"></td>';
+                print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
+            }
+
+            // Prospect/Customer
+            print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%"><select class="flat" name="client">';
+            print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
+            print '<option value="3"'.($soc->client==3?' selected="true"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+            print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
+            print '<option value="0"'.($soc->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
+            print '</select></td>';
+
+            print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
+            print '<table class="nobordernopadding"><tr><td>';
+            $tmpcode=$soc->code_client;
+            if ($modCodeClient->code_auto) $tmpcode=$modCodeClient->getNextValue($soc,0);
+            print '<input type="text" name="code_client" size="16" value="'.$tmpcode.'" maxlength="15">';
+            print '</td><td>';
+            $s=$modCodeClient->getToolTip($langs,$soc,0);
+            print $form->textwithpicto('',$s,1);
+            print '</td></tr></table>';
+
+            print '</td></tr>';
+
+            // Supplier
+            print '<tr>';
+            print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
+            print $form->selectyesno("fournisseur",$soc->fournisseur,1);
+            print '</td>';
+            print '<td>'.$langs->trans('SupplierCode').'</td><td>';
+            print '<table class="nobordernopadding"><tr><td>';
+            $tmpcode=$soc->code_fournisseur;
+            if ($modCodeFournisseur->code_auto) $tmpcode=$modCodeFournisseur->getNextValue($soc,1);
+            print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
+            print '</td><td>';
+            $s=$modCodeFournisseur->getToolTip($langs,$soc,1);
+            print $form->textwithpicto('',$s,1);
+            print '</td></tr></table>';
+
+            print '</td></tr>';
+
+            // Category
+            if ($soc->fournisseur)
+            {
+                $load = $soc->LoadSupplierCateg();
+                if ( $load == 0)
+                {
+                    if (sizeof($soc->SupplierCategories) > 0)
+                    {
+                        print '<tr>';
+                        print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
+                        print $form->selectarray("fournisseur_categorie",$soc->SupplierCategories,$_POST["fournisseur_categorie"],1);
+                        print '</td></tr>';
+                    }
+                }
+            }
+
+            // Barcode
+            if ($conf->global->MAIN_MODULE_BARCODE)
+            {
+                print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod">';
+                print $soc->gencod;
+                print '</textarea></td></tr>';
+            }
+
+            // Address
+            print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
+            print $soc->address;
+            print '</textarea></td></tr>';
+
+            // Zip / Town
+            print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">';
+            if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(\''.DOL_URL_ROOT.'\',cp.value,ville,pays_id,departement_id)">';
+            print '</td>';
+            print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
+
+            // Country
+            print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
+            $form->select_pays($soc->pays_id,'pays_id');
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            print '</td></tr>';
+
+            // State
+            print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+            if ($soc->pays_id)
+            {
+                $formcompany->select_departement($soc->departement_id,$soc->pays_code);
+            }
+            else
+            {
+                print $countrynotdefined;
+            }
+            print '</td></tr>';
+
+            // Phone / Fax
+            print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
+            print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
+
+            print '<tr><td>'.$langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
+            print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
+
+            print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+
+
+            print '<tr>';
+            // IdProf1 (SIREN for France)
+            $idprof=$langs->transcountry('ProfId1',$soc->pays_code);
+            if ($idprof!='-')
+            {
+                print '<td>'.$idprof.'</td><td>';
+                $soc->show_input_id_prof(1,'idprof1',$soc->siren);
+                print '</td>';
+            }
+            else print '<td>&nbsp;</td><td>&nbsp;</td>';
+            // IdProf2 (SIRET for France)
+            $idprof=$langs->transcountry('ProfId2',$soc->pays_code);
+            if ($idprof!='-')
+            {
+                print '<td>'.$idprof.'</td><td>';
+                $soc->show_input_id_prof(2,'idprof2',$soc->siret);
+                print '</td>';
+            }
+            else print '<td>&nbsp;</td><td>&nbsp;</td>';
+            print '</tr>';
+            print '<tr>';
+            // IdProf3 (APE for France)
+            $idprof=$langs->transcountry('ProfId3',$soc->pays_code);
+            if ($idprof!='-')
+            {
+                print '<td>'.$idprof.'</td><td>';
+                $soc->show_input_id_prof(3,'idprof3',$soc->ape);
+                print '</td>';
+            }
+            else print '<td>&nbsp;</td><td>&nbsp;</td>';
+            // IdProf4 (NU for France)
+            $idprof=$langs->transcountry('ProfId4',$soc->pays_code);
+            if ($idprof!='-')
+            {
+                print '<td>'.$idprof.'</td><td>';
+                $soc->show_input_id_prof(4,'idprof4',$soc->idprof4);
+                print '</td>';
+            }
+            else print '<td>&nbsp;</td><td>&nbsp;</td>';
+            print '</tr>';
+
+            // Legal Form
+            print '<tr><td>'.$langs->trans('JuridicalStatus').'</td>';
+            print '<td colspan="3">';
+            if ($soc->pays_id)
+            {
+                $formcompany->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
+            }
+            else
+            {
+                print $countrynotdefined;
+            }
+            print '</td></tr>';
+
+            print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
+            print $form->selectarray("typent_id",$formcompany->typent_array(0), $soc->typent_id);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            print '</td>';
+            print '<td>'.$langs->trans("Staff").'</td><td>';
+            print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            print '</td></tr>';
+
+            if ($conf->global->MAIN_MULTILANGS)
+            {
+                print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
+                $formadmin->select_lang(($soc->default_lang?$soc->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
+                print '</td>';
+                print '</tr>';
+            }
+
+            // Assujeti TVA
+            $html = new Form($db);
+            print '<tr><td>'.$langs->trans('VATIsUsed').'</td>';
+            print '<td>';
+            print $html->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
+            print '</td>';
+            print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
+            print '<td nowrap="nowrap">';
+            $s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
+            $s.=' ';
+            if ($conf->use_javascript_ajax)
+            {
+                $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+                print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+            }
+            else
+            {
+                print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+            }
+            print '</td>';
+
+            print '</tr>';
+
+            // Code TVA
+            if ($conf->use_javascript_ajax)
+            {
+                print "\n";
+                print '<script language="JavaScript" type="text/javascript">';
+                print "function CheckVAT(a) {\n";
+                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
+                print "}\n";
+                print '</script>';
+                print "\n";
+            }
+
+            // Local Taxes
+            if($mysoc->pays_code=='ES')
+            {
+                if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+                {
+                    print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
+                    print $html->selectyesno('localtax1assuj_value',0,1);
+                    print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
+                    print $html->selectyesno('localtax2assuj_value',0,1);
+                    print '</td></tr>';
+
+                }
+                elseif($mysoc->localtax1_assuj=="1")
+                {
+                    print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+                    print $html->selectyesno('localtax1assuj_value',0,1);
+                    print '</td><tr>';
+                }
+                elseif($mysoc->localtax2_assuj=="1")
+                {
+                    print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+                    print $html->selectyesno('localtax2assuj_value',0,1);
+                    print '</td><tr>';
+                }
+            }
+
+            if ($user->rights->societe->client->voir)
+            {
+                // Assign a Name
+                print '<tr>';
+                print '<td>'.$langs->trans("AllocateCommercial").'</td>';
+                print '<td colspan="3">';
+                $form->select_users($soc->commercial_id,'commercial_id',1);
+                print '</td></tr>';
+            }
+
+
+
+            print '<tr><td colspan="4" align="center">';
+            print '<input type="submit" class="button" value="'.$langs->trans('AddThirdParty').'">';
+            print '</td></tr>'."\n";
+
+            print '</table>'."\n";
+            print '</form>'."\n";
+
         }
-        $result=thirdparty_doc_create($db, $soc->id, '', $_REQUEST['model'], $outputlangs);
-        if ($result <= 0)
+    }
+    elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
+    {
+        /*
+         * Company Fact Mode edition
+         */
+        print_fiche_titre($langs->trans("EditCompany"));
+
+        if ($socid)
         {
-            dol_print_error($db,$result);
+            // Load object modCodeTiers
+            $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+            if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
+            if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+            {
+                $module = substr($module, 0, dol_strlen($module)-4);
+            }
+            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+            $modCodeClient = new $module;
+            // We verified if the tag prefix is used
+            if ($modCodeClient->code_auto)
+            {
+                $prefixCustomerIsUsed = $modCodeClient->verif_prefixIsUsed();
+            }
+            $module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+            if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+            if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+            {
+                $module = substr($module, 0, dol_strlen($module)-4);
+            }
+            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+            $modCodeFournisseur = new $module;
+            // On verifie si la balise prefix est utilisee
+            if ($modCodeFournisseur->code_auto)
+            {
+                $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
+            }
+
+            if ($reload || ! $_POST["nom"])
+            {
+                $soc = new Societe($db);
+                $soc->id = $socid;
+                $soc->fetch($socid);
+            }
+            else
+            {
+                $soc->id=$_POST["socid"];
+                $soc->nom=$_POST["nom"];
+                $soc->prefix_comm=$_POST["prefix_comm"];
+                $soc->client=$_POST["client"];
+                $soc->code_client=$_POST["code_client"];
+                $soc->fournisseur=$_POST["fournisseur"];
+                $soc->code_fournisseur=$_POST["code_fournisseur"];
+                $soc->adresse=$_POST["adresse"]; // TODO obsolete
+                $soc->address=$_POST["adresse"];
+                $soc->cp=$_POST["cp"];
+                $soc->ville=$_POST["ville"];
+                $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
+                $soc->departement_id=$_POST["departement_id"];
+                $soc->tel=$_POST["tel"];
+                $soc->fax=$_POST["fax"];
+                $soc->email=$_POST["email"];
+                $soc->url=$_POST["url"];
+                $soc->capital=$_POST["capital"];
+                $soc->siren=$_POST["idprof1"];
+                $soc->siret=$_POST["idprof2"];
+                $soc->ape=$_POST["idprof3"];
+                $soc->idprof4=$_POST["idprof4"];
+                $soc->typent_id=$_POST["typent_id"];
+                $soc->effectif_id=$_POST["effectif_id"];
+                $soc->gencod=$_POST["gencod"];
+                $soc->forme_juridique_code=$_POST["forme_juridique_code"];
+                $soc->default_lang=$_POST["default_lang"];
+
+                $soc->tva_assuj = $_POST["assujtva_value"];
+                $soc->tva_intra=$_POST["tva_intra"];
+
+                //Local Taxes
+                $soc->localtax1_assuj       = $_POST["localtax1assuj_value"];
+                $soc->localtax2_assuj       = $_POST["localtax2assuj_value"];
+
+                // We set pays_id, and pays_code label of the chosen country
+                if ($soc->pays_id)
+                {
+                    $sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$soc->pays_id;
+                    $resql=$db->query($sql);
+                    if ($resql)
+                    {
+                        $obj = $db->fetch_object($resql);
+                    }
+                    else
+                    {
+                        dol_print_error($db);
+                    }
+                    $soc->pays_code=$obj->code;
+                    $soc->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+                }
+            }
+
+            dol_htmloutput_errors($soc->error,$soc->errors);
+
+            if ($conf->use_javascript_ajax)
+            {
+                print "\n".'<script type="text/javascript" language="javascript">';
+                print 'jQuery(document).ready(function () {
+                            jQuery("#selectpays_id").change(function() {
+                                document.formsoc.action.value="edit";
+                                document.formsoc.submit();
+                            });
+                       })';
+                print '</script>'."\n";
+            }
+
+            print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'" method="post" name="formsoc">';
+            print '<input type="hidden" name="action" value="update">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+            if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
+
+            print '<table class="border" width="100%">';
+
+            // Name
+            print '<tr><td><span class="fieldrequired">'.$langs->trans('Name').'</span></td><td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="'.$soc->nom.'"></td></tr>';
+
+            // Prefix
+            print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
+            // It does not change the prefix mode using the auto numbering prefix
+            if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $soc->prefix_comm)
+            {
+                print '<input type="hidden" name="prefix_comm" value="'.$soc->prefix_comm.'">';
+                print $soc->prefix_comm;
+            }
+            else
+            {
+                print '<input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'">';
+            }
+            print '</td>';
+
+            // Prospect/Customer
+            print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%"><select class="flat" name="client">';
+            print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
+            print '<option value="3"'.($soc->client==3?' selected="true"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+            print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
+            print '<option value="0"'.($soc->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
+            print '</select></td>';
+            print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
+
+            print '<table class="nobordernopadding"><tr><td>';
+            if ((!$soc->code_client || $soc->code_client == -1) && $modCodeClient->code_auto)
+            {
+                $tmpcode=$soc->code_client;
+                if (empty($tmpcode) && $modCodeClient->code_auto) $tmpcode=$modCodeClient->getNextValue($soc,0);
+                print '<input type="text" name="code_client" size="16" value="'.$tmpcode.'" maxlength="15">';
+            }
+            else if ($soc->codeclient_modifiable())
+            {
+                print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
+            }
+            else
+            {
+                print $soc->code_client;
+                print '<input type="hidden" name="code_client" value="'.$soc->code_client.'">';
+            }
+            print '</td><td>';
+            $s=$modCodeClient->getToolTip($langs,$soc,0);
+            print $form->textwithpicto('',$s,1);
+            print '</td></tr></table>';
+
+            print '</td></tr>';
+
+            // Supplier
+            print '<tr>';
+            print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
+            print $form->selectyesno("fournisseur",$soc->fournisseur,1);
+            print '</td>';
+            print '<td>'.$langs->trans('SupplierCode').'</td><td>';
+
+            print '<table class="nobordernopadding"><tr><td>';
+            if ((!$soc->code_fournisseur || $soc->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
+            {
+                $tmpcode=$soc->code_fournisseur;
+                if (empty($tmpcode) && $modCodeFournisseur->code_auto) $tmpcode=$modCodeFournisseur->getNextValue($soc,1);
+                print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
+            }
+            else if ($soc->codefournisseur_modifiable())
+            {
+                print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
+            }
+            else
+            {
+                print $soc->code_fournisseur;
+                print '<input type="hidden" name="code_fournisseur" value="'.$soc->code_fournisseur.'">';
+            }
+            print '</td><td>';
+            $s=$modCodeFournisseur->getToolTip($langs,$soc,1);
+            print $form->textwithpicto('',$s,1);
+            print '</td></tr></table>';
+
+            print '</td></tr>';
+
+            // Category
+            if ($soc->fournisseur)
+            {
+                $load = $soc->LoadSupplierCateg();
+                if ( $load == 0)
+                {
+                    if (sizeof($soc->SupplierCategories) > 0)
+                    {
+                        print '<tr>';
+                        print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
+                        print $form->selectarray("fournisseur_categorie",$soc->SupplierCategories,'',1);
+                        print '</td></tr>';
+                    }
+                }
+            }
+
+            if ($conf->global->MAIN_MODULE_BARCODE)
+            {
+                print '<tr><td valign="top">'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod" value="'.$soc->gencod.'">';
+                print '</td></tr>';
+            }
+
+            // Address
+            print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
+            print $soc->address;
+            print '</textarea></td></tr>';
+
+            // Zip / Town
+            print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">';
+            if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(\''.DOL_URL_ROOT.'\',cp.value,ville,pays_id,departement_id)">';
+            print '</td>';
+            print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
+
+            // Country
+            print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+            $form->select_pays($soc->pays_id,'pays_id');
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            print '</td></tr>';
+
+            // Department
+            print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+            $formcompany->select_departement($soc->departement_id,$soc->pays_code);
+            print '</td></tr>';
+
+            // Phone / Fax
+            print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
+            print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
+
+            // EMail / Web
+            print '<tr><td>'.$langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
+            print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
+
+            print '<tr>';
+            // IdProf1 (SIREN for France)
+            $idprof=$langs->transcountry('ProfId1',$soc->pays_code);
+            if ($idprof!='-')
+            {
+                print '<td>'.$idprof.'</td><td>';
+                $soc->show_input_id_prof(1,'idprof1',$soc->siren);
+                print '</td>';
+            }
+            else print '<td>&nbsp;</td><td>&nbsp;</td>';
+            // IdProf2 (SIRET for France)
+            $idprof=$langs->transcountry('ProfId2',$soc->pays_code);
+            if ($idprof!='-')
+            {
+                print '<td>'.$idprof.'</td><td>';
+                $soc->show_input_id_prof(2,'idprof2',$soc->siret);
+                print '</td>';
+            }
+            else print '<td>&nbsp;</td><td>&nbsp;</td>';
+            print '</tr>';
+            print '<tr>';
+            // IdProf3 (APE for France)
+            $idprof=$langs->transcountry('ProfId3',$soc->pays_code);
+            if ($idprof!='-')
+            {
+                print '<td>'.$idprof.'</td><td>';
+                $soc->show_input_id_prof(3,'idprof3',$soc->ape);
+                print '</td>';
+            }
+            else print '<td>&nbsp;</td><td>&nbsp;</td>';
+            // IdProf4 (NU for France)
+            $idprof=$langs->transcountry('ProfId4',$soc->pays_code);
+            if ($idprof!='-')
+            {
+                print '<td>'.$idprof.'</td><td>';
+                $soc->show_input_id_prof(4,'idprof4',$soc->idprof4);
+                print '</td>';
+            }
+            else print '<td>&nbsp;</td><td>&nbsp;</td>';
+            print '</tr>';
+
+            // VAT payers
+            print '<tr><td>'.$langs->trans('VATIsUsed').'</td><td>';
+            print $form->selectyesno('assujtva_value',$soc->tva_assuj,1);
+            print '</td>';
+
+            // VAT Code
+            if ($conf->use_javascript_ajax)
+            {
+                print "\n";
+                print '<script language="JavaScript" type="text/javascript">';
+                print "function CheckVAT(a) {\n";
+                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,260);\n";
+                print "}\n";
+                print '</script>';
+                print "\n";
+            }
+            print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
+            print '<td nowrap="nowrap">';
+            $s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
+            $s.=' ';
+            if ($conf->use_javascript_ajax)
+            {
+                $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+                print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+            }
+            else
+            {
+                print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+            }
+            print '</td>';
+            print '</tr>';
+
+            // Local Taxes
+            if($mysoc->pays_code=='ES')
+            {
+                if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+                {
+                    print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
+                    print $form->selectyesno('localtax1assuj_value',$soc->localtax1_assuj,1);
+                    print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
+                    print $form->selectyesno('localtax2assuj_value',$soc->localtax2_assuj,1);
+                    print '</td></tr>';
+
+                }
+                elseif($mysoc->localtax1_assuj=="1")
+                {
+                    print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+                    print $form->selectyesno('localtax1assuj_value',$soc->localtax1_assuj,1);
+                    print '</td></tr>';
+
+                }
+                elseif($mysoc->localtax2_assuj=="1")
+                {
+                    print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+                    print $form->selectyesno('localtax2assuj_value',$soc->localtax2_assuj,1);
+                    print '</td></tr>';
+                }
+            }
+
+            print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+
+            print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
+            $formcompany->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
+            print '</td></tr>';
+
+            print '<tr><td>'.$langs->trans("Type").'</td><td>';
+            print $form->selectarray("typent_id",$formcompany->typent_array(0), $soc->typent_id);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            print '</td>';
+            print '<td>'.$langs->trans("Staff").'</td><td>';
+            print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            print '</td></tr>';
+
+            if ($conf->global->MAIN_MULTILANGS)
+            {
+                print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
+                $formadmin->select_lang($soc->default_lang,'default_lang',0,0,1);
+                print '</td>';
+                print '</tr>';
+            }
+
+            print '</table>';
+            print '<br>';
+
+            print '<center>';
+            print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+            print ' &nbsp; &nbsp; ';
+            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+            print '</center>';
+
+            print '</form>';
+        }
+    }
+    else
+    {
+        /*
+         * Company Fact Sheet mode visu
+         */
+        $soc = new Societe($db);
+        $soc->id = $socid;
+        $result=$soc->fetch($socid);
+        if ($result < 0)
+        {
+            dol_print_error($db,$soc->error);
             exit;
+        }
+
+        $head = societe_prepare_head($soc);
+
+        dol_fiche_head($head, 'company', $langs->trans("ThirdParty"),0,'company');
+
+        $html = new Form($db);
+
+
+        // Confirm delete third party
+        if ($_GET["action"] == 'delete')
+        {
+            $html = new Form($db);
+            $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
+            if ($ret == 'html') print '<br>';
+        }
+
+        // Template
+        if ($mesg)
+        {
+            print '<div class="error">';
+            print $mesg;
+            print '</div>';
+        }
+
+        print '<form name="formsoc" method="post">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<table class="border" width="100%">';
+
+        // Name
+        print '<tr><td width="20%">'.$langs->trans('Name').'</td>';
+        print '<td colspan="3">';
+        print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
+        print '</td></tr>';
+
+        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
+
+        if ($soc->client)
+        {
+            print '<tr><td>';
+            print $langs->trans('CustomerCode').'</td><td colspan="3">';
+            print $soc->code_client;
+            if ($soc->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+            print '</td></tr>';
+        }
+
+        if ($soc->fournisseur) {
+            print '<tr><td>';
+            print $langs->trans('SupplierCode').'</td><td colspan="3">';
+            print $soc->code_fournisseur;
+            if ($soc->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+            print '</td></tr>';
+        }
+
+        if ($conf->global->MAIN_MODULE_BARCODE)
+        {
+            print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$soc->gencod.'</td></tr>';
+        }
+
+        print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
+
+        print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->cp."</td>";
+        print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$soc->ville."</td></tr>";
+
+        // Country
+        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3" nowrap="nowrap">';
+        $img=picto_from_langcode($soc->pays_code);
+        if ($soc->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$soc->pays,$langs->trans("CountryIsInEEC"),1,0);
+        else print ($img?$img.' ':'').$soc->pays;
+        print '</td></tr>';
+
+        // Department
+        print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$soc->departement.'</td>';
+
+        print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->pays_code,0,$soc->id,'AC_TEL').'</td>';
+        print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->pays_code,0,$soc->id,'AC_FAX').'</td></tr>';
+
+        // EMail
+        print '<tr><td>'.$langs->trans('EMail').'</td><td>';
+        print dol_print_email($soc->email,0,$soc->id,'AC_EMAIL');
+        print '</td>';
+
+        // Web
+        print '<td>'.$langs->trans('Web').'</td><td>';
+        print dol_print_url($soc->url);
+        print '</td></tr>';
+
+        // ProfId1 (SIREN for France)
+        $profid=$langs->transcountry('ProfId1',$soc->pays_code);
+        if ($profid!='-')
+        {
+            print '<tr><td>'.$profid.'</td><td>';
+            print $soc->siren;
+            if ($soc->siren)
+            {
+                if ($soc->id_prof_check(1,$soc) > 0) print ' &nbsp; '.$soc->id_prof_url(1,$soc);
+                else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+            }
+            print '</td>';
+        }
+        else print '<tr><td>&nbsp;</td><td>&nbsp;</td>';
+        // ProfId2 (SIRET for France)
+        $profid=$langs->transcountry('ProfId2',$soc->pays_code);
+        if ($profid!='-')
+        {
+            print '<td>'.$profid.'</td><td>';
+            print $soc->siret;
+            if ($soc->siret)
+            {
+                if ($soc->id_prof_check(2,$soc) > 0) print ' &nbsp; '.$soc->id_prof_url(2,$soc);
+                else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+            }
+            print '</td></tr>';
+        }
+        else print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
+
+        // ProfId3 (APE for France)
+        $profid=$langs->transcountry('ProfId3',$soc->pays_code);
+        if ($profid!='-')
+        {
+            print '<tr><td>'.$profid.'</td><td>';
+            print $soc->ape;
+            if ($soc->ape)
+            {
+                if ($soc->id_prof_check(3,$soc) > 0) print ' &nbsp; '.$soc->id_prof_url(3,$soc);
+                else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+            }
+            print '</td>';
+        }
+        else print '<tr><td>&nbsp;</td><td>&nbsp;</td>';
+        // ProfId4 (NU for France)
+        $profid=$langs->transcountry('ProfId4',$soc->pays_code);
+        if ($profid!='-')
+        {
+            print '<td>'.$profid.'</td><td>';
+            print $soc->idprof4;
+            if ($soc->idprof4)
+            {
+                if ($soc->id_prof_check(4,$soc) > 0) print ' &nbsp; '.$soc->id_prof_url(4,$soc);
+                else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+            }
+            print '</td></tr>';
+        }
+        else print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
+
+        // VAT payers
+        $html = new Form($db);
+        print '<tr><td>';
+        print $langs->trans('VATIsUsed');
+        print '</td><td>';
+        print yn($soc->tva_assuj);
+        print '</td>';
+
+        // VAT Code
+        if ($conf->use_javascript_ajax)
+        {
+            print "\n";
+            print '<script language="JavaScript" type="text/javascript">';
+            print "function CheckVAT(a) {\n";
+            print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,260);\n";
+            print "}\n";
+            print '</script>';
+            print "\n";
+        }
+        print '<td nowrap="nowrpa">'.$langs->trans('VATIntra').'</td><td>';
+        if ($soc->tva_intra)
+        {
+            $s='';
+            $s.=$soc->tva_intra;
+            $s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
+            $s.=' &nbsp; ';
+            if ($conf->use_javascript_ajax)
+            {
+                $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+                print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+            }
+            else
+            {
+                print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+            }
         }
         else
         {
-            Header ('Location: '.$_SERVER["PHP_SELF"].'?socid='.$soc->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
-            exit;
+            print '&nbsp;';
         }
-    }
-}
+        print '</td>';
 
+        print '</tr>';
 
-/*
- *	View
- */
-
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('','',$help_url);
-
-$form = new Form($db);
-$formfile = new FormFile($db);
-$formadmin = new FormAdmin($db);
-$formcompany = new FormCompany($db);
-
-if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
-$_GET["action"] == 'create' || $_POST["action"] == 'create')
-{
-    /*
-     *	Sheet mode creation
-     */
-    if ($user->rights->societe->creer)
-    {
-        $title = $soc->object->getTitle('create');
-    	print_fiche_titre($title);
-        
-        $soc->object->assign_post();
-        
-        // Assign values
-        $soc->assign_values('create');
-
-        dol_htmloutput_errors($soc->object->error,$soc->object->errors);
-
-        // Display canvas
-        $soc->display_canvas();
-
-    }
-}
-elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
-{
-    /*
-     * Company Fact Mode edition
-     */
-	
-	$title = $soc->object->getTitle('edit');
-    print_fiche_titre($title);
-
-    if ($socid)
-    {
-    	if ($reload || ! $_POST["nom"])
+        // Local Taxes
+        if($mysoc->pays_code=='ES')
         {
-            $soc = new Canvas($db);
-            $soc->load_canvas('thirdparty@societe',$canvas);
-            $soc->object->id = $socid;
-            $soc->fetch($socid, 'edit');
+            if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+            {
+                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
+                print yn($soc->localtax1_assuj);
+                print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
+                print yn($soc->localtax2_assuj);
+                print '</td></tr>';
+
+            }
+            elseif($mysoc->localtax1_assuj=="1")
+            {
+                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+                print yn($soc->localtax1_assuj);
+                print '</td><tr>';
+            }
+            elseif($mysoc->localtax2_assuj=="1")
+            {
+                print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+                print yn($soc->localtax2_assuj);
+                print '</td><tr>';
+            }
         }
+
+        // Capital
+        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
+        if ($soc->capital) print $soc->capital.' '.$langs->trans("Currency".$conf->monnaie);
+        else print '&nbsp;';
+        print '</td></tr>';
+
+        // Legal
+        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
+
+        // Type + Staff
+        $arr = $formcompany->typent_array(1);
+        $soc->typent= $arr[$soc->typent_code];
+        print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
+
+        // Default language
+        if ($conf->global->MAIN_MULTILANGS)
+        {
+            require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">';
+            //$s=picto_from_langcode($soc->default_lang);
+            //print ($s?$s.' ':'');
+            $langs->load("languages");
+            $labellang = ($soc->default_lang?$langs->trans('Language_'.$soc->default_lang):'');
+            print $labellang;
+            print '</td></tr>';
+        }
+
+        // Ban
+        print '<tr><td>';
+        print '<table width="100%" class="nobordernopadding"><tr><td>';
+        print $langs->trans('RIB');
+        print '<td><td align="right">';
+        if ($user->rights->societe->creer)
+        print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit().'</a>';
         else
+        print '&nbsp;';
+        print '</td></tr></table>';
+        print '</td>';
+        print '<td colspan="3">';
+        print $soc->display_rib();
+        print '</td></tr>';
+
+        // Parent company
+        print '<tr><td>';
+        print '<table width="100%" class="nobordernopadding"><tr><td>';
+        print $langs->trans('ParentCompany');
+        print '<td><td align="right">';
+        if ($user->rights->societe->creer)
+        print '<a href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">'.img_edit() .'</a>';
+        else
+        print '&nbsp;';
+        print '</td></tr></table>';
+        print '</td>';
+        print '<td colspan="3">';
+        if ($soc->parent)
         {
-        	$soc->object->assign_post();
+            $socm = new Societe($db);
+            $socm->fetch($soc->parent);
+            print $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
+            print $socm->ville?' - '.$socm->ville:'';
+        }
+        else {
+            print $langs->trans("NoParentCompany");
+        }
+        print '</td></tr>';
+
+        // Commercial
+        print '<tr><td>';
+        print '<table width="100%" class="nobordernopadding"><tr><td>';
+        print $langs->trans('SalesRepresentatives');
+        print '<td><td align="right">';
+        if ($user->rights->societe->creer)
+        print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.img_edit().'</a>';
+        else
+        print '&nbsp;';
+        print '</td></tr></table>';
+        print '</td>';
+        print '<td colspan="3">';
+
+        $sql = "SELECT count(sc.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE sc.fk_soc =".$soc->id;
+
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            $obj = $db->fetch_object($resql);
+            print $obj->nb?($obj->nb):$langs->trans("NoSalesRepresentativeAffected");
+        }
+        else {
+            dol_print_error($db);
+        }
+        print '</td></tr>';
+
+        // Module Adherent
+        if ($conf->adherent->enabled)
+        {
+            $langs->load("members");
+            print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+            print '<td colspan="3">';
+            $adh=new Adherent($db);
+            $result=$adh->fetch('','',$soc->id);
+            if ($result > 0)
+            {
+                $adh->ref=$adh->getFullName($langs);
+                print $adh->getNomUrl(1);
+            }
+            else
+            {
+                print $langs->trans("UserNotLinkedToMember");
+            }
+            print '</td>';
+            print "</tr>\n";
         }
 
-        dol_htmloutput_errors($soc->object->error,$soc->object->errors);
-        
-        // Assign values
-        $soc->assign_values('edit');
-        
-        // Display canvas
-        $soc->display_canvas();  
+        print '</table>';
+        print '</form>';
+        print "</div>\n";
+
+
+        /*
+         *  Actions
+         */
+        if ($_GET["action"] == '')
+        {
+            print '<div class="tabsAction">';
+
+            if ($user->rights->societe->creer)
+            {
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+            }
+
+            if ($user->rights->societe->contact->creer)
+            {
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+            }
+
+            if ($user->rights->societe->supprimer)
+            {
+                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+            }
+
+            print '</div>';
+            print '<br>';
+        }
+
+
+
+        print '<table width="100%"><tr><td valign="top" width="50%">';
+        print '<a name="builddoc"></a>'; // ancre
+
+        /*
+         * Documents generes
+         */
+        $filedir=$conf->societe->dir_output.'/'.$soc->id;
+        $urlsource=$_SERVER["PHP_SELF"]."?socid=".$soc->id;
+        $genallowed=$user->rights->societe->creer;
+        $delallowed=$user->rights->societe->supprimer;
+
+        $var=true;
+
+        $somethingshown=$formfile->show_documents('company',$soc->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$soc->default_lang);
+
+        print '</td>';
+        print '<td>';
+        print '</td>';
+        print '</tr>';
+        print '</table>';
+
+        print '<br>';
+
+        // Contacts list
+        $result=show_contacts($conf,$langs,$db,$soc);
+
+        // Projects list
+        $result=show_projects($conf,$langs,$db,$soc);
     }
+
 }
 else
 {
+    // -----------------------------------------
+    // When used with CANVAS
+    // -----------------------------------------
+
+    //$_GET["canvas"] = 'default';
+	//if ($_REQUEST["private"]==1) $_GET["canvas"] = 'individual';
+
+	// Get object canvas
+	$socstatic = new Societe($db);
+	if (!empty($socid)) $socstatic->getCanvas($socid);
+
+
+    // Initialization Company Canvas
+    $canvas = (!empty($socstatic->canvas)?$socstatic->canvas:$_GET["canvas"]);
+    $soc = new Canvas($db);
+    $soc->load_canvas('thirdparty@societe',$canvas);
+
+
     /*
-     * Company Fact Sheet mode visu
+     * Actions
      */
-	
-    $soc->id = $socid;
-    $result=$soc->fetch($socid);
-    if ($result < 0)
+
+    if ($_POST["getcustomercode"])
     {
-        dol_print_error($db,$soc->error);
-        exit;
+        // We defined value code_client
+        $_POST["code_client"]="Acompleter";
     }
 
-    $head = societe_prepare_head($soc);
-    $title = $soc->object->getTitle('view');
+    if ($_POST["getsuppliercode"])
+    {
+        // We defined value code_fournisseur
+        $_POST["code_fournisseur"]="Acompleter";
+    }
 
-    dol_fiche_head($head, 'company', $title, 0, 'company');
-    
-	// Assign values
-    $soc->assign_values('view');
-    
-    // Display canvas
-	$soc->display_canvas();
+    // Add new third party
+    if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
+    && ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
+    {
+        require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+        $error=0;
+
+        if ($_POST["action"] == 'update')
+        {
+            // Load properties of company
+            $soc->fetch($socid);
+        }
+
+        if ($_REQUEST["private"] == 1)
+        {
+            $soc->object->particulier           = $_REQUEST["private"];
+
+            $soc->object->nom                   = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
+            $soc->object->nom_particulier       = $_POST["nom"];
+            $soc->object->prenom                = $_POST["prenom"];
+            $soc->object->civilite_id           = $_POST["civilite_id"];
+        }
+        else
+        {
+            $soc->object->nom                   = $_POST["nom"];
+        }
+        $soc->object->address               = $_POST["adresse"];
+        $soc->object->adresse               = $_POST["adresse"]; // TODO obsolete
+        $soc->object->cp                    = $_POST["cp"];
+        $soc->object->ville                 = $_POST["ville"];
+        $soc->object->pays_id               = $_POST["pays_id"];
+        $soc->object->departement_id        = $_POST["departement_id"];
+        $soc->object->tel                   = $_POST["tel"];
+        $soc->object->fax                   = $_POST["fax"];
+        $soc->object->email                 = trim($_POST["email"]);
+        $soc->object->url                   = $_POST["url"];
+        $soc->object->siren                 = $_POST["idprof1"];
+        $soc->object->siret                 = $_POST["idprof2"];
+        $soc->object->ape                   = $_POST["idprof3"];
+        $soc->object->idprof4               = $_POST["idprof4"];
+        $soc->object->prefix_comm           = $_POST["prefix_comm"];
+        $soc->object->code_client           = $_POST["code_client"];
+        $soc->object->code_fournisseur      = $_POST["code_fournisseur"];
+        $soc->object->capital               = $_POST["capital"];
+        $soc->object->gencod                = $_POST["gencod"];
+        $soc->object->canvas				= $_GET["canvas"];
+
+        $soc->object->tva_assuj             = $_POST["assujtva_value"];
+
+        // Local Taxes
+        $soc->object->localtax1_assuj		= $_POST["localtax1assuj_value"];
+        $soc->object->localtax2_assuj		= $_POST["localtax2assuj_value"];
+
+        $soc->object->tva_intra             = $_POST["tva_intra"];
+
+        $soc->object->forme_juridique_code  = $_POST["forme_juridique_code"];
+        $soc->object->effectif_id           = $_POST["effectif_id"];
+        if ($_REQUEST["private"] == 1)
+        {
+            $soc->object->typent_id             = 8; // TODO predict another method if the field "special" change of rowid
+        }
+        else
+        {
+            $soc->object->typent_id             = $_POST["typent_id"];
+        }
+        $soc->object->client                = $_POST["client"];
+        $soc->object->fournisseur           = $_POST["fournisseur"];
+        $soc->object->fournisseur_categorie = $_POST["fournisseur_categorie"];
+
+        $soc->object->commercial_id         = $_POST["commercial_id"];
+        $soc->object->default_lang          = $_POST["default_lang"];
+
+        // Check parameters
+        if (empty($_POST["cancel"]))
+        {
+            if (! empty($soc->object->email) && ! isValidEMail($soc->object->email))
+            {
+                $error = 1;
+                $langs->load("errors");
+                $soc->object->error = $langs->trans("ErrorBadEMail",$soc->object->email);
+                $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
+            }
+            if (! empty($soc->object->url) && ! isValidUrl($soc->object->url))
+            {
+                $error = 1;
+                $langs->load("errors");
+                $soc->object->error = $langs->trans("ErrorBadUrl",$soc->object->url);
+                $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
+            }
+            if ($soc->object->fournisseur && ! $conf->fournisseur->enabled)
+            {
+                $error = 1;
+                $langs->load("errors");
+                $soc->object->error = $langs->trans("ErrorSupplierModuleNotEnabled");
+                $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
+            }
+        }
+
+        if (! $error)
+        {
+            if ($_POST["action"] == 'add')
+            {
+                $db->begin();
+
+                if (empty($soc->object->client))      $soc->object->code_client='';
+                if (empty($soc->object->fournisseur)) $soc->object->code_fournisseur='';
+
+                $result = $soc->object->create($user);
+                if ($result >= 0)
+                {
+                    if ($soc->object->particulier)
+                    {
+                        dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
+                        $contact=new Contact($db);
+
+                        $contact->civilite_id = $soc->object->civilite_id;
+                        $contact->name=$soc->object->nom_particulier;
+                        $contact->firstname=$soc->object->prenom;
+                        $contact->address=$soc->object->address;
+                        $contact->cp=$soc->object->cp;
+                        $contact->ville=$soc->object->ville;
+                        $contact->fk_pays=$soc->object->fk_pays;
+                        $contact->socid=$soc->object->id;					// fk_soc
+                        $contact->status=1;
+                        $contact->email=$soc->object->email;
+                        $contact->priv=0;
+
+                        $result=$contact->create($user);
+                    }
+                }
+                else
+                {
+                    $mesg=$soc->object->error;
+                }
+
+                if ($result >= 0)
+                {
+                    $db->commit();
+
+                    if ( $soc->object->client == 1 )
+                    {
+                        Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$soc->object->id);
+                        return;
+                    }
+                    else
+                    {
+                        if (  $soc->object->fournisseur == 1 )
+                        {
+                            Header("Location: ".DOL_URL_ROOT."/fourn/fiche.php?socid=".$soc->object->id);
+                            return;
+                        }
+                        else
+                        {
+                            Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$soc->object->id);
+                            return;
+                        }
+                    }
+                    exit;
+                }
+                else
+                {
+                    $db->rollback();
+
+                    $langs->load("errors");
+                    $mesg=$langs->trans($soc->object->error);
+                    $_GET["action"]='create';
+                }
+            }
+
+            if ($_POST["action"] == 'update')
+            {
+                if ($_POST["cancel"])
+                {
+                    Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
+                    exit;
+                }
+
+                $oldsoc = new Canvas($db);
+                $oldsoc->load_canvas('thirdparty@societe',$canvas);
+                $result=$oldsoc->fetch($socid);
+
+                // To not set code if third party is not concerned. But if it had values, we keep them.
+                if (empty($soc->object->client) && empty($oldsoc->code_client))          $soc->object->code_client='';
+                if (empty($soc->object->fournisseur)&& empty($oldsoc->code_fournisseur)) $soc->object->code_fournisseur='';
+                //var_dump($soc);exit;
+
+                $result = $soc->object->update($socid,$user,1,$oldsoc->object->codeclient_modifiable(),$oldsoc->object->codefournisseur_modifiable());
+                if ($result >= 0)
+                {
+                    Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
+                    exit;
+                }
+                else
+                {
+                    $soc->object->id = $socid;
+                    $reload = 0;
+
+                    $mesg = $soc->object->error;
+                    $_GET["action"]= "edit";
+                }
+            }
+        }
+    }
+
+    if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->supprimer)
+    {
+        $soc = new Societe($db);
+        $soc->fetch($socid);
+        $result = $soc->delete($socid);
+
+        if ($result >= 0)
+        {
+            Header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$soc->nom."");
+            exit;
+        }
+        else
+        {
+            $reload = 0;
+            $langs->load("errors");
+            $mesg=$langs->trans($soc->error);
+            $_GET["action"]='';
+        }
+    }
+
 
     /*
-     *	Actions
+     * Generate document
      */
-    if ($_GET["action"] == '')
+    if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
     {
-        print '<div class="tabsAction">';
+        if (is_numeric($_REQUEST['model']))
+        {
+            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
+        }
+        else
+        {
+            require_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
 
+            $soc = new Societe($db);
+            $soc->fetch($socid);
+            $soc->fetch_thirdparty();
+
+            /*if ($_REQUEST['model'])
+             {
+             $fac->setDocModel($user, $_REQUEST['model']);
+             }
+             */
+
+            // Define output language
+            $outputlangs = $langs;
+            $newlang='';
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+            if (! empty($newlang))
+            {
+                $outputlangs = new Translate("",$conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
+            $result=thirdparty_doc_create($db, $soc->id, '', $_REQUEST['model'], $outputlangs);
+            if ($result <= 0)
+            {
+                dol_print_error($db,$result);
+                exit;
+            }
+            else
+            {
+                Header ('Location: '.$_SERVER["PHP_SELF"].'?socid='.$soc->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+                exit;
+            }
+        }
+    }
+
+
+    /*
+     *	View
+     */
+
+    $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+    llxHeader('','',$help_url);
+
+    $form = new Form($db);
+    $formfile = new FormFile($db);
+    $formadmin = new FormAdmin($db);
+    $formcompany = new FormCompany($db);
+
+    if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
+    $_GET["action"] == 'create' || $_POST["action"] == 'create')
+    {
+        /*
+         *	Sheet mode creation
+         */
         if ($user->rights->societe->creer)
         {
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
-        }
+            $title = $soc->object->getTitle('create');
+        	print_fiche_titre($title);
 
-        if ($user->rights->societe->contact->creer)
+            $soc->object->assign_post();
+
+            // Assign values
+            $soc->assign_values('create');
+
+            dol_htmloutput_errors($soc->object->error,$soc->object->errors);
+
+            // Display canvas
+            $soc->display_canvas();
+
+        }
+    }
+    elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
+    {
+        /*
+         * Company Fact Mode edition
+         */
+
+    	$title = $soc->object->getTitle('edit');
+        print_fiche_titre($title);
+
+        if ($socid)
         {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
-        }
+        	if ($reload || ! $_POST["nom"])
+            {
+                $soc = new Canvas($db);
+                $soc->load_canvas('thirdparty@societe',$canvas);
+                $soc->object->id = $socid;
+                $soc->fetch($socid, 'edit');
+            }
+            else
+            {
+            	$soc->object->assign_post();
+            }
 
-        if ($user->rights->societe->supprimer)
+            dol_htmloutput_errors($soc->object->error,$soc->object->errors);
+
+            // Assign values
+            $soc->assign_values('edit');
+
+            // Display canvas
+            $soc->display_canvas();
+        }
+    }
+    else
+    {
+        /*
+         * Company Fact Sheet mode visu
+         */
+
+        $soc->id = $socid;
+        $result=$soc->fetch($socid);
+        if ($result < 0)
         {
-            print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+            dol_print_error($db,$soc->error);
+            exit;
         }
 
-        print '</div>';
+        $head = societe_prepare_head($soc);
+        $title = $soc->object->getTitle('view');
+
+        dol_fiche_head($head, 'company', $title, 0, 'company');
+
+    	// Assign values
+        $soc->assign_values('view');
+
+        // Display canvas
+    	$soc->display_canvas();
+
+        /*
+         *	Actions
+         */
+        if ($_GET["action"] == '')
+        {
+            print '<div class="tabsAction">';
+
+            if ($user->rights->societe->creer)
+            {
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+            }
+
+            if ($user->rights->societe->contact->creer)
+            {
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+            }
+
+            if ($user->rights->societe->supprimer)
+            {
+                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+            }
+
+            print '</div>';
+            print '<br>';
+        }
+
+
+
+        print '<table width="100%"><tr><td valign="top" width="50%">';
+        print '<a name="builddoc"></a>'; // ancre
+
+        /*
+         * Documents generes
+         */
+        $filedir=$conf->societe->dir_output.'/'.$soc->id;
+        $urlsource=$_SERVER["PHP_SELF"]."?socid=".$soc->id;
+        $genallowed=$user->rights->societe->creer;
+        $delallowed=$user->rights->societe->supprimer;
+
+        $var=true;
+
+        $somethingshown=$formfile->show_documents('company',$soc->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$soc->default_lang);
+
+        print '</td>';
+        print '<td>';
+        print '</td>';
+        print '</tr>';
+        print '</table>';
+
         print '<br>';
+
+        // Contacts list
+        $result=show_contacts($conf,$langs,$db,$soc);
+
+        // Projects list
+        $result=show_projects($conf,$langs,$db,$soc);
     }
 
-
-
-    print '<table width="100%"><tr><td valign="top" width="50%">';
-    print '<a name="builddoc"></a>'; // ancre
-
-    /*
-     * Documents generes
-     */
-    $filedir=$conf->societe->dir_output.'/'.$soc->id;
-    $urlsource=$_SERVER["PHP_SELF"]."?socid=".$soc->id;
-    $genallowed=$user->rights->societe->creer;
-    $delallowed=$user->rights->societe->supprimer;
-
-    $var=true;
-
-    $somethingshown=$formfile->show_documents('company',$soc->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$soc->default_lang);
-
-    print '</td>';
-    print '<td>';
-    print '</td>';
-    print '</tr>';
-    print '</table>';
-
-    print '<br>';
-
-    // Contacts list
-    $result=show_contacts($conf,$langs,$db,$soc);
-
-    // Projects list
-    $result=show_projects($conf,$langs,$db,$soc);
 }
+
 
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
+
 ?>
