@@ -2155,6 +2155,12 @@ class Societe extends CommonObject
 		global $conf, $langs, $user, $mysoc;
 		global $form, $formadmin, $formcompany;
 		
+		if ($_GET["type"]=='f')  		{ $this->fournisseur=1; }
+		if ($_GET["type"]=='c')  		{ $this->client=1; }
+		if ($_GET["type"]=='p')  		{ $this->client=2; }
+		if ($_GET["type"]=='cp') 		{ $this->client=3; }
+		if ($_REQUEST["private"]==1) 	{ $this->particulier=1;	}
+		
 		foreach($this as $key => $value)
 		{
 			$this->tpl[$key] = $value;
@@ -2162,11 +2168,9 @@ class Societe extends CommonObject
 		
 		if ($action == 'create' || $action == 'edit')
 		{
-			if ($_GET["type"]=='f')  		{ $this->fournisseur=1; }
-			if ($_GET["type"]=='c')  		{ $this->client=1; }
-			if ($_GET["type"]=='p')  		{ $this->client=2; }
-			if ($_GET["type"]=='cp') 		{ $this->client=3; }
-			if ($_REQUEST["private"]==1) 	{ $this->particulier=1;	}
+			// Chargement ajax
+			$this->tpl['ajax_select_thirdpartytype'] = $this->ajax_selectThirdPartyType();
+			$this->tpl['ajax_select_country'] = $this->ajax_selectCountry($action);
 			
 			// Load object modCodeClient
 			$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
@@ -2373,6 +2377,8 @@ class Societe extends CommonObject
 	 */
 	function assign_post()
 	{
+		global $langs, $mysoc;
+		
 		$this->id					=	$_POST["socid"];
         $this->nom					=	$_POST["nom"];
         $this->prefix_comm			=	$_POST["prefix_comm"];
@@ -2420,11 +2426,78 @@ class Societe extends CommonObject
             }
             else
             {
-                dol_print_error($db);
+                dol_print_error($this->db);
             }
             $this->pays_code	=	$obj->code;
             $this->pays			=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
         }
+	}
+	
+		/**
+		 * 
+		 */
+		function ajax_selectThirdPartyType()
+		{
+		global $conf, $langs;
+		
+		$out='';
+		
+		if ($conf->use_javascript_ajax)
+        {
+            $out.= "\n".'<script type="text/javascript" language="javascript">'."\n";
+            $out.= 'jQuery(document).ready(function () {
+		              jQuery("#radiocompany").click(function() {
+                            document.formsoc.action.value="create";
+                            document.formsoc.private.value=0;
+                            document.formsoc.cleartype.value=1;
+                            document.formsoc.submit();
+		              });
+		               jQuery("#radioprivate").click(function() {
+                            document.formsoc.action.value="create";
+                            document.formsoc.private.value=1;
+                            document.formsoc.cleartype.value=1;
+                            document.formsoc.submit();
+                      });
+		          });';
+            $out.= '</script>'."\n";
+
+            $out.= "<br>\n";
+            $out.= $langs->trans("ThirdPartyType").': &nbsp; ';
+            $out.= '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.(! $_REQUEST["private"]?' checked="true"':'');
+            $out.= '> '.$langs->trans("Company/Fundation");
+            $out.= ' &nbsp; &nbsp; ';
+            $out.= '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.(! $_REQUEST["private"]?'':' checked="true"');
+            $out.= '> '.$langs->trans("Individual");
+            $out.= ' ('.$langs->trans("ToCreateContactWithSameName").')';
+            $out.= "<br>\n";
+            $out.= "<br>\n";
+        }
+        
+        return $out;
+	}
+	
+	/**
+	 * 
+	 */
+	function ajax_selectCountry($action)
+	{
+		global $conf;
+		
+		$out='';
+		
+		if ($conf->use_javascript_ajax)
+        {
+            $out.= "\n".'<script type="text/javascript" language="javascript">'."\n";
+            $out.= 'jQuery(document).ready(function () {
+                        jQuery("#selectpays_id").change(function() {
+                            document.formsoc.action.value="'.$action.'";
+                            document.formsoc.submit();
+                        });
+                   })';
+            $out.= '</script>'."\n";
+        }
+        
+        return $out;
 	}
 
 }

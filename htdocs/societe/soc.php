@@ -382,41 +382,6 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
         // Assign values
         $soc->assign_values('create');
 
-        if ($conf->use_javascript_ajax)
-        {
-            print "\n".'<script type="text/javascript" language="javascript">';
-            print 'jQuery(document).ready(function () {
-		              jQuery("#radiocompany").click(function() {
-                            document.formsoc.action.value="create";
-                            document.formsoc.private.value=0;
-                            document.formsoc.cleartype.value=1;
-                            document.formsoc.submit();
-		              });
-		               jQuery("#radioprivate").click(function() {
-                            document.formsoc.action.value="create";
-                            document.formsoc.private.value=1;
-                            document.formsoc.cleartype.value=1;
-                            document.formsoc.submit();
-                      });
-                      jQuery("#selectpays_id").change(function() {
-                        document.formsoc.action.value="create";
-                        document.formsoc.submit();
-                      });
-		          });';
-            print '</script>'."\n";
-
-            print "<br>\n";
-            print $langs->trans("ThirdPartyType").': &nbsp; ';
-            print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.(! $_REQUEST["private"]?' checked="true"':'');
-            print '> '.$langs->trans("Company/Fundation");
-            print ' &nbsp; &nbsp; ';
-            print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.(! $_REQUEST["private"]?'':' checked="true"');
-            print '> '.$langs->trans("Individual");
-            print ' ('.$langs->trans("ToCreateContactWithSameName").')';
-            print "<br>\n";
-            print "<br>\n";
-        }
-
         dol_htmloutput_errors($soc->object->error,$soc->object->errors);
 
         // Display canvas
@@ -446,18 +411,6 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         }
 
         dol_htmloutput_errors($soc->object->error,$soc->object->errors);
-
-        if ($conf->use_javascript_ajax)
-        {
-            print "\n".'<script type="text/javascript" language="javascript">';
-            print 'jQuery(document).ready(function () {
-                        jQuery("#selectpays_id").change(function() {
-                            document.formsoc.action.value="edit";
-                            document.formsoc.submit();
-                        });
-                   })';
-            print '</script>'."\n";
-        }
         
         // Assign values
         $soc->assign_values('edit');

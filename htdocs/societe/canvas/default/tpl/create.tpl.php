@@ -21,6 +21,9 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
+<?php echo $this->object->tpl['ajax_select_thirdpartytype']; ?>
+<?php echo $this->object->tpl['ajax_select_country']; ?>
+
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" name="formsoc">
 
 <input type="hidden" name="action" value="add">

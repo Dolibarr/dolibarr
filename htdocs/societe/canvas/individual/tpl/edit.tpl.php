@@ -21,6 +21,8 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
+<?php echo $this->object->tpl['ajax_select_country']; ?>
+
 <form action="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->object->tpl['id']; ?>" method="POST" name="formsoc">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
