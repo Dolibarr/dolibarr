@@ -28,6 +28,7 @@
 <?php } ?>
 
 <form name="formsoc" method="POST">
+<input type="hidden" name="canvas" value="<?php echo $canvas ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <table class="border" width="100%">
 
@@ -106,7 +107,7 @@
 	<td><?php echo $this->object->tpl['url']; ?></td>
 </tr>
 
-<?php 
+<?php
 for ($i=1; $i<=4; $i++) {
 	if ($this->object->tpl['langprofid'.$i]!='-')	{
 		if ($i==1 || $i==3) echo '<tr>';
@@ -123,7 +124,7 @@ for ($i=1; $i<=4; $i++) {
 		echo '<td>&nbsp;</td>';
 		echo '<td>&nbsp;</td>';
 		if ($i==2 || $i==4) echo '</tr>';
-	} 
+	}
 }
 ?>
 

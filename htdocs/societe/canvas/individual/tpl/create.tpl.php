@@ -27,6 +27,7 @@
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" name="formsoc">
 
 <input type="hidden" name="action" value="add">
+<input type="hidden" name="canvas" value="<?php echo $canvas ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="cleartype" value="0">
 <input type="hidden" name="private" value="<?php echo $this->object->tpl['particulier']; ?>">

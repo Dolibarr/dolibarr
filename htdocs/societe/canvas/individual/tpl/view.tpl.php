@@ -28,6 +28,7 @@
 <?php } ?>
 
 <form name="formsoc" method="POST">
+<input type="hidden" name="canvas" value="<?php echo $canvas ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <table class="border" width="100%">
 
