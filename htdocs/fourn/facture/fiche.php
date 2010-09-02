@@ -984,18 +984,11 @@ else
 					}
 
 					// Description - Editor wysiwyg
-					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-					{
-						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-						$doleditor=new DolEditor('label',$fac->lignes[$i]->description,200,'dolibarr_details');
-						$doleditor->Create();
-					}
-					else
-					{
-						$nbrows=ROWS_2;
-						if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-						print '<textarea name="label" class="flat" cols="70" rows="'.$nbrows.'">'.dol_htmlentitiesbr_decode($fac->lignes[$i]->description).'</textarea>';
-					}
+					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                    $nbrows=ROWS_2;
+                    if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+					$doleditor=new DolEditor('label',$fac->lignes[$i]->description,200,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+					$doleditor->Create();
 					print '</td>';
 
 					// VAT
@@ -1121,18 +1114,12 @@ else
 				|| (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 
 				// Editor wysiwyg
-				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('label',$_POST["label"],100,'dolibarr_details');
-					$doleditor->Create();
-				}
-				else
-				{
-					$nbrows=ROWS_2;
-					if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-					print '<textarea class="flat" cols="60" name="label" rows="'.$nbrows.'">'.$_POST["label"].'</textarea>';
-				}
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                $nbrows=ROWS_2;
+                if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+				$doleditor=new DolEditor('label',$_POST["label"],100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+				$doleditor->Create();
+
 				print '</td>';
 				print '<td align="right">';
 				print $html->select_tva('tauxtva',$conf->defaulttx,$societe,$mysoc);

@@ -1105,19 +1105,13 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				// Description - Editor wysiwyg
-				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('eldesc',$commandline->description,200,'dolibarr_details');
-					$doleditor->Create();
-				}
-				else
-				{
-					$nbrows=ROWS_2;
-					if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-					print '<textarea name="eldesc" class="flat" cols="70" rows="'.$nbrows.'">'.dol_htmlentitiesbr_decode($commandline->description).'</textarea>';
-				}
-				print '</td>';
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                $nbrows=ROWS_2;
+                if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+        		$doleditor=new DolEditor('eldesc',$commandline->description,200,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,70,$nbrows);
+		      	$doleditor->Create();
+
+		      	print '</td>';
 				print '<td>';
 				$html->select_tva('tva_tx',$commandline->tva_tx);
 				print '</td>';
@@ -1164,18 +1158,12 @@ if ($id > 0 || ! empty($ref))
 			|| (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 
 			// Editor wysiwyg
-			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-			{
-				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],100,'dolibarr_details');
-				$doleditor->Create();
-			}
-			else
-			{
-				$nbrows=ROWS_2;
-				if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-				print '<textarea class="flat" cols="70" name="dp_desc" rows="'.$nbrows.'">'.$_POST["dp_desc"].'</textarea>';
-			}
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+            $nbrows=ROWS_2;
+            if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+			$doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+			$doleditor->Create();
+
 			print '</td>';
 			print '<td align="center">';
 			//if($soc->tva_assuj == "0")
@@ -1224,18 +1212,11 @@ if ($id > 0 || ! empty($ref))
 				if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 
 				// Editor wysiwyg
-				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('np_desc',$_POST["np_desc"],100,'dolibarr_details');
-					$doleditor->Create();
-				}
-				else
-				{
-					$nbrows=ROWS_2;
-					if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-					print '<textarea cols="70" name="np_desc" rows="'.$nbrows.'" class="flat">'.$_POST["np_desc"].'</textarea>';
-				}
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                $nbrows=ROWS_2;
+                if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+				$doleditor=new DolEditor('np_desc',$_POST["np_desc"],100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+				$doleditor->Create();
 
 				print '</td>';
 				print '<td align="right"><input type="text" size="2" name="pqty" value="'.($_POST["pqty"]?$_POST["pqty"]:'1').'"></td>';

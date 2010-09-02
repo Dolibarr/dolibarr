@@ -2772,6 +2772,8 @@ class Product extends CommonObject
 		}
 	}
 
+
+
 	/**
 	 *  \brief 		Affecte les valeurs communes
 	 */
@@ -2838,13 +2840,16 @@ class Product extends CommonObject
 				$this->tpl['hidden'] = $html->selectyesno('hidden',$this->hidden);
 			}
 
-			// TODO creer fonction
+            $this->tpl['description'] = $this->description;
+            $this->tpl['note'] = $this->note;
+
+			/* Fix: La presentation ne doit pas etre gérée dans une classe métier
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 
 				$doleditor=new DolEditor('desc',$this->description,160,'dolibarr_notes','',false);
-				$this->tpl['doleditor_description'] = $doleditor;
+                $this->tpl['doleditor_description'] = $doleditor;
 
 				$doleditor=new DolEditor('note',$this->note,180,'dolibarr_notes','',false);
 				$this->tpl['doleditor_note'] = $doleditor;
@@ -2854,13 +2859,14 @@ class Product extends CommonObject
 				$textarea = '<textarea name="desc" rows="4" cols="90">';
 				$textarea.= $this->description;
 				$textarea.= '</textarea>';
-				$this->tpl['textarea_description'] = $textarea;
+				$this->tpl['description'] = $this->description
 
 				$textarea = '<textarea name="note" rows="8" cols="70">';
 				$textarea.= $this->note;
 				$textarea.= '</textarea>';
 				$this->tpl['textarea_note'] = $textarea;
 			}
+			*/
 		}
 
 		if ($action == 'view')

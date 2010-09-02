@@ -764,16 +764,9 @@ elseif ($fichinterid)
 				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
 				// Editeur wysiwyg
-				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('np_desc',$objp->description,164,'dolibarr_details');
-					$doleditor->Create();
-				}
-				else
-				{
-					print '<textarea name="np_desc" cols="70" class="flat" rows="'.ROWS_2.'">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
-				}
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				$doleditor=new DolEditor('np_desc',$objp->description,164,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
+				$doleditor->Create();
 				print '</td>';
 
 				// Date d'intervention
@@ -826,16 +819,9 @@ elseif ($fichinterid)
 			print '<tr '.$bc[$var].">\n";
 			print '<td>';
 			// editeur wysiwyg
-			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-			{
-				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('np_desc',$_POST["np_desc"],100,'dolibarr_details');
-				$doleditor->Create();
-			}
-			else
-			{
-				print '<textarea class="flat" cols="70" name="np_desc" rows="'.ROWS_2.'">'.$_POST["np_desc"].'</textarea>';
-			}
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('np_desc',$_POST["np_desc"],100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
+			$doleditor->Create();
 			print '</td>';
 
 			// Date intervention

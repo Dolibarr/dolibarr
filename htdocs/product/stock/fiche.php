@@ -177,17 +177,10 @@ if ($_GET["action"] == 'create')
 
 	// Description
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
-	if ($conf->fckeditor->enabled)
-	{
-		// Editeur wysiwyg
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('desc',$entrepot->description,180,'dolibarr_notes','In',false);
-		$doleditor->Create();
-	}
-	else
-	{
-		print '<textarea name="desc" cols="70" rows="5">'.dol_htmlentitiesbr_decode($entrepot->description).'</textarea>';
-	}
+	// Editeur wysiwyg
+	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	$doleditor=new DolEditor('desc',$entrepot->description,180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
+	$doleditor->Create();
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
@@ -477,17 +470,10 @@ else
 
 			// Description
 			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
-			if ($conf->fckeditor->enabled)
-			{
-				// Editeur wysiwyg
-				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('desc',$entrepot->description,180,'dolibarr_notes','In',false);
-				$doleditor->Create();
-			}
-			else
-			{
-				print '<textarea name="desc" cols="70" rows="5">'.dol_htmlentitiesbr_decode($entrepot->description).'</textarea>';
-			}
+			// Editeur wysiwyg
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('desc',$entrepot->description,180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
+			$doleditor->Create();
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';

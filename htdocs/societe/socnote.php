@@ -69,7 +69,7 @@ if ($socid > 0)
 	 * Affichage onglets
 	 */
     if ($conf->notification->enabled) $langs->load("mails");
-    
+
 	$head = societe_prepare_head($societe);
 
 	dol_fiche_head($head, 'note', $langs->trans("ThirdParty"),0,'company');
@@ -112,17 +112,10 @@ if ($socid > 0)
 		print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 		print "<input type=\"hidden\" name=\"socid\" value=\"".$societe->id."\">";
 
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
-	    {
-		    // Editeur wysiwyg
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note',$societe->note,280,'dolibarr_notes','In',true);
-			$doleditor->Create();
-	    }
-	    else
-	    {
-			print '<textarea name="note" cols="70" rows="10">'.dol_htmlentitiesbr_decode($societe->note).'</textarea>';
-	    }
+	    // Editeur wysiwyg
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('note',$societe->note,280,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
+		$doleditor->Create();
 	}
 	else
 	{
