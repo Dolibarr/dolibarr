@@ -251,7 +251,7 @@ class Form
 
         return $this->textwithtooltip($text,$htmltext,2,$direction,$img);
     }
-    
+
     /**
      *    \brief     Return combo list of activated countries, into language of user
      *    \param     selected         Id or Code or Label of preselected country
@@ -275,7 +275,7 @@ class Form
     {
         global $conf,$langs;
         $langs->load("dict");
-        
+
         $out='';
 
         $sql = "SELECT rowid, code, libelle, active";
@@ -319,7 +319,7 @@ class Form
         {
             dol_print_error($this->db);
         }
-        
+
         return $out;
     }
 
@@ -759,7 +759,7 @@ class Form
             return -1;
         }
     }
-    
+
     /**
      *	\brief      Return select list of users
      *  \param      selected        Id user preselected
@@ -772,7 +772,7 @@ class Form
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
     {
-    	print select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly);
+    	print $this->select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly);
     }
 
     /**
@@ -793,7 +793,7 @@ class Form
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
         // Permettre l'inclusion d'utilisateurs
         if (is_array($include))	$includeUsers = implode("','",$include);
-        
+
         $out='';
 
         // On recherche les utilisateurs
@@ -845,7 +845,7 @@ class Form
         {
             dol_print_error($this->db);
         }
-        
+
         return $out;
     }
 
@@ -1818,7 +1818,7 @@ class Form
         $output.= "\n";
         return $output;
     }
-    
+
 	/**
      *     Show a confirmation HTML form or AJAX popup
      *     @param  page        	   Url of page to call if confirmation is OK
@@ -1831,7 +1831,7 @@ class Form
      *     @return string          'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
      */
     function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0)
-    {	
+    {
     	print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax);
     }
 
@@ -1852,7 +1852,7 @@ class Form
 
         $more='';
         $formconfirm='';
-        
+
         if ($formquestion)
         {
             $more.='<tr class="valid"><td class="valid" colspan="3">'."\n";
