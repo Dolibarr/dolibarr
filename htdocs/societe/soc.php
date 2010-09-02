@@ -55,13 +55,13 @@ if (empty($_GET["canvas"]))
 {
 	$_GET["canvas"] = 'default';
 	if ($_REQUEST["private"]==1) $_GET["canvas"] = 'individual';
+	
+	// Get object canvas
+	$socstatic = new Societe($db);
+	if (!empty($socid)) $socstatic->getCanvas($socid);
 }
 
-// Initialization Company Object
-$socstatic = new Societe($db);
-
 // Initialization Company Canvas
-if (!empty($socid)) $socstatic->getCanvas($socid);
 $canvas = (!empty($socstatic->canvas)?$socstatic->canvas:$_GET["canvas"]);
 $soc = new Canvas($db);
 $soc->load_canvas('thirdparty@societe',$canvas);
@@ -375,7 +375,8 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
      */
     if ($user->rights->societe->creer)
     {
-        print_fiche_titre($langs->trans("NewCompany"));
+        $title = $soc->object->getTitle('create');
+    	print_fiche_titre($title);
         
         $soc->object->assign_post();
         
@@ -394,7 +395,9 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
     /*
      * Company Fact Mode edition
      */
-    print_fiche_titre($langs->trans("EditCompany"));
+	
+	$title = $soc->object->getTitle('edit');
+    print_fiche_titre($title);
 
     if ($socid)
     {
@@ -403,7 +406,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $soc = new Canvas($db);
             $soc->load_canvas('thirdparty@societe',$canvas);
             $soc->object->id = $socid;
-            $soc->fetch($socid, $_GET["action"]);
+            $soc->fetch($socid, 'edit');
         }
         else
         {
@@ -434,11 +437,13 @@ else
     }
 
     $head = societe_prepare_head($soc);
+    $title = $soc->object->getTitle('view');
 
-    dol_fiche_head($head, 'company', $langs->trans("ThirdParty"),0,'company');
+    dol_fiche_head($head, 'company', $title, 0, 'company');
     
 	// Assign values
     $soc->assign_values('view');
+    
     // Display canvas
 	$soc->display_canvas();
 

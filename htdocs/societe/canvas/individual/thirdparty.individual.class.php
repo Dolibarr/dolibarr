@@ -51,11 +51,17 @@ class ThirdPartyIndividual extends Societe
 		$this->fieldListName    = "thirdparty_individual";
 	}
 
-	function getTitle()
+	function getTitle($action)
 	{
 		global $langs;
+		
+		$out='';
 
-		return $langs->trans("Individual");
+		if ($action == 'view') 		$out.= $langs->trans("Individual");
+		if ($action == 'edit') 		$out.= $langs->trans("EditIndividual");
+		if ($action == 'create')	$out.= $langs->trans("NewIndividual");
+		
+		return $out;
 	}
 
 	/**

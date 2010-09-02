@@ -68,7 +68,7 @@ class Canvas
 
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
 		{
-			$part1=$part3=$regs[2];
+			$part1=$regs[2];
 			$part2=$regs[1];
 		}
 

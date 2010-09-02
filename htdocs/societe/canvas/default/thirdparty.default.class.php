@@ -50,11 +50,17 @@ class ThirdPartyDefault extends Societe
 		$this->fieldListName    = "thirdparty_default";
 	}
 
-	function getTitle()
+	function getTitle($action)
 	{
 		global $langs;
 
-		return $langs->trans("ThirdParty");
+		$out='';
+
+		if ($action == 'view') 		$out.= $langs->trans("ThirdParty");
+		if ($action == 'edit') 		$out.= $langs->trans("EditCompany");
+		if ($action == 'create')	$out.= $langs->trans("NewCompany");
+		
+		return $out;
 	}
 
 	/**
