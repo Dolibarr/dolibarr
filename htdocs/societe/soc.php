@@ -1587,11 +1587,12 @@ else
     // When used with CANVAS
     // -----------------------------------------
 
-    //$_GET["canvas"] = 'default';
+    //$_GET["canvas"] = 'default@thirdparty';
+    //$canvas = 'default@thirdparty';
 	//if ($_REQUEST["private"]==1) $_GET["canvas"] = 'individual'; To switch to other canvas, we must use another value for canvas
 
     $soccanvas = new Canvas($db);
-    $soccanvas->load_canvas('thirdparty@societe',$canvas);
+    $soccanvas->load_canvas('card',$canvas);
 
 
     /*
@@ -1619,91 +1620,93 @@ else
 
         if ($_POST["action"] == 'update')
         {
-            // Load properties of company
+            $soccanvas->load_control('edit');
+            
+        	// Load properties of company
             $soccanvas->fetch($socid);
         }
 
         if ($_REQUEST["private"] == 1)
         {
-            $soccanvas->object->particulier           = $_REQUEST["private"];
+            $soccanvas->control->object->particulier           = $_REQUEST["private"];
 
-            $soccanvas->object->nom                   = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
-            $soccanvas->object->nom_particulier       = $_POST["nom"];
-            $soccanvas->object->prenom                = $_POST["prenom"];
-            $soccanvas->object->civilite_id           = $_POST["civilite_id"];
+            $soccanvas->control->object->nom                   = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
+            $soccanvas->control->object->nom_particulier       = $_POST["nom"];
+            $soccanvas->control->object->prenom                = $_POST["prenom"];
+            $soccanvas->control->object->civilite_id           = $_POST["civilite_id"];
         }
         else
         {
-            $soccanvas->object->nom                   = $_POST["nom"];
+            $soccanvas->control->object->nom                   = $_POST["nom"];
         }
-        $soccanvas->object->address               = $_POST["adresse"];
-        $soccanvas->object->adresse               = $_POST["adresse"]; // TODO obsolete
-        $soccanvas->object->cp                    = $_POST["cp"];
-        $soccanvas->object->ville                 = $_POST["ville"];
-        $soccanvas->object->pays_id               = $_POST["pays_id"];
-        $soccanvas->object->departement_id        = $_POST["departement_id"];
-        $soccanvas->object->tel                   = $_POST["tel"];
-        $soccanvas->object->fax                   = $_POST["fax"];
-        $soccanvas->object->email                 = trim($_POST["email"]);
-        $soccanvas->object->url                   = $_POST["url"];
-        $soccanvas->object->siren                 = $_POST["idprof1"];
-        $soccanvas->object->siret                 = $_POST["idprof2"];
-        $soccanvas->object->ape                   = $_POST["idprof3"];
-        $soccanvas->object->idprof4               = $_POST["idprof4"];
-        $soccanvas->object->prefix_comm           = $_POST["prefix_comm"];
-        $soccanvas->object->code_client           = $_POST["code_client"];
-        $soccanvas->object->code_fournisseur      = $_POST["code_fournisseur"];
-        $soccanvas->object->capital               = $_POST["capital"];
-        $soccanvas->object->gencod                = $_POST["gencod"];
-        $soccanvas->object->canvas				= $_GET["canvas"];
+        $soccanvas->control->object->address               = $_POST["adresse"];
+        $soccanvas->control->object->adresse               = $_POST["adresse"]; // TODO obsolete
+        $soccanvas->control->object->cp                    = $_POST["cp"];
+        $soccanvas->control->object->ville                 = $_POST["ville"];
+        $soccanvas->control->object->pays_id               = $_POST["pays_id"];
+        $soccanvas->control->object->departement_id        = $_POST["departement_id"];
+        $soccanvas->control->object->tel                   = $_POST["tel"];
+        $soccanvas->control->object->fax                   = $_POST["fax"];
+        $soccanvas->control->object->email                 = trim($_POST["email"]);
+        $soccanvas->control->object->url                   = $_POST["url"];
+        $soccanvas->control->object->siren                 = $_POST["idprof1"];
+        $soccanvas->control->object->siret                 = $_POST["idprof2"];
+        $soccanvas->control->object->ape                   = $_POST["idprof3"];
+        $soccanvas->control->object->idprof4               = $_POST["idprof4"];
+        $soccanvas->control->object->prefix_comm           = $_POST["prefix_comm"];
+        $soccanvas->control->object->code_client           = $_POST["code_client"];
+        $soccanvas->control->object->code_fournisseur      = $_POST["code_fournisseur"];
+        $soccanvas->control->object->capital               = $_POST["capital"];
+        $soccanvas->control->object->gencod                = $_POST["gencod"];
+        $soccanvas->control->object->canvas				= $_GET["canvas"];
 
-        $soccanvas->object->tva_assuj             = $_POST["assujtva_value"];
+        $soccanvas->control->object->tva_assuj             = $_POST["assujtva_value"];
 
         // Local Taxes
-        $soccanvas->object->localtax1_assuj		= $_POST["localtax1assuj_value"];
-        $soccanvas->object->localtax2_assuj		= $_POST["localtax2assuj_value"];
+        $soccanvas->control->object->localtax1_assuj		= $_POST["localtax1assuj_value"];
+        $soccanvas->control->object->localtax2_assuj		= $_POST["localtax2assuj_value"];
 
-        $soccanvas->object->tva_intra             = $_POST["tva_intra"];
+        $soccanvas->control->object->tva_intra             = $_POST["tva_intra"];
 
-        $soccanvas->object->forme_juridique_code  = $_POST["forme_juridique_code"];
-        $soccanvas->object->effectif_id           = $_POST["effectif_id"];
+        $soccanvas->control->object->forme_juridique_code  = $_POST["forme_juridique_code"];
+        $soccanvas->control->object->effectif_id           = $_POST["effectif_id"];
         if ($_REQUEST["private"] == 1)
         {
-            $soccanvas->object->typent_id             = 8; // TODO predict another method if the field "special" change of rowid
+            $soccanvas->control->object->typent_id             = 8; // TODO predict another method if the field "special" change of rowid
         }
         else
         {
-            $soccanvas->object->typent_id             = $_POST["typent_id"];
+            $soccanvas->control->object->typent_id             = $_POST["typent_id"];
         }
-        $soccanvas->object->client                = $_POST["client"];
-        $soccanvas->object->fournisseur           = $_POST["fournisseur"];
-        $soccanvas->object->fournisseur_categorie = $_POST["fournisseur_categorie"];
+        $soccanvas->control->object->client                = $_POST["client"];
+        $soccanvas->control->object->fournisseur           = $_POST["fournisseur"];
+        $soccanvas->control->object->fournisseur_categorie = $_POST["fournisseur_categorie"];
 
-        $soccanvas->object->commercial_id         = $_POST["commercial_id"];
-        $soccanvas->object->default_lang          = $_POST["default_lang"];
+        $soccanvas->control->object->commercial_id         = $_POST["commercial_id"];
+        $soccanvas->control->object->default_lang          = $_POST["default_lang"];
 
         // Check parameters
         if (empty($_POST["cancel"]))
         {
-            if (! empty($soccanvas->object->email) && ! isValidEMail($soccanvas->object->email))
+            if (! empty($soccanvas->control->object->email) && ! isValidEMail($soccanvas->control->object->email))
             {
                 $error = 1;
                 $langs->load("errors");
-                $soccanvas->object->error = $langs->trans("ErrorBadEMail",$soccanvas->object->email);
+                $soccanvas->control->object->error = $langs->trans("ErrorBadEMail",$soccanvas->control->object->email);
                 $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
             }
-            if (! empty($soccanvas->object->url) && ! isValidUrl($soccanvas->object->url))
+            if (! empty($soccanvas->control->object->url) && ! isValidUrl($soccanvas->control->object->url))
             {
                 $error = 1;
                 $langs->load("errors");
-                $soccanvas->object->error = $langs->trans("ErrorBadUrl",$soccanvas->object->url);
+                $soccanvas->control->object->error = $langs->trans("ErrorBadUrl",$soccanvas->control->object->url);
                 $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
             }
-            if ($soccanvas->object->fournisseur && ! $conf->fournisseur->enabled)
+            if ($soccanvas->control->object->fournisseur && ! $conf->fournisseur->enabled)
             {
                 $error = 1;
                 $langs->load("errors");
-                $soccanvas->object->error = $langs->trans("ErrorSupplierModuleNotEnabled");
+                $soccanvas->control->object->error = $langs->trans("ErrorSupplierModuleNotEnabled");
                 $_GET["action"] = $_POST["action"]=='add'?'create':'edit';
             }
         }
@@ -1714,27 +1717,27 @@ else
             {
                 $db->begin();
 
-                if (empty($soccanvas->object->client))      $soccanvas->object->code_client='';
-                if (empty($soccanvas->object->fournisseur)) $soccanvas->object->code_fournisseur='';
+                if (empty($soccanvas->control->object->client))      $soccanvas->control->object->code_client='';
+                if (empty($soccanvas->control->object->fournisseur)) $soccanvas->control->object->code_fournisseur='';
 
-                $result = $soccanvas->object->create($user);
+                $result = $soccanvas->control->object->create($user);
                 if ($result >= 0)
                 {
-                    if ($soccanvas->object->particulier)
+                    if ($soccanvas->control->object->particulier)
                     {
                         dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
                         $contact=new Contact($db);
 
-                        $contact->civilite_id = $soccanvas->object->civilite_id;
-                        $contact->name=$soccanvas->object->nom_particulier;
-                        $contact->firstname=$soccanvas->object->prenom;
-                        $contact->address=$soccanvas->object->address;
-                        $contact->cp=$soccanvas->object->cp;
-                        $contact->ville=$soccanvas->object->ville;
-                        $contact->fk_pays=$soccanvas->object->fk_pays;
-                        $contact->socid=$soccanvas->object->id;					// fk_soc
+                        $contact->civilite_id = $soccanvas->control->object->civilite_id;
+                        $contact->name=$soccanvas->control->object->nom_particulier;
+                        $contact->firstname=$soccanvas->control->object->prenom;
+                        $contact->address=$soccanvas->control->object->address;
+                        $contact->cp=$soccanvas->control->object->cp;
+                        $contact->ville=$soccanvas->control->object->ville;
+                        $contact->fk_pays=$soccanvas->control->object->fk_pays;
+                        $contact->socid=$soccanvas->control->object->id;					// fk_soc
                         $contact->status=1;
-                        $contact->email=$soccanvas->object->email;
+                        $contact->email=$soccanvas->control->object->email;
                         $contact->priv=0;
 
                         $result=$contact->create($user);
@@ -1742,28 +1745,28 @@ else
                 }
                 else
                 {
-                    $mesg=$soccanvas->object->error;
+                    $mesg=$soccanvas->control->object->error;
                 }
 
                 if ($result >= 0)
                 {
                     $db->commit();
 
-                    if ( $soccanvas->object->client == 1 )
+                    if ( $soccanvas->control->object->client == 1 )
                     {
-                        Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$soccanvas->object->id);
+                        Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$soccanvas->control->object->id);
                         return;
                     }
                     else
                     {
-                        if (  $soccanvas->object->fournisseur == 1 )
+                        if (  $soccanvas->control->object->fournisseur == 1 )
                         {
-                            Header("Location: ".DOL_URL_ROOT."/fourn/fiche.php?socid=".$soccanvas->object->id);
+                            Header("Location: ".DOL_URL_ROOT."/fourn/fiche.php?socid=".$soccanvas->control->object->id);
                             return;
                         }
                         else
                         {
-                            Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$soccanvas->object->id);
+                            Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$soccanvas->control->object->id);
                             return;
                         }
                     }
@@ -1774,7 +1777,7 @@ else
                     $db->rollback();
 
                     $langs->load("errors");
-                    $mesg=$langs->trans($soccanvas->object->error);
+                    $mesg=$langs->trans($soccanvas->control->object->error);
                     $_GET["action"]='create';
                 }
             }
@@ -1788,15 +1791,16 @@ else
                 }
 
                 $oldsoccanvas = new Canvas($db);
-                $oldsoccanvas->load_canvas('thirdparty@societe',$canvas);
+                $oldsoccanvas->load_canvas('card',$canvas);
+                $oldsoccanvas->load_control('edit');
                 $result=$oldsoccanvas->fetch($socid);
 
                 // To not set code if third party is not concerned. But if it had values, we keep them.
-                if (empty($soccanvas->object->client) && empty($oldsoccanvas->code_client))          $soccanvas->object->code_client='';
-                if (empty($soccanvas->object->fournisseur)&& empty($oldsoccanvas->code_fournisseur)) $soccanvas->object->code_fournisseur='';
+                if (empty($soccanvas->control->object->client) && empty($oldsoccanvas->control->object->code_client))          $soccanvas->control->object->code_client='';
+                if (empty($soccanvas->control->object->fournisseur)&& empty($oldsoccanvas->control->object->code_fournisseur)) $soccanvas->control->object->code_fournisseur='';
                 //var_dump($soccanvas);exit;
 
-                $result = $soccanvas->object->update($socid,$user,1,$oldsoccanvas->object->codeclient_modifiable(),$oldsoccanvas->object->codefournisseur_modifiable());
+                $result = $soccanvas->control->object->update($socid,$user,1,$oldsoccanvas->control->object->codeclient_modifiable(),$oldsoccanvas->control->object->codefournisseur_modifiable());
                 if ($result >= 0)
                 {
                     Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
@@ -1804,10 +1808,10 @@ else
                 }
                 else
                 {
-                    $soccanvas->object->id = $socid;
+                    $soccanvas->control->object->id = $socid;
                     $reload = 0;
 
-                    $mesg = $soccanvas->object->error;
+                    $mesg = $soccanvas->control->object->error;
                     $_GET["action"]= "edit";
                 }
             }
@@ -1902,15 +1906,17 @@ else
          */
         if ($user->rights->societe->creer)
         {
-            $title = $soccanvas->object->getTitle('create');
+            $soccanvas->load_control('create');
+            
+        	$title = $soccanvas->getTitle();
         	print_fiche_titre($title);
 
-            $soccanvas->object->assign_post();
+            $soccanvas->assign_post();
 
             // Assign values
-            $soccanvas->assign_values('create');
+            $soccanvas->assign_values();
 
-            dol_htmloutput_errors($soccanvas->object->error,$soccanvas->object->errors);
+            dol_htmloutput_errors($soccanvas->error,$soccanvas->errors);
 
             // Display canvas
             $soccanvas->display_canvas();
@@ -1923,27 +1929,27 @@ else
          * Company Fact Mode edition
          */
 
-    	$title = $soccanvas->object->getTitle('edit');
+    	$soccanvas->load_control('edit');
+    	
+    	$title = $soccanvas->getTitle();
         print_fiche_titre($title);
 
         if ($socid)
         {
         	if ($reload || ! $_POST["nom"])
             {
-                $soccanvas = new Canvas($db);
-                $soccanvas->load_canvas('thirdparty@societe',$canvas);
-                $soccanvas->object->id = $socid;
-                $soccanvas->fetch($socid, 'edit');
+                $soc->id = $socid;
+                $soccanvas->fetch($socid);
             }
             else
             {
-            	$soccanvas->object->assign_post();
+            	$soccanvas->assign_post();
             }
 
-            dol_htmloutput_errors($soccanvas->object->error,$soccanvas->object->errors);
+            dol_htmloutput_errors($soccanvas->error,$soccanvas->errors);
 
             // Assign values
-            $soccanvas->assign_values('edit');
+            $soccanvas->assign_values();
 
             // Display canvas
             $soccanvas->display_canvas();
@@ -1955,7 +1961,9 @@ else
          * Company Fact Sheet mode visu
          */
 
-        $soc->id = $socid;
+        $soccanvas->load_control('view');
+    
+    	$soc->id = $socid;
         $result=$soccanvas->fetch($socid);
         if ($result < 0)
         {
@@ -1963,13 +1971,13 @@ else
             exit;
         }
 
-        $head = societe_prepare_head($soc);
-        $title = $soccanvas->object->getTitle('view');
+        $head = societe_prepare_head($soccanvas->control->object);
+        $title = $soccanvas->getTitle('view');
 
         dol_fiche_head($head, 'company', $title, 0, 'company');
 
     	// Assign values
-        $soccanvas->assign_values('view');
+        $soccanvas->assign_values();
 
         // Display canvas
     	$soccanvas->display_canvas();

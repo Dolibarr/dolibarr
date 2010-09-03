@@ -31,7 +31,12 @@
 
 class Canvas
 {
+	var $card;
 	var $canvas;
+	var $module;
+	var $object;
+	var $control;
+	var $aliasmodule;		// for compatibility
 	var $template_dir;		// Directory with all core and external templates files
 	var $action;
 	var $smarty;
@@ -46,43 +51,103 @@ class Canvas
 	{
 		$this->db = $DB;
 	}
+	
+	/**
+	 * 	Return the title of card
+	 */
+	function getTitle()
+	{
+		return $this->control->getTitle($this->action);
+	}
+	
+	/**
+     *    Assigne les valeurs POST dans l'objet
+     */
+	function assign_post()
+	{
+		return $this->control->assign_post();
+	}
+	
+	/**
+	 * 	Fetch object values
+	 * 	@param		id			Element id
+	 */
+	function fetch($id)
+	{
+		return $this->control->object->fetch($id, $this->action);
+	}
 
 	/**
 	 * 	Load canvas
-	 * 	@param		element 	Element of canvas
-	 * 	@param		canvas		Name of canvas
+	 * 	@param		card	 	Type of card
+	 * 	@param		canvas		Name of canvas (ex: default@mymodule)
 	 */
-	function load_canvas($element,$canvas)
+	function load_canvas($card,$canvas)
 	{
 		global $langs;
 
-		$part1=$part3=$element;
-		$part2=$canvas;
-
-		// For compatibility
-		if (preg_match('/^([^@]+)@([^@]+)$/i',$element,$regs))
-		{
-			$part1=$regs[2];
-			$part3=$regs[1];
-		}
+		$this->card = $card;
 
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
 		{
-			$part1=$regs[2];
-			$part2=$regs[1];
+			$this->aliasmodule = $this->module = $regs[2];
+			$this->canvas = $regs[1];
+			
+			// For compatibility
+			if ($this->module == 'thirdparty') $this->aliasmodule = 'societe';
+		}
+		else
+		{
+			$this->error = $langs->trans('CanvasIsInvalid');
+			return 0;
 		}
 
-		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/'.$part3.'.'.$part2.'.class.php'))
+		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->module.'.'.$this->canvas.'.class.php'))
 		{
-			$filecanvas = DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/'.$part3.'.'.$part2.'.class.php';
-			$classname = ucfirst($part3).ucfirst($part2);
-			$this->template_dir = DOL_DOCUMENT_ROOT.'/'.$part1.'/canvas/'.$part2.'/tpl/';
+			// Include model class
+			$modelclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->module.'.'.$this->canvas.'.class.php';
+			include_once($modelclassfile);
+			
+			// Include common controller class
+			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->card.'.common.class.php';
+			include_once($controlclassfile);
+			
+			// Template dir
+			$this->template_dir = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/tpl/';
+		}
+		else
+		{
+			$this->error = $langs->trans('CanvasIsInvalid');
+			return 0;
+		}
+	}
+	
+	/**
+	 * 	Load type of action
+	 * 	@param	action	Type of action
+	 */
+	function load_control($action)
+	{
+		global $langs;
+		
+		$this->action = $action;
 
-			include_once($filecanvas);
-			$this->object = new $classname($this->db);
+		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php'))
+		{
+			// Include canvas controller class
+			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php';
+			include_once($controlclassfile);
+
+			// Instantiate canvas controller class
+			$controlclassname = ucfirst($this->card).ucfirst($this->canvas);
+			$this->control = new $controlclassname($this->db);
+			
+			// Instantiate model class
+			$modelclassname = ucfirst($this->module).ucfirst($this->canvas);
+			$this->control->object = new $modelclassname($this->db);
+			
+			// Need smarty
 			$this->smarty = $this->object->smarty;
-
-			return $this->object;
 		}
 		else
 		{
@@ -92,36 +157,21 @@ class Canvas
 	}
 
 	/**
-	 * 	Fetch object values
-	 * 	@param		id			Element id
-	 * 	@param		action		Type of action
-	 */
-	function fetch($id,$action='')
-	{
-		$this->action = $action;
-
-		$ret = $this->object->fetch($id,$action);
-		return $ret;
-	}
-
-	/**
 	 * 	Assign templates values
 	 * 	@param	action	Type of action
 	 */
-	function assign_values($action='')
+	function assign_values()
 	{
-		$this->action = $action;
-
 		if (!empty($this->smarty))
 		{
 			global $smarty;
 
-			$this->object->assign_smarty_values($smarty, $this->action);
+			$this->control->assign_smarty_values($smarty, $this->action);
 			$smarty->template_dir = $this->template_dir;
 		}
 		else
 		{
-			$this->object->assign_values($this->action);
+			$this->control->assign_values($this->action);
 		}
 
 	}
@@ -141,7 +191,7 @@ class Canvas
 		}
 		else
 		{
-			include($this->template_dir.$this->action.'.tpl.php');
+			include($this->template_dir.$this->card.'_'.$this->action.'.tpl.php');
 		}
 	}
 

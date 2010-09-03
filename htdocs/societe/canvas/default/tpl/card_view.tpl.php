@@ -21,7 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php if ($this->object->tpl['action_delete']) echo $this->object->tpl['action_delete']; ?>
+<?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
 
 <?php if ($mesg) { ?>
 <div class="error"><?php echo $mesg; ?></div>
@@ -34,30 +34,30 @@
 
 <tr>
 	<td width="20%"><?php echo $langs->trans('Name'); ?></td>
-	<td colspan="3"><?php echo $this->object->tpl['showrefnav']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
 
 <tr>
 	<td><?php echo $langs->trans('Prefix'); ?></td>
-	<td colspan="3"><?php echo $this->object->tpl['prefix_comm']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
 </tr>
 
-<?php if ($this->object->tpl['client']) { ?>
+<?php if ($this->control->tpl['client']) { ?>
 <tr>
 	<td><?php echo $langs->trans('CustomerCode'); ?></td>
-	<td colspan="3"><?php echo $this->object->tpl['code_client']; ?>
-	<?php if ($this->object->tpl['checkcustomercode'] <> 0) { ?>
+	<td colspan="3"><?php echo $this->control->tpl['code_client']; ?>
+	<?php if ($this->control->tpl['checkcustomercode'] <> 0) { ?>
 	<font class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</font>
 	<?php } ?>
 	</td>
 </tr>
 <?php } ?>
 
-<?php if ($this->object->tpl['fournisseur']) { ?>
+<?php if ($this->control->tpl['fournisseur']) { ?>
 <tr>
 	<td><?php echo $langs->trans('SupplierCode'); ?></td>
-	<td colspan="3"><?php echo $this->object->tpl['code_fournisseur']; ?>
-	<?php if ($this->object->tpl['checksuppliercode'] <> 0) { ?>
+	<td colspan="3"><?php echo $this->control->tpl['code_fournisseur']; ?>
+	<?php if ($this->control->tpl['checksuppliercode'] <> 0) { ?>
 	<font class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</font>
 	<?php } ?>
 	</td>
@@ -67,54 +67,54 @@
 <?php if ($conf->global->MAIN_MODULE_BARCODE) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
-	<td colspan="3"><?php echo $this->object->tpl['gencod']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['gencod']; ?></td>
 </tr>
 <?php } ?>
 
 <tr>
 	<td valign="top"><?php echo $langs->trans('Address'); ?></td>
-	<td colspan="3"><?php echo $this->object->tpl['address']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['address']; ?></td>
 </tr>
 
 <tr>
 	<td width="25%"><?php echo $langs->trans('Zip'); ?></td>
-	<td width="25%"><?php echo $this->object->tpl['cp']; ?></td>
+	<td width="25%"><?php echo $this->control->tpl['cp']; ?></td>
 	<td width="25%"><?php echo $langs->trans('Town'); ?></td>
-	<td width="25%"><?php echo $this->object->tpl['ville']; ?></td>
+	<td width="25%"><?php echo $this->control->tpl['ville']; ?></td>
 </tr>
 
 <tr>
 	<td><?php echo $langs->trans("Country"); ?></td>
-	<td colspan="3" nowrap="nowrap"><?php echo $this->object->tpl['country']; ?></td>
+	<td colspan="3" nowrap="nowrap"><?php echo $this->control->tpl['country']; ?></td>
 </tr>
 
 <tr>
 	<td><?php echo $langs->trans('State'); ?></td>
-	<td colspan="3"><?php echo $this->object->tpl['departement']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['departement']; ?></td>
 </tr>
 
 <tr>
 	<td><?php echo $langs->trans('Phone'); ?></td>
-	<td><?php echo $this->object->tpl['phone']; ?></td>
+	<td><?php echo $this->control->tpl['phone']; ?></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
-	<td><?php echo $this->object->tpl['fax']; ?></td>
+	<td><?php echo $this->control->tpl['fax']; ?></td>
 </tr>
 
 <tr>
 	<td><?php echo $langs->trans('EMail'); ?></td>
-	<td><?php echo $this->object->tpl['email'];; ?></td>
+	<td><?php echo $this->control->tpl['email'];; ?></td>
 	<td><?php echo $langs->trans('Web'); ?></td>
-	<td><?php echo $this->object->tpl['url']; ?></td>
+	<td><?php echo $this->control->tpl['url']; ?></td>
 </tr>
 
 <?php
 for ($i=1; $i<=4; $i++) {
-	if ($this->object->tpl['langprofid'.$i]!='-')	{
+	if ($this->control->tpl['langprofid'.$i]!='-')	{
 		if ($i==1 || $i==3) echo '<tr>';
-		echo '<td>'.$this->object->tpl['langprofid'.$i].'</td>';
-		echo '<td>'.$this->object->tpl['profid'.$i];
-		if ($this->object->tpl['profid'.$i]) {
-			if ($this->object->tpl['checkprofid'.$i] > 0) echo ' &nbsp; '.$this->object->tpl['urlprofid'.$i];
+		echo '<td>'.$this->control->tpl['langprofid'.$i].'</td>';
+		echo '<td>'.$this->control->tpl['profid'.$i];
+		if ($this->control->tpl['profid'.$i]) {
+			if ($this->control->tpl['checkprofid'.$i] > 0) echo ' &nbsp; '.$this->control->tpl['urlprofid'.$i];
 			else echo ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
 		}
 		echo '</td>';
@@ -130,7 +130,7 @@ for ($i=1; $i<=4; $i++) {
 
 <tr>
 	<td><?php echo $langs->trans('VATIsUsed'); ?></td>
-	<td><?php echo $this->object->tpl['tva_assuj']; ?></td>
+	<td><?php echo $this->control->tpl['tva_assuj']; ?></td>
 
 <?php if ($conf->use_javascript_ajax) { ?>
 <script language="JavaScript" type="text/javascript">
@@ -141,16 +141,16 @@ function CheckVAT(a) {
 <?php } ?>
 
 	<td nowrap="nowrap"><?php echo $langs->trans('VATIntra'); ?></td>
-	<td><?php echo $this->object->tpl['tva_intra']; ?></td>
+	<td><?php echo $this->control->tpl['tva_intra']; ?></td>
 </tr>
 
-<?php if(!empty($this->object->tpl['localtax'])) echo $this->object->tpl['localtax']; ?>
+<?php if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
 
 <tr>
 	<td><?php echo $langs->trans('Capital'); ?></td>
 	<td colspan="3">
 	<?php
-	if ($this->object->tpl['capital']) echo $this->object->tpl['capital'].' '.$langs->trans("Currency".$conf->monnaie);
+	if ($this->control->tpl['capital']) echo $this->control->tpl['capital'].' '.$langs->trans("Currency".$conf->monnaie);
 	else echo '&nbsp;';
 	?>
 	</td>
@@ -158,20 +158,20 @@ function CheckVAT(a) {
 
 <tr>
 	<td><?php echo $langs->trans('JuridicalStatus'); ?></td>
-	<td colspan="3"><?php echo $this->object->tpl['forme_juridique']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['forme_juridique']; ?></td>
 </tr>
 
 <tr>
 	<td><?php echo $langs->trans("Type"); ?></td>
-	<td><?php echo $this->object->tpl['typent']; ?></td>
+	<td><?php echo $this->control->tpl['typent']; ?></td>
 	<td><?php echo $langs->trans("Staff"); ?></td>
-	<td><?php echo $this->object->tpl['effectif']; ?></td>
+	<td><?php echo $this->control->tpl['effectif']; ?></td>
 </tr>
 
 <?php if ($conf->global->MAIN_MULTILANGS) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
-	<td colspan="3"><?php echo $this->object->tpl['default_lang']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['default_lang']; ?></td>
 </tr>
 <?php } ?>
 
@@ -182,7 +182,7 @@ function CheckVAT(a) {
 			<td><?php echo $langs->trans('RIB'); ?></td>
 			<td align="right">
 			<?php if ($user->rights->societe->creer) { ?>
-			<a href="<?php echo DOL_URL_ROOT.'/societe/rib.php?socid='.$this->object->tpl['id']; ?>"><?php echo $this->object->tpl['image_edit']; ?></a>
+			<a href="<?php echo DOL_URL_ROOT.'/societe/rib.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
 			<?php } ?>
@@ -190,7 +190,7 @@ function CheckVAT(a) {
 		</tr>
 	</table>
 	</td>
-	<td colspan="3"><?php echo $this->object->tpl['display_rib']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['display_rib']; ?></td>
 </tr>
 
 <tr>
@@ -200,7 +200,7 @@ function CheckVAT(a) {
 			<td><?php echo $langs->trans('ParentCompany'); ?></td>
 			<td align="right">
 			<?php if ($user->rights->societe->creer) { ?>
-			<a href="<?php echo DOL_URL_ROOT.'/societe/lien.php?socid='.$this->object->tpl['id']; ?>"><?php echo $this->object->tpl['image_edit']; ?></a>
+			<a href="<?php echo DOL_URL_ROOT.'/societe/lien.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
 			<?php } ?>
@@ -208,7 +208,7 @@ function CheckVAT(a) {
 		</tr>
 	</table>
 	</td>
-	<td colspan="3"><?php echo $this->object->tpl['parent_company']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['parent_company']; ?></td>
 </tr>
 
 <tr>
@@ -218,7 +218,7 @@ function CheckVAT(a) {
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
 			<td align="right">
 			<?php if ($user->rights->societe->creer) { ?>
-			<a href="<?php echo DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->object->tpl['id']; ?>"><?php echo $this->object->tpl['image_edit']; ?></a>
+			<a href="<?php echo DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
 			<?php } ?>
@@ -226,13 +226,13 @@ function CheckVAT(a) {
 		</tr>
 	</table>
 	</td>
-	<td colspan="3"><?php echo $this->object->tpl['sales_representatives'];	?></td>
+	<td colspan="3"><?php echo $this->control->tpl['sales_representatives'];	?></td>
 </tr>
 
 <?php if ($conf->adherent->enabled) { ?>
 <tr>
 	<td width="25%" valign="top"><?php echo $langs->trans("LinkedToDolibarrMember"); ?></td>
-	<td colspan="3"><?php echo $this->object->tpl['linked_member']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['linked_member']; ?></td>
 </tr>
 <?php } ?>
 

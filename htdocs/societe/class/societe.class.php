@@ -1301,6 +1301,7 @@ class Societe extends CommonObject
      *		\param		option			Sur quoi pointe le lien ('', 'customer', 'supplier', 'compta')
      *		\param		maxlen			Longueur max libelle
      *		\return		string			Chaine avec URL
+     *	FIXME not in business class
      */
     function getNomUrl($withpicto=0,$option='customer',$maxlen=0)
     {
@@ -1758,11 +1759,11 @@ class Societe extends CommonObject
     }
 
     /**
-     *      \brief      Verifie la validite d'un identifiant professionnel en
-     *                  fonction du pays de la societe (siren, siret, ...)
-     *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *      \param      soc             Objet societe
-     *      \return     int             <0 si ko, >0 si ok
+     *    Verifie la validite d'un identifiant professionnel en fonction du pays de la societe (siren, siret, ...)
+     *    @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *    @param      soc             Objet societe
+     *    @return     int             <0 si ko, >0 si ok
+     *    FIXME not in business class
      */
     function id_prof_check($idprof,$soc)
     {
@@ -1810,10 +1811,11 @@ class Societe extends CommonObject
     }
 
     /**
-     *      \brief      Renvoi url de verification d'un identifiant professionnal
-     *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *      \param      soc             Objet societe
-     *      \return     string          url ou chaine vide si aucune url connue
+     *   Renvoi url de verification d'un identifiant professionnal
+     *   @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *   @param      soc             Objet societe
+     *   @return     string          url ou chaine vide si aucune url connue
+     *   FIXME	not in business class
      */
     function id_prof_url($idprof,$soc)
     {
@@ -1997,9 +1999,9 @@ class Societe extends CommonObject
         }
     }
 
-    /*
-     *  \brief     Charge la liste des categories fournisseurs
-     *   \return    0 in success, <> 0 in error
+    /**
+     *  Charge la liste des categories fournisseurs
+     *  @return    0 in success, <> 0 in error
      */
     function AddFournisseurInCategory($categorie_id)
     {
@@ -2044,10 +2046,11 @@ class Societe extends CommonObject
     }
 
     /**
-     *      \brief      Retourne le formulaire de saisie d'un identifiant professionnel (siren, siret, etc...)
-     *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *      \param      htmlname        Nom de la zone input
-     * 		\param		preselected		Default value to show
+     *  Retourne le formulaire de saisie d'un identifiant professionnel (siren, siret, etc...)
+     *  @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *  @param      htmlname        Nom de la zone input
+     * 	@param		preselected		Default value to show
+     * 	FIXME not in business class
      */
     function show_input_id_prof($idprof,$htmlname,$preselected)
     {
@@ -2055,10 +2058,11 @@ class Societe extends CommonObject
     }
 
     /**
-     *      \brief      Retourne le formulaire de saisie d'un identifiant professionnel (siren, siret, etc...)
-     *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *      \param      htmlname        Nom de la zone input
-     * 		\param		preselected		Default value to show
+     *  Retourne le formulaire de saisie d'un identifiant professionnel (siren, siret, etc...)
+     *  @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *  @param      htmlname        Nom de la zone input
+     * 	@param		preselected		Default value to show
+     * 	FIXME not in business class
      */
     function get_input_id_prof($idprof,$htmlname,$preselected)
     {
@@ -2144,372 +2148,6 @@ class Societe extends CommonObject
             $this->db->rollback();
             return $result;
         }
-    }
-
-
-
-    // Functions for canvas feature (must be moved into template of page calling template)
-    // -----------------------------------------------------------------------------------
-
-
-
-    /**
-     *    \brief      Assigne les valeurs par defaut pour le canvas
-     *    \param      action     Type of template
-     *    FIXME        Do not use presentation code on a business class
-     */
-    function assign_values($action='')
-    {
-        global $conf, $langs, $user, $mysoc, $canvas;
-        global $form, $formadmin, $formcompany;
-
-        if ($_GET["type"]=='f')  		{ $this->fournisseur=1; }
-        if ($_GET["type"]=='c')  		{ $this->client=1; }
-        if ($_GET["type"]=='p')  		{ $this->client=2; }
-        if ($_GET["type"]=='cp') 		{ $this->client=3; }
-        if ($_REQUEST["private"]==1) 	{ $this->particulier=1;	}
-
-        foreach($this as $key => $value)
-        {
-            $this->tpl[$key] = $value;
-        }
-
-        if ($action == 'create' || $action == 'edit')
-        {
-            // Chargement ajax
-            $this->tpl['ajax_select_thirdpartytype'] = $this->ajax_selectThirdPartyType($canvas);
-            $this->tpl['ajax_select_country'] = $this->ajax_selectCountry($action,$canvas);
-
-            // Load object modCodeClient
-            $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-            if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
-            if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
-            {
-                $module = substr($module, 0, dol_strlen($module)-4);
-            }
-            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
-            $modCodeClient = new $module;
-            $this->tpl['auto_customercode'] = $modCodeClient->code_auto;
-            // We verified if the tag prefix is used
-            if ($modCodeClient->code_auto) $this->tpl['prefix_customercode'] = $modCodeClient->verif_prefixIsUsed();
-
-            // Load object modCodeFournisseur
-            $module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
-            if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-            if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
-            {
-                $module = substr($module, 0, dol_strlen($module)-4);
-            }
-            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
-            $modCodeFournisseur = new $module;
-            $this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
-            // We verified if the tag prefix is used
-            if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
-
-            // TODO create a function
-            $this->tpl['select_customertype'] = '<select class="flat" name="client">';
-            $this->tpl['select_customertype'].= '<option value="2"'.($this->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
-            $this->tpl['select_customertype'].= '<option value="3"'.($this->client==3?' selected="true"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="1"'.($this->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="0"'.($this->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
-            $this->tpl['select_customertype'].= '</select>';
-
-            // Customer
-            $this->tpl['customercode'] = $this->code_client;
-            if ((!$this->code_client || $this->code_client == -1) && $modCodeClient->code_auto) $this->tpl['customercode'] = $modCodeClient->getNextValue($this,0);
-            $this->tpl['ismodifiable_customercode'] = $this->codeclient_modifiable();
-            $s=$modCodeClient->getToolTip($langs,$this,0);
-            $this->tpl['help_customercode'] = $form->textwithpicto('',$s,1);
-
-            // Supplier
-            $this->tpl['yn_supplier'] = $form->selectyesno("fournisseur",$this->fournisseur,1);
-            $this->tpl['suppliercode'] = $this->code_fournisseur;
-            if ((!$this->code_fournisseur || $this->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this,1);
-            $this->tpl['ismodifiable_suppliercode'] = $this->codefournisseur_modifiable();
-            $s=$modCodeFournisseur->getToolTip($langs,$this,1);
-            $this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
-
-            $this->LoadSupplierCateg();
-            $this->tpl['suppliercategory'] = $this->SupplierCategories;
-            $this->tpl['select_suppliercategory'] = $form->selectarray("fournisseur_categorie",$this->SupplierCategories,$_POST["fournisseur_categorie"],1);
-
-            if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) $this->tpl['autofilltownfromzip'] = '<input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(\''.DOL_URL_ROOT.'\',cp.value,ville,pays_id,departement_id)">';
-
-            // Country
-            $this->tpl['select_country'] = $form->select_country($this->pays_id,'pays_id');
-            $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
-
-            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-
-            // State
-            if ($this->pays_id) $this->tpl['select_state'] = $formcompany->select_state($this->departement_id,$this->pays_code);
-            else $this->tpl['select_state'] = $countrynotdefined;
-
-            // Language
-            if ($conf->global->MAIN_MULTILANGS) $this->tpl['select_lang'] = $formadmin->select_language(($this->default_lang?$this->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
-
-            // VAT
-            $this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value',$this->tpl['tva_assuj'],1);	// Assujeti par defaut en creation
-
-            // Select users
-            $this->tpl['select_users'] = $form->select_dolusers($this->commercial_id,'commercial_id',1);
-
-            // Local Tax
-            // TODO mettre dans une classe propre au pays
-            if($mysoc->pays_code=='ES')
-            {
-                $this->tpl['localtax'] = '';
-
-                if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-                {
-                    $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->localtax1_assuj,1);
-                    $this->tpl['localtax'].= '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->localtax1_assuj,1);
-                    $this->tpl['localtax'].= '</td></tr>';
-                }
-                elseif($mysoc->localtax1_assuj=="1")
-                {
-                    $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->localtax1_assuj,1);
-                    $this->tpl['localtax'].= '</td><tr>';
-                }
-                elseif($mysoc->localtax2_assuj=="1")
-                {
-                    $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->localtax1_assuj,1);
-                    $this->tpl['localtax'].= '</td><tr>';
-                }
-            }
-
-        }
-
-        if ($action == 'view')
-        {
-            $this->tpl['showrefnav'] 		= $form->showrefnav($this,'socid','',($user->societe_id?0:1),'rowid','nom');
-
-            $this->tpl['checkcustomercode'] = $this->check_codeclient();
-            $this->tpl['checksuppliercode'] = $this->check_codefournisseur();
-            $this->tpl['address'] 			= dol_nl2br($this->address);
-
-            $img=picto_from_langcode($this->pays_code);
-            if ($this->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->pays,$langs->trans("CountryIsInEEC"),1,0);
-            $this->tpl['country'] = ($img?$img.' ':'').$this->pays;
-
-            $this->tpl['phone'] 	= dol_print_phone($this->tel,$this->pays_code,0,$this->id,'AC_TEL');
-            $this->tpl['fax'] 		= dol_print_phone($this->fax,$this->pays_code,0,$this->id,'AC_FAX');
-            $this->tpl['email'] 	= dol_print_email($this->email,0,$this->id,'AC_EMAIL');
-            $this->tpl['url'] 		= dol_print_url($this->url);
-
-            $this->tpl['tva_assuj']		= yn($this->tpl['tva_assuj']);
-
-            // Third party type
-            $arr = $formcompany->typent_array(1);
-            $this->tpl['typent'] = $arr[$this->typent_code];
-
-            if ($conf->global->MAIN_MULTILANGS)
-            {
-                require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-                //$s=picto_from_langcode($this->default_lang);
-                //print ($s?$s.' ':'');
-                $langs->load("languages");
-                $this->tpl['default_lang'] = ($this->default_lang?$langs->trans('Language_'.$this->default_lang):'');
-            }
-
-            $this->tpl['image_edit']	= img_edit();
-
-            $this->tpl['display_rib']	= $this->display_rib();
-
-            // Sales representatives
-            $sql = "SELECT count(sc.rowid) as nb";
-            $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql.= " WHERE sc.fk_soc =".$this->id;
-            $resql = $this->db->query($sql);
-            if ($resql)
-            {
-                $num = $this->db->num_rows($resql);
-                $obj = $this->db->fetch_object($resql);
-                $this->tpl['sales_representatives'] = $obj->nb?($obj->nb):$langs->trans("NoSalesRepresentativeAffected");
-            }
-            else
-            {
-                dol_print_error($this->db);
-            }
-
-            // Linked member
-            if ($conf->adherent->enabled)
-            {
-                $langs->load("members");
-                $adh=new Adherent($this->db);
-                $result=$adh->fetch('','',$this->id);
-                if ($result > 0)
-                {
-                    $adh->ref=$adh->getFullName($langs);
-                    $this->tpl['linked_member'] = $adh->getNomUrl(1);
-                }
-                else
-                {
-                    $this->tpl['linked_member'] = $langs->trans("UserNotLinkedToMember");
-                }
-            }
-
-            // Local Tax
-            // TODO mettre dans une classe propre au pays
-            if($mysoc->pays_code=='ES')
-            {
-                $this->tpl['localtax'] = '';
-
-                if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-                {
-                    $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
-                    $this->tpl['localtax'].= '<td>'.yn($this->localtax1_assuj).'</td>';
-                    $this->tpl['localtax'].= '<td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
-                    $this->tpl['localtax'].= '<td>'.yn($this->localtax2_assuj).'</td></tr>';
-                }
-                elseif($mysoc->localtax1_assuj=="1")
-                {
-                    $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
-                    $this->tpl['localtax'].= '<td colspan="3">'.yn($this->localtax1_assuj).'</td></tr>';
-                }
-                elseif($mysoc->localtax2_assuj=="1")
-                {
-                    $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
-                    $this->tpl['localtax'].= '<td colspan="3">'.yn($this->localtax2_assuj).'</td></tr>';
-                }
-            }
-        }
-    }
-
-    /**
-     *    Assigne les valeurs POST dans l'objet
-     *    FIXME        Do not use presentation code on a business class
-     */
-    function assign_post()
-    {
-        global $langs, $mysoc;
-
-        $this->id					=	$_POST["socid"];
-        $this->nom					=	$_POST["nom"];
-        $this->prefix_comm			=	$_POST["prefix_comm"];
-        $this->client				=	$_POST["client"];
-        $this->code_client			=	$_POST["code_client"];
-        $this->fournisseur			=	$_POST["fournisseur"];
-        $this->code_fournisseur		=	$_POST["code_fournisseur"];
-        $this->adresse				=	$_POST["adresse"]; // TODO obsolete
-        $this->address				=	$_POST["adresse"];
-        $this->cp					=	$_POST["cp"];
-        $this->ville				=	$_POST["ville"];
-        $this->pays_id				=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
-        $this->departement_id		=	$_POST["departement_id"];
-        $this->tel					=	$_POST["tel"];
-        $this->fax					=	$_POST["fax"];
-        $this->email				=	$_POST["email"];
-        $this->url					=	$_POST["url"];
-        $this->capital				=	$_POST["capital"];
-        $this->siren				=	$_POST["idprof1"];
-        $this->siret				=	$_POST["idprof2"];
-        $this->ape					=	$_POST["idprof3"];
-        $this->idprof4				=	$_POST["idprof4"];
-        $this->typent_id			=	$_POST["typent_id"];
-        $this->effectif_id			=	$_POST["effectif_id"];
-        $this->gencod				=	$_POST["gencod"];
-        $this->forme_juridique_code	=	$_POST["forme_juridique_code"];
-        $this->default_lang			=	$_POST["default_lang"];
-        $this->commercial_id		=	$_POST["commercial_id"];
-
-        $this->tva_assuj 			= 	$_POST["assujtva_value"]?$_POST["assujtva_value"]:1;
-        $this->tva_intra			=	$_POST["tva_intra"];
-
-        //Local Taxes
-        $this->localtax1_assuj		= 	$_POST["localtax1assuj_value"];
-        $this->localtax2_assuj		= 	$_POST["localtax2assuj_value"];
-
-        // We set pays_id, and pays_code label of the chosen country
-        if ($this->pays_id)
-        {
-            $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_pays WHERE rowid = ".$this->pays_id;
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                $obj = $this->db->fetch_object($resql);
-            }
-            else
-            {
-                dol_print_error($this->db);
-            }
-            $this->pays_code	=	$obj->code;
-            $this->pays			=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
-        }
-    }
-
-    /**
-     *    FIXME        Do not use presentation code on a business class
-     *                  This code is used by non standard feature of canvas
-     */
-    function ajax_selectThirdPartyType($canvas)
-    {
-        global $conf, $langs;
-
-        $out='';
-
-        if ($conf->use_javascript_ajax)
-        {
-            $out.= "\n".'<script type="text/javascript" language="javascript">'."\n";
-            $out.= 'jQuery(document).ready(function () {
-		              jQuery("#radiocompany").click(function() {
-                            document.formsoc.action.value="create";
-                            document.formsoc.canvas.value="'.$canvas.'";
-                            document.formsoc.private.value=0;
-                            document.formsoc.submit();
-		              });
-		               jQuery("#radioprivate").click(function() {
-                            document.formsoc.action.value="create";
-                            document.formsoc.canvas.value="'.$canvas.'";
-                            document.formsoc.private.value=1;
-                            document.formsoc.submit();
-                      });
-		          });';
-            $out.= '</script>'."\n";
-
-            $out.= "<br>\n";
-            $out.= $langs->trans("ThirdPartyType").': &nbsp; ';
-            $out.= '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.(! $_REQUEST["private"]?' checked="true"':'');
-            $out.= '> '.$langs->trans("Company/Fundation");
-            $out.= ' &nbsp; &nbsp; ';
-            $out.= '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.(! $_REQUEST["private"]?'':' checked="true"');
-            $out.= '> '.$langs->trans("Individual");
-            $out.= ' ('.$langs->trans("ToCreateContactWithSameName").')';
-            $out.= "<br>\n";
-            $out.= "<br>\n";
-        }
-
-        return $out;
-    }
-
-    /**
-     *    FIXME        Do not use presentation code on a business class
-     *                  This code is used by non standard feature of canvas
-     */
-    function ajax_selectCountry($action,$canvas)
-    {
-        global $conf;
-
-        $out='';
-
-        if ($conf->use_javascript_ajax)
-        {
-            $out.= "\n".'<script type="text/javascript" language="javascript">'."\n";
-            $out.= 'jQuery(document).ready(function () {
-                        jQuery("#selectpays_id").change(function() {
-                            document.formsoc.action.value="'.$action.'";
-                            document.formsoc.canvas.value="'.$canvas.'";
-                            document.formsoc.submit();
-                        });
-                   })';
-            $out.= '</script>'."\n";
-        }
-
-        return $out;
     }
 
 }

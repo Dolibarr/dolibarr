@@ -31,37 +31,14 @@ class ThirdPartyIndividual extends Societe
 {
 	//! Numero d'erreur Plage 1280-1535
 	var $errno = 0;
-	//! Template container
-	var $tpl = array();
 
 	/**
 	 *    \brief      Constructeur de la classe
 	 *    \param      DB          Handler acces base de donnees
-	 *    \param      id          Id produit (0 par defaut)
 	 */
 	function ThirdPartyIndividual($DB)
 	{
-		$this->db 				= $DB;
-
-		$this->smarty			= 0;
-		$this->module 			= "societe";
-		$this->canvas 			= "individual";
-		$this->name 			= "individual";
-		$this->definition 		= "Canvas des particuliers";
-		$this->fieldListName    = "thirdparty_individual";
-	}
-
-	function getTitle($action)
-	{
-		global $langs;
-		
-		$out='';
-
-		if ($action == 'view') 		$out.= $langs->trans("Individual");
-		if ($action == 'edit') 		$out.= $langs->trans("EditIndividual");
-		if ($action == 'create')	$out.= $langs->trans("NewIndividual");
-		
-		return $out;
+		$this->db = $DB;
 	}
 
 	/**
@@ -77,33 +54,7 @@ class ThirdPartyIndividual extends Societe
 	}
 
 	/**
-	 *    Assign custom values for canvas
-	 *    @param      action     Type of action
-	 */
-	function assign_values($action='')
-	{
-		global $conf, $langs, $user, $mysoc;
-		global $form, $formadmin, $formcompany;
-			
-		parent::assign_values($action);
-		
-		if ($action == 'create' || $action == 'edit')
-		{
-			$this->tpl['select_civility'] = $formcompany->select_civility($contact->civilite_id);
-		}
-		
-		if ($action == 'view')
-		{
-			// Confirm delete third party
-			if ($_GET["action"] == 'delete')
-			{
-				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->id,$langs->trans("DeleteAnIndividual"),$langs->trans("ConfirmDeleteIndividual"),"confirm_delete",'',0,2);
-			}
-		}
-	}
-
-	/**
-	 * 	\brief	Fetch datas list
+	 * 	Fetch datas list
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
