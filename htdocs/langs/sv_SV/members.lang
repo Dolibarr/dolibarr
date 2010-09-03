@@ -159,3 +159,17 @@ NoThirdPartyAssociatedToMember=Ingen tredje part som är associerade till denna 
 ThirdPartyDolibarr=Dolibarr tredje part
 MembersAndSubscriptions=Medlemmar och Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2010-08-27 08:51:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:29:02).
+// Reference language: en_US -> sv_SV
+MoreActions=Kompletterande åtgärder för inspelning
+MoreActionBankDirect=Skapa en direkt transaktionsregister på grund
+MoreActionBankViaInvoice=Skapa en faktura och delbetalning
+MoreActionInvoiceOnly=Skapa en faktura utan betalning
+LinkToGeneratedPages=Generera besök kort
+LinkToGeneratedPagesDesc=Den här skärmen kan du skapa PDF-filer med visitkort för alla dina medlemmar eller en viss medlem.
+DocForAllMembersCards=Generera visitkort för alla medlemmar (Format för utgång faktiskt setup: <b>%s)</b>
+DocForOneMemberCards=Generera visitkort för en viss medlem (Format för utgång faktiskt setup: <b>%s)</b>
+DocForLabels=Generera adress ark (Format för utgång faktiskt setup: <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:29:12).

@@ -1162,3 +1162,15 @@ OnPayment=Mot betalning
 OnInvoice=På faktura
 SupposedToBePaymentDate=Betalningsdag användas om leveranstid okänd
 // STOP - Lines generated via autotranslator.php tool (2010-08-28 13:10:23).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:29:02).
+// Reference language: en_US -> sv_SV
+ModulesMarketPlaceDesc=Du kan hitta fler moduler för att ladda ner på externa webbplatser på Internet ...
+ModulesMarketPlaces=Fler moduler ...
+DoliStoreDesc=DoliStore, den officiella marknadsplatsen för Dolibarr ERP / CRM externa moduler
+WebSiteDesc=Webbplats leverantörer kan du söka för att hitta fler moduler ...
+URL=Länk
+OfficialMarketPlace=Officiella marknadsplats för externa moduler / addons
+FreeLegalTextOnInterventions=Fri text om ingripande handlingar
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:30:00).
