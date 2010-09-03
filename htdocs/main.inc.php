@@ -941,15 +941,15 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	print "\n".'<!-- Start top horizontal menu -->'."\n";
 	print '<div class="tmenu">'."\n";
 
-    $topmenu=$conf->top_menu;
-    if (GETPOST('topmenu')) $topmenu=GETPOST('topmenu');
+    $top_menu=$conf->top_menu;
+    if (GETPOST('top_menu')) $top_menu=GETPOST('top_menu');
 
 	// Load the top menu manager
-	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$topmenu);
+	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$top_menu);
 	if (! $result)	// If failed to include, we try with standard
 	{
 		$conf->top_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$topmenu);
+		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$top_menu);
 	}
 	$menutop = new MenuTop($db);
 	$menutop->atarget=$target;
@@ -1094,15 +1094,15 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	print '<!-- Begin left vertical menu -->'."\n";
 	print '<div class="vmenu">'."\n";
 
-    $leftmenu=$conf->left_menu;
-    if (GETPOST('leftmenu')) $leftmenu=GETPOST('leftmenu');
+    $left_menu=$conf->left_menu;
+    if (GETPOST('left_menu')) $left_menu=GETPOST('left_menu');
 
     // Load the left menu manager
-	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$leftmenu);
+	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$left_menu);
 	if (! $result)
 	{
 		$conf->left_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$leftmenu);
+		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$left_menu);
 	}
 	$menuleft=new MenuLeft($db,$menu_array_before,$menu_array_after);
 	$menuleft->showmenu(); // output menu_array and menu found in database
