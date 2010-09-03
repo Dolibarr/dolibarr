@@ -1956,10 +1956,10 @@ else
          */
 
         $soc->id = $socid;
-        $result=$soc->fetch($socid);
+        $result=$soccanvas->fetch($socid);
         if ($result < 0)
         {
-            dol_print_error($db,$soc->error);
+            dol_print_error($db,$soccanvas->error);
             exit;
         }
 
