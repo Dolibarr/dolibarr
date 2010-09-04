@@ -76,24 +76,25 @@ if ($_POST["action"] == "set")
 	if ($db->connected == 1)
 	{
 		print "<tr><td>";
-		print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td>".$langs->trans("OK")."</td></tr>";
+		print $langs->trans("ServerConnection")." : ".$conf->db->host."</td><td>".$langs->trans("OK")."</td></tr>";
 		$ok = 1 ;
 	}
 	else
 	{
-		print "<tr><td>Erreur lors de la creation de : $dolibarr_main_db_name</td><td>".$langs->trans("Error")."</td></tr>";
+		print "<tr><td>Failed to connect to server : ".$conf->db->host."</td><td>".$langs->trans("Error")."</td></tr>";
 	}
 
 	if ($ok)
 	{
 		if($db->database_selected == 1)
 		{
-
-			dolibarr_install_syslog("etape2: Connexion successful to database : $dolibarr_main_db_name");
+			dolibarr_install_syslog("etape2: Connexion successful to database : ".$conf->db->name);
 		}
 		else
 		{
-			$ok = 0 ;
+            dolibarr_install_syslog("etape2: Connexion failed to database : ".$conf->db->name);
+		    print "<tr><td>Failed to select database ".$conf->db->name."</td><td>".$langs->trans("Error")."</td></tr>";
+		    $ok = 0 ;
 		}
 	}
 
@@ -489,40 +490,57 @@ if ($_POST["action"] == "set")
 			dolibarr_install_syslog("Open data file ".$dir.$file." handle=".$fp,LOG_DEBUG);
 			if ($fp)
 			{
+			    $arrayofrequests=array();
+                $linefound=0;
+                $linegroup=0;
+                $sizeofgroup=1; // Grouping request to have 1 query for several requests does not works with mysql, so we use 1.
+
+			    // Load all requests
 				while (!feof ($fp))
 				{
 					$buffer = fgets($fp, 4096);
 					$buffer = trim($buffer);
 					if ($buffer)
 					{
-						if (substr($buffer, 0, 2) == '--')
-						{
-							continue;
-						}
+						if (substr($buffer, 0, 2) == '--') continue;
 
-						//dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
-						$resql=$db->query($buffer);
-						if ($resql)
+						if ($linefound && ($linefound % $sizeofgroup) == 0)
 						{
-							$ok = 1;
-							//$db->free($resql);     // Not required as request we launch here does not return memory needs.
+                            $linegroup++;
+						}
+                        if (empty($arrayofrequests[$linegroup])) $arrayofrequests[$linegroup]=$buffer;
+                        else $arrayofrequests[$linegroup].=" ".$buffer;
+
+						$linefound++;
+					}
+                }
+                fclose($fp);
+
+                dolibarr_install_syslog("Found ".$linefound." records, defined ".sizeof($arrayofrequests)." groups.",LOG_DEBUG);
+
+                // We loop on each requests
+                foreach($arrayofrequests as $buffer)
+                {
+					//dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
+					$resql=$db->query($buffer);
+					if ($resql)
+					{
+						$ok = 1;
+						//$db->free($resql);     // Not required as request we launch here does not return memory needs.
+					}
+					else
+					{
+						if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+						{
+							//print "<tr><td>Insertion ligne : $buffer</td><td>";
 						}
 						else
 						{
-							if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-							{
-								//print "<tr><td>Insertion ligne : $buffer</td><td>";
-							}
-							else
-							{
-								$ok = 0;
-								print $langs->trans("ErrorSQL")." : ".$db->lasterrno()." - ".$db->lastqueryerror()." - ".$db->lasterror()."<br>";
-							}
+							$ok = 0;
+							print $langs->trans("ErrorSQL")." : ".$db->lasterrno()." - ".$db->lastqueryerror()." - ".$db->lasterror()."<br>";
 						}
-
 					}
 				}
-				fclose($fp);
 			}
 		}
 
