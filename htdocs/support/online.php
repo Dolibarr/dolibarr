@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
 			$widgetid=$listofwidgets[$pos-1];
 
 			// Widget V3
-			print '<iframe src="http://www.spark-angels.com/static/widget/template-pro3/widgetpro3-iframe.html?widgetId='.$widgetid.'&lgCode='.$langcode.'&'.$arraywidget['logo'].'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
+			print '<iframe src="http://www.spark-angels.com/static/widget/template-pro3/widgetpro3-iframe.html?widgetId='.$widgetid.'&lgCode='.$langcode.'&'.(isset($arraywidget['logo'])?$arraywidget['logo']:'').'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
 
 			print '</td>';
 			$found++;
