@@ -1,0 +1,96 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+Proposals=商业建议
+Proposal=商业建议
+ProposalShort=建议
+ProposalsDraft=商业建议草案
+ProposalDraft=商业建议草案
+ProposalsOpened=新开张的商业建议
+Prop=商业建议
+CommercialProposal=商业建议
+CommercialProposals=商业建议
+ProposalContact=建议接触
+NewProp=新的商业建议
+NewProposal=新的商业建议
+NewPropal=新建议
+Prospect=展望
+ProspectList=展望名单
+DeleteProp=商业建议删除
+ValidateProp=验证的商业建议
+AddProp=新增提案
+ConfirmDeleteProp=你确定要删除这个商业建议？
+ConfirmValidateProp=你确定要验证这个商业建议？
+LastPropals=最后％的提议
+LastClosedProposals=最后％的封闭式建议
+LastModifiedProposals=最后％s的修订建议
+AllPropals=所有提案
+LastProposals=最后建议
+SearchAProposal=搜索建议
+ProposalsStatistics=商业建议的统计数字
+NumberOfProposalsByMonth=按月份数
+AmountOfProposalsByMonthHT=按月份金额（税后）
+NbOfProposals=商业建议数
+ShowPropal=显示建议
+PropalsDraft=草稿
+PropalsOpened=开业
+PropalsNotBilled=闭不计费
+PropalStatusDraft=草案（需要验证）
+PropalStatusValidated=验证（建议打开）
+PropalStatusOpened=验证（建议打开）
+PropalStatusClosed=关闭
+PropalStatusSigned=签名（需要收费）
+PropalStatusNotSigned=不签署（非公开）
+PropalStatusBilled=帐单
+PropalStatusDraftShort=草案
+PropalStatusValidatedShort=验证
+PropalStatusOpenedShort=开业
+PropalStatusClosedShort=关闭
+PropalStatusSignedShort=签名
+PropalStatusNotSignedShort=未签署
+PropalStatusBilledShort=帐单
+PropalsToClose=商业建议关闭
+PropalsToBill=到法案签署商业建议
+ListOfProposals=商业建议名单
+ActionsOnPropal=行动上的建议
+NoOpenedPropals=没有开放的商业建议
+NoOtherOpenedPropals=没有其他打开的商业建议
+RefProposal=商业建议参考
+SendPropalByMail=通过邮件发送的商业建议
+FileNotUploaded=该文件没有上载
+FileUploaded=该文件被成功上传
+AssociatedDocuments=相关文件的建议：
+ErrorCantOpenDir=无法打开目录
+DatePropal=日期的建议
+DateEndPropal=有效期结束日期
+DateEndPropalShort=结束日期
+ValidityDuration=有效期
+CloseAs=密切与地位
+ClassifyBilled=分类计费
+BuildBill=建立发票
+ErrorPropalNotFound=Propal％s不符合
+Estimate=估计：
+EstimateShort=估计
+OtherPropals=其他建议
+CopyPropalFrom=通过复制现有的商业建议提案
+CreateEmptyPropal=创建空的商业建议维耶热或从产品/服务列表
+DefaultProposalDurationValidity=默认的商业建议有效期（天数）
+UseCustomerContactAsPropalRecipientIfExist=使用客户联系地址，如果定义的，而不是作为提案的第三党的地址收件人地址
+ClonePropal=克隆的商业建议
+ConfirmClonePropal=你确定要克隆这种商业建议<b>％s吗</b> ？
+ProposalsAndProposalsLines=商业建议和行
+ProposalLine=建议行
+TypeContact_propal_internal_SALESREPFOLL=代表随访的建议
+TypeContact_propal_external_BILLING=客户发票接触
+TypeContact_propal_external_CUSTOMER=客户联系随访的建议
+DocModelAzurDescription=一个完整的方案模型（logo. ..）
+DocModelJauneDescription=特贾恩方案模型
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+

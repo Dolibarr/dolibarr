@@ -139,3 +139,11 @@ BankTransactionLine=Transação Bancária
 AllAccounts=Todas as Contas bancarias/de Caixa
 BackToAccount=Voltar e a Conta
 ShowAllAccounts=Mostrar para todas as Contas
+
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+BankAccountCountry=Conta do país
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:37).

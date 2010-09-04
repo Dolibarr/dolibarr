@@ -121,7 +121,7 @@ ProductAssociationList=Lista powiązanych produktów / usług: nazwa produktu / 
 ErrorAssociationIsFatherOfThis=Jednym z wybranego produktu jest rodzicem bieżącego produktu
 DeleteProduct=Usuwanie produktu / usługi
 ConfirmDeleteProduct=Czy na pewno chcesz usunąć ten produkt / usługa?
-ProductDeleted=Produktu / usługi &quot; %s&quot; usunięty z bazy danych.
+ProductDeleted=Produktu / usługi " %s" usunięty z bazy danych.
 DeletePicture=Usuń obraz
 ConfirmDeletePicture=Czy na pewno chcesz usunąć to zdjęcie?
 ExportDataset_produit_1=Produkty i usługi
@@ -141,7 +141,7 @@ NoSupplierPriceDefinedForThisProduct=Nr dostawcy cena / qty określonych dla teg
 RecordedProducts=Produkty zarejestrowane
 RecordedProductsAndServices=Produkty / usługi zapisane
 GenerateThumb=Wygeneruj kciuka
-ProductCanvasAbility=Użyj specjalnych &quot;płótnie&quot; addons
+ProductCanvasAbility=Użyj specjalnych "płótnie" addons
 ServiceNb=Service # %s
 ListProductByPopularity=Lista produktów / usług przez popularność
 Finished=Producent produktu
@@ -168,3 +168,25 @@ ClonePricesProduct=Clone główne informacje i ceny
 // Reference language: en_US
 LastRecordedProductsAndServices=Ostatnia %s rejestrowane produkty / usługi
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+ProductAccountancyBuyCode=Kod Rachunkowości (kupić)
+ProductAccountancySellCode=Kod Rachunkowości (sprzedaż)
+Sell=Sprzedaży
+Buy=Zakupy
+OnBuy=Zakupionych
+ProductStatusOnBuy=Dostępny
+ProductStatusNotOnBuy=Przestarzały
+ProductStatusOnBuyShort=Dostępny
+ProductStatusNotOnBuyShort=Przestarzały
+SellingPriceHT=Cena sprzedaży (bez podatku)
+SellingPriceTTC=Cena sprzedaży (w tym podatkowych)
+ListProductServiceByPopularity=Wykaz produktów / usług przez popularność
+ListServiceByPopularity=Wykaz usług według popularności
+ProductIsUsed=Ten produkt jest używany
+NewRefForClone=Ref. nowych produktów / usług
+CustomerPrices=Klientów cenami
+SuppliersPrices=Dostawcy cen
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:23).

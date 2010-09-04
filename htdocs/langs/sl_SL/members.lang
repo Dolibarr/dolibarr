@@ -151,3 +151,17 @@ NoThirdPartyAssociatedToMember=Noben partner ni povezan s tem članom
 ThirdPartyDolibarr=Dolibarr partner
 MembersAndSubscriptions = Člani in naročnine
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> sl_SL
+MoreActions=Dopolnilna dejavnost na snemanje
+MoreActionBankDirect=Ustvarjanje neposredne transakcije zapis na račun
+MoreActionBankViaInvoice=Ustvarjanje računa in plačila na račun
+MoreActionInvoiceOnly=Ustvarite račun brez plačila
+LinkToGeneratedPages=Ustvari kartice obisk
+LinkToGeneratedPagesDesc=Ta zaslon vam omogoča, da ustvarite PDF datotek z vizitke za vse vaše člane ali določene države.
+DocForAllMembersCards=Ustvari vizitke za vse člane (Format za izhod dejansko setup: <b>%s)</b>
+DocForOneMemberCards=Ustvari vizitke za določen član (Format za izhod dejansko setup: <b>%s)</b>
+DocForLabels=Ustvari listov naslov (Format za izhod dejansko setup: <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:38).

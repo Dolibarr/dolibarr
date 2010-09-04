@@ -32,11 +32,11 @@ NbOfInvoiceToWithdraw=Nb faktury z wycofać wniosek
 InvoiceWaitingWithdraw=Faktura czeka na wycofać
 AmountToWithdraw=Kwota do wycofania
 WithdrawsRefused=Wycofuje odmówił
-NoInvoiceToWithdraw=Nr klienta zapłaty faktury w trybie &quot;wycofania&quot; czeka. Idź na &quot;Wypłata&quot; kartę na fakturze kartę do złożenia wniosku.
+NoInvoiceToWithdraw=Nr klienta zapłaty faktury w trybie "wycofania" czeka. Idź na "Wypłata" kartę na fakturze kartę do złożenia wniosku.
 ResponsibleUser=Odpowiedzialny użytkownika
 WithdrawalsSetup=Wycofanie konfiguracji
 WithdrawStatistics=Wycofuje statystyk
-WithdrawRejectStatistics=Wypłaty odrzuca &quot;statystyki
+WithdrawRejectStatistics=Wypłaty odrzuca "statystyki
 LastWithdrawalReceipt=Ostatnia %s wycofanie wpływy
 MakeWithdrawRequest=Zrób wycofać wniosek
 ThirdPartyBankCode=Trzeciej kod banku
@@ -46,3 +46,44 @@ ClassCredited=Klasyfikacja zapisane
 ClassCreditedConfirm=Czy na pewno chcesz to wycofanie otrzymania sklasyfikowania jako wpłacone na konto bankowe?
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> pl_PL
+StandingOrderToProcess=Do procesu
+StandingOrderProcessed=Przetworzony
+TransData=Data Transmission
+TransMetod=Tryb transmisji
+Send=Wysłać
+Lines=Linie
+StandingOrderReject=Problem odrzucenia
+WithdrawalRefused=Wypłaty Refuseds
+WithdrawalRefusedConfirm=Czy na pewno chcesz wprowadzić odrzucenie wycofania dla społeczeństwa
+RefusedData=Od odrzucenia
+RefusedReason=Powodem odrzucenia
+RefusedInvoicing=Rozliczeniowych odrzucenia
+NoInvoiceRefused=Nie za odrzucenie
+InvoiceRefused=Za odrzucenie klienta
+Status=Status
+StatusUnknown=Nieznany
+StatusWaiting=Czekanie
+StatusCredited=Dobro
+StatusRefused=Odmówił
+StatusMotif0=Nieokreślone
+StatusMotif1=Przepis insuffisante
+StatusMotif2=conteste liqueur
+StatusMotif3=Wycofanie zamówienia nie
+StatusMotif4=Zamówienia klientów
+StatusMotif5=RIB inexploitable
+StatusMotif6=Salda rachunku bez
+StatusMotif7=Orzeczenia sądowego
+StatusMotif8=Inny powód
+CreateAll=Wycofania wszystkich
+CreateGuichet=Tylko biuro
+CreateBanque=Tylko bank
+OrderWaiting=Oczekiwania na leczenie
+NotifyTransmision=Wycofanie Przekazanie
+NotifyEmision=Wycofanie emisji
+NotifyCredit=Odstąpienia od umowy kredytowej
+NumeroNationalEmetter=Krajowy numer nadajnika
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:06).

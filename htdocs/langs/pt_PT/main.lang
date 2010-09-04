@@ -160,7 +160,6 @@ Action=Acção
 Model=Modelo
 DefaultModel=Modelo por defeito
 About=Acerca de
-WelcomeString=<font class="body">Somos</font> %s<font class="body">, e liga-se como</font> %s
 Number=Número
 Numero=Número
 Limit=Límite
@@ -550,3 +549,51 @@ CloneMainAttributes=Clone objeto com os seus principais atributos
 PDFMerge=PDF Merge
 Merge=Junção
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> pt_PT
+FormatHourShortDuration=%H:%M
+NoError=Nenhum erro
+ErrorNoSocialContributionForSellerCountry=Erro, nenhum tipo de contribuição social definida para o país &quot;%s&quot;.
+BackgroundColorByDefault=Default cor de fundo
+FileWasNotUploaded=Um arquivo é selecionado para o acessório, mas ainda não estava carregado. Clique em &quot;Anexar arquivo&quot; para isso.
+NbOfEntries=Nb de entradas
+Resize=Redimensionar
+Recenter=Centrar
+NumberByMonth=Número por mês
+KiloBytes=Kilobytes
+MegaBytes=Megabytes
+GigaBytes=Gigabytes
+b=b.
+Kb=Kb
+Mb=Mb
+Gb=Gb
+AmountLT1ES=Montante RE
+AmountLT2ES=Montante IRPF
+TotalLT1ES=Total de RE
+TotalLT2ES=Total IRPF
+Available=Disponível
+Examples=Exemplos
+SendByMail=Enviar por e-mail
+DocumentsNb=arquivos vinculados (%s)
+PrintContentArea=Visualizar página para impressão área de conteúdo principal
+NoMenu=No sub-menu
+WarningYouAreInMaintenanceMode=Atenção, você está em um modo de manutenção, tão somente <b>%s</b> login é permitido o uso de aplicativos no momento.
+CreditCard=cartões de crédito
+FieldsWithAreMandatory=Os campos com <b>%s</b> são obrigatórios
+FieldsWithIsForPublic=Os campos com <b>%s</b> são mostrados na lista pública dos membros. Se você não quer isso, verificar o &quot;caixa&quot; do público.
+AccordingToGeoIPDatabase=(De acordo com GeoIP conversão)
+Line=Linha
+NotSupported=Não é suportado
+RequiredField=Campo obrigatório
+Result=Resultado
+ToTest=Teste
+ValidateBefore=O cartão deve ser validado antes de usar este recurso
+Visibility=Visibilidade
+Private=Privado
+Hidden=Oculto
+Resources=Recursos
+Source=Fonte
+Prefix=Prefixo
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:21:38).

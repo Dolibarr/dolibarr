@@ -100,3 +100,15 @@ CatSupList=Список поставщиков категорий
 CatCusList=Список клиентов / проспект категорий
 CatProdList=Список категорий продукции
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+MembersCategoriesArea=Члены категорий области
+MemberIsInCategories=Этот элемент принадлежит к следующим категориям членов
+MemberHasNoCategory=Этот пользователь не находится в какой-либо категории
+MembersCategoryShort=Члены категории
+MembersCategoriesShort=Члены категории
+ThisCategoryHasNoMember=Эта категория не содержит членов.
+CatMemberList=Список членов категории
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:21).

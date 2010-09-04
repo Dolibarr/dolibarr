@@ -122,7 +122,7 @@ ProductAssociationList=Liste over relaterede produkter / tjenesteydelser: navn p
 ErrorAssociationIsFatherOfThis=En af valgte produkt er moderselskab med aktuelle produkt
 DeleteProduct=Slet et produkt / service
 ConfirmDeleteProduct=Er du sikker på du vil slette dette produkt / service?
-ProductDeleted=Produkt / Service &quot; %s&quot; slettet fra databasen.
+ProductDeleted=Produkt / Service " %s" slettet fra databasen.
 DeletePicture=Slet et billede
 ConfirmDeletePicture=Er du sikker på du vil slette dette billede?
 ExportDataset_produit_1=Produkter og tjenester
@@ -142,7 +142,7 @@ NoSupplierPriceDefinedForThisProduct=Ingen leverandoer pris / Qty defineret for 
 RecordedProducts=Produkter registreres
 RecordedProductsAndServices=Produkter / tjenester registreres
 GenerateThumb=Generer tommelfinger
-ProductCanvasAbility=Brug specielle &quot;lærred&quot; addons
+ProductCanvasAbility=Brug specielle "lærred" addons
 ServiceNb=Service # %s
 ListProductByPopularity=Liste over produkter / ydelser ved popularitet
 Finished=Fremstillede produkt
@@ -163,3 +163,30 @@ ConfirmCloneProduct=Er du sikker på at du vil klone vare eller <b>tjenesteydels
 CloneContentProduct=Klon alle de vigtigste informationer af produkt / service
 ClonePricesProduct=Klon vigtigste informationer og priser
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+ProductAccountancyBuyCode=Regnskab kode (købe)
+ProductAccountancySellCode=Regnskab kode (sælge)
+SellingPriceHT=Salgspris (efter skat)
+SellingPriceTTC=Salgspris (inkl. skat)
+ListProductServiceByPopularity=Liste over produkter / ydelser efter popularitet
+ListServiceByPopularity=Liste over tjenesteydelser efter popularitet
+ProductIsUsed=Dette produkt er brugt
+NewRefForClone=Ref. af nye produkter / ydelser
+CustomerPrices=Kunder priser
+SuppliersPrices=Leverandører priser
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:48).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> da_DA
+Sell=Salg
+Buy=Køb
+OnBuy=Købt
+ProductStatusOnBuy=Tilgængelig
+ProductStatusNotOnBuy=Forældet
+ProductStatusOnBuyShort=Tilgængelig
+ProductStatusNotOnBuyShort=Forældet
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:08).

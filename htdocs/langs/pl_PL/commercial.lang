@@ -72,7 +72,7 @@ ActionAskedBy=Działanie zadawane przez
 ActionAffectedTo=Wpływ na działanie
 ActionDoneBy=Działania wykonywane przez
 ActionUserAsk=Zarejestrowane przez
-ErrorStatusCantBeZeroIfStarted=Jeżeli pole <b>&#39;Data zrobienia</b> &quot;jest wypełniona, rozpoczęto działania (lub gotowy), więc pole&quot; <b>Status</b> &quot;nie może być 0%%.
+ErrorStatusCantBeZeroIfStarted=Jeżeli pole <b>'Data zrobienia</b> "jest wypełniona, rozpoczęto działania (lub gotowy), więc pole" <b>Status</b> "nie może być 0%%.
 ActionAC_TEL=Telefon
 ActionAC_FAX=Wyślij faks
 ActionAC_PROP=Wyślij wniosek
@@ -92,3 +92,12 @@ ActionAC_COM=Wyślij zamówienie pocztą
 AddActionRendezVous=Dodać zadanie Rendezvous
 Rendez-Vous=Rendezvous
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+ToDoActions=Niekompletne działań
+ToDoActionsFor=Niekompletne działań na rzecz sssss
+ActionAC_SUP_ORD=aby dostawca przesłać pocztą
+ActionAC_SUP_INV=fakturze dostawcy przesłać pocztą
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:00).

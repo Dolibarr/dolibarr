@@ -70,7 +70,7 @@ ActionAskedBy=Acţiunea a cerut de către
 ActionAffectedTo=Afectate de acţiune pentru a
 ActionDoneBy=Acţiunea efectuată de către
 ActionUserAsk=Înregistrate de către
-ErrorStatusCantBeZeroIfStarted=Dacă câmpul <b>&quot;Data făcut&quot;</b> este completat, este început de acţiune (sau finite), astfel încât câmpul <b>&quot;Status&quot;</b> nu poate fi 0%%.
+ErrorStatusCantBeZeroIfStarted=Dacă câmpul <b>"Data făcut"</b> este completat, este început de acţiune (sau finite), astfel încât câmpul <b>"Status"</b> nu poate fi 0%%.
 ActionAC_TEL=Telefon
 ActionAC_FAX=Trimite fax
 ActionAC_PROP=Trimiteţi propunere
@@ -90,3 +90,12 @@ ActionAC_COM=Pentru a trimite prin e-mail
 AddActionRendezVous=Adauga un loc de întâlnire sarcină
 Rendez-Vous=Loc de întâlnire
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+ToDoActions=acţiuni incomplete
+ToDoActionsFor=acţiuni incomplete pentru %s
+ActionAC_SUP_ORD=Trimite comanda prin e-mail cu furnizorul
+ActionAC_SUP_INV=Trimite factura prin e-mail cu furnizorul
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:38:43).

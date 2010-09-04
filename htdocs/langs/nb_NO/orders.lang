@@ -116,9 +116,33 @@ OrderSource6=Butikk
 QtyOrdered=Ant bestilt
 AddDeliveryCostLine=Legg til leveringskostnader og angi forsendelsens vekt
 
-
 # Documents models
 PDFEinsteinDescription=En komplett ordremodell (logo...)
 
-# NumRef Modules
-MarbreNumRefDesc=Returnerer et nummer i formatet %sååmm-nnnn hvor åå er året, mm er måneden og nnnn er et løpende nummer som aldri tilbakestilles til null.
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
+// Reference language: en_US
+OrderLine=Bestill linje
+OrderToProcess=For å kunne behandle
+PaymentOrderRef=Betaling av ordre %s
+CloneOrder=Clone bestilling
+ConfirmCloneOrder=Er du sikker på at du vil klone denne bestillingen <b>%s?</b>
+TypeContact_commande_internal_SALESREPFOLL=Representant oppfølging kundeordre
+TypeContact_commande_internal_SHIPPING=Representant oppfølging shipping
+TypeContact_commande_external_BILLING=Kunden faktura kontakt
+TypeContact_commande_external_SHIPPING=Kunden shipping kontakt
+TypeContact_commande_external_CUSTOMER=Kundekontakt oppfølging rekkefølge
+TypeContact_order_supplier_internal_SALESREPFOLL=Representant oppfølging leverandør bestilling
+TypeContact_order_supplier_internal_SHIPPING=Representant oppfølging shipping
+TypeContact_order_supplier_external_BILLING=Leverandørfaktura kontakt
+TypeContact_order_supplier_external_SHIPPING=Leverandør shipping kontakt
+TypeContact_order_supplier_external_CUSTOMER=Leverandør kontakt oppfølging rekkefølge
+PDFEdisonDescription=En enkel bestilling modell
+PDFQuevedoDescription=En komplett ordre modell med spanske RE og IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:45:34).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nb_NO
+DispatchSupplierOrder=Motta leverandør bestill %s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:06).

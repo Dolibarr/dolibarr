@@ -1,0 +1,29 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+Trip=旅程
+Trips=旅游
+TripsAndExpenses=旅游和费用
+TripsAndExpensesStatistics=旅行和费用统计
+TripCard=旅卡
+AddTrip=添加行程
+ListOfTrips=旅行名单
+ListOfFees=费用清单
+NewTrip=新旅程
+CompanyVisited=公司/基础访问
+Kilometers=公里
+FeesKilometersOrAmout=金额或公里
+DeleteTrip=删除行
+ConfirmDeleteTrip=你确定要删除此行？
+TF_OTHER=其他
+TF_LUNCH=午餐
+TF_TRIP=旅程
+ListTripsAndExpenses=旅行和费用清单
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).

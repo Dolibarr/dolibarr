@@ -92,3 +92,9 @@ TypeContact_project_task_external_CONTRIBUTOR=Sodelavec
 # Documents models
 DocumentModelBaleine=Model poročila za celoten projekt (logo...)
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> sl_SL
+ChildOfTask=Child projekt / nalogo
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:12).

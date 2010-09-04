@@ -120,7 +120,7 @@ ProductAssociationList=Liste der entsprechenden Produkte / Dienstleistungen: Nam
 ErrorAssociationIsFatherOfThis=Eines der ausgewählten Produkt ist Elternteil mit aktuellen Produktinformationen
 DeleteProduct=Löschen Sie ein Produkt / Service
 ConfirmDeleteProduct=Sind Sie sicher, dass Sie löschen möchten, dieses Produkt / Service?
-ProductDeleted=Produkt / Service &quot; %s&quot; aus der Datenbank gelöscht.
+ProductDeleted=Produkt / Service " %s" aus der Datenbank gelöscht.
 DeletePicture=So löschen Sie ein Bild
 ConfirmDeletePicture=Sind Sie sicher, dass Sie löschen möchten dieses Bild?
 ExportDataset_produit_1=Produkte und Dienstleistungen
@@ -140,7 +140,7 @@ NoSupplierPriceDefinedForThisProduct=Kein Lieferant Preis / Stück, die für die
 RecordedProducts=Produkte erfasst
 RecordedProductsAndServices=Produkte / Dienstleistungen erfasst
 GenerateThumb=Generate Daumen
-ProductCanvasAbility=Verwenden Sie spezielle &quot;Leinwand&quot; Add-Ons
+ProductCanvasAbility=Verwenden Sie spezielle "Leinwand" Add-Ons
 ServiceNb=Service # %s
 ListProductByPopularity=Liste der Produkte / Dienstleistungen durch die Popularität
 Finished=Hergestellt werden,
@@ -161,3 +161,30 @@ ConfirmCloneProduct=Sind Sie sicher, dass Sie zu klonen Produkts oder einer <b>D
 CloneContentProduct=Clone alle wichtigen Informationen über Produkt / Service
 ClonePricesProduct=Clone wichtigsten Informationen und Preise
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+ProductAccountancyBuyCode=Accountancy Code (kaufen)
+ProductAccountancySellCode=Accountancy Code (verkaufen)
+SellingPriceHT=Verkaufspreis (ohne Steuern)
+SellingPriceTTC=Verkaufspreis (inkl. MwSt.)
+ListProductServiceByPopularity=Liste der Produkte / Dienstleistungen Nach Beliebtheit
+ListServiceByPopularity=Liste der Dienstleistungen, die Popularität
+ProductIsUsed=Dieses Produkt verwendet wird
+NewRefForClone=Ref. des neuen Produkts / der Dienstleistung
+CustomerPrices=Kunden, die Preise
+SuppliersPrices=Suppliers Preise
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> de_DE
+Sell=Vertrieb
+Buy=Käufe
+OnBuy=Gekaufte
+ProductStatusOnBuy=Verfügbar
+ProductStatusNotOnBuy=Veraltet
+ProductStatusOnBuyShort=Verfügbar
+ProductStatusNotOnBuyShort=Veraltet
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:10).

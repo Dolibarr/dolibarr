@@ -37,7 +37,7 @@ BoxTitleLastPropals=Seneste %s registreres forslag
 BoxTitleLastCustomerBills=Seneste %s kundens fakturaer
 BoxTitleLastSupplierBills=Seneste %s leverandørens fakturaer
 BoxTitleLastProspects=Seneste %s registreres udsigter
-BoxTitleCurrentAccounts=Løbende poster&#39;s tilgodehavender
+BoxTitleCurrentAccounts=Løbende poster's tilgodehavender
 BoxTitleSalesTurnover=Omsætning
 BoxMyLastBookmarks=Min sidste %s bogmærker
 FailedToRefreshDataInfoNotUpToDate=Det lykkedes ikke at opdatere RSS flux. Seneste vellykkede opdatere dato: %s
@@ -75,3 +75,21 @@ BoxTitleTotalUnpaidSuppliersBills=Ulønnet leverandørens fakturaer
 NoUnpaidCustomerBills=Nr. ubetalte kundens fakturaer
 NoUnpaidSupplierBills=Nr. ubetalte leverandørens fakturaer
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+BoxLastContracts=Seneste kontrakter
+BoxTitleLastProductsInContract=Seneste %s produkter / services i en kontrakt
+BoxTitleLastContracts=Sidste %s kontrakter
+NoModifiedSupplierBills=Ingen registreres leverandørens fakturaer
+NoRecordedContracts=Ingen registrerede kontrakter
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:48).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> da_DA
+BoxTitleLastModifiedSuppliers=Sidst %s ændret leverandører
+BoxTitleLastModifiedCustomers=Sidst %s ændret kunder
+BoxTitleLastModifiedProspects=Sidst %s ændret udsigterne
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:34).

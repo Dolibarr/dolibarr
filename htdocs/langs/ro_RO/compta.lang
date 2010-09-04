@@ -98,21 +98,12 @@ AnnualSummaryInputOutputMode=Bilan des recettes et dpenses, rsum annuel, en <b>M
 AnnualByCompaniesDueDebtMode=Bilan des recettes et dpenses, dtail par niveluri, en <b>Mod %sCrances-Dettes %s</b> dit <b>comptabilit de angajament.</b>
 AnnualByCompaniesInputOutputMode=Bilan des recettes et dpenses, dtail par niveluri, en <b>Mod %sRecettes-Dpenses %s</b> dit <b>comptabilit de Caisse.</b>
 SeeReportInInputOutputMode=Voir le <b>Rapport %sRecettes-Dpenses %s</b> dit <b>comptabilit de Caisse</b> turna un calcul sur les paiements effectivement raliss
-SeeReportInDueDebtMode=Voir le <b>Rapport %sCrances-Dettes %s</b> dit <b>comptabilit d&#39;angajament</b> turna un calcul sur les factures mises
+SeeReportInDueDebtMode=Voir le <b>Rapport %sCrances-Dettes %s</b> dit <b>comptabilit d'angajament</b> turna un calcul sur les factures mises
 RulesResultDue=- Sumele indicate sunt cu toate taxele incluse <br> - Ea include facturilor restante, a cheltuielilor şi a TVA-ului, indiferent dacă acestea sunt plătite sau nu. <br> - Se bazează pe data de validare de facturi si TVA-ul şi cu privire la data scadentă pentru cheltuieli.
 RulesResultInOut=- Sumele indicate sunt cu toate taxele incluse <br> - Ea include real plăţile efectuate de pe facturi, cheltuielilor şi a TVA-ului. <br> - Se bazează pe datele de plată a facturilor, cheltuielile anf TVA. <br>
 RulesCADue=- Ea include clientilor din cauza facturilor, indiferent dacă acestea sunt plătite sau nu. <br> - Se bazează pe data de validare a acestor facturi. <br>
 RulesCAIn=- Ea include toate plăţile efective a facturilor primite de la clienti. <br> - Se bazează pe data de plată a acestor facturi <br>
-VATReportByCustomersInInputOutputMode=Rapport client par des collectes et plateste TVA (TVA sur encaissement)
-VATReportByCustomersInDueDebtMode=Rapport client par des collectes et plateste TVA (TVA sur dbit)
-VATReportByQuartersInInputOutputMode=Rapport trimestre par des collectes et plateste TVA (TVA sur encaissement)
-VATReportByQuartersInDueDebtMode=Rapport trimestre par des collectes et plateste TVA (TVA sur dbit)
-SeeVATReportInInputOutputMode=Voir le <b>Rapport %sTVA encaissement %s</b> turna modul de calcul standard
-SeeVATReportInDueDebtMode=Voir le <b>Rapport %sTVA sur dbit %s</b> turna modul de calcul avec opţiune sur les dbits
-RulesVATIn=- Pour les servicii, le Rapport inclut les TVA des rglements effectivement Reus ou mis en se basant sur la data du rglement. <br> - Pour les biens matriels, il inclut les TVA des factures en se basant sur la data de validare de la facture.
-RulesVATDue=- Pour les servicii, le Rapport inclut les TVA des factures cotizaţii, payes ou non en se basant sur la data de validare de ces factures. <br> - Pour les biens matriels, il inclut les TVA des factures en se basant sur la data de validare de la facture.
-OptionVatInfoModuleComptabilite=Remarque: Pour les biens matriels, il faudrait utiliser la data de livraison pour tre plus juste.
-PercentOfInvoice=%% / factura
+PercentOfInvoice=%%/factura
 Dispatch=Dispecerizare
 Dispatched=Expediate
 ToDispatch=Pentru a expedierii
@@ -134,3 +125,22 @@ OptionModeTrueDesc=În acest context, se calculează cifra de afaceri de peste d
 ShowVatPayment=Arata plata TVA
 SupplierAccountancyCode=Furnizor de contabilitate cod
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+TaxModuleSetupToModifyRules=Du-te la <a href="%s">modul de configurare</a> a modifica normele de calcul
+VATReportBuildWithOptionDefinedInModule=Sumele prezentate aici sunt calculate folosind regulile definite de modul de configurare fiscale.
+SocialContributionsPayments=Contribuţii sociale plăţi
+VATReportByCustomersInInputOutputMode=Raport de TVA clientului colectate şi plătite (TVA primire)
+VATReportByCustomersInDueDebtMode=Raport de TVA clientului colectate şi plătite (TVA)
+VATReportByQuartersInInputOutputMode=Raport de rata a TVA colectate şi plătite (TVA primire)
+VATReportByQuartersInDueDebtMode=Raport de rata a TVA colectate şi plătite (TVA)
+SeeVATReportInInputOutputMode=A se vedea raportul <b>%sVAT encasement%s</b> pentru un calcul standard
+SeeVATReportInDueDebtMode=A se vedea raportul <b>privind %sVAT flow%s</b> pentru un calcul, cu o opţiune de pe fluxul
+RulesVATIn=Pentru servicii, raportul include TVA lege efectiv primite sau eliberate pe baza de data plăţii. <br> - Pentru bunuri materiale, aceasta include facturi cu TVA, pe baza de la data validării a facturii.
+RulesVATDue=Pentru servicii, raportul include facturile TVA datorată, plătite sau nu, în funcţie de data de validarea acestor facturi. <br> - Pentru bunuri materiale, aceasta include facturi cu TVA, în funcţie de data de validare a facturii.
+OptionVatInfoModuleComptabilite=Notă: Pentru bunuri materiale, ar trebui să utilizeze la data livrării să fie mai echitabil.
+ThirdPartyMustBeEditAsCustomer=A treia parte trebuie să fie definit ca un client
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:38:42).
+

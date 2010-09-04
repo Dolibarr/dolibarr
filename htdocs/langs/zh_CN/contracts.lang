@@ -1,0 +1,101 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+ContractsArea=合同区
+ListOfContracts=合约名单
+LastContracts=最后％s的修改过的合同
+AllContracts=所有合同
+ContractCard=合同卡
+ContractStatus=合同地位
+ContractStatusNotRunning=不运行
+ContractStatusRunning=运行
+ContractStatusDraft=草案
+ContractStatusValidated=验证
+ContractStatusClosed=关闭
+ServiceStatusInitial=不运行
+ServiceStatusRunning=运行
+ServiceStatusNotLate=跑步，没有过期
+ServiceStatusNotLateShort=没有过期
+ServiceStatusLate=跑步，过期
+ServiceStatusLateShort=过期
+ServiceStatusClosed=关闭
+ServicesLegend=服务的传说
+Contracts=合同
+Contract=合同
+ContractContacts=合同接触
+NoContracts=没有合同
+MenuServices=服务
+MenuInactiveServices=服务不活跃
+MenuRunningServices=正在运行的服务
+MenuExpiredServices=过期服务
+MenuClosedServices=休息服务
+NewContract=新合同
+AddContract=新增合同
+SearchAContract=搜索合同
+DeleteAContract=删除合同
+CloseAContract=关闭的合同
+ConfirmDeleteAContract=你确定要删除本合同及所有的服务？
+ConfirmValidateContract=你确定要验证这个合同？
+ConfirmCloseContract=这将关闭所有服务（主动或不）。您确定要关闭这个合同？
+ConfirmCloseService=您确定要关闭这项服务与日期<b>％s吗</b> ？
+ValidateAContract=验证合同
+ActivateService=激活服务
+ConfirmActivateService=你确定要激活这项服务的日期<b>％s吗</b> ？
+DateContract=合同日期
+DateServiceActivate=服务激活日期
+DateServiceUnactivate=服务停用日期
+DateServiceStart=对服务的开始日期
+DateServiceEnd=服务结束日期
+ShowContract=查看合同
+ListOfServices=服务名单
+ListOfInactiveServices=名单不主动服务
+ListOfExpiredServices=名单过期的活动服务
+ListOfClosedServices=关闭服务清单
+ListOfRunningContractsLines=名单合同线运行
+ListOfRunningServices=运行服务的列表
+NotActivatedServices=不活跃的服务（除验证合同）
+BoardNotActivatedServices=服务激活验证合同之间
+LastContracts=上次％合同
+LastActivatedServices=上次％s的激活服务
+LastModifiedServices=最后％S修饰服务
+EditServiceLine=编辑服务项目
+ContractStartDate=开始日期
+ContractEndDate=结束日期
+DateStartPlanned=计划开始日期
+DateStartPlannedShort=计划开始日期
+DateEndPlanned=计划结束日期
+DateEndPlannedShort=计划结束日期
+DateStartReal=真正的开始日期
+DateStartRealShort=真正的开始日期
+DateEndReal=真正的结束日期
+DateEndRealShort=真正的结束日期
+NbOfServices=铌服务
+CloseService=关闭服务
+ServicesNomberShort=％s的服务（S）
+RunningServices=正在运行的服务
+BoardRunningServices=过期的运行服务
+ServiceStatus=服务现状
+DraftContracts=草稿合同
+CloseRefusedBecauseOneServiceActive=合同不能被关闭，因为至少有一个开放式服务上
+CloseAllContracts=关闭所有合同线
+DeleteContractLine=删除线合同
+ConfirmDeleteContractLine=你确定要删除这个合同线？
+MoveToAnotherContract=移动到另一个合同的服务。
+ConfirmMoveToAnotherContract=我选用新的目标合同，确认我想进入这个合同这项服务。
+ConfirmMoveToAnotherContractQuestion=选择了现有合同（同第三方），你要提出这项服务？
+PaymentRenewContractId=续订合同线（％s的数目）
+ExpiredSince=失效日期
+RelatedContracts=有关合同
+TypeContact_contrat_internal_SALESREPSIGN=销售代表签订合同
+TypeContact_contrat_internal_SALESREPFOLL=销售代表随访合同
+TypeContact_contrat_external_BILLING=结算客户联系
+TypeContact_contrat_external_CUSTOMER=后续的客户联系
+TypeContact_contrat_external_SALESREPSIGN=签约客户的联系
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).

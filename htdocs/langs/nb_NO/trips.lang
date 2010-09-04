@@ -16,3 +16,10 @@ ConfirmDeleteTrip=Er du sikker på at du vil slette denne reisen?
 TF_OTHER=Annet
 TF_LUNCH=Lunsj
 TF_TRIP=Reise
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> nb_NO
+TripsAndExpensesStatistics=Turer og utgifter statistikk
+ListTripsAndExpenses=Liste over turer og utgifter
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:11).

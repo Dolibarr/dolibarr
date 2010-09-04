@@ -20,7 +20,7 @@ UnlockNewSessions=Verwijder sessie blokkering
 YourSession=Uw sessie
 Sessions=Users sessies
 NoSessionFound=Uw PHP lijkt niet een lijst van active sessies toe te staan. Map gebruikt om sessies op te slaan (<b>%s</b>) zou afgeschermd kunnen zijn (Bijvoorbeeld, door OS rechten of via PHP directive open_basedir).
-HTMLCharset=Charset voor gegenereerde HTML-pagina&#39;s
+HTMLCharset=Charset voor gegenereerde HTML-pagina's
 DBStoringCharset=Charset database voor het opslaan van gegevens
 DBSortingCharset=Database charset voor het sorteren van gegevens
 WarningModuleNotActive=<b>Module %s</b> moet worden ingeschakeld
@@ -384,8 +384,7 @@ Module13452Desc=Deze module met AJAX zoekt naar een naam en vind met een deel va
 Module50100Name=Kassa
 Module50100Desc=Kassa module
 Permission11=Bekijk facturen
-Permission12=Maak facturen
-Permission13=Wijzigen facturen
+Permission12=Maak/Wijzigen facturen
 Permission14=Valideer facturen
 Permission15=Facturen verzenden via e-mail
 Permission16=Maak de betalingen voor facturen
@@ -552,7 +551,6 @@ Permission1185=Goedkeuren leverancier bestellingen
 Permission1186=Bestel leverancier bestellingen
 Permission1187=Bevestigt de ontvangst van de leverancier bestellingen
 Permission1188=Sluiten leverancier bestellingen
-Permission1189=Annuleren leverancier bestellingen
 Permission1201=Geef het resultaat van een uitvoervergunning
 Permission1202=Maken/wijzigen een uitvoervergunning
 Permission1231=Bekijk leverancier facturen
@@ -599,7 +597,7 @@ VATManagement=BTW Management
 VATIsUsedDesc=Het standaard BTW-tarief bij het aanmaken van prospects, facturen, orders etc volgt de actieve standaard regel:<br>Als verkoper niet onderworpen is aan BTW, BTW-standaard= 0. Einde van de regel. <br> Als het 'land van de verkoper'= 'het land van de koper' dan is de BTW= BTW-standaard van het verkochte product. Einde van de regel. <br> Als verkoper en koper in de Europese Gemeenschap en het betreft een nieuw vervoermiddel (auto, boot, vliegtuig), BTW= 0 (De BTW moet worden betaald door koper in zijn land en niet de verkoper). Einde van de regel. <br> Als verkoper en koper in de Europese Gemeenschap en de koper is een persoon of bedrijf zonder BTW Registratie nummer= BTW-standaard van het verkochte product. Einde van de regel. <br> Als verkoper en koper in de Europese Gemeenschap en koper bedrijf met BTW nummer= intra BTW dan BTW standaard= 0. Einde van de regel. <br> Anders zal de BTW standaard= 0. Einde van de regel. <br>
 VATIsNotUsedDesc=Is de voorgestelde BTW standaard 0 dan kan dat worden gebruikt voor zaken zoals verenigingen, particulieren of kleine bedrijven.
 VATIsUsedExampleFR=In Frankrijk, betekent dit dat bedrijven of organisaties met een echte fiscale stelsel (Vereenvoudigde echte of normale reÃ«le). Een systeem waarbij de BTW wordt aangegeven.
-VATIsNotUsedExampleFR=In Frankrijk, betekent dit dat organisaties die niet BTW-aangegeven of bedrijven, organisaties of vrije beroepen die hebben gekozen voor de micro-onderneming fiscale stelsel (BTW in franchise) en betaalde een franchise BTW zonder BTW aangifte. Deze keuze verschijnt de vermelding &quot;Niet van toepassing BTW - art-293B van CGI&quot; op facturen.
+VATIsNotUsedExampleFR=In Frankrijk, betekent dit dat organisaties die niet BTW-aangegeven of bedrijven, organisaties of vrije beroepen die hebben gekozen voor de micro-onderneming fiscale stelsel (BTW in franchise) en betaalde een franchise BTW zonder BTW aangifte. Deze keuze verschijnt de vermelding "Niet van toepassing BTW - art-293B van CGI" op facturen.
 ##### Local Taxes #####
 LocalTax1ManagementES= Gestion RE
 LocalTax1IsUsedDescES= Le taux de RE proposÃ© par dÃ©faut lors de la crÃ©ation de propale, facture, commande, etc rÃ©pond Ã  la rÃ¨gle standard suivante:<br>Si acheteur non assujeti Ã  RE, RE par dÃ©faut=0. Fin de rÃ¨gle.<br>Si acheteur non assujeti Ã  RE alors RE par dÃ©faut. Fin de rÃ¨gle.<br>
@@ -765,6 +763,7 @@ RunningUpdateProcessMayBeRequired=Update lijkt verplicht (Programma versie %s ve
 YouMustRunCommandFromCommandLineAfterLoginToUser=U dient dit commando vanaf de 'command line' te runnen na in te loggen op de shell met gebruiker <b>%s</b>.
 YourPHPDoesNotHaveSSLSupport=SSL functies niet beschikbaar in uw PHP
 DownloadMoreSkins=Meer thema-huiden te downloaden
+SimpleNumRefModelDesc=Geeft het aantal als %syymm-nnnn waar yy jaar is, mm de maand en nnnn een sequencer naadloos en zonder vervangde 0
 
 ##### Module password generation
 PasswordGenerationStandard=Een wachtwoord gegenereerd volgens interne Dolibarr algoritme: 8 karakters met gedeelde nummers en tekens in kleine letters.
@@ -1003,7 +1002,7 @@ LDAPDescContact=Op deze pagina kunt u bij het definiÃ«ren van LDAP attributen 
 LDAPDescUsers=Op deze pagina kunt u bij het definiÃ«ren van LDAP attributen naam in LDAP boom voor elk gegevens vinden op Dolibarr gebruikers.
 LDAPDescGroups=Op deze pagina kunt u bij het definiÃ«ren van LDAP attributen naam in LDAP boom voor elk gegevens vinden op Dolibarr groepen.
 LDAPDescMembers=Op deze pagina kunt u bij het definiÃ«ren van LDAP attributen naam in LDAP boom voor elk gegevens vinden op Dolibarr leden module.
-LDAPDescValues=Voorbeeld waarden zijn ontworpen voor <b>OpenLDAP</b> geladen met de volgende schema&#39;s: <b>core.schema, cosine.schema, inetorgperson.schema).</b> Als u gebruik thoose waarden en OpenLDAP, wijzigen uw LDAP config bestand <b>slapd.conf</b> om alle thoose schema&#39;s geladen.
+LDAPDescValues=Voorbeeld waarden zijn ontworpen voor <b>OpenLDAP</b> geladen met de volgende schema's: <b>core.schema, cosine.schema, inetorgperson.schema).</b> Als u gebruik thoose waarden en OpenLDAP, wijzigen uw LDAP config bestand <b>slapd.conf</b> om alle thoose schema's geladen.
 ForANonAnonymousAccess=Voor een gewaarmerkte toegang (voor een schrijf toegang bijvoorbeeld)
 ##### Products #####
 ProductSetup=Produkten module setup
@@ -1179,3 +1178,43 @@ DescNumberWords=Deze module brengt u de omrekening van het aantal of het bedrag 
 ProjectsNumberingModules=Module nummering referenties projecten
 ProjectsSetup=Configuratie projecten module
 ProjectsModelModule=Model van rapportagedocument van projecten
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+ExportCompatibility=Verenigbaarheid van de gegenereerde exportbestand
+MySqlExportParameters=MySQL uitvoer parameters
+ExportOptions=Exporteren Opties
+IgnoreDuplicateRecords=Negeer fouten van dubbele records (INSERT negeren)
+ModulesMarketPlaceDesc=U vindt meer modules te downloaden op externe websites op het internet ...
+ModulesMarketPlaces=Meer modules ...
+DoliStoreDesc=DoliStore, de officiële markt voor Dolibarr ERP / CRM externe modules
+WebSiteDesc=Website aanbieders kunt u zoeken naar meer modules te vinden ...
+URL=Link
+OfficialMarketPlace=Officiële markt voor externe modules / addons
+CurrentLeftMenuHandler=Huidig linker menu handler
+MAIN_MAIL_AUTOCOPY_TO=Stuur systematisch een verborgen koolstof-kopie van alle verzonden e-mails naar
+SubmitTranslation=Als vertaling voor deze taal niet volledig is of u fouten vindt, kun je dit corrigeren door het bewerken van bestanden in directory <b>Langs / sssss</b> en forum dienen gewijzigde bestanden op www.dolibarr.org.
+FindPackageFromWebSite=Zoek een pakket dat u wilt functie biedt (bijvoorbeeld op de officiële website van sssss).
+FirstnameNamePosition=Standpunt van voornaam / naam
+Module100Name=ExternalSite
+Module100Desc=Inclusief een externe website in Dolibarr menu&#39;s en bekijken in een frame Dolibarr
+Module10000Desc=Module voor een online betaling per credit card pagina met Paybox bieden
+Permission13=Unvalidate facturen
+Permission38=Export producten
+Permission536=Zie / beheren verborgen diensten
+ListOfEntities=Lijst van entiteiten
+AddEntity=Voeg entiteit
+EditEntity=Edit entiteit
+WebCalAddEventOnCreateCompany=Voeg agenda evenement op het bedrijfsleven te scheppen
+ForceInvoiceDate=Force factuurdatum te validatie datum
+SuggestedPaymentModesIfNotDefinedInInvoice=Voorgestelde betalingen modus op de factuur standaard, indien niet gedefinieerd voor de factuur
+EnableEditDeleteValidInvoice=Schakel de mogelijkheid om te bewerken / verwijderen met geldige factuur geen betaling
+FreeLegalTextOnInvoices=Vrije tekst op facturen
+WatermarkOnDraftInvoices=Watermerk over het ontwerp van facturen (alle indien leeg)
+ProposalsNumberingModules=Commerciële voorstellen nummering modules
+ProposalsPDFModules=Commerciële voorstellen documenten modellen
+DonationsReceiptModel=Sjabloon van donatie ontvangst
+PastDelayVCalExport=Niet exporteren geval ouder dan
+SuppliersCommandModel=Complete sjabloon van de leverancier om (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:47:40).

@@ -273,10 +273,37 @@ YouMustCreateContactFirst=Você deve criar contactos e-mails para terceiros, pri
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:12).
-// Reference language: en_US
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+ThirdPartyName=nome de terceiros
+Poste=Posição
+DefaultLang=Língua por omissão
+LocalTax1IsUsedES=RE é usado
+LocalTax1IsNotUsedES=RE não é usada
+LocalTax2IsUsedES=IRPF é usado
+LocalTax2IsNotUsedES=IRPF não é usada
 ProfId1DE=Prof Id 1 (USt.-IdNr)
-ProfId2DE=Prof Id 2 (USt.-Nr)
-ProfId3DE=Prof Id 3 (Handelsregister-Nr.)
-ProfId4DE=--
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:12).
+ProfId2DE=Prof Id 2 (USt.-NR)
+ProfId3DE=Prof ID 3 Handelsregister-Nr. ()
+ProfId4DE=-
+ProfId1IN=Prof Id 1 (TIN)
+ProfId2IN=Prof ID 2
+ProfId3IN=Prof ID 3
+ProfId4IN=Prof Id 4
+ProfId1ES=Prof Id 1 (CIF / NIF)
+ProfId2ES=Prof Id 2 (número de segurança social)
+ProfId3ES=Prof ID 3 CNAE ()
+ProfId4ES=Prof Id 4 (número Colegiada)
+ProfId1NL=nummer KVK
+ProfId2NL=-
+ProfId3NL=-
+ProfId4NL=-
+ProfId1AR=Prof Id 1 (CUIT / CUIL)
+ProfId2AR=Id Prof 2 (brutos Revenu)
+ProfId3AR=-
+ProfId4AR=-
+SupplierCategory=categoria Fornecedor
+ListSuppliersShort=Lista de fornecedores
+ListProspectsShort=Lista das perspectivas
+ListCustomersShort=Lista de clientes
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:39:49).

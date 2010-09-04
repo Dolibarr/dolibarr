@@ -1,0 +1,22 @@
+/*
+ * Language code: pl_PL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-07-17 11:45:17
+ */
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+CHARSET=UTF-8
+FTPClientSetup=Moduł konfiguracji klienta FTP
+NewFTPClient=Konfiguracja nowego połączenia FTP
+FTPArea=FTP okolicy
+FTPAreaDesc=Ten ekran pokazuje zawartość serwera FTP w celu
+SetupOfFTPClientModuleNotComplete=Konfiguracji modułu klienta FTP, nie wydaje się być pełne
+FTPFeatureNotSupportedByYourPHP=PHP nie obsługuje funkcji FTP
+FailedToConnectToFTPServer=Nie udało się połączyć z serwerem FTP (sssss serwera, sssss port)
+FailedToConnectToFTPServerWithCredentials=Nie udało się zalogować do serwera FTP z definicją login / hasło
+FTPFailedToRemoveFile=Nie udało się usunąć pliku <b>sssss.</b>
+FTPFailedToRemoveDir=Nie udało się usunąć <b>sssss</b> katalogu (Sprawdź uprawnienia i że katalog jest pusty).
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:06).

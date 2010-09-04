@@ -59,7 +59,7 @@ NbOfRecipients=Numărul de beneficiari
 NbOfUniqueEMails=Nb unic de e-mail-uri
 NbOfEMails=Nb de mesaje de poştă electronică
 TotalNbOfDistinctRecipients=Numărul de distincte destinatari
-NoTargetYet=Nu destinatari definit încă (Du-te la tab-ul &#39;Recipients&#39;)
+NoTargetYet=Nu destinatari definit încă (Du-te la tab-ul 'Recipients')
 AddRecipients=Adăugaţi destinatari
 RemoveRecipient=Eliminaţi destinatar
 CommonSubstitutions=Frecvente substituţiilor
@@ -117,3 +117,12 @@ DateLastSend=Data ultimei trimiterea
 MailingModuleDescDolibarrContractsLinesExpired=Terţe părţi, cu contract expirat de linii
 YouCanUseCommaSeparatorForSeveralRecipients=Aveţi posibilitatea de a utiliza <b>comma</b> separator pentru a specifica mai mulţi destinatari.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+DateSending=Data trimiterea
+SentTo=Trimis la <b>%s</b>
+LimitSendingEmailing=Pe linia trimiterea emailings sunt limitate pentru motive de securitate şi timeout destinatarilor <b>%s</b> prin trimiterea sesiune.
+ListOfNotificationsDone=Lista toate notificările e-mail trimis
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:51).

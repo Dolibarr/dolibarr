@@ -30,7 +30,7 @@ NoRecordedSuppliers=Nu furnizori înregistrate
 SupplierPayment=Furnizor de plată
 SuppliersArea=Furnizori zona
 RefSupplierShort=Ref. furnizor
-ExportDataset_fournisseur_1=Furnizor lista de facturi si facturi &quot;linii
+ExportDataset_fournisseur_1=Furnizor lista de facturi si facturi "linii
 ExportDataset_fournisseur_2=Furnizor de facturi şi plăţi
 ApproveThisOrder=Aprobaţi această ordine
 ConfirmApproveThisOrder=Sunteţi sigur că doriţi să aprobe acest ordin?
@@ -50,3 +50,9 @@ ListOfSupplierProductForSupplier=Lista de produse şi a preţurilor pentru <b>fu
 // Reference language: en_US
 NoneOrBatchFileNeverRan=Nici unul sau <b>lot %s</b> nu a fugit recent
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Acest furnizor de referinţă este deja asociat cu o referinţă: %s
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:38).

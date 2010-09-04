@@ -30,9 +30,9 @@ LDAPFieldFirstSubscriptionDate=Первая дата подписки
 LDAPFieldFirstSubscriptionAmount=Кулак сумма подписки
 LDAPFieldLastSubscriptionDate=Последняя дата подписки
 LDAPFieldLastSubscriptionAmount=Последняя сумма подписки
-SynchronizeDolibarr2Ldap=Синхронизация пользователей (Dolibarr -&gt; LDAP)
+SynchronizeDolibarr2Ldap=Синхронизация пользователей (Dolibarr -> LDAP)
 UserSynchronized=Пользователь синхронизированы
-ForceSynchronize=Силы синхронизации Dolibarr -&gt; LDAP
+ForceSynchronize=Силы синхронизации Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Не удалось прочитать LDAP базе. Проверка LDAP модуль настройки и доступности данных.
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
@@ -44,3 +44,4 @@ GroupSynchronized=Группа синхронизированы
 MemberSynchronized=Член синхронизированы
 ContactSynchronized=Контакты синхронизируются
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+

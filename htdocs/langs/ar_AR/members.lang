@@ -148,7 +148,7 @@ DescADHERENT_ETIQUETTE_TYPE=علامات الشكل
 DescADHERENT_CARD_HEADER_TEXT=نص مطبوع على رأس عضو البطاقات
 DescADHERENT_CARD_TEXT=نص مطبوع على بطاقات الأعضاء
 DescADHERENT_CARD_FOOTER_TEXT=نص مطبوع على أسفل بطاقات الأعضاء
-ShowTypeCard=وتبين من نوع &#39;٪ ق&#39;
+ShowTypeCard=وتبين من نوع '٪ ق'
 HTPasswordExport=الملف htpassword جيل
 NoThirdPartyAssociatedToMember=لم يرتبط بها من طرف ثالث لهذا العضو
 ThirdPartyDolibarr=Dolibarr طرف ثالث
@@ -161,3 +161,27 @@ MembersAndSubscriptions=وأعضاء Suscriptions
 // Reference language: en_US
 FundationMembers=أعضاء المؤسسة
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=بريد إلكتروني الموضوع لautosubscription الأعضاء
+DescADHERENT_AUTOREGISTER_MAIL=البريد الإلكتروني لعضو autosubscription
+DescADHERENT_CARD_TYPE=شكل بطاقات صفحة
+DescADHERENT_CARD_TEXT_RIGHT=النص المطبوع على بطاقات الأعضاء (في محاذاة اليمين)
+DescADHERENT_MAILMAN_LISTS=قائمة (ق) للinsription التلقائي للأعضاء الجدد (مفصولة بفاصلة)
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:17).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+MoreActions=تكميلية العمل على تسجيل
+MoreActionBankDirect=إنشاء سجل المعاملات مباشرة على حساب
+MoreActionBankViaInvoice=إنشاء الفاتورة والدفع على حساب
+MoreActionInvoiceOnly=إنشاء فاتورة مع دفع أي مبلغ
+LinkToGeneratedPages=بطاقات زيارة انتج
+LinkToGeneratedPagesDesc=هذه الشاشة تسمح لك لإنشاء ملفات الشعبي مع بطاقات العمل لجميع أعضاء أو عضو معين.
+DocForAllMembersCards=إنشاء بطاقات العمل لجميع أعضاء (تنسيق الإعداد للإخراج في الواقع : <b>%s)</b>
+DocForOneMemberCards=إنشاء بطاقات العمل لعضو معين (تنسيق الإعداد للإخراج في الواقع : <b>%s)</b>
+DocForLabels=أوراق عنوان انتج (تنسيق الإعداد للإخراج فعلا : <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:46).

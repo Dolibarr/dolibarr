@@ -33,7 +33,7 @@ LastClosedProposals=Ultima %s închis propuneri
 AllPropals=Toate propunerile
 LastProposals=Ultimele propuneri
 SearchAProposal=Cautati o propunere
-ProposalsStatistics=Comerciale propuneri &#39;statistici
+ProposalsStatistics=Comerciale propuneri 'statistici
 NumberOfProposalsByMonth=Numărul de luni
 AmountOfProposalsByMonthHT=Suma de luna (net de impozite)
 NbOfProposals=Numărul de propuneri
@@ -98,5 +98,14 @@ LastModifiedProposals=Ultima %s propuneri modificate
 DatePropal=Data de propunerea
 ProposalsAndProposalsLines=Comerciale propunerea si a liniilor
 ProposalLine=Propunere linie
-MarbreNumRefModelDesc=Întoarceţi-vă NUMERO cu formatul %syymm-NNNN de propuneri în cazul în care este aa ani, mm este luna şi NNNN este o succesiune fără pauză şi fără întoarcere la 0
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+TypeContact_propal_internal_SALESREPFOLL=Reprezentant urmărirea propunerii
+TypeContact_propal_external_BILLING=Clientul factura de contact
+TypeContact_propal_external_CUSTOMER=lua legatura cu clientul urmărirea propunerii
+DocModelRoigDescription=Un model de propunere completă cu impozit RE spaniolă şi IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:38).
+

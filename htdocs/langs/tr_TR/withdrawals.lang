@@ -29,11 +29,11 @@ NbOfInvoiceToWithdraw=Nb fatura ile talep geri
 InvoiceWaitingWithdraw=Fatura geri bekliyor
 AmountToWithdraw=Miktar geri çekme
 WithdrawsRefused=Çekilmesi reddetti
-NoInvoiceToWithdraw=Ödeme yok müşteri fatura modu &quot;çekilme&quot; bekliyor. Çekilme &#39;sekmesinde&#39; Doğum fatura kartı Hadi bir istek yapmak.
+NoInvoiceToWithdraw=Ödeme yok müşteri fatura modu "çekilme" bekliyor. Çekilme 'sekmesinde' Doğum fatura kartı Hadi bir istek yapmak.
 ResponsibleUser=Sorumlu kullanıcı
 WithdrawalsSetup=Çekilme kurulum
-WithdrawStatistics=Çekilmesi &#39;istatistiklerine
-WithdrawRejectStatistics=Çekilme &#39;istatistiklerine reddetti
+WithdrawStatistics=Çekilmesi 'istatistiklerine
+WithdrawRejectStatistics=Çekilme 'istatistiklerine reddetti
 LastWithdrawalReceipt=Son% fişleri geri çekilme var
 MakeWithdrawRequest=Bir isteği geri olun
 ThirdPartyBankCode=Üçüncü taraf banka kodu
@@ -42,3 +42,44 @@ NoInvoiceCouldBeWithdrawed=No fatura başarı ile withdrawed. Fatura kontrol şi
 ClassCredited=Sınıflandırmak yatırıldı
 ClassCreditedConfirm=Size banka hesabına alacak olarak çekilmesi makbuz sınıflandırmak istediğinizden emin misiniz?
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> tr_TR
+StandingOrderToProcess=işlemek için
+StandingOrderProcessed=İşlenmiş
+TransData=Tarih İletim
+TransMetod=Yöntem İletim
+Send=Göndermek
+Lines=Hatları
+StandingOrderReject=Sorun bir reddetme
+WithdrawalRefused=Para Çekme Refuseds
+WithdrawalRefusedConfirm=Are sen toplum için bir çekilme ret girmek istediğinizden emin
+RefusedData=Tarih ret
+RefusedReason=Nedeni reddetme
+RefusedInvoicing=Fatura ret
+NoInvoiceRefused=ret şarj etmeyin
+InvoiceRefused=müşteriye ret Charge
+Status=Durum
+StatusUnknown=Bilinmeyen
+StatusWaiting=Bekleme
+StatusCredited=Kredili
+StatusRefused=Reddedildi
+StatusMotif0=Belirtilmemiş
+StatusMotif1=Karşılık insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=No Çekilme sipariş
+StatusMotif4=Müşteri Sipariş
+StatusMotif5=RIB inexploitable
+StatusMotif6=Hesap bakiyesi olmadan
+StatusMotif7=Yargı Kararı
+StatusMotif8=Başka bir nedenle
+CreateAll=Geri tüm
+CreateGuichet=Sadece ofis
+CreateBanque=Sadece banka
+OrderWaiting=tedavi bekliyorum
+NotifyTransmision=Çekilme İletim
+NotifyEmision=Çekilme Emisyon
+NotifyCredit=Çekilme Kredi
+NumeroNationalEmetter=Milli Verici Sayısı
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:28).

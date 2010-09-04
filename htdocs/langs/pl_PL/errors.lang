@@ -13,11 +13,11 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Zaloguj %s już istnieje.
 ErrorGroupAlreadyExists=Grupa %s już istnieje.
-ErrorFailToDeleteFile=Nie można usunąć pliku <b>&quot; %s&quot;.</b>
-ErrorFailToCreateFile=Nie można utworzyć pliku <b>&#39; %s&#39;.</b>
-ErrorFailToRenameDir=Nie można zmienić nazwy katalogu <b>&#39; %s&#39; do&#39; %s&#39;.</b>
-ErrorFailToCreateDir=Nie można utworzyć katalogu <b>&#39; %s&#39;.</b>
-ErrorFailToDeleteDir=Nie można usunąć katalogu <b>&quot; %s&quot;.</b>
+ErrorFailToDeleteFile=Nie można usunąć pliku <b>" %s".</b>
+ErrorFailToCreateFile=Nie można utworzyć pliku <b>' %s'.</b>
+ErrorFailToRenameDir=Nie można zmienić nazwy katalogu <b>' %s' do' %s'.</b>
+ErrorFailToCreateDir=Nie można utworzyć katalogu <b>' %s'.</b>
+ErrorFailToDeleteDir=Nie można usunąć katalogu <b>" %s".</b>
 ErrorFailedToDeleteJoinedFiles=Nie można usunąć, ponieważ jednostka nie ma przystąpiły niektóre pliki. Usuń dołączyć plików.
 ErrorThisContactIsAlreadyDefinedAsThisType=Ten kontakt jest już zdefiniowana jako kontaktowy dla tego typu.
 ErrorCashAccountAcceptsOnlyCashMoney=To konto bankowe jest gotówką uwagę, dlatego akceptuje płatności typu cash only.
@@ -38,8 +38,8 @@ ErrorFieldsRequired=Niektóre pola wymagane nie były obsadzone.
 ErrorFailedToCreateDir=Nie można utworzyć katalogu. Sprawdź, czy serwer WWW użytkownik ma uprawnienia do zapisu do katalogu dokumentów Dolibarr. Jeśli parametr <b>safe_mode</b> jest włączona w tym PHP, czy posiada Dolibarr php pliki do serwera internetowego użytkownika (lub grupy).
 ErrorNoMailDefinedForThisUser=Nie określono mail do tego użytkownika
 ErrorFeatureNeedJavascript=Ta funkcja JavaScript trzeba być aktywowany do pracy. Zmień to w konfiguracji - wyświetlacz.
-ErrorTopMenuMustHaveAParentWithId0=Menu typu &quot;góry&quot; nie może mieć dominującej menu. Umieść 0 dominującej w menu lub wybrać z menu typu &quot;Lewy&quot;.
-ErrorLeftMenuMustHaveAParentId=Menu typu &quot;Lewy&quot; musi mieć identyfikator rodzica.
+ErrorTopMenuMustHaveAParentWithId0=Menu typu "góry" nie może mieć dominującej menu. Umieść 0 dominującej w menu lub wybrać z menu typu "Lewy".
+ErrorLeftMenuMustHaveAParentId=Menu typu "Lewy" musi mieć identyfikator rodzica.
 ErrorFileNotFound=Nie znaleziono pliku (Złe drogi, złe uprawnienia lub odmowa dostępu przez openbasedir parametr)
 ErrorFunctionNotAvailableInPHP=<b>Funkcja %s</b> jest wymagane dla tej funkcji, ale nie jest dostępny w tej wersji / konfiguracji PHP.
 ErrorDirAlreadyExists=A katalog o takiej nazwie już istnieje.
@@ -52,8 +52,8 @@ ErrorNoAccountancyModuleLoaded=Nr rachunkowych moduł aktywowany
 ErrorExportDuplicateProfil=Ten profil nazwie już istnieje dla tego zestawu eksportowych.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP dopasowywania nie jest kompletna.
 ErrorLDAPMakeManualTest=A. LDIF plik został wygenerowany w katalogu %s. Spróbuj załadować go ręcznie z wiersza polecenia, aby mieć więcej informacji na temat błędów.
-ErrorCantSaveADoneUserWithZeroPercentage=Nie można zapisać działania z &quot;Statut nie rozpocznie&quot;, jeśli pole &quot;wykonana przez&quot; jest wypełniona.
-ErrorBillRefAlreadyExists=Numer identyfikacyjny używany do tworzenia już istnieje.
+ErrorCantSaveADoneUserWithZeroPercentage=Nie można zapisać działania z "Statut nie rozpocznie", jeśli pole "wykonana przez" jest wypełniona.
+ErrorRefAlreadyExists=Numer identyfikacyjny używany do tworzenia już istnieje.
 ErrorPleaseTypeBankTransactionReportName=Wpisz nazwę banku otrzymania gdy transakcja jest zgłaszane (Format RRRRMM lub RRRRMMDD)
 ErrorRecordHasChildren=Nie można usunąć rekordy, ponieważ ma pewne Childs.
 // Date 2009-01-19 00:44:06
@@ -65,3 +65,34 @@ ErrorRecordHasChildren=Nie można usunąć rekordy, ponieważ ma pewne Childs.
 MenuManager=Menu menedżera
 ErrorUrlNotValid=Adres strony internetowej jest nieprawidłowy
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+Error=Błąd
+Errors=Błędy
+ErrorBadEMail=EMail sssss jest nie tak
+ErrorBadUrl=Url sssss jest nie tak
+ErrorRecordNotFound=Rekord nie został znaleziony.
+ErrorDirNotFound=Nie znaleziono katalogu <b>sssss</b> (Bad ścieżki złe uprawnienia lub odmowa dostępu przez openbasedir PHP safe_mode lub parametr)
+ErrorFileAlreadyExists=Plik o takiej nazwie już istnieje.
+ErrorPartialFile=Plik nie otrzymał całkowicie przez serwer.
+ErrorNoTmpDir=Tymczasowy directy sssss nie istnieje.
+ErrorUploadBlockedByAddon=Prześlij zablokowane / PHP wtyczki Apache.
+ErrorFileSizeTooLarge=Rozmiar pliku jest zbyt duży.
+WarningSafeModeOnCheckExecDir=Uwaga, opcja <b>safe_mode</b> w PHP jest więc polecenia muszą być przechowywane wewnątrz katalogu <b>safe_mode_exec_dir</b> parametrów deklarowanych przez php.
+WarningConfFileMustBeReadOnly=Uwaga, plik konfiguracyjny <b>(htdocs / conf / conf.php)</b> mogą być zastąpione przez serwer internetowy. Jest to poważna luka w zabezpieczeniach. Modyfikowanie uprawnień na wniosek jest w trybie tylko do odczytu dla użytkownika system operacyjny używany przez serwer sieci Web. Jeśli używasz systemu Windows i format FAT na dysku, musisz wiedzieć, że ten system plików nie pozwala na dodawanie uprawnień do pliku, więc nie może być całkowicie bezpieczne.
+ErrorModuleRequireJavascript=JavaScript nie musi być wyłączona do tej pracy funkcji. Aby włączyć / wyłączyć Javascript, przejdź do menu Start-&gt; Ustawienia-&gt; Ekran.
+ErrorPasswordsMustMatch=Zarówno wpisane hasło musi się zgadzać się
+ErrorContactEMail=Wystąpił błąd techniczny. Proszę, skontaktuj się z administratorem e-mail do folowwing <b>sssss sssss</b> en dostarczyć kod błędu w wiadomości, a nawet lepiej, dodając kopię ekranu strony.
+ErrorWrongValueForField=Nieprawidłowa wartość dla <b>sssss</b> numer pola (wartość <b>&quot;sssss&quot;</b> nie pasuje regex <b>sssss</b> zasady)
+ErrorsOnXLines=Błędów na linii źródło <b>sssss</b>
+WarningsOnXLines=Ostrzeżeń na linii źródło <b>sssss</b>
+ErrorFileIsInfectedWithAVirus=Program antywirusowy nie był w stanie potwierdzić (plik może być zainfekowany przez wirusa)
+ErrorSpecialCharNotAllowedForField=Znaki specjalne nie są dozwolone dla pola &quot;sssss&quot;
+WarningNoDocumentModelActivated=Nie modelu do generowania dokumentu, został aktywowany. Model będzie wybraną domyślnie dopóki nie zajrzysz do modułu konfiguracji.
+ErrorDatabaseParameterWrong=parametr konfiguracji bazy danych <b>&quot;sssss&quot;</b> ma wartość nie jest zgodna korzystać Dolibarr (musi mieć wartość <b>&quot;sssss&quot;).</b>
+ErrorNumRefModel=Odniesienia nie istnieje w bazie danych (sssss) i nie jest zgodna z tą zasadą numeracji. Zmiana nazwy lub usuwanie zapisu w odniesieniu do aktywacji tego modułu.
+ErrorQtyTooLowForThisSupplier=Zbyt mała ilość tego dostawcy lub ceny nie określono tego produktu dla tego dostawca
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:06).

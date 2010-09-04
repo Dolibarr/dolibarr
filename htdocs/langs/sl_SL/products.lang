@@ -157,3 +157,15 @@ NewRefForClone=Ref. novega proizvoda/storitve
 CustomerPrices=Cene za kupce
 SuppliersPrices=Nabavne cene
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> sl_SL
+Sell=Prodaja
+Buy=Nakupi
+OnBuy=Kupljene
+ProductStatusOnBuy=Na voljo
+ProductStatusNotOnBuy=Zastarela
+ProductStatusOnBuyShort=Na voljo
+ProductStatusNotOnBuyShort=Zastarela
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:33).

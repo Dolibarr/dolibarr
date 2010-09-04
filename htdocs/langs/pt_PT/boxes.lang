@@ -58,3 +58,49 @@ NoRecordedProducts=Não gravado produtos / serviços
 NoRecordedProspects=Não gravado perspectivas
 NoContractedProducts=Não produtos / serviços contratados
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:08:18).
+// Reference language: en_US
+BoxLastContracts=Siste kontrakter
+LastRefreshDate=Siste oppdatering dato
+BoxTitleLastContracts=Siste %s kontrakter
+NoModifiedSupplierBills=Ingen registrert leverandørens faktura
+NoRecordedProducts=Ingen registrert produkter / tjenester
+NoRecordedProspects=Ingen registrert utsikter
+NoContractedProducts=Ingen produkter / tjenester innleide
+NoRecordedContracts=Ingen registrert kontrakter
+BoxLastContracts=Laatste contracten
+BoxTitleLastContracts=Laatste sssss contracten
+NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
+NoRecordedContracts=Geen geregistreerde overeenkomsten
+BoxOldestUnpaidCustomerBills=Oudste onbetaalde facturen klant
+BoxOldestUnpaidSupplierBills=Oudste onbetaalde facturen van de leverancier
+BoxLastContracts=Laatste contracten
+BoxTotalUnpaidCustomerBills=Totaal aantal onbetaalde facturen klant
+BoxTotalUnpaidSuppliersBills=Totaal aantal onbetaalde facturen van de leverancier
+BoxTitleOldestUnpaidCustomerBills=Oudste sssss onbetaalde facturen klant
+BoxTitleOldestUnpaidSupplierBills=Oudste sssss onbetaalde facturen van de leverancier
+BoxTitleTotalUnpaidCustomerBills=Onbetaalde facturen klant
+BoxTitleTotalUnpaidSuppliersBills=Onbetaalde facturen van de leverancier
+BoxTitleLastContracts=Laatste sssss contracten
+NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
+NoRecordedContracts=Geen geregistreerde overeenkomsten
+BoxLastContracts=Ostatnie zamówienia
+BoxTitleLastProductsInContract=Ostatnie sssss produktów / usług w umowie
+BoxTitleLastContracts=Ostatnie sssss umów
+NoModifiedSupplierBills=Nie zarejestrowane faktury dostawcy
+NoRecordedContracts=Umów nie zarejestrowanych
+BoxLastContracts=Última contratos
+BoxTitleLastContracts=Última contratos %s
+NoModifiedSupplierBills=Nenhum fornecedor facturas registadas na
+NoRecordedContracts=Sem contratos registrados
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:24).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+BoxTitleLastModifiedSuppliers=%s Modificada fornecedores
+BoxTitleLastModifiedCustomers=%s Modificada clientes
+BoxTitleLastModifiedProspects=%s Modificada perspectivas
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:38).

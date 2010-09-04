@@ -10,7 +10,7 @@
 CHARSET=UTF-8
 PayBoxSetup=PayBox modülü kurulumu
 PayBoxDesc=Bu modül teklif sayfaları müşterilerimiz tarafından <a href="http://www.paybox.com" target="_blank">Paybox</a> ödeme izin vermek. Bu ücretsiz ödeme için kullanılabilir veya belirli bir Dolibarr nesne üzerinde bir ödeme (fatura, sipariş, ...)
-FollowingUrlAreAvailableToMakePayments=Aşağıdaki URL&#39;ler bir müşteriye Dolibarr nesneler üzerinde bir ödeme yapmak için bir sayfa sunmak için kullanılabilir
+FollowingUrlAreAvailableToMakePayments=Aşağıdaki URL'ler bir müşteriye Dolibarr nesneler üzerinde bir ödeme yapmak için bir sayfa sunmak için kullanılabilir
 PaymentForm=Ödeme Formu
 WelcomeOnPaymentPage=Online ödeme servisine hoşgeldiniz
 ThisScreenAllowsYouToPay=Bu ekran% s için bir online ödeme yapmak için izin
@@ -28,6 +28,7 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL% sunmak için bir fatura için online 
 ToOfferALinkForOnlinePaymentOnContractLine=URL% sunmak için bir sözleşme hattı için online ödeme kullanıcı arabirimi var
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL% sunan ücretsiz bir miktar için online ödeme kullanıcı arabirimi var
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL% sunmak için Üye abonelik için online ödeme kullanıcı arabirimi var
-YouCanAddTagOnUrl=De (tek ücretsiz ödeme için) ödeme Yorum etiketi eklemek için gerekli url parametresi <b>&amp; etiketi</b> herhangi bir bu URL için <b>= <i>değer</i></b> ekleyebilirsiniz.
+YouCanAddTagOnUrl=De (tek ücretsiz ödeme için) ödeme Yorum etiketi eklemek için gerekli url parametresi <b>& etiketi</b> herhangi bir bu URL için <b>= <i>değer</i></b> ekleyebilirsiniz.
 SetupPayBoxToHavePaymentCreatedAutomatically=Ayarlayın PayBox <b>url%</b> ile ödeme otomatik olarak paybox tarafından doğrulanmış oluşturduğunuz <b>var.</b>
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+

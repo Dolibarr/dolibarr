@@ -107,3 +107,10 @@ ConfirmDeleteContractLine=Czy na pewno chcesz usunąć tę linię zamówienia?
 PaymentRenewContractId=Odnowienie umowy linii (liczba %s)
 ExpiredSince=Data ważności
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+RelatedContracts=Związane z nimi umowy
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:49).

@@ -26,3 +26,9 @@ TF_LUNCH=Öğle yemeği
 TF_TRIP=Gezinti
 ListTripsAndExpenses=Geziler ve harcamalar listesi
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> tr_TR
+TripsAndExpensesStatistics=Gezileri ve giderler istatistikleri
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:13).

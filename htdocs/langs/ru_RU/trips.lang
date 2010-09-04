@@ -29,7 +29,8 @@ TF_TRIP=Поездка
 // STOP - Lines generated via parser
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-ListTripsAndExpenses=Перечень экскурсий и расходы
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> ru_RU
+TripsAndExpensesStatistics=Экскурсии и расходы статистика
+ListTripsAndExpenses=Список поездок и расходы
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:13).

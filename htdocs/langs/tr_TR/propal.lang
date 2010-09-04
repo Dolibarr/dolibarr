@@ -28,13 +28,13 @@ ValidateProp=Validate ticari önerisi
 AddProp=Öneri ekle
 ConfirmDeleteProp=Bunu ticari öneriyi silmek istediğinizden emin misiniz?
 ConfirmValidateProp=Bunu ticari önerisini doğrulamak istediğinizden emin misiniz?
-LastPropals=Son% s önerileri
-LastClosedProposals=Son% s kapalı teklif
+LastPropals=Son %s  önerileri
+LastClosedProposals=Son %s  kapalı teklif
 LastModifiedProposals=Son% önerileri olarak s
 AllPropals=Tüm önerileri
 LastProposals=Son öneriler
 SearchAProposal=Bir öneri Arama
-ProposalsStatistics=Ticari öneriler &#39;istatistiklerine
+ProposalsStatistics=Ticari öneriler 'istatistiklerine
 NumberOfProposalsByMonth=Numarasını aya göre
 AmountOfProposalsByMonthHT=Miktarı ayına göre (vergi net)
 NbOfProposals=Sayıda ticari öneriler
@@ -91,5 +91,13 @@ ProposalsAndProposalsLines=Ticari önerisi ve hatları
 ProposalLine=Önerisi doğrultusunda
 DocModelAzurDescription=Tam bir öneri modeli (logo. ..)
 DocModelJauneDescription=Jaune modeli önerisi
-MarbreNumRefModelDesc=Format% syymm uyan numero-teklif nnnn nereye YY yılı, mm ay ve nnnn hiçbir break ve 0 olursa dönüş ile bir dizi
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+TypeContact_propal_internal_SALESREPFOLL=Temsilci aşağıdaki-up öneri
+TypeContact_propal_external_BILLING=Müşteri fatura temas
+TypeContact_propal_external_CUSTOMER=Müşteri aşağıdaki-up öneri
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:31).

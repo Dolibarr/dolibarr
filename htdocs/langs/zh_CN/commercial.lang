@@ -1,0 +1,88 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+Commercial=商业
+CommercialArea=商业领域
+CommercialCard=商务卡
+CustomerArea=客户区
+Customer=顾客
+Customers=客户
+Prospect=展望
+Prospects=前途
+DeleteAction=删除一个动作/任务
+NewAction=新的行动/任务
+AddAction=新增行动/任务
+AddAnAction=添加一个动作/任务
+AddActionRendezVous=添加交会任务
+Rendez-Vous=会合
+ConfirmDeleteAction=你确定要删除这个任务吗？
+CardAction=行动卡
+PercentDone=完成百分比
+ActionOnCompany=关于公司的任务
+ActionOnContact=任务关于联系
+TaskRDV=会议
+TaskRDVWith=与％会议上的
+ShowTask=显示任务
+ShowAction=显示行动
+ActionsReport=行动的报告
+SalesRepresentative=销售代表
+SalesRepresentatives=销售代表
+SalesRepresentativeFollowUp=销售代表（后续）
+SalesRepresentativeSignature=销售代表（签字）
+CommercialInterlocutor=商业对话者
+ErrorWrongCode=错误代码
+NoSalesRepresentativeAffected=没有特别的销售代表影响
+ShowCustomer=显示客户
+ShowProspect=展前景
+ListOfProspects=名单前景
+ListOfCustomers=客户名单
+LastDoneTasks=％s的最后完成的任务
+LastRecordedTasks=最后录音任务
+LastActionsToDo=最后％不是最古老的行动完成
+DoneAndToDoActionsFor=完成，为未来的任务s％
+DoneAndToDoActions=任务完成，并要做到
+DoneActions=已完成的行动
+DoneActionsFor=为％完成01-0014-03
+ToDoActions=不完整的行动
+ToDoActionsFor=不完全对％01-0014-03
+SendPropalRef=％s的发送商业建议
+SendOrderRef=发送命令％s的
+StatusActionToDo=要做到
+StatusActionDone=完成
+MyActionsAsked=我的行动已经记录
+MyActionsToDo=我必须做的动作
+MyActionsDone=行动影响到我
+StatusActionInProcess=在过程
+TasksHistoryForThisContact=此联系人的行动
+LastProspectDoNotContact=不要接触
+LastProspectNeverContacted=没有接触过
+LastProspectToContact=要联系
+LastProspectContactInProcess=联系过程
+LastProspectContactDone=联系工作
+DateActionPlanned=日期行动计划
+DateActionDone=日期行动完成
+ActionAskedBy=行动问
+ActionAffectedTo=受影响的行动
+ActionDoneBy=行动方面所做的
+ActionUserAsk=记录
+ErrorStatusCantBeZeroIfStarted=如果字段' <b>日期做</b> '是充满行动启动（或成品），所以外地的<b>状态</b> '不能为0％％。
+ActionAC_TEL=电话
+ActionAC_FAX=发送传真
+ActionAC_PROP=通过邮件发送建议
+ActionAC_EMAIL=发送电子邮件
+ActionAC_RDV=会议
+ActionAC_FAC=通过邮件发送客户发票
+ActionAC_REL=通过邮件发送客户发票（提醒）
+ActionAC_CLO=关闭
+ActionAC_EMAILING=发送大量的电子邮件
+ActionAC_COM=通过邮件发送客户订单
+ActionAC_SUP_ORD=邮寄供应商的订单
+ActionAC_SUP_INV=邮寄发票的供应商
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).

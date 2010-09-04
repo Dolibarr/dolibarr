@@ -93,7 +93,7 @@ ConfirmValidateOrder=Czy na pewno chcesz, aby potwierdzić tej kolejności pod <
 ConfirmCancelOrder=Czy na pewno chcesz anulować zamówienie?
 ConfirmMakeOrder=Czy na pewno chcesz, aby potwierdzić wprowadzone tym celu <b>na %s?</b>
 GenerateBill=Generowanie faktur
-ClassifyBilled=Klasyfikacja &quot;obciążonego&quot;
+ClassifyBilled=Klasyfikacja "obciążonego"
 ComptaCard=Księgowość karty
 DraftOrders=Projekt zamówień
 RelatedOrders=Podobne zamówienia
@@ -104,16 +104,16 @@ CustomerOrder=Zamówieniem
 RefCustomerOrderShort=Nr ref. cust. porządek
 SendOrderByMail=Wyślij zamówienie pocztą
 ActionsOnOrder=Działania mające na celu
-NoArticleOfTypeProduct=Nr artykułu typu &quot;produktu&quot;, więc nie shippable artykule tej kolejności
+NoArticleOfTypeProduct=Nr artykułu typu "produktu", więc nie shippable artykule tej kolejności
 OrderMode=Postanowienie metody
 AuthorRequest=Wniosek autora
 UseCustomerContactAsOrderRecipientIfExist=Użyj klienta adres, jeśli określone zamiast trzeciej kolejności adres odbiorcy adres
 RunningOrders=Zamówienia na proces
-UserWithApproveOrderGrant=Useres przyznane z &quot;zatwierdza zamówienia zgody.
+UserWithApproveOrderGrant=Useres przyznane z "zatwierdza zamówienia zgody.
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Stała COMMANDE_SUPPLIER_ADDON nie zdefiniowane
 Error_COMMANDE_ADDON_NotDefined=Stała COMMANDE_ADDON nie zdefiniowane
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Nie można załadować modułu pliku &#39; %s&#39;
-Error_FailedToLoad_COMMANDE_ADDON_File=Nie można załadować modułu pliku &#39; %s&#39;
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Nie można załadować modułu pliku ' %s'
+Error_FailedToLoad_COMMANDE_ADDON_File=Nie można załadować modułu pliku ' %s'
 OrderSource0=Commercial wniosku
 OrderSource1=Internet
 OrderSource2=Poczta kampanii
@@ -124,7 +124,6 @@ OrderSource6=Przechowywać
 QtyOrdered=Ilosc sortowane
 AddDeliveryCostLine=Dodaj dostawy koszt linii wskazujące wagi zamówienia
 PDFEinsteinDescription=Pełna kolejność modelu (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme syymm% rr-nnnn ou est l&#39;année, le mois mm et un nnnn compteur sequentiel bez pęknięcia et sans zrzekanie e 0
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
 
@@ -136,3 +135,21 @@ PaymentOrderRef=Płatność celu %s
 CloneOrder=Clone celu
 ConfirmCloneOrder=Czy na pewno chcesz klon tej <b>kolejności %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+OrderToProcess=Aby proces
+DispatchSupplierOrder=Sssss Odbiór aby dostawca
+TypeContact_commande_internal_SALESREPFOLL=Przedstawiciela w ślad za zamówienie klienta
+TypeContact_commande_internal_SHIPPING=Przedstawiciela w ślad za koszty
+TypeContact_commande_external_BILLING=kontakt faktury klienta
+TypeContact_commande_external_SHIPPING=kontakt koszty klientów
+TypeContact_commande_external_CUSTOMER=kontakt klienta w ślad za zamówienie
+TypeContact_order_supplier_internal_SALESREPFOLL=Przedstawiciela w ślad za zamówienie dostawca
+TypeContact_order_supplier_internal_SHIPPING=Przedstawiciela w ślad za koszty
+TypeContact_order_supplier_external_BILLING=kontakt fakturze dostawcy
+TypeContact_order_supplier_external_SHIPPING=kontakt koszty dostawcy
+TypeContact_order_supplier_external_CUSTOMER=Kontaktowy dostawca w ślad za zamówienie
+PDFEdisonDescription=Prosty model celu
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:15).

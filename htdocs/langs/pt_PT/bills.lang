@@ -16,9 +16,9 @@ InvoiceStandardDesc=Este tipo de factura é a factura tradicional. também se a 
 InvoiceDeposit=Depositar Factura
 InvoiceDepositAsk=Depositar Factura
 InvoiceDepositDesc=Este tipo de factura é feita com um depósito quando foi recebido.
-InvoiceProFormat=Factura Pro-Forma
-InvoiceProFormatAsk=Factura Pro-Forma
-InvoiceProFormatDesc=<b>Factura Pro-Forma</b> é uma verdadeira imagem de uma factura, mas não tem valor contabilístico.
+InvoiceProForma=Factura Pro-Forma
+InvoiceProFormaAsk=Factura Pro-Forma
+InvoiceProFormaDesc=<b>Factura Pro-Forma</b> é uma verdadeira imagem de uma factura, mas não tem valor contabilístico.
 InvoiceReplacement=Factura Rectificativa
 InvoiceReplacementAsk=Factura Rectificativa da Factura
 InvoiceReplacementDesc=a <b>factura rectificativa</b> sirve para cancelar e para substituir uma factura existente sobre a que ainda não existe pagamentos.<br><br>Nota: só uma factura sem nenhum pagamento pode rectificarse. sim esta última não está cerrada, pasará automáticamente à estado'abandonada'.
@@ -385,3 +385,26 @@ ConfirmRemoveDiscount=Tem certeza de que deseja remover este desconto?
 UseCredit=Uso de crédito
 ShowUnpaidLateOnly=Mostrar tarde unpaid factura única
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+AlreadyPaidNoCreditNotesNoDeposits=Já pagas (sem notas de crédito e depósitos)
+RelatedBill=factura relacionados
+RelatedBills=facturas relacionadas
+ValidateInvoice=Validar a factura
+Cash=Numerário
+Reported=Atrasado
+DisabledBecausePayments=Não é possível, pois há alguns pagamentos
+CantRemovePaymentWithOneInvoicePaid=Não é possível remover o pagamento desde há pelo menos na factura paga classificados
+ExpectedToPay=pagamento esperado
+PayedByThisPayment=Pago por esse pagamento
+TypeContact_facture_internal_SALESREPFOLL=Representante fatura do cliente seguimento
+TypeContact_facture_external_BILLING=contacto na factura do Cliente
+TypeContact_facture_external_SHIPPING=contato com o transporte do cliente
+TypeContact_facture_external_SERVICE=contactar o serviço ao cliente
+TypeContact_facture_fourn_internal_SALESREPFOLL=Representante fatura do fornecedor seguimento
+TypeContact_facture_fourn_external_BILLING=Fornecedor Contactar com factura
+TypeContact_facture_fourn_external_SHIPPING=Fornecedor Contactar com transporte
+TypeContact_facture_fourn_external_SERVICE=Fornecedor contactar o serviço de
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:28).

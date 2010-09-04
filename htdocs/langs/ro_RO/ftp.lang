@@ -1,0 +1,21 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-07-17 11:36:47
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+CHARSET=UTF-8
+FTPClientSetup=Un client FTP modul de configurare
+NewFTPClient=Noua conexiune FTP setup
+FTPArea=Spaţiul FTP
+FTPAreaDesc=Acest ecran vă arate conţinutul în vederea server FTP
+SetupOfFTPClientModuleNotComplete=Setup de modul client FTP pare a fi nu este completă
+FTPFeatureNotSupportedByYourPHP=PHP nu are suport pentru funcţii FTP
+FailedToConnectToFTPServer=Nu a reuşit să se conecteze la serverul FTP (%s server, %s port)
+FailedToConnectToFTPServerWithCredentials=Nu a reuşit să login la serverul FTP cu login definite / parolă
+FTPFailedToRemoveFile=Nu reuşeau să îndepărteze <b>%s</b> fişier.
+FTPFailedToRemoveDir=Nu am putut şterge directorul <b>%s</b> (verificaţi permisiunile şi că directorul este gol).
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:38:45).

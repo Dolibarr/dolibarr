@@ -52,7 +52,6 @@ GenericTransport=Общие транспорт
 Enlevement=Полученной клиентом
 DocumentModelSimple=Простая модель документа
 WarningNoQtyLeftToSend=Внимание, без продуктов, ожидающих отправки.
-NumRefModelJade=Вернуться номер с форматом BLYY00001, ... где YY является год. Количество на конец никогда сброс до нуля.
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
 
@@ -66,3 +65,15 @@ SendingMethodCOLSUI=Colissimo
 DocumentModelSirocco=Простая модель документа для доставки квитанций
 DocumentModelTyphon=Более полная модель документа для доставки квитанций (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+Shipments=Поставки
+StatusSendingCanceled=Отменен
+StatusSendingCanceledShort=Отменен
+DocumentModelMerou=Mérou модели A5
+DateDeliveryPlanned=Планируемая дата поставки
+DateReceived=Дата доставки получили
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:29).

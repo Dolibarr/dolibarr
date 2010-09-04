@@ -192,3 +192,16 @@ NewExport=Nov izvoz
 ##### External sites #####
 ExternalSites=Zunanje strani
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> sl_SL
+PredefinedMailContentSendSupplierOrder=Tukaj boste našli naša da __ORDERREF__ \ n \ nSincerely \ n \ n
+WeightUnitpound=funt
+VolumeUnitounce=unča
+VolumeUnitlitre=liter
+VolumeUnitgallon=galono
+SizeUnitinch=inch
+SizeUnitfoot=stopalo
+ImageEditor=Podoba urednik
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:14).

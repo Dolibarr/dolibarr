@@ -30,7 +30,7 @@ NbOfInvoiceToWithdraw=Nb счета с просьбой отозвать
 InvoiceWaitingWithdraw=Счет ждет снимать
 AmountToWithdraw=Сумма снять
 WithdrawsRefused=Отзывает отказала
-NoInvoiceToWithdraw=Нет счета клиента в оплате режиме &quot;отозвать&quot; ждет. Переход на &quot;Вывод &#39;вкладки на счету карточки сделать запрос.
+NoInvoiceToWithdraw=Нет счета клиента в оплате режиме "отозвать" ждет. Переход на "Вывод 'вкладки на счету карточки сделать запрос.
 ResponsibleUser=Ответственный пользователь
 WithdrawalsSetup=Выход установки
 WithdrawStatistics=Выходит статистика
@@ -44,3 +44,44 @@ ClassCredited=Классифицировать зачисленных
 ClassCreditedConfirm=Вы уверены, что хотите классифицировать этот вывод получения как кредитуются на ваш счет в банке?
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> ru_RU
+StandingOrderToProcess=Для обработки
+StandingOrderProcessed=Обработано
+TransData=Дата передачи
+TransMetod=Метод передачи
+Send=Послать
+Lines=Линии
+StandingOrderReject=Выпуск отклонить
+WithdrawalRefused=Выплаты Refuseds
+WithdrawalRefusedConfirm=Вы уверены, что вы хотите ввести снятия отказа общества
+RefusedData=Дата отказа
+RefusedReason=Причина для отказа
+RefusedInvoicing=Счета отказ
+NoInvoiceRefused=Не заряжайте отказ
+InvoiceRefused=Зарядка отказа клиента
+Status=Статус
+StatusUnknown=Неизвестный
+StatusWaiting=Ожидание
+StatusCredited=Кредитоваться
+StatusRefused=Отказавшийся
+StatusMotif0=Не указано
+StatusMotif1=Предоставление insuffisante
+StatusMotif2=Тираж conteste
+StatusMotif3=Нет Выплаты порядка
+StatusMotif4=Клиент Заказать
+StatusMotif5=RIB inexploitable
+StatusMotif6=Счет без остатка
+StatusMotif7=Судебное решение
+StatusMotif8=Другая причина
+CreateAll=Снять все
+CreateGuichet=Только служба
+CreateBanque=Только банк
+OrderWaiting=Ожидание для лечения
+NotifyTransmision=Снятие передачи
+NotifyEmision=Снятие выбросов
+NotifyCredit=Снятие кредитную
+NumeroNationalEmetter=Национальный передатчик Количество
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:19).

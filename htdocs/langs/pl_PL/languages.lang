@@ -1,0 +1,41 @@
+/*
+ * Language code: pl_PL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-07-17 11:45:17
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+CHARSET=UTF-8
+Language_ar_AR=Arabski
+Language_ca_ES=Kataloński
+Language_da_DA=Duński
+Language_de_DE=Niemiecki
+Language_en_AU=Angielski (Australia)
+Language_en_GB=Angielski (Zjednoczone Królestwo)
+Language_en_IN=Angielski (Indie)
+Language_en_US=Angielski (Stany Zjednoczone)
+Language_es_ES=Hiszpański
+Language_es_AR=Hiszpański (Argentyna)
+Language_fi_FI=Płetwy
+Language_fr_BE=Francuski (Belgia)
+Language_fr_CA=Francuski (Kanada)
+Language_fr_CH=Francuski (Szwajcaria)
+Language_fr_FR=Francuski
+Language_is_IS=Islandzki
+Language_it_IT=Włoski
+Language_nb_NO=Norweski (Bokmål)
+Language_nl_BE=Holenderski (Belgia)
+Language_nl_NL=Holenderski (Holandia)
+Language_pl_PL=Polski
+Language_pt_BR=Portugalski (Brazylia)
+Language_pt_PT=Portugalski
+Language_ro_RO=Rumuński
+Language_ru_RU=Rosyjski
+Language_tr_TR=Turecki
+Language_sl_SL=Słoweński
+Language_sv_SV=Szwedzki
+Language_zh_CN=Chiński
+Language_is_IS=Islandzki
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:20).

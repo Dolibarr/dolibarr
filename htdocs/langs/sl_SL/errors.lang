@@ -72,3 +72,9 @@ WarningNoDocumentModelActivated=Noben model za ustvarjanje dokumentov ni aktivir
 ErrorDatabaseParameterWrong=Parameter nastavitve baze podatkov '<b>%s</b>' ima vrednost, ki ni kompatibilna z Dolibarr (vrednost mora biti '<b>%s</b>').
 ErrorNumRefModel=V bazi podatkov obstaja referenca (%s), ki ni kompatibilna s tem pravilom za številčenje. Odstranite zapis ali preimenujte referenco za aktivacijo tega modula.
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> sl_SL
+ErrorQtyTooLowForThisSupplier=Količina prenizka za dobavitelji ali ne cena iz tega izdelka, za tega dobavitelja
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:18).

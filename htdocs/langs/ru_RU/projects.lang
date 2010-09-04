@@ -68,3 +68,46 @@ AffectedTo=Затронутые в
 ListPredefinedInvoicesAssociatedProject=Список клиентов заранее счетов, связанных с проектом
 CantRemoveProject=Этот проект не может быть удалена, как он ссылается на другие объекты (счета-фактуры, приказы или другие). См. реферрала вкладке.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+PrivateProject=Контакты проекта
+MyProjectsDesc=Эта точка зрения ограничена проекты, которые Вы контакте (что бы это тип).
+ProjectsPublicDesc=Эта точка зрения представлены все проекты, которые Вы позволили читать.
+ProjectsDesc=Эта точка зрения представляет все проекты (разрешений пользователей предоставить вам разрешение для просмотра всего).
+MyTasksDesc=Эта точка зрения ограничена на проекты или задачи, которые являются для контакта (что бы это тип).
+TasksPublicDesc=Эта точка зрения представляет всех проектов и задач, которые могут читать.
+TasksDesc=Эта точка зрения представляет всех проектов и задач (разрешений пользователей предоставить вам разрешение для просмотра всего).
+Progress=Прогресс
+ListFichinterAssociatedProject=Список мероприятий, связанных с проектом
+ListTripAssociatedProject=Список поездки и расходы, связанные с проектом
+ListActionsAssociatedProject=Список мероприятий, связанных с проектом
+ValidateProject=Проверка Projet
+ConfirmValidateProject=Вы уверены, что хотите проверить этот проект?
+CloseAProject=Закрыть проект
+ConfirmCloseAProject=Вы уверены, что хотите, чтобы закрыть этот проект?
+ReOpenAProject=Открытый проект
+ConfirmReOpenAProject=Вы уверены, что хотите, чтобы вновь открыть этот проект?
+ProjectContact=Проект контакты
+ActionsOnProject=Действия по проекту
+YouAreNotContactOfProject=Вы не контакт этого частного проекта
+DeleteATimeSpent=Удалить времени
+ConfirmDeleteATimeSpent=Вы уверены, что хотите удалить этот раз провели?
+DoNotShowMyTasksOnly=См. также задачи, я не влияет на
+ShowMyTasksOnly=Открыть только задачи я затронутые
+TaskRessourceLinks=Библиография
+ProjectsDedicatedToThisThirdParty=Проектов, посвященных этой третьей стороне
+NoTasks=Нет задач, для этого проекта
+LinkedToAnotherCompany=Связь с другими третий участник
+TypeContact_project_internal_PROJECTLEADER=Руководитель проекта
+TypeContact_project_external_PROJECTLEADER=Руководитель проекта
+TypeContact_project_internal_CONTRIBUTOR=Участник
+TypeContact_project_external_CONTRIBUTOR=Участник
+TypeContact_project_task_internal_TASKEXECUTIVE=Целевая исполнительной
+TypeContact_project_task_external_TASKEXECUTIVE=Целевая исполнительной
+TypeContact_project_task_internal_CONTRIBUTOR=Участник
+TypeContact_project_task_external_CONTRIBUTOR=Участник
+DocumentModelBaleine=доклад полной проекта модели (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:12).

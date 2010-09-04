@@ -1,0 +1,146 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+OrdersArea=客户订单面积
+SuppliersOrdersArea=供应商的订单面积
+OrderCard=订购卡
+Order=秩序
+Orders=订单
+OrderLine=在线订单
+OrderFollow=跟进
+OrderContact=订购联系
+OrderDate=订购日期
+OrderToProcess=为了处理
+NewOrder=新秩序
+ToOrder=订单填写
+MakeOrder=订单填写
+SupplierOrder=供应商的订单
+SuppliersOrders=供应商的订单
+SuppliersOrdersRunning=当前供应商的订单
+CustomerOrder=客户订单
+CustomersOrders=客户的订单
+CustomersOrdersRunning=当前客户的订单
+CustomersOrdersAndOrdersLines=客户的订单，订单的行
+OrdersToValid=常规验证
+OrdersToBill=比尔订单
+OrdersInProcess=订单流程
+OrdersToProcess=订单处理
+StatusOrderCanceledShort=取消
+StatusOrderDraftShort=草案
+StatusOrderValidatedShort=验证
+StatusOrderOnProcessShort=论过程
+StatusOrderProcessedShort=加工
+StatusOrderToBillShort=为了法案
+StatusOrderApprovedShort=核准
+StatusOrderRefusedShort=拒绝
+StatusOrderToProcessShort=要处理
+StatusOrderReceivedPartiallyShort=部分接受
+StatusOrderReceivedAllShort=一切都收到
+StatusOrderCanceled=取消
+StatusOrderDraft=草案（需要验证）
+StatusOrderValidated=验证
+StatusOrderOnProcess=论过程
+StatusOrderProcessed=加工
+StatusOrderToBill=为了法案
+StatusOrderApproved=核准
+StatusOrderRefused=拒绝
+StatusOrderReceivedPartially=部分接受
+StatusOrderReceivedAll=一切都收到
+DraftOrWaitingApproved=草案尚未下令或批准
+DraftOrWaitingShipped=草案或审定尚未运
+MenuOrdersToBill=比尔订单
+SearchOrder=搜索顺序
+Sending=发出
+Sendings=Sendings
+ShipProduct=船舶产品
+Discount=折扣
+CreateOrder=创建订单
+RefuseOrder=垃圾秩序
+ApproveOrder=接受命令
+ValidateOrder=为了验证
+DeleteOrder=删除订单
+CancelOrder=取消订单
+AddOrder=添加顺序
+AddToMyOrders=添加到我的订单
+AddToOtherOrders=添加到其他命令
+ShowOrder=显示顺序
+NoOpenedOrders=没有打开订单
+NoOtherOpenedOrders=没有其他打开的订单
+OtherOrders=其他命令
+LastOrders=上次％s的订单
+LastModifiedOrders=最后修改％s的订单
+LastClosedOrders=最后％的封闭式订单
+AllOrders=所有的订单
+NbOfOrders=订单号码
+OrdersStatistics=为了统计
+OrdersStatisticsSuppliers=供应商的订单统计
+NumberOfOrdersByMonth=按月份订单数
+AmountOfOrdersByMonthHT=按月份订单金额（税后）
+ListOfOrders=名单的订单
+CloseOrder=关闭命令
+ConfirmCloseOrder=您确定要关闭这个秩序？一旦订单是封闭的，它只能产生帐单。
+ConfirmCloseOrderIfSending=您确定要关闭这个秩序？你必须关闭，只有当所有航运完成的顺序。
+ConfirmDeleteOrder=你确定要删除这个秩序？
+ConfirmValidateOrder=你确定要验证这个原则下，根据名称<b>％s吗</b> ？
+ConfirmCancelOrder=您确定要取消此订单？
+ConfirmMakeOrder=你一定要确认你这对<b>％的</b>命令？
+GenerateBill=生成发票
+ClassifyBilled=分类“帐单”
+ComptaCard=会计证
+DraftOrders=命令草案
+RelatedOrders=有关命令
+OnProcessOrders=在处理订单
+RefOrder=号。秩序
+RefCustomerOrder=号。客户订单
+CustomerOrder=客户订单
+RefCustomerOrderShort=号。卡斯特。秩序
+SendOrderByMail=为了通过邮件发送
+ActionsOnOrder=订购行动
+NoArticleOfTypeProduct=任何类型的产品文章'，以便对这一秩序shippable文章
+OrderMode=订购方法
+AuthorRequest=要求提交
+UseCustomerContactAsOrderRecipientIfExist=使用客户联系地址，如果定义的，而不是第三方地址为收件人地址
+RunningOrders=订单的过程
+UserWithApproveOrderGrant=用户授予“批准令”的权限。
+PaymentOrderRef=清缴秩序％
+CloneOrder=为了克隆
+ConfirmCloneOrder=你确定要克隆这项命令<b>％s吗</b> ？
+TypeContact_commande_internal_SALESREPFOLL=代表随访客户订单
+TypeContact_commande_internal_SHIPPING=代表随访航运
+TypeContact_commande_external_BILLING=客户发票接触
+TypeContact_commande_external_SHIPPING=客户航运联系
+TypeContact_commande_external_CUSTOMER=客户联系随访秩序
+TypeContact_order_supplier_internal_SALESREPFOLL=代表随访供应商的订单
+TypeContact_order_supplier_internal_SHIPPING=代表随访航运
+TypeContact_order_supplier_external_BILLING=供应商发票接触
+TypeContact_order_supplier_external_SHIPPING=航运供应商联系
+TypeContact_order_supplier_external_CUSTOMER=供应商联系随访秩序
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=常COMMANDE_SUPPLIER_ADDON没有定义
+Error_COMMANDE_ADDON_NotDefined=常COMMANDE_ADDON没有定义
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=无法加载模块文件'％s'的
+Error_FailedToLoad_COMMANDE_ADDON_File=无法加载模块文件'％s'的
+OrderSource0=商业建议
+OrderSource1=因特网
+OrderSource2=邮件活动
+OrderSource3=电话的宣传运动，
+OrderSource4=传真活动
+OrderSource5=商业
+OrderSource6=商店
+QtyOrdered=订购数量
+AddDeliveryCostLine=添加交货成本线，显示该命令的重量
+PDFEinsteinDescription=一个完整的命令模式（logo. ..）
+PDFEdisonDescription=一份简单的订购模式
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+DispatchSupplierOrder=接收供应商的订单%s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:42).

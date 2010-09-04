@@ -93,12 +93,12 @@ ConfirmPaySocialContribution=Вы уверены, что хотите класс
 DeleteSocialContribution=Удалить социального взноса
 ConfirmDeleteSocialContribution=Вы уверены, что хотите удалить этот социальный взнос?
 ExportDataset_tax_1=Социальные взносы и платежи
-AnnualSummaryDueDebtMode=Билан DES recettes и dpenses, rsum annuel, в <b>режиме %sCrances-Dettes %s</b> DIT <b>comptabilit d&#39;участия.</b>
+AnnualSummaryDueDebtMode=Билан DES recettes и dpenses, rsum annuel, в <b>режиме %sCrances-Dettes %s</b> DIT <b>comptabilit d'участия.</b>
 AnnualSummaryInputOutputMode=Билан DES recettes и dpenses, rsum annuel, в <b>режиме %sRecettes-Dpenses %s</b> DIT <b>comptabilit де ящик.</b>
-AnnualByCompaniesDueDebtMode=Билан DES recettes и dpenses, dtail пар ярусов, в <b>режиме %sCrances-Dettes %s</b> DIT <b>comptabilit d&#39;участия.</b>
+AnnualByCompaniesDueDebtMode=Билан DES recettes и dpenses, dtail пар ярусов, в <b>режиме %sCrances-Dettes %s</b> DIT <b>comptabilit d'участия.</b>
 AnnualByCompaniesInputOutputMode=Билан DES recettes и dpenses, dtail пар ярусов, в <b>режиме %sRecettes-Dpenses %s</b> DIT <b>comptabilit де ящик.</b>
 SeeReportInInputOutputMode=См. LE <b>отношения %sRecettes-Dpenses %s</b> DIT <b>comptabilit де ящик</b> POUR UN CALCUL SUR LES paiements effectivement raliss
-SeeReportInDueDebtMode=См. LE <b>отношения %sCrances-Dettes %s</b> DIT <b>comptabilit d&#39;участие</b> POUR UN CALCUL SUR LES factures Мизеса
+SeeReportInDueDebtMode=См. LE <b>отношения %sCrances-Dettes %s</b> DIT <b>comptabilit d'участие</b> POUR UN CALCUL SUR LES factures Мизеса
 RulesResultDue=- Суммы указаны с НДС <br> - Она включает в себя неоплаченные счета, расходы и НДС ли они выплачиваются или нет. <br> - Он основан на одобрении даты счета-фактуры и НДС, и на сегодняшний день из-за расходов.
 RulesResultInOut=- Суммы указаны с НДС <br> - Она включает в себя реальные выплаты на счета, расходы и НДС. <br> - Он основан на оплату даты счета-фактуры, расходы ANF НДС. <br>
 RulesCADue=- Она включает в себя клиентов из-за счетов ли они выплачиваются или нет. <br> - Он основан на дату одобрения этих счетов-фактур. <br>
@@ -111,8 +111,7 @@ SeeVATReportInInputOutputMode=См. LE <b>отношения %sTVA encaissement 
 SeeVATReportInDueDebtMode=См. LE <b>отношения %sTVA сюр dbit %s</b> для режима де CALCUL AVEC вариант SUR LES dbits
 RulesVATIn=- POUR LES услуг, Le отношения inclut Ле дез TVA rglements effectivement Реус или MIS EN SE basant сюр-ла-дю rglement даты. <br> - POUR LES имущества matriels, IL inclut Ле дез TVA factures EN SE basant сюр-де-ла даты подтверждения де-ла-Фактура.
 RulesVATDue=- POUR LES услуг, Le отношения inclut Ле дез TVA factures взносы, или, не payes EN SE basant сюр-де-ла даты подтверждения DE CES factures. <br> - POUR LES имущества matriels, IL inclut Ле дез TVA factures EN SE basant сюр-де-ла даты подтверждения де-ла-Фактура.
-OptionVatInfoModuleComptabilite=Ремарка: POUR LES имущества matriels, IL faudrait использовать дата-де-ла-livraison за тра плюс Жюст.
-PercentOfInvoice=%% / счет-фактура
+PercentOfInvoice=%%/счет-фактура
 Dispatch=Экспедирование
 Dispatched=Отправлено
 ToDispatch=Направить
@@ -129,8 +128,19 @@ NotUsedForGoods=Не используется на товары
 
 // START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
 // Reference language: en_US
-OptionModeTrue=Вариант &quot;затраты-выпуск&quot;
+OptionModeTrue=Вариант "затраты-выпуск"
 OptionModeTrueDesc=В этом контексте, оборот исчисляется за платежи (дата выплаты). \ nThe действительности цифры обеспечивается только в том случае, если бухгалтерия является тщательно путем ввода / вывода по счетам с помощью счетов-фактур.
 ShowVatPayment=Показать оплате НДС
 SupplierAccountancyCode=Поставщик бухгалтерских код
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+TaxModuleSetupToModifyRules=Перейти на <a href="%s">модуль установки</a> для изменения правил расчета
+VATReportBuildWithOptionDefinedInModule=Суммы, показанные здесь, рассчитанного с использованием установленных правил налоговыми модуля установки.
+SocialContributionsPayments=Социальные отчисления платежей
+OptionVatInfoModuleComptabilite=Примечание: Для материальных ценностей, она должна использовать даты доставки будет более справедливым.
+ThirdPartyMustBeEditAsCustomer=Третий участник должен быть определен в качестве клиента
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:53).

@@ -29,7 +29,8 @@ TF_TRIP=Excursie
 // STOP - Lines generated via parser
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-ListTripsAndExpenses=Lista de călătorii şi cheltuieli
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> ro_RO
+TripsAndExpensesStatistics=Excursii şi statistici cheltuieli
+ListTripsAndExpenses=Lista de excursii şi cheltuieli
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:12).

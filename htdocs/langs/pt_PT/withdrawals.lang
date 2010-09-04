@@ -33,3 +33,44 @@ ThirdPartyDeskCode=Código da Escritório do Terceiro
 NoInvoiceCouldBeWithdrawed=Não há factura de débito directo com sucesso. Verifique se a factura da empresa tem um válido IBAN.
 ClassCredited=Classificar Acreditados
 ClassCreditedConfirm=¿Está seguro de querer classificar este débito directo como realizado sobre a sua conta bancaria?
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> pt_PT
+StandingOrderToProcess=Para processar
+StandingOrderProcessed=Processado
+TransData=Data de Envio
+TransMetod=Método de transmissão
+Send=Enviar
+Lines=Linhas
+StandingOrderReject=Emitir uma rejeição
+WithdrawalRefused=Retiradas Refuseds
+WithdrawalRefusedConfirm=Tem certeza que quer entrar com uma rejeição de retirada para a sociedade
+RefusedData=Data de rejeição
+RefusedReason=Motivo da rejeição
+RefusedInvoicing=Faturamento da rejeição
+NoInvoiceRefused=Não carregue a rejeição
+InvoiceRefused=Charge da rejeição ao cliente
+Status=Estado
+StatusUnknown=Desconhecido
+StatusWaiting=Espera
+StatusCredited=Creditado
+StatusRefused=Refused
+StatusMotif0=Indefinido
+StatusMotif1=Provisão insuffisante
+StatusMotif2=conteste Tirage
+StatusMotif3=Nenhuma ordem de retirada
+StatusMotif4=Encomendas
+StatusMotif5=RIB inexploitable
+StatusMotif6=Conta sem saldo
+StatusMotif7=Decisão Judicial
+StatusMotif8=Outro motivo
+CreateAll=Retirar todas as
+CreateGuichet=Apenas escritório
+CreateBanque=Apenas banco
+OrderWaiting=À espera de tratamento
+NotifyTransmision=Retirada Envio
+NotifyEmision=Retirada de emissão
+NotifyCredit=Retirada de crédito
+NumeroNationalEmetter=Número Nacional de Transmissor
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:13).

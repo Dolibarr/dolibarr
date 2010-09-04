@@ -52,3 +52,46 @@ ChildOfTask=Link da Tarefa
 NotOwnerOfProject=Não é responsável deste projecto privado
 AffectedTo=Atribuido a
 CantRemoveProject=Este projecto não pode ser eliminado porque está referenciado por muito objectos (facturas, pedidos e outros). ver a lista no separador referencias.
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+PrivateProject=Contatos do projeto
+MyProjectsDesc=Essa visão é limitada a projetos que você está um contato para (seja qual for o tipo).
+ProjectsPublicDesc=Essa visão apresenta todos os projetos que estão autorizados a ler.
+ProjectsDesc=Essa visão apresenta todos os projectos (as permissões de usuário conceder-lhe permissão para ver tudo).
+MyTasksDesc=Essa visão é limitada a projetos ou tarefas que são de um contato para (seja qual for o tipo).
+TasksPublicDesc=Essa visão apresenta todos os projectos e tarefas que têm permissão para ler.
+TasksDesc=Essa visão apresenta todos os projectos e tarefas (as permissões de usuário conceder-lhe permissão para ver tudo).
+Progress=Progresso
+ListFichinterAssociatedProject=Lista de intervenções associadas ao projecto
+ListTripAssociatedProject=Lista de viagens e as despesas associadas ao projecto
+ListActionsAssociatedProject=Lista de acções associadas ao projecto
+ValidateProject=Validar projet
+ConfirmValidateProject=Tem certeza que deseja validar esse projeto?
+CloseAProject=Fechar projeto
+ConfirmCloseAProject=Tem certeza que quer fechar este projeto?
+ReOpenAProject=projeto Open
+ConfirmReOpenAProject=Tem certeza que quer reabrir esse projeto?
+ProjectContact=contatos Project
+ActionsOnProject=Ações sobre o projecto
+YouAreNotContactOfProject=Você não é um contato deste projecto privado
+DeleteATimeSpent=Excluir tempo gasto
+ConfirmDeleteATimeSpent=Tem certeza que quer deletar este tempo?
+DoNotShowMyTasksOnly=Veja também as tarefas que eu não sou afetado
+ShowMyTasksOnly=Ver tarefas só sou afetado
+TaskRessourceLinks=Ressources
+ProjectsDedicatedToThisThirdParty=Projetos dedicados a este terceiro
+NoTasks=As tarefas para este projeto
+LinkedToAnotherCompany=Vinculado ao terceiro que
+TypeContact_project_internal_PROJECTLEADER=O líder do projeto
+TypeContact_project_external_PROJECTLEADER=O líder do projeto
+TypeContact_project_internal_CONTRIBUTOR=Contribuinte
+TypeContact_project_external_CONTRIBUTOR=Contribuinte
+TypeContact_project_task_internal_TASKEXECUTIVE=executivo Task
+TypeContact_project_task_external_TASKEXECUTIVE=executivo Task
+TypeContact_project_task_internal_CONTRIBUTOR=Contribuinte
+TypeContact_project_task_external_CONTRIBUTOR=Contribuinte
+DocumentModelBaleine=modelo de um projeto completo do relatório (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:05).

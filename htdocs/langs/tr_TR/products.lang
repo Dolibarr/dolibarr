@@ -36,9 +36,9 @@ ServicesNotOnSell=Eski hizmetleri
 InternalRef=Dahili referans
 LastRecorded=Son ürün / hizmet satmak üzerine kaydedilmiş
 LastRecordedProductsAndServices=Son% ürünleri kaydedilen s / hizmet
-LastModifiedProductsAndServices=Son% s olarak ürün / hizmet
-LastRecordedProducts=Son% s ürünleri kaydedildi
-LastRecordedServices=Son% s hizmetleri kaydedildi
+LastModifiedProductsAndServices=Son %s  olarak ürün / hizmet
+LastRecordedProducts=Son %s  ürünleri kaydedildi
+LastRecordedServices=Son %s  hizmetleri kaydedildi
 LastProducts=Son ürünler
 CardProduct0=Ürün kartı
 CardProduct1=Hizmet kartı
@@ -125,7 +125,7 @@ ProductAssociationList=Ilgili ürün / hizmetler: ürün ismi / listesi (adet et
 ErrorAssociationIsFatherOfThis=Seçili ürün üst mevcut ürün ile
 DeleteProduct=Silmek bir ürün / hizmet
 ConfirmDeleteProduct=Bunu silmek ürün / hizmet istediğinizden emin misiniz?
-ProductDeleted=Ürün / Hizmet &quot;% s veritabanından silindi.
+ProductDeleted=Ürün / Hizmet " %s  veritabanından silindi.
 DeletePicture=Silmek bir resim
 ConfirmDeletePicture=Bu resmi silmek istediğinizden emin misiniz?
 ExportDataset_produit_1=Ürünler
@@ -146,8 +146,8 @@ NoSupplierPriceDefinedForThisProduct=No ticaret fiyat / adet Bu ürün için tan
 RecordedProducts=Ürünler kaydedildi
 RecordedProductsAndServices=Ürün / hizmet kaydedildi
 GenerateThumb=Generate Thumb
-ProductCanvasAbility=Kullanımı özel &quot;canvas&quot; addons
-ServiceNb=Servis #% s
+ProductCanvasAbility=Kullanımı özel "canvas" addons
+ServiceNb=Servis # %s 
 ListProductByPopularity=Ürünler Listesi / hizmet popülerlik tarafından
 Finished=Işlenmiş ürün
 RowMaterial=İlk malzeme
@@ -156,3 +156,24 @@ ConfirmCloneProduct=Sizin ürün veya <b>hizmet%</b> clone istediğinizden emin 
 CloneContentProduct=Ürünün Clone bütün temel bilgiler / hizmet
 ClonePricesProduct=Clone ana bilgileri ve fiyatlar
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+ProductAccountancyBuyCode=Muhasebe kodu (satın alma)
+ProductAccountancySellCode=Muhasebe kodu (satmak)
+Sell=Satış
+Buy=Alımlar
+OnBuy=Satın
+ProductStatusOnBuy=Mevcut
+ProductStatusNotOnBuy=Eski
+ProductStatusOnBuyShort=Mevcut
+ProductStatusNotOnBuyShort=Eski
+ListProductServiceByPopularity=Popülerliğe göre ürün / hizmet listesi
+ListServiceByPopularity=Popülerliğe göre hizmet listesi
+ProductIsUsed=Bu ürün kullanılır
+NewRefForClone=Ref. yeni ürün / hizmet
+CustomerPrices=Müşteriler fiyatları
+SuppliersPrices=Tedarikçiler fiyatları
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:38).

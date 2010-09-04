@@ -1,0 +1,211 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+PHPMemoryTooLow=Your PHP max fundur minnið er stillt <b>á %s </b> bæti. Þetta ætti að vera of lág. Breyta <b>php.ini</b> þinn til að stilla <b>memory_limit</b> breytu til að minnsta <b>kosti %s </b> bæti.
+Recheck=Smelltu hér til að fá fleiri significative próf
+ErrorPHPDoesNotSupportSessions=PHP uppsetningu þinn styður ekki fundur. Þessi eiginleiki er nauðsynlegt til að gera Dolibarr vinna. Athugaðu PHP uppsetningu þína.
+ErrorPHPDoesNotSupportGD=PHP uppsetningu þinn styður ekki myndrænt fall GD. Nei línurit verður í boði.
+ErrorPHPDoesNotSupportUTF8=PHP uppsetningu þinn styður ekki UTF8 virka. Dolibarr get ekki virka rétt. Leysa þetta áður installing Dolibarr.
+ErrorDirDoesNotExists=Listinn %s  er ekki til.
+ErrorGoBackAndCorrectParameters=Fara aftur á bak og leiðrétta rangar breytur.
+ErrorWrongValueForParameter=Þú gætir hafa slegið rangt gildi fyrir breytu ' %s '.
+ErrorFailedToCreateDatabase=Ekki tókst að búa til gagnagrunn ' %s '.
+ErrorFailedToConnectToDatabase=Tókst ekki að tengjast við gagnagrunn ' %s '.
+ErrorPHPVersionTooLow=PHP útgáfa of gamall. Útgáfa %s  er krafist.
+ErrorConnectedButDatabaseNotFound=Tenging við miðlara árangri en %s  gagnagrunninum 'fannst ekki.
+ErrorDatabaseAlreadyExists= %s  Database 'er þegar til.
+IfDatabaseNotExistsGoBackAndUncheckCreate=Ef gagnagrunnur er ekki til, farðu til baka og athuga möguleika á "Búa til gagnagrunn".
+IfDatabaseExistsGoBackAndCheckCreate=Ef skráð er þegar til, farðu til baka og veljið "Create gagnagrunninum" valmöguleikann.
+PHPVersion=PHP Version
+YouCanContinue=Þú getur haldið áfram ...
+PleaseBePatient=Vinsamlegast sýnið þolinmæði ...
+License=Using leyfi
+ConfigurationFile=Stillingar skrá
+WebPagesDirectory=Listinn þar vefsíðum eru geymd
+DocumentsDirectory=Listinn á að geyma hlaðið og mynda skjöl
+URLRoot=URL Root
+ForceHttps=Force örugga tengingu (https)
+CheckToForceHttps=Hakaðu við þetta til að knýja á örugga tengingu (https). <br> Þetta krefst þess að vefur framreiðslumaður er stillt með SSL vottorð.
+DolibarrDatabase=Dolibarr Gagnasafn
+DatabaseChoice=Gagnasafn val
+DatabaseType=Gagnasafn tegund
+DriverType=Bílstjóri tegund
+Server=Server
+ServerAddressDescription=Nafn eða ip tölu fyrir framreiðslumaður gagnasafn, venjulega 'localhost' þegar gagnasafn framreiðslumaður er hýst á sama miðlara en vefþjóninum
+ServerPortDescription=Gagnasafn framreiðslumaður höfn. Halda tómur ef ekki þekkt.
+DatabaseServer=Gagnasafn miðlara
+DatabaseName=Gagnasafn nafn
+Login=Innskráning
+AdminLogin=Innskráning fyrir Dolibarr gagnasafn eigandi.
+Password=Lykilorð
+PasswordAgain=Sláðu lykilorðið inn aftur í annað sinn
+AdminPassword=Lykilorð fyrir Dolibarr gagnasafn eigandi.
+CreateDatabase=Búa til gagnasafn
+CreateUser=Búa til eiganda
+DatabaseSuperUserAccess=Gagnasafn framreiðslumaður - Ofurpaur aðgang
+CheckToCreateDatabase=Hakaðu í reitinn ef gagnagrunnur er ekki til og því þarf að skapa. <br> Í þessum tilfellum verður þú að fylla tenging / lykilorð til Ofurpaur reikning neðst á þessari síðu.
+CheckToCreateUser=Hakaðu í reitinn ef gagnasafn eigandi er ekki til og því þarf að skapa. <br> Í þessum tilfellum verður þú að velja notandanafn og lykilorð og einnig fylla tenging / lykilorð til að Ofurpaur reikning neðst á þessari síðu. Ef þessi kassi er valið, eigandi gagnagrunn og lykilorð hans verður að vera til.
+Experimental=(Á tilraunastigi)
+DatabaseRootLoginDescription=Innskráning á notanda leyft að búa til nýja gagnagrunna eða nýr notandi, gagnslaus ef gagnasafninu og gagnasafn innskráningu þegar til (eins og þegar þú ert haldin af vefþjónusta fyrir hendi).
+KeepEmptyIfNoPassword=Leyfi tómur ef notandi hefur ekki aðgangsorð (forðast þetta)
+SaveConfigurationFile=Vista gildi
+ConfigurationSaving=Saving stillingaskrá
+ServerConnection=Server tengingu
+DatabaseConnection=Tengingin við gagnagrunninn
+DatabaseCreation=Gagnasafn sköpun
+UserCreation=Notandi sköpun
+CreateDatabaseObjects=Gagnasafn mótmæla stofnun
+ReferenceDataLoading=Tilvísun gögn hleðsla
+TablesAndPrimaryKeysCreation=Töflur og Primary lykla sköpun
+CreateTableAndPrimaryKey=Búa til borð %s 
+CreateOtherKeysForTable=Búa til erlendra lykla og Vísitölur fyrir% borð s
+OtherKeysCreation=Erlend lykla og Vísitölur sköpun
+FunctionsCreation=Aðgerðir sköpun
+AdminAccountCreation=Administrator Innskráning sköpun
+PleaseTypePassword=Vinsamlega skrifaðu inn lykilorð, er tómt lykilorð ekki leyft!
+PleaseTypeALogin=Vinsamlega skrifaðu inn notandanafn!
+PasswordsMismatch=Lykilorð ólík, vinsamlegast reyndu aftur!
+SetupEnd=Lok skipulag
+SystemIsInstalled=Þessi uppsetning er lokið.
+SystemIsUpgraded=Dolibarr hefur verið uppfærð með góðum árangri.
+YouNeedToPersonalizeSetup=Þú þarft að stilla Dolibarr til föt þinn af nauðsyn (útlit, lögun, ...). Til að gera þetta, vinsamlegast fylgdu tenglinum hér að neðan:
+AdminLoginCreatedSuccessfuly=stjórnandi tenging <b>'%</b> Dolibarr <b>s'</b> skapa successfuly.
+GoToDolibarr=Fara til Dolibarr
+GoToSetupArea=Fara til Dolibarr (skipulag svæði)
+GoToUpgradePage=Fara til uppfærsla síðu aftur
+Examples=Dæmi
+WithNoSlashAtTheEnd=Án rista "/" í lok
+DirectoryRecommendation=Það er recommanded að nota skrá utan möppuna á vefsíðum þínum.
+LoginAlreadyExists=Þegar til
+DolibarrAdminLogin=Dolibarr admin Innskráning
+AdminLoginAlreadyExists=reikningur <b>' %s </b> Dolibarr stjórnandi' er þegar til.
+WarningRemoveInstallDir=Aðvörun, vegna öryggis, þegar setja upp eða uppfæra er heill, þá ættir þú að fjarlægja <b>setja möppu eða gefa henni nýtt heiti með hana til install.lock í því skyni að koma í veg fyrir notkun þess illgjarn.</b>
+ThisPHPDoesNotSupportTypeBase=Þetta PHP kerfi hjartarskinn ekki styðja allir tengi til að fá aðgang gagnasafn tegund %s 
+FunctionNotAvailableInThisPHP=Ekki í boði á þessari PHP
+MigrateScript=Migration handrit
+ChoosedMigrateScript=Veldu fólksflutninga handrit
+DataMigration=Gögn fólksflutninga
+DatabaseMigration=Uppbygging gagnasafn flutningur
+ProcessMigrateScript=Script vinnslu
+ChooseYourSetupMode=Veldu uppsetningu háttur þinn og smelltu á "Start" ...
+FreshInstall=Fresh setja
+FreshInstallDesc=Notaðu þessa stillingu ef þetta er þinn fyrstur setja. Ef ekki, this háttur getur viðgerð á ófullnægjandi fyrri uppsetningum, en ef þú vilt uppfæra þína útgáfu, veldu "Upgrade" ham.
+Upgrade=Uppfærsla
+UpgradeDesc=Notaðu þessa stillingu ef þú hefur skipt út gömlum Dolibarr skrár með skrá úr nýrri útgáfu. Þetta mun uppfæra gagnagrunninn og gögn.
+Start=Byrja
+InstallNotAllowed=Skipulag leyfa ekki með leyfi <b>conf.php</b>
+NotAvailable=Ekki í boði
+YouMustCreateWithPermission=Þú verður að búa til skrána %s  og setja skrifa leyfi á það fyrir vefþjón á meðan setja ferli.
+CorrectProblemAndReloadPage=Vinsamlegast lagaðu vandamál og ýta á F5 til að endurhlaða síðunni.
+AlreadyDone=Þegar flytja
+DatabaseVersion=Gagnasafn útgáfa
+ServerVersion=Gagnasafn framreiðslumaður útgáfa
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
+// Reference language: en_US
+InstallEasy=Fylgdu leiðbeiningunum skref fyrir skref.
+MiscellanousChecks=Undanfarar stöðva
+DolibarrWelcome=Velkomin á Dolibarr
+ConfFileExists=Stillingar <b>skrá %s </b> til.
+ConfFileDoesNotExists=<b>Stillingar %s  er</b> ekki til!
+ConfFileDoesNotExistsAndCouldNotBeCreated=<b>Stillingar %s  er</b> ekki til og gat ekki búið til!
+ConfFileCouldBeCreated=<b>Stillingarskráin %s </b> getur verið búinn til.
+ConfFileIsNotWritable=<b>Stillingarskráin %s </b> er ekki rétta aðgangsheimild. Athugaðu heimildir. Fyrir fyrsta sett verður upp á netþjóninn þinn verði veitt til að geta skrifað inn í þessa mynd á ferli stillingar ("chmod 666" til dæmis á Unix eins og OS).
+ConfFileIsWritable=<b>Stillingarskráin %s </b> er writable.
+PHPSupportSessions=Þetta PHP styður fundur.
+PHPSupportPOSTGETOk=Þetta PHP styður breytur POST og FÁ.
+PHPSupportPOSTGETKo=Það er hægt PHP skipulag þinn styður ekki breytur POST og / eða FÁ. Athugaðu <b>variables_order</b> þinn breytu í php.ini.
+PHPSupportGD=Þetta PHP stuðning GD grafísku aðgerðir.
+PHPSupportUTF8=Þetta PHP stuðning UTF8 virka.
+PHPMemoryOK=Your PHP max fundur minnið er stillt <b>á %s .</b> Þetta ætti að vera nóg.
+YouMustCreateItAndAllowServerToWrite=Þú verður að búa til þessa möppu og gera ráð fyrir the vefur framreiðslumaður að skrifa inn í það.
+CharsetChoice=Stafasett val
+CharacterSetClient=Stafasett notað mynda HTML vefsíðum
+CharacterSetClientComment=Veldu stafasett til birtingar á vefnum. <br/> Default fyrirhugaðar stafasett er einn af gagnasafninu.
+CollationConnection=Eðli flokkun þess
+CollationConnectionComment=Veldu kóða sem skilgreinir flokka til persónu er notaður við gagnagrunn. Þessi stika er einnig kallaður "samanburði" af sumum gagnasöfnum. <br/> Þessi stika er ekki hægt að útskýra ef gagnagrunnur er þegar til.
+CharacterSetDatabase=Stafasett fyrir gagnasafn
+CharacterSetDatabaseComment=Veldu stafasett langaði að skapa gagnagrunn. <br/> Þessi stika er ekki hægt að útskýra ef gagnagrunnur er þegar til.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=Þú biður að búa til <b>gagnasafn %s ,</b> en fyrir þetta, Dolibarr þarf til að tengjast við <b>miðlara %s </b> með frábær <b>notanda %s </b> aðgangsheimildir.
+YouAskLoginCreationSoDolibarrNeedToConnect=Þú biður að búa til gagnasafn <b>innskráningu %s ,</b> en fyrir þetta, Dolibarr þarf til að tengjast við <b>miðlara %s </b> með frábær <b>notanda %s </b> aðgangsheimildir.
+BecauseConnectionFailedParametersMayBeWrong=Eins og tengingin tókst ekki, vélar eða frábær breytur notandinn þarf að vera rangt.
+OrphelinsPaymentsDetectedByMethod=Munaðarlaus greiðslu uppgötva af% aðferð s
+RemoveItManuallyAndPressF5ToContinue=Fjarlægja hana handvirkt og ýta á F5 til að halda áfram.
+KeepDefaultValuesWamp=Þú notar Dolibarr skipulag töframaður frá DoliWamp, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
+KeepDefaultValuesDeb=Þú notar Dolibarr skipulag töframaður frá Ubuntu eða Debian pakka, þannig gildi lagt hér eru nú þegar bjartsýni. Aðeins lykilorð gagnagrunninum eigandi að búa verður að vera lokið. Breyta aðrar breytur aðeins ef þú veist hvað þú gerir.
+KeepDefaultValuesMamp=Þú notar Dolibarr skipulag töframaður frá DoliMamp, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
+FieldRenamed=Field endurnefna
+IfLoginDoesNotExistsCheckCreateUser=Ef tenging er ekki til enn, verður þú að athuga möguleika á "Búa til notanda"
+ErrorConnection=Server <b>" %s ",</b> gagnasafn nafn <b>" %s ",</b> tenging <b>" %s ",</b> eða gagnasafn lykilorð kann að vera rangt eða PHP viðskiptavinur útgáfa getur verið of gömul miðað við gagnagrunn útgáfa.
+InstallChoiceRecommanded=Mælt val til setja í embætti <b>útgáfa %s  er%</b> þín núverandi útgáfa <b>s</b>
+InstallChoiceSuggested=<b>Setja val leiðbeinandi við embætti.</b>
+CheckThatDatabasenameIsCorrect=Athugaðu að gagnagrunnur nafn <b>" %s "</b> er rétt.
+IfAlreadyExistsCheckOption=Ef þetta nafn sé rétt og að gagnagrunnur er ekki til enn, þú verður að athuga möguleika á "Búa til gagnagrunn".
+OpenBaseDir=PHP openbasedir breytu
+YouAskToCreateDatabaseSoRootRequired=Þú hakað við reitinn "Búa til gagnagrunn". Fyrir þetta þarftu að gefa upp notendanafn / lykilorð Ofurpaur (neðst á mynd).
+YouAskToCreateDatabaseUserSoRootRequired=Þú hakað við reitinn "Búa til gagnagrunn eigandi". Fyrir þetta þarftu að gefa upp notendanafn / lykilorð Ofurpaur (neðst á mynd).
+NextStepMightLastALongTime=Núverandi skref getur varað í nokkrar mínútur. Vinsamlegast bíðið þangað til the næstur skjár birtist alveg áður en haldið er áfram.
+MigrationCustomerOrderShipping=Flytja skipum fyrir viðskiptavin pantanir geymslu
+MigrationShippingDelivery=Uppfærsla geymslu Sendingar
+MigrationShippingDelivery2=Uppfærsla geymslu siglinga 2
+MigrationFixData=Festa fyrir denormalized gögn
+MigrationOrder=Gögn fólksflutninga fyrir pantanir viðskiptavina
+MigrationSupplierOrder=Gögn fólksflutninga fyrir pantanir birgis
+MigrationProposal=Gögn fólksflutninga í atvinnuskyni tillögur
+MigrationInvoice=Gögn fólksflutninga fyrir reikninga viðskiptavina
+MigrationContract=Gögn fólksflutninga til samninga
+MigrationSuccessfullUpdate=Uppfærsla tókst
+MigrationUpdateFailed=Gat ekki uppfærsla aðferð
+MigrationRelationshipTables=Gögn fólksflutninga fyrir borð sambandið ( %s )
+MigrationPaymentsUpdate=Greiðsla gögn leiðrétting
+MigrationPaymentsNumberToUpdate= %s  greiðslu (s) til að endurnýja
+MigrationProcessPaymentUpdate=Uppfæra greiðslu (s) %s 
+MigrationPaymentsNothingToUpdate=Engin fleiri atriði sem þarf að gera
+MigrationPaymentsNothingUpdatable=Engar frekari greiðslur sem hægt er að leiðrétta
+MigrationContractsUpdate=Samningur gögn leiðrétting
+MigrationContractsNumberToUpdate= %s  samningi (s) til að endurnýja
+MigrationContractsLineCreation=Búa til samninga lína fyrir samningur dómari %s 
+MigrationContractsNothingToUpdate=Engin fleiri atriði sem þarf að gera
+MigrationContractsFieldDontExist=Field fk_facture er ekki til lengur. Ekkert að gera.
+MigrationContractsEmptyDatesUpdate=Samningur tóm dagsetningu leiðrétting
+MigrationContractsEmptyDatesUpdateSuccess=Samningur emtpy dagsetningu breytingu gert successfuly
+MigrationContractsEmptyDatesNothingToUpdate=Ekki samning tóm dagsetningu til að leiðrétta
+MigrationContractsEmptyCreationDatesNothingToUpdate=Engin sköpun samning dagsetningu til að leiðrétta
+MigrationContractsInvalidDatesUpdate=Bad gildi þann samning leiðrétting
+MigrationContractsInvalidDateFix=Rétt samning %s  (Samningur date = %s , Ræsi þjónusta dagsetningu mín = %s )
+MigrationContractsInvalidDatesNumber= %s  samninga breytt
+MigrationContractsInvalidDatesNothingToUpdate=Engin dagsetning með slæmt gildi til að leiðrétta
+MigrationContractsIncoherentCreationDateUpdate=Bad gildi samningur sköpun dagsetningu leiðrétting
+MigrationContractsIncoherentCreationDateUpdateSuccess=Bad gildi samningur sköpun dagsetningu breytingu gert með góðum árangri
+MigrationContractsIncoherentCreationDateNothingToUpdate=Nei slæmur gildi fyrir samning sköpun dagsetningu til að leiðrétta
+MigrationReopeningContracts=Opinn samning lokað með því að villa
+MigrationReopenThisContract=Hefja aftur samning %s 
+MigrationReopenedContractsNumber= %s  samninga breytt
+MigrationReopeningContractsNothingToUpdate=Nei lokað samning til að opna
+MigrationBankTransfertsUpdate=Uppfæra tengsl milli viðskipta banka og millifærslu
+MigrationBankTransfertsNothingToUpdate=Allir tenglar eru upp til dagsetning
+MigrationShipmentOrderMatching=Sendings kvittun uppfæra
+MigrationDeliveryOrderMatching=Sending kvittun uppfæra
+MigrationDeliveryDetail=Afhending uppfæra
+MigrationStockDetail=Uppfæra lager gildi vöru
+MigrationMenusDetail=Uppfæra dynamic valmyndir töflur
+MigrationDeliveryAddress=Uppfæra skila inn í sendingar
+MigrationProjectTaskActors=Gögn fólksflutninga til llx_projet_task_actors borð
+MigrationProjectUserResp=Gögn fólksflutninga sviði fk_user_resp af llx_projet til llx_element_contact
+MigrationProjectTaskTime=Uppfæra tími í sekúndum
+// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:20:32).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> is_IS
+MigrationNotFinished=Útgáfa af gagnagrunni er ekki alveg upp til dagsetning, svo þú verður að keyra uppfærslu ferlið aftur.
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:25).

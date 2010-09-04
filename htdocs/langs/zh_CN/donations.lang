@@ -1,0 +1,40 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+Donation=捐款
+Donations=捐赠
+Donor=捐赠者
+Donors=捐助者
+AddDonation=添加捐赠
+NewDonation=新捐赠
+DonationPromise=礼品的承诺
+PromisesNotValid=未验证的承诺
+PromisesValid=验证承诺
+DonationsPaid=支付捐款
+DonationsReceived=收到的捐款
+PublicDonation=市民捐款
+DonationsNumber=捐款数目
+DonationsArea=捐赠区
+DonationStatusPromiseNotValidated=草案承诺
+DonationStatusPromiseValidated=验证承诺
+DonationStatusPaid=收到的捐款
+DonationStatusPromiseNotValidatedShort=草案
+DonationStatusPromiseValidatedShort=验证
+DonationStatusPaidShort=收稿
+ValidPromise=验证承诺
+BuildDonationReceipt=建立收据
+DonationsModels=捐赠收据的文件模式
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+ValidPromess=验证承诺
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:14).

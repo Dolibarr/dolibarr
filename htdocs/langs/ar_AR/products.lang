@@ -122,7 +122,7 @@ ProductAssociationList=قائمة المنتجات المتعلقة / الخدم
 ErrorAssociationIsFatherOfThis=واحد من اختيار المنتج الأم الحالية المنتج
 DeleteProduct=حذف المنتجات / الخدمات
 ConfirmDeleteProduct=هل أنت متأكد من حذف هذه المنتجات / الخدمات؟
-ProductDeleted=المنتجات والخدمات &quot;٪ ل&quot; حذفها من قاعدة البيانات.
+ProductDeleted=المنتجات والخدمات "٪ ل" حذفها من قاعدة البيانات.
 DeletePicture=حذف الصورة
 ConfirmDeletePicture=هل أنت متأكد من أنك تريد حذف هذه الصورة؟
 ExportDataset_produit_1=المنتجات
@@ -143,7 +143,7 @@ NoSupplierPriceDefinedForThisProduct=لا مورد السعر الكمية ال�
 RecordedProducts=المنتجات المسجلة
 RecordedProductsAndServices=المنتجات / الخدمات المسجلة
 GenerateThumb=يولد الإبهام
-ProductCanvasAbility=خاصة استخدام &quot;قماش&quot; addons
+ProductCanvasAbility=خاصة استخدام "قماش" addons
 ServiceNb=خدمة ق # ٪
 ListProductByPopularity=قائمة المنتجات / الخدمات شعبية
 Finished=المنتجات المصنعة
@@ -161,3 +161,30 @@ ClonePricesProduct=استنساخ الرئيسية معلومات والأسعا
 LastRecordedProductsAndServices=٪ ق الماضي سجلت المنتجات / الخدمات
 ContractStatusToRun=ألف mettre én الخدمة
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+ProductAccountancyBuyCode=المحاسبة الرمز (شراء)
+ProductAccountancySellCode=المحاسبة الرمز (بيع)
+SellingPriceHT=سعر البيع (صافي الضرائب)
+SellingPriceTTC=سعر البيع (شركة الضريبية)
+ListProductServiceByPopularity=قائمة المنتجات / الخدمات حسب الشهرة
+ListServiceByPopularity=قائمة الخدمات حسب الشهرة
+ProductIsUsed=ويستخدم هذا المنتج
+NewRefForClone=المرجع. من المنتجات الجديدة / خدمة
+CustomerPrices=أسعار العملاء
+SuppliersPrices=أسعار الموردين
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:06).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+Sell=مبيعات
+Buy=مشتريات
+OnBuy=شراؤها
+ProductStatusOnBuy=متاح
+ProductStatusNotOnBuy=عفا عليها الزمن
+ProductStatusOnBuyShort=متاح
+ProductStatusNotOnBuyShort=عفا عليها الزمن
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:07).

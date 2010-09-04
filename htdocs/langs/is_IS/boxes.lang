@@ -1,0 +1,81 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
+// Reference language: en_US
+BoxLastRssInfos=Rss upplýsingar
+BoxLastProducts=Last %s  vörur / þjónustu
+BoxLastProductsInContract=Last %s  dregist vörur / þjónustu
+BoxLastSupplierBills=reikningum Síðasta birgis
+BoxLastCustomerBills=reikningum Síðasta viðskiptavinar
+BoxOldestUnpaidCustomerBills=reikningum Elsta launalaust viðskiptavinar
+BoxOldestUnpaidSupplierBills=reikningum Elsta launalaust birgis
+BoxLastProposals=Síðasta auglýsing tillögur
+BoxLastProspects=Síðasta horfur
+BoxLastCustomers=Síðasta viðskiptavina
+BoxLastCustomerOrders=Síðasta viðskiptavina pantanir
+BoxLastSuppliers=Síðasta birgja
+BoxLastBooks=Síðasta bók
+BoxLastActions=Síðasta aðgerð
+BoxLastContracts=Síðasta samninga
+BoxCurrentAccounts=Núverandi reikningur jafnvægi
+BoxSalesTurnover=Velta Velta
+BoxTotalUnpaidCustomerBills=reikningum Samtals launalaust viðskiptavinar
+BoxTotalUnpaidSuppliersBills=reikningum Samtals launalaust birgis
+BoxTitleLastBooks=Last %s  skrá bækur
+BoxTitleNbOfCustomers=Nombre de viðskiptavinur
+BoxTitleLastRssInfos=Last %s  fréttir frá %s 
+BoxTitleLastProducts=Last %s  breytt vörur / þjónustu
+BoxTitleLastCustomerOrders=Last %s  breytt viðskiptavina pantanir
+BoxTitleLastSuppliers=Last %s  skráð birgja
+BoxTitleLastCustomers=Last %s  skráð viðskiptavini
+BoxTitleLastCustomersOrProspects=Last %s  breytt viðskiptavini eða horfur
+BoxTitleLastPropals=Last %s  skráð tillögur
+BoxTitleLastCustomerBills=Last %s  reikninga viðskiptavina
+BoxTitleLastSupplierBills=Last %s  reikningum birgis
+BoxTitleLastProspects=Last %s  skráð horfur
+BoxTitleLastProductsInContract=Last %s  vörur / þjónustu í samningi
+BoxTitleOldestUnpaidCustomerBills=Elsta %s  reikningum launalaust viðskiptavinar
+BoxTitleOldestUnpaidSupplierBills=Elsta %s  reikningum launalaust birgis
+BoxTitleCurrentAccounts=jafnvægi Núverandi reikningur '
+BoxTitleSalesTurnover=Velta Velta
+BoxTitleTotalUnpaidCustomerBills=reikningum ógreidd viðskiptavinar
+BoxTitleTotalUnpaidSuppliersBills=reikningum ógreidd birgis
+BoxMyLastBookmarks=síðasta %s  mín bókamerki
+FailedToRefreshDataInfoNotUpToDate=Ekki tókst að hressa RSS hreyfingu. Síðast vel hressa dagsetning: %s 
+LastRefreshDate=Síðast endurnýjað dagsetningu
+NoRecordedBookmarks=Engin bókamerki skilgreind. Smelltu <a href="%s">hér</a> til að bæta við bókamerki.
+NoRecordedCustomers=Engin skráð viðskiptavini
+BoxTitleLastActionsToDo=Last %s  aðgerða til að gera
+BoxTitleLastContracts=Last %s  samninga
+NoActionsToDo=Engar aðgerðir til að gera
+NoRecordedOrders=pantanir No skráð viðskiptavinar
+NoRecordedProposals=Engin skráð tillögur
+NoRecordedInvoices=reikningum No skráð viðskiptavinar
+NoUnpaidCustomerBills=reikningum No launalaust viðskiptavinar
+NoRecordedSupplierInvoices=reikningum No skráð birgis
+NoUnpaidSupplierBills=reikningum No launalaust birgis
+NoModifiedSupplierBills=reikningum No skráð birgis
+NoRecordedProducts=Engin skrá vörur / þjónustu
+NoRecordedProspects=Engin skráð horfur
+NoContractedProducts=Engar vörur / þjónustu dróst
+NoRecordedContracts=Engin skrá samninga
+// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:19:48).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> is_IS
+BoxTitleLastModifiedSuppliers=Síðast %s breytt birgja
+BoxTitleLastModifiedCustomers=Síðast %s breytt viðskiptavini
+BoxTitleLastModifiedProspects=Síðast %s breytt horfum
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:35).

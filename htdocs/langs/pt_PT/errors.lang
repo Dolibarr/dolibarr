@@ -44,7 +44,7 @@ ErrorExportDuplicateProfil=o Nome do perfil já existe para este lote de exporta
 ErrorLDAPSetupNotComplete=a configuração Dolibarr-LDAP é incompleta.
 ErrorLDAPMakeManualTest=foi criado unn Ficheiro .ldif na pasta %s. Trate de gastor manualmente este Ficheiro desde a linha de comandos para Obter mais detalles acerca do error.
 ErrorCantSaveADoneUserWithZeroPercentage=No se puede cambiar una acciÃ³n al estado no comenzada si tiene un usuario realizante de  la acciÃ³n.
-ErrorBillRefAlreadyExists=a referencia utilizada para a criação já existe
+ErrorRefAlreadyExists=a referencia utilizada para a criação já existe
 ErrorPleaseTypeBankTransactionReportName=Introduzca o Nome do registo bancario sobre a qual o escrito está constatado (formato AAAAMM ó AAAMMJJ)
 ErrorRecordHasChildren=não se pode eliminar o registo porque tem hijos.
 
@@ -53,3 +53,33 @@ ErrorRecordHasChildren=não se pode eliminar o registo porque tem hijos.
 // Reference language: en_US
 ErrorUrlNotValid=O endereço do sítio está incorreto
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+Error=Erro
+Errors=Erros
+ErrorBadEMail=EMail %s é errado
+ErrorBadUrl=Url %s é errado
+ErrorRecordNotFound=Record não foi encontrado.
+ErrorDirNotFound=<b>%s</b> Directory não encontrado (caminho mau, permissões erradas ou o acesso negado por PHP openbasedir ou parâmetro safe_mode)
+ErrorFileAlreadyExists=Um arquivo com esse nome já existe.
+ErrorPartialFile=Arquivo não recebeu completamente pelo servidor.
+ErrorNoTmpDir=directy Temporária %s não existe.
+ErrorUploadBlockedByAddon=Upload bloqueado por um plugin PHP Apache /.
+ErrorFileSizeTooLarge=O tamanho do arquivo é muito grande.
+WarningSafeModeOnCheckExecDir=Atenção, PHP <b>safe_mode</b> opção está no modo de comando devem ser armazenados dentro de um diretório declarado pelo <b>safe_mode_exec_dir</b> parâmetro php.
+WarningConfFileMustBeReadOnly=Atenção, seu arquivo de configuração <b>(htdocs / conf / conf.php)</b> pode ser substituído pelo servidor web. Esta é uma falha de segurança grave. Modificar permissões no arquivo a ser em modo de leitura apenas para usuário do sistema operacional usado pelo servidor web. Se você usa Windows e no formato FAT para o seu disco, você deve saber que este sistema de arquivos não permite adicionar permissões em arquivo, por isso não pode ser completamente seguro.
+ErrorModuleRequireJavascript=Javascript não deve ser desativado para que este recurso de trabalho. Para ativar / desativar o JavaScript, vá ao menu Home-&gt; Configuração-&gt; Mostrar.
+ErrorPasswordsMustMatch=Ambas as senhas digitadas devem corresponder entre si
+ErrorContactEMail=Um erro técnico ocorrido. Por favor, contacte o administrador para folowwing <b>%s</b> e-mail en fornecer o código <b>%s</b> erro na sua mensagem, ou ainda melhor, adicionando uma cópia de tela da página.
+ErrorWrongValueForField=valor errado para o número <b>%s</b> campo (valor <b>&quot;%s&quot;</b> não coincide com <b>%s</b> regra regex)
+ErrorsOnXLines=<b>%s</b> sobre as linhas das fontes de erros
+WarningsOnXLines=<b>%s</b> em linhas de código Avisos
+ErrorFileIsInfectedWithAVirus=O programa antivírus não foi capaz de validar o arquivo (arquivo pode ser infectado por um vírus)
+ErrorSpecialCharNotAllowedForField=Os caracteres especiais não são permitidos para o campo &quot;%s&quot;
+WarningNoDocumentModelActivated=Não existe um modelo para geração de documentos, foi ativado. A modelo será escolhida por padrão até que você verifique a configuração do módulo.
+ErrorDatabaseParameterWrong=Banco de dados do parâmetro de configuração <b>&quot;%s&quot;</b> tem um valor não compatível para uso Dolibarr (deve ter valor <b>&quot;%s&quot;).</b>
+ErrorNumRefModel=Existe uma referência em banco de dados (%s) e não é compatível com esta regra de numeração. Remover registro ou renomeado de referência para ativar este módulo.
+ErrorQtyTooLowForThisSupplier=Quantidade muito baixa para este fornecedor ou sem preço definido sobre este produto para o fornecedor
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:12).

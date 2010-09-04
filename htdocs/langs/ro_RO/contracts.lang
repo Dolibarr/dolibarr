@@ -105,3 +105,9 @@ ConfirmDeleteContractLine=Sunteţi sigur că doriţi să ştergeţi acest contra
 PaymentRenewContractId=Reînnoiţi contract linie (numărul %s)
 ExpiredSince=Data expirării
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+RelatedContracts=contracte conexe
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:11).

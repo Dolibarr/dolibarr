@@ -1,0 +1,46 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-07-17 11:36:47
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+CHARSET=UTF-8
+Language_ar_AR=Arabă
+Language_ca_ES=Catalan
+Language_da_DA=Danez
+Language_de_DE=German
+Language_en_AU=Engleză (Australia)
+Language_en_GB=Engleză (Marea Britanie)
+Language_en_IN=Engleză (India)
+Language_en_US=Limba engleză (Statele Unite)
+Language_es_ES=Spaniol
+Language_es_AR=Spaniolă (Argentina)
+Language_fi_FI=Aripioare
+Language_fr_BE=Franceză (Belgia)
+Language_fr_CA=Franceză (Canada)
+Language_fr_CH=Franceză (Elveţia)
+Language_fr_FR=Franceză
+Language_is_IS=Islandez
+Language_it_IT=Italian
+Language_nb_NO=Norvegiană (Bokmål)
+Language_nl_BE=Ţările de Jos (Belgia)
+Language_nl_NL=Ţările de Jos (Olanda)
+Language_pl_PL=Polonez
+Language_pt_BR=Portugheză (Brazilia)
+Language_pt_PT=Portughez
+Language_ro_RO=Română
+Language_ru_RU=Rusă
+Language_tr_TR=Turc
+Language_sl_SL=Sloven
+Language_zh_CN=Chinez
+Language_is_IS=Islandez
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:22).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ro_RO
+Language_sv_SV=Suedez
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:24).

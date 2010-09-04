@@ -13,13 +13,13 @@
 CHARSET=UTF-8
 ErrorPasswordDiffers=Passwords er forskellig, skal du skrive dem igen.
 ErrorForbidden=Adgang forbudt. <br> Du forsøger at få adgang til en side, et område eller funktion uden at være i en authenticated samling, eller som ikke er tilladt til din brugerkonto.
-ErrorForbidden2=Tilladelse til dette login kan defineres af din Dolibarr administrator fra menuen %s-&gt; %s.
+ErrorForbidden2=Tilladelse til dette login kan defineres af din Dolibarr administrator fra menuen %s-> %s.
 ErrorForbidden3=Det lader til, at Dolibarr ikke anvendes gennem en authenticated session. Tag et kig på Dolibarr setup dokumentation for at vide, hvordan man forvalter authentications (htaccess, mod_auth eller andre ...).
 ErrorNoImagickReadimage=Funktion imagick_readimage er ikke fundet i denne PHP. Intet eksempel kan være til rådighed. Administratorer kan deaktivere denne fane fra menuen Setup - Display.
 ErrorRecordAlreadyExists=Optag allerede findes
-ErrorCantReadFile=Kunne ikke læse filen &#39; %s&#39;
-ErrorCantReadDir=Kunne ikke læse directory &#39; %s&#39;
-ErrorFailedToFindEntity=Kunne ikke læse enhed &#39; %s&#39;
+ErrorCantReadFile=Kunne ikke læse filen ' %s'
+ErrorCantReadDir=Kunne ikke læse directory ' %s'
+ErrorFailedToFindEntity=Kunne ikke læse enhed ' %s'
 ErrorBadLoginPassword=Bad værdi for brugernavn eller password
 ErrorLoginDisabled=Din konto er blevet deaktiveret
 ErrorFailedToRunExternalCommand=Det lykkedes ikke at køre eksterne kommando. Check den er tilgængelig og runnable af din PHP server. Hvis PHP <b>Safe Mode</b> er aktiveret, skal du kontrollere, at kommandoen er inde i en mappe defineret ved parameter <b>safe_mode_exec_dir.</b>
@@ -179,3 +179,49 @@ DolibarrNotification=Automatisk anmeldelse
 DemoFundation=Administrer medlemmer af en fond
 DemoFundation2=Administrer medlemmer og bankkonto i en fond
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+Notify_NOTIFY_VAL_ORDER=Kundeordre valideret
+Notify_NOTIFY_VAL_PROPAL=Kunde forslag valideret
+PredefinedMailTest=Dette er en test mail. \ NDen to linjer er adskilt af et linjeskift.
+PredefinedMailTestHtml=Dette er en <b>test</b> mail (ordet test skal være i fed). <br> De to linjer er adskilt af et linjeskift.
+CalculatedWeight=Beregnet vægt
+CalculatedVolume=Beregnet mængde
+Length=Længde
+LengthUnitm=m
+LengthUnitdm=dm
+LengthUnitcm=cm
+LengthUnitmm=mm
+Surface=Område
+SurfaceUnitm2=m2
+SurfaceUnitdm2=dm2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+NumberOfUnitsProposals=Antal enheder på forslag om sidste 12 måneder
+EMailTextProposalValidated=Forslaget %s er blevet valideret.
+EMailTextOrderValidated=Ordren %s er blevet valideret.
+ResizeDesc=Indtast nye bredde <b>OR</b> ny højde. Ratio vil blive holdt i resizing ...
+NewLength=Ny bredde
+NewHeight=Ny højde
+NewSizeAfterCropping=Ny størrelse efter beskæring
+DefineNewAreaToPick=Definer et nyt område på billedet for at vælge (til venstre klik på billedet og derefter trække, indtil du når det modsatte hjørne)
+CurrentInformationOnImage=Informationer om aktuelle billede
+YouReceiveMailBecauseOfNotification=Du modtager denne besked fordi din e-mail er blevet føjet til listen over mål, der skal informeres om bestemte begivenheder i %s software %s.
+YouReceiveMailBecauseOfNotification2=Denne begivenhed er følgende:
+ExternalSites=Eksterne sites
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:22:00).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> da_DA
+PredefinedMailContentSendSupplierOrder=Du vil her finde vores ordre __ORDERREF__ \ n \ nSincerely \ n \ n
+WeightUnitpound=pund
+VolumeUnitounce=unse
+VolumeUnitlitre=liter
+VolumeUnitgallon=gallon
+SizeUnitinch=tomme
+SizeUnitfoot=mund
+ImageEditor=Image editor
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:50).

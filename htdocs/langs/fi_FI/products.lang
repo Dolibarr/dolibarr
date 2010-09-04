@@ -119,7 +119,7 @@ ProductAssociationList=Luettelo niihin liittyvät tuotteet / palvelut: nimi tuot
 ErrorAssociationIsFatherOfThis=Yksi valittu tuote on vanhempi nykyinen tuote
 DeleteProduct=Poista tuotteen / palvelun
 ConfirmDeleteProduct=Oletko varma, että haluat poistaa tämän tuotteen / palvelun?
-ProductDeleted=Tuote / palvelu &quot; %s&quot; poistettu tietokannasta.
+ProductDeleted=Tuote / palvelu " %s" poistettu tietokannasta.
 DeletePicture=Poista kuva
 ConfirmDeletePicture=Oletko varma, että haluat poistaa tämän kuvan?
 ExportDataset_produit_1=Tuotteet ja palvelut
@@ -139,7 +139,7 @@ NoSupplierPriceDefinedForThisProduct=Toimittaja ei hinta / kpl määritelty täm
 RecordedProducts=Tuotteet kirjataan
 RecordedProductsAndServices=Tuotteet / palvelut kirjataan
 GenerateThumb=Luo peukalon
-ProductCanvasAbility=Käytä erityistä &quot;kankaalle&quot; AddOns
+ProductCanvasAbility=Käytä erityistä "kankaalle" AddOns
 ServiceNb=Service # %s
 ListProductByPopularity=Luettelo tuotteita / palveluita suosion
 Finished=Valmistettua tuotetta
@@ -166,3 +166,30 @@ ClonePricesProduct=Klooni tärkeimmät tiedot ja hinnat
 // Reference language: en_US
 LastRecordedProductsAndServices=Viimeisin %s kirjataan tuotteet / palvelut
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+ProductAccountancyBuyCode=Kirjanpidon koodi (osta)
+ProductAccountancySellCode=Kirjanpidon koodi (myydä)
+SellingPriceHT=Myyntihinta (ilman veroja)
+SellingPriceTTC=Myyntihinta (sis. alv)
+ListProductServiceByPopularity=Luettelo tuotteiden tai palveluiden suosion
+ListServiceByPopularity=Luettelo palvelujen suosio
+ProductIsUsed=Tämä tuote on käytetty
+NewRefForClone=Ref. uuden tuotteen tai palvelun
+CustomerPrices=Asiakkaat hinnat
+SuppliersPrices=Toimittajat hinnat
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:33).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> fi_FI
+Sell=Myynti
+Buy=Ostot
+OnBuy=Ostettu
+ProductStatusOnBuy=Saatavissa
+ProductStatusNotOnBuy=Vanhentunut
+ProductStatusOnBuyShort=Saatavissa
+ProductStatusNotOnBuyShort=Vanhentunut
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:11).

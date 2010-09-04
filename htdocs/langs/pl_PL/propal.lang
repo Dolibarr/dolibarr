@@ -35,7 +35,7 @@ LastClosedProposals=Ostatnia %s zamknięte propozycje
 AllPropals=Wszystkie propozycje
 LastProposals=Ostatnie propozycje
 SearchAProposal=Szukaj projektu
-ProposalsStatistics=Commercial propozycje &quot;statystyki
+ProposalsStatistics=Commercial propozycje "statystyki
 NumberOfProposalsByMonth=Liczba miesięcy
 AmountOfProposalsByMonthHT=Kwota przez miesiąc (po odliczeniu podatku)
 NbOfProposals=Liczba propozycji
@@ -100,5 +100,12 @@ LastModifiedProposals=Ostatnia %s zmodyfikowane propozycje
 DatePropal=Data wniosku
 ProposalsAndProposalsLines=Commercial wniosku i linie
 ProposalLine=Wniosek linii
-MarbreNumRefModelDesc=Wróć NUMERO z formatu %syymm-nnnn do składania wniosków, jeżeli rr jest rok, mm miesiąc i nnnn jest ciągiem bez przerwy i nie ma powrotu do 0
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+TypeContact_propal_internal_SALESREPFOLL=Przedstawiciela w ślad za wniosek
+TypeContact_propal_external_BILLING=kontakt faktury klienta
+TypeContact_propal_external_CUSTOMER=kontakt klienta w ślad za wniosek
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:25).

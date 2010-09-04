@@ -141,7 +141,7 @@ DescADHERENT_ETIQUETTE_TYPE=Etichete format
 DescADHERENT_CARD_HEADER_TEXT=Text imprimat pe sus de carduri de membru
 DescADHERENT_CARD_TEXT=Text imprimat pe carduri de membru
 DescADHERENT_CARD_FOOTER_TEXT=Text imprimat pe jos de carduri de membru
-ShowTypeCard=Arată tipul &#39; %s&#39;
+ShowTypeCard=Arată tipul ' %s'
 HTPasswordExport=htpassword fişier generaţie
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
@@ -162,3 +162,27 @@ NoThirdPartyAssociatedToMember=Nu părţi terţe asociate la prezenta membru
 ThirdPartyDolibarr=Dolibarr terţă parte
 MembersAndSubscriptions=Membrii şi Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=obiectul e-mail pentru autosubscription membru
+DescADHERENT_AUTOREGISTER_MAIL=E-mail pentru autosubscription membru
+DescADHERENT_CARD_TYPE=Formatul de carduri paginii
+DescADHERENT_CARD_TEXT_RIGHT=Text tipărit pe carduri de membru (alinia la dreapta)
+DescADHERENT_MAILMAN_LISTS=Lista (e) pentru insription automată a noi membri (separate prin virgula)
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ro_RO
+MoreActions=de măsuri complementare privind înregistrarea
+MoreActionBankDirect=Creaţi un înregistrează tranzacţia directe pe cont
+MoreActionBankViaInvoice=Creaţi o factură şi plata în cont
+MoreActionInvoiceOnly=Creaţi o factură cu nici o plată
+LinkToGeneratedPages=Generaţi carti vizita
+LinkToGeneratedPagesDesc=Acest ecran vă permite să generaţi fişiere PDF cu cărţi de vizită pentru toate dvs. de membri sau de un anumit membru.
+DocForAllMembersCards=carti de vizita Generaţi pentru toţi membrii (Format pentru producţia de fapt setup: <b>%s)</b>
+DocForOneMemberCards=Generaţi cărţi de vizită pentru un anumit membru (Format pentru producţia de fapt setup: <b>%s)</b>
+DocForLabels=Generaţi adresa foi (Format pentru producţia de fapt setup: <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:32).

@@ -1,0 +1,147 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-30 00:15:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+// Reference language: en_US
+CHARSET=UTF-8
+OrdersArea=Viðskiptavinir pantanir area
+SuppliersOrdersArea=Birgjar pantanir area
+OrderCard=Panta kort
+Order=Panta
+Orders=Pantanir
+OrderLine=Pöntunarlína
+OrderFollow=Eftirfylgni
+OrderContact=Panta samband
+OrderDate=Panta dagsetningu
+OrderToProcess=Til að framkvæma
+NewOrder=New Order
+ToOrder=Gera röð
+MakeOrder=Gera röð
+SupplierOrder=Birgir röð
+SuppliersOrders=pantanir birgis
+SuppliersOrdersRunning=pantanir Current birgis
+CustomerOrder=Viðskiptavinur röð
+CustomersOrders=pantanir viðskiptavinar
+CustomersOrdersRunning=pantanir Núverandi viðskiptavinur '
+CustomersOrdersAndOrdersLines=Viðskiptavinur pantanir og línur til þess
+OrdersToValid=Pantanir til að sannreyna
+OrdersToBill=Pantanir við reikning
+OrdersInProcess=Pantanir í vinnslu
+OrdersToProcess=Pantanir á ferli
+StatusOrderCanceledShort=Hætt við
+StatusOrderDraftShort=Víxill
+StatusOrderValidatedShort=Staðfestar
+StatusOrderOnProcessShort=Á ferli
+StatusOrderProcessedShort=Afgreitt
+StatusOrderToBillShort=Við reikning
+StatusOrderApprovedShort=Samþykkt
+StatusOrderRefusedShort=Neitaði
+StatusOrderToProcessShort=Til að ganga frá
+StatusOrderReceivedPartiallyShort=Að hluta til fékk
+StatusOrderReceivedAllShort=Allt hlaut
+StatusOrderCanceled=Hætt við
+StatusOrderDraft=Víxill (þarf að vera staðfest)
+StatusOrderValidated=Staðfestar
+StatusOrderOnProcess=Á ferli
+StatusOrderProcessed=Afgreitt
+StatusOrderToBill=Við reikning
+StatusOrderApproved=Samþykkt
+StatusOrderRefused=Neitaði
+StatusOrderReceivedPartially=Að hluta til fékk
+StatusOrderReceivedAll=Allt hlaut
+DraftOrWaitingApproved=Víxill eða samþykkt ekki enn pantað
+DraftOrWaitingShipped=Drög eða viðurkennd ekki enn flutt
+MenuOrdersToBill=Pantanir við reikning
+SearchOrder=Leita röð
+Sending=Senda
+Sendings=Sendings
+ShipProduct=Skip vöru
+Discount=Afsláttur
+CreateOrder=Búa Order
+RefuseOrder=Neita röð
+ApproveOrder=Samþykkja röð
+ValidateOrder=Staðfesta röð
+DeleteOrder=Eyða röð
+CancelOrder=Hætta við röð
+AddOrder=Bæta við röð
+AddToMyOrders=Bæta við pöntunum minn
+AddToOtherOrders=Bæta við aðrar skipanir
+ShowOrder=Sýna röð
+NoOpenedOrders=Nei opnaði pantanir
+NoOtherOpenedOrders=Engin önnur opnaði pantanir
+OtherOrders=Aðrar skipanir
+LastOrders=Last %s  pantanir
+LastModifiedOrders=Last %s  breytt pantanir
+LastClosedOrders=Last %s  lokuð fyrirmæla
+AllOrders=Allar pantanir
+NbOfOrders=Fjöldi fyrirmæla
+OrdersStatistics=tölfræði Order's
+OrdersStatisticsSuppliers=tölfræði Birgir röð's
+NumberOfOrdersByMonth=Fjöldi fyrirmæla eftir mánuði
+AmountOfOrdersByMonthHT=magn af skipunum eftir mánuði (að frádregnum skatti)
+ListOfOrders=Listi yfir pantanir
+CloseOrder=Loka röð
+ConfirmCloseOrder=Ertu viss um að þú viljir loka þessari röð? Einu sinni í röð er lokað, það geta aðeins verið rukkaður.
+ConfirmCloseOrderIfSending=Ertu viss um að þú viljir loka þessari röð? Þú verður að loka að panta aðeins þegar öll siglinga ert.
+ConfirmDeleteOrder=Ertu viss um að þú viljir eyða þessari röð?
+ConfirmValidateOrder=Ertu viss um að þú viljir setja í gildi í þessari röð undir <b>nafninu %s ?</b>
+ConfirmCancelOrder=Ertu viss um að þú viljir hætta í þessari röð?
+ConfirmMakeOrder=Ertu viss um að þú viljir að staðfesta sem þú gerðir í þessari röð <b>á %s ?</b>
+GenerateBill=Búa til reikning
+ClassifyBilled=Flokka "borgað"
+ComptaCard=Bókhalds-kort
+DraftOrders=Drög að fyrirmælum
+RelatedOrders=Svipaðir pantanir
+OnProcessOrders=Í pantanir ferli
+RefOrder=Tilv. röð
+RefCustomerOrder=Tilv. viðskiptavina þess
+CustomerOrder=Viðskiptavinur röð
+RefCustomerOrderShort=Tilv. cust. röð
+SendOrderByMail=Senda til með pósti
+ActionsOnOrder=Aðgerðir á röð
+NoArticleOfTypeProduct=Engar greinar af gerðinni 'vara' svo engin shippable grein fyrir þessari röð
+OrderMode=Panta aðferð
+AuthorRequest=Beiðni Höfundur
+UseCustomerContactAsOrderRecipientIfExist=Nota viðskiptavina samband netfang ef skilgreint í stað þriðja aðila netfang sem til viðtakanda heimilisfang
+RunningOrders=Pantanir á ferli
+UserWithApproveOrderGrant=Notendur veitt með "samþykkja pantanir" leyfi.
+PaymentOrderRef=Greiðsla %s kyni s
+CloneOrder=Klóna röð
+ConfirmCloneOrder=Ertu viss um að þú viljir klón þessari <b>röð %s ?</b>
+TypeContact_commande_internal_SALESREPFOLL=Fulltrúi eftirfarandi upp viðskiptavina röð
+TypeContact_commande_internal_SHIPPING=Fulltrúi eftirfarandi upp siglinga
+TypeContact_commande_external_BILLING=Viðskiptavinur Reikningar samband
+TypeContact_commande_external_SHIPPING=Viðskiptavinur siglinga samband
+TypeContact_commande_external_CUSTOMER=Viðskiptavinur samband eftirfarandi upp röð
+TypeContact_order_supplier_internal_SALESREPFOLL=Fulltrúi eftirfarandi upp birgir röð
+TypeContact_order_supplier_internal_SHIPPING=Fulltrúi eftirfarandi upp siglinga
+TypeContact_order_supplier_external_BILLING=Birgir Reikningar samband
+TypeContact_order_supplier_external_SHIPPING=Birgir siglinga samband
+TypeContact_order_supplier_external_CUSTOMER=Birgir samband eftirfarandi upp röð
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON skilgreind ekki
+Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON skilgreind ekki
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Ekki tókst að hlaða module skrána ' %s '
+Error_FailedToLoad_COMMANDE_ADDON_File=Ekki tókst að hlaða module skrána ' %s '
+OrderSource0=Auglýsing tillögu
+OrderSource1=Internet
+OrderSource2=Póstur herferð
+OrderSource3=Sími compaign
+OrderSource4=Fax herferð
+OrderSource5=Auglýsing
+OrderSource6=Store
+QtyOrdered=Magn röð
+AddDeliveryCostLine=Bæta við kostnað sending línu sem gefur til kynna að þyngd þess
+PDFEinsteinDescription=A heill til líkan (logo. ..)
+PDFEdisonDescription=Einföld röð líkan
+PDFQuevedoDescription=A heill til líkan með spænsku RE og IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> is_IS
+DispatchSupplierOrder=Móttaka birgir röð %s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:03).

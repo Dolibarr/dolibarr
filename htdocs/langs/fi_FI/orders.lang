@@ -26,7 +26,7 @@ SuppliersOrdersRunning=Nykyinen toimittajien tilaukset
 CustomerOrder=Asiakas jotta
 CustomersOrders=Asiakkaiden tilausten
 CustomersOrdersRunning=Nykyisten asiakkaiden tilausten
-CustomersOrdersAndOrdersLines=Asiakkaan tilaukset ja tilaukset &quot;linjat
+CustomersOrdersAndOrdersLines=Asiakkaan tilaukset ja tilaukset "linjat
 OrdersToValid=Tilauksia voimassa
 OrdersToBill=Tilaukset laskuttaa
 OrdersInProcess=Tilaukset prosessi
@@ -91,7 +91,7 @@ ConfirmValidateOrder=Oletko varma, että haluamme vahvistaa tämän määräykse
 ConfirmCancelOrder=Oletko varma, että haluat peruuttaa tämän tilauksen?
 ConfirmMakeOrder=Oletko varma, että haluat vahvistaa olet tehnyt tämän <b>tilauksen %s?</b>
 GenerateBill=Luo lasku
-ClassifyBilled=Luokittele &quot;Laskutetun&quot;
+ClassifyBilled=Luokittele "Laskutetun"
 ComptaCard=Kirjanpito-kortti
 DraftOrders=Luonnos tilaukset
 RelatedOrders=Aiheeseen liittyvät tilaukset
@@ -102,16 +102,16 @@ CustomerOrder=Asiakas jotta
 RefCustomerOrderShort=Ref. asiakasnumero. tilata
 SendOrderByMail=Lähetä tilata postitse
 ActionsOnOrder=Toimia, jotta
-NoArticleOfTypeProduct=N: o artikkeli tyypin &quot;tuote&quot; niin ei shippable artikkeli tässä tilauksessa
+NoArticleOfTypeProduct=N: o artikkeli tyypin "tuote" niin ei shippable artikkeli tässä tilauksessa
 OrderMode=Jotta menetelmä
 AuthorRequest=Pyydä tekijä
 UseCustomerContactAsOrderRecipientIfExist=Käytä asiakkaan yhteystiedot, jos se on määritetty sijaan kolmannen osapuolen osoite jotta vastaanottajan osoite
 RunningOrders=Toimitussuhteet prosessi
-UserWithApproveOrderGrant=Useres myönnetään &quot;hyväksyä tilauksia&quot; lupaa.
+UserWithApproveOrderGrant=Useres myönnetään "hyväksyä tilauksia" lupaa.
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON ole määritelty
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON ole määritelty
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file &#39; %s&#39;
-Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file &#39; %s&#39;
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file ' %s'
+Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file ' %s'
 OrderSource0=Kaupalliset ehdotus
 OrderSource1=Internet
 OrderSource2=Mail kampanja
@@ -122,7 +122,6 @@ OrderSource6=Varastoida
 QtyOrdered=Kpl velvoitti
 AddDeliveryCostLine=Lisää toimitus kustannukset linja ilmoitetaan paino, jotta
 PDFEinsteinDescription=Täydellinen jotta malli (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme %syymm-nnnn tai vv est l&#39;année, mm le mois et nnnn un compteur sequentiel sans murtumasta et sans remise e 0
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
 
@@ -134,3 +133,27 @@ PaymentOrderRef=Maksutoimisto jotta %s
 CloneOrder=Klooni jotta
 ConfirmCloneOrder=Oletko varma, että haluat klooni tässä <b>järjestyksessä %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
+// Reference language: en_US
+OrderToProcess=Jotta prosessi
+TypeContact_commande_internal_SALESREPFOLL=Edustaja seurantaan asiakkaan tilauksen
+TypeContact_commande_internal_SHIPPING=Edustaja seurantaan merenkulku
+TypeContact_commande_external_BILLING=Asiakkaan lasku yhteystiedot
+TypeContact_commande_external_SHIPPING=Asiakas merenkulku yhteystiedot
+TypeContact_commande_external_CUSTOMER=Asiakas ottaa yhteyttä seurantaan, jotta
+TypeContact_order_supplier_internal_SALESREPFOLL=Edustaja seurantaan toimittaja järjestys
+TypeContact_order_supplier_internal_SHIPPING=Edustaja seurantaan merenkulku
+TypeContact_order_supplier_external_BILLING=Toimittajan lasku yhteystiedot
+TypeContact_order_supplier_external_SHIPPING=Toimittajan merenkulku yhteystiedot
+TypeContact_order_supplier_external_CUSTOMER=Toimittajan yhteystiedot seurantaan, jotta
+PDFEdisonDescription=Yksinkertainen, jotta malli
+PDFQuevedoDescription=Täydellinen, jotta malli Espanjan RE ja IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:25).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> fi_FI
+DispatchSupplierOrder=Vastaanottaminen toimittaja järjestys %s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:02).

@@ -70,3 +70,45 @@ AffectedTo=Affected do
 ListPredefinedInvoicesAssociatedProject=Lista klientów gotowych faktur związanych z projektem
 CantRemoveProject=Ten projekt nie może zostać usunięty, ponieważ jest do których odwołują się inne obiekty (faktury, zamówienia lub innych). Zobacz odsyłających tab.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+PrivateProject=Kontakt z projektu
+MyProjectsDesc=Ten widok jest ograniczony do projektów jesteś kontaktu (cokolwiek to typ).
+ProjectsPublicDesc=Ten widok przedstawia wszystkie projekty, które możesz przeczytać.
+ProjectsDesc=Ten widok przedstawia wszystkie projekty (uprawnień użytkownika przyznać uprawnienia do wyświetlania wszystko).
+MyTasksDesc=Ten widok jest ograniczony do projektów i zadań, które są do kontaktu (cokolwiek to typ).
+TasksPublicDesc=Ten widok przedstawia wszystkich projektów i zadań, które możesz przeczytać.
+TasksDesc=Ten widok przedstawia wszystkich projektów i zadań (uprawnień użytkownika przyznać uprawnienia do wyświetlania wszystko).
+Progress=Postęp
+ListFichinterAssociatedProject=Wykaz interwencji związanych z projektem
+ListTripAssociatedProject=Lista wycieczek i wydatków związanych z projektem
+ListActionsAssociatedProject=Wykaz działań związanych z projektem
+ValidateProject=Sprawdź projet
+ConfirmValidateProject=Czy na pewno chcesz sprawdzić tego projektu?
+CloseAProject=Projekt Zamknij
+ConfirmCloseAProject=Czy na pewno chcesz zamknąć ten projekt?
+ReOpenAProject=Projekt Open
+ConfirmReOpenAProject=Czy na pewno chcesz ponownie otworzyć ten projekt?
+ProjectContact=Kontakt Project
+ActionsOnProject=Działania w ramach projektu
+YouAreNotContactOfProject=Nie masz kontaktu to prywatne przedsięwzięcie
+DeleteATimeSpent=Czas spędzony Usuń
+ConfirmDeleteATimeSpent=Czy na pewno chcesz usunąć ten czas?
+DoNotShowMyTasksOnly=Zobacz także zadania i nie jestem wpływ na
+ShowMyTasksOnly=Zobacz zadania ja jestem tylko wpływ na
+TaskRessourceLinks=Zasoby
+ProjectsDedicatedToThisThirdParty=Projekty poświęcone tej trzeciej
+NoTasks=Brak zadań dla tego projektu
+LinkedToAnotherCompany=Powiązane z innymi trzeciej
+TypeContact_project_internal_PROJECTLEADER=Kierownik projektu
+TypeContact_project_external_PROJECTLEADER=Kierownik projektu
+TypeContact_project_internal_CONTRIBUTOR=Współpracownik
+TypeContact_project_external_CONTRIBUTOR=Współpracownik
+TypeContact_project_task_internal_TASKEXECUTIVE=zadań wykonawczych
+TypeContact_project_task_external_TASKEXECUTIVE=zadań wykonawczych
+TypeContact_project_task_internal_CONTRIBUTOR=Współpracownik
+TypeContact_project_task_external_CONTRIBUTOR=Współpracownik
+DocumentModelBaleine=Kompletny model projektu sprawozdania (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:54).

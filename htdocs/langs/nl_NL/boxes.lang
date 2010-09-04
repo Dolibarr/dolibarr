@@ -53,3 +53,39 @@ NoUnpaidSupplierBills=Geen onbetaalde leverancier facturen
 NoRecordedProducts=Geen geregistreerde producten/diensten
 NoRecordedProspects=Geen geregistreerde prospects
 NoContractedProducts=Geen gecontracteerde producten/diensten
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:08:18).
+// Reference language: en_US
+BoxLastContracts=Siste kontrakter
+LastRefreshDate=Siste oppdatering dato
+BoxTitleLastContracts=Siste %s kontrakter
+NoModifiedSupplierBills=Ingen registrert leverandørens faktura
+NoRecordedProducts=Ingen registrert produkter / tjenester
+NoRecordedProspects=Ingen registrert utsikter
+NoContractedProducts=Ingen produkter / tjenester innleide
+NoRecordedContracts=Ingen registrert kontrakter
+BoxLastContracts=Laatste contracten
+BoxTitleLastContracts=Laatste sssss contracten
+NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
+NoRecordedContracts=Geen geregistreerde overeenkomsten
+BoxOldestUnpaidCustomerBills=Oudste onbetaalde facturen klant
+BoxOldestUnpaidSupplierBills=Oudste onbetaalde facturen van de leverancier
+BoxLastContracts=Laatste contracten
+BoxTotalUnpaidCustomerBills=Totaal aantal onbetaalde facturen klant
+BoxTotalUnpaidSuppliersBills=Totaal aantal onbetaalde facturen van de leverancier
+BoxTitleOldestUnpaidCustomerBills=Oudste sssss onbetaalde facturen klant
+BoxTitleOldestUnpaidSupplierBills=Oudste sssss onbetaalde facturen van de leverancier
+BoxTitleTotalUnpaidCustomerBills=Onbetaalde facturen klant
+BoxTitleTotalUnpaidSuppliersBills=Onbetaalde facturen van de leverancier
+BoxTitleLastContracts=Laatste sssss contracten
+NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
+NoRecordedContracts=Geen geregistreerde overeenkomsten
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:23).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+BoxTitleLastModifiedSuppliers=Laatst bewerkt sssss leveranciers
+BoxTitleLastModifiedCustomers=Laatst bewerkt sssss klanten
+BoxTitleLastModifiedProspects=Laatst bewerkt vooruitzichten sssss
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:37).

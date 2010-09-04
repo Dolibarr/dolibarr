@@ -1,0 +1,85 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+StandingOrdersArea=区人大常委会订单
+CustomersStandingOrdersArea=站在客户的订单面积
+StandingOrders=常年订单
+StandingOrder=常年订单
+NewStandingOrder=新的长期订单
+StandingOrderToProcess=要处理
+StandingOrderProcessed=加工
+Withdrawals=提款
+Withdrawal=提款
+WithdrawalsReceipts=提款收据
+WithdrawalReceipt=提款收据
+WithdrawalReceiptShort=收据
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> zh_CN
+LastWithdrawalReceipts=最后%s撤出收益
+WithdrawedBills=撤回发票
+WithdrawalsLines=提款线
+RequestStandingOrderToTreat=要求会议常规治疗
+RequestStandingOrderTreated=站在请求处理的订单
+CustomersStandingOrders=站在客户的订单
+CustomerStandingOrder=客户的长期订单
+NbOfInvoiceToWithdraw=铌的发票与撤回要求
+InvoiceWaitingWithdraw=发票等待撤离
+AmountToWithdraw=收回的款额
+WithdrawsRefused=拒绝撤回
+NoInvoiceToWithdraw=无付款方式客户发票“撤回”是等待。继续就提款卡发票&#39;标签作出要求。
+ResponsibleUser=负责用户
+WithdrawalsSetup=提款设置
+WithdrawStatistics=提款的统计
+WithdrawRejectStatistics=撤回拒绝的统计
+LastWithdrawalReceipt=撤回收益最后%s
+MakeWithdrawRequest=作出撤回请求
+ThirdPartyBankCode=第三方银行代码
+ThirdPartyDeskCode=第三方办公桌代码
+NoInvoiceCouldBeWithdrawed=没有发票withdrawed成功。检查发票的公司是一个有效的禁令。
+ClassCredited=分类记
+ClassCreditedConfirm=你确定要分类这一撤离收据上记入您的银行帐户？
+TransData=数据传输
+TransMetod=传输的方法
+Send=发送
+Lines=线路
+StandingOrderReject=发出拒绝
+WithdrawalRefused=提款Refuseds
+WithdrawalRefusedConfirm=你确定要输入一个社会拒绝撤出
+RefusedData=日期拒收
+RefusedReason=拒绝的原因
+RefusedInvoicing=帐单拒绝
+NoInvoiceRefused=拒绝不收
+InvoiceRefused=负责对客户拒绝
+Status=地位
+StatusUnknown=未知
+StatusWaiting=等候
+StatusCredited=计入
+StatusRefused=拒绝
+StatusMotif0=未指定
+StatusMotif1=提供insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=没有撤退的命令
+StatusMotif4=客户订单
+StatusMotif5=肋inexploitable
+StatusMotif6=帐户无余额
+StatusMotif7=司法判决
+StatusMotif8=其他原因
+CreateAll=撤回所有
+CreateGuichet=只有办公室
+CreateBanque=只有银行
+OrderWaiting=等待治疗
+NotifyTransmision=提款传输
+NotifyEmision=撤离发射
+NotifyCredit=提款信用
+NumeroNationalEmetter=国家发射数
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:39).

@@ -43,13 +43,6 @@ ErrorExportDuplicateProfil=Deze profielnaam bestaat al voor deze export set.
 ErrorLDAPSetupNotComplete=Dolibarr LDAP-matching is niet compleet.
 ErrorLDAPMakeManualTest=A .ldif file has been generated in directory %s. Try to load it manually from command line to have more informations on errors.
 ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "statut not started" if field "done by" is also filled.
-ErrorBillRefAlreadyExists=Ref gebruikt voor de oprichting bestaat al.
+ErrorRefAlreadyExists=Ref gebruikt voor de oprichting bestaat al.
 ErrorPleaseTypeBankTransactionReportName=Vul bankontvangst naam in waar transactie wordt gemeld (Formaat YYYYMM of JJJJMMDD)
 ErrorRecordHasChildren=Mislukt om records te verwijderen omdat er nog gelinkte bestanden zijn.
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
-// Reference language: en_US
-MenuManager=Menu manager
-ErrorUrlNotValid=Het adres van de website is onjuist
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

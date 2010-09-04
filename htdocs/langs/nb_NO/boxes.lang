@@ -49,3 +49,24 @@ NoRecordedInvoices=Ingen registrerte kundefakturaer
 NoUnpaidCustomerBills=Ingen ubetalte kundefakturaer
 NoRecordedSupplierInvoices=Ingen registrte leverandørfakturaer
 NoUnpaidSupplierBills=Ingen ubetalte leverandørfakturaer
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:08:18).
+// Reference language: en_US
+BoxLastContracts=Siste kontrakter
+LastRefreshDate=Siste oppdatering dato
+BoxTitleLastContracts=Siste %s kontrakter
+NoModifiedSupplierBills=Ingen registrert leverandørens faktura
+NoRecordedProducts=Ingen registrert produkter / tjenester
+NoRecordedProspects=Ingen registrert utsikter
+NoContractedProducts=Ingen produkter / tjenester innleide
+NoRecordedContracts=Ingen registrert kontrakter
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:20).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nb_NO
+BoxTitleLastModifiedSuppliers=Sist endret %s leverandører
+BoxTitleLastModifiedCustomers=Sist endret %s kunder
+BoxTitleLastModifiedProspects=Sist %s endret utsiktene
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:37).

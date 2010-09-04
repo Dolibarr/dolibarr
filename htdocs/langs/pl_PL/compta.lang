@@ -94,26 +94,17 @@ ConfirmPaySocialContribution=Czy na pewno chcesz sklasyfikować ten społecznego
 DeleteSocialContribution=Usuń społecznego wkładu
 ConfirmDeleteSocialContribution=Czy na pewno chcesz usunąć ten wkład społeczny?
 ExportDataset_tax_1=Składek na ubezpieczenia społeczne i płatności
-AnnualSummaryDueDebtMode=Bilan et des recettes dpenses, rsum annuel, pl <b>trybie %sCrances-dettes %s comptabilit</b> dit <b>d&#39;engagement.</b>
+AnnualSummaryDueDebtMode=Bilan et des recettes dpenses, rsum annuel, pl <b>trybie %sCrances-dettes %s comptabilit</b> dit <b>d'engagement.</b>
 AnnualSummaryInputOutputMode=Bilan et des recettes dpenses, rsum annuel, pl <b>trybie %sRecettes-Dpenses %s comptabilit</b> dit <b>de Caisse.</b>
-AnnualByCompaniesDueDebtMode=Bilan et des recettes dpenses, dtail par tiers, en <b>trybie %sCrances-dettes %s comptabilit</b> dit <b>d&#39;engagement.</b>
+AnnualByCompaniesDueDebtMode=Bilan et des recettes dpenses, dtail par tiers, en <b>trybie %sCrances-dettes %s comptabilit</b> dit <b>d'engagement.</b>
 AnnualByCompaniesInputOutputMode=Bilan et des recettes dpenses, dtail par tiers, en <b>trybie %sRecettes-Dpenses %s comptabilit</b> dit <b>de Caisse.</b>
 SeeReportInInputOutputMode=Voir le <b>rapport %sRecettes-Dpenses %s comptabilit</b> dit pour un <b>Caisse de</b> calcul sur les paiements effectivement raliss
-SeeReportInDueDebtMode=Voir le <b>rapport %sCrances-dettes %s comptabilit</b> dit <b>d&#39;engagement</b> pour un calcul sur les factures mises
+SeeReportInDueDebtMode=Voir le <b>rapport %sCrances-dettes %s comptabilit</b> dit <b>d'engagement</b> pour un calcul sur les factures mises
 RulesResultDue=- Kwoty wykazane są łącznie ze wszystkimi podatkami <br> - Obejmuje ona zaległych faktur, kosztów i podatku VAT, czy są one wypłacane lub nie. <br> - Jest on oparty na zatwierdzanie daty faktur i podatku VAT oraz o terminie płatności na wydatki.
 RulesResultInOut=- Kwoty wykazane są łącznie ze wszystkimi podatkami <br> - Obejmuje on rzeczywiste płatności faktur, koszty i VAT. <br> - Jest on oparty na terminy płatności faktur, koszty ANF VAT. <br>
 RulesCADue=- Obejmuje ona klientów z powodu faktury, czy są one wypłacane, czy nie. <br> - Jest on oparty na zatwierdzenie daty tych faktur. <br>
 RulesCAIn=- Obejmuje wszystkie skuteczne płatności faktur otrzymanych od klientów. <br> - Jest on oparty na dacie płatności tych faktur <br>
-VATReportByCustomersInInputOutputMode=Rapport par des klienta TVA et collectes płaci (TVA sur encaissement)
-VATReportByCustomersInDueDebtMode=Rapport par des klienta TVA et collectes płaci (TVA sur dbit)
-VATReportByQuartersInInputOutputMode=Rapport trimestre par des TVA et collectes płaci (TVA sur encaissement)
-VATReportByQuartersInDueDebtMode=Rapport trimestre par des TVA et collectes płaci (TVA sur dbit)
-SeeVATReportInInputOutputMode=Voir le <b>rapport %sTVA encaissement %s</b> pour de calcul trybie standardowym
-SeeVATReportInDueDebtMode=Voir le rapport <b>sur dbit %sTVA %s</b> pour Mode de calcul avec opcja sur les dbits
-RulesVATIn=- Pour les usług le rapport inclut les TVA des rglements effectivement Reus mis en ou se basant sur la date du rglement. <br> - Pour les biens matriels, il les TVA inclut des factures en se basant sur la date de walidacji de la faktura.
-RulesVATDue=- Pour les usług le rapport inclut les TVA des factures należności, payes ou se non en basant sur la date de walidacji de ces factures. <br> - Pour les biens matriels, il les TVA inclut des factures en se basant sur la date de walidacji de la faktura.
-OptionVatInfoModuleComptabilite=Remarque: Pour les biens matriels, il faudrait korzystać la date de livraison pour tre plus juste.
-PercentOfInvoice=%% / faktury
+PercentOfInvoice=%%/faktury
 Dispatch=Dysponowanie
 Dispatched=Wysłane
 ToDispatch=Do wysyłki
@@ -136,3 +127,22 @@ ShowVatPayment=Pokaż zapłaty podatku VAT
 SupplierAccountancyCode=Dostawca rachunkowych kod
 AlreadyPaid=Już wypłaconych
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+TaxModuleSetupToModifyRules=Przejdź do <a href="%s">konfiguracji modułu</a> , aby zmienić zasady obliczania
+VATReportBuildWithOptionDefinedInModule=Kwoty wyświetlane tutaj są obliczane na zasadach określonych przez organy podatkowe moduł konfiguracji.
+SocialContributionsPayments=Płatności składek na ubezpieczenia społeczne
+VATReportByCustomersInInputOutputMode=Sprawozdanie z VAT klienta i opłacane (paragon VAT)
+VATReportByCustomersInDueDebtMode=Sprawozdanie z VAT klienta i płatny (stawka VAT)
+VATReportByQuartersInInputOutputMode=Sprawozdanie stawki VAT i wypłacane klejnoty (paragon VAT)
+VATReportByQuartersInDueDebtMode=Sprawozdanie stawki VAT i gromadzonych zapłaty (stawka VAT)
+SeeVATReportInInputOutputMode=Zobacz raport <b>%sVAT encasement%s</b> na standardowe obliczenia
+SeeVATReportInDueDebtMode=<b>%sVAT</b> sprawozdanie Zobacz <b>na flow%s</b> do obliczenia z opcją na przepływ
+RulesVATIn=Dla usług, raport zawiera regulacji podatku VAT faktycznie otrzymane lub wydane na podstawie daty zapłaty. <br> - Dla dobra materialne, zawiera faktur VAT na podstawie daty zatwierdzenia faktury.
+RulesVATDue=Dla usług, raport zawiera faktur VAT należny, zapłacone czy nie, w zależności od daty zatwierdzenia tych rachunków. <br> - Dla dobra materialne, zawiera VAT faktury, w zależności od daty zatwierdzenia faktury.
+OptionVatInfoModuleComptabilite=Uwaga: W przypadku dóbr materialnych, należy użyć daty dostawy do bardziej sprawiedliwego.
+ThirdPartyMustBeEditAsCustomer=Osoby trzecie muszą być określone jako klient
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:49).

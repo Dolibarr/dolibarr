@@ -14,10 +14,10 @@ BillsStatisticsSuppliers=Statistieken leveranciers facturen
 InvoiceStandard=Standaard factuur
 InvoiceStandardAsk=Standaard factuur
 InvoiceStandardDesc=Dit type van rekening is de traditionele factuur.
-InvoiceProFormat=Proformat factuur
-InvoiceProFormatAsk=Proformat factuur
-InvoiceProFormatDesc=Een pro forma factuur is een voorlopige factuur en een orderbevestiging. Het is geen officiële factuur, maar bedoeld voor klanten in het buitenland om bijvoorbeeld een vergunning aan te vragen of de inklaring voor te bereiden. Ze worden ook gebruikt voor het aanvragen van een Letter of Credit (L/C).
-InvoiceReplacement=Vervangings factuur. Moet vervangen factuur met referentie
+InvoiceProForma=Proforma factuur
+InvoiceProFormaAsk=Proforma factuur
+InvoiceProFormaDesc=Een pro forma factuur is een voorlopige factuur en een orderbevestiging. Het is geen officiële factuur, maar bedoeld voor klanten in het buitenland om bijvoorbeeld een vergunning aan te vragen of de inklaring voor te bereiden. Ze worden ook gebruikt voor het aanvragen van een Letter of Credit (L/C).
+InvoiceReplacement=Vervangings factuur
 InvoiceReplacementAsk=Vervangings factuur voor factuur
 InvoiceReplacementDesc=<b>Vervangings factuur</b> wordt gebruikt om een factuur zonder reeds ontvangen volledig betaling te annuleren en te vervangen. <br><br> Opmerking: Alleen factuur zonder ontvangen betaling kan worden vervangen. Als deze niet gesloten is, wordt deze automatisch gesloten te 'verlaten'.
 InvoiceAvoir=Creditnota
@@ -401,3 +401,21 @@ PDFTourteauDescription=Model factuur zonder vervanging
 
 TerreNumRefModelDesc1=Geeft het aantal als %syymm-nnnn voor facturen en %syymm-nnnn voor de activa is waar yy jaar, mm de maand en nnnn een opeenvolgend nummer is zonder vervangings 0 (nul)
 TerreNumRefModelError=Een factuur beginnend met $syymm als basis bestaat reeds en is onverenigbaar met deze nummering. Verwijder of hernoem de factuur om deze module te activeren.
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+PaymentRule=Betaling regel
+BillShortStatusConverted=Verwerkte
+RelatedBill=Betrokken factuur
+RelatedBills=Gerelateerde facturen
+OrionNumRefModelDesc1=Toon het aantal in het formaat FAYYNNNNN waarbij YY het jaar en de toename NNNNN nummer is vanaf 1.
+OrionNumRefModelDesc2=Het jaar wordt verhoogd met 1 ZONDER een initialisatie tot nul aan het begin van het boekjaar.
+OrionNumRefModelDesc3=Definieer de variabele SOCIETE_FISCAL_MONTH_START met de maand aan het begin van het boekjaar, bijvoorbeeld: 9 voor september.
+OrionNumRefModelDesc4=In dit voorbeeld zullen wij op 1 september 2006 een factuur met de naam FA700354.
+TitanNumRefModelDesc1=Toon het aantal aan het formaat FAYYNNNNN waarbij YY het jaar en NNNNN is de toename vanaf nummer 1.
+TitanNumRefModelDesc2=Het jaar is verhoogd met 1 en de toename van het aantal wordt geïnitialiseerd op nul aan het begin van het boekjaar.
+TitanNumRefModelDesc3=Definieer de variabele SOCIETE_FISCAL_MONTH_START met de maand aan het begin van het boekjaar, bijvoorbeeld: 9 voor september.
+TitanNumRefModelDesc4=In dit voorbeeld, we moeten op 1 september 2006 een factuur met de naam FA0700001
+PlutonNumRefModelDesc1=Terug een aanpasbare factuurnummer hand van een vastgelegde masker.
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:15).

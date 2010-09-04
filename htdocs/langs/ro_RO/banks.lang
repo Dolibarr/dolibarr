@@ -154,3 +154,9 @@ ShowAllAccounts=Arata pentru toate conturile
 // Reference language: en_US
 TransactionWithOtherAccount=Contul de transfer
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+BankAccountCountry=Contul ţară
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:09).

@@ -30,9 +30,9 @@ LDAPFieldFirstSubscriptionDate=Prima data de abonament
 LDAPFieldFirstSubscriptionAmount=Pumn de abonament suma
 LDAPFieldLastSubscriptionDate=Ultima data de abonament
 LDAPFieldLastSubscriptionAmount=Ultima abonament suma
-SynchronizeDolibarr2Ldap=Sincronizarea de utilizator (Dolibarr -&gt; LDAP)
+SynchronizeDolibarr2Ldap=Sincronizarea de utilizator (Dolibarr -> LDAP)
 UserSynchronized=Utilizator sincronizate
-ForceSynchronize=Forţei de sincronizare Dolibarr -&gt; LDAP
+ForceSynchronize=Forţei de sincronizare Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Nu şi-a citit de baze de date LDAP. LDAP verifica modul de instalare şi de baze de date de accesibilitate.
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser

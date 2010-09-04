@@ -11,11 +11,11 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Login %s existiert bereits.
 ErrorGroupAlreadyExists=Gruppe %s existiert bereits.
-ErrorFailToDeleteFile=Failed to remove file <b>&#39; %s&#39;.</b>
-ErrorFailToCreateFile=Fehler beim Erstellen einer Datei <b>&quot; %s&quot;.</b>
-ErrorFailToRenameDir=Failed to rename <b>Verzeichnis&#39; %s&#39;</b> in <b>&#39; %s&#39;.</b>
-ErrorFailToCreateDir=Fehler beim Erstellen von <b>Verzeichnis&#39; %s&#39;.</b>
-ErrorFailToDeleteDir=Fehler zu löschen <b>Verzeichnis&#39; %s&#39;.</b>
+ErrorFailToDeleteFile=Failed to remove file <b>' %s'.</b>
+ErrorFailToCreateFile=Fehler beim Erstellen einer Datei <b>" %s".</b>
+ErrorFailToRenameDir=Failed to rename <b>Verzeichnis' %s'</b> in <b>' %s'.</b>
+ErrorFailToCreateDir=Fehler beim Erstellen von <b>Verzeichnis' %s'.</b>
+ErrorFailToDeleteDir=Fehler zu löschen <b>Verzeichnis' %s'.</b>
 ErrorFailedToDeleteJoinedFiles=Unternehmen können nicht gelöscht, weil es sich einige Dateien. Nehmen Sie sich Dateien zuerst.
 ErrorThisContactIsAlreadyDefinedAsThisType=Dieser Kontakt ist bereits definiert als Ansprechpartner für diese Art.
 ErrorCashAccountAcceptsOnlyCashMoney=Dieses Konto ist ein Cash-Konto, so dass sie Zahlungen vom Typ nur Barzahlung.
@@ -36,8 +36,8 @@ ErrorFieldsRequired=Einige Felder müssen ausgefüllt wurden nicht besetzt.
 ErrorFailedToCreateDir=Fehler beim Erstellen eines Verzeichnis. Vergewissern Sie sich, dass Web-Server-Benutzer-Berechtigungen zu schreiben, in Dolibarr Dokumenten-Verzeichnis. Ist der Parameter <b>safe_mode</b> aktiviert ist, für die dieser PHP, prüfen Sie, ob Dolibarr PHP-Dateien besitzt, um Web-Server-Benutzer (oder Gruppe).
 ErrorNoMailDefinedForThisUser=Keine Mail, die für dieses Benutzers
 ErrorFeatureNeedJavascript=Diese Funktion muss JavaScript aktiviert werden zu arbeiten. Ändern Sie diese im Setup - Display.
-ErrorTopMenuMustHaveAParentWithId0=Ein Menü vom Typ &#39;Top&#39; kann nicht sein, Eltern-Menü. Put 0 in Stamm-Menü oder wählen Sie ein Menü vom Typ &#39;Links&#39;.
-ErrorLeftMenuMustHaveAParentId=Ein Menü vom Typ &#39;Linke&#39; muss ein Elternteil id.
+ErrorTopMenuMustHaveAParentWithId0=Ein Menü vom Typ 'Top' kann nicht sein, Eltern-Menü. Put 0 in Stamm-Menü oder wählen Sie ein Menü vom Typ 'Links'.
+ErrorLeftMenuMustHaveAParentId=Ein Menü vom Typ 'Linke' muss ein Elternteil id.
 ErrorFileNotFound=Datei nicht gefunden (Bad Weg, falsche Berechtigungen oder der Zugriff wurde verweigert, indem openbasedir-Parameter)
 ErrorFunctionNotAvailableInPHP=<b>Funktion %s</b> ist für diese Funktion ist aber nicht in dieser Version / Konfiguration von PHP.
 ErrorDirAlreadyExists=Ein Verzeichnis mit diesem Namen ist bereits vorhanden.
@@ -50,8 +50,8 @@ ErrorNoAccountancyModuleLoaded=Nr. Rechnungswesen-Modul aktiviert
 ErrorExportDuplicateProfil=Dieses Profil existiert bereits für diesen Export festgelegt.
 ErrorLDAPSetupNotComplete=Dolibarr LDAP-Matching ist nicht vollständig.
 ErrorLDAPMakeManualTest=A. Ldif-Datei generiert wurde im Verzeichnis %s. Versuchen Sie, laden Sie es manuell von der Kommandozeile aus, um mehr Informationen über Fehler.
-ErrorCantSaveADoneUserWithZeroPercentage=Kann nicht speichern, eine Aktion mit &quot;statut nicht begonnen&quot;, wenn Feld &quot;durch&quot; ist auch gefüllt.
-ErrorBillRefAlreadyExists=Referenz für die Gründung ist bereits vorhanden.
+ErrorCantSaveADoneUserWithZeroPercentage=Kann nicht speichern, eine Aktion mit "statut nicht begonnen", wenn Feld "durch" ist auch gefüllt.
+ErrorRefAlreadyExists=Referenz für die Gründung ist bereits vorhanden.
 ErrorPleaseTypeBankTransactionReportName=Bitte geben Sie Bank-Eingang, wo Transaktion wird (oder JJJJMM Format JJJJMMTT)
 ErrorRecordHasChildren=Fehler zu löschen Einträge, da es einige Kinder.
 // Date 2009-01-20 00:09:12
@@ -63,3 +63,38 @@ ErrorRecordHasChildren=Fehler zu löschen Einträge, da es einige Kinder.
 MenuManager=Menü-Manager
 ErrorUrlNotValid=Die Website-Adresse ist nicht korrekt
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:23:11).
+// Reference language: en_US
+Error=Fehler
+Errors=Errors
+ErrorBadEMail=EMail %s ist falsch
+ErrorBadUrl=Url %s ist falsch
+ErrorRecordNotFound=Eintrag nicht gefunden.
+ErrorDirNotFound=<b>%s</b> Directory nicht gefunden (Bad Weg, falsche Berechtigungen oder der Zugriff verweigert Parameter von PHP openbasedir oder safe_mode)
+ErrorFileAlreadyExists=Eine Datei mit diesem Namen existiert bereits.
+ErrorPartialFile=Die Datei wurde nicht vollständig empfangen vom Server.
+ErrorNoTmpDir=Temporäre directy %s existiert nicht.
+ErrorUploadBlockedByAddon=Upload blockiert durch eine PHP / Apache-Plugin.
+ErrorFileSizeTooLarge=Dateigröße ist zu groß.
+WarningSafeModeOnCheckExecDir=Warnung, PHP-Option <b>safe_mode</b> ist auf Befehl muss so gelagert werden <b>safe_mode_exec_dir</b> Parameter innerhalb eines Verzeichnisses von PHP erklärt.
+WarningConfFileMustBeReadOnly=Warnung, config-Datei <b>(htdocs / conf / conf.php)</b> können Sie Ihre Server überschrieben werden durch das Web. Das ist ein ernstes Sicherheitsloch. Ändern Sie Berechtigungen auf Datei im Nur-Lese-Modus für die Betriebssystem-Benutzer von Web-Server verwendet werden. Wenn Sie Windows-und FAT-Format für Ihre Festplatte zu nutzen, müssen Sie wissen, dass dieses Dateisystem nicht möglich, Berechtigungen auf Datei hinzufügen, können so nicht völlig sicher.
+ErrorModuleRequireJavascript=Javascript muss nicht deaktiviert werden, um diese Funktion gearbeitet haben. So aktivieren / deaktivieren Sie Javascript, um Menü Home-> Einstellungen-> Display.
+ErrorPasswordsMustMatch=Beide eingegeben Passwörter müssen zueinander passen
+ErrorContactEMail=Ein technischer Fehler aufgetreten. Bitte Administrator kontaktieren folowwing <b>email%</b> en bieten den Fehlercode <b>%s</b> in Ihrer Nachricht, oder noch besser, indem Sie einen Bildschirm-Kopie dieser Seite.
+ErrorWrongValueForField=Falscher Wert für das Feld Anzahl <b>%s</b> (Wert <b>'%s'</b> passt nicht regex Regel <b>%s)</b>
+ErrorsOnXLines=Fehler auf <b>%s</b> Quellzeilen
+WarningsOnXLines=Warnhinweise auf <b>%s</b> Quellzeilen
+ErrorFileIsInfectedWithAVirus=Die Antiviren-Programm konnte nicht validiert die Datei (vielleicht mit einem Virus infiziert werden)
+ErrorSpecialCharNotAllowedForField=Sonderzeichen sind nicht zulässig für das Feld "%s"
+WarningNoDocumentModelActivated=Kein Modell für die Generierung von Dokumenten, wurde aktiviert. Ein Modell wird standardmäßig choosed, bis Sie Ihr Modul Setup zu überprüfen.
+ErrorDatabaseParameterWrong=Datenbank-Setup-Parameter <b>'%s</b> "hat einen Wert nicht kompatibel zu" benutzen Dolibarr (müssen <b>%s</b> Wert').
+ErrorNumRefModel=Bezug besteht, in die Datenbank (%s) und ist nicht kompatibel mit dieser Nummerierung Regel. Entfernen Sie aufzeichnen oder umbenannt Verweis auf dieses Modul zu aktivieren.
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> de_DE
+ErrorQtyTooLowForThisSupplier=Menge zu gering für diesen Lieferanten oder kein Preis dieses Produkt für diesen Anbieter definiert
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:55).

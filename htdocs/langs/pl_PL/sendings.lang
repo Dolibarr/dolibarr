@@ -54,7 +54,6 @@ GenericTransport=Generic transportu
 Enlevement=Zgarnięte przez klienta
 DocumentModelSimple=Prosty wzór dokumentu
 WarningNoQtyLeftToSend=Ostrzeżenie nie produktów oczekujących na wysłanie.
-NumRefModelJade=Wróć numeru referencyjnego w formacie BLYY00001 ... gdzie RR jest rok. Liczba na końcu nigdy nie jest resetowany do zera.
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
 
@@ -68,3 +67,14 @@ SendingMethodCOLSUI=Colissimo
 DocumentModelSirocco=Prosty dokument model dostawy wpływy
 DocumentModelTyphon=Więcej kompletny dokument model dostawy wpływy (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+Shipments=Wysyłek
+StatusSendingCanceled=Odwołany
+StatusSendingCanceledShort=Odwołany
+DocumentModelMerou=Mérou model A5
+DateDeliveryPlanned=Strugane daty dostawy
+DateReceived=Data otrzymania dostawy
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:26).

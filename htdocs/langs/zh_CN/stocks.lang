@@ -1,0 +1,92 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+WarehouseCard=库卡
+Warehouse=仓库
+NewWarehouse=新仓库/库存区
+MenuNewWarehouse=新仓库
+WarehouseOpened=打开仓库
+WarehouseClosed=仓库关闭
+WarehouseSource=来源仓库
+WarehouseTarget=目标仓库
+ValidateSending=删除发送
+CancelSending=取消发送
+DeleteSending=删除发送
+Stock=股票
+Stocks=股票
+Movement=运动
+Movements=运动
+ErrorWarehouseRefRequired=仓库引用的名称是必需的
+ErrorWarehouseLabelRequired=仓库标签要求
+CorrectStock=正确的股票
+ListOfWarehouses=仓库名单
+ListOfStockMovements=名单的股票走势
+StocksArea=股票区
+Location=位置
+LocationSummary=短名称位置
+NumberOfProducts=产品总数
+LastMovement=最后乐章
+LastMovements=最后动作
+Units=单位
+Unit=单位
+StockCorrection=正确的股票
+StockMovement=转让
+StockMovements=股票转让
+NumberOfUnit=单位数目
+TotalStock=总库存
+StockTooLow=库存过低
+EnhancedValue=值
+PMPValue=加权平均价格
+PMPValueShort=的WAP
+EnhancedValueOfWarehouses=仓库价值
+UserWarehouseAutoCreate=创建一个股票时自动创建一个用户
+QtyDispatched=派出数量
+OrderDispatch=联合调度
+RuleForStockManagementDecrease=为减少库存管理规则
+RuleForStockManagementIncrease=增加的库存管理规则
+DeStockOnBill=减少对客户的实际库存发票/信用票据验证（警告在此版本，它只有在仓库数1，股票被修改）
+DeStockOnValidateOrder=减少对客户的订单确认（警告在此版本中，真正的股票，它只有在仓库数1，股票被修改）
+DeStockOnShipment=减少对实际装运验证股票（推荐）
+ReStockOnBill=增加对供应商发票的实际库存/信用票据验证（警告在此版本中，它只有在仓库数1，股票被修改）
+ReStockOnValidateOrder=对供应商的订单增加赞许（警告在此版本中，真正的股票，它只有在仓库数1，股票被修改）
+ReStockOnDispatchOrder=增加人工调度到仓库供应商接到订单后，实时股票
+OrderStatusNotReadyToDispatch=命令还没有或根本没有更多的地位，使产品在仓库库存调度。
+StockDiffPhysicTeoric=股票差异的原因和理论物理
+NoPredefinedProductToDispatch=此对象没有预定义的产品。因此，没有库存调度是必需的。
+DispatchVerb=派遣
+StockLimitShort=限制
+StockLimit=库存限额警报
+PhysicalStock=体育股票
+RealStock=实际股票
+TheoreticalStock=Therocial股票
+VirtualStock=虚拟股票
+MininumStock=最低股票
+StockUp=库存上升
+MininumStockShort=股票分
+StockUpShort=库存上升
+IdWarehouse=编号仓库
+DescWareHouse=说明仓库
+LieuWareHouse=本地化仓库
+WarehousesAndProducts=仓库和产品
+AverageUnitPricePMPShort=投入品平均价格
+AverageUnitPricePMP=投入品平均价格
+EstimatedStockValueShort=估计值的股票
+EstimatedStockValue=估计值的股票
+DeleteAWarehouse=删除仓库
+ConfirmDeleteWarehouse=你确定要删除仓库<b>％s吗</b> ？
+PersonalStock=％s的个人股票
+ThisWarehouseIsPersonalStock=这个仓库代表的％s％的个人股票期权
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+WarehouseEdit=修改仓库
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:05).

@@ -26,7 +26,7 @@ SuppliersOrdersRunning=Current furnizori ordinelor
 CustomerOrder=Pentru clienţi
 CustomersOrders=Ordinelor clienţilor
 CustomersOrdersRunning=Current ordinelor clienţilor
-CustomersOrdersAndOrdersLines=Clientul comenzi şi ordine &quot;linii
+CustomersOrdersAndOrdersLines=Clientul comenzi şi ordine "linii
 OrdersToValid=Comenzi la valabil
 OrdersToBill=Comenzi la factura
 OrdersInProcess=Comenzi în procesul de
@@ -78,8 +78,8 @@ LastModifiedOrders=Ultima modificare %s ordinele
 LastClosedOrders=Ultima %s ordinele închise
 AllOrders=Toate comenzile
 NbOfOrders=Numar de comenzi
-OrdersStatistics=Comenzi &#39;statistici
-OrdersStatisticsSuppliers=Furnizor ordinele &quot;statistici
+OrdersStatistics=Comenzi 'statistici
+OrdersStatisticsSuppliers=Furnizor ordinele "statistici
 NumberOfOrdersByMonth=Numarul de comenzi de luni
 AmountOfOrdersByMonthHT=valoarea ordinelor de luna (net de impozite)
 ListOfOrders=Lista de comenzi
@@ -91,7 +91,7 @@ ConfirmValidateOrder=Sunteţi sigur că doriţi să valideze această ordine sub
 ConfirmCancelOrder=Sunteţi sigur că doriţi să anulaţi acest ordin?
 ConfirmMakeOrder=Sunteţi sigur că doriţi să confirme acest lucru, pentru ai face <b>pe %s?</b>
 GenerateBill=Generare factură
-ClassifyBilled=Clasifica &quot;facturat&quot;
+ClassifyBilled=Clasifica "facturat"
 ComptaCard=Contabilitate carte
 DraftOrders=Proiect de ordine de
 RelatedOrders=Legate de comenzi
@@ -102,16 +102,16 @@ CustomerOrder=Pentru clienţi
 RefCustomerOrderShort=Ref. client. comanda
 SendOrderByMail=Pentru a trimite prin e-mail
 ActionsOnOrder=Acţiunile de pe ordinea
-NoArticleOfTypeProduct=Nici un articol de tip &quot;produs&quot; astfel încât nu shippable articol pentru acest ordin
+NoArticleOfTypeProduct=Nici un articol de tip "produs" astfel încât nu shippable articol pentru acest ordin
 OrderMode=Ordinul metodă
 AuthorRequest=Cerere de autor
 UseCustomerContactAsOrderRecipientIfExist=Utilizaţi client adresa de contact, dacă este definită în loc de o terţă parte, pentru ca adresa destinatarului adresa
 RunningOrders=COMANDA ON proces
-UserWithApproveOrderGrant=Useres acordate cu &quot;aproba ordinele&quot; permisiune.
+UserWithApproveOrderGrant=Useres acordate cu "aproba ordinele" permisiune.
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON nu sunt definite
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON nu sunt definite
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Încărcare fişier modul &quot; %s&quot;
-Error_FailedToLoad_COMMANDE_ADDON_File=Încărcare fişier modul &quot; %s&quot;
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Încărcare fişier modul " %s"
+Error_FailedToLoad_COMMANDE_ADDON_File=Încărcare fişier modul " %s"
 OrderSource0=Comerciale propunerea
 OrderSource1=Internet
 OrderSource2=Mail campanie
@@ -122,7 +122,6 @@ OrderSource6=Magazin
 QtyOrdered=Cantitate ordonat
 AddDeliveryCostLine=
 PDFEinsteinDescription=Un model complet pentru (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la Forme %syymm-NNNN ou aa est l&#39;année, le mois et mm NNNN un compteur sequentiel sans ruptură et sans remiză e 0
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
 
@@ -134,3 +133,28 @@ PaymentOrderRef=Plata pentru %s
 CloneOrder=Clone pentru
 ConfirmCloneOrder=Sunteţi sigur că doriţi să clona pentru <b>acest %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+OrderToProcess=Pentru a procesa
+TypeContact_commande_internal_SALESREPFOLL=Reprezentant client următoarele-up pentru
+TypeContact_commande_internal_SHIPPING=Reprezentant urmărire de transport maritim
+TypeContact_commande_external_BILLING=Clientul factura de contact
+TypeContact_commande_external_SHIPPING=Clientul de transport maritim de contact
+TypeContact_commande_external_CUSTOMER=lua legatura cu clientul pentru urmărirea
+TypeContact_order_supplier_internal_SALESREPFOLL=Reprezentant următoarele-up cu furnizorul pentru
+TypeContact_order_supplier_internal_SHIPPING=Reprezentant urmărire de transport maritim
+TypeContact_order_supplier_external_BILLING=A lua legatura cu furnizorul factură
+TypeContact_order_supplier_external_SHIPPING=Furnizor de transport maritim de contact
+TypeContact_order_supplier_external_CUSTOMER=A lua legatura ordinea următoare-up
+PDFEdisonDescription=Un simplu pentru model
+PDFQuevedoDescription=Un model complet cu scopul de spaniolă RE şi IRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:50).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ro_RO
+DispatchSupplierOrder=Primirea comenzii furnizorul %s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:24).

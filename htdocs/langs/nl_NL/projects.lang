@@ -85,5 +85,14 @@ TypeContact_project_task_internal_CONTRIBUTOR=Medewerker
 TypeContact_project_task_external_CONTRIBUTOR=Medewerker
 # Documenten modulen
 DocumentModelBaleine=Model Project Report Compleet (logo. ..)
-# NumRef Modules
-SimpleNumRefModelDesc=Geeft het aantal als PJyymm-nnnn waar yy jaar is, mm de maand en nnnn een sequencer naadloos en zonder vervangde 0
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+DoNotShowMyTasksOnly=Zie ook taken Ik ben niet beïnvloed
+ShowMyTasksOnly=Bekijk alleen de taken Ik ben beïnvloed
+TaskRessourceLinks=Ressources
+ProjectsDedicatedToThisThirdParty=Projecten gewijd aan deze derde partij
+NoTasks=Geen taken voor dit project
+LinkedToAnotherCompany=Gekoppeld aan een andere derde partij
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:46).

@@ -77,8 +77,9 @@ ActionAC_CLO=Fechar
 ActionAC_EMAILING=Envío mailing massivo
 ActionAC_COM=Envío pedido por correio
 Stats=Estatisticas de Venda
-CAOrder=
-FromTo=
-MargeOrder=
-RecapAnnee=
-NoData=
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+ActionAC_SUP_ORD=Enviar por e-mail para fornecedor
+ActionAC_SUP_INV=Enviar fatura do fornecedor por e-mail
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:01).

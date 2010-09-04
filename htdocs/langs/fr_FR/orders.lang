@@ -104,6 +104,7 @@ UserWithApproveOrderGrant=Utilisateurs habilités à approuver les commandes
 PaymentOrderRef=Paiement commande %s
 CloneOrder=Cloner commande
 ConfirmCloneOrder=Êtes-vous sûr de vouloir cloner cette commande <b>%s</b> ?
+DispatchSupplierOrder=Réception de la commande fournisseur %s
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Reponsable suivi commande client
 TypeContact_commande_internal_SHIPPING=Reponsable envoi commande client
@@ -133,7 +134,5 @@ QtyOrdered=Qté commandée
 AddDeliveryCostLine=Ajouter une ligne de frais port indiquant le poids de la commande
 
 # Document models
-PDFEinsteinDescription=Modèle de propositions commerciales complet (logo...)
-
-# NumRef Modules
-MarbreNumRefDesc=Renvoie le numéro sous la forme %syymm-nnnn ou yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
+PDFEinsteinDescription=Modèle de comande complet (logo...)
+PDFEdisonDescription=Modèle de commande simple

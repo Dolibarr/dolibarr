@@ -21,10 +21,9 @@ InvoiceStandardDesc=هذا النوع من الفاتورة هي فاتورة ع
 InvoiceDeposit=إيداع فاتورة
 InvoiceDepositAsk=إيداع فاتورة
 InvoiceDepositDesc=هذا النوع من الفاتورة يتم فيه ايداع وقد وردت.
-InvoiceProFormat=Proformat الفاتورة
-InvoiceProFormatAsk=Proformat الفاتورة
-InvoiceProFormatDesc=<b>Proformat الفاتورة</b> هو صورة حقيقية فاتورة المحاسبة ولكن ليس له قيمة.
-InvoiceReplacement=استبدال الفاتورة. ويجب أن تحل محل الفاتورة مع الإشارة
+InvoiceProForma=Proforma الفاتورة
+InvoiceProFormaAsk=Proforma الفاتورة
+InvoiceProFormaDesc=<b>Proforma الفاتورة</b> هو صورة حقيقية فاتورة المحاسبة ولكن ليس له قيمة.
 InvoiceReplacementAsk=استبدال فاتورة الفاتورة
 InvoiceAvoir=علما الائتمان
 InvoiceAvoirAsk=علما الائتمان لتصحيح الفاتورة
@@ -75,7 +74,7 @@ PaymentConditions=مدة السداد
 PaymentConditionsShort=مدة السداد
 PaymentAmount=دفع مبلغ
 PaymentHigherThanReminderToPay=دفع أعلى من دفع تذكرة
-ClassifyClosed=تصنيف &#39;مغلقة&#39;
+ClassifyClosed=تصنيف 'مغلقة'
 CreateBill=إنشاء الفاتورة
 AddBill=تضيف المذكرة الائتمان أو فاتورة
 DeleteBill=شطب فاتورة
@@ -182,7 +181,7 @@ DateInvoice=تاريخ الفاتورة
 NoInvoice=لا الفاتورة
 ClassifyBill=تصنيف الفاتورة
 SupplierBillsToPay=دفع فواتير الموردين
-DispenseMontantLettres=ليه factures rédigées قدم المساواة طرائق mécanographiques sont l&#39; arrêté dispensées دي én lettres
+DispenseMontantLettres=ليه factures rédigées قدم المساواة طرائق mécanographiques sont l' arrêté dispensées دي én lettres
 DispenseMontantLettres=المكتوب من خلال فواتير mecanographic إجراءات الاستغناء حسب الترتيب رسائل
 NonPercuRecuperable=غير القابلة للاسترداد
 SetConditions=تحدد شروط الدفع
@@ -196,9 +195,9 @@ Repeatables=محددة مسبقا
 ChangeIntoRepeatableInvoice=تحويل محددة مسبقا
 CreateRepeatableInvoice=إنشاء فاتورة محددة مسبقا
 CreateFromRepeatableInvoice=خلق من فاتورة محددة مسبقا
-CustomersInvoicesAndInvoiceLines=فواتير العملاء والفواتير &#39;خطوط
+CustomersInvoicesAndInvoiceLines=فواتير العملاء والفواتير 'خطوط
 CustomersInvoicesAndPayments=العملاء والفواتير والمدفوعات
-ExportDataset_invoice_1=قائمة العملاء والفواتير والفواتير &#39;خطوط
+ExportDataset_invoice_1=قائمة العملاء والفواتير والفواتير 'خطوط
 ExportDataset_invoice_2=العملاء والفواتير والمدفوعات
 ProformaBill=Proforma بيل :
 Reduction=تخفيض
@@ -350,11 +349,11 @@ BillsCustomersUnpaid=غير المدفوعة للعملاء الفواتير
 BillsCustomersUnpaidForCompany=غير المدفوعة للعملاء فواتير ق ٪
 BillsSuppliersUnpaid=غير المدفوعة الموردين
 BillsUnpaid=غير المدفوعة
-InvoiceReplacementDesc=<b>استبدال الفاتورة</b> يستخدم لالغاء واستبدال تماما مع فاتورة الدفع لا تلقى بالفعل. <br><br> ملاحظة : ليس فقط من فاتورة الدفع على أنه يمكن الاستعاضة عنها. إن لم تكن مغلقة ، سيكون تلقائيا مغلقة &#39;المهجورة.
+InvoiceReplacementDesc=<b>استبدال الفاتورة</b> يستخدم لالغاء واستبدال تماما مع فاتورة الدفع لا تلقى بالفعل. <br><br> ملاحظة : ليس فقط من فاتورة الدفع على أنه يمكن الاستعاضة عنها. إن لم تكن مغلقة ، سيكون تلقائيا مغلقة 'المهجورة.
 InvoiceAvoirDesc=<b>الفضل</b> في <b>المذكرة</b> سلبية الفاتورة تستخدم لحل كون فاتورة بمبلغ قد يختلف عن المبلغ المدفوع فعلا (لأنه دفع الكثير من العملاء عن طريق الخطأ ، أو لن تدفع بالكامل منذ عودته لبعض المنتجات على سبيل المثال).
 HelpPaymentHigherThanReminderToPay=الاهتمام ، على دفع مبلغ واحد أو أكثر من فواتير أعلى من الراحة على الدفع. <br> تعديل الدخول ، تؤكد خلاف ذلك والتفكير في خلق الائتمان علما الزائدة وتلقى كل الفواتير الزائدة.
-ClassifyPaid=تصنيف &#39;مدفوع&#39;
-ClassifyPaidPartially=تصنيف &#39;مدفوع جزئيا&#39;
+ClassifyPaid=تصنيف 'مدفوع'
+ClassifyPaidPartially=تصنيف 'مدفوع جزئيا'
 BillStatusPaid=دفع
 BillStatusPaidBackOrConverted=يدفع أو تحويلها إلى الخصم
 BillStatusValidated=مصادق عليه (لا بد من دفعها)
@@ -364,7 +363,7 @@ BillStatusClosedPaidPartially=دفعت (جزئيا)
 BillShortStatusPaid=دفع
 BillShortStatusNotPaid=لم تدفع
 BillShortStatusClosedPaidPartially=دفعت (جزئيا)
-ConfirmCancelBillQuestion=لماذا تريدها لتصنيف هذه الفاتورة &#39;المهجورة؟
+ConfirmCancelBillQuestion=لماذا تريدها لتصنيف هذه الفاتورة 'المهجورة؟
 ConfirmClassifyPaidPartiallyQuestion=هذه الفاتورة لم تدفع بالكامل. ما هي أسباب قريبة لك هذه الفاتورة؟
 ConfirmClassifyPaidPartiallyReasonOther=التخلي عن المبلغ لسبب آخر
 AlreadyPaid=دفعت بالفعل
@@ -377,7 +376,7 @@ ShowUnpaidLateOnly=وتبين في وقت متأخر من الفواتير غي�
 
 // START - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
 // Reference language: en_US
-ClassifyCanceled=تصنيف &#39;المهجورة&#39;
+ClassifyCanceled=تصنيف 'المهجورة'
 BillStatusCanceled=المهجورة
 BillShortStatusCanceled=المهجورة
 Unpaid=غير المدفوعة
@@ -386,3 +385,33 @@ ConfirmCustomerPayment=هل تؤكد ذلك دفع مساهمات <b>٪</b> ٪ <
 ConfirmValidatePayment=هل أنت متأكد أنك تريد التحقق من صحة هذا الدفع؟ لم يطرأ أي تغيير يمكن الدفع مرة واحدة على صحتها.
 HelpEscompte=هذا الخصم هو الخصم الممنوح للعميل لأن الدفع قبل البعيد.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+AlreadyPaidNoCreditNotesNoDeposits=دفعت بالفعل (بدون تلاحظ الائتمان والودائع)
+RelatedBill=الفاتورة ذات الصلة
+RelatedBills=الفواتير ذات الصلة
+ValidateInvoice=تحقق من صحة الفواتير
+Cash=نقد
+Reported=تأخر
+DisabledBecausePayments=غير ممكن لأن هناك بعض المدفوعات
+CantRemovePaymentWithOneInvoicePaid=تصنيف لا يمكن إزالة الدفع لأنه ليس هناك على الأقل على الفاتورة سيولي
+ExpectedToPay=من المتوقع الدفع
+PayedByThisPayment=سيولي هذا الدفع
+TypeContact_facture_internal_SALESREPFOLL=ممثل العميل متابعة فاتورة
+TypeContact_facture_external_BILLING=الزبون فاتورة الاتصال
+TypeContact_facture_external_SHIPPING=العملاء الشحن الاتصال
+TypeContact_facture_external_SERVICE=خدمة العملاء الاتصال
+TypeContact_facture_fourn_internal_SALESREPFOLL=ممثل المورد متابعة فاتورة
+TypeContact_facture_fourn_external_BILLING=المورد فاتورة الاتصال
+TypeContact_facture_fourn_external_SHIPPING=المورد الشحن الاتصال
+TypeContact_facture_fourn_external_SERVICE=المورد خدمة الاتصال
+PDFLinceDescription=نموذج الفاتورة كاملة مع الطاقة المتجددة الاسبانية وIRPF
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:33).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+InvoiceReplacement=استبدال الفاتورة
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:36).

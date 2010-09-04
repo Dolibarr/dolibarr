@@ -32,7 +32,7 @@ NoRecordedSuppliers=Nr dostawców rejestrowane
 SupplierPayment=Dostawca płatności
 SuppliersArea=Dostawcy obszarze
 RefSupplierShort=Nr ref. Dostawca
-ExportDataset_fournisseur_1=Dostawca faktury i faktury listę &quot;linii
+ExportDataset_fournisseur_1=Dostawca faktury i faktury listę "linii
 ExportDataset_fournisseur_2=Dostawca faktur i płatności
 ApproveThisOrder=Zatwierdzenie tego celu
 ConfirmApproveThisOrder=Czy na pewno chcesz zatwierdzić tego celu?
@@ -52,3 +52,9 @@ ListOfSupplierProductForSupplier=Wykaz produktów i cen <b>dostawcy %s</b>
 // Reference language: en_US
 NoneOrBatchFileNeverRan=Brak lub <b>partii %s</b> nie prowadził niedawno
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=To dostawca odniesienia jest już powiązany z odniesieniem: sssss
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:33).

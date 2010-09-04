@@ -1,0 +1,46 @@
+/*
+ * Language code: it_IT
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-07-17 11:32:28
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+// Reference language: en_US
+CHARSET=UTF-8
+Language_ar_AR=Arabo
+Language_ca_ES=Catalano
+Language_da_DA=Danese
+Language_de_DE=Tedesco
+Language_en_AU=Inglese (Australia)
+Language_en_GB=English (United Kingdom)
+Language_en_IN=Inglese (India)
+Language_en_US=Inglese (Stati Uniti)
+Language_es_ES=Spagnolo
+Language_es_AR=Spagnolo (Argentina)
+Language_fi_FI=Pinne
+Language_fr_BE=Francese (Belgio)
+Language_fr_CA=Francese (Canada)
+Language_fr_CH=Francese (Svizzera)
+Language_fr_FR=Francese
+Language_is_IS=Islandese
+Language_it_IT=Italiano
+Language_nb_NO=Norvegese (Bokmål)
+Language_nl_BE=Olandese (Belgio)
+Language_nl_NL=Olandese (Paesi Bassi)
+Language_pl_PL=Polacco
+Language_pt_BR=Portoghese (Brasile)
+Language_pt_PT=Portoghese
+Language_ro_RO=Rumeno
+Language_ru_RU=Russo
+Language_tr_TR=Turco
+Language_sl_SL=Sloveno
+Language_zh_CN=Cinese
+Language_is_IS=Islandese
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> it_IT
+Language_sv_SV=Svedese
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:15).

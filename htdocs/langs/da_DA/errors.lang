@@ -13,11 +13,11 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Log ind %s eksisterer allerede.
 ErrorGroupAlreadyExists=Gruppe %s eksisterer allerede.
-ErrorFailToDeleteFile=Det lykkedes ikke at fjerne filen <b>&#39; %s&#39;.</b>
-ErrorFailToCreateFile=Kunne ikke oprette filen <b>&#39; %s&#39;.</b>
-ErrorFailToRenameDir=Kunne ikke omdøbe mappe <b>&#39; %s&#39; i&#39; %s&#39;.</b>
-ErrorFailToCreateDir=Kunne ikke oprette mappen <b>&#39; %s&#39;.</b>
-ErrorFailToDeleteDir=Det lykkedes ikke at slette mappen <b>&#39; %s&#39;.</b>
+ErrorFailToDeleteFile=Det lykkedes ikke at fjerne filen <b>' %s'.</b>
+ErrorFailToCreateFile=Kunne ikke oprette filen <b>' %s'.</b>
+ErrorFailToRenameDir=Kunne ikke omdøbe mappe <b>' %s' i' %s'.</b>
+ErrorFailToCreateDir=Kunne ikke oprette mappen <b>' %s'.</b>
+ErrorFailToDeleteDir=Det lykkedes ikke at slette mappen <b>' %s'.</b>
 ErrorFailedToDeleteJoinedFiles=Kan ikke slette enhed, fordi der er nogle tiltrådte filer. Fjern slutte filer først.
 ErrorThisContactIsAlreadyDefinedAsThisType=Denne kontaktperson er allerede defineret som kontaktperson for denne type.
 ErrorCashAccountAcceptsOnlyCashMoney=Denne bankkonto er et kontant-konto, så det accepterer betaling af type cash only.
@@ -38,7 +38,7 @@ ErrorFieldsRequired=Nogle krævede felter ikke var fyldt.
 ErrorFailedToCreateDir=Det lykkedes ikke at oprette en mappe. Kontroller, at web-serveren bruger har tilladelse til at skrive i Dolibarr dokumenter bibliotek. Hvis parameter <b>safe_mode</b> er aktiveret på dette PHP, kontrollere, at Dolibarr php filer ejer til web-serveren bruger (eller gruppe).
 ErrorNoMailDefinedForThisUser=Nr. mail defineret for denne bruger
 ErrorFeatureNeedJavascript=Denne funktion skal have Javascript skal aktiveres for at arbejde. Ændre dette i opsætningen - displayet.
-ErrorTopMenuMustHaveAParentWithId0=En menu af type &#39;Top&#39; kan ikke have en forælder menuen. Sæt 0 i moderselskabet menu eller vælge en menu af typen »Venstre«.
+ErrorTopMenuMustHaveAParentWithId0=En menu af type 'Top' kan ikke have en forælder menuen. Sæt 0 i moderselskabet menu eller vælge en menu af typen »Venstre«.
 ErrorLeftMenuMustHaveAParentId=En menu af typen »Venstre« skal have en forælder id.
 ErrorFileNotFound=Filen blev ikke fundet (Forkert sti, forkerte tilladelser eller adgang nægtet ved openbasedir parameter)
 ErrorFunctionNotAvailableInPHP=<b>Funktion %s</b> er påkrævet for denne funktion, men er ikke tilgængelig i denne version / opsætning af PHP.
@@ -52,8 +52,8 @@ ErrorNoAccountancyModuleLoaded=Nr. regnskabspool modul aktiveret
 ErrorExportDuplicateProfil=Denne profil navn eksisterer allerede for denne eksport sæt.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matchende er ikke komplet.
 ErrorLDAPMakeManualTest=A. LDIF-fil er blevet genereret i mappen %s. Prøv at indlæse den manuelt fra kommandolinjen for at få flere informationer om fejl.
-ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke gemme en aktion med &quot;vedtægt ikke startes&quot;, hvis feltet &quot;udført af&quot; er også fyldt.
-ErrorBillRefAlreadyExists=Ref bruges til oprettelse eksisterer allerede.
+ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke gemme en aktion med "vedtægt ikke startes", hvis feltet "udført af" er også fyldt.
+ErrorRefAlreadyExists=Ref bruges til oprettelse eksisterer allerede.
 ErrorPleaseTypeBankTransactionReportName=Please type bank modtagelsen navn, hvor transaktionen er rapporteret (Format ÅÅÅÅMM eller ÅÅÅÅMMDD)
 ErrorRecordHasChildren=Det lykkedes ikke at slette poster, da det har nogle Childs.
 // Date 2009-01-19 21:26:39
@@ -65,3 +65,38 @@ ErrorRecordHasChildren=Det lykkedes ikke at slette poster, da det har nogle Chil
 MenuManager=Menu manager
 ErrorUrlNotValid=Adressen på webstedet er forkert
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+Error=Fejl
+Errors=Fejl
+ErrorBadEMail=EMail %s er forkert
+ErrorBadUrl=Url %s er forkert
+ErrorRecordNotFound=Optag ikke fundet.
+ErrorDirNotFound=Directory <b>%s</b> ikke fundet (Bad sti, forkerte rettigheder eller adgang nægtet af PHP openbasedir eller safe_mode parameter)
+ErrorFileAlreadyExists=En fil med dette navn findes allerede.
+ErrorPartialFile=Fil ikke modtaget helt af serveren.
+ErrorNoTmpDir=Midlertidig directy %s ikke eksisterer.
+ErrorUploadBlockedByAddon=Upload blokeret af en PHP / Apache plugin.
+ErrorFileSizeTooLarge=Filstørrelse er for stor.
+WarningSafeModeOnCheckExecDir=Advarsel, PHP option <b>safe_mode</b> er på så kommandoen skal opbevares i en mappe angivet af php parameter <b>safe_mode_exec_dir.</b>
+WarningConfFileMustBeReadOnly=Advarsel, config fil <b>(htdocs / conf / conf.php)</b> kan din blive overskrevet af den web-server. Dette er en alvorlig sikkerhedsrisiko hul. Rediger tilladelserne til filen skal være i read only mode i operativsystemet bruger bruges af web-serveren. Hvis du bruger Windows og FAT format til din disk, skal du vide, at denne fil systemet ikke lader til at tilføje tilladelser på filen, kan så ikke helt sikker.
+ErrorModuleRequireJavascript=Javascript skal ikke være deaktiveret for at have denne funktion virker. For at aktivere / deaktivere Javascript, gå til menu Home-> Setup-> Display.
+ErrorPasswordsMustMatch=Begge har skrevet passwords skal matche hinanden
+ErrorContactEMail=En teknisk fejl opstod. Venligst, administrator til at kontakte folowwing <b>email%</b> en give fejlkode <b>%s</b> i din besked, eller endnu bedre ved at tilføje en skærm kopi af denne side.
+ErrorWrongValueForField=Forkert værdi for felt nummer <b>%s</b> (værdi <b>'%s'</b> passer ikke regex regel <b>%s)</b>
+ErrorsOnXLines=Fejl på <b>%s</b> kildelinjer
+WarningsOnXLines=Advarsler om <b>%s</b> kildelinjer
+ErrorFileIsInfectedWithAVirus=Det antivirusprogram var ikke i stand til at validere filen (filen kan være inficeret med en virus)
+ErrorSpecialCharNotAllowedForField=Specialtegn er ikke tilladt for feltet "%s"
+WarningNoDocumentModelActivated=Ingen model, for dokument generation, er blevet aktiveret. En model vil være choosed som standard, indtil du tjekke din modul opsætning.
+ErrorDatabaseParameterWrong=Database setup parameter <b>'%s'</b> har en værdi ikke er forenelige at bruge Dolibarr (skal have værdi <b>'%s</b> «).
+ErrorNumRefModel=En henvisning findes i databasen (%s) og er ikke kompatible med denne nummerering regel. Fjern optage eller omdøbt henvisning til aktivere dette modul.
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> da_DA
+ErrorQtyTooLowForThisSupplier=Mængde for lav for denne leverandør eller nogen pris fastlagt på denne vare for denne leverandør
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:54).

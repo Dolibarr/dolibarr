@@ -1,0 +1,34 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-07-17 11:45:17
+ */
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+CHARSET=UTF-8
+PayBoxSetup=PayBox模块设置
+PayBoxDesc=该模块提供的网页，以便在付款<a href="http://www.paybox.com" target="_blank">Paybox</a>客户。这可以用来为一个自由付款或就某一Dolibarr对象（发票，订货，付款...）
+FollowingUrlAreAvailableToMakePayments=以下网址可提供给客户的网页上，能够作出Dolibarr支付对象
+PaymentForm=付款方式
+WelcomeOnPaymentPage=欢迎您来到我们的在线支付服务
+ThisScreenAllowsYouToPay=这个屏幕允许你进行网上支付%s。
+ThisIsInformationOnPayment=这是在做付款信息
+ToComplete=要完成
+YourEMail=付款确认的电子邮件
+Creditor=债权人
+PaymentCode=付款代码
+PayBoxDoPayment=前往付款
+YouWillBeRedirectedOnPayBox=您将被重定向担保Paybox页，输入您的信用卡信息
+PleaseBePatient=请耐心等待
+Continue=未来
+ToOfferALinkForOnlinePaymentOnOrder=网址提供一个命令%s网上支付的用户界面
+ToOfferALinkForOnlinePaymentOnInvoice=网址提供发票一%s在线支付的用户界面
+ToOfferALinkForOnlinePaymentOnContractLine=网址提供了一个合同线%s在线支付的用户界面
+ToOfferALinkForOnlinePaymentOnFreeAmount=网址提供一个免费的网上支付金额%s用户界面
+ToOfferALinkForOnlinePaymentOnMemberSubscription=网址为会员提供订阅%s在线支付的用户界面
+YouCanAddTagOnUrl=您还可以添加<b>标签=</b> url参数<b>及<i>价值</i></b>的任何网址（只需要支付免费）添加自己的注释标记付款。
+SetupPayBoxToHavePaymentCreatedAutomatically=设置您的<b>%s</b> PayBox与网址有paybox付款时自动创建的验证。
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:33:57).

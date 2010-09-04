@@ -11,11 +11,11 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Login %s există deja.
 ErrorGroupAlreadyExists=Grupul %s există deja.
-ErrorFailToDeleteFile=Nu a reuşit să eliminaţi fişierul <b>&quot; %s&quot;.</b>
-ErrorFailToCreateFile=Nu a reuşit să creeze fişierul <b>&quot; %s&quot;.</b>
-ErrorFailToRenameDir=Nu a reuşit să redenumiţi directorul <b>&quot; %s&quot;</b> în <b>&quot; %s&quot;.</b>
-ErrorFailToCreateDir=Nu a reuşit să crea directorul <b>&quot; %s&quot;.</b>
-ErrorFailToDeleteDir=Esec pentru a şterge directorul <b>&quot; %s&quot;.</b>
+ErrorFailToDeleteFile=Nu a reuşit să eliminaţi fişierul <b>" %s".</b>
+ErrorFailToCreateFile=Nu a reuşit să creeze fişierul <b>" %s".</b>
+ErrorFailToRenameDir=Nu a reuşit să redenumiţi directorul <b>" %s"</b> în <b>" %s".</b>
+ErrorFailToCreateDir=Nu a reuşit să crea directorul <b>" %s".</b>
+ErrorFailToDeleteDir=Esec pentru a şterge directorul <b>" %s".</b>
 ErrorFailedToDeleteJoinedFiles=Nu se poate sterge entitate pentru că există unele aderat fişiere. Eliminaţi fişierele alătura primele.
 ErrorThisContactIsAlreadyDefinedAsThisType=Acest contact este deja definit ca persoană de contact pentru acest tip.
 ErrorCashAccountAcceptsOnlyCashMoney=Acest cont bancar este un cont de bani, aşa că acceptă plăţi de tip cash numai.
@@ -36,8 +36,8 @@ ErrorFieldsRequired=Unele campuri obligatorii nu au fost ocupate.
 ErrorFailedToCreateDir=Nu a reuşit să creeze un director. Verificaţi ca server Web utilizator are permisiuni pentru a scrie în directorul de Dolibarr documente. Dacă <b>safe_mode</b> parametru este activat pe această PHP, Dolibarr verifica faptul că fişierele PHP detine la server web utilizator (sau grup).
 ErrorNoMailDefinedForThisUser=Nu mail definite pentru acest utilizator
 ErrorFeatureNeedJavascript=Această caracteristică JavaScript trebuie activat pentru a fi la locul de muncă. Schimbare în acest setup - display.
-ErrorTopMenuMustHaveAParentWithId0=Un meniu de tip &quot;Top&quot; nu poate avea un părinte de meniu. Pune-0 în meniul părinte sau alege un meniu de tip &quot;stânga&quot;.
-ErrorLeftMenuMustHaveAParentId=Un meniu de tip &quot;stânga&quot; trebuie să aibă o mamă id.
+ErrorTopMenuMustHaveAParentWithId0=Un meniu de tip "Top" nu poate avea un părinte de meniu. Pune-0 în meniul părinte sau alege un meniu de tip "stânga".
+ErrorLeftMenuMustHaveAParentId=Un meniu de tip "stânga" trebuie să aibă o mamă id.
 ErrorFileNotFound=Fişierul nu a fost găsit (Bad calea, greşit permisiunile de acces refuzat sau de openbasedir parametru)
 ErrorFunctionNotAvailableInPHP=<b>Funcţia %s</b> este necesar pentru această funcţie, dar nu este disponibil în această versiune / setup de PHP.
 ErrorDirAlreadyExists=Un director cu acest nume există deja.
@@ -50,8 +50,8 @@ ErrorNoAccountancyModuleLoaded=Nu activat modul de contabilitate
 ErrorExportDuplicateProfil=Acest profil nume există deja pentru acest set de export.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP de potrivire nu este completă.
 ErrorLDAPMakeManualTest=A. Ldif fişier a fost generat în directorul %s. Încercaţi să încărcaţi manual de la linia de comandă pentru a avea mai multe informatii cu privire la erori.
-ErrorCantSaveADoneUserWithZeroPercentage=Nu se poate salva o acţiune cu &quot;statut nu a început&quot; în cazul în domeniu &quot;realizat de către&quot; este, de asemenea, completat.
-ErrorBillRefAlreadyExists=Ref utilizate pentru crearea există deja.
+ErrorCantSaveADoneUserWithZeroPercentage=Nu se poate salva o acţiune cu "statut nu a început" în cazul în domeniu "realizat de către" este, de asemenea, completat.
+ErrorRefAlreadyExists=Ref utilizate pentru crearea există deja.
 ErrorPleaseTypeBankTransactionReportName=Vă rugăm să scrieţi numele băncii primirea în cazul în care tranzacţia este raportate (Format YYYYMM sau YYYYMMDD)
 ErrorRecordHasChildren=Nu a reuşit să ştergeţi înregistrări, deoarece acesta are unele Childs.
 // Date 2009-01-19 21:32:52
@@ -63,3 +63,38 @@ ErrorRecordHasChildren=Nu a reuşit să ştergeţi înregistrări, deoarece aces
 MenuManager=Meniu manager
 ErrorUrlNotValid=Site-ul este incorect adresa
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+Error=Eroare
+Errors=Erori
+ErrorBadEMail=EMail %s este greşit
+ErrorBadUrl=Url-ul %s este greşit
+ErrorRecordNotFound=Înregistrarea nu a fost găsit.
+ErrorDirNotFound=Director <b>%s</b> nu a fost găsit (calea Bad, permisiuni greşite sau acces refuzat de către openbasedir PHP, sau safe_mode parametru)
+ErrorFileAlreadyExists=Un fişier cu acest nume există deja.
+ErrorPartialFile=Fişierul nu a primit complet de server.
+ErrorNoTmpDir=Temporare directy %s nu există.
+ErrorUploadBlockedByAddon=Încărcaţi blocat de un PHP / Apache plug-in.
+ErrorFileSizeTooLarge=Dimensiunea fişierului este prea mare.
+WarningSafeModeOnCheckExecDir=Atenţie, PHP <b>safe_mode</b> opţiune este pe atât de comandă trebuie să fie depozitate într-un director declarate de <b>safe_mode_exec_dir</b> parametru PHP.
+WarningConfFileMustBeReadOnly=Atenţie, fişierul de configurare dvs. <b>(htdocs / conf / conf.php)</b> poate fi suprascrise de către serverul de web. Aceasta este o gaura de securitate grave. Modificare permisiuni pe fişier pentru a fi citit în modul doar pentru utilizatorul sistemului de operare folosit de server Web. Dacă utilizaţi Windows şi formatul FAT pentru discul dvs., vă trebuie să ştiţi că acest sistem de fişier nu se permite to adăuga permisiuni la dosar, deci nu poate fi complet safe.
+ErrorModuleRequireJavascript=Javascript nu trebuie să fie dezactivate pentru a avea această facilitate de lucru. Pentru a activa / dezactiva Javascript, du-te la meniul Home-> Configurare-> Display.
+ErrorPasswordsMustMatch=Ambele parolele tastate trebuie să se potrivească reciproc
+ErrorContactEMail=Apărut o eroare tehnică. Vă rugăm, contactaţi administratorul de la folowwing <b>email%</b> en furniza <b>%s</b> codul de eroare în mesajul dvs., sau chiar mai bine prin adăugarea de o copie de ecran a acestei pagini.
+ErrorWrongValueForField=Valoarea greşit pentru <b>%s</b> numărul de câmp (valoarea <b>"%s"</b> nu se potriveste cu regula <b>%s</b> regex)
+ErrorsOnXLines=Erori pe liniile sursă <b>%s</b>
+WarningsOnXLines=Avertismentele privind sursa <b>%s</b> linii
+ErrorFileIsInfectedWithAVirus=Programul antivirus nu a fost în măsură să valideze dosar (dosar ar putea fi infectat cu un virus)
+ErrorSpecialCharNotAllowedForField=Caractere speciale nu sunt permise pentru domeniul "%s"
+WarningNoDocumentModelActivated=Nici un model, pentru generarea de document, a fost activat. Un model va fi ales în mod implicit, până când a verifica configurarea modulului.
+ErrorDatabaseParameterWrong=parametru de configurare baza de date <b>'%s</b> "are o valoare care nu este compatibil de a folosi Dolibarr (valoarea trebuie să aibă" <b>%s</b> ").
+ErrorNumRefModel=O referire există în baza de date (%s) şi nu este compatibilă cu această regulă de numerotare. înregistra Remove sau redenumite de referinţă pentru a activa acest modul.
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:37).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ro_RO
+ErrorQtyTooLowForThisSupplier=Cantitatea prea mică pentru acest furnizor sau nu există un preţ definite pe acest produs pentru acest furnizor
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:12).

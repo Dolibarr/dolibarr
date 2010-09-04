@@ -73,3 +73,59 @@ BoxTitleTotalUnpaidSuppliersBills=Furnizorului, facturi neachitate
 NoUnpaidCustomerBills=Nu neachitate clientului facturi
 NoUnpaidSupplierBills=Nu facturi neachitate furnizorului
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+BoxLastContracts=Ultimele contracte
+BoxTitleLastProductsInContract=Ultima %s produse / servicii intr-un contract
+BoxTitleLastContracts=Ultimele contracte %s
+NoModifiedSupplierBills=Nici un furnizor nu a înregistrat facturile
+NoRecordedContracts=Nr contracte înregistrate
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:39:15).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:08:18).
+// Reference language: en_US
+BoxLastContracts=Siste kontrakter
+LastRefreshDate=Siste oppdatering dato
+BoxTitleLastContracts=Siste %s kontrakter
+NoModifiedSupplierBills=Ingen registrert leverandørens faktura
+NoRecordedProducts=Ingen registrert produkter / tjenester
+NoRecordedProspects=Ingen registrert utsikter
+NoContractedProducts=Ingen produkter / tjenester innleide
+NoRecordedContracts=Ingen registrert kontrakter
+BoxLastContracts=Laatste contracten
+BoxTitleLastContracts=Laatste sssss contracten
+NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
+NoRecordedContracts=Geen geregistreerde overeenkomsten
+BoxOldestUnpaidCustomerBills=Oudste onbetaalde facturen klant
+BoxOldestUnpaidSupplierBills=Oudste onbetaalde facturen van de leverancier
+BoxLastContracts=Laatste contracten
+BoxTotalUnpaidCustomerBills=Totaal aantal onbetaalde facturen klant
+BoxTotalUnpaidSuppliersBills=Totaal aantal onbetaalde facturen van de leverancier
+BoxTitleOldestUnpaidCustomerBills=Oudste sssss onbetaalde facturen klant
+BoxTitleOldestUnpaidSupplierBills=Oudste sssss onbetaalde facturen van de leverancier
+BoxTitleTotalUnpaidCustomerBills=Onbetaalde facturen klant
+BoxTitleTotalUnpaidSuppliersBills=Onbetaalde facturen van de leverancier
+BoxTitleLastContracts=Laatste sssss contracten
+NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
+NoRecordedContracts=Geen geregistreerde overeenkomsten
+BoxLastContracts=Ostatnie zamówienia
+BoxTitleLastProductsInContract=Ostatnie sssss produktów / usług w umowie
+BoxTitleLastContracts=Ostatnie sssss umów
+NoModifiedSupplierBills=Nie zarejestrowane faktury dostawcy
+NoRecordedContracts=Umów nie zarejestrowanych
+BoxLastContracts=Última contratos
+BoxTitleLastContracts=Última contratos %s
+NoModifiedSupplierBills=Nenhum fornecedor facturas registadas na
+NoRecordedContracts=Sem contratos registrados
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:24).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ro_RO
+BoxTitleLastModifiedSuppliers=%s Ultima modificare furnizori
+BoxTitleLastModifiedCustomers=%s Ultima modificare clienţii
+BoxTitleLastModifiedProspects=%s Ultima modificare perspective
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:39).

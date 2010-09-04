@@ -31,7 +31,8 @@ TF_TRIP=Wycieczka
 // STOP - Lines generated via parser
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-ListTripsAndExpenses=Wykaz wycieczek i wydatków
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> pl_PL
+TripsAndExpensesStatistics=Koszty podróży i statystyki
+ListTripsAndExpenses=Lista wycieczek i wydatków
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:12).

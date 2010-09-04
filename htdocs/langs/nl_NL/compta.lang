@@ -117,3 +117,9 @@ Dispatch=Verstuur
 Dispatched=Verzonden
 ToDispatch=Te verzenden
 ThirdPartyMustBeEditAsCustomer=Bedrijf moet worden gedefinieerd als een klant
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+SocialContributionsPayments=Sociale bijdragen betalingen
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:45).

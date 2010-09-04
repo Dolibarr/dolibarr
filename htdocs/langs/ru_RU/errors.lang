@@ -11,11 +11,11 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Логин% уже существует.
 ErrorGroupAlreadyExists=Группа% уже существует.
-ErrorFailToDeleteFile=Не удается удалить файл <b>&#39; %s&#39;.</b>
-ErrorFailToCreateFile=Не удалось создать файл <b>&#39; %s&#39;.</b>
-ErrorFailToRenameDir=Не удалось переименовать директорию <b>&#39; %s&#39;</b> в <b>&#39; %s&#39;.</b>
-ErrorFailToCreateDir=Не удалось создать каталог <b>&#39; %s&#39;.</b>
-ErrorFailToDeleteDir=Не удалось удалить каталог <b>&#39; %s&#39;.</b>
+ErrorFailToDeleteFile=Не удается удалить файл <b>' %s'.</b>
+ErrorFailToCreateFile=Не удалось создать файл <b>' %s'.</b>
+ErrorFailToRenameDir=Не удалось переименовать директорию <b>' %s'</b> в <b>' %s'.</b>
+ErrorFailToCreateDir=Не удалось создать каталог <b>' %s'.</b>
+ErrorFailToDeleteDir=Не удалось удалить каталог <b>' %s'.</b>
 ErrorFailedToDeleteJoinedFiles=Не удается удалить орган, поскольку существует определенная присоединились файлов. Удалить объединить файлы.
 ErrorThisContactIsAlreadyDefinedAsThisType=Этот контакт уже определено в качестве контакта для данного типа.
 ErrorCashAccountAcceptsOnlyCashMoney=Этот банковский счет наличными счет, так что она принимает платежи от типа только наличными.
@@ -36,8 +36,8 @@ ErrorFieldsRequired=Некоторые обязательные поля не б
 ErrorFailedToCreateDir=Не удалось создать каталог. Убедитесь, что веб-сервер пользователь имеет разрешения на запись в каталог Dolibarr документы. Если параметр <b>safe_mode</b> включен по этому PHP, проверьте, что Dolibarr PHP файлы принадлежат к веб-серверу пользователей (или группы).
 ErrorNoMailDefinedForThisUser=Нет почты определить для этого пользователя
 ErrorFeatureNeedJavascript=Эта функция JavaScript должны быть активированы на работу. Изменить это в настройки - дисплей.
-ErrorTopMenuMustHaveAParentWithId0=Меню типа &#39;Top&#39; не может быть родителем меню. Положить 0 родителей в меню или выбрать меню типа &#39;левых&#39;.
-ErrorLeftMenuMustHaveAParentId=Меню типа &#39;левых&#39; должен иметь родителя ID.
+ErrorTopMenuMustHaveAParentWithId0=Меню типа 'Top' не может быть родителем меню. Положить 0 родителей в меню или выбрать меню типа 'левых'.
+ErrorLeftMenuMustHaveAParentId=Меню типа 'левых' должен иметь родителя ID.
 ErrorFileNotFound=Файл не найден (Неверный путь, неправильное или разрешения доступа отказано openbasedir параметр)
 ErrorFunctionNotAvailableInPHP=<b>Функция %s</b> необходим для этой функции, но не доступен в этой версии / настройки PHP.
 ErrorDirAlreadyExists=Каталог с таким именем уже существует.
@@ -50,8 +50,8 @@ ErrorNoAccountancyModuleLoaded=Нет бухгалтерского модуля 
 ErrorExportDuplicateProfil=Эта анкета именем уже существует на этом экспорт набора.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP соответствия не является полной.
 ErrorLDAPMakeManualTest=. LDIF файл был создан в директории %s. Попробуйте загрузить его вручную из командной строки, чтобы иметь больше информации об ошибках.
-ErrorCantSaveADoneUserWithZeroPercentage=Не удается сохранить действие с &quot;Статут не началась&quot;, если поле &quot;проделанной&quot; также заполнены.
-ErrorBillRefAlreadyExists=Ссылки, используемые для создания, уже существует.
+ErrorCantSaveADoneUserWithZeroPercentage=Не удается сохранить действие с "Статут не началась", если поле "проделанной" также заполнены.
+ErrorRefAlreadyExists=Ссылки, используемые для создания, уже существует.
 ErrorPleaseTypeBankTransactionReportName=Введите название банка, где получение сделки (в формате ГГГГММ или ГГГГММДД)
 ErrorRecordHasChildren=Не удается удалить записи, поскольку он имеет некоторые хлеб.
 // Date 2009-01-19 21:30:52
@@ -63,3 +63,34 @@ ErrorRecordHasChildren=Не удается удалить записи, поск
 MenuManager=Меню менеджера
 ErrorUrlNotValid=Адрес веб-сайта, является неверным
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+Error=Ошибка
+Errors=Ошибки
+ErrorBadEMail=EMail %s неправильно
+ErrorBadUrl=Url %s неправильно
+ErrorRecordNotFound=Запись не найдена.
+ErrorDirNotFound=Directory <b>%s</b> не найден (Неверный путь, проблемы с правами доступа, или отсутствует доступ к PHP safe_mode openbasedir или параметр)
+ErrorFileAlreadyExists=Файл с этим именем уже существует.
+ErrorPartialFile=Файл не получил полностью на сервер.
+ErrorNoTmpDir=Временные directy %s не существует.
+ErrorUploadBlockedByAddon=Добавить заблокирован PHP / Apache плагин.
+ErrorFileSizeTooLarge=Размер файла слишком велик.
+WarningSafeModeOnCheckExecDir=Предупреждение, PHP <b>safe_mode</b> вариант находится на так команда должна храниться в каталог заявил на PHP <b>safe_mode_exec_dir</b> параметра.
+WarningConfFileMustBeReadOnly=Внимание, ваш конфигурационный файл <b>(htdocs / CONF / conf.php)</b> может быть переписан на веб-сервере. Это серьезная дыра в безопасности. Изменение разрешений на файл находится в режиме только для чтения для операционной системы пользователя используется веб-сервер. Если вы используете Windows FAT и формат для Вашего диска, вы должны знать, что эта файловая система не позволяет добавить разрешения на файл, поэтому не может быть полностью безопасным.
+ErrorModuleRequireJavascript=Javascript не должна быть отключена, чтобы эта функция работает. Чтобы включить / отключить Javascript, перейдите в меню Главная-&gt; Настройка-&gt; Экран.
+ErrorPasswordsMustMatch=Оба набрали пароли должны совпадать друг с другом
+ErrorContactEMail=Технические ошибки. Пожалуйста, обратитесь к администратору электронной почты folowwing <b>%s</b> ан предоставить код ошибки <b>%s</b> в Вашем послании, или даже лучше, добавив экране копия этой страницы.
+ErrorWrongValueForField=Неверное значение для области количество <b>%s</b> (значение <b>&#39;%s</b> &quot;не соответствует регулярное <b>%s</b> правило)
+ErrorsOnXLines=Ошибки на источник <b>%s</b> линий
+WarningsOnXLines=Предупреждения об источнике <b>%s</b> линий
+ErrorFileIsInfectedWithAVirus=Антивирусная программа не смогла проверить файл (файл может быть заражен вирусом)
+ErrorSpecialCharNotAllowedForField=Специальные символы не допускаются для поля &quot;%s&quot;
+WarningNoDocumentModelActivated=Ни одна из моделей, для генерации документов, была активирована. Модель будет выбранные по умолчанию, пока вы не проверить ваш модуль установки.
+ErrorDatabaseParameterWrong=База данных установки параметра <b>&quot;%s&quot;</b> имеет значение не совместимы с использованием Dolibarr (должно иметь значение <b>&#39;%s&#39;).</b>
+ErrorNumRefModel=Ссылка есть в базе данных (%s) и не совместимы с данным правилом нумерации. Удаление записей или переименован ссылкой для активации этого модуля.
+ErrorQtyTooLowForThisSupplier=Количество слишком мало для этого поставщика или не определена цена на этот продукт для этого поставщика
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:17).

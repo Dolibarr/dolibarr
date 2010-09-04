@@ -81,3 +81,20 @@ AverageUnitPricePMP=Preţul mediu de intrare
 EstimatedStockValueShort=Valoare estimată de stoc
 EstimatedStockValue=Valoare estimată de stoc
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+WarehouseEdit=Modificare depozit
+DeStockOnShipment=Scăderea stocurilor reale privind transferurile de validare
+ReStockOnDispatchOrder=Creşterea stocurilor real pe manualul de expediere în depozite, după ce furnizorul pentru primirea
+OrderStatusNotReadyToDispatch=Ordinul nu a fost încă sau nu mai mult de un statut care permite trimiterea produselor în depozite stoc.
+StockDiffPhysicTeoric=Motivul pentru stocul diferenţa fizice şi teoretice
+NoPredefinedProductToDispatch=Nu exista produse predefinite pentru acest obiect. Deci, nu de expediere în stoc este necesară.
+DispatchVerb=Expediere
+DeleteAWarehouse=Ştergeţi-un antrepozit
+ConfirmDeleteWarehouse=Sunteţi sigur că doriţi să ştergeţi <b>%s</b> depozit?
+PersonalStock=%s personale stoc
+ThisWarehouseIsPersonalStock=Acest depozit reprezinta stocul personale ale %s %s
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:57).
+

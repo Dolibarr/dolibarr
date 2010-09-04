@@ -72,3 +72,17 @@ AverageUnitPricePMP=Média dos preços de entrada
 EstimatedStockValueShort=Valor estimado de stock
 EstimatedStockValue=Valor estimado de stock
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+WarehouseEdit=Modificar armazém
+ReStockOnDispatchOrder=Aumentar o estoque real de manual de expedição em armazéns, após receber ordem de fornecedor
+OrderStatusNotReadyToDispatch=Ordem ainda não está ou não mais um status que permite o envio de produtos em armazéns de ações.
+NoPredefinedProductToDispatch=Não há produtos pré-definidos para este objeto. Portanto, não despachando em estoque é exigido.
+DispatchVerb=Expedição
+DeleteAWarehouse=Excluir um armazém
+ConfirmDeleteWarehouse=Tem certeza de que deseja excluir o <b>%s</b> armazém?
+PersonalStock=Pessoal %s stock
+ThisWarehouseIsPersonalStock=Este armazém representa estoque pessoal de %s %s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:56).

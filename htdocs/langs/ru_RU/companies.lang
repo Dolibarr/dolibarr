@@ -163,7 +163,7 @@ ValidityControledByModule=Действительность, контролиру
 ThisIsModuleRules=Это правила для данного модуля
 LastProspect=Последний
 ProspectToContact=Проспект связаться
-CompanyDeleted=Компания &quot; %s&quot; исключены из базы данных.
+CompanyDeleted=Компания " %s" исключены из базы данных.
 ListOfContacts=Список контактов
 ListOfProspectsContacts=Список перспективы контактов
 ListOfCustomersContacts=Список клиентов
@@ -174,10 +174,10 @@ ShowCompany=Показать компании
 ShowContact=Показать контакт
 ContactsAllShort=Все (без фильтра)
 ContactType=Контакт типа
-ContactForOrders=Приказ &#39;контакт
-ContactForProposals=Предложения &#39;контакт
-ContactForContracts=Контракты &#39;контакт
-ContactForInvoices=Счета &#39;контакт
+ContactForOrders=Приказ 'контакт
+ContactForProposals=Предложения 'контакт
+ContactForContracts=Контракты 'контакт
+ContactForInvoices=Счета 'контакт
 NoContactForAnyOrder=Этот контакт не контакт для заказа
 NoContactForAnyProposal=Этот контакт не контакта для любого коммерческого предложения
 NoContactForAnyContract=Этот контакт не контакта для любого контракта
@@ -227,11 +227,11 @@ StatusProspect0=Никогда не обращались
 StatusProspect1=Для контакта
 StatusProspect2=Обратная связь в процессе
 StatusProspect3=Контакт сделали
-ChangeDoNotContact=Изменить статус на &quot;не вступают в контакт &#39;
-ChangeNeverContacted=Изменение статуса с &quot;Никогда не связался &#39;
-ChangeToContact=Изменение статуса с &quot;Для контакта &#39;
-ChangeContactInProcess=Смена статуса на &quot;связь в процессе &#39;
-ChangeContactDone=Изменение статуса на &#39;Контакт сделали&#39;
+ChangeDoNotContact=Изменить статус на "не вступают в контакт '
+ChangeNeverContacted=Изменение статуса с "Никогда не связался '
+ChangeToContact=Изменение статуса с "Для контакта '
+ChangeContactInProcess=Смена статуса на "связь в процессе '
+ChangeContactDone=Изменение статуса на 'Контакт сделали'
 ProspectsByStatus=Перспективы на статус
 BillingContact=Платежная контакт
 NbOfAttachedFiles=Количество прикрепленных файлов
@@ -289,3 +289,36 @@ ProfId2DE=Проф Id 2 (USt.-NR)
 ProfId3DE=Проф ID 3 (Handelsregister-Nr.)
 ProfId4DE=--
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+ThirdPartyName=Третье название партии
+Poste=Положение
+DefaultLang=Язык по умолчанию
+LocalTax1IsUsedES=RE используется
+LocalTax1IsNotUsedES=RE не используется
+LocalTax2IsUsedES=IRPF используется
+LocalTax2IsNotUsedES=IRPF не используется
+ProfId1IN=Проф Id 1 (ИНН)
+ProfId2IN=Проф Id 2
+ProfId3IN=Проф Id 3
+ProfId4IN=Проф Id 4
+ProfId1ES=Проф Id 1 (CIF / NIF)
+ProfId2ES=Проф Id 2 (номер социального страхования)
+ProfId3ES=Проф Id 3 (CNAE)
+ProfId4ES=Проф Id 4 (Энциклопедический номер)
+ProfId1NL=KVK Nummer
+ProfId2NL=-
+ProfId3NL=-
+ProfId4NL=-
+ProfId1AR=Проф Id 1 (CUIT / Cuil)
+ProfId2AR=Проф Id 2 (Revenu скоты)
+ProfId3AR=-
+ProfId4AR=-
+SupplierCategory=Поставщик категории
+ListSuppliersShort=Список поставщиков
+ListProspectsShort=Список перспективы
+ListCustomersShort=Список клиентов
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:39:58).

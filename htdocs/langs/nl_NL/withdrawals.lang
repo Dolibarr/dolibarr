@@ -33,3 +33,44 @@ ThirdPartyDeskCode=Derden bureau code
 NoInvoiceCouldBeWithdrawed=Geen factuur met succes terug genomen. Zorg ervoor dat de facturen zijn op vennootschappen waarvan de BAN (RIB) goed is ingesteld.
 ClassCredited=Classificeer creditering
 ClassCreditedConfirm=Weet u zeker dat u deze terugname ontvangst als bijgeschreven op uw bankrekening wilt classificeren?
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> nl_NL
+StandingOrderToProcess=Voor het verwerken van
+StandingOrderProcessed=Verwerkte
+TransData=Datum Indiening
+TransMetod=Toezending Methode
+Send=Verzenden
+Lines=Lijnen
+StandingOrderReject=Afgifte van een af te wijzen
+WithdrawalRefused=Onttrekkingen Refuseds
+WithdrawalRefusedConfirm=Weet u zeker dat u een intrekking afwijzing voor de samenleving gaan
+RefusedData=Datum van de afwijzing
+RefusedReason=Reden voor de afwijzing
+RefusedInvoicing=Billing de afwijzing
+NoInvoiceRefused=Laad de afwijzing
+InvoiceRefused=Laad de afwijzing van de klant
+Status=Toestand
+StatusUnknown=Onbekend
+StatusWaiting=Wachten
+StatusCredited=Gecrediteerd
+StatusRefused=Geweigerde
+StatusMotif0=Onbepaald
+StatusMotif1=Voorziening insuffisante
+StatusMotif2=Liqueur conteste
+StatusMotif3=Om geen terugtrekking
+StatusMotif4=Klant Order
+StatusMotif5=RIB inexploitable
+StatusMotif6=Account zonder evenwicht
+StatusMotif7=Rechterlijke beslissing
+StatusMotif8=Andere reden
+CreateAll=Trek alle
+CreateGuichet=Alleen kantoor
+CreateBanque=Alleen de bank
+OrderWaiting=Wachten voor de behandeling
+NotifyTransmision=Intrekking Toezending
+NotifyEmision=Intrekking Emissie
+NotifyCredit=Intrekking Credit
+NumeroNationalEmetter=Nationale zender Aantal
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:00).

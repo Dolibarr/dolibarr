@@ -279,3 +279,28 @@ CountryCH=Eleveţia
 CountryIE=Irlanda
 CountryMA=Maroc
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+CurrencySingAUD=UA dolar
+CurrencySingCAD=CAN dolar
+CurrencySingCHF=Francul elveţian
+CurrencySingEUR=Euro
+CurrencySingFRF=Franceză franc
+CurrencySingGBP=GB Pound
+CurrencyINR=rupii indiene
+CurrencySingINR=Rupie indiană
+CurrencySingMAD=Dirham
+CurrencySingMGA=Ariary
+CurrencyMUR=Mauritius rupii
+CurrencySingMUR=Rupie Mauritius
+CurrencyNOK=Krones norvegiană
+CurrencySingNOK=Coroană norvegiană
+CurrencySingTND=Dinar tunisian
+CurrencySingUSD=Dolari SUA
+CurrencySingXAF=CFA franc BEAC
+CurrencySingXOF=CFA franc BCEAO
+CurrencyXPF=PCP franci
+CurrencySingXPF=PCP franc
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:44).

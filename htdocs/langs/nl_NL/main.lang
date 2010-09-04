@@ -173,7 +173,6 @@ Action=Actie
 Model=Model
 DefaultModel=Standaard model
 About=Over
-WelcomeString=<font class="body">Wij zijn</font> %s<font class="body">, en u bent verbonden als gebruiker</font> %s
 Number=Aantal
 Numero=Nummer
 Limit=Limiet
@@ -256,8 +255,8 @@ UnitPrice=Eenheidsprijs
 UnitPriceHT=Eenheidsprijs (netto)
 UnitPriceTTC=Eenheidsprijs (bruto)
 PriceU=E.P.
-PriceUHT=E.P. (netto)
-PriceUTTC=E.P. (bruto)
+PriceUHT=EP (netto)
+PriceUTTC=EP (bruto)
 Amount=Hoeveelheid
 AmountInvoice=Factuurbedrag
 AmountPayment=Betalingsbedrag
@@ -277,7 +276,7 @@ Total=Totaal
 SubTotal=Subtotaal
 TotalHTShort=Total ex BTW
 TotalTTCShort=Total met BTW
-TotalHT=Totaal (exclusief BTW)
+TotalHT=Totaal excl. BTW
 TotalTTC=Totaal (incl. BTW)
 TotalTTCToYourCredit=Totaal (incl. BTW) op uw krediet
 TotalVAT=Totaal BTW
@@ -573,3 +572,19 @@ ShortThursday=Do
 ShortFriday=Vr
 ShortSaturday=Za
 ShortSunday=Zo
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> nl_NL
+FormatHourShortDuration=%H:%M
+NumberByMonth=Aantal per maand
+AmountLT1ES=Bedrag RE
+AmountLT2ES=Bedrag IRPF
+TotalLT1ES=Totaal RE
+TotalLT2ES=Totaal IRPF
+ActionsRunningshort=Gestart
+Available=Beschikbaar
+Resources=Middelen
+Source=Bron
+Prefix=Voorvoegsel
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:21:17).

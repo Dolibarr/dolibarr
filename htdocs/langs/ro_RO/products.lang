@@ -120,7 +120,7 @@ ProductAssociationList=Lista de legate de produse / servicii: nume de produse / 
 ErrorAssociationIsFatherOfThis=Un produs este selectat de părinte cu curent produs
 DeleteProduct=A şterge un produs / serviciu
 ConfirmDeleteProduct=Sunteţi sigur că doriţi să ştergeţi acest produs / serviciu?
-ProductDeleted=Produse / servicii &quot; %s&quot; şterse din baza de date.
+ProductDeleted=Produse / servicii " %s" şterse din baza de date.
 DeletePicture=Ştergeţi o imagine
 ConfirmDeletePicture=Sunteţi sigur că doriţi să ştergeţi această imagine?
 ExportDataset_produit_1=Produse si servicii
@@ -140,7 +140,7 @@ NoSupplierPriceDefinedForThisProduct=Nu furnizor preţ / Cantitate definite pent
 RecordedProducts=Produse înregistrate
 RecordedProductsAndServices=Produse / servicii înregistrate
 GenerateThumb=Generaţi thumb
-ProductCanvasAbility=Utilizaţi speciale &quot;panza&quot; addons
+ProductCanvasAbility=Utilizaţi speciale "panza" addons
 ServiceNb=Service # %s
 ListProductByPopularity=Lista de produse / servicii de popularitate
 Finished=Produs fabricat
@@ -161,3 +161,31 @@ ConfirmCloneProduct=Sunteţi sigur că doriţi să clona produsul sau <b>servici
 CloneContentProduct=Clone toate principalele informatii de produs / serviciu
 ClonePricesProduct=Clone principalele informatii si preturi
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
+// Reference language: en_US
+ProductAccountancyBuyCode=Codul de Contabilitate (cumpăra)
+ProductAccountancySellCode=Codul de Contabilitate (vinde)
+SellingPriceHT=Preţul de vânzare (nete de impozit)
+SellingPriceTTC=Preţul de vânzare (inclusiv taxe)
+ListProductServiceByPopularity=Lista de produse / servicii de popularitate
+ListServiceByPopularity=Lista de servicii de către popularitate
+ProductIsUsed=Acest produs este utilizat
+NewRefForClone=Ref. de produs / serviciu nou
+CustomerPrices=Clienţii preţurile
+SuppliersPrices=Furnizori preţurile
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:00).
+
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ro_RO
+Sell=Vânzări
+Buy=Achiziţii
+OnBuy=Achiziţionat
+ProductStatusOnBuy=Disponibil
+ProductStatusNotOnBuy=Învechit
+ProductStatusOnBuyShort=Disponibil
+ProductStatusNotOnBuyShort=Învechit
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:28).

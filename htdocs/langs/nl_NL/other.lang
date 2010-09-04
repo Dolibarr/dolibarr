@@ -186,3 +186,101 @@ ToExport=Export
 NewExport=Nieuwe exportmogelijkheden
 ##### External sites #####
 ExternalSites=Externe sites
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:23:40).
+// Reference language: en_US
+BirthdayAlertOn=bursdag varsling aktive
+BirthdayAlertOff=bursdag varsling inaktive
+Notify_NOTIFY_APP_ORDER_SUPPLIER=Leverandør bestill godkjent
+Notify_NOTIFY_REF_ORDER_SUPPLIER=Leverandør bestill nektet
+Notify_NOTIFY_VAL_ORDER=Kundeordre validert
+Notify_NOTIFY_VAL_PROPAL=Kunden forslaget validert
+PredefinedMailTest=Dette er en test post. \ NDe to linjer er atskilt med en vognretur.
+PredefinedMailTestHtml=Dette er en <b>test</b> mail (ordet testen må være i fet skrift). <br> De to linjene er skilt med en vognretur.
+FeatureNotYetAvailableShort=Tilgjengelig i en neste versjon
+CalculatedWeight=Beregnet vekt
+CalculatedVolume=Beregnet volum
+Length=Lengde
+LengthUnitm=m
+LengthUnitdm=dm
+LengthUnitcm=cm
+LengthUnitmm=mm
+Surface=Område
+SurfaceUnitm2=m2
+SurfaceUnitdm2=DM2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+StatsByNumberOfUnits=Statistikk i antall produkter / tjenester enheter
+StatsByNumberOfEntities=Statistikk i antall henvisende enheter
+NumberOfProposals=Antall forslag på 12 siste måned
+NumberOfCustomerOrders=Antall kundeordre på siste 12 mnd
+NumberOfCustomerInvoices=Antall kundefakturaer på siste 12 mnd
+NumberOfSupplierInvoices=Antall leverandørfakturaer på siste 12 mnd
+NumberOfUnitsProposals=Antall enheter på forslag på siste 12 mnd
+NumberOfUnitsCustomerOrders=Antall enheter på kundeordrer på siste 12 mnd
+NumberOfUnitsCustomerInvoices=Antall enheter på kundenes fakturaer på siste 12 mnd
+NumberOfUnitsSupplierInvoices=Antall enheter på leverandørfakturaer på siste 12 mnd
+EMailTextInterventionValidated=Intervensjonen %s har blitt validert.
+EMailTextInvoiceValidated=Fakturaen %s har blitt validert.
+EMailTextProposalValidated=Forslaget %s har blitt validert.
+EMailTextOrderValidated=Ordren %s har blitt validert.
+EMailTextOrderApproved=Ordren %s er godkjent.
+EMailTextOrderApprovedBy=Ordren %s er godkjent av %s.
+EMailTextOrderRefused=Ordren %s har blitt nektet.
+EMailTextOrderRefusedBy=Ordren %s har blitt nektet av %s.
+ImportedWithSet=Innførsel datasett
+DolibarrNotification=Automatisk varsling
+ResizeDesc=Skriv inn ny <b>bredde</b> eller ny høyde. Forhold vil bli holdt under resizing ...
+NewLength=Ny bredde
+NewHeight=Ny høyde
+NewSizeAfterCropping=Ny størrelse etter beskjæring
+DefineNewAreaToPick=Definer nytt område på bildet for å plukke (venstre klikk på bildet og dra til du kommer til motsatt hjørne)
+CurrentInformationOnImage=Informasjon om gjeldende bilde
+YouReceiveMailBecauseOfNotification=Du mottar denne meldingen fordi din e-post har blitt lagt til listen over mål for å bli informert om spesielle hendelser i %s programvare av %s.
+YouReceiveMailBecauseOfNotification2=Denne hendelsen er følgende:
+ExternalSites=Eksterne nettsteder
+Notify_NOTIFY_VAL_ORDER=Bestelling van de klant gevalideerd
+Notify_NOTIFY_VAL_PROPAL=Klant voorstel gevalideerd
+PredefinedMailTest=Dit is een test e-mail. \ NDe twee lijnen worden gescheiden door een harde return.
+PredefinedMailTestHtml=Dit is een <b>test</b> e-mail (het woord test moet worden in het vet). <br> De twee lijnen worden gescheiden door een harde return.
+CalculatedWeight=Berekend gewicht
+CalculatedVolume=Berekende volume
+Length=Lengte
+LengthUnitm=m
+LengthUnitdm=dm
+LengthUnitcm=cm
+LengthUnitmm=mm
+Surface=Gebied
+SurfaceUnitm2=m2
+SurfaceUnitdm2=dm2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+EMailTextProposalValidated=Het voorstel is gevalideerd sssss.
+EMailTextOrderValidated=De volgorde sssss is gevalideerd.
+ResizeDesc=Voer een nieuwe breedte <b>of</b> hoogte van nieuwe. Ratio zullen worden gehouden gedurende resizen ...
+NewLength=Nieuwe breedte
+NewHeight=Nieuwe hoogte
+NewSizeAfterCropping=Nieuwe grootte na bijsnijden
+DefineNewAreaToPick=Definieer nieuwe ruimte op de afbeelding om uit te kiezen (klik links op de afbeelding en sleep totdat u bij de tegenoverliggende hoek)
+CurrentInformationOnImage=Informatie over de huidige afbeelding
+YouReceiveMailBecauseOfNotification=U ontvangt dit bericht omdat uw e-mail is toegevoegd aan de lijst van doelstellingen te worden geïnformeerd over bepaalde gebeurtenissen in de software van sssss sssss.
+YouReceiveMailBecauseOfNotification2=Dit evenement is de volgende:
+ExternalSites=Externe sites
+CalculatedWeight=Berekend gewicht
+CalculatedVolume=Berekende volume
+YouReceiveMailBecauseOfNotification=U ontvangt dit bericht omdat uw e-mail is toegevoegd aan de lijst van doelstellingen te worden geïnformeerd over bepaalde gebeurtenissen in de software van sssss sssss.
+YouReceiveMailBecauseOfNotification2=Dit evenement is de volgende:
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:39:54).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+PredefinedMailContentSendSupplierOrder=U vindt hier onze bestelling __ORDERREF__ \ n \ nSincerely \ n \ n
+WeightUnitpound=pond
+VolumeUnitounce=ons
+VolumeUnitlitre=liter
+VolumeUnitgallon=gallon
+SizeUnitinch=inch
+SizeUnitfoot=voet
+ImageEditor=Beeldredacteur
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:04).

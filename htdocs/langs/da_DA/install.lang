@@ -18,7 +18,7 @@ ConfFileExists=<b>Konfigurationsfil %s</b> eksisterer.
 ConfFileDoesNotExists=<b>Konfigurationsfil %s</b> eksisterer ikke!
 ConfFileDoesNotExistsAndCouldNotBeCreated=<b>Konfigurationsfil %s</b> eksisterer ikke og kunne ikke oprettes!
 ConfFileCouldBeCreated=<b>Konfigurationsfil %s</b> kunne oprettes.
-ConfFileIsNotWritable=<b>Konfigurationsfil %s</b> er ikke skrivbar. Check permissions. For første installation, webserveren skal ydes for at kunne skrive i denne fil under konfigurationen ( &quot;chmod 666&quot; for eksempel på Unix-lignende OS).
+ConfFileIsNotWritable=<b>Konfigurationsfil %s</b> er ikke skrivbar. Check permissions. For første installation, webserveren skal ydes for at kunne skrive i denne fil under konfigurationen ( "chmod 666" for eksempel på Unix-lignende OS).
 ConfFileIsWritable=<b>Konfigurationsfil %s</b> er skrivbar.
 PHPSupportSessions=Denne PHP understøtter sessioner.
 PHPSupportPOSTGETOk=Denne PHP understøtter variabler POST og GET.
@@ -33,14 +33,14 @@ ErrorPHPDoesNotSupportGD=Din PHP installation ikke understøtter grafiske funkti
 ErrorPHPDoesNotSupportUTF8=Din PHP installation ikke støtte UTF8 funktioner. Dolibarr kan ikke fungere korrekt. Løse dette, før du installerer Dolibarr.
 ErrorDirDoesNotExists=Directory %s ikke eksisterer.
 ErrorGoBackAndCorrectParameters=Gå tilbage og rette forkerte parametre.
-ErrorWrongValueForParameter=Du kan have indtastet en forkert værdi for parameter &#39; %s&#39;.
-ErrorFailedToCreateDatabase=Kunne ikke oprette databasen &#39; %s&#39;.
-ErrorFailedToConnectToDatabase=Det lykkedes ikke at oprette forbindelse til databasen &#39; %s&#39;.
+ErrorWrongValueForParameter=Du kan have indtastet en forkert værdi for parameter ' %s'.
+ErrorFailedToCreateDatabase=Kunne ikke oprette databasen ' %s'.
+ErrorFailedToConnectToDatabase=Det lykkedes ikke at oprette forbindelse til databasen ' %s'.
 ErrorPHPVersionTooLow=PHP version for gammel. Version %s er påkrævet.
-ErrorConnectedButDatabaseNotFound=Forbindelsen til serveren vellykket men database &#39; %s&#39; blev ikke fundet.
-ErrorDatabaseAlreadyExists=Database &#39; %s&#39; eksisterer allerede.
-IfDatabaseNotExistsGoBackAndUncheckCreate=Hvis databasen ikke findes, gå tilbage og tjekke valgmulighed &quot;Opret database&quot;.
-IfDatabaseExistsGoBackAndCheckCreate=Hvis database findes allerede, gå tilbage og fjerne markeringen &quot;Opret database&quot; valgmulighed.
+ErrorConnectedButDatabaseNotFound=Forbindelsen til serveren vellykket men database ' %s' blev ikke fundet.
+ErrorDatabaseAlreadyExists=Database ' %s' eksisterer allerede.
+IfDatabaseNotExistsGoBackAndUncheckCreate=Hvis databasen ikke findes, gå tilbage og tjekke valgmulighed "Opret database".
+IfDatabaseExistsGoBackAndCheckCreate=Hvis database findes allerede, gå tilbage og fjerne markeringen "Opret database" valgmulighed.
 PHPVersion=PHP Version
 YouCanContinue=Du kan fortsætte ...
 PleaseBePatient=Vær tålmodig ...
@@ -54,7 +54,7 @@ DatabaseChoice=Database valg
 DatabaseType=Database type
 DriverType=Driver type
 Server=Server
-ServerAddressDescription=Navn eller IP-adresse til database-serveren, som normalt &#39;localhost&#39;, når database-serveren er hostet på samme server end webserver
+ServerAddressDescription=Navn eller IP-adresse til database-serveren, som normalt 'localhost', når database-serveren er hostet på samme server end webserver
 ServerPortDescription=Database serverport. Opbevar tomme hvis ukendt.
 DatabaseServer=Database server
 DatabaseName=Database navn
@@ -92,13 +92,13 @@ SetupEnd=Slutningen af setup
 SystemIsInstalled=Denne installationen er færdig.
 SystemIsUpgraded=Dolibarr er blevet opgraderet med succes.
 YouNeedToPersonalizeSetup=Du er nødt til at konfigurere Dolibarr at matche dine behov (udseende, funktioner, ...). For at gøre dette, skal du følge nedenstående link:
-AdminLoginCreatedSuccessfuly=Dolibarr administrator login <b>&#39; %s&#39;</b> skabt successfuly.
+AdminLoginCreatedSuccessfuly=Dolibarr administrator login <b>' %s'</b> skabt successfuly.
 GoToSetupArea=Gå til Dolibarr (setup-området)
 Examples=Eksempler
-WithNoSlashAtTheEnd=Uden skråstreg &quot;/&quot; i slutningen
+WithNoSlashAtTheEnd=Uden skråstreg "/" i slutningen
 LoginAlreadyExists=Allerede findes
 DolibarrAdminLogin=Dolibarr admin login
-AdminLoginAlreadyExists=Dolibarr administratorkonto <b>&#39; %s&#39;</b> eksisterer allerede.
+AdminLoginAlreadyExists=Dolibarr administratorkonto <b>' %s'</b> eksisterer allerede.
 WarningRemoveInstallDir=Advarsel, af sikkerhedshensyn, når de installerer eller opgraderer er færdig, bør du fjerne <b>installationen mappe eller omdøbe den til install.lock for at undgå sin ondsindet brug.</b>
 ThisPHPDoesNotSupportTypeBase=Denne PHP system understøtter ikke nogen grænseflade for at få adgang til databasen type %s
 FunctionNotAvailableInThisPHP=Ikke til rådighed på dette PHP
@@ -107,9 +107,9 @@ ChoosedMigrateScript=Valgt migrere script
 DataMigration=Data migration
 DatabaseMigration=Struktur database migration
 ProcessMigrateScript=Script forarbejdning
-ChooseYourSetupMode=Vælg din opsætning mode, og klik på &quot;Start&quot; ...
+ChooseYourSetupMode=Vælg din opsætning mode, og klik på "Start" ...
 FreshInstall=Friske installere
-FreshInstallDesc=Brug denne tilstand, hvis dette er din første installation. Hvis ikke, denne tilstand kan reparere en tidligere ufuldstændige installere, men hvis du ønsker at opgradere din version, kan du vælge &quot;Opdater&quot;-tilstand.
+FreshInstallDesc=Brug denne tilstand, hvis dette er din første installation. Hvis ikke, denne tilstand kan reparere en tidligere ufuldstændige installere, men hvis du ønsker at opgradere din version, kan du vælge "Opdater"-tilstand.
 Upgrade=Upgrade
 UpgradeDesc=Brug denne tilstand, hvis du har erstattet gamle Dolibarr filer med filerne fra en nyere version. Dette vil opgradere din database og data.
 Start=Start
@@ -125,7 +125,7 @@ CharsetChoice=Tegnsæt valg
 CharacterSetClient=Tegnsæt anvendes til genererede HTML-websider
 CharacterSetClientComment=Vælg tegnsættet for web displayet. <br/> Default foreslåede tegnsæt er den ene af din database.
 CollationConnection=Tegn sortering orden
-CollationConnectionComment=Vælg side kode, der definerer karakter&#39;s sortering rækkefølge anvendes af databasen. Denne parameter kaldes også »samling« af nogle databaser. <br/> Denne parameter kan ikke defineres, hvis database findes allerede.
+CollationConnectionComment=Vælg side kode, der definerer karakter's sortering rækkefølge anvendes af databasen. Denne parameter kaldes også »samling« af nogle databaser. <br/> Denne parameter kan ikke defineres, hvis database findes allerede.
 CharacterSetDatabase=Tegnsæt for database
 CharacterSetDatabaseComment=Vælg tegnsættet ønskede for database oprettelse. <br/> Denne parameter kan ikke defineres, hvis database findes allerede.
 YouAskDatabaseCreationSoDolibarrNeedToConnect=Du beder om at oprette <b>databasen %s,</b> men for dette, Dolibarr behovet for at oprette forbindelse til <b>serveren %s</b> med <b>superbruger %s</b> tilladelser.
@@ -136,8 +136,8 @@ RemoveItManuallyAndPressF5ToContinue=Fjern det manuelt, og tryk på F5 for at fo
 KeepDefaultValuesWamp=Du bruger DoliWamp opsætningsguiden, så værdier foreslås her allerede er optimeret. Ændre dem kun, hvis du ved hvad du gør.
 KeepDefaultValuesMamp=Du bruger DoliMamp opsætningsguiden, så værdier foreslås her allerede er optimeret. Ændre dem kun, hvis du ved hvad du gør.
 FieldRenamed=Felt omdøbt
-IfLoginDoesNotExistsCheckCreateUser=Hvis login ikke findes endnu, skal du kontrollere option &quot;Opret bruger&quot;
-ErrorConnection=Server <b>&quot; %s&quot;,</b> databasenavn <b>&quot; %s&quot;</b> login <b>&quot; %s&quot;,</b> eller database password kan være forkerte eller PHP klientversionen kan være for gammel i forhold til database version.
+IfLoginDoesNotExistsCheckCreateUser=Hvis login ikke findes endnu, skal du kontrollere option "Opret bruger"
+ErrorConnection=Server <b>" %s",</b> databasenavn <b>" %s"</b> login <b>" %s",</b> eller database password kan være forkerte eller PHP klientversionen kan være for gammel i forhold til database version.
 MigrationOrder=Data migration for kundernes ordrer
 MigrationSupplierOrder=Data migration for leverandører ordrer
 MigrationProposal=Data migration til kommercielle forslag
@@ -180,7 +180,6 @@ MigrationDeliveryDetail=Levering opdatering
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
 // Reference language: en_US
 GoToDolibarr=Gå til Dolibarr
-MigrationNotFinished=Version af din dtabase er ikke helt up to date, så du er nødt til at køre opgraderingsprocessen igen.
 GoToUpgradePage=Gå til opgradere siden igen
 InstallChoiceSuggested=<b>Installer valg foreslået af installationsprogrammet.</b>
 MigrationStockDetail=Update materiel værdi af produkter
@@ -194,3 +193,33 @@ MigrationDeliveryAddress=Update leverings adresse i forsendelser
 MigrationUpdateFailed=Mislykket Opgraderingsprocessen
 MigrationBankTransfertsUpdate=Update forbindelser mellem bank transaktion og en bankoverførsel
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
+// Reference language: en_US
+ForceHttps=Force sikre forbindelser (https)
+CheckToForceHttps=Markér dette for at tvinge sikre forbindelser (https). <br> Dette kræver, at web-serveren er konfigureret med en SSL-certifikat.
+DirectoryRecommendation=Det er opfordres der til at bruge en mappe uden for din mappe på dine websider.
+KeepDefaultValuesDeb=Du bruger Dolibarr opsætningsguiden fra en Ubuntu eller Debian-pakke, så værdier, der foreslås her, er allerede optimeret. Kun den password i databasen ejeren for at oprette skal udfyldes. Ændre andre parametre kun hvis du ved hvad du gør.
+InstallChoiceRecommanded=Anbefalet valg til at installere version <b>%s</b> fra din nuværende version <b>%s</b>
+CheckThatDatabasenameIsCorrect=Kontroller, at databasen navnet <b>"%s"</b> er korrekt.
+IfAlreadyExistsCheckOption=Hvis dette navn er korrekte, og at databasen ikke findes endnu, skal du kontrollere indstillingen "Opret database".
+OpenBaseDir=PHP openbasedir parameter
+YouAskToCreateDatabaseSoRootRequired=Du har markeret afkrydsningsfeltet "Opret database". Til dette skal du give login / password på superbruger (i bunden af skemaet).
+YouAskToCreateDatabaseUserSoRootRequired=Du har markeret afkrydsningsfeltet "Opret database ejer". Til dette skal du give login / password på superbruger (i bunden af skemaet).
+NextStepMightLastALongTime=Nuværende trin kan vare flere minutter. Vent venligst indtil det næste skærmbillede vises helt, før du fortsætter.
+MigrationCustomerOrderShipping=Migræne shipping for kundeordrer opbevaring
+MigrationShippingDelivery=Opgrader opbevaring af skibsfart
+MigrationShippingDelivery2=Opgrader opbevaring af shipping 2
+MigrationFixData=Fix for denormalized data
+MigrationRelationshipTables=Data migration for forholdet tabeller (%s)
+MigrationProjectTaskActors=Data migration for llx_projet_task_actors tabel
+MigrationProjectUserResp=Data migration inden fk_user_resp af llx_projet til llx_element_contact
+MigrationProjectTaskTime=Update tid i sekunder
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:22:05).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> da_DA
+MigrationNotFinished=Version af din database er ikke helt up to date, så du bliver nødt til at køre opgraderingen igen.
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:21).
