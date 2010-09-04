@@ -109,7 +109,7 @@ class DolEditor
         {
     	    $this->content = $content;
     	    $this->htmlname = $htmlname;
-            $this->rows=max(4,$rows);
+            $this->rows=max(ROWS_3,$rows);
             $this->cols=max(40,$cols);
     	}
     }

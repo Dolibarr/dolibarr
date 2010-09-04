@@ -1108,7 +1108,7 @@ if ($id > 0 || ! empty($ref))
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
                 $nbrows=ROWS_2;
                 if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-        		$doleditor=new DolEditor('eldesc',$commandline->description,200,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,70,$nbrows);
+        		$doleditor=new DolEditor('eldesc',$commandline->description,200,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
 		      	$doleditor->Create();
 
 		      	print '</td>';
