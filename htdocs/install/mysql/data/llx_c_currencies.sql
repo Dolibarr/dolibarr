@@ -1,6 +1,6 @@
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
--- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -42,7 +42,7 @@ insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DA', 'D
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DH', 'MAD', 1, 'Dirham'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'AD', 'AUD', 1, 'Dollars australiens'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DC', 'CAD', 1, 'Dollars canadiens'); 
-insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DH', 'HKD', 1, 'Dollars hong kong'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'HK', 'HKD', 1, 'Dollars hong kong'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DS', 'SGD', 1, 'Dollars singapour'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DU', 'USD', 1, 'Dollars us'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'EC', 'XEU', 1, 'Ecus'); 
