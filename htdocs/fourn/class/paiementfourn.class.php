@@ -398,7 +398,7 @@ class PaiementFourn
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$billsarray[$i]=$obj->fk_facture;
+				$billsarray[$i]=$obj->fk_facturefourn;
 				$i++;
 			}
 
