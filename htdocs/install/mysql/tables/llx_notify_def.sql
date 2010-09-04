@@ -27,5 +27,5 @@ create table llx_notify_def
   fk_soc          integer NOT NULL,
   fk_contact      integer,
   fk_user		  integer,
-  type            varchar(16) DEFAULT 'email';
+  type            varchar(16) DEFAULT 'email'
 )type=innodb;
