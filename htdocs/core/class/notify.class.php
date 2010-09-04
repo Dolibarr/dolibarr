@@ -160,7 +160,7 @@ class Notify
                 	$subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
 
                 	$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
-                	$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
+                	$message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
                 	$message.= "\n";
                     $message.= $texte;
                     // Add link
