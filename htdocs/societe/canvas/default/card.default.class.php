@@ -55,6 +55,16 @@ class CardDefault extends CardCommon
 	}
 	
 	/**
+	 * 	Load actions
+	 */
+	function load_actions($socid)
+	{
+		$return = parent::load_actions($socid);
+		
+		return $return;
+	}
+	
+	/**
 	 *    Assign custom values for canvas
 	 *    @param      action     Type of action
 	 */

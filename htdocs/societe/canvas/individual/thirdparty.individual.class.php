@@ -52,16 +52,6 @@ class ThirdPartyIndividual extends Societe
 
 		return $result;
 	}
-	
-	/**
-     *    Charge les actions
-     */
-    function load_actions()
-    {
-    	$result = parent::load_action();
-    	
-    	return $result;
-    }
 
 	/**
 	 * 	Fetch datas list

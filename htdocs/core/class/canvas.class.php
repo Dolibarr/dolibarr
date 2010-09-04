@@ -123,10 +123,10 @@ class Canvas
 	}
 	
 	/**
-	 * 	Load type of action
+	 * 	Load controller
 	 * 	@param	action	Type of action
 	 */
-	function load_control($action)
+	function load_control($action='null')
 	{
 		global $langs;
 		
@@ -154,6 +154,14 @@ class Canvas
 			$this->error = $langs->trans('CanvasIsInvalid');
 			return 0;
 		}
+	}
+	
+	/**
+	 * 	Load actions
+	 */
+	function load_actions($socid)
+	{
+		return $this->control->load_actions($socid);
 	}
 
 	/**

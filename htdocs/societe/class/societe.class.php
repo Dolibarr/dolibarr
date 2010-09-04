@@ -182,8 +182,6 @@ class Societe extends CommonObject
             return -1;
         }
 
-        if (empty($this->canvas)) $this->canvas = 'default';
-
         $this->db->begin();
 
         // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
@@ -200,7 +198,7 @@ class Societe extends CommonObject
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas)";
             $sql.= " VALUES ('".$this->db->escape($this->nom)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."'";
             $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
-            $sql.= ", '".$this->canvas."'";
+            $sql.= ", ".($this->canvas ? "'".$this->canvas."'":"null");
             $sql.= ")";
 
             dol_syslog("Societe::create sql=".$sql);
