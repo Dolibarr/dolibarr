@@ -230,14 +230,14 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 0, $user->rights->categorie->lire);
 					if ($user->societe_id == 0)
 					{
-						$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=1", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+						$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=1", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
 					}
 				}
 				// Categories prospects/customers
 				$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=2", $langs->trans("CustomersProspectsCategoriesShort"), 0, $user->rights->categorie->lire);
 				if ($user->societe_id == 0)
 				{
-					$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=2", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+					$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=2", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
 				}
 				//if ($leftmenu=="cat") $newmenu->add(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 			}
@@ -639,7 +639,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 				$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=0", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
 				if ($user->societe_id == 0)
 				{
-					$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=0", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+					$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=0", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
 				}
 				//if ($leftmenu=="cat") $newmenu->add(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 			}
@@ -715,7 +715,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 				$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
 				if ($user->societe_id == 0)
 				{
-					$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=1", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+					$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=1", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
 				}
 				//if ($leftmenu=="cat") $newmenu->add(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 			}
@@ -825,7 +825,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=3", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
 					if ($user->societe_id == 0)
 					{
-						$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=3", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+						$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=3", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
 					}
 					//if ($leftmenu=="cat") $newmenu->add(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 				}
