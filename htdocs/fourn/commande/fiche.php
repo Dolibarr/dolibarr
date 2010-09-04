@@ -1263,7 +1263,7 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				// Send
-				if ($commande->statut == 2)
+				if (in_array($commande->statut,array(2,3,4,5)))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
