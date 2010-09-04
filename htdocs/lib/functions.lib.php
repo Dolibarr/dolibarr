@@ -238,7 +238,7 @@ function dol_syslog($message, $level=LOG_INFO)
 	// If adding log inside HTML page is required
 	if (! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_LOGTOHTML))
 	{
-		$conf->logbuffer[]=strftime("%Y-%m-%d %H:%M:%S",time())." ".$message;
+		$conf->logbuffer[]=dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
 	}
 
 	// If syslog module enabled
@@ -287,7 +287,7 @@ function dol_syslog($message, $level=LOG_INFO)
 				$liblevel=$liblevelarray[$level];
 				if (! $liblevel) $liblevel='UNDEF';
 
-				$message=strftime("%Y-%m-%d %H:%M:%S",time())." ".sprintf("%-5s",$liblevel)." ".sprintf("%-15s",$ip)." ".$message;
+				$message=dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".sprintf("%-5s",$liblevel)." ".sprintf("%-15s",$ip)." ".$message;
 
 				fwrite($file,$message."\n");
 				fclose($file);
