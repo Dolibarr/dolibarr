@@ -215,7 +215,7 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 		print '<tr><td valign="top">'.$langs->trans("BankAccountCountry").'</td><td colspan="3">';
 		$img=picto_from_langcode($account->pays_code);
 		print $img?$img.' ':'';
-		print getCountry($account->getCountryCode());
+		print getCountry($account->getCountryCode(),0,$db);
 		print "</td></tr>\n";
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td><td colspan="3">';

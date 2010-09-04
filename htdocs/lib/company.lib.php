@@ -179,24 +179,27 @@ function societe_prepare_head2($objsoc)
 
 
 /**
- *    \brief      Return country translated from an id or a code
- *    \param      id          id or code of country
- *    \param      withcode    0=Return label, 1=Return code + label, 2=Return code from id
- *    \return     string      String with country code or translated country name
+ *    Return country translated from an id or a code
+ *    @param      id          id or code of country
+ *    @param      withcode    0=Return label, 1=Return code + label, 2=Return code from id
+ *    @param      dbtouse     Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @return     string      String with country code or translated country name
  */
-function getCountry($id,$withcode=0)
+function getCountry($id,$withcode=0,$dbtouse=0)
 {
     global $db,$langs;
+
+    if (! is_object($dbtouse)) $dbtouse=$db;
 
     $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
     if (is_numeric($id)) $sql.= " WHERE rowid=".$id;
     else $sql.= " WHERE code='".$id."'";
 
     dol_syslog("Company.lib::getCountry sql=".$sql);
-    $resql=$db->query($sql);
+    $resql=$dbtouse->query($sql);
     if ($resql)
     {
-        $obj = $db->fetch_object($resql);
+        $obj = $dbtouse->fetch_object($resql);
         if ($obj)
         {
             $label=((! empty($obj->libelle) && $obj->libelle!='-')?$obj->libelle:'');
@@ -214,27 +217,30 @@ function getCountry($id,$withcode=0)
             return "NotDefined";
         }
     }
-    else dol_print_error($db,'');
+    else dol_print_error($dbtouse,'');
 }
 
 /**
- *    \brief      Return state translated from an id
- *    \param      id          id of state (province/departement)
- *    \param      withcode    0=Return label, 1=Return code + label, 2=Return code
- *    \return     string      String with state code or translated state name
+ *    Return state translated from an id
+ *    @param      id          id of state (province/departement)
+ *    @param      withcode    0=Return label, 1=Return code + label, 2=Return code
+ *    @param      dbtouse     Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @return     string      String with state code or translated state name
  */
-function getState($id,$withcode=0)
+function getState($id,$withcode=0,$dbtouse=0)
 {
     global $db,$langs;
+
+    if (! is_object($dbtouse)) $dbtouse=$db;
 
     $sql = "SELECT rowid, code_departement as code, nom as label FROM ".MAIN_DB_PREFIX."c_departements";
     $sql.= " WHERE rowid=".$id;
 
     dol_syslog("Company.lib::getState sql=".$sql);
-    $resql=$db->query($sql);
+    $resql=$dbtouse->query($sql);
     if ($resql)
     {
-        $obj = $db->fetch_object($resql);
+        $obj = $dbtouse->fetch_object($resql);
         if ($obj)
         {
             $label=$obj->label;
@@ -247,7 +253,7 @@ function getState($id,$withcode=0)
             return $langs->trans("NotDefined");
         }
     }
-    else dol_print_error($db,'');
+    else dol_print_error($dbtouse,'');
 }
 
 /**

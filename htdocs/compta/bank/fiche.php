@@ -371,7 +371,7 @@ else
 		{
 			$img=picto_from_langcode($account->pays_code);
 			print $img?$img.' ':'';
-			print getCountry($account->getCountryCode());
+			print getCountry($account->getCountryCode(),0,$db);
 		}
 		print '</td></tr>';
 

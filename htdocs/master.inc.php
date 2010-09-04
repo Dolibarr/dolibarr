@@ -363,8 +363,8 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
     else                    // For backward compatibility
     {
         include_once(DOL_DOCUMENT_ROOT.'/lib/company.lib.php');
-        $pays_code=getCountry($pays_id,2);  // This need a SQL request, but it's the old feature
-        $pays_label=getCountry($pays_id,0);  // This need a SQL request, but it's the old feature
+        $pays_code=getCountry($pays_id,2,$db);  // This need a SQL request, but it's the old feature
+        $pays_label=getCountry($pays_id,0,$db);  // This need a SQL request, but it's the old feature
     }
     $mysoc->pays_id=$pays_id;
     $mysoc->pays_code=$pays_code;
