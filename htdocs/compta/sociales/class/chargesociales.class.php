@@ -170,9 +170,9 @@ class ChargeSociales extends CommonObject
 
 
 	/**
-	 *      \brief      Met a jour une charge sociale
-	 *      \param      user    Utilisateur qui modifie
-	 *      \return     int     <0 si erreur, >0 si ok
+	 *      Met a jour une charge sociale
+	 *      @param      user    Utilisateur qui modifie
+	 *      @return     int     <0 si erreur, >0 si ok
 	 */
 	function update($user)
 	{
