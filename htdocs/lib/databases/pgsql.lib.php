@@ -514,7 +514,7 @@ class DoliDb
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
-				dol_syslog("Pgsql.lib::query SQL error: ".$query, LOG_ERR);
+				dol_syslog("Pgsql.lib::query SQL error: ".$query, LOG_WARNING);
 				//print "\n>> ".$query."<br>\n";
 				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
 
