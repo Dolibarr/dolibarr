@@ -124,7 +124,7 @@ if ($id > 0 || ! empty($ref))
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
-		print '<textarea name="note_public" cols="80" rows="8">'.$commande->note_public."</textarea><br>";
+		print '<textarea name="note_public" cols="80" rows="'.ROWS_4.'">'.$commande->note_public."</textarea><br>";
 	}
 	else
 	{
@@ -132,14 +132,14 @@ if ($id > 0 || ! empty($ref))
 	}
 	print "</td></tr>";
 
-	// Note priv�e
+	// Note private
 	if (! $user->societe_id)
 	{
 		print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
 		print '<td valign="top" colspan="3">';
 		if ($_GET["action"] == 'edit')
 		{
-			print '<textarea name="note" cols="80" rows="8">'.$commande->note."</textarea><br>";
+			print '<textarea name="note" cols="80" rows="'.ROWS_8.'">'.$commande->note."</textarea><br>";
 		}
 		else
 		{

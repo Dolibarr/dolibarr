@@ -72,7 +72,7 @@ $html = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-$now=gmmktime();
+$now=dol_now();
 
 $id = $_GET['id'];
 $ref= $_GET['ref'];
@@ -154,7 +154,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 			print '<td colspan="2">';
-			if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_6.'" name="note">';
+			if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_8.'" name="note">';
 			print $commande->note;
 			if ($user->rights->fournisseur->commande->creer) print '</textarea>';
 			print '</td></tr>';
@@ -171,8 +171,9 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		/* Commande non trouv�e */
-		print "Commande inexistante";
+		/* Order not found */
+		$langs->load("errors");
+	    print $langs->trans("ErrorRecordNotFound");
 	}
 }
 
