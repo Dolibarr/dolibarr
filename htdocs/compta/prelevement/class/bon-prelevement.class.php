@@ -1149,8 +1149,10 @@ class BonPrelevement extends CommonObject
         return $result;
     }
 
+
     /**
-     * Generate a withdrawal file
+     *  Generate a withdrawal file (format CFONB ?)
+     *  File is generated with name this->filename
      */
     function Generate()
     {
@@ -1168,13 +1170,23 @@ class BonPrelevement extends CommonObject
         $this->EnregEmetteur();
 
         /*
-         * Lignes
+         * Lines
          */
         $this->total = 0;
 
-        $sql = "SELECT rowid, client_nom, code_banque, code_guichet, number, amount";
+        /*$sql = "SELECT rowid, client_nom, code_banque, code_guichet, number, amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes";
         $sql .= " WHERE fk_prelevement_bons = ".$this->id;
+        */
+        $sql = "SELECT pl.rowid, pl.client_nom, pl.code_banque, pl.code_guichet, pl.number, pl.amount,";
+        $sql.= " f.facnumber, pf.fk_facture";
+        $sql.= " FROM";
+        $sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
+        $sql.= " ".MAIN_DB_PREFIX."facture as f,";
+        $sql.= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
+        $sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
+        $sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
+        $sql.= " AND pf.fk_facture = f.rowid";
 
         $i = 0;
 
@@ -1192,7 +1204,9 @@ class BonPrelevement extends CommonObject
                 $row[2],
                 $row[3],
                 $row[4],
-                $row[5]);
+                $row[5],
+                $row[6],
+                $row[7]);
 
                 $this->total = $this->total + $row[5];
 
@@ -1219,11 +1233,17 @@ class BonPrelevement extends CommonObject
 
 
     /**
-     * Enregistrements destinataires
-     *
-     *
+     *  Write recipient of withdraw
+     *  @param      rowid       Id of line
+     *  @param      client_nom  Name of customer
+     *  @param      rib_banque
+     *  @param      rib_guichet
+     *  @param      rib_number
+     *  @param      amount
+     *  @param      facnumber   Ref of invoice
+     *  @param      facid       Id of invoice
      */
-    function EnregDestinataire($rowid, $client_nom, $rib_banque, $rib_guichet, $rib_number, $amount)
+    function EnregDestinataire($rowid, $client_nom, $rib_banque, $rib_guichet, $rib_number, $amount, $facnumber, $facid)
     {
         fputs ($this->file, "06");
         fputs ($this->file, "08"); // Prelevement ordinaire
@@ -1282,70 +1302,7 @@ class BonPrelevement extends CommonObject
 
 
     /**
-     * Enregistrements destinataires
-     *
-     *
-     */
-    function EnregDestinataireVersion1($fac)
-    {
-        fputs ($this->file, "06");
-        fputs ($this->file, "08"); // Prelevement ordinaire
-
-        fputs ($this->file, "        "); // Zone Reservee B2
-
-        fputs ($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
-
-        // Date d'echeance C1
-
-        fputs ($this->file, "       ");
-        fputs ($this->file, strftime("%d%m", $this->date_echeance));
-        fputs ($this->file, substr(strftime("%y", $this->date_echeance),1));
-
-        // Raison Sociale Destinataire C2
-
-        fputs ($this->file, substr($fac->client->nom. "                           ",0,24));
-
-        // Reference de la remise creancier D1
-
-        fputs ($this->file, substr("                                    ",0,24));
-
-        // Zone Reservee D2
-
-        fputs ($this->file, substr("                             ",0,8));
-
-        // Code Guichet  D3
-
-        fputs ($this->file, $fac->client->bank_account->code_guichet);
-
-        // Numero de compte D4
-
-        fputs ($this->file, substr("000000000000000".$fac->client->bank_account->number, -11));
-
-        // Zone E Montant
-
-        $montant = (round($fac->total_ttc,2) * 100);
-
-        fputs ($this->file, substr("000000000000000".$montant, -16));
-
-        // Libelle F
-
-        fputs ($this->file, substr("*".$fac->ref."                                   ",0,13));
-        fputs ($this->file, substr("                                        ",0,18));
-
-        // Code etablissement G1
-
-        fputs ($this->file, $fac->client->bank_account->code_banque);
-
-        // Zone Reservee G2
-
-        fputs ($this->file, substr("                                        ",0,5));
-
-        fputs ($this->file, "\n");
-    }
-
-    /**
-     *
-     *
+     *  Write sender (me)
      */
     function EnregEmetteur()
     {
@@ -1409,8 +1366,8 @@ class BonPrelevement extends CommonObject
     }
 
     /**
-     * Pied de page
-     *
+     *  Write end
+     *  @param      total       Total amount
      */
     function EnregTotal($total)
     {
