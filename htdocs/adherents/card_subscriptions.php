@@ -234,14 +234,17 @@ if ($errmsg)
 /*
  * Barre d'actions
  */
+
 print '<div class="tabsAction">';
 
 // Lien nouvelle cotisation si non brouillon et non resilie
 if ($user->rights->adherent->cotisation->creer)
 {
-	if ($action != 'addsubscription' && $adh->statut > 0)
+	if ($action != 'addsubscription')
 	{
-		print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("AddSubscription")."</a>";
+		if ($adh->statut > 0) print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("AddSubscription")."</a>";
+        else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a>';
+
 	}
 }
 print '</div>';
