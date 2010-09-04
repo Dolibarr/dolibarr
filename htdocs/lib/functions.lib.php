@@ -2872,8 +2872,12 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
  */
 function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 {
-    // We use @ to avoid warning on PHP4 that does not support entity encoding from UTF8;
-    if (! $nl2brmode) return @nl2br($stringtoencode,$forxml);
+    if (! $nl2brmode)
+    {
+        // We use @ to avoid warning on PHP4 that does not support entity encoding from UTF8;
+        if (version_compare(PHP_VERSION, '5.3.0') < 0) return @nl2br($stringtoencode);
+        else return @nl2br($stringtoencode,$forxml);
+    }
 	else
 	{
 		$ret=str_replace("\r","",$stringtoencode);
