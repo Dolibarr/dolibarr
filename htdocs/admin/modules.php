@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -62,10 +62,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'reset' && $user->admin)
 }
 
 /**
- * 	\brief      Enable a module
- * 	\param      value       Nom du module a activer
- * 	\param      withdeps    Active/desactive aussi les dependances
- * 	\return		string		Error message or '';
+ * 	Enable a module
+ * 	@param      value       Nom du module a activer
+ * 	@param      withdeps    Active/desactive aussi les dependances
+ * 	@return		string		Error message or '';
  */
 function Activate($value,$withdeps=1)
 {
@@ -148,9 +148,10 @@ function Activate($value,$withdeps=1)
 
 
 /**
- *  \brief      Disable a module
- *  \param      value               Nom du module a desactiver
- *  \param      requiredby          1=Desactive aussi modules dependants
+ *  Disable a module
+ *  @param      value               Nom du module a desactiver
+ *  @param      requiredby          1=Desactive aussi modules dependants
+ *  @return     string              Error message or '';
  */
 function UnActivate($value,$requiredby=1)
 {
@@ -203,8 +204,9 @@ function UnActivate($value,$requiredby=1)
 
 
 /*
- * Affichage page
+ * View
  */
+
 $_SESSION["mode"]=$mode;
 
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
@@ -439,14 +441,17 @@ if ($mode != 4)
 
             // Picto
             print '  <td valign="top" width="14" align="center">';
+            $alttext='';
+            //if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
+            //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
             if (! empty($objMod->picto))
             {
-            	if (preg_match('/^\//i',$objMod->picto)) print img_picto('',$objMod->picto,'',1);
-            	else print img_object('',$objMod->picto);
+            	if (preg_match('/^\//i',$objMod->picto)) print img_picto($alttext,$objMod->picto,'',1);
+            	else print img_object($alttext,$objMod->picto);
             }
             else
             {
-            	print img_object('','generic');
+            	print img_object($alttext,'generic');
             }
             print '</td>';
 
