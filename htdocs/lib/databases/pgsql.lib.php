@@ -404,7 +404,7 @@ class DoliDb
 	function close()
 	{
 		dol_syslog("DoliDB::disconnect",LOG_DEBUG);
-		return pg_close($this->db);
+		return $this->db?pg_close($this->db):0;
 	}
 
 	/**

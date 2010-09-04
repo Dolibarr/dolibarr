@@ -237,7 +237,7 @@ class DoliDb
 	function close()
 	{
 		dol_syslog("DoliDB::disconnect",LOG_DEBUG);
-		return mssql_close($this->db);
+		return $this->db?mssql_close($this->db):0;
 	}
 
 

@@ -288,7 +288,7 @@ class DoliDb
 	function close()
 	{
 		dol_syslog("DoliDB::disconnect",LOG_DEBUG);
-		return mysqli_close($this->db);
+		return $this->db?mysqli_close($this->db):0;
 	}
 
 
