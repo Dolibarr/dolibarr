@@ -337,7 +337,7 @@ if ($_POST["action"] == "set")
 				if ($db->DDLCreateDb($dolibarr_main_db_name, $dolibarr_main_db_character_set, $dolibarr_main_db_collation, $dolibarr_main_db_user))
 				{
 					print '<tr><td>';
-					print $langs->trans("DatabaseCreation").' : ';
+					print $langs->trans("DatabaseCreation")." (".$langs->trans("User")." ".$userroot.") : ";
 					print $dolibarr_main_db_name;
 					print '</td>';
 					print "<td>".$langs->trans("OK")."</td></tr>";
@@ -353,7 +353,7 @@ if ($_POST["action"] == "set")
 				else
 				{
 					print '<tr><td>';
-					print $langs->trans("DatabaseCreation").' : ';
+					print $langs->trans("DatabaseCreation")." (".$langs->trans("User")." ".$userroot.") : ";
 					print $dolibarr_main_db_name;
 					print '</td>';
 					print '<td>'.$langs->trans("Error").' '.$db->lasterrno().'<br>'.$db->lasterror().'</td></tr>';
@@ -372,7 +372,7 @@ if ($_POST["action"] == "set")
 			}
 			else {
 				print '<tr><td>';
-				print $langs->trans("DatabaseCreation").' : ';
+				print $langs->trans("DatabaseCreation")." (".$langs->trans("User")." ".$userroot.") : ";
 				print $dolibarr_main_db_name;
 				print '</td>';
 				print '<td>'.$langs->trans("Error").'</td>';
@@ -408,7 +408,7 @@ if ($_POST["action"] == "set")
 				{
 					dolibarr_install_syslog("etape1: connexion to server by user ".$conf->db->user." is ok", LOG_DEBUG);
 					print "<tr><td>";
-					print $langs->trans("ServerConnection")." : ";
+					print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
 					print $dolibarr_main_db_host;
 					print "</td><td>";
 					print $langs->trans("OK");
@@ -416,7 +416,7 @@ if ($_POST["action"] == "set")
 
 					dolibarr_install_syslog("etape1: connexion to database : ".$conf->db->name.", by user : ".$conf->db->user." is ok", LOG_DEBUG);
 					print "<tr><td>";
-					print $langs->trans("DatabaseConnection")." : ";
+					print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
 					print $dolibarr_main_db_name;
 					print "</td><td>";
 					print $langs->trans("OK");
@@ -428,7 +428,7 @@ if ($_POST["action"] == "set")
 				{
 					dolibarr_install_syslog("etape1: connexion to server by user ".$conf->db->user." is ok", LOG_DEBUG);
 					print "<tr><td>";
-					print $langs->trans("ServerConnection")." : ";
+					print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
 					print $dolibarr_main_db_host;
 					print "</td><td>";
 					print $langs->trans("OK");
@@ -436,7 +436,7 @@ if ($_POST["action"] == "set")
 
 					dolibarr_install_syslog("etape1: connexion to database ".$conf->db->name.", by user : ".$conf->db->user." has failed", LOG_ERR);
 					print "<tr><td>";
-					print $langs->trans("DatabaseConnection")." : ";
+					print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
 					print $dolibarr_main_db_name;
 					print '</td><td>';
 					print $langs->trans("Error");
@@ -456,7 +456,7 @@ if ($_POST["action"] == "set")
 			{
 				dolibarr_install_syslog("etape1: la connexion au serveur par le user ".$conf->db->user." est rate");
 				print "<tr><td>";
-				print $langs->trans("ServerConnection")." : ";
+				print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
 				print $dolibarr_main_db_host;
 				print '</td><td>';
 				print '<font class="error">'.$db->error.'</div>';

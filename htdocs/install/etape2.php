@@ -151,7 +151,7 @@ if ($_POST["action"] == "set")
 		}
 		closedir($handle);
 
-		// Sort list of data files on alphabetical order (load order is important)
+		// Sort list of sql files on alphabetical order (load order is important)
 		sort($tabledata);
 		foreach($tabledata as $file)
 		{
@@ -261,7 +261,7 @@ if ($_POST["action"] == "set")
 		}
 		closedir($handle);
 
-		// Sort list of data files on alphabetical order (load order is important)
+		// Sort list of sql files on alphabetical order (load order is important)
 		sort($tabledata);
 		foreach($tabledata as $file)
 		{
@@ -505,7 +505,7 @@ if ($_POST["action"] == "set")
 						if ($resql)
 						{
 							$ok = 1;
-							$db->free($resql);
+							//$db->free($resql);     // Not required as request we launch here does not return memory needs.
 						}
 						else
 						{
@@ -519,6 +519,7 @@ if ($_POST["action"] == "set")
 								print $langs->trans("ErrorSQL")." : ".$db->lasterrno()." - ".$db->lastqueryerror()." - ".$db->lasterror()."<br>";
 							}
 						}
+
 					}
 				}
 				fclose($fp);
