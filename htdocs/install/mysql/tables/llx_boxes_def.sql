@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2010      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,16 +23,8 @@
 create table llx_boxes_def
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  file        varchar(255) NOT NULL,
+  file        varchar(200) NOT NULL,        -- Do not increase this as file+note must be small to allow index
   entity      integer DEFAULT 1 NOT NULL,	-- multi company id
-  tms         timestamp,
-  note        varchar(255)
+  tms         timestamp,  
+  note        varchar(140)                  -- Do not increase this as file+note must be small to allow index
 )type=innodb;
-
--- 
--- List of codes for the field "entity"
---
--- 1 : first company boxes
--- 2 : second company boxes
--- 3 : etc...
---
