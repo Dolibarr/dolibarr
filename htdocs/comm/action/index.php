@@ -27,8 +27,8 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
@@ -50,12 +50,12 @@ if (! $sortfield) $sortfield="a.datec";
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
+$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 
 $canedit=1;
 if (! $user->rights->agenda->myactions->read) accessforbidden();
 if (! $user->rights->agenda->allactions->read) $canedit=0;
-if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')
+if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')	// If no permission to see all, we show only affected to me
 {
 	$filtera=$user->id;
 	$filtert=$user->id;
@@ -70,6 +70,7 @@ $pid=! empty($_REQUEST["projectid"])?$_REQUEST["projectid"]:0;
 $status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
 
 $langs->load("other");
+$langs->load("commercial");
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
@@ -187,29 +188,29 @@ $sql.= ' AND u.entity in (0,'.$conf->entity.')';	// To limit to entity
 if ($pid) $sql.=" AND a.fk_project=".addslashes($pid);
 if ($_GET["action"] == 'show_day')
 {
-	$sql.= ' AND (';
-	$sql.= ' (datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
-	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year)).')';
-	$sql.= ' OR ';
-	$sql.= ' (datep2 BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
-	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year)).')';
-	$sql.= ' OR ';
-	$sql.= ' (datep < '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
-	$sql.= ' AND datep2 > '.$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year)).')';
+	$sql.= " AND (";
+	$sql.= " (datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year))."'";
+	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year))."')";
+	$sql.= " OR ";
+	$sql.= " (datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year))."'";
+	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year))."')";
+	$sql.= " OR ";
+	$sql.= " (datep < '".$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year))."'";
+	$sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year))."')";
 	$sql.= ')';
 }
 else
 {
 	// To limit array
-	$sql.= ' AND (';
-	$sql.= ' (datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));	// Start 7 days before
-	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10)).')';			// End 7 days after + 3 to go from 28 to 31
-	$sql.= ' OR ';
-	$sql.= ' (datep2 BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));
-	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10)).')';
-	$sql.= ' OR ';
-	$sql.= ' (datep < '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));
-	$sql.= ' AND datep2 > '.$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10)).')';
+	$sql.= " AND (";
+	$sql.= " (datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";	// Start 7 days before
+	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";			// End 7 days after + 3 to go from 28 to 31
+	$sql.= " OR ";
+	$sql.= " (datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
+	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
+	$sql.= " OR ";
+	$sql.= " (datep < '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
+	$sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
 	$sql.= ')';
 }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
@@ -249,8 +250,7 @@ if ($resql)
 		$action->userdone->id=$obj->fk_user_done;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
-		// They are date start and end of action but modified to not be outside
-		// calendar view.
+		// They are date start and end of action but modified to not be outside calendar view.
 		if ($action->percentage <= 0)
 		{
 			$action->date_start_in_calendar=$action->datep;
@@ -269,37 +269,43 @@ if ($resql)
 			$action->ponctuel=1;
 		}
 
-		if ($action->date_start_in_calendar < $firstdaytoshow) $action->date_start_in_calendar=$firstdaytoshow;
-		if ($action->date_end_in_calendar > $lastdaytoshow) $action->date_end_in_calendar=$lastdaytoshow;
-
-		// Add an entry in actionarray for each day
-		$daycursor=$action->date_start_in_calendar;
-		$annee = date('Y',$daycursor);
-		$mois = date('m',$daycursor);
-		$jour = date('d',$daycursor);
-
-		// Loop on each day covered by action to prepare an index to show on calendar
-		$loop=true; $j=0;
-		$daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
-		do
+		// Check values
+		if ($action->date_end_in_calendar < $firstdaytoshow ||
+		$action->date_start_in_calendar > $lastdaytoshow)
 		{
-			//if ($action->id==408) print 'daykey='.$daykey.' '.$action->datep.' '.$action->datef.'<br>';
-
-			//if ($action->datef && $action->datef == $daykey && $action->datep < $action->datef)
-			//{	// We discard such index. This means it's end of a range ending on last day + 1 at 00:00:00.
-			//}
-			//else
-			//{
-			$actionarray[$daykey][]=$action;
-			$j++;
-			//}
-			$daykey+=60*60*24;
-			if ($daykey > $action->date_end_in_calendar) $loop=false;
+			// This record is out of visible range
 		}
-		while ($loop);
+		else
+		{
+			if ($action->date_start_in_calendar < $firstdaytoshow) $action->date_start_in_calendar=$firstdaytoshow;
+			if ($action->date_end_in_calendar > $lastdaytoshow) $action->date_end_in_calendar=$lastdaytoshow;
+
+			// Add an entry in actionarray for each day
+			$daycursor=$action->date_start_in_calendar;
+			$annee = date('Y',$daycursor);
+			$mois = date('m',$daycursor);
+			$jour = date('d',$daycursor);
+
+			// Loop on each day covered by action to prepare an index to show on calendar
+			$loop=true; $j=0;
+			$daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
+			do
+			{
+				//if ($action->id==408) print 'daykey='.$daykey.' '.$action->datep.' '.$action->datef.'<br>';
+
+				$actionarray[$daykey][]=$action;
+				$j++;
+
+				$daykey+=60*60*24;
+				if ($daykey > $action->date_end_in_calendar) $loop=false;
+			}
+			while ($loop);
+
+			//print 'Event '.$i.' id='.$action->id.' (start='.dol_print_date($action->datep).'-end='.dol_print_date($action->datef);
+			//print ' startincalendar='.dol_print_date($action->date_start_in_calendar).'-endincalendar='.dol_print_date($action->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
+		}
 		$i++;
 
-		//print 'Event '.$i.' id='.$action->id.' (start='.dol_print_date($action->datep).'-end='.dol_print_date($action->datef).') was added in '.$j.' different index days in array<br>';
 	}
 }
 else
@@ -323,10 +329,9 @@ if ($showbirthday)
 	{
 		$sql.= ' AND MONTH(birthday) = '.$month;
 	}
-	// Sort on date
 	$sql.= ' ORDER BY birthday';
-	//print $sql;
 
+	dol_syslog("comm/action/index.php sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -406,14 +411,15 @@ if ($_GET["action"] != 'show_day')		// View by month
 	}
 	echo " </tr>\n";
 
-	// In loops, tmpday contains day nb in current month (can be negative for days of previous month)
+	// In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
+	//var_dump($actionarray);
+	//print $tmpday;
 	for($iter_week = 0; $iter_week < 6 ; $iter_week++)
 	{
 		echo " <tr>\n";
 		for($iter_day = 0; $iter_day < 7; $iter_day++)
 		{
-			/* Show days before the beginning of the current month
-			 (previous month)  */
+			/* Show days before the beginning of the current month (previous month)  */
 			if($tmpday <= 0)
 			{
 				$style='cal_other_month';
@@ -477,17 +483,17 @@ llxFooter('$Date$ - $Revision$');
 
 
 /**
- * \brief	Show event of a particular day
+ * Show event of a particular day
  *
- * @param unknown_type $db				Database handler
- * @param unknown_type $day				Day
- * @param unknown_type $month			Month
- * @param unknown_type $year			Year
- * @param unknown_type $monthshown      Month shown in calendar view
- * @param unknown_type $style			Style to use for this day
- * @param unknown_type $actionarray		Array of actions
- * @param unknown_type $maxPrint		Nb of actions to show each day on month view (0 means non limit)
- * @param unknown_type nbofchartoshow	Nb of characters to show for event line
+ * @param 	$db				Database handler
+ * @param 	$day			Day
+ * @param 	$month			Month
+ * @param 	$year			Year
+ * @param 	$monthshown     Month shown in calendar view
+ * @param 	$style			Style to use for this day
+ * @param 	$actionarray	Array of actions
+ * @param 	$maxPrint		Nb of actions to show each day on month view (0 means non limit)
+ * @param 	nbofchartoshow	Nb of characters to show for event line
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$actionarray, $maxPrint=0, $nbofchartoshow=14)
 {
