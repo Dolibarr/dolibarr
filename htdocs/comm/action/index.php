@@ -70,6 +70,7 @@ $pid=! empty($_REQUEST["projectid"])?$_REQUEST["projectid"]:0;
 $status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
 
 $langs->load("other");
+$langs->load("commercial");
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
