@@ -202,3 +202,16 @@ ExternalSites=Ytri síður
 CalculatedWeight=Reiknað þyngd
 CalculatedVolume=Reiknað magn
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:30:13).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> is_IS
+PredefinedMailContentSendSupplierOrder=Þú vilja finna hér til __ORDERREF__ \ okkar n \ nSincerely \ n \ n
+WeightUnitpound=pund
+VolumeUnitounce=eyri
+VolumeUnitlitre=l
+VolumeUnitgallon=gálgi
+SizeUnitinch=tomma
+SizeUnitfoot=fótur
+ImageEditor=Image ritstjóri
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:57).

@@ -83,3 +83,11 @@ BoxTitleLastContracts=Letzte %s Verträge
 NoModifiedSupplierBills=Nr. aufgezeichnet Lieferantenrechnungen
 NoRecordedContracts=Keine Verträge erfasst
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:25:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> de_DE
+BoxTitleLastModifiedSuppliers=Zuletzt geändert %s Lieferanten
+BoxTitleLastModifiedCustomers=Zuletzt geändert %s Kunden
+BoxTitleLastModifiedProspects=Zuletzt geändert %s Aussichten
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:34).

@@ -76,3 +76,56 @@ FieldsInSourceFile=Поля в исходном файле
 FieldsInTargetDatabase=Задача поля в базе данных Dolibarr
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+NotImportedFields=Области исходный файл не импортируется
+NoDiscardedFields=Нет полей в исходном файле не учитываются
+FieldOrder=Порядок полей
+FieldTitle=Поле название
+DownloadEmptyExample=Скачать пример пустого исходного файла
+ChooseFormatOfFileToImport=Выберите формат файла для использования в качестве формата файла импорта, нажав на Picto %s, чтобы выделить ее ...
+SourceFileFormat=Формат исходного файла
+Field=Поле
+NoFields=Нет поля
+MoveField=Перемещение поля %s номер столбца
+ExampleOfImportFile=Example_of_import_file
+SaveImportProfile=Сохранить импорт профиля
+ErrorImportDuplicateProfil=Не удалось сохранить импорт профиль с таким именем. Существующий профиль уже существует с таким названием.
+ImportSummary=Импорт установки резюме
+TablesTarget=Целевые таблицы
+FieldsTarget=Целевые поля
+TableTarget=Целевые таблицы
+FieldTarget=Целевые области
+FieldSource=Источник области
+DoNotImportFirstLine=Не импортировать первые строки исходного файла
+NbOfSourceLines=Количество строк в исходном файле
+NowClickToTestTheImport=Проверить параметры импорта вы определили. Если они верны, нажмите на кнопку <b>&quot;%s&quot;,</b> чтобы начать моделирование процесса импорта (данные не будут изменены в базе данных, это только имитация на данный момент) ...
+RunSimulateImportFile=Запуск импорта моделирования
+FieldNeedSource=Это чувствует себя в базе данных требует данных из исходных файлов
+SomeMandatoryFieldHaveNoSource=Некоторые обязательные поля не имеют источника из файла данных
+InformationOnSourceFile=Информация об исходном файле
+InformationOnTargetTables=Информация о целевых полей
+SelectAtLeastOneField=Switch по крайней мере один источник поля в колонке полей для экспорта
+SelectFormat=Выберите этот формат файла для импорта
+RunImportFile=Запуск файла для импорта
+NowClickToRunTheImport=Проверьте результат импорта моделирования. Если все в порядке, начало окончательного импорта.
+DataLoadedWithId=Все данные будут загружены следующие идентификатор импорт: <b>%s</b>
+ErrorMissingMandatoryValue=Обязательные данные пуст в исходном файле на местах <b>%s.</b>
+TooMuchErrors=Существует еще <b>%s</b> других линий источника ошибок, но выход был ограниченным.
+TooMuchWarnings=Существует еще <b>%s</b> другие линии источника с предупреждениями, но выход был ограниченным.
+EmptyLine=Пустые строки (будет использоваться)
+CorrectErrorBeforeRunningImport=Прежде всего, необходимо исправить все ошибки перед запуском окончательного импорта.
+YouCanUseImportIdToFindRecord=Вы можете найти все импортируемые записей в базе данных с помощью фильтрации на поле <b>import_key = &#39;%s.</b>
+NbOfLinesOK=Количество строк, без ошибок и предупреждений нет: <b>%s.</b>
+NbOfLinesImported=Количество линий успешно импортированы: <b>%s.</b>
+DataComeFromNoWhere=Соотношение вставить приходит из ниоткуда в исходном файле.
+DataComeFromFileFieldNb=Соотношение вставить происходит от области число <b>%s</b> в исходном файле.
+DataComeFromIdFoundFromRef=Соотношение, что исходит от области число <b>%s</b> исходного файла будет использоваться, чтобы найти идентификатор родительского объекта для использования (так Objet <b>%s</b> которая исх. Из исходного файла должно существует в Dolibarr).
+DataIsInsertedInto=Данные поступившие от исходного файла будет вставлено в следующее поле:
+DataIDSourceIsInsertedInto=Идентификатор родительского объекта найти с помощью данных в исходном файле, будут включены в следующие поля:
+SourceRequired=Данные значения является обязательным
+SourceExample=Пример возможных значений данных
+CSVFormatDesc=<b>Разделителями-запятыми</b> файл (формат. CSV). <br> Это текстовый формат файла, в котором поля разделены сепаратором [%s]. Если разделитель находится внутри области содержания, поля окружены круглый характер [%s]. Escape характер бежать вокруг характер [%s].
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:44).

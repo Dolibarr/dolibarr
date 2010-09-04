@@ -81,3 +81,11 @@ BoxTitleLastContracts=Laatste sssss contracten
 NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
 NoRecordedContracts=Geen geregistreerde overeenkomsten
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:23).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+BoxTitleLastModifiedSuppliers=Laatst bewerkt sssss leveranciers
+BoxTitleLastModifiedCustomers=Laatst bewerkt sssss klanten
+BoxTitleLastModifiedProspects=Laatst bewerkt vooruitzichten sssss
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:37).

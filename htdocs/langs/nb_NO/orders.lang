@@ -140,3 +140,9 @@ TypeContact_order_supplier_external_CUSTOMER=Leverandør kontakt oppfølging rek
 PDFEdisonDescription=En enkel bestilling modell
 PDFQuevedoDescription=En komplett ordre modell med spanske RE og IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:45:34).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nb_NO
+DispatchSupplierOrder=Motta leverandør bestill %s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:06).

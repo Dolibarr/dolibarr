@@ -164,3 +164,15 @@ NewRefForClone=号。新产品/服务
 CustomerPrices=客户价格
 SuppliersPrices=供应商的价格
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+Sell=销售
+Buy=采购
+OnBuy=购买
+ProductStatusOnBuy=可用的
+ProductStatusNotOnBuy=过时的
+ProductStatusOnBuyShort=可用的
+ProductStatusNotOnBuyShort=过时的
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:40).

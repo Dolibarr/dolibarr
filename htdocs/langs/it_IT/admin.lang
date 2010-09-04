@@ -1225,3 +1225,16 @@ SuppliersCommandModel=modello completo di ordine fornitore (logo. ..)
 NumberWordsSetup=NumberWords di installazione modulo
 DescNumberWords=Questo modulo fornisce le funzioni per convertire il numero in caratteri o importo intero. Sostituirà anche le occorrenze seguente stringa __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ o __TOTAL_VAT_WORDS__ da incl totale. fiscale, al netto delle imposte totale, o totale dell'IVA in tutte le textes che li utilizzano (testo libero sulle fatture, ...)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:00).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> it_IT
+ModulesMarketPlaceDesc=Potete trovare altri moduli da scaricare su siti web esterni su Internet ...
+ModulesMarketPlaces=Più moduli ...
+DoliStoreDesc=DoliStore, il mercato ufficiale per Dolibarr ERP / CRM moduli esterni
+WebSiteDesc=i fornitori di siti Web è possibile cercare di trovare più moduli ...
+URL=Collegamento
+OfficialMarketPlace=Ufficiale mercato per moduli esterni / addons
+MAIN_MAIL_AUTOCOPY_TO=Inviare sistematicamente una copia carbone nascosta di tutte le email inviate a
+FreeLegalTextOnInterventions=Testo libero su documenti d&#39;intervento
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:46:40).

@@ -291,3 +291,35 @@ ProfId3DE=Prof ID 3 (Handelsregister-Nr.)
 ProfId4DE=--
 ProspectLevelShort=Potencjalne
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+ThirdPartyName=Nazwa strony trzeciej
+Poste=Miejsce
+DefaultLang=Domyślnie język
+LocalTax1IsUsedES=RE jest używany
+LocalTax1IsNotUsedES=RE nie jest używany
+LocalTax2IsUsedES=IRPF jest używany
+LocalTax2IsNotUsedES=IRPF nie jest używany
+ProfId1IN=Prof Id 1 (TIN)
+ProfId2IN=Prof ID 2
+ProfId3IN=Prof ID 3
+ProfId4IN=Prof Id 4
+ProfId1ES=Prof Id 1 (CIF / NIF)
+ProfId2ES=Id Prof 2 (numer ubezpieczenia społeczne)
+ProfId3ES=Prof Id 3 (CNAE)
+ProfId4ES=Id Prof 4 (liczba Collegiate)
+ProfId1NL=nummer KVK
+ProfId2NL=-
+ProfId3NL=-
+ProfId4NL=-
+ProfId1AR=Prof Id 1 (CUIT / Cuil)
+ProfId2AR=Id Prof 2 (bydlęta Revenu)
+ProfId3AR=-
+ProfId4AR=-
+SupplierCategory=Dostawca kategorii
+ListSuppliersShort=Lista dostawców
+ListProspectsShort=Listy potencjalnych
+ListCustomersShort=Listę klientów
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:39:41).

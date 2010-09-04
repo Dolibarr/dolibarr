@@ -92,3 +92,9 @@ WarningNoDocumentModelActivated=Ei mallia, dokumenttien tuotanto, on aktivoitu. 
 ErrorDatabaseParameterWrong=Tietokannan asetukset parametri <b>"%s"</b> on arvo ei ole yhteensopiva käyttää Dolibarr (on arvo <b>"%s).</b>
 ErrorNumRefModel=Viittaus olemassa otetaan tietokantaan (%s) ja ei ole yhteensopiva tämän numeroinnin sääntöä. Poista levy tai nimen viittaus aktivoida tämän moduulin.
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> fi_FI
+ErrorQtyTooLowForThisSupplier=Määrä liian alhainen tämän toimittaja tai ei hinta määritellään tämän tuotteen tavarantoimittaja
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:56).

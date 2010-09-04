@@ -43,3 +43,9 @@ AddSupplierInvoice=Tedarikçi faturası oluşturun
 ListOfSupplierProductForSupplier=Ürünler ve fiyatlar tedarikçi listesi <b>için %s </b>
 NoneOrBatchFileNeverRan=Hiçbiri veya toplu <b>iş%</b> son koştu <b>değil</b>
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Bu referans tedarikçi zaten bir referans ile ilişkili: Ssss
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:34).

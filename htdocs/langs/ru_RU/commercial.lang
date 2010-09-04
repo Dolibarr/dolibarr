@@ -91,3 +91,12 @@ AddActionRendezVous=Добавить рандеву задачи
 Rendez-Vous=Свидание
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+ToDoActions=Неполные действия
+ToDoActionsFor=Неполные действия %s
+ActionAC_SUP_ORD=Отправить поставщиком заказы по почте
+ActionAC_SUP_INV=Отправить поставщиком счета по почте
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:01).

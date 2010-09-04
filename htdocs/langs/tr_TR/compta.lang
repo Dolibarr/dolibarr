@@ -124,3 +124,11 @@ ToDispatch=Sevk için
 ThirdPartyMustBeEditAsCustomer=Üçüncü parti bir müşteri olarak tanımlanması gerekir
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+TaxModuleSetupToModifyRules=Git <a href="%s">kurulum modülü</a> hesaplaması için kuralları değiştirme
+VATReportBuildWithOptionDefinedInModule=Tutarlar burada kurallar Vergi modülü kurulum tarafından tanımlanan kullanılarak hesaplanmıştır gösterilir.
+SocialContributionsPayments=Sosyal katkılar ödemeler
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:55).

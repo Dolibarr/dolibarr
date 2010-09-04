@@ -151,3 +151,9 @@ TypeContact_order_supplier_external_CUSTOMER=Anbieter kontaktieren Follow-up um
 PDFEdisonDescription=Ein einfaches Modell, um
 PDFQuevedoDescription=Eine vollständige Bestellung Modell mit spanischen und RE IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:14).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> de_DE
+DispatchSupplierOrder=Empfangen Lieferanten bestellen %s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:01).

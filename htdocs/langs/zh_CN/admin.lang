@@ -1147,3 +1147,25 @@ ProjectsNumberingModules=项目编号模块
 ProjectsSetup=项目模块设置
 ProjectsModelModule=项目的报告文档模型
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+IgnoreDuplicateRecords=忽略重复的错误记录（插入忽略）
+ModulesMarketPlaceDesc=你可以找到更多的模块，以在互联网上下载的外部网站的...
+ModulesMarketPlaces=更多的模块...
+DoliStoreDesc=DoliStore，为Dolibarr的ERP / CRM的外部模块官方市场
+WebSiteDesc=网站提供者可以搜索找到更多的模块...
+URL=链接
+OfficialMarketPlace=官方/插件外部模块市场
+MAIN_MAIL_AUTOCOPY_TO=发送一个隐藏的系统碳复制所有发送电子邮件给
+SubmitTranslation=如果语言翻译，这是不完整的，或者您发现错误，您可以通过编辑更正此文件到目录<b>兰斯/ %s</b>并提交www.dolibarr.org论坛上修改的文件。
+ListOfDirectoriesForModelGenODT=含有目录清单模板OpenDocument格式的文件。 <br><br>这里写的目录的完整路径。 <br>之间添加字节EAH目录回车。 <br>要添加一个模块目录中的盖德，在这里补充<b>DOL_DATA_ROOT /流脑/ yourdirectoryname。</b> <br><br>在这些目录中的文件必须以<b>。的ODT。</b>
+FirstnameNamePosition=的名字位置/名称
+Module100Name=ExternalSite
+Module100Desc=到Dolibarr菜单包含任何外部网站，并查看它成为一个Dolibarr框架
+Permission13=Unvalidate发票
+Permission36=查看/隐藏产品管理
+Permission536=查看/隐藏服务管理
+FreeLegalTextOnInterventions=自由文本文件干预
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:42).

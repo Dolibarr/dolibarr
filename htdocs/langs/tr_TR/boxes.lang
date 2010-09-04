@@ -113,3 +113,11 @@ BoxTitleLastContracts=Son Ssss sözleşmeleri
 NoModifiedSupplierBills=No kaydedildi tedarikçinin faturalar
 NoRecordedContracts=No kaydedildi sözleşmeleri
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+BoxTitleLastModifiedSuppliers=Son Ssss tedarikçiler olarak
+BoxTitleLastModifiedCustomers=Son Ssss müşteriler olarak
+BoxTitleLastModifiedProspects=Son Ssss potansiyel olarak
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:41).

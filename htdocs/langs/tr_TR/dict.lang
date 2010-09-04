@@ -290,3 +290,10 @@ CurrencySingXOF=CFA Frangı BCEAO
 CurrencyXPF=CFP Frangı
 CurrencySingXPF=CFP Frangı
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+CurrencyINR=Indian rupi
+CurrencySingINR=Hint rupisi
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:43:16).

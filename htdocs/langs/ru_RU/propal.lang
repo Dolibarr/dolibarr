@@ -100,3 +100,11 @@ ProposalsAndProposalsLines=Коммерческое предложение и л
 ProposalLine=Предложение линия
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+TypeContact_propal_internal_SALESREPFOLL=Представитель следующие меры предложение
+TypeContact_propal_external_BILLING=свяжитесь со счета
+TypeContact_propal_external_CUSTOMER=Абонентский отдел следующие меры предложение
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:29).

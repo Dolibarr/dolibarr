@@ -145,3 +145,9 @@ AllAccounts=所有银行/现金帐户
 BackToAccount=回到帐户
 ShowAllAccounts=显示所有帐户
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+BankAccountCountry=到国家
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:43).

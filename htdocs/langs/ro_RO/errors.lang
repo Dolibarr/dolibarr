@@ -92,3 +92,9 @@ WarningNoDocumentModelActivated=Nici un model, pentru generarea de document, a f
 ErrorDatabaseParameterWrong=parametru de configurare baza de date <b>'%s</b> "are o valoare care nu este compatibil de a folosi Dolibarr (valoarea trebuie să aibă" <b>%s</b> ").
 ErrorNumRefModel=O referire există în baza de date (%s) şi nu este compatibilă cu această regulă de numerotare. înregistra Remove sau redenumite de referinţă pentru a activa acest modul.
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:37).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ro_RO
+ErrorQtyTooLowForThisSupplier=Cantitatea prea mică pentru acest furnizor sau nu există un preţ definite pe acest produs pentru acest furnizor
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:12).

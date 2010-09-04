@@ -205,3 +205,16 @@ YouReceiveMailBecauseOfNotification=Sie erhalten diese Nachricht, weil Sie Ihre 
 YouReceiveMailBecauseOfNotification2=Diese Veranstaltung ist die folgende:
 ExternalSites=Externe Seiten
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:25:37).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> de_DE
+PredefinedMailContentSendSupplierOrder=Hier finden Sie unser Bestellformular __ORDERREF__ \ n \ nSincerely \ n \ n
+WeightUnitpound=Pfund
+VolumeUnitounce=Unze
+VolumeUnitlitre=Liter
+VolumeUnitgallon=Gallone
+SizeUnitinch=Zoll
+SizeUnitfoot=Fuß
+ImageEditor=Image Editor
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:52).

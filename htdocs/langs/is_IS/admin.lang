@@ -1166,3 +1166,16 @@ SubmitTranslation=Ef þýðing fyrir þetta tungumál er ekki lokið eða þú f
 ListOfDirectoriesForModelGenODT=Listi yfir möppur sem innihalda sniðmát skrá með OpenDocument sniði. <br><br> Settu hér fulla slóð í möppur. <br> Bæta við flutning til baka á milli eah skrá. <br> Til að bæta við möppu á GED mát, bæta við hér <b>DOL_DATA_ROOT / ECM / yourdirectoryname.</b> <br><br> Skrá í þessum möppum verður að enda <b>með. Odt.</b>
 Permission14=Staðfesta reikningum
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:30:01).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> is_IS
+ModulesMarketPlaceDesc=Þú getur fundið fleiri einingar til að hlaða niður á yfirborð vefsíðum á Internetinu ...
+ModulesMarketPlaces=Meira mát ...
+DoliStoreDesc=DoliStore, opinber markaður staður fyrir Dolibarr ERP / CRM ytri mát
+WebSiteDesc=Vefsíða veitendur þú getur leitað til að finna fleiri mát ...
+URL=Link
+OfficialMarketPlace=Opinber markaði fyrir ytri modules / addons
+MAIN_MAIL_AUTOCOPY_TO=Senda kerfisbundið falin kolefnis-afrit af öllum sendi tölvupóst til
+FreeLegalTextOnInterventions=Frjáls texti á skjölum inngrip
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:46:06).

@@ -176,3 +176,15 @@ NewRefForClone=Ref. des neuen Produkts / der Dienstleistung
 CustomerPrices=Kunden, die Preise
 SuppliersPrices=Suppliers Preise
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> de_DE
+Sell=Vertrieb
+Buy=Käufe
+OnBuy=Gekaufte
+ProductStatusOnBuy=Verfügbar
+ProductStatusNotOnBuy=Veraltet
+ProductStatusOnBuyShort=Verfügbar
+ProductStatusNotOnBuyShort=Veraltet
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:10).

@@ -155,3 +155,16 @@ ProductIsUsed=Dit product wordt gebruikt
 NewRefForClone=Referentie naar nieuw produkt/dienst
 CustomerPrices=Consumentenprijs
 SuppliersPrices=Leveranciersprijs
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+Create=Creëren
+Sell=Verkoop
+Buy=Aankopen
+OnBuy=Gekocht
+ProductStatusOnBuy=Beschikbaar
+ProductStatusNotOnBuy=Verouderd
+ProductStatusOnBuyShort=Beschikbaar
+ProductStatusNotOnBuyShort=Verouderd
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:19).

@@ -171,3 +171,17 @@ DescADHERENT_CARD_TYPE=شكل بطاقات صفحة
 DescADHERENT_CARD_TEXT_RIGHT=النص المطبوع على بطاقات الأعضاء (في محاذاة اليمين)
 DescADHERENT_MAILMAN_LISTS=قائمة (ق) للinsription التلقائي للأعضاء الجدد (مفصولة بفاصلة)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:17).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+MoreActions=تكميلية العمل على تسجيل
+MoreActionBankDirect=إنشاء سجل المعاملات مباشرة على حساب
+MoreActionBankViaInvoice=إنشاء الفاتورة والدفع على حساب
+MoreActionInvoiceOnly=إنشاء فاتورة مع دفع أي مبلغ
+LinkToGeneratedPages=بطاقات زيارة انتج
+LinkToGeneratedPagesDesc=هذه الشاشة تسمح لك لإنشاء ملفات الشعبي مع بطاقات العمل لجميع أعضاء أو عضو معين.
+DocForAllMembersCards=إنشاء بطاقات العمل لجميع أعضاء (تنسيق الإعداد للإخراج في الواقع : <b>%s)</b>
+DocForOneMemberCards=إنشاء بطاقات العمل لعضو معين (تنسيق الإعداد للإخراج في الواقع : <b>%s)</b>
+DocForLabels=أوراق عنوان انتج (تنسيق الإعداد للإخراج فعلا : <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:46).

@@ -157,3 +157,20 @@ ThirdPartyDolibarr=Dolibarr üçüncü parti
 MembersAndSubscriptions=Üyeleri ve Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+DescADHERENT_CARD_TYPE=Format kartların sayfası
+DescADHERENT_CARD_TEXT_RIGHT=Metin üye kartları (sağ üstünde align) basılı
+DescADHERENT_MAILMAN_LISTS=yeni üye (virgülle ayrılmış otomatik insription için List (s))
+MoreActions=kayıt üzerinde Tamamlayıcı eylem
+MoreActionBankDirect=Oluşturmak doğrudan işlem kayıt hesabına
+MoreActionBankViaInvoice=Yaratmak bir fatura ve ödeme hesap
+MoreActionInvoiceOnly=Create hiçbir ödeme ile bir fatura
+LinkToGeneratedPages=Oluşturmak ziyaret kartları
+LinkToGeneratedPagesDesc=Bu ekran, tüm üye veya belirli bir üye için kartvizit ile PDF dosyaları oluşturmasına olanak sağlar.
+DocForAllMembersCards=Kurulum: <b>Ssss</b> aslında (Biçim için çıkış üye kartları oluşturun iş için tüm)
+DocForOneMemberCards=Kurulum: <b>Ssss</b> aslında üye (Biçim için çıktı özel kartlar oluşturun işletme için)
+DocForLabels=çıktı aslında kurulum: <b>Ssss</b> için yaprak oluşturun adresiniz (Format)
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:42).

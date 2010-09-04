@@ -108,3 +108,9 @@ ConfirmCreateThirdParty=Weet u zeker dat u een 'derden' partij wilt maken voor d
 LoginToCreate=Te maken login
 NameToCreate=Naam van derden maken
 YourRole=Uw rollen
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+YourQuotaOfUsersIsReached=Uw quotum van actieve gebruikers is bereikt!
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:30).

@@ -115,3 +115,9 @@ DataIDSourceIsInsertedInto=标识对象的家长发现使用源文件中的数�
 SourceRequired=数据值是强制性的
 SourceExample=例如可能的数据值
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+CSVFormatDesc=<b>逗号分隔值</b>文件格式（。csv格式）。 <br>这是一个文本文件格式字段被分隔在[%s]分开。如果一个字段分隔符是里面的内容发现，现场是圆形的圆字[%s]。字符转义字符是为了逃避轮[%s]。
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:46).

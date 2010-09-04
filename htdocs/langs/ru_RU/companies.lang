@@ -290,3 +290,35 @@ ProfId3DE=Проф ID 3 (Handelsregister-Nr.)
 ProfId4DE=--
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+ThirdPartyName=Третье название партии
+Poste=Положение
+DefaultLang=Язык по умолчанию
+LocalTax1IsUsedES=RE используется
+LocalTax1IsNotUsedES=RE не используется
+LocalTax2IsUsedES=IRPF используется
+LocalTax2IsNotUsedES=IRPF не используется
+ProfId1IN=Проф Id 1 (ИНН)
+ProfId2IN=Проф Id 2
+ProfId3IN=Проф Id 3
+ProfId4IN=Проф Id 4
+ProfId1ES=Проф Id 1 (CIF / NIF)
+ProfId2ES=Проф Id 2 (номер социального страхования)
+ProfId3ES=Проф Id 3 (CNAE)
+ProfId4ES=Проф Id 4 (Энциклопедический номер)
+ProfId1NL=KVK Nummer
+ProfId2NL=-
+ProfId3NL=-
+ProfId4NL=-
+ProfId1AR=Проф Id 1 (CUIT / Cuil)
+ProfId2AR=Проф Id 2 (Revenu скоты)
+ProfId3AR=-
+ProfId4AR=-
+SupplierCategory=Поставщик категории
+ListSuppliersShort=Список поставщиков
+ListProspectsShort=Список перспективы
+ListCustomersShort=Список клиентов
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:39:58).

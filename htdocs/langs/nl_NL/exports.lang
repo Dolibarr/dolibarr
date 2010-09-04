@@ -107,3 +107,9 @@ DataIsInsertedInto=De gegevens uit het bronbestand wordt ingevoegd in het volgen
 DataIDSourceIsInsertedInto=Het id van het bovenliggende object teruggevorderd van de gegevensbron zal worden ingevoegd in het volgende veld:
 SourceRequired=Bron bindend
 SourceExample=Voorbeeld gegevensbron kan
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+CSVFormatDesc=<b>Comma Separated Value-bestandsindeling</b> (. Csv). <br> Dit is een tekstbestand waar de velden zijn gescheiden door het scheidingsteken [sssss]. Als separator is gevonden in een veld inhoud, is afgerond gebied door ronde karakter [sssss]. Escape character te ontsnappen ronde karakter is [sssss].
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:15).

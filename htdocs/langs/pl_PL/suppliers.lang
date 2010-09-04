@@ -52,3 +52,9 @@ ListOfSupplierProductForSupplier=Wykaz produktów i cen <b>dostawcy %s</b>
 // Reference language: en_US
 NoneOrBatchFileNeverRan=Brak lub <b>partii %s</b> nie prowadził niedawno
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=To dostawca odniesienia jest już powiązany z odniesieniem: sssss
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:33).

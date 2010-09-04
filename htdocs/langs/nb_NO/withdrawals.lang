@@ -35,8 +35,8 @@ ClassCredited=Godkjenn belastning
 ClassCreditedConfirm=Er du sikker på at du vil godkjenne denne betalingen som bokført på din bankkonto?
 
 
-// START - Lines generated via autotranslator.php tool (2010-07-17 12:23:40).
-// Reference language: en_US
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> nb_NO
 StandingOrderToProcess=Å behandle
 StandingOrderProcessed=Behandlet
 TransData=Dato Transmission
@@ -73,4 +73,4 @@ NotifyTransmision=Uttak Transmission
 NotifyEmision=Uttak Emisjon
 NotifyCredit=Uttak Credit
 NumeroNationalEmetter=Nasjonale Transmitter nummer
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:38:41).
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:22:53).

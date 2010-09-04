@@ -62,3 +62,46 @@ AffectedTo=Etkilenen
 CantRemoveProject=Gibi diğer bazı nesneler tarafından (fatura, sipariş veya başvurulan Bu proje kaldırılamaz diğer). Işaret sekmesine bakın.
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+PrivateProject=Proje Rehber
+MyProjectsDesc=Bu görünüm, projeler, sizin için bir kişi (her türü) vardır sınırlıdır.
+ProjectsPublicDesc=Bu görünüm okumak için izin verilen tüm projeler sunmaktadır.
+ProjectsDesc=Bu görünüm) kullanıcı izinleri izin herşeyi görmek size hibe tüm projeleri (sunar.
+MyTasksDesc=Bu görüş, proje veya görevleri sizin için bir kişi (her türü) vardır sınırlıdır.
+TasksPublicDesc=Bu görüş, tüm projeler ve görevler okumak izin verilir sunar.
+TasksDesc=Bu görünüm) tüm projeler ve görevler (kullanıcı izinleri izin herşeyi görmek size hibe sunuyor.
+Progress=Ilerleme
+ListFichinterAssociatedProject=müdahaleler projeyle ilişkili Listesi
+ListTripAssociatedProject=geziler ve harcamalar proje ile ilişkili Listesi
+ListActionsAssociatedProject=eylemleri projeyle ilişkili Listesi
+ChildOfTask=Projenin Çocuk / görev
+ValidateProject=Validate projet
+ConfirmValidateProject=Are sen bu projeyi doğrulamak istediğinizden emin misiniz?
+CloseAProject=Yakın proje
+ConfirmCloseAProject=Are sen bu projeyi kapatmak istediğinizden emin misiniz?
+ReOpenAProject=Açık proje
+ConfirmReOpenAProject=Emin yeniden bu proje açmak istiyor musunuz?
+ProjectContact=Proje rehber
+ActionsOnProject=Proje hakkında Eylemler
+YouAreNotContactOfProject=Bu özel projenin bir iletişim değildir
+DeleteATimeSpent=Sil zaman geçirdim
+ConfirmDeleteATimeSpent=Eğer bu kez silmek istediğinizden emin harcanan misiniz?
+DoNotShowMyTasksOnly=Ayrıca görevleri i Görmek etkilenen değilim
+ShowMyTasksOnly=View sadece görevleri i etkilenen önce
+TaskRessourceLinks=Kaynaklar
+ProjectsDedicatedToThisThirdParty=Projeler bu üçüncü parti adanmış
+NoTasks=Bu proje için hiçbir görevleri
+LinkedToAnotherCompany=diğer üçüncü Bağlantılı
+TypeContact_project_internal_PROJECTLEADER=Proje lideri
+TypeContact_project_external_PROJECTLEADER=Proje lideri
+TypeContact_project_internal_CONTRIBUTOR=Katılımcı
+TypeContact_project_external_CONTRIBUTOR=Katılımcı
+TypeContact_project_task_internal_TASKEXECUTIVE=Görev yöneticisi
+TypeContact_project_task_external_TASKEXECUTIVE=Görev yöneticisi
+TypeContact_project_task_internal_CONTRIBUTOR=Katılımcı
+TypeContact_project_task_external_CONTRIBUTOR=Katılımcı
+DocumentModelBaleine=Tam bir proje raporu modeli (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:19).

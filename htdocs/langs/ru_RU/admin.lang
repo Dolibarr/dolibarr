@@ -1062,3 +1062,127 @@ UseSearchToSelectProduct=Используйте поисковую форму в
 OnPayment=Об оплате
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+SessionSaveHandler=Обработчик для сохранения сессий
+PurgeSessions=Чистки сессий
+ConfirmPurgeSessions=Вы действительно хотите удалить все сеансы? Это будет отключать всех пользователей (кроме себя).
+NoSessionListWithThisHandler=Запомнить обработчик настроен в PHP не позволяет получить список всех открытых сессий.
+LockNewSessions=Lock новых подключений
+ConfirmLockNewSessions=Вы уверены, что хотите, чтобы ограничить любые новые связи Dolibarr к себе. Только <b>%s</b> пользователь будет иметь возможность подключиться после этого.
+UnlockNewSessions=Удаление связи блокировки
+YourSession=Ваша сессия
+Sessions=Пользователь сессии
+NoSessionFound=Ваша версия PHP, кажется, не позволяют в список активных сессий. Directory используется для сохранения сессий <b>(%s)</b> может быть защищен (например, ОС, разрешения или open_basedir директивы PHP).
+FormToTestFileUploadForm=Форма для проверки загрузки файлов (в зависимости от настройки)
+PreviewNotAvailable=Предварительный нет
+AntiVirusCommand=Полный путь к антивирусной команду
+AntiVirusCommandExample=Пример для ClamWin: C: \ Program Files (x86) \ ClamWin \ Bin \ clamscan.exe <br> Пример для ClamAV: / USR / BIN / clamscan
+AntiVirusParam=Дополнительные параметры командной строки
+AntiVirusParamExample=Пример для ClamWin: - база данных = &quot;C: \ Program Files (x86) \ ClamWin \ Библиотека&quot;
+YouCanDownloadBackupFile=Генерируемые файлы теперь могут быть загружены
+IgnoreDuplicateRecords=Игнорировать ошибки дублирующихся записей (INSERT IGNORE)
+ModulesMarketPlaceDesc=Вы сможете найти больше модулей для загрузки на внешних веб-сайтов в Интернете ...
+ModulesMarketPlaces=Подробнее модули ...
+DoliStoreDesc=DoliStore, официальный рынок для Dolibarr ERP / CRM внешних модулей
+WebSiteDesc=Поставщикам веб-сайте Вы можете найти с модулями ...
+URL=Ссылка
+InstrucToEncodePass=Чтобы иметь пароль кодируется в <b>conf.php</b> файл, замените строку <br> <b>$ Dolibarr_main_db_pass =&quot;...&quot;</b> <br> по <br> <b>Dolibarr_main_db_pass $ = &quot;Кодировка: %s&quot;</b>
+InstrucToClearPass=Чтобы декодировать пароль (прозрачный) в <b>conf.php</b> файл, замените строку <br> <b>Dolibarr_main_db_pass $ = &quot;Кодировка :...&quot;</b> <br> по <br> <b>Dolibarr_main_db_pass $ = &quot;%s&quot;</b>
+OfficialMarketPlace=Официальный рынке внешних модулей / Оборудование
+MAIN_MAIL_AUTOCOPY_TO=Отправить систематически скрытые отсылать копии всех послал письма на
+MAIN_MAIL_EMAIL_TLS=Использовать TLS (SSL) шифрует
+SubmitTranslation=Если перевод на этот язык не является полным, или вы нашли ошибки, вы можете исправить это путем редактирования файлов в каталоге <b>Лангс / %s</b> и представить измененные файлы на www.dolibarr.org форуме.
+FindPackageFromWebSite=Найти пакет, который обеспечивает функции вы хотите (например, на официальном веб-сайте %s).
+MinLength=Минимальная длина
+LanguageFilesCachedIntoShmopSharedMemory=Файлы. Ланг, загруженной в разделяемой памяти
+ExamplesWithCurrentSetup=Примеры с текущего запуска программы установки
+ListOfDirectories=Список шаблонов OpenDocument каталоги
+ListOfDirectoriesForModelGenODT=Список каталогов, содержащих файлы с шаблонами формата OpenDocument. <br><br> Добавьте сюда полный путь к директории. <br> Добавить возврат каретки между ГБ каталога. <br> Чтобы добавить каталог GED модуль, добавить здесь <b>DOL_DATA_ROOT / рэп / yourdirectoryname.</b> <br><br> Файлы в этих каталогах должны <b>заканчиваться. ODT.</b>
+NumberOfModelFilesFound=Количество ODT шаблоны файлов, найденных в этих каталогах
+ExampleOfDirectoriesForModelGen=Примеры синтаксиса: <br> C: \ MYDIR <br> / Главная / MYDIR <br> DOL_DATA_ROOT / рэп / ecmdir
+FirstnameNamePosition=Позиция Имя / название
+Module23Name=Энергия
+Module23Desc=Мониторинг потребления энергии
+Module100Name=ExternalSite
+Module100Desc=Включите любой внешний веб-сайт в меню Dolibarr и просмотреть его в рамку Dolibarr
+Module2000Name=FCKeditor
+Module2000Desc=WYSIWYG редактор
+Module2600Name=WebServices
+Module2600Desc=Включить сервер услуг Dolibarr Сети
+Module2700Name=Gravatar
+Module2700Desc=Использование онлайн Gravatar службы (www.gravatar.com), чтобы показать фото пользователей / участников (нашли с их электронной почты). Необходимость доступа в Интернет
+Module2900Name=GeoIPMaxmind
+Module2900Desc=GeoIP MaxMind возможности преобразования
+Module13452Name=SpeedFinder
+Module13452Desc=Поиск в AJAX, чтобы найти имя из части номер телефона в течение 2 секунд
+Permission13=Unvalidate счетов
+Permission141=Читайте задач
+Permission142=Создать / изменить задач
+Permission144=Удалить задач
+Permission536=See / Управлять скрытых сервисов
+Permission2411=Читайте действия (события или задачи), других
+Permission2412=Создать / изменить действия (события или задачи), других
+Permission2413=Удалить действия (события или задачи), других
+DictionnaryStaff=Персонал
+LocalTax1ManagementES=RE управления
+LocalTax1IsUsedDescES=RE ставка по умолчанию при создании перспективы, счета, заказы и т.д. последующей стандартных правил: <br> Если те покупатель не подвергается RE, RE по умолчанию = 0. Конец правления. <br> Если покупатель подвергается RE затем RE по умолчанию. Конец правления. <br>
+LocalTax1IsNotUsedDescES=По умолчанию предлагается RE 0. Конец правления.
+LocalTax1IsUsedExampleES=В Испании они являются профессионалами с учетом некоторых конкретных разделов испанский ИАЭ.
+LocalTax1IsNotUsedExampleES=В Испании они являются профессиональными и общества и при условии соблюдения определенных слоев испанского ИАЭ.
+LocalTax2ManagementES=IRPF управления
+LocalTax2IsUsedDescES=RE ставка по умолчанию при создании перспективы, счета, заказы и т.д. последующей стандартных правил: <br> Если продавец не подвергается IRPF, то IRPF по умолчанию = 0. Конец правления. <br> Если продавец подвергается IRPF то IRPF по умолчанию. Конец правления. <br>
+LocalTax2IsNotUsedDescES=По умолчанию предлагается IRPF 0. Конец правления.
+LocalTax2IsUsedExampleES=В Испании, фрилансеры и независимые специалисты, которые оказывают услуги и компаний, которые выбрали налоговой системы модулей.
+LocalTax2IsNotUsedExampleES=В Испании они бизнес не облагается налогом на системе модулей.
+MenuUpgrade=Обновление / Расширение
+DatabaseServer=База данных принимающей
+DatabaseUser=База данных пользователей
+DatabasePassword=Пароль базы данных
+EnableShowLogo=Показать логотип на левом меню
+DelaysOfToleranceMembers=Толерантность задержки (в днях) до оповещения по отсроченным членский взнос
+MAIN_ROUNDING_RULE_TOT=Размер округления диапазона (для тех стран, где округление происходит что-то другое, чем по основанию 10)
+UnitPriceOfProduct=Чистая цена единицы продукта
+TotalPriceAfterRounding=Общая стоимость (нетто / НДС / включая налоги) после округления
+PreviousDumpFiles=Наличие резервной копии базы данных дамп файлы
+WeekStartOnDay=Первый день недели
+RunningUpdateProcessMayBeRequired=Запуск процесса обновления, как представляется, требуется (версия программы отличается от %s %s версия базы данных)
+YouMustRunCommandFromCommandLineAfterLoginToUser=Вы должны запустить эту команду из командной строки после Войти в оболочку с пользователем <b>%s.</b>
+YourPHPDoesNotHaveSSLSupport=SSL функций, не доступных в PHP
+DownloadMoreSkins=Дополнительные шкуры для загрузки
+SimpleNumRefModelDesc=Вернуться номер с форматом %syymm-NNNN, где YY это год, месяц мм и NNNN последовательность без отверстия и без сброса
+ListOfEntities=Перечень организаций
+AddEntity=Добавить лица
+EditEntity=Изменить лицо
+UsersSetup=Пользователь модуля установки
+UserMailRequired=EMail, необходимые для создания нового пользователя
+ModelModules=Документы шаблоны
+DocumentModelOdt=Создание документов из OpenDocuments шаблонов (. ODT файлов OpenOffice, KOffice, TextEdit ,...)
+WatermarkOnDraft=Watermark по проекту документа
+FreeLegalTextOnInterventions=В свободной форме о вмешательстве документов
+LDAPFieldGroupMembers=Члены группы
+LDAPFieldGroupMembersExample=Пример: uniqueMember
+DonationsReceiptModel=Шаблон дарения получения
+MailingEMailError=Вернуться EMail (ошибки-до) для сообщений электронной почты с ошибками
+OptionVatDefaultDesc=НДС из-за: <br> - По доставке / оплате товаров <br> - На оплату услуг
+OptionVatDebitOptionDesc=НДС из-за: <br> - По доставке / оплате товаров <br> - На счета (дебетовой) на услуги
+PastDelayVCalExport=Не экспортировать события старше
+CashDesk=Точка продаж
+CashDeskBankAccountForCheque=Счет будет использоваться для получения выплат чеком
+CashDeskBankAccountForCB=Учетной записи для использования на получение денежных выплат по кредитным картам
+SuppliersSetup=Поставщик модуля установки
+SuppliersCommandModel=Полный шаблон для поставщика (logo. ..)
+GeoIPMaxmindSetup=GeoIP MaxMind модуля установки
+PathToGeoIPMaxmindCountryDataFile=Путь к файлу, содержащему MaxMind ИС страны перевода. <br> Пример: / USR / местные / доли / GeoIP / GeoIP.dat
+NoteOnPathLocation=Обратите внимание, что Ваш IP, чтобы страны файл данных должен быть в директории вашего PHP может читать (Проверьте ваши установки PHP open_basedir и файловой системы разрешений).
+YouCanDownloadFreeDatFileTo=Вы можете <b>скачать</b> бесплатную <b>демонстрационную версию</b> страны GeoIP MaxMind файл на %s.
+YouCanDownloadAdvancedDatFileTo=Вы также можете скачать более <b>полную версию, с обновлениями,</b> в стране GeoIP MaxMind файл на %s.
+TestGeoIPResult=Испытание преобразование IP -&gt; страны
+NumberWordsSetup=NumberWords модуля установки
+DescNumberWords=Этот модуль обеспечивает функции для преобразования числа или суммы в полном объеме символов. Она также будет заменить следующие строки вхождения __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ или __TOTAL_VAT_WORDS__ на общую вкл. налог, всего за вычетом налогов, или в общей сложности НДС во всех textes, которые используют их (в произвольной форме по счетам-фактурам, ...)
+ProjectsNumberingModules=Проекты нумерации модуль
+ProjectsSetup=Проект модуля установки
+ProjectsModelModule=доклад документ проекта модели
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:50:27).

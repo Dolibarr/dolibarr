@@ -157,3 +157,23 @@ CloneContentProduct=Ürünün Clone bütün temel bilgiler / hizmet
 ClonePricesProduct=Clone ana bilgileri ve fiyatlar
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+ProductAccountancyBuyCode=Muhasebe kodu (satın alma)
+ProductAccountancySellCode=Muhasebe kodu (satmak)
+Sell=Satış
+Buy=Alımlar
+OnBuy=Satın
+ProductStatusOnBuy=Mevcut
+ProductStatusNotOnBuy=Eski
+ProductStatusOnBuyShort=Mevcut
+ProductStatusNotOnBuyShort=Eski
+ListProductServiceByPopularity=Popülerliğe göre ürün / hizmet listesi
+ListServiceByPopularity=Popülerliğe göre hizmet listesi
+ProductIsUsed=Bu ürün kullanılır
+NewRefForClone=Ref. yeni ürün / hizmet
+CustomerPrices=Müşteriler fiyatları
+SuppliersPrices=Tedarikçiler fiyatları
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:38).

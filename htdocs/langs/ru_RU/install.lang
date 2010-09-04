@@ -463,3 +463,9 @@ MigrationProjectTaskActors=Миграция данных для llx_projet_task_
 MigrationProjectUserResp=Миграция данных из поля fk_user_resp llx_projet к llx_element_contact
 MigrationProjectTaskTime=Обновление времени в секундах
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:41:32).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+MigrationNotFinished=Версия базы данных не совсем в курсе, так что вам придется запустить процесс обновления еще раз.
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:38).

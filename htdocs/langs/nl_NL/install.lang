@@ -435,3 +435,9 @@ MigrationCustomerOrderShipping=Migreren verzendkosten voor de klant bestellingen
 MigrationShippingDelivery=Upgrade opslag van de scheepvaart
 MigrationShippingDelivery2=Upgrade opslag van de scheepvaart 2
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:41:17).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+MigrationNotFinished=Versie van uw database is niet helemaal up to date, dus je moet de upgrade opnieuw uit te voeren.
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:29).

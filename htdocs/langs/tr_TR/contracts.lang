@@ -99,3 +99,9 @@ TypeContact_contrat_external_CUSTOMER=Takip müşteri UP
 TypeContact_contrat_external_SALESREPSIGN=Sözleşme imzalama müşteri temas
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+RelatedContracts=Ilgili sözleşmeler
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:54).

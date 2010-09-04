@@ -112,3 +112,11 @@ AddNewNotification=Etkinleştirmek için yeni bir e-posta bildirimi talebi
 ListOfActiveNotifications=Liste tüm aktif e-posta bildirimi kişi
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+DateSending=Tarih gönderme
+SentTo=Gönderilen <b>Ssss</b> için
+ListOfNotificationsDone=Liste tüm e-posta bildirimleri gönderildi
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:01).

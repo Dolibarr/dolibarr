@@ -54,3 +54,14 @@ DocumentModelSirocco=Simples documento modelo de recibos de entrega
 DocumentModelTyphon=Documento modelo mais completo para a entrega recibos (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+Shipments=Envios
+StatusSendingCanceled=Cancelado
+StatusSendingCanceledShort=Cancelado
+DocumentModelMerou=Mérou modelo A5
+DateDeliveryPlanned=aplainada data de entrega
+DateReceived=Data da entrega recebida
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:28).

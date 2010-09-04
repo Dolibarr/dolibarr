@@ -108,3 +108,12 @@ CloneReceivers=Cloner destinatários
 DateLastSend=Data do último envio
 MailingModuleDescDolibarrContractsLinesExpired=Terceiros com contrato expirou as linhas
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+DateSending=Data de envio
+SentTo=Enviado para <b>%s</b>
+LimitSendingEmailing=Na linha de envio de emailings são limitadas por motivos de segurança e limite de destinatários <b>%s</b> enviando sessão.
+ListOfNotificationsDone=Lista de todas as notificações de e-mail enviado
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:54).

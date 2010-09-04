@@ -64,3 +64,33 @@ MenuManager=Меню менеджера
 ErrorUrlNotValid=Адрес веб-сайта, является неверным
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+Error=Ошибка
+Errors=Ошибки
+ErrorBadEMail=EMail %s неправильно
+ErrorBadUrl=Url %s неправильно
+ErrorRecordNotFound=Запись не найдена.
+ErrorDirNotFound=Directory <b>%s</b> не найден (Неверный путь, проблемы с правами доступа, или отсутствует доступ к PHP safe_mode openbasedir или параметр)
+ErrorFileAlreadyExists=Файл с этим именем уже существует.
+ErrorPartialFile=Файл не получил полностью на сервер.
+ErrorNoTmpDir=Временные directy %s не существует.
+ErrorUploadBlockedByAddon=Добавить заблокирован PHP / Apache плагин.
+ErrorFileSizeTooLarge=Размер файла слишком велик.
+WarningSafeModeOnCheckExecDir=Предупреждение, PHP <b>safe_mode</b> вариант находится на так команда должна храниться в каталог заявил на PHP <b>safe_mode_exec_dir</b> параметра.
+WarningConfFileMustBeReadOnly=Внимание, ваш конфигурационный файл <b>(htdocs / CONF / conf.php)</b> может быть переписан на веб-сервере. Это серьезная дыра в безопасности. Изменение разрешений на файл находится в режиме только для чтения для операционной системы пользователя используется веб-сервер. Если вы используете Windows FAT и формат для Вашего диска, вы должны знать, что эта файловая система не позволяет добавить разрешения на файл, поэтому не может быть полностью безопасным.
+ErrorModuleRequireJavascript=Javascript не должна быть отключена, чтобы эта функция работает. Чтобы включить / отключить Javascript, перейдите в меню Главная-&gt; Настройка-&gt; Экран.
+ErrorPasswordsMustMatch=Оба набрали пароли должны совпадать друг с другом
+ErrorContactEMail=Технические ошибки. Пожалуйста, обратитесь к администратору электронной почты folowwing <b>%s</b> ан предоставить код ошибки <b>%s</b> в Вашем послании, или даже лучше, добавив экране копия этой страницы.
+ErrorWrongValueForField=Неверное значение для области количество <b>%s</b> (значение <b>&#39;%s</b> &quot;не соответствует регулярное <b>%s</b> правило)
+ErrorsOnXLines=Ошибки на источник <b>%s</b> линий
+WarningsOnXLines=Предупреждения об источнике <b>%s</b> линий
+ErrorFileIsInfectedWithAVirus=Антивирусная программа не смогла проверить файл (файл может быть заражен вирусом)
+ErrorSpecialCharNotAllowedForField=Специальные символы не допускаются для поля &quot;%s&quot;
+WarningNoDocumentModelActivated=Ни одна из моделей, для генерации документов, была активирована. Модель будет выбранные по умолчанию, пока вы не проверить ваш модуль установки.
+ErrorDatabaseParameterWrong=База данных установки параметра <b>&quot;%s&quot;</b> имеет значение не совместимы с использованием Dolibarr (должно иметь значение <b>&#39;%s&#39;).</b>
+ErrorNumRefModel=Ссылка есть в базе данных (%s) и не совместимы с данным правилом нумерации. Удаление записей или переименован ссылкой для активации этого модуля.
+ErrorQtyTooLowForThisSupplier=Количество слишком мало для этого поставщика или не определена цена на этот продукт для этого поставщика
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:17).

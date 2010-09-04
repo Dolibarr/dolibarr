@@ -197,3 +197,16 @@ YouReceiveMailBecauseOfNotification=Du mottar denne meldingen fordi din e-post h
 YouReceiveMailBecauseOfNotification2=Denne hendelsen er følgende:
 ExternalSites=Eksterne nettsteder
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:39:40).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nb_NO
+PredefinedMailContentSendSupplierOrder=Du finner her vårt bestillingsskjema __ORDERREF__ \ n \ nSincerely \ n \ n
+WeightUnitpound=pund
+VolumeUnitounce=unse
+VolumeUnitlitre=liter
+VolumeUnitgallon=gallon
+SizeUnitinch=tommers
+SizeUnitfoot=foten
+ImageEditor=Image Editor
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:02).

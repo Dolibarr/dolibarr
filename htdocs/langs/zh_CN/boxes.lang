@@ -117,3 +117,11 @@ NoRecordedContracts=No kaydedildi sözleşmeleri
 NoModifiedSupplierBills=没有记录供应商的发票
 NoRecordedContracts=合同没有记录
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:27).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+BoxTitleLastModifiedSuppliers=最后%s修改供应商
+BoxTitleLastModifiedCustomers=最后%s修改客户
+BoxTitleLastModifiedProspects=最后%s修改前景
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:41).

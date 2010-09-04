@@ -271,3 +271,16 @@ CalculatedVolume=Berekende volume
 YouReceiveMailBecauseOfNotification=U ontvangt dit bericht omdat uw e-mail is toegevoegd aan de lijst van doelstellingen te worden geïnformeerd over bepaalde gebeurtenissen in de software van sssss sssss.
 YouReceiveMailBecauseOfNotification2=Dit evenement is de volgende:
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:39:54).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+PredefinedMailContentSendSupplierOrder=U vindt hier onze bestelling __ORDERREF__ \ n \ nSincerely \ n \ n
+WeightUnitpound=pond
+VolumeUnitounce=ons
+VolumeUnitlitre=liter
+VolumeUnitgallon=gallon
+SizeUnitinch=inch
+SizeUnitfoot=voet
+ImageEditor=Beeldredacteur
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:04).

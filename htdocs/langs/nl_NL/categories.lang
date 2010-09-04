@@ -89,3 +89,10 @@ CategoryContents=Categorie inhoud
 CategId=Categorie-id
 CatSupList=Lijst van leveranciers categorie
 CatCusList=Lijst van klanten/prospect categorie
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+CatProdList=Lijst van producten categorieën
+CatMemberList=Lijst van de leden categorieën
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:07).

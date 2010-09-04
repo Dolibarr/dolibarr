@@ -1177,3 +1177,16 @@ ProjectsNumberingModules=Proiecte de numerotare modulul
 ProjectsSetup=Proiect modul de configurare
 ProjectsModelModule=Proiectul de raport document model
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:38:39).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ro_RO
+ModulesMarketPlaceDesc=Puteţi găsi mai multe module pentru descărcare pe site-uri web externe de pe Internet ...
+ModulesMarketPlaces=module mai mult ...
+DoliStoreDesc=DoliStore, locul oficială de piaţă pentru Dolibarr ERP / CRM module externe
+WebSiteDesc=Web site-ul furnizorii puteţi căutare pentru a găsi mai multe module ...
+URL=Legătură
+OfficialMarketPlace=Oficial loc pe piaţă pentru modulelor externe / addons
+MAIN_MAIL_AUTOCOPY_TO=Trimite un mod sistematic ascunse carbon copie a tuturor e-mailuri trimise la
+FreeLegalTextOnInterventions=Textul gratuit pe documente de intervenţie
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:49:40).

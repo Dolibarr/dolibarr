@@ -164,3 +164,15 @@ NewRefForClone=Tilv. nýrra vara / þjónusta
 CustomerPrices=Viðskiptavinir verð
 SuppliersPrices=Birgjar verð
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> is_IS
+Sell=Velta
+Buy=Innkaup
+OnBuy=Keypt
+ProductStatusOnBuy=Laus
+ProductStatusNotOnBuy=Úrelt
+ProductStatusOnBuyShort=Laus
+ProductStatusNotOnBuyShort=Úrelt
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:13).

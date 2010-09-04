@@ -94,3 +94,9 @@ WarningNoDocumentModelActivated=Ingen model, for dokument generation, er blevet 
 ErrorDatabaseParameterWrong=Database setup parameter <b>'%s'</b> har en værdi ikke er forenelige at bruge Dolibarr (skal have værdi <b>'%s</b> «).
 ErrorNumRefModel=En henvisning findes i databasen (%s) og er ikke kompatible med denne nummerering regel. Fjern optage eller omdøbt henvisning til aktivere dette modul.
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:21).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> da_DA
+ErrorQtyTooLowForThisSupplier=Mængde for lav for denne leverandør eller nogen pris fastlagt på denne vare for denne leverandør
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:54).

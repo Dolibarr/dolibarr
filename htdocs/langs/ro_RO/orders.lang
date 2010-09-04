@@ -152,3 +152,9 @@ PDFEdisonDescription=Un simplu pentru model
 PDFQuevedoDescription=Un model complet cu scopul de spaniolă RE şi IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:50).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ro_RO
+DispatchSupplierOrder=Primirea comenzii furnizorul %s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:24).

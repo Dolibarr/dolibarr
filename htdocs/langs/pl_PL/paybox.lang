@@ -30,3 +30,9 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL zaoferować płatności online %s i
 YouCanAddTagOnUrl=Możesz również dodać parametr <b>&</b> url <b>= <i>wartość</i> tagu</b> do żadnej z tych adresów URL (wymagany tylko za darmo płatności), aby dodać swój komentarz płatności tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Skonfiguruj PayBox url <b>z %s</b> do zapłaty tworzone automatycznie, gdy zatwierdzone przez paybox.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+ToOfferALinkForOnlinePaymentOnMemberSubscription=Adres URL do zaoferowania płatności online sssss interfejs użytkownika jest członkiem subskrypcji
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:33:42).

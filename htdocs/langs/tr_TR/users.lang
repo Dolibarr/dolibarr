@@ -116,3 +116,11 @@ LoginToCreate=Giriş oluşturmak için
 NameToCreate=Üçüncü Adı oluşturmak için
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+Inherited=Miras
+YourRole=Sizin rolleri
+YourQuotaOfUsersIsReached=aktif kullanıcıların Kotanız ulaşılır!
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:39).

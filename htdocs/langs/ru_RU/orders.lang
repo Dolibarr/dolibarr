@@ -134,3 +134,21 @@ CloneOrder=Клон порядка
 ConfirmCloneOrder=Вы уверены, что хотите клон этого <b>приказа %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+OrderToProcess=Для обработки
+DispatchSupplierOrder=Прием %s поставщиком для
+TypeContact_commande_internal_SALESREPFOLL=Представитель следующие меры для клиентов
+TypeContact_commande_internal_SHIPPING=Представитель следующие меры судоходства
+TypeContact_commande_external_BILLING=свяжитесь со счета
+TypeContact_commande_external_SHIPPING=обратитесь в службу доставки
+TypeContact_commande_external_CUSTOMER=Абонентский отдел следующие меры для
+TypeContact_order_supplier_internal_SALESREPFOLL=Представитель следующие меры поставщиком для
+TypeContact_order_supplier_internal_SHIPPING=Представитель следующие меры судоходства
+TypeContact_order_supplier_external_BILLING=Поставщик счет контакта
+TypeContact_order_supplier_external_SHIPPING=Поставщик доставка контакты
+TypeContact_order_supplier_external_CUSTOMER=Поставщик связаться следующие меры для
+PDFEdisonDescription=Простая модель для
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:31).

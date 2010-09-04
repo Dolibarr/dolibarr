@@ -172,3 +172,17 @@ DescADHERENT_CARD_TYPE=Format der Karten-Seite
 DescADHERENT_CARD_TEXT_RIGHT=Text auf Karten Mitglied (gedruckt align rechts)
 DescADHERENT_MAILMAN_LISTS=List (s) zur automatischen Papierabnahme neuer Mitglieder (durch ein Komma getrennt)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:31).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> de_DE
+MoreActions=Ergänzende Maßnahmen zur Aufnahme
+MoreActionBankDirect=Erstellen Sie eine direkte Transaktion aufzeichnen wegen
+MoreActionBankViaInvoice=Erstellen Sie eine Rechnung und Zahlung auf Rechnung
+MoreActionInvoiceOnly=Erstellen Sie eine Rechnung ohne Bezahlung
+LinkToGeneratedPages=Generieren Sie Visitenkarten
+LinkToGeneratedPagesDesc=Dieser Bildschirm ermöglicht es Ihnen, PDF-Dateien mit Visitenkarten für alle Mitglieder oder einem bestimmten Mitgliedstaat zu generieren.
+DocForAllMembersCards=Generieren Sie Visitenkarten für alle Mitglieder (Format für die Ausgabe tatsächlich Setup: <b>%s)</b>
+DocForOneMemberCards=Generieren Sie Visitenkarten für einen bestimmten Mitglied (Format für die Ausgabe tatsächlich Setup: <b>%s)</b>
+DocForLabels=Generieren Adresse Blatt (Format für die Ausgabe tatsächlich Setup: <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:51).

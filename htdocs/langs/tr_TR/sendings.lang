@@ -59,3 +59,14 @@ DocumentModelSirocco=Teslimat makbuzlarını için basit belge modeli
 DocumentModelTyphon=Teslimat makbuzlarını için daha fazla dokümanın modeli (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+Shipments=Gönderiler
+StatusSendingCanceled=Iptal
+StatusSendingCanceledShort=Iptal
+DocumentModelMerou=Merou A5 model
+DateDeliveryPlanned=Teslim Planlı tarih
+DateReceived=Tarih teslim aldı
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:30).

@@ -177,3 +177,17 @@ DescADHERENT_CARD_TYPE=Muotoile korttien sivu
 DescADHERENT_CARD_TEXT_RIGHT=Teksti on painettu jäsen kortit (yhdenmukaistettava oikealla)
 DescADHERENT_MAILMAN_LISTS=List (s) automaattisesti insription uusien jäsenten (pilkulla erotettuna)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:43).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> fi_FI
+MoreActions=Täydentäviä toimia tallennus
+MoreActionBankDirect=Luo suoraan tiliotteensa takia
+MoreActionBankViaInvoice=Luo lasku ja ennakkomaksu
+MoreActionInvoiceOnly=Luo laskun maksua
+LinkToGeneratedPages=Luo käyntikorttini
+LinkToGeneratedPagesDesc=Tässä näytössä voit luoda PDF-tiedostoja käyntikortit kaikki jäsenet tai tietyssä jäsenvaltiossa.
+DocForAllMembersCards=Luo käyntikortteja kaikkien jäsenten (malli lähtö todella setup: <b>%s)</b>
+DocForOneMemberCards=Luo käyntikortit erityisesti jäsen (malli lähtö todella setup: <b>%s)</b>
+DocForLabels=Luo osoite arkkia (malli lähtö todella setup: <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:54).

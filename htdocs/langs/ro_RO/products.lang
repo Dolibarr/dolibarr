@@ -177,3 +177,15 @@ CustomerPrices=Clienţii preţurile
 SuppliersPrices=Furnizori preţurile
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:00).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ro_RO
+Sell=Vânzări
+Buy=Achiziţii
+OnBuy=Achiziţionat
+ProductStatusOnBuy=Disponibil
+ProductStatusNotOnBuy=Învechit
+ProductStatusOnBuyShort=Disponibil
+ProductStatusNotOnBuyShort=Învechit
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:28).

@@ -163,3 +163,22 @@ ThirdPartyDolibarr=Dolibarr третья сторона
 MembersAndSubscriptions=Члены и Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Тема сообщения для государств-членов autosubscription
+DescADHERENT_AUTOREGISTER_MAIL=EMail для государств-членов autosubscription
+DescADHERENT_CARD_TYPE=Формат карт страницы
+DescADHERENT_CARD_TEXT_RIGHT=Текст печатается на члена карты (выравнивание справа)
+DescADHERENT_MAILMAN_LISTS=Список (ы) для автоматического insription новых членов (через запятую)
+MoreActions=Дополнительные меры по записи
+MoreActionBankDirect=Создание прямой записи транзакций на счета
+MoreActionBankViaInvoice=Создание счета-фактуры и оплаты по счету
+MoreActionInvoiceOnly=Создание счета без каких-либо оплаты
+LinkToGeneratedPages=Создание визитки
+LinkToGeneratedPagesDesc=Этот экран позволяет вам создавать PDF файлы с визитных карточек для всех членов вашей или иной член.
+DocForAllMembersCards=Создание визитной карточки для всех членов (формат для вывода на самом деле установки: <b>%s)</b>
+DocForOneMemberCards=Создание визитной карточки для конкретного члена (формат для вывода на самом деле установки: <b>%s)</b>
+DocForLabels=Создание листов адрес (формат для вывода на самом деле установки: <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:35).

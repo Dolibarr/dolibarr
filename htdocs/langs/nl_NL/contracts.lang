@@ -90,3 +90,9 @@ TypeContact_contrat_internal_SALESREPFOLL=Vertegenwoordiger opvolging contract
 TypeContact_contrat_external_BILLING=Factuurcontact klant
 TypeContact_contrat_external_CUSTOMER=Opvolgingscontact klant
 TypeContact_contrat_external_SALESREPSIGN=Ondertekening contract door klant contact
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+RelatedContracts=Gerelateerde contracten
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:48).

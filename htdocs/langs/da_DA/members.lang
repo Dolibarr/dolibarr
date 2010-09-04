@@ -179,3 +179,17 @@ DescADHERENT_CARD_TYPE=Format af kort side
 DescADHERENT_CARD_TEXT_RIGHT=Tekst trykt på medlem-kort (tilpasning til højre)
 DescADHERENT_MAILMAN_LISTS=Liste (r) for automatisk insription af nye medlemmer (adskilt af et komma)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:58).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> da_DA
+MoreActions=Supplerende aktion om kontrolapparatet
+MoreActionBankDirect=Opret en direkte transaktion record på grund
+MoreActionBankViaInvoice=Opret en faktura og acontobeløb
+MoreActionInvoiceOnly=Opret en faktura uden betaling
+LinkToGeneratedPages=Generer besøg kort
+LinkToGeneratedPagesDesc=Denne skærm giver dig mulighed for at generere PDF-filer med visitkort til alle dine medlemmer eller et bestemt medlem.
+DocForAllMembersCards=Generer visitkort for alle medlemmer (Format for output faktisk setup: <b>%s)</b>
+DocForOneMemberCards=Generer visitkort for et bestemt medlem (Format for output faktisk setup: <b>%s)</b>
+DocForLabels=Generer adresse ark (Format for output faktisk setup: <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:48).

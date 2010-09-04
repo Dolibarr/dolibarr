@@ -283,3 +283,30 @@ MonkeyNumRefModelDesc=Format %s yymm uyan numero müşteri kodu ve %s yymm için
 LeopardNumRefModelDesc=Müşteri / tedarikçi kodu ücretsizdir. Bu kod herhangi bir zamanda değiştirilebilir.
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+Poste=Pozisyon
+DefaultLang=Dil varsayılan
+LocalTax1IsUsedES=RE kullanılır
+LocalTax1IsNotUsedES=RE kullanılmaz
+LocalTax2IsUsedES=IRPF kullanılır
+LocalTax2IsNotUsedES=IRPF kullanılmaz
+ProfId1IN=Prof (TIN) 1 No
+ProfId2IN=Prof 2 No
+ProfId3IN=Prof 3 No
+ProfId4IN=Prof 4 No
+ProfId1NL=KVK nummer
+ProfId2NL=-
+ProfId3NL=-
+ProfId4NL=-
+ProfId1AR=Prof CUIT / CUIL) 1 (Id
+ProfId2AR=Prof Id 2 (Revenu brutes)
+ProfId3AR=-
+ProfId4AR=-
+SupplierCategory=Tedarikçi kategori
+ListSuppliersShort=tedarikçiler listesi
+ListProspectsShort=umutları Listesi
+ListCustomersShort=müşteri listesi
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:09).

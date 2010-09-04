@@ -134,3 +134,10 @@ AddDeliveryCostLine=Voeg een regel toe die aangeeft dat de leveringskosten afhan
 
 # Document models
 PDFEinsteinDescription=Model van een complete zakelijk voorstel model (incl. logo, ..)
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+DispatchSupplierOrder=Het ontvangen van de leverancier om sssss
+PDFEdisonDescription=Een eenvoudig model om
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:07).

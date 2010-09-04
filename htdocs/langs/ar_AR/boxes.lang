@@ -82,3 +82,11 @@ BoxTitleLastContracts=%s العقود الماضية
 NoModifiedSupplierBills=أي مورد مسجل في الفواتير
 NoRecordedContracts=لا عقود المسجلة
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:02).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+BoxTitleLastModifiedSuppliers=%s آخر تعديل الموردين
+BoxTitleLastModifiedCustomers=%s آخر تعديل الزبائن
+BoxTitleLastModifiedProspects=%s آخر تعديل آفاق
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:33).

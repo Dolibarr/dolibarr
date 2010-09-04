@@ -150,3 +150,17 @@ HTPasswordExport=htpassword bestand generatie
 NoThirdPartyAssociatedToMember=Geen derden betrokken bij dit lid
 ThirdPartyDolibarr=Dolibarr derden
 MembersAndSubscriptions=Leden en Openingsformulier
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+MoreActions=Aanvullende maatregelen op de opname
+MoreActionBankDirect=Maak een directe transactie record op rekening
+MoreActionBankViaInvoice=Maak een factuur en betaling op rekening
+MoreActionInvoiceOnly=Maak een factuur met geen enkele betaling
+LinkToGeneratedPages=Genereer visitekaartjes
+LinkToGeneratedPagesDesc=Dit scherm kunt u PDF-bestanden te genereren met visitekaartjes voor al uw leden of een bepaald lid.
+DocForAllMembersCards=Genereer visitekaartjes voor alle leden (Format voor de output daadwerkelijk setup: <b>sssss)</b>
+DocForOneMemberCards=Genereer visitekaartjes voor een bepaald lid (Format voor de output daadwerkelijk setup: <b>sssss)</b>
+DocForLabels=Genereer adres vellen (formaat voor de uitgang van de daadwerkelijk setup: <b>sssss)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:21).

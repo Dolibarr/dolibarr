@@ -93,3 +93,15 @@ CatSupList=Tedarikçi kategoriler listesi
 CatCusList=Müşteri listesi / umudu kategoriler
 CatProdList=Ürün kategorileri Listesi
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+MembersCategoriesArea=Üyeler kategoriler alan
+MemberIsInCategories=Bu üye kategoriler üyeleri aşağıdaki sahibi
+MemberHasNoCategory=Bu üye herhangi bir kategoride değil
+MembersCategoryShort=Üyeler kategori
+MembersCategoriesShort=Üyeler kategoriler
+ThisCategoryHasNoMember=Bu kategoride herhangi bir üye içermez.
+CatMemberList=Üye Listesi kategoriler
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:26).

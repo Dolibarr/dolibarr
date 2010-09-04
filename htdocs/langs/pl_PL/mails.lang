@@ -119,3 +119,12 @@ DateLastSend=Data ostatniej wysyłanie
 MailingModuleDescDolibarrContractsLinesExpired=Trzecim minął zamówienia linie
 YouCanUseCommaSeparatorForSeveralRecipients=Możesz używać <b>przecinka</b> separator określić kilku odbiorców.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+DateSending=Data wysłania
+SentTo=Wysłane do <b>sssss</b>
+LimitSendingEmailing=On line wysyłanie wysyłanie wiadomości pocztowych są ograniczone ze względów bezpieczeństwa i timeout do odbiorców <b>sssss</b> wysyłając sesji.
+ListOfNotificationsDone=Lista wszystkich powiadomień e-mail wysłany
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:52).

@@ -69,3 +69,15 @@ EstimatedStockValueShort=Geschatte voorraadwaarde
 EstimatedStockValue=Geschatte waarde van de voorraad
 DeleteAWarehouse=Verwijder de voorraad
 ConfirmDeleteWarehouse=Weet u zeker dat u de voorraad <b>%s</b> wilt verwijderen?
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+WarehouseEdit=Wijzig magazijn
+ReStockOnDispatchOrder=Verhoog echte voorraden op handmatige verzending in entrepots, na ontvangst van de leverancier om
+OrderStatusNotReadyToDispatch=Bestellen is nog niet of niet meer een status waarmee het verzenden van producten in stock magazijnen.
+NoPredefinedProductToDispatch=Geen vooraf gedefinieerde producten voor dit object. Dus geen verzending in voorraad is vereist.
+DispatchVerb=Verzending
+PersonalStock=Persoonlijke voorraad sssss
+ThisWarehouseIsPersonalStock=Dit magazijn vertegenwoordigt persoonlijke voorraad van sssss sssss
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:46).

@@ -127,3 +127,11 @@ NameToCreate=Имя третьей стороной для создания
 // Reference language: en_US
 PermissionInheritedFromAGroup=Разрешение предоставляется, поскольку унаследовал от одного из пользователей в группы.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+Inherited=Унаследованный
+YourRole=Ваша роль
+YourQuotaOfUsersIsReached=Квота активных пользователей будет достигнута!
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:37).

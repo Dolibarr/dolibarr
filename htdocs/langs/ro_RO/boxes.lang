@@ -121,3 +121,11 @@ BoxTitleLastContracts=Última contratos %s
 NoModifiedSupplierBills=Nenhum fornecedor facturas registadas na
 NoRecordedContracts=Sem contratos registrados
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:24).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ro_RO
+BoxTitleLastModifiedSuppliers=%s Ultima modificare furnizori
+BoxTitleLastModifiedCustomers=%s Ultima modificare clienţii
+BoxTitleLastModifiedProspects=%s Ultima modificare perspective
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:39).

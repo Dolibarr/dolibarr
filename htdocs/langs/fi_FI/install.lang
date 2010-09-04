@@ -215,3 +215,9 @@ MigrationProjectTaskActors=Tiedot maahanmuuton llx_projet_task_actors taulukko
 MigrationProjectUserResp=Tietojen siirtäminen alalla fk_user_resp ja llx_projet on llx_element_contact
 MigrationProjectTaskTime=Päivitä aika sekunneissa
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:47).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> fi_FI
+MigrationNotFinished=Version tietokanta ei ole täysin ajan tasalla, joten sinun täytyy suorittaa päivityksen uudelleen.
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:24).

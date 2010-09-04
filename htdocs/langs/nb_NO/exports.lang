@@ -110,10 +110,10 @@ DataIsInsertedInto=Data kommer fra kildefil blir satt inn på følgende felt:
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:47).
 
 
-// START - Lines generated via autotranslator.php tool (2010-07-17 12:23:40).
-// Reference language: en_US
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> nb_NO
 DataIDSourceIsInsertedInto=IDen til overordnede objektet ble funnet ved hjelp av dataene i kildefilen, vil bli satt inn på følgende felt:
 SourceRequired=Dataverdi er obligatorisk
 SourceExample=Eksempel på mulige dataverdi
 CSVFormatDesc=<b>Kommadelte Verdi</b> filformatet (. CSV). <br> Dette er en tekstfil format der feltene er atskilt med skilletegn [%s]. Hvis separatoren blir funnet inne i et felt innhold, er felt omgitt av runde tegn [%s]. Escape karakter å unnslippe runde tegn er [%s].
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:35:52).
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:08).

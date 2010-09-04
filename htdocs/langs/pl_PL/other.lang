@@ -288,3 +288,16 @@ YouReceiveMailBecauseOfNotification=Pojawieniu się tego komunikatu, ponieważ e
 YouReceiveMailBecauseOfNotification2=To wydarzenie jest następujące:
 ExternalSites=tereny zewnętrzne
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:40:00).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+PredefinedMailContentSendSupplierOrder=Znajdziecie tu nasze zamówienie n __ORDERREF__ \ \ nSincerely \ n \ n
+WeightUnitpound=funt
+VolumeUnitounce=uncja
+VolumeUnitlitre=litr
+VolumeUnitgallon=galon
+SizeUnitinch=cal
+SizeUnitfoot=stopa
+ImageEditor=Edytor obrazów
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:06).

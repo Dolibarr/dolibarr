@@ -118,3 +118,12 @@ MailingModuleDescDolibarrContractsLinesExpired=Третьи стороны ис�
 YouCanUseCommaSeparatorForSeveralRecipients=Вы можете использовать сепаратор для <b>запятую</b> указать несколько получателей.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+DateSending=Дата отправки
+SentTo=Направлено в <b>%s</b>
+LimitSendingEmailing=В строке отправки emailings ограничены для обеспечения безопасности и тайм-аут причин <b>%s</b> получателей, отправив сессии.
+ListOfNotificationsDone=Список всех уведомлений по электронной почте отправлено
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:57).

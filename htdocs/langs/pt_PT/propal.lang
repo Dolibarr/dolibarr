@@ -88,3 +88,11 @@ DatePropal=Data da proposta
 ProposalsAndProposalsLines=Proposta comercial e linhas
 ProposalLine=Proposta linha
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+TypeContact_propal_internal_SALESREPFOLL=Representante proposta seguimento
+TypeContact_propal_external_BILLING=contacto na factura do Cliente
+TypeContact_propal_external_CUSTOMER=Atendimento ao cliente seguinte proposta-up
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:27).

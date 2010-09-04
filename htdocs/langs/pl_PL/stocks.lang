@@ -85,3 +85,17 @@ AverageUnitPricePMP=Średnia cena wejścia
 EstimatedStockValueShort=Szacunkowa wartość zapasów
 EstimatedStockValue=Szacunkowa wartość zapasów
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+WarehouseEdit=Modyfikacja składu
+ReStockOnDispatchOrder=Wzrost rzeczywisty stan zapasów w magazynach ręcznego wysyłki, po otrzymaniu zamówienia dostawca
+OrderStatusNotReadyToDispatch=Zamówienie nie jest jeszcze lub nie więcej status, który umożliwia wysyłanie produktów w magazynach czas.
+NoPredefinedProductToDispatch=Nie gotowych produktów dla tego obiektu. Więc nie w czas wysyłki jest wymagane.
+DispatchVerb=Wysyłka
+DeleteAWarehouse=Usuń magazyn
+ConfirmDeleteWarehouse=Czy na pewno chcesz usunąć <b>sssss</b> magazynie?
+PersonalStock=Osobowych sssss czas
+ThisWarehouseIsPersonalStock=Tym składzie przedstawia osobiste zasobów sssss sssss
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:51).

@@ -443,3 +443,9 @@ MigrationProjectTaskActors=Migração de dados para llx_projet_task_actors tabel
 MigrationProjectUserResp=Dados fk_user_resp domínio da migração de llx_projet para llx_element_contact
 MigrationProjectTaskTime=Atualização de tempo gasto em segundos
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:41:27).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+MigrationNotFinished=Versão do seu banco de dados não é completamente até à data, assim você terá que executar o processo de atualização novamente.
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:34).

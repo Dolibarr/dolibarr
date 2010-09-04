@@ -1192,3 +1192,16 @@ DescNumberWords=Ta modul omogoča funkcijo pretvorbe številke ali zneska or v b
 ProjectsNumberingModules=Modul za številčenje projektov
 ProjectsSetup=Nastavitve modula za projekte
 ProjectsModelModule=Vzorec dokumenta poročila o projektih
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> sl_SL
+ModulesMarketPlaceDesc=Lahko najdete več modulov, s katerimi prenesete na zunanje spletne strani na internetu ...
+ModulesMarketPlaces=Več modulov, ...
+DoliStoreDesc=DoliStore, uradni trg prostor za Dolibarr ERP / CRM zunanjih modulov
+WebSiteDesc=Spletna stran ponudniki lahko iščete najti več modulov, ...
+URL=Link
+OfficialMarketPlace=Uradni trgu za zunanje modules / addons
+MAIN_MAIL_AUTOCOPY_TO=Pošlji sistematično skrita ogljika kopijo vseh poslal e-pošte
+FreeLegalTextOnInterventions=Prosto besedilo na intervencijske dokumentov
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:50:59).

@@ -150,3 +150,25 @@ ConfirmCloneProduct=Tem certeza de que pretende clonar produto ou <b>serviço %s
 CloneContentProduct=Clone todas as principais informações do produto / serviço
 ClonePricesProduct=Clone principais informações e preços
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+ProductAccountancyBuyCode=Contabilidade (código de compra)
+ProductAccountancySellCode=Contabilidade (código vender)
+Sell=De vendas
+Buy=Compras
+OnBuy=Comprado
+ProductStatusOnBuy=Disponível
+ProductStatusNotOnBuy=Obsoleto
+ProductStatusOnBuyShort=Disponível
+ProductStatusNotOnBuyShort=Obsoleto
+SellingPriceHT=Preço de venda (líquido de impostos)
+SellingPriceTTC=Preço de venda (inc. IVA)
+ListProductServiceByPopularity=Lista dos produtos / serviços por popularidade
+ListServiceByPopularity=Lista de serviços de popularidade
+ProductIsUsed=Este produto é utilizado
+NewRefForClone=Ref. do novo produto / serviço
+CustomerPrices=preços de Clientes
+SuppliersPrices=preços dos fornecedores
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:26).

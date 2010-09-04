@@ -80,3 +80,9 @@ WarningNoDocumentModelActivated=没有模型，对文档生成，已被激活。
 ErrorDatabaseParameterWrong=数据库设置参数<b>'％s'</b>的值不兼容使用Dolibarr（必须有值<b>'％s'）。</b>
 ErrorNumRefModel=存在一个引用（％s）和编号是不符合本规则兼容到数据库。记录中删除或重命名参考激活此模块。
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+ErrorQtyTooLowForThisSupplier=数量过低，供应商或供应商在这此产品没有价格定义
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:21).

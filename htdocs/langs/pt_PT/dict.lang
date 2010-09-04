@@ -263,3 +263,28 @@ CurrencyTND=TND
 CurrencyUSD=Dólar E.U.
 CurrencyXAF=Francos CFA BEAC
 CurrencyXOF=Francos CFA BCEAO
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+CurrencySingAUD=AU Dollar
+CurrencySingCAD=CAN dólar
+CurrencySingCHF=Franco Suíço
+CurrencySingEUR=Euro
+CurrencySingFRF=Franco francês
+CurrencySingGBP=GB Pound
+CurrencyINR=rupias
+CurrencySingINR=rupia indiana
+CurrencySingMAD=Dirham
+CurrencySingMGA=Ariary
+CurrencyMUR=Maurício rupias
+CurrencySingMUR=rupee Maurícia
+CurrencyNOK=Krones norueguês
+CurrencySingNOK=Coroa Norueguesa
+CurrencySingTND=dinar tunisino
+CurrencySingUSD=E.U. dólar
+CurrencySingXAF=Franco CFA BEAC
+CurrencySingXOF=Franco CFA BCEAO
+CurrencyXPF=PCP Francos
+CurrencySingXPF=Franco CFP
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:43:03).

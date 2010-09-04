@@ -1087,3 +1087,123 @@ MultiCompanySetup=Multi-empresa módulo configuração
 // Reference language: en_US
 OnPayment=Pagamento
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:12).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+SessionSaveHandler=Handler para salvar sessões
+PurgeSessions=Purga das sessões
+ConfirmPurgeSessions=Você realmente deseja remover todas as sessões? Isto irá desligar todos os usuários (exceto a si mesmo).
+NoSessionListWithThisHandler=Save session handler configurado no seu PHP não permite listar todas as sessões de corrida.
+LockNewSessions=Lock novas conexões
+ConfirmLockNewSessions=Tem certeza que quer restringir qualquer ligação Dolibarr novo para si. <b>%s</b> usuário só será capaz de se conectar em seguida.
+UnlockNewSessions=Remover Bloqueio de ligação
+YourSession=Sua sessão
+Sessions=sessão do usuário
+NoSessionFound=Seu PHP parece não permitir que a lista de sessões ativas. Diretório usado para salvar sessões <b>(%s)</b> pode ser protegido (por exemplo, pelas permissões do sistema operativo ou por PHP open_basedir directiva).
+FormToTestFileUploadForm=Formulário para testar o upload de arquivos (de acordo com instalação)
+PreviewNotAvailable=Visualização não disponível
+AntiVirusCommand=Caminho completo para o comando de antivírus
+AntiVirusCommandExample=Exemplo de Mexilhão: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Exemplo de Mexilhão: / usr / bin / clamscan
+AntiVirusParam=Mais informações sobre parâmetros de linha de comando
+AntiVirusParamExample=Exemplo de Mexilhão: - database = &quot;C: \ Program Files (x86) \ lib ClamWin \&quot;
+IgnoreDuplicateRecords=Ignore os erros de registros duplicados (INSERT IGNORE)
+ModulesMarketPlaceDesc=Você pode encontrar mais módulos para download em sites externos sobre a Internet ...
+ModulesMarketPlaces=módulos mais ...
+DoliStoreDesc=DoliStore, o mercado oficial para Dolibarr ERP / CRM módulos externos
+WebSiteDesc=prestadores de site você pode pesquisar para encontrar os módulos mais ...
+URL=Link
+InstrucToEncodePass=Para ter uma senha codificada no <b>conf.php</b> arquivo, substitua a linha <br> <b>=&quot;...&quot; Dolibarr_main_db_pass $</b> <br> por <br> <b>dolibarr_main_db_pass $ = &quot;crypted: %s&quot;</b>
+InstrucToClearPass=Para ter a senha decodificado (transparente) para o <b>conf.php</b> arquivo, substitua a linha <br> <b>dolibarr_main_db_pass $ = crypted :...&quot; &quot;</b> <br> por <br> <b>dolibarr_main_db_pass $ = &quot;%s&quot;</b>
+OfficialMarketPlace=Oficial mercado externo para os módulos / addons
+MAIN_MAIL_AUTOCOPY_TO=Enviar sistematicamente uma cópia carbono oculta de todos os e-mails enviados para
+MAIN_MAIL_EMAIL_TLS=Use TLS (SSL) criptografa
+SubmitTranslation=Se a tradução para esse idioma não esteja completa ou você encontrar erros, você pode corrigir isso, a edição de arquivos em <b>langs</b> diretório <b>/ %s</b> e enviar arquivos modificados www.dolibarr.org fórum.
+FindPackageFromWebSite=Encontre um pacote que fornece funcionalidade que você quiser (por exemplo, %s site oficial).
+MinLength=Prazo mínimo
+LanguageFilesCachedIntoShmopSharedMemory=Arquivos. Lang carregado na memória compartilhada
+ExamplesWithCurrentSetup=Exemplos com o funcionamento actual configuração
+ListOfDirectories=Lista dos modelos OpenDocument diretórios
+ListOfDirectoriesForModelGenODT=Lista dos diretórios que contêm arquivos de modelos com o formato OpenDocument. <br><br> Coloque aqui o caminho completo de diretórios. <br> Adicionar um retorno de carro entre eah diretório. <br> Para adicionar um diretório do módulo de GED, adicione aqui <b>DOL_DATA_ROOT / ECM / yourdirectoryname.</b> <br><br> Arquivos nesses diretórios deve terminar <b>com. Odt.</b>
+NumberOfModelFilesFound=Número de ODT modelos arquivos encontrados nos diretórios
+ExampleOfDirectoriesForModelGen=Exemplos de sintaxe: <br> c: \ mydir <br> / Home mydir / <br> DOL_DATA_ROOT ecm / ecmdir /
+FirstnameNamePosition=Posição do firstname nome /
+Module23Name=Energia
+Module23Desc=Acompanhamento do consumo de energias
+Module100Name=ExternalSite
+Module100Desc=Incluir qualquer site externo em menus Dolibarr e visualizá-lo em um quadro Dolibarr
+Module2000Name=FCKeditor
+Module2000Desc=Editor WYSIWYG
+Module2600Name=WebServices
+Module2600Desc=o servidor de serviços web Dolibarr Enable
+Module2700Name=Gravatar
+Module2700Desc=Usar o serviço online Gravatar (www.gravatar.com) para mostrar fotos de usuários / membros (que se encontra com os seus e-mails). Necessita de um acesso à Internet
+Module2900Name=GeoIPMaxmind
+Module2900Desc=capacidades GeoIP conversões MaxMind
+Module13452Name=SpeedFinder
+Module13452Desc=Motor de busca em AJAX para encontrar um nome de uma parte de um número de telefone dentro de 2 segundos
+Permission13=facturas Unvalidate
+Permission141=Leia tarefas
+Permission142=Criar / modificar funções
+Permission144=Exclua as tarefas
+Permission536=Ver / gerenciar os serviços escondidos
+Permission2411=Leia ações (eventos ou tarefas) de outros
+Permission2412=Criar / modificar ações (eventos ou tarefas) de outros
+Permission2413=Excluir ações (eventos ou tarefas) de outros
+DictionnaryStaff=Pessoal
+LocalTax1ManagementES=RE Gestão
+LocalTax1IsUsedDescES=A taxa de RE por padrão, quando as perspectivas de criação, faturas, pedidos, etc seguir a regra ativa padrão: <br> Se o comprador não te está sujeita a RE, RE por default = 0. Fim da regra. <br> Se o comprador está sujeito a RE, em seguida, o RE, por padrão. Fim da regra. <br>
+LocalTax1IsNotUsedDescES=Por padrão, o RE proposta é 0. Fim da regra.
+LocalTax1IsUsedExampleES=Na Espanha, eles são profissionais sujeitos a algumas seções específicas do IAE espanhol.
+LocalTax1IsNotUsedExampleES=Na Espanha, eles são profissionais e sociedades e sujeitos a certas secções do IAE espanhol.
+LocalTax2ManagementES=IRPF Gestão
+LocalTax2IsUsedDescES=A taxa de RE por padrão, quando as perspectivas de criação, faturas, pedidos, etc seguir a regra ativa padrão: <br> Se o vendedor não está sujeito ao IRPF, IRPF, em seguida, por default = 0. Fim da regra. <br> Se o vendedor for submetido a IRPF, em seguida, o IRPF, por padrão. Fim da regra. <br>
+LocalTax2IsNotUsedDescES=Por padrão, o IRPF proposta é 0. Fim da regra.
+LocalTax2IsUsedExampleES=Em Espanha, os freelancers e profissionais liberais que prestam serviços e empresas que escolheram o regime fiscal dos módulos.
+LocalTax2IsNotUsedExampleES=Na Espanha, eles não são bussines sujeitas ao regime fiscal dos módulos.
+MenuUpgrade=Upgrade / Ampliar
+DatabaseServer=host de banco de dados
+DatabaseUser=usuário de banco de dados
+DatabasePassword=senha de banco de dados
+EnableShowLogo=Show logo no menu da esquerda
+MAIN_ROUNDING_RULE_TOT=Tamanho do arredondamento (intervalo para raros países onde o arredondamento é feito em algo mais do que base 10)
+UnitPriceOfProduct=preço unitário líquido de um produto
+TotalPriceAfterRounding=Preço total (líquida / / IVA incl fiscal) após arredondamento
+PreviousDumpFiles=cópia de segurança disponível banco de dados de arquivos
+WeekStartOnDay=Primeiro dia da semana
+RunningUpdateProcessMayBeRequired=Correndo o processo de atualização parece ser necessário (versão Programas %s %s difere da versão do banco de dados)
+YouMustRunCommandFromCommandLineAfterLoginToUser=Você deve executar este comando de linha de comando após o login de um escudo com <b>%s</b> usuário.
+YourPHPDoesNotHaveSSLSupport=funções SSL não está disponível em seu PHP
+DownloadMoreSkins=Mais skins para download
+SimpleNumRefModelDesc=Retorna o número de referência, com formato nnnn %syymm, onde aa é o ano, mm é o mês e nnnn é uma seqüência sem buraco e sem reset
+ListOfEntities=Lista das entidades
+AddEntity=Adicionar entidade
+EditEntity=entidade Editar
+UsersSetup=Usuários de configuração do módulo
+UserMailRequired=Email exigidos para criar um novo usuário
+ModelModules=Documentos modelos
+DocumentModelOdt=Gere documentos de OpenDocuments templates (arquivos. ODT para o OpenOffice, KOffice, TextEdit ,...)
+WatermarkOnDraft=Marca d&#39;água sobre o projecto de documento
+FreeLegalTextOnInterventions=Texto livre sobre os documentos de intervenção
+LDAPFieldGroupMembers=Os membros do grupo
+LDAPFieldGroupMembersExample=Exemplo: uniqueMember
+DonationsReceiptModel=Modelo de recibo de doação
+MailingEMailError=Retorno EMail (Erros a) para e-mails com erros
+PastDelayVCalExport=Não exportar evento com mais de
+CashDesk=Ponto de vendas
+CashDeskBankAccountForCheque=Conta a ser usado para receber pagamentos através de cheque
+CashDeskBankAccountForCB=Conta a ser usado para receber pagamentos em dinheiro por cartões de crédito
+SuppliersSetup=Fornecedor de configuração do módulo
+SuppliersCommandModel=Complete modelo de ordem fornecedor (logo. ..)
+GeoIPMaxmindSetup=MaxMind GeoIP instalação do módulo
+PathToGeoIPMaxmindCountryDataFile=Caminho para o arquivo que contém a tradução MaxMind ip país. <br> Exemplo: / usr / local / share / GeoIP / GeoIP.dat
+NoteOnPathLocation=Note que o ip de dados do país arquivo deve estar dentro de um diretório do seu PHP pode ler (Verifique a configuração do PHP open_basedir e permissões de arquivos).
+YouCanDownloadFreeDatFileTo=Você pode baixar uma <b>versão demo gratuita</b> do país arquivo GeoIP MaxMind em %s.
+YouCanDownloadAdvancedDatFileTo=Você também pode baixar uma <b>versão</b> mais <b>completa, com atualizações</b> do país arquivo GeoIP MaxMind em %s.
+TestGeoIPResult=Teste de uma conversão de IP -&gt; país
+NumberWordsSetup=NumberWords instalação do módulo
+DescNumberWords=Este módulo fornecer funções para converter o número ou a quantidade de caracteres completa. Ele também irá substituir as ocorrências seguinte seqüência __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ ou __TOTAL_VAT_WORDS__ por incl total. fiscal líquida total do imposto, ou total do IVA em todos os textes que usá-los (texto livre nas facturas, ...)
+ProjectsNumberingModules=Projetos módulo de numeração
+ProjectsSetup=Projeto de instalação do módulo
+ProjectsModelModule=modelo de projeto de documento de relatório
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:49:13).

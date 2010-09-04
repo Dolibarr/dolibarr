@@ -159,3 +159,17 @@ NoThirdPartyAssociatedToMember=无关联的第三方该会员
 ThirdPartyDolibarr=Dolibarr第三者
 MembersAndSubscriptions=议员和Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+MoreActions=补充行动记录
+MoreActionBankDirect=创建一个直接交易记录的帐户
+MoreActionBankViaInvoice=创建发票和付款帐户
+MoreActionInvoiceOnly=创建一个没有付款发票
+LinkToGeneratedPages=生成访问卡
+LinkToGeneratedPagesDesc=这个屏幕允许你生成你所有的成员或某成员的名片PDF文件。
+DocForAllMembersCards=成员（名片格式生成所有输出实际上设置<b>：%s）</b>
+DocForOneMemberCards=设置<b>：%s</b>生成名片输出实际上是一个特定的成员（格式）
+DocForLabels=生成报告表（格式输出实际上设置<b>：%s）</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:45).

@@ -11,14 +11,14 @@ CHARSET=UTF-8
 Error=Hata
 Errors=Hatalar
 MenuManager=Menü yöneticisi
-ErrorLoginAlreadyExists=Giriş %s  zaten var.
-ErrorGroupAlreadyExists=Grup %s  zaten var.
+ErrorLoginAlreadyExists=Giriş %s zaten var.
+ErrorGroupAlreadyExists=Grup %s zaten var.
 ErrorRecordNotFound=Kayıt bulunamadı.
-ErrorFailToDeleteFile=Dosya <b>'%</b> kaldırılamadı <b>s'.</b>
-ErrorFailToCreateFile=Dosya <b>'%</b> oluşturulamadı <b>s'.</b>
-ErrorFailToRenameDir=Dizini <b>'%</b> adlandırmak Başarısız' içine <b>s %s </b> '.
-ErrorFailToCreateDir=Dizini <b>'%</b> oluşturulamadı <b>s'.</b>
-ErrorFailToDeleteDir=Dizini <b>'%</b> silinemedi <b>s'.</b>
+ErrorFailToDeleteFile=Dosya <b>%s</b> kaldırılamadı <b>%s</b>.
+ErrorFailToCreateFile=Dosya <b>%s</b> oluşturulamadı <b>%s</b>.
+ErrorFailToRenameDir=Dizini <b>%s</b> adlandırmak Başarısız' içine <b>%s</b>.
+ErrorFailToCreateDir=Dizini <b>%s</b> oluşturulamadı <b>%s</b>.
+ErrorFailToDeleteDir=Dizini <b>%s</b> silinemedi <b>%s</b>
 ErrorFailedToDeleteJoinedFiles=Çünkü bazı katıldı dosyaları bir varlık silinemiyor. Dosyaları katılmak kaldırın.
 ErrorThisContactIsAlreadyDefinedAsThisType=Bu kişi zaten bu tür iletişim olarak tanımlanır.
 ErrorCashAccountAcceptsOnlyCashMoney=Bu banka hesabı kasa hesabı, bu yüzden nakit tek tip ödemeleri kabul eder.
@@ -67,3 +67,23 @@ ErrorsOnXLines=<b>%s</b> Doğum Hatalar kaynak hatları <b>var</b>
 WarningsOnXLines=<b>%s</b> Uyarıları kaynak hatları <b>var</b>
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+ErrorBadEMail=EMail Ssss yanlış
+ErrorBadUrl=Url Ssss yanlış
+ErrorDirNotFound=Directory) safe_mode veya <b>Ssss</b> bulunamadı (Kötü yol, yanlış openbasedir PHP izinleri ya da erişim engellendi tarafından parametre
+ErrorFileAlreadyExists=Bu adı taşıyan bir dosya zaten var.
+ErrorPartialFile=Dosya tamamen sunucu ulaşmaz.
+ErrorNoTmpDir=Geçici direkt olarak Ssss mevcut değildir.
+ErrorUploadBlockedByAddon=Yükle PHP / Apache eklentisi tarafından engellendi.
+ErrorFileSizeTooLarge=Dosya boyutu çok büyük.
+WarningSafeModeOnCheckExecDir=Uyarı, PHP seçenek <b>safe_mode safe_mode_exec_dir</b> parametre php tarafından ilan dizini bu kadar içinde saklanır komutu olmalıdır.
+ErrorFileIsInfectedWithAVirus=Virüsten koruma programı (bir virüs tarafından enfekte olabilir dosyası) dosya doğrulayabilir değildi
+ErrorSpecialCharNotAllowedForField=Özel karakterler alan için "%s" izin verilmez
+WarningNoDocumentModelActivated=Hiçbir model, belge nesil için, aktif olmuştur. Eğer modül ayarlarınızı kontrol edin kadar bir model varsayılan olarak tercih edilecektir.
+ErrorDatabaseParameterWrong=Veritabanı kurulum parametresi <b>"Ssss"</b> bir değere sahip olmalıdır (değer değil uyumlu kullanmak Dolibarr <b>Ssss</b> &#39;).
+ErrorNumRefModel=Bir referans veritabanı içine var (Ssss) ve bu numaralandırma kuralı ile uyumlu değildir. Kaldır kayıt veya referans adını bu modül etkinleştirin.
+ErrorQtyTooLowForThisSupplier=Miktar çok bu tedarikçi veya fiyat bu tedarikçi için bu ürün üzerinde tanımlanan düşük
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:21).

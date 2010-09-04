@@ -125,3 +125,21 @@ CloneOrder=Clone fim
 ConfirmCloneOrder=Tem certeza de que deseja clonar este <b>fim %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+OrderToProcess=Para iniciar o processo
+DispatchSupplierOrder=Para receber %s fornecedor
+TypeContact_commande_internal_SALESREPFOLL=Representante ordem do cliente seguimento
+TypeContact_commande_internal_SHIPPING=Representante transporte seguimento
+TypeContact_commande_external_BILLING=contacto na factura do Cliente
+TypeContact_commande_external_SHIPPING=contato com o transporte do cliente
+TypeContact_commande_external_CUSTOMER=Atendimento ao cliente seguinte ordem-up
+TypeContact_order_supplier_internal_SALESREPFOLL=Representante para fornecedor seguimento
+TypeContact_order_supplier_internal_SHIPPING=Representante transporte seguimento
+TypeContact_order_supplier_external_BILLING=Fornecedor Contactar com factura
+TypeContact_order_supplier_external_SHIPPING=Fornecedor Contactar com transporte
+TypeContact_order_supplier_external_CUSTOMER=Fornecedor Contactar com a seguinte ordem-up
+PDFEdisonDescription=Um modelo simples ordem
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:22).

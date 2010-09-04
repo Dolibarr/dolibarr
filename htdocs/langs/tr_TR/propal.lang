@@ -93,3 +93,11 @@ DocModelAzurDescription=Tam bir öneri modeli (logo. ..)
 DocModelJauneDescription=Jaune modeli önerisi
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+TypeContact_propal_internal_SALESREPFOLL=Temsilci aşağıdaki-up öneri
+TypeContact_propal_external_BILLING=Müşteri fatura temas
+TypeContact_propal_external_CUSTOMER=Müşteri aşağıdaki-up öneri
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:31).

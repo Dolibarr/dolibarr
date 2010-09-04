@@ -167,3 +167,25 @@ ClonePricesProduct=Клон основные данные и цены
 LastRecordedProductsAndServices=Последнее %s зарегистрированные продукции / услуг
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+ProductAccountancyBuyCode=Бухгалтерия код (купить)
+ProductAccountancySellCode=Бухгалтерия код (продать)
+Sell=Реализация
+Buy=Покупает
+OnBuy=Приобретенная
+ProductStatusOnBuy=Доступный
+ProductStatusNotOnBuy=Устаревший
+ProductStatusOnBuyShort=Доступный
+ProductStatusNotOnBuyShort=Устаревший
+SellingPriceHT=Продажная цена (за вычетом налогов)
+SellingPriceTTC=Продажная цена (вкл. налоги)
+ListProductServiceByPopularity=Перечень товаров / услуг по популярности
+ListServiceByPopularity=Перечень услуг по популярности
+ProductIsUsed=Этот продукт используется
+NewRefForClone=Ссылка нового продукта / услуги
+CustomerPrices=Клиенты цены
+SuppliersPrices=Поставщики цены
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:31).

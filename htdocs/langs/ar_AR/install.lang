@@ -215,3 +215,9 @@ MigrationProjectTaskActors=بيانات الهجرة لllx_projet_task_actors ا
 MigrationProjectUserResp=بيانات fk_user_resp مجال الهجرة من llx_projet لllx_element_contact
 MigrationProjectTaskTime=تحديث الوقت الذي يقضيه في ثوان
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:17).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+MigrationNotFinished=نسخة من قاعدة البيانات الخاصة بك لا يصل تماما حتى الآن ، لذلك سيكون لديك لتشغيل عملية الترقية مرة أخرى.
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:20).

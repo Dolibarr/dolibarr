@@ -210,3 +210,16 @@ YouReceiveMailBecauseOfNotification=Saat tämän viestin koska sähköpostiosoit
 YouReceiveMailBecauseOfNotification2=Tämä tapahtuma on seuraava:
 ExternalSites=Ulkoiset sivustot
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:43).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> fi_FI
+PredefinedMailContentSendSupplierOrder=Löydät tästä meidän järjestys __ORDERREF__ \ n \ nSincerely \ n \ n
+WeightUnitpound=punta
+VolumeUnitounce=unssi
+VolumeUnitlitre=litra
+VolumeUnitgallon=gallona
+SizeUnitinch=tuuma
+SizeUnitfoot=jalka
+ImageEditor=Kuvankäsittelyohjelmassa
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:55).

@@ -80,3 +80,9 @@ WarningNoDocumentModelActivated=Engin fyrirmynd fyrir kynslóð skjal hefur veri
 ErrorDatabaseParameterWrong=viðfang <b>' %s </b> Gagnasafn skipulag hefur a gildi ekki samhæft við notkun Dolibarr (verður að hafa <b>gildi' %s </b> ').
 ErrorNumRefModel=Vísun til staðar í gagnagrunninum ( %s ) og er ekki með þessari tala reglu. Fjarlægja færslu eða endurnefna þær tilvísun til að virkja þessa einingu.
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> is_IS
+ErrorQtyTooLowForThisSupplier=Magn of lág fyrir þessa söluaðila eða ekki verði skilgreind á þessa vöru fyrir þennan birgir
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:56).

@@ -387,3 +387,16 @@ YouReceiveMailBecauseOfNotification=E-posta hedef listesine Ssss of Ssss yazıl�
 YouReceiveMailBecauseOfNotification2=Bu olay şudur:
 ExternalSites=Harici siteler
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:40:29).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+PredefinedMailContentSendSupplierOrder=Burada bizim için __ORDERREF__ \ n bulacaksınız \ n nSincerely \ \ n
+WeightUnitpound=pound
+VolumeUnitounce=ons
+VolumeUnitlitre=litre
+VolumeUnitgallon=galon
+SizeUnitinch=inç
+SizeUnitfoot=ayak
+ImageEditor=Resim düzenleyici
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:17).

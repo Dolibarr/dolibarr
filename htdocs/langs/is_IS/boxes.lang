@@ -71,3 +71,11 @@ NoRecordedProspects=Engin skráð horfur
 NoContractedProducts=Engar vörur / þjónustu dróst
 NoRecordedContracts=Engin skrá samninga
 // STOP - Lines generated via autotranslator.php tool (2010-07-10 01:19:48).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> is_IS
+BoxTitleLastModifiedSuppliers=Síðast %s breytt birgja
+BoxTitleLastModifiedCustomers=Síðast %s breytt viðskiptavini
+BoxTitleLastModifiedProspects=Síðast %s breytt horfum
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:35).

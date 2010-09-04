@@ -297,3 +297,13 @@ ListCustomersShort=客户名单
 MonkeyNumRefModelDesc=返回格式％syymm为客户代码以及％syymm -○○○○供应商代码其中YY是年numero，MM是月，nnnn是一个没有休息，没有为0返回序列。
 LeopardNumRefModelDesc=客户/供应商代码是免费的。此代码可以随时修改。
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+ProfId1IN=教授ID是1（天）
+ProfId2IN=ID为2教授
+ProfId3IN=教授ID已3
+ProfId4IN=ID四教授
+SupplierCategory=供应商类别
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:12).

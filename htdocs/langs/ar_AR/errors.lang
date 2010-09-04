@@ -87,3 +87,9 @@ WarningNoDocumentModelActivated=لا يوجد نموذج لجيل وثيقة ، 
 ErrorDatabaseParameterWrong=قاعدة بيانات المعلمة الإعداد <b>'%s'</b> يحتوي على قيمة غير متوافق لاستخدام Dolibarr (يجب أن يكون قيمة <b>'%s').</b>
 ErrorNumRefModel=إشارة إلى وجود قاعدة بيانات (%s) ، وغير متوافق مع هذه القاعدة الترقيم. سجل إزالة أو إعادة تسميته اشارة الى تفعيل هذه الوحدة.
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:01).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+ErrorQtyTooLowForThisSupplier=كمية قليلة جدا لهذا المورد أو السعر لا تعرف عن هذا المنتج لهذا المورد
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:54).

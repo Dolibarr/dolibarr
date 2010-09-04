@@ -341,3 +341,16 @@ YouReceiveMailBecauseOfNotification=Это сообщение появляетс
 YouReceiveMailBecauseOfNotification2=Это событие имеет следующий вид:
 ExternalSites=На внешних сайтах
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:40:17).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+PredefinedMailContentSendSupplierOrder=Вы найдете здесь наш заказ __ORDERREF__ \ п \ nSincerely \ п \ п
+WeightUnitpound=фунт
+VolumeUnitounce=унция
+VolumeUnitlitre=литр
+VolumeUnitgallon=галлон
+SizeUnitinch=дюйм
+SizeUnitfoot=фут
+ImageEditor=Редактор изображений
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:12).

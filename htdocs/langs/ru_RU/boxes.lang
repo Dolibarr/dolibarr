@@ -115,3 +115,11 @@ BoxTitleLastContracts=Последние контракты %s
 NoModifiedSupplierBills=Нет зарегистрированных поставщиков счетов
 NoRecordedContracts=Нет зарегистрированных контрактов
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:25).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+BoxTitleLastModifiedSuppliers=Последнее изменение %s поставщиков
+BoxTitleLastModifiedCustomers=Последнее изменение %s клиентов
+BoxTitleLastModifiedProspects=Последнее изменение %s перспективы
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:40).

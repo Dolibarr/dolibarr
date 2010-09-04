@@ -127,3 +127,21 @@ AddDeliveryCostLine=Iletim hattı maliyet düzenin ağırlığı belirten ekle
 PDFEinsteinDescription=Tam bir düzen modeli (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+OrderToProcess=Sipariş sürecine
+DispatchSupplierOrder=Alma tedarikçi sipariş Ssss
+TypeContact_commande_internal_SALESREPFOLL=Temsilci aşağıdaki-up müşteri siparişi
+TypeContact_commande_internal_SHIPPING=Temsilci aşağıdaki-up nakliye
+TypeContact_commande_external_BILLING=Müşteri fatura temas
+TypeContact_commande_external_SHIPPING=Müşteri nakliye iletişim
+TypeContact_commande_external_CUSTOMER=Müşteri aşağıdaki-up sipariş
+TypeContact_order_supplier_internal_SALESREPFOLL=Temsilci aşağıdaki-up tedarikçi sipariş
+TypeContact_order_supplier_internal_SHIPPING=Temsilci aşağıdaki-up nakliye
+TypeContact_order_supplier_external_BILLING=Tedarikçi faturası temas
+TypeContact_order_supplier_external_SHIPPING=Tedarikçi nakliye temas
+TypeContact_order_supplier_external_CUSTOMER=Tedarikçi temas aşağıdaki-up sipariş
+PDFEdisonDescription=Basit bir sipariş modeli
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:41).

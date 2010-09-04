@@ -168,3 +168,17 @@ MembersAndSubscriptions=Deputati e Suscriptions
 // Reference language: en_US
 DescADHERENT_MAILMAN_LISTS=List (s) per insription automatica di nuovi membri (separati da una virgola)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:46).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> it_IT
+MoreActions=azione complementare sulla registrazione
+MoreActionBankDirect=Creare un record di transazione direttamente sul conto
+MoreActionBankViaInvoice=Creare una fattura e di acconto
+MoreActionInvoiceOnly=Creare una fattura con nessun pagamento
+LinkToGeneratedPages=biglietti da visita Genera
+LinkToGeneratedPagesDesc=Questa schermata permette di generare file PDF con i biglietti da visita per tutti i vostri membri o da un determinato utente.
+DocForAllMembersCards=biglietti da visita generare per tutti i membri (di formato per l&#39;output effettivamente installazione: <b>%s)</b>
+DocForOneMemberCards=biglietti da visita per generare un particolare membro (formato per l&#39;output effettivamente installazione: <b>%s)</b>
+DocForLabels=Generare fogli di indirizzo (formato per l&#39;output effettivamente installazione: <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:59).

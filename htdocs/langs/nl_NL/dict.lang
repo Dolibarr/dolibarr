@@ -289,3 +289,10 @@ CurrencyXOF=Francs CFA BCEAO
 CurrencySingXOF=Franc CFA BCEAO
 CurrencyXPF=Francs CFP
 CurrencySingXPF=Franc CFP
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+CurrencyINR=Indiase roepies
+CurrencySingINR=Indiase roepie
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:53).

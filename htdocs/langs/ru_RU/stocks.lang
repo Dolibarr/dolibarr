@@ -82,3 +82,18 @@ AverageUnitPricePMP=Средняя цена входного
 EstimatedStockValueShort=Ориентировочная стоимость товарно-материальных запасов
 EstimatedStockValue=Ориентировочная стоимость товарно-материальных запасов
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+WarehouseEdit=Изменить склад
+DeStockOnShipment=Снижение реальных запасов отгрузки проверки
+ReStockOnDispatchOrder=Увеличение реальных запасов на ручной посылаем в склады, после получения заказа поставщиком
+OrderStatusNotReadyToDispatch=Заказ еще не или не более статуса, который позволяет отправку товаров на складе склады.
+NoPredefinedProductToDispatch=Нет предопределенного продуктов для данного объекта. Так что не диспетчеризации в акции не требуется.
+DispatchVerb=Отправка
+DeleteAWarehouse=Удалить склад
+ConfirmDeleteWarehouse=Вы уверены, что хотите удалить склад <b>%s?</b>
+PersonalStock=Личный %s складе
+ThisWarehouseIsPersonalStock=Этот склад представляет собой персональный запас %s %s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:02).

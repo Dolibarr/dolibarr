@@ -387,3 +387,30 @@ ConfirmClassifyPaidPartiallyReasonOther=Kwota porzucił dla innej przyczyny
 NoSupplierBillsUnpaid=Nr dostawców niezapłaconych faktur
 CustomerBillsUnpaid=Należne wpłaty klientów faktury
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+ClassifyCanceled=Klasyfikacji &quot;Abandoned&quot;
+BillStatusCanceled=Opuszczony
+BillShortStatusCanceled=Opuszczony
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Wybór ten jest możliwe, jeżeli faktury zostały wyposażone w odpowiedni komentarz. (Przykład &quot;Tylko podatku odpowiadającej cenie, które zostały faktycznie zapłacone daje prawa do odliczenia&quot;)
+AlreadyPaidNoCreditNotesNoDeposits=Już wypłacone (bez not kredytowych i depozytów)
+RelatedBill=Podobne faktury
+RelatedBills=Faktur związanych
+ValidateInvoice=faktura Validate
+Cash=Gotówka
+Reported=Opóźniony
+DisabledBecausePayments=Nie możliwe, ponieważ istnieją pewne płatności
+CantRemovePaymentWithOneInvoicePaid=Nie można usunąć płatności, ponieważ istnieje przynajmniej na fakturze sklasyfikowane płatne
+ExpectedToPay=Oczekuje płatności
+PayedByThisPayment=Wypłacana przez płatność
+TypeContact_facture_internal_SALESREPFOLL=Przedstawiciela w ślad za klienta faktura
+TypeContact_facture_external_BILLING=kontakt faktury klienta
+TypeContact_facture_external_SHIPPING=kontakt koszty klientów
+TypeContact_facture_external_SERVICE=kontakt z działem obsługi klienta
+TypeContact_facture_fourn_internal_SALESREPFOLL=Przedstawiciela w ślad za faktury dostawcy
+TypeContact_facture_fourn_external_BILLING=kontakt fakturze dostawcy
+TypeContact_facture_fourn_external_SHIPPING=kontakt koszty dostawcy
+TypeContact_facture_fourn_external_SERVICE=Dostawca usługi kontakt
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:21).

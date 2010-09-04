@@ -101,3 +101,11 @@ DatePropal=Data wniosku
 ProposalsAndProposalsLines=Commercial wniosku i linie
 ProposalLine=Wniosek linii
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+TypeContact_propal_internal_SALESREPFOLL=Przedstawiciela w ślad za wniosek
+TypeContact_propal_external_BILLING=kontakt faktury klienta
+TypeContact_propal_external_CUSTOMER=kontakt klienta w ślad za wniosek
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:25).

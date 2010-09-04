@@ -1177,3 +1177,16 @@ ProjectsNumberingModules=Hankkeet numerointi moduuli
 ProjectsSetup=Hankkeen moduuli setup
 ProjectsModelModule=Hankkeen raportti asiakirjan malli
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:02).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> fi_FI
+ModulesMarketPlaceDesc=Löydät lisää moduuleja ladata Pat internetissä ...
+ModulesMarketPlaces=Lisää moduuleja ...
+DoliStoreDesc=DoliStore, virallinen markkinapaikka Dolibarr ERP / CRM ulkoisten moduulien
+WebSiteDesc=Web-sivuston tarjoajat voit etsiä löytää lisää moduuleja ...
+URL=Linkki
+OfficialMarketPlace=Virallinen markkinoilla ulkoisten moduulien / lisät
+MAIN_MAIL_AUTOCOPY_TO=Lähetä järjestelmällisesti piilotettu hiili-kopio kaikki lähetetyt sähköpostit
+FreeLegalTextOnInterventions=Vapaa teksti interventio asiakirjojen
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:45:31).

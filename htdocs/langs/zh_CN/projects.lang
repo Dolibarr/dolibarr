@@ -97,3 +97,9 @@ TypeContact_project_task_internal_CONTRIBUTOR=投稿
 TypeContact_project_task_external_CONTRIBUTOR=投稿
 DocumentModelBaleine=一个完整的项目报告模型（logo. ..）
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+LinkedToAnotherCompany=链接到其他第三方
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:20).

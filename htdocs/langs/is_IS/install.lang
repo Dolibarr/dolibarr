@@ -203,3 +203,9 @@ MigrationProjectTaskActors=Gögn fólksflutninga til llx_projet_task_actors bor�
 MigrationProjectUserResp=Gögn fólksflutninga sviði fk_user_resp af llx_projet til llx_element_contact
 MigrationProjectTaskTime=Uppfæra tími í sekúndum
 // STOP - Lines generated via autotranslator.php tool (2010-07-10 01:20:32).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> is_IS
+MigrationNotFinished=Útgáfa af gagnagrunni er ekki alveg upp til dagsetning, svo þú verður að keyra uppfærslu ferlið aftur.
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:25).

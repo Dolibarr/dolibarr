@@ -390,3 +390,9 @@ TitanNumRefModelDesc3=定义与在本财年开始，例如：9月9个月的变�
 TitanNumRefModelDesc4=在这个例子中，我们应当对2006年9月1日发票命名FA0700001
 PlutonNumRefModelDesc1=返回一个可定制的发票号码，按确定的面具。
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+InvoiceReplacement=更换发票
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:53).

@@ -93,3 +93,9 @@ WarningNoDocumentModelActivated=Nessun modello, per la generazione di documenti,
 ErrorDatabaseParameterWrong=parametro di configurazione database <b>'%s'</b> ha un valore non compatibile da utilizzare Dolibarr (deve avere un valore <b>'%s').</b>
 ErrorNumRefModel=Esiste un riferimento nel database (%s) e non è compatibile con questa regola di numerazione. Rimuovere o rinominare record di riferimento per attivare questo modulo.
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:33:08).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> it_IT
+ErrorQtyTooLowForThisSupplier=Quantità troppo basso per un fornitore o nessun prezzo definito su questo prodotto per questo fornitore
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:56).

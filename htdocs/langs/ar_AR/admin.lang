@@ -1175,3 +1175,16 @@ ProjectsNumberingModules=مشاريع وحدة الترقيم
 ProjectsSetup=مشروع إعداد وحدة
 ProjectsModelModule=المشروع نموذج التقرير وثيقة
 // STOP - Lines generated via autotranslator.php tool ().
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+ModulesMarketPlaceDesc=يمكنك العثور على مزيد من وحدات للتحميل على مواقع الإنترنت الخارجية على شبكة الانترنت...
+ModulesMarketPlaces=مزيد من وحدات...
+DoliStoreDesc=DoliStore ، في السوق الرسمي لتخطيط موارد المؤسسات وحدات Dolibarr / خارجي إدارة علاقات العملاء
+WebSiteDesc=مزودي موقع ويب يمكنك البحث للعثور على المزيد من وحدات...
+URL=رابط
+OfficialMarketPlace=المسؤول عن وحدات السوق الخارجية / أدونس
+MAIN_MAIL_AUTOCOPY_TO=إرسال منهجية خفية الكربون نسخة من جميع رسائل البريد الإلكتروني المرسلة إلى
+FreeLegalTextOnInterventions=حرر النص على وثائق التدخل
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:43:53).

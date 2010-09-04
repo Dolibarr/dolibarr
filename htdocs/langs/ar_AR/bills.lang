@@ -409,3 +409,9 @@ TypeContact_facture_fourn_external_SHIPPING=المورد الشحن الاتصا
 TypeContact_facture_fourn_external_SERVICE=المورد خدمة الاتصال
 PDFLinceDescription=نموذج الفاتورة كاملة مع الطاقة المتجددة الاسبانية وIRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:33).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+InvoiceReplacement=استبدال الفاتورة
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:36).

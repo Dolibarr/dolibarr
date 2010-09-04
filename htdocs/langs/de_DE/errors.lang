@@ -92,3 +92,9 @@ WarningNoDocumentModelActivated=Kein Modell für die Generierung von Dokumenten,
 ErrorDatabaseParameterWrong=Datenbank-Setup-Parameter <b>'%s</b> "hat einen Wert nicht kompatibel zu" benutzen Dolibarr (müssen <b>%s</b> Wert').
 ErrorNumRefModel=Bezug besteht, in die Datenbank (%s) und ist nicht kompatibel mit dieser Nummerierung Regel. Entfernen Sie aufzeichnen oder umbenannt Verweis auf dieses Modul zu aktivieren.
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:23:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> de_DE
+ErrorQtyTooLowForThisSupplier=Menge zu gering für diesen Lieferanten oder kein Preis dieses Produkt für diesen Anbieter definiert
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:55).

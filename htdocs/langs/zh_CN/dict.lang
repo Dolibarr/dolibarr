@@ -290,3 +290,10 @@ CurrencySingXOF=郎西非国家中央银行
 CurrencyXPF=CFP法郎
 CurrencySingXPF=太平洋法郎
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+CurrencyINR=印度卢比
+CurrencySingINR=印度卢比
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:43:19).

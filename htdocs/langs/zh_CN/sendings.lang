@@ -63,3 +63,9 @@ SendingMethodCOLSUI=Colissimo
 DocumentModelSirocco=简单的送货单文档模型
 DocumentModelTyphon=更多的送货单（logo. ..完整的文档模型）
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+Shipments=出货
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:30).

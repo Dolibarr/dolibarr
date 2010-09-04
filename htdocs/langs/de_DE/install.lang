@@ -215,3 +215,9 @@ MigrationProjectTaskActors=Data Migration für llx_projet_task_actors Tisch
 MigrationProjectUserResp=Datenmigration Bereich der fk_user_resp llx_projet zu llx_element_contact
 MigrationProjectTaskTime=Update-Zeit in Sekunden ausgegeben
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:25:41).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> de_DE
+MigrationNotFinished=Version der Datenbank ist nicht ganz up to date, so müssen Sie den Upgrade-Prozess erneut zu starten.
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:22).

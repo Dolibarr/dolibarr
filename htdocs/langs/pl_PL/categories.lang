@@ -103,3 +103,15 @@ CatCusList=Lista klientów / perspektywa kategorii
 CatProdList=Lista produktów kategorii
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+MembersCategoriesArea=Członków kategorii obszaru
+MemberIsInCategories=Ten użytkownik posiada do następujących kategorii użytkowników
+MemberHasNoCategory=Członek ten nie jest w żadnym kategorii
+MembersCategoryShort=Członków kategorii
+MembersCategoriesShort=Członków kategorii
+ThisCategoryHasNoMember=Ta kategoria nie zawiera żadnych członków.
+CatMemberList=Lista członków kategorii
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:11).

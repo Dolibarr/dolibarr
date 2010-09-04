@@ -215,3 +215,16 @@ YouReceiveMailBecauseOfNotification=تلقيت هذه الرسالة لأنه ق
 YouReceiveMailBecauseOfNotification2=هذا الحدث هو ما يلي :
 ExternalSites=المواقع الخارجية
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:13).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+PredefinedMailContentSendSupplierOrder=ستجد هنا ن لدينا نظام \ __ORDERREF__ \ nSincerely \ ن \ ن
+WeightUnitpound=جنيه
+VolumeUnitounce=أوقية
+VolumeUnitlitre=لتر
+VolumeUnitgallon=غالون
+SizeUnitinch=بوصة
+SizeUnitfoot=قدم
+ImageEditor=صورة المحرر
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:48).

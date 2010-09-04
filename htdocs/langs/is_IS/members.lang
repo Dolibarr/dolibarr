@@ -159,3 +159,17 @@ NoThirdPartyAssociatedToMember=Engar þriðja aðila í tengslum við þennan
 ThirdPartyDolibarr=Dolibarr þriðja aðila
 MembersAndSubscriptions=Aðilar og Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> is_IS
+MoreActions=Fjölbreyttari aðgerðir á upptöku
+MoreActionBankDirect=Búa beinni viðskipti færslu á reikning
+MoreActionBankViaInvoice=Búa til reikning og greiðslu á reikning
+MoreActionInvoiceOnly=Búa til reikning án greiðslu
+LinkToGeneratedPages=Búa til korta heimsókn
+LinkToGeneratedPagesDesc=Þessi skjár leyfa þér að búa til PDF skrár með nafnspjöld fyrir alla aðila eða tiltekna félagi.
+DocForAllMembersCards=Búa til nafnspjöld fyrir alla meðlimi (Format fyrir framleiðsla raunverulega skipulag: <b>%s)</b>
+DocForOneMemberCards=Búa til nafnspjöld fyrir tiltekinn aðili (Format fyrir framleiðsla raunverulega skipulag: <b>%s)</b>
+DocForLabels=Mynda lak heimilisfang (Format fyrir framleiðsla raunverulega skipulag: <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:56).

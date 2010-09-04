@@ -118,3 +118,12 @@ ToDispatch=A Repartir
 // Reference language: en_US
 NotUsedForGoods=Não utilizados em bens
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+TaxModuleSetupToModifyRules=Ir para o <a href="%s">módulo de configuração</a> para modificar as regras para o cálculo
+VATReportBuildWithOptionDefinedInModule=Montantes apresentados aqui são calculadas usando as regras definidas pelo Imposto de configuração do módulo.
+SocialContributionsPayments=contribuições de pagamentos Social
+ThirdPartyMustBeEditAsCustomer=terceiro deve ser definido como um cliente
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:50).

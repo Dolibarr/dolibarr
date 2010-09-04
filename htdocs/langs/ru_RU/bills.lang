@@ -385,3 +385,30 @@ ConfirmValidatePayment=Вы уверены, что хотите проверит
 NoSupplierBillsUnpaid=Нет поставщиками счетов-фактур неоплачиваемым
 CustomerBillsUnpaid=Неоплаченные счета-фактуры клиентам
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+ClassifyCanceled=Классифицировать &#39;Заброшенные&#39;
+BillStatusCanceled=Заброшенный
+BillShortStatusCanceled=Заброшенный
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Такой выбор возможен, если счета-фактуры были обеспечены подходящей комментарии. (Например, «Только налогообложения, соответствующих цен, которые были фактически уплаченной дает права на вычет»)
+AlreadyPaidNoCreditNotesNoDeposits=Уже выплаченные (без кредитные ноты и депозиты)
+RelatedBill=Связанные счет-фактура
+RelatedBills=Связанные счетов
+ValidateInvoice=Проверка счета
+Cash=Наличные деньги
+Reported=Задерживается
+DisabledBecausePayments=Не возможно, поскольку есть некоторые платежи
+CantRemovePaymentWithOneInvoicePaid=Не удается удалить оплаты поскольку есть по крайней мере, на счета оплачивается классифицированы
+ExpectedToPay=Ожидаемые оплаты
+PayedByThisPayment=Платные этой оплаты
+TypeContact_facture_internal_SALESREPFOLL=Представитель следующие меры счета клиента
+TypeContact_facture_external_BILLING=свяжитесь со счета
+TypeContact_facture_external_SHIPPING=обратитесь в службу доставки
+TypeContact_facture_external_SERVICE=контакта с клиентами
+TypeContact_facture_fourn_internal_SALESREPFOLL=Представитель следующие меры фактуры поставщика
+TypeContact_facture_fourn_external_BILLING=Поставщик счет контакта
+TypeContact_facture_fourn_external_SHIPPING=Поставщик доставка контакты
+TypeContact_facture_fourn_external_SERVICE=Поставщик услуг связи
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:38).

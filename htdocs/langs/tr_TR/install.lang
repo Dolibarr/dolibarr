@@ -484,3 +484,9 @@ MigrationProjectTaskActors=llx_projet_task_actors için veri göç tablosu
 MigrationProjectUserResp=llx_projet Veri göç alan fk_user_resp llx_element_contact için
 MigrationProjectTaskTime=Update zaman saniyede harcanan
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:41:39).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+MigrationNotFinished=Sürüm veritabanı tamamen güncel değil, tekrar yükseltme işlemi çalıştırmak zorundasınız.
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:41).

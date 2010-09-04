@@ -105,3 +105,9 @@ ConfirmDeleteContractLine=Вы уверены, что хотите удалит�
 PaymentRenewContractId=Продлить контракт линия (номер %s)
 ExpiredSince=Срок действия
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+RelatedContracts=Связанные контрактов
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:52).

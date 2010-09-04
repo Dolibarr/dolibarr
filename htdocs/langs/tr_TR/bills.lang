@@ -378,3 +378,22 @@ TitanNumRefModelDesc3=Mali yılın başlama, örneğin: 9 Eylül için de aylık
 TitanNumRefModelDesc4=Bu örnekte, 1 Eylül 2006 tarihinde bir fatura FA0700001 adlı sahiptir
 PlutonNumRefModelDesc1=Özelleştirilebilir bir fatura numarasını tanımlı bir maske göre dön.
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+RelatedBill=İlgili fatura
+RelatedBills=Ilgili faturaların
+DisabledBecausePayments=bazı ödemeler olduğundan Mümkün değil
+CantRemovePaymentWithOneInvoicePaid=Eğer bu yana ödeme çıkarmak Can&#39;t fatura en az geçerli ödenir sınıflandırılmış
+ExpectedToPay=Beklenen ödeme
+PayedByThisPayment=Bu ödeme tarafından ödenir
+TypeContact_facture_internal_SALESREPFOLL=Temsilci aşağıdaki-up müşteriye fatura
+TypeContact_facture_external_BILLING=Müşteri fatura temas
+TypeContact_facture_external_SHIPPING=Müşteri nakliye iletişim
+TypeContact_facture_external_SERVICE=Temas kurun müşteri hizmetlerimizle
+TypeContact_facture_fourn_internal_SALESREPFOLL=Temsilci aşağıdaki-up tedarikçi faturası
+TypeContact_facture_fourn_external_BILLING=Tedarikçi faturası temas
+TypeContact_facture_fourn_external_SHIPPING=Tedarikçi nakliye temas
+TypeContact_facture_fourn_external_SERVICE=Tedarikçi servis
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:50).

@@ -55,3 +55,12 @@ SendingMethodCOLSUI=Colissimo
 # ModelDocument
 DocumentModelSirocco=Voorbeeld voor eenvoudige ontvangstbewijs
 DocumentModelTyphon=Model ontvangstbewijs volledige levering (logo...)
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+Shipments=Zendingen
+DocumentModelMerou=Merou A5 model
+DateDeliveryPlanned=Geschaafd datum van levering
+DateReceived=Datum van aflevering ontvangen
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:25).

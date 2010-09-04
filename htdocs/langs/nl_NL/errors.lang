@@ -63,3 +63,17 @@ WarningsOnXLines=Waarschuwing op bronregel <b>%s</b>
 ErrorFileIsInfectedWithAVirus=Het antivirus kon dit bestand niet valideren (het waarschijnlijk is geÃ¯nfecteerd door een virus)!
 ErrorSpecialCharNotAllowedForField=Speciale tekens zijn niet teogestaan voor het " %s " gebied 
 WarningNoDocumentModelActivated=Geen model, voor het maken van het document, is geactiveerd. Een model wordt gekozen tot standaard worden, totdat de module configuratie is gecontroleert.
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+ErrorFileAlreadyExists=Een bestand met deze naam bestaat reeds.
+ErrorPartialFile=Het bestand is niet volledig ontvangen door de server.
+ErrorNoTmpDir=Tijdelijke directy sssss bestaat niet.
+ErrorUploadBlockedByAddon=Upload geblokkeerd door een PHP / Apache-plugin.
+ErrorFileSizeTooLarge=Bestand is te groot.
+WarningSafeModeOnCheckExecDir=Waarschuwing, optie PHP <b>safe_mode</b> is op zo-opdracht moet worden opgeslagen in een directory verklaard door php parameter <b>safe_mode_exec_dir.</b>
+ErrorDatabaseParameterWrong=Database Setup parameter <b>&#39;sssss&#39;</b> heeft een waarde van niet compatibel is met het gebruik Dolibarr (waarde moet hebben <b>sssss</b> &#39;).
+ErrorNumRefModel=Een verwijzing in de database bestaat (sssss) en is niet compatibel met deze regel nummering. Verwijder record of een andere naam een verwijzing naar het activeren van deze module.
+ErrorQtyTooLowForThisSupplier=Hoeveelheid te laag voor deze leverancier of geen prijs die over dit product voor deze leverancier
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:00).

@@ -411,3 +411,16 @@ ExternalSites=Harici siteler
 CalculatedWeight=计算重量
 CalculatedVolume=计算量
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:40:30).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+PredefinedMailContentSendSupplierOrder=在这里你会发现我们的订单__ORDERREF__ \ ñ \ nSincerely \ ñ \ ñ
+WeightUnitpound=英镑
+VolumeUnitounce=盎司
+VolumeUnitlitre=升
+VolumeUnitgallon=加仑
+SizeUnitinch=英寸
+SizeUnitfoot=脚
+ImageEditor=图像编辑器
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:19).

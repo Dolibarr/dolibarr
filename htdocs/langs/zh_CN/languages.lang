@@ -33,3 +33,14 @@ Language_ru_RU=俄
 Language_tr_TR=土耳其
 Language_sl_SL=斯洛文尼亚
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+Language_en_IN=英国（印度）
+Language_es_AR=西班牙语（阿根廷）
+Language_is_IS=冰岛
+Language_sv_SV=瑞典
+Language_zh_CN=中文
+Language_is_IS=冰岛
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:32).

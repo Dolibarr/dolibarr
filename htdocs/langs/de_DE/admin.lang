@@ -1177,3 +1177,16 @@ ProjectsNumberingModules=Projekte Nummerierung Modul
 ProjectsSetup=Projekt-Setup-Modul
 ProjectsModelModule=Projekt-Berichts Musterdokument
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:24:52).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> de_DE
+ModulesMarketPlaceDesc=Hier finden Sie weitere Module auf externe Web-Sites im Internet herunterladen ...
+ModulesMarketPlaces=Weitere Module ...
+DoliStoreDesc=DoliStore, die offizielle Marktplatz für Dolibarr ERP / CRM externe Module
+WebSiteDesc=Website-Anbietern können Sie die Suche auf mehrere Module finden ...
+URL=Link
+OfficialMarketPlace=Offizielle Marktplatz für externe Module / addons
+MAIN_MAIL_AUTOCOPY_TO=Senden Sie systematisch eine versteckte Kohlenstoff-Kopie aller gesendeten E-Mails an
+FreeLegalTextOnInterventions=Freitext-Dokumente über die Intervention
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:45:02).

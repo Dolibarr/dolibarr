@@ -160,3 +160,15 @@ NewRefForClone=Ref. av nye produkt / tjeneste
 CustomerPrices=Kunder priser
 SuppliersPrices=Leverandører priser
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:46:52).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nb_NO
+Sell=Salg
+Buy=Kjøp
+OnBuy=Kjøpt
+ProductStatusOnBuy=Tilgjengelig
+ProductStatusNotOnBuy=Foreldet
+ProductStatusOnBuyShort=Tilgjengelig
+ProductStatusNotOnBuyShort=Foreldet
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:17).

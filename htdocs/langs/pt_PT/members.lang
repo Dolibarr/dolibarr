@@ -151,3 +151,22 @@ MemberId=Estados-id
 PaymentSubscription=Nova contribuição pagamento
 MembersAndSubscriptions=Deputados e Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=EMail assunto para autosubscription membro
+DescADHERENT_AUTOREGISTER_MAIL=E-mail para autosubscription membro
+DescADHERENT_CARD_TYPE=Formato de cartões de página
+DescADHERENT_CARD_TEXT_RIGHT=Texto impresso em cartões de membro (alinhar à direita)
+DescADHERENT_MAILMAN_LISTS=Lista (s) para insription automática de novos membros (separadas por vírgula)
+MoreActions=Complementares de acção sobre a gravação
+MoreActionBankDirect=Criar um registro de transação direto na conta
+MoreActionBankViaInvoice=Criar uma fatura e pagamento por conta
+MoreActionInvoiceOnly=Criar uma fatura sem pagamento
+LinkToGeneratedPages=Gera cartões de visita
+LinkToGeneratedPagesDesc=Esta tela permite gerar arquivos PDF com os cartões de negócio para todos os seus membros ou de um membro particular.
+DocForAllMembersCards=Gerar cartões de visita para todos os membros (Formato de saída realmente configuração: <b>%s)</b>
+DocForOneMemberCards=Gerar cartões de visita para um determinado membro (Formato de saída realmente configuração: <b>%s)</b>
+DocForLabels=Gerar folhas de endereço (Formato de saída realmente configuração: <b>%s)</b>
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:29).

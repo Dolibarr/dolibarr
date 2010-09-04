@@ -181,3 +181,15 @@ NewRefForClone=Ref. uuden tuotteen tai palvelun
 CustomerPrices=Asiakkaat hinnat
 SuppliersPrices=Toimittajat hinnat
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:33).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> fi_FI
+Sell=Myynti
+Buy=Ostot
+OnBuy=Ostettu
+ProductStatusOnBuy=Saatavissa
+ProductStatusNotOnBuy=Vanhentunut
+ProductStatusOnBuyShort=Saatavissa
+ProductStatusNotOnBuyShort=Vanhentunut
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:11).

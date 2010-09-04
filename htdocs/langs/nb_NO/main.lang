@@ -591,9 +591,8 @@ Resources=Ressurser
 Source=Kilde
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:06:26).
 
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 12:23:40).
-// Reference language: en_US
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> nb_NO
 Prefix=Prefiks
 Day1=Mandag
 Day2=Tirsdag
@@ -602,4 +601,4 @@ Day4=Torsdag
 Day5=Fredag
 Day6=Lørdag
 Day0=Søndag
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:36:50).
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:21:09).

@@ -84,3 +84,9 @@ ConfirmDeleteWarehouse=你确定要删除仓库<b>％s吗</b> ？
 PersonalStock=％s的个人股票
 ThisWarehouseIsPersonalStock=这个仓库代表的％s％的个人股票期权
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+WarehouseEdit=修改仓库
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:05).

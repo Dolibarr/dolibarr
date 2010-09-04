@@ -139,3 +139,9 @@ OrderToProcess=Ordine di processo
 PDFEdisonDescription=Un modello semplice ordine
 PDFQuevedoDescription=Un modello di ordine completo con lo spagnolo RE e IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:29).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> it_IT
+DispatchSupplierOrder=Ricezione ordine fornitore %s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:05).

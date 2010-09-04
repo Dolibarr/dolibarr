@@ -1096,3 +1096,76 @@ YouCanDownloadFreeDatFileTo=Size %s . de MaxMind GeoIP ülke dosyasının bir <b
 YouCanDownloadAdvancedDatFileTo=<b>Ayrıca, güncellemeler ile,%</b> de MaxMind GeoIP ülke dosyasının s daha <b>tam sürümünü indirebilirsiniz</b>
 TestGeoIPResult=Bir dönüşüm IP Test -> ülke
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> tr_TR
+FormToTestFileUploadForm=Form dosyası test upload (setup göre)
+PreviewNotAvailable=Önizleme mevcut değil
+AntiVirusCommand=antivirus komuta tam yolu
+AntiVirusCommandExample=Örnek ClamWin için: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Örnek ClamAV için: / usr / bin / clamscan
+AntiVirusParam=komut satırında Diğer parametreler
+AntiVirusParamExample=Örnek ClamWin için: - database = &quot;C: \ FilesWindows (x86) \ ClamWin \ lib&quot;
+IgnoreDuplicateRecords=kayıtları (INSERT IGNORE) yinelenen hataları yoksay
+ModulesMarketPlaceDesc=Daha modülleri internette dış web sitelerinde download bulabilirsiniz ...
+ModulesMarketPlaces=Daha modülleri ...
+DoliStoreDesc=DoliStore, Dolibarr ERP / CRM dış modülleri için resmi pazar yeri
+WebSiteDesc=Web sitesi sağlayıcılar daha modülleri bulmak için arama yapabilir ...
+URL=Bağlantı
+OfficialMarketPlace=dış modules / addons için Resmi pazar yeri
+MAIN_MAIL_AUTOCOPY_TO=tüm gönderilen e-postaları için Gönder sistematik gizli karbon kopya
+SubmitTranslation=tam bunun için eğer çeviri değildir dil ya da hataları bulmak, sen forum www.dolibarr.org bundan edebilirsiniz doğru düzenleme dosyalarını dizine <b>diller</b> dosyaları teslim olarak ve <b>Ssss /.</b>
+FindPackageFromWebSite=) Size (resmi web sitesi Ssss örneğin, istediğiniz özelliği sağlayan bir paketi bulun.
+LanguageFilesCachedIntoShmopSharedMemory=Dosyalar. Paylaşılan belleğe lang
+ExamplesWithCurrentSetup=mevcut kurulum çalışan örnekleri
+ListOfDirectories=OpenDocument Listesi dizinleri şablonları
+ListOfDirectoriesForModelGenODT=dizinleri içeren Listesi OpenDocument biçiminde dosyaları şablonlar. <br><br> Burada dizin tam yolunu yazınız. <br> eah listesi arasında bir satırbaşı ekleyin. <br> , GED için dizin için ilave bir modül <b>yourdirectoryname</b> eklemek <b>/ ecm</b> burada <b>DOL_DATA_ROOT.</b> <br><br> Dosyalar dizinler o sona <b>ermelidir. Odt.</b>
+NumberOfModelFilesFound=Sayı ODT o dizinlerde bulunan dosyalar şablonları
+ExampleOfDirectoriesForModelGen=sözdizimi örnekleri: <br> c: \ mydir <br> / Home / mydir <br> DOL_DATA_ROOT / ecm / ecmdir
+FirstnameNamePosition=Pozisyon Isim ve / isim
+Module100Name=ExternalSite
+Module100Desc=Dolibarr menüler içine dahil herhangi bir harici web sitesi ve Dolibarr çerçeve içine görünümü
+Permission13=Unvalidate faturalar
+Permission36=/ Gizli ürünler yönetmek bak
+Permission141=Oku görevleri
+Permission142=Create / görevleri değiştirin
+Permission144=Sil görevleri
+Permission536=/ Gizli servisleri yönetmek bak
+LocalTax1ManagementES=RE Yönetimi
+LocalTax1IsUsedDescES=gıyaben RE oran oluştururken umutları, faturalar, sipariş vs aktif standart kural izleyin: <br> te alıcı RE için default = 0 RE tabi değilse. kural sonu. <br> Alıcı daha sonra varsayılan RE RE tabi varsa. kural sonu. <br>
+LocalTax1IsNotUsedDescES=Varsayılan olarak önerilen RE 0&#39;dır. kural sonu.
+LocalTax1IsUsedExampleES=İspanya&#39;da onlar profesyoneller İspanyol IAE bazı belirli bölümlerini tabidir.
+LocalTax1IsNotUsedExampleES=İspanya&#39;da onlar profesyonel ve toplumlar ve İspanyol IAE belirli bölümlerini tabidir.
+LocalTax2ManagementES=IRPF Yönetimi
+LocalTax2IsUsedDescES=gıyaben RE oran oluştururken umutları, faturalar, sipariş vs aktif standart kural izleyin: <br> satıcı IRPF, sonra IRPF default = 0 tabi değilse. kural sonu. <br> Satıcı IRPF daha sonra varsayılan IRPF tabi ise. kural sonu. <br>
+LocalTax2IsNotUsedDescES=Varsayılan olarak önerilen IRPF 0&#39;dır. kural sonu.
+LocalTax2IsUsedExampleES=İspanya&#39;da, serbest ve hizmetler sunmak ve modüllerin vergi sistemi seçen şirketler bağımsız profesyoneller.
+LocalTax2IsNotUsedExampleES=İspanya&#39;da oldukları modüllerin vergi sistemine tabi değildir Bussines.
+DatabaseUser=Veritabanı kullanıcı
+DatabasePassword=Veritabanı şifresi
+EnableShowLogo=soldaki Show logo menü
+MAIN_ROUNDING_RULE_TOT=aralığı yuvarlaklaşma Boyutu (yuvarlama tabanı 10 dan başka bir şey yapılır nadir ülkeler için)
+UnitPriceOfProduct=Bir ürünün Net birim fiyat
+TotalPriceAfterRounding=net / fıçı / vergi) dahil yuvarlamadan sonra toplam fiyat (
+SimpleNumRefModelDesc=Dönüş yy yıl format %syymm-nnnn ile referans numarası mm ayıdır ve nnnn delik olmayan bir dizi ve hiçbir araştırma ile
+ListOfEntities=kuruluşlar listesi
+AddEntity=varlık ekle
+EditEntity=Edit varlık
+UsersSetup=Kullanıcılar modülü kurulumu
+UserMailRequired=EMail yeni bir kullanıcı yaratmak için gereken
+ModelModules=Belgeler şablonları
+DocumentModelOdt=OpenDocuments dan oluşturmak belgeleri (şablonlar. OpenOffice, Koffice, TextEdit ,...) için ODT resimler
+WatermarkOnDraft=Filigran taslak belge
+FreeLegalTextOnInterventions=müdahale belgeler üzerinde Serbest metin
+LDAPFieldGroupMembers=Grup üyeleri
+LDAPFieldGroupMembersExample=Örnek: uniqueMember
+DonationsReceiptModel=Şablon bağış makbuzu
+MailingEMailError=Dönüş EMail (Hataları yapılır) hataları ile e-postalar için
+PastDelayVCalExport=büyük olay ihracat yapmayın
+SuppliersCommandModel=Komple bir tedarikçi sipariş (logo. .. of) şablonu
+NumberWordsSetup=NumberWords modülü kurulumu
+DescNumberWords=Bu modül sayısı dönüştürmek ya da miktarı tam karakter fonksiyonları sağlar. Ayrıca şu dize olaylar __TOTAL_TTC_WORDS__, yerini alacak __TOTAL_HT_WORDS__ veya __TOTAL_VAT_WORDS__ toplam dahil tarafından. vergi, onlara (faturada özgür metin ... kullanan tüm textes içine vergi veya KDV toplam toplam net)
+ProjectsNumberingModules=Projeler numaralandırma modülü
+ProjectsSetup=Proje modülü kurulumu
+ProjectsModelModule=Proje raporu belge model
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:07).

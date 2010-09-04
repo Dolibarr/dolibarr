@@ -138,3 +138,9 @@ AddDeliveryCostLine=添加交货成本线，显示该命令的重量
 PDFEinsteinDescription=一个完整的命令模式（logo. ..）
 PDFEdisonDescription=一份简单的订购模式
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+DispatchSupplierOrder=接收供应商的订单%s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:42).

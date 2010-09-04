@@ -62,3 +62,11 @@ NoRecordedProspects=Ingen registrert utsikter
 NoContractedProducts=Ingen produkter / tjenester innleide
 NoRecordedContracts=Ingen registrert kontrakter
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:20).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nb_NO
+BoxTitleLastModifiedSuppliers=Sist endret %s leverandører
+BoxTitleLastModifiedCustomers=Sist endret %s kunder
+BoxTitleLastModifiedProspects=Sist %s endret utsiktene
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:37).

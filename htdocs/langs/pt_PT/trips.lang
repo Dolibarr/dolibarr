@@ -19,23 +19,8 @@ TF_LUNCH=Alimentação
 TF_TRIP=Viagem
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-ListTripsAndExpenses=Lista de viagens e gastos
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 12:07:10).
-// Reference language: en_US
-TripsAndExpensesStatistics=Koszty podróży i statystyki
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> pt_PT
 TripsAndExpensesStatistics=Viagens e estatísticas despesas
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:07:13).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 12:07:33).
-// Reference language: en_US
-TripsAndExpensesStatistics=Turer og utgifter statistikk
-ListTripsAndExpenses=Liste over turer og utgifter
-TripsAndExpensesStatistics=Uitstapjes en kosten statistieken
-TripsAndExpensesStatistics=Uitstapjes en kosten statistieken
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:07:33).
+ListTripsAndExpenses=Lista de viagens e despesas
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:12).

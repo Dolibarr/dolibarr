@@ -282,3 +282,28 @@ CountryCH=Szwajcaria
 CountryMA=Maroko
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pl_PL
+CurrencySingAUD=AU Dollar
+CurrencySingCAD=CAN Dollar
+CurrencySingCHF=Frank szwajcarski
+CurrencySingEUR=Euro
+CurrencySingFRF=Frank francuski
+CurrencySingGBP=GB Pound
+CurrencyINR=Rupii indyjskich
+CurrencySingINR=Rupia indyjska
+CurrencySingMAD=Dirham
+CurrencySingMGA=Ariary
+CurrencyMUR=Mauritius rupii
+CurrencySingMUR=rupia Mauritius
+CurrencyNOK=Koron norweskich
+CurrencySingNOK=Korona norweska
+CurrencySingTND=Dinar tunezyjski
+CurrencySingUSD=US Dollar
+CurrencySingXAF=Frank CFA BEAC
+CurrencySingXOF=Frank CFA BCEAO
+CurrencyXPF=Franków CFP
+CurrencySingXPF=Frank CFP
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:59).

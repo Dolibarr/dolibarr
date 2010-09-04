@@ -138,3 +138,9 @@ PDFEinsteinDescription=Vzorec popolnega naročila (logo...)
 PDFEdisonDescription=Vzorec enostavnega naročila
 PDFQuevedoDescription=Vzorec naročila s španskim RE in IRPF
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> sl_SL
+DispatchSupplierOrder=Prejemanje dobavitelj da %s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:32).

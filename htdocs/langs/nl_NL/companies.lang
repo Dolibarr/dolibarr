@@ -294,3 +294,20 @@ MonkeyNumRefModelDesc=Geeft het nummer als %syymm-nnnn klanten-codes en %syymm-n
 # Leopard
 LeopardNumRefModelDesc=Klant/leverancier-code is gratis. Deze code kan te allen tijde worden gewijzigd.
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nl_NL
+ProfId1IN=Prof Id 1 (TIN)
+ProfId2IN=Prof ID 2
+ProfId3IN=Prof Id 3
+ProfId4IN=Prof Id 4
+ProfId1AR=Prof Id 1 (Cuit / Cuil)
+ProfId2AR=Prof Id 2 (Revenu woestelingen)
+ProfId3AR=-
+ProfId4AR=-
+JuridicalStatus200=Onafhankelijk
+ListSuppliersShort=Lijst van de leveranciers
+ListProspectsShort=Lijst van de vooruitzichten
+ListCustomersShort=Lijst van de klanten
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:39:34).

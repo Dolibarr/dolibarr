@@ -77,3 +77,9 @@ WarningNoDocumentModelActivated=Ingen modell, for dokument generasjon, har blitt
 ErrorDatabaseParameterWrong=Database setup parameter <b>'%s</b> "har en verdi ikke forenlig å bruke Dolibarr (må ha verdi' <b>%s</b> ').
 ErrorNumRefModel=En referanse finnes i databasen (%s), og er ikke kompatibel med denne nummerering regelen. Fjern posten eller omdøpt referanse for å aktivere denne modulen.
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:51:32).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> nb_NO
+ErrorQtyTooLowForThisSupplier=Kvantum er for lavt for denne leverandøren eller pris ikke definert på dette produktet for denne leverandøren
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:57).

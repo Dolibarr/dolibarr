@@ -176,3 +176,15 @@ NewRefForClone=المرجع. من المنتجات الجديدة / خدمة
 CustomerPrices=أسعار العملاء
 SuppliersPrices=أسعار الموردين
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:06).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+Sell=مبيعات
+Buy=مشتريات
+OnBuy=شراؤها
+ProductStatusOnBuy=متاح
+ProductStatusNotOnBuy=عفا عليها الزمن
+ProductStatusOnBuyShort=متاح
+ProductStatusNotOnBuyShort=عفا عليها الزمن
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:07).

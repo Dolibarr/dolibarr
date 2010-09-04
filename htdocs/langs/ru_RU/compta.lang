@@ -134,3 +134,13 @@ ShowVatPayment=Показать оплате НДС
 SupplierAccountancyCode=Поставщик бухгалтерских код
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
 
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ru_RU
+TaxModuleSetupToModifyRules=Перейти на <a href="%s">модуль установки</a> для изменения правил расчета
+VATReportBuildWithOptionDefinedInModule=Суммы, показанные здесь, рассчитанного с использованием установленных правил налоговыми модуля установки.
+SocialContributionsPayments=Социальные отчисления платежей
+OptionVatInfoModuleComptabilite=Примечание: Для материальных ценностей, она должна использовать даты доставки будет более справедливым.
+ThirdPartyMustBeEditAsCustomer=Третий участник должен быть определен в качестве клиента
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:53).
