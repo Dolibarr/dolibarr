@@ -119,8 +119,8 @@ class Canvas
 			$this->canvas = $regs[1];
 
 			// For compatibility
-			if ($this->module == 'thirdparty') $childmodule = $this->aliasmodule = 'societe';
-			if ($this->targetmodule == 'thirdparty') $targetmodule = $this->aliastargetmodule = 'societe';
+			if ($childmodule == 'thirdparty') $childmodule = $this->aliasmodule = 'societe';
+			if ($targetmodule == 'thirdparty') $targetmodule = 'societe';
 		}
 
 		//print 'childmodule='.$childmodule.' targetmodule='.$targetmodule.'<br>';
@@ -139,11 +139,11 @@ class Canvas
 			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php';
 			include_once($controlclassfile);
 
-			// Instantiate canvas controller class
+			// Instantiate actions class (controller)
 			$controlclassname = ucfirst($this->card).ucfirst($this->canvas);
 			$this->control = new $controlclassname($this->db);
 
-			// Instantiate model class
+			// Instantiate dataservice class (model)
 			$modelclassname = ucfirst($this->targetmodule).ucfirst($this->canvas);
 			$this->control->object = new $modelclassname($this->db);
 
