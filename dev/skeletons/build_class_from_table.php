@@ -357,6 +357,7 @@ if ($fp)
 	fclose($fp);
 	print "\n";
 	print "File '".$outfile."' has been built in current directory.\n";
+	print "Current dir is ".getcwd()."\n";
 }
 else $error++;
 
