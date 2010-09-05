@@ -975,13 +975,10 @@ class BonPrelevement extends CommonObject
             if (!$error)
             {
                 /*
-                 * Bon de Prelevement
-                 *
-                 *
+                 * Withdraw receipt
                  */
 
-                dol_syslog("Debut prelevement");
-                dol_syslog("Nombre de factures ".sizeof($factures_prev));
+                dol_syslog("Debut prelevement - Nombre de factures ".sizeof($factures_prev));
 
                 if (sizeof($factures_prev) > 0)
                 {
@@ -1233,7 +1230,7 @@ class BonPrelevement extends CommonObject
 
 
     /**
-     *  Write recipient of withdraw
+     *  Write recipient of withdraw (me)
      *  @param      rowid       Id of line
      *  @param      client_nom  Name of customer
      *  @param      rib_banque
@@ -1302,7 +1299,7 @@ class BonPrelevement extends CommonObject
 
 
     /**
-     *  Write sender (me)
+     *  Write sender (customer)
      */
     function EnregEmetteur()
     {

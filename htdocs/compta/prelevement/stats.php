@@ -45,30 +45,29 @@ llxHeader('',$langs->trans("WithdrawStatistics"));
 
 print_fiche_titre($langs->trans("WithdrawStatistics"));
 
-
+// Define total and nbtotal
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE pl.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
-
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	if ( $num >0 )
-	{
-		$row = $db->fetch_row($resql);
-		$total = $row[0];
-		$nbtotal = $row[1];
-	}
+    if ( $num > 0 )
+    {
+        $row = $db->fetch_row($resql);
+        $total = $row[0];
+        $nbtotal = $row[1];
+    }
 }
+
 
 /*
  * Stats
- *
  */
 $sql = "SELECT sum(pl.amount), count(pl.amount), pl.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -142,30 +141,29 @@ else
 print '<br>';
 print_titre($langs->trans("WithdrawRejectStatistics"));
 
-
+// Define total and nbtotal
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE pl.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
-$sql.= " WHERE pl.statut = 3";
+$sql.= " AND pl.statut = 3";
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	if ( $num > 0 )
-	{
-		$row = $db->fetch_row($resql);
-		$total = $row[0];
-		$nbtotal = $row[1];
-	}
+    if ( $num > 0 )
+    {
+        $row = $db->fetch_row($resql);
+        $total = $row[0];
+        $nbtotal = $row[1];
+    }
 }
 
 /*
  * Stats sur les rejets
- *
  */
 $sql = "SELECT sum(pl.amount), count(pl.amount) as cc, pr.motif";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -225,7 +223,7 @@ if ($resql)
 	print price($total);
 	print '</td><td align="right">&nbsp;</td>';
 	print "</tr></table>";
-	$db->free();
+	$db->free($resql);
 }
 else
 {
