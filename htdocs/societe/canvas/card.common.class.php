@@ -27,14 +27,18 @@
  *	\class      CardCommon
  *	\brief      Classe permettant la gestion des tiers par defaut
  */
-class CardCommon extends Canvas
+class CardCommon
 {
+	var $db;
+	
 	//! Numero d'erreur Plage 1280-1535
 	var $errno = 0;
 	//! Template container
 	var $tpl = array();
 	//! Object container
 	var $object;
+	//! Canvas
+	var $canvas;
 
 	/**
 	 *    Constructeur de la classe
@@ -335,12 +339,11 @@ class CardCommon extends Canvas
     }
     
     /**
-     *    Charge les actions
+     *    Load data control
      */
-    function load_actions($socid)
+    function loadControl($socid)
     {
     	global $conf, $user, $langs;
-    	global $canvas;
     	
     	if ($_POST["getcustomercode"])
     	{
@@ -362,9 +365,7 @@ class CardCommon extends Canvas
     		$error=0;
     		
     		if ($_POST["action"] == 'update')
-    		{
-    			$this->load_control();
-    			
+    		{	
     			// Load properties of company
     			$this->object->fetch($socid);
     		}
@@ -534,8 +535,7 @@ class CardCommon extends Canvas
         			}
         			
         			$oldsoccanvas = new Canvas($this->db);
-        			$oldsoccanvas->load_canvas('card',$canvas);
-        			$oldsoccanvas->load_control();
+        			$oldsoccanvas->getCanvas('card',$this->canvas);
         			$result=$oldsoccanvas->fetch($socid);
         			
         			// To not set code if third party is not concerned. But if it had values, we keep them.
@@ -563,23 +563,20 @@ class CardCommon extends Canvas
         
         if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->supprimer)
         {
-        	$soccanvas = new Canvas($this->db);
-        	$soccanvas->load_canvas('card',$canvas);
-        	$soccanvas->load_control();
-        	$soccanvas->fetch($socid);
+        	$this->object->fetch($socid);
 
-        	$result = $soccanvas->control->object->delete($socid);
+        	$result = $this->object->delete($socid);
         	
         	if ($result >= 0)
         	{
-        		Header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$soccanvas->control->object->nom."");
+        		Header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$this->object->nom."");
         	    exit;
         	}
         	else
         	{
         		$reload = 0;
         		$langs->load("errors");
-        		$mesg=$langs->trans($soccanvas->control->object->error);
+        		$mesg=$langs->trans($this->object->error);
         		$_GET["action"]='';
         	}
         }
@@ -597,11 +594,8 @@ class CardCommon extends Canvas
         	{
         		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
         		
-        		$soccanvas = new Canvas($this->db);
-        		$soccanvas->load_canvas('card',$canvas);
-        		$soccanvas->load_control();
-        		$soccanvas->fetch($socid);
-        		$soccanvas->control->object->fetch_thirdparty();
+        		$this->object->fetch($socid);
+        		$this->object->fetch_thirdparty();
         		
             	/*if ($_REQUEST['model'])
              	{
@@ -613,13 +607,13 @@ class CardCommon extends Canvas
         		$outputlangs = $langs;
         		$newlang='';
         		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-        		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$soccanvas->object->default_lang;
+        		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$this->object->default_lang;
         		if (! empty($newlang))
         		{
         			$outputlangs = new Translate("",$conf);
         			$outputlangs->setDefaultLang($newlang);
         		}
-        		$result=thirdparty_doc_create($this->db, $soccanvas->control->object->id, '', $_REQUEST['model'], $outputlangs);
+        		$result=thirdparty_doc_create($this->db, $this->object->id, '', $_REQUEST['model'], $outputlangs);
         		if ($result <= 0)
         		{
         			dol_print_error($this->db,$result);
@@ -627,7 +621,7 @@ class CardCommon extends Canvas
         		}
         		else
         		{
-        			Header ('Location: '.$_SERVER["PHP_SELF"].'?socid='.$soccanvas->control->object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+        			Header ('Location: '.$_SERVER["PHP_SELF"].'?socid='.$this->object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
         			exit;
         		}
         	}

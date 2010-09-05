@@ -29,13 +29,18 @@
  */
 class CardDefault extends CardCommon
 {
+	var $db;
+	
+	//! Canvas
+	var $canvas;
+	
 	/**
 	 *    Constructeur de la classe
 	 *    @param	DB		Handler acces base de donnees
 	 */
 	function CardDefault($DB)
 	{
-		$this->db 				= $DB;
+		$this->db = $DB;
 	}
 
 	/**
@@ -55,11 +60,11 @@ class CardDefault extends CardCommon
 	}
 	
 	/**
-	 * 	Load actions
+	 * 	Load data control
 	 */
-	function load_actions($socid)
+	function loadControl($socid)
 	{
-		$return = parent::load_actions($socid);
+		$return = parent::loadControl($socid);
 		
 		return $return;
 	}

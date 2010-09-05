@@ -33,8 +33,8 @@ class ThirdPartyIndividual extends Societe
 	var $errno = 0;
 
 	/**
-	 *    \brief      Constructeur de la classe
-	 *    \param      DB          Handler acces base de donnees
+	 *    Constructeur de la classe
+	 *    @param      DB          Handler acces base de donnees
 	 */
 	function ThirdPartyIndividual($DB)
 	{

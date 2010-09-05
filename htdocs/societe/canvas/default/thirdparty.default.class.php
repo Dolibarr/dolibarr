@@ -29,6 +29,8 @@
  */
 class ThirdPartyDefault extends Societe
 {
+	var $db;
+	
 	//! Numero d'erreur Plage 1280-1535
 	var $errno = 0;
 
@@ -43,7 +45,7 @@ class ThirdPartyDefault extends Societe
 
 	/**
 	 *    Lecture des donnees dans la base
-	 *    @param	id          Product id
+	 *    @param	id          Element id
 	 *    @param	action		Type of action
 	 */
 	function fetch($id='', $action='')

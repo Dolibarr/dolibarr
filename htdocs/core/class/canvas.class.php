@@ -31,6 +31,8 @@
 
 class Canvas
 {
+	var $db;
+	
 	var $card;
 	var $canvas;
 	var $module;
@@ -69,6 +71,22 @@ class Canvas
 	}
 	
 	/**
+     *    Set action type
+     */
+	function setAction($action='view')
+	{
+		return $this->action = $action;
+	}
+	
+	/**
+	 * 	Load data control
+	 */
+	function loadControl($socid)
+	{
+		return $this->control->loadControl($socid);
+	}
+	
+	/**
 	 * 	Fetch object values
 	 * 	@param		id			Element id
 	 */
@@ -78,14 +96,15 @@ class Canvas
 	}
 
 	/**
-	 * 	Load canvas
+	 * 	Get card and canvas type
 	 * 	@param		card	 	Type of card
 	 * 	@param		canvas		Name of canvas (ex: default@mymodule)
 	 */
-	function load_canvas($card,$canvas)
+	function getCanvas($card,$canvas)
 	{
 		global $langs;
 
+		$error='';
 		$this->card = $card;
 
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
@@ -102,7 +121,8 @@ class Canvas
 			return 0;
 		}
 
-		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->module.'.'.$this->canvas.'.class.php'))
+		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->module.'.'.$this->canvas.'.class.php') &&
+			file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php'))
 		{
 			// Include model class
 			$modelclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->module.'.'.$this->canvas.'.class.php';
@@ -112,32 +132,10 @@ class Canvas
 			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->card.'.common.class.php';
 			include_once($controlclassfile);
 			
-			// Template dir
-			$this->template_dir = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/tpl/';
-		}
-		else
-		{
-			$this->error = $langs->trans('CanvasIsInvalid');
-			return 0;
-		}
-	}
-	
-	/**
-	 * 	Load controller
-	 * 	@param	action	Type of action
-	 */
-	function load_control($action='null')
-	{
-		global $langs;
-		
-		$this->action = $action;
-
-		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php'))
-		{
 			// Include canvas controller class
 			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php';
 			include_once($controlclassfile);
-
+			
 			// Instantiate canvas controller class
 			$controlclassname = ucfirst($this->card).ucfirst($this->canvas);
 			$this->control = new $controlclassname($this->db);
@@ -146,22 +144,22 @@ class Canvas
 			$modelclassname = ucfirst($this->module).ucfirst($this->canvas);
 			$this->control->object = new $modelclassname($this->db);
 			
+			// Canvas
+			$this->control->canvas = $canvas;
+			
+			// Template dir
+			$this->template_dir = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/tpl/';
+			
 			// Need smarty
-			$this->smarty = $this->object->smarty;
+			$this->smarty = $this->control->smarty;
 		}
 		else
 		{
 			$this->error = $langs->trans('CanvasIsInvalid');
 			return 0;
 		}
-	}
-	
-	/**
-	 * 	Load actions
-	 */
-	function load_actions($socid)
-	{
-		return $this->control->load_actions($socid);
+		
+		return 1;
 	}
 
 	/**
