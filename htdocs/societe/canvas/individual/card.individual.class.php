@@ -75,8 +75,8 @@ class CardIndividual extends CardCommon
 	 */
 	function assign_values($action='')
 	{
-		global $conf, $langs, $user, $mysoc;
-		global $form, $formadmin, $formcompany;
+		global $langs;
+		global $form, $formcompany;
 			
 		parent::assign_values($action);
 		
