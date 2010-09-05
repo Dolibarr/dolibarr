@@ -1589,7 +1589,7 @@ else
 
     $soccanvas = new Canvas($db);
     $soccanvas->getCanvas('thirdparty','card',$canvas);
-	
+
     // Load data control
     $soccanvas->loadControl($socid);
 
@@ -1605,16 +1605,17 @@ else
     $formadmin = new FormAdmin($db);
     $formcompany = new FormCompany($db);
 
+
     if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] || GETPOST("action") == 'create')
     {
         /*
-         *	Sheet mode creation
+         *	Mode creation
          */
         if ($user->rights->societe->creer)
         {
         	// Set action type
         	$soccanvas->setAction(GETPOST("action"));
-        	
+
         	// Card header
         	$title = $soccanvas->getTitle();
         	print_fiche_titre($title);
@@ -1635,12 +1636,12 @@ else
     elseif (GETPOST("action") == 'edit')
     {
         /*
-         * Company Fact Mode edition
+         * Mode edition
          */
-    	
+
     	// Set action type
         $soccanvas->setAction(GETPOST("action"));
-        	
+
     	// Card header
     	$title = $soccanvas->getTitle();
         print_fiche_titre($title);
@@ -1666,90 +1667,97 @@ else
             // Display canvas
             $soccanvas->display_canvas();
         }
+        else
+        {
+            $langs->load("errors");
+            print $langs->trans("ErrorRecordNotFound");
+        }
     }
     else
     {
         /*
-         * Company Fact Sheet mode visu
+         * Mode view
          */
-    	
+
     	// Set action type
         $soccanvas->setAction('view');
 
         // Fetch object
     	$result=$soccanvas->fetch($socid);
-        if ($result < 0)
+        if ($result > 0)
         {
-            dol_print_error($db,$soccanvas->control->object->error);
-            exit;
-        }
+            // Card header
+            $head = societe_prepare_head($soccanvas->control->object);
+            $title = $soccanvas->getTitle();
+            dol_fiche_head($head, 'company', $title, 0, 'company');
 
-        // Card header
-        $head = societe_prepare_head($soccanvas->control->object);
-        $title = $soccanvas->getTitle();
-        dol_fiche_head($head, 'company', $title, 0, 'company');
+        	// Assign values
+            $soccanvas->assign_values();
 
-    	// Assign values
-        $soccanvas->assign_values();
+            // Display canvas
+        	$soccanvas->display_canvas();
 
-        // Display canvas
-    	$soccanvas->display_canvas();
-
-        /*
-         *	Actions
-         */
-        if ($_GET["action"] == '')
-        {
-            print '<div class="tabsAction">';
-
-            if ($user->rights->societe->creer)
+            /*
+             *	Actions
+             */
+            if ($_GET["action"] == '')
             {
-                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans("Modify").'</a>';
+                print '<div class="tabsAction">';
+
+                if ($user->rights->societe->creer)
+                {
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans("Modify").'</a>';
+                }
+
+                if ($user->rights->societe->contact->creer)
+                {
+                    print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create&amp;canvas='.$canvas.'">'.$langs->trans("AddContact").'</a>';
+                }
+
+                if ($user->rights->societe->supprimer)
+                {
+                    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
+                }
+
+                print '</div>';
+                print '<br>';
             }
 
-            if ($user->rights->societe->contact->creer)
-            {
-                print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create&amp;canvas='.$canvas.'">'.$langs->trans("AddContact").'</a>';
-            }
 
-            if ($user->rights->societe->supprimer)
-            {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
-            }
+            print '<table width="100%"><tr><td valign="top" width="50%">';
+            print '<a name="builddoc"></a>'; // ancre
 
-            print '</div>';
+            /*
+             * Documents generes
+             */
+            $filedir=$conf->societe->dir_output.'/'.$socid;
+            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
+            $genallowed=$user->rights->societe->creer;
+            $delallowed=$user->rights->societe->supprimer;
+
+            $var=true;
+
+            $somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$soccanvas->control->object->default_lang);
+
+            print '</td>';
+            print '<td>';
+            print '</td>';
+            print '</tr>';
+            print '</table>';
+
             print '<br>';
+
+            // Contacts list
+            $result=show_contacts($conf,$langs,$db,$soccanvas->control->object);
+
+            // Projects list
+            $result=show_projects($conf,$langs,$db,$soccanvas->control->object);
         }
-
-
-        print '<table width="100%"><tr><td valign="top" width="50%">';
-        print '<a name="builddoc"></a>'; // ancre
-
-        /*
-         * Documents generes
-         */
-        $filedir=$conf->societe->dir_output.'/'.$socid;
-        $urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
-        $genallowed=$user->rights->societe->creer;
-        $delallowed=$user->rights->societe->supprimer;
-
-        $var=true;
-
-        $somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$soccanvas->control->object->default_lang);
-
-        print '</td>';
-        print '<td>';
-        print '</td>';
-        print '</tr>';
-        print '</table>';
-
-        print '<br>';
-
-        // Contacts list
-        $result=show_contacts($conf,$langs,$db,$soccanvas->control->object);
-
-        // Projects list
-        $result=show_projects($conf,$langs,$db,$soccanvas->control->object);
+        else
+        {
+            $langs->load("errors");
+            print $langs->trans("ErrorRecordNotFound");
+        }
     }
 
 }
