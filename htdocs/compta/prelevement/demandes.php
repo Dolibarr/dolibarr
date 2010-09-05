@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,10 @@
  */
 
 /**
- \file       htdocs/compta/prelevement/demandes.php
- \brief      Page de la liste des demandes de prelevements
- \version    $Id$
+ *  \file       htdocs/compta/prelevement/demandes.php
+ *  \brief      Page to list withdraw requests
+ *  \version    $Id$
  */
-
 require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
 require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
@@ -62,15 +61,15 @@ if (! $sortfield) $sortfield="f.facnumber";
 
 /*
  * Liste de demandes
- *
  */
 
-$sql= "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid";
-$sql.= ", pfd.date_demande as date_demande";
-$sql.= ", pfd.fk_user_demande";
-$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql= "SELECT f.facnumber, f.rowid, f.total_ttc,";
+$sql.= " s.nom, s.rowid as socid,";
+$sql.= " pfd.date_demande as date_demande,";
+$sql.= " pfd.fk_user_demande";
+$sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
+$sql.= " ".MAIN_DB_PREFIX."societe as s,";
+$sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.rowid = f.fk_soc";
 $sql.= " AND f.entity = ".$conf->entity;
@@ -102,13 +101,14 @@ if ($resql)
 	}
 
 	print '<table class="liste" width="100%">';
+
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">'.$langs->trans("Bill").'</td><td class="liste_titre">'.$langs->trans("Company").'</td>';
-	print '<td class="liste_titre" align="center">'.$langs->trans("DateRequest").'</td>';
-	print '<td class="liste_titre" align="center">'.$langs->trans("Author").'</td>';
+    print '<td class="liste_titre" align="right">'.$langs->trans("Amount").'</td>';
+	print '<td class="liste_titre" align="right">'.$langs->trans("DateRequest").'</td>';
 	print '</tr>';
 
-	print '<form action="demandes.php" method="GET">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.$GET["search_facture"].'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.$GET["search_societe"].'"></td>';
 	print '<td colspan="2" class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
@@ -138,18 +138,9 @@ if ($resql)
 		print $thirdpartystatic->getNomUrl(1,'customer');
 		print '</td>';
 
-		print '<td align="center">'.dol_print_date($db->jdate($obj->date_demande),'day').'</td>';
+        print '<td align="right">'.price($obj->total_ttc).'</td>';
 
-		if (!array_key_exists($obj->fk_user_demande,$users))
-		{
-			$users[$obj->fk_user_demande] = new User($db);
-			$users[$obj->fk_user_demande]->fetch($obj->fk_user_demande);
-		}
-
-		// User
-		print '<td align="center">';
-		print $users[$obj->fk_user_demande]->getNomUrl(1);
-		print '</td>';
+        print '<td align="right">'.dol_print_date($db->jdate($obj->date_demande),'day').'</td>';
 
 		print '</tr>';
 		$i++;

@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Juanjo Menent <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,7 @@ if ($user->societe_id > 0) accessforbidden();
  * Actions
  */
 
-if ($_POST["action"] == 'confirm_credite' && $_POST["confirm"] == yes)
+if (GETPOST("action") == 'confirm_credite' && GETPOST("confirm") == 'yes')
 {
 	$bon = new BonPrelevement($db,"");
 	$bon->id = $_GET["id"];
@@ -54,7 +54,7 @@ if ($_POST["action"] == 'confirm_credite' && $_POST["confirm"] == yes)
 	exit;
 }
 
-if ($_POST["action"] == 'infotrans')
+if (GETPOST("action") == 'infotrans')
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
@@ -71,17 +71,18 @@ if ($_POST["action"] == 'infotrans')
 
 			$bon->set_infotrans($user, $dt, $_POST["methode"]);
 		}
+
+		Header("Location: fiche.php?id=".$_GET["id"]);
+        exit;
 	}
 	else
 	{
 		dol_syslog("Fichier invalide",LOG_WARNING);
+		$mesg='BadFile';
 	}
-
-	Header("Location: fiche.php?id=".$_GET["id"]);
-	exit;
 }
 
-if ($_POST["action"] == 'infocredit')
+if (GETPOST("action") == 'infocredit')
 {
 	$bon = new BonPrelevement($db,"");
 	$bon->fetch($_GET["id"]);
@@ -97,7 +98,9 @@ if ($_POST["action"] == 'infocredit')
 	{
 		Header("Location: fiche.php?id=".$_GET["id"]."&error=$error");
 	}
+	exit;
 }
+
 
 /*
  * View
@@ -144,7 +147,7 @@ if ($_GET["id"])
 
 	if ($bon->fetch($_GET["id"]) == 0)
 	{
-		dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
+		dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"), '', 'payment');
 
 		if (isset($_GET["error"]))
 		{
@@ -155,7 +158,7 @@ if ($_GET["id"])
 
 		if ($_GET["action"] == 'credite')
 		{
-			$ret=$html->form_confirm("fiche.php?id=".$bon->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite");
+			$ret=$html->form_confirm("fiche.php?id=".$bon->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite",'',1,1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -166,12 +169,13 @@ if ($_GET["id"])
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 
-		$relativepath = 'bon/'.$bon->ref;
+		$relativepath = 'receipts/'.$bon->ref;
 
-		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$bon->ref.'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
 
 		print '</td></tr>';
 
+		// Status
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td><td>';
 		print '<img src="./img/statut'.$bon->statut.'.png"> ';
 		print $langs->trans($lipre->statuts[$lipre->statut]).'</td></tr>';
@@ -250,20 +254,16 @@ if ($_GET["id"])
 
 print "\n</div>\n<div class=\"tabsAction\">\n";
 
-if ($_GET["action"] == '')
+/*if ($bon->statut == 0)
 {
-
-	if ($bon->credite == 0)
-	{
-		print "<a class=\"butAction\" href=\"fiche.php?action=credite&amp;id=$bon->id\">".$langs->trans("ClassCredited")."</a>";
-	}
-
-
-
-}
+	print "<a class=\"butAction\" href=\"fiche.php?action=credite&amp;id=$bon->id\">".$langs->trans("ClassCredited")."</a>";
+}*/
 
 print "</div>";
 
+
+
+$db->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>

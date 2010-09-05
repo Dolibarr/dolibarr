@@ -37,6 +37,10 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','');
 
+/*
+ * Actions
+ */
+
 
 
 
@@ -44,8 +48,7 @@ $result = restrictedArea($user, 'prelevement','','');
  * View
  */
 
-llxHeader();
-
+llxHeader('',$langs->trans("CustomersStandingOrdersArea"));
 
 print_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
 
@@ -74,9 +77,11 @@ print '</td></tr></table><br>';
 print '</td><td valign="top" width="70%">';
 
 /*
- * Factures
+ * Invoices waiting for withdraw
  */
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid";
+$sql = "SELECT f.facnumber, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
+$sql.= " pfd.date_demande,";
+$sql.= " s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -90,49 +95,67 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</td></tr>';
-	if ($num)
-	{
-		$var = True;
-		while ($i < $num && $i < 20)
-		{
-			$obj = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'><td>';
-			$invoicestatic->id=$obj->rowid;
-			$invoicestatic->ref=$obj->facnumber;
-			print $invoicestatic->getNomUrl(1,'withdraw');
-			print '</td>';
-			print '<td>';
-			$thirdpartystatic->id=$obj->socid;
-			$thirdpartystatic->nom=$obj->nom;
-			print $thirdpartystatic->getNomUrl(1,'customer');
-			print '</td>';
-			print '</tr>';
-			$i++;
-		}
-	}
-	else
-	{
-		print '<tr><td colspan="2">'.$langs->trans("NoInvoiceToWithdraw").'</td></tr>';
-	}
-	print "</table><br>";
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="5">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</td></tr>';
+    if ($num)
+    {
+        $var = True;
+        while ($i < $num && $i < 20)
+        {
+            $obj = $db->fetch_object($resql);
+
+            $invoicestatic->id=$obj->rowid;
+            $invoicestatic->ref=$obj->facnumber;
+            $invoicestatic->statut=$obj->fk_statut;
+            $invoicestatic->paye=$obj->paye;
+            $invoicestatic->type=$obj->type;
+            $alreadypayed=$invoicestatic->getSommePaiement();
+
+            $var=!$var;
+            print '<tr '.$bc[$var].'><td>';
+            print $invoicestatic->getNomUrl(1,'withdraw');
+            print '</td>';
+
+            print '<td>';
+            $thirdpartystatic->id=$obj->socid;
+            $thirdpartystatic->nom=$obj->nom;
+            print $thirdpartystatic->getNomUrl(1,'customer');
+            print '</td>';
+
+            print '<td align="right">';
+            print price($obj->total_ttc);
+            print '</td>';
+
+            print '<td align="right">';
+            print dol_print_date($db->jdate($obj->date_demande),'day');
+            print '</td>';
+
+            print '<td align="right">';
+            print $invoicestatic->getLibStatut(3,$alreadypayed);
+            print '</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    else
+    {
+        print '<tr><td colspan="2">'.$langs->trans("NoInvoiceToWithdraw").'</td></tr>';
+    }
+    print "</table><br>";
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 
 
 /*
- * Bon de pr�l�vement
- *
+ * Withdraw receipts
  */
 $limit=5;
 $sql = "SELECT p.rowid, p.ref, p.amount, p.datec";
@@ -143,41 +166,41 @@ $sql .= " ORDER BY datec DESC LIMIT ".$limit;
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
-	$i = 0;
-	$var=True;
+    $num = $db->num_rows($result);
+    $i = 0;
+    $var=True;
 
-	print"\n<!-- debut table -->\n";
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("LastWithdrawalReceipt",$limit).'</td>';
-	print '<td>'.$langs->trans("Date").'</td>';
-	print '<td align="right">'.$langs->trans("Amount").'</td>';
-	print '</tr>';
+    print"\n<!-- debut table -->\n";
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("LastWithdrawalReceipt",$limit).'</td>';
+    print '<td>'.$langs->trans("Date").'</td>';
+    print '<td align="right">'.$langs->trans("Amount").'</td>';
+    print '</tr>';
 
-	while ($i < min($num,$limit))
-	{
-		$obj = $db->fetch_object($result);
-		$var=!$var;
+    while ($i < min($num,$limit))
+    {
+        $obj = $db->fetch_object($result);
+        $var=!$var;
 
-		print "<tr $bc[$var]><td>";
+        print "<tr $bc[$var]><td>";
 
-		print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
+        print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
 
-		print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
+        print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-		print '<td>'.dol_print_date($db->jdate($obj->datec),"dayhour")."</td>\n";
+        print '<td>'.dol_print_date($db->jdate($obj->datec),"dayhour")."</td>\n";
 
-		print '<td align="right">'.price($obj->amount)."</td>\n";
+        print '<td align="right">'.price($obj->amount)."</td>\n";
 
-		print "</tr>\n";
-		$i++;
-	}
-	print "</table>";
-	$db->free($result);
+        print "</tr>\n";
+        $i++;
+    }
+    print "</table>";
+    $db->free($result);
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 print '</td></tr></table>';

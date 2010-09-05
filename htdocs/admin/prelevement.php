@@ -44,7 +44,7 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');*/
 
 if ($_GET["action"] == "set")
 {
-	for ($i = 6 ; $i < 7 ; $i++)
+	for ($i = 0 ; $i < 9 ; $i++)
 	{
 		dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"],'chaine',0,'',$conf->entity);
 	}
@@ -85,30 +85,81 @@ print_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'setup');
 
 print '<form method="post" action="prelevement.php?action=set">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
 print '<table class="nobordernopadding" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("Parameter").'</td>';
 print '<td width="40%">'.$langs->trans("Value").'</td>';
-print '<td width="30%">'.$langs->trans("CurrentValue").'</td>';
+//print '<td width="30%">'.$langs->trans("CurrentValue").'</td>';
 print "</tr>\n";
 print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
 print '<td align="left">';
-print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
-print $html->select_users($conf->global->PRELEVEMENT_USER,'value6',1);
+print '<input type="hidden" name="nom0" value="PRELEVEMENT_USER">';
+print $html->select_users($conf->global->PRELEVEMENT_USER,'value0',1);
 print '</td>';
-print '<td>';
-if ($conf->global->PRELEVEMENT_USER > 0)
-{
-	$cuser = new User($db);
-	$cuser->fetch($conf->global->PRELEVEMENT_USER);
-	print $cuser->getFullName($langs);
-}
-else
-{
-	print '&nbsp;';
-}
-print '</td></tr>';
-print '<tr><td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+print '</tr>';
+
+print '<tr class="pair"><td>'.$langs->trans("NumeroNationalEmetter").'</td>';
+print '<td align="left">';
+print '<input type="hidden" name="nom1" value="PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR">';
+print '<input type="text"   name="value1" value="'.$conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'" size="9" ></td>';
+print '</tr>';
+
+/*print_fiche_titre($langs->trans("PleaseSelectCustomerBankBANToWithdraw"),'','');
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="action" value="modify">';
+print '<table class="border" width="100%">';
+*/
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BankToReceiveWithdraw").'</td></tr>';
+
+print '<tr class="impair"><td>'.$langs->trans("Name").'</td>';
+print '<td align="left">';
+print '<input type="hidden" name="nom2" value="PRELEVEMENT_RAISON_SOCIALE">';
+print '<input type="text"   name="value2" value="'.$conf->global->PRELEVEMENT_RAISON_SOCIALE.'" size="14" ></td>';
+print '</tr>';
+// RIB
+//print '<tr><td colspan="2">'.$langs->trans("ForCustomerWithBankUsingRIB").'</td></tr>';
+print '<tr class="pair"><td>'.$langs->trans("BankCode").'</td>';
+print '<td align="left">';
+print '<input type="hidden" name="nom3" value="PRELEVEMENT_CODE_BANQUE">';
+print '<input type="text"   name="value3" value="'.$conf->global->PRELEVEMENT_CODE_BANQUE.'" size="6" ></td>';
+print '</tr>';
+print '<tr class="impair"><td>'.$langs->trans("DeskCode").'</td>';
+print '<td align="left">';
+print '<input type="hidden" name="nom4" value="PRELEVEMENT_CODE_GUICHET">';
+print '<input type="text"   name="value4" value="'.$conf->global->PRELEVEMENT_CODE_GUICHET.'" size="6" ></td>';
+print '</tr>';
+print '<tr class="pair"><td>'.$langs->trans("AccountNumber").'</td>';
+print '<td align="left">';
+print '<input type="hidden" name="nom5" value="PRELEVEMENT_NUMERO_COMPTE">';
+print '<input type="text"   name="value5" value="'.$conf->global->PRELEVEMENT_NUMERO_COMPTE.'" size="11" ></td>';
+print '</tr>';
+print '<tr class="impair"><td>'.$langs->trans("BankAccountNumberKey").'</td>';
+print '<td align="left">';
+print '<input type="hidden" name="nom6" value="PRELEVEMENT_NUMBER_KEY">';
+print '<input type="text"   name="value6" value="'.$conf->global->PRELEVEMENT_NUMBER_KEY.'" size="11" ></td>';
+print '</tr>';
+// BAN/BIC/SWIFT
+//print '<tr><td colspan="2">'.$langs->trans("ForCustomerWithBankUsingBANBIC").'</td></tr>';
+print '<tr class="pair"><td>'.$langs->trans("IBAN").'</td>';
+print '<td align="left">';
+print '<input type="hidden" name="nom7" value="PRELEVEMENT_IBAN">';
+print '<input type="text"   name="value7" value="'.$conf->global->PRELEVEMENT_IBAN.'" size="11" ></td>';
+print '</tr>';
+print '<tr class="impair"><td>'.$langs->trans("BIC").'</td>';
+print '<td align="left">';
+print '<input type="hidden" name="nom8" value="PRELEVEMENT_BIC">';
+print '<input type="text"   name="value8" value="'.$conf->global->PRELEVEMENT_BIC.'" size="11" ></td>';
+print '</tr>';
+
+/*print '<tr class="pair"><td colspan="2" align="center">';
+print '<input type="submit" class="button" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+print '</td>';
+print '</tr>';
+*/
+print '<tr><td align="center" colspan="3"><br><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+
 print '</table>';
 print '</form>';
 print '<br>';
@@ -177,15 +228,8 @@ if ($resql)
 		print "<tr $bc[$var]>";
 		print '<td>'.$obj->firstname." ".$obj->name.'</td>';
 		print '<td>'.$obj->titre.'</td>';
-
-		if ($user->rights->prelevement->bons->configurer)
-		{
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->code.'">'.img_delete().'</a></td></tr>';
-		}
-		else
-		{
-			print '</tr>';
-		}
+		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->code.'">'.img_delete().'</a></td>';
+		print '</tr>';
 		$i++;
 	}
 	$db->free($resql);

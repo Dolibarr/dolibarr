@@ -77,7 +77,7 @@ if ($prev_id)
 
 	if ($bon->fetch($_GET["id"]) == 0)
 	{
-		dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
+		dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"), '', 'payment');
 
 		print '<table class="border" width="100%">';
 

@@ -47,6 +47,8 @@ class BonPrelevement extends CommonObject
     var $total;
     var $_fetched;
 
+    var $statut;    // 0-Wait, 1-Trans, 2-Done
+
 
     function BonPrelevement($DB, $filename='')
     {
@@ -217,7 +219,7 @@ class BonPrelevement extends CommonObject
     {
     	global $conf;
 
-        $sql = "SELECT p.rowid, p.ref, p.amount, p.note, p.credite";
+        $sql = "SELECT p.rowid, p.ref, p.amount, p.note";
         $sql.= ", p.datec as dc";
         $sql.= ", p.date_trans as date_trans";
         $sql.= ", p.method_trans, p.fk_user_trans";
@@ -241,7 +243,6 @@ class BonPrelevement extends CommonObject
                 $this->amount             = $obj->amount;
                 $this->note               = $obj->note;
                 $this->datec              = $this->db->jdate($obj->dc);
-                $this->credite            = $obj->credite;
 
                 $this->date_trans         = $this->db->jdate($obj->date_trans);
                 $this->method_trans       = $obj->method_trans;
@@ -271,8 +272,7 @@ class BonPrelevement extends CommonObject
     }
 
     /**
-     *
-     *
+     *     @deprecated
      */
     function set_credite()
     {
@@ -282,9 +282,9 @@ class BonPrelevement extends CommonObject
 
         if ($this->db->begin())
         {
-            $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
-            $sql.= " SET credite = 1";
-            $sql.= " WHERE rowid=".$this->id;
+            $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
+            $sql.= " SET statut = 1";
+            $sql.= " WHERE rowid = ".$this->id;
             $sql.= " AND entity = ".$conf->entity;
 
             $result=$this->db->query($sql);
@@ -301,7 +301,7 @@ class BonPrelevement extends CommonObject
 
                 for ($i = 0 ; $i < sizeof($facs) ; $i++)
                 {
-                    /* Tag la facture comme impay�e */
+                    /* Tag invoice as payed */
                     dol_syslog("BonPrelevement::set_credite set_paid fac ".$facs[$i]);
                     $fac = new Facture($this->db);
                     $fac->fetch($facs[$i]);
@@ -312,7 +312,7 @@ class BonPrelevement extends CommonObject
             if ($error == 0)
             {
 
-                $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes ";
+                $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
                 $sql.= " SET statut = 2";
                 $sql.= " WHERE fk_prelevement_bons = ".$this->id;
 
@@ -334,18 +334,14 @@ class BonPrelevement extends CommonObject
             }
             else
             {
-
                 $this->db->rollback();
                 dol_syslog("BonPrelevement::set_credite ROLLBACK ");
 
                 return -1;
             }
-
-
         }
         else
         {
-
             dol_syslog("BonPrelevement::set_credite Ouverture transaction SQL impossible ");
             return -2;
         }
@@ -602,18 +598,17 @@ class BonPrelevement extends CommonObject
     	global $conf;
 
         $sql = "SELECT sum(f.total_ttc)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-        $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
+        $sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+        //$sql.= " ,".MAIN_DB_PREFIX."c_paiement as cp";
         $sql.= " WHERE f.fk_statut = 1";
         $sql.= " AND f.entity = ".$conf->entity;
         $sql.= " AND f.rowid = pfd.fk_facture";
         $sql.= " AND f.paye = 0";
         $sql.= " AND pfd.traite = 0";
         $sql.= " AND f.total_ttc > 0";
-        $sql.= " AND f.fk_mode_reglement = 3";
 
         $resql = $this->db->query($sql);
-
         if ( $resql )
         {
             $row = $this->db->fetch_row($resql);
@@ -1171,10 +1166,6 @@ class BonPrelevement extends CommonObject
          */
         $this->total = 0;
 
-        /*$sql = "SELECT rowid, client_nom, code_banque, code_guichet, number, amount";
-        $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes";
-        $sql .= " WHERE fk_prelevement_bons = ".$this->id;
-        */
         $sql = "SELECT pl.rowid, pl.client_nom, pl.code_banque, pl.code_guichet, pl.number, pl.amount,";
         $sql.= " f.facnumber, pf.fk_facture";
         $sql.= " FROM";
@@ -1230,7 +1221,7 @@ class BonPrelevement extends CommonObject
 
 
     /**
-     *  Write recipient of withdraw (me)
+     *  Write recipient of request (customer)
      *  @param      rowid       Id of line
      *  @param      client_nom  Name of customer
      *  @param      rib_banque
@@ -1299,7 +1290,7 @@ class BonPrelevement extends CommonObject
 
 
     /**
-     *  Write sender (customer)
+     *  Write sender of request (me)
      */
     function EnregEmetteur()
     {

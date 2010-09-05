@@ -1937,7 +1937,7 @@ else
 			$totaldeposits = $fac->getSumDepositsUsed();
 			//print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
 
-			// We cal also use bcadd to avoid pb with floating points
+			// We can also use bcadd to avoid pb with floating points
 			// For example print 239.2 - 229.3 - 9.9; does not return 0.
 			//$resteapayer=bcadd($fac->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 			//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
@@ -2327,72 +2327,6 @@ else
 			print '</tr>';
 
 			$var=true;
-
-			// Payments already done (from deposits)
-			/*
-			$depositamount=0;
-			$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-			$sql.= " re.description, re.fk_facture_source, re.fk_facture_source";
-			$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
-			$sql.= " WHERE fk_facture = ".$fac->id;
-			$resql=$db->query($sql);
-			if ($resql)
-			{
-			$numdeposits = $db->num_rows($resql);
-			$i = 0;
-			$invoice=new Facture($db);
-			// Loop on each deposit applied
-			while ($i < $numdeposits)
-			{
-			$objinvoice = $db->fetch_object($resql);
-			$invoice->fetch($objinvoice->fk_facture_source);
-			if ($invoice->type != 3) continue;	// only deposits
-
-			// For each deposits, get payments
-			$sql = 'SELECT datep as dp, pf.amount,';
-			$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
-			$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
-			$sql.= ' WHERE pf.fk_facture = '.$invoice->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
-			$sql.= ' ORDER BY dp, tms';
-
-			$resqlpayment = $db->query($sql);
-			if ($resqlpayment)
-			{
-			$numpayments = $db->num_rows($resqlpayment);
-			$j = 0;
-			while ($j < $numpayments)
-			{
-			$objpayment = $db->fetch_object($resqlpayement);
-			$var=!$var;
-
-			print '<tr '.$bc[$var].'><td>';
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objpayment->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
-			print dol_print_date($db->jdate($objpayment->dp),'day').'</a>';
-
-			print ' ('.$langs->trans("Deposit").' ';
-			print $invoice->getNomUrl(0).')';
-
-			print '</td>';
-			print '<td>'.$objpayment->paiement_type.' '.$objpayement->num_paiement.'</td>';
-			print '<td align="right">'.price($objpayment->amount).'</td>';
-			// Remove deposit invoice
-			print '<td align="right">';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&action=unlinkdiscount&discountid='.$objinvoice->rowid.'">'.img_delete().'</a>';
-			print '</td>';
-			print '</tr>';
-
-			$j++;
-			$depositamount += $obj->amount;
-			}
-			}
-			$i++;
-			}
-			}
-			else
-			{
-			dol_print_error($db);
-			}
-			*/
 
 			// Payments already done (from payment on this invoice)
 			$sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid,';

@@ -571,7 +571,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
                 if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/bons.php?mainmenu=bank",$langs->trans("WithdrawalsReceipts"),1,$user->rights->prelevement->bons->lire);
                 if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/liste.php?mainmenu=bank",$langs->trans("WithdrawalsLines"),1,$user->rights->prelevement->bons->lire);
-                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/liste_factures.php?mainmenu=bank",$langs->trans("WithdrawedBills"),1,$user->rights->prelevement->bons->lire);
                 if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/rejets.php?mainmenu=bank",$langs->trans("Rejects"),1,$user->rights->prelevement->bons->lire);
                 if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/stats.php?mainmenu=bank",$langs->trans("Statistics"),1,$user->rights->prelevement->bons->lire);
 

@@ -57,7 +57,7 @@ class modPrelevement extends DolibarrModules
 		$this->description = "Gestion des Prelevements";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
@@ -70,7 +70,7 @@ class modPrelevement extends DolibarrModules
 		// Dependancies
 		$this->depends = array("modFacture");
 		$this->requiredby = array();
-		
+
 		// Config pages
 		$this->config_page_url = array("prelevement.php");
 
@@ -91,26 +91,20 @@ class modPrelevement extends DolibarrModules
 		$this->rights[1][4] = 'bons';
 		$this->rights[1][5] = 'lire';
 
-		$this->rights[2][0] = 152;
-		$this->rights[2][1] = 'Create/modify a withdrawal request';
-		$this->rights[2][2] = 'w';
-		$this->rights[2][3] = 0;
-		$this->rights[2][4] = 'bons';
-		$this->rights[2][5] = 'configurer';
-
-		$this->rights[3][0] = 153;
-		$this->rights[3][1] = 'Read a widthrawal receipt';
-		$this->rights[3][2] = 'r';
-		$this->rights[3][3] = 0;
-		$this->rights[3][4] = 'bons';
-		$this->rights[3][5] = 'lire';
-
-		$this->rights[4][0] = 154;
-		$this->rights[4][1] = 'Create/modify a withdrawal receipt';
+		$this->rights[4][0] = 152;
+		$this->rights[4][1] = 'Create/modify a withdrawals';
 		$this->rights[4][2] = 'w';
 		$this->rights[4][3] = 0;
 		$this->rights[4][4] = 'bons';
 		$this->rights[4][5] = 'creer';
+
+/*        $this->rights[2][0] = 154;
+        $this->rights[2][1] = 'Setup withdraw account';
+        $this->rights[2][2] = 'w';
+        $this->rights[2][3] = 0;
+        $this->rights[2][4] = 'bons';
+        $this->rights[2][5] = 'configurer';
+*/
 	}
 
 

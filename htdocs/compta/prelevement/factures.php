@@ -76,7 +76,7 @@ if ($_GET["id"])
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
-      dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
+      dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"), '', 'payment');
 
       print '<table class="border" width="100%">';
       print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
