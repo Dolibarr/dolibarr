@@ -65,7 +65,7 @@ $tabname[8] = MAIN_DB_PREFIX."c_typent";
 $tabname[9] = MAIN_DB_PREFIX."c_currencies";
 $tabname[10]= MAIN_DB_PREFIX."c_tva";
 $tabname[11]= MAIN_DB_PREFIX."c_type_contact";
-$tabname[12]= MAIN_DB_PREFIX."cond_reglement";
+$tabname[12]= MAIN_DB_PREFIX."c_payment_term";
 $tabname[13]= MAIN_DB_PREFIX."c_paiement";
 $tabname[14]= MAIN_DB_PREFIX."c_ecotaxe";
 $tabname[15]= MAIN_DB_PREFIX."c_paper_format";
@@ -107,7 +107,7 @@ $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[9] = "SELECT code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1, t.localtax2, p.libelle as pays, p.code as pays_code, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
+$tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as pays_id, p.code as pays_code, p.libelle as pays, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_pays as p WHERE e.fk_pays=p.rowid and p.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";

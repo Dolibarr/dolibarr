@@ -1478,7 +1478,7 @@ class Form
         if (sizeof($this->cache_conditions_paiements)) return 0;    // Cache deja charge
 
         $sql = "SELECT rowid, code, libelle";
-        $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
+        $sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY sortorder";
         dol_syslog('Form::load_cache_conditions_paiements sql='.$sql,LOG_DEBUG);
