@@ -35,10 +35,12 @@ class Canvas
 	
 	var $card;
 	var $canvas;
-	var $module;
 	var $object;
 	var $control;
+	var $module;
+	var $targetmodule;
 	var $aliasmodule;		// for compatibility
+	var $aliastargetmodule;	// for compatibility
 	var $template_dir;		// Directory with all core and external templates files
 	var $action;
 	var $smarty;
@@ -97,15 +99,17 @@ class Canvas
 
 	/**
 	 * 	Get card and canvas type
-	 * 	@param		card	 	Type of card
-	 * 	@param		canvas		Name of canvas (ex: default@mymodule)
+	 * 	@param		module		Name of target module (product, thirdparty, ...)
+	 * 	@param		card	 	Type of card (ex: card, info, ...)
+	 * 	@param		canvas		Name of canvas (ex: mycanvas@mymodule)
 	 */
-	function getCanvas($card,$canvas)
+	function getCanvas($module,$card,$canvas)
 	{
 		global $langs;
 
 		$error='';
 		$this->card = $card;
+		$this->aliastargetmodule = $this->targetmodule = $module;
 
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
 		{
@@ -114,6 +118,7 @@ class Canvas
 			
 			// For compatibility
 			if ($this->module == 'thirdparty') $this->aliasmodule = 'societe';
+			if ($this->targetmodule == 'thirdparty') $this->aliastargetmodule = 'societe';
 		}
 		else
 		{
@@ -121,15 +126,15 @@ class Canvas
 			return 0;
 		}
 
-		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->module.'.'.$this->canvas.'.class.php') &&
+		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->targetmodule.'.'.$this->canvas.'.class.php') &&
 			file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php'))
 		{
 			// Include model class
-			$modelclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->module.'.'.$this->canvas.'.class.php';
+			$modelclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->targetmodule.'.'.$this->canvas.'.class.php';
 			include_once($modelclassfile);
 			
 			// Include common controller class
-			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->card.'.common.class.php';
+			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliastargetmodule.'/canvas/'.$this->card.'.common.class.php';
 			include_once($controlclassfile);
 			
 			// Include canvas controller class
@@ -141,7 +146,7 @@ class Canvas
 			$this->control = new $controlclassname($this->db);
 			
 			// Instantiate model class
-			$modelclassname = ucfirst($this->module).ucfirst($this->canvas);
+			$modelclassname = ucfirst($this->targetmodule).ucfirst($this->canvas);
 			$this->control->object = new $modelclassname($this->db);
 			
 			// Canvas

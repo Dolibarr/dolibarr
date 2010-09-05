@@ -1588,7 +1588,7 @@ else
     // -----------------------------------------
 
     $soccanvas = new Canvas($db);
-    $soccanvas->getCanvas('card',$canvas);
+    $soccanvas->getCanvas('thirdparty','card',$canvas);
 	
     // Load data control
     $soccanvas->loadControl($socid);

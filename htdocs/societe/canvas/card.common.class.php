@@ -535,7 +535,7 @@ class CardCommon
         			}
         			
         			$oldsoccanvas = new Canvas($this->db);
-        			$oldsoccanvas->getCanvas('thirparty','card',$this->canvas);
+        			$oldsoccanvas->getCanvas('thirdparty','card',$this->canvas);
         			$result=$oldsoccanvas->fetch($socid);
         			
         			// To not set code if third party is not concerned. But if it had values, we keep them.
