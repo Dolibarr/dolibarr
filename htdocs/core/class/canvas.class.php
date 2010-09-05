@@ -32,7 +32,7 @@
 class Canvas
 {
 	var $db;
-	
+
 	var $card;
 	var $canvas;
 	var $object;
@@ -55,7 +55,7 @@ class Canvas
 	{
 		$this->db = $DB;
 	}
-	
+
 	/**
 	 * 	Return the title of card
 	 */
@@ -63,7 +63,7 @@ class Canvas
 	{
 		return $this->control->getTitle($this->action);
 	}
-	
+
 	/**
      *    Assigne les valeurs POST dans l'objet
      */
@@ -71,7 +71,7 @@ class Canvas
 	{
 		return $this->control->assign_post();
 	}
-	
+
 	/**
      *    Set action type
      */
@@ -79,7 +79,7 @@ class Canvas
 	{
 		return $this->action = $action;
 	}
-	
+
 	/**
 	 * 	Load data control
 	 */
@@ -87,7 +87,7 @@ class Canvas
 	{
 		return $this->control->loadControl($socid);
 	}
-	
+
 	/**
 	 * 	Fetch object values
 	 * 	@param		id			Element id
@@ -117,7 +117,7 @@ class Canvas
 		{
 			$childmodule = $this->aliasmodule = $this->module = $regs[2];
 			$this->canvas = $regs[1];
-			
+
 			// For compatibility
 			if ($this->module == 'thirdparty') $childmodule = $this->aliasmodule = 'societe';
 			if ($this->targetmodule == 'thirdparty') $targetmodule = $this->aliastargetmodule = 'societe';
@@ -125,38 +125,34 @@ class Canvas
 
 		//print 'childmodule='.$childmodule.' targetmodule='.$targetmodule.'<br>';
 		//print 'childmodule='.$conf->$childmodule->enabled.' targetmodule='.$conf->$targetmodule->enabled.'<br>';
-		
+
 		if (! $conf->$childmodule->enabled || ! $conf->$targetmodule->enabled) accessforbidden();
 
 		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->targetmodule.'.'.$this->canvas.'.class.php') &&
 			file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php'))
 		{
-			// Include model class
+			// Include dataservice class (model)
 			$modelclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->targetmodule.'.'.$this->canvas.'.class.php';
 			include_once($modelclassfile);
-			
-			// Include common controller class
-			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliastargetmodule.'/canvas/'.$this->card.'.common.class.php';
-			include_once($controlclassfile);
-			
-			// Include canvas controller class
+
+			// Include actions class (controller)
 			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php';
 			include_once($controlclassfile);
-			
+
 			// Instantiate canvas controller class
 			$controlclassname = ucfirst($this->card).ucfirst($this->canvas);
 			$this->control = new $controlclassname($this->db);
-			
+
 			// Instantiate model class
 			$modelclassname = ucfirst($this->targetmodule).ucfirst($this->canvas);
 			$this->control->object = new $modelclassname($this->db);
-			
+
 			// Canvas
 			$this->control->canvas = $canvas;
-			
+
 			// Template dir
 			$this->template_dir = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/tpl/';
-			
+
 			// Need smarty
 			$this->smarty = $this->control->smarty;
 		}
@@ -164,7 +160,7 @@ class Canvas
 		{
 			accessforbidden();
 		}
-		
+
 		return 1;
 	}
 

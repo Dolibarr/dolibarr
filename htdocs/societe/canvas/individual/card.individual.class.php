@@ -22,6 +22,7 @@
  *	\brief      Fichier de la classe Thirdparty card controller (individual canvas)
  *	\version    $Id$
  */
+include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/card.common.class.php');
 
 /**
  *	\class      CardIndividual
@@ -30,10 +31,10 @@
 class CardIndividual extends CardCommon
 {
 	var $db;
-	
+
 	//! Canvas
 	var $canvas;
-	
+
 	/**
 	 *    Constructeur de la classe
 	 *    @param	DB		Handler acces base de donnees
@@ -49,16 +50,16 @@ class CardIndividual extends CardCommon
 	function getTitle($action)
 	{
 		global $langs;
-		
+
 		$out='';
 
 		if ($action == 'view') 		$out.= $langs->trans("Individual");
 		if ($action == 'edit') 		$out.= $langs->trans("EditIndividual");
 		if ($action == 'create')	$out.= $langs->trans("NewIndividual");
-		
+
 		return $out;
 	}
-	
+
 	/**
      *    Assigne les valeurs POST dans l'objet
      */
@@ -66,17 +67,17 @@ class CardIndividual extends CardCommon
     {
     	parent::assign_post();
     }
-	
+
 	/**
 	 * 	Load data control
 	 */
 	function loadControl($socid)
 	{
 		$return = parent::loadControl($socid);
-		
+
 		return $return;
 	}
-	
+
 	/**
 	 *    Assign custom values for canvas
 	 *    @param      action     Type of action
@@ -85,14 +86,14 @@ class CardIndividual extends CardCommon
 	{
 		global $langs;
 		global $form, $formcompany;
-			
+
 		parent::assign_values($action);
-		
+
 		if ($action == 'create' || $action == 'edit')
 		{
 			$this->tpl['select_civility'] = $formcompany->select_civility($contact->civilite_id);
 		}
-		
+
 		if ($action == 'view')
 		{
 			// Confirm delete third party
@@ -102,7 +103,7 @@ class CardIndividual extends CardCommon
 			}
 		}
 	}
-	
+
 }
 
 ?>
