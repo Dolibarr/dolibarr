@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,9 @@ accessforbidden();
 
 if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisation' && ! $_POST["cancel"])
 {
-	$langs->load("banks");
+    $error=0;
+
+    $langs->load("banks");
 
 	$result=$adh->fetch($rowid);
 	$result=$adht->fetch($adh->typeid);
@@ -82,6 +84,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 
 	if (! $datecotisation)
 	{
+	    $error++;
 		$errmsg=$langs->trans("BadDateFormat");
 		$action='addsubscription';
 	}
@@ -100,12 +103,13 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
     if (empty($option)) $option='none';
 
 	// Check if a payment is mandatory or not
-	if ($adht->cotisation)	// Type adherent soumis a cotisation
+	if (! $error && $adht->cotisation)	// Type adherent soumis a cotisation
 	{
 		if (! is_numeric($_POST["cotisation"]))
 		{
 			// If field is '' or not a numeric value
 			$errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
+            $error++;
 			$action='addsubscription';
 		}
 		else
@@ -127,37 +131,93 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 		}
 	}
 
-	if ($action=='cotisation')
+	if (! $error && $action=='cotisation')
 	{
 		$db->begin();
 
 		$crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend, $option);
 
-		if ($crowid > 0)
+		if ($crowid <= 0)
+		{
+		    $error++;
+		    $errmsg=$adh->error;
+		}
+
+		if (! $error)
+		{
+		    if ($option == 'bankviainvoice' || $option == 'invoiceonly')
+		    {
+                // If option choosed, we create invoice
+                require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+
+    		    $invoice=new Facture($db);
+                $customer=new Societe($db);
+                $result=$customer->fetch($adh->fk_soc);
+                if ($result <= 0)
+                {
+                    $errmsg=$customer->error;
+                    $error++;
+                }
+
+                // Create draft invoice
+                $invoice->type=0;
+                $invoice->cond_reglement_id=$customer->cond_reglement_id;
+                if (empty($invoice->cond_reglement_id))
+                {
+                    // TODO Found the id for code 'RECEP'. If not found take the first one
+                    //?$customer->cond_reglement_id:1;
+
+                }
+                $invoice->socid=$adh->fk_soc;
+
+                $result=$invoice->create($user);
+                if ($result <= 0)
+                {
+                    $errmsg=$invoice->error;
+                    $error++;
+                }
+
+                // Add line to draft invoice
+                $idprodsubscription=0;
+                $vattouse=get_default_tva($mysoc, $customer, $idprodsubscription);
+                $result=$invoice->addline($invoice->id,$label,0,1,$vattouse,0,0,$idprodsubscription,0,$datecotisation,$datesubend,0,0,'','TTC',$cotisation,1);
+                if ($result <= 0)
+                {
+                    $errmsg=$invoice->error;
+                    $error++;
+                }
+		    }
+		}
+
+		if (! $error)
 		{
 			$db->commit();
-
-			// Send confirmation Email
-			if ($adh->email && $_POST["sendmail"])
-			{
-                $subjecttosend=$adh->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-                $texttosend=$adh->makeSubstitution($adht->getMailOnSubscription());
-
-				$result=$adh->send_an_email($texttosend,$subjecttosend,array(),array(),array(),"","",0,-1);
-				if ($result < 0) $errmsg=$adh->error;
-			}
-
-			$_POST["cotisation"]='';
-			$_POST["accountid"]='';
-			$_POST["operation"]='';
-			$_POST["label"]='';
-			$_POST["num_chq"]='';
 		}
 		else
 		{
 			$db->rollback();
 			$errmsg=$adh->error;
 			$action = 'addsubscription';
+		}
+
+		// Send email
+		if (! $error)
+		{
+            // Send confirmation Email
+            if ($adh->email && $_POST["sendmail"])
+            {
+                $subjecttosend=$adh->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
+                $texttosend=$adh->makeSubstitution($adht->getMailOnSubscription());
+
+                $result=$adh->send_an_email($texttosend,$subjecttosend,array(),array(),array(),"","",0,-1);
+                if ($result < 0) $errmsg=$adh->error;
+            }
+
+            $_POST["cotisation"]='';
+            $_POST["accountid"]='';
+            $_POST["operation"]='';
+            $_POST["label"]='';
+            $_POST["num_chq"]='';
 		}
 	}
 }
@@ -226,8 +286,7 @@ if ($errmsg)
 		$langs->load("errors");
 		$errmsg=$langs->trans($errmsg);
 	}
-	print '<div class="error">'.$errmsg.'</div>';
-	print "\n";
+	print '<div class="error">'.$errmsg.'</div>'."\n";
 }
 
 
@@ -245,10 +304,10 @@ if ($user->rights->adherent->cotisation->creer)
 		if ($adh->statut > 0) print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("AddSubscription")."</a>";
         else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a>';
 
+        print "<br>\n";
 	}
 }
 print '</div>';
-print "<br>\n";
 
 
 
@@ -374,7 +433,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
     if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && (empty($_POST['paymentsave']) || $_POST["paymentsave"] == 'bankdirect')) $bankdirect=1;
     if ($conf->banque->enabled && $conf->societe->enabled && $conf->facture->enabled && $adh->fk_soc) $bankviainvoice=1;
     // TODO A virer
-    $bankviainvoice=0;
+    //$bankviainvoice=0;
 
 	print "\n\n<!-- Form add subscription -->\n";
 
