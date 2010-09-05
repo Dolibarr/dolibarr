@@ -60,6 +60,14 @@ class CardIndividual extends CardCommon
 	}
 	
 	/**
+     *    Assigne les valeurs POST dans l'objet
+     */
+    function assign_post()
+    {
+    	parent::assign_post();
+    }
+	
+	/**
 	 * 	Load data control
 	 */
 	function loadControl($socid)
