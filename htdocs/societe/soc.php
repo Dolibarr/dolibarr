@@ -1587,19 +1587,12 @@ else
     // When used with CANVAS
     // -----------------------------------------
 
-    //$_GET["canvas"] = 'default@thirdparty';
-    //$canvas = 'default@thirdparty';
-	//if ($_REQUEST["private"]==1) $_GET["canvas"] = 'individual'; To switch to other canvas, we must use another value for canvas
-
     $soccanvas = new Canvas($db);
     $soccanvas->getCanvas('card',$canvas);
-
-
-    /*
-     * Actions
-     */
-
+	
+    // Load data control
     $soccanvas->loadControl($socid);
+
 
     /*
      *	View
@@ -1612,23 +1605,24 @@ else
     $formadmin = new FormAdmin($db);
     $formcompany = new FormCompany($db);
 
-    if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
-    $_GET["action"] == 'create' || $_POST["action"] == 'create')
+    if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] || GETPOST("action") == 'create')
     {
         /*
          *	Sheet mode creation
          */
         if ($user->rights->societe->creer)
-        { 
+        {
         	// Set action type
         	$soccanvas->setAction(GETPOST("action"));
         	
+        	// Card header
         	$title = $soccanvas->getTitle();
         	print_fiche_titre($title);
 
-            $soccanvas->assign_post();
+            // Assign _POST data
+        	$soccanvas->assign_post();
 
-            // Assign values
+            // Assign template values
             $soccanvas->assign_values();
 
             dol_htmloutput_errors($soccanvas->error,$soccanvas->errors);
@@ -1638,15 +1632,16 @@ else
 
         }
     }
-    elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
+    elseif (GETPOST("action") == 'edit')
     {
         /*
          * Company Fact Mode edition
          */
-
+    	
     	// Set action type
         $soccanvas->setAction(GETPOST("action"));
-    	
+        	
+    	// Card header
     	$title = $soccanvas->getTitle();
         print_fiche_titre($title);
 
@@ -1654,11 +1649,12 @@ else
         {
         	if ($reload || ! $_POST["nom"])
             {
-                $soc->id = $socid;
-                $soccanvas->fetch($socid);
+                //Reload object
+            	$soccanvas->fetch($socid);
             }
             else
             {
+            	// Assign _POST data
             	$soccanvas->assign_post();
             }
 
@@ -1676,20 +1672,21 @@ else
         /*
          * Company Fact Sheet mode visu
          */
-
-        // Set action type
+    	
+    	// Set action type
         $soccanvas->setAction('view');
 
-        $result=$soccanvas->fetch($socid);
+        // Fetch object
+    	$result=$soccanvas->fetch($socid);
         if ($result < 0)
         {
             dol_print_error($db,$soccanvas->control->object->error);
             exit;
         }
 
+        // Card header
         $head = societe_prepare_head($soccanvas->control->object);
         $title = $soccanvas->getTitle();
-
         dol_fiche_head($head, 'company', $title, 0, 'company');
 
     	// Assign values
