@@ -105,26 +105,28 @@ class Canvas
 	 */
 	function getCanvas($module,$card,$canvas)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$error='';
 		$this->card = $card;
-		$this->aliastargetmodule = $this->targetmodule = $module;
+		$this->canvas = $canvas;
+		$childmodule = $this->aliasmodule = $this->module = $module;
+		$targetmodule = $this->aliastargetmodule = $this->targetmodule = $module;
 
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
 		{
-			$this->aliasmodule = $this->module = $regs[2];
+			$childmodule = $this->aliasmodule = $this->module = $regs[2];
 			$this->canvas = $regs[1];
 			
 			// For compatibility
-			if ($this->module == 'thirdparty') $this->aliasmodule = 'societe';
-			if ($this->targetmodule == 'thirdparty') $this->aliastargetmodule = 'societe';
+			if ($this->module == 'thirdparty') $childmodule = $this->aliasmodule = 'societe';
+			if ($this->targetmodule == 'thirdparty') $targetmodule = $this->aliastargetmodule = 'societe';
 		}
-		else
-		{
-			$this->error = $langs->trans('CanvasIsInvalid');
-			return 0;
-		}
+
+		//print 'childmodule='.$childmodule.' targetmodule='.$targetmodule.'<br>';
+		//print 'childmodule='.$conf->$childmodule->enabled.' targetmodule='.$conf->$targetmodule->enabled.'<br>';
+		
+		if (! $conf->$childmodule->enabled || ! $conf->$targetmodule->enabled) accessforbidden();
 
 		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->targetmodule.'.'.$this->canvas.'.class.php') &&
 			file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php'))
@@ -160,8 +162,7 @@ class Canvas
 		}
 		else
 		{
-			$this->error = $langs->trans('CanvasIsInvalid');
-			return 0;
+			accessforbidden();
 		}
 		
 		return 1;
