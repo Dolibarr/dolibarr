@@ -72,11 +72,11 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 		//$pdf->SetCompression(false);
 
-        if (class_exists('TCPDF'))
-        {
-            $pdf->setPrintHeader(false);
-            $pdf->setPrintFooter(false);
-        }
+		if (class_exists('TCPDF'))
+		{
+			$pdf->setPrintHeader(false);
+			$pdf->setPrintFooter(false);
+		}
 		$pdf->SetFont('Helvetica');
 
 		//$pdf->Open();
@@ -91,12 +91,12 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 			// Charge un document PDF depuis un fichier.
 			$pagecount = $pdf->setSourceFile($file);
 			for ($i = 1; $i <= $pagecount; $i++)
-            {
-                 $tplidx = $pdf->importPage($i);
-                 $s = $pdf->getTemplatesize($tplidx);
-                 $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-                 $pdf->useTemplate($tplidx);
-            }
+			{
+				$tplidx = $pdf->importPage($i);
+				$s = $pdf->getTemplatesize($tplidx);
+				$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+				$pdf->useTemplate($tplidx);
+			}
 		}
 
 		// Create output dir if not exists
@@ -110,7 +110,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 			$file=$diroutputpdf.'/'.$filename.'_'.dol_print_date(mktime(),'dayhourlog').'.pdf';
 			$pdf->Output($file,'F');
 			if (! empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
+			@chmod($file, octdec($conf->global->MAIN_UMASK));
 		}
 		else
 		{
@@ -125,8 +125,6 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 
 
 
-
-
 /*
  * View
  */
@@ -138,23 +136,25 @@ llxHeader('',$title);
 
 $html = new Form($db);
 $formfile = new FormFile($db);
-?><script type="text/javascript">
-<!--
-	function checkall(checked){
-		var checkboxes = [];
-		checkboxes = $$('input').each(function(e){ if(e.type == 'checkbox') checkboxes.push(e) });
-		checkboxes.each(function(e){ e.checked = checked });
-	}
- -->
+
+?>
+<script language="javascript" type="text/javascript">
+jQuery(document).ready(function() {
+	jQuery("#checkall").click(function() {
+		jQuery(".checkformerge").attr('checked', true);
+	});
+	jQuery("#checknone").click(function() {
+		jQuery(".checkformerge").attr('checked', false);
+	});
+});
 </script>
 <?php
 
-
 /***************************************************************************
-*                                                                         *
-*                      Mode Liste                                         *
-*                                                                         *
-***************************************************************************/
+ *                                                                         *
+ *                      Mode Liste                                         *
+ *                                                                         *
+ ***************************************************************************/
 
 $now=gmmktime();
 
@@ -299,7 +299,9 @@ if ($result)
 	print '</td><td class="liste_titre" colspan="2" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '</td>';
-	print '<td class="liste_titre" align="center"><input type="checkbox" onclick="checkall(this.checked);"></td>';
+	print '<td class="liste_titre" align="center">';
+	if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
+	print '</td>';
 	print "</tr>\n";
 	print '</form>';
 
@@ -371,7 +373,7 @@ if ($result)
 
 			// Checkbox
 			print '<td align="center">';
-			if ($foundpdf) print '<input id="cb'.$objp->facid.'" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
+			if ($foundpdf) print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
 			else print '&nbsp;';
 			print '</td>' ;
 
