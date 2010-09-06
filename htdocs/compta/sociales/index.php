@@ -152,7 +152,7 @@ if ($resql)
 		print_liste_field_titre($langs->trans("Type"),"index.php","type","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("PeriodEndDate"),"index.php","periode","",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("DateDue"),"index.php","de","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateDue"),"index.php","s.date_ech","",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","",$param,'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
 
@@ -208,7 +208,7 @@ if ($resql)
 			print '<td align="right" width="100">'.price($obj->amount).'</td>';
 
 			// Due date
-			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->de), 'day').'</td>';
+			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 
 			print '<td align="right" nowrap="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
 
