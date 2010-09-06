@@ -300,6 +300,8 @@ if (GETPOST('action') && preg_match('/upgrade/i',GETPOST("action")))
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
             //print $langs->trans("AlreadyDone");
+            
+        	migrate_element_rang($db,$langs,$conf);
 
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
@@ -3047,6 +3049,87 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 	{
 		dol_print_error($db);
 		$db->rollback();
+	}
+
+	print '</td></tr>';
+}
+
+/*
+ * Migration de la gestion des rangs dans llx_element_rang
+ */
+function migrate_element_rang($db,$langs,$conf)
+{
+	dolibarr_install_syslog("upgrade2::migrate_element_rang");
+
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationElementRang')."</b><br>\n";
+	
+	$tables = array();
+	
+	// llx_propaldet
+	$tables[] = array('name'=>'propaldet','element'=>'propal','fk_element'=>'fk_propal');
+
+	foreach($tables as $table)
+	{
+		$result = $db->DDLDescTable(MAIN_DB_PREFIX.$table['name'],"rang");
+		$obj = $db->fetch_object($result);
+		if ($obj)
+		{
+			$error = 0;
+			
+			$db->begin();
+			
+			$sql = "SELECT rowid, ".$table['fk_element'].", rang FROM ".MAIN_DB_PREFIX.$table['name'];
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$i = 0;
+				$num = $db->num_rows($resql);
+				
+				if ($num)
+				{
+					while ($i < $num)
+					{
+						$obj = $db->fetch_object($resql);
+						
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_rang (fk_parent,parenttype,fk_child,childtype,rang)";
+						$sql.= " VALUES (".$obj->fk_propal.",'".$table['element']."',".$obj->rowid.",'".$table['element']."',".$obj->rang.")";
+						$resql2=$db->query($sql);
+						
+						if (!$resql2)
+						{
+							$error++;
+							dol_print_error($db);
+						}
+						print ". ";
+						$i++;
+					}
+				}
+				
+				if ($error == 0)
+				{
+					$db->commit();
+					$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table['name']." DROP COLUMN rang";
+					print "<br>".$langs->trans('FieldMigrated')."<br>\n";
+					$db->query($sql);
+				}
+				else
+				{
+					$db->rollback();
+				}
+			}
+			else
+			{
+				dol_print_error($db);
+				$db->rollback();
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
 	}
 
 	print '</td></tr>';

@@ -677,19 +677,9 @@ class CommonObject
 	 */
 	function line_order($renum=false)
 	{
-		if (! $this->table_element_line)
-		{
-			dol_syslog("CommonObject::line_order was called on objet with property table_element_line not defined",LOG_ERR);
-			return -1;
-		}
-		if (! $this->fk_element)
-		{
-			dol_syslog("CommonObject::line_order was called on objet with property fk_element not defined",LOG_ERR);
-			return -1;
-		}
-
-		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql.= ' WHERE '.$this->fk_element.'='.$this->id;
+		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.'element_rang';
+		$sql.= ' WHERE fk_parent = '.$this->id;
+		$sql.= ' AND parenttype = "'.$this->element.'"';
 		if (! $renum) $sql.= ' AND rang = 0';
 		if ($renum) $sql.= ' AND rang <> 0';
 		$resql = $this->db->query($sql);
@@ -700,8 +690,9 @@ class CommonObject
 		}
 		if ($nl > 0)
 		{
-			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'element_rang';
+			$sql.= ' WHERE fk_parent = '.$this->id;
+			$sql.= ' AND parenttype = "'.$this->element.'"';
 			$sql.= ' ORDER BY rang ASC, rowid ASC';
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -717,7 +708,7 @@ class CommonObject
 			}
 			for ($i = 0 ; $i < sizeof($li) ; $i++)
 			{
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.($i+1);
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_rang SET rang = '.($i+1);
 				$sql.= ' WHERE rowid = '.$li[$i];
 				if (!$this->db->query($sql) )
 				{
@@ -759,13 +750,47 @@ class CommonObject
 		// Update position of line
 		$this->updateLineDown($rowid, $rang, $max);
 	}
+	
+	/**
+	 * 	   Add position of line (rang)
+	 */
+	function addRangOfLine($childid,$childtype,$rang)
+	{
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'element_rang (';
+		$sql.= 'fk_parent, parenttype, fk_child, childtype, rang';
+		$sql.= ') VALUES (';
+		$sql.= $this->id.', "'.$this->element.'", '.$childid.', "'.$childtype.'", '.$rang;
+		$sql.= ')';
+
+		if (! $this->db->query($sql) )
+		{
+			dol_print_error($this->db);
+		}
+	}
+	
+	/**
+	 * 	   Delete position of line (rang)
+	 */
+	function delRangOfLine($childid,$childtype)
+	{
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'element_rang';
+		$sql.= ' WHERE fk_parent = '.$this->id;
+		$sql.= ' AND parenttype = "'.$this->element.'"';
+		$sql.= ' AND fk_child = '.$childid;
+		$sql.= ' AND childtype = "'.$childtype.'"';
+
+		if (! $this->db->query($sql) )
+		{
+			dol_print_error($this->db);
+		}
+	}
 
 	/**
 	 * 	   Update position of line (rang)
 	 */
 	function updateRangOfLine($rowid,$rang)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.$rang;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_rang SET rang  = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
 		if (! $this->db->query($sql) )
 		{
@@ -780,13 +805,16 @@ class CommonObject
 	{
 		if ($rang > 1 )
 		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.$rang ;
-			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_rang SET rang = '.$rang ;
+			$sql.= ' WHERE fk_parent = '.$this->id;
+			$sql.= ' AND parenttype = "'.$this->element.'"';
 			$sql.= ' AND rang = '.($rang - 1);
 			if ($this->db->query($sql) )
 			{
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.($rang - 1);
-				$sql.= ' WHERE rowid = '.$rowid;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_rang SET rang  = '.($rang - 1);
+				$sql.= ' WHERE fk_parent = '.$this->id;
+				$sql.= ' AND parenttype = "'.$this->element.'"';
+				$sql.= ' AND fk_child = '.$rowid;
 				if (! $this->db->query($sql) )
 				{
 					dol_print_error($this->db);
@@ -806,13 +834,16 @@ class CommonObject
 	{
 		if ($rang < $max)
 		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.$rang;
-			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql.= ' AND rang = '.($rang+1);
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_rang SET rang = '.$rang;
+			$sql.= ' WHERE fk_parent = '.$this->id;
+			$sql.= ' AND parenttype = "'.$this->element.'"';
+			$sql.= ' AND rang = '.($rang + 1);
 			if ($this->db->query($sql) )
 			{
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.($rang+1);
-				$sql.= ' WHERE rowid = '.$rowid;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_rang SET rang = '.($rang + 1);
+				$sql.= ' WHERE fk_parent = '.$this->id;
+				$sql.= ' AND parenttype = "'.$this->element.'"';
+				$sql.= ' AND fk_child = '.$rowid;
 				if (! $this->db->query($sql) )
 				{
 					dol_print_error($this->db);
@@ -831,8 +862,10 @@ class CommonObject
 	 */
 	function getRangOfLine($rowid)
 	{
-		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql.= ' WHERE rowid ='.$rowid;
+		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.'element_rang';
+		$sql.= ' WHERE fk_parent = '.$this->id;
+		$sql.= ' AND parenttype = "'.$this->element.'"';
+		$sql.= ' AND fk_child = '.$rowid;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -847,8 +880,9 @@ class CommonObject
 	 */
 	function getIdOfLine($rang)
 	{
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'element_rang';
+		$sql.= ' WHERE fk_parent = '.$this->id;
+		$sql.= ' AND parenttype = "'.$this->element.'"';
 		$sql.= ' AND rang = '.$rang;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -864,8 +898,9 @@ class CommonObject
 	 */
 	function line_max()
 	{
-		$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+		$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'element_rang';
+		$sql.= ' WHERE fk_parent = '.$this->id;
+		$sql.= ' AND parenttype = "'.$this->element.'"';
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

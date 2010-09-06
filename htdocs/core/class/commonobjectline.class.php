@@ -31,6 +31,22 @@
 
 class CommonObjectLine
 {
+	/**
+	 * 	   Add position of line (rang)
+	 */
+	function addRangOfLine($parentid,$parenttype,$childid,$childtype,$rang)
+	{
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'element_rang (';
+		$sql.= 'fk_parent, parenttype, fk_child, childtype, rang';
+		$sql.= ') VALUES (';
+		$sql.= $parentid.', "'.$parenttype.'", '.$childid.', "'.$childtype.'", '.$rang;
+		$sql.= ')';
+
+		if (! $this->db->query($sql) )
+		{
+			dol_print_error($this->db);
+		}
+	}
 
 }
 
