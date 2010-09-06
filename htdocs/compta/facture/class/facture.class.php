@@ -674,15 +674,20 @@ class Facture extends CommonObject
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
-		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc,';
-		$sql.= ' r.rang';
+		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
+        // FIXME: There is a bug when using a join with element_rang and
+        // condition outside of left join. This give unpredicable results as this is not
+        // a valid SQL syntax .
+        // $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
+        // Getting a "sort order" must be done outside of the request to get values
+		//$sql.= ' r.rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_facture AND r.parenttype = '".$this->element."'";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_facture AND r.parenttype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
-		$sql.= " AND r.fk_child = l.rowid";
-		$sql.= " AND r.childtype = '".$this->element."'";
-		$sql.= ' ORDER BY r.rang';
+		//$sql.= " AND r.fk_child = l.rowid";
+		//$sql.= " AND r.childtype = '".$this->element."'";
+		//$sql.= ' ORDER BY r.rang';
 
 		dol_syslog('Facture::fetch_lines sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1028,7 +1033,7 @@ class Facture extends CommonObject
 			{
 				// Delete all rang of lines
 				$this->delAllRangOfLines();
-				
+
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
 				$resql=$this->db->query($sql);
 				if ($resql)
@@ -1041,7 +1046,7 @@ class Facture extends CommonObject
 						$this->db->rollback();
 						return 0;
 					}
-					
+
 					// Appel des triggers
 					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
@@ -1896,7 +1901,7 @@ class Facture extends CommonObject
 		}
 
 		$result=$this->update_price();
-		
+
 		$this->delRangOfLine($lineid, $this->element);
 
 		// Appel des triggers
@@ -2995,7 +3000,7 @@ class FactureLigne extends CommonObjectLine
 		$sql.= ' WHERE fd.rowid = '.$rowid;
 		$sql.= " AND r.fk_child = fd.rowid";
 		$sql.= " AND r.childtype = '".$this->element."'";
-		
+
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -3109,7 +3114,7 @@ class FactureLigne extends CommonObjectLine
 		if ($resql)
 		{
 			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
-			
+
 			$this->addRangOfLine($this->fk_facture,'facture',$this->rowid,'facture',$this->rang);
 
 			// Si fk_remise_except defini, on lie la remise a la facture

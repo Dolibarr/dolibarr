@@ -763,7 +763,8 @@ class Expedition extends CommonObject
 		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
 		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)"; // FIXME utiliser llx_element_element
         // FIXME: There is a bug when using a join with element_rang and
-        // condition outside of left join. This give unpredicable results.
+        // condition outside of left join. This give unpredicable results as this is not
+        // a valid SQL syntax .
 		// $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
 		// Getting a "sort order" must be done outside of the request to get values
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";

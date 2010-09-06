@@ -230,7 +230,7 @@ class Livraison extends CommonObject
 
 			$this->rang = 0; // TODO en attendant une gestion de la disposition
 			$this->addRangOfLine($this->rowid,$this->element,$this->rang);
-			
+
 			return 1;
 		}
 		else
@@ -550,7 +550,7 @@ class Livraison extends CommonObject
 			if ($this->db->query($sql) )
 			{
 				$this->update_price();
-				
+
 				$this->delRangOfLine($lineid, $this->element);
 
 				return 1;
@@ -576,7 +576,7 @@ class Livraison extends CommonObject
 		{
 			// Delete all rang of lines
 			$this->delAllRangOfLines();
-			
+
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 			$sql.= " WHERE fk_target = ".$this->id;
 			$sql.= " AND targettype = '".$this->element."'";
@@ -585,7 +585,7 @@ class Livraison extends CommonObject
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison";
 				$sql.= " WHERE rowid = ".$this->id;
 				if ( $this->db->query($sql) )
-				{				
+				{
 					$this->db->commit();
 
 					// On efface le repertoire de pdf provisoire
@@ -674,13 +674,18 @@ class Livraison extends CommonObject
 		$sql.= " p.ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd"; // TODO utiliser llx_element_element
 		$sql.= ", ".MAIN_DB_PREFIX."livraisondet as ld";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ld.fk_livraison AND r.parenttype = '".$this->element."'";
+        // FIXME: There is a bug when using a join with element_rang and
+        // condition outside of left join. This give unpredicable results as this is not
+        // a valid SQL syntax .
+        // $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
+        // Getting a "sort order" must be done outside of the request to get values
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ld.fk_livraison AND r.parenttype = '".$this->element."'";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
 		$sql.= " WHERE ld.fk_origin_line = cd.rowid";
 		$sql.= " AND ld.fk_livraison = ".$this->id;
-		$sql.= " AND r.fk_child = ld.rowid";
-		$sql.= " AND r.childtype = '".$this->element."'";
-		$sql.= " ORDER by r.rang";
+		//$sql.= " AND r.fk_child = ld.rowid";
+		//$sql.= " AND r.childtype = '".$this->element."'";
+		//$sql.= " ORDER by r.rang";
 
 		dol_syslog("Livraison::fetch_lignes sql=".$sql);
 		$resql = $this->db->query($sql);

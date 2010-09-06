@@ -300,8 +300,8 @@ if (GETPOST('action') && preg_match('/upgrade/i',GETPOST("action")))
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
             //print $langs->trans("AlreadyDone");
-            
-        	migrate_element_rang($db,$langs,$conf);
+
+        	//migrate_element_rang($db,$langs,$conf);
 
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
@@ -3065,9 +3065,9 @@ function migrate_element_rang($db,$langs,$conf)
 
 	print '<br>';
 	print '<b>'.$langs->trans('MigrationElementRang')."</b><br>\n";
-	
+
 	$tables = array();
-	
+
 	// llx_propaldet
 	$tables[] = array('name'=>'propaldet','element'=>'propal','fk_element'=>'fk_propal');
 	// llx_commandedet
@@ -3088,26 +3088,26 @@ function migrate_element_rang($db,$langs,$conf)
 		if ($obj)
 		{
 			$error = 0;
-			
+
 			$db->begin();
-			
+
 			$sql = "SELECT rowid, ".$table['fk_element'].", rang FROM ".MAIN_DB_PREFIX.$table['name'];
 			$resql = $db->query($sql);
 			if ($resql)
 			{
 				$i = 0;
 				$num = $db->num_rows($resql);
-				
+
 				if ($num)
 				{
 					while ($i < $num)
 					{
 						$obj = $db->fetch_object($resql);
-						
+
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_rang (fk_parent,parenttype,fk_child,childtype,rang)";
 						$sql.= " VALUES (".$obj->$table['fk_element'].",'".$table['element']."',".$obj->rowid.",'".$table['element']."',".$obj->rang.")";
 						$resql2=$db->query($sql);
-						
+
 						if (!$resql2)
 						{
 							$error++;
@@ -3117,13 +3117,14 @@ function migrate_element_rang($db,$langs,$conf)
 						$i++;
 					}
 				}
-				
+
 				if ($error == 0)
 				{
 					$db->commit();
-					$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table['name']." DROP COLUMN rang";
-					print "<br>".$langs->trans('FieldMigrated',$table['name'])."<br>\n";
-					$db->query($sql);
+					// DDL sql order must not be done into the data migrate process
+					//$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table['name']." DROP COLUMN rang";
+					//print "<br>".$langs->trans('FieldMigrated',$table['name'])."<br>\n";
+					//$db->query($sql);
 				}
 				else
 				{

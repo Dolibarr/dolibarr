@@ -1233,16 +1233,21 @@ class Commande extends CommonObject
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.info_bits,';
 		$sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
-		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label,';
-		$sql.= ' r.rang';
+		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
+        // FIXME: There is a bug when using a join with element_rang and
+        // condition outside of left join. This give unpredicable results as this is not
+        // a valid SQL syntax .
+        // $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
+        // Getting a "sort order" must be done outside of the request to get values
+		//$sql.= ' r.rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_commande AND r.parenttype = '".$this->element."'";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_commande AND r.parenttype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
-		$sql.= " AND r.fk_child = l.rowid";
-		$sql.= " AND r.childtype = '".$this->element."'";
+		//$sql.= " AND r.fk_child = l.rowid";
+		//$sql.= " AND r.childtype = '".$this->element."'";
 		if ($only_product) $sql .= ' AND p.fk_product_type = 0';
-		$sql .= ' ORDER BY r.rang';
+		//$sql .= ' ORDER BY r.rang';
 
 		dol_syslog("Commande::fetch_lines sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1477,7 +1482,7 @@ class Commande extends CommonObject
 					if ($result > 0)
 					{
 						$result=$this->update_price();
-						
+
 						$this->delRangOfLine($lineid, $this->element);
 
 						if ($result > 0)
@@ -1992,7 +1997,7 @@ class Commande extends CommonObject
 			dol_syslog("CustomerOrder::delete error", LOG_ERR);
 			$err++;
 		}
-		
+
 		// Delete all rang of lines
 		$this->delAllRangOfLines();
 
@@ -2420,15 +2425,21 @@ class Commande extends CommonObject
 		$sql.= ' l.date_start,';
 		$sql.= ' l.date_end,';
 		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, ';
-		$sql.= ' p.description as product_desc,';
-		$sql.= ' r.rang';
+		$sql.= ' p.description as product_desc';
+        // FIXME: There is a bug when using a join with element_rang and
+        // condition outside of left join. This give unpredicable results as this is not
+        // a valid SQL syntax .
+        // $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
+        // Getting a "sort order" must be done outside of the request to get values
+		//$sql.= ' r.rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_commande AND r.parenttype = '".$this->element."'";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_commande AND r.parenttype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
-		$sql.= " AND r.fk_child = l.rowid";
-		$sql.= " AND r.childtype = '".$this->element."'";
+		//$sql.= " AND r.fk_child = l.rowid";
+		//$sql.= " AND r.childtype = '".$this->element."'";
 		$sql.= ' ORDER BY r.rang ASC, l.rowid';
+        $sql.= ' ORDER BY l.rowid';
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2544,15 +2555,20 @@ class OrderLine extends CommonObjectLine
 		$sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
 		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.marge_tx, cd.marque_tx,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
-		$sql.= ' cd.date_start, cd.date_end,';
-		$sql.= ' r.rang';
+		$sql.= ' cd.date_start, cd.date_end';
+        // FIXME: There is a bug when using a join with element_rang and
+        // condition outside of left join. This give unpredicable results as this is not
+        // a valid SQL syntax .
+        // $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
+        // Getting a "sort order" must be done outside of the request to get values
+		//$sql.= ' r.rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = cd.fk_commande AND r.parenttype = '".$this->element."'";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = cd.fk_commande AND r.parenttype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		$sql.= ' WHERE cd.rowid = '.$rowid;
-		$sql.= " AND r.fk_child = cd.rowid";
-		$sql.= " AND r.childtype = '".$this->element."'";
-		
+		//$sql.= " AND r.fk_child = cd.rowid";
+		//$sql.= " AND r.childtype = '".$this->element."'";
+
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -2699,7 +2715,7 @@ class OrderLine extends CommonObjectLine
 		if ($resql)
 		{
 			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
-			
+
 			$this->addRangOfLine($this->fk_commande,'commande',$this->rowid,'commande',$this->rang);
 
 			if (! $notrigger)

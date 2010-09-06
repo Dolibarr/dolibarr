@@ -326,14 +326,20 @@ if ($id > 0 || ! empty($ref))
 	$sql.= ' pt.product_type,';
 	$sql.= ' p.rowid as prodid, p.label as product_label, p.ref, p.fk_product_type, ';
 	$sql.= ' p.description as product_desc';
+    // FIXME: There is a bug when using a join with element_rang and
+    // condition outside of left join. This give unpredicable results as this is not
+    // a valid SQL syntax .
+    // $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
+    // Getting a "sort order" must be done outside of the request to get values
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = pt.fk_propal AND r.parenttype = '".$propal->element."'";
+	//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = pt.fk_propal AND r.parenttype = '".$propal->element."'";
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
 	$sql.= ' WHERE pt.fk_propal = '.$propal->id;
-	$sql.= " AND r.fk_child = pt.rowid";
-	$sql.= " AND r.childtype = '".$propal->element."'";
-	$sql.= ' ORDER BY r.rang ASC, pt.rowid';
-	
+	//$sql.= " AND r.fk_child = pt.rowid";
+	//$sql.= " AND r.childtype = '".$propal->element."'";
+	//$sql.= ' ORDER BY r.rang ASC, pt.rowid';
+	$sql.=" ORDER BY pt.rowid";
+
 	$resql = $db->query($sql);
 	if ($resql)
 	{
