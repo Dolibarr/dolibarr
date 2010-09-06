@@ -1024,13 +1024,23 @@ class Facture extends CommonObject
 			}
 
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
-			if ($this->db->query($sql) && $this->delete_linked_contact())
+			if ($this->db->query($sql))
 			{
+				// Delete all rang of files
+				$this->delAllRangOfLines();
+				
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
-					$this->delAllRangOfLines();
+					// Delete linked contacts
+					$res = $this->delete_linked_contact();
+					if ($res < 0)
+					{
+						$this->error='ErrorFailToDeleteLinkedContact';
+						$this->db->rollback();
+						return 0;
+					}
 					
 					// Appel des triggers
 					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
