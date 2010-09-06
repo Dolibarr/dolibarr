@@ -485,7 +485,8 @@ function getDateFromFormat(val,format)
 /*
  * ================================================================= 
  * Function:
- * stringIsInteger(string) Purpose: Return true if string is an integer
+ * stringIsInteger(string) 
+ * Purpose: Return true if string is an integer
  * ==================================================================
  */
 function stringIsInteger(str)
@@ -504,8 +505,8 @@ function stringIsInteger(str)
 /*
  * ================================================================= 
  * Function:
- * getIntegerInString(string,pos,minlength,maxlength) Purpose: Return part of
- * string from position i that is integer
+ * getIntegerInString(string,pos,minlength,maxlength) 
+ * Purpose: Return part of string from position i that is integer
  * ==================================================================
  */
 function getIntegerInString(str,i,minlength,maxlength)
@@ -523,7 +524,9 @@ function getIntegerInString(str,i,minlength,maxlength)
 /*
  * ================================================================= 
  * Purpose:
- * Clean string to have it url encoded Input: s Author: Laurent Destailleur
+ * Clean string to have it url encoded 
+ * Input: s 
+ * Author: Laurent Destailleur
  * Licence: GPL
  * ==================================================================
  */
@@ -534,9 +537,11 @@ function urlencode(s) {
 
 /*
  * ================================================================= 
- * Purpose:
- * Show a popup HTML page. Input: url,title Author: Laurent Destailleur Licence:
- * GPL ==================================================================
+ * Purpose: Show a popup HTML page. 
+ * Input:   url,title 
+ * Author:  Laurent Destailleur 
+ * Licence: GPL 
+ * ==================================================================
  */
 function newpopup(url,title) {
 	var argv = newpopup.arguments;
@@ -554,7 +559,8 @@ function newpopup(url,title) {
  * ================================================================= 
  * Purpose:
  * Fonction pour champ saisie en mode ajax. Used for autocompletion of products.
- * Author: Laurent Destailleur Licence: GPL
+ * Author: Laurent Destailleur 
+ * Licence: GPL
  * ==================================================================
  */
 function publish_selvalue(obj) { $(obj.name).value = obj.options[obj.selectedIndex].value; }
@@ -565,7 +571,9 @@ function publish_selvalue(obj) { $(obj.name).value = obj.options[obj.selectedInd
  * ================================================================= 
  * Purpose:
  * Set value of a field after return of Ajax call. Used for autocompletion.
- * Input: HTML field name, val Author: Regis Houssin Licence: GPL
+ * Input: HTML field name, val 
+ * Author: Regis Houssin 
+ * Licence: GPL
  * ==================================================================
  */
 function ac_return(field, val){
@@ -586,7 +594,9 @@ function ac_return(field, val){
  * ================================================================= 
  * Purpose:
  * Applique un delai avant execution. Used for autocompletion of companies.
- * Input: funct, delay Author: Regis Houssin Licence: GPL
+ * Input:   funct, delay 
+ * Author:  Regis Houssin 
+ * Licence: GPL
  * ==================================================================
  */
  function ac_delay(funct,delay) {
@@ -598,8 +608,11 @@ function ac_return(field, val){
 /*
  * ================================================================= 
  * Purpose:
- * Clean values of a "Sortable.serialize". Used by drag and drop. Works for
- * Scriptaculous and jQuery. Input: expr Author: Regis Houssin Licence: GPL
+ * Clean values of a "Sortable.serialize". Used by drag and drop.
+ * Works for Scriptaculous and jQuery. 
+ * Input:   expr 
+ * Author:  Regis Houssin 
+ * Licence: GPL
  * ==================================================================
  */
 function cleanSerialize(expr) {
@@ -613,10 +626,13 @@ function cleanSerialize(expr) {
 
 /*
  * ================================================================= 
- * Purpose:
- * Display a temporary message in input text fields (For showing help message on
- * input field). Input: fieldId Input: message Author: Regis Houssin Licence:
- * GPL ==================================================================
+ * Purpose: Display a temporary message in input text fields (For showing help message on
+ *          input field).
+ * Input:   fieldId
+ * Input:   message
+ * Author:  Regis Houssin 
+ * Licence: GPL
+ * ==================================================================
  */
 function displayMessage(fieldId,message) {
 	var textbox = document.getElementById(fieldId);
@@ -628,9 +644,12 @@ function displayMessage(fieldId,message) {
 
 /*
  * ================================================================= 
- * Purpose:
- * Hide a temporary message in input text fields (For showing help message on
- * input field). Input: fiedId Input: message Author: Regis Houssin Licence: GPL
+ * Purpose: Hide a temporary message in input text fields (For showing help message on
+ *          input field). 
+ * Input:   fiedId 
+ * Input:   message 
+ * Author:  Regis Houssin
+ * Licence: GPL
  * ==================================================================
  */
 function hideMessage(fieldId,message) {
@@ -638,61 +657,3 @@ function hideMessage(fieldId,message) {
 	textbox.style.color = 'black';
 	if (textbox.value == message) textbox.value = '';
 }
-
-
-/*
- * ================================================================= 
- * Purpose: To
- * show an element (To support multiselect of checkboxes in some pages) Input:
- * fieldId Author: Regis Houssin Licence: GPL
- * ==================================================================
- */
-function displayElement(fieldId) {
-	var elementId = document.getElementById(fieldId);
-	if (elementId.style.visibility == 'hidden') {
-		elementId.style.visibility = 'visible';
-	}
-}
-
-/*
- * ================================================================= 
- * Purpose: To
- * hide an element (To support multiselect of checkboxes in some pages) Input:
- * fieldId Author: Regis Houssin Licence: GPL
- * ==================================================================
- */
-function hideElement(fieldId) {
-	var elementId = document.getElementById(fieldId);
-	if (elementId.style.visibility == 'visible') {
-		elementId.style.visibility = 'hidden';
-	}
-}
-
-/*
- * ================================================================= 
- * Purpose: To
- * check a checkbox (To support multiselect of checkboxes in some pages) Input:
- * fieldId Author: Regis Houssin Licence: GPL
- * ==================================================================
- */
-function checkBox(boxId) {
-	var elementId = document.getElementById(boxId);
-	if (elementId.checked == false) {
-		elementId.checked = true;
-	}
-}
-
-/*
- * ================================================================= 
- * Purpose: To
- * uncheck a checkbox (To support multiselect of checkboxes in some pages)
- * Input: fieldId Author: Regis Houssin Licence: GPL
- * ==================================================================
- */
-function uncheckBox(boxId) {
-	var elementId = document.getElementById(boxId);
-	if (elementId.checked == true) {
-		elementId.checked = false;
-	}
-}
-
