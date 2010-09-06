@@ -227,18 +227,19 @@ class PaymentTerm // extends CommonObject
 
 
     /**
-     *    \brief      Return id of default payment term
-     *    \return     int         <0 if KO, >0 if OK
+     *    Return id of default payment term
+     *    @return     int         <0 if KO, >0 if OK
      */
     function getDefaultId()
     {
     	global $langs;
-        $sql = "SELECT";
+
+        $ret=0;
+
+    	$sql = "SELECT";
 		$sql.= " t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
         $sql.= " WHERE t.code = 'RECEP'";
-
-        $ret=0;
 
     	dol_syslog(get_class($this)."::getDefaultId sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -255,7 +256,7 @@ class PaymentTerm // extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::getDefaultId ".$this->error, LOG_ERR);
             return -1;
         }
     }
