@@ -361,6 +361,21 @@ if ($_REQUEST['action'] == 'download')
 
 llxHeader();
 
+// Add logic to shoow/hide buttons
+if ($conf->use_javascript_ajax)
+{
+?>
+<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	jQuery("#delconst").hide();
+	jQuery(".checkboxfordelete").click(function() {
+		jQuery("#delconst").show();
+	});
+});
+</script>
+<?php
+}
+
 $form=new Form($db);
 $formfile=new FormFile($db);
 $userstatic = new User($db);
@@ -514,7 +529,7 @@ else
 				}
 
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var].' height="18">';
 				// Name
 				print '<td>';
 				$newsection=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
@@ -561,14 +576,11 @@ else
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_file().'</a>';
 					print ' &nbsp; ';
+					print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
+					print ' &nbsp; ';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
 					print '<input type="hidden" name="const['.$i.'][section]" value="'.$section.'">';
 					print '<input type="hidden" name="const['.$i.'][file]" value="'.$file.'">';
-					if ($conf->use_javascript_ajax)
-					{
-						print ' &nbsp; <input type="checkbox" id="check_'.$i.'" name="const['.$i.'][check]" value="1" onClick="displayElement(\'delconst\');">';
-						print ' &nbsp; ';
-					}
 				}
 				print '</td>';
 				print '</tr>'."\n";
@@ -593,16 +605,10 @@ else
 		else print '&nbsp;';
 		*/
 
-		if ($conf->use_javascript_ajax)
-		{
-			print '<br>';
-			print '<div id="updateconst" align="right" style="visibility:hidden;">';
-			print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
-			print '</div>';
-			print '<div id="delconst" align="right" style="visibility:hidden;">';
-			print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
-			print '</div>';
-		}
+		print '<br>';
+		print '<div id="delconst" align="right">';
+		print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
+		print '</div>';
 
 		print "</form>";
 	}
