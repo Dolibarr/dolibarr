@@ -3070,6 +3070,7 @@ function migrate_element_rang($db,$langs,$conf)
 	
 	// llx_propaldet
 	$tables[] = array('name'=>'propaldet','element'=>'propal','fk_element'=>'fk_propal');
+	$tables[] = array('name'=>'commandedet','element'=>'commande','fk_element'=>'fk_commande');
 
 	foreach($tables as $table)
 	{
@@ -3095,7 +3096,7 @@ function migrate_element_rang($db,$langs,$conf)
 						$obj = $db->fetch_object($resql);
 						
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_rang (fk_parent,parenttype,fk_child,childtype,rang)";
-						$sql.= " VALUES (".$obj->fk_propal.",'".$table['element']."',".$obj->rowid.",'".$table['element']."',".$obj->rang.")";
+						$sql.= " VALUES (".$obj->$table['fk_element'].",'".$table['element']."',".$obj->rowid.",'".$table['element']."',".$obj->rang.")";
 						$resql2=$db->query($sql);
 						
 						if (!$resql2)
@@ -3113,7 +3114,7 @@ function migrate_element_rang($db,$langs,$conf)
 					$db->commit();
 					$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table['name']." DROP COLUMN rang";
 					print "<br>".$langs->trans('FieldMigrated')."<br>\n";
-					$db->query($sql);
+					//$db->query($sql);
 				}
 				else
 				{
