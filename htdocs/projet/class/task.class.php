@@ -333,6 +333,9 @@ class Task extends CommonObject
 				return 0;
 			}
 		}
+		
+		// Delete rang of line
+		//$this->delRangOfLine($this->id, $this->element);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
 		$sql.= " WHERE rowid=".$this->id;
