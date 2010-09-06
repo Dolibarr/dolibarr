@@ -1801,7 +1801,7 @@ else
 								}
 								else
 								{*/
-									print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$comid.'">'.$langs->trans('ShipProduct').'</a>';
+									print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$commande->id.'">'.$langs->trans('ShipProduct').'</a>';
 								//}
 							}
 							else

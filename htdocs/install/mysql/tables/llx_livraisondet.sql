@@ -28,6 +28,5 @@ create table llx_livraisondet
   description       text,
   qty               real,                            -- quantity
   subprice          double(24,8) DEFAULT 0,          -- prix unitaire
-  total_ht          double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantite
-  rang              integer      DEFAULT 0
+  total_ht          double(24,8) DEFAULT 0           -- Total HT de la ligne toute quantite
 )type=innodb;

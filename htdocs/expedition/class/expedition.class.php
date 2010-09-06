@@ -231,13 +231,19 @@ class Expedition extends CommonObject
 		$sql.= ", ".$qty;
 		$sql.= ")";
 
-		if (! $this->db->query($sql))
+		if ($this->db->query($sql))
 		{
-			$error++;
-		}
+			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'expeditiondet');
 
-		if (! $error) return 1;
-		else return -1;
+			$this->rang = 0; // TODO en attendant une gestion de la disposition
+			$this->addRangOfLine($this->rowid,$this->element,$this->rang);
+			
+			return 1;
+		}
+		else
+		{
+			return -1;
+		} 
 	}
 
 	/**
@@ -544,16 +550,18 @@ class Expedition extends CommonObject
 	 *
 	 *
 	 */
-	function delete_line($id)
+	function delete_line($lineid)
 	{
 		if ($this->statut == 0)
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql.= " WHERE rowid = ".$id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
+			$sql.= " WHERE rowid = ".$lineid;
 
 			if ($this->db->query($sql) )
 			{
 				$this->update_price();
+				
+				$this->delRangOfLine($lineid, $this->element);
 
 				return 1;
 			}
@@ -679,6 +687,9 @@ class Expedition extends CommonObject
 
 		if ( $this->db->query($sql) )
 		{
+			// Delete all rang of files
+			$this->delAllRangOfLines();
+			
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 			$sql.= " WHERE fk_target = ".$this->id;
 			$sql.= " AND targettype = '".$this->element."'";
@@ -752,10 +763,14 @@ class Expedition extends CommonObject
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref, p.fk_product_type, p.label, p.weight, p.weight_units, p.volume, p.volume_units";
 		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
-		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)";
+		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)"; // FIXME utiliser llx_element_element
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql.= " WHERE ed.fk_expedition = ".$this->id;
-		$sql.= " AND ed.fk_origin_line = cd.rowid";
+		$sql.= " AND r.fk_child = ed.rowid";
+		$sql.= " AND r.childtype = '".$this->element."'";
+		$sql.= " AND ed.fk_origin_line = cd.rowid";  // FIXME utiliser llx_element_element
+		$sql.= " ORDER by r.rang";
 
 		dol_syslog("Expedition::fetch_lines sql=".$sql);
 		$resql = $this->db->query($sql);

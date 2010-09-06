@@ -1992,6 +1992,9 @@ class Commande extends CommonObject
 			dol_syslog("CustomerOrder::delete error", LOG_ERR);
 			$err++;
 		}
+		
+		// Delete all rang of lines
+		$this->delAllRangOfLines();
 
 		// Delete order
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;

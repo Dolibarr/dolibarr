@@ -49,6 +49,7 @@ $langs->load('other');
 $langs->load('propal');
 
 $origin = $_GET["origin"]?$_GET["origin"]:$_POST["origin"];                // Example: commande, propal
+if (empty($origin)) $origin = 'expedition';
 $origin_id = isset($_REQUEST["id"])?$_REQUEST["id"]:'';
 if (empty($origin_id)) $origin_id  = $_GET["origin_id"]?$_GET["origin_id"]:$_POST["origin_id"];    // Id of order or propal
 if (empty($origin_id)) $origin_id  = $_GET["object_id"]?$_GET["object_id"]:$_POST["object_id"];    // Id of order or propal
@@ -57,7 +58,7 @@ $id = $origin_id;
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,$origin,$origin_id,'');
+$result=restrictedArea($user,$origin,$origin_id);
 
 
 /*

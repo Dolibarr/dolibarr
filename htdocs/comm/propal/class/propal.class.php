@@ -1574,6 +1574,9 @@ class Propal extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
 		if ( $this->db->query($sql) )
 		{
+			// Delete all rang of files
+			$this->delAllRangOfLines();
+			
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
 			if ( $this->db->query($sql) )
 			{

@@ -754,7 +754,7 @@ class CommonObject
 	/**
 	 * 	   Add position of line (rang)
 	 */
-	function addRangOfLine($childid,$childtype,$rang)
+	function addRangOfLine($childid,$childtype,$rang=0)
 	{
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'element_rang (';
 		$sql.= 'fk_parent, parenttype, fk_child, childtype, rang';
@@ -778,6 +778,21 @@ class CommonObject
 		$sql.= ' AND parenttype = "'.$this->element.'"';
 		$sql.= ' AND fk_child = '.$childid;
 		$sql.= ' AND childtype = "'.$childtype.'"';
+
+		if (! $this->db->query($sql) )
+		{
+			dol_print_error($this->db);
+		}
+	}
+	
+	/**
+	 * 	   Delete all position of lines (rang)
+	 */
+	function delAllRangOfLines()
+	{
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'element_rang';
+		$sql.= ' WHERE fk_parent = '.$this->id;
+		$sql.= ' AND parenttype = "'.$this->element.'"';
 
 		if (! $this->db->query($sql) )
 		{

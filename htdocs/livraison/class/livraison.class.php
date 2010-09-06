@@ -224,14 +224,18 @@ class Livraison extends CommonObject
 		$sql.= $qty.")";
 
 		dol_syslog("Livraison::create_line sql=".$sql, LOG_DEBUG);
-		if (! $this->db->query($sql) )
+		if ($this->db->query($sql))
 		{
-			$error++;
-		}
+			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'livraisondet');
 
-		if ($error == 0 )
-		{
+			$this->rang = 0; // TODO en attendant une gestion de la disposition
+			$this->addRangOfLine($this->rowid,$this->element,$this->rang);
+			
 			return 1;
+		}
+		else
+		{
+			return -1;
 		}
 	}
 
@@ -536,16 +540,18 @@ class Livraison extends CommonObject
 	 *
 	 *
 	 */
-	function delete_line($idligne)
+	function delete_line($lineid)
 	{
 		if ($this->statut == 0)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql.= " WHERE rowid = ".$idligne;
+			$sql.= " WHERE rowid = ".$lineid;
 
 			if ($this->db->query($sql) )
 			{
 				$this->update_price();
+				
+				$this->delRangOfLine($lineid, $this->element);
 
 				return 1;
 			}
@@ -568,6 +574,9 @@ class Livraison extends CommonObject
 		$sql.= " WHERE fk_livraison = ".$this->id;
 		if ( $this->db->query($sql) )
 		{
+			// Delete all rang of files
+			$this->delAllRangOfLines();
+			
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 			$sql.= " WHERE fk_target = ".$this->id;
 			$sql.= " AND targettype = '".$this->element."'";
@@ -576,7 +585,7 @@ class Livraison extends CommonObject
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison";
 				$sql.= " WHERE rowid = ".$this->id;
 				if ( $this->db->query($sql) )
-				{
+				{				
 					$this->db->commit();
 
 					// On efface le repertoire de pdf provisoire
@@ -663,10 +672,15 @@ class Livraison extends CommonObject
 		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped,";
 		$sql.= " cd.qty as qty_asked,";
 		$sql.= " p.ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd"; // TODO utiliser llx_element_element
+		$sql.= ", ".MAIN_DB_PREFIX."livraisondet as ld";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ld.fk_livraison AND r.parenttype = '".$this->element."'";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
 		$sql.= " WHERE ld.fk_origin_line = cd.rowid";
 		$sql.= " AND ld.fk_livraison = ".$this->id;
+		$sql.= " AND r.fk_child = ld.rowid";
+		$sql.= " AND r.childtype = '".$this->element."'";
+		$sql.= " ORDER by r.rang";
 
 		dol_syslog("Livraison::fetch_lignes sql=".$sql);
 		$resql = $this->db->query($sql);

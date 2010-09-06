@@ -1030,6 +1030,8 @@ class Facture extends CommonObject
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
+					$this->delAllRangOfLines();
+					
 					// Appel des triggers
 					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
