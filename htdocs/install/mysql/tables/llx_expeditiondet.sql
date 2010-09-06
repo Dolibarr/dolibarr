@@ -25,5 +25,6 @@ create table llx_expeditiondet
   fk_expedition     integer NOT NULL,
   fk_origin_line    integer,           -- Correspondance de la ligne avec le document d'origine (propal, commande)
   fk_entrepot       integer,           -- Entrepot de depart du produit
-  qty               real               -- Quantity
+  qty               real,              -- Quantity
+  rang              integer  DEFAULT 0
 )type=innodb;

@@ -48,7 +48,8 @@ create table llx_propaldet
   marge_tx          double(6,3)  DEFAULT 0,          -- taux de marge (marge sur prix d'achat)
   marque_tx         double(6,3)  DEFAULT 0,          -- taux de marque (marge sur prix de vente)
 
-  special_code      integer UNSIGNED DEFAULT 0       -- code pour les lignes speciales
+  special_code      integer UNSIGNED DEFAULT 0,      -- code pour les lignes speciales
+  rang              integer      DEFAULT 0           -- ordre affichage sur la propal
 )type=innodb;
 
 -- 

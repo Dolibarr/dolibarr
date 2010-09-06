@@ -49,6 +49,7 @@ create table llx_facturedet
   fk_code_ventilation integer    DEFAULT 0 NOT NULL,
   fk_export_compta    integer    DEFAULT 0 NOT NULL,
   special_code        integer UNSIGNED DEFAULT 0,		-- code pour les lignes speciales
+  rang                integer    DEFAULT 0,				-- ordre d'affichage
   import_key          varchar(14)
 )type=innodb;
 
