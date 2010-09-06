@@ -110,6 +110,27 @@ if ($_GET["action"] == 'delete')
 
 llxHeader('',$langs->trans("OtherSetup"));
 
+// Add logic to shoow/hide buttons
+if ($conf->use_javascript_ajax)
+{
+?>
+<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	jQuery("#updateconst").hide();
+	jQuery("#delconst").hide();
+	jQuery(".checkboxfordelete").click(function() {
+		jQuery("#delconst").show();
+	});
+	jQuery(".inputforupdate").keypress(function() {
+		jQuery("#updateconst").show();
+		tmp=jQuery(this).attr("id");
+		jQuery("#check_"+tmp).attr("checked",true);
+	});
+});
+</script>
+<?php
+}
+
 print_fiche_titre($langs->trans("OtherSetup"),'','setup');
 
 print $langs->trans("ConstDesc")."<br>\n";
@@ -137,7 +158,7 @@ print '<form action="const.php" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add">';
 
-print "<tr $bc[$var] class=value><td><input type=\"text\" class=\"flat\" size=\"24\" name=\"constname\" value=\"\"></td>\n";
+print '<tr '.$bc[$var].' class=value><td><input type="text" class="flat" size="24" name="constname" value=""></td>'."\n";
 print '<td>';
 print '<input type="text" class="flat" size="30" name="constvalue" value="">';
 print '</td><td>';
@@ -200,14 +221,12 @@ if ($result)
 
 		// Value
 		print '<td>';
-		print '<input type="text" class="flat" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'"';
-		if ($conf->use_javascript_ajax) print ' onKeyPress="displayElement(\'updateconst\'); checkBox(\'check_'.$i.'\');"';
+		print '<input type="text" id="input'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'"';
 		print '>';
 		print '</td><td>';
 
 		// Note
-		print '<input type="text" class="flat" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'"';
-		if ($conf->use_javascript_ajax) print ' onKeyPress="displayElement(\'updateconst\'); checkBox(\'check_'.$i.'\');"';
+		print '<input type="text" id="input'.$i.'"class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'"';
 		print '>';
 		print '</td>';
 
@@ -226,7 +245,7 @@ if ($result)
 		print '<td align="center">';
 		if ($conf->use_javascript_ajax)
 		{
-			print '<input type="checkbox" id="check_'.$i.'" name="const['.$i.'][check]" value="1" onClick="displayElement(\'delconst\');">';
+			print '<input type="checkbox" class="flat checkboxfordelete" id="check_input'.$i.'" name="const['.$i.'][check]" value="1">';
 			print ' &nbsp; ';
 		}
 		else
@@ -247,10 +266,10 @@ print '</table>';
 if ($conf->use_javascript_ajax)
 {
 	print '<br>';
-	print '<div id="updateconst" align="right" style="visibility:hidden;">';
+	print '<div id="updateconst" align="right">';
 	print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
 	print '</div>';
-	print '<div id="delconst" align="right" style="visibility:hidden;">';
+	print '<div id="delconst" align="right">';
 	print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
 	print '</div>';
 }
