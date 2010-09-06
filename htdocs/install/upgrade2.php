@@ -3073,7 +3073,7 @@ function migrate_element_rang($db,$langs,$conf)
 	// llx_commandedet
 	$tables[] = array('name'=>'commandedet','element'=>'commande','fk_element'=>'fk_commande');
 	//llx_facturedet
-	//$tables[] = array('name'=>'facturedet','element'=>'facture','fk_element'=>'fk_facture');
+	$tables[] = array('name'=>'facturedet','element'=>'facture','fk_element'=>'fk_facture');
 
 	foreach($tables as $table)
 	{
