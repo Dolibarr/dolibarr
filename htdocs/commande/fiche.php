@@ -136,6 +136,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 		$commande = new Commande($db);
 		$commande->fetch($comid);
 		$result=$commande->delete($user);
+		
 		if ($result > 0)
 		{
 			Header('Location: index.php');
@@ -160,6 +161,9 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 		$result = $commande->delete_line($_GET['lineid']);
 		if ($result > 0)
 		{
+			// reorder lines
+			$commande->line_order(true);
+			
 			// Define output language
 			$outputlangs = $langs;
 			$newlang='';

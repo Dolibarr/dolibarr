@@ -27,6 +27,7 @@
  *  \version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 
@@ -1230,14 +1231,18 @@ class Commande extends CommonObject
 		$this->lines=array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
-		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
+		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.info_bits,';
 		$sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
-		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
+		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label,';
+		$sql.= ' r.rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_commande AND r.parenttype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
+		$sql.= " AND r.fk_child = l.rowid";
+		$sql.= " AND r.childtype = '".$this->element."'";
 		if ($only_product) $sql .= ' AND p.fk_product_type = 0';
-		$sql .= ' ORDER BY l.rang';
+		$sql .= ' ORDER BY r.rang';
 
 		dol_syslog("Commande::fetch_lines sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1439,7 +1444,7 @@ class Commande extends CommonObject
 	 *  \param      idligne     Id de la ligne a supprimer
 	 *  \return     int         >0 si ok, 0 si rien a supprimer, <0 si ko
 	 */
-	function delete_line($idligne)
+	function delete_line($lineid)
 	{
 		global $user;
 
@@ -1449,7 +1454,7 @@ class Commande extends CommonObject
 
 			$sql = "SELECT fk_product, qty";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql.= " WHERE rowid = ".$idligne;
+			$sql.= " WHERE rowid = ".$lineid;
 
 			$result = $this->db->query($sql);
 			if ($result)
@@ -1464,7 +1469,7 @@ class Commande extends CommonObject
 					// Supprime ligne
 					$line = new OrderLine($this->db);
 
-					$line->id = $idligne;
+					$line->id = $lineid;
 					$line->fk_commande = $this->id; // On en a besoin dans les triggers
 
 					$result=$line->delete($user);
@@ -1472,6 +1477,8 @@ class Commande extends CommonObject
 					if ($result > 0)
 					{
 						$result=$this->update_price();
+						
+						$this->delRangOfLine($lineid, $this->element);
 
 						if ($result > 0)
 						{
@@ -2400,23 +2407,25 @@ class Commande extends CommonObject
 	 * 	\brief		Return an array of order lines
 	 * 	\param		option		0=No filter on rang, 1=filter on rang <> 0, 2=filter on rang=0
 	 */
-	function getLinesArray($option=0)
+	function getLinesArray()
 	{
 		$lines = array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.description, l.price, l.qty, l.tva_tx, ';
-		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,l.rang,';
+		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql.= ' l.date_start,';
 		$sql.= ' l.date_end,';
 		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, ';
-		$sql.= ' p.description as product_desc';
+		$sql.= ' p.description as product_desc,';
+		$sql.= ' r.rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_commande AND r.parenttype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
-		if ($option == 1) $sql.= ' AND l.rang <> 0';
-		if ($option == 2) $sql.= ' AND l.rang = 0';
-		$sql.= ' ORDER BY l.rang ASC, l.rowid';
+		$sql.= " AND r.fk_child = l.rowid";
+		$sql.= " AND r.childtype = '".$this->element."'";
+		$sql.= ' ORDER BY r.rang ASC, l.rowid';
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2469,7 +2478,7 @@ class Commande extends CommonObject
  *  \class      OrderLine
  *  \brief      Classe de gestion des lignes de commande
  */
-class OrderLine
+class OrderLine extends CommonObjectLine
 {
 	var $db;
 	var $error;
@@ -2530,12 +2539,17 @@ class OrderLine
 	{
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.price, cd.qty, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx,';
 		$sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
-		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.marge_tx, cd.marque_tx, cd.rang,';
+		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.marge_tx, cd.marque_tx,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
-		$sql.= ' cd.date_start, cd.date_end';
+		$sql.= ' cd.date_start, cd.date_end,';
+		$sql.= ' r.rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = cd.fk_commande AND r.parenttype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		$sql.= ' WHERE cd.rowid = '.$rowid;
+		$sql.= " AND r.fk_child = cd.rowid";
+		$sql.= " AND r.childtype = '".$this->element."'";
+		
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -2640,7 +2654,7 @@ class OrderLine
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
 		$sql.= ' (fk_commande, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
 		$sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
-		$sql.= ' rang, marge_tx, marque_tx,';
+		$sql.= ' marge_tx, marque_tx,';
 		// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 		// Insert in the database the start and end dates
 		$sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end)';
@@ -2659,7 +2673,6 @@ class OrderLine
 		$sql.= " '".price2num($this->remise)."',";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
-		$sql.= ' '.$this->rang.',';
 		if (isset($this->marge_tx)) $sql.= ' '.$this->marge_tx.',';
 		else $sql.= ' null,';
 		if (isset($this->marque_tx)) $sql.= ' '.$this->marque_tx.',';
@@ -2683,6 +2696,8 @@ class OrderLine
 		if ($resql)
 		{
 			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
+			
+			$this->addRangOfLine($this->fk_commande,'commande',$this->rowid,'commande',$this->rang);
 
 			if (! $notrigger)
 			{

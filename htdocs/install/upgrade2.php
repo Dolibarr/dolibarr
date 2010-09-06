@@ -3113,8 +3113,8 @@ function migrate_element_rang($db,$langs,$conf)
 				{
 					$db->commit();
 					$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table['name']." DROP COLUMN rang";
-					print "<br>".$langs->trans('FieldMigrated')."<br>\n";
-					//$db->query($sql);
+					print "<br>".$langs->trans('FieldMigrated',$table['name'])."<br>\n";
+					$db->query($sql);
 				}
 				else
 				{

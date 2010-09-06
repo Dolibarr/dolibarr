@@ -1884,7 +1884,7 @@ class Propal extends CommonObject
 						$this->nbtodolate++;
 					}
 				}
-				// \todo Definir regle des propales a facturer en retard
+				// TODO Definir regle des propales a facturer en retard
 				// if ($mode == 'signed' && ! sizeof($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
 			}
 			return 1;
@@ -2226,9 +2226,9 @@ class PropaleLigne extends CommonObjectLine
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = pd.fk_propal AND r.parenttype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
+		$sql.= ' WHERE pd.rowid = '.$rowid;
 		$sql.= " AND r.fk_child = pd.rowid";
 		$sql.= " AND r.childtype = '".$this->element."'";
-		$sql.= ' WHERE pd.rowid = '.$rowid;
 		
 		$result = $this->db->query($sql);
 		if ($result)
