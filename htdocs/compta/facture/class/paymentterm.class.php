@@ -230,7 +230,7 @@ class PaymentTerm // extends CommonObject
      *    \brief      Return id of default payment term
      *    \return     int         <0 if KO, >0 if OK
      */
-    function getDefaultId($id)
+    function getDefaultId()
     {
     	global $langs;
         $sql = "SELECT";

@@ -149,6 +149,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 		    {
                 // If option choosed, we create invoice
                 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+                require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/paymentterm.class.php");
 
     		    $invoice=new Facture($db);
                 $customer=new Societe($db);
@@ -164,9 +165,13 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
                 $invoice->cond_reglement_id=$customer->cond_reglement_id;
                 if (empty($invoice->cond_reglement_id))
                 {
-                    // TODO Found the id for code 'RECEP'. If not found take the first one
-                    //?$customer->cond_reglement_id:1;
-
+                	$paymenttermstatic=new PaymentTerm($db);
+                	$invoice->cond_reglement_id=$paymenttermstatic->getDefaultId();
+					if (empty($invoice->cond_reglement_id))
+					{
+						$error++;
+						$errmsg='ErrorNoPaymentTermRECEPFound';
+					}
                 }
                 $invoice->socid=$adh->fk_soc;
 
@@ -180,6 +185,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
                 // Add line to draft invoice
                 $idprodsubscription=0;
                 $vattouse=get_default_tva($mysoc, $customer, $idprodsubscription);
+                //print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
                 $result=$invoice->addline($invoice->id,$label,0,1,$vattouse,0,0,$idprodsubscription,0,$datecotisation,$datesubend,0,0,'','TTC',$cotisation,1);
                 if ($result <= 0)
                 {
