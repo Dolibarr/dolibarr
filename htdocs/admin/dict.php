@@ -712,6 +712,7 @@ if ($_GET["id"])
 					// Est-ce une entree du dictionnaire qui peut etre desactivee ?
 					$iserasable=1;  // Oui par defaut
 					if (isset($obj->code) && ($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i',$obj->code))) $iserasable=0;
+					if (isset($obj->code) && $obj->code == 'RECEP') $iserasable=0;
 					if ($obj->type && $obj->type == 'system') $iserasable=0;
 
 					if ($iserasable) {
@@ -721,11 +722,13 @@ if ($_GET["id"])
 					}
 					print "</td>";
 
+					// Modify link
 					if ($iserasable) {
 						print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=modify#'.($obj->rowid?$obj->rowid:$obj->code).'">'.img_edit().'</a></td>';
 					} else {
 						print '<td>&nbsp;</td>';
 					}
+					// Delete link
 					if ($iserasable) {
 						print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete">'.img_delete().'</a></td>';
 					} else {
