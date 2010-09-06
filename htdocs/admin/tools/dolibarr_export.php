@@ -263,8 +263,8 @@ if ($_GET["msg"])
 
 
 
-<fieldset><label for="filename_template"> <?php echo $langs->trans("FileNameToGenerate"); ?></label>
-: <input type="text" name="filename_template" size="60"
+<fieldset><label for="filename_template"> <?php echo $langs->trans("FileNameToGenerate"); ?></label>:
+ <input type="text" name="filename_template" size="60"
 	id="filename_template"
 	value="<?php
 $prefix='dump';
@@ -281,7 +281,7 @@ echo $file;
 $compression=array(
 	'none' => array('function' => '',         'id' => 'radio_compression_none', 'label' => $langs->trans("None")),
 //	'zip'  => array('function' => 'zip_open', 'id' => 'radio_compression_zip',  'label' => $langs->trans("Zip")),		Not open source
-	'gz'   => array('function' => 'gzopen',  'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
+	'gz'   => array('function' => 'gzopen',   'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
 );
 if ($db->label == 'MySQL')
 {
@@ -297,12 +297,12 @@ print $langs->trans("Compression").': &nbsp; ';
 
 foreach($compression as $key => $val)
 {
-	if (! $val['function'] || function_exists($val['function']))
+	if (! $val['function'] || function_exists($val['function']))	// Enabled export format
 	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'">';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked="true">';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 	}
-	else
+	else	// Disabled export format
 	{
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled="true">';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';

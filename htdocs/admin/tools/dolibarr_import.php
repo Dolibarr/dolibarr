@@ -66,6 +66,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 <?php print '<legend>'.$langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b></legend>'; ?>
 <table><tr><td valign="top">
 
+<?php if ($conf->use_javascript_ajax) { ?>
 <div id="div_container_exportoptions">
 <fieldset id="exportoptions">
 	<legend><?php echo $langs->trans("ImportMethod"); ?></legend>
@@ -77,7 +78,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
     </div>
 </fieldset>
 </div>
-
+<?php } ?>
 
 </td><td valign="top">
 
