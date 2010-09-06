@@ -397,9 +397,12 @@ if ($id > 0 || ! empty($ref))
 		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
 		$sql.= ' p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX."commandedet as l";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_commande AND r.parenttype = '".$commande->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 		$sql.= " WHERE l.fk_commande = ".$commande->id;
-		$sql.= " ORDER BY l.rang, l.rowid";
+		$sql.= " AND r.fk_child = l.rowid";
+		$sql.= " AND r.childtype = '".$commande->element."'";
+		$sql.= " ORDER BY r.rang, l.rowid";
 
 		$resql = $db->query($sql);
 		if ($resql)

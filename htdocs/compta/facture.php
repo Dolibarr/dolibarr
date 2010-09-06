@@ -1775,7 +1775,7 @@ if ($_GET['action'] == 'create')
 		$sql.= ' WHERE pt.fk_propal = '.$object->id;
 		$sql.= " AND r.fk_child = pt.rowid";
 		$sql.= " AND r.childtype = '".$object->element."'";
-		$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
+		$sql.= ' ORDER BY r.rang ASC, pt.rowid';
 	}
 	// TODO deplacer dans la classe
 	if ($_GET['origin'] == 'commande')
@@ -1792,7 +1792,7 @@ if ($_GET['action'] == 'create')
 		$sql.= ' WHERE pt.fk_commande = '.$object->id;
 		$sql.= " AND r.fk_child = pt.rowid";
 		$sql.= " AND r.childtype = '".$object->element."'";
-		$sql.= ' ORDER BY pt.rowid ASC';
+		$sql.= ' ORDER BY r.rang ASC, pt.rowid';
 	}
 	// TODO deplacer dans la classe
 	if ($_GET['origin'] == 'contrat')

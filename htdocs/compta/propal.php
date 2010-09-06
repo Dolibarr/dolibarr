@@ -327,9 +327,13 @@ if ($id > 0 || ! empty($ref))
 	$sql.= ' p.rowid as prodid, p.label as product_label, p.ref, p.fk_product_type, ';
 	$sql.= ' p.description as product_desc';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = pt.fk_propal AND r.parenttype = '".$propal->element."'";
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
 	$sql.= ' WHERE pt.fk_propal = '.$propal->id;
-	$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
+	$sql.= " AND r.fk_child = pt.rowid";
+	$sql.= " AND r.childtype = '".$propal->element."'";
+	$sql.= ' ORDER BY r.rang ASC, pt.rowid';
+	
 	$resql = $db->query($sql);
 	if ($resql)
 	{
