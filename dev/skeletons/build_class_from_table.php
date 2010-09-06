@@ -65,6 +65,7 @@ if ($db->type != 'mysql' && $db->type != 'mysqli')
 
 // Show parameters
 print 'Tablename='.$argv[1]."\n";
+print "Current dir is ".getcwd()."\n";
 
 
 
@@ -357,7 +358,6 @@ if ($fp)
 	fclose($fp);
 	print "\n";
 	print "File '".$outfile."' has been built in current directory.\n";
-	print "Current dir is ".getcwd()."\n";
 }
 else $error++;
 
