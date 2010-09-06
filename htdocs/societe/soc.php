@@ -56,19 +56,21 @@ $socstatic = new Societe($db);
 if (!empty($socid)) $socstatic->getCanvas($socid);
 $canvas = (!empty($socstatic->canvas)?$socstatic->canvas:GETPOST("canvas"));
 
+$soc = new Societe($db);
+
+
+/*
+ * Actions
+ */
 
 // If canvas is defined, because on url, or because company was created with canvas feature on,
 // we use the canvas feature.
 // If canvas is not defined, we use standard feature.
-
 if (empty($canvas))
 {
     // -----------------------------------------
     // When used in standard mode
     // -----------------------------------------
-
-    // Initialization Company Object
-    $soc = new Societe($db);
 
     /*
      * Actions
@@ -290,7 +292,6 @@ if (empty($canvas))
 
     if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->supprimer)
     {
-        $soc = new Societe($db);
         $soc->fetch($socid);
         $result = $soc->delete($socid);
 
@@ -349,23 +350,38 @@ if (empty($canvas))
             }
         }
     }
+}
+else
+{
+    // -----------------------------------------
+    // When used with CANVAS
+    // -----------------------------------------
+
+    $soccanvas = new Canvas($db);
+    $soccanvas->getCanvas('thirdparty','card',$canvas);
+
+    // Load data control
+    $soccanvas->loadControl($socid);
+}
 
 
-    /*
-     *  View
-     */
 
-    $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-    llxHeader('','',$help_url);
+/*
+ *  View
+ */
 
-    $form = new Form($db);
-    $formfile = new FormFile($db);
-    $formadmin = new FormAdmin($db);
-    $formcompany = new FormCompany($db);
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('','',$help_url);
 
-    $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
+$form = new Form($db);
+$formfile = new FormFile($db);
+$formadmin = new FormAdmin($db);
+$formcompany = new FormCompany($db);
 
+$countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
+if (empty($canvas))
+{
     if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
     $_GET["action"] == 'create' || $_POST["action"] == 'create')
     {
@@ -1583,29 +1599,6 @@ if (empty($canvas))
 }
 else
 {
-    // -----------------------------------------
-    // When used with CANVAS
-    // -----------------------------------------
-
-    $soccanvas = new Canvas($db);
-    $soccanvas->getCanvas('thirdparty','card',$canvas);
-
-    // Load data control
-    $soccanvas->loadControl($socid);
-
-
-    /*
-     *	View
-     */
-    $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-    llxHeader('','',$help_url);
-
-    $form = new Form($db);
-    $formfile = new FormFile($db);
-    $formadmin = new FormAdmin($db);
-    $formcompany = new FormCompany($db);
-
-
     if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] || GETPOST("action") == 'create')
     {
         /*
@@ -1766,5 +1759,4 @@ else
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
 ?>
