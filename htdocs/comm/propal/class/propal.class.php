@@ -2220,11 +2220,16 @@ class PropaleLigne extends CommonObjectLine
 	{
 		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_product, pd.description, pd.price, pd.qty, pd.tva_tx,';
 		$sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
-		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.marge_tx, pd.marque_tx, pd.special_code, pd.rang,';
-		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.marge_tx, pd.marque_tx, pd.special_code,';
+		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
+		$sql.= ' r.rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = pd.fk_propal AND r.parenttype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
+		$sql.= " AND r.fk_child = pd.rowid";
+		$sql.= " AND r.childtype = '".$this->element."'";
 		$sql.= ' WHERE pd.rowid = '.$rowid;
+		
 		$result = $this->db->query($sql);
 		if ($result)
 		{
