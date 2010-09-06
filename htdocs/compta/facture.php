@@ -148,9 +148,6 @@ if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] =
 		$result = $fac->deleteline($_GET['rowid'], $user);
 		if ($result > 0)
 		{
-			// reorder lines
-			$fac->line_order(true);
-
 			// Define output language
 			$outputlangs = $langs;
 			$newlang='';
@@ -1769,19 +1766,10 @@ if ($_GET['action'] == 'create')
 		$sql = 'SELECT pt.rowid, pt.description, pt.fk_remise_except,';
 		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.product_type, pt.info_bits,';
 		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-        // FIXME: There is a bug when using a join with element_rang and
-        // condition outside of left join. This give unpredicable results as this is not
-        // a valid SQL syntax .
-        // $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
-        // Getting a "sort order" must be done outside of the request to get values
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = pt.fk_propal AND r.parenttype = '".$object->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
 		$sql.= ' WHERE pt.fk_propal = '.$object->id;
-		//$sql.= " AND r.fk_child = pt.rowid";
-		//$sql.= " AND r.childtype = '".$object->element."'";
-		//$sql.= ' ORDER BY r.rang ASC, pt.rowid';
-		$sql.=" ORDER BY pt.rowid";
+		$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
 	}
 	// TODO deplacer dans la classe
 	if ($_GET['origin'] == 'commande')
@@ -1792,19 +1780,10 @@ if ($_GET['action'] == 'create')
 		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.product_type, pt.info_bits,';
 		$sql.= ' pt.date_start as date_debut_prevue, pt.date_end as date_fin_prevue,';
 		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-		// FIXME: There is a bug when using a join with element_rang and
-        // condition outside of left join. This give unpredicable results as this is not
-        // a valid SQL syntax .
-        // $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
-        // Getting a "sort order" must be done outside of the request to get values
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt';
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = pt.fk_commande AND r.parenttype = '".$object->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
 		$sql.= ' WHERE pt.fk_commande = '.$object->id;
-		//$sql.= " AND r.fk_child = pt.rowid";
-		//$sql.= " AND r.childtype = '".$object->element."'";
-		//$sql.= ' ORDER BY r.rang ASC, pt.rowid';
-		$sql.=" ORDER BY pt.rowid";
+		$sql.= ' ORDER BY pt.rowid ASC';
 	}
 	// TODO deplacer dans la classe
 	if ($_GET['origin'] == 'contrat')
@@ -2667,13 +2646,9 @@ else
 			$sql.= ' p.ref as product_ref, p.fk_product_type, p.label as product_label,';
 			$sql.= ' p.description as product_desc';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
-			//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_facture AND r.parenttype = '".$fac->element."'";
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON l.fk_product=p.rowid';
 			$sql.= ' WHERE l.fk_facture = '.$fac->id;
-			//$sql.= " AND r.fk_child = l.rowid";
-			//$sql.= " AND r.childtype = '".$fac->element."'";
-			$sql.= ' ORDER BY r.rang ASC, l.rowid';
-			$sql.= " ORDER BY l.rowid";
+			$sql.= ' ORDER BY l.rang ASC, l.rowid';
 
 			$resql = $db->query($sql);
 			if ($resql)

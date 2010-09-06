@@ -231,19 +231,13 @@ class Expedition extends CommonObject
 		$sql.= ", ".$qty;
 		$sql.= ")";
 
-		if ($this->db->query($sql))
+		if (! $this->db->query($sql))
 		{
-			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'expeditiondet');
-
-			$this->rang = 0; // TODO en attendant une gestion de la disposition
-			$this->addRangOfLine($this->rowid,$this->element,$this->rang);
-
-			return 1;
+			$error++;
 		}
-		else
-		{
-			return -1;
-		}
+
+		if (! $error) return 1;
+		else return -1;
 	}
 
 	/**
@@ -550,18 +544,16 @@ class Expedition extends CommonObject
 	 *
 	 *
 	 */
-	function delete_line($lineid)
+	function delete_line($id)
 	{
 		if ($this->statut == 0)
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
-			$sql.= " WHERE rowid = ".$lineid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
+			$sql.= " WHERE rowid = ".$id;
 
 			if ($this->db->query($sql) )
 			{
 				$this->update_price();
-
-				$this->delRangOfLine($lineid, $this->element);
 
 				return 1;
 			}
@@ -687,9 +679,6 @@ class Expedition extends CommonObject
 
 		if ( $this->db->query($sql) )
 		{
-			// Delete all rang of lines
-			$this->delAllRangOfLines();
-
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 			$sql.= " WHERE fk_target = ".$this->id;
 			$sql.= " AND targettype = '".$this->element."'";
@@ -757,22 +746,16 @@ class Expedition extends CommonObject
 	 */
 	function fetch_lines()
 	{
+		// TODO: recuperer les champs du document associe a part
+
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_asked";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref, p.fk_product_type, p.label, p.weight, p.weight_units, p.volume, p.volume_units";
 		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
-		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)"; // FIXME utiliser llx_element_element
-        // FIXME: There is a bug when using a join with element_rang and
-        // condition outside of left join. This give unpredicable results as this is not
-        // a valid SQL syntax .
-		// $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
-		// Getting a "sort order" must be done outside of the request to get values
+		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql.= " WHERE ed.fk_expedition = ".$this->id;
-		//$sql.= " AND r.fk_child = ed.rowid";
-		//$sql.= " AND r.childtype = '".$this->element."'";
-		$sql.= " AND ed.fk_origin_line = cd.rowid";  // FIXME utiliser llx_element_element
-		//$sql.= " ORDER by r.rang";
+		$sql.= " AND ed.fk_origin_line = cd.rowid";
 
 		dol_syslog("Expedition::fetch_lines sql=".$sql);
 		$resql = $this->db->query($sql);

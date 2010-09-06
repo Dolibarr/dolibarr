@@ -301,8 +301,6 @@ if (GETPOST('action') && preg_match('/upgrade/i',GETPOST("action")))
         {
             //print $langs->trans("AlreadyDone");
 
-        	//migrate_element_rang($db,$langs,$conf);
-
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
         }
@@ -3049,98 +3047,6 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 	{
 		dol_print_error($db);
 		$db->rollback();
-	}
-
-	print '</td></tr>';
-}
-
-/*
- * Migration de la gestion des rangs dans llx_element_rang
- */
-function migrate_element_rang($db,$langs,$conf)
-{
-	dolibarr_install_syslog("upgrade2::migrate_element_rang");
-
-	print '<tr><td colspan="4">';
-
-	print '<br>';
-	print '<b>'.$langs->trans('MigrationElementRang')."</b><br>\n";
-
-	$tables = array();
-
-	// llx_propaldet
-	$tables[] = array('name'=>'propaldet','element'=>'propal','fk_element'=>'fk_propal');
-	// llx_commandedet
-	$tables[] = array('name'=>'commandedet','element'=>'commande','fk_element'=>'fk_commande');
-	//llx_facturedet
-	$tables[] = array('name'=>'facturedet','element'=>'facture','fk_element'=>'fk_facture');
-	//llx_expeditiondet
-	$tables[] = array('name'=>'expeditiondet','element'=>'shipping','fk_element'=>'fk_expedition');
-	//llx_livraisondet
-	$tables[] = array('name'=>'livraisondet','element'=>'delivery','fk_element'=>'fk_livraison');
-	//llx_projet_task
-	//$tables[] = array('name'=>'projet_task','element'=>'project_task','fk_element'=>'fk_projet');
-
-	foreach($tables as $table)
-	{
-		$result = $db->DDLDescTable(MAIN_DB_PREFIX.$table['name'],"rang");
-		$obj = $db->fetch_object($result);
-		if ($obj)
-		{
-			$error = 0;
-
-			$db->begin();
-
-			$sql = "SELECT rowid, ".$table['fk_element'].", rang FROM ".MAIN_DB_PREFIX.$table['name'];
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$i = 0;
-				$num = $db->num_rows($resql);
-
-				if ($num)
-				{
-					while ($i < $num)
-					{
-						$obj = $db->fetch_object($resql);
-
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_rang (fk_parent,parenttype,fk_child,childtype,rang)";
-						$sql.= " VALUES (".$obj->$table['fk_element'].",'".$table['element']."',".$obj->rowid.",'".$table['element']."',".$obj->rang.")";
-						$resql2=$db->query($sql);
-
-						if (!$resql2)
-						{
-							$error++;
-							dol_print_error($db);
-						}
-						print ". ";
-						$i++;
-					}
-				}
-
-				if ($error == 0)
-				{
-					$db->commit();
-					// DDL sql order must not be done into the data migrate process
-					//$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table['name']." DROP COLUMN rang";
-					//print "<br>".$langs->trans('FieldMigrated',$table['name'])."<br>\n";
-					//$db->query($sql);
-				}
-				else
-				{
-					$db->rollback();
-				}
-			}
-			else
-			{
-				dol_print_error($db);
-				$db->rollback();
-			}
-		}
-		else
-		{
-			print $langs->trans('AlreadyDone')."<br>\n";
-		}
 	}
 
 	print '</td></tr>';

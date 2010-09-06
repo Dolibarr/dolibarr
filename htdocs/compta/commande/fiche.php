@@ -396,19 +396,10 @@ if ($id > 0 || ! empty($ref))
 		$sql.= ' l.date_end,';
 		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
 		$sql.= ' p.description as product_desc';
-        // FIXME: There is a bug when using a join with element_rang and
-        // condition outside of left join. This give unpredicable results as this is not
-        // a valid SQL syntax .
-        // $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
-        // Getting a "sort order" must be done outside of the request to get values
 		$sql.= ' FROM '.MAIN_DB_PREFIX."commandedet as l";
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_commande AND r.parenttype = '".$commande->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 		$sql.= " WHERE l.fk_commande = ".$commande->id;
-		//$sql.= " AND r.fk_child = l.rowid";
-		//$sql.= " AND r.childtype = '".$commande->element."'";
-		//$sql.= " ORDER BY r.rang, l.rowid";
-        $sql.=" ORDER BY l.rowid";
+		$sql.= " ORDER BY l.rang, l.rowid";
 
 		$resql = $db->query($sql);
 		if ($resql)

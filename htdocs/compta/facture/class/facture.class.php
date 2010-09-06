@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
@@ -32,7 +32,6 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobjectline.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/societe/class/client.class.php");
 
@@ -675,19 +674,10 @@ class Facture extends CommonObject
 		$sql.= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
-        // FIXME: There is a bug when using a join with element_rang and
-        // condition outside of left join. This give unpredicable results as this is not
-        // a valid SQL syntax .
-        // $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = ed.fk_expedition AND r.parenttype = '".$this->element."'";
-        // Getting a "sort order" must be done outside of the request to get values
-		//$sql.= ' r.rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = l.fk_facture AND r.parenttype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
-		//$sql.= " AND r.fk_child = l.rowid";
-		//$sql.= " AND r.childtype = '".$this->element."'";
-		//$sql.= ' ORDER BY r.rang';
+		$sql.= ' ORDER BY l.rang';
 
 		dol_syslog('Facture::fetch_lines sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -727,7 +717,6 @@ class Facture extends CommonObject
 				$faclig->total_ttc        = $objp->total_ttc;
 				$faclig->export_compta    = $objp->fk_export_compta;
 				$faclig->code_ventilation = $objp->fk_code_ventilation;
-				$faclig->rang 			  = $objp->rang;
 
 				// Ne plus utiliser
 				$faclig->price            = $objp->price;
@@ -1029,24 +1018,12 @@ class Facture extends CommonObject
 			}
 
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
-			if ($this->db->query($sql))
+			if ($this->db->query($sql) && $this->delete_linked_contact())
 			{
-				// Delete all rang of lines
-				$this->delAllRangOfLines();
-
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
-					// Delete linked contacts
-					$res = $this->delete_linked_contact();
-					if ($res < 0)
-					{
-						$this->error='ErrorFailToDeleteLinkedContact';
-						$this->db->rollback();
-						return 0;
-					}
-
 					// Appel des triggers
 					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
@@ -1857,11 +1834,11 @@ class Facture extends CommonObject
 	 *	\param		user		User object
 	 *	\return		int			<0 if KO, >0 if OK
 	 */
-	function deleteline($lineid, $user='')
+	function deleteline($rowid, $user='')
 	{
 		global $langs, $conf;
 
-		dol_syslog("Facture::Deleteline rowid=".$lineid, LOG_DEBUG);
+		dol_syslog("Facture::Deleteline rowid=".$rowid, LOG_DEBUG);
 
 		if (! $this->brouillon)
 		{
@@ -1874,7 +1851,7 @@ class Facture extends CommonObject
 		// Libere remise liee a ligne de facture
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 		$sql.= ' SET fk_facture_line = NULL';
-		$sql.= ' WHERE fk_facture_line = '.$lineid;
+		$sql.= ' WHERE fk_facture_line = '.$rowid;
 
 		dol_syslog("Facture::Deleteline sql=".$sql);
 		$result = $this->db->query($sql);
@@ -1888,7 +1865,7 @@ class Facture extends CommonObject
 
 		// Efface ligne de facture
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet';
-		$sql.= ' WHERE rowid = '.$lineid;
+		$sql.= ' WHERE rowid = '.$rowid;
 
 		dol_syslog("Facture::Deleteline sql=".$sql);
 		$result = $this->db->query($sql);
@@ -1901,8 +1878,6 @@ class Facture extends CommonObject
 		}
 
 		$result=$this->update_price();
-
-		$this->delRangOfLine($lineid, $this->element);
 
 		// Appel des triggers
 		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -2920,7 +2895,7 @@ class Facture extends CommonObject
  *	\brief      	Classe permettant la gestion des lignes de factures
  *	\remarks		Gere des lignes de la table llx_facturedet
  */
-class FactureLigne extends CommonObjectLine
+class FactureLigne
 {
 	var $db;
 	var $error;
@@ -2990,17 +2965,12 @@ class FactureLigne extends CommonObjectLine
 		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_product, fd.product_type, fd.description, fd.price, fd.qty, fd.tva_tx,';
 		$sql.= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
 		$sql.= ' fd.date_start as date_start, fd.date_end as date_end,';
-		$sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc,';
+		$sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc, fd.rang,';
 		$sql.= ' fd.fk_code_ventilation, fd.fk_export_compta,';
-		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
-		$sql.= ' r.rang';
+		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_rang as r ON r.fk_parent = fd.fk_facture AND r.parenttype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
 		$sql.= ' WHERE fd.rowid = '.$rowid;
-		$sql.= " AND r.fk_child = fd.rowid";
-		$sql.= " AND r.childtype = '".$this->element."'";
-
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -3079,6 +3049,7 @@ class FactureLigne extends CommonObjectLine
 		$sql.= ' (fk_facture, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
 		$sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
 		$sql.= ' date_start, date_end, fk_code_ventilation, fk_export_compta, ';
+		$sql.= ' rang,';
 		$sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc)';
 		$sql.= " VALUES (".$this->fk_facture.",";
 		$sql.= " '".addslashes($this->desc)."',";
@@ -3101,6 +3072,7 @@ class FactureLigne extends CommonObjectLine
 		else { $sql.='null,'; }
 		$sql.= ' '.$this->fk_code_ventilation.',';
 		$sql.= ' '.$this->fk_export_compta.',';
+		$sql.= ' '.$this->rang.',';
 		$sql.= " '".$this->info_bits."',";
 		$sql.= " ".price2num($this->total_ht).",";
 		$sql.= " ".price2num($this->total_tva).",";
@@ -3114,8 +3086,6 @@ class FactureLigne extends CommonObjectLine
 		if ($resql)
 		{
 			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
-
-			$this->addRangOfLine($this->fk_facture,'facture',$this->rowid,'facture',$this->rang);
 
 			// Si fk_remise_except defini, on lie la remise a la facture
 			// ce qui la flague comme "consommee".
