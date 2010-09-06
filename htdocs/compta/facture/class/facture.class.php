@@ -1026,7 +1026,7 @@ class Facture extends CommonObject
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
 			if ($this->db->query($sql))
 			{
-				// Delete all rang of files
+				// Delete all rang of lines
 				$this->delAllRangOfLines();
 				
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;

@@ -574,7 +574,7 @@ class Livraison extends CommonObject
 		$sql.= " WHERE fk_livraison = ".$this->id;
 		if ( $this->db->query($sql) )
 		{
-			// Delete all rang of files
+			// Delete all rang of lines
 			$this->delAllRangOfLines();
 			
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
