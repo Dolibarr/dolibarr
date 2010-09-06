@@ -76,7 +76,7 @@ function reloadGraph() {
 	g.setShowDur(booShowDurations);
 	g.setCaptionType(barText);
 	g.setFormat(graphFormat);
-	g.Draw($("#tabs").width()-40);
+	g.Draw(jQuery("#tabs").width()-40);
 }
 
 
@@ -108,7 +108,7 @@ for ($tcursor=0; $tcursor < $tnums; $tcursor++) {
 	}
 }
 ?>
-	g.Draw($("#tabs").width()-40);
+	g.Draw(jQuery("#tabs").width()-40);
 	setTimeout('g.DrawDependencies()',100);
 }
 else

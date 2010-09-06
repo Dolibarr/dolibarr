@@ -1,7 +1,12 @@
 /*
-* http://deepliquid.com/content/Jcrop.html
-*/
+ * http://deepliquid.com/content/Jcrop.html
+ */
 
+//
+// \file       htdocs/lib/lib_photoresize.js
+// \brief      File that include javascript functions for croping feature
+// \version    $Id$
+//
 
 jQuery(function() {
    jQuery('#cropbox').Jcrop({
@@ -12,18 +17,17 @@ jQuery(function() {
      
 function updateCoords(c)
 {
-   $('#x').val(c.x);
-   $('#y').val(c.y);
-   $('#x2').val(c.x2);
-   $('#y2').val(c.y2);
-   $('#w').val(c.w);
-   $('#h').val(c.h);
+	jQuery('#x').val(c.x);
+	jQuery('#y').val(c.y);
+	jQuery('#x2').val(c.x2);
+	jQuery('#y2').val(c.y2);
+	jQuery('#w').val(c.w);
+	jQuery('#h').val(c.h);
 };
 
 function checkCoords()
 {
-   if (parseInt($('#w').val())) return true;
+   if (parseInt(jQuery('#w').val())) return true;
    alert('Please select a crop region then press submit.');
    return false;
 };
-   

@@ -857,10 +857,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-1.4.2.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-1.8.4.custom.min'.$ext.'"></script>'."\n";
 
-            // This one is required for lot of Ajax features
+            // This one is required for some Ajax features
 			if (! defined('DISABLE_PROTOTYPE'))
 			{
-                print '<!-- Includes for Prototype (Used by Scriptaculous) -->'."\n";
+                print '<!-- Includes for Prototype -->'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype'.$mini.$ext.'"></script>'."\n";
 			}
 		}
