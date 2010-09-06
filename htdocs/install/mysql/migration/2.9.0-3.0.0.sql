@@ -41,9 +41,19 @@ ALTER TABLE llx_expedition MODIFY date_expedition datetime;
 ALTER TABLE llx_expedition MODIFY date_delivery datetime NULL;
 
 ALTER TABLE llx_societe ADD COLUMN canvas varchar(32) DEFAULT NULL AFTER default_lang;
---UPDATE llx_societe SET canvas='default' WHERE canvas IS NULL;
---UPDATE llx_societe SET canvas='default' WHERE fk_typent <> 8;
---UPDATE llx_societe SET canvas='individual' WHERE fk_typent = 8;
 
 ALTER TABLE llx_cond_reglement RENAME TO llx_c_payment_term;
 ALTER TABLE llx_expedition_methode RENAME TO llx_c_shipment_mode;
+
+create table llx_element_rang
+(
+  rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
+  fk_parent			integer NOT NULL,
+  parenttype		varchar(16) NOT NULL,
+  fk_child			integer NOT NULL,
+  childtype			varchar(16) NOT NULL,
+  rang				integer	DEFAULT 0
+) type=innodb;
+
+ALTER TABLE llx_element_rang ADD UNIQUE INDEX idx_element_rang_idx1 (fk_parent, parenttype, fk_child, childtype);
+ALTER TABLE llx_element_rang ADD INDEX idx_element_rang_fk_parent (fk_parent);
