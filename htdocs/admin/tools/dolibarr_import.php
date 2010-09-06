@@ -38,6 +38,22 @@ if (! $user->admin)
 
 llxHeader('','','EN:Restores|FR:Restaurations|ES:Restauraciones');
 
+?>
+<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	jQuery("#mysql_options").<?php echo GETPOST('radio_dump')=='mysql_options'?'show()':'hide()'; ?>;
+	jQuery("#postgresql_options").<?php echo GETPOST('radio_dump')=='postgresql_options'?'show()':'hide()'; ?>;
+
+	jQuery("#radio_dump_mysql").click(function() {
+		jQuery("#mysql_options").show();
+	});
+	jQuery("#radio_dump_postgresql").click(function() {
+		jQuery("#postgresql_options").show();
+	});
+});
+</script>
+<?php
+
 print_fiche_titre($langs->trans("Restore"),'','setup');
 
 print $langs->trans("RestoreDesc",DOL_DATA_ROOT).'<br><br>';
@@ -46,31 +62,9 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 
 ?>
 
-<!-- Run on page load -->
-<script type="text/javascript" language="javascript">
-//<![CDATA[
-function hide_them_all() {
-    document.getElementById("mysql_options").style.display = 'none';
-//    document.getElementById("csv_options").style.display = 'none';
-//    document.getElementById("latex_options").style.display = 'none';
-//    document.getElementById("pdf_options").style.display = 'none';
-//    document.getElementById("none_options").style.display = 'none';
-
-<?php
-if (! empty($_GET["radio_dump"])) print "document.getElementById('mysql_options').style.display = 'block';";
-?>
-}
-
-//]]>
-</script>
-
-
 <fieldset id="fieldsetexport">
+<?php print '<legend>'.$langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b></legend>'; ?>
 <table><tr><td valign="top">
-<?php
-print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
-print '<br>';
-?>
 
 <div id="div_container_exportoptions">
 <fieldset id="exportoptions">
@@ -78,12 +72,7 @@ print '<br>';
     <div class="formelementrow">
         <input type="radio" name="what" value="mysql" id="radio_dump_mysql"
         	<?php echo ($_GET["radio_dump"]=='mysql_options'?' checked':''); ?>
-            onclick="
-                if (this.checked) {
-                    hide_them_all();
-                    document.getElementById('mysql_options').style.display = 'block';
-                }; return true"
-             />
+            />
             <label for="radio_dump_mysql">MySQL</label>
     </div>
 </fieldset>
@@ -130,11 +119,6 @@ if ($db->label == 'MySQL')
 }
 ?>
 
-	<script type="text/javascript" language="javascript">
-//<![CDATA[
-	hide_them_all();
-//]]>
-	</script>
 	</fieldset>
 </div>
 
@@ -142,33 +126,9 @@ if ($db->label == 'MySQL')
 </td></tr></table>
 </fieldset>
 
-
-<script type="text/javascript" language="javascript">
-//<![CDATA[
-
-
-// set current db, table and sql query in the querywindow
-if (window.parent.refreshLeft) {
-    window.parent.reload_querywindow("","","");
-}
-
-
-if (window.parent.frames[1]) {
-    // reset content frame name, as querywindow needs to set a unique name
-    // before submitting form data, and navigation frame needs the original name
-    if (window.parent.frames[1].name != 'frame_content') {
-        window.parent.frames[1].name = 'frame_content';
-    }
-    if (window.parent.frames[1].id != 'frame_content') {
-        window.parent.frames[1].id = 'frame_content';
-    }
-    //window.parent.frames[1].setAttribute('name', 'frame_content');
-    //window.parent.frames[1].setAttribute('id', 'frame_content');
-}
-//]]>
-</script>
-
 <?php
+
+$db->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>

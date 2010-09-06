@@ -136,14 +136,14 @@ if ($what == 'mysql')
 		$paramclear.=" -p".$dolibarr_main_db_pass;
 	}
 
-	print $langs->trans("RunCommandSummary").':<br>'."\n";
+	print '<b>'.$langs->trans("RunCommandSummary").':</b><br>'."\n";
 	print '<textarea rows="'.ROWS_2.'" cols="120">'.$command." ".$paramcrypted.'</textarea><br>'."\n";
 
 	print '<br>';
 
 
 	// Now run command and show result
-	print $langs->trans("BackupResult").': ';
+	print '<b>'.$langs->trans("BackupResult").':</b> ';
 
 	$errormsg='';
 
