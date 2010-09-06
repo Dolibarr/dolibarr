@@ -18,7 +18,7 @@
 -- $Id$
 -- ============================================================================
 
-create table llx_cond_reglement
+create table llx_c_payment_term
 (
   rowid           integer PRIMARY KEY,
   code            varchar(16),

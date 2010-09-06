@@ -912,7 +912,7 @@ else
 				if ($expedition->expedition_method_id > 0)
 				{
 					// Get code using getLabelFromKey
-					$code=$langs->getLabelFromKey($db,$expedition->expedition_method_id,'expedition_methode','rowid','code');
+					$code=$langs->getLabelFromKey($db,$expedition->expedition_method_id,'c_shipment_mode','rowid','code');
 					print $langs->trans("SendingMethod".strtoupper($code));
 				}
 			}

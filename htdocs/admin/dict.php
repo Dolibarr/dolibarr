@@ -71,7 +71,7 @@ $tabname[14]= MAIN_DB_PREFIX."c_ecotaxe";
 $tabname[15]= MAIN_DB_PREFIX."c_paper_format";
 $tabname[16]= MAIN_DB_PREFIX."c_prospectlevel";
 $tabname[17]= MAIN_DB_PREFIX."c_type_fees";
-$tabname[18]= MAIN_DB_PREFIX."expedition_methode";
+$tabname[18]= MAIN_DB_PREFIX."c_shipment_mode";
 $tabname[19]= MAIN_DB_PREFIX."c_effectif";
 
 // Dictionary labels
@@ -113,7 +113,7 @@ $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.org
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
 $tabsql[16]= "SELECT code, label as libelle, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 $tabsql[17]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_fees";
-$tabsql[18]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."expedition_methode";
+$tabsql[18]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_shipment_mode";
 $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
 
 // Critere de tri du dictionnaire

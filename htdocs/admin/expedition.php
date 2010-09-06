@@ -146,7 +146,7 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 	$classname = "methode_expedition_$module";
 	$expem = new $classname($db);
 
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode";
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_shipment_mode";
 	$sql.= " WHERE rowid = ".$moduleid;
 
 	$resql = $db->query($sql);
@@ -154,7 +154,7 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 	{
 		$db->begin();
 
-		$sqlu = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
+		$sqlu = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode";
 		$sqlu.= " SET statut=1";
 		$sqlu.= " WHERE rowid=".$moduleid;
 
@@ -173,7 +173,7 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 	{
 		$db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle,description,statut)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (rowid,code,libelle,description,statut)";
 		$sql.= " VALUES (".$moduleid.",'".$expem->code."','".$expem->name."','".$expem->description."',1)";
 		$result=$db->query($sql);
 		if ($result)
@@ -190,7 +190,7 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 	{
 		$db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode";
 		$sql.= " SET statut=0";
 		$sql.= " WHERE rowid=".$moduleid;
 		$result=$db->query($sql);

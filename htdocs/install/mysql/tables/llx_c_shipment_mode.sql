@@ -18,7 +18,7 @@
 -- $Id$
 -- ===================================================================
 
-create table llx_expedition_methode
+create table llx_c_shipment_mode
 (
   rowid            integer PRIMARY KEY,
   tms              timestamp,

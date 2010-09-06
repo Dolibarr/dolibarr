@@ -999,7 +999,7 @@ class Expedition extends CommonObject
 		$meths = array();
 
 		$sql = "SELECT em.rowid, em.code, em.libelle";
-		$sql.= " FROM ".MAIN_DB_PREFIX."expedition_methode as em";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 		$sql.= " WHERE em.active = 1";
 		$sql.= " ORDER BY em.libelle ASC";
 
@@ -1020,7 +1020,7 @@ class Expedition extends CommonObject
 	function GetUrlTrackingStatus()
 	{
 		$sql = "SELECT em.code";
-		$sql.= " FROM ".MAIN_DB_PREFIX."expedition_methode as em";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 		$sql.= " WHERE em.rowid = ".$this->expedition_method_id;
 
 		$resql = $this->db->query($sql);

@@ -31,5 +31,5 @@ ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_expedition_methode (fk_ex
 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_soc					FOREIGN KEY (fk_soc)				REFERENCES llx_societe (rowid);
 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_user_author			FOREIGN KEY (fk_user_author)		REFERENCES llx_user (rowid);
 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_user_valid 			FOREIGN KEY (fk_user_valid)			REFERENCES llx_user (rowid);
-ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_expedition_methode 	FOREIGN KEY (fk_expedition_methode) REFERENCES llx_expedition_methode (rowid);
+ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_expedition_methode 	FOREIGN KEY (fk_expedition_methode) REFERENCES llx_c_shipment_mode (rowid);
 -- obsolete ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_adresse_livraison	FOREIGN KEY (fk_adresse_livraison)	REFERENCES llx_societe_address (rowid);

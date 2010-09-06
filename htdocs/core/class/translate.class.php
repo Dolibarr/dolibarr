@@ -359,7 +359,7 @@ class Translate {
 		}
 		else if (preg_match('/SendingMethod([0-9A-Z]+)$/i',$key,$reg))
 		{
-			$newstr=$this->getLabelFromKey($db,$reg[1],'expedition_methode','code','libelle');
+			$newstr=$this->getLabelFromKey($db,$reg[1],'c_shipment_mode','code','libelle');
 		}
 		return $newstr;
 	}

@@ -31,6 +31,6 @@
 --
 -- Sending method
 --
-INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUES (1,'CATCH','Catch','Catch by client',1);
-INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUES (2,'TRANS','Transporter','Generic transporter',1);
-INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUES (3,'COLSUI','Colissimo Suivi','Colissimo Suivi',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (1,'CATCH','Catch','Catch by client',1);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (2,'TRANS','Transporter','Generic transporter',1);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (3,'COLSUI','Colissimo Suivi','Colissimo Suivi',0);

@@ -46,3 +46,4 @@ ALTER TABLE llx_societe ADD COLUMN canvas varchar(32) DEFAULT NULL AFTER default
 --UPDATE llx_societe SET canvas='individual' WHERE fk_typent = 8;
 
 RENAME TABLE llx_cond_reglement TO llx_c_payment_term;
+RENAME TABLE llx_expedition_method TO llx_c_shipment_mode;
