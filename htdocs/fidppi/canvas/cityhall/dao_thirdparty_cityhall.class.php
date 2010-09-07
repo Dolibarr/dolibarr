@@ -17,20 +17,20 @@
  */
 
 /**
- *	\file       htdocs/societe/canvas/default/dao_thirdparty_default.class.php
+ *	\file       htdocs/fidppi/canvas/cityhall/dao_thirdparty_cityhall.class.php
  *	\ingroup    thirdparty
- *	\brief      Fichier de la classe des tiers par defaut
+ *	\brief      Fichier de la classe des mairies
  *	\version    $Id$
  */
 
 /**
- *	\class      DaoThirdPartyDefault
- *	\brief      Classe permettant la gestion des tiers par defaut, cette classe surcharge la classe societe
+ *	\class      DaoThirdPartyCityhall
+ *	\brief      Classe permettant la gestion des mairies, cette classe surcharge la classe societe
  */
-class DaoThirdPartyDefault extends Societe
+class DaoThirdPartyCityhall extends Societe
 {
 	var $db;
-
+	
 	//! Numero d'erreur Plage 1280-1535
 	var $errno = 0;
 
@@ -38,7 +38,7 @@ class DaoThirdPartyDefault extends Societe
 	 *    Constructeur de la classe
 	 *    @param	DB		Handler acces base de donnees
 	 */
-	function DaoThirdPartyDefault($DB)
+	function DaoThirdPartyCityhall($DB)
 	{
 		$this->db = $DB;
 	}
@@ -54,7 +54,7 @@ class DaoThirdPartyDefault extends Societe
 
 		return $result;
 	}
-
+	
 	/**
      *    Create third party in database
      *    @param      user        Object of user that ask creation
@@ -66,7 +66,7 @@ class DaoThirdPartyDefault extends Societe
 
 		return $result;
     }
-
+    
 	/**
      *      Update parameters of third party
      *      @param      id              			id societe
@@ -79,10 +79,10 @@ class DaoThirdPartyDefault extends Societe
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
     {
     	$result = parent::update($id, $user, $call_trigger, $allowmodcodeclient, $allowmodcodefournisseur);
-
+    	
     	return $result;
     }
-
+    
 	/**
      *    Delete third party in database
      *    @param      id      id de la societe a supprimer
@@ -90,7 +90,7 @@ class DaoThirdPartyDefault extends Societe
     function delete($id)
     {
     	$result = parent::delete($id);
-
+    	
     	return $result;
     }
 

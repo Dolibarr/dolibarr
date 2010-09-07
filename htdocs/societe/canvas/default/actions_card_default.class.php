@@ -18,7 +18,7 @@
 
 /**
  *	\file       htdocs/societe/canvas/default/actions_card_default.class.php
- *	\ingroup    thirparty
+ *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty card controller (default canvas)
  *	\version    $Id$
  */

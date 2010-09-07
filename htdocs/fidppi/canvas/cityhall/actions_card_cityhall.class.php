@@ -17,31 +17,31 @@
  */
 
 /**
- *	\file       htdocs/societe/canvas/individual/actions_card_individual.class.php
+ *	\file       htdocs/fidppi/canvas/cityhall/actions_card_cityhall.class.php
  *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty card controller (individual canvas)
+ *	\brief      Fichier de la classe Thirdparty card controller (cityhall canvas)
  *	\version    $Id$
  */
 include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
 
 /**
- *	\class      ActionsCardIndividual
- *	\brief      Classe permettant la gestion des particuliers
+ *	\class      ActionsCardCityhall
+ *	\brief      Classe permettant la gestion des mairies
  */
-class ActionsCardIndividual extends ActionsCardCommon
+class ActionsCardCityhall extends ActionsCardCommon
 {
 	var $db;
-
+	
 	//! Canvas
 	var $canvas;
-
+	
 	/**
 	 *    Constructeur de la classe
 	 *    @param	DB		Handler acces base de donnees
 	 */
-	function ActionsCardIndividual($DB)
+	function ActionsCardCityhall($DB)
 	{
-		$this->db 				= $DB;
+		$this->db = $DB;
 	}
 
 	/**
@@ -53,13 +53,23 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 		$out='';
 
-		if ($action == 'view') 		$out.= $langs->trans("Individual");
-		if ($action == 'edit') 		$out.= $langs->trans("EditIndividual");
-		if ($action == 'create')	$out.= $langs->trans("NewIndividual");
-
+		if ($action == 'view') 		$out.= $langs->trans("CityHall");
+		if ($action == 'edit') 		$out.= $langs->trans("EditCityHall");
+		if ($action == 'create')	$out.= $langs->trans("NewCityHall");
+		
 		return $out;
 	}
-
+	
+	/**
+	 * 	Load data control
+	 */
+	function loadControl($socid)
+	{
+		$return = parent::loadControl($socid);
+		
+		return $return;
+	}
+	
 	/**
      *    Assigne les valeurs POST dans l'objet
      */
@@ -67,18 +77,7 @@ class ActionsCardIndividual extends ActionsCardCommon
     {
     	parent::assign_post();
     }
-
-	/**
-	 * 	Execute actions
-	 * 	@param 		Id of object (may be empty for creation)
-	 */
-	function doActions($socid)
-	{
-		$return = parent::doActions($socid);
-
-		return $return;
-	}
-
+	
 	/**
 	 *    Assign custom values for canvas
 	 *    @param      action     Type of action
@@ -86,25 +85,26 @@ class ActionsCardIndividual extends ActionsCardCommon
 	function assign_values($action='')
 	{
 		global $langs;
-		global $form, $formcompany;
-
+		global $form, $formcompany;	
+		
 		parent::assign_values($action);
-
-		if ($action == 'create' || $action == 'edit')
-		{
-			$this->tpl['select_civility'] = $formcompany->select_civility($contact->civilite_id);
-		}
-
+		
 		if ($action == 'view')
 		{
 			// Confirm delete third party
 			if ($_GET["action"] == 'delete')
 			{
-				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteAnIndividual"),$langs->trans("ConfirmDeleteIndividual"),"confirm_delete",'',0,2);
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteACityHall"),$langs->trans("ConfirmDeleteCityHall"),"confirm_delete",'',0,2);
 			}
 		}
+		
+		if ($action == 'create' || $action == 'edit')
+		{
+			// Workforce
+			$this->tpl['select_workforce'] = $form->selectarray("effectif_id",$formcompany->effectif_array(0), $this->object->effectif_id);
+		}
 	}
-
+	
 }
 
 ?>
