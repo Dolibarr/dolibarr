@@ -1387,46 +1387,32 @@ if ($id > 0 || ! empty($ref))
 	 * Lines
 	 */
 	print '<table class="noborder" width="100%">';
-
-	// Hook of thirdparty module
-	if (! empty($hooks->objModules))
+	
+	$result = $propal->getLinesArray();
+	//var_dump($propal->lines);
+	
+	if (! empty($propal->lines))
 	{
-		foreach($hooks->objModules as $module)
+		if (! empty($hooks->objModules))
 		{
-			$lines = $propal->getLinesArray(1);
-
-			$module->getObjectList($propal);
-			$sublines = $propal->getLinesArray(2);
-
-			if (! empty($module->lines))
-			{
-				$propal->print_title_list();
-				$module->printObjectList($propal, $lines, $sublines);
-			}
-			else if (! empty($lines) )
-			{
-				$propal->print_title_list();
-				$propal->printLinesList($lines);
-			}
+			// TODO traitement des hooks
+			$propal->print_title_list();
+			$propal->printLinesList();
 		}
-	}
-	else
-	{
-		$lines = $propal->getLinesArray(0);
-
-		if (! empty($lines) )
+		else
 		{
 			$propal->print_title_list();
-			$propal->printLinesList($lines);
+			$propal->printLinesList();
 		}
 	}
+
 
 	/*
 	 * Form to add new line
 	 */
 	if ($propal->statut == 0 && $user->rights->propale->creer)
 	{
-		if (! preg_match('/editline|edit_/',$_GET["action"]))
+		if ($_GET['action'] != 'editline')
 		{
 			$var=true;
 

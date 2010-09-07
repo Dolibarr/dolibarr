@@ -1341,16 +1341,15 @@ class CommonObject
 
 	/**
 	 * 	Return HTML with object lines list
-	 * 	@param		lines		Object lines
      *  FIXME This must be moved into a html.class file instead of a business class.
 	 */
-	function printLinesList($lines,$dateSelector=0)
+	function printLinesList($dateSelector=0)
 	{
-		$num = count($lines);
+		$num = count($this->lines);
 		$var = true;
 		$i	 = 0;
 
-		foreach ($lines as $line)
+		foreach ($this->lines as $line)
 		{
 			$var=!$var;
 
