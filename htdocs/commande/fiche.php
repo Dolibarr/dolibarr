@@ -1644,8 +1644,12 @@ else
 			print '<table class="noborder" width="100%">';
 			
 			$result = $commande->getLinesArray();
-			$commande->print_title_list();
-			$commande->printLinesList();
+			
+			if (!empty($commande->lines))
+			{
+				$commande->print_title_list();
+				$commande->printLinesList();
+			}
 
 			$numlines=sizeof($commande->lines);
 

@@ -1360,8 +1360,12 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="noborder" width="100%">';
 	
 	$result = $propal->getLinesArray();
-	$propal->print_title_list();
-	$propal->printLinesList();
+	
+	if (!empty($propal->lines))
+	{
+		$propal->print_title_list();
+		$propal->printLinesList();
+	}
 
 
 	/*
