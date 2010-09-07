@@ -28,12 +28,12 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/user/user.class.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/action/cactioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formactions.class.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/action/class/cactioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formactions.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $langs->load("companies");
@@ -168,16 +168,16 @@ if ($_POST["action"] == 'add_action')
 	}
 	$actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
 
-	$usertodo=new User($db,$_POST["affectedto"]);
+	$usertodo=new User($db);
 	if ($_POST["affectedto"] > 0)
 	{
-		$usertodo->fetch();
+		$usertodo->fetch($_POST["affectedto"]);
 	}
 	$actioncomm->usertodo = $usertodo;
-	$userdone=new User($db,$_POST["doneby"]);
+	$userdone=new User($db);
 	if ($_POST["doneby"] > 0)
 	{
-		$userdone->fetch();
+		$userdone->fetch($_POST["doneby"]);
 	}
 	$actioncomm->userdone = $userdone;
 
@@ -357,16 +357,16 @@ if ($_POST["action"] == 'update')
 		}
 
 		// Users
-		$usertodo=new User($db,$_POST["affectedto"]);
+		$usertodo=new User($db);
 		if ($_POST["affectedto"])
 		{
-			$usertodo->fetch();
+			$usertodo->fetch($_POST["affectedto"]);
 		}
 		$actioncomm->usertodo = $usertodo;
-		$userdone=new User($db,$_POST["doneby"]);
+		$userdone=new User($db);
 		if ($_POST["doneby"])
 		{
-			$userdone->fetch();
+			$userdone->fetch($_POST["doneby"]);
 		}
 		$actioncomm->userdone = $userdone;
 
@@ -606,7 +606,11 @@ if ($_GET["id"])
 
 	$act = new ActionComm($db);
 	$result=$act->fetch($_GET["id"]);
-	if ($result < 0) dol_print_error($db,$act->error);
+	if ($result < 0)
+	{
+		dol_print_error($db,$act->error);
+		exit;
+	}
 
 	$societe = new Societe($db);
 	if ($act->societe->id)
@@ -615,10 +619,10 @@ if ($_GET["id"])
 	}
 	$act->societe = $societe;
 
-	if ($act->author->id > 0)   { $tmpuser=new User($db); $tmpuser->id=$act->author->id;   $res=$tmpuser->fetch(); $act->author=$tmpuser; }
-	if ($act->usermod->id > 0)  { $tmpuser=new User($db); $tmpuser->id=$act->usermod->id;  $res=$tmpuser->fetch(); $act->usermod=$tmpuser; }
-	if ($act->usertodo->id > 0) { $tmpuser=new User($db); $tmpuser->id=$act->usertodo->id; $res=$tmpuser->fetch(); $act->usertodo=$tmpuser; }
-	if ($act->userdone->id > 0) { $tmpuser=new User($db); $tmpuser->id=$act->userdone->id; $res=$tmpuser->fetch(); $act->userdone=$tmpuser; }
+	if ($act->author->id > 0)   { $tmpuser=new User($db); $res=$tmpuser->fetch($act->author->id); $act->author=$tmpuser; }
+	if ($act->usermod->id > 0)  { $tmpuser=new User($db); $res=$tmpuser->fetch($act->usermod->id); $act->usermod=$tmpuser; }
+	if ($act->usertodo->id > 0) { $tmpuser=new User($db); $res=$tmpuser->fetch($act->usertodo->id); $act->usertodo=$tmpuser; }
+	if ($act->userdone->id > 0) { $tmpuser=new User($db); $res=$tmpuser->fetch($act->userdone->id); $act->userdone=$tmpuser; }
 
 	$contact = new Contact($db);
 	if ($act->contact->id)
@@ -634,7 +638,7 @@ if ($_GET["id"])
 	$head=actions_prepare_head();
 	dol_fiche_head($head, 'card', $langs->trans("Action"),0,'task');
 
-	$now=gmmktime();
+	$now=dol_now();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
 	// Confirmation suppression action
@@ -670,7 +674,7 @@ if ($_GET["id"])
 		// Company
 		print '<tr><td>'.$langs->trans("Company").'</td>';
 		print '<td>';
-		print $html->select_societes($act->societe->id,'socid',1,1);
+		print $html->select_societes($act->societe->id,'socid','',1,1);
 		print '</td>';
 
 		// Contact
@@ -773,7 +777,9 @@ if ($_GET["id"])
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print $html->showrefnav($act,'id','',1,'id','ref','');
+		print '</td></tr>';
 
 		// Type
 		print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
