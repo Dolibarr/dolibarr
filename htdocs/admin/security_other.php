@@ -64,9 +64,11 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			{
 				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+			else if (preg_match('/ErrorFileIsInfectedWithAVirus.(.*)/',$resupload,$reg))	// Files infected by a virus
 			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus");
+				$mesg.= '<br>'.$langs->trans("Information").': '.$langs->trans($reg[1]);
+				$mesg.= '</div>';
 			}
 			else	// Known error
 			{
