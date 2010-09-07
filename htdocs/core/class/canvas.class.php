@@ -17,7 +17,7 @@
  */
 
 /**
- *   \file		htdocs/core/class/canvas.class.php
+ *   \file			htdocs/core/class/canvas.class.php
  *   \ingroup		core
  *   \brief			Fichier de la classe de gestion des canvas
  *   \version		$Id$
@@ -128,23 +128,23 @@ class Canvas
 
 		if (! $conf->$childmodule->enabled || ! $conf->$targetmodule->enabled) accessforbidden();
 
-		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->targetmodule.'.'.$this->canvas.'.class.php') &&
-			file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php'))
+		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php') &&
+			file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php'))
 		{
 			// Include dataservice class (model)
-			$modelclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->targetmodule.'.'.$this->canvas.'.class.php';
+			$modelclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php';
 			include_once($modelclassfile);
 
 			// Include actions class (controller)
-			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/'.$this->card.'.'.$this->canvas.'.class.php';
+			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php';
 			include_once($controlclassfile);
 
 			// Instantiate actions class (controller)
-			$controlclassname = ucfirst($this->card).ucfirst($this->canvas);
+			$controlclassname = 'Actions'.ucfirst($this->card).ucfirst($this->canvas);
 			$this->control = new $controlclassname($this->db);
 
 			// Instantiate dataservice class (model)
-			$modelclassname = ucfirst($this->targetmodule).ucfirst($this->canvas);
+			$modelclassname = 'Dao'.ucfirst($this->targetmodule).ucfirst($this->canvas);
 			$this->control->object = new $modelclassname($this->db);
 
 			// Canvas

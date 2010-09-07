@@ -24,13 +24,13 @@
  */
 
 /**
- *	\class      ThirdPartyDefault
+ *	\class      DaoThirdPartyDefault
  *	\brief      Classe permettant la gestion des tiers par defaut, cette classe surcharge la classe societe
  */
-class ThirdPartyDefault extends Societe
+class DaoThirdPartyDefault extends Societe
 {
 	var $db;
-	
+
 	//! Numero d'erreur Plage 1280-1535
 	var $errno = 0;
 
@@ -38,7 +38,7 @@ class ThirdPartyDefault extends Societe
 	 *    Constructeur de la classe
 	 *    @param	DB		Handler acces base de donnees
 	 */
-	function ThirdPartyDefault($DB)
+	function DaoThirdPartyDefault($DB)
 	{
 		$this->db = $DB;
 	}
@@ -54,7 +54,7 @@ class ThirdPartyDefault extends Societe
 
 		return $result;
 	}
-	
+
 	/**
      *    Create third party in database
      *    @param      user        Object of user that ask creation
@@ -66,7 +66,7 @@ class ThirdPartyDefault extends Societe
 
 		return $result;
     }
-    
+
 	/**
      *      Update parameters of third party
      *      @param      id              			id societe
@@ -79,10 +79,10 @@ class ThirdPartyDefault extends Societe
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
     {
     	$result = parent::update($id, $user, $call_trigger, $allowmodcodeclient, $allowmodcodefournisseur);
-    	
+
     	return $result;
     }
-    
+
 	/**
      *    Delete third party in database
      *    @param      id      id de la societe a supprimer
@@ -90,10 +90,10 @@ class ThirdPartyDefault extends Societe
     function delete($id)
     {
     	$result = parent::delete($id);
-    	
+
     	return $result;
     }
-	
+
 	/**
 	 * 	Fetch datas list
 	 */
