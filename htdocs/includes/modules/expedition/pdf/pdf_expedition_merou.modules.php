@@ -174,13 +174,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->SetMargins(10, 10, 10);
 				$pdf->SetAutoPageBreak(1,0);
 
-				$pdf->SetFont('Arial','', 7);
+				$pdf->SetFont('','', 7);
 
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
 				$this->_pagehead($pdf, $this->expe, $outputlangs);
-				$pdf->SetFont('Arial','', 7);
+				$pdf->SetFont('','', 7);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
@@ -189,7 +189,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$tab_height = 70;
 				$pdf->SetFillColor(240,240,240);
 				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','', 7);
+				$pdf->SetFont('','', 7);
 				$pdf->SetXY (10, $tab_top + 5 );
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
@@ -212,18 +212,18 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					$pdf->rect(20+3, $curY+1, 3, 3);
 					//Insertion de la reference du produit
 					$pdf->SetXY (30, $curY+1 );
-					$pdf->SetFont('Arial','B', 7);
+					$pdf->SetFont('','B', 7);
 					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($object->commande->lignes[$i]->ref), 0, 'L', 0);
 					//Insertion du libelle
-					$pdf->SetFont('Arial','', 7);
+					$pdf->SetFont('','', 7);
 					$pdf->SetXY (50, $curY+1 );
 					$pdf->writeHTMLCell(90, 3, 50, $curY+1, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 'L', 0);
 					//Insertion de la quantite commandee
-					$pdf->SetFont('Arial','', 7);
+					$pdf->SetFont('','', 7);
 					$pdf->SetXY (140, $curY+1 );
 					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_asked, 0, 'C', 0);
 					//Insertion de la quantite a envoyer
-					$pdf->SetFont('Arial','', 7);
+					$pdf->SetFont('','', 7);
 					$pdf->SetXY (170, $curY+1 );
 					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_shipped, 0, 'C', 0);
 
@@ -244,7 +244,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 						$this->_pagehead($pdf, $this->expe, $outputlangs);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('Arial','', 7);
+						$pdf->SetFont('','', 7);
 					}
 				}
 				//Insertion du pied de page
@@ -286,7 +286,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$langs->load("main");
 		$langs->load("bills");
 
-		$pdf->SetFont('Arial','B',8);
+		$pdf->SetFont('','B',8);
 		$pdf->SetXY(10,$tab_top);
 		$pdf->MultiCell(10,5,"LS",0,'C',1);
 		$pdf->line(20, $tab_top, 20, $tab_top + $tab_height);
@@ -312,7 +312,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs)
 	{
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('','',8);
 		$pdf->SetY(-23);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("GoodStatusDeclaration") , 0, 'L');
 		$pdf->SetY(-13);
@@ -363,7 +363,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			else
 			{
 				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('Arial','B',8);
+				$pdf->SetFont('','B',8);
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
@@ -377,7 +377,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//*********************Entete****************************
 		//Nom du Document
 		$pdf->SetXY($Xoff,7);
-		$pdf->SetFont('Arial','B',12);
+		$pdf->SetFont('','B',12);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("SendingSheet"), '' , 'L');	// Bordereau expedition
 		//Num Expedition
@@ -385,7 +385,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$Xoff = 142;
 		//$pdf->rect($Xoff, $Yoff, 85, 8);
 		$pdf->SetXY($Xoff,$Yoff);
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('','',8);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($object->ref), '' , 'R');
 		//$this->Code39($Xoff+43, $Yoff+1, $object->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
@@ -408,7 +408,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 						{
 							$Yoff = $Yoff+4;
 							$pdf->SetXY($Xoff,$Yoff);
-							$pdf->SetFont('Arial','',8);
+							$pdf->SetFont('','',8);
 							$text=$newobject->ref;
 							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
 							$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
@@ -435,7 +435,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		// Sender properties
 		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
-		$pdf->SetFont('Arial','',7);
+		$pdf->SetFont('','',7);
 		$pdf->SetXY($blSocX,$blSocY+3);
 		$pdf->MultiCell(80, 2, $carac_emetteur);
 
@@ -453,13 +453,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Date Expedition
 		$Yoff = $Yoff+7;
 		$pdf->SetXY($blSocX-80,$blSocY+20);
-		$pdf->SetFont('Arial','B',8);
+		$pdf->SetFont('','B',8);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_delivery,'day',false,$outputlangs,true), '' , 'L');
 
 		// Deliverer
 		$pdf->SetXY($blSocX-80,$blSocY+23);
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('','',8);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($this->livreur->getFullName($outputlangs)), '' , 'L');
 
@@ -509,16 +509,16 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->Rect($blDestX, $Yoff-1, $blW, 20);
 
 		//Titre
-		$pdf->SetFont('Arial','B',7);
+		$pdf->SetFont('','B',7);
 		$pdf->SetXY($blDestX,$Yoff-4);
 		$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Recipient"), 0, 'L');
 
 		// Show customer/recipient
-		$pdf->SetFont('Arial','B',7);
+		$pdf->SetFont('','B',7);
 		$pdf->SetXY($blDestX,$Yoff);
 		$pdf->MultiCell($blW,3, $carac_client_name, 0, 'L');
 
-		$pdf->SetFont('Arial','',7);
+		$pdf->SetFont('','',7);
 		//$posy=$pdf->GetY(); //Auto Y coord readjust for multiline name
 		$pdf->SetXY($blDestX,$pdf->GetY());
 		$pdf->MultiCell($blW,2, $carac_client);

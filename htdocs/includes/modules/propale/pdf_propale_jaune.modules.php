@@ -171,7 +171,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$pdf->AddPage();
 				$pagenb++;
 				$this->_pagehead($pdf, $propale, 1, $outputlangs);
-				$pdf->SetFont('Arial','', 9);
+				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
@@ -193,11 +193,11 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 					// Description de la ligne produit
 					$libelleproduitservice=pdf_getlinedesc($propale->lignes[$i],$outputlangs);
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					$pdf->writeHTMLCell(102, 4, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
-					$pdf->SetFont('Arial','', 9);   // On repositionne la police par d�faut
+					$pdf->SetFont('','', 9);   // On repositionne la police par d�faut
 					$nexY = $pdf->GetY();
 
 					$ref=dol_htmlentitiesbr($propale->lignes[$i]->ref);
@@ -245,7 +245,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $propale, 0, $outputlangs);
-						$pdf->SetFont('Arial','', 9);
+						$pdf->SetFont('','', 9);
 						$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
@@ -264,7 +264,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$tab2_lh = 7;
 				$tab2_height = $tab2_lh * 3;
 
-				$pdf->SetFont('Arial','', 10);
+				$pdf->SetFont('','', 10);
 
 				$pdf->Rect(132, $tab2_top, 68, $tab2_height);
 
@@ -319,12 +319,12 @@ class pdf_propale_jaune extends ModelePDFPropales
 	{
 		global $conf;
 
-		$pdf->SetFont('Arial','', 9);
+		$pdf->SetFont('','', 9);
 
         // If France, show VAT mention if not applicable
 		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
 		{
-			$pdf->SetFont('Arial','B',8);
+			$pdf->SetFont('','B',8);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 
@@ -334,12 +334,12 @@ class pdf_propale_jaune extends ModelePDFPropales
         // Show payments conditions
 		if ($object->cond_reglement_code || $object->cond_reglement)
 		{
-			$pdf->SetFont('Arial','B',8);
+			$pdf->SetFont('','B',8);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 
-			$pdf->SetFont('Arial','',8);
+			$pdf->SetFont('','',8);
 			$pdf->SetXY(50, $posy);
 			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
 			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
@@ -356,7 +356,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		{
             $pdf->SetXY($this->marge_gauche, $posy);
             $pdf->SetTextColor(200,0,0);
-            $pdf->SetFont('Arial','B',8);
+            $pdf->SetFont('','B',8);
             $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
             $pdf->SetTextColor(0,0,0);
 
@@ -368,12 +368,12 @@ class pdf_propale_jaune extends ModelePDFPropales
         	 && $object->mode_reglement_code != 'CHQ'
            	 && $object->mode_reglement_code != 'VIR')
            	 {
-	            $pdf->SetFont('Arial','B',8);
+	            $pdf->SetFont('','B',8);
 	            $pdf->SetXY($this->marge_gauche, $posy);
 	            $titre = $outputlangs->transnoentities("PaymentMode").':';
 	            $pdf->MultiCell(80, 5, $titre, 0, 'L');
 
-	            $pdf->SetFont('Arial','',8);
+	            $pdf->SetFont('','',8);
 	            $pdf->SetXY(50, $posy);
 	            //print "xxx".$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code);exit;
 	            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
@@ -394,24 +394,24 @@ class pdf_propale_jaune extends ModelePDFPropales
 	                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
 
 	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('Arial','B',8);
+	                $pdf->SetFont('','B',8);
 	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
 		            $posy=$pdf->GetY()+1;
 
 	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('Arial','',8);
+	                $pdf->SetFont('','',8);
 	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
 		            $posy=$pdf->GetY()+2;
 	            }
 	            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
 	            {
 	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('Arial','B',8);
+	                $pdf->SetFont('','B',8);
 	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->nom).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
 		            $posy=$pdf->GetY()+1;
 
 		            $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('Arial','',8);
+	                $pdf->SetFont('','',8);
 	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
 		            $posy=$pdf->GetY()+2;
 	            }
@@ -455,7 +455,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$langs->load("main");
 		$langs->load("bills");
 
-		$pdf->SetFont('Arial','',11);
+		$pdf->SetFont('','',11);
 
 		$pdf->SetXY(10,$tab_top);
 		$pdf->MultiCell(20,10,$outputlangs->transnoentities("Ref"),0,'C',1);
@@ -482,7 +482,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 	}
 
 
@@ -504,7 +504,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 		// Sender name
 		$pdf->SetTextColor(0,0,00);
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 		// Sender properties
@@ -519,7 +519,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 	 	$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);
 
-		$pdf->SetFont('Arial','',9);
+		$pdf->SetFont('','',9);
 		$pdf->SetXY($this->marge_gauche+2,$posy+4);
 		$pdf->MultiCell(80, 4, $carac_emetteur);
 
@@ -527,7 +527,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->rect(10, 40, 80, 40);
 
 		$pdf->SetXY(10,5);
-		$pdf->SetFont('Arial','B',16);
+		$pdf->SetFont('','B',16);
 		$pdf->SetTextColor(0,0,200);
 		$pdf->MultiCell(200, 20, $outputlangs->transnoentities("CommercialProposal"), '' , 'C');
 
@@ -535,7 +535,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->rect(100, 40, 100, 40);
 
 		$pdf->SetTextColor(200,0,0);
-		$pdf->SetFont('Arial','B',12);
+		$pdf->SetFont('','B',12);
 
 		$pdf->rect(10, 90, 100, 10);
 		$pdf->rect(110, 90, 90, 10);
@@ -546,7 +546,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs,true));
 
 		$posy=15;
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
@@ -604,11 +604,11 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 		// Show recipient
 		$pdf->SetXY(102,$posy+3);
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($carac_client_name), 0, 'L');
 
 		// Show address
-		$pdf->SetFont('Arial','',9);
+		$pdf->SetFont('','',9);
 		$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
 		$pdf->SetXY(102,$posy+6);
 		$pdf->MultiCell(86,4, $carac_client);

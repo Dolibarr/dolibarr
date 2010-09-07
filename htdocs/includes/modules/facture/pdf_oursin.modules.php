@@ -198,7 +198,7 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->AddPage();
 				$pagenb++;
 				$this->_pagehead($pdf, $fac, 1, $outputlangs);
-				$pdf->SetFont('Arial','', 9);
+				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
@@ -206,7 +206,7 @@ class pdf_oursin extends ModelePDFFactures
 				$tab_height = 110;
 
 				$pdf->SetFillColor(220,220,220);
-				$pdf->SetFont('Arial','', 9);
+				$pdf->SetFont('','', 9);
 				$pdf->SetXY ($this->marges['g'], $tab_top + $this->marges['g'] );
 
 				$iniY = $pdf->GetY();
@@ -265,7 +265,7 @@ class pdf_oursin extends ModelePDFFactures
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $fac, 0, $outputlangs);
-						$pdf->SetFont('Arial','', 9);
+						$pdf->SetFont('','', 9);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 					}
@@ -329,7 +329,7 @@ class pdf_oursin extends ModelePDFFactures
 		$tab3_width = 80;
 		$tab3_height = 4;
 
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('','',8);
 		$pdf->SetXY ($tab3_posx, $tab3_top - 5);
 		$pdf->MultiCell(60, 5, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
 
@@ -346,7 +346,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		$y=0;
 
-		$pdf->SetFont('Arial','',6);
+		$pdf->SetFont('','',6);
 
 		// Loop on each credit note included
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
@@ -467,12 +467,12 @@ class pdf_oursin extends ModelePDFFactures
 	{
 		global $conf;
 
-		$pdf->SetFont('Arial','', 9);
+		$pdf->SetFont('','', 9);
 
 		// If France, show VAT mention if not applicable
 		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
 		{
-			$pdf->SetFont('Arial','B',8);
+			$pdf->SetFont('','B',8);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 
@@ -482,12 +482,12 @@ class pdf_oursin extends ModelePDFFactures
 		// Show payments conditions
 		if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement))
 		{
-			$pdf->SetFont('Arial','B',8);
+			$pdf->SetFont('','B',8);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 
-			$pdf->SetFont('Arial','',8);
+			$pdf->SetFont('','',8);
 			$pdf->SetXY(50, $posy);
 			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
 			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
@@ -506,7 +506,7 @@ class pdf_oursin extends ModelePDFFactures
 			{
 				$pdf->SetXY($this->marge_gauche, $posy);
 				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('Arial','B',8);
+				$pdf->SetFont('','B',8);
 				$pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
 				$pdf->SetTextColor(0,0,0);
 
@@ -518,12 +518,12 @@ class pdf_oursin extends ModelePDFFactures
 			&& $object->mode_reglement_code != 'CHQ'
 			&& $object->mode_reglement_code != 'VIR')
 			{
-				$pdf->SetFont('Arial','B',8);
+				$pdf->SetFont('','B',8);
 				$pdf->SetXY($this->marge_gauche, $posy);
 				$titre = $outputlangs->transnoentities("PaymentMode").':';
 				$pdf->MultiCell(80, 5, $titre, 0, 'L');
 
-				$pdf->SetFont('Arial','',8);
+				$pdf->SetFont('','',8);
 				$pdf->SetXY(50, $posy);
 				$lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
 				$pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
@@ -543,24 +543,24 @@ class pdf_oursin extends ModelePDFFactures
 						$account->fetch($conf->global->FACTURE_CHQ_NUMBER);
 
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('Arial','B',8);
+						$pdf->SetFont('','B',8);
 						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('Arial','',8);
+						$pdf->SetFont('','',8);
 						$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
 						$posy=$pdf->GetY()+2;
 					}
 					if ($conf->global->FACTURE_CHQ_NUMBER == -1)
 					{
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('Arial','B',8);
+						$pdf->SetFont('','B',8);
 						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->nom).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('Arial','',8);
+						$pdf->SetFont('','',8);
 						$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
 						$posy=$pdf->GetY()+2;
 					}
@@ -608,7 +608,7 @@ class pdf_oursin extends ModelePDFFactures
 		$tab2_top = $this->marges['h']+202;
 		$tab2_hl = 5;
 		$tab2_height = $tab2_hl * 4;
-		$pdf->SetFont('Arial','', 9);
+		$pdf->SetFont('','', 9);
 
 		// Tableau total
 		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
@@ -677,7 +677,7 @@ class pdf_oursin extends ModelePDFFactures
 			$index++;
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->SetTextColor(22,137,210);
-			$pdf->SetFont('Arial','B', 11);
+			$pdf->SetFont('','B', 11);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), 0, 'L', 0);
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), 0, 'R', 0);
@@ -691,7 +691,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		if ($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0)
 		{
-			$pdf->SetFont('Arial','', 10);
+			$pdf->SetFont('','', 10);
 
 			// Already paid + Deposits
 			$index++;
@@ -733,7 +733,7 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer), 0, 'R', 0);
 
 			// Fin
-			$pdf->SetFont('Arial','B', 11);
+			$pdf->SetFont('','B', 11);
 			$pdf->SetTextColor(0,0,0);
 		}
 
@@ -754,7 +754,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->line( $this->marges['g'], $tab_top+8, 210-$this->marges['d'], $tab_top+8 );
 		$pdf->line( $this->marges['g'], $tab_top + $tab_height, 210-$this->marges['d'], $tab_top + $tab_height );
 
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 
 		$pdf->Text($this->marges['g']+1,$tab_top + 5, $outputlangs->transnoentities("Designation"));
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
@@ -802,7 +802,7 @@ class pdf_oursin extends ModelePDFFactures
 		}
 
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('Arial','B',13);
+		$pdf->SetFont('','B',13);
 
 		$pdf->SetXY($this->marges['g'],6);
 
@@ -819,7 +819,7 @@ class pdf_oursin extends ModelePDFFactures
 			else
 			{
 				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('Arial','B',8);
+				$pdf->SetFont('','B',8);
 				$pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
 				$pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
@@ -836,7 +836,7 @@ class pdf_oursin extends ModelePDFFactures
 		 */
 		$posy=$this->marges['h']+24;
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('','',8);
 		$pdf->SetXY($this->marges['g'],$posy-5);
 
 
@@ -849,13 +849,13 @@ class pdf_oursin extends ModelePDFFactures
 
 		// Sender name
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 		// Sender properties
 		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
-		$pdf->SetFont('Arial','',9);
+		$pdf->SetFont('','',9);
 		$pdf->SetXY($this->marge_gauche,$posy+9);
 		$pdf->MultiCell(80, 4, $carac_emetteur);
 
@@ -863,9 +863,9 @@ class pdf_oursin extends ModelePDFFactures
 		// Client destinataire
 		$posy=45;
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('','',8);
 		$pdf->SetXY($this->marges['g']+100,$posy-5);
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 
 		// If BILLING contact defined on invoice, we use it
 		$usecontact=false;
@@ -892,11 +892,11 @@ class pdf_oursin extends ModelePDFFactures
 		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 		// Show customer/recipient
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->SetXY($this->marges['g']+100,$posy+4);
 		$pdf->MultiCell(86,4, $carac_client_name, 0, 'L');
 
-		$pdf->SetFont('Arial','B',9);
+		$pdf->SetFont('','B',9);
 		$pdf->SetXY($this->marges['g']+100,$posy+6);
 		$pdf->MultiCell(86,4, $carac_client);
 
@@ -904,7 +904,7 @@ class pdf_oursin extends ModelePDFFactures
 		 * ref facture
 		 */
 		$posy=70;
-		$pdf->SetFont('Arial','B',13);
+		$pdf->SetFont('','B',13);
 		$pdf->SetXY($this->marges['g'],$posy-5);
 		$pdf->SetTextColor(0,0,0);
 		$title=$outputlangs->transnoentities("Invoice");
@@ -913,7 +913,7 @@ class pdf_oursin extends ModelePDFFactures
 		if ($object->type == 3) $title=$outputlangs->transnoentities("InvoiceDeposit");
 		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProForma");
 		$pdf->MultiCell(100, 10, $title.' '.$outputlangs->transnoentities("Of").' '.dol_print_date($object->date,"day",false,$outputlangs,true), '' , 'L');
-		$pdf->SetFont('Arial','B',11);
+		$pdf->SetFont('','B',11);
 		$pdf->SetXY($this->marges['g'],$posy);
 		$pdf->SetTextColor(22,137,210);
 		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("RefBill")." : " . $outputlangs->transnoentities($object->ref), '', 'L');
@@ -956,7 +956,7 @@ class pdf_oursin extends ModelePDFFactures
 		{
 			$posy+=5;
 			$pdf->SetXY($this->marges['g'],$posy);
-			$pdf->SetFont('Arial','',9);
+			$pdf->SetFont('','',9);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'L');
 		}
 
@@ -964,7 +964,7 @@ class pdf_oursin extends ModelePDFFactures
 		{
 			$posy+=4;
 			$pdf->SetXY($this->marges['g'],$posy);
-			$pdf->SetFont('Arial','',9);
+			$pdf->SetFont('','',9);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'L');
 		}
 
@@ -989,7 +989,7 @@ class pdf_oursin extends ModelePDFFactures
 						{
 							$posy+=4;
 							$pdf->SetXY($this->marges['g'],$posy);
-							$pdf->SetFont('Arial','',9);
+							$pdf->SetFont('','',9);
 							$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($newobject->ref));
 						}
 					}
@@ -1015,7 +1015,7 @@ class pdf_oursin extends ModelePDFFactures
 						{
 							$posy+=4;
 							$pdf->SetXY($this->marges['g'],$posy);
-							$pdf->SetFont('Arial','',9);
+							$pdf->SetFont('','',9);
 							$text=$newobject->ref;
 							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
 							$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text));
@@ -1027,7 +1027,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
 		$pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
 	}

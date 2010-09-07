@@ -160,7 +160,7 @@ class CommActionRapport
 
 		$y=$this->_pagehead($pdf, $outputlangs, $pagenb);
 		$y++;
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('','',8);
 
 		$sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 		$sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
@@ -200,7 +200,7 @@ class CommActionRapport
 					$pagenb++;
 					$y=$this->_pagehead($pdf, $outputlangs, $pagenb);
 					$y++;
-					$pdf->SetFont('Arial','',8);
+					$pdf->SetFont('','',8);
 				}
 				$y++;
 
@@ -246,7 +246,7 @@ class CommActionRapport
 		$pdf->AddPage();
 
 		// Show title
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->SetXY($this->marge_gauche, $this->marge_haute);
 		$pdf->MultiCell(80, 1, $this->title, 0, 'L', 0);
 		$pdf->SetXY($this->page_largeur-$this->marge_droite-40, $this->marge_haute);

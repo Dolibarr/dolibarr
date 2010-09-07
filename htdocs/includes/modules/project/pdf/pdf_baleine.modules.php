@@ -182,7 +182,7 @@ class pdf_baleine extends ModelePDFProjects
 				$pdf->AddPage();
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetFont('Arial','', 9);
+				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
@@ -194,7 +194,7 @@ class pdf_baleine extends ModelePDFProjects
 				// Affiche notes
 				if (! empty($object->note_public))
 				{
-					$pdf->SetFont('Arial','', 9);
+					$pdf->SetFont('','', 9);
 					$pdf->SetXY ($this->posxref-1, $tab_top-2);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
@@ -229,7 +229,7 @@ class pdf_baleine extends ModelePDFProjects
 					$dateend=dol_print_date($object->lines[$i]->date_end,'day');
 
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					$pdf->SetXY($this->posxref, $curY);
 					$pdf->MultiCell(60, 3, $outputlangs->convToOutputCharset($ref), 0, 'L');
@@ -243,7 +243,7 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf->MultiCell(20, 3, $dateend, 0, 'L');
 
 
-					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
+					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
 					$nexY+=2;    // Passe espace entre les lignes
@@ -271,7 +271,7 @@ class pdf_baleine extends ModelePDFProjects
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
-						$pdf->SetFont('Arial','', 9);
+						$pdf->SetFont('','', 9);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
@@ -322,7 +322,7 @@ class pdf_baleine extends ModelePDFProjects
 
 		// Montants exprimes en     (en tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('','',8);
 		//$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
 		//$pdf->Text($this->page_largeur - $this->marge_droite - $pdf->GetStringWidth($titre), $tab_top-1, $titre);
 
@@ -333,7 +333,7 @@ class pdf_baleine extends ModelePDFProjects
 		// line prend une position y en 3eme param
 		$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
 
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 
 		$pdf->SetXY ($this->posxref-1, $tab_top+2);
 		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Tasks"),'','L');
@@ -353,7 +353,7 @@ class pdf_baleine extends ModelePDFProjects
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('Arial','B',13);
+		$pdf->SetFont('','B',13);
 
 		$posy=$this->marge_haute;
 
@@ -370,18 +370,18 @@ class pdf_baleine extends ModelePDFProjects
 			else
 			{
 				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('Arial','B',8);
+				$pdf->SetFont('','B',8);
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
 		else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->nom), 0, 'L');
 
-		$pdf->SetFont('Arial','B',13);
+		$pdf->SetFont('','B',13);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Project")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
-		$pdf->SetFont('Arial','',12);
+		$pdf->SetFont('','',12);
 
 		$posy+=6;
 		$pdf->SetXY(100,$posy);
@@ -412,7 +412,7 @@ class pdf_baleine extends ModelePDFProjects
 						{
 							$posy+=4;
 							$pdf->SetXY(100,$posy);
-							$pdf->SetFont('Arial','',9);
+							$pdf->SetFont('','',9);
 							$text=$newobject->ref;
 							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
 							$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');

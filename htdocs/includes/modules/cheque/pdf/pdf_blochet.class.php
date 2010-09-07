@@ -198,38 +198,38 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$outputlangs->load("banks");
 
 		$title = $outputlangs->transnoentities("CheckReceipt");
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->Text(10, 10, $title);
 
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 		$pdf->Text(10, 19, $outputlangs->transnoentities("Numero"));
 
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 		$pdf->Text(10, 27, $outputlangs->transnoentities("Date") );
 
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 		$pdf->Text(10, 35, $outputlangs->transnoentities("Owner"));
 
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->Text(32, 35, $outputlangs->convToOutputCharset($this->account->proprio));
 
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->Text(32, 19, $outputlangs->convToOutputCharset($this->number));
 
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->Text(32, 27, dol_print_date($this->date,"day",false,$outputlangs));
 
 
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 		$pdf->Text(10, 43, $outputlangs->transnoentities("Account"));
 
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->Text(32,  43, $outputlangs->convToOutputCharset($this->account->code_banque));
 		$pdf->Text(51,  43, $outputlangs->convToOutputCharset($this->account->code_guichet));
 		$pdf->Text(68,  43, $outputlangs->convToOutputCharset($this->account->number));
 		$pdf->Text(104, 43, $outputlangs->convToOutputCharset($this->account->cle_rib));
 
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 		$pdf->Text(114, 19, $outputlangs->transnoentities("Signature"));
 
 		$pdf->Rect(9, 47, 192, 7);
@@ -237,21 +237,21 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->line(140, 47, 140, 54);
 		$pdf->line(170, 47, 170, 54);
 
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 		$pdf->Text(10, 52, $outputlangs->transnoentities("NumberOfCheques"));
 
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->Text(57, 52, $this->nbcheque);
 
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 		$pdf->Text(148, 52, "Total");
 
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->SetXY (170, 47);
 		$pdf->MultiCell(31, 7, price($this->amount), 0, 'C', 0);
 
 		// Tableau
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('','',8);
 		$pdf->Text(11,$this->tab_top + 6,$outputlangs->transnoentities("Num"));
 		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
 
@@ -289,7 +289,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		// x=10 - Num
 		// x=30 - Banque
 		// x=100 - Emetteur
-		$pdf->SetFont('Arial','', 9);
+		$pdf->SetFont('','', 9);
 		$oldprowid = 0;
 		$pdf->SetFillColor(220,220,220);
 		$yp = 0;
@@ -335,7 +335,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		// Line of free text
 		$ligne=(! empty($conf->global->$paramfreetext))?$outputlangs->convToOutputCharset($conf->global->$paramfreetext):"";
 
-		$pdf->SetFont('Arial','',7);
+		$pdf->SetFont('','',7);
 		$pdf->SetDrawColor(224,224,224);
 
 		// On positionne le debut du bas de page selon nbre de lignes de ce bas de page

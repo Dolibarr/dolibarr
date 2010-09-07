@@ -198,7 +198,7 @@ class pdf_paiement
 		$pdf->AddPage();
 		$pagenb++;
 		$this->_pagehead($pdf, $pages, 1, $outputlangs);
-		$pdf->SetFont('Arial','', 9);
+		$pdf->SetFont('','', 9);
 		$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 		$pdf->SetTextColor(0,0,0);
 
@@ -231,16 +231,16 @@ class pdf_paiement
 
 		$title=$outputlangs->transnoentities("ListOfCustomerPayments");
 		$title.=' - '.dol_print_date(dol_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs,true);
-		$pdf->SetFont('Arial','B',12);
+		$pdf->SetFont('','B',12);
 		$pdf->Text(70, 10, $title);
 
-		$pdf->SetFont('Arial','',12);
+		$pdf->SetFont('','',12);
 		$pdf->Text(11, 16, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(),"day",false,$outputlangs,true));
 
-		$pdf->SetFont('Arial','',12);
+		$pdf->SetFont('','',12);
 		$pdf->Text(11, 22, $outputlangs->transnoentities("Page")." : ".$page);
 
-		$pdf->SetFont('Arial','',12);
+		$pdf->SetFont('','',12);
 
 		$pdf->Text(11,$this->tab_top + 6,'Date');
 
@@ -269,7 +269,7 @@ class pdf_paiement
 	 */
 	function Body(&$pdf, $page, $lines, $outputlangs)
 	{
-		$pdf->SetFont('Arial','', 9);
+		$pdf->SetFont('','', 9);
 		$oldprowid = 0;
 		$pdf->SetFillColor(220,220,220);
 		$yp = 0;
@@ -283,7 +283,7 @@ class pdf_paiement
 					$page++;
 					$pdf->AddPage();
 					$this->_pagehead($pdf, $page, 0, $outputlangs);
-					$pdf->SetFont('Arial','', 9);
+					$pdf->SetFont('','', 9);
 					$yp = 0;
 				}
 

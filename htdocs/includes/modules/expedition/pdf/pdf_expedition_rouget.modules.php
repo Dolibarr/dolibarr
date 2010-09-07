@@ -88,7 +88,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		//Prepare la suite
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('Arial','B',13);
+		$pdf->SetFont('','B',13);
 
 		$posy=$this->marge_haute;
 
@@ -105,7 +105,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			else
 			{
 				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('Arial','B',8);
+				$pdf->SetFont('','B',8);
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
@@ -145,13 +145,13 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$posx=100;
 		$posy=$this->marge_haute;
 
-		$pdf->SetFont('Arial','B',13);
+		$pdf->SetFont('','B',13);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("SendingSheet");
 		$pdf->MultiCell(100, 4, $title, '' , 'R');
 
-		$pdf->SetFont('Arial','B',12);
+		$pdf->SetFont('','B',12);
 
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
@@ -173,7 +173,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		}
 
 
-		$pdf->SetFont('Arial','', 14);
+		$pdf->SetFont('','', 14);
 	    $Yoff=40;
 
 	    // Add list of linked orders
@@ -194,7 +194,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 						{
 							$Yoff = $Yoff+8;
 							$pdf->SetXY($Xoff,$Yoff);
-							$pdf->SetFont('Arial','',8);
+							$pdf->SetFont('','',8);
 							$text=$newobject->ref;
 							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
 							$pdf->Text($posx, $Yoff, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text));
@@ -299,7 +299,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->AddPage();
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetFont('Arial','', 9);
+				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
@@ -317,7 +317,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				}
 				$this->tableau_top = 80;
 
-				$pdf->SetFont('Arial','', 10);
+				$pdf->SetFont('','', 10);
 				$curY = $this->tableau_top + 4;
 				$pdf->writeHTMLCell(100, 3, 12,  $curY, $outputlangs->trans("Description"), 0, 0);
 				$curY = $this->tableau_top + 4;
@@ -339,10 +339,10 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					// Description de la ligne produit
 					$libelleproduitservice=pdf_getlinedesc($object->lignes[$i],$outputlangs);
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
-					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
+					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
 					$pdf->SetXY (160, $curY);

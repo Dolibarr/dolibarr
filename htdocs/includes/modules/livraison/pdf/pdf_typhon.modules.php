@@ -214,7 +214,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->AddPage();
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetFont('Arial','', 9);
+				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
@@ -228,7 +228,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
@@ -258,11 +258,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					// Description de la ligne produit
 					$libelleproduitservice=pdf_getlinedesc($object->lignes[$i],$outputlangs);
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
-					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
+					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
 					/*
@@ -339,7 +339,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
-						$pdf->SetFont('Arial','', 9);
+						$pdf->SetFont('','', 9);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
@@ -403,7 +403,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 							$pdf->AddPage('P', 'A4');
 
-							$pdf->SetFont('Arial','', 9);
+							$pdf->SetFont('','', 9);
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 
 							$pdf-> SetY(40);
@@ -453,7 +453,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		// Montants exprimes en     (en tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont('','',8);
 		//$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
 		//$pdf->Text($this->page_largeur - $this->marge_droite - $pdf->GetStringWidth($titre), $tab_top-1, $titre);
 
@@ -464,7 +464,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		// line prend une position y en 3eme param
 		$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
 
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
 		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Designation"),'','L');
@@ -480,7 +480,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->MultiCell(30, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
 
 		// Modif Seb cadres signatures
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 		$larg_sign = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/3;
 		$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
 		$pdf->SetXY ($this->marge_gauche + 2, $tab_top + $tab_height + 5);
@@ -505,7 +505,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('Arial','B',13);
+		$pdf->SetFont('','B',13);
 
 		$posy=$this->marge_haute;
 
@@ -522,19 +522,19 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			else
 			{
 				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('Arial','B',8);
+				$pdf->SetFont('','B',8);
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
 		else $pdf->MultiCell(100, 4, $this->emetteur->nom, 0, 'L');
 
-		$pdf->SetFont('Arial','B',12);
+		$pdf->SetFont('','B',12);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
 
-		$pdf->SetFont('Arial','',12);
+		$pdf->SetFont('','',12);
 
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
@@ -579,7 +579,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						{
 							$posy+=4;
 							$pdf->SetXY(100,$posy);
-							$pdf->SetFont('Arial','',9);
+							$pdf->SetFont('','',9);
 							$text=$newobject->ref;
 							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
 							$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
@@ -595,7 +595,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$posy=42;
 			$hautcadre=40;
 			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('Arial','',8);
+			$pdf->SetFont('','',8);
 			$pdf->SetXY($this->marge_gauche,$posy-5);
 			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
 
@@ -609,20 +609,20 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			// Nom emetteur
 			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('Arial','B',10);
+			$pdf->SetFont('','B',10);
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 			// Sender properties
 			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
-			$pdf->SetFont('Arial','',9);
+			$pdf->SetFont('','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+9);
 			$pdf->MultiCell(80, 3, $carac_emetteur);
 
 			// Client destinataire
 			$posy=42;
 			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('Arial','',8);
+			$pdf->SetFont('','',8);
 			$pdf->SetXY(102,$posy-5);
 			$pdf->MultiCell(80,5, $outputlangs->transnoentities("DeliveryAddress").":");
 
@@ -655,10 +655,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			// Show customer/recipient
 			$pdf->SetXY(102,$posy+3);
-			$pdf->SetFont('Arial','B',10);
+			$pdf->SetFont('','B',10);
 			$pdf->MultiCell(106,4, $carac_client_name, 0, 'L');
 
-			$pdf->SetFont('Arial','',9);
+			$pdf->SetFont('','',9);
 			$pdf->SetXY(102,$posy+7);
 			$pdf->MultiCell(86,4, $carac_client);
 		}

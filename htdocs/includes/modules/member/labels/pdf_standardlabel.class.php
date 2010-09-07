@@ -113,7 +113,7 @@ class pdf_standardlabel {
 		if ($pt > 3) {
 			$this->_Char_Size = $pt;
 			$this->_Line_Height = $this->_Get_Height_Chars($pt);
-			$pdf->SetFont('Arial','',$pt);
+			$pdf->SetFont('','',$pt);
 		}
 	}
 

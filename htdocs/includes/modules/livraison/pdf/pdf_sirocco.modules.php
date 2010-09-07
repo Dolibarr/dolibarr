@@ -181,7 +181,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pdf->AddPage();
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetFont('Arial','', 9);
+				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
@@ -201,11 +201,11 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					// Description de la ligne produit
 					$libelleproduitservice=pdf_getlinedesc($object->lignes[$i],$outputlangs);
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 					$nexY = $pdf->GetY();
 
 					$pdf->SetXY (10, $curY );
@@ -275,7 +275,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
-						$pdf->SetFont('Arial','', 9);
+						$pdf->SetFont('','', 9);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
@@ -323,7 +323,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
-		$pdf->SetFont('Arial','',11);
+		$pdf->SetFont('','',11);
 
 		$pdf->Text(30,$tab_top + 5,$outputlangs->transnoentities("Designation"));
 
@@ -344,7 +344,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('Arial','',10);
+		$pdf->SetFont('','',10);
 		//		$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentitiesnoconv("Currency".$conf->monnaie));
 		//		$pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 
@@ -363,7 +363,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('Arial','B',13);
+		$pdf->SetFont('','B',13);
 
 		$posy=$this->marge_haute;
 
@@ -372,14 +372,14 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		if ($conf->global->MAIN_INFO_SOCIETE_NOM)
 		{
 			$pdf->SetTextColor(0,0,200);
-			$pdf->SetFont('Arial','B',12);
+			$pdf->SetFont('','B',12);
 			$pdf->MultiCell(76, 4, $outputlangs->convToOutputCharset(MAIN_INFO_SOCIETE_NOM), 0, 'L');
 		}
 
 		// Sender properties
 		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
-		$pdf->SetFont('Arial','',9);
+		$pdf->SetFont('','',9);
 		$pdf->SetXY($this->marge_gauche,$posy+4);
 		$pdf->MultiCell(80, 3, $carac_emetteur);
 
@@ -413,18 +413,18 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('Arial','B',11);
+		$pdf->SetFont('','B',11);
 
 		$pdf->SetXY(102,42);
 		$pdf->MultiCell(96,5, $carac_client_name);
-		$pdf->SetFont('Arial','B',10);
+		$pdf->SetFont('','B',10);
 		$pdf->SetXY(102,47);
 		$pdf->MultiCell(96,5, $carac_client);
 		$pdf->rect(100, 40, 100, 40);
 
 
 		$pdf->SetTextColor(200,0,0);
-		$pdf->SetFont('Arial','B',12);
+		$pdf->SetFont('','B',12);
 		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dol_print_date(($object->date_delivery?$object->date_delivery:$date->valid),"day",false,$outputlangs,true));
 		$pdf->Text(11, 94, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref));
 
@@ -436,7 +436,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 			$pdf->MultiCell(96, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
 
-		$pdf->SetFont('Arial','B',9);
+		$pdf->SetFont('','B',9);
 
 		// Add list of linked orders
 		// TODO mutualiser
@@ -457,7 +457,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 						{
 							$posy+=4;
 							$pdf->SetXY(102,$posy);
-							$pdf->SetFont('Arial','',9);
+							$pdf->SetFont('','',9);
 							$text=$newobject->ref;
 							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
 							$pdf->Text(11, 94, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
