@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/societe/canvas/default/thirdparty.default.class.php
+ *	\file       htdocs/societe/canvas/default/dao_thirdparty_default.class.php
  *	\ingroup    thirparty
  *	\brief      Fichier de la classe des tiers par defaut
  *	\version    $Id$

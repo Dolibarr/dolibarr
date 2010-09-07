@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/societe/canvas/default/card.default.class.php
+ *	\file       htdocs/societe/canvas/default/actions_card_default.class.php
  *	\ingroup    thirparty
  *	\brief      Fichier de la classe Thirdparty card controller (default canvas)
  *	\version    $Id$
@@ -25,10 +25,10 @@
 include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
 
 /**
- *	\class      ThirdPartyCardDefault
+ *	\class      ActionsCardDefault
  *	\brief      Classe permettant la gestion des tiers par defaut
  */
-class ActionsCardDefault extends CardCommon
+class ActionsCardDefault extends ActionsCardCommon
 {
 	var $db;
 

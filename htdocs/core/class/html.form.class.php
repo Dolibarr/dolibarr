@@ -428,12 +428,13 @@ class Form
     }
 
     /**
-     *		\brief      Return list of types of lines (product or service)
-     *		\param      selected        Preselected type
-     *		\param      htmlname        Name of field in html form
-     * 		\param		showempty		Add an empty field
-     * 		\param		hidetext		Do not show label before combo box
-     * 		\param		forceall		Force to show products and services in combo list, whatever are activated modules
+     *		Return list of types of lines (product or service)
+     *		@param      selected        Preselected type
+     *		@param      htmlname        Name of field in html form
+     * 		@param		showempty		Add an empty field
+     * 		@param		hidetext		Do not show label before combo box
+     * 		@param		forceall		Force to show products and services in combo list, whatever are activated modules
+     * 		@example	0=product, 1=service, 9=other (for external module)
      */
     function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0,$forceall=0)
     {

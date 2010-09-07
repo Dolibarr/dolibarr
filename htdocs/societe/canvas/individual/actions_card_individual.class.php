@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/societe/canvas/individual/card.individual.class.php
+ *	\file       htdocs/societe/canvas/individual/actions_card_individual.class.php
  *	\ingroup    thirparty
  *	\brief      Fichier de la classe Thirdparty card controller (individual canvas)
  *	\version    $Id$
@@ -28,7 +28,7 @@ include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
  *	\class      ActionsCardIndividual
  *	\brief      Classe permettant la gestion des particuliers
  */
-class ActionsCardIndividual extends CardCommon
+class ActionsCardIndividual extends ActionsCardCommon
 {
 	var $db;
 

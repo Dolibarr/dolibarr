@@ -17,17 +17,17 @@
  */
 
 /**
- *	\file       htdocs/societe/canvas/card.common.class.php
+ *	\file       htdocs/societe/canvas/actions_card_common.class.php
  *	\ingroup    thirparty
  *	\brief      Fichier de la classe Thirdparty card controller (common)
  *	\version    $Id$
  */
 
 /**
- *	\class      CardCommon
+ *	\class      ActionsCardCommon
  *	\brief      Classe permettant la gestion des tiers par defaut
  */
-class CardCommon
+class ActionsCardCommon
 {
 	var $db;
 
@@ -44,7 +44,7 @@ class CardCommon
 	 *    Constructeur de la classe
 	 *    @param	DB		Handler acces base de donnees
 	 */
-	function CardCommon($DB)
+	function ActionsCardCommon($DB)
 	{
 		$this->db = $DB;
 	}
