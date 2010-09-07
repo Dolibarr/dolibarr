@@ -62,11 +62,12 @@ $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 $mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
 
+$commande = new Commande($db);
+
 // Instantiate hooks of thirdparty module
 if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 {
-	$hooks = new Commande($db);
-	$hooks->callHooks('objectcard');
+	$commande->callHooks('objectcard');
 }
 
 
@@ -75,11 +76,11 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /******************************************************************************/
 
 // Hook of thirdparty module
-if (! empty($hooks->objModules))
+if (! empty($commande->objModules))
 {
-	foreach($hooks->objModules as $module)
+	foreach($commande->objModules as $module)
 	{
-		$module->getObjectActions($hooks);
+		$module->doActions($commande);
 		$mesg = $module->error;
 	}
 }
@@ -93,8 +94,7 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 	}
 	else
 	{
-		$object=new Commande($db);
-		$result=$object->createFromClone($comid);
+		$result=$commande->createFromClone($comid);
 		if ($result > 0)
 		{
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -111,7 +111,6 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 // Reopen a closed order
 if ($_GET['action'] == 'reopen' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	if ($commande->statut == 3)
 	{
@@ -133,7 +132,6 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
 	if ($user->rights->commande->supprimer)
 	{
-		$commande = new Commande($db);
 		$commande->fetch($comid);
 		$result=$commande->delete($user);
 		if ($result > 0)
@@ -153,7 +151,6 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 {
 	if ($user->rights->commande->creer)
 	{
-		$commande = new Commande($db);
 		$commande->fetch($comid);
 		$commande->fetch_thirdparty();
 
@@ -184,7 +181,6 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 // Categorisation dans projet
 if ($_POST['action'] == 'classin')
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$commande->setProject($_POST['projectid']);
 }
@@ -196,7 +192,6 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$datecommande  = dol_mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
 	$datelivraison = dol_mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
 
-	$commande = new Commande($db);
 	$commande->socid=$_POST['socid'];
 	$commande->fetch_thirdparty();
 
@@ -269,14 +264,12 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 // Positionne ref commande client
 if ($_POST['action'] == 'set_ref_client' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$commande->set_ref_client($user, $_POST['ref_client']);
 }
 
 if ($_POST['action'] == 'setremise' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$commande->set_remise($user, $_POST['remise']);
 }
@@ -285,15 +278,14 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->commande->creer)
 {
 	if ($_POST["remise_id"])
 	{
-		$com = new Commande($db);
-		$ret=$com->fetch($comid);
+		$ret=$commande->fetch($comid);
 		if ($ret > 0)
 		{
-	  		$com->insert_discount($_POST["remise_id"]);
+	  		$commande->insert_discount($_POST["remise_id"]);
 		}
 		else
 		{
-	 		dol_print_error($db,$com->error);
+	 		dol_print_error($db,$commande->error);
 		}
 	}
 }
@@ -303,7 +295,6 @@ if ($_POST['action'] == 'setdate' && $user->rights->commande->creer)
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 	$date=dol_mktime(0, 0, 0, $_POST['order_month'], $_POST['order_day'], $_POST['order_year']);
 
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$result=$commande->set_date($user,$date);
 	if ($result < 0)
@@ -317,7 +308,6 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 	$datelivraison=dol_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$result=$commande->set_date_livraison($user,$datelivraison);
 	if ($result < 0)
@@ -328,14 +318,12 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 
 if ($_POST['action'] == 'setaddress' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$commande->set_adresse_livraison($user,$_POST['fk_address']);
 }
 
 if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$result=$commande->mode_reglement($_POST['mode_reglement_id']);
 	if ($result < 0) dol_print_error($db,$commande->error);
@@ -343,7 +331,6 @@ if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
 
 if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$result=$commande->cond_reglement($_POST['cond_reglement_id']);
 	if ($result < 0) dol_print_error($db,$commande->error);
@@ -351,14 +338,12 @@ if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 
 if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$result = $commande->set_remise($user, $_POST['remise_percent']);
 }
 
 if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$result = $commande->set_remise_absolue($user, $_POST['remise_absolue']);
 }
@@ -368,7 +353,6 @@ if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
  */
 if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
 	$result=0;
 
 	if (empty($_POST['idprod']) && $_POST["type"] < 0)
@@ -525,7 +509,6 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
 {
-	$commande = new Commande($db);
 	if (! $commande->fetch($comid) > 0) dol_print_error($db);
 	$commande->fetch_thirdparty();
 
@@ -623,7 +606,6 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 
 if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);	// Load order and lines
 	$commande->fetch_thirdparty();
 
@@ -646,7 +628,6 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 
 if ($_REQUEST['action'] == 'confirm_close' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->cloturer)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);		// Load order and lines
 
 	$result = $commande->cloture($user);
@@ -654,7 +635,6 @@ if ($_REQUEST['action'] == 'confirm_close' && $_REQUEST['confirm'] == 'yes' && $
 
 if ($_REQUEST['action'] == 'confirm_cancel' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);		// Load order and lines
 
 	$result = $commande->cancel($user);
@@ -665,7 +645,6 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 	/*
 	 *  Repasse la commande en mode brouillon
 	 */
-	$commande = new Commande($db);
 	$commande->fetch($comid);		// Load order and lines
 	$commande->fetch_thirdparty();
 
@@ -692,7 +671,6 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 
 if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$commande->fetch_thirdparty();
 	$commande->line_up($_GET['rowid']);
@@ -716,7 +694,6 @@ if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 
 if ($_GET['action'] == 'down' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
 	$commande->fetch($comid);
 	$commande->fetch_thirdparty();
 	$commande->line_down($_GET['rowid']);
@@ -745,7 +722,6 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 	 */
 
 	// Sauvegarde le dernier modele choisi pour generer un document
-	$commande = new Commande($db);
 	$result=$commande->fetch($comid);
 	$commande->fetch_thirdparty();
 
@@ -780,9 +756,7 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 // Remove file in doc form
 if ($_REQUEST['action'] == 'remove_file')
 {
-	$com = new Commande($db);
-
-	if ($com->fetch($id))
+	if ($commande->fetch($id))
 	{
 		$upload_dir = $conf->commande->dir_output . "/";
 		$file = $upload_dir . '/' . $_GET['file'];
@@ -832,7 +806,6 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 {
 	$langs->load('mails');
 
-	$commande= new Commande($db);
 	$result=$commande->fetch($_POST['orderid']);
 	$result=$commande->fetch_thirdparty();
 
@@ -1002,8 +975,6 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 	print_fiche_titre($langs->trans('CreateOrder'));
 
 	if ($mesg) print $mesg.'<br>';
-
-	$new_commande = new Commande($db);
 
 	if ($propalid)
 	{
@@ -1306,7 +1277,6 @@ else
 
 		$product_static=new Product($db);
 
-		$commande = new Commande($db);
 		$result=$commande->fetch($comid,$ref);
 		if ($result > 0)
 		{
@@ -1674,22 +1644,8 @@ else
 			print '<table class="noborder" width="100%">';
 			
 			$result = $commande->getLinesArray();
-			//var_dump($commande->lines);
-			
-			if (! empty($commande->lines))
-			{
-				if (! empty($hooks->objModules))
-				{
-					// TODO traitement des hooks
-					$commande->print_title_list();
-					$commande->printLinesList();
-				}
-				else
-				{
-					$commande->print_title_list();
-					$commande->printLinesList();
-				}
-			}
+			$commande->print_title_list();
+			$commande->printLinesList();
 
 			$numlines=sizeof($commande->lines);
 

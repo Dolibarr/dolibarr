@@ -72,11 +72,12 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
 
+$propal = new Propal($db);
+
 // Instantiate hooks of thirdparty module
 if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 {
-	$hooks = new Propal($db);
-	$hooks->callHooks('objectcard');
+	$propal->callHooks('objectcard');
 }
 
 
@@ -85,11 +86,11 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /******************************************************************************/
 
 // Hook of thirdparty module
-if (! empty($hooks->objModules))
+if (! empty($propal->objModules))
 {
-	foreach($hooks->objModules as $module)
+	foreach($propal->objModules as $module)
 	{
-		$module->getObjectActions($hooks);
+		$module->doActions($propal);
 		$mesg = $module->error;
 	}
 }
@@ -103,8 +104,7 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 	}
 	else
 	{
-		$object=new Propal($db);
-		$result=$object->createFromClone($_REQUEST["id"]);
+		$result=$propal->createFromClone($_REQUEST["id"]);
 		if ($result > 0)
 		{
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -112,7 +112,7 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 		}
 		else
 		{
-			$mesg=$object->error;
+			$mesg=$propal->error;
 			$_GET['action']='';
 			$_GET['id']=$_REQUEST['id'];
 		}
@@ -124,7 +124,6 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
 	if ($user->rights->propale->supprimer)
 	{
-		$propal = new Propal($db, 0, $_GET["id"]);
 		$propal->fetch($_GET["id"]);
 		$result=$propal->delete($user);
 		$id = 0;
@@ -149,7 +148,6 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 {
 	if ($user->rights->propale->creer)
 	{
-		$propal = new Propal($db);
 		$propal->fetch($_GET["id"]);
 		$propal->fetch_thirdparty();
 		$result = $propal->delete_product($_GET['lineid']);
@@ -177,7 +175,6 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 // Validation
 if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' && $user->rights->propale->valider)
 {
-	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
 	$propal->fetch_thirdparty();
 
@@ -204,21 +201,18 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 
 if ($_POST['action'] == 'setdate')
 {
-	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
 	$result=$propal->set_date($user,dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']));
 	if ($result < 0) dol_print_error($db,$propal->error);
 }
 if ($_POST['action'] == 'setecheance')
 {
-	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
 	$result=$propal->set_echeance($user,dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 	if ($result < 0) dol_print_error($db,$propal->error);
 }
 if ($_POST['action'] == 'setdate_livraison')
 {
-	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
 	$result=$propal->set_date_livraison($user,dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 	if ($result < 0) dol_print_error($db,$propal->error);
@@ -226,7 +220,6 @@ if ($_POST['action'] == 'setdate_livraison')
 
 if ($_POST['action'] == 'setaddress' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
 	$result=$propal->set_adresse_livraison($user,$_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$propal->error);
@@ -235,7 +228,6 @@ if ($_POST['action'] == 'setaddress' && $user->rights->propale->creer)
 // Positionne ref client
 if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
 	$propal->set_ref_client($user, $_POST['ref_client']);
 }
@@ -245,7 +237,6 @@ if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
  */
 if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db);
 	$propal->socid=$_POST['socid'];
 	$propal->fetch_thirdparty();
 
@@ -381,7 +372,6 @@ if ($_REQUEST['action'] == 'setstatut' && $user->rights->propale->cloturer)
 		}
 		else
 		{
-			$propal = new Propal($db);
 			$propal->fetch($_GET["id"]);
 			// prevent browser refresh from closing proposal several times
 			if ($propal->statut==1)
@@ -434,7 +424,6 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 {
 	$langs->load('mails');
 
-	$propal= new Propal($db);
 	$result=$propal->fetch($_POST["id"]);
 	$result=$propal->fetch_thirdparty();
 
@@ -586,7 +575,6 @@ if ($_GET['action'] == 'commande')
 	/*
 	 *  Cloture de la propale
 	 */
-	$propal = new Propal($db);
 	$propal->fetch($id);
 	$propal->create_commande($user);
 }
@@ -596,7 +584,6 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 	/*
 	 *  Repasse la propale en mode brouillon
 	 */
-	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
 	$propal->fetch_thirdparty();
 	$propal->set_draft($user);
@@ -619,20 +606,19 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 {
 	if ($_POST["remise_id"])
 	{
-		$prop = new Propal($db);
-		$prop->id=$_GET["id"];
-		$ret=$prop->fetch($_GET["id"]);
+		$propal->id=$_GET["id"];
+		$ret=$propal->fetch($_GET["id"]);
 		if ($ret > 0)
 		{
-			$result=$prop->insert_discount($_POST["remise_id"]);
+			$result=$propal->insert_discount($_POST["remise_id"]);
 			if ($result < 0)
 			{
-				$mesg='<div class="error">'.$prop->error.'</div>';
+				$mesg='<div class="error">'.$propal->error.'</div>';
 			}
 		}
 		else
 		{
-			dol_print_error($db,$prop->error);
+			dol_print_error($db,$propal->error);
 		}
 	}
 }
@@ -642,7 +628,6 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
  */
 if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 {
-	$propal = new Propal($db);
 	$result=0;
 
 	if (empty($_POST['idprod']) && $_POST["type"] < 0)
@@ -784,7 +769,6 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
-	$propal = new Propal($db);
 	if (! $propal->fetch($_POST["id"]) > 0)
 	{
 		dol_print_error($db,$propal->error);
@@ -845,7 +829,6 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
  */
 if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db);
 	$propal->fetch($_GET["id"]);
 	$propal->fetch_thirdparty();
 
@@ -880,7 +863,6 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 // Set project
 if ($_POST['action'] == 'classin')
 {
-	$propal = new Propal($db);
 	$propal->fetch($_GET['id']);
 	$propal->setProject($_POST['projectid']);
 }
@@ -888,7 +870,6 @@ if ($_POST['action'] == 'classin')
 // Conditions de reglement
 if ($_POST["action"] == 'setconditions')
 {
-	$propal = new Propal($db);
 	$propal->fetch($_REQUEST['id']);
 	$result = $propal->cond_reglement($_POST['cond_reglement_id']);
 	$_GET['id']=$_REQUEST['id'];
@@ -896,7 +877,6 @@ if ($_POST["action"] == 'setconditions')
 
 if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db);
 	$propal->fetch($_REQUEST["id"]);
 	$result = $propal->set_remise_percent($user, $_POST['remise_percent']);
 	$_GET["id"]=$_REQUEST["id"];
@@ -904,7 +884,6 @@ if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->propale->creer)
 
 if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db);
 	$propal->fetch($_REQUEST["id"]);
 	$result = $propal->set_remise_absolue($user, $_POST['remise_absolue']);
 	$_GET["id"]=$_REQUEST["id"];
@@ -913,7 +892,6 @@ if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->propale->creer)
 // Mode de reglement
 if ($_POST["action"] == 'setmode')
 {
-	$propal = new Propal($db);
 	$propal->fetch($_REQUEST["id"]);
 	$result = $propal->mode_reglement($_POST['mode_reglement_id']);
 	$_GET["id"]=$_REQUEST["id"];
@@ -925,7 +903,6 @@ if ($_POST["action"] == 'setmode')
 
 if ($_GET['action'] == 'up' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db, '', $_GET["id"]);
 	$propal->fetch($_GET["id"]);
 	$propal->fetch_thirdparty();
 	$propal->line_up($_GET['rowid']);
@@ -948,7 +925,6 @@ if ($_GET['action'] == 'up' && $user->rights->propale->creer)
 
 if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db, '', $_GET["id"]);
 	$propal->fetch($_GET['id']);
 	$propal->fetch_thirdparty();
 	$propal->line_down($_GET['rowid']);
@@ -993,7 +969,6 @@ if ($id > 0 || ! empty($ref))
 
 	if ($mesg) print $mesg."<br>";
 
-	$propal = new Propal($db);
 	$propal->fetch($id,$ref);
 
 	$soc = new Societe($db);
@@ -1385,22 +1360,8 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="noborder" width="100%">';
 	
 	$result = $propal->getLinesArray();
-	//var_dump($propal->lines);
-	
-	if (! empty($propal->lines))
-	{
-		if (! empty($hooks->objModules))
-		{
-			// TODO traitement des hooks
-			$propal->print_title_list();
-			$propal->printLinesList();
-		}
-		else
-		{
-			$propal->print_title_list();
-			$propal->printLinesList();
-		}
-	}
+	$propal->print_title_list();
+	$propal->printLinesList();
 
 
 	/*

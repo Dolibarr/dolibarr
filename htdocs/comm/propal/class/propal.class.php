@@ -405,7 +405,7 @@ class Propal extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->ligne->error;
+				$this->error=$this->line->error;
 				$this->db->rollback();
 				return -2;
 			}
