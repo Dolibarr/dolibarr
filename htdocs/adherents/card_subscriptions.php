@@ -39,6 +39,17 @@ $langs->load("members");
 $langs->load("users");
 $langs->load("mails");
 
+// If socid provided by ajax company selector
+if (! empty($_REQUEST['socid_id']))
+{
+    $_GET['socid'] = $_GET['socid_id'];
+    $_POST['socid'] = $_POST['socid_id'];
+    $_REQUEST['socid'] = $_REQUEST['socid_id'];
+}
+
+// Security check
+if (! $user->rights->adherent->cotisation->lire) accessforbidden();
+
 $adh = new Adherent($db);
 $adho = new AdherentOptions($db);
 $adht = new AdherentType($db);
@@ -51,13 +62,102 @@ $action=GETPOST('action');
 $rowid=GETPOST('rowid');
 $typeid=GETPOST('typeid');
 
-if (! $user->rights->adherent->cotisation->lire)
-accessforbidden();
+if ($rowid)
+{
+    // Load member
+    $result = $adh->fetch($rowid);
+
+    // Define variables to know what current user can do on users
+    $canadduser=($user->admin || $user->rights->user->user->creer);
+    // Define variables to know what current user can do on properties of user linked to edited member
+    if ($adh->user_id)
+    {
+        // $user est le user qui edite, $adh->user_id est l'id de l'utilisateur lies au membre edite
+        $caneditfielduser=( (($user->id == $adh->user_id) && $user->rights->user->self->creer)
+        || (($user->id != $adh->user_id) && $user->rights->user->user->creer) );
+        $caneditpassworduser=( (($user->id == $adh->user_id) && $user->rights->user->self->password)
+        || (($user->id != $adh->user_id) && $user->rights->user->user->password) );
+    }
+}
+
+// Define variables to know what current user can do on members
+$canaddmember=$user->rights->adherent->creer;
+// Define variables to know what current user can do on properties of a member
+if ($rowid)
+{
+    $caneditfieldmember=$user->rights->adherent->creer;
+}
+
+// Define size of logo small and mini (might be set into other pages)
+$maxwidthsmall=270;$maxheightsmall=150;
+$maxwidthmini=128;$maxheightmini=72;
+$quality = 80;
+
 
 
 /*
  * 	Actions
  */
+
+
+if ($_POST['action'] == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
+{
+    $error=0;
+    if (empty($user->rights->user->user->creer))    // If can edit only itself user, we can link to itself only
+    {
+        if ($_POST["userid"] != $user->id && $_POST["userid"] != $adh->user_id)
+        {
+            $error++;
+            $mesg='<div class="error">'.$langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly").'</div>';
+        }
+    }
+
+    if (! $error)
+    {
+        if ($_POST["userid"] != $adh->user_id)  // If link differs from currently in database
+        {
+            $result=$adh->setUserId($_POST["userid"]);
+            if ($result < 0) dol_print_error($adh->db,$adh->error);
+            $_POST['action']='';
+            $action='';
+        }
+    }
+}
+
+if ($_POST['action'] == 'setsocid')
+{
+    $error=0;
+    if (! $error)
+    {
+        if (GETPOST("socid") != $adh->fk_soc)    // If link differs from currently in database
+        {
+            $sql ="SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
+            $sql.=" WHERE fk_soc = '".GETPOST("socid")."'";
+            $resql = $db->query($sql);
+            if ($resql)
+            {
+                $obj = $db->fetch_object($resql);
+                if ($obj && $obj->rowid > 0)
+                {
+                    $othermember=new Adherent($db);
+                    $othermember->fetch($obj->rowid);
+                    $thirdparty=new Societe($db);
+                    $thirdparty->fetch(GETPOST("socid"));
+                    $error++;
+                    $mesg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->nom).'</div>';
+                }
+            }
+
+            if (! $error)
+            {
+                $result=$adh->setThirdPartyId(GETPOST("socid"));
+                if ($result < 0) dol_print_error($adh->db,$adh->error);
+                $_POST['action']='';
+                $action='';
+            }
+        }
+    }
+}
 
 if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisation' && ! $_POST["cancel"])
 {
@@ -240,6 +340,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 }
 
 
+
 /*
  * View
  */
@@ -250,7 +351,6 @@ llxHeader('',$langs->trans("Subscriptions"),'EN:Module_Foundations|FR:Module_Adh
 
 if ($rowid)
 {
-    $adh->id = $rowid;
     $result=$adh->fetch($rowid);
     $result=$adh->fetch_optionals($rowid);
 
@@ -264,8 +364,9 @@ if ($rowid)
 
     dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
 
-    print '<form action="fiche.php" method="post">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="rowid" value="'.$adh->id.'">';
     print '<table class="border" width="100%">';
 
     // Ref
@@ -292,7 +393,6 @@ if ($rowid)
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
 
     // Date end subscription
-    // Date fin cotisation
     print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
     if ($adh->datefin)
     {
@@ -310,6 +410,73 @@ if ($rowid)
     {
         print $langs->trans("SubscriptionNotReceived");
         if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+    }
+    print '</td></tr>';
+
+    // Third party Dolibarr
+    if ($conf->societe->enabled)
+    {
+        print '<tr><td>';
+        print '<table class="nobordernopadding" width="100%"><tr><td>';
+        print $langs->trans("LinkedToDolibarrThirdParty");
+        print '</td>';
+        if ($_GET['action'] != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$adh->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td class="valeur">';
+        if ($_GET['action'] == 'editthirdparty')
+        {
+            $htmlname='socid';
+            print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
+            print '<input type="hidden" name="rowid" value="'.$adh->id.'">';
+            print '<input type="hidden" name="action" value="set'.$htmlname.'">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            print $html->select_societes($adh->fk_soc,'socid','',1);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($adh->fk_soc)
+            {
+                $company=new Societe($db);
+                $result=$company->fetch($adh->fk_soc);
+                print $company->getNomUrl(1);
+            }
+            else
+            {
+                print $langs->trans("NoThirdPartyAssociatedToMember");
+            }
+        }
+        print '</td></tr>';
+    }
+
+    // Login Dolibarr
+    print '<tr><td>';
+    print '<table class="nobordernopadding" width="100%"><tr><td>';
+    print $langs->trans("LinkedToDolibarrUser");
+    print '</td>';
+    if ($_GET['action'] != 'editlogin' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$adh->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a></td>';
+    print '</tr></table>';
+    print '</td><td class="valeur">';
+    if ($_GET['action'] == 'editlogin')
+    {
+        /*$include=array();
+        if (empty($user->rights->user->user->creer))    // If can edit only itself user, we can link to itself only
+        {
+            $include=array($adh->user_id,$user->id);
+        }*/
+        print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'userid','');
+    }
+    else
+    {
+        if ($adh->user_id)
+        {
+            print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'none');
+        }
+        else print $langs->trans("NoDolibarrAccess");
     }
     print '</td></tr>';
 

@@ -51,10 +51,7 @@ if (! empty($_REQUEST['socid_id']))
 }
 
 // Security check
-if (! $user->rights->adherent->lire)
-{
-	accessforbidden();
-}
+if (! $user->rights->adherent->lire) accessforbidden();
 
 $adh = new Adherent($db);
 $adho = new AdherentOptions($db);
@@ -318,18 +315,8 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		}
 		else
 		{
-		    if ($adh->error)
-			{
-				$errmsg=$adh->error;
-			}
-			else
-			{
-				foreach($adh->errors as $error)
-				{
-					if ($errmsg) $errmsg.='<br>';
-					$errmsg.=$error;
-				}
-			}
+            if ($adh->error) $errmsg=$adh->error;
+            else $errmsgs=$adh->errors;
 			$action='';
 		}
 	}
@@ -475,7 +462,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
 			$db->rollback();
 
 			if ($adh->error) $errmsg=$adh->error;
-			else $errmsg=$adh->errors[0];
+			else $errmsgs=$adh->errors;
 
 			$action = 'create';
         }
@@ -527,19 +514,8 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_P
 	}
 	else
 	{
-	    // \TODO Mettre fonction qui fabrique errmsg depuis this->error||this->errors
-	    if ($adh->error)
-		{
-			$errmsg=$adh->error;
-		}
-		else
-		{
-			foreach($adh->errors as $error)
-			{
-				if ($errmsg) $errmsg.='<br>';
-				$errmsg.=$error;
-			}
-		}
+        if ($adh->error) $errmsg=$adh->error;
+        else $errmsgs=$adh->errors;
 		$action='';
 	}
 }
@@ -571,19 +547,8 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 	}
 	else
 	{
-	    // \TODO Mettre fonction qui fabrique errmsg depuis this->error||this->errors
-		if ($adh->error)
-		{
-			$errmsg=$adh->error;
-		}
-		else
-		{
-			foreach($adh->errors as $error)
-			{
-				if ($errmsg) $errmsg.='<br>';
-				$errmsg.=$error;
-			}
-		}
+		if ($adh->error) $errmsg=$adh->error;
+		else $errmsgs=$adh->errors;
 		$action='';
 	}
 }
@@ -857,10 +822,8 @@ if ($action == 'edit')
 
 	dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
-	if ($errmsg)
-	{
-	    print '<div class="error">'.$errmsg.'</div>';
-	}
+	dol_htmloutput_errors($errmsg,$errmsgs);
+
 	if ($mesg) print '<div class="ok">'.$mesg.'</div>';
 
 
@@ -1195,7 +1158,6 @@ if ($rowid && $action != 'edit')
     $rowspan=15+sizeof($adho->attribute_label);
     if ($conf->societe->enabled) $rowspan++;
 
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="border" width="100%">';
 
     // Ref
@@ -1289,9 +1251,9 @@ if ($rowid && $action != 'edit')
 	    print '</td><td class="valeur">';
 		if ($_GET['action'] == 'editthirdparty')
 		{
-			$page=$_SERVER['PHP_SELF'].'?rowid='.$adh->id;
 			$htmlname='socid';
-			print '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
+			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
+            print '<input type="hidden" name="rowid" value="'.$adh->id.'">';
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';

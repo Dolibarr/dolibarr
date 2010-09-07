@@ -2113,7 +2113,7 @@ class Form
 
         if ($htmlname != "none")
         {
-            print '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
+            print '<form method="POST" action="'.$page.'" name="form'.$htmlname.'">';
             print '<input type="hidden" name="action" value="set'.$htmlname.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
@@ -2151,7 +2151,7 @@ class Form
         global $langs;
         if ($htmlname != "none")
         {
-            print '<form method="post" action="'.$page.'">';
+            print '<form method="POST" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setmode">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';

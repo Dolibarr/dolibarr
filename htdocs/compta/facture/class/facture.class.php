@@ -1636,6 +1636,7 @@ class Facture extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
+            $pu_ht = $tabprice[3];
 
 			// Rang to use
 			$rangtouse = $rang;
