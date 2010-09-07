@@ -1388,9 +1388,9 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Hook of thirdparty module
-			if (! empty($hooks->objModules))
+			if (! empty($propal->objModules))
 			{
-				foreach($hooks->objModules as $module)
+				foreach($propal->objModules as $module)
 				{
 					$var=!$var;
 					$module->formAddObject($propal);

@@ -1658,7 +1658,7 @@ else
 			 */
 			if ($commande->statut == 0 && $user->rights->commande->creer)
 			{
-				if (! preg_match('/editline|edit_/',$_GET["action"]))
+				if ($_GET['action'] != 'editline')
 				{
 					$var=true;
 
@@ -1672,9 +1672,9 @@ else
 					}
 
 					// Hook of thirdparty module
-					if (! empty($hooks->objModules))
+					if (! empty($commande->objModules))
 					{
-						foreach($hooks->objModules as $module)
+						foreach($commande->objModules as $module)
 						{
 							$var=!$var;
 							$module->formAddObject($commande);

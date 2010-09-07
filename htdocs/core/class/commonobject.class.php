@@ -1356,7 +1356,7 @@ class CommonObject
 
 			if ($line->product_type == 9 && ! empty($line->special_code))
 			{
-				$this->objModules[$line->special_code]->printObjectLine($this,$num,$i);
+				$this->objModules[$line->special_code]->printObjectLine($this,$line,$num,$i);
 			}
 			else
 			{
