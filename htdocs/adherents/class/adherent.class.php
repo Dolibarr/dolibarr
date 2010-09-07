@@ -1188,7 +1188,7 @@ class Adherent extends CommonObject
                     $result=$adh->add_to_mailman($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT);
                 }
 
-                // Insertion dans la gestion bancaire si configure pour
+                // Insert into bank account directlty (if option choosed for)
                 if ($option == 'bankdirect' && $accountid)
                 {
                     $acct=new Account($this->db);

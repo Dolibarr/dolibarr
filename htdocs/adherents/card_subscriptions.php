@@ -174,6 +174,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 					}
                 }
                 $invoice->socid=$adh->fk_soc;
+                $invoice->date=$datecotisation;
 
                 $result=$invoice->create($user);
                 if ($result <= 0)
@@ -192,6 +193,16 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
                     $errmsg=$invoice->error;
                     $error++;
                 }
+
+                $result=$invoice->validate($user);
+
+                 if ($option == 'bankviainvoice')
+                 {
+                    // Now we add payment
+                    // TODO
+
+
+                 }
 		    }
 		}
 
@@ -280,6 +291,27 @@ if ($rowid)
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
 
+    // Date end subscription
+    // Date fin cotisation
+    print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+    if ($adh->datefin)
+    {
+        if ($adh->datefin < time())
+        {
+            print dol_print_date($adh->datefin,'day');
+            if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+        }
+        else
+        {
+            print dol_print_date($adh->datefin,'day');
+        }
+    }
+    else
+    {
+        print $langs->trans("SubscriptionNotReceived");
+        if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+    }
+    print '</td></tr>';
 
     print "</table>\n";
     print '</form>';
@@ -302,49 +334,22 @@ if ($rowid)
      * Barre d'actions
      */
 
-    print '<div class="tabsAction">';
-
     // Lien nouvelle cotisation si non brouillon et non resilie
     if ($user->rights->adherent->cotisation->creer)
     {
     	if ($action != 'addsubscription')
     	{
-    		if ($adh->statut > 0) print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("AddSubscription")."</a>";
+            print '<div class="tabsAction">';
+
+    	    if ($adh->statut > 0) print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("AddSubscription")."</a>";
             else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a>';
 
             print "<br>\n";
+
+            print '</div>';
+            print '<br>';
     	}
     }
-    print '</div>';
-
-
-
-    // Date fin cotisation
-    print "<table class=\"border\" width=\"50%\">\n";
-    print '<tr><td>'.$langs->trans("SubscriptionEndDate");
-    print '</td>';
-    print '<td>';
-    if ($adh->datefin)
-    {
-        if ($adh->datefin < time())
-        {
-            print dol_print_date($adh->datefin,'day');
-            if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
-        }
-        else
-        {
-            print dol_print_date($adh->datefin,'day');
-        }
-    }
-    else
-    {
-        print $langs->trans("SubscriptionNotReceived");
-        if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
-    }
-    print '</td>';
-    print '</tr>';
-    print '</table>';
-    print '<br>';
 
 
     /*

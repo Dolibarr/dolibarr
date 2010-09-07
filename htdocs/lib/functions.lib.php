@@ -2411,17 +2411,17 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1)
 }
 
 /**
- *	\brief     		Function that return a number with universal decimal format (decimal separator is '.') from
- *					an amount typed by a user.
- *	\remarks   		Function to use on each input amount before any numeric test or database insert.
- *	\param	    	amount			Amount to convert/clean
- *	\param	    	rounding		''=No rounding
+ *	Function that return a number with universal decimal format (decimal separator is '.') from
+ *	an amount typed by a user.
+ *	Function to use on each input amount before any numeric test or database insert.
+ *	@param	    	amount			Amount to convert/clean
+ *	@param	    	rounding		''=No rounding
  * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *									'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
- * 	\param			alreadysqlnb	Put 1 if you know that content is already universal format number
- *	\return			string			Amount with universal numeric format (Example: '99.99999')
- *	\seealso		price			Opposite function of price2num
+ * 	@param			alreadysqlnb	Put 1 if you know that content is already universal format number
+ *	@return			string			Amount with universal numeric format (Example: '99.99999')
+ *	@see     		price			Opposite function of price2num
  */
 function price2num($amount,$rounding='',$alreadysqlnb=0)
 {
@@ -2497,10 +2497,11 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 }
 
 /**
- *	\brief		Return localtaxe rate for a particular tva
- * 	\param      tva			Vat taxe
- * 	\param      local		Local taxe to search and return
- * 	\return		int			0 if not found, localtax if found
+ *	Return localtaxe rate for a particular tva
+ * 	@param      tva			         Vat taxe
+ * 	@param      local		         Local taxe to search and return
+ *  @param      societe_acheteuse    Object of buying third party
+ * 	@return		int			         0 if not found, localtax if found
  */
 function get_localtax($tva, $local, $societe_acheteuse="")
 {
@@ -2534,7 +2535,11 @@ function get_localtax($tva, $local, $societe_acheteuse="")
 }
 
 /**
- *	Return vat rate of a product in a particular selling country.
+ *	Return vat rate of a product in a particular selling country or default country
+ *  vat if product is unknown.
+ *  @param      idprod          Id of product or 0 if not a predefined product
+ *  @param      countrycode     Country code (FR, US, IT, ...)
+ *  @return     int             <0 if KO, Vat rate if OK
  *	TODO May be this should be better as a method of product class
  */
 function get_product_vat_for_country($idprod, $countrycode)
@@ -2542,20 +2547,29 @@ function get_product_vat_for_country($idprod, $countrycode)
 	global $db,$mysoc;
 
     $ret=0;
+    $found=0;
 
-    // Load product
-	$product=new Product($db);
-	$product->fetch($idprod);
+    if ($idprod > 0)
+    {
+        // Load product
+    	$product=new Product($db);
+    	$result=$product->fetch($idprod);
 
-	if ($mysoc->pays_code == $countrycode) // If selling country is ours
+    	if ($mysoc->pays_code == $countrycode) // If selling country is ours
+    	{
+            $ret=$product->tva_tx;    // Default vat of product we defined
+            $found=1;
+    	}
+    	else
+    	{
+            // TODO Read default product vat according to countrycode and product
+
+
+    	}
+    }
+
+	if (! $found)
 	{
-        $ret=$product->tva_tx;    // Default vat of product we defined
-	}
-	else
-	{
-        // TODO Read default product vat according to countrycode
-
-
         // If vat of product for the country not found or not defined, we return higher vat of country.
         $sql.="SELECT taux as vat_rate";
         $sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
@@ -2575,12 +2589,16 @@ function get_product_vat_for_country($idprod, $countrycode)
         else dol_print_error($db);
 	}
 
-	//print "ret=".$ret;exit;
+	dol_syslog("get_product_vat_for_country: ret=".$ret);
 	return $ret;
 }
 
 /**
  *	Return localtax rate of a product in a particular selling country
+ *  @param      idprod          Id of product
+ *  @package    local           1 for localtax1, 2 for localtax 2
+ *  @param      countrycode     Country code (FR, US, IT, ...)
+ *  @return     int             <0 if KO, Vat rate if OK
  *	TODO May be this should be better as a method of product class
  */
 function get_product_localtax_for_country($idprod, $local, $countrycode)
@@ -2597,17 +2615,17 @@ function get_product_localtax_for_country($idprod, $local, $countrycode)
 }
 
 /**
- *	\brief      	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
- *	\remarks    	Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
- *					Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
- *					Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
- *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
- *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
- *					Sinon TVA proposee par defaut=0. Fin de regle.
- *	\param      	societe_vendeuse    	Objet societe vendeuse
- *	\param      	societe_acheteuse   	Objet societe acheteuse
- *	\param      	idprod					Id product
- *	\return     	float               	Taux de tva a appliquer, -1 si ne peut etre determine
+ *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
+ *   Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+ *	 Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
+ *	 Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+ *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
+ *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
+ *	 Sinon TVA proposee par defaut=0. Fin de regle.
+ *	@param      	societe_vendeuse    	Objet societe vendeuse
+ *	@param      	societe_acheteuse   	Objet societe acheteuse
+ *	@param      	idprod					Id product
+ *	@return     	float               	Taux de tva a appliquer, -1 si ne peut etre determine
  */
 function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 {
@@ -2616,7 +2634,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 	if (!is_object($societe_vendeuse)) return -1;
 	if (!is_object($societe_acheteuse)) return -1;
 
-	dol_syslog("get_default_tva seller use vat=".$societe_vendeuse->tva_assuj." seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod);
+	dol_syslog("get_default_tva: seller use vat=".$societe_vendeuse->tva_assuj.", seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod);
 
 	// Si vendeur non assujeti a TVA (tva_assuj vaut 0/1 ou franchise/reel)
 	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
@@ -2627,8 +2645,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concerne si le test suivant n'est pas suffisant.
 	if ($societe_vendeuse->pays_code == $societe_acheteuse->pays_code) // Warning ->pays_id not always defined
 	{
-		if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
-		return -1;	// Si produit absent, on ne peut determiner taux tva
+		return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
 	}
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
@@ -2645,8 +2662,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 		}
 		else
 		{
-			if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
-            return -1;  // Si produit absent, on ne peut determiner taux tva
+			return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
 		}
 	}
 
