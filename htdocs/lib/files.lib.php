@@ -443,7 +443,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		if ($result < 0)	// If virus or error, we stop here
 		{
 			$reterrors=$antivir->errors;
-			dol_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." KO with antivir", LOG_WARNING);
+			dol_syslog('Functions.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$file_name.'") KO with antivirus: result='.$result.' errors='.join(',',$antivir->errors), LOG_WARNING);
 			return 'ErrorFileIsInfectedWithAVirus: '.join(',',$reterrors);
 		}
 	}

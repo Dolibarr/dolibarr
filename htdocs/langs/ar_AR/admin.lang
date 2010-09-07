@@ -1078,7 +1078,7 @@ NoSessionFound=الخاص بي ويبدو أن عدم السماح لقائمة 
 FormToTestFileUploadForm=نموذج لاختبار تحميل الملف (وفقا لبرنامج الإعداد)
 PreviewNotAvailable=المعاينة غير متاحة
 AntiVirusCommand=المسار الكامل لقيادة مكافحة الفيروسات
-AntiVirusCommandExample=c:\Program Files (x86)\ClamWin\bin\clamscan.exe
+AntiVirusCommandExample=c:\Progra~1\ClamWin\bin\clamscan.exe
 AntiVirusParam=مزيد من المعلمات على سطر الأوامر
 AntiVirusParamExample=--database="C:\Program Files (x86)\ClamWin\lib"
 YouCanDownloadBackupFile=يمكن أن الملفات التي تم إنشاؤها الآن يمكن تحميلها

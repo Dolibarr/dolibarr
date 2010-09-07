@@ -67,7 +67,7 @@ MaxSizeForUploadedFiles=Maximum size for uploaded files (0 to disallow any uploa
 UseCaptchaCode=Use graphical code (CAPTCHA) on login page
 UseAvToScanUploadedFiles=Use anti-virus to scan uploaded files
 AntiVirusCommand= Full path to antivirus command
-AntiVirusCommandExample= Example for ClamWin: c:\Program Files (x86)\ClamWin\bin\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
+AntiVirusCommandExample= Example for ClamWin: c:\Progra~1\ClamWin\bin\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParam= More parameters on command line
 AntiVirusParamExample= Example for ClamWin: --database="C:\Program Files (x86)\ClamWin\lib"
 ComptaSetup=Accounting module setup

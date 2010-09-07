@@ -60,19 +60,22 @@ class AntiVir
 
 		$return = 0;
 
-		$outputfile=$conf->admin->dir_temp.'/dol_avscan_file.out.'.session_id();
-
 		$fullcommand=$this->getCliCommand($file);
 		//$fullcommand='"c:\Program Files (x86)\ClamWin\bin\clamscan.exe" --database="C:\Program Files (x86)\ClamWin\lib" "c:\temp\aaa.txt"';
+        $fullcommand.=' 2>&1';      // This is to get error output
 
 		$output=array();
 		$return_var=0;
+        $safemode=ini_get("safe_mode");
 		// Create a clean fullcommand
-		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand);
-		exec($fullcommand, $output, $return_var);
+		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand." with safe_mode ".($safe_mode?"on":"off"));
+		// Run CLI command. If run of Windows, you can get return with echo %ERRORLEVEL%
+		$lastline=exec($fullcommand, $output, $return_var);
 
+        //print "x".$lastline." - ".join(',',$output)." - ".$return_var."y";exit;
 
 		/*
+        $outputfile=$conf->admin->dir_temp.'/dol_avscan_file.out.'.session_id();
 		$handle = fopen($outputfile, 'w');
 		if ($handle)
 		{
@@ -150,10 +153,11 @@ class AntiVir
 		if (! preg_match('/%file/',$conf->global->MAIN_ANTIVIRUS_PARAM))
 			$param=$param." ".escapeshellarg(trim($file));
 
-		if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
+		if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command. Using escapeshellcmd fails.
 
 		$ret=$command.' '.$param;
 		//$ret=$command.' '.$param.' 2>&1';
+        //print "xx".$ret."xx";exit;
 
 		return $ret;
 	}
