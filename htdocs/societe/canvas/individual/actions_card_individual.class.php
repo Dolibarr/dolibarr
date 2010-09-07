@@ -22,13 +22,13 @@
  *	\brief      Fichier de la classe Thirdparty card controller (individual canvas)
  *	\version    $Id$
  */
-include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/card.common.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
 
 /**
- *	\class      CardIndividual
+ *	\class      ActionsCardIndividual
  *	\brief      Classe permettant la gestion des particuliers
  */
-class CardIndividual extends CardCommon
+class ActionsCardIndividual extends CardCommon
 {
 	var $db;
 
@@ -39,7 +39,7 @@ class CardIndividual extends CardCommon
 	 *    Constructeur de la classe
 	 *    @param	DB		Handler acces base de donnees
 	 */
-	function CardIndividual($DB)
+	function ActionsCardIndividual($DB)
 	{
 		$this->db 				= $DB;
 	}

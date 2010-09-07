@@ -22,13 +22,13 @@
  *	\brief      Fichier de la classe Thirdparty card controller (default canvas)
  *	\version    $Id$
  */
-include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/card.common.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
 
 /**
  *	\class      ThirdPartyCardDefault
  *	\brief      Classe permettant la gestion des tiers par defaut
  */
-class CardDefault extends CardCommon
+class ActionsCardDefault extends CardCommon
 {
 	var $db;
 
@@ -39,7 +39,7 @@ class CardDefault extends CardCommon
 	 *    Constructeur de la classe
 	 *    @param	DB		Handler acces base de donnees
 	 */
-	function CardDefault($DB)
+	function ActionsCardDefault($DB)
 	{
 		$this->db = $DB;
 	}
