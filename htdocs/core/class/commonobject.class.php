@@ -1256,7 +1256,8 @@ class CommonObject
 				}
 
 				$classname = ucfirst($module);
-				$this->objModules[] = new $classname($this->db);
+				$obj_module = new $classname($this->db);
+				$this->objModules[$obj_module->module_number] = $obj_module;
 			}
 		}
 	}
@@ -1353,7 +1354,14 @@ class CommonObject
 		{
 			$var=!$var;
 
-			$this->printLine($line,$var,$num,$i,$dateSelector);
+			if ($line->product_type == 9 && ! empty($line->special_code))
+			{
+				$this->objModules[$line->special_code]->printObjectLine($this,$num,$i);
+			}
+			else
+			{
+				$this->printLine($line,$var,$num,$i,$dateSelector);
+			}
 
 			$i++;
 		}
