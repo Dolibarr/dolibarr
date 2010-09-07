@@ -81,11 +81,12 @@ class Canvas
 	}
 
 	/**
-	 * 	Load data control
+	 * 	Execute actions
+	 * 	@param 		Id of object (may be empty for creation)
 	 */
-	function loadControl($socid)
+	function doActions($socid)
 	{
-		return $this->control->loadControl($socid);
+		return $this->control->doActions($socid);
 	}
 
 	/**

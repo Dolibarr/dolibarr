@@ -69,11 +69,12 @@ class ActionsCardDefault extends CardCommon
     }
 
 	/**
-	 * 	Load data control
+	 * 	Execute actions
+	 * 	@param 		Id of object (may be empty for creation)
 	 */
-	function loadControl($socid)
+	function doActions($socid)
 	{
-		$return = parent::loadControl($socid);
+		$return = parent::doActions($socid);
 
 		return $return;
 	}

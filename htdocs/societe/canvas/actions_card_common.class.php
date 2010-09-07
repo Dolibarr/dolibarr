@@ -337,7 +337,7 @@ class CardCommon
     /**
      *    Load data control
      */
-    function loadControl($socid)
+    function doActions($socid)
     {
     	global $conf, $user, $langs;
 

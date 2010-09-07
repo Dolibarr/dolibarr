@@ -30,7 +30,6 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
@@ -353,15 +352,15 @@ if (empty($canvas))
 }
 else
 {
-    // -----------------------------------------
+	// -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-
+	require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
     $soccanvas = new Canvas($db);
     $soccanvas->getCanvas('thirdparty','card',$canvas);
 
     // Load data control
-    $soccanvas->loadControl($socid);
+    $soccanvas->doActions($socid);
 }
 
 
