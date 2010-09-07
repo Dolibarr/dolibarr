@@ -728,9 +728,6 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		// Rang to use
-		$rang = (!empty($module->rangtouse)?$module->rangtouse:-1);
-
 		if ($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
 		{
 			$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
@@ -751,8 +748,7 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 			$price_base_type,
 			$pu_ttc,
 			$info_bits,
-			$type,
-			$rang
+			$type
 			);
 
 			if ($result > 0)

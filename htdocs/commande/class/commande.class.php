@@ -829,7 +829,7 @@ class Commande extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1)
+	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0)
 	{
 		dol_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
 
@@ -895,35 +895,36 @@ class Commande extends CommonObject
 			}
 
 			// Insert line
-			$line=new OrderLine($this->db);
+			$this->line=new OrderLine($this->db);
 
-			$line->fk_commande=$commandeid;
-			$line->desc=$desc;
-			$line->qty=$qty;
-			$line->tva_tx=$txtva;
-			$line->localtax1_tx=$txlocaltax1;
-			$line->localtax2_tx=$txlocaltax2;
-			$line->fk_product=$fk_product;
-			$line->fk_remise_except=$fk_remise_except;
-			$line->remise_percent=$remise_percent;
-			$line->subprice=$pu_ht;
-			$line->rang=$rangtouse;
-			$line->info_bits=$info_bits;
-			$line->total_ht=$total_ht;
-			$line->total_tva=$total_tva;
-			$line->total_localtax1=$total_localtax1;
-			$line->total_localtax2=$total_localtax2;
-			$line->total_ttc=$total_ttc;
-			$line->product_type=$type;
+			$this->line->fk_commande=$commandeid;
+			$this->line->desc=$desc;
+			$this->line->qty=$qty;
+			$this->line->tva_tx=$txtva;
+			$this->line->localtax1_tx=$txlocaltax1;
+			$this->line->localtax2_tx=$txlocaltax2;
+			$this->line->fk_product=$fk_product;
+			$this->line->fk_remise_except=$fk_remise_except;
+			$this->line->remise_percent=$remise_percent;
+			$this->line->subprice=$pu_ht;
+			$this->line->rang=$rangtouse;
+			$this->line->info_bits=$info_bits;
+			$this->line->total_ht=$total_ht;
+			$this->line->total_tva=$total_tva;
+			$this->line->total_localtax1=$total_localtax1;
+			$this->line->total_localtax2=$total_localtax2;
+			$this->line->total_ttc=$total_ttc;
+			$this->line->product_type=$type;
+			$this->line->special_code=$special_code;
+			
+			$this->line->date_start=$date_start;
+			$this->line->date_end=$date_end;
 
 			// \TODO Ne plus utiliser
-			$line->price=$price;
-			$line->remise=$remise;
+			$this->line->price=$price;
+			$this->line->remise=$remise;
 
-			$line->date_start=$date_start;
-			$line->date_end=$date_end;
-
-			$result=$line->insert();
+			$result=$this->line->insert();
 			if ($result > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la commande meme
@@ -942,7 +943,7 @@ class Commande extends CommonObject
 			}
 			else
 			{
-				$this->error=$line->error;
+				$this->error=$this->line->error;
 				dol_syslog("Commande::addline error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -2397,15 +2398,14 @@ class Commande extends CommonObject
 	}
 
 	/**
-	 * 	\brief		Return an array of order lines
-	 * 	\param		option		0=No filter on rang, 1=filter on rang <> 0, 2=filter on rang=0
+	 * 	Return an array of order lines
 	 */
-	function getLinesArray($option=0)
+	function getLinesArray()
 	{
 		$lines = array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.description, l.price, l.qty, l.tva_tx, ';
-		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,l.rang,';
+		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,l.rang,l.special_code,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql.= ' l.date_start,';
 		$sql.= ' l.date_end,';
@@ -2414,8 +2414,6 @@ class Commande extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
-		if ($option == 1) $sql.= ' AND l.rang <> 0';
-		if ($option == 2) $sql.= ' AND l.rang = 0';
 		$sql.= ' ORDER BY l.rang ASC, l.rowid';
 
 		$resql = $this->db->query($sql);
@@ -2428,38 +2426,41 @@ class Commande extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$lines[$i]->id					= $obj->rowid;
-				$lines[$i]->description 		= $obj->description;
-				$lines[$i]->fk_product			= $obj->fk_product;
-				$lines[$i]->ref					= $obj->ref;
-				$lines[$i]->product_label		= $obj->product_label;
-				$lines[$i]->product_desc		= $obj->product_desc;
-				$lines[$i]->fk_product_type		= $obj->fk_product_type;
-				$lines[$i]->product_type		= $obj->product_type;
-				$lines[$i]->qty					= $obj->qty;
-				$lines[$i]->subprice			= $obj->subprice;
-				$lines[$i]->fk_remise_except 	= $obj->fk_remise_except;
-				$lines[$i]->remise_percent		= $obj->remise_percent;
-				$lines[$i]->tva_tx				= $obj->tva_tx;
-				$lines[$i]->info_bits			= $obj->info_bits;
-				$lines[$i]->total_ht			= $obj->total_ht;
-				$lines[$i]->total_tva			= $obj->total_tva;
-				$lines[$i]->total_ttc			= $obj->total_ttc;
-				$lines[$i]->special_code		= $obj->special_code;
-				$lines[$i]->rang				= $obj->rang;
-				$lines[$i]->date_start			= $this->db->jdate($obj->date_start);
-				$lines[$i]->date_end			= $this->db->jdate($obj->date_end);
+				$this->lines[$i]->id				= $obj->rowid;
+				$this->lines[$i]->description 		= $obj->description;
+				$this->lines[$i]->fk_product		= $obj->fk_product;
+				$this->lines[$i]->ref				= $obj->ref;
+				$this->lines[$i]->product_label		= $obj->product_label;
+				$this->lines[$i]->product_desc		= $obj->product_desc;
+				$this->lines[$i]->fk_product_type	= $obj->fk_product_type;
+				$this->lines[$i]->product_type		= $obj->product_type;
+				$this->lines[$i]->qty				= $obj->qty;
+				$this->lines[$i]->subprice			= $obj->subprice;
+				$this->lines[$i]->fk_remise_except 	= $obj->fk_remise_except;
+				$this->lines[$i]->remise_percent	= $obj->remise_percent;
+				$this->lines[$i]->tva_tx			= $obj->tva_tx;
+				$this->lines[$i]->info_bits			= $obj->info_bits;
+				$this->lines[$i]->total_ht			= $obj->total_ht;
+				$this->lines[$i]->total_tva			= $obj->total_tva;
+				$this->lines[$i]->total_ttc			= $obj->total_ttc;
+				$this->lines[$i]->special_code		= $obj->special_code;
+				$this->lines[$i]->rang				= $obj->rang;
+				$this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
+				$this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
 
 				$i++;
 			}
+			
 			$this->db->free($resql);
+			
+			return 1;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			$this->error=$this->db->error();
+			dol_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
+			return -1;
 		}
-
-		return $lines;
 	}
 
 }
@@ -2530,7 +2531,7 @@ class OrderLine
 	{
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.price, cd.qty, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx,';
 		$sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
-		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.marge_tx, cd.marque_tx, cd.rang,';
+		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.marge_tx, cd.marque_tx, cd.rang, cd.special_code,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
 		$sql.= ' cd.date_start, cd.date_end';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
@@ -2548,7 +2549,7 @@ class OrderLine
 			$this->subprice         = $objp->subprice;
 			$this->tva_tx           = $objp->tva_tx;
 			$this->localtax1_tx		= $objp->localtax1_tx;
-			$tish->localtax2_tx		= $objp->localtax2_tx;
+			$this->localtax2_tx		= $objp->localtax2_tx;
 			$this->remise           = $objp->remise;
 			$this->remise_percent   = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
@@ -2562,6 +2563,7 @@ class OrderLine
 			$this->total_ttc        = $objp->total_ttc;
 			$this->marge_tx         = $objp->marge_tx;
 			$this->marque_tx        = $objp->marque_tx;
+			$this->special_code		= $objp->special_code;
 			$this->rang             = $objp->rang;
 
 			$this->ref	            = $objp->product_ref;
@@ -2630,6 +2632,7 @@ class OrderLine
         if (empty($this->remise)) $this->remise=0;
         if (empty($this->remise_percent)) $this->remise_percent=0;
         if (empty($this->info_bits)) $this->info_bits=0;
+        if (empty($this->special_code)) $this->special_code=0;
 
         // Check parameters
         if ($this->product_type < 0) return -1;
@@ -2640,7 +2643,7 @@ class OrderLine
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
 		$sql.= ' (fk_commande, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
 		$sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
-		$sql.= ' rang, marge_tx, marque_tx,';
+		$sql.= ' special_code, rang, marge_tx, marque_tx,';
 		// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 		// Insert in the database the start and end dates
 		$sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end)';
@@ -2659,6 +2662,7 @@ class OrderLine
 		$sql.= " '".price2num($this->remise)."',";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
+		$sql.= ' '.$this->special_code.',';
 		$sql.= ' '.$this->rang.',';
 		if (isset($this->marge_tx)) $sql.= ' '.$this->marge_tx.',';
 		else $sql.= ' null,';

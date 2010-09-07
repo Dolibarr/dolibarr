@@ -1672,41 +1672,26 @@ else
             $numlines=0;
 
 			print '<table class="noborder" width="100%">';
-
-			// Hook of thirdparty module
-			if (! empty($hooks->objModules))
+			
+			$result = $commande->getLinesArray();
+			//var_dump($commande->lines);
+			
+			if (! empty($commande->lines))
 			{
-				foreach($hooks->objModules as $module)
+				if (! empty($hooks->objModules))
 				{
-					$lines = $commande->getLinesArray(1);
-
-					$module->getObjectList($commande);
-					$sublines = $commande->getLinesArray(2);
-
-					if (! empty($module->lines))
-					{
-						$commande->print_title_list();
-						$module->printObjectList($commande, $lines, $sublines,1);
-					}
-					else if (! empty($lines) )
-					{
-						$commande->print_title_list();
-						$commande->printLinesList($lines,1);
-					}
+					// TODO traitement des hooks
+					$commande->print_title_list();
+					$commande->printLinesList();
 				}
-			}
-			else
-			{
-				$lines = $commande->getLinesArray(0);
-
-				if (! empty($lines) )
+				else
 				{
 					$commande->print_title_list();
-					$commande->printLinesList($lines,1);
+					$commande->printLinesList();
 				}
 			}
 
-			$numlines=sizeof($lines);
+			$numlines=sizeof($commande->lines);
 
 			/*
 			 * Form to add new line
