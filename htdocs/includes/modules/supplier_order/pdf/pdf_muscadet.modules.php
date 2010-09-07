@@ -617,7 +617,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("SupplierOrder")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
 		$pdf->SetFont('Arial','',12);
 
 		$posy+=6;
