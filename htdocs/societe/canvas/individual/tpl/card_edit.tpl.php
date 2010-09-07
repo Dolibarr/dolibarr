@@ -21,7 +21,17 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php echo $this->control->tpl['ajax_select_country']; ?>
+<?php if ($conf->use_javascript_ajax) { ?>
+<script type="text/javascript" language="javascript">
+jQuery(document).ready(function () {
+                        jQuery("#selectpays_id").change(function() {
+                            document.formsoc.action.value="update";
+                            document.formsoc.canvas.value="<?php echo $canvas ?>";
+                            document.formsoc.submit();
+                        });
+                   });
+</script>
+<?php } ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id']; ?>" method="POST" name="formsoc">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">

@@ -30,7 +30,7 @@
 class CardCommon
 {
 	var $db;
-	
+
 	//! Numero d'erreur Plage 1280-1535
 	var $errno = 0;
 	//! Template container
@@ -48,7 +48,7 @@ class CardCommon
 	{
 		$this->db = $DB;
 	}
-	
+
     /**
      *    Assigne les valeurs par defaut pour le canvas
      *    @param      action     Type of template
@@ -71,10 +71,6 @@ class CardCommon
 
         if ($action == 'create' || $action == 'edit')
         {
-        	// Chargement ajax
-            $this->tpl['ajax_select_thirdpartytype'] = $this->ajax_selectThirdPartyType($canvas);
-            $this->tpl['ajax_select_country'] = $this->ajax_selectCountry($action,$canvas);
-
             // Load object modCodeClient
             $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
             if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
@@ -337,43 +333,43 @@ class CardCommon
             $this->object->pays			=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
         }
     }
-    
+
     /**
      *    Load data control
      */
     function loadControl($socid)
     {
     	global $conf, $user, $langs;
-    	
+
     	if ($_POST["getcustomercode"])
     	{
     		// We defined value code_client
     		$_POST["code_client"]="Acompleter";
     	}
-    	
+
     	if ($_POST["getsuppliercode"])
     	{
     		// We defined value code_fournisseur
     		$_POST["code_fournisseur"]="Acompleter";
     	}
-    	
+
     	// Add new third party
     	if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
     	&& ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
     	{
     		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
     		$error=0;
-    		
+
     		if ($_POST["action"] == 'update')
-    		{	
+    		{
     			// Load properties of company
     			$this->object->fetch($socid);
     		}
-    		
+
     		if ($_REQUEST["private"] == 1)
     		{
     			$this->object->particulier           = $_REQUEST["private"];
-    			
+
     			$this->object->nom                   = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
     			$this->object->nom_particulier       = $_POST["nom"];
     			$this->object->prenom                = $_POST["prenom"];
@@ -383,7 +379,7 @@ class CardCommon
     		{
     			$this->object->nom                   = $_POST["nom"];
     		}
-    		
+
     		$this->object->address					= $_POST["adresse"];
     		$this->object->adresse					= $_POST["adresse"]; // TODO obsolete
     		$this->object->cp						= $_POST["cp"];
@@ -406,12 +402,12 @@ class CardCommon
     		$this->object->canvas					= $_REQUEST["canvas"];
 
         	$this->object->tva_assuj				= $_POST["assujtva_value"];
-        	
+
         	// Local Taxes
         	$this->object->localtax1_assuj			= $_POST["localtax1assuj_value"];
         	$this->object->localtax2_assuj			= $_POST["localtax2assuj_value"];
         	$this->object->tva_intra				= $_POST["tva_intra"];
-        	
+
         	$this->object->forme_juridique_code  	= $_POST["forme_juridique_code"];
         	$this->object->effectif_id           	= $_POST["effectif_id"];
         	if ($_REQUEST["private"] == 1)
@@ -425,10 +421,10 @@ class CardCommon
         	$this->object->client					= $_POST["client"];
         	$this->object->fournisseur				= $_POST["fournisseur"];
         	$this->object->fournisseur_categorie 	= $_POST["fournisseur_categorie"];
-        	
+
         	$this->object->commercial_id			= $_POST["commercial_id"];
         	$this->object->default_lang				= $_POST["default_lang"];
-        	
+
         	// Check parameters
         	if (empty($_POST["cancel"]))
         	{
@@ -454,16 +450,16 @@ class CardCommon
         			$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
         		}
         	}
-        	
+
         	if (! $error)
         	{
         		if ($_POST["action"] == 'add')
         		{
         			$this->db->begin();
-        			
+
         			if (empty($this->object->client))      $this->object->code_client='';
         			if (empty($this->object->fournisseur)) $this->object->code_fournisseur='';
-        			
+
         			$result = $this->object->create($user);
         			if ($result >= 0)
         			{
@@ -471,7 +467,7 @@ class CardCommon
         				{
         					dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
         					$contact=new Contact($this->db);
-        					
+
         					$contact->civilite_id 	= $this->object->civilite_id;
         					$contact->name			= $this->object->nom_particulier;
         					$contact->firstname		= $this->object->prenom;
@@ -483,7 +479,7 @@ class CardCommon
         					$contact->status		= 1;
         					$contact->email			= $this->object->email;
         					$contact->priv			= 0;
-        					
+
         					$result=$contact->create($user);
         				}
         			}
@@ -491,11 +487,11 @@ class CardCommon
         			{
         				$mesg=$this->object->error;
         			}
-        			
+
         			if ($result >= 0)
         			{
         				$this->db->commit();
-        				
+
         				if ( $this->object->client == 1 )
         				{
         					Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$this->object->id);
@@ -519,13 +515,13 @@ class CardCommon
         			else
         			{
         				$this->db->rollback();
-        				
+
         				$langs->load("errors");
         				$mesg=$langs->trans($this->object->error);
         				$_GET["action"]='create';
         			}
         		}
-        		
+
         		if ($_POST["action"] == 'update')
         		{
         			if ($_POST["cancel"])
@@ -533,16 +529,16 @@ class CardCommon
         				Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
         				exit;
         			}
-        			
+
         			$oldsoccanvas = new Canvas($this->db);
         			$oldsoccanvas->getCanvas('thirdparty','card',$this->canvas);
         			$result=$oldsoccanvas->fetch($socid);
-        			
+
         			// To not set code if third party is not concerned. But if it had values, we keep them.
         			if (empty($this->object->client) && empty($oldsoccanvas->control->object->code_client))				$this->object->code_client='';
         			if (empty($this->object->fournisseur)&& empty($oldsoccanvas->control->object->code_fournisseur)) 	$this->object->code_fournisseur='';
         			//var_dump($soccanvas);exit;
-        			
+
         			$result = $this->object->update($socid,$user,1,$oldsoccanvas->control->object->codeclient_modifiable(),$oldsoccanvas->control->object->codefournisseur_modifiable());
         			if ($result >= 0)
         			{
@@ -553,20 +549,20 @@ class CardCommon
         			{
         				$this->object->id = $socid;
         				$reload = 0;
-        				
+
         				$mesg = $this->object->error;
         				$_GET["action"]= "edit";
         			}
         		}
         	}
         }
-        
+
         if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->supprimer)
         {
         	$this->object->fetch($socid);
 
         	$result = $this->object->delete($socid);
-        	
+
         	if ($result >= 0)
         	{
         		Header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$this->object->nom."");
@@ -580,7 +576,7 @@ class CardCommon
         		$_GET["action"]='';
         	}
         }
-        
+
         /*
          * Generate document
          */
@@ -593,16 +589,16 @@ class CardCommon
         	else
         	{
         		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
-        		
+
         		$this->object->fetch($socid);
         		$this->object->fetch_thirdparty();
-        		
+
             	/*if ($_REQUEST['model'])
              	{
              		$fac->setDocModel($user, $_REQUEST['model']);
              	}
              	*/
-        		
+
         		// Define output language
         		$outputlangs = $langs;
         		$newlang='';
@@ -626,74 +622,6 @@ class CardCommon
         		}
         	}
         }
-    }
-
-    /**
-     *
-     */
-    function ajax_selectThirdPartyType($canvas)
-    {
-        global $conf, $langs;
-
-        $out='';
-
-        if ($conf->use_javascript_ajax)
-        {
-            $out.= "\n".'<script type="text/javascript" language="javascript">'."\n";
-            $out.= 'jQuery(document).ready(function () {
-		              jQuery("#radiocompany").click(function() {
-                            document.formsoc.action.value="create";
-                            document.formsoc.canvas.value="'.$canvas.'";
-                            document.formsoc.private.value=0;
-                            document.formsoc.submit();
-		              });
-		               jQuery("#radioprivate").click(function() {
-                            document.formsoc.action.value="create";
-                            document.formsoc.canvas.value="'.$canvas.'";
-                            document.formsoc.private.value=1;
-                            document.formsoc.submit();
-                      });
-		          });';
-            $out.= '</script>'."\n";
-
-            $out.= "<br>\n";
-            $out.= $langs->trans("ThirdPartyType").': &nbsp; ';
-            $out.= '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.(! $_REQUEST["private"]?' checked="true"':'');
-            $out.= '> '.$langs->trans("Company/Fundation");
-            $out.= ' &nbsp; &nbsp; ';
-            $out.= '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.(! $_REQUEST["private"]?'':' checked="true"');
-            $out.= '> '.$langs->trans("Individual");
-            $out.= ' ('.$langs->trans("ToCreateContactWithSameName").')';
-            $out.= "<br>\n";
-            $out.= "<br>\n";
-        }
-
-        return $out;
-    }
-
-    /**
-     *
-     */
-    function ajax_selectCountry($action,$canvas)
-    {
-        global $conf;
-
-        $out='';
-
-        if ($conf->use_javascript_ajax)
-        {
-            $out.= "\n".'<script type="text/javascript" language="javascript">'."\n";
-            $out.= 'jQuery(document).ready(function () {
-                        jQuery("#selectpays_id").change(function() {
-                            document.formsoc.action.value="'.$action.'";
-                            document.formsoc.canvas.value="'.$canvas.'";
-                            document.formsoc.submit();
-                        });
-                   })';
-            $out.= '</script>'."\n";
-        }
-
-        return $out;
     }
 
 }

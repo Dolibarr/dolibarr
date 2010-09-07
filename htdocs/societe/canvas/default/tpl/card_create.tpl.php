@@ -21,8 +21,42 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php echo $this->control->tpl['ajax_select_thirdpartytype']; ?>
-<?php echo $this->control->tpl['ajax_select_country']; ?>
+<?php if ($conf->use_javascript_ajax) { ?>
+<script type="text/javascript" language="javascript">
+jQuery(document).ready(function () {
+		              jQuery("#radiocompany").click(function() {
+                            document.formsoc.action.value="create";
+                            document.formsoc.canvas.value="default@societe";
+                            document.formsoc.private.value=0;
+                            document.formsoc.submit();
+		              });
+		               jQuery("#radioprivate").click(function() {
+                            document.formsoc.action.value="create";
+                            document.formsoc.canvas.value="individual@societe";
+                            document.formsoc.private.value=1;
+                            document.formsoc.submit();
+                      });
+		          });
+</script>
+
+<br>
+<?php echo $langs->trans("ThirdPartyType") ?>: &nbsp;
+<input type="radio" id="radiocompany" class="flat" name="private" value="0"'<?php echo (! $_REQUEST["private"]?' checked="true"':''); ?>>
+<?php echo $langs->trans("Company/Fundation"); ?> &nbsp; &nbsp;
+<input type="radio" id="radioprivate" class="flat" name="private" value="1"'<?php echo (! $_REQUEST["private"]?'':' checked="true"'); ?>> <?php echo $langs->trans("Individual"); ?> (<?php echo $langs->trans("ToCreateContactWithSameName") ?>)
+<br>
+<br>
+
+<script type="text/javascript" language="javascript">
+jQuery(document).ready(function () {
+                        jQuery("#selectpays_id").change(function() {
+                            document.formsoc.action.value="create";
+                            document.formsoc.canvas.value="<?php echo $canvas ?>";
+                            document.formsoc.submit();
+                        });
+                   });
+</script>
+<?php } ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" name="formsoc">
 
