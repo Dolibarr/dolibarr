@@ -165,6 +165,9 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 			$outputlangs->setDefaultLang($newlang);
 		}
 		propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+		
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$propal->id);
+		exit;
 	}
 	else
 	{
@@ -1005,6 +1008,15 @@ if ($id > 0 || ! empty($ref))
 	if ($_GET['action'] == 'ask_deleteline')
 	{
 		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$propal->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
+		if ($ret == 'html') print '<br>';
+	}
+	
+	/*
+	 * Confirmation de la suppression d'une ligne produit/service
+	 */
+	if ($_GET['action'] == 'ask_deletemilestone')
+	{
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$propal->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteMilestone'), $langs->trans('ConfirmDeleteMilestone'), 'confirm_deletemilestone','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 
