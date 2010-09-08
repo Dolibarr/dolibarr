@@ -265,7 +265,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php");
 
 	// Sauvegarde le dernier modele choisi pour generer un document
-	$shipment = new Expedition($db, 0, $_REQUEST['id']);
+	$shipment = new Expedition($db);
 	$shipment->fetch($_REQUEST['id']);
 	$shipment->fetch_thirdparty();
 

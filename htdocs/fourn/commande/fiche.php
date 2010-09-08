@@ -467,7 +467,7 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
 	 */
 
 	// Sauvegarde le dernier module	choisi pour	generer	un document
-	$commande =	new	CommandeFournisseur($db, 0, $_REQUEST['id']);
+	$commande =	new	CommandeFournisseur($db);
 	$commande->fetch($_REQUEST['id']);
 	if ($_REQUEST['model'])
 	{

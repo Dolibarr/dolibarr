@@ -190,7 +190,7 @@ if ($_GET["action"] == 'set_encaisse')
  */
 if ($_REQUEST['action'] == 'builddoc')
 {
-	$donation = new Don($db, 0, $_GET['rowid']);
+	$donation = new Don($db);
 	$donation->fetch($_GET['rowid']);
 
 	if ($_REQUEST['model'])

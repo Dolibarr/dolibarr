@@ -151,7 +151,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-	$delivery = new Livraison($db, 0, $_REQUEST['id']);
+	$delivery = new Livraison($db);
 	$delivery->fetch($_REQUEST['id']);
 
 	if ($_REQUEST['model'])
