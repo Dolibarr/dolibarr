@@ -1251,24 +1251,24 @@ class CommonObject
 				{
 					// Include actions class (controller)
 					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/class/actions_'.$module.'.class.php');
-					
+
 					// Include dataservice class (model)
 					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/class/dao_'.$module.'.class.php');
-					
+
 					// Instantiate actions class (controller)
 					$controlclassname = 'Actions'.ucfirst($module);
 					$objModule = new $controlclassname($this->db);
 					$this->hooks[$objModule->module_number] = $objModule;
-					
+
 					// Instantiate dataservice class (model)
 					$modelclassname = 'Dao'.ucfirst($module);
 					$this->hooks[$objModule->module_number]->object = new $modelclassname($this->db);
 				}
-				
+
 				if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php'))
 				{
 					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php');
-				}	
+				}
 			}
 		}
 	}
@@ -1281,7 +1281,9 @@ class CommonObject
 
 	/**
 	 *	Show add predefined products/services form
-	 *  FIXME This must be moved into a html.class file instead of a business class.
+	 *  TODO This should be moved into a html.class file instead of a business class.
+	 *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *  @param          $dateSelector       1=Show also date range input fields
 	 */
 	function showAddPredefinedProductForm($dateSelector=0)
 	{
@@ -1293,8 +1295,10 @@ class CommonObject
 
 	/**
 	 *	Show add free products/services form
-     *  FIXME This must be moved into a html.class file instead of a business class.
-	 */
+     *  TODO This should be moved into a html.class file instead of a business class. But for
+     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *  @param          $dateSelector       1=Show also date range input fields
+     */
 	function showAddFreeProductForm($dateSelector=0)
 	{
 		global $conf,$langs;
@@ -1308,7 +1312,8 @@ class CommonObject
 	 *	@param	$object
 	 *	@param	$objectid
 	 *	@param	$somethingshown
-     *  FIXME This must be moved into a html.class file instead of a business class.
+     *  TODO This must be moved into a html.class file instead of a business class.
+     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
 	 */
 	function showLinkedObjectBlock($object,$objectid,$somethingshown=0)
 	{
@@ -1319,9 +1324,8 @@ class CommonObject
 		{
 			$classpath = $object.'/class';
 			$tplpath = $object;
-			// TODO uniformiser emplacement classe
-			if ($object == 'facture') $tplpath = 'compta/'.$object; $classpath = $tplpath.'/class';
-			if ($object == 'propal') $tplpath = 'comm/'.$object; $classpath = $tplpath.'/class';
+			if ($object == 'facture') $tplpath = 'compta/'.$object; $classpath = $tplpath.'/class';  // To work with non standard path
+			if ($object == 'propal') $tplpath = 'comm/'.$object; $classpath = $tplpath.'/class';     // To work with non standard path
 
 			$classname = ucfirst($object);
 			if(!class_exists($classname)) require(DOL_DOCUMENT_ROOT."/".$classpath."/".$object.".class.php");
@@ -1333,7 +1337,8 @@ class CommonObject
 
 	/**
 	 * 	Return HTML table with title list
-     *  FIXME This must be moved into a html.class file instead of a business class.
+     *  TODO This must be moved into a html.class file instead of a business class.
+     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
 	 */
 	function print_title_list()
 	{
@@ -1380,8 +1385,13 @@ class CommonObject
 
 	/**
 	 * 	Return HTML with selected object line
-	 * 	@param		line		Selected object line
-     *  FIXME This must be moved into a html.class file instead of a business class.
+	 * 	@param	    $line		       Selected object line to output
+	 *  @param      $var               Is it a an odd line
+	 *  @param      $num               Number of line
+	 *  @param      $i
+     *  @param      $dateSelector      1=Show also date range input fields
+     *  TODO This must be moved into a html.class file instead of a business class.
+     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
 	 */
 	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0)
 	{
@@ -1389,8 +1399,7 @@ class CommonObject
 		global $html,$bc;
 
 		$element = $this->element;
-		// TODO uniformiser
-		if ($element == 'propal') $element = 'propale';
+		if ($element == 'propal') $element = 'propale';   // To work with non standard path
 
 		// Show product and description
 		$type=$line->product_type?$line->product_type:$line->fk_product_type;
@@ -1407,7 +1416,7 @@ class CommonObject
 			if ($line->fk_product > 0)
 			{
 				$product_static = new Product($db);
-				
+
 				$product_static->type=$line->fk_product_type;
 				$product_static->id=$line->fk_product;
 				$product_static->ref=$line->ref;
@@ -1415,7 +1424,7 @@ class CommonObject
 				$text=$product_static->getNomUrl(1);
 				$text.= ' - '.$line->product_label;
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-				
+
 				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_view.tpl.php');
 			}
 			else
