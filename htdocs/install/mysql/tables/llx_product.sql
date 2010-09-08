@@ -26,10 +26,10 @@ create table llx_product
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   datec						datetime,
   tms						timestamp,
-  virtual					tinyint	  DEFAULT 0 NOT NULL,	-- value 0 for physical product, 1 for virtual product
-  fk_parent					integer	  DEFAULT 0,			-- virtual product id
+  virtual					tinyint	  DEFAULT 0 NOT NULL,	-- Not used. Used by external modules. Value 0 for physical product, 1 for virtual product
+  fk_parent					integer	  DEFAULT 0,			-- Not used. Used by external modules. Virtual product id
   ref						varchar(32)  NOT NULL,
-  entity					integer	  DEFAULT 1 NOT NULL,	-- multi company id
+  entity					integer	  DEFAULT 1 NOT NULL,	-- Multi company id
   label						varchar(255) NOT NULL,
   description				text,
   note						text,
@@ -39,7 +39,7 @@ create table llx_product
   price_min_ttc				double(24,8) DEFAULT 0,
   price_base_type			varchar(3)   DEFAULT 'HT',
   tva_tx					double(6,3),
-  recuperableonly           integer NOT NULL DEFAULT '0',   -- Franch NPR VAT
+  recuperableonly           integer NOT NULL DEFAULT '0',   -- French NPR VAT
   localtax1_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 1 
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 2
   fk_user_author			integer,
@@ -50,9 +50,9 @@ create table llx_product
   seuil_stock_alerte		integer      DEFAULT 0,
   barcode					varchar(255) DEFAULT NULL,
   fk_barcode_type			integer      DEFAULT 0,
-  accountancy_code_sell		varchar(15),					-- code compta vente
-  accountancy_code_buy		varchar(15),					-- code compta achat
-  partnumber				varchar(32),
+  accountancy_code_sell		varchar(15),					-- Selling accountancy code
+  accountancy_code_buy		varchar(15),					-- Buying accountancy code
+  partnumber				varchar(32),                    -- Not used. Used by external modules.
   weight					float        DEFAULT NULL,
   weight_units				tinyint      DEFAULT NULL,
   length					float        DEFAULT NULL,
@@ -61,10 +61,10 @@ create table llx_product
   surface_units				tinyint      DEFAULT NULL,
   volume					float        DEFAULT NULL,
   volume_units				tinyint      DEFAULT NULL,
-  stock						integer,						-- physical stock
+  stock						integer,						-- Current physical stock (dernormalized field)
   pmp						double(24,8) DEFAULT 0 NOT NULL,
   canvas					varchar(32)  DEFAULT 'default@product',
   finished					tinyint      DEFAULT NULL,
   hidden					tinyint      DEFAULT 0,			-- Need permission see also hidden products
-  import_key				varchar(14)						-- import key
+  import_key				varchar(14)						-- Import key
 )type=innodb;
