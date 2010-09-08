@@ -1288,7 +1288,7 @@ class CommonObject
 		global $conf,$langs;
 		global $html,$bc,$var;
 
-		include(DOL_DOCUMENT_ROOT.'/core/tpl/addpredefinedproductform.tpl.php');
+		include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
 	}
 
 	/**
@@ -1300,7 +1300,7 @@ class CommonObject
 		global $conf,$langs;
 		global $html,$bc,$var;
 
-		include(DOL_DOCUMENT_ROOT.'/core/tpl/addfreeproductform.tpl.php');
+		include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
 	}
 
 	/**
@@ -1400,152 +1400,20 @@ class CommonObject
 		if (! empty($line->date_end)) $type=1;
 
 		// Ligne en mode visu
+		// TODO simplifier les templates
 		if ($_GET['action'] != 'editline' || $_GET['lineid'] != $line->id)
 		{
-			print '<tr '.$bc[$var].'>';
-
 			// Produit
 			if ($line->fk_product > 0)
 			{
 				$product_static = new Product($db);
-
-				print '<td>';
-				print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne;
-
-				// Show product and description
-				$product_static->type=$line->fk_product_type;
-				$product_static->id=$line->fk_product;
-				$product_static->ref=$line->ref;
-				$product_static->libelle=$line->product_label;
-				$text=$product_static->getNomUrl(1);
-				$text.= ' - '.$line->product_label;
-				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-				print $html->textwithtooltip($text,$description,3,'','',$i);
-
-				// Show range
-				print_date_range($line->date_start, $line->date_end);
-
-				// Add description in form
-				if ($conf->global->PRODUIT_DESC_IN_FORM)
-				{
-					print ($line->description && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
-				}
-
-				print '</td>';
+				
+				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_view.tpl.php');
 			}
 			else
 			{
-				print '<td>';
-				print '<a name="'.$line->rowid.'"></a>'; // ancre pour retourner sur la ligne
-				if (($line->info_bits & 2) == 2)
-				{
-					print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid.'">';
-					print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
-					print '</a>';
-					if ($line->description)
-					{
-						if ($line->description == '(CREDIT_NOTE)')
-						{
-							$discount=new DiscountAbsolute($this->db);
-							$discount->fetch($line->fk_remise_except);
-							print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
-						}
-						else
-						{
-							print ' - '.nl2br($line->description);
-						}
-					}
-				}
-				else
-				{
-					if ($type==1) $text = img_object($langs->trans('Service'),'service');
-					else $text = img_object($langs->trans('Product'),'product');
-					print $text.' '.nl2br($line->description);
-					// Show range
-					print_date_range($line->date_start,$line->date_end);
-				}
-				print "</td>\n";
+				include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_view.tpl.php');
 			}
-
-			// VAT Rate
-			print '<td align="right" nowrap="nowrap">'.vatrate($line->tva_tx,'%',$line->info_bits).'</td>';
-
-			// U.P HT
-			print '<td align="right" nowrap="nowrap">'.price($line->subprice)."</td>\n";
-
-			// Qty
-			print '<td align="right" nowrap="nowrap">';
-			if ((($line->info_bits & 2) != 2) && $line->special_code != 3)
-			{
-				print $line->qty;
-			}
-			else print '&nbsp;';
-			print '</td>';
-
-			// Remise percent (negative or positive)
-			if (!empty($line->remise_percent) && $line->special_code != 3)
-			{
-				print '<td align="right">'.dol_print_reduction($line->remise_percent,$langs)."</td>\n";
-			}
-			else
-			{
-				print '<td>&nbsp;</td>';
-			}
-
-			// Montant total HT
-			if ($line->special_code == 3)
-			{
-				// Si ligne en option
-				print '<td align="right" nowrap="nowrap">'.$langs->trans('Option').'</td>';
-			}
-			else
-			{
-				print '<td align="right" nowrap="nowrap">'.price($line->total_ht)."</td>\n";
-			}
-
-			// Icone d'edition et suppression
-			if ($this->statut == 0  && $user->rights->$element->creer)
-			{
-				print '<td align="center">';
-				if (($line->info_bits & 2) == 2)
-				{
-					// Ligne remise predefinie, on permet pas modif
-				}
-				else
-				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#'.$line->id.'">';
-					print img_edit();
-					print '</a>';
-				}
-				print '</td>';
-				print '<td align="center">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id.'">';
-				print img_delete();
-				print '</a></td>';
-				if ($num > 1)
-				{
-					print '<td align="center">';
-					if ($i > 0)
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id.'">';
-						print img_up();
-						print '</a>';
-					}
-					if ($i < $num-1)
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id.'">';
-						print img_down();
-						print '</a>';
-					}
-					print '</td>';
-				}
-			}
-			else
-			{
-				print '<td colspan="3">&nbsp;</td>';
-			}
-
-			print '</tr>';
 		}
 
 		// Ligne en mode update
