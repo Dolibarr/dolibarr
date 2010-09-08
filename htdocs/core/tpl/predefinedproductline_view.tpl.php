@@ -25,24 +25,16 @@
 	<td>
 	<a name="<?php echo $line->id; ?>"></a>
 	<?php
-		// Show product and description
-		$product_static->type=$line->fk_product_type;
-		$product_static->id=$line->fk_product;
-		$product_static->ref=$line->ref;
-		$product_static->libelle=$line->product_label;
-		$text=$product_static->getNomUrl(1);
-		$text.= ' - '.$line->product_label;
-		$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-		echo $html->textwithtooltip($text,$description,3,'','',$i);
+	echo $html->textwithtooltip($text,$description,3,'','',$i);
 
-		// Show range
-		print_date_range($line->date_start, $line->date_end);
+	// Show range
+	print_date_range($line->date_start, $line->date_end);
 
-		// Add description in form
-		if ($conf->global->PRODUIT_DESC_IN_FORM)
-		{
-			print ($line->description && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
-		}
+	// Add description in form
+	if ($conf->global->PRODUIT_DESC_IN_FORM)
+	{
+		print ($line->description && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
+	}
 	?>
 	</td>
 

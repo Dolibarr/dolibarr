@@ -1408,6 +1408,14 @@ class CommonObject
 			{
 				$product_static = new Product($db);
 				
+				$product_static->type=$line->fk_product_type;
+				$product_static->id=$line->fk_product;
+				$product_static->ref=$line->ref;
+				$product_static->libelle=$line->product_label;
+				$text=$product_static->getNomUrl(1);
+				$text.= ' - '.$line->product_label;
+				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
+				
 				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_view.tpl.php');
 			}
 			else
@@ -1419,72 +1427,14 @@ class CommonObject
 		// Ligne en mode update
 		if ($this->statut == 0 && $_GET["action"] == 'editline' && $user->rights->propale->creer && $_GET["lineid"] == $line->id)
 		{
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'#'.$line->id.'" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="updateligne">';
-			print '<input type="hidden" name="id" value="'.$this->id.'">';
-			print '<input type="hidden" name="lineid" value="'.$_GET["lineid"].'">';
-			print '<tr '.$bc[$var].'>';
-			print '<td>';
-			print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
 			if ($line->fk_product > 0)
 			{
-				print '<input type="hidden" name="productid" value="'.$line->fk_product.'">';
-				print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product.'">';
-				if ($line->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
-				else print img_object($langs->trans('ShowProduct'),'product');
-				print ' '.$line->ref.'</a>';
-				print ' - '.nl2br($line->product_label);
-				print '<br>';
+				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_edit.tpl.php');
 			}
-			
-			// editeur wysiwyg
-            $nbrows=ROWS_2;
-            if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-        	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		  	$doleditor=new DolEditor('desc',$line->description,164,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
-			$doleditor->Create();
-
-			print '</td>';
-
-			// TODO a déplacer dans classe module marge
-			//if ($conf->global->PRODUIT_USE_MARKUP) print '<td align="right">'.vatrate($line->marge_tx).'%</td>';
-
-			print '<td align="right">';
-			print $html->select_tva('tva_tx',$line->tva_tx,$mysoc,$societe,'',$line->info_bits);
-			print '</td>';
-			print '<td align="right"><input size="6" type="text" class="flat" name="subprice" value="'.price($line->subprice,0,'',0).'"></td>';
-			print '<td align="right">';
-			if (($line->info_bits & 2) != 2)
+			else
 			{
-				print '<input size="2" type="text" class="flat" name="qty" value="'.$line->qty.'">';
+				include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_edit.tpl.php');
 			}
-			else print '&nbsp;';
-			print '</td>';
-			print '<td align="right" nowrap>';
-			if (($line->info_bits & 2) != 2)
-			{
-				print '<input size="1" type="text" class="flat" name="remise_percent" value="'.$line->remise_percent.'">%';
-			}
-			else print '&nbsp;';
-			print '</td>';
-			print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-			print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
-			print '</tr>' . "\n";
-
-			// Start and end dates selector
-			if ($conf->service->enabled && $dateSelector)
-			{
-				print '<tr '.$bc[$var].'>';
-				print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-				print $html->select_date($line->date_start,'date_start',$usehm,$usehm,$line->date_start?0:1,"updateligne");
-				print ' '.$langs->trans('to').' ';
-				print $html->select_date($line->date_end,'date_end',$usehm,$usehm,$line->date_end?0:1,"updateligne");
-				print '</td>';
-				print '</tr>';
-			}
-
-			print "</form>\n";
 		}
 	}
 
