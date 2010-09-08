@@ -427,7 +427,7 @@ class Propal extends CommonObject
 	 *	\param     	info_bits        	Miscellanous informations
 	 *    \return     int             	0 en cas de succes
 	 */
-	function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0)
+	function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0)
 	{
 		global $conf,$user,$langs;
 
@@ -456,6 +456,8 @@ class Propal extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
+			
+			if (empty($qty) && empty($special_code)) $special_code=3;
 
 
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
@@ -481,8 +483,7 @@ class Propal extends CommonObject
 			$sql.= " , total_localtax2=".price2num($total_localtax2);
 			$sql.= " , total_ttc=".price2num($total_ttc);
 			$sql.= " , info_bits=".$info_bits;
-			//if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
-			$sql.= " , special_code=".(empty($qty)?"3":"0");
+			$sql.= " , special_code=".$special_code;
 			$sql.= " WHERE rowid = '".$rowid."'";
 
 			$result=$this->db->query($sql);

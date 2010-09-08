@@ -76,9 +76,9 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /******************************************************************************/
 
 // Hook of thirdparty module
-if (! empty($commande->objModules))
+if (! empty($commande->hooks))
 {
-	foreach($commande->objModules as $module)
+	foreach($commande->hooks as $module)
 	{
 		$module->doActions($commande);
 		$mesg = $module->error;
@@ -1672,9 +1672,9 @@ else
 					}
 
 					// Hook of thirdparty module
-					if (! empty($commande->objModules))
+					if (! empty($commande->hooks))
 					{
-						foreach($commande->objModules as $module)
+						foreach($commande->hooks as $module)
 						{
 							$var=!$var;
 							$module->formAddObject($commande);

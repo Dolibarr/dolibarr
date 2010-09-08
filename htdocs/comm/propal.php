@@ -86,9 +86,9 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /******************************************************************************/
 
 // Hook of thirdparty module
-if (! empty($propal->objModules))
+if (! empty($propal->hooks))
 {
-	foreach($propal->objModules as $module)
+	foreach($propal->hooks as $module)
 	{
 		$module->doActions($propal);
 		$mesg = $module->error;
@@ -1388,9 +1388,9 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Hook of thirdparty module
-			if (! empty($propal->objModules))
+			if (! empty($propal->hooks))
 			{
-				foreach($propal->objModules as $module)
+				foreach($propal->hooks as $module)
 				{
 					$var=!$var;
 					$module->formAddObject($propal);

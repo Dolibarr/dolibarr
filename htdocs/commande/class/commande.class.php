@@ -1920,7 +1920,7 @@ class Commande extends CommonObject
 			$sql.= ",localtax1_tx='".price2num($txlocaltax1)."'";
 			$sql.= ",localtax2_tx='".price2num($txlocaltax2)."'";
 			$sql.= ",qty='".price2num($qty)."'";
-			$sql.= ",product_type='".$type."'";
+			if (! empty($type)) $sql.= ",product_type='".$type."'";
 			$sql.= ",info_bits='".$info_bits."'";
 			$sql.= ",total_ht='".price2num($total_ht)."'";
 			$sql.= ",total_tva='".price2num($total_tva)."'";

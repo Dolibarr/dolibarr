@@ -33,8 +33,8 @@
 
 class CommonObject
 {
-	// Instantiate classes of thirdparty module
-	var $objModules=array();
+	// Instantiate hook classe of thirdparty module
+	var $hooks=array();
 
 	/**
 	 *      \brief      Check if ref is used.
@@ -1246,18 +1246,29 @@ class CommonObject
 			if ($conf->$module->enabled && in_array($type,$hooks))
 			{
 				// Include class and library of thirdparty module
-				if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/class/'.$module.'.class.php'))
+				if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/class/actions_'.$module.'.class.php') &&
+					file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/class/dao_'.$module.'.class.php'))
 				{
-					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/class/'.$module.'.class.php');
+					// Include actions class (controller)
+					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/class/actions_'.$module.'.class.php');
+					
+					// Include dataservice class (model)
+					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/class/dao_'.$module.'.class.php');
+					
+					// Instantiate actions class (controller)
+					$controlclassname = 'Actions'.ucfirst($module);
+					$objModule = new $controlclassname($this->db);
+					$this->hooks[$objModule->module_number] = $objModule;
+					
+					// Instantiate dataservice class (model)
+					$modelclassname = 'Dao'.ucfirst($module);
+					$this->hooks[$objModule->module_number]->object = new $modelclassname($this->db);
 				}
+				
 				if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php'))
 				{
 					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php');
-				}
-
-				$classname = ucfirst($module);
-				$obj_module = new $classname($this->db);
-				$this->objModules[$obj_module->module_number] = $obj_module;
+				}	
 			}
 		}
 	}
@@ -1356,7 +1367,7 @@ class CommonObject
 
 			if ($line->product_type == 9 && ! empty($line->special_code))
 			{
-				$this->objModules[$line->special_code]->printObjectLine($this,$line,$num,$i);
+				$this->hooks[$line->special_code]->printObjectLine($this,$line,$num,$i);
 			}
 			else
 			{
