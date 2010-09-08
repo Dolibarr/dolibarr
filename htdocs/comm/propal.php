@@ -1012,7 +1012,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	
 	/*
-	 * Confirmation de la suppression d'une ligne produit/service
+	 * TODO ajout temporaire pour test en attendant la migration en template
 	 */
 	if ($_GET['action'] == 'ask_deletemilestone')
 	{
