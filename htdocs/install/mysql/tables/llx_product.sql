@@ -45,7 +45,7 @@ create table llx_product
   fk_user_author			integer,
   tosell					tinyint      DEFAULT 1,
   tobuy						tinyint      DEFAULT 1,
-  fk_product_type			integer      DEFAULT 0,			-- Type 0 for regular product, 1 for service
+  fk_product_type			integer      DEFAULT 0,			-- Type 0 for regular product, 1 for service, 9 for other (used by external module)
   duration					varchar(6),
   seuil_stock_alerte		integer      DEFAULT 0,
   barcode					varchar(255) DEFAULT NULL,
