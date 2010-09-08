@@ -939,6 +939,7 @@ class Propal extends CommonObject
 
 						$line                   = new PropaleLigne($this->db);
 
+						$line->rowid			= $objp->rowid;
 						$line->product_type     = $objp->product_type;
 						$line->desc             = $objp->description;  // Description ligne
 						$line->qty              = $objp->qty;
