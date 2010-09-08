@@ -168,7 +168,7 @@ class Account extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($result);
-				// Anciens liens (pour compatibilit�)
+				// Anciens liens (pour compatibilite)
 				$lines[$i][0] = $obj->url;
 				$lines[$i][1] = $obj->url_id;
 				$lines[$i][2] = $obj->label;
@@ -525,9 +525,9 @@ class Account extends CommonObject
 
 
 	/**
-	 *      \brief      Charge un compte en memoire depuis la base
-	 *      \param      id      Id du compte a recuperer
-	 *      \param      ref     Ref du compte a recuperer
+	 *      Load a bank account into memory from database
+	 *      @param      id      Id du compte a recuperer
+	 *      @param      ref     Ref du compte a recuperer
 	 */
 	function fetch($id,$ref='')
 	{

@@ -159,3 +159,4 @@ LinkToGeneratedPagesDesc=Cet écran vous permet de générer des planches de car
 DocForAllMembersCards=Génération de cartes pour tous les adhérents (Format de planche actuellement configuré: <b>%s</b>)
 DocForOneMemberCards=Génération de cartes pour un adhérent particulier (Format de planche actuellement configuré: <b>%s</b>)
 DocForLabels=Génération d'étiquette d'adresses (Format de planche actuellement configuré: <b>%s</b>)
+SubscriptionPayment=Paiement cotisation

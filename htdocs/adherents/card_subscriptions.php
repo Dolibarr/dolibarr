@@ -165,93 +165,93 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 
     $langs->load("banks");
 
-	$result=$adh->fetch($rowid);
-	$result=$adht->fetch($adh->typeid);
+    $result=$adh->fetch($rowid);
+    $result=$adht->fetch($adh->typeid);
 
-	// Subscription informations
-	$datecotisation=0;
-	$datesubend=0;
-	if ($_POST["reyear"] && $_POST["remonth"] && $_POST["reday"])
-	{
-		$datecotisation=dol_mktime(0, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-	}
-	if ($_POST["endyear"] && $_POST["endmonth"] && $_POST["endday"])
-	{
-		$datesubend=dol_mktime(0, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-	}
-	$cotisation=$_POST["cotisation"];	// Amount of subscription
-	$label=$_POST["label"];
+    // Subscription informations
+    $datecotisation=0;
+    $datesubend=0;
+    if ($_POST["reyear"] && $_POST["remonth"] && $_POST["reday"])
+    {
+        $datecotisation=dol_mktime(0, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+    }
+    if ($_POST["endyear"] && $_POST["endmonth"] && $_POST["endday"])
+    {
+        $datesubend=dol_mktime(0, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+    }
+    $cotisation=$_POST["cotisation"];	// Amount of subscription
+    $label=$_POST["label"];
 
-	if (! $datecotisation)
-	{
-	    $error++;
-		$errmsg=$langs->trans("BadDateFormat");
-		$action='addsubscription';
-	}
-	if (! $datesubend)
-	{
-		$datesubend=dol_time_plus_duree(dol_time_plus_duree($datecotisation,$defaultdelay,$defaultdelayunit),-1,'d');
-	}
+    if (! $datecotisation)
+    {
+        $error++;
+        $errmsg=$langs->trans("BadDateFormat");
+        $action='addsubscription';
+    }
+    if (! $datesubend)
+    {
+        $datesubend=dol_time_plus_duree(dol_time_plus_duree($datecotisation,$defaultdelay,$defaultdelayunit),-1,'d');
+    }
 
-	// Payment informations
-	$accountid=$_POST["accountid"];
-	$operation=$_POST["operation"];	// Payment mode
-	$num_chq=$_POST["num_chq"];
-	$emetteur_nom=$_POST["chqemetteur"];
-	$emetteur_banque=$_POST["chqbank"];
+    // Payment informations
+    $accountid=$_POST["accountid"];
+    $operation=$_POST["operation"];	// Payment mode
+    $num_chq=$_POST["num_chq"];
+    $emetteur_nom=$_POST["chqemetteur"];
+    $emetteur_banque=$_POST["chqbank"];
     $option=$_POST["paymentsave"];
     if (empty($option)) $option='none';
 
-	// Check if a payment is mandatory or not
-	if (! $error && $adht->cotisation)	// Type adherent soumis a cotisation
-	{
-		if (! is_numeric($_POST["cotisation"]))
-		{
-			// If field is '' or not a numeric value
-			$errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
+    // Check if a payment is mandatory or not
+    if (! $error && $adht->cotisation)	// Type adherent soumis a cotisation
+    {
+        if (! is_numeric($_POST["cotisation"]))
+        {
+            // If field is '' or not a numeric value
+            $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
             $error++;
-			$action='addsubscription';
-		}
-		else
-		{
-			if ($conf->banque->enabled && $_POST["paymentsave"] != 'none')
-			{
-			    if ($_POST["cotisation"])
-				{
-					if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
-					if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
-					if (! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
-				}
-				else
-				{
-					if ($_POST["accountid"])   $errmsg=$langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
-				}
-				if ($errmsg) $action='addsubscription';
-			}
-		}
-	}
+            $action='addsubscription';
+        }
+        else
+        {
+            if ($conf->banque->enabled && $_POST["paymentsave"] != 'none')
+            {
+                if ($_POST["cotisation"])
+                {
+                    if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+                    if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+                    if (! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
+                }
+                else
+                {
+                    if ($_POST["accountid"])   $errmsg=$langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
+                }
+                if ($errmsg) $action='addsubscription';
+            }
+        }
+    }
 
-	if (! $error && $action=='cotisation')
-	{
-		$db->begin();
+    if (! $error && $action=='cotisation')
+    {
+        $db->begin();
 
-		$crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend, $option);
+        $crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend, $option);
 
-		if ($crowid <= 0)
-		{
-		    $error++;
-		    $errmsg=$adh->error;
-		}
+        if ($crowid <= 0)
+        {
+            $error++;
+            $errmsg=$adh->error;
+        }
 
-		if (! $error)
-		{
-		    if ($option == 'bankviainvoice' || $option == 'invoiceonly')
-		    {
+        if (! $error)
+        {
+            if ($option == 'bankviainvoice' || $option == 'invoiceonly')
+            {
                 // If option choosed, we create invoice
                 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
                 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/paymentterm.class.php");
 
-    		    $invoice=new Facture($db);
+                $invoice=new Facture($db);
                 $customer=new Societe($db);
                 $result=$customer->fetch($adh->fk_soc);
                 if ($result <= 0)
@@ -265,13 +265,13 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
                 $invoice->cond_reglement_id=$customer->cond_reglement_id;
                 if (empty($invoice->cond_reglement_id))
                 {
-                	$paymenttermstatic=new PaymentTerm($db);
-                	$invoice->cond_reglement_id=$paymenttermstatic->getDefaultId();
-					if (empty($invoice->cond_reglement_id))
-					{
-						$error++;
-						$errmsg='ErrorNoPaymentTermRECEPFound';
-					}
+                    $paymenttermstatic=new PaymentTerm($db);
+                    $invoice->cond_reglement_id=$paymenttermstatic->getDefaultId();
+                    if (empty($invoice->cond_reglement_id))
+                    {
+                        $error++;
+                        $errmsg='ErrorNoPaymentTermRECEPFound';
+                    }
                 }
                 $invoice->socid=$adh->fk_soc;
                 $invoice->date=$datecotisation;
@@ -294,32 +294,60 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
                     $error++;
                 }
 
+                // Validate invoice
                 $result=$invoice->validate($user);
 
-                 if ($option == 'bankviainvoice')
-                 {
+                if ($option == 'bankviainvoice')
+                {
                     // Now we add payment
-                    // TODO
+                    require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
+                    require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 
+                    // Creation de la ligne paiement
+                    $amounts[$invoice->id] = price2num($cotisation);
+                    $paiement = new Paiement($db);
+                    $paiement->datepaye     = $datecotisation;
+                    $paiement->amounts      = $amounts;
+                    $paiement->paiementid   = $operation;
+                    $paiement->num_paiement = $num_chq;
+                    $paiement->note         = $label;
 
-                 }
-		    }
-		}
+                    if (! $error)
+                    {
+                        $paiement_id = $paiement->create($user);
+                        if (! $paiement_id > 0)
+                        {
+                            $errmsg=$paiement->error;
+                            $error++;
+                        }
+                    }
 
-		if (! $error)
-		{
-			$db->commit();
-		}
-		else
-		{
-			$db->rollback();
-			$errmsg=$adh->error;
-			$action = 'addsubscription';
-		}
+                    if (! $error)
+                    {
+                        $result=$paiement->addLinkInvoiceBank($user,'(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
+                        if (! $result > 0)
+                        {
+                            $errmsg=$paiement->error;
+                            $error++;
+                        }
+                    }
+                }
+            }
+        }
 
-		// Send email
-		if (! $error)
-		{
+        if (! $error)
+        {
+            $db->commit();
+        }
+        else
+        {
+            $db->rollback();
+            $action = 'addsubscription';
+        }
+
+        // Send email
+        if (! $error)
+        {
             // Send confirmation Email
             if ($adh->email && $_POST["sendmail"])
             {
@@ -335,8 +363,8 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
             $_POST["operation"]='';
             $_POST["label"]='';
             $_POST["num_chq"]='';
-		}
-	}
+        }
+    }
 }
 
 
@@ -464,10 +492,10 @@ if ($rowid)
     if ($_GET['action'] == 'editlogin')
     {
         /*$include=array();
-        if (empty($user->rights->user->user->creer))    // If can edit only itself user, we can link to itself only
-        {
-            $include=array($adh->user_id,$user->id);
-        }*/
+         if (empty($user->rights->user->user->creer))    // If can edit only itself user, we can link to itself only
+         {
+         $include=array($adh->user_id,$user->id);
+         }*/
         print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'userid','');
     }
     else
@@ -488,12 +516,12 @@ if ($rowid)
 
     if ($errmsg)
     {
-    	if (preg_match('/^Error/i',$errmsg))
-    	{
-    		$langs->load("errors");
-    		$errmsg=$langs->trans($errmsg);
-    	}
-    	print '<div class="error">'.$errmsg.'</div>'."\n";
+        if (preg_match('/^Error/i',$errmsg))
+        {
+            $langs->load("errors");
+            $errmsg=$langs->trans($errmsg);
+        }
+        print '<div class="error">'.$errmsg.'</div>'."\n";
     }
 
 
@@ -504,18 +532,18 @@ if ($rowid)
     // Lien nouvelle cotisation si non brouillon et non resilie
     if ($user->rights->adherent->cotisation->creer)
     {
-    	if ($action != 'addsubscription')
-    	{
+        if ($action != 'addsubscription')
+        {
             print '<div class="tabsAction">';
 
-    	    if ($adh->statut > 0) print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("AddSubscription")."</a>";
+            if ($adh->statut > 0) print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("AddSubscription")."</a>";
             else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a>';
 
             print "<br>\n";
 
             print '</div>';
             print '<br>';
-    	}
+        }
     }
 
 
@@ -539,60 +567,60 @@ if ($rowid)
         $result = $db->query($sql);
         if ($result)
         {
-        	$cotisationstatic=new Cotisation($db);
-        	$accountstatic=new Account($db);
+            $cotisationstatic=new Cotisation($db);
+            $accountstatic=new Account($db);
 
-        	$num = $db->num_rows($result);
-        	$i = 0;
+            $num = $db->num_rows($result);
+            $i = 0;
 
-        	print "<table class=\"noborder\" width=\"100%\">\n";
+            print "<table class=\"noborder\" width=\"100%\">\n";
 
-        	print '<tr class="liste_titre">';
-        	print '<td>'.$langs->trans("Ref").'</td>';
-        	print '<td align="center">'.$langs->trans("DateSubscription").'</td>';
-        	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-        	print '<td align="right">'.$langs->trans("Amount").'</td>';
-        	if ($conf->banque->enabled)
-        	{
-        		print '<td align="right">'.$langs->trans("Account").'</td>';
-        	}
-        	print "</tr>\n";
+            print '<tr class="liste_titre">';
+            print '<td>'.$langs->trans("Ref").'</td>';
+            print '<td align="center">'.$langs->trans("DateSubscription").'</td>';
+            print '<td align="center">'.$langs->trans("DateEnd").'</td>';
+            print '<td align="right">'.$langs->trans("Amount").'</td>';
+            if ($conf->banque->enabled)
+            {
+                print '<td align="right">'.$langs->trans("Account").'</td>';
+            }
+            print "</tr>\n";
 
-        	$var=True;
-        	while ($i < $num)
-        	{
-        		$objp = $db->fetch_object($result);
-        		$var=!$var;
-        		print "<tr $bc[$var]>";
-        		$cotisationstatic->ref=$objp->crowid;
-        		$cotisationstatic->id=$objp->crowid;
-        		print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
-        		print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
-        		print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
-        		print '<td align="right">'.price($objp->cotisation).'</td>';
-        		if ($conf->banque->enabled)
-        		{
-        			print '<td align="right">';
-        			if ($objp->bid)
-        			{
-        				$accountstatic->label=$objp->label;
-        				$accountstatic->id=$objp->baid;
-        				print $accountstatic->getNomUrl(1);
-        			}
-        			else
-        			{
-        				print '&nbsp;';
-        			}
-        			print '</td>';
-        		}
-        		print "</tr>";
-        		$i++;
-        	}
-        	print "</table>";
+            $var=True;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
+                $var=!$var;
+                print "<tr $bc[$var]>";
+                $cotisationstatic->ref=$objp->crowid;
+                $cotisationstatic->id=$objp->crowid;
+                print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
+                print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
+                print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
+                print '<td align="right">'.price($objp->cotisation).'</td>';
+                if ($conf->banque->enabled)
+                {
+                    print '<td align="right">';
+                    if ($objp->bid)
+                    {
+                        $accountstatic->label=$objp->label;
+                        $accountstatic->id=$objp->baid;
+                        print $accountstatic->getNomUrl(1);
+                    }
+                    else
+                    {
+                        print '&nbsp;';
+                    }
+                    print '</td>';
+                }
+                print "</tr>";
+                $i++;
+            }
+            print "</table>";
         }
         else
         {
-        	dol_print_error($db);
+            dol_print_error($db);
         }
     }
 
@@ -603,9 +631,9 @@ if ($rowid)
      */
     if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
     {
-    	print '<br>';
+        print '<br>';
 
-    	print_fiche_titre($langs->trans("NewCotisation"));
+        print_fiche_titre($langs->trans("NewCotisation"));
 
         $bankdirect=0;        // Option to write to bank is on by default
         $bankviainvoice=0;    // Option to write via invoice is on by default
@@ -615,10 +643,10 @@ if ($rowid)
         // TODO A virer
         //$bankviainvoice=0;
 
-    	print "\n\n<!-- Form add subscription -->\n";
+        print "\n\n<!-- Form add subscription -->\n";
 
-    	if ($conf->use_javascript_ajax)
-    	{
+        if ($conf->use_javascript_ajax)
+        {
             print "\n".'<script type="text/javascript" language="javascript">';
             print 'jQuery(document).ready(function () {
                         jQuery(".bankswitchclass").'.($bankdirect||$bankviainvoice?'show()':'hide()').';
@@ -635,66 +663,66 @@ if ($rowid)
                             jQuery(".bankswitchclass").show();
                         });
     	       });';
-        	print '</script>'."\n";
-    	}
+            print '</script>'."\n";
+        }
 
-    	print '<form name="cotisation" method="post" action="'.$_SERVER["PHP_SELF"].'">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<input type="hidden" name="action" value="cotisation">';
-    	print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-    	print "<table class=\"border\" width=\"100%\">\n";
+        print '<form name="cotisation" method="post" action="'.$_SERVER["PHP_SELF"].'">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="cotisation">';
+        print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+        print "<table class=\"border\" width=\"100%\">\n";
 
-    	$today=mktime();
-    	$datefrom=0;
-    	$dateto=0;
+        $today=mktime();
+        $datefrom=0;
+        $dateto=0;
 
-    	// Date start subscription
-    	print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
-    	if ($_POST["reday"])
-    	{
-    		$datefrom=dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
-    	}
-    	if (! $datefrom)
-    	{
-    		if ($adh->datefin > 0)
-    		{
-    			$datefrom=dol_time_plus_duree($adh->datefin,1,'d');
-    		}
-    		else
-    		{
-    			$datefrom=mktime();
-    		}
-    	}
-    	$html->select_date($datefrom,'','','','',"cotisation");
-    	print "</td></tr>";
+        // Date start subscription
+        print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
+        if ($_POST["reday"])
+        {
+            $datefrom=dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+        }
+        if (! $datefrom)
+        {
+            if ($adh->datefin > 0)
+            {
+                $datefrom=dol_time_plus_duree($adh->datefin,1,'d');
+            }
+            else
+            {
+                $datefrom=mktime();
+            }
+        }
+        $html->select_date($datefrom,'','','','',"cotisation");
+        print "</td></tr>";
 
-    	// Date end subscription
-    	if ($_POST["endday"])
-    	{
-    		$dateto=dol_mktime(0,0,0,$_POST["endmonth"],$_POST["endday"],$_POST["endyear"]);
-    	}
-    	if (! $dateto)
-    	{
-    		//$dateto=dol_time_plus_duree(dol_time_plus_duree($datefrom,$defaultdelay,$defaultdelayunit),-1,'d');
-    		$dateto=-1;		// By default, no date is suggested
-    	}
-    	print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
-    	$html->select_date($dateto,'end','','','',"cotisation");
-    	print "</td></tr>";
+        // Date end subscription
+        if ($_POST["endday"])
+        {
+            $dateto=dol_mktime(0,0,0,$_POST["endmonth"],$_POST["endday"],$_POST["endyear"]);
+        }
+        if (! $dateto)
+        {
+            //$dateto=dol_time_plus_duree(dol_time_plus_duree($datefrom,$defaultdelay,$defaultdelayunit),-1,'d');
+            $dateto=-1;		// By default, no date is suggested
+        }
+        print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
+        $html->select_date($dateto,'end','','','',"cotisation");
+        print "</td></tr>";
 
-    	if ($adht->cotisation)
-    	{
-    		// Amount
-    		print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        if ($adht->cotisation)
+        {
+            // Amount
+            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-    		// Label
-    		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-    		print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
-    		print dol_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
+            // Label
+            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
+            print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
+            print dol_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
 
-    		// Bank account transaction
-    		if ($conf->banque->enabled || $conf->facture->enabled)
-    		{
+            // Bank account transaction
+            if ($conf->banque->enabled || $conf->facture->enabled)
+            {
                 $company=new Societe($db);
                 if ($adh->fk_soc)
                 {
@@ -734,43 +762,43 @@ if ($rowid)
                 }
                 print '</td></tr>';
 
-    			// Bank account
-    			print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
-    			$html->select_comptes($_POST["accountid"],'accountid',0,'',1);
-    			print "</td></tr>\n";
+                // Bank account
+                print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
+                $html->select_comptes($_POST["accountid"],'accountid',0,'',1);
+                print "</td></tr>\n";
 
-    			// Payment mode
-    			print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-    			$html->select_types_paiements($_POST["operation"],'operation');
-    			print "</td></tr>\n";
+                // Payment mode
+                print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+                $html->select_types_paiements($_POST["operation"],'operation');
+                print "</td></tr>\n";
 
-    			print '<tr class="bankswitchclass"><td>'.$langs->trans('Numero');
-    			print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-    			print '</td>';
-    			print '<td><input id="fieldnum_chq" name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
+                print '<tr class="bankswitchclass"><td>'.$langs->trans('Numero');
+                print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+                print '</td>';
+                print '<td><input id="fieldnum_chq" name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
 
-    			print '<tr class="bankswitchclass"><td>'.$langs->trans('CheckTransmitter');
-    			print ' <em>('.$langs->trans("ChequeMaker").')</em>';
-    			print '</td>';
-    			print '<td><input id="fieldchqemetteur" name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
+                print '<tr class="bankswitchclass"><td>'.$langs->trans('CheckTransmitter');
+                print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+                print '</td>';
+                print '<td><input id="fieldchqemetteur" name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
 
-    			print '<tr class="bankswitchclass"><td>'.$langs->trans('Bank');
-    			print ' <em>('.$langs->trans("ChequeBank").')</em>';
-    			print '</td>';
-    			print '<td><input id="chqbank" name="chqbank" size="32" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
-    		}
-    	}
+                print '<tr class="bankswitchclass"><td>'.$langs->trans('Bank');
+                print ' <em>('.$langs->trans("ChequeBank").')</em>';
+                print '</td>';
+                print '<td><input id="chqbank" name="chqbank" size="32" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
+            }
+        }
 
         print '<tr><td colspan="2">&nbsp;</td>';
 
         print '<tr><td width="30%">'.$langs->trans("SendAcknowledgementByMail").'</td>';
-    	print '<td>';
-    	if (! $adh->email)
-    	{
-    		print $langs->trans("NoEMail");
-    	}
-    	else
-    	{
+        print '<td>';
+        if (! $adh->email)
+        {
+            print $langs->trans("NoEMail");
+        }
+        else
+        {
             $adht = new AdherentType($db);
             $adht->fetch($adh->typeid);
 
@@ -787,21 +815,21 @@ if ($rowid)
             $helpcontent.='<b>'.$langs->trans("Content").'</b>:<br>';
             $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
 
-    		print $html->textwithpicto($tmp,$helpcontent,1,'help');
-    	}
-    	print '</td></tr>';
+            print $html->textwithpicto($tmp,$helpcontent,1,'help');
+        }
+        print '</td></tr>';
         print '</table>';
         print '<br>';
 
-    	print '<center>';
-    	print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
-    	print ' &nbsp; &nbsp; ';
-    	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-    	print '</center>';
+        print '<center>';
+        print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
+        print ' &nbsp; &nbsp; ';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        print '</center>';
 
-    	print '</form>';
+        print '</form>';
 
-    	print "\n<!-- End form subscription -->\n\n";
+        print "\n<!-- End form subscription -->\n\n";
     }
 
     //print '</td></tr>';

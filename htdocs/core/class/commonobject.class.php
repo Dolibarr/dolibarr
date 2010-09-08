@@ -542,7 +542,7 @@ class CommonObject
 		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." < '".addslashes($this->ref)."'";
 		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
-		if (isset($filter)) $sql.=" AND ".$filter;
+		if (! empty($filter)) $sql.=" AND ".$filter;
 		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
 		if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN (0,'.$conf->entity.')';
 

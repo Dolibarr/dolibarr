@@ -116,9 +116,10 @@ class Paiement
 	}
 
 	/**
-	 *    \brief      Create payment in database
-	 *    \param      user        object user
-	 *    \return     int         id of created payment, < 0 if error
+	 *    Create payment of invoices into database.
+	 *    Use this->amounts to have list of invoices for the payment
+	 *    @param      user        object user
+	 *    @return     int         id of created payment, < 0 if error
 	 */
 	function create($user)
 	{
@@ -138,64 +139,69 @@ class Paiement
 		}
 		$this->total = price2num($this->total);
 
+		// Check parameters
+		if ($this->total == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement
+
 
 		$this->db->begin();
 
-		if ($this->total <> 0) // On accepte les montants negatifs pour les rejets de prelevement
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
+		$sql.= " VALUES ('".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$this->total."', ".$this->paiementid.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.")";
+
+		dol_syslog("Paiement::Create insert paiement sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
-			$sql.= " VALUES ('".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$this->total."', ".$this->paiementid.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.")";
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'paiement');
 
-			dol_syslog("Paiement::Create insert paiement sql=".$sql);
-			$resql = $this->db->query($sql);
-			if ($resql)
+			// Insere liens montants / factures
+			foreach ($this->amounts as $key => $amount)
 			{
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'paiement');
-
-				// Insere liens montants / factures
-				foreach ($this->amounts as $key => $amount)
+				$facid = $key;
+				if (is_numeric($amount) && $amount <> 0)
 				{
-					$facid = $key;
-					if (is_numeric($amount) && $amount <> 0)
-					{
-						$amount = price2num($amount);
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount)';
-						$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\')';
+					$amount = price2num($amount);
+					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount)';
+					$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\')';
 
-						dol_syslog("Paiement::Create Amount line '.$key.' insert paiement_facture sql=".$sql);
-						$resql=$this->db->query($sql);
-						if (! $resql)
-						{
-							$this->error=$this->db->lasterror();
-							dol_syslog('Paiement::Create insert paiement_facture error='.$this->error, LOG_ERR);
-							$error++;
-						}
-					}
-					else
+					dol_syslog("Paiement::Create Amount line '.$key.' insert paiement_facture sql=".$sql);
+					$resql=$this->db->query($sql);
+					if (! $resql)
 					{
-						dol_syslog('Paiement::Create Amount line '.$key.' not a number. We discard it.');
+						$this->error=$this->db->lasterror();
+						dol_syslog('Paiement::Create insert paiement_facture error='.$this->error, LOG_ERR);
+						$error++;
 					}
 				}
-
-				if (! $error)
+				else
 				{
-					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('PAYMENT_CUSTOMER_CREATE',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
+					dol_syslog('Paiement::Create Amount line '.$key.' not a number. We discard it.');
 				}
 			}
-			else
+
+			if (! $error)
 			{
-				$this->error=$this->db->error();
-				dol_syslog('Paiement::Create insert paiement error='.$this->error, LOG_ERR);
-				$error++;
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('PAYMENT_CUSTOMER_CREATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
 			}
 		}
+		else
+		{
+			$this->error=$this->db->error();
+			dol_syslog('Paiement::Create insert paiement error='.$this->error, LOG_ERR);
+			$error++;
+		}
 
-		if ($this->total <> 0 && ! $error) // On accepte les montants negatifs
+        // If option to add link to bank account is on
+
+
+
+
+		if (! $error) // On accepte les montants negatifs
 		{
 			$this->db->commit();
 			return $this->id;
@@ -293,6 +299,99 @@ class Paiement
 		}
 	}
 
+
+    /**
+     *      A record into bank for payment with links between this bank record and invoices of payment.
+     *      All payment properties must have been set first like after a call to create().
+     *      @param      user                Object of user making payment
+     *      @param      label               Label to use in bank record
+     *      @param      accountid           Id of bank account to do link with
+     *      @param      emetteur_nom        Name of transmitter
+     *      @param      emetteur_banque     Name of bank
+     *      @return     int                 <0 if KO, >0 if OK
+     */
+    function addLinkInvoiceBank($user,$label,$accountid,$emetteur_nom,$emetteur_banque)
+    {
+        global $conf;
+
+        $error=0;
+
+        if ($conf->banque->enabled)
+        {
+            require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+
+            $acc = new Account($this->db);
+            $acc->fetch($accountid);
+
+            // Insert payment into llx_bank
+            $bank_line_id = $acc->addline($this->datepaye,
+            $this->paiementid,  // Payment mode id or code ("CHQ or VIR for example")
+            $label,
+            $this->total,
+            $this->num_paiement,
+            '',
+            $user,
+            $emetteur_nom,
+            $emetteur_banque);
+
+            // Mise a jour fk_bank dans llx_paiement.
+            // On connait ainsi le paiement qui a genere l'ecriture bancaire
+            if ($bank_line_id > 0)
+            {
+                $result=$this->update_fk_bank($bank_line_id);
+                if ($result <= 0)
+                {
+                    $error++;
+                    dol_print_error($this->db);
+                }
+                // Add link 'payment' in bank_url between payment and bank transaction
+                $result=$acc->add_url_line($bank_line_id,
+                    $this->id,
+                    DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
+                                                 '(paiement)',
+                                                 'payment');
+                if ($result <= 0)
+                {
+                    $error++;
+                    dol_print_error($this->db);
+                }
+                // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
+                $linkaddedforthirdparty=array();
+                foreach ($this->amounts as $key => $value)
+                {
+                    $fac = new Facture($this->db);
+                    $fac->fetch($key);
+                    $fac->fetch_thirdparty();   // This should be always same third party but we loop in case of.
+                    if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                    {
+                        $result=$acc->add_url_line($bank_line_id,
+                        $fac->client->id,
+                        DOL_URL_ROOT.'/compta/fiche.php?socid=',
+                        $fac->client->nom,
+                        'company');
+                        if ($result <= 0) dol_print_error($this->db);
+                        $linkaddedforthirdparty[$fac->client->id]=$fac->client->id;  // Mark as done for this thirdparty
+                    }
+                }
+            }
+            else
+            {
+                $this->error=$acc->error;
+                $error++;
+            }
+        }
+
+        if (! $error)
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+
 	/**
 	 *      \brief      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
 	 *      \param      id_bank     Id compte bancaire
@@ -301,6 +400,8 @@ class Paiement
 	{
 		$sql = 'UPDATE llx_paiement set fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
+
+		dol_syslog('Paiement::update_fk_bank sql='.$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{

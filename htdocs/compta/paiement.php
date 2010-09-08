@@ -29,8 +29,8 @@
 
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 
 $langs->load('companies');
 $langs->load('bills');
@@ -46,6 +46,14 @@ $page=isset($_GET['page'])?$_GET['page']:$_POST['page'];
 $amounts=array();
 $amountsresttopay=array();
 $addwarning=0;
+
+// Security check
+if ($user->societe_id > 0)
+{
+    $socid = $user->societe_id;
+}
+
+
 
 /*
  * Action add_paiement et confirm_paiement
@@ -130,10 +138,9 @@ if ($_POST['action'] == 'add_paiement')
  */
 if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 {
-	$datepaye = dol_mktime(12, 0 , 0,
-	$_POST['remonth'],
-	$_POST['reday'],
-	$_POST['reyear']);
+    $error=0;
+
+	$datepaye = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
 	if (! $error)
 	{
@@ -147,70 +154,27 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 		$paiement->num_paiement = $_POST['num_paiement'];
 		$paiement->note         = $_POST['comment'];
 
-		$paiement_id = $paiement->create($user);
-
-		if ($paiement_id > 0)
+		if (! $error)
 		{
-			if ($conf->banque->enabled)
-			{
-				// Insert payment into llx_bank
-				$label = "(CustomerInvoicePayment)";
-				$acc = new Account($db, $_POST['accountid']);
-
-				$bank_line_id = $acc->addline($paiement->datepaye,
-				$paiement->paiementid,	// Payment mode id or code ("CHQ or VIR for example")
-				$label,
-				$totalpaiement,
-				$paiement->num_paiement,
-	      		'',
-				$user,
-				$_POST['chqemetteur'],
-				$_POST['chqbank']);
-
-				// Mise a jour fk_bank dans llx_paiement.
-				// On connait ainsi le paiement qui a genere l'ecriture bancaire
-				if ($bank_line_id > 0)
-				{
-					$result=$paiement->update_fk_bank($bank_line_id);
-					if ($result <= 0) dol_print_error($db);
-                    // Add link in bank_url between payment and bank transaction
-					$result=$acc->add_url_line($bank_line_id,
-                        $paiement_id,
-                        DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
-                                                     '(paiement)',
-                                                     'payment');
-                    if ($result <= 0) dol_print_error($db);
-					// Add link in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                    $linkaddedforthirdparty=array();
-                    foreach ($paiement->amounts as $key => $value)
-                    {
-						$fac = new Facture($db);
-						$fac->fetch($key);
-						$fac->fetch_thirdparty();
-						if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
-						{
-							$result=$acc->add_url_line($bank_line_id,
-							$fac->client->id,
-							DOL_URL_ROOT.'/compta/fiche.php?socid=',
-							$fac->client->nom,
-			       			'company');
-                            if ($result <= 0) dol_print_error($db);
-							$linkaddedforthirdparty[$fac->client->id]=$fac->client->id;  // Mark as done for this thirdparty
-						}
-					}
-				}
-				else
-				{
-					$error++;
-				}
-			}
-		}
-		else
-		{
-			$error++;
+    		$paiement_id = $paiement->create($user);
+    		if (! $paiement_id > 0)
+    		{
+    		    $errmsg=$paiement->error;
+    		    $error++;
+    		}
 		}
 
-		if ($error == 0)
+		if (! $error)
+		{
+		    $result=$paiement->addLinkInvoiceBank($user,'(CustomerInvoicePayment)',$_POST['accountid'],$_POST['chqemetteur'],$_POST['chqbank']);
+            if (! $result > 0)
+            {
+                $errmsg=$paiement->error;
+                $error++;
+            }
+		}
+
+		if (! $error)
 		{
 			$db->commit();
 			$loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
@@ -222,13 +186,6 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 			$db->rollback();
 		}
 	}
-}
-
-// Security check
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
 }
 
 
