@@ -127,7 +127,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			if (! is_object($object))
 			{
 				$id = $object;
-				$object = new Propal($this->db,"",$id);
+				$object = new Propal($this->db);
 				$ret=$object->fetch($id);
 			}
 			$object->fetch_thirdparty();
