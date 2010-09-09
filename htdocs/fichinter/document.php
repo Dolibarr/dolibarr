@@ -162,7 +162,7 @@ if ($object->id)
 
 	// List of document
 	$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'fichinter',$param);
+	$formfile->list_of_documents($filearray,$object,'ficheinter',$param);
 
 }
 else
