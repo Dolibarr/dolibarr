@@ -167,7 +167,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->projet->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	$result=project_pdf_create($db, $project->id, $project->modelpdf, $outputlangs);
+	$result=project_pdf_create($db, $project, $project->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);

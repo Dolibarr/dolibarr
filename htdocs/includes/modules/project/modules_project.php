@@ -134,14 +134,14 @@ class ModeleNumRefProjects
 
 
 /**
- *		\brief      Create object on disk
- *		\param	    db  			objet base de donnee
- *		\param	    deliveryid		id object
- *		\param	    modele			force le modele a utiliser ('' to not force)
- *		\param		outputlangs		objet lang a utiliser pour traduction
- *      \return     int         	0 si KO, 1 si OK
+ *		Create object on disk
+ *		@param	    db  			objet base de donnee
+ *		@param	    object			object project
+ *		@param	    model			force le modele a utiliser ('' to not force)
+ *		@param		outputlangs		objet lang a utiliser pour traduction
+ *      @return     int         	0 si KO, 1 si OK
  */
-function project_pdf_create($db, $comid, $modele,$outputlangs)
+function project_pdf_create($db, $object, $model,$outputlangs)
 {
 	global $conf,$langs;
 	$langs->load("projects");
@@ -149,25 +149,25 @@ function project_pdf_create($db, $comid, $modele,$outputlangs)
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/project/pdf/";
 
 	// Positionne modele sur le nom du modele de projet a utiliser
-	if (! dol_strlen($modele))
+	if (! dol_strlen($model))
 	{
 		if (! empty($conf->global->PROJECT_ADDON_PDF))
 		{
-			$modele = $conf->global->PROJECT_ADDON_PDF;
+			$model = $conf->global->PROJECT_ADDON_PDF;
 		}
 		else
 		{
-			$modele='baleine';
+			$model='baleine';
 			//print $langs->trans("Error")." ".$langs->trans("Error_PROJECT_ADDON_PDF_NotDefined");
 			//return 0;
 		}
 	}
 
 	// Charge le modele
-	$file = "pdf_".$modele.".modules.php";
+	$file = "pdf_".$model.".modules.php";
 	if (file_exists($dir.$file))
 	{
-		$classname = "pdf_".$modele;
+		$classname = "pdf_".$model;
 		require_once($dir.$file);
 
 		$obj = new $classname($db);
@@ -175,10 +175,10 @@ function project_pdf_create($db, $comid, $modele,$outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($comid,$outputlangs) > 0)
+		if ($obj->write_file($object,$outputlangs) > 0)
 		{
 			// on supprime l'image correspondant au preview
-			project_delete_preview($db, $comid);
+			project_delete_preview($db, $object->id);
 
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;
@@ -202,15 +202,15 @@ function project_pdf_create($db, $comid, $modele,$outputlangs)
  * Enter description here...
  *
  * @param   $db
- * @param   $projectid
+ * @param   $objectid
  * @return  int
  */
-function project_delete_preview($db, $projectid)
+function project_delete_preview($db, $objectid)
 {
 	global $langs,$conf;
 
-	$project = new Project($db,"",$projectid);
-	$project->fetch($projectid);
+	$project = new Project($db);
+	$project->fetch($objectid);
 	$client = new Societe($db);
 	$client->fetch($project->socid);
 

@@ -105,19 +105,6 @@ class pdf_baleine extends ModelePDFProjects
 
 		if ($conf->projet->dir_output)
 		{
-			// If $object is id instead of object
-			if (! is_object($object))
-			{
-				$id = $object;
-				$object = new Project($this->db);
-				$object->fetch($id);
-
-				if ($result < 0)
-				{
-					dol_print_error($db,$object->error);
-				}
-			}
-
 			$nblignes = sizeof($object->lines);
 
 			$objectref = dol_sanitizeFileName($object->ref);
