@@ -219,8 +219,8 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
                 if ($_POST["cotisation"])
                 {
                     if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
-                    if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
-                    if (! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
+                    if ($_POST["paymentsave"] != 'invoiceonly' && ! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+                    if ($_POST["paymentsave"] != 'invoiceonly' && ! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
                 }
                 else
                 {
@@ -688,8 +688,6 @@ if ($rowid)
         $invoiceonly=0;
         if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && (empty($_POST['paymentsave']) || $_POST["paymentsave"] == 'bankdirect')) $bankdirect=1;
         if ($conf->banque->enabled && $conf->societe->enabled && $conf->facture->enabled && $adh->fk_soc) $bankviainvoice=1;
-        // TODO A virer
-        //$bankviainvoice=0;
 
         print "\n\n<!-- Form add subscription -->\n";
 
@@ -700,15 +698,19 @@ if ($rowid)
                         jQuery(".bankswitchclass").'.($bankdirect||$bankviainvoice?'show()':'hide()').';
                         jQuery("#none").click(function() {
                             jQuery(".bankswitchclass").hide();
+                            jQuery(".bankswitchclass2").hide();
                         });
                         jQuery("#bankdirect").click(function() {
                             jQuery(".bankswitchclass").show();
+                            jQuery(".bankswitchclass2").show();
                         });
-                        jQuery("#bankdviainvoice").click(function() {
+                        jQuery("#bankviainvoice").click(function() {
                             jQuery(".bankswitchclass").show();
+                            jQuery(".bankswitchclass2").show();
                         });
     	                jQuery("#invoiceonly").click(function() {
-                            jQuery(".bankswitchclass").show();
+                            jQuery(".bankswitchclass").hide();
+                            jQuery(".bankswitchclass2").show();
                         });
                         ';
             if (GETPOST('paymentsave')) print 'jQuery("#'.GETPOST('paymentsave').'").attr(\'checked\',true);';
@@ -822,17 +824,17 @@ if ($rowid)
                 $html->select_types_paiements($_POST["operation"],'operation');
                 print "</td></tr>\n";
 
-                print '<tr class="bankswitchclass"><td>'.$langs->trans('Numero');
+                print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');
                 print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
                 print '</td>';
                 print '<td><input id="fieldnum_chq" name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
 
-                print '<tr class="bankswitchclass"><td>'.$langs->trans('CheckTransmitter');
+                print '<tr class="bankswitchclass2"><td>'.$langs->trans('CheckTransmitter');
                 print ' <em>('.$langs->trans("ChequeMaker").')</em>';
                 print '</td>';
                 print '<td><input id="fieldchqemetteur" name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
 
-                print '<tr class="bankswitchclass"><td>'.$langs->trans('Bank');
+                print '<tr class="bankswitchclass2"><td>'.$langs->trans('Bank');
                 print ' <em>('.$langs->trans("ChequeBank").')</em>';
                 print '</td>';
                 print '<td><input id="chqbank" name="chqbank" size="32" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
