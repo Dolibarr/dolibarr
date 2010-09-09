@@ -253,7 +253,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
                 $acct=new Account($db);
                 $result=$acct->fetch($accountid);
 
-                $dateop=time();
+                $dateop=dol_now();
 
                 $insertid=$acct->addline($dateop, $operation, $label, $cotisation, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
                 if ($insertid > 0)
