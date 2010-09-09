@@ -21,7 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE freeproductline_edit.tpl.php -->
 
-<form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'#'.$line->id; ?>" method="POST">';
+<form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'#'.$line->id; ?>" method="POST">
 <input type="hidden" name="token" value="<?php  echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="updateligne">
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
