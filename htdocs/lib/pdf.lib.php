@@ -404,81 +404,88 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	$desc=$object->lines[$i]->desc; if (empty($desc))   $desc=$object->lines[$i]->description;
 	$ref_supplier=$object->lines[$i]->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$object->lines[$i]->ref_fourn;	// TODO Not yeld saved for supplier invoices, only supplier orders
 	$note=$object->lines[$i]->note;
-
-	if ($issupplierline) $prodser = new ProductFournisseur($db);
-	else $prodser = new Product($db);
-
-	if ($idprod)
+	
+	if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
 	{
-		$prodser->fetch($idprod);
-		// If a predefined product and multilang and on other lang, we renamed label with label translated
-		if ($conf->global->MAIN_MULTILANGS && ($outputlangs->defaultlang != $langs->defaultlang))
-		{
-			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["libelle"]))     $label=$prodser->multilangs[$outputlangs->defaultlang]["libelle"];
-			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"])) $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
-			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]))        $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
-		}
+		$libelleproduitservice = $object->hooks[$object->lines[$i]->special_code]->pdf_getlinedesc($object,$i,$outputlangs);
 	}
-
-
-	// Description short of product line
-	$libelleproduitservice=$label;
-
-	// Description long of product line
-	if ($desc && ($desc != $label))
+	else
 	{
-		if ($libelleproduitservice && !$hidedesc) $libelleproduitservice.="\n";
-
-		if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
+		if ($issupplierline) $prodser = new ProductFournisseur($db);
+		else $prodser = new Product($db);
+		
+		if ($idprod)
 		{
-			$discount=new DiscountAbsolute($db);
-			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
-		}
-		else
-		{
-			if ($idprod)
+			$prodser->fetch($idprod);
+			// If a predefined product and multilang and on other lang, we renamed label with label translated
+			if ($conf->global->MAIN_MULTILANGS && ($outputlangs->defaultlang != $langs->defaultlang))
 			{
-				if (!$hidedesc) $libelleproduitservice.=$desc;
+				if (! empty($prodser->multilangs[$outputlangs->defaultlang]["libelle"]))     $label=$prodser->multilangs[$outputlangs->defaultlang]["libelle"];
+				if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"])) $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
+				if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]))        $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
+			}
+		}
+		
+		// Description short of product line
+		$libelleproduitservice=$label;
+		
+		// Description long of product line
+		if ($desc && ($desc != $label))
+		{
+			if ($libelleproduitservice && !$hidedesc) $libelleproduitservice.="\n";
+			
+			if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
+			{
+				$discount=new DiscountAbsolute($db);
+				$discount->fetch($object->lines[$i]->fk_remise_except);
+				$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
 			}
 			else
 			{
-				$libelleproduitservice.=$desc;
-			}
-		}
-	}
-
-	// If line linked to a product
-	if ($idprod)
-	{
-		// On ajoute la ref
-		if ($prodser->ref)
-		{
-			$prefix_prodserv = "";
-			$ref_prodserv = "";
-			if ($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)	// In standard mode, we do not show this
-			{
-				if($prodser->isservice())
+				if ($idprod)
 				{
-					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
+					if (!$hidedesc) $libelleproduitservice.=$desc;
 				}
 				else
 				{
-					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
+					$libelleproduitservice.=$desc;
 				}
 			}
-
-			if (!$hideref)
+		}
+		
+		// If line linked to a product
+		if ($idprod)
+		{
+			// On ajoute la ref
+			if ($prodser->ref)
 			{
-				if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->trans("SupplierRef").' '.$ref_supplier.')';	// Show local ref and supplier ref
-				else $ref_prodserv = $prodser->ref;	// Show local ref only
-
-				$ref_prodserv .= " - ";
+				$prefix_prodserv = "";
+				$ref_prodserv = "";
+				if ($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)	// In standard mode, we do not show this
+				{
+					if($prodser->isservice())
+					{
+						$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
+					}
+					else
+					{
+						$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
+					}
+				}
+				
+				if (!$hideref)
+				{
+					if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->trans("SupplierRef").' '.$ref_supplier.')';	// Show local ref and supplier ref
+					else $ref_prodserv = $prodser->ref;	// Show local ref only
+					
+					$ref_prodserv .= " - ";
+				}
+				
+				$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 			}
-
-			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 		}
 	}
+
 	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
 
 	if ($object->lines[$i]->date_start || $object->lines[$i]->date_end)
@@ -500,6 +507,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		$libelleproduitservice.="<br>".dol_htmlentitiesbr($period,1);
 		//print $libelleproduitservice;
 	}
+	
 	return $libelleproduitservice;
 }
 

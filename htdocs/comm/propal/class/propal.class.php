@@ -959,7 +959,7 @@ class Propal extends CommonObject
 						$line->subprice         = $objp->subprice;
 						$line->fk_remise_except = $objp->fk_remise_except;
 						$line->remise_percent   = $objp->remise_percent;
-						$line->price            = $objp->price;		// deprecated
+						$line->price            = $objp->price;		// TODO deprecated
 
 						$line->info_bits        = $objp->info_bits;
 						$line->total_ht         = $objp->total_ht;
