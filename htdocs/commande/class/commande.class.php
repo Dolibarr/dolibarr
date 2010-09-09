@@ -130,19 +130,20 @@ class Commande extends CommonObject
 		{
 			$line = new OrderLine($this->db);
 
-			$line->libelle           = $propal->lignes[$i]->libelle;
-			$line->desc              = $propal->lignes[$i]->desc;
-			$line->price             = $propal->lignes[$i]->price;
-			$line->subprice          = $propal->lignes[$i]->subprice;
-			$line->tva_tx            = $propal->lignes[$i]->tva_tx;
-			$line->localtax1_tx		 = $propal->lignes[$i]->localtax1_tx;
-			$line->localtax2_tx		 = $propal->lignes[$i]->localtax2_tx;
-			$line->qty               = $propal->lignes[$i]->qty;
-			$line->fk_remise_except  = $propal->lignes[$i]->fk_remise_except;
-			$line->remise_percent    = $propal->lignes[$i]->remise_percent;
-			$line->fk_product        = $propal->lignes[$i]->fk_product;
-			$line->info_bits         = $propal->lignes[$i]->info_bits;
-			$line->product_type      = $propal->lignes[$i]->product_type;
+			$line->libelle           = $propal->lines[$i]->libelle;
+			$line->desc              = $propal->lines[$i]->desc;
+			$line->price             = $propal->lines[$i]->price;
+			$line->subprice          = $propal->lines[$i]->subprice;
+			$line->tva_tx            = $propal->lines[$i]->tva_tx;
+			$line->localtax1_tx		 = $propal->lines[$i]->localtax1_tx;
+			$line->localtax2_tx		 = $propal->lines[$i]->localtax2_tx;
+			$line->qty               = $propal->lines[$i]->qty;
+			$line->fk_remise_except  = $propal->lines[$i]->fk_remise_except;
+			$line->remise_percent    = $propal->lines[$i]->remise_percent;
+			$line->fk_product        = $propal->lines[$i]->fk_product;
+			$line->info_bits         = $propal->lines[$i]->info_bits;
+			$line->product_type      = $propal->lines[$i]->product_type;
+			$line->special_code		 = $propal->lines[$i]->special_code;
 
 			$this->lines[$i] = $line;
 		}

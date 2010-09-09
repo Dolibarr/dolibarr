@@ -400,21 +400,21 @@ class Facture extends CommonObject
 		$facture->remise_absolue    = $this->remise_absolue;
 		$facture->remise_percent    = $this->remise_percent;
 
-		$facture->lignes		    = $this->lignes;	// Tableau des lignes de factures
-		$facture->products		    = $this->lignes;	// Tant que products encore utilise
+		$facture->lines		    	= $this->lines;	// Tableau des lignes de factures
+		$facture->products		    = $this->lines;	// Tant que products encore utilise
 
 		// Loop on each line of new invoice
-		foreach($facture->lignes as $i => $line)
+		foreach($facture->lines as $i => $line)
 		{
 			if ($invertdetail)
 			{
-				$facture->lignes[$i]->subprice  = -$facture->lignes[$i]->subprice;
-				$facture->lignes[$i]->price     = -$facture->lignes[$i]->price;
-				$facture->lignes[$i]->total_ht  = -$facture->lignes[$i]->total_ht;
-				$facture->lignes[$i]->total_tva = -$facture->lignes[$i]->total_tva;
-				$facture->lignes[$i]->total_localtax1 = -$facture->lignes[$i]->total_localtax1;
-				$facture->lignes[$i]->total_localtax2 = -$facture->lignes[$i]->total_localtax2;
-				$facture->lignes[$i]->total_ttc = -$facture->lignes[$i]->total_ttc;
+				$facture->lines[$i]->subprice  = -$facture->lines[$i]->subprice;
+				$facture->lines[$i]->price     = -$facture->lines[$i]->price;
+				$facture->lines[$i]->total_ht  = -$facture->lines[$i]->total_ht;
+				$facture->lines[$i]->total_tva = -$facture->lines[$i]->total_tva;
+				$facture->lines[$i]->total_localtax1 = -$facture->lines[$i]->total_localtax1;
+				$facture->lines[$i]->total_localtax2 = -$facture->lines[$i]->total_localtax2;
+				$facture->lines[$i]->total_ttc = -$facture->lines[$i]->total_ttc;
 			}
 		}
 

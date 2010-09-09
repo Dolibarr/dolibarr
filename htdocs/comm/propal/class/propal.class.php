@@ -650,19 +650,24 @@ class Propal extends CommonObject
 				/*
 				 *  Insertion du detail des produits dans la base
 				 */
-				for ($i = 0 ; $i < sizeof($this->products) ; $i++)
+				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
 					$resql = $this->addline(
 					$this->id,
-					$this->products[$i]->desc,
-					$this->products[$i]->subprice,
-					$this->products[$i]->qty,
-					$this->products[$i]->tva_tx,
-					$this->products[$i]->localtax1_tx,
-                    $this->products[$i]->localtax2_tx,
-					$this->products[$i]->fk_product,
-					$this->products[$i]->remise_percent,
-						'HT'
+					$this->lines[$i]->desc,
+					$this->lines[$i]->subprice,
+					$this->lines[$i]->qty,
+					$this->lines[$i]->tva_tx,
+					$this->lines[$i]->localtax1_tx,
+                    $this->lines[$i]->localtax2_tx,
+					$this->lines[$i]->fk_product,
+					$this->lines[$i]->remise_percent,
+					'HT',
+					0,
+					0,
+					$this->lines[$i]->product_type,
+					$this->lines[$i]->rang,
+					$this->lines[$i]->special_code
 						);
 
 						if ($resql < 0)
@@ -793,10 +798,9 @@ class Propal extends CommonObject
 		$object->user_author        = $user->id;
 		$object->user_valid         = '';
 		$object->date               = '';
-		$object->datep = dol_now('gmt');
+		$object->datep 				= dol_now('gmt');
 		$object->fin_validite       = '';
 		$object->ref_client         = '';
-		$object->products = $object->lignes;	// Tant que products encore utilise
 
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
 		$obj = $conf->global->PROPALE_ADDON;
