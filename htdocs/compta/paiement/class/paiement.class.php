@@ -164,7 +164,7 @@ class Paiement
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount)';
 					$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\')';
 
-					dol_syslog("Paiement::Create Amount line '.$key.' insert paiement_facture sql=".$sql);
+					dol_syslog('Paiement::Create Amount line '.$key.' insert paiement_facture sql='.$sql);
 					$resql=$this->db->query($sql);
 					if (! $resql)
 					{
@@ -309,13 +309,14 @@ class Paiement
      *      @param      accountid           Id of bank account to do link with
      *      @param      emetteur_nom        Name of transmitter
      *      @param      emetteur_banque     Name of bank
-     *      @return     int                 <0 if KO, >0 if OK
+     *      @return     int                 <0 if KO, bank_line_id if OK
      */
     function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
     {
         global $conf;
 
         $error=0;
+        $bank_line_id=0;
 
         if ($conf->banque->enabled)
         {
@@ -325,8 +326,8 @@ class Paiement
             $acc->fetch($accountid);
 
             $total=$this->total;
+            if ($mode == 'payment') $total=$this->total;
             if ($mode == 'payment_supplier') $total=-$total;
-            if ($mode == 'payment_sc') $total=-$total;
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline($this->datepaye,
@@ -339,7 +340,7 @@ class Paiement
             $emetteur_nom,
             $emetteur_banque);
 
-            // Mise a jour fk_bank dans llx_paiement.
+            // Mise a jour fk_bank dans llx_paiement
             // On connait ainsi le paiement qui a genere l'ecriture bancaire
             if ($bank_line_id > 0)
             {
@@ -350,7 +351,7 @@ class Paiement
                     dol_print_error($this->db);
                 }
 
-                // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
+                // Add link 'payment', 'payment_supplier' in bank_url between payment and bank transaction
                 $url='';
                 if ($mode == 'payment') $url=DOL_URL_ROOT.'/compta/paiement/fiche.php?id=';
                 if ($mode == 'payment_supplier') $url=DOL_URL_ROOT.'/fourn/paiement/fiche.php?id=';
@@ -405,7 +406,7 @@ class Paiement
 
         if (! $error)
         {
-            return 1;
+            return $bank_line_id;
         }
         else
         {

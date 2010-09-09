@@ -235,7 +235,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
     {
         $db->begin();
 
-        // Create subscription (and bank record if option is 'bankdirect')
+        // Create subscription
         $crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend, $option);
         if ($crowid <= 0)
         {
@@ -245,9 +245,47 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 
         if (! $error)
         {
-            if ($option == 'bankviainvoice' || $option == 'invoiceonly')
+            // Insert into bank account directlty (if option choosed for) + link to llx_cotisation if option is 'bankdirect'
+            if ($option == 'bankdirect' && $accountid)
             {
-                // If option choosed, we create invoice
+                require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+
+                $acct=new Account($db);
+                $result=$acct->fetch($accountid);
+
+                $dateop=time();
+
+                $insertid=$acct->addline($dateop, $operation, $label, $cotisation, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
+                if ($insertid > 0)
+                {
+                    $inserturlid=$acct->add_url_line($insertid, $adh->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $adh->getFullname($langs), 'member');
+                    if ($inserturlid > 0)
+                    {
+                        // Met a jour la table cotisation
+                        $sql ="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid;
+                        $sql.=" WHERE rowid=".$crowid;
+
+                        dol_syslog("Adherent::cotisation sql=".$sql);
+                        $resql = $db->query($sql);
+                        if (! $resql)
+                        {
+                            $error=$db->lasterror();
+                        }
+                    }
+                    else
+                    {
+                        $error=$acct->error;
+                    }
+                }
+                else
+                {
+                    $error=$acct->error;
+                }
+            }
+
+            // If option choosed, we create invoice
+            if (($option == 'bankviainvoice' && $accountid) || $option == 'invoiceonly')
+            {
                 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
                 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/paymentterm.class.php");
 
@@ -297,8 +335,8 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
                 // Validate invoice
                 $result=$invoice->validate($user);
 
-                // Add payment
-                if ($option == 'bankviainvoice')
+                // Add payment on invoice
+                if ($option == 'bankviainvoice' && $accountid)
                 {
                     require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
                     require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
@@ -324,10 +362,20 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 
                     if (! $error)
                     {
-                        $result=$paiement->addPaymentToBank($user,'payment','(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
-                        if (! $result > 0)
+                        $bank_line_id=$paiement->addPaymentToBank($user,'payment','(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
+                        if (! $bank_line_id > 0)
                         {
                             $errmsg=$paiement->error;
+                            $error++;
+                        }
+
+                        // Update fk_bank for subscriptions
+                        $sql = 'UPDATE llx_cotisation set fk_bank='.$bank_line_id;
+                        $sql.= ' WHERE rowid='.$crowid;
+                        dol_syslog('sql='.$sql);
+                        $result = $db->query($sql);
+                        if (! $result)
+                        {
                             $error++;
                         }
                     }
@@ -662,7 +710,9 @@ if ($rowid)
     	                jQuery("#invoiceonly").click(function() {
                             jQuery(".bankswitchclass").show();
                         });
-    	       });';
+                        ';
+            if (GETPOST('paymentsave')) print 'jQuery("#'.GETPOST('paymentsave').'").attr(\'checked\',true);';
+    	    print '});';
             print '</script>'."\n";
         }
 
@@ -720,7 +770,7 @@ if ($rowid)
             print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
             print dol_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
 
-            // Bank account transaction
+            // Complementary action
             if ($conf->banque->enabled || $conf->facture->enabled)
             {
                 $company=new Societe($db);

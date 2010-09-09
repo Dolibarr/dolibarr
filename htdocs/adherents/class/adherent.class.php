@@ -1143,10 +1143,9 @@ class Adherent extends CommonObject
      *	\param		emetteur_nom	Nom emetteur cheque
      *	\param		emetteur_banque	Nom banque emetteur cheque
      *	\param		datesubend		Date fin adhesion
-     *  \param      option          'none'=No more action, 'bankdirect'=Add direct bank transaction, 'bankviainvoice'=Add bank transaction via invoice and payment
      *	\return     int         	rowid de l'entree ajoutee, <0 si erreur
      */
-    function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0, $option='none')
+    function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
     {
         global $conf,$langs,$user;
 
@@ -1186,47 +1185,6 @@ class Adherent extends CommonObject
                 if ($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT && ! $adh->datefin)
                 {
                     $result=$adh->add_to_mailman($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT);
-                }
-
-                // Insert into bank account directlty (if option choosed for)
-                if ($option == 'bankdirect' && $accountid)
-                {
-                    $acct=new Account($this->db);
-                    $result=$acct->fetch($accountid);
-
-                    $dateop=time();
-
-                    $insertid=$acct->addline($dateop, $operation, $label, $montant, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
-                    if ($insertid > 0)
-                    {
-                        $inserturlid=$acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $this->getFullname($langs), 'member');
-                        if ($inserturlid > 0)
-                        {
-                            // Met a jour la table cotisation
-                            $sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid." WHERE rowid=".$rowid;
-
-                            dol_syslog("Adherent::cotisation sql=".$sql);
-                            $resql = $this->db->query($sql);
-                            if (! $resql)
-                            {
-                                $this->error=$this->db->error();
-                                $this->db->rollback();
-                                return -5;
-                            }
-                        }
-                        else
-                        {
-                            $this->error=$acct->error();
-                            $this->db->rollback();
-                            return -4;
-                        }
-                    }
-                    else
-                    {
-                        $this->error=$acct->error;
-                        $this->db->rollback();
-                        return -3;
-                    }
                 }
 
                 // Change properties of object (used by triggers)
