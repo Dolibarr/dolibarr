@@ -48,7 +48,7 @@ $langs->load('stocks');
 $langs->load('other');
 $langs->load('propal');
 
-$origin = $_GET["origin"]?$_GET["origin"]:$_POST["origin"];                // Example: commande, propal
+$origin = GETPOST("origin")?GETPOST("origin"):'expedition';                // Example: commande, propal
 $origin_id = isset($_REQUEST["id"])?$_REQUEST["id"]:'';
 if (empty($origin_id)) $origin_id  = $_GET["origin_id"]?$_GET["origin_id"]:$_POST["origin_id"];    // Id of order or propal
 if (empty($origin_id)) $origin_id  = $_GET["object_id"]?$_GET["object_id"]:$_POST["object_id"];    // Id of order or propal
