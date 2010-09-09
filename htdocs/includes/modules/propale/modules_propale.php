@@ -42,8 +42,8 @@ class ModelePDFPropales
 
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *      Return list of active generation modules
+	 * 		@param		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
@@ -131,12 +131,12 @@ class ModeleNumRefPropales
 
 
 /**
- \brief      Cree une propale sur disque en fonction du modele de PROPALE_ADDON_PDF
- \param	    db  			objet base de donnee
- \param	    id				id de la propale � creer
- \param	    modele			force le modele � utiliser ('' to not force)
- \param		outputlangs		objet lang a utiliser pour traduction
- \return     int         	0 si KO, 1 si OK
+ * 	Cree une propale sur disque en fonction du modele de PROPALE_ADDON_PDF
+ * 	@param	    db  			objet base de donnee
+ * 	@param	    id				id de la propale a creer
+ * 	@param	    modele			force le modele a utiliser ('' to not force)
+ * 	@param		outputlangs		objet lang a utiliser pour traduction
+ * 	@return     int         	0 si KO, 1 si OK
  */
 function propale_pdf_create($db, $id, $modele, $outputlangs)
 {
@@ -211,10 +211,10 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
 }
 
 /**
- \brief      Supprime l'image de previsualitation, pour le cas de regeneration de propal
- \param	    db  		objet base de donnee
- \param	    propalid	id de la propal a effacer
- \param     propalref reference de la propal si besoin
+ * 	Supprime l'image de previsualitation, pour le cas de regeneration de propal
+ * 	@param	    db  		objet base de donnee
+ * 	@param	    propalid	id de la propal a effacer
+ * 	@param     propalref reference de la propal si besoin
  */
 function propale_delete_preview($db, $propalid, $propalref='')
 {
