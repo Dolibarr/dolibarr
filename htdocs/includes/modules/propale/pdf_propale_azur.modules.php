@@ -105,7 +105,7 @@ class pdf_propale_azur extends ModelePDFPropales
 	 *	\param		outputlangs		Lang object for output language
 	 *	\return	    int     		1=ok, 0=ko
 	 */
-	function write_file($propale,$outputlangs)
+	function write_file($object,$outputlangs)
 	{
 		global $user,$langs,$conf;
 
@@ -123,25 +123,25 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		if ($conf->propale->dir_output)
 		{
-			// Definition de l'objet $propale (pour compatibilite ascendante)
-			if (! is_object($propale))
+			// Definition de l'objet $object (pour compatibilite ascendante)
+			if (! is_object($object))
 			{
-				$id = $propale;
-				$propale = new Propal($this->db,"",$id);
-				$ret=$propale->fetch($id);
+				$id = $object;
+				$object = new Propal($this->db,"",$id);
+				$ret=$object->fetch($id);
 			}
-			$propale->fetch_thirdparty();
+			$object->fetch_thirdparty();
 			$deja_regle = "";
 
 			// Definition de $dir et $file
-			if ($propale->specimen)
+			if ($object->specimen)
 			{
 				$dir = $conf->propale->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
-				$propref = dol_sanitizeFileName($propale->ref);
+				$propref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->propale->dir_output . "/" . $propref;
 				$file = $dir . "/" . $propref . ".pdf";
 			}
@@ -157,7 +157,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			if (file_exists($dir))
 			{
-				$nblignes = sizeof($propale->lignes);
+				$nblignes = sizeof($object->lines);
 
 				// Protection et encryption du pdf
 				if ($conf->global->PDF_SECURITY_ENCRYPTION)
@@ -184,11 +184,11 @@ class pdf_propale_azur extends ModelePDFPropales
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset($propale->ref));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("CommercialProposal"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($propale->ref)." ".$outputlangs->transnoentities("CommercialProposal"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("CommercialProposal"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -197,7 +197,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				// Positionne $this->atleastonediscount si on a au moins une remise
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
-					if ($propale->lignes[$i]->remise_percent)
+					if ($object->lines[$i]->remise_percent)
 					{
 						$this->atleastonediscount++;
 					}
@@ -206,7 +206,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $propale, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 4
 				$pdf->SetTextColor(0,0,0);
@@ -219,13 +219,13 @@ class pdf_propale_azur extends ModelePDFPropales
 				$tab_height_newpage = 150;
 
 				// Affiche notes
-				if (! empty($propale->note_public))
+				if (! empty($object->note_public))
 				{
 					$tab_top = 88;
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 4, $outputlangs->convToOutputCharset($propale->note_public), 0, 'J');
+					$pdf->MultiCell(190, 4, $outputlangs->convToOutputCharset($object->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -251,7 +251,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($propale->lignes[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object->lines[$i],$outputlangs);
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
@@ -265,51 +265,51 @@ class pdf_propale_azur extends ModelePDFPropales
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
 						$pdf->SetXY ($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, vatrate($propale->lignes[$i]->tva_tx,1,$propale->lignes[$i]->info_bits), 0, 'R');
+						$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits), 0, 'R');
 					}
 
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 4, price($propale->lignes[$i]->subprice), 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-1, 4, price($object->lines[$i]->subprice), 0, 'R', 0);
 
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
-					if ($propale->lignes[$i]->special_code != 3) $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $propale->lignes[$i]->qty, 0, 'R');
+					if ($object->lines[$i]->special_code != 3) $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $object->lines[$i]->qty, 0, 'R');
 
 					// Remise sur ligne
 					$pdf->SetXY ($this->posxdiscount, $curY);
-					if ($propale->lignes[$i]->remise_percent && $propale->lignes[$i]->special_code != 3)
+					if ($object->lines[$i]->remise_percent && $object->lines[$i]->special_code != 3)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($propale->lignes[$i]->remise_percent,$outputlangs), 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs), 0, 'R');
 					}
 
 					// Total HT ligne
 					$pdf->SetXY ($this->postotalht, $curY);
-					if ($propale->lignes[$i]->special_code == 3)
+					if ($object->lines[$i]->special_code == 3)
 					{
 						// Ligne produit en option
 						$pdf->MultiCell(26, 4, $outputlangs->transnoentities("Option"), 0, 'R', 0);
 					}
 					else
 					{
-						$total = price($propale->lignes[$i]->total_ht);
+						$total = price($object->lines[$i]->total_ht);
 						$pdf->MultiCell(26, 4, $total, 0, 'R', 0);
 					}
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$tvaligne=$propale->lignes[$i]->total_tva;
-					$localtax1ligne=$propale->lignes[$i]->total_localtax1;
-					$localtax2ligne=$propale->lignes[$i]->total_localtax2;
+					$tvaligne=$object->lines[$i]->total_tva;
+					$localtax1ligne=$object->lines[$i]->total_localtax1;
+					$localtax2ligne=$object->lines[$i]->total_localtax2;
 
-					if ($propale->remise_percent) $tvaligne-=($tvaligne*$propale->remise_percent)/100;
-					if ($propale->remise_percent) $localtax1ligne-=($localtax1ligne*$propale->remise_percent)/100;
-					if ($propale->remise_percent) $localtax2ligne-=($localtax2ligne*$propale->remise_percent)/100;
+					if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
+					if ($object->remise_percent) $localtax1ligne-=($localtax1ligne*$object->remise_percent)/100;
+					if ($object->remise_percent) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
 
-					$vatrate=(string) $propale->lignes[$i]->tva_tx;
-					$localtax1rate=(string) $propale->lignes[$i]->localtax1_tx;
-					$localtax2rate=(string) $propale->lignes[$i]->localtax2_tx;
+					$vatrate=(string) $object->lines[$i]->tva_tx;
+					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
+					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
 
-					if (($propale->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
+					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
@@ -321,7 +321,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
-						$follow_descproduitservice = $propale->lignes[$i+1]->desc;
+						$follow_descproduitservice = $object->lines[$i+1]->desc;
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4);
 					}
@@ -352,12 +352,12 @@ class pdf_propale_azur extends ModelePDFPropales
 							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
 						}
 
-						$this->_pagefoot($pdf,$propale,$outputlangs);
+						$this->_pagefoot($pdf,$object,$outputlangs);
 
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $propale, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('','', 9);
 						$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
@@ -380,19 +380,19 @@ class pdf_propale_azur extends ModelePDFPropales
 				}
 
 				// Affiche zone infos
-				$posy=$this->_tableau_info($pdf, $propale, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $propale, $deja_regle, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
 				if ($deja_regle)
 				{
-					$posy=$this->_tableau_versements($pdf, $propale, $posy, $outputlangs);
+					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 
 				// Pied de page
-				$this->_pagefoot($pdf,$propale,$outputlangs);
+				$this->_pagefoot($pdf,$object,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
