@@ -80,7 +80,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 	 *	\param		outputlangs		Lang object for output language
 	 *	\return	    int     		1=ok, 0=ko
 	 */
-	function write_file($propale,$outputlangs)
+	function write_file($object,$outputlangs)
 	{
 		global $user,$langs,$conf;
 
@@ -98,27 +98,20 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 		if ($conf->propale->dir_output)
 		{
-			// D�finition de l'objet $propal (pour compatibilite ascendante)
-			if (! is_object($propale))
-			{
-				$id = $propale;
-				$propale = new Propal($this->db,"",$id);
-				$ret=$propale->fetch($id);
-			}
-			$propale->fetch_thirdparty();
+			$object->fetch_thirdparty();
 			$deja_regle = "";
 
 			// Definition de $dir et $file
-			if ($propale->specimen)
+			if ($object->specimen)
 			{
 				$dir = $conf->propale->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
-				$propref = dol_sanitizeFileName($propale->ref);
-				$dir = $conf->propale->dir_output . "/" . $propref;
-				$file = $dir . "/" . $propref . ".pdf";
+				$objectref = dol_sanitizeFileName($object->ref);
+				$dir = $conf->propale->dir_output . "/" . $objectref;
+				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
 			if (! file_exists($dir))
@@ -138,7 +131,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
+					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -157,11 +150,11 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset($propale->ref));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("CommercialProposal"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($propale->ref)." ".$outputlangs->transnoentities("CommercialProposal"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("CommercialProposal"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -170,7 +163,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $propale, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -184,7 +177,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$iniY = $tab_top + 12;
 				$curY = $tab_top + 12;
 				$nexY = $tab_top + 12;
-				$nblignes = sizeof($propale->lignes);
+				$nblignes = sizeof($object->lines);
 
 				// Loop on each lines
 				for ($i = 0 ; $i < $nblignes ; $i++)
@@ -192,30 +185,30 @@ class pdf_propale_jaune extends ModelePDFPropales
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($propale->lignes[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					$pdf->writeHTMLCell(102, 4, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
-					$pdf->SetFont('','', 9);   // On repositionne la police par d�faut
+					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
-					$ref=dol_htmlentitiesbr($propale->lignes[$i]->ref);
+					$ref=dol_htmlentitiesbr($object->lines[$i]->ref);
 
 					$pdf->SetXY (10, $curY );
 					$pdf->MultiCell(20, 4, $outputlangs->convToOutputCharset($ref), 0, 'L', 0);
 
 					$pdf->SetXY (132, $curY );
-					$pdf->MultiCell(12, 4, vatrate($propale->lignes[$i]->tva_tx,0,$propale->lignes[$i]->info_bits), 0, 'R');
+					$pdf->MultiCell(12, 4, vatrate($object->lines[$i]->tva_tx,0,$object->lines[$i]->info_bits), 0, 'R');
 
 					$pdf->SetXY (144, $curY );
-					$pdf->MultiCell(10, 4, price($propale->lignes[$i]->qty), 0, 'R', 0);
+					$pdf->MultiCell(10, 4, price($object->lines[$i]->qty), 0, 'R', 0);
 
 					$pdf->SetXY (154, $curY );
-					$pdf->MultiCell(22, 4, price($propale->lignes[$i]->price), 0, 'R', 0);
+					$pdf->MultiCell(22, 4, price($object->lines[$i]->price), 0, 'R', 0);
 
 					$pdf->SetXY (176, $curY );
-					$pdf->MultiCell(24, 4, price($propale->lignes[$i]->total_ht), 0, 'R', 0);
+					$pdf->MultiCell(24, 4, price($object->lines[$i]->total_ht), 0, 'R', 0);
 
 					//$pdf->line(10, $curY, 200, $curY );
 
@@ -225,7 +218,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
-						$follow_descproduitservice = $outputlangs->convToOutputCharset($propale->lignes[$i+1]->desc);
+						$follow_descproduitservice = $outputlangs->convToOutputCharset($object->lines[$i+1]->desc);
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4);
 					}
@@ -237,14 +230,14 @@ class pdf_propale_jaune extends ModelePDFPropales
 					// test si besoin nouvelle page
 					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
-						$this->_pagefoot($pdf,$propale,$outputlangs);
+						$this->_pagefoot($pdf,$object,$outputlangs);
 
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $propale, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('','', 9);
 						$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
@@ -258,7 +251,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$bottomlasttab=$tab_top + $tab_height + 1;
 
 				// Affiche zone infos
-				$this->_tableau_info($pdf, $propale, $bottomlasttab, $outputlangs);
+				$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				$tab2_top = 254;
 				$tab2_lh = 7;
@@ -284,16 +277,16 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$pdf->MultiCell(42, $tab2_lh, $outputlangs->transnoentities("TotalTTC"), 1, 'R', 1);
 
 				$pdf->SetXY (174, $tab2_top + 0);
-				$pdf->MultiCell(26, $tab2_lh, price($propale->total_ht), 0, 'R', 0);
+				$pdf->MultiCell(26, $tab2_lh, price($object->total_ht), 0, 'R', 0);
 
 				$pdf->SetXY (174, $tab2_top + $tab2_lh);
-				$pdf->MultiCell(26, $tab2_lh, price($propale->total_tva), 0, 'R', 0);
+				$pdf->MultiCell(26, $tab2_lh, price($object->total_tva), 0, 'R', 0);
 
 				$pdf->SetXY (174, $tab2_top + ($tab2_lh*2));
-				$pdf->MultiCell(26, $tab2_lh, price($propale->total_ttc), 1, 'R', 1);
+				$pdf->MultiCell(26, $tab2_lh, price($object->total_ttc), 1, 'R', 1);
 
 				// Pied de page
-				$this->_pagefoot($pdf,$propale,$outputlangs);
+				$this->_pagefoot($pdf,$object,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();

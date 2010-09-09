@@ -104,11 +104,11 @@ class pdf_crabe extends ModelePDFFactures
 
 	/**
 	 *		\brief      Fonction generant la facture sur le disque
-	 *		\param	    fac				Objet invoice to build (or id if old method)
+	 *		\param	    object			Object invoice to build (or id if old method)
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int     		1=ok, 0=ko
 	 */
-	function write_file($fac,$outputlangs)
+	function write_file($object,$outputlangs)
 	{
 		global $user,$langs,$conf;
 
@@ -124,31 +124,23 @@ class pdf_crabe extends ModelePDFFactures
 
 		if ($conf->facture->dir_output)
 		{
-			// Definition de l'objet $fac (pour compatibilite ascendante)
-			if (! is_object($fac))
-			{
-				$id = $fac;
-				$fac = new Facture($this->db);
-				$ret=$fac->fetch($id);
-			}
+			$object->fetch_thirdparty();
 
-			$fac->fetch_thirdparty();
-
-			$deja_regle = $fac->getSommePaiement();
-			$amount_credit_notes_included = $fac->getSumCreditNotesUsed();
-			$amount_deposits_included = $fac->getSumDepositsUsed();
+			$deja_regle = $object->getSommePaiement();
+			$amount_credit_notes_included = $object->getSumCreditNotesUsed();
+			$amount_deposits_included = $object->getSumDepositsUsed();
 
 			// Definition of $dir and $file
-			if ($fac->specimen)
+			if ($object->specimen)
 			{
 				$dir = $conf->facture->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
-				$facref = dol_sanitizeFileName($fac->ref);
-				$dir = $conf->facture->dir_output . "/" . $facref;
-				$file = $dir . "/" . $facref . ".pdf";
+				$objectref = dol_sanitizeFileName($object->ref);
+				$dir = $conf->facture->dir_output . "/" . $objectref;
+				$file = $dir . "/" . $objectref . ".pdf";
 			}
 			if (! file_exists($dir))
 			{
@@ -161,7 +153,7 @@ class pdf_crabe extends ModelePDFFactures
 
 			if (file_exists($dir))
 			{
-				$nblignes = sizeof($fac->lignes);
+				$nblignes = sizeof($object->lines);
 
 				// Protection et encryption du pdf
 				if ($conf->global->PDF_SECURITY_ENCRYPTION)
@@ -189,11 +181,11 @@ class pdf_crabe extends ModelePDFFactures
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($fac->ref)." ".$outputlangs->transnoentities("Invoice"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Invoice"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -202,7 +194,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Positionne $this->atleastonediscount si on a au moins une remise
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
-					if ($fac->lignes[$i]->remise_percent)
+					if ($object->lines[$i]->remise_percent)
 					{
 						$this->atleastonediscount++;
 					}
@@ -211,7 +203,7 @@ class pdf_crabe extends ModelePDFFactures
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $fac, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -222,13 +214,13 @@ class pdf_crabe extends ModelePDFFactures
 				$tab_height_newpage = 150;
 
 				// Affiche notes
-				if (! empty($fac->note_public))
+				if (! empty($object->note_public))
 				{
 					$tab_top = 88;
 
 					$pdf->SetFont('','', 9);
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($fac->note_public), 0, 'J');
+					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -254,7 +246,7 @@ class pdf_crabe extends ModelePDFFactures
 					$curY = $nexY;
 
 					// Description of product line
-					$libelleproduitservice=pdf_getlinedesc($fac->lignes[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
@@ -266,43 +258,43 @@ class pdf_crabe extends ModelePDFFactures
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
 						$pdf->SetXY ($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($fac->lignes[$i]->tva_tx,1,$fac->lignes[$i]->info_bits), 0, 'R');
+						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits), 0, 'R');
 					}
 
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($fac->lignes[$i]->subprice), 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($object->lines[$i]->subprice), 0, 'R', 0);
 
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $fac->lignes[$i]->qty, 0, 'R');	// Enough for 6 chars
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $object->lines[$i]->qty, 0, 'R');	// Enough for 6 chars
 
 					// Remise sur ligne
 					$pdf->SetXY ($this->posxdiscount, $curY);
-					if ($fac->lignes[$i]->remise_percent)
+					if ($object->lines[$i]->remise_percent)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, dol_print_reduction($fac->lignes[$i]->remise_percent,$outputlangs), 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs), 0, 'R');
 					}
 
 					// Total HT ligne
 					$pdf->SetXY ($this->postotalht, $curY);
-					$total = price($fac->lignes[$i]->total_ht);
+					$total = price($object->lines[$i]->total_ht);
 					$pdf->MultiCell(26, 3, $total, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$tvaligne=$fac->lignes[$i]->total_tva;
-					$localtax1ligne=$fac->lignes[$i]->total_localtax1;
-					$localtax2ligne=$fac->lignes[$i]->total_localtax2;
+					$tvaligne=$object->lines[$i]->total_tva;
+					$localtax1ligne=$object->lines[$i]->total_localtax1;
+					$localtax2ligne=$object->lines[$i]->total_localtax2;
 
-					if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
-					if ($fac->remise_percent) $localtax1ligne-=($localtax1ligne*$fac->remise_percent)/100;
-					if ($fac->remise_percent) $localtax2ligne-=($localtax2ligne*$fac->remise_percent)/100;
+					if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
+					if ($object->remise_percent) $localtax1ligne-=($localtax1ligne*$object->remise_percent)/100;
+					if ($object->remise_percent) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
 
-					$vatrate=(string) $fac->lignes[$i]->tva_tx;
-					$localtax1rate=(string) $fac->lignes[$i]->localtax1_tx;
-					$localtax2rate=(string) $fac->lignes[$i]->localtax2_tx;
+					$vatrate=(string) $object->lines[$i]->tva_tx;
+					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
+					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
 
-					if (($fac->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
+					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
@@ -313,11 +305,11 @@ class pdf_crabe extends ModelePDFFactures
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
-						$follow_descproduitservice = $fac->lignes[$i+1]->desc;
+						$follow_descproduitservice = $object->lines[$i+1]->desc;
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4;
 						// Et si on affiche dates de validite, on ajoute encore une ligne
-						if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end)
+						if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
 						{
 							$nblineFollowDesc += 4;
 						}
@@ -349,12 +341,12 @@ class pdf_crabe extends ModelePDFFactures
 							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
 						}
 
-						$this->_pagefoot($pdf,$fac,$outputlangs);
+						$this->_pagefoot($pdf,$object,$outputlangs);
 
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $fac, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('','', 9);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
@@ -377,19 +369,19 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				// Affiche zone infos
-				$posy=$this->_tableau_info($pdf, $fac, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $fac, $deja_regle, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
 				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
-					$posy=$this->_tableau_versements($pdf, $fac, $posy, $outputlangs);
+					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 
 				// Pied de page
-				$this->_pagefoot($pdf,$fac,$outputlangs);
+				$this->_pagefoot($pdf,$object,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -424,7 +416,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *	\param		outputlangs		Object langs for output
 	 *	\return 	int				<0 if KO, >0 if OK
 	 */
-	function _tableau_versements(&$pdf, $fac, $posy, $outputlangs)
+	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 		$tab3_posx = 120;
 		$tab3_top = $posy + 8;
@@ -456,7 +448,7 @@ class pdf_crabe extends ModelePDFFactures
 		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source,";
 		$sql.= " f.type, f.datef";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re, ".MAIN_DB_PREFIX ."facture as f";
-		$sql.= " WHERE re.fk_facture_source = f.rowid AND re.fk_facture = ".$fac->id;
+		$sql.= " WHERE re.fk_facture_source = f.rowid AND re.fk_facture = ".$object->id;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -498,7 +490,7 @@ class pdf_crabe extends ModelePDFFactures
 		// Loop on each payment
 		$sql = "SELECT p.datep as date, pf.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
 		$sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
-		$sql.= "WHERE pf.fk_paiement = p.rowid and pf.fk_facture = ".$fac->id." ";
+		$sql.= "WHERE pf.fk_paiement = p.rowid and pf.fk_facture = ".$object->id." ";
 		$sql.= "ORDER BY p.datep";
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1039,11 +1031,11 @@ class pdf_crabe extends ModelePDFFactures
 		$posy+=2;
 		$pdf->SetFont('','',9);
 
-		$facidnext=$object->getIdReplacingInvoice('validated');
-		if ($object->type == 0 && $facidnext)
+		$objectidnext=$object->getIdReplacingInvoice('validated');
+		if ($object->type == 0 && $objectidnext)
 		{
 			$objectreplacing=new Facture($this->db);
-			$objectreplacing->fetch($facidnext);
+			$objectreplacing->fetch($objectidnext);
 
 			$posy+=4;
 			$pdf->SetXY(100,$posy);

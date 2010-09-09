@@ -62,6 +62,8 @@ class CommandeFournisseur extends Commande
 	{
 		$this->db = $DB;
 		$this->products = array();
+		$this->lignes = array();	// TODO deprecated
+		$this->lines = array();
 
 		// List of language codes for status
 		$this->statuts[0] = 'StatusOrderDraft';
@@ -127,9 +129,7 @@ class CommandeFournisseur extends Commande
 			$this->db->free($resql);
 
 			if ($this->statut == 0) $this->brouillon = 1;
-
-			// Now load lines
-			$this->lignes = array();
+			
 
 			$sql = "SELECT l.rowid, l.ref as ref_fourn, l.fk_product, l.product_type, l.label, l.description,";
 			$sql.= " l.qty,";
@@ -153,30 +153,30 @@ class CommandeFournisseur extends Commande
 				{
 					$objp                  = $this->db->fetch_object($result);
 
-					$ligne                 = new CommandeFournisseurLigne($this->db);
+					$line                 = new CommandeFournisseurLigne($this->db);
 
-					$ligne->id                  = $objp->rowid;
-					$ligne->desc                = $objp->description;  // Description ligne
-					$ligne->description         = $objp->description;  // Description ligne
-					$ligne->qty                 = $objp->qty;
-					$ligne->tva_tx              = $objp->tva_tx;
-					$ligne->subprice            = $objp->subprice;
-					$ligne->remise_percent      = $objp->remise_percent;
-					$ligne->total_ht            = $objp->total_ht;
-					$ligne->total_tva           = $objp->total_tva;
-					$ligne->total_ttc           = $objp->total_ttc;
-					$ligne->product_type        = $objp->product_type;
+					$line->id                  = $objp->rowid;
+					$line->desc                = $objp->description;  // Description ligne
+					$line->description         = $objp->description;  // Description ligne
+					$line->qty                 = $objp->qty;
+					$line->tva_tx              = $objp->tva_tx;
+					$line->subprice            = $objp->subprice;
+					$line->remise_percent      = $objp->remise_percent;
+					$line->total_ht            = $objp->total_ht;
+					$line->total_tva           = $objp->total_tva;
+					$line->total_ttc           = $objp->total_ttc;
+					$line->product_type        = $objp->product_type;
 
-					$ligne->fk_product          = $objp->fk_product;   // Id du produit
-					$ligne->libelle             = $objp->label;        // Label produit
-					$ligne->product_desc        = $objp->product_desc; // Description produit
+					$line->fk_product          = $objp->fk_product;   // Id du produit
+					$line->libelle             = $objp->label;        // Label produit
+					$line->product_desc        = $objp->product_desc; // Description produit
 
-					$ligne->ref                 = $objp->ref;          // Reference
-					$ligne->ref_fourn           = $objp->ref_fourn;    // Reference supplier
+					$line->ref                 = $objp->ref;          // Reference
+					$line->ref_fourn           = $objp->ref_fourn;    // Reference supplier
 
-					$this->lignes[$i]      = $ligne;
-					//dol_syslog("1 ".$ligne->desc);
-					//dol_syslog("2 ".$ligne->product_desc);
+					$this->lignes[$i]     = $line;	// TODO deprecated
+					$this->lines[$i]      = $line;
+
 					$i++;
 				}
 				$this->db->free($result);

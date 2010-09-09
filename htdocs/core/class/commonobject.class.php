@@ -499,15 +499,15 @@ class CommonObject
 	}
 
     /**
-	 *		\brief		Read linked document
+	 *		Read linked origin object
 	 */
-	function fetch_object()
+	function fetch_origin()
 	{
-		$object = $this->origin;
-
 		// TODO uniformise code
-		if ($object == 'shipping') $object = 'expedition';
-		if ($object == 'delivery') $object = 'livraison';
+		if ($this->origin == 'shipping') $this->origin = 'expedition';
+		if ($this->origin == 'delivery') $this->origin = 'livraison';
+		
+		$object = $this->origin;
 
 		$classname = ucfirst($object);
 		$this->$object = new $classname($this->db);

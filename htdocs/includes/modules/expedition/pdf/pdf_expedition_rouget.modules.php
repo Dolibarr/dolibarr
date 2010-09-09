@@ -327,17 +327,17 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 				$nexY = $this->tableau_top + 14;
 
-				for ($i = 0 ; $i < sizeof($object->lignes) ; $i++)
+				for ($i = 0 ; $i < sizeof($object->lines) ; $i++)
 				{
 					$curY = $nexY;
 
 					if ($this->barcode->enabled)
 					{
-						$pdf->i25($this->marge_gauche+3, ($curY - 2), "000000".$object->lignes[$i]->fk_product, 1, 8);
+						$pdf->i25($this->marge_gauche+3, ($curY - 2), "000000".$object->lines[$i]->fk_product, 1, 8);
 					}
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($object->lignes[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
@@ -346,10 +346,10 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					$nexY = $pdf->GetY();
 
 					$pdf->SetXY (160, $curY);
-					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_asked);
+					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_asked);
 
 					$pdf->SetXY (186, $curY);
-					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_shipped);
+					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped);
 
 					$nexY+=2;    // Passe espace entre les lignes
 				}

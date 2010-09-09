@@ -387,22 +387,23 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 
 
 /**
- *	\brief		Return line description translated in outputlangs and encoded in UTF8
- *	\param		line				Line to format
- *  \param    	outputlang			Object lang for output
- *  \param    	hideref       		Hide reference
- *  \param      hidedesc            Hide description
- * 	\param		issupplierline		Is it a line for a supplier object ?
+ *	Return line description translated in outputlangs and encoded in UTF8
+ *	@param		object				Object
+ *	@param		$i					Current line number
+ *  @param    	outputlang			Object lang for output
+ *  @param    	hideref       		Hide reference
+ *  @param      hidedesc            Hide description
+ * 	@param		issupplierline		Is it a line for a supplier object ?
  */
-function pdf_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierline=0)
+function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issupplierline=0)
 {
 	global $db, $conf, $langs;
 
-	$idprod=$line->fk_product;
-	$label=$line->label; if (empty($label))  $label=$line->libelle;
-	$desc=$line->desc; if (empty($desc))   $desc=$line->description;
-	$ref_supplier=$line->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$line->ref_fourn;	// TODO Not yeld saved for supplier invoices, only supplier orders
-	$note=$line->note;
+	$idprod=$object->lines[$i]->fk_product;
+	$label=$object->lines[$i]->label; if (empty($label))  $label=$object->lines[$i]->libelle;
+	$desc=$object->lines[$i]->desc; if (empty($desc))   $desc=$object->lines[$i]->description;
+	$ref_supplier=$object->lines[$i]->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$object->lines[$i]->ref_fourn;	// TODO Not yeld saved for supplier invoices, only supplier orders
+	$note=$object->lines[$i]->note;
 
 	if ($issupplierline) $prodser = new ProductFournisseur($db);
 	else $prodser = new Product($db);
@@ -428,10 +429,10 @@ function pdf_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 	{
 		if ($libelleproduitservice && !$hidedesc) $libelleproduitservice.="\n";
 
-		if ($desc == '(CREDIT_NOTE)' && $line->fk_remise_except)
+		if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
 		{
 			$discount=new DiscountAbsolute($db);
-			$discount->fetch($line->fk_remise_except);
+			$discount->fetch($object->lines[$i]->fk_remise_except);
 			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
 		}
 		else
@@ -480,20 +481,20 @@ function pdf_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 	}
 	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
 
-	if ($line->date_start || $line->date_end)
+	if ($object->lines[$i]->date_start || $object->lines[$i]->date_end)
 	{
 		// Show duration if exists
-		if ($line->date_start && $line->date_end)
+		if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
 		{
-			$period='('.$outputlangs->transnoentitiesnoconv('DateFromTo',dol_print_date($line->date_start, $format, false, $outputlangs),dol_print_date($line->date_end, $format, false, $outputlangs)).')';
+			$period='('.$outputlangs->transnoentitiesnoconv('DateFromTo',dol_print_date($object->lines[$i]->date_start, $format, false, $outputlangs),dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
 		}
-		if ($line->date_start && ! $line->date_end)
+		if ($object->lines[$i]->date_start && ! $object->lines[$i]->date_end)
 		{
-			$period='('.$outputlangs->transnoentitiesnoconv('DateFrom',dol_print_date($line->date_start, $format, false, $outputlangs)).')';
+			$period='('.$outputlangs->transnoentitiesnoconv('DateFrom',dol_print_date($object->lines[$i]->date_start, $format, false, $outputlangs)).')';
 		}
-		if (! $line->date_start && $line->date_end)
+		if (! $object->lines[$i]->date_start && $object->lines[$i]->date_end)
 		{
-			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($line->date_end, $format, false, $outputlangs)).')';
+			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
 		$libelleproduitservice.="<br>".dol_htmlentitiesbr($period,1);

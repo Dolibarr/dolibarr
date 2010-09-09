@@ -97,19 +97,6 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		if ($conf->expedition->dir_output."/receipt")
 		{
-			// If $object is id instead of object
-			if (! is_object($object))
-			{
-				$id = $object;
-				$object = new Livraison($this->db);
-				$object->fetch($id);
-				$object->id = $id;
-				if ($result < 0)
-				{
-					dol_print_error($db,$object->error);
-				}
-			}
-
 			$object->fetch_thirdparty();
 
 			$nblignes = sizeof($object->lignes);
@@ -199,7 +186,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($object->lignes[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 

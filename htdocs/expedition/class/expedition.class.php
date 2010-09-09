@@ -50,7 +50,8 @@ class Expedition extends CommonObject
 	var $modelpdf;
 	var $origin;
 	var $origin_id;
-	var $lignes;
+	var $lignes=array();	// TODO deprecated
+	var $lines=array();
 	var $expedition_method_id;
 	var $statut;
 
@@ -304,8 +305,6 @@ class Expedition extends CommonObject
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;
-
-				$this->lignes = array();
 
 				$file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id,2) . "/" . $this->id.".pdf";
 				$this->pdf_filename = $file;
@@ -768,13 +767,14 @@ class Expedition extends CommonObject
 				$line = new ExpeditionLigne($this->db);
 				$obj = $this->db->fetch_object($resql);
 
-				$line->origin_line_id 	= $obj->fk_origin_line;
+				$line->fk_origin_line 	= $obj->fk_origin_line;
+				$line->origin_line_id 	= $obj->fk_origin_line;	// TODO deprecated
 				$line->entrepot_id    	= $obj->fk_entrepot;
 				$line->fk_product     	= $obj->fk_product;
 				$line->fk_product_type	= $obj->fk_product_type;
 				$line->ref            	= $obj->ref;
 				$line->label          	= $obj->label;
-				$line->libelle        	= $obj->label;			// deprecated
+				$line->libelle        	= $obj->label;			// TODO deprecated
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
 				$line->qty_shipped    	= $obj->qty_shipped;
@@ -783,7 +783,9 @@ class Expedition extends CommonObject
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
 
-				$this->lignes[$i] = $line;
+				$this->lignes[$i] = $line; // TODO deprecated
+				$this->lines[$i] = $line;
+				
 				$i++;
 			}
 			$this->db->free($resql);

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This	program	is free	software; you can redistribute it and/or modify
@@ -210,7 +210,7 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
-			supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+			supplier_order_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 
 			unset($_POST['qty']);
 			unset($_POST['type']);
@@ -260,7 +260,7 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
-		supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+		supplier_order_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 	}
 	else
 	{
@@ -283,7 +283,7 @@ if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] =
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
-		supplier_order_pdf_create($db, $id, $commande->modelpdf, $outputlangs);
+		supplier_order_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 	}
 }
 
@@ -303,7 +303,7 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
-		supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+		supplier_order_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 	}
 }
 
@@ -436,7 +436,7 @@ if ($_GET['action']	== 'up'	&& $user->rights->fournisseur->commande->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	supplier_order_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
 	exit;
 }
@@ -453,7 +453,7 @@ if ($_GET['action']	== 'down' && $user->rights->fournisseur->commande->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	supplier_order_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
 	exit;
 }
@@ -480,7 +480,7 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	$result=supplier_order_pdf_create($db, $commande->id,$commande->modelpdf,$outputlangs);
+	$result=supplier_order_pdf_create($db, $commande,$commande->modelpdf,$outputlangs);
 	if ($result	<= 0)
 	{
 		dol_print_error($db,$result);

@@ -99,7 +99,8 @@ class Facture extends CommonObject
 	var $mode_reglement_code;		// Code in llx_c_paiement
 	var $modelpdf;
 	var $products=array();
-	var $lignes=array();
+	var $lignes=array();	// TODO deprecated
+	var $lines=array();
 	//! Pour board
 	var $nbtodo;
 	var $nbtodolate;
@@ -688,41 +689,43 @@ class Facture extends CommonObject
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($result);
-				$faclig = new FactureLigne($this->db);
+				$line = new FactureLigne($this->db);
 
-				$faclig->rowid	          = $objp->rowid;
-				$faclig->desc             = $objp->description;     // Description line
-				$faclig->product_type     = $objp->product_type;	// Type of line
-				$faclig->product_ref      = $objp->product_ref;     // Ref product
-				$faclig->libelle          = $objp->label;           // Label product
-				$faclig->product_desc     = $objp->product_desc;    // Description product
-				$faclig->fk_product_type  = $objp->fk_product_type;	// Type of product
-				$faclig->qty              = $objp->qty;
-				$faclig->subprice         = $objp->subprice;
-				$faclig->tva_tx           = $objp->tva_tx;
-				$faclig->localtax1_tx     = $objp->localtax1_tx;
-				$faclig->localtax2_tx     = $objp->localtax2_tx;
-				$faclig->remise_percent   = $objp->remise_percent;
-				$faclig->fk_remise_except = $objp->fk_remise_except;
-				$faclig->fk_product       = $objp->fk_product;
-				$faclig->date_start       = $this->db->jdate($objp->date_start);
-				$faclig->date_end         = $this->db->jdate($objp->date_end);
-				$faclig->date_start       = $this->db->jdate($objp->date_start);
-				$faclig->date_end         = $this->db->jdate($objp->date_end);
-				$faclig->info_bits        = $objp->info_bits;
-				$faclig->total_ht         = $objp->total_ht;
-				$faclig->total_tva        = $objp->total_tva;
-				$faclig->total_localtax1  = $objp->total_localtax1;
-				$faclig->total_localtax2  = $objp->total_localtax2;
-				$faclig->total_ttc        = $objp->total_ttc;
-				$faclig->export_compta    = $objp->fk_export_compta;
-				$faclig->code_ventilation = $objp->fk_code_ventilation;
+				$line->rowid	        = $objp->rowid;
+				$line->desc             = $objp->description;     // Description line
+				$line->product_type     = $objp->product_type;	// Type of line
+				$line->product_ref      = $objp->product_ref;     // Ref product
+				$line->libelle          = $objp->label;           // Label product
+				$line->product_desc     = $objp->product_desc;    // Description product
+				$line->fk_product_type  = $objp->fk_product_type;	// Type of product
+				$line->qty              = $objp->qty;
+				$line->subprice         = $objp->subprice;
+				$line->tva_tx           = $objp->tva_tx;
+				$line->localtax1_tx     = $objp->localtax1_tx;
+				$line->localtax2_tx     = $objp->localtax2_tx;
+				$line->remise_percent   = $objp->remise_percent;
+				$line->fk_remise_except = $objp->fk_remise_except;
+				$line->fk_product       = $objp->fk_product;
+				$line->date_start       = $this->db->jdate($objp->date_start);
+				$line->date_end         = $this->db->jdate($objp->date_end);
+				$line->date_start       = $this->db->jdate($objp->date_start);
+				$line->date_end         = $this->db->jdate($objp->date_end);
+				$line->info_bits        = $objp->info_bits;
+				$line->total_ht         = $objp->total_ht;
+				$line->total_tva        = $objp->total_tva;
+				$line->total_localtax1  = $objp->total_localtax1;
+				$line->total_localtax2  = $objp->total_localtax2;
+				$line->total_ttc        = $objp->total_ttc;
+				$line->export_compta    = $objp->fk_export_compta;
+				$line->code_ventilation = $objp->fk_code_ventilation;
 
 				// Ne plus utiliser
-				$faclig->price            = $objp->price;
-				$faclig->remise           = $objp->remise;
+				$line->price            = $objp->price;
+				$line->remise           = $objp->remise;
 
-				$this->lignes[$i] = $faclig;
+				$this->lignes[$i] = $line;	// TODO deprecated
+				$this->lines[$i] = $line;
+				
 				$i++;
 			}
 			$this->db->free($result);

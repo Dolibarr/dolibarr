@@ -105,7 +105,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int     		1=ok, 0=ko
 	 */
-	function write_file($fac,$outputlangs)
+	function write_file($object,$outputlangs)
 	{
 		global $user,$langs,$conf;
 
@@ -121,30 +121,23 @@ class pdf_oursin extends ModelePDFFactures
 
 		if ($conf->facture->dir_output)
 		{
-			// Definition de l'objet $fac (pour compatibilite ascendante)
-			if (! is_object($fac))
-			{
-				$id = $fac;
-				$fac = new Facture($this->db);
-				$ret=$fac->fetch($id);
-			}
-			$fac->fetch_thirdparty();
+			$object->fetch_thirdparty();
 
-			$deja_regle = $fac->getSommePaiement();
-			$amount_credit_notes_included = $fac->getSumCreditNotesUsed();
-			$amount_deposits_included = $fac->getSumDepositsUsed();
+			$deja_regle = $object->getSommePaiement();
+			$amount_credit_notes_included = $object->getSumCreditNotesUsed();
+			$amount_deposits_included = $object->getSumDepositsUsed();
 
 			// Definition of $dir and $file
-			if ($fac->specimen)
+			if ($object->specimen)
 			{
 				$dir = $conf->facture->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
-				$facref = dol_sanitizeFileName($fac->ref);
-				$dir = $conf->facture->dir_output . "/" . $facref;
-				$file = $dir . "/" . $facref . ".pdf";
+				$objectref = dol_sanitizeFileName($object->ref);
+				$dir = $conf->facture->dir_output . "/" . $objectref;
+				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
 			if (! file_exists($dir))
@@ -184,11 +177,11 @@ class pdf_oursin extends ModelePDFFactures
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($fac->ref)." ".$outputlangs->transnoentities("Invoice"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Invoice"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins(10, 10, 10);
@@ -197,7 +190,7 @@ class pdf_oursin extends ModelePDFFactures
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $fac, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -212,7 +205,7 @@ class pdf_oursin extends ModelePDFFactures
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
-				$nblignes = sizeof($fac->lignes);
+				$nblignes = sizeof($object->lines);
 
 				// Loop on each lines
 				for ($i = 0 ; $i < $nblignes ; $i++)
@@ -220,7 +213,7 @@ class pdf_oursin extends ModelePDFFactures
 					$curY = $nexY;
 
 					// Description of product line
-					$libelleproduitservice=pdf_getlinedesc($fac->lignes[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 
 					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
@@ -232,62 +225,62 @@ class pdf_oursin extends ModelePDFFactures
 						if ($this->franchise!=1)
 						{
 							$pdf->SetXY ($this->marges['g']+119, $curY);
-							$pdf->MultiCell(10, 3, $fac->lignes[$i]->tva_tx, 0, 'R');
+							$pdf->MultiCell(10, 3, $object->lines[$i]->tva_tx, 0, 'R');
 						}
 					}
 
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->marges['g']+132, $curY);
-					$pdf->MultiCell(16, 3, price($fac->lignes[$i]->subprice), 0, 'R', 0);
+					$pdf->MultiCell(16, 3, price($object->lines[$i]->subprice), 0, 'R', 0);
 
 					// Quantit
 					$pdf->SetXY ($this->marges['g']+150, $curY);
-					$pdf->MultiCell(10, 3, $fac->lignes[$i]->qty, 0, 'R');
+					$pdf->MultiCell(10, 3, $object->lines[$i]->qty, 0, 'R');
 
 					// Remise sur ligne
 					$pdf->SetXY ($this->marges['g']+160, $curY);
-					if ($fac->lignes[$i]->remise_percent) {
-						$pdf->MultiCell(14, 3, $fac->lignes[$i]->remise_percent."%", 0, 'R');
+					if ($object->lines[$i]->remise_percent) {
+						$pdf->MultiCell(14, 3, $object->lines[$i]->remise_percent."%", 0, 'R');
 					}
 
 					// Total HT
 					$pdf->SetXY ($this->marges['g']+168, $curY);
-					$total = price($fac->lignes[$i]->total_ht);
+					$total = price($object->lines[$i]->total_ht);
 					$pdf->MultiCell(21, 3, $total, 0, 'R', 0);
 
 
 					if ($nexY > 200 && $i < $nblignes - 1)
 					{
-						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac, $outputlangs);
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $object, $outputlangs);
 						$nexY = $iniY;
 
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $fac, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('','', 9);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 					}
 
 				}
-				$posy=$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac, $outputlangs);
+				$posy=$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $object, $outputlangs);
 				$bottomlasttab=$tab_top + $tab_height + 1;
 
 				// Affiche zone infos
-				$posy=$this->_tableau_info($pdf, $fac, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $fac, $deja_regle, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
 				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
-					$posy=$this->_tableau_versements($pdf, $fac, $posy, $outputlangs);
+					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 
 				// Pied de page
-				$this->_pagefoot($pdf, $fac, $outputlangs);
+				$this->_pagefoot($pdf, $object, $outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -322,7 +315,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *	\param		outputlangs		Object langs for output
 	 *	\return 	int				<0 if KO, >0 if OK
 	 */
-	function _tableau_versements(&$pdf, $fac, $posy, $outputlangs)
+	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 		$tab3_posx = $this->marges['g']+110;
 		$tab3_top = $posy + 8;
@@ -353,7 +346,7 @@ class pdf_oursin extends ModelePDFFactures
 		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source,";
 		$sql.= " f.type, f.datef";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re, ".MAIN_DB_PREFIX ."facture as f";
-		$sql.= " WHERE re.fk_facture_source = f.rowid AND re.fk_facture = ".$fac->id;
+		$sql.= " WHERE re.fk_facture_source = f.rowid AND re.fk_facture = ".$object->id;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -395,7 +388,7 @@ class pdf_oursin extends ModelePDFFactures
 		// Loop on each payment
 		$sql = "SELECT p.datep as date, pf.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
 		$sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
-		$sql.= "WHERE pf.fk_paiement = p.rowid and pf.fk_facture = ".$fac->id." ";
+		$sql.= "WHERE pf.fk_paiement = p.rowid and pf.fk_facture = ".$object->id." ";
 		$sql.= "ORDER BY p.datep";
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -764,10 +757,10 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->Text($this->marges['g']+135, $tab_top + 5,$outputlangs->transnoentities("PriceUHT"));
 		$pdf->Text($this->marges['g']+153, $tab_top + 5, $outputlangs->transnoentities("Qty"));
 
-		$nblignes = sizeof($object->lignes);
+		$nblignes = sizeof($object->lines);
 		$rem=0;
 		for ($i = 0 ; $i < $nblignes ; $i++)
-		if ($object->lignes[$i]->remise_percent)
+		if ($object->lines[$i]->remise_percent)
 		{
 			$rem=1;
 		}
@@ -920,11 +913,11 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetTextColor(0,0,0);
 		$posy+=4;
 
-		$facidnext=$object->getIdReplacingInvoice('validated');
-		if ($object->type == 0 && $facidnext)
+		$objectidnext=$object->getIdReplacingInvoice('validated');
+		if ($object->type == 0 && $objectidnext)
 		{
 			$objectreplacing=new Facture($this->db);
-			$objectreplacing->fetch($facidnext);
+			$objectreplacing->fetch($objectidnext);
 
 			$posy+=4;
 			$pdf->SetXY($this->marges['g'],$posy);

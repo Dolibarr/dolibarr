@@ -124,6 +124,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		if ($conf->propale->dir_output)
 		{
 			$object->fetch_thirdparty();
+			
 			$deja_regle = "";
 
 			// Definition de $dir et $file
@@ -134,9 +135,9 @@ class pdf_propale_azur extends ModelePDFPropales
 			}
 			else
 			{
-				$propref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->propale->dir_output . "/" . $propref;
-				$file = $dir . "/" . $propref . ".pdf";
+				$objectref = dol_sanitizeFileName($object->ref);
+				$dir = $conf->propale->dir_output . "/" . $objectref;
+				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
 			if (! file_exists($dir))
@@ -244,7 +245,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($object->lines[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 

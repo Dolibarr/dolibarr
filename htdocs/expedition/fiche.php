@@ -164,7 +164,7 @@ if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=expedition_pdf_create($db,$expedition->id,$expedition->modelpdf,$outputlangs);
+	$result=expedition_pdf_create($db,$expedition,$expedition->modelpdf,$outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -284,7 +284,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=expedition_pdf_create($db,$_REQUEST['id'],$_REQUEST['model'],$outputlangs);
+	$result=expedition_pdf_create($db,$shipment,$_REQUEST['model'],$outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -668,7 +668,7 @@ else
 			{
 				$typeobject = $expedition->origin;
 				$origin = $expedition->origin;
-				$expedition->fetch_object();
+				$expedition->fetch_origin();
 			}
 
 			if (dol_strlen($expedition->tracking_number))

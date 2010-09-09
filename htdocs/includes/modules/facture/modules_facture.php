@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,15 +134,15 @@ class ModeleNumRefFactures
 
 
 /**
- *	\brief   	Cree un facture sur disque en fonction du modele de FACTURE_ADDON_PDF
- *	\param   	db  			objet base de donnee
- *	\param   	id				Object invoice (or id of invoice)
- *	\param	    message			message
- *	\param	    modele			force le modele a utiliser ('' to not force)
- *	\param		outputlangs		objet lang a utiliser pour traduction
- *	\return  	int        		<0 if KO, >0 if OK
+ *	Cree un facture sur disque en fonction du modele de FACTURE_ADDON_PDF
+ *	@param   	db  			objet base de donnee
+ *	@param   	object			Object invoice
+ *	@param	    message			message
+ *	@param	    modele			force le modele a utiliser ('' to not force)
+ *	@param		outputlangs		objet lang a utiliser pour traduction
+ *	@return  	int        		<0 if KO, >0 if OK
  */
-function facture_pdf_create($db, $id, $message, $modele, $outputlangs)
+function facture_pdf_create($db, $object, $message, $modele, $outputlangs)
 {
 	global $conf,$langs;
 	$langs->load("bills");
@@ -177,22 +177,12 @@ function facture_pdf_create($db, $id, $message, $modele, $outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($id, $outputlangs) > 0)
+		if ($obj->write_file($object, $outputlangs) > 0)
 		{
-			if (! is_object($id))	// Old method
-			{
-				// Success in building document. We build meta file.
-				facture_meta_create($db, $id);
-				// et on supprime l'image correspondant au preview
-				facture_delete_preview($db, $id);
-			}
-			else
-			{
-				// Success in building document. We build meta file.
-				facture_meta_create($db, $id->id);
-				// et on supprime l'image correspondant au preview
-				facture_delete_preview($db, $id->id);
-			}
+			// Success in building document. We build meta file.
+			facture_meta_create($db, $object->id);
+			// et on supprime l'image correspondant au preview
+			facture_delete_preview($db, $object->id);
 
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;

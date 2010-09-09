@@ -96,6 +96,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		if ($conf->expedition->dir_output."/sending")
 		{
 			$object->fetch_thirdparty();
+			
+			$origin = $object->origin;
 
 			//Creation de l expediteur
 			$this->expediteur = $mysoc;
@@ -104,11 +106,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			$this->destinataire = new Contact($this->db);
 			//		$pdf->expe->commande->fetch($pdf->commande->id);
 			//print_r($pdf->expe);
-			$idcontact = $object->commande->getIdContact('external','SHIPPING');
+			$idcontact = $object->$origin->getIdContact('external','SHIPPING');
 			$this->destinataire->fetch($idcontact[0]);
 
 			//Creation du livreur
-			$idcontact = $object->commande->getIdContact('internal','LIVREUR');
+			$idcontact = $object->$origin->getIdContact('internal','LIVREUR');
 			$this->livreur = new User($this->db);
 			if ($idcontact[0]) $this->livreur->fetch($idcontact[0]);
 
@@ -198,13 +200,12 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
 				//Recuperation des produits de la commande.
-				$Produits = $object->commande->lignes;
-				$nblignes = sizeof($Produits);
+				$nblignes = sizeof($object->$origin->lines);
 
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($object->commande->lignes[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object->$origin,$i,$outputlangs);
 					//if ($i==1) { print $object->commande->lignes[$i]->libelle.' - '.$libelleproduitservice; exit; }
 
 					//Creation des cases a cocher
@@ -213,7 +214,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					//Insertion de la reference du produit
 					$pdf->SetXY (30, $curY+1 );
 					$pdf->SetFont('','B', 7);
-					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($object->commande->lignes[$i]->ref), 0, 'L', 0);
+					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($object->$origin->lines[$i]->ref), 0, 'L', 0);
 					//Insertion du libelle
 					$pdf->SetFont('','', 7);
 					$pdf->SetXY (50, $curY+1 );
@@ -221,11 +222,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					//Insertion de la quantite commandee
 					$pdf->SetFont('','', 7);
 					$pdf->SetXY (140, $curY+1 );
-					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_asked, 0, 'C', 0);
+					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_asked, 0, 'C', 0);
 					//Insertion de la quantite a envoyer
 					$pdf->SetFont('','', 7);
 					$pdf->SetXY (170, $curY+1 );
-					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_shipped, 0, 'C', 0);
+					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped, 0, 'C', 0);
 
 					//Generation de la page 2
 					$curY += (dol_nboflines_bis($libelleproduitservice,0,$outputlangs->charset_output)*3+1);
@@ -334,6 +335,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	function _pagehead(&$pdf, $object, $outputlangs)
 	{
 		global $conf, $langs;
+		
+		$origin = $object->origin;
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
@@ -398,19 +401,20 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
-				if ($key == 'commande')
+				if ($key == $origin)
 				{
 					for ($i = 0; $i<sizeof($val);$i++)
 					{
-						$newobject=new Commande($this->db);
-						$result=$newobject->fetch($val[$i]);
+						$classname = ucfirst($origin);
+						$linkedobject = new $classname($this->db);
+						$result=$linkedobject->fetch($val[$i]);
 						if ($result >= 0)
 						{
 							$Yoff = $Yoff+4;
 							$pdf->SetXY($Xoff,$Yoff);
 							$pdf->SetFont('','',8);
-							$text=$newobject->ref;
-							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+							$text=$linkedobject->ref;
+							if ($linkedobject->ref_client) $text.=' ('.$linkedobject->ref_client.')';
 							$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
 						}
 					}
@@ -479,7 +483,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		// If SHIPPING contact defined on order, we use it
 		$usecontact=false;
-		$arrayidcontact=$object->commande->getIdContact('external','SHIPPING');
+		$arrayidcontact=$object->$origin->getIdContact('external','SHIPPING');
 		if (sizeof($arrayidcontact) > 0)
 		{
 			$usecontact=true;

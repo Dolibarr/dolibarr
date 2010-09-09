@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -133,14 +133,14 @@ class ModeleNumRefSuppliersOrders
 
 
 /**
- *		\brief      Create object on disk
- *		\param	    db  			objet base de donnee
- *		\param	    deliveryid		id object
- *		\param	    modele			force le modele a utiliser ('' to not force)
- *		\param		outputlangs		objet lang a utiliser pour traduction
- *      \return     int         	0 si KO, 1 si OK
+ *		Create object on disk
+ *		@param	    db  			objet base de donnee
+ *		@param	    object			object supplier order
+ *		@param	    model			force le modele a utiliser ('' to not force)
+ *		@param		outputlangs		objet lang a utiliser pour traduction
+ *      @return     int         	0 si KO, 1 si OK
  */
-function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
+function supplier_order_pdf_create($db, $object, $model, $outputlangs)
 {
 	global $langs;
 	$langs->load("suppliers");
@@ -148,11 +148,11 @@ function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/supplier_order/pdf/";
 
 	// Positionne modele sur le nom du modele de commande fournisseur a utiliser
-	if (! dol_strlen($modele))
+	if (! dol_strlen($model))
 	{
 		if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF))
 		{
-			$modele = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
+			$model = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
 		}
 		else
 		{
@@ -161,10 +161,10 @@ function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
 		}
 	}
 	// Charge le modele
-	$file = "pdf_".$modele.".modules.php";
+	$file = "pdf_".$model.".modules.php";
 	if (file_exists($dir.$file))
 	{
-		$classname = "pdf_".$modele;
+		$classname = "pdf_".$model;
 		require_once($dir.$file);
 
 		$obj = new $classname($db);
@@ -172,10 +172,10 @@ function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($comid,$outputlangs) > 0)
+		if ($obj->write_file($object,$outputlangs) > 0)
 		{
 			// on supprime l'image correspondant au preview
-			supplier_order_delete_preview($db, $comid);
+			supplier_order_delete_preview($db, $object->id);
 
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;
@@ -202,12 +202,12 @@ function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
  * @param   $propalid
  * @return  int
  */
-function supplier_order_delete_preview($db, $propalid)
+function supplier_order_delete_preview($db, $objectid)
 {
 	global $langs,$conf;
 
-	$comfourn = new CommandeFournisseur($db,"",$propalid);
-	$comfourn->fetch($propalid);
+	$comfourn = new CommandeFournisseur($db,"",$objectid);
+	$comfourn->fetch($objectid);
 	$client = new Societe($db);
 	$client->fetch($comfourn->socid);
 

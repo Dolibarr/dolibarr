@@ -74,7 +74,7 @@ if ($_POST["action"] == 'add')
 	$commande = new Commande($db);
 	$commande->fetch($delivery->commande_id);
 	$commande->fetch_lines();
-	for ($i = 0 ; $i < sizeof($commande->lignes) ; $i++)
+	for ($i = 0 ; $i < sizeof($commande->lines) ; $i++)
 	{
 		$qty = "qtyl".$i;
 		$idl = "idl".$i;
@@ -118,7 +118,7 @@ if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=delivery_order_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
+	$result=delivery_order_pdf_create($db, $delivery,$_REQUEST['model'],$outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -170,7 +170,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$outputlangs->setDefaultLang($newlang);
 	}
 
-	$result=delivery_order_pdf_create($db, $_REQUEST['id'],$_REQUEST['model'],$outputlangs);
+	$result=delivery_order_pdf_create($db, $delivery,$_REQUEST['model'],$outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -392,7 +392,7 @@ else
 
 		if ($delivery->origin_id)
 		{
-			$delivery->fetch_object();
+			$delivery->fetch_origin();
 		}
 
 		if ( $delivery->id > 0)

@@ -132,14 +132,14 @@ class ModeleNumRefDeliveryOrder
 
 
 /**
- *		\brief      Create object on disk
- *		\param	    db  			objet base de donnee
- *		\param	    deliveryid		id object
- *		\param	    modele			force le modele a utiliser ('' to not force)
- *		\param		outputlangs		objet lang a utiliser pour traduction
- *      \return     int         	0 si KO, 1 si OK
+ *		Create object on disk
+ *		@param	    db  			objet base de donnee
+ *		@param	    object			object delivery
+ *		@param	    model			force le modele a utiliser ('' to not force)
+ *		@param		outputlangs		objet lang a utiliser pour traduction
+ *      @return     int         	0 si KO, 1 si OK
  */
-function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs='')
+function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
 {
 	global $conf,$langs;
 	$langs->load("deliveries");
@@ -147,11 +147,11 @@ function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs=''
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/livraison/pdf/";
 
 	// Positionne modele sur le nom du modele de bon de livraison a utiliser
-	if (! dol_strlen($modele))
+	if (! dol_strlen($model))
 	{
 		if ($conf->global->LIVRAISON_ADDON_PDF)
 		{
-			$modele = $conf->global->LIVRAISON_ADDON_PDF;
+			$model = $conf->global->LIVRAISON_ADDON_PDF;
 		}
 		else
 		{
@@ -160,10 +160,10 @@ function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs=''
 		}
 	}
 	// Charge le modele
-	$file = "pdf_".$modele.".modules.php";
+	$file = "pdf_".$model.".modules.php";
 	if (file_exists($dir.$file))
 	{
-		$classname = "pdf_".$modele;
+		$classname = "pdf_".$model;
 		require_once($dir.$file);
 
 		$obj = new $classname($db);
@@ -171,10 +171,10 @@ function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs=''
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($deliveryid,$outputlangs) > 0)
+		if ($obj->write_file($object,$outputlangs) > 0)
 		{
 			// on supprime l'image correspondant au preview
-			delivery_order_delete_preview($db, $deliveryid);
+			delivery_order_delete_preview($db, $object->id);
 
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;

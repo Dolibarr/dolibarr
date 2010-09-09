@@ -135,13 +135,13 @@ class ModeleNumRefCommandes
 
 
 /**
- *  \brief      Cree un bon de commande sur disque en fonction d'un modele
- *  \param	    db  			objet base de donnee
- *  \param	    id				id de la propale a creer
- *  \param	    modele			force le modele a utiliser ('' to not force)
- *  \param		outputlangs		objet lang a utiliser pour traduction
+ *  Cree un bon de commande sur disque en fonction d'un modele
+ *  @param	    db  			objet base de donnee
+ *  @param	    object			object order
+ *  @param	    modele			force le modele a utiliser ('' to not force)
+ *  @param		outputlangs		objet lang a utiliser pour traduction
  */
-function commande_pdf_create($db, $id, $modele, $outputlangs)
+function commande_pdf_create($db, $object, $modele, $outputlangs)
 {
 	global $conf,$langs;
 	$langs->load("orders");
@@ -183,11 +183,11 @@ function commande_pdf_create($db, $id, $modele, $outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($id, $outputlangs) > 0)
+		if ($obj->write_file($object, $outputlangs) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
-			commande_delete_preview($db, $id);
+			commande_delete_preview($db, $object->id);
 			return 1;
 		}
 		else

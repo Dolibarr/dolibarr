@@ -59,13 +59,13 @@ class ModelePdfExpedition
 
 
 /**
-		\brief      Cree un bon d'expedition sur disque
-		\param	    db  			objet base de donnee
-		\param	    id				id de la expedition a creer
-		\param	    modele			force le modele a utiliser ('' to not force)
-		\param		outputlangs		objet lang a utiliser pour traduction
-*/
-function expedition_pdf_create($db, $id, $modele, $outputlangs)
+ * 	Cree un bon d'expedition sur disque
+ * 	@param	    db  			objet base de donnee
+ * 	@param	    object			object expedition
+ * 	@param	    modele			force le modele a utiliser ('' to not force)
+ * 	@param		outputlangs		objet lang a utiliser pour traduction
+ */
+function expedition_pdf_create($db, $object, $modele, $outputlangs)
 {
 	global $conf,$langs;
 	$langs->load("sendings");
@@ -104,14 +104,12 @@ function expedition_pdf_create($db, $id, $modele, $outputlangs)
 
 		$obj = new $classname($db);
 
-		$expedition = new Expedition($db);
-		$result=$expedition->fetch($id);
-		$result=$expedition->fetch_object($expedition->origin);
+		$result=$object->fetch_origin();
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($expedition, $outputlangs) > 0)
+		if ($obj->write_file($object, $outputlangs) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview

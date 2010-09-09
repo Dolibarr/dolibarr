@@ -65,7 +65,8 @@ class Livraison extends CommonObject
 	function Livraison($DB)
 	{
 		$this->db = $DB;
-		$this->lignes = array();
+		$this->lignes = array(); // TODO deprecated
+		$this->lines = array();
 		$this->products = array();
 
 		// List of short language codes for status
@@ -676,25 +677,27 @@ class Livraison extends CommonObject
 			$i = 0;
 			while ($i < $num)
 			{
-				$ligne = new LivraisonLigne($this->db);
+				$line = new LivraisonLigne($this->db);
 
 				$obj = $this->db->fetch_object($resql);
 
-				$ligne->description    = $obj->description;
-				$ligne->fk_product     = $obj->fk_product;
-				$ligne->qty_asked      = $obj->qty_asked;
-				$ligne->qty_shipped    = $obj->qty_shipped;
+				$line->description    = $obj->description;
+				$line->fk_product     = $obj->fk_product;
+				$line->qty_asked      = $obj->qty_asked;
+				$line->qty_shipped    = $obj->qty_shipped;
 
-				$ligne->ref            = $obj->ref;
-				$ligne->libelle        = $obj->label;           // Label produit
-				$ligne->label          = $obj->label;
-				$ligne->product_desc   = $obj->product_desc;    // Description produit
-				$ligne->product_type   = $obj->fk_product_type;
+				$line->ref            = $obj->ref;
+				$line->libelle        = $obj->label;           // Label produit
+				$line->label          = $obj->label;
+				$line->product_desc   = $obj->product_desc;    // Description produit
+				$line->product_type   = $obj->fk_product_type;
 
-				$ligne->price          = $obj->price;
-				$ligne->total_ht       = $obj->total_ht;
+				$line->price          = $obj->price;
+				$line->total_ht       = $obj->total_ht;
 
-				$this->lignes[$i] = $ligne;
+				$this->lignes[$i] = $line;	// TODO deprecated
+				$this->lines[$i] = $line;
+				
 				$i++;
 			}
 			$this->db->free($resql);

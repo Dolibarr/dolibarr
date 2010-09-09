@@ -102,11 +102,11 @@ class pdf_einstein extends ModelePDFCommandes
 
 	/**
 	 *		\brief      Fonction generant la commande sur le disque
-	 *		\param	    com				Objet commande a generer
+	 *		\param	    object				Objet commande a generer
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int         	1=ok, 0=ko
 	 */
-	function write_file($com,$outputlangs)
+	function write_file($object,$outputlangs)
 	{
 		global $user,$langs,$conf;
 
@@ -123,29 +123,21 @@ class pdf_einstein extends ModelePDFCommandes
 
 		if ($conf->commande->dir_output)
 		{
-			// Definition de l'objet $com (pour compatibilite ascendante)
-			if (! is_object($com))
-			{
-				$id = $com;
-				$com = new Commande($this->db,"",$id);
-				$ret=$com->fetch($id);
-			}
-
-            $com->fetch_thirdparty();
+            $object->fetch_thirdparty();
 
             $deja_regle = "";
 
             // Definition de $dir et $file
-			if ($com->specimen)
+			if ($object->specimen)
 			{
 				$dir = $conf->commande->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
-				$comref = dol_sanitizeFileName($com->ref);
-				$dir = $conf->commande->dir_output . "/" . $comref;
-				$file = $dir . "/" . $comref . ".pdf";
+				$objectref = dol_sanitizeFileName($object->ref);
+				$dir = $conf->commande->dir_output . "/" . $objectref;
+				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
 			if (! file_exists($dir))
@@ -159,7 +151,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 			if (file_exists($dir))
 			{
-				$nblignes = sizeof($com->lignes);
+				$nblignes = sizeof($object->lines);
 
 				// Protection et encryption du pdf
 				if ($conf->global->PDF_SECURITY_ENCRYPTION)
@@ -186,11 +178,11 @@ class pdf_einstein extends ModelePDFCommandes
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset($com->ref));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Order"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($com->ref)." ".$outputlangs->transnoentities("Order"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Order"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -199,7 +191,7 @@ class pdf_einstein extends ModelePDFCommandes
 				// Positionne $this->atleastonediscount si on a au moins une remise
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
-					if ($com->lignes[$i]->remise_percent)
+					if ($object->lines[$i]->remise_percent)
 					{
 						$this->atleastonediscount++;
 					}
@@ -208,7 +200,7 @@ class pdf_einstein extends ModelePDFCommandes
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $com, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -220,13 +212,13 @@ class pdf_einstein extends ModelePDFCommandes
 				$tab_height_newpage = 150;
 
 				// Affiche notes
-				if (! empty($com->note_public))
+				if (! empty($object->note_public))
 				{
 					$tab_top = 88;
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($com->note_public), 0, 'J');
+					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -252,7 +244,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$curY = $nexY;
 
 					// Description of product line
-					$libelleproduitservice=pdf_getlinedesc($com->lignes[$i],$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
@@ -264,40 +256,40 @@ class pdf_einstein extends ModelePDFCommandes
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
 						$pdf->SetXY ($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($com->lignes[$i]->tva_tx,1,$com->lignes[$i]->info_bits), 0, 'R');
+						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits), 0, 'R');
 					}
 
 					// Prix unitaire HT avant remise
 					$pdf->SetXY ($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($com->lignes[$i]->subprice), 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($object->lines[$i]->subprice), 0, 'R', 0);
 
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $com->lignes[$i]->qty, 0, 'R');
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $object->lines[$i]->qty, 0, 'R');
 
 					// Remise sur ligne
 					$pdf->SetXY ($this->posxdiscount, $curY);
-					if ($com->lignes[$i]->remise_percent)
+					if ($object->lines[$i]->remise_percent)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, dol_print_reduction($com->lignes[$i]->remise_percent,$outputlangs), 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs), 0, 'R');
 					}
 
 					// Total HT ligne
 					$pdf->SetXY ($this->postotalht, $curY);
-					$total = price($com->lignes[$i]->total_ht);
+					$total = price($object->lines[$i]->total_ht);
 					$pdf->MultiCell(26, 3, $total, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$tvaligne=$com->lignes[$i]->total_tva;
+					$tvaligne=$object->lines[$i]->total_tva;
 
-					$localtax1ligne=$com->lignes[$i]->total_localtax1;
-					$localtax2ligne=$com->lignes[$i]->total_localtax2;
+					$localtax1ligne=$object->lines[$i]->total_localtax1;
+					$localtax2ligne=$object->lines[$i]->total_localtax2;
 
-					$vatrate=(string) $com->lignes[$i]->tva_tx;
-					$localtax1rate=(string) $com->lignes[$i]->localtax1_tx;
-					$localtax2rate=(string) $com->lignes[$i]->localtax2_tx;
+					$vatrate=(string) $object->lines[$i]->tva_tx;
+					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
+					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
 
-					if (($com->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
+					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
@@ -308,11 +300,11 @@ class pdf_einstein extends ModelePDFCommandes
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
-						$follow_descproduitservice = $outputlangs->convToOutputCharset($com->lignes[$i+1]->desc);
+						$follow_descproduitservice = $outputlangs->convToOutputCharset($object->lines[$i+1]->desc);
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4);
 						// Et si on affiche dates de validite, on ajoute encore une ligne
-						if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
+						if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
 						{
 							$nblineFollowDesc += 4;
 						}
@@ -344,12 +336,12 @@ class pdf_einstein extends ModelePDFCommandes
 							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
 						}
 
-						$this->_pagefoot($pdf,$com,$outputlangs);
+						$this->_pagefoot($pdf,$object,$outputlangs);
 
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $com, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('','', 9);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
@@ -371,19 +363,19 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 
 				// Affiche zone infos
-				$posy=$this->_tableau_info($pdf, $com, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $com, $deja_regle, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
 				if ($deja_regle)
 				{
-					$posy=$this->_tableau_versements($pdf, $com, $posy, $outputlangs);
+					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 
 				// Pied de page
-				$this->_pagefoot($pdf,$com,$outputlangs);
+				$this->_pagefoot($pdf,$object,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
