@@ -362,7 +362,7 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->unvalidate)
 	$resteapayer = $object->total_ttc - $totalpaye;
 
 	// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
-	$ventilExportCompta = $fac->getVentilExportCompta();
+	$ventilExportCompta = $object->getVentilExportCompta();
 
 	// On verifie si aucun paiement n'a ete effectue
 	if ($resteapayer == $object->total_ttc	&& $object->paye == 0 && $ventilExportCompta == 0)
@@ -2179,7 +2179,7 @@ else
 				print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNomUrl(1)).')';
 			}
 
-			$facidavoir=$fac->getListIdAvoirFromInvoice();
+			$facidavoir=$object->getListIdAvoirFromInvoice();
 			if (sizeof($facidavoir) > 0)
 			{
 				print ' ('.$langs->transnoentities("InvoiceHasAvoir");
@@ -2624,6 +2624,10 @@ else
 			/*
 			 * Inoice lines
 			 */
+			
+			print '<table class="noborder" width="100%">';
+			
+			/*
 
 			$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_tx,';
 			$sql.= ' l.fk_remise_except,';
@@ -2902,6 +2906,16 @@ else
 			{
 				dol_print_error($db);
 			}
+			
+			*/
+			
+			$result = $object->getLinesArray();
+			
+			if (!empty($object->lines))
+			{
+				$object->print_title_list();
+				$object->printLinesList();
+			}
 
 			/*
 			 * Form to add new line
@@ -2917,6 +2931,16 @@ else
 				{
 					$var=!$var;
 					$object->showAddPredefinedProductForm(1);
+				}
+				
+				// Hook of thirdparty module
+				if (! empty($object->hooks))
+				{
+					foreach($object->hooks as $module)
+					{
+						$var=!$var;
+						$module->formAddObject($object);
+					}
 				}
 			}
 
@@ -3145,11 +3169,11 @@ else
 				 */
 				$object->load_object_linked($object->id,$object->element);
 
-				foreach($object->linked_object as $object => $objectid)
+				foreach($object->linked_object as $objecttype => $objectid)
 				{
-					if($conf->$object->enabled && $object != $object->element)
+					if($conf->$objecttype->enabled && $objecttype != $object->element)
 					{
-						$somethingshown=$object->showLinkedObjectBlock($object,$objectid,$somethingshown);
+						$somethingshown=$object->showLinkedObjectBlock($objecttype,$objectid,$somethingshown);
 					}
 				}
 

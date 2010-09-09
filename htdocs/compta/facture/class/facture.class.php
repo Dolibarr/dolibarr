@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
@@ -101,6 +101,7 @@ class Facture extends CommonObject
 	var $products=array();
 	var $lignes=array();	// TODO deprecated
 	var $lines=array();
+	var $line;
 	//! Pour board
 	var $nbtodo;
 	var $nbtodolate;
@@ -672,6 +673,7 @@ class Facture extends CommonObject
 	{
 		$sql = 'SELECT l.rowid, l.fk_product, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
+		$sql.= ' l.rang, l.special_code,';
 		$sql.= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
@@ -718,6 +720,8 @@ class Facture extends CommonObject
 				$line->total_ttc        = $objp->total_ttc;
 				$line->export_compta    = $objp->fk_export_compta;
 				$line->code_ventilation = $objp->fk_code_ventilation;
+				$line->rang				= $objp->rang;
+				$line->special_code		= $objp->special_code;
 
 				// Ne plus utiliser
 				$line->price            = $objp->price;
@@ -1593,7 +1597,7 @@ class Facture extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1)
+	function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0)
 	{
 		dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -1668,34 +1672,35 @@ class Facture extends CommonObject
 			}
 
 			// Insert line
-			$ligne=new FactureLigne($this->db);
-			$ligne->fk_facture=$facid;
-			$ligne->desc=$desc;
-			$ligne->qty=$qty;
-			$ligne->tva_tx=$txtva;
-			$ligne->localtax1_tx=$txlocaltax1;
-			$ligne->localtax2_tx=$txlocaltax2;
-			$ligne->fk_product=$fk_product;
-			$ligne->product_type=$product_type;
-			$ligne->remise_percent=$remise_percent;
-			$ligne->subprice=$pu_ht;
-			$ligne->date_start=$date_start;
-			$ligne->date_end=$date_end;
-			$ligne->ventil=$ventil;
-			$ligne->rang=$rangtouse;
-			$ligne->info_bits=$info_bits;
-			$ligne->fk_remise_except=$fk_remise_except;
-			$ligne->total_ht=$total_ht;
-			$ligne->total_tva=$total_tva;
-			$ligne->total_localtax1=$total_localtax1;
-			$ligne->total_localtax2=$total_localtax2;
-			$ligne->total_ttc=$total_ttc;
+			$this->line=new FactureLigne($this->db);
+			$this->line->fk_facture=$facid;
+			$this->line->desc=$desc;
+			$this->line->qty=$qty;
+			$this->line->tva_tx=$txtva;
+			$this->line->localtax1_tx=$txlocaltax1;
+			$this->line->localtax2_tx=$txlocaltax2;
+			$this->line->fk_product=$fk_product;
+			$this->line->product_type=$product_type;
+			$this->line->remise_percent=$remise_percent;
+			$this->line->subprice=$pu_ht;
+			$this->line->date_start=$date_start;
+			$this->line->date_end=$date_end;
+			$this->line->ventil=$ventil;
+			$this->line->rang=$rangtouse;
+			$this->line->info_bits=$info_bits;
+			$this->line->fk_remise_except=$fk_remise_except;
+			$this->line->total_ht=$total_ht;
+			$this->line->total_tva=$total_tva;
+			$this->line->total_localtax1=$total_localtax1;
+			$this->line->total_localtax2=$total_localtax2;
+			$this->line->total_ttc=$total_ttc;
+			$this->line->special_code=$special_code;
 
 			// \TODO Ne plus utiliser
-			$ligne->price=$price;
-			$ligne->remise=$remise;
+			$this->line->price=$price;
+			$this->line->remise=$remise;
 
-			$result=$ligne->insert();
+			$result=$this->line->insert();
 			if ($result > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la facture meme
@@ -2889,6 +2894,71 @@ class Facture extends CommonObject
 			return -1;
 		}
 	}
+	
+	/**
+	 * 	Return an array of invoice lines
+	 */
+	function getLinesArray()
+	{
+		$sql = 'SELECT l.rowid, l.description, l.fk_product, l.product_type, l.qty, l.tva_tx,';
+		$sql.= ' l.fk_remise_except,';
+		$sql.= ' l.remise_percent, l.subprice, l.info_bits, l.rang, l.special_code,';
+		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
+		$sql.= ' l.date_start,';
+		$sql.= ' l.date_end,';
+		$sql.= ' l.product_type,';
+		$sql.= ' p.ref as product_ref, p.fk_product_type, p.label as product_label,';
+		$sql.= ' p.description as product_desc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON l.fk_product=p.rowid';
+		$sql.= ' WHERE l.fk_facture = '.$this->id;
+		$sql.= ' ORDER BY l.rang ASC, l.rowid';
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$this->lines[$i]->id				= $obj->rowid;
+				$this->lines[$i]->description 		= $obj->description;
+				$this->lines[$i]->fk_product		= $obj->fk_product;
+				$this->lines[$i]->ref				= $obj->product_ref;
+				$this->lines[$i]->product_label		= $obj->product_label;
+				$this->lines[$i]->product_desc		= $obj->product_desc;
+				$this->lines[$i]->fk_product_type	= $obj->fk_product_type;
+				$this->lines[$i]->product_type		= $obj->product_type;
+				$this->lines[$i]->qty				= $obj->qty;
+				$this->lines[$i]->subprice			= $obj->subprice;
+				$this->lines[$i]->fk_remise_except 	= $obj->fk_remise_except;
+				$this->lines[$i]->remise_percent	= $obj->remise_percent;
+				$this->lines[$i]->tva_tx			= $obj->tva_tx;
+				$this->lines[$i]->info_bits			= $obj->info_bits;
+				$this->lines[$i]->total_ht			= $obj->total_ht;
+				$this->lines[$i]->total_tva			= $obj->total_tva;
+				$this->lines[$i]->total_ttc			= $obj->total_ttc;
+				$this->lines[$i]->special_code		= $obj->special_code;
+				$this->lines[$i]->rang				= $obj->rang;
+				$this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
+				$this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
+
+				$i++;
+			}
+			$this->db->free($resql);
+			
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dol_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
+			return -1;
+		}
+	}
 
 }
 
@@ -2925,6 +2995,11 @@ class FactureLigne
 	var $info_bits = 0;		// Liste d'options cumulables:
 	// Bit 0:	0 si TVA normal - 1 si TVA NPR
 	// Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	
+	var $special_code;	// Liste d'options non cumulabels:
+	// 1: frais de port
+	// 2: ecotaxe
+	// 3: ??
 
 	//! Total HT  de la ligne toute quantite et incluant la remise ligne
 	var $total_ht;
@@ -3042,6 +3117,7 @@ class FactureLigne
         if (empty($this->info_bits)) $this->info_bits=0;
         if (empty($this->subprice)) $this->subprice=0;
         if (empty($this->price))    $this->price=0;
+        if (empty($this->special_code)) $this->special_code=0;
 
         // Check parameters
         if ($this->product_type < 0) return -1;
@@ -3053,7 +3129,7 @@ class FactureLigne
 		$sql.= ' (fk_facture, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
 		$sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
 		$sql.= ' date_start, date_end, fk_code_ventilation, fk_export_compta, ';
-		$sql.= ' rang,';
+		$sql.= ' rang, special_code,';
 		$sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc)';
 		$sql.= " VALUES (".$this->fk_facture.",";
 		$sql.= " '".addslashes($this->desc)."',";
@@ -3077,6 +3153,7 @@ class FactureLigne
 		$sql.= ' '.$this->fk_code_ventilation.',';
 		$sql.= ' '.$this->fk_export_compta.',';
 		$sql.= ' '.$this->rang.',';
+		$sql.= ' '.$this->special_code.',';
 		$sql.= " '".$this->info_bits."',";
 		$sql.= " ".price2num($this->total_ht).",";
 		$sql.= " ".price2num($this->total_tva).",";

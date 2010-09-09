@@ -257,29 +257,33 @@ class pdf_crabe extends ModelePDFFactures
 					// TVA
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
+						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
 						$pdf->SetXY ($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits), 0, 'R');
+						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
 					}
 
 					// Prix unitaire HT avant remise
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs);
 					$pdf->SetXY ($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($object->lines[$i]->subprice), 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, $up_excl_tax, 0, 'R', 0);
 
 					// Quantity
+					$qty = pdf_getlineqty($object, $i, $outputlangs);
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $object->lines[$i]->qty, 0, 'R');	// Enough for 6 chars
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $qty, 0, 'R');	// Enough for 6 chars
 
 					// Remise sur ligne
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($object->lines[$i]->remise_percent)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs), 0, 'R');
+						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs);
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT ligne
+					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
 					$pdf->SetXY ($this->postotalht, $curY);
-					$total = price($object->lines[$i]->total_ht);
-					$pdf->MultiCell(26, 3, $total, 0, 'R', 0);
+					$pdf->MultiCell(26, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;

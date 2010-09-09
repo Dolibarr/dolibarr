@@ -2084,8 +2084,6 @@ class Propal extends CommonObject
 	 */
 	function getLinesArray()
 	{
-		$lines = array();
-
 		$sql = 'SELECT pt.rowid, pt.description, pt.fk_product, pt.fk_remise_except,';
 		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
 		$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.marge_tx, pt.marque_tx, pt.pa_ht, pt.special_code,';
