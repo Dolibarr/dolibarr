@@ -101,7 +101,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 	/**
 	 *	\brief      Fonction generant la propale sur le disque
-	 *	\param	    propale			Objet propal a generer (ou id si ancienne methode)
+	 *	\param	    object			Objet propal a generer (ou id si ancienne methode)
 	 *	\param		outputlangs		Lang object for output language
 	 *	\return	    int     		1=ok, 0=ko
 	 */
