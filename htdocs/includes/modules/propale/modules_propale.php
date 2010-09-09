@@ -138,7 +138,7 @@ class ModeleNumRefPropales
  * 	@param		outputlangs		objet lang a utiliser pour traduction
  * 	@return     int         	0 si KO, 1 si OK
  */
-function propale_pdf_create($db, $id, $modele, $outputlangs)
+function propale_pdf_create($db, $object, $modele, $outputlangs)
 {
 	global $langs;
 	$langs->load("propale");
@@ -181,11 +181,11 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($id, $outputlangs) > 0)
+		if ($obj->write_file($object, $outputlangs) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
-			propale_delete_preview($db, $id);
+			propale_delete_preview($db, $object->id);
 			return 1;
 		}
 		else

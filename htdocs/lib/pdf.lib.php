@@ -501,4 +501,23 @@ function pdf_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 	}
 	return $libelleproduitservice;
 }
+
+/**
+ *	Return line vat rate
+ *	@param		object				Object
+ *	@param		$i					Current line number
+ *  @param    	outputlang			Object lang for output
+ */
+function pdf_getlinevatrate($object,$i,$outputlangs)
+{
+	if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+	{
+		// TODO add hook function
+	}
+	else
+	{
+		return vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits);
+	}
+}
+
 ?>

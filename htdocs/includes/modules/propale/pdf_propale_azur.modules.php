@@ -123,13 +123,6 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		if ($conf->propale->dir_output)
 		{
-			// Definition de l'objet $object (pour compatibilite ascendante)
-			if (! is_object($object))
-			{
-				$id = $object;
-				$object = new Propal($this->db);
-				$ret=$object->fetch($id);
-			}
 			$object->fetch_thirdparty();
 			$deja_regle = "";
 
@@ -264,8 +257,10 @@ class pdf_propale_azur extends ModelePDFPropales
 					// TVA
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
+						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
+						
 						$pdf->SetXY ($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits), 0, 'R');
+						$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, $vat_rate, 0, 'R');
 					}
 
 					// Prix unitaire HT avant remise
