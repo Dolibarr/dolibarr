@@ -30,11 +30,12 @@ include_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 $langs->load("bills");
 
 $chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+$amounts = array();
 
-// Securite acces client
+// Security check
+$socid=0;
 if ($user->societe_id > 0)
 {
-	$action = '';
 	$socid = $user->societe_id;
 }
 
@@ -74,14 +75,12 @@ if ($_POST["action"] == 'add_paiement')
 		$paymentid = 0;
 
 		// Read possible payments
-		$amounts = array();
 		foreach ($_POST as $key => $value)
 		{
 			if (substr($key,0,7) == 'amount_')
 			{
 				$other_chid = substr($key,7);
-
-				$amounts[$other_chid] = $_POST[$key];
+				$amounts[$other_chid] = price2num($_POST[$key]);
 			}
 		}
 
@@ -95,57 +94,38 @@ if ($_POST["action"] == 'add_paiement')
 		$paiement->paiementtype = $_POST["paiementtype"];
 		$paiement->num_paiement = $_POST["num_paiement"];
 		$paiement->note         = $_POST["note"];
-		$paymentid = $paiement->create($user);
 
-		$socialcontrib = new ChargeSociales($db);
-		$socialcontrib->fetch($paiement->chid);
-
-		if ($paymentid > 0)
+		if (! $error)
 		{
-			// On determine le montant total du paiement
-			$total=0;
-			foreach ($paiement->amounts as $key => $value)
-			{
-				$chid = $key;
-				$value = trim($value);
-				$amount = price2num(trim($value), 'MT');   // Un round est ok si nb avec '.'
-				$total += $amount;
-			}
-
-			// Insertion dans llx_bank
-			$langs->load("banks");
-			$label = $langs->transnoentities("SocialContributionPayment");
-			$acc = new Account($db, $_POST["accountid"]);
-			$bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementtype, $label, -$total, $paiement->num_paiement, '', $user);
-
-			// Mise a jour fk_bank dans llx_paiementcharge. On connait ainsi le paiement qui a genere l'ecriture bancaire
-			if ($bank_line_id > 0)
-			{
-				$paiement->update_fk_bank($bank_line_id);
-
-				// Mise a jour liens (pour chaque charge concernee par le paiement)
-				foreach ($paiement->amounts as $key => $value)
-				{
-					$acc->add_url_line($bank_line_id, $chid, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''),'sc');
-					$acc->add_url_line($bank_line_id, $paymentid, DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id=', '(paiement)','payment_sc');
-				}
-
-				$db->commit();
-
-				$loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
-				Header("Location: ".$loc);
-				exit;
-			}
-			else {
-				$db->rollback();
-				$mesg = "Echec de la creation entree compte: ".$db->error();
-			}
+		    $paymentid = $paiement->create($user);
+            if (! $paymentid > 0)
+            {
+                $errmsg=$paiement->error;
+                $error++;
+            }
 		}
-		else
-		{
-			$db->rollback();
-			$mesg = "Failed to create payment: paiement_id=".$paymentid." ".$db->error();
-		}
+
+        if (! $error)
+        {
+            $result=$paiement->addPaymentToBank($user,'payment_sc','(SocialContributionPayment)',$_POST['accountid'],'','');
+            if (! $result > 0)
+            {
+                $errmsg=$paiement->error;
+                $error++;
+            }
+        }
+
+	    if (! $error)
+        {
+            $db->commit();
+            $loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
+            Header('Location: '.$loc);
+            exit;
+        }
+        else
+        {
+            $db->rollback();
+        }
 	}
 
 	$_GET["action"]='create';

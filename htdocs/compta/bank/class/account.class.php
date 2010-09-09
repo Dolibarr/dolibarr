@@ -202,6 +202,7 @@ class Account extends CommonObject
 		// Clean parameters
 		$emetteur=trim($emetteur);
 		$banque=trim($banque);
+
 		if (is_numeric($oper))    // Clean oper to have a code instead of a rowid
 		{
 			$sql ="SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -235,7 +236,6 @@ class Account extends CommonObject
 			$this->error="ErrorCashAccountAcceptsOnlyCashMoney";
 			return -3;
 		}
-
 
 		$this->db->begin();
 

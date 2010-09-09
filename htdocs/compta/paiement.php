@@ -48,6 +48,7 @@ $amountsresttopay=array();
 $addwarning=0;
 
 // Security check
+$socid=0;
 if ($user->societe_id > 0)
 {
     $socid = $user->societe_id;
@@ -166,7 +167,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 
 		if (! $error)
 		{
-		    $result=$paiement->addLinkInvoiceBank($user,'(CustomerInvoicePayment)',$_POST['accountid'],$_POST['chqemetteur'],$_POST['chqbank']);
+		    $result=$paiement->addPaymentToBank($user,'payment','(CustomerInvoicePayment)',$_POST['accountid'],$_POST['chqemetteur'],$_POST['chqbank']);
             if (! $result > 0)
             {
                 $errmsg=$paiement->error;

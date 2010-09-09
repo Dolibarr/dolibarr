@@ -244,69 +244,29 @@ switch ( $_GET['action'] )
 				$paiement_id = $payment->create($user);
 				if ($paiement_id > 0)
 				{
-					// Ajout d'une ecriture sur le compte bancaire
-					if ($conf->banque->enabled)
-					{
-						$bankaccountid=0;
-						if ( $obj_facturation->mode_reglement() == 'ESP' )
-						{
-							$bankaccountid=$conf_fkaccount_cash;
-						}
-						if ( $obj_facturation->mode_reglement() == 'CHQ' )
-						{
-							$bankaccountid=$conf_fkaccount_cheque;
-						}
-						if ( $obj_facturation->mode_reglement() == 'CB' )
-						{
-							$bankaccountid=$conf_fkaccount_cb;
-						}
+                    $bankaccountid=0;
+                    if ( $obj_facturation->mode_reglement() == 'ESP' )
+                    {
+                        $bankaccountid=$conf_fkaccount_cash;
+                    }
+                    if ( $obj_facturation->mode_reglement() == 'CHQ' )
+                    {
+                        $bankaccountid=$conf_fkaccount_cheque;
+                    }
+                    if ( $obj_facturation->mode_reglement() == 'CB' )
+                    {
+                        $bankaccountid=$conf_fkaccount_cb;
+                    }
 
-						if ($bankaccountid > 0)
-						{
-							// Insertion dans llx_bank
-							$label = "(CustomerInvoicePayment)";
-							$acc = new Account($db, $bankaccountid);
-
-							$bank_line_id = $acc->addline($payment->datepaye,
-							$payment->paiementid,	// Payment mode id or code ("CHQ or VIR for example")
-							$label,
-							$obj_facturation->prix_total_ttc(),
-							$payment->num_paiement,
-				      		'',
-							$user,
-							'',
-							'');
-
-							// Mise a jour fk_bank dans llx_paiement.
-							// On connait ainsi le paiement qui a genere l'ecriture bancaire
-							if ($bank_line_id > 0)
-							{
-								$payment->update_fk_bank($bank_line_id);
-								// Mise a jour liens (pour chaque facture concernees par le paiement)
-								foreach ($payment->amounts as $key => $value)
-								{
-									$facid = $key;
-									$fac = new Facture($db);
-									$fac->fetch($facid);
-									$fac->fetch_client();
-									$acc->add_url_line($bank_line_id,
-									$paiement_id,
-									DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
-					        									 '(paiement)',
-					        									 'payment');
-									$acc->add_url_line($bank_line_id,
-									$fac->client->id,
-									DOL_URL_ROOT.'/compta/fiche.php?socid=',
-									$fac->client->nom,
-					       										'company');
-								}
-							}
-							else
-							{
-								$error++;
-							}
-						}
-					}
+                    if (! $error)
+                    {
+                        $result=$payment->addPaymentToBank($user,'payment','(CustomerInvoicePayment)',$bankaccountid,'','');
+                        if (! $result > 0)
+                        {
+                            $errmsg=$paiement->error;
+                            $error++;
+                        }
+                    }
 				}
 				else
 				{

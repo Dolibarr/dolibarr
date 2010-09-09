@@ -304,13 +304,14 @@ class Paiement
      *      A record into bank for payment with links between this bank record and invoices of payment.
      *      All payment properties must have been set first like after a call to create().
      *      @param      user                Object of user making payment
+     *      @param      mode                'payment', 'payment_supplier'
      *      @param      label               Label to use in bank record
      *      @param      accountid           Id of bank account to do link with
      *      @param      emetteur_nom        Name of transmitter
      *      @param      emetteur_banque     Name of bank
      *      @return     int                 <0 if KO, >0 if OK
      */
-    function addLinkInvoiceBank($user,$label,$accountid,$emetteur_nom,$emetteur_banque)
+    function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
     {
         global $conf;
 
@@ -323,11 +324,15 @@ class Paiement
             $acc = new Account($this->db);
             $acc->fetch($accountid);
 
+            $total=$this->total;
+            if ($mode == 'payment_supplier') $total=-$total;
+            if ($mode == 'payment_sc') $total=-$total;
+
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline($this->datepaye,
             $this->paiementid,  // Payment mode id or code ("CHQ or VIR for example")
             $label,
-            $this->total,
+            $total,
             $this->num_paiement,
             '',
             $user,
@@ -344,33 +349,50 @@ class Paiement
                     $error++;
                     dol_print_error($this->db);
                 }
-                // Add link 'payment' in bank_url between payment and bank transaction
-                $result=$acc->add_url_line($bank_line_id,
-                    $this->id,
-                    DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
-                                                 '(paiement)',
-                                                 'payment');
-                if ($result <= 0)
+
+                // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
+                $url='';
+                if ($mode == 'payment') $url=DOL_URL_ROOT.'/compta/paiement/fiche.php?id=';
+                if ($mode == 'payment_supplier') $url=DOL_URL_ROOT.'/fourn/paiement/fiche.php?id=';
+                if ($url)
                 {
-                    $error++;
-                    dol_print_error($this->db);
+                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
+                    if ($result <= 0)
+                    {
+                        $error++;
+                        dol_print_error($this->db);
+                    }
                 }
+
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
                 $linkaddedforthirdparty=array();
                 foreach ($this->amounts as $key => $value)
                 {
-                    $fac = new Facture($this->db);
-                    $fac->fetch($key);
-                    $fac->fetch_thirdparty();   // This should be always same third party but we loop in case of.
-                    if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                    if ($mode == 'payment')
                     {
-                        $result=$acc->add_url_line($bank_line_id,
-                        $fac->client->id,
-                        DOL_URL_ROOT.'/compta/fiche.php?socid=',
-                        $fac->client->nom,
-                        'company');
-                        if ($result <= 0) dol_print_error($this->db);
-                        $linkaddedforthirdparty[$fac->client->id]=$fac->client->id;  // Mark as done for this thirdparty
+                        $fac = new Facture($this->db);
+                        $fac->fetch($key);
+                        $fac->fetch_thirdparty();   // This should be always same third party but we loop in case of.
+                        if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                        {
+                            $result=$acc->add_url_line($bank_line_id, $fac->client->id,
+                            DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom, 'company');
+                            if ($result <= 0) dol_print_error($this->db);
+                            $linkaddedforthirdparty[$fac->client->id]=$fac->client->id;  // Mark as done for this thirdparty
+                        }
+                    }
+                    if ($mode == 'payment_supplier')
+                    {
+                        $fac = new FactureFournisseur($this->db);
+                        $fac->fetch($key);
+                        $fac->fetch_fournisseur();   // This should be always same third party but we loop in case of.
+                        if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                        {
+                            $result=$acc->add_url_line($bank_line_id, $fac->fournisseur->id,
+                            DOL_URL_ROOT.'/fourn/fiche.php?socid=', $fac->fournisseur->nom, 'company');
+                            if ($result <= 0) dol_print_error($this->db);
+                            $linkaddedforthirdparty[$fac->fournisseur->id]=$fac->fournisseur->id;  // Mark as done for this thirdparty
+                        }
                     }
                 }
             }

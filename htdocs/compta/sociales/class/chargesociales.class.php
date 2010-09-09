@@ -374,7 +374,7 @@ class PaiementCharge extends CommonObject
 	 *      \brief      Constructor
 	 *      \param      DB      Database handler
 	 */
-	function Paiementcharge($DB)
+	function PaiementCharge($DB)
 	{
 		$this->db = $DB;
 		return 1;
@@ -414,7 +414,6 @@ class PaiementCharge extends CommonObject
 		$total=0;
 		foreach ($this->amounts as $key => $value)
 		{
-			$facid = $key;
 			$amount = price2num(trim($value), 'MT');
 			$total += $amount;
 		}
@@ -756,6 +755,100 @@ class PaiementCharge extends CommonObject
 
 
 	}
+
+
+    /**
+     *      A record into bank for payment with links between this bank record and invoices of payment.
+     *      All payment properties must have been set first like after a call to create().
+     *      @param      user                Object of user making payment
+     *      @param      mode                'payment_sc'
+     *      @param      label               Label to use in bank record
+     *      @param      accountid           Id of bank account to do link with
+     *      @param      emetteur_nom        Name of transmitter
+     *      @param      emetteur_banque     Name of bank
+     *      @return     int                 <0 if KO, >0 if OK
+     */
+    function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
+    {
+        global $conf;
+
+        $error=0;
+
+        if ($conf->banque->enabled)
+        {
+            require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+
+            $acc = new Account($this->db);
+            $acc->fetch($accountid);
+
+            $total=$this->total;
+            if ($mode == 'payment_sc') $total=-$total;
+
+            // Insert payment into llx_bank
+            $bank_line_id = $acc->addline($this->datepaye,
+            $this->paiementtype,  // Payment mode id or code ("CHQ or VIR for example")
+            $label,
+            $total,
+            $this->num_paiement,
+            '',
+            $user,
+            $emetteur_nom,
+            $emetteur_banque);
+
+            // Mise a jour fk_bank dans llx_paiement.
+            // On connait ainsi le paiement qui a genere l'ecriture bancaire
+            if ($bank_line_id > 0)
+            {
+                $result=$this->update_fk_bank($bank_line_id);
+                if ($result <= 0)
+                {
+                    $error++;
+                    dol_print_error($this->db);
+                }
+
+                // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
+                $url='';
+                if ($mode == 'payment_sc') $url=DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id=';
+                if ($url)
+                {
+                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
+                    if ($result <= 0)
+                    {
+                        $error++;
+                        dol_print_error($this->db);
+                    }
+                }
+
+                // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
+                $linkaddedforthirdparty=array();
+                foreach ($this->amounts as $key => $value)
+                {
+                    if ($mode == 'payment_sc')
+                    {
+                        $socialcontrib = new ChargeSociales($this->db);
+                        $socialcontrib->fetch($key);
+                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id,
+                        DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''),'sc');
+                        if ($result <= 0) dol_print_error($this->db);
+                    }
+                }
+            }
+            else
+            {
+                $this->error=$acc->error;
+                $error++;
+            }
+        }
+
+        if (! $error)
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 
 
 	/**

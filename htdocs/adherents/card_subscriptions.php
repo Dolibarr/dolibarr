@@ -235,8 +235,8 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
     {
         $db->begin();
 
+        // Create subscription (and bank record if option is 'bankdirect')
         $crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend, $option);
-
         if ($crowid <= 0)
         {
             $error++;
@@ -297,9 +297,9 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
                 // Validate invoice
                 $result=$invoice->validate($user);
 
+                // Add payment
                 if ($option == 'bankviainvoice')
                 {
-                    // Now we add payment
                     require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
                     require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 
@@ -324,7 +324,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 
                     if (! $error)
                     {
-                        $result=$paiement->addLinkInvoiceBank($user,'(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
+                        $result=$paiement->addPaymentToBank($user,'payment','(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
                         if (! $result > 0)
                         {
                             $errmsg=$paiement->error;

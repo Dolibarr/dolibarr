@@ -1229,12 +1229,6 @@ class Adherent extends CommonObject
                     }
                 }
 
-                // Create invoice and payment
-                if ($option == 'bankviainvoice' && $accountid)
-                {
-                    // TODO
-                }
-
                 // Change properties of object (used by triggers)
                 $this->last_subscription_date=$dateop;
                 $this->last_subscription_amount=$montant;
