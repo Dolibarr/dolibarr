@@ -258,38 +258,32 @@ class pdf_propale_azur extends ModelePDFPropales
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
-						
 						$pdf->SetXY ($this->posxtva, $curY);
 						$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, $vat_rate, 0, 'R');
 					}
 
 					// Prix unitaire HT avant remise
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs);
 					$pdf->SetXY ($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 4, price($object->lines[$i]->subprice), 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-1, 4, $up_excl_tax, 0, 'R', 0);
 
 					// Quantity
+					$qty = pdf_getlineqty($object, $i, $outputlangs);
 					$pdf->SetXY ($this->posxqty, $curY);
-					if ($object->lines[$i]->special_code != 3) $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $object->lines[$i]->qty, 0, 'R');
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $qty, 0, 'R');
 
 					// Remise sur ligne
 					$pdf->SetXY ($this->posxdiscount, $curY);
-					if ($object->lines[$i]->remise_percent && $object->lines[$i]->special_code != 3)
+					if ($object->lines[$i]->remise_percent)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs), 0, 'R');
+						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs);
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, $remise_percent, 0, 'R');
 					}
 
 					// Total HT ligne
+					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
 					$pdf->SetXY ($this->postotalht, $curY);
-					if ($object->lines[$i]->special_code == 3)
-					{
-						// Ligne produit en option
-						$pdf->MultiCell(26, 4, $outputlangs->transnoentities("Option"), 0, 'R', 0);
-					}
-					else
-					{
-						$total = price($object->lines[$i]->total_ht);
-						$pdf->MultiCell(26, 4, $total, 0, 'R', 0);
-					}
+					$pdf->MultiCell(26, 4, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;

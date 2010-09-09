@@ -520,4 +520,89 @@ function pdf_getlinevatrate($object,$i,$outputlangs)
 	}
 }
 
+/**
+ *	Return line unit price excluding tax
+ *	@param		object				Object
+ *	@param		$i					Current line number
+ *  @param    	outputlang			Object lang for output
+ */
+function pdf_getlineupexcltax($object,$i,$outputlangs)
+{
+	if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+	{
+		// TODO add hook function
+	}
+	else
+	{
+		return price($object->lines[$i]->subprice);
+	}
+}
+
+/**
+ *	Return line quantity
+ *	@param		object				Object
+ *	@param		$i					Current line number
+ *  @param    	outputlang			Object lang for output
+ */
+function pdf_getlineqty($object,$i,$outputlangs)
+{
+	if ($object->lines[$i]->special_code != 3)
+	{
+		if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+		{
+			// TODO add hook function
+		}
+		else
+		{
+			return $object->lines[$i]->qty;
+		}
+	}
+}
+
+/**
+ *	Return line remise percent
+ *	@param		object				Object
+ *	@param		$i					Current line number
+ *  @param    	outputlang			Object lang for output
+ */
+function pdf_getlineremisepercent($object,$i,$outputlangs)
+{
+	if ($object->lines[$i]->special_code != 3)
+	{
+		if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+		{
+			// TODO add hook function
+		}
+		else
+		{
+			return dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs);
+		}
+	}
+}
+
+/**
+ *	Return line total excluding tax
+ *	@param		object				Object
+ *	@param		$i					Current line number
+ *  @param    	outputlang			Object lang for output
+ */
+function pdf_getlinetotalexcltax($object,$i,$outputlangs)
+{
+	if ($object->lines[$i]->special_code == 3)
+	{
+		return $outputlangs->transnoentities("Option");
+	}
+	else
+	{
+		if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+		{
+			// TODO add hook function
+		}
+		else
+		{
+			return price($object->lines[$i]->total_ht);
+		}
+	}
+}
+
 ?>
