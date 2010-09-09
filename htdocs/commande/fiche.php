@@ -167,7 +167,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			commande_pdf_create($db, $comid, $commande->modelpdf, $outputlangs);
+			commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 		}
 		else
 		{
@@ -588,7 +588,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+			commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 		}
 		else
 		{
@@ -622,7 +622,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+		commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 	}
 }
 
@@ -661,7 +661,7 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+		commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 	}
 }
 
@@ -686,7 +686,7 @@ if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 		$outputlangs->setDefaultLang($newlang);
 	}
 
-	commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid.'#'.$_GET['rowid']);
 	exit;
@@ -708,7 +708,7 @@ if ($_GET['action'] == 'down' && $user->rights->commande->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid.'#'.$_GET['rowid']);
 	exit;
@@ -740,7 +740,7 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	$result=commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
