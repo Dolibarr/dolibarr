@@ -53,12 +53,12 @@ function propal_prepare_head($propal)
 		$head[$h][2] = 'shipping';
 		$h++;
 	}
-
+/*
 	$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?id='.$propal->id;
 	$head[$h][1] = $langs->trans('AccountancyCard');
 	$head[$h][2] = 'compta';
 	$h++;
-
+*/
 	if ($conf->use_preview_tabs)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?id='.$propal->id;

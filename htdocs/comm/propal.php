@@ -1506,7 +1506,7 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Delete
-			if ($propal->statut < 4 && $user->rights->propale->supprimer)
+			if ($user->rights->propale->supprimer)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=delete"';
 				print '>'.$langs->trans('Delete').'</a>';
