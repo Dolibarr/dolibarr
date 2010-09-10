@@ -94,8 +94,6 @@ class Propal extends CommonObject
 
 	var $lines = array();
 	var $line;
-	
-	var $clone_fromid;
 
 	var $origin;
 	var $origin_id;
@@ -778,6 +776,12 @@ class Propal extends CommonObject
 		$error=0;
 
 		$object=new Propal($this->db);
+		
+		// Instantiate hooks of thirdparty module
+		if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+		{
+			$object->callHooks('objectcard');
+		}
 
 		$this->db->begin();
 
@@ -785,7 +789,6 @@ class Propal extends CommonObject
 		$object->fetch($fromid);
 		$object->id=0;
 		$object->statut=0;
-		$object->clone_fromid=$fromid;
 
 		require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
 		$objsoc=new Societe($this->db);
@@ -825,6 +828,16 @@ class Propal extends CommonObject
 
 		if (! $error)
 		{
+			// Hook of thirdparty module
+			if (! empty($object->hooks))
+			{
+				foreach($object->hooks as $module)
+				{
+					$result = $module->createFromClone($object);
+					if ($result < 0) $error++;
+				}
+			}
+			
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
@@ -1352,41 +1365,6 @@ class Propal extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-
-
-	/**
-	 *      \brief      Cree une commande a partir de la proposition commerciale
-	 *      \param      user        Utilisateur
-	 *      \return     int         <0 si ko, >=0 si ok
-	 *      TODO move in triggers
-	 */
-	function create_commande($user)
-	{
-		global $conf;
-
-		if ($conf->commande->enabled)
-		{
-			if ($this->statut == 2)
-			{
-				// Propale signee
-				include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-				$commande = new Commande($this->db);
-				$result=$commande->create_from_propale($user, $this->id);
-
-				// Ne pas passer par la commande provisoire
-				if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
-				{
-					$commande->fetch($result);
-					$commande->valid($user);
-				}
-
-				return $result;
-			}
-			else return 0;
-		}
-		else return 0;
-	}
-
 
 	/**
 	 *		\brief		Set draft status

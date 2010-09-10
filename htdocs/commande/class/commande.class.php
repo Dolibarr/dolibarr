@@ -77,6 +77,8 @@ class Commande extends CommonObject
 	var $remise_absolue;
 	var $modelpdf;
 	var $info_bits;
+	var $rang;
+	var $special_code;
 	var $source;			// Origin of order
 
 	var $origin;
@@ -607,7 +609,9 @@ class Commande extends CommonObject
 					0,
 					$this->lines[$i]->date_start,
 					$this->lines[$i]->date_end,
-					$this->lines[$i]->product_type
+					$this->lines[$i]->product_type,
+					$this->lines[$i]->rang,
+					$this->lines[$i]->special_code
 					);
 					if ($result < 0)
 					{
@@ -691,11 +695,17 @@ class Commande extends CommonObject
 	 */
 	function createFromClone($fromid,$invertdetail=0)
 	{
-		global $user,$langs;
+		global $conf,$user,$langs;
 
 		$error=0;
 
 		$object=new Commande($this->db);
+		
+		// Instantiate hooks of thirdparty module
+		if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+		{
+			$object->callHooks('objectcard');
+		}
 
 		$this->db->begin();
 
@@ -723,9 +733,22 @@ class Commande extends CommonObject
 
 		if (! $error)
 		{
-
-
-
+			// Hook of thirdparty module
+			if (! empty($object->hooks))
+			{
+				foreach($object->hooks as $module)
+				{
+					$result = $module->createFromClone($object);
+					if ($result < 0) $error++;
+				}
+			}
+			
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('ORDER_CLONE',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
 		}
 
 		// End
@@ -1170,7 +1193,7 @@ class Commande extends CommonObject
 		$this->lines=array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
-		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
+		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits, l.special_code,';
 		$sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
@@ -1216,6 +1239,7 @@ class Commande extends CommonObject
 				$line->marque_tx        = $objp->marque_tx;
 				$line->rang             = $objp->rang;
 				$line->info_bits        = $objp->info_bits;
+				$line->special_code		= $objp->special_code;
 
 				$line->ref              = $objp->product_ref;
 				$line->libelle          = $objp->label;

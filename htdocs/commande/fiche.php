@@ -484,7 +484,7 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 						$outputlangs = new Translate("",$conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+					commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 
 					unset($_POST['qty']);
 					unset($_POST['type']);

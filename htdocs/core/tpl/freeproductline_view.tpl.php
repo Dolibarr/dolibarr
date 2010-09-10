@@ -63,7 +63,7 @@
 	<?php if ($line->special_code == 3)	{ ?>
 	<td align="right" nowrap="nowrap"><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
-	<td align="right" nowrap="nowrap"><?php price($line->total_ht); ?></td>
+	<td align="right" nowrap="nowrap"><?php echo price($line->total_ht); ?></td>
 	<?php } ?>
 
 	<?php if ($this->statut == 0  && $user->rights->$element->creer) { ?>
