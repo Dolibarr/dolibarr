@@ -64,7 +64,7 @@ if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enable
 	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader("",$helpurl,$langs->trans("ProductsAndServices"));
+llxHeader("",$langs->trans("ProductsAndServices"),$helpurl);
 
 print_fiche_titre($transAreaType);
 
