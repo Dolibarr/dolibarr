@@ -439,6 +439,12 @@ class Facture extends CommonObject
 		$error=0;
 
 		$object=new Facture($this->db);
+		
+		// Instantiate hooks of thirdparty module
+		if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+		{
+			$object->callHooks('objectcard');
+		}
 
 		$this->db->begin();
 
@@ -480,9 +486,22 @@ class Facture extends CommonObject
 
 		if (! $error)
 		{
-
-
-
+			// Hook of thirdparty module
+			if (! empty($object->hooks))
+			{
+				foreach($object->hooks as $module)
+				{
+					$result = $module->createFromClone($object);
+					if ($result < 0) $error++;
+				}
+			}
+			
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('BILL_CLONE',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
 		}
 
 		// End
@@ -1791,32 +1810,32 @@ class Facture extends CommonObject
 			$price    = price2num($price);
 
 			// Mise a jour ligne en base
-			$ligne=new FactureLigne($this->db);
-			$ligne->rowid=$rowid;
-			$ligne->fetch($rowid);
+			$this->line=new FactureLigne($this->db);
+			$this->line->rowid=$rowid;
+			$this->line->fetch($rowid);
 
-			$ligne->desc=$desc;
-			$ligne->qty=$qty;
-			$ligne->tva_tx=$txtva;
-			$ligne->localtax1_tx=$txlocaltax1;
-			$ligne->localtax2_tx=$txlocaltax2;
-			$ligne->remise_percent=$remise_percent;
-			$ligne->subprice=$pu;
-			$ligne->date_start=$date_start;
-			$ligne->date_end=$date_end;
-			$ligne->total_ht=$total_ht;
-			$ligne->total_tva=$total_tva;
-			$ligne->total_localtax1=$total_localtax1;
-			$ligne->total_localtax2=$total_localtax2;
-			$ligne->total_ttc=$total_ttc;
-			$ligne->info_bits=$info_bits;
-			$ligne->product_type=$type;
+			$this->line->desc				= $desc;
+			$this->line->qty				= $qty;
+			$this->line->tva_tx				= $txtva;
+			$this->line->localtax1_tx		= $txlocaltax1;
+			$this->line->localtax2_tx		= $txlocaltax2;
+			$this->line->remise_percent		= $remise_percent;
+			$this->line->subprice			= $pu;
+			$this->line->date_start			= $date_start;
+			$this->line->date_end			= $date_end;
+			$this->line->total_ht			= $total_ht;
+			$this->line->total_tva			= $total_tva;
+			$this->line->total_localtax1	= $total_localtax1;
+			$this->line->total_localtax2	= $total_localtax2;
+			$this->line->total_ttc			= $total_ttc;
+			$this->line->info_bits			= $info_bits;
+			$this->line->product_type		= $type;
 
 			// A ne plus utiliser
-			$ligne->price=$price;
-			$ligne->remise=$remise;
+			$this->line->price=$price;
+			$this->line->remise=$remise;
 
-			$result=$ligne->update();
+			$result=$this->line->update();
 			if ($result > 0)
 			{
 				// Mise a jour info denormalisees au niveau facture
