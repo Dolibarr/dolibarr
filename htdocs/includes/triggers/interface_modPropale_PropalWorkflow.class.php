@@ -32,7 +32,7 @@
 class InterfacePropalWorkflow
 {
     var $db;
-    
+
     /**
      *   \brief      Constructeur.
      *   \param      DB      Handler d'acces base
@@ -40,15 +40,15 @@ class InterfacePropalWorkflow
     function InterfacePropalWorkflow($DB)
     {
         $this->db = $DB ;
-    
+
         $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "propale";
         $this->description = "Triggers of this module allows to manage proposal workflow";
         $this->version = 'dolibarr';            // 'development', 'experimental', 'dolibarr' or version
         $this->picto = 'propal';
     }
-    
-    
+
+
     /**
      *   \brief      Renvoi nom du lot de triggers
      *   \return     string      Nom du lot de triggers
@@ -57,7 +57,7 @@ class InterfacePropalWorkflow
     {
         return $this->name;
     }
-    
+
     /**
      *   \brief      Renvoi descriptif du lot de triggers
      *   \return     string      Descriptif du lot de triggers
@@ -82,7 +82,7 @@ class InterfacePropalWorkflow
         elseif ($this->version) return $this->version;
         else return $langs->trans("Unknown");
     }
-    
+
     /**
      *      \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
      *                  D'autres fonctions run_trigger peuvent etre presentes dans includes/triggers
@@ -94,7 +94,7 @@ class InterfacePropalWorkflow
      *      \return     int         <0 if fatal error, 0 si nothing done, >0 if ok
      */
 	function run_trigger($action,$object,$user,$langs,$conf)
-    {	
+    {
         // Mettre ici le code a executer en reaction de l'action
         // Les donnees de l'action sont stockees dans $object
 
@@ -102,36 +102,36 @@ class InterfacePropalWorkflow
         if ($action == 'PROPAL_CLOSE_SIGNED')
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            return $this->_createSupplierOrderFromPropal($action,$object,$user,$langs,$conf);
+            return $this->_createOrderFromPropal($action,$object,$user,$langs,$conf);
         }
 
 		return 0;
     }
-    
+
     /**
-	 * 		Create a supplier order from a propal
+	 * 		Create an order from a propal
 	 */
-    function _createSupplierOrderFromPropal($action,$object,$user,$langs,$conf)
+    function _createOrderFromPropal($action,$object,$user,$langs,$conf)
     {
     	$error=0;
 
 		if ($conf->commande->enabled)
-		{	
+		{
 			// Signed proposal
 			if ($object->statut == 2)
 			{
 				include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-				
+
 				$order = new Commande($this->db);
 				$orderline = new OrderLine($this->db);
-				
-				$order->date_commande = time();
+
+				$order->date_commande = dol_now();
 				$order->source = 0;
-				
+
 				for ($i = 0 ; $i < sizeof($object->lines) ; $i++)
 				{
 					$line = new OrderLine($this->db);
-					
+
 					$line->libelle           = $object->lines[$i]->libelle;
 					$line->desc              = $object->lines[$i]->desc;
 					$line->price             = $object->lines[$i]->price;
@@ -146,10 +146,10 @@ class InterfacePropalWorkflow
 					$line->info_bits         = $object->lines[$i]->info_bits;
 					$line->product_type      = $object->lines[$i]->product_type;
 					$line->special_code		 = $object->lines[$i]->special_code;
-					
+
 					$order->lines[$i] = $line;
 				}
-				
+
 				$order->socid                = $object->socid;
 				$order->fk_project           = $object->fk_project;
 				$order->cond_reglement_id    = $object->cond_reglement_id;
@@ -160,12 +160,12 @@ class InterfacePropalWorkflow
 				$order->ref_client           = $object->ref_client;
 				$order->note                 = $object->note;
 				$order->note_public          = $object->note_public;
-				
+
 				$order->origin 		= $object->element;
 				$order->origin_id 	= $object->id;
-				
+
 				$ret = $order->create($user);
-				
+
 				if ($ret > 0)
 				{
 					// Ne pas passer par la commande provisoire
@@ -174,7 +174,7 @@ class InterfacePropalWorkflow
 						$order->fetch($ret);
 						$order->valid($user);
 					}
-					
+
 					return 1;
 				}
 			}
