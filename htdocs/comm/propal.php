@@ -360,6 +360,13 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	}
 }
 
+// Classify billed
+if ($_GET["action"] == 'classifybilled')
+{
+	$propal->fetch($_GET["id"]);
+	$propal->cloture($user, 4, '');
+}
+
 /*
  *  Cloture de la propale
  */
@@ -1469,6 +1476,21 @@ if ($id > 0 || ! empty($ref))
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
 				}
 			}
+			
+			// Create an invoice and classify billed
+			if ($conf->facture->enabled && $propal->statut == 2 && $user->societe_id == 0)
+			{
+				if ($user->rights->facture->creer)
+				{
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$propal->element.'&amp;originid='.$propal->id.'&amp;socid='.$propal->socid.'">'.$langs->trans("BuildBill").'</a>';
+				}
+				
+				$arraypropal=$propal->getInvoiceArrayList();
+				if (is_array($arraypropal) && sizeof($arraypropal) > 0)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=classifybilled&amp;socid='.$propal->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
+				}
+			}
 
 			// Close
 			if ($propal->statut == 1 && $user->rights->propale->cloturer)
@@ -1484,7 +1506,7 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Delete
-			if ($user->rights->propale->supprimer)
+			if ($propal->statut < 4 && $user->rights->propale->supprimer)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=delete"';
 				print '>'.$langs->trans('Delete').'</a>';
