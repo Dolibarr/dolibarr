@@ -1353,6 +1353,41 @@ class Propal extends CommonObject
 		}
 	}
 
+
+	/**
+	 *      \brief      Cree une commande a partir de la proposition commerciale
+	 *      \param      user        Utilisateur
+	 *      \return     int         <0 si ko, >=0 si ok
+	 *      TODO move in triggers
+	 */
+	function create_commande($user)
+	{
+		global $conf;
+
+		if ($conf->commande->enabled)
+		{
+			if ($this->statut == 2)
+			{
+				// Propale signee
+				include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+				$commande = new Commande($this->db);
+				$result=$commande->create_from_propale($user, $this->id);
+
+				// Ne pas passer par la commande provisoire
+				if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
+				{
+					$commande->fetch($result);
+					$commande->valid($user);
+				}
+
+				return $result;
+			}
+			else return 0;
+		}
+		else return 0;
+	}
+
+
 	/**
 	 *		\brief		Set draft status
 	 *		\param		user		Object user that modify
