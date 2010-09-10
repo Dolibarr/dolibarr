@@ -275,7 +275,7 @@ if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] =
 	{
 		$commande = new CommandeFournisseur($db);
 		$commande->fetch($id);
-		$result = $commande->delete_line($_GET['lineid']);
+		$result = $commande->deleteline($_GET['lineid']);
 
 		$outputlangs = $langs;
 		if (! empty($_REQUEST['lang_id']))

@@ -527,11 +527,11 @@ class Propal extends CommonObject
 	 *      \param      idligne     Id de la ligne detail a supprimer
 	 *      \return     int         >0 si ok, <0 si ko
 	 */
-	function delete_product($idligne)
+	function deleteline($lineid)
 	{
 		if ($this->statut == 0)
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".$idligne;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".$lineid;
 
 			if ($this->db->query($sql) )
 			{

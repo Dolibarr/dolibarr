@@ -1000,14 +1000,14 @@ class CommandeFournisseur extends Commande
 	 * 	Delete line
 	 *	@param		idligne
 	 */
-	function delete_line($idligne)
+	function deleteline($idligne)
 	{
 		if ($this->statut == 0)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idligne;
 			$resql=$this->db->query($sql);
 
-			dol_syslog("Fournisseur.commande.class::delete_line sql=".$sql);
+			dol_syslog("Fournisseur.commande.class::deleteline sql=".$sql);
 			if ($resql)
 	  {
 	  	$result=$this->update_price();

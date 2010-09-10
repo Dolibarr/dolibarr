@@ -537,12 +537,12 @@ class Livraison extends CommonObject
 	 *
 	 *
 	 */
-	function delete_line($idligne)
+	function deleteline($lineid)
 	{
 		if ($this->statut == 0)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql.= " WHERE rowid = ".$idligne;
+			$sql.= " WHERE rowid = ".$lineid;
 
 			if ($this->db->query($sql) )
 			{

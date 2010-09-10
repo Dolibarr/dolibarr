@@ -150,14 +150,14 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 /*
  *  Supprime une ligne produit AVEC ou SANS confirmation
  */
-if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] == 'yes')
+if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes')
 {
 	if ($user->rights->facture->creer)
 	{
 		$object->fetch($facid);
 		$object->fetch_thirdparty();
 
-		$result = $object->deleteline($_GET['rowid'], $user);
+		$result = $object->deleteline($_GET['lineid'], $user);
 		if ($result > 0)
 		{
 			// Define output language
@@ -2083,9 +2083,18 @@ else
 			}
 
 			// Confirmation de la suppression d'une ligne produit
-			if ($_GET['action'] == 'delete_product_line')
+			if ($_GET['action'] == 'ask_deleteline')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&rowid='.$_GET["rowid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline', '', 'no', 1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
+				if ($ret == 'html') print '<br>';
+			}
+			
+			/*
+			 * TODO ajout temporaire pour test en attendant la migration en template
+			 */
+			if ($_GET['action'] == 'ask_deletemilestone')
+			{
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteMilestone'), $langs->trans('ConfirmDeleteMilestone'), 'confirm_deletemilestone','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 

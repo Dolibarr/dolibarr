@@ -1403,7 +1403,7 @@ class Commande extends CommonObject
 	 *  \param      idligne     Id de la ligne a supprimer
 	 *  \return     int         >0 si ok, 0 si rien a supprimer, <0 si ko
 	 */
-	function delete_line($idligne)
+	function deleteline($lineid)
 	{
 		global $user;
 
@@ -1413,7 +1413,7 @@ class Commande extends CommonObject
 
 			$sql = "SELECT fk_product, qty";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql.= " WHERE rowid = ".$idligne;
+			$sql.= " WHERE rowid = ".$lineid;
 
 			$result = $this->db->query($sql);
 			if ($result)
@@ -1428,7 +1428,7 @@ class Commande extends CommonObject
 					// Supprime ligne
 					$line = new OrderLine($this->db);
 
-					$line->id = $idligne;
+					$line->id = $lineid;
 					$line->fk_commande = $this->id; // On en a besoin dans les triggers
 
 					$result=$line->delete($user);

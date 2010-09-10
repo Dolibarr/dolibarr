@@ -154,7 +154,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 		$commande->fetch($comid);
 		$commande->fetch_thirdparty();
 
-		$result = $commande->delete_line($_GET['lineid']);
+		$result = $commande->deleteline($_GET['lineid']);
 		if ($result > 0)
 		{
 			// Define output language
@@ -1350,6 +1350,15 @@ else
 			if ($_GET['action'] == 'ask_deleteline')
 			{
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+				if ($ret == 'html') print '<br>';
+			}
+			
+			/*
+			 * TODO ajout temporaire pour test en attendant la migration en template
+			 */
+			if ($_GET['action'] == 'ask_deletemilestone')
+			{
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteMilestone'), $langs->trans('ConfirmDeleteMilestone'), 'confirm_deletemilestone','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 

@@ -102,6 +102,7 @@ class Facture extends CommonObject
 	var $lignes=array();	// TODO deprecated
 	var $lines=array();
 	var $line;
+	var $clone_fromid;
 	//! Pour board
 	var $nbtodo;
 	var $nbtodolate;
@@ -452,6 +453,7 @@ class Facture extends CommonObject
 		$object->fetch($fromid);
 		$object->id=0;
 		$object->statut=0;
+		$object->clone_fromid=$fromid;
 
 		// Clear fields
 		$object->user_author        = $user->id;

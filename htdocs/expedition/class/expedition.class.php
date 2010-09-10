@@ -543,12 +543,12 @@ class Expedition extends CommonObject
 	 *
 	 *
 	 */
-	function delete_line($id)
+	function deleteline($lineid)
 	{
 		if ($this->statut == 0)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql.= " WHERE rowid = ".$id;
+			$sql.= " WHERE rowid = ".$lineid;
 
 			if ($this->db->query($sql) )
 			{

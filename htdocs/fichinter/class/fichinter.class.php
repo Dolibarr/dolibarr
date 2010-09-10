@@ -1024,16 +1024,16 @@ class FichinterLigne
 	 *      \brief      Supprime une ligne d'intervention
 	 *      \return     int         >0 si ok, <0 si ko
 	 */
-	function delete_line()
+	function deleteline()
 	{
 		if ($this->statut == 0)
 		{
-			dol_syslog("FichinterLigne::delete_line lineid=".$this->rowid);
+			dol_syslog("FichinterLigne::deleteline lineid=".$this->rowid);
 			$this->db->begin();
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->rowid;
 			$resql = $this->db->query($sql);
-			dol_syslog("FichinterLigne::delete_line sql=".$sql);
+			dol_syslog("FichinterLigne::deleteline sql=".$sql);
 
 			if ($resql)
 			{
@@ -1052,7 +1052,7 @@ class FichinterLigne
 			else
 			{
 				$this->error=$this->db->error()." sql=".$sql;
-				dol_syslog("FichinterLigne::delete_line Error ".$this->error, LOG_ERR);
+				dol_syslog("FichinterLigne::deleteline Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}

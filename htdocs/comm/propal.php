@@ -150,7 +150,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 	{
 		$propal->fetch($_GET["id"]);
 		$propal->fetch_thirdparty();
-		$result = $propal->delete_product($_GET['lineid']);
+		$result = $propal->deleteline($_GET['lineid']);
 		// reorder lines
 		if ($result) $propal->line_order(true);
 

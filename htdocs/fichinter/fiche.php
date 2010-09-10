@@ -358,7 +358,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 			dol_print_error($db);
 			exit;
 		}
-		$result=$fichinterline->delete_line();
+		$result=$fichinterline->deleteline();
 		$fichinter = new Fichinter($db);
 		if ($fichinter->fetch($fichinterline->fk_fichinter) <= 0)
 		{
