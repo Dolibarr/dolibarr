@@ -573,15 +573,6 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 	}
 }
 
-if ($_GET['action'] == 'commande')
-{
-	/*
-	 *  Cloture de la propale
-	 */
-	$propal->fetch($id);
-	$propal->create_commande($user);
-}
-
 if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 {
 	/*

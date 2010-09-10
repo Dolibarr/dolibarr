@@ -109,68 +109,6 @@ class Commande extends CommonObject
 		$this->products = array();
 	}
 
-
-	/**
-	 * 		\brief      Cree la commande depuis une propale existante
-	 *		\param      user            Utilisateur qui cree
-	 *		\param      propale_id      id de la propale qui sert de modele
-	 *		TODO move in trigger
-	 */
-	function create_from_propale($user, $propale_id)
-	{
-		dol_syslog("Commande::create_from_propale propale_id=$propale_id");
-
-		$propal = new Propal($this->db);
-		$propal->fetch($propale_id);
-
-		$this->lines = array();
-		$this->date_commande = time();
-		$this->source = 0;
-		for ($i = 0 ; $i < sizeof($propal->lignes) ; $i++)
-		{
-			$line = new OrderLine($this->db);
-
-			$line->libelle           = $propal->lines[$i]->libelle;
-			$line->desc              = $propal->lines[$i]->desc;
-			$line->price             = $propal->lines[$i]->price;
-			$line->subprice          = $propal->lines[$i]->subprice;
-			$line->tva_tx            = $propal->lines[$i]->tva_tx;
-			$line->localtax1_tx		 = $propal->lines[$i]->localtax1_tx;
-			$line->localtax2_tx		 = $propal->lines[$i]->localtax2_tx;
-			$line->qty               = $propal->lines[$i]->qty;
-			$line->fk_remise_except  = $propal->lines[$i]->fk_remise_except;
-			$line->remise_percent    = $propal->lines[$i]->remise_percent;
-			$line->fk_product        = $propal->lines[$i]->fk_product;
-			$line->info_bits         = $propal->lines[$i]->info_bits;
-			$line->product_type      = $propal->lines[$i]->product_type;
-			$line->special_code		 = $propal->lines[$i]->special_code;
-
-			$this->lines[$i] = $line;
-		}
-
-		$this->socid                = $propal->socid;
-		$this->fk_project           = $propal->fk_project;
-		$this->cond_reglement_id    = $propal->cond_reglement_id;
-		$this->mode_reglement_id    = $propal->mode_reglement_id;
-		$this->date_livraison       = $propal->date_livraison;
-		$this->fk_delivery_address  = $propal->fk_delivery_address;
-		$this->contact_id           = $propal->contactid;
-		$this->ref_client           = $propal->ref_client;
-		$this->note                 = $propal->note;
-		$this->note_public          = $propal->note_public;
-
-		/* Definit la societe comme un client */
-		$soc = new Societe($this->db);
-		$soc->id = $this->socid;
-		$soc->set_as_client();
-
-		$this->origin 		= $propal->element;
-		$this->origin_id 	= $propal->id;
-
-		return $this->create($user);
-	}
-
-
 	/**
 	 *      \brief      Renvoie la reference de commande suivante non utilisee en fonction du module
 	 *                  de numerotation actif defini dans COMMANDE_ADDON
