@@ -418,7 +418,7 @@ class Facture extends CommonObject
 			}
 		}
 
-		dol_syslog("Facture::createFromCurrent invertdetail=".$invertdetail." socid=".$this->socid." nboflines=".sizeof($facture->lignes));
+		dol_syslog("Facture::createFromCurrent invertdetail=".$invertdetail." socid=".$this->socid." nboflines=".sizeof($facture->lines));
 
 		$facid = $facture->create($user);
 
@@ -434,7 +434,7 @@ class Facture extends CommonObject
 	 */
 	function createFromClone($fromid,$invertdetail=0)
 	{
-		global $user,$langs;
+		global $conf,$user,$langs;
 
 		$error=0;
 
@@ -462,14 +462,14 @@ class Facture extends CommonObject
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
-		$object->products = $object->lignes;	// Tant que products encore utilise
+		$object->products = $object->lines;	// Tant que products encore utilise
 
 		// Loop on each line of new invoice
-		foreach($object->lignes as $i => $line)
+		foreach($object->lines as $i => $line)
 		{
-			if (($object->lignes[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
+			if (($object->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
 			{
-				unset($object->lignes[$i]);
+				unset($object->lines[$i]);
 				unset($object->products[$i]);	// Tant que products encore utilise
 			}
 		}
