@@ -46,8 +46,6 @@ $langs->load("products");
  * View
  */
 
-
-
 $transAreaType = $langs->trans("ProductsAndServicesArea");
 $helpurl='';
 if (! isset($_GET["type"]))
