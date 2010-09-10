@@ -261,6 +261,12 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 
 }
 
+if ($_GET["action"] == 'classifybilled')
+{
+	$commande->fetch($comid);
+	$commande->classer_facturee();
+}
+
 // Positionne ref commande client
 if ($_POST['action'] == 'set_ref_client' && $user->rights->commande->creer)
 {
@@ -1758,6 +1764,19 @@ else
 							{
 								print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ShipProduct').'</a>';
 							}
+						}
+					}
+					
+					if ($conf->facture->enabled && $commande->statut > 0  && ! $commande->facturee)
+					{	
+						if ($user->rights->facture->creer)
+						{
+							print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$commande->element.'&amp;originid='.$commande->id.'&amp;socid='.$commande->socid.'">'.$langs->trans("CreateBill").'</a>';
+						}
+						
+						if ($user->rights->commande->creer)
+						{
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 						}
 					}
 

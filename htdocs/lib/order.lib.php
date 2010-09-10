@@ -54,7 +54,7 @@ function commande_prepare_head($commande)
 		$head[$h][2] = 'shipping';
 		$h++;
 	}
-
+/*
 	// Commande a facturer
 	if ($conf->facture->enabled)
 	{
@@ -63,7 +63,7 @@ function commande_prepare_head($commande)
 		$head[$h][2] = 'accountancy';
 		$h++;
 	}
-
+*/
 	if ($conf->use_preview_tabs)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$commande->id;
