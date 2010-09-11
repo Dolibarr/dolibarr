@@ -173,18 +173,22 @@ class InterfacePropalWorkflow
 					{
 						foreach($object->hooks as $module)
 						{
-							$module->createfrom($object,$ret,$order->element);
+							$result = $module->createfrom($object,$ret,$order->element);
+							if ($result < 0) $error++;
 						}
 					}
 					
-					// Ne pas passer par la commande provisoire
-					if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
+					if (! $error)
 					{
-						$order->fetch($ret);
-						$order->valid($user);
+						// Ne pas passer par la commande provisoire
+						if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
+						{
+							$order->fetch($ret);
+							$order->valid($user);
+						}
+						return 1;
 					}
-
-					return 1;
+					else return -1;
 				}
 			}
 			else return 0;
