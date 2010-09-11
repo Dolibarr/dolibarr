@@ -102,7 +102,6 @@ class Facture extends CommonObject
 	var $lignes=array();	// TODO deprecated
 	var $lines=array();
 	var $line;
-	var $clone_fromid;
 	//! Pour board
 	var $nbtodo;
 	var $nbtodolate;
@@ -273,10 +272,10 @@ class Facture extends CommonObject
 			 *  Insert lines of invoices in database
 			 */
 			//dol_syslog("There is ".sizeof($this->lignes)." lines");
-			foreach ($this->lignes as $i => $val)
+			foreach ($this->lines as $i => $val)
 			{
 				$newinvoiceline=new FactureLigne($this->db);
-				$newinvoiceline=$this->lignes[$i];
+				$newinvoiceline=$this->lines[$i];
 				$newinvoiceline->fk_facture=$this->id;
 				if ($result >= 0 && ($newinvoiceline->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
 				{
@@ -294,12 +293,12 @@ class Facture extends CommonObject
 			 */
 			if (! $error && $this->fac_rec > 0)
 			{
-				foreach ($_facrec->lignes as $i => $val)
+				foreach ($_facrec->lines as $i => $val)
 				{
-					if ($_facrec->lignes[$i]->fk_product)
+					if ($_facrec->lines[$i]->fk_product)
 					{
-						$prod = new Product($this->db, $_facrec->lignes[$i]->fk_product);
-						$res=$prod->fetch($_facrec->lignes[$i]->fk_product);
+						$prod = new Product($this->db, $_facrec->lines[$i]->fk_product);
+						$res=$prod->fetch($_facrec->lines[$i]->fk_product);
 					}
 					$tva_tx = get_default_tva($mysoc,$soc,$prod->id);
 					$localtax1_tx=get_localtax($tva_tx,1,$soc);
@@ -307,16 +306,16 @@ class Facture extends CommonObject
 
 					$result_insert = $this->addline(
 					$this->id,
-					$_facrec->lignes[$i]->desc,
-					$_facrec->lignes[$i]->subprice,
-					$_facrec->lignes[$i]->qty,
+					$_facrec->lines[$i]->desc,
+					$_facrec->lines[$i]->subprice,
+					$_facrec->lines[$i]->qty,
 					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
-					$_facrec->lignes[$i]->fk_product,
-					$_facrec->lignes[$i]->remise_percent,
+					$_facrec->lines[$i]->fk_product,
+					$_facrec->lines[$i]->remise_percent,
 					'','',0,0,'','HT',0,
-					$_facrec->lignes[$i]->product_type
+					$_facrec->lines[$i]->product_type
 					);
 
 					if ( $result_insert < 0)
@@ -451,9 +450,10 @@ class Facture extends CommonObject
 
 		// Load source object
 		$object->fetch($fromid);
+		$objFrom = $object;
+
 		$object->id=0;
 		$object->statut=0;
-		$object->clone_fromid=$fromid;
 
 		// Clear fields
 		$object->user_author        = $user->id;
@@ -476,8 +476,14 @@ class Facture extends CommonObject
 			}
 		}
 
+		// FIXME objForm change de valeur apres le create() !!
+		//var_dump($objFrom->lines[0]);
+		
 		// Create clone
 		$result=$object->create($user);
+		
+		//print '!!!!! after !!!!!<br>';
+		//var_dump($objFrom->lines[0]);
 
 		// Other options
 		if ($result < 0)
@@ -493,7 +499,7 @@ class Facture extends CommonObject
 			{
 				foreach($object->hooks as $module)
 				{
-					$result = $module->createFromClone($object);
+					$result = $module->createfrom($objFrom,$result,$object->element);
 					if ($result < 0) $error++;
 				}
 			}

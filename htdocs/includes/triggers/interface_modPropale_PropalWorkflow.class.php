@@ -168,6 +168,15 @@ class InterfacePropalWorkflow
 
 				if ($ret > 0)
 				{
+					// Hook of thirdparty module
+					if (! empty($object->hooks))
+					{
+						foreach($object->hooks as $module)
+						{
+							$module->createfrom($object,$ret,$order->element);
+						}
+					}
+					
 					// Ne pas passer par la commande provisoire
 					if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
 					{

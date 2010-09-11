@@ -787,6 +787,8 @@ class Propal extends CommonObject
 
 		// Load source object
 		$object->fetch($fromid);
+		$objFrom = $object;
+		
 		$object->id=0;
 		$object->statut=0;
 
@@ -833,7 +835,7 @@ class Propal extends CommonObject
 			{
 				foreach($object->hooks as $module)
 				{
-					$result = $module->createFromClone($object);
+					$result = $module->createfrom($objFrom,$result,$object->element);
 					if ($result < 0) $error++;
 				}
 			}
