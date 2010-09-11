@@ -272,6 +272,7 @@ class Facture extends CommonObject
 			 *  Insert lines of invoices in database
 			 */
 			//dol_syslog("There is ".sizeof($this->lignes)." lines");
+			/*
 			foreach ($this->lines as $i => $val)
 			{
 				$newinvoiceline=new FactureLigne($this->db);
@@ -285,6 +286,41 @@ class Facture extends CommonObject
 				{
 					$error++;
 					break;
+				}
+			}
+			*/
+			for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+			{
+				if (($this->lines[$i]->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
+				{
+					$result = $this->addline(
+					$this->id,
+					$this->lines[$i]->desc,
+					$this->lines[$i]->subprice,
+					$this->lines[$i]->qty,
+					$this->lines[$i]->tva_tx,
+					$this->lines[$i]->localtax1_tx,
+					$this->lines[$i]->localtax2_tx,
+					$this->lines[$i]->fk_product,
+					$this->lines[$i]->remise_percent,
+					$this->lines[$i]->date_start,
+					$this->lines[$i]->date_end,
+					$this->lines[$i]->fk_code_ventilation,
+					$this->lines[$i]->info_bits,
+					$this->lines[$i]->fk_remise_except,
+					'HT',
+					0,
+					$this->lines[$i]->product_type,
+					$this->lines[$i]->rang,
+					$this->lines[$i]->special_code
+					);
+					if ($result < 0)
+					{
+						$this->error=$this->db->lasterror();
+						dol_print_error($this->db);
+						$this->db->rollback();
+						return -1;
+					}
 				}
 			}
 
@@ -315,7 +351,9 @@ class Facture extends CommonObject
 					$_facrec->lines[$i]->fk_product,
 					$_facrec->lines[$i]->remise_percent,
 					'','',0,0,'','HT',0,
-					$_facrec->lines[$i]->product_type
+					$_facrec->lines[$i]->product_type,
+					$_facrec->lines[$i]->rang,
+					$_facrec->lines[$i]->special_code
 					);
 
 					if ( $result_insert < 0)
