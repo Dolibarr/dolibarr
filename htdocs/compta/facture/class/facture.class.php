@@ -513,15 +513,9 @@ class Facture extends CommonObject
 				unset($object->products[$i]);	// Tant que products encore utilise
 			}
 		}
-
-		// FIXME objFrom change de valeur apres le create() !!
-		//var_dump($objFrom->lines[0]);
 		
 		// Create clone
 		$result=$object->create($user);
-		
-		//print '!!!!! after !!!!!<br>';
-		//var_dump($objFrom->lines[0]);
 
 		// Other options
 		if ($result < 0)
