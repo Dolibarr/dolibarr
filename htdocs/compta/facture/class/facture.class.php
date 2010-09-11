@@ -98,7 +98,7 @@ class Facture extends CommonObject
 	var $mode_reglement_id;			// Id in llx_c_paiement
 	var $mode_reglement_code;		// Code in llx_c_paiement
 	var $modelpdf;
-	var $products=array();
+	var $products=array();	// TODO deprecated
 	var $lignes=array();	// TODO deprecated
 	var $lines=array();
 	var $line;
@@ -476,7 +476,7 @@ class Facture extends CommonObject
 			}
 		}
 
-		// FIXME objForm change de valeur apres le create() !!
+		// FIXME objFrom change de valeur apres le create() !!
 		//var_dump($objFrom->lines[0]);
 		
 		// Create clone
