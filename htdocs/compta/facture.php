@@ -42,6 +42,8 @@ if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/proj
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 
 $langs->load('bills');
+//print 'ee'.$langs->trans('BillsCustomer');exit;
+
 $langs->load('companies');
 $langs->load('products');
 $langs->load('main');
@@ -71,6 +73,8 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 {
 	$object->callHooks('objectcard');
 }
+
+
 
 /******************************************************************************/
 /*                     Actions                                                */
@@ -2088,7 +2092,7 @@ else
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
 				if ($ret == 'html') print '<br>';
 			}
-			
+
 			/*
 			 * TODO ajout temporaire pour test en attendant la migration en template
 			 */
@@ -2633,9 +2637,9 @@ else
 			/*
 			 * Inoice lines
 			 */
-			
+
 			print '<table class="noborder" width="100%">';
-			
+
 			/*
 
 			$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_tx,';
@@ -2915,11 +2919,11 @@ else
 			{
 				dol_print_error($db);
 			}
-			
+
 			*/
-			
+
 			$result = $object->getLinesArray();
-			
+
 			if (!empty($object->lines))
 			{
 				$object->print_title_list();
@@ -2941,7 +2945,7 @@ else
 					$var=!$var;
 					$object->showAddPredefinedProductForm(1);
 				}
-				
+
 				// Hook of thirdparty module
 				if (! empty($object->hooks))
 				{
@@ -3295,7 +3299,7 @@ else
 			*                      Mode Liste                                         *
 			*                                                                         *
 			***************************************************************************/
-		$now=gmmktime();
+		$now=dol_now();
 
 		$page     =$_GET['page'];
 		$sortorder=$_GET['sortorder'];
@@ -3317,10 +3321,12 @@ else
 		$sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 		$sql.= ' f.paye as paye, f.fk_statut,';
 		$sql.= ' s.nom, s.rowid as socid';
+        if (! $sall) $sql.= ' ,SUM(pf.amount) as am';   // To be able to sort on status
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= ', '.MAIN_DB_PREFIX.'facture as f';
 		if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
+        if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 		$sql.= ' WHERE f.fk_soc = s.rowid';
 		$sql.= " AND f.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -3355,7 +3361,7 @@ else
 			if ($year > 0)
 			$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
 			else
-			$sql.= " AND date_format(f.datef, '%m') = '$month'";
+			$sql.= " AND date_format(f.datef, '%m') = '".$month."'";
 		}
 		else if ($year > 0)
 		{
@@ -3369,12 +3375,19 @@ else
 		{
 			$sql.= ' AND (s.nom LIKE \'%'.addslashes($sall).'%\' OR f.facnumber LIKE \'%'.addslashes($sall).'%\' OR f.note LIKE \'%'.addslashes($sall).'%\' OR fd.description LIKE \'%'.addslashes($sall).'%\')';
 		}
-
+        if (! $sall)
+        {
+            $sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
+            $sql.= ' f.datef, f.date_lim_reglement,';
+            $sql.= ' f.paye, f.fk_statut,';
+            $sql.= ' s.nom, s.rowid';
+        }
 		$sql.= ' ORDER BY ';
 		$listfield=explode(',',$sortfield);
 		foreach ($listfield as $key => $value) $sql.= $listfield[$key].' '.$sortorder.',';
 		$sql.= ' f.rowid DESC ';
 		$sql.= $db->plimit($limit+1,$offset);
+        //print $sql;
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -3391,7 +3404,7 @@ else
 			if ($month) $param.='&amp;month='.$month;
 			if ($year)  $param.='&amp;year=' .$year;
 
-			print_barre_liste($langs->trans('BillsCustomer').' '.($socid?' '.$soc->nom:''),$page,'facture.php',$param,$sortfield,$sortorder,'',$num);
+			print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php',$param,$sortfield,$sortorder,'',$num);
 
 			$i = 0;
 			print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
