@@ -71,6 +71,13 @@ class ActionComm extends CommonObject
     var $note;
     var $percentage;
 
+    // Properties for links to other tables
+    var $orderrowid;
+    var $propalrowid;
+    var $facid;
+    var $supplierorderrowid;
+    var $supplierinvoicerowid;
+
 
     /**
      *      \brief      Constructeur
@@ -162,7 +169,11 @@ class ActionComm extends CommonObject
 		$sql.= "fk_user_action,";
 		$sql.= "fk_user_done,";
 		$sql.= "label,percent,priority,location,punctual,";
-        $sql.= "fk_facture,propalrowid,fk_commande)";
+        $sql.= "fk_facture,";
+        $sql.= "propalrowid,";
+        $sql.= "fk_commande,";
+        $sql.= "fk_supplier_invoice,";
+        $sql.= "fk_supplier_order)";
         $sql.= " VALUES (";
         $sql.= "'".$this->db->idate($now)."',";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").",";
@@ -182,7 +193,9 @@ class ActionComm extends CommonObject
 		$sql.= "'".addslashes($this->label)."','".$this->percentage."','".$this->priority."','".addslashes($this->location)."','".$this->punctual."',";
         $sql.= ($this->facid?$this->facid:"null").",";
         $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
-        $sql.= ($this->orderrowid?$this->orderrowid:"null");
+        $sql.= ($this->orderrowid?$this->orderrowid:"null").",";
+        $sql.= ($this->supplierinvoicerowid?$this->supplierinvoicerowid:"null").",";
+        $sql.= ($this->supplierorderrowid?$this->supplierorderrowid:"null");
         $sql.= ")";
 
         dol_syslog("ActionComm::add sql=".$sql);

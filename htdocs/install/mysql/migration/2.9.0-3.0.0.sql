@@ -45,6 +45,8 @@ ALTER TABLE llx_societe ADD COLUMN canvas varchar(32) DEFAULT NULL AFTER default
 ALTER TABLE llx_cond_reglement RENAME TO llx_c_payment_term;
 ALTER TABLE llx_expedition_methode RENAME TO llx_c_shipment_mode;
 
-
 ALTER TABLE llx_facturedet_rec ADD COLUMN special_code integer UNSIGNED DEFAULT 0 AFTER total_ttc;
 ALTER TABLE llx_facturedet_rec ADD COLUMN rang integer DEFAULT 0 AFTER special_code;
+
+ALTER TABLE llx_actioncomm ADD COLUMN fk_supplier_order   integer;
+ALTER TABLE llx_actioncomm ADD COLUMN fk_supplier_invoice integer;

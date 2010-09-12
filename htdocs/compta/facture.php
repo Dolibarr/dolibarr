@@ -3011,7 +3011,7 @@ else
 					}
 
 					// Validate
-					if ($object->statut == 0 && $num_lignes > 0 &&
+					if ($object->statut == 0 && sizeof($object->lines) > 0 &&
 					(
 					(($object->type == 0 || $object->type == 1 || $object->type == 3 || $object->type == 4) && $object->total_ttc >= 0)
 					|| ($object->type == 2 && $object->total_ttc <= 0))

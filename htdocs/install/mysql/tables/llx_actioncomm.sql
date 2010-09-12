@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -55,6 +55,10 @@ create table llx_actioncomm
   propalrowid    integer,
   fk_commande    integer,
   fk_facture     integer
+  fk_contract    integer,
+
+  fk_supplier_order   integer,
+  fk_supplier_invoice integer
 
 )type=innodb;
 

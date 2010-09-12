@@ -171,9 +171,16 @@ class InterfaceActionsAuto
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("propal");
             $langs->load("agenda");
-			$ok=1;
 
-			// Parameters $object->xxx defined by caller
+            $object->actiontypecode='AC_EMAIL';
+            $object->actionmsg2=$langs->transnoentities("ProposalSentByEMail",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ProposalSentByEMail",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+            $object->propalrowid=$object->id;
+            $object->orderrowid=$object->facid=0;
+			$ok=1;
 		}
 		elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
@@ -228,7 +235,16 @@ class InterfaceActionsAuto
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("orders");
             $langs->load("agenda");
-			$ok=1;
+
+            $object->actiontypecode='AC_EMAIL';
+            $object->actionmsg2=$langs->transnoentities("OrderSentByEMail",$object->ref);
+            $object->actionmsg=$langs->transnoentities("OrderSentByEMail",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+            $object->facid=$object->id;
+            $object->orderrowid=$object->propalrowid=0;
+            $ok=1;
 
 			// Parameters $object->xxx defined by caller
 		}
@@ -255,7 +271,15 @@ class InterfaceActionsAuto
             $langs->load("other");
             $langs->load("bills");
             $langs->load("agenda");
-			$ok=1;
+
+            $object->actiontypecode='AC_EMAIL';
+            $object->actionmsg2=$langs->transnoentities("InvoiceSentByEMail",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InvoiceSentByEMail",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->facid=$object->id;
+            $object->orderrowid=$object->propalrowid=0;
+            $ok=1;
 
 			// Parameters $object->xxx defined by caller
 		}
@@ -320,8 +344,8 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->orderrowid=0;	// Supplier order not yet supported
-			$object->propalrowid=$object->facid=0;
+            $object->supplierorderrowid=$object->id;
+            $object->supplierinvoicerowid=$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
         elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
@@ -331,9 +355,16 @@ class InterfaceActionsAuto
             $langs->load("bills");
             $langs->load("agenda");
             $langs->load("orders");
-            $ok=1;
 
-			// Parameters $object->xxx defined by caller
+            $object->actiontypecode='AC_EMAIL';
+            $object->actionmsg2=$langs->transnoentities("SupplierOrderSentByEMail",$object->ref);
+            $object->actionmsg=$langs->transnoentities("SupplierOrderSentByEMail",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+            $object->supplierorderrowid=$object->id;
+            $object->supplierinvoicerowid=$object->facid=$object->orderrowid=$object->propalrowid=0;
+            $ok=1;
         }
 		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
         {
@@ -348,11 +379,29 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=0;	// Supplier invoice not yet supported
-			$object->orderrowid=$object->propalrowid=0;
+			$object->supplierinvoicerowid=$object->id;
+            $object->supplierorderrowid=$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
-    	elseif ($action == 'BILL_SUPPLIER_PAYED')
+        elseif ($action == 'BILL_SUPPLIER_SENTBYMAIL')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("bills");
+            $langs->load("agenda");
+            $langs->load("orders");
+
+            $object->actiontypecode='AC_EMAIL';
+            $object->actionmsg2=$langs->transnoentities("SupplierInvoiceSentByEMail",$object->ref);
+            $object->actionmsg=$langs->transnoentities("SupplierInvoiceSentByEMail",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+            $object->supplierorderrowid=$object->id;
+            $object->supplierinvoicerowid=$object->facid=$object->orderrowid=$object->propalrowid=0;
+            $ok=1;
+        }
+		elseif ($action == 'BILL_SUPPLIER_PAYED')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
@@ -365,8 +414,8 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=0;
-			$object->orderrowid=$object->propalrowid=0;
+            $object->supplierinvoicerowid=$object->id;
+			$object->supplierorderrowid=$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
 		elseif ($action == 'BILL_SUPPLIER_CANCELED')
@@ -382,8 +431,8 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=0;
-			$object->orderrowid=$object->propalrowid=0;
+			$object->supplierinvoicerowid=$object->id;
+			$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
 
@@ -403,8 +452,7 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=0;	// Supplier invoice not yet supported
-			$object->orderrowid=$object->propalrowid=0;
+			$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
@@ -499,9 +547,13 @@ class InterfaceActionsAuto
 			$actioncomm->author      = $user;   // User saving action
 			//$actioncomm->usertodo  = $user;	// User affected to action
 			$actioncomm->userdone    = $user;	// User doing action
+
 			$actioncomm->facid       = $object->facid;
 			$actioncomm->orderrowid  = $object->orderrowid;
 			$actioncomm->propalrowid = $object->propalrowid;
+            $actioncomm->supplierinvoicerowid = $object->supplierinvoicerowid;
+            $actioncomm->supplierorderrowid   = $object->supplierorderrowid;
+
 			$ret=$actioncomm->add($user);       // User qui saisit l'action
 			if ($ret > 0)
 			{
