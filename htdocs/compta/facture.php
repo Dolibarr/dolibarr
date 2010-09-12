@@ -3573,7 +3573,7 @@ else
 			if ($month) $param.='&amp;month='.$month;
 			if ($year)  $param.='&amp;year=' .$year;
 
-			print_barre_liste($langs->trans('BillsCustomer').' '.($socid?' '.$soc->nom:''),$page,'facture.php',$param,$sortfield,$sortorder,'',$num);
+			print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php',$param,$sortfield,$sortorder,'',$num);
 
 			$i = 0;
 			print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
