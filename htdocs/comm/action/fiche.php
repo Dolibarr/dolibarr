@@ -182,10 +182,10 @@ if ($_POST["action"] == 'add_action')
 
 	$actioncomm->note = trim($_POST["note"]);
 	if (isset($_POST["contactid"])) $actioncomm->contact = $contact;
-	if (isset($_REQUEST["socid"]) && $_REQUEST["socid"] > 0)
+	if (GETPOST("socid") > 0)
 	{
 		$societe = new Societe($db);
-		$societe->fetch($_REQUEST["socid"]);
+		$societe->fetch(GETPOST("socid"));
 		$actioncomm->societe = $societe;
 	}
 
@@ -245,7 +245,7 @@ if ($_POST["action"] == 'add_action')
 			{
 				// Si erreur
 				$db->rollback();
-				$_GET["id"]=$idaction;
+				$id=$idaction;
 				$langs->load("errors");
 				$error=$langs->trans($actioncomm->error);
 			}
@@ -253,22 +253,20 @@ if ($_POST["action"] == 'add_action')
 		else
 		{
 			$db->rollback();
-			$_GET["id"]=$idaction;
+			$id=$idaction;
 			$langs->load("errors");
 			$error=$langs->trans($actioncomm->error);
 		}
 	}
-
-	//    print $_REQUEST["from"]."rr";
 }
 
 /*
  * Action suppression de l'action
  */
-if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
+if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes')
 {
 	$actioncomm = new ActionComm($db);
-	$actioncomm->fetch($_GET["id"]);
+	$actioncomm->fetch($id);
 
 	if ($user->rights->agenda->myactions->delete
 		|| $user->rights->agenda->allactions->delete)
@@ -290,7 +288,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 /*
  * Action mise a jour de l'action
  */
-if ($_POST["action"] == 'update')
+if (GETPOST("action") == 'update')
 {
 	if (! $_POST["cancel"])
 	{
@@ -352,7 +350,7 @@ if ($_POST["action"] == 'update')
 		if (! $datep2 && $_POST["percentage"] == 100)
 		{
 			$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
-			$_REQUEST["action"] = 'edit';
+			$_GET["action"] = 'edit';
 		}
 
 		// Users
@@ -390,7 +388,6 @@ if ($_POST["action"] == 'update')
 	{
 		$langs->load("errors");
 		$mesg='<div class="error">'.$langs->trans($actioncomm->error).'</div>';
-		$_GET["id"]=$_POST["id"];
 	}
 	else
 	{
@@ -398,10 +395,6 @@ if ($_POST["action"] == 'update')
 		{
 			header("Location: ".$_POST["from"]);
 			exit;
-		}
-		else
-		{
-			$_GET["id"]=$_REQUEST["id"];
 		}
 	}
 }
@@ -418,15 +411,12 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 $html = new Form($db);
 $htmlactions = new FormActions($db);
 
-/*
- * Affichage fiche en mode creation
- */
 
 if (GETPOST('action') == 'create')
 {
 	$contact = new Contact($db);
 
-	if ($_REQUEST["contactid"])
+	if (GETPOST("contactid"))
 	{
 		$result=$contact->fetch(GETPOST("contactid"));
 		if ($result < 0) dol_print_error($db,$contact->error);
@@ -449,7 +439,7 @@ if (GETPOST('action') == 'create')
 	print '<form name="formaction" action="fiche.php" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add_action">';
-	if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="backtopage" value="'.($_REQUEST["backtopage"] != 1 ? $_REQUEST["backtopage"] : $_SERVER["HTTP_REFERER"]).'">';
+	if (GETPOST("backtopage")) print '<input type="hidden" name="backtopage" value="'.(GETPOST("backtopage") != 1 ? GETPOST("backtopage") : $_SERVER["HTTP_REFERER"]).'">';
 
 	if ($_GET["actioncode"] == 'AC_RDV') print_fiche_titre ($langs->trans("AddActionRendezVous"));
 	else print_fiche_titre ($langs->trans("AddAnAction"));
@@ -523,7 +513,6 @@ if (GETPOST('action') == 'create')
 
 	// Affected by
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-	//	$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:$actioncomm->usertodo,'affectedto',1);
 	$html->select_users(GETPOST("affectedto")?GETPOST("affectedto"):($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
 	print '</td></tr>';
 
@@ -598,7 +587,7 @@ if (GETPOST('action') == 'create')
 /*
  * Affichage action en mode edition ou visu
  */
-if ($_GET["id"])
+if ($id)
 {
 	if ($error)
 	{
@@ -610,7 +599,7 @@ if ($_GET["id"])
 	}
 
 	$act = new ActionComm($db);
-	$result=$act->fetch($_GET["id"]);
+	$result=$act->fetch($id);
 	if ($result < 0)
 	{
 		dol_print_error($db,$act->error);
@@ -649,7 +638,7 @@ if ($_GET["id"])
 	// Confirmation suppression action
 	if (GETPOST("action") == 'delete')
 	{
-		$ret=$html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
+		$ret=$html->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -659,8 +648,8 @@ if ($_GET["id"])
 		print '<form name="formaction" action="fiche.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="id" value="'.GETPOST("id").'">';
-		if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		if (GETPOST("backtopage")) print '<input type="hidden" name="from" value="'.(GETPOST("from") ? GETPOST("from") : $_SERVER["HTTP_REFERER"]).'">';
 
 		print '<table class="border" width="100%">';
 
@@ -723,20 +712,20 @@ if ($_GET["id"])
 
 		// Date start
 		print '<tr><td width="30%" nowrap="nowrap" class="fieldrequired">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-		if ($_REQUEST["afaire"] == 1) $html->select_date($act->datep,'ap',1,1,0,"action",1,1);
-		else if ($_REQUEST["afaire"] == 2) $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
+		if (GETPOST("afaire") == 1) $html->select_date($act->datep,'ap',1,1,0,"action",1,1);
+		else if (GETPOST("afaire") == 2) $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
 		else $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if ($_REQUEST["afaire"] == 1) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
-		else if ($_REQUEST["afaire"] == 2) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
+		if (GETPOST("afaire") == 1) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
+		else if (GETPOST("afaire") == 2) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
 		else $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
 		print '</td></tr>';
 
 		// Status
 		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-		$percent=isset($_REQUEST["percentage"])?$_REQUEST["percentage"]:$act->percentage;
+		$percent=GETPOST("percentage")?GETPOST("percentage"):$act->percentage;
 		print $htmlactions->form_select_status_action('formaction',$percent,1);
 		print '</td></tr>';
 
