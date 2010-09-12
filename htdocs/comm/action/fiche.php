@@ -301,7 +301,7 @@ if (GETPOST("action") == 'update')
 		//if ($_POST["admin"] == -1) $_POST["admin"]='0';
 
 		$actioncomm = new Actioncomm($db);
-		$actioncomm->fetch($_POST["id"]);
+		$actioncomm->fetch($id);
 
 		$datep=dol_mktime($_POST["aphour"],
 		$_POST["apmin"],
@@ -629,7 +629,7 @@ if ($id)
 	 * Affichage onglets
 	 */
 
-	$head=actions_prepare_head();
+	$head=actions_prepare_head($act);
 	dol_fiche_head($head, 'card', $langs->trans("Action"),0,'task');
 
 	$now=dol_now();

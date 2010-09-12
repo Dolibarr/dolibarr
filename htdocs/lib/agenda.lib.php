@@ -291,8 +291,8 @@ function show_array_last_actions_done($max=5)
 
 
 /**
- *  \brief     	Define head array for tabs of agenda setup pages
- *  \return		Array of head
+ *  Define head array for tabs of agenda setup pages
+ *  @return		Array of head
  */
 function agenda_prepare_head()
 {
@@ -314,27 +314,28 @@ function agenda_prepare_head()
 }
 
 /**
- *  \brief     	Define head array for tabs of agenda setup pages
- *  \return		Array of head
+ *  Define head array for tabs of agenda setup pages
+ *  @param      action              Object action
+ *  @return		Array of head
  */
-function actions_prepare_head()
+function actions_prepare_head($action)
 {
 	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$_GET["id"];
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$action->id;
 	$head[$h][1] = $langs->trans("CardAction");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$action->id;
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$_GET["id"];
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$action->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
