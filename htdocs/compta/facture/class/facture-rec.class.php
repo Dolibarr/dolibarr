@@ -62,6 +62,12 @@ class FactureRec extends Facture
 	var $db_table;
 	var $propalid;
 	var $fk_project;
+	
+	var $rang;
+	var $special_code;
+	
+	var $lignes=array(); // TODO deprecated
+	var $lines=array();
 
 
 	/**
@@ -139,14 +145,16 @@ class FactureRec extends Facture
 				for ($i = 0 ; $i < sizeof($facsrc->lignes) ; $i++)
 				{
 					$result_insert = $this->addline($this->id,
-					$facsrc->lignes[$i]->desc,
-					$facsrc->lignes[$i]->subprice,
-					$facsrc->lignes[$i]->qty,
-					$facsrc->lignes[$i]->tva_tx,
-					$facsrc->lignes[$i]->fk_product,
-					$facsrc->lignes[$i]->remise_percent,
+					$facsrc->lines[$i]->desc,
+					$facsrc->lines[$i]->subprice,
+					$facsrc->lines[$i]->qty,
+					$facsrc->lines[$i]->tva_tx,
+					$facsrc->lines[$i]->fk_product,
+					$facsrc->lines[$i]->remise_percent,
 		                    'HT',0,'',0,
-					$facsrc->lignes[$i]->product_type
+					$facsrc->lines[$i]->product_type,
+					$facsrc->lines[$i]->rang,
+					$facsrc->lines[$i]->special_code
 					);
 
 					if ($result_insert < 0)
@@ -192,7 +200,7 @@ class FactureRec extends Facture
 
 		$sql = 'SELECT f.titre,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
-		$sql.= ', f.note, f.note_public, f.fk_user_author';
+		$sql.= ', f.note, f.note_public, f.fk_user_author, f.rang, f.special_code';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
@@ -245,8 +253,9 @@ class FactureRec extends Facture
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
 				$this->modelpdf               = $obj->model_pdf;
+				$this->rang					  = $obj->rang;
+				$this->special_code			  = $obj->special_code;
 				$this->commande_id            = $obj->fk_commande;
-				$this->lignes                 = array();
 
 				if ($this->commande_id)
 				{
@@ -303,6 +312,7 @@ class FactureRec extends Facture
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.description, l.price, l.qty, l.tva_tx, ';
 		$sql.= ' l.remise, l.remise_percent, l.subprice,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
+		$sql.= ' l.rang, l.special_code,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -317,36 +327,41 @@ class FactureRec extends Facture
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($result);
-				$faclig = new FactureLigne($this->db);
-				$faclig->rowid	          = $objp->rowid;
-				$faclig->desc             = $objp->description;     // Description line
-				$faclig->product_type     = $objp->product_type;	// Type of line
-				$faclig->product_ref      = $objp->product_ref;     // Ref product
-				$faclig->libelle          = $objp->label;           // Label product
-				$faclig->product_desc     = $objp->product_desc;    // Description product
-				$faclig->fk_product_type  = $objp->fk_product_type;	// Type of product
-				$faclig->qty              = $objp->qty;
-				$faclig->subprice         = $objp->subprice;
-				$faclig->tva_tx           = $objp->tva_tx;
-				$faclig->remise_percent   = $objp->remise_percent;
-				$faclig->fk_remise_except = $objp->fk_remise_except;
-				$faclig->fk_product       = $objp->fk_product;
-				$faclig->date_start       = $objp->date_start;
-				$faclig->date_end         = $objp->date_end;
-				$faclig->date_start       = $objp->date_start;
-				$faclig->date_end         = $objp->date_end;
-				$faclig->info_bits        = $objp->info_bits;
-				$faclig->total_ht         = $objp->total_ht;
-				$faclig->total_tva        = $objp->total_tva;
-				$faclig->total_ttc        = $objp->total_ttc;
-				$faclig->export_compta    = $objp->fk_export_compta;
-				$faclig->code_ventilation = $objp->fk_code_ventilation;
+				$line = new FactureLigne($this->db);
+				
+				$line->rowid	        = $objp->rowid;
+				$line->desc             = $objp->description;     // Description line
+				$line->product_type     = $objp->product_type;	// Type of line
+				$line->product_ref      = $objp->product_ref;     // Ref product
+				$line->libelle          = $objp->label;           // Label product
+				$line->product_desc     = $objp->product_desc;    // Description product
+				$line->fk_product_type  = $objp->fk_product_type;	// Type of product
+				$line->qty              = $objp->qty;
+				$line->subprice         = $objp->subprice;
+				$line->tva_tx           = $objp->tva_tx;
+				$line->remise_percent   = $objp->remise_percent;
+				$line->fk_remise_except = $objp->fk_remise_except;
+				$line->fk_product       = $objp->fk_product;
+				$line->date_start       = $objp->date_start;
+				$line->date_end         = $objp->date_end;
+				$line->date_start       = $objp->date_start;
+				$line->date_end         = $objp->date_end;
+				$line->info_bits        = $objp->info_bits;
+				$line->total_ht         = $objp->total_ht;
+				$line->total_tva        = $objp->total_tva;
+				$line->total_ttc        = $objp->total_ttc;
+				$line->export_compta    = $objp->fk_export_compta;
+				$line->code_ventilation = $objp->fk_code_ventilation;
+				$line->rang 			= $objp->rang;
+				$line->special_code 	= $objp->special_code;
 
 				// Ne plus utiliser
-				$faclig->price            = $objp->price;
-				$faclig->remise           = $objp->remise;
+				$line->price            = $objp->price;
+				$line->remise           = $objp->remise;
 
-				$this->lignes[$i] = $faclig;
+				$this->lignes[$i] = $line; // TODO deprecated
+				$this->lines[$i] = $line;
+				
 				$i++;
 			}
 
@@ -394,7 +409,7 @@ class FactureRec extends Facture
 	/**
 	 *		\brief		Add a line to invoice
 	 */
-	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0)
+	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0)
 	{
 		dol_syslog("FactureRec::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -462,6 +477,8 @@ class FactureRec extends Facture
 			$sql.= ", total_ht";
 			$sql.= ", total_tva";
 			$sql.= ", total_ttc";
+			$sql.= ", rang";
+			$sql.= ", special_code";
 			$sql.= ") VALUES (";
 			$sql.= "'".$facid."'";
 			$sql.= ", '".addslashes($desc)."'";
@@ -476,6 +493,8 @@ class FactureRec extends Facture
 			$sql.= ", '".price2num($total_ht)."'";
 			$sql.= ", '".price2num($total_tva)."'";
 			$sql.= ", '".price2num($total_ttc)."') ;";
+			$sql.= ", ".$rang;
+			$sql.= ", ".$special_code;
 
 			dol_syslog("FactureRec::addline sql=".$sql, LOG_DEBUG);
 			if ($this->db->query( $sql))

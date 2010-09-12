@@ -2,6 +2,7 @@
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2010 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -39,5 +40,7 @@ create table llx_facturedet_rec
   total_tva       double(24,8),	             	-- Total TVA de la ligne toute quantity et incluant remise ligne et globale
   total_localtax1 double(24,8) DEFAULT 0,		-- Total LocalTax1 for total quantity of line
   total_localtax2 double(24,8) DEFAULT 0,		-- total LocalTax2 for total quantity of line
-  total_ttc       double(24,8)	             	-- Total TTC de la ligne toute quantity et incluant remise ligne et globale
+  total_ttc       double(24,8),	             	-- Total TTC de la ligne toute quantity et incluant remise ligne et globale
+  special_code    integer UNSIGNED DEFAULT 0,		-- code pour les lignes speciales
+  rang            integer    DEFAULT 0				-- ordre d'affichage
 )type=innodb;

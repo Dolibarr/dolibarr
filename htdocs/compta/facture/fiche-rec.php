@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  */
 
 require("../../main.inc.php");
-require_once("./class/facture-rec.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture-rec.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
@@ -108,6 +108,12 @@ if ($_GET["action"] == 'create')
 
 	$facture = new Facture($db);
 	$product_static=new Product($db);
+	
+	// Instantiate hooks of thirdparty module
+	if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+	{
+		$facture->callHooks('objectcard');
+	}
 
 	if ($facture->fetch($_GET["facid"]) > 0)
 	{
