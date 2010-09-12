@@ -28,7 +28,8 @@
  */
 
 require('../../main.inc.php');
-include_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/paymentsocialcontribution.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
 if ($conf->banque->enabled) require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
@@ -56,7 +57,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 {
 	$db->begin();
 
-	$paiement = new PaiementCharge($db);
+	$paiement = new PaymentSocialContribution($db);
 	$paiement->fetch($_REQUEST['id']);
 	$result = $paiement->delete($user);
 	if ($result > 0)
@@ -77,7 +78,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 {
 	$db->begin();
 
-	$paiement = new PaiementCharge($db);
+	$paiement = new PaymentSocialContribution($db);
 	$paiement->id = $_REQUEST['id'];
 	if ($paiement->valide() > 0)
 	{
@@ -116,7 +117,9 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 
 llxHeader();
 
-$paiement = new PaiementCharge($db);
+$socialcontrib=new ChargeSociales($db);
+$paiement = new PaymentSocialContribution($db);
+
 $result=$paiement->fetch($_GET['id']);
 if ($result <= 0)
 {
@@ -230,6 +233,7 @@ if ($resql)
 	print '<br><table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('SocialContribution').'</td>';
+    print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
 	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td align="center">'.$langs->trans('Status').'</td>';
@@ -240,24 +244,28 @@ if ($resql)
 	{
 		$var=True;
 
-		$socialcontribstatic=new ChargeSociales($db);
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
+
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
+			// Ref
 			print '<td>';
-			$socialcontribstatic->id=$objp->scid;
-			$socialcontribstatic->ref=$objp->scid;
-			$socialcontribstatic->lib=$objp->sc_type;
-			print $socialcontribstatic->getNomUrl(1);
+			$socialcontrib->fetch($objp->scid);
+			print $socialcontrib->getNomUrl(1);
 			print "</td>\n";
+			// Type
+            print '<td>';
+            print $socialcontrib->type_libelle;
+            /*print $socialcontrib->type;*/
+            print "</td>\n";
+			// Label
 			print '<td>'.$objp->libelle.'</td>';
 			// Expected to pay
 			print '<td align="right">'.price($objp->sc_amount).'</td>';
 			// Status
-			print '<td align="center">'.$socialcontribstatic->LibStatut($objp->fk_statut,2).'</td>';
+			print '<td align="center">'.$socialcontrib->LibStatut($objp->fk_statut,2).'</td>';
 			// Amount payed
 			print '<td align="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";

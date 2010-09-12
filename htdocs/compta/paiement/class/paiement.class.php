@@ -77,7 +77,7 @@ class Paiement
 		$sql.= ' WHERE p.fk_paiement = c.id';
 		$sql.= ' AND p.rowid = '.$id;
 
-		dol_syslog("Paiement::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$result = $this->db->query($sql);
 
 		if ($result)
@@ -148,7 +148,7 @@ class Paiement
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
 		$sql.= " VALUES ('".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$this->total."', ".$this->paiementid.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.")";
 
-		dol_syslog("Paiement::Create insert paiement sql=".$sql);
+		dol_syslog(get_class($this)."::Create insert paiement sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -164,18 +164,18 @@ class Paiement
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount)';
 					$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\')';
 
-					dol_syslog('Paiement::Create Amount line '.$key.' insert paiement_facture sql='.$sql);
+					dol_syslog(get_class($this).'::Create Amount line '.$key.' insert paiement_facture sql='.$sql);
 					$resql=$this->db->query($sql);
 					if (! $resql)
 					{
 						$this->error=$this->db->lasterror();
-						dol_syslog('Paiement::Create insert paiement_facture error='.$this->error, LOG_ERR);
+						dol_syslog(get_class($this).'::Create insert paiement_facture error='.$this->error, LOG_ERR);
 						$error++;
 					}
 				}
 				else
 				{
-					dol_syslog('Paiement::Create Amount line '.$key.' not a number. We discard it.');
+					dol_syslog(get_class($this).'::Create Amount line '.$key.' not a number. We discard it.');
 				}
 			}
 
@@ -192,7 +192,7 @@ class Paiement
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Paiement::Create insert paiement error='.$this->error, LOG_ERR);
+			dol_syslog(get_class($this).'::Create insert paiement error='.$this->error, LOG_ERR);
 			$error++;
 		}
 
@@ -424,7 +424,7 @@ class Paiement
 		$sql = 'UPDATE llx_paiement set fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 
-		dol_syslog('Paiement::update_fk_bank sql='.$sql);
+		dol_syslog(get_class($this).'::update_fk_bank sql='.$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -445,7 +445,7 @@ class Paiement
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'paiement SET statut = 1 WHERE rowid = '.$this->id;
 
-		dol_syslog('Paiement::valide sql='.$sql);
+		dol_syslog(get_class($this).'::valide sql='.$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -453,7 +453,7 @@ class Paiement
 		}
 		else
 		{
-			dol_syslog('Paiement::valide Error -1');
+			dol_syslog(get_class($this).'::valide Error -1');
 			return -1;
 		}
 	}
@@ -469,7 +469,7 @@ class Paiement
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
-		dol_syslog('Paiement::info sql='.$sql);
+		dol_syslog(get_class($this).'::info sql='.$sql);
 		$result = $this->db->query($sql);
 
 		if ($result)
@@ -531,7 +531,7 @@ class Paiement
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Paiement::getBillsArray Error '.$this->error.' - sql='.$sql);
+			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error.' - sql='.$sql);
 			return -1;
 		}
 	}

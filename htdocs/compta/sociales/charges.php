@@ -168,7 +168,7 @@ if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->cha
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("SocialContribution"));
 
 $html = new Form($db);
 
@@ -247,11 +247,9 @@ if ($_GET["action"] == 'create')
 if ($chid > 0)
 {
 	$cha = new ChargeSociales($db);
+    $result=$cha->fetch($chid);
 
-	/*
-	*   Charge
-	*/
-	if ($cha->fetch($chid) > 0)
+	if ($result > 0)
 	{
 		if ($mesg) print $mesg.'<br>';
 

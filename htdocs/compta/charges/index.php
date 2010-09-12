@@ -28,6 +28,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/paymentsocialcontribution.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 $langs->load("compta");
@@ -58,7 +59,7 @@ if (! $sortorder) $sortorder="DESC";
 
 $tva_static = new Tva($db);
 $socialcontrib=new ChargeSociales($db);
-$payment_sc_static=new PaiementCharge($db);
+$payment_sc_static=new PaymentSocialContribution($db);
 
 llxHeader('',$langs->trans("TaxAndDividendsArea"));
 

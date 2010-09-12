@@ -24,8 +24,9 @@
  */
 
 require('../main.inc.php');
-include_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
-include_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/paymentsocialcontribution.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
 $langs->load("bills");
 
@@ -86,8 +87,8 @@ if ($_POST["action"] == 'add_paiement')
 
 		$db->begin();
 
-		// Creation de la ligne paiement
-		$paiement = new PaiementCharge($db);
+		// Create a line of payments
+		$paiement = new PaymentSocialContribution($db);
 		$paiement->chid         = $chid;
 		$paiement->datepaye     = $datepaye;
 		$paiement->amounts      = $amounts;   // Tableau de montant
