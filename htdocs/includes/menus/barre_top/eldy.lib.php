@@ -29,9 +29,9 @@
  *
  * @param $db
  * @param $atarget
- * @param $hideifnotallowed
+ * @param $type_user     0=Internal,1=External,2=All
  */
-function print_eldy_menu($db,$atarget,$hideifnotallowed)
+function print_eldy_menu($db,$atarget,$type_user)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
@@ -96,7 +96,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		}
 		else
 		{
-			if (! $hideifnotallowed)
+			if (! $type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
@@ -142,7 +142,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		}
 		else
 		{
-			if (! $hideifnotallowed)
+			if (! $type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
@@ -183,7 +183,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		}
 		else
 		{
-			if (! $hideifnotallowed)
+			if (! $type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
@@ -226,7 +226,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		}
 		else
 		{
-			if (! $hideifnotallowed)
+			if (! $type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
@@ -268,7 +268,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
         }
         else
         {
-            if (! $hideifnotallowed)
+            if (! $type_user)
             {
                 print_start_menu_entry($idsel);
                 print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
@@ -309,7 +309,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		}
 		else
 		{
-			if (! $hideifnotallowed)
+			if (! $type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
@@ -350,7 +350,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		}
 		else
 		{
-			if (! $hideifnotallowed)
+			if (! $type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
@@ -417,7 +417,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 		}
 		else
 		{
-			if (! $hideifnotallowed)
+			if (! $type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
@@ -435,7 +435,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 
 	$menuArbo = new Menubase($db,'eldy','top');
 
-	$tabMenu = $menuArbo->menuTopCharger($hideifnotallowed,$_SESSION['mainmenu'],'eldy');
+	$tabMenu = $menuArbo->menuTopCharger($type_user,$_SESSION['mainmenu'],'eldy');
 
 	for($i=0; $i<count($tabMenu); $i++)
 	{
@@ -478,7 +478,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 			}
 			else
 			{
-				if (! $hideifnotallowed)
+				if (! $type_user)
 				{
 					print_start_menu_entry($idsel);
 					print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';

@@ -93,7 +93,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
 
 		$menuArbo = new Menubase($db,'auguria','left');
 		$overwritemenufor = $menuArbo->listeMainmenu();
-		$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,0,'auguria');
+		$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria');
 
 		/*
 		 * Menu AUTRES (Pour les menus du haut qui ne serait pas geres)

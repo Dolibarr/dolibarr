@@ -30,9 +30,9 @@
  *
  * @param $db
  * @param $atarget
- * @param $hideifnotallowed
+ * @param $type_user     0=Internal,1=External,2=All
  */
-function print_auguria_menu($db,$atarget,$hideifnotallowed)
+function print_auguria_menu($db,$atarget,$type_user)
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
@@ -44,7 +44,7 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 	$_SESSION["leftmenuopened"]="";
 
 	$menuArbo = new Menubase($db,'auguria','top');
-	$tabMenu = $menuArbo->menuTopCharger($hideifnotallowed,$_SESSION['mainmenu'], 'auguria');
+	$tabMenu = $menuArbo->menuTopCharger($type_user,$_SESSION['mainmenu'], 'auguria');
 
 	print_start_menu_array_auguria();
 
@@ -86,7 +86,7 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 			}
 			else
 			{
-				if (! $hideifnotallowed)
+				if (! $type_user)
 				{
 					print_start_menu_entry_auguria($idsel);
 					print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
