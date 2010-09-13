@@ -512,6 +512,24 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 }
 
 /**
+ *	Return line ref
+ *	@param		object				Object
+ *	@param		$i					Current line number
+ *  @param    	outputlang			Object lang for output
+ */
+function pdf_getlineref($object,$i,$outputlangs)
+{
+	if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+	{
+		// TODO add hook function
+	}
+	else
+	{
+		return dol_htmlentitiesbr($object->lines[$i]->ref);
+	}
+}
+
+/**
  *	Return line vat rate
  *	@param		object				Object
  *	@param		$i					Current line number

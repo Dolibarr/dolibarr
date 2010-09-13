@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Sylvain SCATTOLINI   <sylvain@s-infoservices.com>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,29 +225,33 @@ class pdf_oursin extends ModelePDFFactures
 					{
 						if ($this->franchise!=1)
 						{
+							$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
 							$pdf->SetXY ($this->marges['g']+119, $curY);
-							$pdf->MultiCell(10, 3, $object->lines[$i]->tva_tx, 0, 'R');
+							$pdf->MultiCell(10, 3, $vat_rate, 0, 'R');
 						}
 					}
 
 					// Prix unitaire HT avant remise
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs);
 					$pdf->SetXY ($this->marges['g']+132, $curY);
-					$pdf->MultiCell(16, 3, price($object->lines[$i]->subprice), 0, 'R', 0);
+					$pdf->MultiCell(16, 3, $up_excl_tax, 0, 'R', 0);
 
-					// Quantit
+					// Quantity
+					$qty = pdf_getlineqty($object, $i, $outputlangs);
 					$pdf->SetXY ($this->marges['g']+150, $curY);
-					$pdf->MultiCell(10, 3, $object->lines[$i]->qty, 0, 'R');
+					$pdf->MultiCell(10, 3, $qty, 0, 'R');
 
 					// Remise sur ligne
 					$pdf->SetXY ($this->marges['g']+160, $curY);
 					if ($object->lines[$i]->remise_percent) {
-						$pdf->MultiCell(14, 3, $object->lines[$i]->remise_percent."%", 0, 'R');
+						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs);
+						$pdf->MultiCell(14, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT
+					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
 					$pdf->SetXY ($this->marges['g']+168, $curY);
-					$total = price($object->lines[$i]->total_ht);
-					$pdf->MultiCell(21, 3, $total, 0, 'R', 0);
+					$pdf->MultiCell(21, 3, $total_excl_tax, 0, 'R', 0);
 
 
 					if ($nexY > 200 && $i < $nblignes - 1)

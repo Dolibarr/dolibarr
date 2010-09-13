@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +186,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
+					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs,1);
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					$pdf->writeHTMLCell(102, 4, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
@@ -193,22 +194,25 @@ class pdf_propale_jaune extends ModelePDFPropales
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
-					$ref=dol_htmlentitiesbr($object->lines[$i]->ref);
-
+					$ref = pdf_getlineref($object, $i, $outputlangs);
 					$pdf->SetXY (10, $curY );
-					$pdf->MultiCell(20, 4, $outputlangs->convToOutputCharset($ref), 0, 'L', 0);
+					$pdf->MultiCell(20, 4, $ref, 0, 'L', 0);
 
+					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
 					$pdf->SetXY (132, $curY );
-					$pdf->MultiCell(12, 4, vatrate($object->lines[$i]->tva_tx,0,$object->lines[$i]->info_bits), 0, 'R');
+					$pdf->MultiCell(12, 4, $vat_rate, 0, 'R');
 
+					$qty = pdf_getlineqty($object, $i, $outputlangs);
 					$pdf->SetXY (144, $curY );
-					$pdf->MultiCell(10, 4, price($object->lines[$i]->qty), 0, 'R', 0);
+					$pdf->MultiCell(10, 4, $qty, 0, 'R', 0);
 
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs);
 					$pdf->SetXY (154, $curY );
-					$pdf->MultiCell(22, 4, price($object->lines[$i]->price), 0, 'R', 0);
+					$pdf->MultiCell(22, 4, $up_excl_tax, 0, 'R', 0);
 
+					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
 					$pdf->SetXY (176, $curY );
-					$pdf->MultiCell(24, 4, price($object->lines[$i]->total_ht), 0, 'R', 0);
+					$pdf->MultiCell(24, 4, $total_excl_tax, 0, 'R', 0);
 
 					//$pdf->line(10, $curY, 200, $curY );
 
@@ -598,7 +602,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		// Show recipient
 		$pdf->SetXY(102,$posy+3);
 		$pdf->SetFont('','B',10);
-		$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($carac_client_name), 0, 'L');
+		$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
 
 		// Show address
 		$pdf->SetFont('','',9);

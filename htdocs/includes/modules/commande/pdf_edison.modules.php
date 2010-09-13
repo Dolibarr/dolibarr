@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ class pdf_edison extends ModelePDFCommandes
 	 *	\param		outputlangs		Lang output object
 	 *	\return	    int     		1=ok, 0=ko
 	 */
-	function write_file($com,$outputlangs)
+	function write_file($object,$outputlangs)
 	{
 		global $user,$conf,$langs,$mysoc;
 
@@ -105,27 +106,19 @@ class pdf_edison extends ModelePDFCommandes
 		$outputlangs->load("products");
         $outputlangs->load("orders");
 
-		// Definition de l'objet $com (pour compatibilite ascendante)
-		if (! is_object($com))
-		{
-			$id = $com;
-			$com = new Commande($this->db,"",$id);
-			$ret=$com->fetch($id);
-		}
-
 		if ($conf->commande->dir_output)
 		{
 			// Definition of $dir and $file
-			if ($com->specimen)
+			if ($object->specimen)
 			{
 				$dir = $conf->commande->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
-				$comref = dol_sanitizeFileName($com->ref);
-				$dir = $conf->commande->dir_output . "/" . $comref;
-				$file = $dir . "/" . $comref . ".pdf";
+				$objectref = dol_sanitizeFileName($object->ref);
+				$dir = $conf->commande->dir_output . "/" . $objectref;
+				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
 			if (! file_exists($dir))
@@ -164,11 +157,11 @@ class pdf_edison extends ModelePDFCommandes
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset($com->ref));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Order"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($com->ref)." ".$outputlangs->transnoentities("Order"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Order"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -177,7 +170,7 @@ class pdf_edison extends ModelePDFCommandes
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $com, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', 9);
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -196,31 +189,37 @@ class pdf_edison extends ModelePDFCommandes
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
-				$nblignes = sizeof($com->lignes);
+				$nblignes = sizeof($object->lines);
 
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
 
-					$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($com->lignes[$i]->desc), 0, 1);
+					// Description de la ligne produit
+					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs,1);
+					$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$nexY = $pdf->GetY();
 
+					$ref = pdf_getlineref($object, $i, $outputlangs);
 					$pdf->SetXY (10, $curY);
-					$pdf->MultiCell(20, 3, $outputlangs->convToOutputCharset($com->lignes[$i]->ref), 0, 'C');
+					$pdf->MultiCell(20, 3, $ref, 0, 'C');
 
+					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
 					$pdf->SetXY (133, $curY);
-					$pdf->MultiCell(10, 3, vatrate($com->lignes[$i]->tva_tx), 0, 'C');
+					$pdf->MultiCell(12, 3, $vat_rate, 0, 'C');
 
+					$qty = pdf_getlineqty($object, $i, $outputlangs);
 					$pdf->SetXY (145, $curY);
-					$pdf->MultiCell(10, 3, price2num($com->lignes[$i]->qty), 0, 'C');
+					$pdf->MultiCell(10, 3, $qty, 0, 'C');
 
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs);
 					$pdf->SetXY (156, $curY);
-					$pdf->MultiCell(18, 3, price($com->lignes[$i]->price), 0, 'R', 0);
+					$pdf->MultiCell(18, 3, $up_excl_tax, 0, 'R', 0);
 
+					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
 					$pdf->SetXY (174, $curY);
-					$total = price($com->lignes[$i]->total_ht);
-					$pdf->MultiCell(26, 3, $total, 0, 'R', 0);
+					$pdf->MultiCell(26, 3, $total_excl_tax, 0, 'R', 0);
 
 					$nexY+=2;    // Passe espace entre les lignes
 
@@ -228,7 +227,7 @@ class pdf_edison extends ModelePDFCommandes
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
-						$follow_descproduitservice = $outputlangs->convToOutputCharset($com->lignes[$i+1]->desc);
+						$follow_descproduitservice = $outputlangs->convToOutputCharset($object->lines[$i+1]->desc);
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4);
 					}
@@ -244,7 +243,7 @@ class pdf_edison extends ModelePDFCommandes
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $com, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('','', 9);
 						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
@@ -258,7 +257,7 @@ class pdf_edison extends ModelePDFCommandes
 				$bottomlasttab=$tab_top + $tab_height + 1;
 
 				// Affiche zone infos
-				$this->_tableau_info($pdf, $com, $bottomlasttab, $outputlangs);
+				$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
 				$tab2_top = 241;
@@ -285,16 +284,16 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalTTC"), 1, 'R', 1);
 
 				$pdf->SetXY (174, $tab2_top + 0);
-				$pdf->MultiCell(26, $tab2_lh, price($com->total_ht), 0, 'R', 0);
+				$pdf->MultiCell(26, $tab2_lh, price($object->total_ht), 0, 'R', 0);
 
 				$pdf->SetXY (174, $tab2_top + $tab2_lh);
-				$pdf->MultiCell(26, $tab2_lh, price($com->total_tva), 0, 'R', 0);
+				$pdf->MultiCell(26, $tab2_lh, price($object->total_tva), 0, 'R', 0);
 
 				$pdf->SetXY (174, $tab2_top + ($tab2_lh*2));
-				$pdf->MultiCell(26, $tab2_lh, price($com->total_ttc), 1, 'R', 1);
+				$pdf->MultiCell(26, $tab2_lh, price($object->total_ttc), 1, 'R', 1);
 
 				// Pied de page
-				$this->_pagefoot($pdf,$com,$outputlangs);
+				$this->_pagefoot($pdf,$object,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
