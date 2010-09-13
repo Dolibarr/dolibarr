@@ -54,7 +54,7 @@ create table llx_actioncomm
 
   propalrowid    integer,
   fk_commande    integer,
-  fk_facture     integer
+  fk_facture     integer,
   fk_contract    integer,
 
   fk_supplier_order   integer,
