@@ -425,11 +425,11 @@ class Menubase
 	}
 
 	/**
-	 *		\brief		Load tabMenu array
-	 * 		\param		type_user		0=Internal,1=External,2=All
-	 * 		\param		mainmenu		Value for mainmenu that defined top menu
-	 * 		\param		menu_handler	Name of menu_handler used (auguria, eldy...)
-	 * 		\return		array			Return array with menu entries for top menu
+	 *		Load tabMenu array
+	 * 		@param		type_user		0=Internal,1=External,2=All
+	 * 		@param		mainmenu		Value for mainmenu that defined top menu
+	 * 		@param		menu_handler	Name of menu_handler used (auguria, eldy...)
+	 * 		@return		array			Return array with menu entries for top menu
 	 */
 	function menuTopCharger($type_user, $mainmenu, $menu_handler)
 	{
@@ -528,11 +528,10 @@ class Menubase
 	}
 
     /**
-     *  Load entries found in database in a menu array
-     *
+     * Load entries found in database in a menu array
      * @param  $newmenu        Menu array to complete
      * @param  $mainmenu       Value for mainmenu that defined top menu
-     * @param  $leftmenu       Value for left that defined leftmenu
+     * @param  $myleftmenu     Value for left that defined leftmenu
      * @param  $type_user      0=Internal,1=External,2=All
      * @param  $menu_handler   Name of menu_handler used (auguria, eldy...)
      * @return array           Menu array completed
