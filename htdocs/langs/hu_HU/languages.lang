@@ -1,0 +1,32 @@
+# Dolibarr language file - hu_HU - languages
+CHARSET=UTF-8
+
+Language_ar_AR=Arab
+Language_ca_ES=Katalán
+Language_da_DA=Dán
+Language_de_DE=Német
+Language_en_AU=Angol (Ausztrália)
+Language_en_GB=Angol (Egyesült Királyság)
+Language_en_IN=Angol (India)
+Language_en_US=Angol (Egyesült Államok)
+Language_es_ES=Spanyo
+Language_es_AR=Spanyo (Argentina)
+Language_fi_FI=Finn
+Language_fr_BE=Francia (Belgium)
+Language_fr_CA=Francia (Kanada)
+Language_fr_CH=Francia (Svájc)
+Language_fr_FR=Francia
+Language_hu_HU=Magyar
+Language_is_IS=Grönlandi
+Language_it_IT=Olasz
+Language_nb_NO=Norvég (Bokmål)
+Language_nl_BE=Holland (Belgium)
+Language_nl_NL=Holland (Hollandia)
+Language_pl_PL=Lengyel
+Language_pt_BR=Portugál (Brazilia)
+Language_pt_PT=Portugál
+Language_ro_RO=Román
+Language_ru_RU=Orosz
+Language_tr_TR=Török
+Language_sl_SL=Szlovén
+Language_zh_CN=Kínai

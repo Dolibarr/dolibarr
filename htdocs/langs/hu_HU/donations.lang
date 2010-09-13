@@ -1,0 +1,25 @@
+# Dolibarr language file - hu_HU - donations
+CHARSET=UTF-8
+Donation=Adomány
+Donations=Adományok
+Donor=Donor
+Donors=Donorok
+AddDonation=Új adomány hozzáadása
+NewDonation=Új adomány
+DonationPromise=Ajándék ígéret
+PromisesNotValid=Nem hitelesített ígéretek
+PromisesValid=Hitelesített ígéretek
+DonationsPaid=Kifizetett adományok
+DonationsReceived=Kapott adományok
+PublicDonation=Publikus adomány
+DonationsNumber=Adomány szám
+DonationsArea=Adomány terület
+DonationStatusPromiseNotValidated=Igéret vázlat
+DonationStatusPromiseValidated=Hitelesített ígéret
+DonationStatusPaid=Kapott adomány
+DonationStatusPromiseNotValidatedShort=Vázlat
+DonationStatusPromiseValidatedShort=Hitelesített
+DonationStatusPaidShort=Kapott
+ValidPromise=Ígéret hitelesítése
+BuildDonationReceipt=Nyugta készítése
+DonationsModels=Dokumentum modellek adományok nyugtájához

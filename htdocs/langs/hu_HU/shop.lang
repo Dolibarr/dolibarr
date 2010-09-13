@@ -1,0 +1,11 @@
+# Dolibarr language file - hu_HU - shop
+CHARSET=UTF-8
+Shop=Bolt
+ShopWeb=Web Bolt
+LastOrders=Utolsó rendelések
+OnStandBy=Készenléti állapotban
+TreatmentInProgress=Kezelés folyamatban
+LastCustomers=Utolsó vásárlók
+OSCommerceShop=OSCommerce bolt
+OSCommerce=OSCommerce
+AddProd=Online eladás

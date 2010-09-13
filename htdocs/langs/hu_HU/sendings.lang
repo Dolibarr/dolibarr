@@ -1,0 +1,61 @@
+# Dolibarr language file - hu_HU - sendings
+CHARSET=UTF-8
+RefSending=Szállítási Ref.
+Sending=Szállítás
+Sendings=Szállítások
+Shipments=Szállítások
+Receivings=Fogadás
+SendingsArea=Szállítási terület
+ListOfSendings=Szállítások listája
+SendingMethod=Szállítás módja
+SendingReceipt=Szállítási bizonylat
+LastSendings=%s utolsó szállítás
+SearchASending=Szállítás keresése
+StatisticsOfSendings=Szállítási statisztikák
+NbOfSendings=Szállítások száma
+SendingCard=Szállítási kártya
+NewSending=Új szállítás
+CreateASending=Szállítás létrehozása
+CreateSending=Szállítás létrehozása
+QtyOrdered=Rendelt mennyiség
+QtyShipped=Kiszállított mennyiség
+QtyToShip=Szállítandó mennyiség
+QtyReceived=Átvett mennyiség
+KeepToShip=Szállításra félretenni
+OtherSendingsForSameOrder=Más szállítások ehhez a megrendeléshez
+DateSending=Date sending order
+DateSendingShort=Küldési dátum sorrend
+SendingsForSameOrder=Szállítások ehhez a megrendeléshez
+SendingsAndReceivingForSameOrder=Szállítások és átvételek ehhez a rendeléshez
+SendingsToValidate=Hitelesítésre váró szállítások
+StatusSendingCanceled=Megszakítva
+StatusSendingDraft=Piszkozat
+StatusSendingValidated=Hitelesítve (már szállítva)
+StatusSendingCanceledShort=Megszakítva
+StatusSendingDraftShort=Piszkozat
+StatusSendingValidatedShort=Hitelesítve
+SendingSheet=Küldési adatlap
+Carriers=Fuvarozók
+Carrier=Fuvarozó
+CarriersArea=Fuvarozási terület
+NewCarrier=Új fuvarozó
+ConfirmDeleteSending=Biztos törölni akarja ezt a szállítmányt?
+ConfirmValidateSending=Biztos hitelesíteni akarja ezt a szállítmányt?
+ConfirmCancelSending=Biztos meg akarja szakítani ezt a szállítmányt?
+GenericTransport=Általános szállítás
+Enlevement=Ügyfél átvette
+DocumentModelSimple=Egyszerű dokumentum modell
+DocumentModelMerou=Merou A5 modell
+WarningNoQtyLeftToSend=Figyelem, nincs szállításra váró termék.
+StatsOnShipmentsOnlyValidated=A statisztika csak a hitelesített szállítmányokat veszi figyelembe
+DateDeliveryPlanned=Tervezett szállítási dátum
+DateReceived=Átvétel dátuma
+
+# Sending methods
+SendingMethodCATCH=Ügyfél fogád
+SendingMethodTRANS=Szállító
+SendingMethodCOLSUI=Futár szolgálat
+
+# ModelDocument
+DocumentModelSirocco=Egyszerű dokumentum modell bizonylatokhoz
+DocumentModelTyphon=Teljesebb dokumentum modell bizonylatokhoz (logo...)

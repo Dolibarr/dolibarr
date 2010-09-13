@@ -1,0 +1,24 @@
+# Dolibarr language file - hu_HU - paybox
+CHARSET=UTF-8
+PayBoxSetup=PayBox modul beállítás
+PayBoxDesc=Ez a nodul lehetővé teszi az oldalak számára a <a href="http://www.paybox.com" target="_blank">Paybox</a>-on keresztüli fizetést az ügyfelek számára. Ingyenes fizetési megoldás.
+FollowingUrlAreAvailableToMakePayments=Following URLs are available to offer a page to a customer to make a payment on Dolibarr objects
+PaymentForm=Fizetési ürlap
+WelcomeOnPaymentPage=Üdvözöljük az online fizetési oldalunkon
+ThisScreenAllowsYouToPay=Ez az oldal lehetővé teszi az online fizetést %s számára.
+ThisIsInformationOnPayment=Ez az információ a fizetendő tételről
+ToComplete=Befejezni
+YourEMail=Email a fizetés teljesítéséről
+Creditor=Hitelező
+PaymentCode=Fizetési kód
+PayBoxDoPayment=Tovább a fizetéshez
+YouWillBeRedirectedOnPayBox=Át lesz irányítva egy biztonságos Paybox oldalra ahol megadhatja a bak/hitelkártya információit
+PleaseBePatient=Kérjük legyen türelemmel
+Continue=Következő
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for an order
+ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment user interface for an invoice
+ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment user interface for a contract line
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment user interface for a free amount
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment user interface for a member subscription
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (required only for free payment) to add your own payment comment tag.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your PayBox with url <b>%s</b> to have payment created automatically when validated by paybox. 

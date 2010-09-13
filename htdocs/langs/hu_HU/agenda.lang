@@ -1,0 +1,49 @@
+# Dolibarr language file - hu_HU - agenda 
+CHARSET=UTF-8
+Actions=Cselekvés
+ActionsArea=Cselekvés terület (Események és Feladatok)
+Agenda=Napirend
+Agendas=Napirendek
+Calendar=Naptár
+Calendars=Naptárak
+AffectedTo=Befolyásolhatja
+DoneBy=Által végzett
+Events=Események
+ListOfActions=Események listája
+Location=Helyszín
+SearchAnAction=Cselekvés/feladat keresése
+MenuToDoActions=Minden nem teljesített cselekvés
+MenuDoneActions=Minden megszüntetett cselekvés
+MenuToDoMyActions=Nem teljesített cselekvéseim
+MenuDoneMyActions=Megszüntetett cselekvéseim
+ListOfEvents=Dolibarr események listája
+ActionsAskedBy=Cselekvéseket rögzítette
+ActionsToDoBy=Eseményeket befolyásolhatja
+ActionsDoneBy=Actions done by
+AllMyActions=Az én cselekvéseim/feladataim
+AllActions=Az összes cselekvés/feladat
+ViewList=Lista megtekintése
+ViewCal=Naptár megtekintése
+ViewWithPredefinedFilters=Előre definiált szűrőkkel való megtekintés
+AutoActions=Napirend automatikus kitöltése
+AgendaAutoActionDesc=Define here events for which you want Dolibarr to create automatically an action in agenda. If nothing is checked (by default), only manual actions will be included in agenda.
+AgendaSetupOtherDesc=Ez az oldal lehetővé teszi a napirend modul konfigurálását.
+ActionsEvents=Events for which Dolibarr will create an action in agenda automatically
+PropalValidatedInDolibarr=%s ajánlat érvényesítve
+InvoiceValidatedInDolibarr=%s számla érvényesítve
+OrderValidatedInDolibarr=%s megrendelés érvényesítve
+InterventionValidatedInDolibarr= %s közbenjárás érvényesítve
+NewCompanyToDolibarr=Harmadik fél létrehozva
+DateActionPlannedStart=Tervezett indulási dátum
+DateActionPlannedEnd=Tervezett befejezési dátum
+DateActionDoneStart=Tényleges indulási dátum
+DateActionDoneEnd=Tényleges befejezési dátum
+DateActionStart=Indulási dátum
+DateActionEnd=Befejezési dátum
+AgendaUrlOptions1= Az alábbi paramétereket hozzá lehet adni a kimenet szűréséhez:
+AgendaUrlOptions2=<b>login=%s</b> kimenet szükítése a <b>%s</b> felhasználó által létrehozott cselekvésekre, érintő cselekvésekre,által végzett cselekvésekre.
+AgendaUrlOptions3=<b>logina=%s</b> kimenet szükítése a <b>%s</b> felhasználó által létrehozott cselekvésekre.
+AgendaUrlOptions4=<b>logint=%s</b> kimenet szükítése a <b>%s</b> felhasználó érintő cselekvésekre.
+AgendaUrlOptions5=<b>logind=%s</b> kimenet szükítése a <b>%s</b> felhasználó által végzett cselekvésekre.
+AgendaShowBirthdayEvents=Kapcsolatok születésnapjának mutatása
+AgendaHideBirthdayEvents=Kapcsolatok születésnapjának elrejtése

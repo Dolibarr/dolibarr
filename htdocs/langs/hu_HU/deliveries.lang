@@ -1,0 +1,24 @@
+# Dolibarr language file - hu_HU - deliveries
+CHARSET=UTF-8
+Delivery=Kézbesítés
+Deliveries=Kézbesítések
+DeliveryCard=Kézbesítés kártya
+DeliveryOrder=Kézbesítés megrendelés
+DeliveryOrders=Kézbesítés megrendelések
+DeliveryDate=Kézbesítés dátuma
+DeliveryDateShort=Kézb. dátuma
+CreateDeliveryOrder=Kézbesítési megrendelés generálása
+QtyDelivered=Szállított mennyiség
+SetDeliveryDate=Szállítási dátum beállítása
+ValidateDeliveryReceipt=Szállítási bizonylat hitelesítése
+ValidateDeliveryReceiptConfirm=Biztos hitelesíteni akarja a szállítási bizonylatot?
+DeliveryMethod=Szállítási mód
+TrackingNumber=Nyomonkövetési szám
+
+# merou PDF model						   
+NameAndSignature=Név és aláírás : 
+ToAndDate=To___________________________________ on ____/_____/__________
+GoodStatusDeclaration=Have received the goods above in good condition,
+Deliverer=Deliverer : 
+Sender=Sender
+Recipient=Recipient

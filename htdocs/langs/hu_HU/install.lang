@@ -1,0 +1,224 @@
+# Dolibarr language file - hu_HU - install
+CHARSET=UTF-8
+InstallEasy=Csak kövesse az utasitásokat lépésrõl lépésre.
+MiscellanousChecks=Feltételek ellenörézse
+DolibarrWelcome=Üdvözöljük a Dolibarr rendszerében
+ConfFileExists=<b>%s</b> konfigurációs fájl már létezik.
+ConfFileDoesNotExists=<b>%s</b> konfigurációs fájl NEM létezik!
+ConfFileDoesNotExistsAndCouldNotBeCreated=<b>%s</b> konfigurációs fájl NEM létezik és NEM lehet létrehozni!
+ConfFileCouldBeCreated=<b>%s</b> konfigurációs fájl sikeresen létrehozva.
+ConfFileIsNotWritable=<b>%s</b> konfigurációs fájl NEM írható. Ellenõrizze a jogosúltságokat. Elsõ telepítés esetén, a web szervernek tudnia kell írni ebbe a fájlba a konfigurációs folyamat során (Unix alapu rendszer esetén "chmod 666").
+ConfFileIsWritable=<b>%s</b> konfigurációs fájl írható.
+PHPSupportSessions=Ez a PHP verzió támogatja a munkameneteket.
+PHPSupportPOSTGETOk=Ez a PHP verzió támogatja POST és GET változókat.
+PHPSupportPOSTGETKo=Lehetséges, hogy az alkalmazott PHP verzió NEM támogatja a POST és/vagy GET változókat. Ellenõrizze a  <b>variables_order</b> paramétert a php.ini fájlban.
+PHPSupportGD=Ez a PHP verzió támogatja a GD grafikai funkciókat.
+PHPSupportUTF8=Ez a PHP verzió támogatja az UTF8 funkciókat.
+PHPMemoryOK=A munkamenetek maximális memóriája <b>%s</b>. Ennek elégnek kéne lennie.
+PHPMemoryTooLow=A munkamenetek maximális memóriája <b>%s</b> byte. Ez kevés lesz. A <b>php.ini</b>-ben a <b>memory_limit</b> paramétert legalább <b>%s</b> byte-ra kell állítani.
+Recheck=Kattintson ide egy részletesebb tesztért
+ErrorPHPDoesNotSupportSessions=Ez a PHP verzió NEM támogatja a munkameneteket. Erre szükség van a Dolibarr futtatásához. Kérjük ellenõrizze a PHP beállításait.
+ErrorPHPDoesNotSupportGD=Ez a PHP verzió NEM támogatja a GD grafikai funkciókat. A grafikonok nem lesznek elérhetõek.
+ErrorPHPDoesNotSupportUTF8=Ez a PHP verzió NEM támogatja az UTF8 funkciókat. A Dolibarr így nem tud rendesen mûködni. Kérjük oldaj meg mielött végrehajtaná a telepítést.
+ErrorDirDoesNotExists=%s könyvtár nem létezik.
+ErrorGoBackAndCorrectParameters=Menjen vissza és javítsa ki a rossz paramétereket.
+ErrorWrongValueForParameter=Lehet, hogy rossz értéket adott meg a(z) '%s' paraméter számára.
+ErrorFailedToCreateDatabase=Nem sikerült létrehozni a(z) '%s' adatbázist.
+ErrorFailedToConnectToDatabase=Nem sikerült csatlakozni a(z) '%s' adatbázishoz.
+ErrorPHPVersionTooLow=Túl régi a PHP verzió. Legalább %s kell.
+ErrorConnectedButDatabaseNotFound=Sikeres kapcsolódás az adatbázis szerverhez, de a(z) '%s' adatbázis nincs meg.
+ErrorDatabaseAlreadyExists='%s' adatbázis már létezik.
+IfDatabaseNotExistsGoBackAndUncheckCreate=Ha az adatbázis nem létezik akkor menjen vissza és jelölje ki az "Adatbázis létrehozása" opciót.
+IfDatabaseExistsGoBackAndCheckCreate=Ha az adatbázis már létezik, menjen vissza és ne válassza az "Adatbázis létrehozása" opciót.
+PHPVersion=PHP Verzió
+YouCanContinue=Folytathatja...
+PleaseBePatient=Kerjük legyen türelemmel...
+License=Használatban lévõ licensz
+ConfigurationFile=Konfigurációs fájl
+WebPagesDirectory=A könyvtár ahol a weblapok tárolva vannak
+DocumentsDirectory=Könyvátr a feltöltött és generált fájlok számára
+URLRoot=Gyökér URL
+ForceHttps=Biztonságos kapocslat eröltetése (https)
+CheckToForceHttps=Válassza ki ezt az opciót a biztonságos kapcsolat igénybevélteléhez (https).<br>Ennek az elõfeltétele, hogy a szerver rendelkezzen a megfelelõ SSL hitelesítésekkel.
+DolibarrDatabase=Dolibarr Adatbázis
+DatabaseChoice=Adatbázis választás
+DatabaseType=Adatbázis típus
+DriverType=Meghajtó típus
+Server=Szerver
+ServerAddressDescription=Adatbûzis szerver neve vagy IP címe, általában 'localhost' vagy '127.0.0.1' ha ugyan az a webszerver és az adatbázis szerver
+ServerPortDescription=Adatbázis szerver port. Hagyja üresen ha nem tudja.
+DatabaseServer=Adatbázis szerver
+DatabaseName=Adatbázis név
+Login=Bejelentkezés
+AdminLogin=Adatbázis tulajdonos bejelentkezési neve.
+Password=Jelszó
+PasswordAgain=Jelszó mégegyszer
+AdminPassword=Adatbázis tulajdonos jelszava.
+CreateDatabase=Adatbázis lérehozása
+CreateUser=Tulajdonos lérehozása
+DatabaseSuperUserAccess=Adatbázis szerver - Superuser hozzáférés
+CheckToCreateDatabase=Pipálja ki a dobozt ha szeretné, hogy a rendszer létrehozza az adatbázist.<br>Ebbben az esetben a SuperUser bejelentkezési adatai ki kell tölteni az oldal alján.
+CheckToCreateUser=Pipálja ki a dobozt ha szeretné, hogy a rendszer létrehozza az adatbázis tulajdonos.<br>Ebbben az esetben a SuperUser bejelentkezési adatai ki kell tölteni az oldal alján. A a doboz nincs kipipálva akkor az adatbázisnak és a tulajdonosának léteznie kell.
+Experimental=(kísérleti)
+DatabaseRootLoginDescription=A felhasználó jogosúlt új adatbázisok vagy új felhasználók létrehozására, felesleges ha a szolgáltatás hostolt formában veszik igénybe.
+KeepEmptyIfNoPassword=Hagyja üresen ha a felhasználónak nincs jelszava (az ilyet jobb elkerülni)
+SaveConfigurationFile=Értékek mentése
+ConfigurationSaving=Konfigurációs fájl mentése
+ServerConnection=Szerver kapcsolat
+DatabaseConnection=Adatbázis kapcsolat
+DatabaseCreation=Adatbázis létrehozása
+UserCreation=Felhasználó létrehozása
+CreateDatabaseObjects=Adatbázis objektumok létrehozása
+ReferenceDataLoading=Referencia adatok betöltése
+TablesAndPrimaryKeysCreation=Táblák és Elsõdleges kulcsok létrehozása
+CreateTableAndPrimaryKey=%s tábla létrehozása
+CreateOtherKeysForTable=Külsõ kulcsok és indexek létrehozása a(z) %s tábla számára
+OtherKeysCreation=Foreign Külsõ kulcsok és indexek létrehozása
+FunctionsCreation=Funkciók létrehozása
+AdminAccountCreation=Adminisztrátor bejelntkezés létrehozása
+PleaseTypePassword=Kérjük adjon meg egy jelszót, üres jelszavak használata nem megenegedett!
+PleaseTypeALogin=Kérjük adjon meg egy bejelentkezési nevet!
+PasswordsMismatch=A két jelszó eltér, próbálja újra!
+SetupEnd=Telepítés vége
+SystemIsInstalled=A telepítés készen van.
+SystemIsUpgraded=Dolibarr sikeresen frissítve lett.
+YouNeedToPersonalizeSetup=Most már konfiguálhatja a Dolibarr-t az igényei szerint (megjelenés, funkciók, ...). Ehhez kérjük kövesse az alábbi linket:
+AdminLoginCreatedSuccessfuly=Dolibarr adminisztrátor bejelentkezés '<b>%s</b>' sikeresen létrehozva.
+GoToDolibarr=Ugrás a Dolibarr-ba
+GoToSetupArea=Ugrás a Dolibarr-ba (beállítási terültre)
+MigrationNotFinished=Az adatbázis verziója nem teljesen, kérjük futassa újra a frissítést. 
+GoToUpgradePage=Ugrás a frissítési oldalra
+Examples=Példák
+WithNoSlashAtTheEnd="/" nélkül a végén
+DirectoryRecommendation=Ajánlatos a weblap könyvtárán kívüli könyvtárat megadni.
+LoginAlreadyExists=Már létezik
+DolibarrAdminLogin=Dolibarr admin bejelentkezés
+AdminLoginAlreadyExists='<b>%s</b>' Dolibarr adminisztrátor fiók már létezik.
+WarningRemoveInstallDir=Figyelem, biztonsági okok miatt, amint végez a telepítés/frissítés, törölje az <b>install<b> könyvtárat vagy nevezze át <b>install.lock</b> -ra.
+ThisPHPDoesNotSupportTypeBase=Ez a PHP nem támogat semilyen interfészt a(z) %s adatbázis típushoz
+FunctionNotAvailableInThisPHP=Nem elérhetõ ezen a PHP verzión
+MigrateScript=Migrációs szkript
+ChoosedMigrateScript=Migrációs szkript választása
+DataMigration=Adat migráció
+DatabaseMigration=Struktúra adatbázis migráció
+ProcessMigrateScript=Szkript feldolhozása
+ChooseYourSetupMode=Válassta ki a telepítési módot és kattintson a "START"-ra...
+FreshInstall=Friss telepítés
+FreshInstallDesc=Használja ezt a módot ha még nem telepítette soha a rendszert. Ez a mód ki tudja javítani egy korább sikertelen telepítést, de ha frissíteni akar használja a "Frissítés" lehetõséget.
+Upgrade=Frissítés
+UpgradeDesc=Használja ezt a módot, ha már helyettesítette a régi fájlokat az újabb verzió fájlaivel. Frissíti az adatbázist és az adatokat.
+Start=START
+InstallNotAllowed=Telepítés nincs engedélyezve a <b>conf.php</b> fájlban
+NotAvailable=Nem elérhetõ
+YouMustCreateWithPermission=Létre kell hoznia %s fájlt és írásai jogokat adnia a webszerveren a telepítés idejére.
+CorrectProblemAndReloadPage=Kérjük javítsa ki a problémát és F5-el frissítsen.
+AlreadyDone=Már migárlva
+DatabaseVersion=Adatbázis verzió
+ServerVersion=Adatbázis szerver verzió
+YouMustCreateItAndAllowServerToWrite=Létre kell hoznia ezt a könyvtárat és engedélyeznie a szervenek, hogy írhasson bele.
+CharsetChoice=Karakter készlet választás
+CharacterSetClient=A generált web oldalakhoz használt karakterkészlet
+CharacterSetClientComment=Válasszon karakterkészletet a webes megjelenitéshez.<br/> Az alapértelmezett az adatbázis karakterkészlete.
+CollationConnection=Karakter rendezés
+CollationConnectionComment=Válasszon kódot ami deifiniálja az adatbázis által használt karakter rendezést. Ezt a paraméter 'illesztés'/'collation'-ként is imseretes egyes adatbázisok esetén.<br/>Ez a paraméter nem megadható ha az adatbázisban már létezik.
+CharacterSetDatabase=Az adatbázis karakterkészlete
+CharacterSetDatabaseComment=Válasszon karakterkészletet az adatbázis létrehozásához.<br/>Ez a paraméter nem megadható ha az adatbázisban már létezik.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=A(z) <b>%s</b> adatbázis létrehozásához az adatbázis szerverhez SuperUser jogosúltságokkal kell csatlakozni.
+YouAskLoginCreationSoDolibarrNeedToConnect=A(z) <b>%s</b> adatbázis bejelentkezés, étrehozásához az adatbázis szerverhez SuperUser jogosúltságokkal kell csatlakozni.
+BecauseConnectionFailedParametersMayBeWrong=A kapcslódás sikertelen, a hosz és/vagy a bejelentkezési adatok hibásan lettek megadva.
+OrphelinsPaymentsDetectedByMethod=%s metódus által felfedezett árva fizetések vannak a rendszerben
+RemoveItManuallyAndPressF5ToContinue=Távolítsa el manuálisan, majd F5-el frissítsen.
+KeepDefaultValuesWamp=A DoliWamp-ot használja a Dolibarr telepítéséhez, az itt lévõ értékek már optimalizálva vannak. Csak saját felelõsségre módosítsa ezeket.
+KeepDefaultValuesDeb=Ubuntun vagy Debian csomagból használja a telepítési varázslót, az itt lévõ értékek már optimalizálva vannak. Csak az adatbázis tulajdonosnak kell jelszót megadni. Csak saját felelõsségre módosítsa ezeket az értékeket.
+KeepDefaultValuesMamp=A DoliMamp-ot használja a Dolibarr telepítéséhez, az itt lévõ értékek már optimalizálva vannak. Csak saját felelõsségre módosítsa ezeket.
+FieldRenamed=Mezõ átnevezve
+IfLoginDoesNotExistsCheckCreateUser=Ha bejelentkezési adat nem létezik használja a "Felhasználó létrehozása" lehetõséget
+ErrorConnection=Server "<b>%s</b>", adatbázis név "<b>%s</b>", login "<b>%s</b>", vagy adatbázis jelszó rosszúl lett megadva vagy a PHP kliens verzió túl régi az adatbázis verzióhoz képest.
+InstallChoiceRecommanded=A javasolt választás <b>%s</b> verzióra frissítés a <b>%s</b> jelenlegi verzióról
+InstallChoiceSuggested=<b>A telepítõ által javasolt választás</b>.
+CheckThatDatabasenameIsCorrect=Ellenõrizze hogy a(z) "<b>%s</b>" adatbázis név helyes.
+IfAlreadyExistsCheckOption=Ha a név jó és a megadott adatbázis nem létezik, használja az "Adatbázis létrehozása" opciót.
+OpenBaseDir=PHP openbasedir paraméter
+YouAskToCreateDatabaseSoRootRequired=Használja a "Adatbázis létrehozása" opciót. Ehhez meg kell adnia a SuperUser fiók adatait az oldal alján.
+YouAskToCreateDatabaseUserSoRootRequired=Használja a "Adatbázis tulajdonos létrehozása" opciót. Ehhez meg kell adnia a SuperUser fiók adatait az oldal alján.
+NextStepMightLastALongTime=A jelenlegi lépés akár több percig is eltarthat. Kérjük várjon amig a következõ oldal teljesen be nem töltõdik mielött folytatná.
+MigrationCustomerOrderShipping=Szállítási rendelések migrálása
+MigrationShippingDelivery=Szállítási tárló frissítése
+MigrationShippingDelivery2=Szállítási tárló frissítése 2 
+
+#########
+# upgrade
+#########
+MigrationFixData=Fix denormalizált adatra
+MigrationOrder=Ügyfél rendelések migrációja
+MigrationSupplierOrder=Beszállítói rendelések migrációja
+MigrationProposal=Üzleti ajánlatok migrációja
+MigrationInvoice=Ügyfél számlák migrációja
+MigrationContract=Szerzõdések migrációja
+MigrationSuccessfullUpdate=A frissítés sikeres
+MigrationUpdateFailed=Sikeretelen frissítés
+MigrationRelationshipTables=Kapcsolati táblák migrációja (%s)
+
+# Payments Update
+MigrationPaymentsUpdate=Fizetési adatok korrekciója
+MigrationPaymentsNumberToUpdate=%s fizetés(ek) várn(nak) frissítésre
+MigrationProcessPaymentUpdate=Fizetések frissítése %s
+MigrationPaymentsNothingToUpdate=Nincs több tenni való
+MigrationPaymentsNothingUpdatable=Nincs több javítható fizetési adat
+
+# Contracts Update
+MigrationContractsUpdate=Szerzõdési adatok javítása
+MigrationContractsNumberToUpdate=%s szerzõdés(ek) várn(nak) frissítésre
+MigrationContractsLineCreation=%s számú szerzõdés számára új sorok létrehozása
+MigrationContractsNothingToUpdate=Nincs több tenni való
+MigrationContractsFieldDontExist=fk_facture mezõ nem létezik többé. Nincs több tenni való.
+
+# Contracts Empty Dates Update
+MigrationContractsEmptyDatesUpdate=Szerzõdés üres dátumának korrekciója
+MigrationContractsEmptyDatesUpdateSuccess=Szerzõdés üres dátumának korrekciója sikeresen lezajlott
+MigrationContractsEmptyDatesNothingToUpdate=Nincs szerzõdés üres dátummal
+MigrationContractsEmptyCreationDatesNothingToUpdate=Nincs szerzõdés üres létrehozási dátummal
+
+# Contracts Invalid Dates Update
+MigrationContractsInvalidDatesUpdate=Szerzõdés érvénytelen dátumának korrekciója
+MigrationContractsInvalidDateFix=%s szerzõdés korrekciója (Szerzõdés dátum=%s, Szolgáltatás kezdete min=%s)
+MigrationContractsInvalidDatesNumber=%s szerzõdés módosítva
+MigrationContractsInvalidDatesNothingToUpdate=Nincs korrekcióra szoruló dátum
+
+# Contracts Incoherent Dates Update
+MigrationContractsIncoherentCreationDateUpdate=Szerzõdés rossz létrehztási dátum korrekció
+MigrationContractsIncoherentCreationDateUpdateSuccess=Szerzõdés rossz létrehztási dátum korrekció sikeresen lezajlott
+MigrationContractsIncoherentCreationDateNothingToUpdate=Nincs korrekcióra szoruló szerzõdés
+
+# Reopening Contracts
+MigrationReopeningContracts=Hiba miatt véletlenül lezárt szerzõdések újranyitása
+MigrationReopenThisContract=%s szerzõdés újranyitása
+MigrationReopenedContractsNumber=%s szerzõdés módosítva
+MigrationReopeningContractsNothingToUpdate=Nincs újranyitásra szoruló szerzõdés
+
+# Migration transfer
+MigrationBankTransfertsUpdate=Linkek frissítése banki tranzakciók és banki átutalások között
+MigrationBankTransfertsNothingToUpdate=Minden link friss
+
+# Migration delivery
+MigrationShipmentOrderMatching=Küldött bizonylatok frissítése
+MigrationDeliveryOrderMatching=Szállítási bizonylatok frissítése
+MigrationDeliveryDetail=Szállítások frissítése
+
+# Migration stock
+MigrationStockDetail=Termékek készletének frissítése
+
+# Migration menus
+MigrationMenusDetail=Dinamikus menük frissítése
+
+# Migration delivery address
+MigrationDeliveryAddress=Szállítási címek frissítése
+
+# Migration project task actors
+MigrationProjectTaskActors=Migárlás llx_projet_task_actors tábla részére
+
+# Migration project user resp
+MigrationProjectUserResp=Adatok migrálása fk_user_resp/llx_projet llx_element_contact -ba
+
+# Migration project task time
+MigrationProjectTaskTime=Frissítési idõ másodpercekben
