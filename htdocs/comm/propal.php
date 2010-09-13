@@ -1367,16 +1367,27 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Lines
 	 */
-	print '<table class="noborder" width="100%">';
-	
 	$result = $propal->getLinesArray();
 
 	if (!empty($propal->lines))
 	{
+		print '<table class="noborder" width="100%">';
 		$propal->print_title_list();
+		print '</table>';
+		
+		print '<script>
+		jQuery(document).ready(function(){
+		   jQuery("#sortable").sortable();
+		   jQuery("#sortable").disableSelection();
+		});
+		</script>';
+		
+		print '<div id="sortable">';
 		$propal->printLinesList();
+		print '</div>';
 	}
-
+	
+	print '<table class="noborder" width="100%">';
 
 	/*
 	 * Form to add new line

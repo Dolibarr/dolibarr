@@ -21,6 +21,8 @@
 
 <!-- BEGIN PHP TEMPLATE predefinedproductline_view.tpl.php -->
 
+<div>
+<table class="noborder" width="100%">
 <tr <?php echo $bc[$var]; ?>>
 	<td>
 	<a name="<?php echo $line->id; ?>"></a>
@@ -94,5 +96,7 @@
 <?php } ?>
 
 </tr>
+</table>
+</div>
 
 <!-- END PHP TEMPLATE predefinedproductline_view.tpl.php -->
