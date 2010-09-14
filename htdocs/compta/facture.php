@@ -662,7 +662,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$object->remise_absolue    = $_POST['remise_absolue'];
 			$object->remise_percent    = $_POST['remise_percent'];
 
-			// If creation from other modules
+			// If creation from another object of another module
 			if ($_POST['origin'] && $_POST['originid'])
 			{
 				// Parse element/subelement (ex: project_task)
@@ -682,23 +682,24 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 				$object->origin_id = $_POST['originid'];
 
 				$facid = $object->create($user);
-
 				if ($facid > 0)
 				{
 					require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
 					$classname = ucfirst($subelement);
-					$object = new $classname($db);
+					$srcobject = new $classname($db);
 
-					if ($object->fetch($_POST['originid']))
+					$result=$srcobject->fetch($_POST['originid']);
+					if ($result > 0)
 					{
 						// TODO mutualiser
-						$lines = $object->lignes;
-						if (empty($lines) && method_exists($object,'fetch_lignes')) $lines = $object->fetch_lignes();
-						if (empty($lines) && method_exists($object,'fetch_lines'))  $lines = $object->fetch_lines();
+						$lines = $srcobject->lignes;
+						if (sizeof($lines)) $lines = $srcobject->lines;
+						if (empty($lines) && method_exists($object,'fetch_lignes')) $lines = $srcobject->fetch_lignes();
+						if (empty($lines) && method_exists($object,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
 						{
-							$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+						    $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
 							$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
 							// Dates
