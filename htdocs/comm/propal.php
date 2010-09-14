@@ -1367,7 +1367,7 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Lines
 	 */
-	if ($conf->use_javascript_ajax && $propal->statut == 0)
+	if ($conf->use_javascript_ajax && $propal->statut == 0 && $_GET['action'] != 'editline')
 	{
 		print '<script>
 		jQuery(document).ready(function(){
