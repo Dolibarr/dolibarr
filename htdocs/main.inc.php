@@ -486,12 +486,15 @@ if (! defined('NOLOGIN'))
 		}
 		else
 		{
-			// Call triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf,$conf->entity);
-			if ($result < 0) { $error++; }
-			// End call triggers
+		    if (! empty($conf->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))
+		    {
+    			// Call triggers
+    			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+    			$interface=new Interfaces($db);
+    			$result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf,$conf->entity);
+    			if ($result < 0) { $error++; }
+    			// End call triggers
+		    }
 		}
 	}
 

@@ -362,6 +362,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
     }
     else                    // For backward compatibility
     {
+        dol_syslog("Your country setup use an old syntax. Reedit it in setup area.", LOG_WARNING);
         include_once(DOL_DOCUMENT_ROOT.'/lib/company.lib.php');
         $pays_code=getCountry($pays_id,2,$db);  // This need a SQL request, but it's the old feature
         $pays_label=getCountry($pays_id,0,$db);  // This need a SQL request, but it's the old feature
