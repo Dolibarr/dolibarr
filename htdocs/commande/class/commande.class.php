@@ -54,7 +54,7 @@ class Commande extends CommonObject
 	var $ref_client;
 	var $contactid;
 	var $fk_project;
-	var $statut;		// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted, 3=Closed (Envoyee/Recue facturee ou non)
+	var $statut;		// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Recevied, billed or not)
 
 	var $facturee;		// Facturee ou non
 	var $brouillon;
@@ -186,6 +186,8 @@ class Commande extends CommonObject
 			return -1;
 		}
 
+		$now=dol_now();
+
 		$this->db->begin();
 
 		// Definition du nom de module de numerotation de commande
@@ -209,7 +211,7 @@ class Commande extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 		$sql.= " SET ref = '".$num."'";
 		$sql.= ", fk_statut = 1";
-		$sql.= ", date_valid=".$this->db->idate(mktime());
+		$sql.= ", date_valid=".$this->db->idate($now);
 		$sql.= ", fk_user_valid = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -391,7 +393,7 @@ class Commande extends CommonObject
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql.= ' SET fk_statut=2';
+			$sql.= ' SET fk_statut=2, facture=0';
 			$sql.= ' WHERE rowid = '.$this->id;
 
 			dol_syslog("Commande::set_reopen sql=".$sql);
@@ -700,7 +702,7 @@ class Commande extends CommonObject
 		$error=0;
 
 		$object=new Commande($this->db);
-		
+
 		// Instantiate hooks of thirdparty module
 		if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 		{
@@ -712,7 +714,7 @@ class Commande extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$objFrom = $object;
-		
+
 		$object->id=0;
 		$object->statut=0;
 
@@ -744,7 +746,7 @@ class Commande extends CommonObject
 					if ($result < 0) $error++;
 				}
 			}
-			
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
@@ -880,7 +882,7 @@ class Commande extends CommonObject
 			$this->line->total_ttc=$total_ttc;
 			$this->line->product_type=$type;
 			$this->line->special_code=$special_code;
-			
+
 			$this->line->date_start=$date_start;
 			$this->line->date_end=$date_end;
 
@@ -2415,9 +2417,9 @@ class Commande extends CommonObject
 
 				$i++;
 			}
-			
+
 			$this->db->free($resql);
-			
+
 			return 1;
 		}
 		else

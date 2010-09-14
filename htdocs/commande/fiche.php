@@ -1358,7 +1358,7 @@ else
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
-			
+
 			/*
 			 * TODO ajout temporaire pour test en attendant la migration en template
 			 */
@@ -1657,9 +1657,9 @@ else
             $numlines=0;
 
 			print '<table class="noborder" width="100%">';
-			
+
 			$result = $commande->getLinesArray();
-			
+
 			if (!empty($commande->lines))
 			{
 				$commande->print_title_list();
@@ -1766,15 +1766,22 @@ else
 							}
 						}
 					}
-					
+
+                    // Reopen a closed order
+                    if ($commande->statut == 3)
+                    {
+                        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$commande->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+                    }
+
+					// Create bill and Classify billed
 					if ($conf->facture->enabled && $commande->statut > 0  && ! $commande->facturee)
-					{	
+					{
 						if ($user->rights->facture->creer)
 						{
 							print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$commande->element.'&amp;originid='.$commande->id.'&amp;socid='.$commande->socid.'">'.$langs->trans("CreateBill").'</a>';
 						}
-						
-						if ($user->rights->commande->creer)
+
+						if ($user->rights->commande->creer && $commande->statut > 2)
 						{
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 						}
@@ -1788,12 +1795,6 @@ else
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=close"';
 							print '>'.$langs->trans('Close').'</a>';
 						}
-					}
-
-					// Reopen a close order
-					if ($commande->statut == 3)
-					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$commande->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
 					}
 
 					// Clone
