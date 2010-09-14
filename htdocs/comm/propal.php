@@ -165,7 +165,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 			$outputlangs->setDefaultLang($newlang);
 		}
 		propale_pdf_create($db, $propal, $propal->modelpdf, $outputlangs);
-		
+
 		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$propal->id);
 		exit;
 	}
@@ -1008,7 +1008,7 @@ if ($id > 0 || ! empty($ref))
 		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$propal->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
-	
+
 	/*
 	 * TODO ajout temporaire pour test en attendant la migration en template
 	 */
@@ -1372,12 +1372,14 @@ if ($id > 0 || ! empty($ref))
 		print '<script>
 		jQuery(document).ready(function(){
 		   jQuery("#objectline").tableDnD();
-		});
+		   jQuery(".imgup").hide();
+           jQuery(".imgdown").hide();
+	       });
 		</script>';
 	}
-	
+
 	print '<table id="objectline" class="noborder" width="100%">';
-	
+
 	$result = $propal->getLinesArray();
 
 	if (!empty($propal->lines))
@@ -1484,7 +1486,7 @@ if ($id > 0 || ! empty($ref))
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
 				}
 			}
-			
+
 			// Create an invoice and classify billed
 			if ($conf->facture->enabled && $propal->statut == 2 && $user->societe_id == 0)
 			{
@@ -1492,7 +1494,7 @@ if ($id > 0 || ! empty($ref))
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$propal->element.'&amp;originid='.$propal->id.'&amp;socid='.$propal->socid.'">'.$langs->trans("BuildBill").'</a>';
 				}
-				
+
 				$arraypropal=$propal->getInvoiceArrayList();
 				if (is_array($arraypropal) && sizeof($arraypropal) > 0)
 				{

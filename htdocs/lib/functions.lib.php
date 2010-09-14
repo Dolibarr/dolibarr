@@ -1397,31 +1397,31 @@ function img_previous($alt = "default")
 }
 
 /**
- *	\brief      Affiche logo bas
- *	\param      alt         Texte sur le alt de l'image
- *	\param      selected    Affiche version "selected" du logo
- *	\return     string      Retourne tag img
+ *	Show logo down arrow
+ *	@param      alt         Texte sur le alt de l'image
+ *	@param      selected    Affiche version "selected" du logo
+ *	@return     string      Retourne tag img
  */
 function img_down($alt = "default", $selected=0)
 {
 	global $conf,$langs;
 	if ($alt=="default") $alt=$langs->trans("Down");
-	if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-	else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+	if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgdown">';
+	else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgdown">';
 }
 
 /**
- *	\brief      Affiche logo haut
- *	\param      alt         Texte sur le alt de l'image
- *	\param      selected    Affiche version "selected" du logo
- *	\return     string      Retourne tag img
+ *	Show logo top arrow
+ *	@param      alt         Texte sur le alt de l'image
+ *	@param      selected    Affiche version "selected" du logo
+ *	@return     string      Retourne tag img
  */
 function img_up($alt = "default", $selected=0)
 {
 	global $conf,$langs;
 	if ($alt=="default") $alt=$langs->trans("Up");
-	if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-	else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+	if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgup">';
+	else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgup">';
 }
 
 /**
