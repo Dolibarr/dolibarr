@@ -26,7 +26,7 @@
 if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 ?>
 
-<tr class="liste_titre">
+<tr class="liste_titre nodrag nodrop">
 	<td <?php echo $colspan; ?>><a name="add"></a><?php echo $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone"); ?></td>
 	<td align="right"><?php echo $langs->trans('VAT'); ?></td>
 	<td align="right"><?php echo $langs->trans('PriceUHT'); ?></td>
@@ -40,7 +40,7 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 <input type="hidden" name="action" value="addline">
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
 
-<tr <?php echo $bc[$var]; ?>>
+<tr <?php echo $bcnd[$var]; ?>>
 	<td <?php echo $colspan; ?>>
 	<?php
 	echo $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
@@ -68,7 +68,7 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 </tr>
 
 <?php if ($conf->service->enabled && $dateSelector) {?>
-<tr <?php echo $bc[$var]; ?>>
+<tr <?php echo $bcnd[$var]; ?>>
 	<td colspan="9">
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';

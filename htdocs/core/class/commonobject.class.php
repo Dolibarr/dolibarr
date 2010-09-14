@@ -1288,7 +1288,7 @@ class CommonObject
 	function showAddPredefinedProductForm($dateSelector=0)
 	{
 		global $conf,$langs;
-		global $html,$bc,$var;
+		global $html,$bcnd,$var;
 
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
 	}
@@ -1302,7 +1302,7 @@ class CommonObject
 	function showAddFreeProductForm($dateSelector=0)
 	{
 		global $conf,$langs;
-		global $html,$bc,$var;
+		global $html,$bcnd,$var;
 
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
 	}
@@ -1344,7 +1344,7 @@ class CommonObject
 	{
 		global $conf,$langs;
 
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre nodrag nodrop">';
 		print '<td>'.$langs->trans('Description').'</td>';
 		if ($conf->global->PRODUIT_USE_MARKUP) print '<td align="right" width="80">'.$langs->trans('Markup').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';

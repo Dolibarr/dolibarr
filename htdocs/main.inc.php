@@ -699,6 +699,7 @@ if (! defined('NOREQUIRETRAN'))
 
 // Define some constants used for style of arrays
 $bc=array(0=>'class="impair"',1=>'class="pair"');
+$bcnd=array(0=>'class="impair nodrag nodrop"',1=>'class="pair nodrag nodrop"');
 
 // Constants used to defined number of lines in textarea
 if (empty($conf->browser->firefox))
@@ -856,6 +857,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			print '<!-- Includes for JQuery -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-1.4.2.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-1.8.4.custom.min'.$ext.'"></script>'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
 
             // This one is required for some Ajax features
 			if (! defined('DISABLE_PROTOTYPE'))

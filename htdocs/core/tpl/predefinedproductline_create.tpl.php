@@ -28,7 +28,7 @@ else
 $colspan = 'colspan="3"';
 ?>
 
-<tr class="liste_titre">
+<tr class="liste_titre nodrag nodrop">
 	<td <?php echo $colspan; ?>>
 	<?php
 	echo $langs->trans("AddNewLine").' - ';
@@ -48,7 +48,7 @@ $colspan = 'colspan="3"';
 <input type="hidden" name="action" value="addline">
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
 
-<tr <?php echo $bc[$var]; ?>>
+<tr <?php echo $bcnd[$var]; ?>>
 	<td <?php echo $colspan; ?>>
 	<?php
 	// multiprix
@@ -74,7 +74,7 @@ $colspan = 'colspan="3"';
 </tr>
 
 <?php if ($conf->service->enabled && $dateSelector) {?>
-<tr <?php echo $bc[$var]; ?>>
+<tr <?php echo $bcnd[$var]; ?>>
 	<td colspan="9">
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';

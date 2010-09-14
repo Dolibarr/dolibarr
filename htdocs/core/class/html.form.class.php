@@ -879,7 +879,7 @@ class Form
             }
             else
             {
-                print '<table class="nobordernopadding" width="100%"><tr class="nocellnopadd">';
+                print '<table class="nobordernopadding nodrag nodrop" width="100%"><tr class="nocellnopadd">';
                 print '<td class="nobordernopadding" nowrap="nowrap" width="80">';
                 print $langs->trans("RefOrLabel").':</td>';
                 print '<td class="nobordernopadding" width="16">';

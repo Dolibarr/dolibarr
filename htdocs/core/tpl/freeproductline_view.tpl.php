@@ -21,9 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE freeproductline_view.tpl.php -->
 
-<div>
-<table class="noborder" width="100%">
-<tr <?php echo $bc[$var]; ?>>
+<tr <?php echo 'id='.$i.' '.$bc[$var]; ?>>
 	<td><a name="<?php echo $line->rowid; ?>"></a>
 	<?php if (($line->info_bits & 2) == 2) { ?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
@@ -103,7 +101,5 @@
 <?php } ?>
 
 </tr>
-</table>
-</div>
 
 <!-- END PHP TEMPLATE freeproductline_view.tpl.php -->
