@@ -44,14 +44,15 @@ class FormAdmin
 
 		return 1;
 	}
-	
+
 	/**
-	 *    	\brief      Retourne la liste deroulante des langues disponibles
-	 *    	\param      selected        Langue pre-selectionnee
-	 *    	\param      htmlname        Nom de la zone select
-	 *    	\param      showauto        Affiche choix auto
-	 * 		\param		filter			Array of keys to exclude in list
-	 * 		\param		showempty		Add empty value
+	 *    	Output list with available languages.
+	 *      @deprecated                 Use select_language instead
+	 *    	@param      selected        Langue pre-selectionnee
+	 *    	@param      htmlname        Nom de la zone select
+	 *    	@param      showauto        Affiche choix auto
+	 * 		@param		filter			Array of keys to exclude in list
+	 * 		@param		showempty		Add empty value
 	 */
 	function select_lang($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0)
 	{
@@ -59,19 +60,19 @@ class FormAdmin
 	}
 
 	/**
-	 *    	\brief      Retourne la liste deroulante des langues disponibles
-	 *    	\param      selected        Langue pre-selectionnee
-	 *    	\param      htmlname        Nom de la zone select
-	 *    	\param      showauto        Affiche choix auto
-	 * 		\param		filter			Array of keys to exclude in list
-	 * 		\param		showempty		Add empty value
+	 *    	Return html select list with available languages
+	 *    	@param      selected        Langue pre-selectionnee
+	 *    	@param      htmlname        Nom de la zone select
+	 *    	@param      showauto        Affiche choix auto
+	 * 		@param		filter			Array of keys to exclude in list
+	 * 		@param		showempty		Add empty value
 	 */
 	function select_language($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0)
 	{
 		global $langs;
 
 		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT,12);
-		
+
 		$out='';
 
 		$out.= '<select class="flat" name="'.$htmlname.'">';
@@ -109,7 +110,7 @@ class FormAdmin
 			}
 		}
 		$out.= '</select>';
-		
+
 		return $out;
 	}
 

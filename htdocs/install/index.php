@@ -60,7 +60,7 @@ print '</center>';
 print '<br><br><center>';
 print '<table><tr>';
 print '<td>'.$langs->trans("DefaultLanguage").' : </td><td align="left">';
-$formadmin->select_lang('auto','selectlang',1);
+print $formadmin->select_language('auto','selectlang',1);
 print '</td>';
 print '</tr></table></center>';
 

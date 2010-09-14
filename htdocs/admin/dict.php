@@ -849,7 +849,7 @@ function fieldList($fieldlist,$obj='')
 		}
 		elseif ($fieldlist[$field] == 'lang') {
 			print '<td>';
-			$formadmin->select_lang($conf->global->MAIN_LANG_DEFAULT,'lang');
+			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT,'lang');
 			print '</td>';
 		}
 		// Le type de l'element (pour les type de contact).'

@@ -864,7 +864,7 @@ else
 		if ($conf->global->MAIN_MULTILANGS)
 		{
 			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
-			$formadmin->select_lang(($soc->default_lang?$soc->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
+			print $formadmin->select_language(($soc->default_lang?$soc->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
 			print '</td>';
 			print '</tr>';
 		}
@@ -1318,7 +1318,7 @@ else
 			if ($conf->global->MAIN_MULTILANGS)
 			{
 				print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
-				$formadmin->select_lang($soc->default_lang,'default_lang',0,0,1);
+				print $formadmin->select_language($soc->default_lang,'default_lang',0,0,1);
 				print '</td>';
 				print '</tr>';
 			}

@@ -175,7 +175,7 @@ if ($_GET["action"] == 'edit')
     print ! empty($dolibarr_main_demo)?' disabled="true"':'';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
-    $formadmin->select_lang($fuser->conf->MAIN_LANG_DEFAULT,'main_lang_default',1);
+    print $formadmin->select_language($fuser->conf->MAIN_LANG_DEFAULT,'main_lang_default',1);
     print '</td></tr>';
 
     // Taille max des listes

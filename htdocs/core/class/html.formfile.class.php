@@ -348,7 +348,7 @@ class FormFile
 				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php');
 				$formadmin=new FormAdmin($this->db);
 				$defaultlang=$codelang?$codelang:$langs->getDefaultLang();
-				$formadmin->select_lang($defaultlang);
+				print $formadmin->select_language($defaultlang);
 			}
 			else
 			{

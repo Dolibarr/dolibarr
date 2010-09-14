@@ -167,7 +167,7 @@ print '</select>';
 print '</td>';
 print '<td><input type="text" name="value" class="flat" value="'.$_POST["value"].'"></td>';
 print '<td>';
-$htmlother->select_lang($_POST["lang_id"]?$_POST["lang_id"]:$langs->defaultlang,'lang_id');
+print $htmlother->select_language($_POST["lang_id"]?$_POST["lang_id"]:$langs->defaultlang,'lang_id');
 print '</td>';
 print '<td><input type="submit" class="button" '.$option.' value="'.$langs->trans("ToTest").'"></td>';
 print '<td>'.$newvaltest.'</td>';
