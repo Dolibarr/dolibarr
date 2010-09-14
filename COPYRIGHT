@@ -20,8 +20,7 @@ FPDI_Protection   1.0.3    Apache Software License 2.0 No GPL3 only     PDF encr
 GeoIP             x.x                                  Yes              GeoIP Maxmind conversion
 iWebkit			  5.0.4	   LGPL 3.0					   Yes				Iphone templates framework
 JCrop			  0.9.8	   MIT Licence				   Yes				JS library to crop images
-JQuery            1.4.2    GPL and MIT Licence         Yes
-JSGantt           1.2      BSD Licence                 Yes
+JQuery            1.4.2    GPL and MIT Licence         Yes              JS library +Plugin UI,Layout,TableDND
 MagPieRss         0.72     GPL 2.0                     Yes              Load RSS
 NuSoap            0.9.5    LGPL 2.1                    Yes              Interfaces with third tools
 OdtPHP            1.0.1    GPL 2.0                     Yes              Library to build/edit ODT files
