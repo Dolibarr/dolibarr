@@ -23,6 +23,7 @@ For users:
 - New: Can add a comment on stock dispatching to be save into stock movements.
 - New: Add option to send all emails sent to a bulk carbon copy.
 - New: Preview of emails sent by member module is shown.
+- New: task #10100 : Add button to create invoice from a subscription
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Better Postgresql compatibility.
