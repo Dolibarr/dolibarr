@@ -58,12 +58,17 @@ print '</center>';
 
 // Ask installation language
 print '<br><br><center>';
-print '<table><tr>';
-print '<td>'.$langs->trans("DefaultLanguage").' : </td><td align="left">';
-print $formadmin->select_language('auto','selectlang',1);
-print '</td>';
-print '</tr></table></center>';
+print '<table>';
 
+print '<tr>';
+print '<td>'.$langs->trans("DefaultLanguage").' : </td><td align="left">';
+print $formadmin->select_language('auto','selectlang',1,0,0,1);
+print '</td>';
+print '</tr>';
+
+print '</table></center>';
+
+print '<br><br>'.$langs->trans("SomeTranslationAreUncomplete");
 
 // Si pas d'erreur, on affiche le bouton pour passer a l'etape suivante
 if ($err == 0) pFooter(0);

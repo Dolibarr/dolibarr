@@ -66,8 +66,9 @@ class FormAdmin
 	 *    	@param      showauto        Affiche choix auto
 	 * 		@param		filter			Array of keys to exclude in list
 	 * 		@param		showempty		Add empty value
+	 *      @param      showwarning     Show a warning if language is not complete
 	 */
-	function select_language($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0)
+	function select_language($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0,$showwarning=0)
 	{
 		global $langs;
 
@@ -91,8 +92,13 @@ class FormAdmin
 
 		asort($langs_available);
 
+		$uncompletelanguages=array('de_DE','da_DA','fi_FI','hu_HU','is_IS','pl_PL','ro_RO','ru_RU','sv_SV','tr_TR','zh_CN');
 		foreach ($langs_available as $key => $value)
 		{
+		    if ($showwarning && in_array($key,$uncompletelanguages))
+		    {
+		        //$value.=' - '.$langs->trans("TranslationUncomplete",$key);
+		    }
 			if ($filter && is_array($filter))
 			{
 				if ( ! array_key_exists($key, $filter))
@@ -115,16 +121,16 @@ class FormAdmin
 	}
 
 	/**
-     *    \brief      Retourne la liste deroulante des menus disponibles (eldy_backoffice, ...)
-     *    \param      selected        Menu pre-selectionnee
-     *    \param      htmlname        Nom de la zone select
-     *    \param      dirmenu         Repertoire a scanner
+     *    Return list of available menus (eldy_backoffice, ...)
+     *    @param      selected        Preselected menu value
+     *    @param      htmlname        Name of html select
+     *    @param      dirmenu         Directory to scan
      */
     function select_menu($selected='',$htmlname,$dirmenu)
     {
         global $langs,$conf;
 
-        if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // Pour compatibilite
+        if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // For compatibility
 
 		$menuarray=array();
         $handle=opendir($dirmenu);
