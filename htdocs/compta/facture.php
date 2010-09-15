@@ -1355,6 +1355,7 @@ if ($_GET['action'] == 'create')
 	if ($mesg) print $mesg;
 
 	$soc = new Societe($db);
+    if ($socid) $res=$soc->fetch($socid);
 
 	if ($_GET['origin'] && $_GET['originid'])
 	{
@@ -1366,30 +1367,36 @@ if ($_GET['action'] == 'create')
 			$subelement = $regs[2];
 		}
 
-		// For compatibility
-		if ($element == 'order')    { $element = $subelement = 'commande'; }
-		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
-		if ($element == 'contract') { $element = $subelement = 'contrat'; }
+		if ($element == 'project')
+		{
+            $projectid=$_GET['originid'];
+		}
+		else if (in_array($element,array('order','propal','contract')))
+		{
+    		// For compatibility
+    		if ($element == 'order')    { $element = $subelement = 'commande'; }
+    		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
+    		if ($element == 'contract') { $element = $subelement = 'contrat'; }
 
-		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
-		$classname = ucfirst($subelement);
-		$object = new $classname($db);
-		$object->fetch($_GET['originid']);
-		$object->fetch_thirdparty();
+    		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
+    		$classname = ucfirst($subelement);
+    		$object = new $classname($db);
+    		$object->fetch($_GET['originid']);
+    		$object->fetch_thirdparty();
 
-		$projectid			= (!empty($object->fk_project)?$object->fk_project:'');
-		$ref_client			= (!empty($object->ref_client)?$object->ref_client:'');
+    		$projectid			= (!empty($object->fk_project)?$object->fk_project:'');
+    		$ref_client			= (!empty($object->ref_client)?$object->ref_client:'');
 
-		$soc = $object->client;
-		$cond_reglement_id 	= (!empty($object->cond_reglement_id)?$object->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
-		$mode_reglement_id 	= (!empty($object->mode_reglement_id)?$object->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-		$remise_percent 	= (!empty($object->remise_percent)?$object->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
-		$remise_absolue 	= (!empty($object->remise_absolue)?$object->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
-		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+    		$soc = $object->client;
+    		$cond_reglement_id 	= (!empty($object->cond_reglement_id)?$object->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+    		$mode_reglement_id 	= (!empty($object->mode_reglement_id)?$object->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+    		$remise_percent 	= (!empty($object->remise_percent)?$object->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
+    		$remise_absolue 	= (!empty($object->remise_absolue)?$object->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
+    		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+		}
 	}
 	else
 	{
-		$res=$soc->fetch($socid);
 		$cond_reglement_id 	= $soc->cond_reglement_id;
 		$mode_reglement_id 	= $soc->mode_reglement_id;
 		$remise_percent 	= $soc->remise_percent;
@@ -1753,6 +1760,9 @@ if ($_GET['action'] == 'create')
 
 	print "</form>\n";
 
+	// Try to read line from origin
+	$sql='';
+
 	// TODO deplacer dans la classe
 	if ($_GET['origin'] == 'propal')
 	{
@@ -1795,7 +1805,8 @@ if ($_GET['action'] == 'create')
 		$sql.= ' WHERE pt.fk_contrat = '.$object->id;
 		$sql.= ' ORDER BY pt.rowid ASC';
 	}
-	if ($_GET['origin'] && $_GET['originid'])
+
+	if ($sql)
 	{
 		print '<br>';
 		print_titre($title);
