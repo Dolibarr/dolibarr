@@ -2372,17 +2372,18 @@ class Form
      *      \param      selectedrate        Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
      *      \param      societe_vendeuse    Objet societe vendeuse
      *      \param      societe_acheteuse   Objet societe acheteuse
-     *      \param      taux_produit        Taux par defaut du produit vendu
+     *      \param      idprod             Id product
      *      \param      info_bits           Miscellanous information on line
+     *      \param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
      *      \remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *                  Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Sinon la TVA proposee par defaut=0. Fin de regle.
      */
-    function select_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='', $info_bits=0)
+    function select_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
     {
-        print $this->load_tva($name, $selectedrate, $societe_vendeuse, $societe_acheteuse, $taux_produit, $info_bits);
+        print $this->load_tva($name, $selectedrate, $societe_vendeuse, $societe_acheteuse, $idprod, $info_bits, $type);
     }
 
 
@@ -2394,13 +2395,14 @@ class Form
      *      \param      societe_acheteuse  Objet societe acheteuse
      *      \param      idprod             Id product
      *      \param      info_bits          Miscellanous information on line
+     *      \param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
      *      \remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *                  Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Sinon la TVA proposee par defaut=0. Fin de regle.
      */
-    function load_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0)
+    function load_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
     {
         global $langs,$conf,$mysoc;
 
@@ -2429,7 +2431,7 @@ class Form
         }
 
         //var_dump($societe_acheteuse);
-        //print "name=$name, selectedrate=$selectedrate, seller=".$societe_vendeuse->pays_code." buyer=".$societe_acheteuse->pays_code." idprod=$idprod, info_bits=$info_bits";
+        //print "name=$name, selectedrate=$selectedrate, seller=".$societe_vendeuse->pays_code." buyer=".$societe_acheteuse->pays_code." idprod=$idprod, info_bits=$info_bits type=$type";
         //exit;
 
         // Get list of all VAT rates to show
@@ -2442,10 +2444,17 @@ class Form
         {
             $code_pays="'".$mysoc->pays_code."'";   // Pour compatibilite ascendente
         }
-        if (! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC))
+        if (! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC) && is_object($societe_acheteuse))
         {
             // We also add the buyer
-            if (! $idprod)  // We don't know type of product
+            if (is_numeric($type))
+            {
+                if ($type == 1) // We know product is a service
+                {
+                    $code_pays.=",'".$societe_acheteuse->pays_code."'";
+                }
+            }
+            else if (! $idprod)  // We don't know type of product
             {
                 $code_pays.=",'".$societe_acheteuse->pays_code."'";
             }

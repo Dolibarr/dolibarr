@@ -316,7 +316,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 
         // VAT
         print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-        print $html->select_tva("tva_tx",$product->tva_tx,$mysoc,'');
+        print $html->select_tva("tva_tx",$product->tva_tx,$mysoc,'',$product->id);
         print '</td></tr>';
 
 		// Price base
@@ -376,7 +376,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
             if ($i == 1)
             {
                 print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-                print $html->select_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'');
+                print $html->select_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'',$product->id);
                 print '</td></tr>';
             }
             else

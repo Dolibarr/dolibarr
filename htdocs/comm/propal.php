@@ -1385,7 +1385,7 @@ if ($id > 0 || ! empty($ref))
 	if (!empty($propal->lines))
 	{
 		$propal->print_title_list();
-		$propal->printLinesList();
+		$propal->printLinesList(0,$mysoc,$soc);
 	}
 
 	/*

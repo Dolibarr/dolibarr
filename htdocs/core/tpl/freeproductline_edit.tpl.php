@@ -40,7 +40,7 @@
 	?>
 	</td>
 
-	<td align="right"><?php echo $html->select_tva('tva_tx',$line->tva_tx,$seller,$buyer,'',$line->info_bits); ?></td>
+	<td align="right"><?php echo $html->select_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type); ?></td>
 
 	<td align="right"><input size="6" type="text" class="flat" name="subprice" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
 

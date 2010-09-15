@@ -1661,7 +1661,7 @@ else
 			if (!empty($commande->lines))
 			{
 				$commande->print_title_list();
-				$commande->printLinesList();
+				$commande->printLinesList(0,$mysoc,$soc);
 			}
 
 			$numlines=sizeof($commande->lines);
