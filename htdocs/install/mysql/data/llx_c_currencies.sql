@@ -57,6 +57,7 @@ insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LR', 'I
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LS', 'GBP', 1, 'Livres sterling'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'MA', 'DEM', 0, 'Deutsch mark'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'MF', 'FIM', 1, 'Mark finlandais'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'MR', 'MRO', 1, 'Ouguiya Mauritanien');
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'PA', 'ARP', 1, 'Pesos argentins'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'PC', 'CLP', 1, 'Pesos chilien'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'PE', 'ESP', 1, 'Pesete'); 
@@ -85,3 +86,4 @@ insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FH', 'H
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LK', 'LKR', 1, 'Roupies sri lanka');
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'MU', 'MUR', 1, 'Roupies mauritiennes');
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'SR', 'SAR', 1, 'Saudi riyal');
+
