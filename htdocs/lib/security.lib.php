@@ -41,6 +41,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$langs->load("main");
 	$langs->load("other");
 	$langs->load("help");
+    $langs->load("admin");
 
 	$main_authentication=$conf->file->main_authentication;
 	$session_name=session_name();
