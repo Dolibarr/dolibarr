@@ -92,7 +92,7 @@ class DolibarrModules
 
 		// Insert activation triggers
 		if (! $err) $err+=$this->insert_triggers();
-		
+
 		// Insert activation login method
 		if (! $err) $err+=$this->insert_login_method();
 
@@ -190,7 +190,7 @@ class DolibarrModules
 
 		// Remove activation of module's triggers (MAIN_MODULE_MYMODULE_TRIGGERS in llx_const)
 		if (! $err) $err+=$this->delete_triggers();
-		
+
 		// Remove activation of module's authentification method (MAIN_MODULE_MYMODULE_LOGIN_METHOD in llx_const)
 		if (! $err) $err+=$this->delete_login_method();
 
@@ -1270,7 +1270,7 @@ class DolibarrModules
 
 		return $err;
 	}
-	
+
 	/**
 	 *	\brief      Insert activation login method from modules in llx_const
 	 *	\return     int             Number of errors (0 if ok)

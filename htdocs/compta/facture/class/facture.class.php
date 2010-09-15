@@ -269,59 +269,65 @@ class Facture extends CommonObject
 			}
 
 			/*
-			 *  Insert lines of invoices in database
+			 *  Insert lines of invoices into database
 			 */
-			//dol_syslog("There is ".sizeof($this->lignes)." lines");
-			/*
-			foreach ($this->lines as $i => $val)
+			if (sizeof($this->lines) && is_object($this->lines[0]))
 			{
-				$newinvoiceline=new FactureLigne($this->db);
-				$newinvoiceline=$this->lines[$i];
-				$newinvoiceline->fk_facture=$this->id;
-				if ($result >= 0 && ($newinvoiceline->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
-				{
-					$result=$newinvoiceline->insert();
-				}
-				if ($result < 0)
-				{
-					$error++;
-					break;
-				}
+    			dol_syslog("There is ".sizeof($this->lines)." lines that are invoice lines objects");
+    			foreach ($this->lines as $i => $val)
+    			{
+    				$newinvoiceline=new FactureLigne($this->db);
+    				$newinvoiceline=$this->lines[$i];
+    				$newinvoiceline->fk_facture=$this->id;
+    				if ($result >= 0 && ($newinvoiceline->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
+    				{
+    					$result=$newinvoiceline->insert();
+    				}
+    				if ($result < 0)
+    				{
+    					$this->error=$newinvoiceline->error;
+    				    $error++;
+    					break;
+    				}
+    			}
 			}
-			*/
-			for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+			else
 			{
-				if (($this->lines[$i]->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
-				{
-					$result = $this->addline(
-					$this->id,
-					$this->lines[$i]->desc,
-					$this->lines[$i]->subprice,
-					$this->lines[$i]->qty,
-					$this->lines[$i]->tva_tx,
-					$this->lines[$i]->localtax1_tx,
-					$this->lines[$i]->localtax2_tx,
-					$this->lines[$i]->fk_product,
-					$this->lines[$i]->remise_percent,
-					$this->lines[$i]->date_start,
-					$this->lines[$i]->date_end,
-					$this->lines[$i]->fk_code_ventilation,
-					$this->lines[$i]->info_bits,
-					$this->lines[$i]->fk_remise_except,
-					'HT',
-					0,
-					$this->lines[$i]->product_type,
-					$this->lines[$i]->rang,
-					$this->lines[$i]->special_code
-					);
-					if ($result < 0)
-					{
-						$this->error=$this->db->lasterror();
-						dol_print_error($this->db);
-						$this->db->rollback();
-						return -1;
-					}
-				}
+                dol_syslog("There is ".sizeof($this->lines)." lines that are array lines");
+			    for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+    			{
+    				if (($this->lines[$i]->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
+    				{
+    					$result = $this->addline(
+    					$this->id,
+    					$this->lines[$i]->desc,
+    					$this->lines[$i]->subprice,
+    					$this->lines[$i]->qty,
+    					$this->lines[$i]->tva_tx,
+    					$this->lines[$i]->localtax1_tx,
+    					$this->lines[$i]->localtax2_tx,
+    					$this->lines[$i]->fk_product,
+    					$this->lines[$i]->remise_percent,
+    					$this->lines[$i]->date_start,
+    					$this->lines[$i]->date_end,
+    					$this->lines[$i]->fk_code_ventilation,
+    					$this->lines[$i]->info_bits,
+    					$this->lines[$i]->fk_remise_except,
+    					'HT',
+    					0,
+    					$this->lines[$i]->product_type,
+    					$this->lines[$i]->rang,
+    					$this->lines[$i]->special_code
+    					);
+    					if ($result < 0)
+    					{
+    						$this->error=$this->db->lasterror();
+    						dol_print_error($this->db);
+    						$this->db->rollback();
+    						return -1;
+    					}
+    				}
+    			}
 			}
 
 			/*

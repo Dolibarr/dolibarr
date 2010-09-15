@@ -694,8 +694,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 						// TODO mutualiser
 						$lines = $srcobject->lignes;
 						if (sizeof($lines)) $lines = $srcobject->lines;
-						if (empty($lines) && method_exists($object,'fetch_lignes')) $lines = $srcobject->fetch_lignes();
-						if (empty($lines) && method_exists($object,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+						if (empty($lines) && method_exists($srcobject,'fetch_lignes')) $lines = $srcobject->fetch_lignes();
+						if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
 						{
@@ -1371,7 +1371,7 @@ if ($_GET['action'] == 'create')
 		{
             $projectid=$_GET['originid'];
 		}
-		else if (in_array($element,array('order','propal','contract')))
+		else if (in_array($element,array('order','commande','propal','contrat','contract')))
 		{
     		// For compatibility
     		if ($element == 'order')    { $element = $subelement = 'commande'; }
@@ -1772,7 +1772,7 @@ if ($_GET['action'] == 'create')
 		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE pt.fk_propal = '.$object->id;
+		$sql.= ' WHERE pt.fk_propal = '.$objectsrc->id;
 		$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
 	}
 	// TODO deplacer dans la classe
@@ -1786,7 +1786,7 @@ if ($_GET['action'] == 'create')
 		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE pt.fk_commande = '.$object->id;
+		$sql.= ' WHERE pt.fk_commande = '.$objectsrc->id;
 		$sql.= ' ORDER BY pt.rowid ASC';
 	}
 	// TODO deplacer dans la classe
@@ -1801,7 +1801,7 @@ if ($_GET['action'] == 'create')
 		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'contratdet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE pt.fk_contrat = '.$object->id;
+		$sql.= ' WHERE pt.fk_contrat = '.$objectsrc->id;
 		$sql.= ' ORDER BY pt.rowid ASC';
 	}
 

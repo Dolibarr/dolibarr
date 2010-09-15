@@ -193,7 +193,7 @@ switch ( $_GET['action'] )
 			$invoiceline->total_ht=$tab_liste[$i]['total_ht'];
 			$invoiceline->total_ttc=$tab_liste[$i]['total_ttc'];
 			$invoiceline->total_tva=($tab_liste[$i]['total_ttc']-$tab_liste[$i]['total_ht']);
-			$invoice->lignes[]=$invoiceline;
+			$invoice->lines[]=$invoiceline;
 		}
 
 		$invoice->socid=$conf_fksoc;
