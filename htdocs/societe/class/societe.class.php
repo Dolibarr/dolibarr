@@ -363,7 +363,6 @@ class Societe extends CommonObject
 
         // Clean parameters
         $this->id=$id;
-        $this->capital=trim($this->capital);
         $this->nom=trim($this->nom);
         $this->adresse=trim($this->adresse); // TODO obsolete
         $this->address=trim($this->address);
@@ -392,8 +391,8 @@ class Societe extends CommonObject
         $this->localtax1_assuj=trim($this->localtax1_assuj);
         $this->localtax2_assuj=trim($this->localtax2_assuj);
 
-        $this->capital=trim($this->capital);
-        if (dol_strlen($this->capital) == 0) $this->capital = 0;
+        $this->capital=price2num(trim($this->capital),'MT');
+        if (empty($this->capital)) $this->capital = 0;
 
         $this->effectif_id=trim($this->effectif_id);
         $this->forme_juridique_code=trim($this->forme_juridique_code);
@@ -452,7 +451,7 @@ class Societe extends CommonObject
             $sql .= ",localtax1_assuj = ".($this->localtax1_assuj!=''?"'".$this->localtax1_assuj."'":"null");
             $sql .= ",localtax2_assuj = ".($this->localtax2_assuj!=''?"'".$this->localtax2_assuj."'":"null");
 
-            $sql .= ",capital = '" .   addslashes($this->capital) ."'";
+            $sql .= ",capital = ".$this->capital;
 
             $sql .= ",prefix_comm = ".($this->prefix_comm?"'".addslashes($this->prefix_comm)."'":"null");
 
