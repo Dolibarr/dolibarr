@@ -1380,18 +1380,18 @@ if ($_GET['action'] == 'create')
 
     		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
     		$classname = ucfirst($subelement);
-    		$object = new $classname($db);
-    		$object->fetch($_GET['originid']);
-    		$object->fetch_thirdparty();
+    		$objectsrc = new $classname($db);
+    		$objectsrc->fetch($_GET['originid']);
+    		$objectsrc->fetch_thirdparty();
 
-    		$projectid			= (!empty($object->fk_project)?$object->fk_project:'');
-    		$ref_client			= (!empty($object->ref_client)?$object->ref_client:'');
+    		$projectid			= (!empty($objectsrc->fk_project)?$object->fk_project:'');
+    		$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
 
-    		$soc = $object->client;
-    		$cond_reglement_id 	= (!empty($object->cond_reglement_id)?$object->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
-    		$mode_reglement_id 	= (!empty($object->mode_reglement_id)?$object->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-    		$remise_percent 	= (!empty($object->remise_percent)?$object->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
-    		$remise_absolue 	= (!empty($object->remise_absolue)?$object->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
+    		$soc = $objectsrc->client;
+    		$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+    		$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+    		$remise_percent 	= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
+    		$remise_absolue 	= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
     		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 		}
 	}
@@ -1640,9 +1640,9 @@ if ($_GET['action'] == 'create')
 	print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
 	print '<td valign="top" colspan="2">';
 	print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-	if (is_object($object))
+	if (is_object($objectsrc))    // Take value from source object
 	{
-		print $object->note_public;
+		print $objectsrc->note_public;
 	}
 	print '</textarea></td></tr>';
 
@@ -1653,52 +1653,51 @@ if ($_GET['action'] == 'create')
 		print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
 		print '<td valign="top" colspan="2">';
 		print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-		if (is_object($object))
+		if (is_object($objectsrc))    // Take value from source object
 		{
-			print $object->note;
+			print $objectsrc->note;
 		}
 		print '</textarea></td></tr>';
 	}
 
-	if (is_object($object))
+	if (is_object($objectsrc))
 	{
 		// TODO for compatibility
 		if ($_GET['origin'] == 'contrat')
 		{
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-			$object->remise_absolue=$remise_absolue;
-			$object->remise_percent=$remise_percent;
-			$object->update_price();
+			$objectsrc->remise_absolue=$remise_absolue;
+			$objectsrc->remise_percent=$remise_percent;
+			$objectsrc->update_price();
 		}
 
 		print "\n<!-- ".$classname." info -->";
 		print "\n";
-		print '<input type="hidden" name="amount"         value="'.$object->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$object->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$object->total_tva.'">'."\n";
-		print '<input type="hidden" name="origin"         value="'.$object->element.'">';
-		print '<input type="hidden" name="originid"       value="'.$object->id.'">';
+		print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
+		print '<input type="hidden" name="total"          value="'.$objectsrc->total_ttc.'">'."\n";
+		print '<input type="hidden" name="tva"            value="'.$objectsrc->total_tva.'">'."\n";
+		print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
+		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
-		print '<tr><td>'.$langs->trans($classname).'</td><td colspan="2">'.$object->getNomUrl(1).'</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($object->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($object->total_tva)."</td></tr>";
+		print '<tr><td>'.$langs->trans($classname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
+		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
 		if ($mysoc->pays_code=='ES')
 		{
 			if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 			{
-				print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($object->total_localtax1)."</td></tr>";
+				print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
 			}
 
 			if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 			{
-				print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($object->total_localtax2)."</td></tr>";
+				print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
 			}
 		}
-		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($object->total_ttc)."</td></tr>";
+		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
 	}
 	else
 	{
-
 		// Show deprecated optional form to add product line here
 		if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
 		{
@@ -2652,288 +2651,6 @@ else
 
 			print '<table class="noborder" width="100%">';
 
-			/*
-
-			$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_tx,';
-			$sql.= ' l.fk_remise_except,';
-			$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
-			$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
-			$sql.= ' l.date_start,';
-			$sql.= ' l.date_end,';
-			$sql.= ' l.product_type,';
-			$sql.= ' p.ref as product_ref, p.fk_product_type, p.label as product_label,';
-			$sql.= ' p.description as product_desc';
-			$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
-			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON l.fk_product=p.rowid';
-			$sql.= ' WHERE l.fk_facture = '.$object->id;
-			$sql.= ' ORDER BY l.rang ASC, l.rowid';
-
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$num_lignes = $db->num_rows($resql);
-				$i = 0; $total = 0;
-
-				$product_static=new Product($db);
-
-				print '<table class="noborder" width="100%">';
-
-				if ($num_lignes)
-				{
-					print '<tr class="liste_titre">';
-					print '<td>'.$langs->trans('Description').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
-					print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
-					print '<td width="48" colspan="3">&nbsp;</td>';
-					print "</tr>\n";
-				}
-				$var=true;
-				while ($i < $num_lignes)
-				{
-					$objp = $db->fetch_object($resql);
-					$var=!$var;
-
-					// Show product and description
-					$type=$objp->product_type?$objp->product_type:$objp->fk_product_type;
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
-					if (! empty($objp->date_start)) $type=1;
-					if (! empty($objp->date_end)) $type=1;
-
-					// Show line
-					if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
-					{
-						print '<tr '.$bc[$var].'>';
-						if ($objp->fk_product > 0)
-						{
-							print '<td>';
-							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-
-							// Show product and description
-							$product_static->type=$objp->fk_product_type;
-							$product_static->id=$objp->fk_product;
-							$product_static->ref=$objp->product_ref;
-							$product_static->libelle=$objp->product_label;
-							$text=$product_static->getNomUrl(1);
-							$text.= ' - '.$objp->product_label;
-							$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
-							print $html->textwithtooltip($text,$description,3,'','',$i);
-
-							// Show range
-							print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
-
-							// Add description in form
-							if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-
-							print '</td>';
-						}
-						else
-						{
-							print '<td>';
-							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-
-							if (($objp->info_bits & 2) == 2)
-							{
-								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->socid.'">';
-								print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
-								print '</a>';
-								if ($objp->description)
-								{
-									if ($objp->description == '(CREDIT_NOTE)')
-									{
-										$discount=new DiscountAbsolute($db);
-										$discount->fetch($objp->fk_remise_except);
-										print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
-									}
-									elseif ($objp->description == '(DEPOSIT)')
-									{
-										$discount=new DiscountAbsolute($db);
-										$discount->fetch($objp->fk_remise_except);
-										print ' - '.$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
-									}
-									else
-									{
-										print ' - '.nl2br($objp->description);
-									}
-								}
-							}
-							else
-							{
-								if ($type==1) $text = img_object($langs->trans('Service'),'service');
-								else $text = img_object($langs->trans('Product'),'product');
-								print $text.' '.nl2br($objp->description);
-
-								// Show range
-								print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
-							}
-							print "</td>\n";
-						}
-
-						// VAT
-						print '<td align="right">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
-
-						// Unit price
-						print '<td align="right">'.price($objp->subprice)."</td>\n";
-						print '<td align="right">';
-						if (($objp->info_bits & 2) != 2)
-						{
-							print $objp->qty;
-						}
-						else print '&nbsp;';
-						print '</td>';
-
-						// Remise percent (negative or positive)
-						if (!empty($objp->remise_percent))
-						{
-							print '<td align="right">'.dol_print_reduction($objp->remise_percent,$langs)."</td>\n";
-						}
-						else
-						{
-							print '<td>&nbsp;</td>';
-						}
-
-						// Montant total HT
-						print '<td align="right" nowrap="nowrap">'.price($objp->total_ht)."</td>\n";
-
-						// Icone d'edition et suppression
-						if ($object->statut == 0  && $user->rights->facture->creer)
-						{
-							print '<td align="center">';
-							if (($objp->info_bits & 2) == 2)
-							{
-								// Ligne remise predefinie, on permet pas modif
-							}
-							else
-							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
-								print img_edit();
-								print '</a>';
-							}
-							print '</td>';
-							print '<td align="center">';
-							print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=delete_product_line&amp;rowid='.$objp->rowid.'">';
-							print img_delete();
-							print '</a></td>';
-							if ($num_lignes > 1)
-							{
-								print '<td align="center">';
-								if ($i > 0)
-								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
-									print img_up();
-									print '</a>';
-								}
-								if ($i < $num_lignes-1)
-								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
-									print img_down();
-									print '</a>';
-								}
-								print '</td>';
-							}
-						}
-						else
-						{
-							print '<td colspan="3">&nbsp;</td>';
-						}
-						print '</tr>';
-					}
-
-					// Ligne en mode update
-					if ($_GET['action'] == 'editline' && $user->rights->facture->creer && $_GET['rowid'] == $objp->rowid)
-					{
-						print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'#'.$objp->rowid.'" method="post">';
-						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-						print '<input type="hidden" name="action" value="updateligne">';
-						print '<input type="hidden" name="facid" value="'.$object->id.'">';
-						print '<input type="hidden" name="rowid" value="'.$_GET['rowid'].'">';
-						print '<tr '.$bc[$var].'>';
-						print '<td>';
-						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-
-						// Show product and description
-						if ($objp->fk_product > 0)
-						{
-							print '<input type="hidden" name="productid" value="'.$objp->fk_product.'">';
-							$product_static->type=$objp->fk_product_type;
-							$product_static->id=$objp->fk_product;
-							$product_static->ref=$objp->product_ref;
-							$product_static->libelle=$objp->product_label;
-							$text=$product_static->getNomUrl(1);
-							$text.= ' - '.$objp->product_label;
-							print $text;
-							print '<br>';
-						}
-						else
-						{
-							print $html->select_type_of_lines($objp->product_type,'type',1);
-							if ($conf->product->enabled && $conf->service->enabled) print '<br>';
-						}
-
-						// Description - Editor wysiwyg
-                        $nbrows=ROWS_2;
-					    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-						$doleditor=new DolEditor('desc',$objp->description,164,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
-						$doleditor->Create();
-						print '</td>';
-
-						// VAT
-						print '<td align="right">';
-						print $html->select_tva('np_tva_tx',$objp->tva_tx,$mysoc,$soc,'',$objp->info_bits);
-						print '</td>';
-
-						// Unit price
-						print '<td align="right"><input size="6" type="text" class="flat" name="price" value="'.price($objp->subprice,0,'',0).'"></td>';
-
-
-						print '<td align="right">';
-						if (($objp->info_bits & 2) != 2)
-						{
-							print '<input size="2" type="text" class="flat" name="qty" value="'.$objp->qty.'">';
-						}
-						else print '&nbsp;';
-						print '</td>';
-
-						print '<td align="right" nowrap>';
-						if (($objp->info_bits & 2) != 2)
-						{
-							print '<input size="2" type="text" class="flat" name="remise_percent" value="'.$objp->remise_percent.'">%';
-						}
-						else print '&nbsp;';
-						print '</td>';
-
-						print '<td align="center" rowspan="1" colspan="5" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-						print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
-						print '</tr>' . "\n";
-						if ($conf->service->enabled)
-						{
-							print '<tr '.$bc[$var].'>';
-							print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-							print $html->select_date($db->jdate($objp->date_start),'date_start',$usehm,$usehm,$objp->date_start?0:1,"updateligne");
-							print ' '.$langs->trans('to').' ';
-							print $html->select_date($db->jdate($objp->date_end),'date_end',$usehm,$usehm,$objp->date_end?0:1,"updateligne");
-							print '</td>';
-							print '</tr>';
-						}
-						print "</form>\n";
-					}
-
-					$total = $total + ($objp->qty * $objp->price);
-					$i++;
-				}
-
-				$db->free($resql);
-			}
-			else
-			{
-				dol_print_error($db);
-			}
-
-			*/
-
 			$result = $object->getLinesArray();
 
 			if (!empty($object->lines))
@@ -2949,13 +2666,13 @@ else
 			{
 				$var=true;
 
-				$object->showAddFreeProductForm(1);
+				$object->showAddFreeProductForm(1,$mysoc,$soc);
 
 				// Add predefined products/services
 				if ($conf->product->enabled || $conf->service->enabled)
 				{
 					$var=!$var;
-					$object->showAddPredefinedProductForm(1);
+					$object->showAddPredefinedProductForm(1,$mysoc,$soc);
 				}
 
 				// Hook of thirdparty module

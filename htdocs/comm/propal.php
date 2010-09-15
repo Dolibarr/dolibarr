@@ -1398,13 +1398,13 @@ if ($id > 0 || ! empty($ref))
 			$var=true;
 
 			// Add free products/services
-			$propal->showAddFreeProductForm();
+			$propal->showAddFreeProductForm(0,$mysoc,$soc);
 
 			// Add predefined products/services
 			if ($conf->product->enabled || $conf->service->enabled)
 			{
 				$var=!$var;
-				$propal->showAddPredefinedProductForm();
+				$propal->showAddPredefinedProductForm(0,$mysoc,$soc);
 			}
 
 			// Hook of thirdparty module

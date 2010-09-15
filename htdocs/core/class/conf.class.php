@@ -357,7 +357,7 @@ class Conf
 			$this->defaulttx='0';		// Taux par defaut des factures clients
 		}
 		else {
-			$this->defaulttx='';		// Pas de taux par defaut des factures clients, le premier sera pris
+			$this->defaulttx='';		// Pas de taux par defaut des factures clients, le plus élevé sera pris
 		}
 
 		// $this->liste_limit = constante de taille maximale des listes
@@ -409,7 +409,7 @@ class Conf
         $this->format_date_hour_short="%d/%m/%Y %H:%M";
         $this->format_date_hour_text_short="%d %b %Y %H:%M";
         $this->format_date_hour_text="%d %B %Y %H:%M";
-		
+
 		// Limites decimales si non definie (peuvent etre egale a 0)
 		if (! isset($this->global->MAIN_MAX_DECIMALS_UNIT))  $this->global->MAIN_MAX_DECIMALS_UNIT=5;
 		if (! isset($this->global->MAIN_MAX_DECIMALS_TOT))   $this->global->MAIN_MAX_DECIMALS_TOT=2;

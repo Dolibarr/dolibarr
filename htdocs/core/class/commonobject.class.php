@@ -506,7 +506,7 @@ class CommonObject
 		// TODO uniformise code
 		if ($this->origin == 'shipping') $this->origin = 'expedition';
 		if ($this->origin == 'delivery') $this->origin = 'livraison';
-		
+
 		$object = $this->origin;
 
 		$classname = ucfirst($object);
@@ -1285,11 +1285,12 @@ class CommonObject
 	 *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
 	 */
-	function showAddPredefinedProductForm($dateSelector=0)
+	function showAddPredefinedProductForm($dateSelector,$seller,$buyer)
 	{
 		global $conf,$langs;
 		global $html,$bcnd,$var;
 
+        // Use global variables + $dateSelector + $seller and $buyer
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
 	}
 
@@ -1299,11 +1300,12 @@ class CommonObject
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
      */
-	function showAddFreeProductForm($dateSelector=0)
+	function showAddFreeProductForm($dateSelector,$seller,$buyer)
 	{
 		global $conf,$langs;
 		global $html,$bcnd,$var;
 
+        // Use global variables + $dateSelector + $seller and $buyer
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
 	}
 
@@ -1360,7 +1362,7 @@ class CommonObject
 	 * 	Return HTML with object lines list
      *  FIXME This must be moved into a html.class file instead of a business class.
 	 */
-	function printLinesList($dateSelector=0)
+	function printLinesList($dateSelector=0,$seller,$buyer)
 	{
 		$num = count($this->lines);
 		$var = true;
@@ -1376,7 +1378,7 @@ class CommonObject
 			}
 			else
 			{
-				$this->printLine($line,$var,$num,$i,$dateSelector);
+				$this->printLine($line,$var,$num,$i,$dateSelector,$seller,$buyer);
 			}
 
 			$i++;
@@ -1390,10 +1392,12 @@ class CommonObject
 	 *  @param      $num               Number of line
 	 *  @param      $i
      *  @param      $dateSelector      1=Show also date range input fields
+     *  @param      $seller            Object of seller third party
+     *  @param      $buyer             Object of buyer third party
      *  TODO This must be moved into a html.class file instead of a business class.
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
 	 */
-	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0)
+	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer)
 	{
 		global $conf,$langs,$user;
 		global $html,$bc;
@@ -1425,11 +1429,13 @@ class CommonObject
 				$text.= ' - '.$line->product_label;
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
 
+				// Use global variables + $seller and $buyer
 				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_view.tpl.php');
 			}
 			else
 			{
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_view.tpl.php');
+                // Use global variables + $dateSelector + $seller and $buyer
+			    include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_view.tpl.php');
 			}
 		}
 
@@ -1438,11 +1444,13 @@ class CommonObject
 		{
 			if ($line->fk_product > 0)
 			{
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_edit.tpl.php');
+                // Use global variables + $dateSelector + $seller and $buyer
+			    include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_edit.tpl.php');
 			}
 			else
 			{
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_edit.tpl.php');
+                // Use global variables + $dateSelector + $seller and $buyer
+			    include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_edit.tpl.php');
 			}
 		}
 	}

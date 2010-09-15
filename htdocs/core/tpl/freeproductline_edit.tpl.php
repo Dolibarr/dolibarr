@@ -40,10 +40,10 @@
 	?>
 	</td>
 
-	<td align="right"><?php echo $html->select_tva('tva_tx',$line->tva_tx,$mysoc,$societe,'',$line->info_bits); ?></td>
-	
+	<td align="right"><?php echo $html->select_tva('tva_tx',$line->tva_tx,$seller,$buyer,'',$line->info_bits); ?></td>
+
 	<td align="right"><input size="6" type="text" class="flat" name="subprice" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
-	
+
 	<td align="right">
 	<?php if (($line->info_bits & 2) != 2) { ?>
 		<input size="2" type="text" class="flat" name="qty" value="<?php echo $line->qty; ?>">
@@ -51,7 +51,7 @@
 		&nbsp;
 	<?php } ?>
 	</td>
-	
+
 	<td align="right" nowrap>
 	<?php if (($line->info_bits & 2) != 2) { ?>
 		<input size="1" type="text" class="flat" name="remise_percent" value="<?php echo $line->remise_percent; ?>">%
@@ -59,7 +59,7 @@
 		&nbsp;
 	<?php } ?>
 	</td>
-	
+
 	<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
 	<br><input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></td>
 </tr>
@@ -68,9 +68,9 @@
 <tr <?php echo $bc[$var]; ?>>
 	<td colspan="9"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
-	echo $html->select_date($line->date_start,'date_start',$usehm,$usehm,$line->date_start?0:1,"updateligne");
+	echo $html->select_date($line->date_start,'date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$line->date_start?0:1,"updateligne");
 	echo ' '.$langs->trans('to').' ';
-	echo $html->select_date($line->date_end,'date_end',$usehm,$usehm,$line->date_end?0:1,"updateligne");
+	echo $html->select_date($line->date_end,'date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$line->date_end?0:1,"updateligne");
 	?>
 	</td>
 </tr>

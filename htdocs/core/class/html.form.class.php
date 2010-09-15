@@ -2405,7 +2405,6 @@ class Form
         global $langs,$conf,$mysoc;
 
         $return='';
-
         $txtva=array();
         $libtva=array();
         $nprtva=array();
@@ -2415,7 +2414,7 @@ class Form
         $defaultnpr=(preg_match('/\*/',$selectedrate) ? 1 : $defaultnpr);
         $defaulttx=str_replace('*','',$selectedrate);
 
-        //print $societe_vendeuse."-".$societe_acheteuse;
+        // Check parameters
         if (is_object($societe_vendeuse) && ! $societe_vendeuse->pays_code)
         {
             if ($societe_vendeuse->id == $mysoc->id)
@@ -2429,29 +2428,44 @@ class Form
             return $return;
         }
 
+        //var_dump($societe_acheteuse);
+        //print "name=$name, selectedrate=$selectedrate, seller=".$societe_vendeuse->pays_code." buyer=".$societe_acheteuse->pays_code." idprod=$idprod, info_bits=$info_bits";
+        //exit;
+
+        // Get list of all VAT rates to show
+        // First we defined code_pays to use to find list
         if (is_object($societe_vendeuse))
         {
-            if ($societe_vendeuse->isInEEC() && (! empty($societe_vendeuse->tva_intra))
-            && preg_match('/^([A-Z][A-Z])/',$societe_vendeuse->tva_intra,$reg))
-            {
-                $code_pays=$reg[1];
-            }
-            else
-            {
-                $code_pays=$societe_vendeuse->pays_code;
-            }
+            $code_pays="'".$societe_vendeuse->pays_code."'";
         }
         else
         {
-            $code_pays=$mysoc->pays_code;	// Pour compatibilite ascendente
+            $code_pays="'".$mysoc->pays_code."'";   // Pour compatibilite ascendente
         }
-
-        // Recherche liste des codes TVA du pays vendeur
-        $sql  = "SELECT t.taux,t.recuperableonly";
-        $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-        $sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
-        $sql .= " AND t.active = 1";
-        $sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
+        if (! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC))
+        {
+            // We also add the buyer
+            if (! $idprod)  // We don't know type of product
+            {
+                $code_pays.=",'".$societe_acheteuse->pays_code."'";
+            }
+            else
+            {
+                $prodstatic=new Product($this->db);
+                $prodstatic->fetch($idprod);
+                if ($prodstatic->type == 1)   // We know product is a service
+                {
+                    $code_pays.=",'".$societe_acheteuse->pays_code."'";
+                }
+            }
+        }
+        // Now we get list
+        $sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+        $sql.= " WHERE t.fk_pays = p.rowid";
+        $sql.= " AND t.active = 1";
+        $sql.= " AND p.code in (".$code_pays.")";
+        $sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2491,8 +2505,7 @@ class Form
         }
 
         $nbdetaux = sizeof($txtva);
-
-        if (sizeof($txtva))
+        if ($nbdetaux > 0)
         {
             $return.= '<select class="flat" name="'.$name.'">';
 

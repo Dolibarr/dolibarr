@@ -20,7 +20,6 @@
 ?>
 
 <!-- BEGIN PHP TEMPLATE freeproductline_create.tpl.php -->
-
 <?php
 // TODO à déplacer
 if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
@@ -58,7 +57,7 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 	<td align="right">
 	<?php
 	if ($soc->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
-	else $html->select_tva('np_tva_tx', $conf->defaulttx, $mysoc, $soc);
+	else $html->select_tva('np_tva_tx', $conf->defaulttx, $seller, $buyer);
 	?>
 	</td>
 	<td align="right"><input type="text" size="5" name="np_price"></td>
@@ -72,9 +71,9 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 	<td colspan="9">
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-	echo $html->select_date('','date_start',$usehm,$usehm,1,"addproduct");
+	echo $html->select_date('','date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
 	echo ' '.$langs->trans('to').' ';
-	echo $html->select_date('','date_end',$usehm,$usehm,1,"addproduct");
+	echo $html->select_date('','date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
 	?>
 	</td>
 </tr>
