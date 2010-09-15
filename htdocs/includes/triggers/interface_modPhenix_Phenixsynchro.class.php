@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +18,21 @@
  */
 
 /**
-        \file       htdocs/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php
-        \ingroup    webcalendar
-        \brief      Fichier de gestion des triggers webcalendar
+        \file       htdocs/includes/triggers/interface_modPhenix_Phenixsynchro.class.php
+        \ingroup    phenix
+        \brief      Fichier de gestion des triggers phenix
 		\version	$Id$
 */
 
-include_once(DOL_DOCUMENT_ROOT.'/webcalendar/class/webcal.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/phenix/class/phenix.class.php');
 
 
 /**
-        \class      InterfaceWebcalsynchro
-        \brief      Classe des fonctions triggers des actions webcalendar
+        \class      InterfacePhenixsynchro
+        \brief      Classe des fonctions triggers des actions phenix
 */
 
-class InterfaceWebcalsynchro
+class InterfacePhenixsynchro
 {
     var $db;
     var $error;
@@ -45,14 +46,14 @@ class InterfaceWebcalsynchro
      *   \brief      Constructeur.
      *   \param      DB      Handler d'acces base
      */
-    function InterfaceWebcalsynchro($DB)
+    function InterfacePhenixsynchro($DB)
     {
         $this->db = $DB ;
 
         $this->name = preg_replace('/^Interface/i','',get_class($this));
-        $this->family = "webcal";
-        $this->description = "Triggers of this module allows to add an event inside Webcalendar for each Dolibarr business event.";
-        $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+        $this->family = "phenix";
+        $this->description = "Triggers of this module allows to add an event inside Phenix calendar for each Dolibarr business event.";
+        $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
     }
 
     /**
@@ -103,8 +104,8 @@ class InterfaceWebcalsynchro
         // Mettre ici le code a executer en reaction de l'action
         // Les donnees de l'action sont stockees dans $object
 
-        if (! $conf->webcal->enabled) return 0;     // Module non actif
-        if (! $object->use_webcal) return 0;        // Option syncro webcal non active
+        if (! $conf->phenix->enabled) return 0;     // Module non actif
+        if (! $object->use_phenix) return 0;        // Option syncro phenix non active
 
         // Actions
         if ($action == 'ACTION_CREATE')
@@ -163,6 +164,28 @@ class InterfaceWebcalsynchro
             $this->duree=0;
             $this->texte=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
             $this->desc=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
+        }
+        elseif ($action == 'CONTRACT_CANCEL')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("ContractCanceledInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("ContractCanceledInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
+        }
+        elseif ($action == 'CONTRACT_CLOSE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("ContractClosedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("ContractClosedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
 
@@ -359,40 +382,40 @@ class InterfaceWebcalsynchro
         }
 */
 
-        // Ajoute entree dans webcal
+        // Ajoute entree dans phenix
         if ($this->date)
         {
 
-            // Cree objet webcal et connexion avec params $conf->webcal->db->xxx
-            $webcal = new Webcal();
-            if (! $webcal->localdb->ok)
+            // Cree objet phenix et connexion avec params $conf->phenix->db->xxx
+            $phenix = new Phenix();
+            if (! $phenix->localdb->ok)
             {
                 // Si la creation de l'objet n'as pu se connecter
-                $error ="Dolibarr n'a pu se connecter a la base Webcalendar avec les identifiants definis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user."). ";
+                $error ="Dolibarr n'a pu se connecter a la base Phenix avec les identifiants definis (host=".$conf->phenix->db->host." dbname=".$conf->phenix->db->name." user=".$conf->phenix->db->user."). ";
                 $error.="La mise a jour Webcalendar a ete ignoree.";
                 $this->error=$error;
 
-                //dol_syslog("interface_webcal.class.php: ".$this->error, LOG_ERR);
+                //dol_syslog("interface_phenix.class.php: ".$this->error, LOG_ERR);
                 return -1;
             }
 
-            $webcal->date=$this->date;
-            $webcal->duree=$this->duree;
-            $webcal->texte=$this->texte;
-            $webcal->desc=$this->desc;
+            $phenix->date=$this->date;
+            $phenix->duree=$this->duree;
+            $phenix->texte=$this->texte;
+            $phenix->desc=$this->desc;
 
-            $result=$webcal->add($user);
+            $result=$phenix->add($user);
             if ($result > 0)
             {
                 return 1;
             }
             else
             {
-                $error ="Echec insertion dans webcal: ".$webcal->error." ";
-                $error.="La mise a jour Webcalendar a ete ignoree.";
+                $error ="Echec insertion dans phenix: ".$phenix->error." ";
+                $error.="La mise a jour Phenix a ete ignoree.";
                 $this->error=$error;
 
-                //dol_syslog("interface_webcal.class.php: ".$this->error, LOG_ERR);
+                //dol_syslog("interface_phenix.class.php: ".$this->error, LOG_ERR);
                 return -2;
             }
         }
