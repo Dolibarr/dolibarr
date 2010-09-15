@@ -211,7 +211,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 		$pdf->line($curx+1, $cury+1, $curx+1, $cury+10 );
 
 		$fieldstoshow=array('bank','desk','number','key');
-		//if ($account->pays_code == 'ES') $fieldstoshow=array('bank','desk','key','number');
+		if ($account->pays_code == 'ES') $fieldstoshow=array('bank','desk','key','number');
 
 		foreach ($fieldstoshow as $val)
 		{
