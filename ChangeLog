@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.0 compared to 2.9 *****
 
 For users:
+- New: task #10473 : Option MAIN_PROFIDx_IN_ADDRESS must no more be hidden.
 - New: Can generate business card for on particular member.
 - New: Task #10553 : Can attach files on members card.
 - New: Can filter on payment type and bank account in payment lists.

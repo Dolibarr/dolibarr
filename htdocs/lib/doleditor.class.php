@@ -55,11 +55,11 @@ class DolEditor
      *                                    	'Out:nom' partage de la barre d'outils ou 'nom' est le nom du DIV qui affiche la barre
      *      @param  toolbarstartexpanded  	visible ou non au demarrage
 	 *		@param	uselocalbrowser			Enabled to add links to local object with local browsers. If false, only external images can be added in content.
-	 *      @param  tool                    fckeditor or textarea or xxx
+	 *      @param  okforextandededitor     True=Allow usage of extended editor tool (like fckeditor)
      *      @param  rows                    Size of rows for textarea tool
 	 *      @param  cols                    Size of cols for textarea tool
 	 */
-    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforfckeditor=true,$rows=0,$cols=0)
+    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextandededitor=true,$rows=0,$cols=0)
     {
     	global $conf,$langs;
 
@@ -68,7 +68,7 @@ class DolEditor
         $this->tool='fckeditor';    // By default
 
         // Check fckeditor is ok
-        if ($this->tool == 'fckeditor' && (empty($conf->fckeditor->enabled) || ! $okforfckeditor))
+        if ($this->tool == 'fckeditor' && (empty($conf->fckeditor->enabled) || ! $okforextandededitor))
         {
             $this->tool = 'textarea';
         }

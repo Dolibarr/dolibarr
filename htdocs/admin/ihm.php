@@ -83,6 +83,10 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",       $_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
 	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",    $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
 
+	dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS",    $_POST["MAIN_PROFID1_IN_ADDRESS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS",    $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS",    $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS",    $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
@@ -116,6 +120,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     clearstatcache();
     $var=true;
 
+    print_fiche_titre($langs->trans("Language"),'','').'<br>';
     print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
 	print '<td width="20">&nbsp;</td>';
@@ -134,6 +139,34 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
     print $html->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
     print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+	print '</table><br>'."\n";
+
+
+    // Themes
+    show_theme('',1);
+    print '<br>';
+
+
+    // Liste des zone de recherche permanantes supportees
+    print '<table summary="search" class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td colspan="2">'.$langs->trans("Activated").'</td></tr>';
+    $var=True;
+    foreach ($searchform as $key => $value)
+    {
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td colspan="2">';
+        print $html->selectyesno($searchform[$key],$searchformconst[$key],1);
+        print '</td></tr>';
+    }
+    print '</table>';
+    print '<br>';
+
+    // Other
+    print '<table summary="edit" class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
@@ -213,32 +246,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	print '</table><br>';
-
-
-    // Themes
-    show_theme('',1);
-    print '<br>';
-
-
-    // Liste des zone de recherche permanantes supportees
-    print '<table summary="search" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td colspan="2">'.$langs->trans("Activated").'</td></tr>';
-    $var=True;
-    foreach ($searchform as $key => $value)
-    {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td colspan="2">';
-        print $html->selectyesno($searchform[$key],$searchformconst[$key],1);
-        print '</td></tr>';
-    }
-    print '</table>';
-    print '<br>';
-
-    $var=true;
-    print '<table summary="more" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
-
     // Hide helpcenter link on login page
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
@@ -260,17 +267,17 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
 	// Editeur wysiwyg
 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-	$doleditor=new DolEditor('main_home',$conf->global->MAIN_HOME,158,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,ROWS_5,90);
+	$doleditor=new DolEditor('main_home',$conf->global->MAIN_HOME,142,'dolibarr_notes','In',false,true,true,ROWS_4,90);
 	$doleditor->Create();
-	print '</td></tr>';
+	print '</td></tr>'."\n";
 
 	// Message of the day on home page
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-	$doleditor=new DolEditor('main_motd',$conf->global->MAIN_MOTD,158,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,ROWS_5,90);
+	$doleditor=new DolEditor('main_motd',$conf->global->MAIN_MOTD,142,'dolibarr_notes','In',false,true,true,ROWS_4,90);
 	$doleditor->Create();
-	print '</td></tr>';
+	print '</td></tr>'."\n";
 
 	/*
 	// Show bugtrack link
@@ -282,7 +289,41 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	print '</tr>';
 	*/
 
+	print '</table><br>'."\n";
+
+
+    // PDF
+    print_fiche_titre($langs->trans("PDF"),'','').'<br>';
+	$var=true;
+    print '<table summary="more" class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
+
+    // Show prof id 1 in address into pdf
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId1",$mysoc->pays_code).'</td><td>';
+	print $html->selectyesno('MAIN_PROFID1_IN_ADDRESS',isset($conf->global->MAIN_PROFID1_IN_ADDRESS)?$conf->global->MAIN_PROFID1_IN_ADDRESS:0,1);
+    print '</td></tr>';
+
+    // Show prof id 2 in address into pdf
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId2",$mysoc->pays_code).'</td><td>';
+	print $html->selectyesno('MAIN_PROFID2_IN_ADDRESS',isset($conf->global->MAIN_PROFID2_IN_ADDRESS)?$conf->global->MAIN_PROFID2_IN_ADDRESS:0,1);
+    print '</td></tr>';
+
+    // Show prof id 3 in address into pdf
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId3",$mysoc->pays_code).'</td><td>';
+	print $html->selectyesno('MAIN_PROFID3_IN_ADDRESS',isset($conf->global->MAIN_PROFID3_IN_ADDRESS)?$conf->global->MAIN_PROFID3_IN_ADDRESS:0,1);
+    print '</td></tr>';
+
+    // Show prof id 4 in address into pdf
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId4",$mysoc->pays_code).'</td><td>';
+	print $html->selectyesno('MAIN_PROFID4_IN_ADDRESS',isset($conf->global->MAIN_PROFID4_IN_ADDRESS)?$conf->global->MAIN_PROFID4_IN_ADDRESS:0,1);
+    print '</td></tr>';
+
 	print '</table>';
+
 
     print '<br><center>';
     print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
@@ -295,6 +336,8 @@ else	// Show
 {
     $var=true;
 
+    // Language
+    print_fiche_titre($langs->trans("Language"),'','').'<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td><td>&nbsp;</td></tr>';
 
@@ -314,8 +357,36 @@ else	// Show
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
+	print '</table><br>'."\n";
+
+
+	// Themes
+    show_theme('',0);
+    print '<br>';
+
+
+    // Liste des zone de recherches permanentes supportees
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td><td>&nbsp;</td></tr>';
+    $var=true;
+    foreach ($searchform as $key => $value)
+    {
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
+		print '<td align="left">'.$langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
+        print '</td></tr>';
+    }
+    print '</table>';
+    print '<br>';
+
+
+    // Other
+    $var=true;
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
+
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
@@ -375,55 +446,29 @@ else	// Show
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	print '</table><br>';
-
-
-    // Themes
-    show_theme('',0);
-    print '<br>';
-
-
-    // Liste des zone de recherches permanentes supportees
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td><td>&nbsp;</td></tr>';
-    $var=true;
-    foreach ($searchform as $key => $value)
-    {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
-		print '<td align="left">'.$langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
-        print '</td></tr>';
-    }
-    print '</table>';
-    print '<br>';
-
-    $var=true;
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
     // Link to help center
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
     print yn($conf->global->MAIN_HELPCENTER_DISABLELINK,1);
     print '</td></tr>';
 
     // Link to wiki help
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1)).'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1)).'</td><td colspan="2">';
     print yn($conf->global->MAIN_HELP_DISABLELINK,1);
     print '</td></tr>';
 
     // Message login
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
     print nl2br($conf->global->MAIN_HOME);
-    print '</td></tr>';
+    print '</td></tr>'."\n";
 
     // Message of the day
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
     print nl2br($conf->global->MAIN_MOTD);
-    print '</td></tr>';
+    print '</td></tr>'."\n";
 
     /*
     // Show bugtrack link
@@ -434,8 +479,39 @@ else	// Show
 	print "</tr>";
 	*/
 
+    print '</table><br>'."\n";
 
-    print '</table>';
+
+    $var=true;
+    //print_fiche_titre($langs->trans("PDF"),'','').'<br>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+    // Show prof id 1 in address into pdf
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId1",$mysoc->pays_code).'</td><td>';
+    print yn($conf->global->MAIN_PROFID1_IN_ADDRESS,1);
+    print '</td></tr>';
+
+    // Show prof id 2 in address into pdf
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId2",$mysoc->pays_code).'</td><td>';
+    print yn($conf->global->MAIN_PROFID2_IN_ADDRESS,1);
+    print '</td></tr>';
+
+    // Show prof id 3 in address into pdf
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId3",$mysoc->pays_code).'</td><td>';
+    print yn($conf->global->MAIN_PROFID3_IN_ADDRESS,1);
+    print '</td></tr>';
+
+    // Show prof id 4 in address into pdf
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId4",$mysoc->pays_code).'</td><td>';
+    print yn($conf->global->MAIN_PROFID4_IN_ADDRESS,1);
+    print '</td></tr>';
+
+    print '</table>'."\n";
 
 
     print '<div class="tabsAction">';

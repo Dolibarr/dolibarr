@@ -781,6 +781,7 @@ SimpleNumRefModelDesc=Return the reference number with format %syymm-nnnn where 
 ListOfEntities=List of entities
 AddEntity=Add entity
 EditEntity=Edit entity
+ShowProfIdInAddress=Show professionnal id into addresses on documents
 
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.

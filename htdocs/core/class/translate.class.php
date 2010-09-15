@@ -482,10 +482,10 @@ class Translate {
 
 
 	/**
-	 *  \brief       Retourne la version traduite du texte passe en parametre complete du code pays
-	 *  \param       str            string root to translate
-	 *  \param       countrycode    country code (FR, ...)
-	 *  \return      string         translated string
+	 *  Retourne la version traduite du texte passe en parametre complete du code pays
+	 *  @param       str            string root to translate
+	 *  @param       countrycode    country code (FR, ...)
+	 *  @return      string         translated string
 	 */
 	function transcountrynoentities($str, $countrycode)
 	{
