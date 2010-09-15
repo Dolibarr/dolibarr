@@ -312,7 +312,7 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2313', 'Sociedad en Comandita por Acciones (arts. 315 a 324, LSC)', 1);
 
 
-delete from llx_const where name='USER_PASSWORD_GENERATED' and value='default';
+DELETE from llx_const where name='USER_PASSWORD_GENERATED' and value='default';
 
 
 ALTER TABLE llx_boxes_def DROP INDEX uk_boxes_def;
@@ -321,3 +321,10 @@ ALTER TABLE llx_boxes_def ADD UNIQUE INDEX uk_boxes_def (file, entity, note);
 
 -- Fix bad old data
 UPDATE llx_bank_url SET type='payment' WHERE type='?' AND label='(payment)' AND url LIKE '%compta/paiement/fiche.php%';
+
+
+update llx_const set value ='eldy' where name = 'MAIN_THEME' and (value= 'rodolphe' or value='dev' or value='bluelagoon');
+update llx_user_param set value ='eldy' where param = 'MAIN_THEME' and (value= 'rodolphe' or value='dev' or value='bluelagoon');
+
+
+ALTER TABLE llx_tmp_caisse MODIFY fk_article integer NOT NULL;

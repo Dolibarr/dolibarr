@@ -52,4 +52,4 @@ ALTER TABLE llx_actioncomm ADD COLUMN fk_supplier_order   integer;
 ALTER TABLE llx_actioncomm ADD COLUMN fk_supplier_invoice integer;
 
 
-ALTER TABLE llx_tmp_caisse MODIFY fk_article int(11) NOT NULL;
+ALTER TABLE llx_tmp_caisse MODIFY fk_article integer NOT NULL;
