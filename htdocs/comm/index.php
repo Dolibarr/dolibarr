@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
  * View
  */
 
-$now=gmmktime();
+$now=dol_now();
 
 $html = new Form($db);
 $formfile = new FormFile($db);
@@ -314,7 +314,8 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 			print $propalstatic->getNomUrl(1);
 			print '</td>';
 			print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
-			if (($objp->fk_statut <= 1) && $objp->dp < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+			// TODO se baser sur datep ou fin_validite ?
+			if (($objp->fk_statut <= 1) && ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay))) print img_warning($langs->trans("Late"));
 			print '</td>';
 			print '<td width="16" align="center" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($objp->ref);
