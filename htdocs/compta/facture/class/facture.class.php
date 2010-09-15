@@ -477,7 +477,7 @@ class Facture extends CommonObject
 		$error=0;
 
 		$object=new Facture($this->db);
-		
+
 		// Instantiate hooks of thirdparty module
 		if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 		{
@@ -513,7 +513,7 @@ class Facture extends CommonObject
 				unset($object->products[$i]);	// Tant que products encore utilise
 			}
 		}
-		
+
 		// Create clone
 		$result=$object->create($user);
 
@@ -535,7 +535,7 @@ class Facture extends CommonObject
 					if ($result < 0) $error++;
 				}
 			}
-			
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
@@ -788,7 +788,7 @@ class Facture extends CommonObject
 
 				$this->lignes[$i] = $line;	// TODO deprecated
 				$this->lines[$i] = $line;
-				
+
 				$i++;
 			}
 			$this->db->free($result);
@@ -2883,7 +2883,7 @@ class Facture extends CommonObject
 		$this->cond_reglement_id   = 1;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_id   = 7;
-		$this->mode_reglement_code = 'CHQ';
+		$this->mode_reglement_code = '';  // No particular payment mode defined
 		$this->note_public='SPECIMEN';
 		// Lines
 		$nbp = 5;
@@ -2953,7 +2953,7 @@ class Facture extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * 	Return an array of invoice lines
 	 */
@@ -3008,7 +3008,7 @@ class Facture extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-			
+
 			return 1;
 		}
 		else
@@ -3054,7 +3054,7 @@ class FactureLigne
 	var $info_bits = 0;		// Liste d'options cumulables:
 	// Bit 0:	0 si TVA normal - 1 si TVA NPR
 	// Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
-	
+
 	var $special_code;	// Liste d'options non cumulabels:
 	// 1: frais de port
 	// 2: ecotaxe

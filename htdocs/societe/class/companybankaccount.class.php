@@ -140,19 +140,20 @@ class CompanyBankAccount
 	{
 		if (empty($id) && empty($socid)) return -1;
 
-		$sql = "SELECT rowid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, adresse_proprio";
+		$sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, adresse_proprio";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id)    $sql.= " WHERE rowid = ".$id;
 		if ($socid) $sql.= " WHERE fk_soc  = ".$socid;
 
-		$result = $this->db->query($sql);
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			if ($this->db->num_rows($result))
+			if ($this->db->num_rows($resql))
 			{
-				$obj = $this->db->fetch_object($result);
+				$obj = $this->db->fetch_object($resql);
 
-				$this->id				= $obj->rowid;
+				$this->id			   = $obj->rowid;
+                $this->socid           = $obj->fk_soc;
 				$this->bank            = $obj->bank;
 				$this->courant         = $obj->courant;
 				$this->clos            = $obj->clos;
@@ -214,8 +215,9 @@ class CompanyBankAccount
 	}
 
 	/**
-	 * 	\brief		Return account country code
-	 *	\return		String		country code
+	 * 	Return account country code.
+	 *  Use this->iban and this->socid.
+	 *	@return		String		country code
 	 */
 	function getCountryCode()
 	{
@@ -234,8 +236,8 @@ class CompanyBankAccount
 	}
 
 	/**
-	 * 	\brief		Return if a bank account is defined with detailed information (bank code, desk code, number and key)
-	 * 	\return		boolean		true or false
+	 * 	Return if a bank account is defined with detailed information (bank code, desk code, number and key)
+	 * 	@return		boolean		true or false
 	 */
 	function useDetailedBBAN()
 	{
@@ -245,8 +247,7 @@ class CompanyBankAccount
 	}
 
 	/**
-	 *
-	 *
+	 * Initialize properties with test values
 	 */
 	function initAsSpecimen()
 	{

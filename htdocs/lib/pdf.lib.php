@@ -201,35 +201,67 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 
 	if ($usedetailedbban)
 	{
-		$pdf->SetFont('','',6);
+        $savcurx=$curx;
+
+	    $pdf->SetFont('','',6);
 		$pdf->SetXY ($curx, $cury);
 		$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Bank").': ' . $outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
 		$cury+=3;
 
-		$pdf->SetFont('','B',6);
 		$pdf->line($curx+1, $cury+1, $curx+1, $cury+10 );
-		$pdf->SetXY ($curx, $cury+1);
-		$pdf->MultiCell(18, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
-		$pdf->line($curx+18, $cury+1, $curx+18, $cury+10 );
-		$pdf->SetXY ($curx+18, $cury+1);
-		$pdf->MultiCell(18, 3, $outputlangs->transnoentities("DeskCode"), 0, 'C', 0);
-		$pdf->line($curx+36, $cury+1, $curx+36, $cury+10 );
-		$pdf->SetXY ($curx+36, $cury+1);
-		$pdf->MultiCell(24, 3, $outputlangs->transnoentities("BankAccountNumber"), 0, 'C', 0);
-		$pdf->line($curx+60, $cury+1, $curx+60, $cury+10 );
-		$pdf->SetXY ($curx+60, $cury+1);
-		$pdf->MultiCell(13, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
-		$pdf->line($curx+73, $cury+1, $curx+73, $cury+10 );
 
-		$pdf->SetFont('','',8);
-		$pdf->SetXY ($curx, $cury+6);
-		$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
-		$pdf->SetXY ($curx+18, $cury+6);
-		$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_guichet), 0, 'C', 0);
-		$pdf->SetXY ($curx+36, $cury+6);
-		$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($account->number), 0, 'C', 0);
-		$pdf->SetXY ($curx+60, $cury+6);
-		$pdf->MultiCell(13, 3, $outputlangs->convToOutputCharset($account->cle_rib), 0, 'C', 0);
+		$fieldstoshow=array('bank','desk','number','key');
+		//if ($account->pays_code == 'ES') $fieldstoshow=array('bank','desk','key','number');
+
+		foreach ($fieldstoshow as $val)
+		{
+		    if ($val == 'bank')
+		    {
+        		// Bank code
+                $tmplength=18;
+                $pdf->SetXY ($curx, $cury+6);
+                $pdf->SetFont('','',8);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
+        		$pdf->SetXY ($curx, $cury+1);
+        		$curx+=$tmplength;
+        		$pdf->SetFont('','B',6);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
+        		$pdf->line($curx, $cury+1, $curx, $cury+10 );
+		    }
+		    if ($val == 'desk')
+		    {
+        		// Desk
+                $tmplength=18;
+                $pdf->SetXY ($curx, $cury+6);
+                $pdf->SetFont('','',8);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->code_guichet), 0, 'C', 0);
+                $pdf->SetXY ($curx, $cury+1);
+        		$curx+=$tmplength;
+        		$pdf->SetFont('','B',6);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("DeskCode"), 0, 'C', 0);
+        		$pdf->line($curx, $cury+1, $curx, $cury+10 );
+		    }
+		    if ($val == 'number')
+		    {
+        		// Number
+                $tmplength=24;
+                $pdf->SetXY ($curx, $cury+6);
+                $pdf->SetFont('','',8);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->number), 0, 'C', 0);
+                $pdf->SetXY ($curx, $cury+1);
+        		$curx+=$tmplength;
+        		$pdf->SetFont('','B',6);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankAccountNumber"), 0, 'C', 0);
+        		$pdf->line($curx, $cury+1, $curx, $cury+10 );
+		    }
+		    if ($val == 'key')
+		    {
+        		// Key
+                $tmplength=13;
+                $pdf->SetXY ($curx, $cury+6);
+                $pdf->SetFont('','',8);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->cle_rib), 0, 'C', 0);
+                $pdf->SetXY ($curx, $cury+1);
+        		$curx+=$tmplength;
+        		$pdf->SetFont('','B',6);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
+        		$pdf->line($curx, $cury+1, $curx, $cury+10 );
+		    }
+		}
+
+        $curx=$savcurx;
 	}
 	else
 	{
@@ -243,6 +275,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 		$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
 		$cury-=9;
 	}
+    $pdf->SetXY ($curx, $cury+1);
 
 	// Use correct name of bank id according to country
 	$ibankey="IBANNumber";
@@ -404,7 +437,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	$desc=$object->lines[$i]->desc; if (empty($desc))   $desc=$object->lines[$i]->description;
 	$ref_supplier=$object->lines[$i]->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$object->lines[$i]->ref_fourn;	// TODO Not yeld saved for supplier invoices, only supplier orders
 	$note=$object->lines[$i]->note;
-	
+
 	if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
 	{
 		$libelleproduitservice = $object->hooks[$object->lines[$i]->special_code]->pdf_getlinedesc($object,$i,$outputlangs);
@@ -413,7 +446,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	{
 		if ($issupplierline) $prodser = new ProductFournisseur($db);
 		else $prodser = new Product($db);
-		
+
 		if ($idprod)
 		{
 			$prodser->fetch($idprod);
@@ -425,15 +458,15 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 				if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]))        $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
 			}
 		}
-		
+
 		// Description short of product line
 		$libelleproduitservice=$label;
-		
+
 		// Description long of product line
 		if ($desc && ($desc != $label))
 		{
 			if ($libelleproduitservice && !$hidedesc) $libelleproduitservice.="\n";
-			
+
 			if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
 			{
 				$discount=new DiscountAbsolute($db);
@@ -452,7 +485,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 				}
 			}
 		}
-		
+
 		// If line linked to a product
 		if ($idprod)
 		{
@@ -472,15 +505,15 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 						$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 					}
 				}
-				
+
 				if (!$hideref)
 				{
 					if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->trans("SupplierRef").' '.$ref_supplier.')';	// Show local ref and supplier ref
 					else $ref_prodserv = $prodser->ref;	// Show local ref only
-					
+
 					$ref_prodserv .= " - ";
 				}
-				
+
 				$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 			}
 		}
@@ -507,7 +540,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		$libelleproduitservice.="<br>".dol_htmlentitiesbr($period,1);
 		//print $libelleproduitservice;
 	}
-	
+
 	return $libelleproduitservice;
 }
 

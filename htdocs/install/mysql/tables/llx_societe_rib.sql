@@ -26,11 +26,11 @@ create table llx_societe_rib
   datec          datetime,
   tms            timestamp,
   label          varchar(30),
-  bank           varchar(255),
-  code_banque    varchar(7),
-  code_guichet   varchar(6),
-  number         varchar(255),
-  cle_rib        varchar(5),
+  bank           varchar(255),  -- bank name
+  code_banque    varchar(7),    -- bank code
+  code_guichet   varchar(6),    -- desk code
+  number         varchar(255),  -- account number
+  cle_rib        varchar(5),    -- key of bank account
   bic            varchar(10),
   iban_prefix    varchar(34),	-- 34 according to ISO 13616
   domiciliation  varchar(255),
