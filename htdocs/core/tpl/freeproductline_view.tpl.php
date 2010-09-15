@@ -32,6 +32,10 @@
 					$discount=new DiscountAbsolute($this->db);
 					$discount->fetch($line->fk_remise_except);
 					echo ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+				} elseif ($line->description == '(DEPOSIT)') {
+					$discount=new DiscountAbsolute($this->db);
+					$discount->fetch($line->fk_remise_except);
+					echo ' - '.$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
 				} else {
 					echo ' - '.nl2br($line->description);
 				}
