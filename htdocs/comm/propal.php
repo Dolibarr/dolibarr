@@ -1367,7 +1367,8 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Lines
 	 */
-	if ($conf->use_javascript_ajax && $propal->statut == 0 && $_GET['action'] != 'editline')
+	// We disable with 1 == 2 because until dev is finished.
+	if (1 == 2 && $conf->use_javascript_ajax && $propal->statut == 0 && $_GET['action'] != 'editline')
 	{
 		print '<script>
 		jQuery(document).ready(function(){
