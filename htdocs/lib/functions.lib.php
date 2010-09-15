@@ -2634,7 +2634,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 	if (!is_object($societe_vendeuse)) return -1;
 	if (!is_object($societe_acheteuse)) return -1;
 
-	dol_syslog("get_default_tva: seller use vat=".$societe_vendeuse->tva_assuj.", seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod.", SERVICES_ARE_ECOMMERCE_200238EC=".$conf->global->SERVICES_ARE_ECOMMERCE_200238EC);
+	dol_syslog("get_default_tva: seller use vat=".$societe_vendeuse->tva_assuj.", seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod.", SERVICE_ARE_ECOMMERCE_200238EC=".$conf->global->SERVICES_ARE_ECOMMERCE_200238EC);
 
 	// Si vendeur non assujeti a TVA (tva_assuj vaut 0/1 ou franchise/reel)
 	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
@@ -2668,7 +2668,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 
     // If services are eServices according to EU Council Directive 2002/38/EC (ec.europa.eu/taxation_customs/taxation/v.../article_1610_en.htm)
     // we use the buyer VAT.
-	if (! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC))
+	if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))
 	{
 		//print "eee".$societe_acheteuse->isACompany();exit;
         if (! $societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())

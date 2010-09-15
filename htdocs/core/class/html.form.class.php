@@ -2431,7 +2431,7 @@ class Form
         }
 
         //var_dump($societe_acheteuse);
-        //print "name=$name, selectedrate=$selectedrate, seller=".$societe_vendeuse->pays_code." buyer=".$societe_acheteuse->pays_code." idprod=$idprod, info_bits=$info_bits type=$type";
+        //print "name=$name, selectedrate=$selectedrate, seller=".$societe_vendeuse->pays_code." buyer=".$societe_acheteuse->pays_code." buyer is company=".$societe_acheteuse->isACompany()." idprod=$idprod, info_bits=$info_bits type=$type";
         //exit;
 
         // Get list of all VAT rates to show
@@ -2444,27 +2444,30 @@ class Form
         {
             $code_pays="'".$mysoc->pays_code."'";   // Pour compatibilite ascendente
         }
-        if (! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC) && is_object($societe_acheteuse))
+        if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))    // If option to have vat for end customer for services is on
         {
-            // We also add the buyer
-            if (is_numeric($type))
+            if (! $societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())
             {
-                if ($type == 1) // We know product is a service
+                // We also add the buyer
+                if (is_numeric($type))
+                {
+                    if ($type == 1) // We know product is a service
+                    {
+                        $code_pays.=",'".$societe_acheteuse->pays_code."'";
+                    }
+                }
+                else if (! $idprod)  // We don't know type of product
                 {
                     $code_pays.=",'".$societe_acheteuse->pays_code."'";
                 }
-            }
-            else if (! $idprod)  // We don't know type of product
-            {
-                $code_pays.=",'".$societe_acheteuse->pays_code."'";
-            }
-            else
-            {
-                $prodstatic=new Product($this->db);
-                $prodstatic->fetch($idprod);
-                if ($prodstatic->type == 1)   // We know product is a service
+                else
                 {
-                    $code_pays.=",'".$societe_acheteuse->pays_code."'";
+                    $prodstatic=new Product($this->db);
+                    $prodstatic->fetch($idprod);
+                    if ($prodstatic->type == 1)   // We know product is a service
+                    {
+                        $code_pays.=",'".$societe_acheteuse->pays_code."'";
+                    }
                 }
             }
         }
