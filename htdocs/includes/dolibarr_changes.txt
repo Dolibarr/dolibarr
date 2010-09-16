@@ -29,6 +29,15 @@ FPDFI and FPDF_TPL:
 * Replaced all sprintf(%0.2f) by sprintf(%0.2F) (Fix bug)
 
 
+TCPDF:
+------
+To be compatible with FPDF, replace line
+public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0, $valign='T', $fitcell=false) {
+by
+public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=false, $maxh=0, $valign='T', $fitcell=false) {
+
+
+
 JSGANTT:
 --------
 * Replace in function JSGantt.taskLink
