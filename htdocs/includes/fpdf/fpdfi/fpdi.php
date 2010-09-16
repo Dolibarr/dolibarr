@@ -1,6 +1,6 @@
 <?php
 //
-//  FPDI - Version 1.3.2
+//  FPDI - Version 1.3.4
 //
 //    Copyright 2004-2010 Setasign - Jan Slabon
 //
@@ -17,8 +17,7 @@
 //  limitations under the License.
 //
 
-define('FPDI_VERSION','1.3.2');
-
+define('FPDI_VERSION','1.3.4');
 
 /* Begin DOLCHANGE Added by Regis */
 // height of cell repect font height
@@ -88,8 +87,11 @@ class FPDI extends FPDF_TPL {
      */
     var $lastUsedPageBox;
 
+    /**
+     * Cache for imported pages/template ids
+     * @var array
+     */
     var $_importedPages = array();
-
 
     /**
      * Set a source-file
@@ -99,7 +101,7 @@ class FPDI extends FPDF_TPL {
      */
     function setSourceFile($filename) {
         $this->current_filename = $filename;
-        $fn =& $this->current_filename;
+        $fn = $this->current_filename;
 
         if (!isset($this->parsers[$fn]))
             $this->parsers[$fn] = new fpdi_pdf_parser($fn, $this);
@@ -119,7 +121,7 @@ class FPDI extends FPDF_TPL {
             return $this->error('Please import the desired pages before creating a new template.');
         }
 
-        $fn =& $this->current_filename;
+        $fn = $this->current_filename;
 
         // check if page already imported
         $pageKey = $fn.((int)$pageno).$boxName;
@@ -193,14 +195,19 @@ class FPDI extends FPDF_TPL {
         if ($adjustPageSize == true && is_null($_x) && is_null($_y)) {
             $size = $this->getTemplateSize($tplidx, $_w, $_h);
             $format = array($size['w'], $size['h']);
-            if ($format[0]!=$this->CurPageFormat[0] || $format[1]!=$this->CurPageFormat[1]) {
-                $this->w=$format[0];
-                $this->h=$format[1];
-                $this->wPt=$this->w*$this->k;
-        		$this->hPt=$this->h*$this->k;
-        		$this->PageBreakTrigger=$this->h-$this->bMargin;
-        		$this->CurPageFormat=$format;
-        		$this->PageSizes[$this->page]=array($this->wPt, $this->hPt);
+            if (!is_subclass_of($this, 'TCPDF')) {
+            	if ($format[0] != $this->CurPageFormat[0] || $format[1] != $this->CurPageFormat[1]) {
+	                $this->w = $format[0];
+	                $this->h = $format[1];
+	                $this->wPt = $this->w*$this->k;
+	        		$this->hPt = $this->h*$this->k;
+	        		$this->PageBreakTrigger = $this->h-$this->bMargin;
+	        		$this->CurPageFormat = $format;
+	        		$this->PageSizes[$this->page] = array($this->wPt, $this->hPt);
+	            }
+
+            } else {
+            	$this->setPageFormat($format, $format[0] > $format[1] ? 'L' : 'P');
             }
         }
 

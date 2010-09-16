@@ -1,6 +1,6 @@
 <?php
 //
-//  FPDI - Version 1.3.2
+//  FPDI - Version 1.3.4
 //
 //    Copyright 2004-2010 Setasign - Jan Slabon
 //
@@ -213,6 +213,11 @@ class fpdi_pdf_parser extends pdf_parser {
         if (isset($obj[1][1]['/Filter'])) {
             $_filter = $obj[1][1]['/Filter'];
 
+            if ($_filter[0] == PDF_TYPE_OBJREF) {
+                $tmpFilter = $this->pdf_resolve_object($this->c, $_filter);
+                $_filter = $tmpFilter[1];
+            }
+            
             if ($_filter[0] == PDF_TYPE_TOKEN) {
                 $filters[] = $_filter;
             } else if ($_filter[0] == PDF_TYPE_ARRAY) {
@@ -225,13 +230,15 @@ class fpdi_pdf_parser extends pdf_parser {
         foreach ($filters AS $_filter) {
             switch ($_filter[1]) {
                 case '/FlateDecode':
-                    if (function_exists('gzuncompress')) {
+                	// $stream .= "\x0F\x0D"; // in an errorious stream this suffix could work
+                	if (function_exists('gzuncompress')) {
                         $stream = (strlen($stream) > 0) ? @gzuncompress($stream) : '';
                     } else {
                         $this->error(sprintf('To handle %s filter, please compile php with zlib support.',$_filter[1]));
                     }
+                    
                     if ($stream === false) {
-                        $this->error('Error while decompressing stream.');
+                    	$this->error('Error while decompressing stream.');
                     }
                 break;
                 case '/LZWDecode':

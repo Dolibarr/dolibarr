@@ -1,6 +1,6 @@
 <?php
 //
-//  FPDI - Version 1.3.2
+//  FPDI - Version 1.3.4
 //
 //    Copyright 2004-2010 Setasign - Jan Slabon
 //
@@ -87,6 +87,13 @@ if (!call_user_func_array('class_exists', $__tmp)) {
          */
         var $pdfVersion;
         
+        /**
+	     * For reading encrypted documents and xref/objectstreams are in use
+	     *
+	     * @var boolean
+	     */
+	    var $readPlain = true;
+	    
         /**
          * Constructor
          *
@@ -206,8 +213,8 @@ if (!call_user_func_array('class_exists', $__tmp)) {
          * @param integer $offset of xref-table
          */
         function pdf_read_xref(&$result, $offset) {
-            
-            fseek($this->f, $o_pos = $offset-20); // set some bytes backwards to fetch errorious docs
+            $o_pos = $offset-min(20, $offset);
+        	fseek($this->f, $o_pos); // set some bytes backwards to fetch errorious docs
                 
             $data = fread($this->f, 100);
             
@@ -452,7 +459,7 @@ if (!call_user_func_array('class_exists', $__tmp)) {
     		        } else {
     		        	$length = $this->actual_obj[1][1]['/Length'][1];	
     		        }
-    		        
+    		        	
     		        if ($length > 0) {
         		        $c->reset($startpos+$e,$length);
         		        $v = $c->buffer;
@@ -542,7 +549,14 @@ if (!call_user_func_array('class_exists', $__tmp)) {
         			$header = $this->pdf_read_value($c);
     
         			if ($header[0] != PDF_TYPE_OBJDEC || $header[1] != $obj_spec[1] || $header[2] != $obj_spec[2]) {
-        				$this->error("Unable to find object ({$obj_spec[1]}, {$obj_spec[2]}) at expected location");
+        				$toSearchFor = $obj_spec[1].' '.$obj_spec[2].' obj';
+        				if (preg_match('/'.$toSearchFor.'/', $c->buffer)) {
+        					$c->offset = strpos($c->buffer, $toSearchFor) + strlen($toSearchFor);
+        					// reset stack
+        					$c->stack = array();
+        				} else {
+	        				$this->error("Unable to find object ({$obj_spec[1]}, {$obj_spec[2]}) at expected location");
+        				}
         			}
     
         			// If we're being asked to store all the information

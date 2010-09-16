@@ -1,6 +1,6 @@
 <?php
 //
-//  FPDI - Version 1.3.2
+//  FPDI - Version 1.3.4
 //
 //    Copyright 2004-2010 Setasign - Jan Slabon
 //
@@ -51,6 +51,22 @@ class FPDF extends TCPDF {
         }
     }
 
+    function _putstream($s) {
+		$this->_out($this->_getstream($s));
+	}
+	
+	function _getxobjectdict() {
+		
+        $out = parent::_getxobjectdict();
+        if (count($this->tpls)) {
+            foreach($this->tpls as $tplidx => $tpl) {
+                $out .= sprintf('%s%d %d 0 R', $this->tplprefix, $tplidx, $tpl['n']);
+            }
+        }
+        
+        return $out;
+    }
+	
     /**
      * Encryption of imported data by FPDI
      *
