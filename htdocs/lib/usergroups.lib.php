@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
  *		\version    $Id$
  */
-function user_prepare_head($user)
+function user_prepare_head($object)
 {
 	global $langs, $conf;
 	$langs->load("users");
@@ -31,7 +32,7 @@ function user_prepare_head($user)
 	$h = 0;
 	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$user->id;
+    $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$object->id;
     $head[$h][1] = $langs->trans("UserCard");
     $head[$h][2] = 'user';
     $h++;
@@ -39,52 +40,69 @@ function user_prepare_head($user)
 	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
 	{
 		$langs->load("ldap");
-	    $head[$h][0] = DOL_URL_ROOT.'/user/ldap.php?id='.$user->id;
+	    $head[$h][0] = DOL_URL_ROOT.'/user/ldap.php?id='.$object->id;
 	    $head[$h][1] = $langs->trans("LDAPCard");
 	    $head[$h][2] = 'ldap';
 	    $h++;
 	}
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$user->id;
+    $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
     $head[$h][1] = $langs->trans("UserRights");
     $head[$h][2] = 'rights';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$user->id;
+    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
     $head[$h][1] = $langs->trans("UserGUISetup");
     $head[$h][2] = 'guisetup';
     $h++;
 
     if ($conf->clicktodial->enabled)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$user->id;
+        $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$object->id;
         $head[$h][1] = $langs->trans("ClickToDial");
 	    $head[$h][2] = 'clicktodial';
         $h++;
     }
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$user->id;
+    $head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Note");
     $head[$h][2] = 'note';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$user->id;
+    $head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
     $h++;
+    
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
+	if (is_array($conf->tabs_modules['user']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['user'] as $value)
+		{
+			$values=explode(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$object->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
 
 	return $head;
 }
 
 
-function group_prepare_head($group)
+function group_prepare_head($object)
 {
 	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/group/fiche.php?id='.$group->id;
+    $head[$h][0] = DOL_URL_ROOT.'/user/group/fiche.php?id='.$object->id;
     $head[$h][1] = $langs->trans("GroupCard");
     $head[$h][2] = 'group';
     $h++;
@@ -92,16 +110,33 @@ function group_prepare_head($group)
 	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
 	{
 		$langs->load("ldap");
-	    $head[$h][0] = DOL_URL_ROOT.'/user/group/ldap.php?id='.$group->id;
+	    $head[$h][0] = DOL_URL_ROOT.'/user/group/ldap.php?id='.$object->id;
 	    $head[$h][1] = $langs->trans("LDAPCard");
 	    $head[$h][2] = 'ldap';
 	    $h++;
 	}
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$group->id;
+    $head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$object->id;
     $head[$h][1] = $langs->trans("GroupRights");
     $head[$h][2] = 'rights';
     $h++;
+    
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
+	if (is_array($conf->tabs_modules['group']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['group'] as $value)
+		{
+			$values=explode(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$object->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
 
 	return $head;
 }

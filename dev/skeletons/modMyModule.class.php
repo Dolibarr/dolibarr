@@ -111,6 +111,9 @@ class modMyModule extends DolibarrModules
 		// 'propal'           to add a tab in propal view
 		// 'member'           to add a tab in fundation member view
 		// 'contract'         to add a tab in contract view
+		// 'user'             to add a tab in user view
+		// 'group'            to add a tab in group view
+		// 'contact'          to add a tab in contact view
 
 
 		// Boxes

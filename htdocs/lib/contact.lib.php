@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,17 +29,17 @@
 /**
  * Enter description here...
  *
- * @param   $contrat
+ * @param   $object
  * @return  array
  */
-function contact_prepare_head($contrat)
+function contact_prepare_head($object)
 {
 	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
+	$head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'general';
 	$h++;
@@ -47,26 +48,43 @@ function contact_prepare_head($contrat)
 	{
 		$langs->load("ldap");
 
-		$head[$h][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$_GET["id"];
+		$head[$h][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("LDAPCard");
 		$head[$h][2] = 'ldap';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
+	$head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("PersonalInformations");
 	$head[$h][2] = 'perso';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
+	$head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("ExportImport");
 	$head[$h][2] = 'exportimport';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
+	$head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
+	
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
+	if (is_array($conf->tabs_modules['contact']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['contact'] as $value)
+		{
+			$values=explode(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$object->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
 
 	return $head;
 }
