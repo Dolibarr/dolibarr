@@ -771,8 +771,6 @@ class CommonObject
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
-		
-		dol_syslog("CommonObject::updateRangOfLine sql=".$sql, LOG_DEBUG);
 		if (! $this->db->query($sql) )
 		{
 			dol_print_error($this->db);
@@ -787,11 +785,8 @@ class CommonObject
 		$rows = explode(',',$roworder);
 		$num = count($rows);
 		
-		dol_syslog("CommonObject::line_ajaxorder roworder=".$roworder." num=".$num, LOG_DEBUG);
-		
 		for ($i = 0 ; $i < $num ; $i++)
 		{
-			dol_syslog("CommonObject::line_ajaxorder row=".$rows[$i]." rang=".($i+1), LOG_DEBUG);
 			$this->updateRangOfLine($rows[$i], ($i+1));
 		}
 	}
