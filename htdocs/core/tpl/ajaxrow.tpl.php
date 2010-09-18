@@ -28,7 +28,7 @@ jQuery(document).ready(function(){
 	jQuery("#objectline").tableDnD({
 		onDrop: function(table, row) {
 		var roworder = cleanSerialize(jQuery("#objectline").tableDnDSerialize());
-		var element = "<?php echo $propal->table_element_line; ?>";
+		var element = "<?php echo $object->table_element_line; ?>";
 		jQuery.get("<?php echo DOL_URL_ROOT; ?>/core/ajaxrow.php?roworder="+roworder+"&element="+element);
         }
 	});
