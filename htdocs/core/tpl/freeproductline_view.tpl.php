@@ -89,12 +89,12 @@
 	<?php if ($num > 1) { ?>
 	<td align="center">
 		<?php if ($i > 0) { ?>
-		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
+		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
 		<?php echo img_up(); ?>
 		</a>
 		<?php } ?>
 		<?php if ($i < $num-1) { ?>
-		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
+		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
 		<?php echo img_down(); ?>
 		</a>
 		<?php } ?>
