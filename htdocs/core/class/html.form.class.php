@@ -1924,8 +1924,8 @@ class Form
 			    jQuery("#dialog-confirm").dialog({
 			        autoOpen: true,
 			        resizable: false,
-			        height:160,
-			        width:580,
+			        height:170,
+			        width:590,
 			        modal: true,
 			        closeOnEscape: false,
 			        close: function(event, ui) {
