@@ -699,7 +699,7 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *	\brief		Check permissions
+	 *	\brief		Check if user has read permission on project
 	 * 	@param		user		Object user to evaluate
 	 * 	@param 		noprint		0=Print forbidden message if no permission, 1=Return -1 if no permission
 	 */
@@ -758,7 +758,7 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * Return array of projects affected to a user, authorized to a user, or all projects
+	 * Return array of projects a user has permission on, is affected to, or all projects
 	 *
 	 * @param 	user		User object
 	 * @param 	mode		0=All project I have permission on, 1=Affected to me only, 2=Will return list of all projects
@@ -775,23 +775,17 @@ class Project extends CommonObject
 
 		$sql = "SELECT DISTINCT p.rowid, p.ref";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-		$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
-		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
+		if ($mode == 0 || $mode == 1)
+		{
+    		$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
+    		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
+		}
 		$sql.= " WHERE p.entity = ".$conf->entity;
-		if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+        // Internal users must see project he is contact to even if project linked to a third party he can't see.
+		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+        if ($socid) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 
-		if ($mode == 2)
-		{
-			// No filter. Use this if user has permission to see all project
-		}
-		if ($mode == 1)
-		{
-			$sql.= " AND ec.element_id = p.rowid";
-			$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
-			$sql.= " AND ctc.element = '".$this->element."'";
-			$sql.= " AND ec.fk_socpeople = ".$user->id;
-		}
-		if ($mode == 0)
+        if ($mode == 0)
 		{
 			$sql.= " AND ( p.public = 1";
 			//$sql.= " OR p.fk_user_creat = ".$user->id;
@@ -800,6 +794,17 @@ class Project extends CommonObject
 			$sql.= " AND ctc.element = '".$this->element."'";
 			$sql.= " AND ec.fk_socpeople = ".$user->id." ) )";
 		}
+        if ($mode == 1)
+        {
+            $sql.= " AND ec.element_id = p.rowid";
+            $sql.= " AND ctc.rowid = ec.fk_c_type_contact";
+            $sql.= " AND ctc.element = '".$this->element."'";
+            $sql.= " AND ec.fk_socpeople = ".$user->id;
+        }
+        if ($mode == 2)
+        {
+            // No filter. Use this if user has permission to see all project
+        }
 
 		$resql = $this->db->query($sql);
 		if ($resql)

@@ -266,9 +266,10 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
  * @param   $lines
  * @param   $level
  * @param   $projectsrole
+ * @param   $mytask         0 or 1 to enable only if task is a task i am affected to
  * @return  $inc
  */
-function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
+function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mytask=0)
 {
 	global $user, $bc, $langs;
 	global $form;
@@ -327,19 +328,29 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 			else print '--:--';
 			print "</td>\n";
 
-			$disabled=1;
+			$disabledproject=1;$disabledtask=1;
 			//print "x".$lines[$i]->fk_project;
 			//var_dump($lines[$i]);
 			//var_dump($projectsrole[$lines[$i]->fk_project]);
 			// If at least one role for project
-			if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) $disabled=0;
+			if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer)
+			{
+			    $disabledproject=0;
+                $disabledtask=0;
+			}
+            // If mytask and no role on task
+            if ($mytask && empty($tasksrole[$lines[$i]->id]))
+            {
+                $disabledtask=1;
+            }
 
 			print '<td nowrap="nowrap">';
-			print $form->select_date('',$lines[$i]->id,'','','',"addtime",1,0,1,$disabled);
+			print $form->select_date('',$lines[$i]->id,'','','',"addtime",1,0,1,$disabledtask);
 			print '&nbsp;&nbsp;&nbsp;';
-			print $form->select_duration($lines[$i]->id,'',$disabled);
-			print '&nbsp;<input type="submit" class="button"'.($disabled?' disabled="true"':'').' value="'.$langs->trans("Add").'">';
-			if ((! $lines[$i]->public) && $disabled) print '('.$langs->trans("YouAreNotContactOfProject").')';
+			print $form->select_duration($lines[$i]->id,'',$disabledtask);
+			print '&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="true"':'').' value="'.$langs->trans("Add").'">';
+            if ($disabledtask) print '('.$langs->trans("TaskIsNotAffectedToYou").')';
+			if ((! $lines[$i]->public) && $disabledproject) print '('.$langs->trans("YouAreNotContactOfProject").')';
 			print '</td>';
 			print "<td>&nbsp;";
 			print '</td>';
@@ -347,7 +358,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 			print "</tr>\n";
 			$inc++;
 			$level++;
-			if ($lines[$i]->id) PLinesb($inc, $lines[$i]->id, $lines, $level, $projectsrole);
+			if ($lines[$i]->id) PLinesb($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mytask);
 			$level--;
 		}
 		else
@@ -541,8 +552,8 @@ function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 
 /**
  * Clean task not linked to a parent
- * @param unknown_type $db
- * @return		int		Nb of records deleted
+ * @param   $db     Database handler
+ * @return	int		Nb of records deleted
  */
 function clean_orphelins($db)
 {
@@ -598,12 +609,13 @@ function clean_orphelins($db)
 /**
  * Return HTML table with list of projects and number of opened tasks
  *
- * @param unknown_type $db
- * @param unknown_type $mine
- * @param unknown_type $socid
- * @param unknown_type $projectsListId
+ * @param   $db
+ * @param   $mine               Limited to project i am contact to
+ * @param   $socid
+ * @param   $projectsListId
+ * @param   $mytasks            Limited to task i am contact to
  */
-function print_projecttasks_array($db,$mine,$socid,$projectsListId)
+function print_projecttasks_array($db, $mine, $socid, $projectsListId, $mytasks=0)
 {
 	global $langs,$conf,$user,$bc;
 
@@ -623,11 +635,29 @@ function print_projecttasks_array($db,$mine,$socid,$projectsListId)
 
 	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, COUNT(t.rowid) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
+	if ($mytasks)
+	{
+        $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+	    $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
+        $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
+	}
+	else
+	{
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
+	}
 	$sql.= " WHERE p.entity = ".$conf->entity;
-	if ($mine) $sql.= " AND p.rowid IN (".$projectsListId.")";
-	if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut";
+    if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+	//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+    if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+    if ($mytasks)
+    {
+        $sql.= " AND p.rowid = t.fk_projet";
+        $sql.= " AND ec.element_id = t.rowid";
+        $sql.= " AND ctc.rowid = ec.fk_c_type_contact";
+        $sql.= " AND ctc.element = 'project_task'";
+        $sql.= " AND ec.fk_socpeople = ".$user->id;
+    }
+    $sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut";
 
 	$var=true;
 	$resql = $db->query($sql);
@@ -644,8 +674,8 @@ function print_projecttasks_array($db,$mine,$socid,$projectsListId)
 			$projectstatic->user_author_id = $objp->fk_user_creat;
 			$projectstatic->public = $objp->public;
 
+			// Check is user has read permission on project
 			$userAccess = $projectstatic->restrictedProjectArea($user,1);
-
 			if ($userAccess >= 0)
 			{
 				$var=!$var;

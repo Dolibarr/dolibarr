@@ -29,23 +29,18 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
-if (!$user->rights->projet->lire) accessforbidden();
-
-$socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
-
 $title = $langs->trans("Projects");
 
 // Security check
-$socid=0;
+$socid = (is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
 if ($user->societe_id > 0) $socid=$user->societe_id;
-
-
 if ($socid > 0)
 {
 	$soc = new Societe($db);
 	$soc->fetch($socid);
 	$title .= ' (<a href="liste.php">'.$soc->nom.'</a>)';
 }
+if (!$user->rights->projet->lire) accessforbidden();
 
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
@@ -60,6 +55,7 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
 
 /*
@@ -71,7 +67,6 @@ llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:
 $projectstatic = new Project($db);
 $socstatic = new Societe($db);
 
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
 
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.public, p.fk_user_creat";
@@ -80,9 +75,10 @@ $sql.= ", s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
-if ($mine) $sql.= " AND p.rowid IN (".$projectsListId.")";
-//var_dump($user->rights->societe);
-if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
+//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($_GET["search_ref"])
 {
 	$sql.= " AND p.ref LIKE '%".addslashes($_GET["search_ref"])."%'";
@@ -98,7 +94,6 @@ if ($_GET["search_societe"])
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-//print $sql;
 $var=true;
 $resql = $db->query($sql);
 if ($resql)

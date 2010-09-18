@@ -49,8 +49,8 @@ $langs->load("projects");
 $now = dol_now();
 
 $projectstatic=new Project($db);
-
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+//$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
 
 $title=$langs->trans("Activities");
 if ($mine) $title=$langs->trans("MyActivities");
@@ -69,8 +69,7 @@ else
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
-
-print_projecttasks_array($db,$mine,$socid,$projectsListId);
+print_projecttasks_array($db,0,$socid,$projectsListId,$mine);
 
 
 /* Affichage de la liste des projets d'aujourd'hui */
@@ -80,7 +79,7 @@ print '<td width="50%">'.$langs->trans('Today').'</td>';
 print '<td width="50%" align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
+$sql = "SELECT p.rowid, p.ref, p.title, SUM(tt.task_duration) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
@@ -90,7 +89,7 @@ $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND date_format(task_date,'%d%m%y') = ".strftime("%d%m%y",time());
 $sql.= " AND p.rowid in ('".$projectsListId."')";
-$sql.= " GROUP BY p.rowid";
+$sql.= " GROUP BY p.rowid, p.ref, p.title";
 
 $resql = $db->query($sql);
 if ( $resql )

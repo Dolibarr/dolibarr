@@ -35,6 +35,9 @@ $langs->load('projects');
 
 $mode=$_REQUEST["mode"];
 
+$mine=0;
+if ($mode == 'mine') $mine=1;
+
 $projectid='';
 $projectid=isset($_GET["id"])?$_GET["id"]:$_POST["projectid"];
 
@@ -98,14 +101,18 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
  */
 
 $form=new Form($db);
+$projectstatic=new Project($db);
+$project = new Project($db);
+$taskstatic = new Task($db);
 
 $title=$langs->trans("TimeSpent");
-if ($mode == 'mine') $title=$langs->trans("MyTimeSpent");
+if ($mine) $title=$langs->trans("MyTimeSpent");
+
 
 llxHeader("",$title,"");
 
-$project = new Project($db);
-$task = new Task($db);
+//$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
 
 if ($_GET["id"])
 {
@@ -113,14 +120,18 @@ if ($_GET["id"])
 	$project->societe->fetch($project->societe->id);
 }
 
+$tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0);    // We want to see all task of project i am allowed to see, not only mine. Later only mine will be editable later.
+$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($user,0,($project->id?$project->id:$projectsListId),0);
+$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$project->id:$projectsListId),0);
+//var_dump($tasksarray);
+//var_dump($projectsrole);
+//var_dump($taskrole);
+
+
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 if ($mesg) print $mesg;
 
-$tasksarray=$task->getTasksArray(0,0,$project->id,$socid);
-$projectsrole=$task->getUserRolesForProjectsOrTasks($user,0,$project->id,0);
-//var_dump($tasksarray);
-//var_dump($projectsrole);
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -134,7 +145,7 @@ print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";
-PLinesb($j, 0, $tasksarray, $level, $projectsrole);
+PLinesb($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine);
 print '</form>';
 
 

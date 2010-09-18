@@ -220,12 +220,16 @@ class pdf_crabe extends ModelePDFFactures
 
 					$pdf->SetFont('','', 9);
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J');
+                    //$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J', false, 1, '', '', true, 0, false, false, 0, 'T', true);
+                    $pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J', false);    // FPDF
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
 					// Rect prend une longueur en 3eme param
 					$pdf->SetDrawColor(192,192,192);
+//print $pdf->getStringHeight(200,'SPECIMEN',false,false);
+//print "$this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1";exit;
+
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
 					$tab_height = $tab_height - $height_note;

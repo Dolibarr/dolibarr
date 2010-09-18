@@ -333,7 +333,7 @@ class Task extends CommonObject
 				return 0;
 			}
 		}
-		
+
 		// Delete rang of line
 		//$this->delRangOfLine($this->id, $this->element);
 
@@ -478,7 +478,7 @@ class Task extends CommonObject
 			$sql.= " WHERE t.fk_projet = p.rowid";
 			$sql.= " AND p.entity = ".$conf->entity;
 			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-			if ($projectid) $sql.= " AND p.rowid =".$projectid;
+			if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
 		}
 		if ($mode == 1)
 		{
@@ -486,7 +486,7 @@ class Task extends CommonObject
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
 			$sql.= " WHERE p.entity = ".$conf->entity;
 			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-			if ($projectid) $sql.= " AND p.rowid =".$projectid;
+			if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
 		}
 		$sql.= " ORDER BY p.ref, t.label";
 
@@ -504,7 +504,7 @@ class Task extends CommonObject
 
 				$obj = $this->db->fetch_object($resql);
 
-				if ((! $obj->public) && (is_object($userp)))	// If not public and we ask a filter on project owned by a user
+				if ((! $obj->public) && (is_object($userp)))	// If not public project and we ask a filter on project owned by a user
 				{
 					if (! $this->getUserRolesForProjectsOrTasks($userp, 0, $obj->projectid, 0))
 					{
@@ -552,14 +552,13 @@ class Task extends CommonObject
 	 * Return list of roles for a user for each projects or each tasks (or a particular project or task)
 	 * @param 	userp			Return roles on project for this internal user (task id can't be defined)
 	 * @param	usert			Return roles on task for this internal user
-	 * @param 	projectid		Project id to filter on a project
+	 * @param 	projectid		Project id list separated with , to filter on project
 	 * @param 	taskid			Task id to filter on a task
 	 * @return 	array			Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
 	 */
-	function getUserRolesForProjectsOrTasks($userp,$usert,$projectid=0,$taskid=0)
+	function getUserRolesForProjectsOrTasks($userp,$usert,$projectid='',$taskid=0)
 	{
-		$projectsrole = array();
-		$tasksrole = array();
+		$arrayroles = array();
 
 		dol_syslog("Task::getUserRolesForProjectsOrTasks userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
 
@@ -591,8 +590,8 @@ class Task extends CommonObject
 		$sql.= " AND ctc.source = 'internal'";
 		if ($projectid)
 		{
-			if ($userp) $sql.= " AND pt.rowid = ".$projectid;
-			if ($usert) $sql.= " AND pt.fk_projet = ".$projectid;
+			if ($userp) $sql.= " AND pt.rowid in (".$projectid.")";
+			if ($usert) $sql.= " AND pt.fk_projet in (".$projectid.")";
 		}
 		if ($taskid)
 		{
@@ -610,8 +609,8 @@ class Task extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				if (empty($projectsrole[$obj->pid])) $projectsrole[$obj->pid] = $obj->code;
-				else $projectsrole[$obj->pid].=','.$obj->code;
+				if (empty($arrayroles[$obj->pid])) $arrayroles[$obj->pid] = $obj->code;
+				else $arrayroles[$obj->pid].=','.$obj->code;
 				$i++;
 			}
 			$this->db->free($resql);
@@ -621,7 +620,7 @@ class Task extends CommonObject
 			dol_print_error($this->db);
 		}
 
-		return $projectsrole;
+		return $arrayroles;
 	}
 
 

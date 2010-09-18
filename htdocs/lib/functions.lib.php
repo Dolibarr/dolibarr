@@ -1604,6 +1604,10 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 		{
 			if (! $user->rights->ecm->download) $readok=0;
 		}
+        else if ($feature == 'projet')
+        {
+            if (! $user->rights->projet->lire && ! $user->rights->projet->all->lire) $readok=0;
+        }
 		else if (! empty($feature2))	// This should be used for future changes
 		{
 			if (empty($user->rights->$feature->$feature2->lire)
@@ -1684,10 +1688,11 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 			$sql='';
 
 			$check = array('user','usergroup','produit','service','produit|service'); // Test on entity only (Objects with no link to company)
-			$checksoc = array('societe');	// Test for societe object
-			$checkother = array('contact','projet');	// Test on entity and link to societe. Allowed if link is empty (Ex: contacts, projects...).
-			// Others: Test on entity and link to societe. Not allowed if link is empty (Ex: invoice, orders...).
+			$checksoc = array('societe');	 // Test for societe object
+			$checkother = array('contact');	 // Test on entity and link to societe. Allowed if link is empty (Ex: contacts...).
+            $checkproject = array('projet'); // Test for project object
 			$nocheck = array('categorie','barcode','stock','fournisseur');	// No test
+            $checkdefault = 'all other not already defined'; // Test on entity and link to societe. Not allowed if link is empty (Ex: invoice, orders...).
 
 			// If dbtable not defined, we use same name for table than module name
 			if (empty($dbtablename)) $dbtablename = $feature;
@@ -1756,6 +1761,17 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql.= " AND dbt.entity = ".$conf->entity;
 				}
 			}
+			else if (in_array($feature,$checkproject))
+            {
+                if (! $user->rights->projet->all->lire)
+                {
+                    include_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+                    $projectstatic=new Project($db);
+                    $tmps=$projectstatic->getProjectsAuthorizedForUser($user,0,1,$user->societe_id);
+                    $tmparray=explode(',',$tmps);
+                    if (! in_array($objectid,$tmparray)) accessforbidden();
+                }
+            }
 			else if (!in_array($feature,$nocheck))
 			{
 				// If external user: Check permission for external users
