@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,9 +26,9 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/core/notify.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/core/class/notify.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/commande/class/commande.class.php");
 
 if (!$user->rights->commande->lire) accessforbidden();
 
@@ -126,7 +126,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 $max=5;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid,";
-$sql.= " ".$db->pdate("date_cloture")." as datec";
+$sql.= " date_cloture as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -162,7 +162,7 @@ if ($resql)
 			$commandestatic->ref=$obj->ref;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+			print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
 			print $commandestatic->getNomUrl(1);
 			print '</td>';
 
@@ -180,7 +180,7 @@ if ($resql)
 			print '</td>';
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-			print '<td>'.dol_print_date($obj->datec).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datec)).'</td>';
 			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 			print '</tr>';
 			$i++;
@@ -229,7 +229,7 @@ if ($conf->commande->enabled)
 				$commandestatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
 				print $commandestatic->getNomUrl(1);
 				print '</td>';
 
@@ -298,7 +298,7 @@ if ($conf->commande->enabled)
 				$commandestatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
 				print $commandestatic->getNomUrl(1);
 				print '</td>';
 
