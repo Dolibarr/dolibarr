@@ -69,6 +69,10 @@ class Propal extends CommonObject
 	var $date_livraison;
 	var $fin_validite;
 
+	var $user_author_id;
+	var $user_valid_id;
+	var $user_close_id;
+
 	var $total_ht;					// Total net of tax
 	var $total_tva;					// Total VAT
 	var $total_localtax1;			// Total Local Taxes 1
@@ -376,7 +380,7 @@ class Propal extends CommonObject
 			$this->line->total_ttc=$total_ttc;
 			$this->line->product_type=$type;
 			$this->line->special_code=$special_code;
-			
+
 			// Mise en option de la ligne
 			//if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty) $ligne->special_code=3;
 			if (empty($qty) && empty($special_code)) $this->line->special_code=3;
@@ -456,7 +460,7 @@ class Propal extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
-			
+
 			if (empty($qty) && empty($special_code)) $special_code=3;
 
 
@@ -776,7 +780,7 @@ class Propal extends CommonObject
 		$error=0;
 
 		$object=new Propal($this->db);
-		
+
 		// Instantiate hooks of thirdparty module
 		if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 		{
@@ -788,7 +792,7 @@ class Propal extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$objFrom = $object;
-		
+
 		$object->id=0;
 		$object->statut=0;
 
@@ -839,7 +843,7 @@ class Propal extends CommonObject
 					if ($result < 0) $error++;
 				}
 			}
-			
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
@@ -880,7 +884,8 @@ class Propal extends CommonObject
 		$sql.= ", date_livraison as date_livraison";
 		$sql.= ", model_pdf, ref_client";
 		$sql.= ", note, note_public";
-		$sql.= ", fk_projet, fk_statut, fk_user_author";
+		$sql.= ", fk_projet, fk_statut";
+		$sql.= ", fk_user_author, fk_user_valid, fk_user_cloture";
 		$sql.= ", fk_adresse_livraison";
 		$sql.= ", p.fk_cond_reglement";
 		$sql.= ", p.fk_mode_reglement";
@@ -941,6 +946,8 @@ class Propal extends CommonObject
 				$this->cond_reglement_doc      = $obj->cond_reglement_libelle_doc;
 
 				$this->user_author_id = $obj->fk_user_author;
+				$this->user_valid_id  = $obj->fk_user_valid;
+				$this->user_close_id  = $obj->fk_user_cloture;
 
 				if ($obj->fk_statut == 0)
 				{
@@ -1041,12 +1048,14 @@ class Propal extends CommonObject
 	{
 		global $conf,$langs;
 
+		$now=dol_now();
+
 		if ($user->rights->propale->valider)
 		{
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-			$sql.= " SET fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=".$user->id;
+			$sql.= " SET fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			if ($this->db->query($sql))
@@ -1063,8 +1072,20 @@ class Propal extends CommonObject
 					// Fin appel triggers
 				}
 
-				$this->db->commit();
-				return 1;
+				if (! $error)
+				{
+					$this->brouillon=0;
+					$this->statut = 1;
+					$this->user_valid_id=$user->id;
+					$this->datev=$now;
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					return -2;
+				}
 			}
 			else
 			{
@@ -2114,7 +2135,7 @@ class Propal extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-			
+
 			return 1;
 		}
 		else
