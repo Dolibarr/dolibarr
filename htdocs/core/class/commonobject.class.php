@@ -35,6 +35,15 @@ class CommonObject
 {
 	// Instantiate hook classe of thirdparty module
 	var $hooks=array();
+	
+	/**
+	 *    Constructeur de la classe
+	 *    @param	DB		Handler acces base de donnees
+	 */
+	function CommonObject($DB)
+	{
+		$this->db = $DB;
+	}
 
 	/**
 	 *      \brief      Check if ref is used.
@@ -776,7 +785,7 @@ class CommonObject
 	function line_ajaxorder($roworder)
 	{	
 		$rows = explode(',',$roworder);
-		$num = sizeof($rows);
+		$num = count($rows);
 		
 		dol_syslog("CommonObject::line_ajaxorder roworder=".$roworder." num=".$num, LOG_DEBUG);
 		
