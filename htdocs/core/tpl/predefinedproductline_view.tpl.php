@@ -76,7 +76,7 @@
 	</td>
 
 	<?php if ($num > 1) { ?>
-	<td align="center">
+	<td align="center" class="tdlineupdown">
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
 		<?php echo img_up(); ?>

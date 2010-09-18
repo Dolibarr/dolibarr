@@ -18,20 +18,27 @@
  * $Id$
  */
 ?>
- 
+
 <!-- BEGIN PHP TEMPLATE -->
 
 <script>
 jQuery(document).ready(function(){
-	jQuery(".imgup").hide();
-    jQuery(".imgdown").hide();
+/*	jQuery(".imgup").hide(); */
+/*    jQuery(".imgdown").hide(); */
+    jQuery(".lineupdown").removeAttr('href');
 	jQuery("#objectline").tableDnD({
 		onDrop: function(table, row) {
 		var roworder = cleanSerialize(jQuery("#objectline").tableDnDSerialize());
 		var element = "<?php echo $object->table_element_line; ?>";
 		jQuery.get("<?php echo DOL_URL_ROOT; ?>/core/ajaxrow.php?roworder="+roworder+"&element="+element);
-        }
+        },
+        dragHandle: "tdlineupdown"
 	});
+	 jQuery(".tdlineupdown").hover(function() {
+		 jQuery(this).addClass('showDragHandle');
+   }, function() {
+	   jQuery(this).removeClass('showDragHandle');
+   });
 });
 </script>
 

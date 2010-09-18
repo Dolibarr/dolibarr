@@ -151,6 +151,9 @@ form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
+.showDragHandle {
+	cursor: move;
+}
 
 
 /* ============================================================================== */
