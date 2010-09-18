@@ -163,7 +163,7 @@ if ($resql)
 			$commandestatic->ref=$obj->ref;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+			print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
 			print $commandestatic->getNomUrl(1);
 			print '</td>';
 
@@ -231,7 +231,7 @@ if ($conf->commande->enabled)
 				$commandestatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
 				print $commandestatic->getNomUrl(1);
 				print '</td>';
 
@@ -262,7 +262,7 @@ if ($conf->commande->enabled)
 }
 
 /*
- * Commandes en cours d'expedition
+ * Orders thar are in a shipping process
  */
 if ($conf->commande->enabled)
 {
@@ -301,7 +301,7 @@ if ($conf->commande->enabled)
 				$commandestatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
 				print $commandestatic->getNomUrl(1);
 				print '</td>';
 
