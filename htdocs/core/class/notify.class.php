@@ -71,7 +71,7 @@ class Notify
 		$langs->load("mails");
 
 		$nb=$this->countDefinedNotifications($action,$socid);
-		if ($nb <= 0) $texte=$langs->trans("NoNotificationsWillBeSent");
+		if ($nb <= 0) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("NoNotificationsWillBeSent");
 		if ($nb == 1) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ANotificationsWillBeSent");
 		if ($nb >= 2) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("SomeNotificationsWillBeSent",$nb);
 		return $texte;
