@@ -64,7 +64,7 @@ if (! is_object($conf)) dolibarr_install_syslog("repair: conf file not initializ
  * View
  */
 
-pHeader('',"upgrade2",$_REQUEST['action']);
+pHeader('',"upgrade2",GETPOST('action'));
 
 $actiondone=0;
 
