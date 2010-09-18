@@ -717,12 +717,7 @@ class CommonObject
 			}
 			for ($i = 0 ; $i < sizeof($li) ; $i++)
 			{
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.($i+1);
-				$sql.= ' WHERE rowid = '.$li[$i];
-				if (!$this->db->query($sql) )
-				{
-					dol_syslog($this->db->error());
-				}
+				$this->updateRangOfLine($li[$i], ($i+1));
 			}
 		}
 	}
@@ -767,9 +762,28 @@ class CommonObject
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
+		
+		dol_syslog("CommonObject::updateRangOfLine sql=".$sql, LOG_DEBUG);
 		if (! $this->db->query($sql) )
 		{
 			dol_print_error($this->db);
+		}
+	}
+	
+	/**
+	 * 	   Update position of line with ajax (rang)
+	 */
+	function line_ajaxorder($roworder)
+	{	
+		$rows = explode(',',$roworder);
+		$num = sizeof($rows);
+		
+		dol_syslog("CommonObject::line_ajaxorder roworder=".$roworder." num=".$num, LOG_DEBUG);
+		
+		for ($i = 0 ; $i < $num ; $i++)
+		{
+			dol_syslog("CommonObject::line_ajaxorder row=".$rows[$i]." rang=".($i+1), LOG_DEBUG);
+			$this->updateRangOfLine($rows[$i], ($i+1));
 		}
 	}
 

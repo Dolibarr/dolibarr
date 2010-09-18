@@ -21,7 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE predefinedproductline_view.tpl.php -->
 
-<tr <?php echo 'id='.$i.' '.$bc[$var]; ?>>
+<tr <?php echo 'id=row-'.$line->id.' '.$bc[$var]; ?>>
 	<td>
 	<a name="<?php echo $line->id; ?>"></a>
 	<?php

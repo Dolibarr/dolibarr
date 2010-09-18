@@ -1367,16 +1367,10 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Lines
 	 */
-	// We disable with 1 == 2 because until dev is finished.
-	if (1 == 2 && $conf->use_javascript_ajax && $propal->statut == 0 && $_GET['action'] != 'editline')
+	// We disable with $conf->global->MAIN_FEATURES_LEVEL because until dev is finished.
+	if ($conf->global->MAIN_FEATURES_LEVEL == 2 && $conf->use_javascript_ajax && $propal->statut == 0 && $_GET['action'] != 'editline')
 	{
-		print '<script>
-		jQuery(document).ready(function(){
-		   jQuery("#objectline").tableDnD();
-		   jQuery(".imgup").hide();
-           jQuery(".imgdown").hide();
-	       });
-		</script>';
+		include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php');
 	}
 
 	print '<table id="objectline" class="noborder" width="100%">';
