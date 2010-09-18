@@ -21,7 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE predefinedproductline_view.tpl.php -->
 
-<tr <?php echo 'id=row-'.$line->id.' '.$bc[$var]; ?>>
+<tr <?php echo 'id="row-'.$line->id.'" '.$bc[$var]; ?>>
 	<td>
 	<a name="<?php echo $line->id; ?>"></a>
 	<?php
@@ -39,20 +39,20 @@
 	</td>
 
 	<td align="right" nowrap="nowrap"><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
-	
+
 	<td align="right" nowrap="nowrap"><?php echo price($line->subprice); ?></td>
 
 	<td align="right" nowrap="nowrap">
 	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) echo $line->qty;
 		else echo '&nbsp;';	?>
 	</td>
-	
+
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
 	<td align="right"><?php echo dol_print_reduction($line->remise_percent,$langs); ?></td>
 	<?php } else { ?>
 	<td>&nbsp;</td>
 	<?php } ?>
-	
+
 	<?php if ($line->special_code == 3)	{ ?>
 	<td align="right" nowrap="nowrap"><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
@@ -68,13 +68,13 @@
 		</a>
 		<?php } ?>
 	</td>
-	
+
 	<td align="center">
 		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id; ?>">
 		<?php echo img_delete(); ?>
 		</a>
 	</td>
-	
+
 	<?php if ($num > 1) { ?>
 	<td align="center">
 		<?php if ($i > 0) { ?>
