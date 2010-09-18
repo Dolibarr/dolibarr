@@ -29,7 +29,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
@@ -80,7 +80,6 @@ if (!$user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND 
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed table to filter by categ
-
 if ($search_nom)   $sql.= " AND s.nom like '%".addslashes(strtolower($search_nom))."%'";
 if ($search_ville) $sql.= " AND s.ville like '%".addslashes(strtolower($search_ville))."%'";
 if ($search_code)  $sql.= " AND s.code_client like '%".addslashes(strtolower($search_code))."%'";
