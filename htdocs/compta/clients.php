@@ -60,6 +60,8 @@ $pagenext = $page + 1;
 
 llxHeader();
 
+$thirdpartystatic=new Societe($db);
+
 if ($action == 'attribute_prefix')
 {
 	$societe = new Societe($db, $socid);
@@ -96,7 +98,7 @@ if ($mode == 'search') {
  *
  */
 
-$sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea";
+$sql = "SELECT s.rowid, s.nom, s.client, s.ville, s.datec, s.datea";
 $sql.= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -199,9 +201,12 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr $bc[$var]>";
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->rowid.'">';
-		print img_object($langs->trans("ShowCustomer"),"company");
-		print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->rowid.'">'.$obj->nom.'</a></td>';
+		print '<td>';
+		$thirdpartystatic->id=$obj->rowid;
+		$thirdpartystatic->nom=$obj->nom;
+		$thirdpartystatic->client=$obj->client;
+		print $thirdpartystatic->getNomUrl(1,'compta');
+		print '</td>';
 		print '<td>'.$obj->ville.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';

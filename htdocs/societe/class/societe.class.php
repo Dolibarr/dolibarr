@@ -1307,7 +1307,7 @@ class Societe extends CommonObject
         $result='';
         $lien=$lienfin='';
 
-        if ($option == 'customer')
+        if ($option == 'customer' || $option == 'compta')
         {
             if ($this->client == 1)
             {
@@ -1323,11 +1323,6 @@ class Societe extends CommonObject
         if ($option == 'supplier')
         {
             $lien = '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$this->id.'">';
-            $lienfin='</a>';
-        }
-        if ($option == 'compta')
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$this->id.'">';
             $lienfin='</a>';
         }
         if (empty($lien))
