@@ -80,6 +80,7 @@ TaskRessourceLinks=Affectation ressources
 ProjectsDedicatedToThisThirdParty=Projets dédiés à ce tiers
 NoTasks=Aucune tâche pour ce projet
 LinkedToAnotherCompany=Liés à autre société
+TaskIsNotAffectedToYou=Tache qui ne vous est pas affecté
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Chef de projet
 TypeContact_project_external_PROJECTLEADER=Chef de projet
