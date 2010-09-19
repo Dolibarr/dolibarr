@@ -785,7 +785,7 @@ class Expedition extends CommonObject
 
 				$this->lignes[$i] = $line; // TODO deprecated
 				$this->lines[$i] = $line;
-				
+
 				$i++;
 			}
 			$this->db->free($resql);
@@ -875,37 +875,12 @@ class Expedition extends CommonObject
 
 		dol_syslog("Expedition::initAsSpecimen");
 
-		// Charge tableau des id de societe socids
-		$socids = array();
-
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE client IN (1, 3)";
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " LIMIT 10";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num_socs = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_socs)
-			{
-				$i++;
-
-				$row = $this->db->fetch_row($resql);
-				$socids[$i] = $row[0];
-			}
-		}
-
 		// Charge tableau des produits prodids
 		$prodids = array();
-
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE tosell = 1";
 		$sql.= " AND entity = ".$conf->entity;
-
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -926,7 +901,6 @@ class Expedition extends CommonObject
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
-		$socid = rand(1, $num_socs);
 		$this->statut               = 1;
 		if ($conf->livraison_bon->enabled)
 		{
@@ -935,10 +909,13 @@ class Expedition extends CommonObject
 		$this->date                 = time();
 		$this->entrepot_id          = 0;
 		$this->fk_delivery_address  = 0;
-		$this->socid = $socids[$socid];
+		$this->socid                = 1;
 
 		$this->commande_id          = 0;
 		$this->commande             = $order;
+
+        $this->origin_id            = 1;
+        $this->origin               = 'commande';
 
 		$nbp = 5;
 		$xnbp = 0;

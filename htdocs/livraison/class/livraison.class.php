@@ -697,7 +697,7 @@ class Livraison extends CommonObject
 
 				$this->lignes[$i] = $line;	// TODO deprecated
 				$this->lines[$i] = $line;
-				
+
 				$i++;
 			}
 			$this->db->free($resql);
@@ -754,37 +754,12 @@ class Livraison extends CommonObject
 	{
 		global $user,$langs,$conf;
 
-		// Charge tableau des id de societe socids
-		$socids = array();
-
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE client IN (1, 3)";
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " LIMIT 10";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num_socs = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_socs)
-			{
-				$i++;
-
-				$row = $this->db->fetch_row($resql);
-				$socids[$i] = $row[0];
-			}
-		}
-
 		// Charge tableau des produits prodids
 		$prodids = array();
-
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE tosell = 1";
 		$sql.= " AND entity = ".$conf->entity;
-
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -802,8 +777,7 @@ class Livraison extends CommonObject
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
-		$socid = rand(1, $num_socs);
-		$this->socid = $socids[$socid];
+		$this->socid = 1;
 		$this->date_delivery = time();
 		$this->note_public='SPECIMEN';
 

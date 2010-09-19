@@ -646,7 +646,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->MultiCell(106,4, $carac_client_name, 0, 'L');
 
 			$pdf->SetFont('','',9);
-			$pdf->SetXY(102,$posy+7);
+			$pdf->SetXY(102,$posy+8);
 			$pdf->MultiCell(86,4, $carac_client);
 		}
 

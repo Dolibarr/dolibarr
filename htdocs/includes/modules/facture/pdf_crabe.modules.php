@@ -1225,8 +1225,7 @@ class pdf_crabe extends ModelePDFFactures
 
 			// Show recipient information
 			$pdf->SetFont('','',9);
-			$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
-			$pdf->SetXY($posx+2,$posy+6);
+			$pdf->SetXY($posx+2,$posy+8);
 			$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
 	}

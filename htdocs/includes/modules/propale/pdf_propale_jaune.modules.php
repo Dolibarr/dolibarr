@@ -606,8 +606,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 		// Show address
 		$pdf->SetFont('','',9);
-		$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
-		$pdf->SetXY(102,$posy+6);
+		$pdf->SetXY(102,$posy+8);
 		$pdf->MultiCell(86,4, $carac_client);
 	}
 

@@ -96,7 +96,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		if ($conf->expedition->dir_output."/sending")
 		{
 			$object->fetch_thirdparty();
-			
+
 			$origin = $object->origin;
 
 			//Creation de l expediteur
@@ -335,7 +335,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	function _pagehead(&$pdf, $object, $outputlangs)
 	{
 		global $conf, $langs;
-		
+
 		$origin = $object->origin;
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
@@ -432,7 +432,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		// Sender name
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetXY($blSocX,$blSocY);
+		$pdf->SetXY($blSocX,$blSocY+3);
 		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 		$pdf->SetTextColor(0,0,0);
 
@@ -440,9 +440,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
 		$pdf->SetFont('','',7);
-		$pdf->SetXY($blSocX,$blSocY+3);
+		$pdf->SetXY($blSocX,$blSocY+6);
 		$pdf->MultiCell(80, 2, $carac_emetteur);
-
 
 
 		if ($object->client->code_client)
@@ -523,8 +522,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->MultiCell($blW,3, $carac_client_name, 0, 'L');
 
 		$pdf->SetFont('','',7);
-		//$posy=$pdf->GetY(); //Auto Y coord readjust for multiline name
-		$pdf->SetXY($blDestX,$pdf->GetY());
+		$pdf->SetXY($blDestX,$Yoff+4);
 		$pdf->MultiCell($blW,2, $carac_client);
 	}
 }

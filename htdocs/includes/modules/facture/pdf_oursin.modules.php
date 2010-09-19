@@ -895,7 +895,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->MultiCell(86,4, $carac_client_name, 0, 'L');
 
 		$pdf->SetFont('','B',9);
-		$pdf->SetXY($this->marges['g']+100,$posy+6);
+		$pdf->SetXY($this->marges['g']+100,$posy+8);
 		$pdf->MultiCell(86,4, $carac_client);
 
 		/*
