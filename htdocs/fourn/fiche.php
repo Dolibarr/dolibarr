@@ -46,6 +46,25 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
 
+/*
+ * Action
+ */
+
+if ($_POST['action'] == 'setsupplieraccountancycode')
+{
+    $societe = new Societe($db);
+    $result=$societe->fetch($_POST['socid']);
+    $societe->code_compta_fournisseur=$_POST["supplieraccountancycode"];
+    $result=$societe->update($societe->id,$user,1,0,1);
+    if ($result < 0)
+    {
+        $mesg=join(',',$societe->errors);
+    }
+    $POST["action"]="";
+    $socid=$_POST["socid"];
+}
+
+
 
 /*
  * View
@@ -80,15 +99,26 @@ if ( $societe->fetch($socid) )
 
 	if ($societe->fournisseur)
 	{
-		print '<tr><td nowrap="nowrap">';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print $societe->code_fournisseur;
-		if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		print '</td></tr>';
+        print '<tr>';
+        print '<td nowrap="nowrap">'.$langs->trans("SupplierCode"). '</td><td colspan="3">';
+        print $societe->code_fournisseur;
+        if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        print '</td>';
+        print '</tr>';
+
+        print '<tr>';
+        print '<td>';
+        print $form->editfieldkey("SupplierAccountancyCode",'supplieraccountancycode',$societe->code_compta_fournisseur,'socid',$societe->id,$user->rights->societe->creer);
+        print '</td><td colspan="3">';
+        print $form->editfieldval("SupplierAccountancyCode",'supplieraccountancycode',$societe->code_compta_fournisseur,'socid',$societe->id,$user->rights->societe->creer);
+        print '</td>';
+        print '</tr>';
 	}
 
+	// Address
 	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->address).'</td></tr>';
 
+	// Zip / Town
 	print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
 	print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';
 
@@ -303,10 +333,18 @@ if ( $societe->fetch($socid) )
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddBill").'</a>';
 	}
 
-	if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddAction").'</a>';
-	}
+    // Add action
+    if ($conf->agenda->enabled && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+    {
+        if ($user->rights->agenda->myactions->create)
+        {
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddAction").'</a>';
+        }
+        else
+        {
+            print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
+        }
+    }
 
 	if ($user->rights->societe->contact->creer)
 	{
@@ -316,24 +354,20 @@ if ( $societe->fetch($socid) )
 	print '</div>';
 	print '<br>';
 
-	if ($conf->global->MAIN_REPEATCONTACTTASKONEACHTAB)
-	{
-		/*
-		 * Liste des contacts
-		 */
-		show_contacts($conf,$langs,$db,$societe);
+    if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
+    {
+        // List of contacts
+        show_contacts($conf,$langs,$db,$societe);
+    }
 
-		/*
-		 *      Listes des actions a faire
-		 */
-		show_actions_todo($conf,$langs,$db,$societe);
+    if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+    {
+        // List of todo actions
+        show_actions_todo($conf,$langs,$db,$societe);
 
-		/*
-		 *      Listes des actions effectuees
-		 */
-		show_actions_done($conf,$langs,$db,$societe);
-	}
-
+        // List of done actions
+        show_actions_done($conf,$langs,$db,$societe);
+    }
 }
 else
 {

@@ -44,11 +44,6 @@ function societe_prepare_head($objsoc)
     $head[$h][2] = 'company';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Agenda");
-    $head[$h][2] = 'agenda';
-    $h++;
-
     if ($objsoc->client==1 || $objsoc->client==3 || $objsoc->object->client==1 || $objsoc->object->client==3)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
@@ -70,14 +65,19 @@ function societe_prepare_head($objsoc)
         $head[$h][2] = 'supplier';
         $h++;
     }
-    if ($conf->facture->enabled || $conf->compta->enabled || $conf->accounting->enabled)
+    /*if ($conf->facture->enabled || $conf->compta->enabled || $conf->accounting->enabled)
     {
         $langs->load("compta");
         $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
         $head[$h][1] = $langs->trans("Accountancy");
         $head[$h][2] = 'compta';
         $h++;
-    }
+    }*/
+
+    $head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$objsoc->id;
+    $head[$h][1] = $langs->trans("Agenda");
+    $head[$h][2] = 'agenda';
+    $h++;
 
     //show categorie tab
     if ($conf->categorie->enabled)
@@ -165,7 +165,7 @@ function societe_prepare_head2($objsoc)
     $h++;
 
     $head[$h][0] = 'lien.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Links");
+    $head[$h][1] = $langs->trans("ParentCompany");
     $head[$h][2] = 'links';
     $h++;
 

@@ -1650,7 +1650,13 @@ else
 		{
 			$num = $db->num_rows($resql);
 			$obj = $db->fetch_object($resql);
-			print $obj->nb?($obj->nb):$langs->trans("NoSalesRepresentativeAffected");
+			if ($obj->nb)
+			{
+			     print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">';
+			     print $obj->nb;
+			     print '</a>';
+			}
+			else print $langs->trans("NoSalesRepresentativeAffected");
 		}
 		else {
 			dol_print_error($db);
@@ -1700,7 +1706,12 @@ else
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 			}
 
-			if ($user->rights->societe->supprimer)
+            if ($conf->projet->enabled && $user->rights->projet->creer)
+            {
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>';
+            }
+
+            if ($user->rights->societe->supprimer)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 			}

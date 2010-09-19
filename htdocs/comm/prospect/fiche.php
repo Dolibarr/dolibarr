@@ -262,51 +262,49 @@ if ($socid > 0)
 
 	/*
 	 * Barre d'action
-	 *
 	 */
 
 	print '<div class="tabsAction">';
 
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+    if ($conf->propal->enabled && $user->rights->propale->creer)
+    {
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
+    }
 
-	if ($conf->agenda->enabled)
-	{
-		// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-action-button-behaviour.html)
-		// Don't force the user to add a "todo action"; he could report an action that he did
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
-	}
+    // Add action
+    if ($conf->agenda->enabled && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+    {
+        if ($user->rights->agenda->myactions->create)
+        {
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddAction").'</a>';
+        }
+        else
+        {
+            print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
+        }
+    }
 
-	if ($conf->propal->enabled && $user->rights->propale->creer)
-	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
-	}
+    print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 
-	if ($conf->projet->enabled && $user->rights->projet->creer)
-	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>';
-	}
 	print '</div>';
 
 	print '<br>';
 
 
-	if ($conf->global->MAIN_REPEATCONTACTTASKONEACHTAB)
-	{
-		/*
-		 * 		Liste des contacts
-		 */
-		show_contacts($conf,$langs,$db,$societe);
+    if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
+    {
+        // List of contacts
+        show_contacts($conf,$langs,$db,$societe);
+    }
 
-		/*
-		 *      Listes des actions a faire
-		 */
-		show_actions_todo($conf,$langs,$db,$societe);
+    if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+    {
+        // List of todo actions
+        show_actions_todo($conf,$langs,$db,$societe);
 
-		/*
-		 *      Listes des actions effectuees
-		 */
-		show_actions_done($conf,$langs,$db,$societe);
-	}
+        // List of done actions
+        show_actions_done($conf,$langs,$db,$societe);
+    }
 }
 
 $db->close();

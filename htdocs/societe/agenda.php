@@ -150,15 +150,38 @@ if ($_GET["socid"])
 
 	if ($mesg) print($mesg);
 
-	/*
-	 *      Listes des actions a faire
-	 */
-	show_actions_todo($conf,$langs,$db,$soc);
+    /*
+     * Barre d'action
+     */
 
-	/*
-	 *      Listes des actions effectuees
-	 */
-	show_actions_done($conf,$langs,$db,$soc);
+    print '<div class="tabsAction">';
+
+    if ($conf->agenda->enabled)
+    {
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
+    }
+
+    print '</div>';
+
+    print '<br>';
+
+/*
+    if ($conf->global->MAIN_REPEATCONTACTONEACHTAB)
+    {
+        // List of contacts
+        show_contacts($conf,$langs,$db,$societe);
+    }
+
+    if ($conf->global->MAIN_REPEATTASKONEACHTAB)
+    {
+*/
+        // List of todo actions
+        show_actions_todo($conf,$langs,$db,$soc);
+
+        // List of done actions
+        show_actions_done($conf,$langs,$db,$soc);
+//    }
+
 }
 
 

@@ -218,7 +218,8 @@ class Conf
 		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="en_US";
 
         // By default, we repeat info on all tabs
-		if (! isset($this->global->MAIN_REPEATCONTACTTASKONEACHTAB)) $this->global->MAIN_REPEATCONTACTTASKONEACHTAB=1;
+		if (! isset($this->global->MAIN_REPEATCONTACTONEACHTAB)) $this->global->MAIN_REPEATCONTACTONEACHTAB=1;
+        //if (! isset($this->global->MAIN_REPEATTASKONEACHTAB)) $this->global->MAIN_REPEATTASKONEACHTAB=1; No more required as we have now an agenda tab
 
 		$rootfordata = DOL_DATA_ROOT;
 		$rootforuser = DOL_DATA_ROOT;

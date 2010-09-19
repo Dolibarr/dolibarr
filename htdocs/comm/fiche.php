@@ -24,8 +24,8 @@
 
 /**
  *       \file       htdocs/comm/fiche.php
- *       \ingroup    commercial
- *       \brief      Onglet client de la fiche societe
+ *       \ingroup    commercial, compta
+ *       \brief      Page to show customer card of a third party
  *       \version    $Id$
  */
 
@@ -39,9 +39,10 @@ if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/cont
 if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) require_once(DOL_DOCUMENT_ROOT."/chronodocs/chronodocs_entries.class.php");
 
 $langs->load("companies");
-$langs->load("orders");
-$langs->load("bills");
-$langs->load("contracts");
+if ($conf->contrat->enabled)  $langs->load("contracts");
+if ($conf->commande->enabled) $langs->load("orders");
+if ($conf->facture->enabled) $langs->load("bills");
+if ($conf->projet->enabled)  $langs->load("projects");
 if ($conf->ficheinter->enabled) $langs->load("interventions");
 if ($conf->notification->enabled) $langs->load("mails");
 if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) $langs->load("chronodocs");
@@ -60,6 +61,20 @@ if (! $sortfield) $sortfield="nom";
 /*
  * Actions
  */
+
+if ($_POST['action'] == 'setcustomeraccountancycode')
+{
+	$societe = new Societe($db);
+	$result=$societe->fetch($_POST['socid']);
+	$societe->code_compta=$_POST["customeraccountancycode"];
+	$result=$societe->update($societe->id,$user,1,1,0);
+	if ($result < 0)
+	{
+		$mesg=join(',',$societe->errors);
+	}
+	$POST["action"]="";
+	$socid=$_POST["socid"];
+}
 
 if ($_GET["action"] == 'attribute_prefix' && $user->rights->societe->creer)
 {
@@ -106,8 +121,9 @@ if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
 llxHeader('',$langs->trans('CustomerCard'));
 
 
+$facturestatic=new Facture($db);
+$contactstatic = new Contact($db);
 $userstatic=new User($db);
-
 $form = new Form($db);
 
 
@@ -138,14 +154,18 @@ if ($mode == 'search')
 
 if ($socid > 0)
 {
-	// On recupere les donnees societes par l'objet
+	// Load data of third party
 	$objsoc = new Societe($db);
 	$objsoc->id=$socid;
 	$objsoc->fetch($socid,$to);
+	if ($objsoc->id <= 0)
+	{
+		dol_print_error($db,$objsoc->error);
+	}
 
 	if ($errmesg)
 	{
-		print "<b>$errmesg</b><br>";
+		print "<b>".$errmesg."</b><br>";
 	}
 
 	/*
@@ -157,9 +177,6 @@ if ($socid > 0)
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"),0,'company');
 
 
-	/*
-	 *
-	 */
 	print '<table width="100%" class="notopnoleftnoright">';
 	print '<tr><td valign="top" class="notopnoleft">';
 
@@ -170,7 +187,10 @@ if ($socid > 0)
 	print $form->showrefnav($objsoc,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$objsoc->prefix_comm.'</td></tr>';
+	// Prefix
+	print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
+	print ($objsoc->prefix_comm?$objsoc->prefix_comm:'&nbsp;');
+	print '</td></tr>';
 
 	if ($objsoc->client)
 	{
@@ -179,9 +199,18 @@ if ($socid > 0)
 		print $objsoc->code_client;
 		if ($objsoc->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 		print '</td></tr>';
+
+		print '<tr>';
+		print '<td>';
+		print $form->editfieldkey("CustomerAccountancyCode",'customeraccountancycode',$objsoc->code_compta,'socid',$objsoc->id,$user->rights->societe->creer);
+		print '</td><td colspan="3">';
+		print $form->editfieldval("CustomerAccountancyCode",'customeraccountancycode',$objsoc->code_compta,'socid',$objsoc->id,$user->rights->societe->creer);
+		print '</td>';
+		print '</tr>';
 	}
 
-	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($objsoc->address)."</td></tr>";
+	// Address
+	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">'.nl2br($objsoc->address)."</td></tr>";
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$objsoc->cp."</td>";
@@ -206,7 +235,7 @@ if ($socid > 0)
 	// Web
 	print '<tr><td>'.$langs->trans("Web").'</td><td colspan="3">'.dol_print_url($objsoc->url,'_blank').'</td></tr>';
 
-	// Assujeti TVA ou pas
+	// Assujeti a TVA ou pas
 	print '<tr>';
 	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
 	print yn($objsoc->tva_assuj);
@@ -239,6 +268,11 @@ if ($socid > 0)
 		}
 	}
 
+	// TVA Intra
+	print '<tr><td nowrap>'.$langs->trans('VATIntraVeryShort').'</td><td colspan="3">';
+	print $objsoc->tva_intra;
+	print '</td></tr>';
+
 	// Conditions de reglement par defaut
 	$langs->load('bills');
 	$html = new Form($db);
@@ -260,7 +294,7 @@ if ($socid > 0)
 	print "</td>";
 	print '</tr>';
 
-	// Mode de reglement
+	// Mode de reglement par defaut
 	print '<tr><td nowrap>';
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('PaymentMode');
@@ -284,7 +318,7 @@ if ($socid > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans("CustomerRelativeDiscountShort");
 	print '<td><td align="right">';
-	if ($user->rights->societe->creer)
+	if ($user->rights->societe->creer && !$user->societe_id > 0)
 	{
 		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 	}
@@ -298,7 +332,7 @@ if ($socid > 0)
 	print '<tr><td nowrap>';
 	print $langs->trans("CustomerAbsoluteDiscountShort");
 	print '<td><td align="right">';
-	if ($user->rights->societe->creer)
+	if ($user->rights->societe->creer && !$user->societe_id > 0)
 	{
 		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 	}
@@ -372,12 +406,13 @@ if ($socid > 0)
 
 	// Nbre max d'elements des petites listes
 	$MAXLIST=4;
+	$tableaushown=1;
 
 	// Lien recap
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
-	print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/recap-client.php?socid='.$objsoc->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td></tr></table></td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$objsoc->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td></tr></table></td>';
 	print '</tr>';
 	print '</table>';
 	print '<br>';
@@ -387,7 +422,6 @@ if ($socid > 0)
 	/*
 	 * Last proposals
 	 */
-	// TODO remplacer par une fonction
 	if ($conf->propal->enabled && $user->rights->propale->lire)
 	{
 		$propal_static = new Propal($db);
@@ -592,6 +626,75 @@ if ($socid > 0)
 	}
 
 	/*
+	 *   Last invoices
+	 */
+	if ($conf->facture->enabled && $user->rights->facture->lire)
+	{
+		$facturestatic = new Facture($db);
+
+		print '<table class="noborder" width="100%">';
+
+		$sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
+		$sql.= ' f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut,';
+		$sql.= ' s.nom, s.rowid as socid,';
+		$sql.= ' SUM(pf.amount) as am';
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
+		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$objsoc->id;
+		$sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
+		$sql.= ' f.datef, f.datec, f.paye, f.fk_statut,';
+		$sql.= ' s.nom, s.rowid';
+		$sql.= " ORDER BY f.datef DESC, f.datec DESC";
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$var=true;
+			$num = $db->num_rows($resql);
+			$i = 0;
+			if ($num > 0)
+			{
+				$tableaushown=1;
+				print '<tr class="liste_titre">';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$objsoc->id.'">'.$langs->trans("AllBills").' ('.$num.')</a></td></tr></table></td>';
+				print '</tr>';
+			}
+
+			while ($i < $num && $i < $MAXLIST)
+			{
+				$objp = $db->fetch_object($resql);
+				$var=!$var;
+				print "<tr $bc[$var]>";
+				print '<td>';
+				$facturestatic->id=$objp->facid;
+				$facturestatic->ref=$objp->facnumber;
+				$facturestatic->type=$objp->type;
+				print $facturestatic->getNomUrl(1);
+				print '</td>';
+				if ($objp->df > 0)
+				{
+					print "<td align=\"right\">".dol_print_date($db->jdate($objp->df))."</td>\n";
+				}
+				else
+				{
+					print "<td align=\"right\"><b>!!!</b></td>\n";
+				}
+				print "<td align=\"right\">".price($objp->total_ttc)."</td>\n";
+
+				print '<td align="right" nowrap="nowrap">'.($facturestatic->LibStatut($objp->paye,$objp->statut,5,$objp->am))."</td>\n";
+				print "</tr>\n";
+				$i++;
+			}
+			$db->free($resql);
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		print "</table>";
+	}
+
+	/*
 	 * Last linked chronodocs
 	 */
 	// TODO add function to add an external module
@@ -632,12 +735,13 @@ if ($socid > 0)
 	}
 
 	print "</td></tr>";
-	print "</table></div>\n";
+	print "</table>";
+
+	print "\n</div>\n";
 
 
 	/*
-	 * Barre d'action
-	 *
+	 * Barre d'actions
 	 */
 	print '<div class="tabsAction">';
 
@@ -665,9 +769,41 @@ if ($socid > 0)
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';
 	}
 
-	if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+	// Add invoice
+	if ($user->societe_id == 0)
 	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
+		if ($conf->deplacement->enabled)
+		{
+			$langs->load("trips");
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a>';
+		}
+
+		if ($conf->facture->enabled)
+		{
+			if ($user->rights->facture->creer)
+			{
+				$langs->load("bills");
+				if ($objsoc->client != 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddBill").'</a>';
+				else print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a>';
+			}
+		}
+	}
+
+	// Add action
+	if ($conf->agenda->enabled && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+	{
+		if ($user->rights->agenda->myactions->create)
+		{
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
+		}
+		else
+		{
+			print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
+		}
 	}
 
 	if ($user->rights->societe->contact->creer)
@@ -681,23 +817,20 @@ if ($socid > 0)
 	}
 
 	print '</div>';
-	print '<br>';
+	print "<br>\n";
 
-	if ($conf->global->MAIN_REPEATCONTACTTASKONEACHTAB)
+	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
 	{
-		/*
-		 * Liste des contacts
-		 */
+		// List of contacts
 		show_contacts($conf,$langs,$db,$objsoc);
+	}
 
-		/*
-		 *      Listes des actions a faire
-		 */
+    if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+    {
+		// List of todo actions
 		show_actions_todo($conf,$langs,$db,$objsoc);
 
-		/*
-		 *      Listes des actions effectuees
-		 */
+        // List of done actions
 		show_actions_done($conf,$langs,$db,$objsoc);
 	}
 }

@@ -274,7 +274,7 @@ if ($resql)
  	if ($user->rights->societe->client->voir || $socid)
  	{
 	 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
-		$moreforfilter.=$htmlother->select_salesrepresentatives($search_sale,'search_sale');
+		$moreforfilter.=$htmlother->select_salesrepresentatives($search_sale,'search_sale',$user);
  	}
  	if ($moreforfilter)
 	{

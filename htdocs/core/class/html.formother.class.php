@@ -269,12 +269,13 @@ class FormOther
 
 
 	/**
-	 *  \brief     	Return select list for categories (to use in form search selectors)
-	 *  \param     	selected     	Preselected value
-	 *  \param     	htmlname      	Name of combo list
-	 *  \return    	return        	Html combo list code
+	 *  Return select list for categories (to use in form search selectors)
+	 *  @param     	selected     	Preselected value
+	 *  @param     	htmlname      	Name of combo list
+	 *  @param      user            Object user
+	 *  @return    	return        	Html combo list code
 	 */
-	function select_salesrepresentatives($selected=0,$htmlname='search_sale')
+	function select_salesrepresentatives($selected=0,$htmlname='search_sale',$user)
 	{
 		global $conf;
 
@@ -282,12 +283,24 @@ class FormOther
  		$moreforfilter ='<select class="flat" name="'.$htmlname.'">';
  		$moreforfilter.='<option value="">&nbsp;</option>';
 
- 		$sql_usr = "SELECT u.rowid, u.name, u.firstname, u.login";
+ 		// Get list of users allowed to be viewed
+ 		$sql_usr = "SELECT u.rowid, u.name as name, u.firstname, u.login";
  		$sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
  		$sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
- 		$sql_usr.= " ORDER BY u.name ASC";
+ 		if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.fk_societe = ".($user->societe_id?$user->societe_id:0);
+        // Add existing sales representatives of company
+ 		if (empty($user->rights->user->user->lire) && $user->societe_id)
+ 		{
+            $sql_usr.=" UNION ";
+            $sql_usr.= "SELECT u2.rowid, u2.name as name, u2.firstname, u2.login";
+            $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
+            $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
+ 		}
+        $sql_usr.= " ORDER BY name ASC";
+        //print $sql_usr;exit;
 
- 		$resql_usr = $this->db->query($sql_usr);
+        $resql_usr = $this->db->query($sql_usr);
  		if ($resql_usr)
  		{
  			while ($obj_usr = $this->db->fetch_object($resql_usr))
@@ -305,7 +318,7 @@ class FormOther
  		}
  		else
  		{
- 			dol_print_error($db);
+ 			dol_print_error($this->db);
  		}
  		$moreforfilter.='</select>';
 
@@ -313,7 +326,7 @@ class FormOther
 	}
 
 	/**
-	 *	\brief     	Retourn list of project and tasks
+	 *	\brief     	Return list of project and tasks
 	 *	\param     	selectedtask   	Pre-selected task
 	 *  \param      projectid       Project id
 	 * 	\param     	htmlname    	Name of html select

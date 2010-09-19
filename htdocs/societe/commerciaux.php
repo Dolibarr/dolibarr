@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,10 +53,12 @@ if($_GET["socid"] && $_GET["commid"])
 		$soc->add_commercial($user, $_GET["commid"]);
 
 		Header("Location: commerciaux.php?socid=".$soc->id);
+		exit;
 	}
 	else
 	{
 		Header("Location: commerciaux.php?socid=".$_GET["socid"]);
+		exit;
 	}
 }
 
@@ -144,25 +146,18 @@ if ($_GET["socid"])
 		{
 			$obj = $db->fetch_object($resql);
 
-			if (!$user->rights->societe->client->voir)
+			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+			print img_object($langs->trans("ShowUser"),"user").' ';
+			print $obj->firstname." " .$obj->name."\n";
+			print '</a>&nbsp;';
+			if ($user->rights->societe->creer)
 			{
-				print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
-				print img_object($langs->trans("ShowUser"),"user").' ';
-				print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
-				print '</a><br>';
-				$i++;
+			    print '<a href="commerciaux.php?socid='.$_GET["socid"].'&amp;delcommid='.$obj->rowid.'">';
+			    print img_delete();
+			    print '</a>';
 			}
-			else
-			{
-				print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
-				print img_object($langs->trans("ShowUser"),"user").' ';
-				print $obj->firstname." " .$obj->name."\n";
-				print '</a>&nbsp;';
-				print '<a href="commerciaux.php?socid='.$_GET["socid"].'&amp;delcommid='.$obj->rowid.'">';
-				print img_delete();
-				print '</a><br>';
-				$i++;
-			}
+			print '<br>';
+			$i++;
 		}
 
 		$db->free($resql);
