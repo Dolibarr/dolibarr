@@ -1182,9 +1182,9 @@ class Adherent extends CommonObject
             if ($result > 0)
             {
                 // Rajout du nouveau cotisant dans les listes qui vont bien
-                if ($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT && ! $adh->datefin)
+                if ($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT && ! $this->datefin)
                 {
-                    $result=$adh->add_to_mailman($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT);
+                    $result=$this->add_to_mailman($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT);
                 }
 
                 // Change properties of object (used by triggers)
