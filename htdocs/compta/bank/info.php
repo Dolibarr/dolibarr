@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
 $langs->load("banks");
 $langs->load("companies");
@@ -38,7 +38,7 @@ $langs->load("companies");
 llxHeader();
 
 $line = new AccountLine($db);
-$line->fetch($_GET["rowid"], $user);
+$line->fetch($_GET["rowid"]);
 $line->info($_GET["rowid"]);
 
 
