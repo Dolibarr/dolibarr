@@ -89,7 +89,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][0] = 251;
 		$this->rights[$r][1] = 'Consulter les autres utilisateurs, leurs groupes et permissions';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'lire';
 
