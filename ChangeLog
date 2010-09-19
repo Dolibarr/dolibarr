@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.0 compared to 2.9 *****
 
 For users:
+- New: Can exclude deposit, replacement or credit notes in script rebuild_merge_pdf.
 - New: task #10473 : Option MAIN_PROFIDx_IN_ADDRESS must no more be hidden.
 - New: Can generate business card for on particular member.
 - New: Task #10553 : Can attach files on members card.
@@ -25,6 +26,7 @@ For users:
 - New: Add option to send all emails sent to a bulk carbon copy.
 - New: Preview of emails sent by member module is shown.
 - New: task #10100 : Add button to create invoice from a subscription
+- New: Reorganize tabs on third parties.
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Better Postgresql compatibility.

@@ -84,7 +84,7 @@ foreach ($argv as $key => $value)
 	if ($value == 'filter=all')
 	{
 		$found=true;
-		$option.='all';
+		$option.=(empty($option)?'':'_').'all';
 		$filter[]='all';
 
 		print 'Rebuild PDF for all invoices'."\n";
@@ -120,6 +120,31 @@ foreach ($argv as $key => $value)
 
 		print 'Rebuild PDF for invoices with no payment done yet.'."\n";
 	}
+
+    if ($value == 'filter=nodeposit')
+    {
+        $found=true;
+        $option.=(empty($option)?'':'_').'nodeposit';
+        $filter[]='nodeposit';
+
+        print 'Exclude deposit invoices'."\n";
+    }
+    if ($value == 'filter=noreplacement')
+    {
+        $found=true;
+        $option.=(empty($option)?'':'_').'noreplacement';
+        $filter[]='noreplacement';
+
+        print 'Exclude replacement invoices'."\n";
+    }
+    if ($value == 'filter=nocreditnote')
+    {
+        $found=true;
+        $option.=(empty($option)?'':'_').'nocreditnote';
+        $filter[]='nocreditnote';
+
+        print 'Exclude credit note invoices'."\n";
+    }
 
 	if (! $found && preg_match('/filter=/i',$value))
 	{
@@ -180,6 +205,24 @@ if (in_array('payments',$filter))
 	$sqlwhere.= " AND p.datep >= ".$db->idate($paymentdateafter);
 	$sqlwhere.= " AND p.datep <= ".$db->idate($paymentdatebefore);
 	$sqlorder = " ORDER BY p.datep ASC";
+}
+if (in_array('nodeposit',$filter))
+{
+    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+    else $sqlwhere.=" AND";
+    $sqlwhere.=' type <> 3';
+}
+if (in_array('noreplacement',$filter))
+{
+    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+    else $sqlwhere.=" AND";
+    $sqlwhere.=' type <> 1';
+}
+if (in_array('nocreditnote',$filter))
+{
+    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+    else $sqlwhere.=" AND";
+    $sqlwhere.=' type <> 2';
 }
 if ($sqlwhere) $sql.=$sqlwhere;
 if ($sqlorder) $sql.=$sqlorder;
@@ -346,7 +389,10 @@ function usage()
 	print "Usage:   ".$script_file." filter=all\n";
 	print "To build/merge PDF for invoices with no payments, use filter=nopayment\n";
 	print "Usage:   ".$script_file." filter=nopayment\n";
-	print "\n";
+    print "To exclude credit notes, use filter=nocreditnote\n";
+    print "To exclude replacement invoices, use filter=noreplacement\n";
+    print "To exclude deposit invoices, use filter=nodeposit\n";
+    print "\n";
 	print "Example: ".$script_file." filter=payments 20080101 20081231 lang=fr_FR\n";
 	print "Example: ".$script_file." filter=all lang=it_IT\n";
 	print "\n";
