@@ -136,7 +136,7 @@ if ($action == 'add_paiement')
         if (! $error)
         {
             $result=$paiement->addPaymentToBank($user,'payment_supplier','(SupplierInvoicePayment)',$_POST['accountid'],'','');
-            if (! $result > 0)
+            if ($result < 0)
             {
                 $errmsg='<div class="error">'.$paiement->error.'</div>';
                 $error++;

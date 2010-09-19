@@ -158,7 +158,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 		if (! $error)
 		{
     		$paiement_id = $paiement->create($user);
-    		if (! $paiement_id > 0)
+    		if ($paiement_id < 0)
     		{
     		    $errmsg=$paiement->error;
     		    $error++;
@@ -168,7 +168,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 		if (! $error)
 		{
 		    $result=$paiement->addPaymentToBank($user,'payment','(CustomerInvoicePayment)',$_POST['accountid'],$_POST['chqemetteur'],$_POST['chqbank']);
-            if (! $result > 0)
+            if ($result < 0)
             {
                 $errmsg=$paiement->error;
                 $error++;

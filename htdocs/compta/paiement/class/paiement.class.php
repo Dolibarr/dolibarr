@@ -32,7 +32,12 @@
  */
 class Paiement
 {
-	var $id;
+    var $db;
+    var $error;
+    var $element='payment';
+    var $table_element='paiement';
+
+    var $id;
 	var $ref;
 	var $facid;
 	var $datepaye;
@@ -48,8 +53,6 @@ class Paiement
 	var $note;
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
-
-	var $db;
 
 
 	/**
@@ -352,47 +355,53 @@ class Paiement
                 }
 
                 // Add link 'payment', 'payment_supplier' in bank_url between payment and bank transaction
-                $url='';
-                if ($mode == 'payment') $url=DOL_URL_ROOT.'/compta/paiement/fiche.php?id=';
-                if ($mode == 'payment_supplier') $url=DOL_URL_ROOT.'/fourn/paiement/fiche.php?id=';
-                if ($url)
+                if ( ! $error)
                 {
-                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
-                    if ($result <= 0)
+                    $url='';
+                    if ($mode == 'payment') $url=DOL_URL_ROOT.'/compta/paiement/fiche.php?id=';
+                    if ($mode == 'payment_supplier') $url=DOL_URL_ROOT.'/fourn/paiement/fiche.php?id=';
+                    if ($url)
                     {
-                        $error++;
-                        dol_print_error($this->db);
+                        $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
+                        if ($result <= 0)
+                        {
+                            $error++;
+                            dol_print_error($this->db);
+                        }
                     }
                 }
 
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                $linkaddedforthirdparty=array();
-                foreach ($this->amounts as $key => $value)
+                if (! $error)
                 {
-                    if ($mode == 'payment')
+                    $linkaddedforthirdparty=array();
+                    foreach ($this->amounts as $key => $value)
                     {
-                        $fac = new Facture($this->db);
-                        $fac->fetch($key);
-                        $fac->fetch_thirdparty();   // This should be always same third party but we loop in case of.
-                        if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                        if ($mode == 'payment')
                         {
-                            $result=$acc->add_url_line($bank_line_id, $fac->client->id,
-                            DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom, 'company');
-                            if ($result <= 0) dol_print_error($this->db);
-                            $linkaddedforthirdparty[$fac->client->id]=$fac->client->id;  // Mark as done for this thirdparty
+                            $fac = new Facture($this->db);
+                            $fac->fetch($key);
+                            $fac->fetch_thirdparty();   // This should be always same third party but we loop in case of.
+                            if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                            {
+                                $result=$acc->add_url_line($bank_line_id, $fac->client->id,
+                                DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom, 'company');
+                                if ($result <= 0) dol_print_error($this->db);
+                                $linkaddedforthirdparty[$fac->client->id]=$fac->client->id;  // Mark as done for this thirdparty
+                            }
                         }
-                    }
-                    if ($mode == 'payment_supplier')
-                    {
-                        $fac = new FactureFournisseur($this->db);
-                        $fac->fetch($key);
-                        $fac->fetch_fournisseur();   // This should be always same third party but we loop in case of.
-                        if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                        if ($mode == 'payment_supplier')
                         {
-                            $result=$acc->add_url_line($bank_line_id, $fac->fournisseur->id,
-                            DOL_URL_ROOT.'/fourn/fiche.php?socid=', $fac->fournisseur->nom, 'company');
-                            if ($result <= 0) dol_print_error($this->db);
-                            $linkaddedforthirdparty[$fac->fournisseur->id]=$fac->fournisseur->id;  // Mark as done for this thirdparty
+                            $fac = new FactureFournisseur($this->db);
+                            $fac->fetch($key);
+                            $fac->fetch_fournisseur();   // This should be always same third party but we loop in case of.
+                            if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                            {
+                                $result=$acc->add_url_line($bank_line_id, $fac->fournisseur->id,
+                                DOL_URL_ROOT.'/fourn/fiche.php?socid=', $fac->fournisseur->nom, 'company');
+                                if ($result <= 0) dol_print_error($this->db);
+                                $linkaddedforthirdparty[$fac->fournisseur->id]=$fac->fournisseur->id;  // Mark as done for this thirdparty
+                            }
                         }
                     }
                 }
@@ -416,12 +425,12 @@ class Paiement
 
 
 	/**
-	 *      \brief      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
-	 *      \param      id_bank     Id compte bancaire
+	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
+	 *      @param      id_bank     Id compte bancaire
 	 */
 	function update_fk_bank($id_bank)
 	{
-		$sql = 'UPDATE llx_paiement set fk_bank = '.$id_bank;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this).'::update_fk_bank sql='.$sql);
@@ -432,18 +441,19 @@ class Paiement
 		}
 		else
 		{
-			dol_print_error($this->db);
-			return 0;
+            $this->error=$this->db->lasterror();
+            dol_syslog(get_class($this).'::update_fk_bank '.$this->error);
+			return -1;
 		}
 	}
 
 	/**
-	 *    \brief      Valide le paiement
-	 *    \return     int     <0 si ko, >0 si ok
+	 *    Validate payment
+	 *    @return     int     <0 if KO, >0 if OK
 	 */
 	function valide()
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'paiement SET statut = 1 WHERE rowid = '.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this).'::valide sql='.$sql);
 		$result = $this->db->query($sql);
@@ -453,7 +463,8 @@ class Paiement
 		}
 		else
 		{
-			dol_syslog(get_class($this).'::valide Error -1');
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this).'::valide '.$this->error);
 			return -1;
 		}
 	}

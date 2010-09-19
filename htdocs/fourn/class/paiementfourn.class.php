@@ -26,17 +26,21 @@
         \remarks	Cette classe est presque identique a paiement.class.php
 		\version    $Id$
 */
-
 require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
 
 /**
 	\class      PaiementFourn
 	\brief      Classe permettant la gestion des paiements des factures fournisseurs
 */
-
-class PaiementFourn
+class PaiementFourn extends Paiement
 {
-	var $id;
+    var $db;
+    var $error;
+    var $element='payment_supplier';
+    var $table_element='paiementfourn';
+
+    var $id;
 	var $ref;
 	var $facid;
 	var $datepaye;
@@ -53,8 +57,6 @@ class PaiementFourn
     var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
-
-	var $db;
 
 	/**
 	 *    \brief  Constructeur de la classe
@@ -291,48 +293,6 @@ class PaiementFourn
 			$this->error=$this->db->error;
 			$this->db->rollback();
 			return -5;
-		}
-	}
-
-	/**
-	 *      \brief      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
-	 *      \param      id_bank     Id compte bancaire
-	 */
-	function update_fk_bank($id_bank)
-	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'paiementfourn set fk_bank = '.$id_bank;
-		$sql.= ' WHERE rowid = '.$this->id;
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			return 1;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return 0;
-		}
-	}
-
-	/**
-	 *    \brief      Valide le paiement
-	 *    \return     int     <0 si ko, >0 si ok
-	 */
-	function valide()
-	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'paiementfourn SET statut = 1 WHERE rowid = '.$this->id;
-
-		dol_syslog("PaiementFourn::valide sql=".$sql);
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			return 0;
-		}
-		else
-		{
-			$this->error='Paiement::Valide Error -1 '.$this->db->error();
-			dol_syslog('PaiementFourn::valide error '.$this->error, LOG_ERR);
-			return -1;
 		}
 	}
 
