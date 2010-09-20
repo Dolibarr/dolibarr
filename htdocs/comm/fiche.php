@@ -673,7 +673,7 @@ if ($socid > 0)
 				print '</td>';
 				if ($objp->df > 0)
 				{
-					print "<td align=\"right\">".dol_print_date($db->jdate($objp->df))."</td>\n";
+					print "<td align=\"right\">".dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 				}
 				else
 				{
