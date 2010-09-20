@@ -239,20 +239,21 @@ if ($_POST['action'] == 'setmode')
 	if ($result < 0) dol_print_error($object->db,$object->error);
 }
 
-if ($_POST['action'] == 'setpaymentterm')
-{
-	$object->fetch($facid);
-	$date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
-	$result=$object->cond_reglement($object->cond_reglement_id,$date_lim_reglement);
-	if ($result < 0) dol_print_error($object->db,$object->error);
-}
-
 if ($_POST['action'] == 'setinvoicedate')
 {
 	$object->fetch($facid);
 	$object->date=dol_mktime(12,0,0,$_POST['invoicedatemonth'],$_POST['invoicedateday'],$_POST['invoicedateyear']);
+	if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement=$object->date;
 	$result=$object->update($user);
 	if ($result < 0) dol_print_error($object->db,$object->error);
+}
+
+if ($_POST['action'] == 'setpaymentterm')
+{
+    $object->fetch($facid);
+    $date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
+    $result=$object->cond_reglement($object->cond_reglement_id,$date_lim_reglement);
+    if ($result < 0) dol_print_error($object->db,$object->error);
 }
 
 if ($_POST['action'] == 'setconditions')
