@@ -538,7 +538,7 @@ div.blockvmenubookmarks
 div.blockvmenuhelp {
 	text-align: center;
 	border-spacing: 0px;
-    width: 166px;
+    width: 162px;
 	background: transparent;
 	font-family: <?php print $fontlist ?>;
 	color: #000000;
