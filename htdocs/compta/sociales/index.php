@@ -83,13 +83,14 @@ $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 $sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
 $sql.= " WHERE s.fk_type = c.id";
 $sql.= " AND s.entity = ".$conf->entity;
+if (GETPOST("search_label")) $sql.=" AND s.libelle like '%".GETPOST("search_label")."%'";
 if ($year > 0)
 {
     $sql .= " AND (";
     // Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
     // ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-    $sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = $year) ";
-    $sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = $year)";
+    $sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = ".$year.") ";
+    $sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = ".$year.")";
     $sql .= ")";
 }
 if ($filtre) {
@@ -158,7 +159,7 @@ if ($resql)
 
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">&nbsp;</td>';
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.GETPOST("search_label").'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
 	    $html->select_type_socialcontrib($typeid,'typeid',1,16,0);
