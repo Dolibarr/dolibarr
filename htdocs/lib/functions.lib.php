@@ -3456,7 +3456,7 @@ function dol_eval($s)
 }
 
 
-if (! function_exists('glob'))
+if (! function_exists('glob') && ! is_callable('glob'))
 {
     /**
      *  \brief      For replace glob() function
