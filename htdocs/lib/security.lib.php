@@ -54,12 +54,19 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Select templates
 	if ($conf->browser->phone)
 	{
-		// Special cases
-		if (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
+		// iWebKit template
+		if (preg_match('/android|blackberry|iphone/i',$conf->browser->phone))
+		{
+			$theme = 'default';
+			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/smartphone/tpl/";
+		}
+		// Special template
+		elseif (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
 		{
 			$theme = 'default';
 			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/tpl/";
 		}
+		// Default template
 		else
 		{
 			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";

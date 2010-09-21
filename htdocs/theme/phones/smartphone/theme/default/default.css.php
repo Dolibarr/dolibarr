@@ -17,8 +17,8 @@
  */
 
 /**
- *		\file       htdocs/theme/phones/iphone/theme/default/default.css.php
- *		\brief      Fichier de style CSS du theme Iphone default
+ *		\file       htdocs/theme/phones/smartphone/theme/default/default.css.php
+ *		\brief      Fichier de style CSS du theme Smartphone default
  *		\version    $Id$
  */
 
@@ -323,7 +323,7 @@ a:hover .arrow {
 }
 #tributton .links, #duobutton .links {
 	height: 30px;
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/tributton.png'; ?>") 0 4 0 4;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/tributton.png'; ?>") 0 4 0 4;
 	border-width: 0 4px 0 4px;
 	margin: 0 auto 0px auto;
 	position: relative;
@@ -365,7 +365,7 @@ a:hover .arrow {
 	text-shadow: black 0 -1px 0;
 }
 #triselectionbuttons, #duoselectionbuttons {
-	-webkit-border-image: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navbutton.png'; ?>') 0 5 0 5;
+	-webkit-border-image: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navbutton.png'; ?>') 0 5 0 5;
 	border-width: 0 5px 0 5px;
 	position: relative;
 	margin: auto;
@@ -434,7 +434,7 @@ li#doublead:hover {
 }
 .searchbox form {
 	height: 24px;
-	-webkit-border-image: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/searchfield.png'; ?>') 4 14 1 24;
+	-webkit-border-image: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/searchfield.png'; ?>') 4 14 1 24;
 	border-width: 4px 14px 1px 24px;
 	display: block;
 	position: relative;
@@ -550,7 +550,7 @@ fieldset {
 	right: 10px;
 	top: 15px;
 	margin: 0!important;
-	background: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/arrow.png'; ?>") 0 0 no-repeat;
+	background: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/arrow.png'; ?>") 0 0 no-repeat;
 }
 .applist .arrow {
 	position: absolute;
@@ -559,7 +559,7 @@ fieldset {
 	right: 10px;
 	top: 29px;
 	margin: 0!important;
-	background: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/arrow.png'; ?>") 0 0 no-repeat;
+	background: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/arrow.png'; ?>") 0 0 no-repeat;
 }
 .store {
 	height: 90px;
@@ -663,22 +663,22 @@ li:last-child.store .image, .store:last-child a {
 	display: block!important;
 }
 .store .stars0 {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/0starsborder.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/0starsborder.png'; ?>');
 }
 .store .stars1 {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/1starsborder.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/1starsborder.png'; ?>');
 }
 .store .stars2 {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/2starsborder.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/2starsborder.png'; ?>');
 }
 .store .stars3 {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/3starsborder.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/3starsborder.png'; ?>');
 }
 .store .stars4 {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/4starsborder.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/4starsborder.png'; ?>');
 }
 .store .stars5, .applist .stars5 {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/5stars.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/5stars.png'; ?>');
 }
 .applist .stars0, .applist .stars1, .applist .stars2, .applist .stars3, .applist .stars4, .applist .stars5 {
 	position: absolute;
@@ -689,19 +689,19 @@ li:last-child.store .image, .store:last-child a {
 	display: block!important;
 }
 .applist .stars0 {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/0stars.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/0stars.png'; ?>');
 }
 .applist .stars1 {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/1stars.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/1stars.png'; ?>');
 }
 .applist .stars2 {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/2stars.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/2stars.png'; ?>');
 }
 .applist .stars3 {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/3stars.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/3stars.png'; ?>');
 }
 .applist .stars4 {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/4stars.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/4stars.png'; ?>');
 }
 .applist .starcomment {
 	left: 147px;
@@ -861,10 +861,10 @@ li:last-child.store .image, .store:last-child a {
 	margin-top: 16px;
 }
 .ipodlist .play {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/play.gif'; ?>') no-repeat;
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/play.gif'; ?>') no-repeat;
 }
 .ipodlist a:hover .auto, .ipodlist a:hover .play {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/play.gif'; ?>') no-repeat;
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/play.gif'; ?>') no-repeat;
 	background-position: 0 -10px;
 }
 .ipodlist .time {
@@ -989,23 +989,23 @@ li:last-child.store .image, .store:last-child a {
 	text-decoration: none;
 }
 .black #leftnav a:first-child, .transparent #leftnav a:first-child {
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navleftblack.png'; ?>") 0 5 0 13;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navleftblack.png'; ?>") 0 5 0 13;
 }
 .black #leftnav a, .transparent #leftnav a {
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navlinkleftblack.png'; ?>") 0 5 0 13;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navlinkleftblack.png'; ?>") 0 5 0 13;
 }
 .black #rightnav a:first-child, .transparent #rightnav a:first-child {
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navrightblack.png'; ?>") 0 13 0 5;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navrightblack.png'; ?>") 0 13 0 5;
 }
 .black #rightnav a, .transparent #rightnav a {
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navlinkrightblack.png'; ?>") 0 13 0 5;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navlinkrightblack.png'; ?>") 0 13 0 5;
 }
 .black #leftbutton a, .black #rightbutton a, .transparent #leftbutton a, .transparent #rightbutton a {
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navbuttonblack.png'; ?>") 0 5 0 5;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navbuttonblack.png'; ?>") 0 5 0 5;
 }
 #leftnav a:first-child {
 	z-index: 2;
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navleft.png'; ?>") 0 5 0 13;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navleft.png'; ?>") 0 5 0 13;
 	border-width: 0 5px 0 13px;
 	-webkit-border-top-left-radius: 16px;
 	-webkit-border-bottom-left-radius: 16px;
@@ -1014,7 +1014,7 @@ li:last-child.store .image, .store:last-child a {
 	width: auto;
 }
 #leftnav a {
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navlinkleft.png'; ?>") 0 5 0 13;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navlinkleft.png'; ?>") 0 5 0 13;
 	z-index: 3;
 	margin-left: -4px;
 	border-width: 0 5px 0 13px;
@@ -1032,7 +1032,7 @@ li:last-child.store .image, .store:last-child a {
 	font-weight: bold;
 }
 #rightnav a {
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navlinkright.png'; ?>") 0 13 0 5;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navlinkright.png'; ?>") 0 13 0 5;
 	z-index: 3;
 	margin-right: -4px;
 	border-width: 0 13px 0 5px;
@@ -1047,25 +1047,25 @@ li:last-child.store .image, .store:last-child a {
 	z-index: 2;
 	-webkit-border-top-left-radius: 6px;
 	-webkit-border-bottom-left-radius: 6px;
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navright.png'; ?>") 0 13 0 5;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navright.png'; ?>") 0 13 0 5;
 	border-width: 0 13px 0 5px;
 	-webkit-border-top-right-radius: 16px;
 	-webkit-border-bottom-right-radius: 16px;
 }
 #leftbutton a, #rightbutton a {
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navbutton.png'; ?>") 0 5 0 5;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navbutton.png'; ?>") 0 5 0 5;
 	border-width: 0 5px;
 	-webkit-border-radius: 6px;
 }
 #blueleftbutton a, #bluerightbutton a {
-	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navbuttonblue.png'; ?>") 0 5 0 5;
+	-webkit-border-image: url("<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/navbuttonblue.png'; ?>") 0 5 0 5;
 	border-width: 0 5px;
 	-webkit-border-radius: 6px;
 }
 input[type="checkbox"] {
 	width: 94px;
 	height: 27px;
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/checkbox.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/checkbox.png'; ?>');
 	-webkit-appearance: none;
 	border: 0;
 	float: right;
@@ -1086,7 +1086,7 @@ input[type="radio"] {
 	-webkit-border-radius: 0;
 }
 input[type="radio"]:checked {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/radiobutton.png'; ?>') no-repeat;
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/radiobutton.png'; ?>') no-repeat;
 	background-position: right center;
 }
 .radiobutton .name {
@@ -1108,7 +1108,7 @@ select {
 	max-width: 90%;
 }
 .select .arrow {
-	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/arrow.png'; ?>');
+	background: url('<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/img/arrow.png'; ?>');
 	width: 8px;
 	height: 13px;
 	display: block;

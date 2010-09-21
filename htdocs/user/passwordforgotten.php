@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,11 +146,19 @@ $dol_url_root = DOL_URL_ROOT;
 // Select templates
 if ($conf->browser->phone)
 {
-	if (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
+	// iWebKit template
+	if (preg_match('/android|blackberry|iphone/i',$conf->browser->phone))
+	{
+		$theme = 'default';
+		$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/smartphone/tpl/";
+	}
+	// Special phones templates
+	elseif (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
 	{
 		$theme = 'default';
 		$template_dir = DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/tpl/";
 	}
+	// Default phones template
 	else
 	{
 		$template_dir = DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";

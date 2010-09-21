@@ -32,10 +32,10 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <title><?php echo $title; ?></title>
 <meta name="robots" content="noindex,nofollow" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<link rel="apple-touch-icon" href="<?php echo $dol_url_root.'/theme/phones/iphone/theme/'.$theme.'/thumbs/homescreen.png'; ?>" />
+<link rel="apple-touch-icon" href="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$theme.'/thumbs/homescreen.png'; ?>" />
 <meta name="viewport"content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
-<link type="text/css" rel="stylesheet" href="<?php echo $dol_url_root.'/theme/phones/iphone/theme/'.$theme.'/'.$theme.'.css.php'; ?>" />
-<script type="text/javascript" src="<?php echo $dol_url_root.'/includes/iphone/iwebkit/Framework/javascript/functions.js'; ?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$theme.'/'.$theme.'.css.php'; ?>" />
+<script type="text/javascript" src="<?php echo $dol_url_root.'/includes/iwebkit/Framework/javascript/functions.js'; ?>"></script>
 </head>
 
 <body>
@@ -50,7 +50,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	<input type="hidden" name="loginfunction" value="loginfunction" />
 	
 	<div align="center">
-		<img src="<?php echo $dol_url_root.'/theme/phones/iphone/theme/'.$theme.'/thumbs/dolibarr.png'; ?>">
+		<img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$theme.'/thumbs/dolibarr.png'; ?>">
 	</div>
 	
 	<br>
@@ -102,7 +102,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	<?php if ($forgetpasslink) { ?>
 		<li class="menu">
 			<a href="<?php echo $dol_url_root.'/user/passwordforgotten.php'; ?>">
-				<img alt="tools" src="<?php echo $dol_url_root.'/theme/phones/iphone/theme/'.$theme.'/thumbs/tools.png'; ?>" />
+				<img alt="tools" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$theme.'/thumbs/tools.png'; ?>" />
 				<span class="name"><?php echo $langs->trans('PasswordForgotten'); ?></span>
 				<span class="arrow"></span>
 			</a>
@@ -112,7 +112,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	<?php if ($helpcenterlink) { ?>
 		<li class="menu">
 			<a href="<?php echo $dol_url_root.'/support/index.php'; ?>">
-				<img alt="support" src="<?php echo $dol_url_root.'/theme/phones/iphone/theme/'.$theme.'/thumbs/support.png'; ?>" />
+				<img alt="support" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$theme.'/thumbs/support.png'; ?>" />
 				<span class="name"><?php echo $langs->trans('NeedHelpCenter'); ?></span>
 				<span class="arrow"></span>
 			</a>
