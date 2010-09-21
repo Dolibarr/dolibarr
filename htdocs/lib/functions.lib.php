@@ -3380,7 +3380,7 @@ function dol_eval($s)
 /**
  * 	\brief		For replace glob() function
  */
-if (! function_exists('glob'))
+if (! function_exists('glob') && ! is_callable('glob'))
 {
 	function glob($pattern)
 	{
