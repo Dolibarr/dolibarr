@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010      Juanjo Menent	    <jmenent@2byte.es>
@@ -243,14 +243,12 @@ class pdf_propale_azur extends ModelePDFPropales
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
-
-					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
-
+					
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
-					// Description
-					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 4, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+					// Description de la ligne produit
+					$curX = $this->posxdesc-1;
+					pdf_getlinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY);
 
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();

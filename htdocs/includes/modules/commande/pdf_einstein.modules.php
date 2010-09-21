@@ -242,12 +242,12 @@ class pdf_einstein extends ModelePDFCommandes
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
+					
+					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					// Description of product line
-					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
-
-					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
-					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+					$curX = $this->posxdesc-1;
+					pdf_getlinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY);
 
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();

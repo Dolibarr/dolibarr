@@ -250,10 +250,14 @@ class pdf_crabe extends ModelePDFFactures
 					$curY = $nexY;
 
 					// Description of product line
-					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
+					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
-					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+					
+					$curX = $this->posxdesc-1;
+					pdf_getlinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY);
+					
+					//$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();

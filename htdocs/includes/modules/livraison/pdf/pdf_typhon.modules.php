@@ -243,11 +243,13 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
+					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
+					
+					pdf_getlinedesc($pdf,$object,$i,$outputlangs,108,3,$this->posxdesc-1,$curY);
 
-					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+					//$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();

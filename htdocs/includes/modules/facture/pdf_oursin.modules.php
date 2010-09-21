@@ -214,9 +214,11 @@ class pdf_oursin extends ModelePDFFactures
 					$curY = $nexY;
 
 					// Description of product line
-					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
+					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
+					
+					pdf_getlinedesc($pdf,$object,$i,$outputlangs,108,3,$this->posxdesc-1,$curY+1);
 
-					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+					//$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$nexY = $pdf->GetY();
 

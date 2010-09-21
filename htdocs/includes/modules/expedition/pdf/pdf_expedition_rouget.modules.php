@@ -335,12 +335,14 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					{
 						$pdf->i25($this->marge_gauche+3, ($curY - 2), "000000".$object->lines[$i]->fk_product, 1, 8);
 					}
+					
+					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
+					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
+					pdf_getlinedesc($pdf,$object,$i,$outputlangs,150,3,$this->posxdesc,$curY);
 
-					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
-					$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+					//$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();

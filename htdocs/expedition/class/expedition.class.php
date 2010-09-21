@@ -285,7 +285,7 @@ class Expedition extends CommonObject
 				$this->modelpdf             = $obj->model_pdf;
 				$this->expedition_method_id = $obj->fk_expedition_methode;
 				$this->tracking_number      = $obj->tracking_number;
-				$this->origin               = $obj->origin;
+				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
 
 				$this->trueWeight           = $obj->weight;

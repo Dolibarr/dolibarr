@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007      Patrick Raguin <patrick.raguin@gmail.com>
+ * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -452,22 +453,22 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
  *  @param      hidedesc            Hide description
  * 	@param		issupplierline		Is it a line for a supplier object ?
  */
-function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issupplierline=0)
+function pdf_getlinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref=0,$hidedesc=0,$issupplierline=0)
 {
     global $db, $conf, $langs;
 
-    $idprod=$object->lines[$i]->fk_product;
-    $label=$object->lines[$i]->label; if (empty($label))  $label=$object->lines[$i]->libelle;
-    $desc=$object->lines[$i]->desc; if (empty($desc))   $desc=$object->lines[$i]->description;
-    $ref_supplier=$object->lines[$i]->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$object->lines[$i]->ref_fourn;	// TODO Not yeld saved for supplier invoices, only supplier orders
-    $note=$object->lines[$i]->note;
-
     if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
     {
-        $libelleproduitservice = $object->hooks[$object->lines[$i]->special_code]->pdf_getlinedesc($object,$i,$outputlangs);
+        $object->hooks[$object->lines[$i]->special_code]->pdf_getlinedesc($pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy);
     }
     else
     {
+        $idprod=$object->lines[$i]->fk_product;
+        $label=$object->lines[$i]->label; if (empty($label))  $label=$object->lines[$i]->libelle;
+        $desc=$object->lines[$i]->desc; if (empty($desc))   $desc=$object->lines[$i]->description;
+        $ref_supplier=$object->lines[$i]->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$object->lines[$i]->ref_fourn;	// TODO Not yeld saved for supplier invoices, only supplier orders
+        $note=$object->lines[$i]->note;
+        
         if ($issupplierline) $prodser = new ProductFournisseur($db);
         else $prodser = new Product($db);
 
@@ -541,31 +542,35 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
                 $libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
             }
         }
+        
+        $libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
+        
+        if ($object->lines[$i]->date_start || $object->lines[$i]->date_end)
+        {
+        	// Show duration if exists
+        	if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
+        	{
+        		$period='('.$outputlangs->transnoentitiesnoconv('DateFromTo',dol_print_date($object->lines[$i]->date_start, $format, false, $outputlangs),dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
+        	}
+        	if ($object->lines[$i]->date_start && ! $object->lines[$i]->date_end)
+        	{
+        		$period='('.$outputlangs->transnoentitiesnoconv('DateFrom',dol_print_date($object->lines[$i]->date_start, $format, false, $outputlangs)).')';
+        	}
+        	if (! $object->lines[$i]->date_start && $object->lines[$i]->date_end)
+        	{
+        		$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
+        	}
+        	//print '>'.$outputlangs->charset_output.','.$period;
+        	$libelleproduitservice.="<br>".dol_htmlentitiesbr($period,1);
+        	//print $libelleproduitservice;
+        }
+        
+        // Description
+        $pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+        
+        // For compatibility
+        return $libelleproduitservice;
     }
-
-    $libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
-
-    if ($object->lines[$i]->date_start || $object->lines[$i]->date_end)
-    {
-        // Show duration if exists
-        if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
-        {
-            $period='('.$outputlangs->transnoentitiesnoconv('DateFromTo',dol_print_date($object->lines[$i]->date_start, $format, false, $outputlangs),dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
-        }
-        if ($object->lines[$i]->date_start && ! $object->lines[$i]->date_end)
-        {
-            $period='('.$outputlangs->transnoentitiesnoconv('DateFrom',dol_print_date($object->lines[$i]->date_start, $format, false, $outputlangs)).')';
-        }
-        if (! $object->lines[$i]->date_start && $object->lines[$i]->date_end)
-        {
-            $period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
-        }
-        //print '>'.$outputlangs->charset_output.','.$period;
-        $libelleproduitservice.="<br>".dol_htmlentitiesbr($period,1);
-        //print $libelleproduitservice;
-    }
-
-    return $libelleproduitservice;
 }
 
 /**
