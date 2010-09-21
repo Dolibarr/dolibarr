@@ -22,16 +22,8 @@
 create table llx_boxes_def
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  file        varchar(255) NOT NULL,
+  file        varchar(200) NOT NULL,
   entity      integer DEFAULT 1 NOT NULL,	-- multi company id
   tms         timestamp,
-  note        varchar(255)
+  note        varchar(140)
 )type=innodb;
-
--- 
--- List of codes for the field "entity"
---
--- 1 : first company boxes
--- 2 : second company boxes
--- 3 : etc...
---
