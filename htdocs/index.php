@@ -46,6 +46,16 @@ if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
  * View
  */
 
+// Smartphone (for dev only)
+if ($conf->global->MAIN_FEATURES_LEVEL == 2 && class_exists('Smartphone'))
+{
+	// Template directory
+	$smartphone->getTemplateDir();
+	$smartphone->title = $langs->trans("Home");
+	$smartphone->smartmenu();
+	exit;
+}
+
 llxHeader();
 
 print_fiche_titre($langs->trans("HomeArea"));
