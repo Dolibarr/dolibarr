@@ -109,6 +109,6 @@ $smartphone->smartheader($title);
 	</script>
 <?php } ?>
 
-<?php $smartphone->smartfooter(); ?>
-
 <!-- END LOGIN SMARTPHONE TEMPLATE -->
+
+<?php $smartphone->smartfooter(); ?>

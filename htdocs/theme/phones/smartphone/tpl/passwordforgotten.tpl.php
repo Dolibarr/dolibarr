@@ -95,6 +95,6 @@ $smartphone->smartheader($title);
 	</script>
 <?php } ?>
 
-<?php $smartphone->smartfooter(); ?>
-
 <!-- END SMARTPHONE TEMPLATE -->
+
+<?php $smartphone->smartfooter(); ?>

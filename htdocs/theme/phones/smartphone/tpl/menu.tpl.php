@@ -26,7 +26,6 @@ $this->smartheader($this->title);
 	<div id="title"><?php echo $this->title; ?></div>
 </div>
 
+<!-- END MENU SMARTPHONE TEMPLATE -->
 
 <?php $this->smartfooter(); ?>
-
-<!-- END MENU SMARTPHONE TEMPLATE -->
