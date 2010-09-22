@@ -99,7 +99,7 @@ class modAdherent extends DolibarrModules
         $this->const[31] = array("ADHERENT_BANK_USE_AUTO","yesno","","Insertion automatique des cotisations dans le compte banquaire");
         $this->const[32] = array("ADHERENT_BANK_ACCOUNT","chaine","","ID du Compte banquaire utilise");
         $this->const[33] = array("ADHERENT_BANK_CATEGORIE","chaine","","ID de la catégorie banquaire des cotisations");
-        $this->const[34] = array("ADHERENT_ETIQUETTE_TYPE","chaine","L7163","Type d'étiquette (pour impression de planche d'étiquette)");
+        $this->const[34] = array("ADHERENT_ETIQUETTE_TYPE","chaine","L7163","Type d'étiquette (pour impression de planche d'étiquettes)");
 
         // Boites
         //-------
