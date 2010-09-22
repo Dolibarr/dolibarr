@@ -75,31 +75,31 @@ class modAdherent extends DolibarrModules
         // Constantes
         //-----------
         $this->const = array();
-        $this->const[0]  = array("ADHERENT_MAIL_RESIL","texte","Votre adhesion vient d'etre resiliee.\r\nNous esperons vous revoir tres bientot","Mail de resiliation");
-        $this->const[1]  = array("ADHERENT_MAIL_VALID","texte","Votre adhesion vient d'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\n","Mail de validation");
-        $this->const[5]  = array("ADHERENT_MAIL_VALID_SUBJECT","chaine","Votre adhesion a ete validee","Sujet du mail de validation");
-        $this->const[6]  = array("ADHERENT_MAIL_RESIL_SUBJECT","chaine","Resiliation de votre adhesion","Sujet du mail de resiliation");
-        $this->const[10] = array("ADHERENT_MAILMAN_UNSUB_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&user=%EMAIL%","Url de desinscription aux listes mailman");
+        $this->const[0]  = array("ADHERENT_MAIL_RESIL","texte","Votre adhésion vient d'être résiliée.\r\nNous espérons vous revoir très bientôt","Mail de résiliation");
+        $this->const[1]  = array("ADHERENT_MAIL_VALID","texte","Votre adhésion vient d'être validée. \r\nVoici le rappel de vos coordonnées (toute information erronée entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\n","Mail de validation");
+        $this->const[5]  = array("ADHERENT_MAIL_VALID_SUBJECT","chaine","Votre adhésion a été validée","Sujet du mail de validation");
+        $this->const[6]  = array("ADHERENT_MAIL_RESIL_SUBJECT","chaine","Résiliation de votre adhésion","Sujet du mail de résiliation");
+        $this->const[10] = array("ADHERENT_MAILMAN_UNSUB_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&user=%EMAIL%","Url de désinscription aux listes mailman");
         $this->const[11] = array("ADHERENT_MAILMAN_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%","Url pour les inscriptions mailman");
-        $this->const[12] = array("ADHERENT_MAILMAN_LISTS","chaine","","Listes auxquelles les nouveaux adherents sont inscris");
+        $this->const[12] = array("ADHERENT_MAILMAN_LISTS","chaine","","Listes auxquelles les nouveaux adhérents sont inscrits");
         $this->const[16] = array("ADHERENT_USE_SPIP_AUTO","yesno","","Utilisation de SPIP automatiquement");
-        $this->const[17] = array("ADHERENT_SPIP_USER","chaine","","Utilisateur de connexion a la base spip");
-        $this->const[18] = array("ADHERENT_SPIP_PASS","chaine","","Mot de passe de connexion a la base spip");
+        $this->const[17] = array("ADHERENT_SPIP_USER","chaine","","Utilisateur de connexion à la base spip");
+        $this->const[18] = array("ADHERENT_SPIP_PASS","chaine","","Mot de passe de connexion à la base spip");
         $this->const[19] = array("ADHERENT_SPIP_SERVEUR","chaine","","serveur spip");
         $this->const[20] = array("ADHERENT_SPIP_DB","chaine","","db spip");
         $this->const[21] = array("ADHERENT_MAIL_FROM","chaine","","From des mails");
-        $this->const[22] = array("ADHERENT_MAIL_COTIS","texte","Bonjour %PRENOM%,\r\nCet email confirme que votre cotisation a ete recue\r\net enregistree","Mail de validation de cotisation");
-        $this->const[23] = array("ADHERENT_MAIL_COTIS_SUBJECT","chaine","Recu de votre cotisation","Sujet du mail de validation de cotisation");
-        $this->const[25] = array("ADHERENT_CARD_HEADER_TEXT","chaine","%ANNEE%","Texte imprime sur le haut de la carte adherent");
-        $this->const[26] = array("ADHERENT_CARD_FOOTER_TEXT","chaine","Association AZERTY","Texte imprime sur le bas de la carte adherent");
-        $this->const[27] = array("ADHERENT_CARD_TEXT","texte","%PRENOM% %NOM%\r\nMembre ne %ID%\r\n%EMAIL%\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%","Texte imprime sur la carte adherent");
+        $this->const[22] = array("ADHERENT_MAIL_COTIS","texte","Bonjour %PRENOM%,\r\nCet email confirme que votre cotisation a été reçue\r\net enregistrée","Mail de validation de cotisation");
+        $this->const[23] = array("ADHERENT_MAIL_COTIS_SUBJECT","chaine","Reçu de votre cotisation","Sujet du mail de validation de cotisation");
+        $this->const[25] = array("ADHERENT_CARD_HEADER_TEXT","chaine","%ANNEE%","Texte imprimé sur le haut de la carte adhérent");
+        $this->const[26] = array("ADHERENT_CARD_FOOTER_TEXT","chaine","Association AZERTY","Texte imprimé sur le bas de la carte adhérent");
+        $this->const[27] = array("ADHERENT_CARD_TEXT","texte","%PRENOM% %NOM%\r\nMembre ne %ID%\r\n%EMAIL%\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%","Texte imprimé sur la carte adhérent");
         $this->const[28] = array("ADHERENT_MAILMAN_ADMINPW","chaine","","Mot de passe Admin des liste mailman");
-        $this->const[29] = array("ADHERENT_MAILMAN_SERVER","chaine","","Serveur hebergeant les interfaces d'Admin des listes mailman");
-        $this->const[30] = array("ADHERENT_MAILMAN_LISTS_COTISANT","chaine","","Liste(s) auxquelles les nouveaux cotisants sont inscris automatiquement");
-        $this->const[31] = array("ADHERENT_BANK_USE_AUTO","yesno","","Insertion automatique des cotisation dans le compte banquaire");
+        $this->const[29] = array("ADHERENT_MAILMAN_SERVER","chaine","","Serveur hébergeant les interfaces d'Admin des listes mailman");
+        $this->const[30] = array("ADHERENT_MAILMAN_LISTS_COTISANT","chaine","","Liste(s) auxquelles les nouveaux cotisants sont inscrits automatiquement");
+        $this->const[31] = array("ADHERENT_BANK_USE_AUTO","yesno","","Insertion automatique des cotisations dans le compte banquaire");
         $this->const[32] = array("ADHERENT_BANK_ACCOUNT","chaine","","ID du Compte banquaire utilise");
-        $this->const[33] = array("ADHERENT_BANK_CATEGORIE","chaine","","ID de la categorie banquaire des cotisations");
-        $this->const[34] = array("ADHERENT_ETIQUETTE_TYPE","chaine","L7163","Type d etiquette (pour impression de planche d etiquette)");
+        $this->const[33] = array("ADHERENT_BANK_CATEGORIE","chaine","","ID de la catégorie banquaire des cotisations");
+        $this->const[34] = array("ADHERENT_ETIQUETTE_TYPE","chaine","L7163","Type d'étiquette (pour impression de planche d'étiquette)");
 
         // Boites
         //-------
