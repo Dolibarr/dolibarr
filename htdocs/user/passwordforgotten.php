@@ -146,7 +146,9 @@ $dol_url_root = DOL_URL_ROOT;
 // Select templates
 if (class_exists('Smartphone'))
 {
-	$template_dir = $smartphone->getTemplateDir();
+	// Template directory
+	$smartphone->getTemplateDir();
+	$template_dir = $smartphone->template_dir;
 }
 else
 {
