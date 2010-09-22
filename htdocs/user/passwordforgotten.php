@@ -143,11 +143,16 @@ $php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
 
 $dol_url_root = DOL_URL_ROOT;
 
+// Title
+$title='Dolibarr '.DOL_VERSION;
+if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
+
 // Select templates
 if (class_exists('Smartphone'))
 {
 	// Template directory
 	$smartphone->getTemplateDir();
+	$smartphone->title = $title;
 	$template_dir = $smartphone->template_dir;
 }
 else
@@ -176,10 +181,6 @@ else
 
 if (! $_REQUEST["username"]) $focus_element = 'username';
 else $focus_element = 'password';
-
-// Title
-$title='Dolibarr '.DOL_VERSION;
-if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 
 // Send password button enabled ?
 $disabled='disabled';

@@ -17,28 +17,10 @@
  *
  * $Id$
  */
-header('Cache-Control: Public, must-revalidate');
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
+$smartphone->smartheader($title);
 ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<!-- BEGIN PHP TEMPLATE -->
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-<head>
-<title><?php echo $title; ?></title>
-<meta name="robots" content="noindex,nofollow" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<link rel="apple-touch-icon" href="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/homescreen.png'; ?>" />
-<meta name="viewport"content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
-<link type="text/css" rel="stylesheet" href="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/'.$smartphone->theme.'.css.php'; ?>" />
-<script type="text/javascript" src="<?php echo $dol_url_root.'/includes/iwebkit/Framework/javascript/functions.js'; ?>"></script>
-</head>
-
-<body>
+<!-- START LOGIN SMARTPHONE TEMPLATE -->
 
 <div id="topbar">
 	<div id="title"><?php echo $title; ?></div>
@@ -127,7 +109,6 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	</script>
 <?php } ?>
 
-</body>
-</html>
+<?php $smartphone->smartfooter(); ?>
 
-<!-- END PHP TEMPLATE -->
+<!-- END LOGIN SMARTPHONE TEMPLATE -->

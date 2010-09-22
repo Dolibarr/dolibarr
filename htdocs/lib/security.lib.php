@@ -51,11 +51,18 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$php_self = $_SERVER['PHP_SELF'];
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
+	
+	// Title
+	$title='Dolibarr '.DOL_VERSION;
+	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 
 	// Select templates
 	if (class_exists('Smartphone'))
 	{
-		$template_dir = $smartphone->getTemplateDir();
+		// Template directory
+		$smartphone->getTemplateDir();
+		$smartphone->title = $title;
+		$template_dir = $smartphone->template_dir;
 	}
 	else
 	{
@@ -87,10 +94,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		$login_background=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png';
 	}
-
-	// Title
-	$title='Dolibarr '.DOL_VERSION;
-	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 
 	$demologin='';
 	$demopassword='';

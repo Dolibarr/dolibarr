@@ -33,6 +33,8 @@ class Smartphone {
     
     var $phone;
     var $theme;
+    var $title;
+    var $template_dir;
 
     /**
      *  Constructor for class
@@ -52,21 +54,38 @@ class Smartphone {
 		if (preg_match('/android|blackberry|iphone/i',$this->phone))
 		{
 			$this->theme = 'default';
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/smartphone/tpl/";
+			$this->template_dir=DOL_DOCUMENT_ROOT."/theme/phones/smartphone/tpl/";
 		}
 		// Special template
 		elseif (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$this->phone))
 		{
 			$this->theme = 'default';
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$this->phone."/tpl/";
+			$this->template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$this->phone."/tpl/";
 		}
 		// Default template
 		else
 		{
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
+			$this->template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
 		}
-		
-		return $template_dir;
     }
+    
+    /**
+     *  Show HTML header
+     *  @param      title   	Web page title
+     */
+    function smartheader()
+    {
+    	global $conf;
+    	
+    	include_once($this->template_dir.'header.tpl.php');
+    }
+    
+	/**
+     *  Show HTML footer
+     */
+    function smartfooter()
+    {	
+    	include_once($this->template_dir.'footer.tpl.php');
+    }	
 
 }
