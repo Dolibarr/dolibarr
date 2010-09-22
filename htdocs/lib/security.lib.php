@@ -34,6 +34,7 @@
 function dol_loginfunction($langs,$conf,$mysoc)
 {
 	global $dolibarr_main_demo,$db;
+	global $smartphone;
 
 	$langcode=(empty($_GET["lang"])?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):$_GET["lang"]);
 	$langs->setDefaultLang($langcode);
@@ -52,25 +53,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
 
 	// Select templates
-	if ($conf->browser->phone)
+	if (class_exists('Smartphone'))
 	{
-		// iWebKit template
-		if (preg_match('/android|blackberry|iphone/i',$conf->browser->phone))
-		{
-			$theme = 'default';
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/smartphone/tpl/";
-		}
-		// Special template
-		elseif (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
-		{
-			$theme = 'default';
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/tpl/";
-		}
-		// Default template
-		else
-		{
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
-		}
+		$template_dir = $smartphone->getTemplateDir();
 	}
 	else
 	{

@@ -33,7 +33,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <meta name="robots" content="noindex,nofollow" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="viewport"content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
-<link type="text/css" rel="stylesheet" href="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$theme.'/'.$theme.'.css.php'; ?>" />
+<link type="text/css" rel="stylesheet" href="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/'.$smartphone->theme.'.css.php'; ?>" />
 <script type="text/javascript" src="<?php echo $dol_url_root.'/includes/iwebkit/Framework/javascript/functions.js'; ?>"></script>
 </head>
 
@@ -43,7 +43,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	<div id="title"><?php echo $langs->trans('Password'); ?></div>
 	<div id="leftnav">
 		<a href="<?php echo $dol_url_root; ?>/">
-			<img alt="home" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$theme.'/img/home.png'; ?>"/>
+			<img alt="home" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/img/home.png'; ?>"/>
 		</a>
 	</div>
 </div>
@@ -54,7 +54,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	<input type="hidden" name="action" value="buildnewpassword">
 	
 	<div align="center">
-		<img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$theme.'/thumbs/dolibarr.png'; ?>">
+		<img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/dolibarr.png'; ?>">
 	</div>
 	
 	<br>

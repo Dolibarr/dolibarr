@@ -33,6 +33,8 @@
 
 class CommonObject
 {
+	var $db;
+	
 	// Instantiate hook classe of thirdparty module
 	var $hooks=array();
 	

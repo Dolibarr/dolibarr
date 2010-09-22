@@ -267,6 +267,15 @@ if (sizeof($conf->need_smarty) > 0)
 	}
 }
 
+// Init Smartphone
+if (isset($conf->browser->phone))
+{
+	include_once(DOL_DOCUMENT_ROOT."/core/class/smartphone.class.php");
+		
+	$smartphone = new Smartphone($db);
+	$smartphone->phone = $conf->browser->phone;
+}
+
 /*
  * Phase authentication / login
  */

@@ -144,29 +144,13 @@ $php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
 $dol_url_root = DOL_URL_ROOT;
 
 // Select templates
-if ($conf->browser->phone)
+if (class_exists('Smartphone'))
 {
-	// iWebKit template
-	if (preg_match('/android|blackberry|iphone/i',$conf->browser->phone))
-	{
-		$theme = 'default';
-		$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/smartphone/tpl/";
-	}
-	// Special phones templates
-	elseif (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
-	{
-		$theme = 'default';
-		$template_dir = DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/tpl/";
-	}
-	// Default phones template
-	else
-	{
-		$template_dir = DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
-	}
+	$template_dir = $smartphone->getTemplateDir();
 }
 else
 {
-	if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/passwordforgotten.tpl"))
+	if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/passwordforgotten.tpl.php"))
 	{
 		$template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
 	}
