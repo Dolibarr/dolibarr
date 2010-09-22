@@ -26,7 +26,7 @@ ErrorWrongValueForParameter=Vous avez peut-être saisi une mauvaise valeur pour 
 ErrorFailedToCreateDatabase=Echec de création de la base '%s'.
 ErrorFailedToConnectToDatabase=Echec de connexion à la base '%s'.
 ErrorPHPVersionTooLow=Version de PHP trop ancienne. La version %s est requise.
-ErrorConnectedButDatabaseNotFound=Connection au serveur réussi mais base '%s' introuvable.
+ErrorConnectedButDatabaseNotFound=Connexion au serveur réussi mais base '%s' introuvable.
 ErrorDatabaseAlreadyExists=La base de données '%s' existe déjà.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Si la base n'existe pas, revenez en arrière et cochez l'option "Créer la base de données".
 IfDatabaseExistsGoBackAndCheckCreate=Si la base existe déjà, revenez en arrière et désactiver l'option "Créer la base de données".
@@ -57,7 +57,7 @@ AdminPassword=Mot de passe du propriétaire de la base de données Dolibarr.
 CreateDatabase=Créer la base de données
 CreateUser=Créer le propriétaire
 DatabaseSuperUserAccess=Serveur de base de données - Accès super utilisateur
-CheckToCreateDatabase=Cochez cette option si la base de données n'existe pas et doit être créée.<br>Dans ce cas, il faut renseigner le login/mot de passe du superutilisateur au bas de cette page.
+CheckToCreateDatabase=Cochez cette option si la base de données n'existe pas et doit être créée.<br>Dans ce cas, il faut renseigner le login/mot de passe du super-utilisateur au bas de cette page.
 CheckToCreateUser=Cochez cette option si l'utilisateur propriétaire n'existe pas et doit être créé.<br>Dans ce cas, il faut renseigner le nom et mot de passe du propriétaire à créer ainsi que le login/mot de passe du superutilisateur au bas de cette page. Si la case n'est pas cochée, le nom et mot de passe du propriétaire doivent exister. 
 Experimental=(expérimental)
 DatabaseRootLoginDescription=Login de l'utilisateur de la base ayant les droits de création de bases de données ou de comptes pour la base, inutile si la base et son compte d'accès existent déjà (comme lorsque vous êtes chez un hébergeur).
@@ -150,7 +150,7 @@ MigrationShippingDelivery2=Mise à jour stockage des expéditions 2
 #########
 # upgrade
 #########
-MigrationFixData=Correction de données dénormalisées
+MigrationFixData=Correction de données dé-normalisées
 MigrationOrder=Migration de données sur les commandes clients
 MigrationSupplierOrder=Migration de données sur les commandes fournisseurs
 MigrationProposal=Migration de données sur les propositions commerciales
@@ -165,7 +165,7 @@ MigrationPaymentsUpdate=Mise à jour des paiements (lien n-n paiements-factures)
 MigrationPaymentsNumberToUpdate=%s paiement(s) a mettre à jour
 MigrationProcessPaymentUpdate=Mise à jour paiement(s) %s
 MigrationPaymentsNothingToUpdate=Pas ou plus de paiement orphelin à corriger.
-MigrationPaymentsNothingUpdatable=Pas ou plus de paiement orphelin corrigeable.
+MigrationPaymentsNothingUpdatable=Pas ou plus de paiement orphelin corrigible.
 
 # Contracts Update
 MigrationContractsUpdate=Mise à jour des contrats sans détail (gestion du contrat + détail de contrat)
@@ -196,7 +196,7 @@ MigrationContractsIncoherentCreationDateNothingToUpdate=Pas ou plus de date de c
 MigrationReopeningContracts=Réouverture des contrats qui ont au moins un service actif non fermé
 MigrationReopenThisContract=Réouverture contrat %s
 MigrationReopenedContractsNumber=%s contrats modifiés
-MigrationReopeningContractsNothingToUpdate=Pas ou plus de contrats à réouvrir.
+MigrationReopeningContractsNothingToUpdate=Pas ou plus de contrats à ré-ouvrir.
 
 # Migration transfert
 MigrationBankTransfertsUpdate=Mise à jour des liens entre écriture bancaire et un transfert entre compte
