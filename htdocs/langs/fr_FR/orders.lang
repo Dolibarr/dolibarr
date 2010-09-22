@@ -106,21 +106,21 @@ CloneOrder=Cloner commande
 ConfirmCloneOrder=Êtes-vous sûr de vouloir cloner cette commande <b>%s</b> ?
 DispatchSupplierOrder=Réception de la commande fournisseur %s
 ##### Types de contacts #####
-TypeContact_commande_internal_SALESREPFOLL=Reponsable suivi commande client
-TypeContact_commande_internal_SHIPPING=Reponsable envoi commande client
+TypeContact_commande_internal_SALESREPFOLL=Responsable suivi commande client
+TypeContact_commande_internal_SHIPPING=Responsable envoi commande client
 TypeContact_commande_external_BILLING=Contact client facturation commande
 TypeContact_commande_external_SHIPPING=Contact client livraison commande
 TypeContact_commande_external_CUSTOMER=Contact client suivi commande
-TypeContact_order_supplier_internal_SALESREPFOLL=Reponsable suivi commande fournisseur
-TypeContact_order_supplier_internal_SHIPPING=Reponsable réception commande fournisseur
+TypeContact_order_supplier_internal_SALESREPFOLL=Responsable suivi commande fournisseur
+TypeContact_order_supplier_internal_SHIPPING=Responsable réception commande fournisseur
 TypeContact_order_supplier_external_BILLING=Contact fournisseur facturation commande
 TypeContact_order_supplier_external_SHIPPING=Contact fournisseur livraison commande
 TypeContact_order_supplier_external_CUSTOMER=Contact fournisseur suivi commande
 
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON non définie
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON non définie
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Echec chargement du fichier module '%s'
-Error_FailedToLoad_COMMANDE_ADDON_File=Echec chargement du fichier module '%s'
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Échec chargement du fichier module '%s'
+Error_FailedToLoad_COMMANDE_ADDON_File=Échec chargement du fichier module '%s'
 
 # Sources
 OrderSource0=Proposition commerciale
@@ -134,5 +134,5 @@ QtyOrdered=Qté commandée
 AddDeliveryCostLine=Ajouter une ligne de frais port indiquant le poids de la commande
 
 # Document models
-PDFEinsteinDescription=Modèle de comande complet (logo...)
+PDFEinsteinDescription=Modèle de commande complet (logo...)
 PDFEdisonDescription=Modèle de commande simple
