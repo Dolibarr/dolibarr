@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/includes/modules/societe/mod_codeclient_monkey.class.php
+ *       \file       htdocs/includes/modules/societe/mod_codeclient_monkey.php
  *       \ingroup    societe
  *       \brief      Fichier de la classe des gestion lion des codes clients
  *       \version    $Id$
@@ -109,7 +109,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$posindice=8;
 		$sql = "SELECT MAX(SUBSTRING(".$field.",".$posindice.")) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE ".$field." LIKE '".$prefix."%'";
+		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
 
 		$resql=$db->query($sql);
 		if ($resql)
