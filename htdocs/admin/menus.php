@@ -72,7 +72,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	{
 		$dir = DOL_DOCUMENT_ROOT."/includes/menus/";
 		
-		if ($key == 'auguria' || $key == 'iphone')
+		if ($key == 'auguria')
 		{
 			// Load sql init_menu_base.sql file
 			$file='init_menu_base.sql';
@@ -84,7 +84,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 			$file='init_menu_'.$key.'.sql';
 			if (file_exists($dir.$file))
 			{
-				$result=run_sql($dir.$file,1,'',1);
+				$result=run_sql($dir.$file,1,'',1,$key);
 			}
 		}
 	}
