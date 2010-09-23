@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-$smartphone->smartheader($title);
+$smartphone->smartheader();
 ?>
 
 <!-- START LOGIN SMARTPHONE TEMPLATE -->
