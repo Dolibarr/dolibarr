@@ -141,7 +141,7 @@ class FormAdmin
                 if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
             	$filelib=preg_replace('/\.php$/i','',$file);
 				$prefix='';
-				if (preg_match('/^eldy/i',$file)) $prefix='0';	// 0=Recommanded, 1=Experimental, 2=Other
+				if (preg_match('/^eldy|^iphone/i',$file)) $prefix='0';	// 0=Recommanded, 1=Experimental, 2=Other
 				else $prefix='2';
 
                 if ($file == $selected)
