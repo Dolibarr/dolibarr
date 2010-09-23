@@ -92,7 +92,7 @@ class Smartphone {
      *  Show menu
      */
     function smartmenu()
-    {
+    {	
     	global $conf, $langs;
     	
     	include_once($this->template_dir.'menu.tpl.php');

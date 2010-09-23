@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,15 +37,21 @@ if (! $user->admin)
 
 $dirtop = "../../includes/menus/barre_top";
 $dirleft = "../../includes/menus/barre_left";
+$dirsmartphone = "../../includes/menus/smartphone";
+
+$dirmenu = array($dirleft,$dirsmartphone);
 
 $mesg=$_GET["mesg"];
 
 $menu_handler_top=$conf->global->MAIN_MENU_BARRETOP;
 $menu_handler_left=$conf->global->MAIN_MENU_BARRELEFT;
+$menu_handler_smartphone=$conf->global->MAIN_MENU_SMARTPHONE;
 $menu_handler_top=preg_replace('/_backoffice.php/i','',$menu_handler_top);
 $menu_handler_top=preg_replace('/_frontoffice.php/i','',$menu_handler_top);
 $menu_handler_left=preg_replace('/_backoffice.php/i','',$menu_handler_left);
 $menu_handler_left=preg_replace('/_frontoffice.php/i','',$menu_handler_left);
+$menu_handler_smartphone=preg_replace('/_backoffice.php/i','',$menu_handler_smartphone);
+$menu_handler_smartphone=preg_replace('/_frontoffice.php/i','',$menu_handler_smartphone);
 
 $menu_handler=$menu_handler_left;
 
@@ -265,7 +272,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	// Handler
 	print '<tr><td><b>'.$langs->trans('MenuHandler').'</b></td>';
 	print '<td>';
-	print $htmladmin->select_menu_families($menu_handler,'menu_handler',$dirleft);
+	print $htmladmin->select_menu_families($menu_handler,'menu_handler',$dirmenu);
 	print '</td>';
 	print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 

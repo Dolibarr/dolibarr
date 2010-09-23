@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,15 +37,21 @@ if (! $user->admin)
 
 $dirtop = "../../includes/menus/barre_top";
 $dirleft = "../../includes/menus/barre_left";
+$dirsmartphone = "../../includes/menus/smartphone";
+
+$dirmenu = array($dirleft,$dirsmartphone);
 
 $mesg=$_GET["mesg"];
 
 $menu_handler_top=$conf->global->MAIN_MENU_BARRETOP;
 $menu_handler_left=$conf->global->MAIN_MENU_BARRELEFT;
+$menu_handler_smartphone=$conf->global->MAIN_MENU_SMARTPHONE;
 $menu_handler_top=preg_replace('/_backoffice.php/i','',$menu_handler_top);
 $menu_handler_top=preg_replace('/_frontoffice.php/i','',$menu_handler_top);
 $menu_handler_left=preg_replace('/_backoffice.php/i','',$menu_handler_left);
 $menu_handler_left=preg_replace('/_frontoffice.php/i','',$menu_handler_left);
+$menu_handler_smartphone=preg_replace('/_backoffice.php/i','',$menu_handler_smartphone);
+$menu_handler_smartphone=preg_replace('/_frontoffice.php/i','',$menu_handler_smartphone);
 
 $menu_handler=$menu_handler_left;
 
@@ -263,7 +269,7 @@ if ($_GET["action"] == 'delete')
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
-print $htmladmin->select_menu_families($menu_handler,'menu_handler',$dirleft);
+print $htmladmin->select_menu_families($menu_handler,'menu_handler',$dirmenu);
 print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
 print '</form>';
 
@@ -291,8 +297,8 @@ if ($conf->use_javascript_ajax)
 	c'est un tableau a 2 dimensions.
 	Une ligne represente un element : data[$x]
 	chaque ligne est decomposee en 3 donnees:
-	  - l'index de l'�l�ment
-	  - l'index de l'�l�ment parent
+	  - l'index de l'élément
+	  - l'index de l'élément parent
 	  - la chaine a afficher
 	ie: data[]= array (index, index parent, chaine )
 	*/

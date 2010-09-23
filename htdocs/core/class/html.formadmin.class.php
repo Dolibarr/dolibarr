@@ -179,30 +179,36 @@ class FormAdmin
     }
 
     /**
-     *    \brief      Retourne la liste deroulante des menus disponibles
-     *    \param      selected        Menu pre-selectionnee
-     *    \param      htmlname        Nom de la zone select
-     *    \param      dirmenu         Repertoire a scanner
+     *    Retourne la liste deroulante des menus disponibles
+     *    @param      selected        Menu pre-selectionnee
+     *    @param      htmlname        Nom de la zone select
+     *    @param      dirmenuarray    Repertoires a scanner
      */
-    function select_menu_families($selected='',$htmlname,$dirmenu)
+    function select_menu_families($selected='',$htmlname,$dirmenuarray)
     {
 		global $langs,$conf;
 
 		$menuarray=array();
-        $handle=opendir($dirmenu);
-        while (($file = readdir($handle))!==false)
-        {
-            if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-            {
-                $filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
-				if (preg_match('/^default/i',$filelib)) continue;
-				if (preg_match('/^empty/i',$filelib)) continue;
-				if (preg_match('/\.lib/i',$filelib)) continue;
-
-				$menuarray[$filelib]=1;
-            }
-			$menuarray['all']=1;
-        }
+		
+		foreach($dirmenuarray as $dirmenu)
+		{
+			$handle=opendir($dirmenu);
+			while (($file = readdir($handle))!==false)
+			{
+				if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+				{
+					$filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
+					if (preg_match('/^default/i',$filelib)) continue;
+					if (preg_match('/^empty/i',$filelib)) continue;
+					if (preg_match('/\.lib/i',$filelib)) continue;
+					
+					$menuarray[$filelib]=1;
+				}
+				$menuarray['all']=1;
+			}
+			closedir($handle);
+		}
+        
 		ksort($menuarray);
 
 		// Affichage liste deroulante des menus

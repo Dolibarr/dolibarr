@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ if (!$user->admin) accessforbidden();
 
 $dirtop = "../includes/menus/barre_top";
 $dirleft = "../includes/menus/barre_left";
+$dirsmartphone = "../includes/menus/smartphone";
 
 
 /*
@@ -53,9 +54,11 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 
 	dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE",     $_POST["main_menu_smartphone"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRETOP", $_POST["main_menufront_barretop"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRELEFT",$_POST["main_menufront_barreleft"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE",$_POST["main_menufront_smartphone"],'chaine',0,'',$conf->entity);
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler=array();
@@ -63,11 +66,13 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_barretop"])]=1;
 	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menu_barreleft"])]=1;
 	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_barreleft"])]=1;
+	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menu_smartphone"])]=1;
+	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_smartphone"])]=1;
 	foreach ($listofmenuhandler as $key => $val)
 	{
 		//print "x".$key;
 
-		// Load sql ini_menu_handler.sql file
+		// Load sql init_menu_handler.sql file
 		$dir = DOL_DOCUMENT_ROOT."/includes/menus/";
 		$file='init_menu_'.$key.'.sql';
 		if (file_exists($dir.$file))
@@ -155,6 +160,17 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print $htmladmin->select_menu($conf->global->MAIN_MENUFRONT_BARRELEFT,'main_menufront_barreleft',$dirleft);
 	print '</td>';
 	print '</tr>';
+	
+	// Menu smartphone
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
+	print '<td>';
+	print $htmladmin->select_menu($conf->global->MAIN_MENU_SMARTPHONE,'main_menu_smartphone',$dirsmartphone);
+	print '</td>';
+	print '<td>';
+	print $htmladmin->select_menu($conf->global->MAIN_MENUFRONT_SMARTPHONE,'main_menufront_smartphone',$dirsmartphone);
+	print '</td>';
+	print '</tr>';
 
 	print '</table>';
 
@@ -202,6 +218,19 @@ else
 	print '</td>';
 	print '<td>';
 	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENUFRONT_BARRELEFT);
+	print $filelib;
+	print '</td>';
+	print '</tr>';
+	
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
+	print '<td>';
+	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENU_SMARTPHONE);
+	print $filelib;
+	print '</td>';
+	print '<td>';
+	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENUFRONT_SMARTPHONE);
 	print $filelib;
 	print '</td>';
 	print '</tr>';
