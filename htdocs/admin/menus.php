@@ -70,14 +70,22 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_smartphone"])]=1;
 	foreach ($listofmenuhandler as $key => $val)
 	{
-		//print "x".$key;
-
-		// Load sql init_menu_handler.sql file
 		$dir = DOL_DOCUMENT_ROOT."/includes/menus/";
-		$file='init_menu_'.$key.'.sql';
-		if (file_exists($dir.$file))
+		
+		if ($key == 'auguria' || $key == 'iphone')
 		{
-			$result=run_sql($dir.$file,1,'',1);
+			// Load sql init_menu_base.sql file
+			$file='init_menu_base.sql';
+			$result=run_sql($dir.$file,1,'',1,$key);
+		}
+		else
+		{
+			// Load sql init_menu_handler.sql file
+			$file='init_menu_'.$key.'.sql';
+			if (file_exists($dir.$file))
+			{
+				$result=run_sql($dir.$file,1,'',1);
+			}
 		}
 	}
 

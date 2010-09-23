@@ -89,14 +89,15 @@ function versiondolibarrarray($fortest=0)
 
 
 /**
- *	\brief		Launch a sql file
- *	\param		sqlfile			Full path to sql file
- * 	\param		silent			1=Do not output anything, 0=Output line for update page
- * 	\param		entity			Entity targeted for multicompany module
- *	\param		usesavepoint	1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
- * 	\return		int				<=0 if KO, >0 if OK
+ *	Launch a sql file
+ *	@param		sqlfile			Full path to sql file
+ * 	@param		silent			1=Do not output anything, 0=Output line for update page
+ * 	@param		entity			Entity targeted for multicompany module
+ *	@param		usesavepoint	1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+ *	@param		handler			Handler targeted for menu
+ * 	@return		int				<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
+function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 {
 	global $db, $conf, $langs, $user;
 
@@ -205,7 +206,9 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 	{
 		if ($sql)
 		{
-			$newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$sql);
+			if (!empty($handler)) $newsql=preg_replace('/__HANDLER__/i',"'".$handler."'",$sql);
+			
+			$newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$newsql);
 
 			// Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
 			if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$newsql."'</td></tr>\n";
