@@ -73,11 +73,12 @@ class Smartphone {
      *  Show HTML header
      *  @param      title   	Web page title
      */
-    function smartheader()
+    function smartheader($type='default')
     {
     	global $conf;
     	
-    	include_once($this->template_dir.'header.tpl.php');
+    	if ($type == 'default') include_once($this->template_dir.'header.tpl.php');
+    	if ($type == 'menu') include_once($this->template_dir.'menuheader.tpl.php');
     }
     
 	/**
@@ -94,6 +95,20 @@ class Smartphone {
     function smartmenu()
     {	
     	global $conf, $langs;
+    	
+    	if (! $conf->smart_menu)  $conf->smart_menu ='iphone_backoffice.php';
+    	$smart_menu=$conf->smart_menu;
+    	if (GETPOST('top_menu')) $smart_menu=GETPOST('top_menu');
+    	
+    	// Load the smartphone menu manager
+    	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$smart_menu);
+    	if (! $result)	// If failed to include, we try with standard
+    	{
+    		$conf->smart_menu='iphone_backoffice.php';
+    		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$smart_menu);
+    	}
+    	$menusmart = new MenuSmart($this->db);
+    	$menusmart->atarget=$target;
     	
     	include_once($this->template_dir.'menu.tpl.php');
     }

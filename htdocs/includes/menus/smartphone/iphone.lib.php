@@ -37,16 +37,21 @@ function print_iphone_menu($db,$atarget,$type_user)
 	require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
 	global $user,$conf,$langs,$dolibarr_main_db_name;
+	
+	$submenu=array();
 
 	// On sauve en session le menu principal choisi
 	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
 	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
 	$_SESSION["leftmenuopened"]="";
 
-	$menuArbo = new Menubase($db,'iphone','top');
-	$tabMenu = $menuArbo->menuTopCharger($type_user,$_SESSION['mainmenu'], 'iphone');
-
-	print_start_menu_array();
+	$menutop = new Menubase($db,'iphone','top');
+	$menuleft = new Menubase($db,'iphone','left');
+	$tabMenu = $menutop->menuTopCharger($type_user,$_SESSION['mainmenu'], 'iphone');
+	//var_dump($newmenu);
+	
+	
+	print_start_menu_array($langs->trans('Home'),1);
 
 	for($i=0; $i<count($tabMenu); $i++)
 	{
@@ -70,31 +75,17 @@ function print_iphone_menu($db,$atarget,$type_user)
 						$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=&';
 					}
 					$url.="idmenu=".$tabMenu[$i]['rowid'];
+					
+					$newmenu = new Menu();
+					
+					$submenu[$i] = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'iphone');
 				}
 
-				// Define the class (top menu selected or not)
-				if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
-				else if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $classname='class="tmenusel"';
-				else $classname='class="tmenu"';
-
 				print_start_menu_entry($idsel);
-				print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
+				print '<a href="#'.$tabMenu[$i]['titre'].'">';
 				print_text_menu_entry($tabMenu[$i]['titre']);
 				print '</a>';
 				print_end_menu_entry();
-			}
-			else
-			{
-				if (! $type_user)
-				{
-					print_start_menu_entry($idsel);
-					print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
-					print_text_menu_entry($tabMenu[$i]['titre']);
-					print '</a>';
-					print_end_menu_entry();
-				}
 			}
 		}
 	}
@@ -102,45 +93,54 @@ function print_iphone_menu($db,$atarget,$type_user)
 	print_end_menu_array();
 
 	print "\n";
+
+	for($i=0; $i<count($submenu); $i++)
+	{
+		foreach($submenu[$i] as $menu)
+		{
+			print_start_menu_array($menu[0]['titre']);
+			
+			for($j=0; $j<count($menu); $j++)
+			{
+				print_start_menu_entry();
+				print '<a href="'.$url.'"'.($menu[$j]['atarget']?" target='".$menu[$j]['atarget']."'":($atarget?" target=$atarget":"")).'>';
+				print_text_menu_entry($menu[$j]['titre']);
+				print '</a>';
+				print_end_menu_entry();
+			}
+			
+			print_end_menu_array();
+		}
+	}
 }
 
 
 
-function print_start_menu_array()
+function print_start_menu_array($title,$selected=0)
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
-	else print '<ul class="tmenu">';
+	print '<ul id="'.$title.'" title="'.$title.'" '.($selected?'selected="true"':'').'>';
 }
 
-function print_start_menu_entry($idsel)
+function print_start_menu_entry()
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
-	else print '<li class="tmenu" id="mainmenutd_'.$idsel.'">';
+	print '<li>';
 }
 
 function print_text_menu_entry($text)
 {
-	global $conf;
-	print '<span class="mainmenuaspan">';
-	print $text;
-	print '</span>';
+	print '<span class="name">'.$text.'</span>';
+	print '<span class="arrow"></span>';
 }
 
 function print_end_menu_entry()
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</td>';
-	else print '</li>';
+	print '</li>';
 	print "\n";
 }
 
 function print_end_menu_array()
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</tr></table>';
-	else print '</ul>';
+	print '</ul>';
 	print "\n";
 }
 
