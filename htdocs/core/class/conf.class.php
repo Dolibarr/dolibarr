@@ -51,6 +51,7 @@ class Conf
     //! Used to store current menu handlers
 	var $top_menu;
 	var $left_menu;
+	var $smart_menu;
 
 	//! Used to store entity for multi-company (default 1)
 	var $entity=1;
@@ -206,6 +207,8 @@ class Conf
 		if (! $this->global->MAIN_MENUFRONT_BARRETOP) $this->global->MAIN_MENUFRONT_BARRETOP="eldy_backoffice.php";
 		if (! $this->global->MAIN_MENU_BARRELEFT) $this->global->MAIN_MENU_BARRELEFT="eldy_backoffice.php";
 		if (! $this->global->MAIN_MENUFRONT_BARRELEFT) $this->global->MAIN_MENUFRONT_BARRELEFT="eldy_backoffice.php";
+		if (! $this->global->MAIN_MENU_SMARTPHONE) $this->global->MAIN_MENU_SMARTPHONE="iphone_backoffice.php";
+		if (! $this->global->MAIN_MENUFRONT_SMARTPHONE) $this->global->MAIN_MENUFRONT_SMARTPHONE="iphone_backoffice.php";
 
 		// Variable globales LDAP
 		if (empty($this->global->LDAP_FIELD_FULLNAME)) $this->global->LDAP_FIELD_FULLNAME='';
