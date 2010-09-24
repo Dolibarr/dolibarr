@@ -51,7 +51,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 	//var_dump($newmenu);
 	
 	
-	print_start_menu_array($langs->trans('Home'),1);
+	print_start_menu_array('home',$langs->trans('Home'),1);
 
 	for($i=0; $i<count($tabMenu); $i++)
 	{
@@ -82,7 +82,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 				}
 
 				print_start_menu_entry();
-				print '<a href="#'.$tabMenu[$i]['titre'].'">';
+				print '<a href="#'.$tabMenu[$i]['mainmenu'].'">';
 				print_text_menu_entry($tabMenu[$i]['titre']);
 				print '</a>';
 				print_end_menu_entry();
@@ -104,9 +104,11 @@ function print_iphone_menu($db,$atarget,$type_user)
 	{
 		$menu = $submenu->liste;
 		
+		//var_dump($menu);
+		
 		if (is_array($menu) && !empty($menu))
 		{
-			print_start_menu_array($menu[0]['titre']);
+			print_start_menu_array($menu[0]['mainmenu'],$menu[0]['titre']);
 				
 			$num = count($menu);
 				
@@ -126,9 +128,10 @@ function print_iphone_menu($db,$atarget,$type_user)
 
 
 
-function print_start_menu_array($title,$selected=0)
+function print_start_menu_array($id,$title,$selected=0)
 {
-	print '<ul id="'.$title.'" title="'.$title.'" '.($selected?'selected="true"':'').'>';
+	print '<ul id="'.$id.'" title="'.$title.'" '.($selected?'selected="true"':'').'>';
+	print "\n";
 }
 
 function print_start_menu_entry()

@@ -56,7 +56,7 @@ class Menu {
      *  \param      enabled     Menu actif ou non
      *  \param      target		Target lien
      */
-    function add($url, $titre, $level=0, $enabled=1, $target='')
+    function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='')
     {
         $i = sizeof($this->liste);
         $this->liste[$i]['url'] = $url;
@@ -64,6 +64,7 @@ class Menu {
         $this->liste[$i]['level'] = $level;
         $this->liste[$i]['enabled'] = $enabled;
         $this->liste[$i]['target'] = $target;
+        $this->liste[$i]['mainmenu'] = $mainmenu;
     }
 
     /**

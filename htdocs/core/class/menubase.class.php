@@ -381,7 +381,7 @@ class Menubase
 					{
 						//				print "x".$pere." ".$tab[$x][6];
 
-						$this->newmenu->add((! preg_match("/^(http:\/\/|https:\/\/)/i",$tab[$x][2])) ? DOL_URL_ROOT . $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
+						$this->newmenu->add((! preg_match("/^(http:\/\/|https:\/\/)/i",$tab[$x][2])) ? DOL_URL_ROOT . $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5], $tab[$x][8]);
 						$this->recur($tab, $tab[$x][0], $rang +1);
 					}
 				}
@@ -630,6 +630,7 @@ class Menubase
                 else $tabMenu[$b][4] = ($tabMenu[$b][4] && $perms);
                 if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $enabled;
                 else $tabMenu[$b][7] = ($tabMenu[$b][7] && $enabled);
+                $tabMenu[$b][8] = $menu['mainmenu'];
 
                 $a++;
             }
