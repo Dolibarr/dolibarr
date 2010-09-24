@@ -792,9 +792,6 @@ YouMustRunCommandFromCommandLineAfterLoginToUser=Vous devez exécuter la command
 YourPHPDoesNotHaveSSLSupport=Fonctions SSL non présentes dans votre PHP
 DownloadMoreSkins=+ de thèmes à télécharger
 SimpleNumRefModelDesc=Renvoie le numéro sous la forme %syymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0.
-ListOfEntities=Liste des entités
-AddEntity=Ajouter entité
-EditEntity=Editer entité
 ShowProfIdInAddress=Afficher l'identifiant professionnel dans les adresses sur les documents
 TranslationUncomplete=Traduction partielle
 SomeTranslationAreUncomplete=Certaines langues sont traduites partiellement ou peuvent contenir des erreurs. Si vous en détectez, vous pouvez corriger les fichiers textes <b>.lang</b> du répertoire <b>htdocs/langs</b> et les soumettre sur le forum à <a href="http://www.dolibarr.fr/forum" target="_blank">http://www.dolibarr.fr</a>. 

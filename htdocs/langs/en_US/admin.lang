@@ -781,9 +781,6 @@ YouMustRunCommandFromCommandLineAfterLoginToUser=You must run this command from 
 YourPHPDoesNotHaveSSLSupport=SSL functions not available in your PHP
 DownloadMoreSkins=More skins to download
 SimpleNumRefModelDesc=Return the reference number with format %syymm-nnnn where yy is year, mm is month and nnnn is a sequence without hole and with no reset
-ListOfEntities=List of entities
-AddEntity=Add entity
-EditEntity=Edit entity
 ShowProfIdInAddress=Show professionnal id with addresses on documents
 TranslationUncomplete=Partial translation
 SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix <b>.lang</b> text files into directory <b>htdocs/langs</b> and submit them on the forum at <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a>. 

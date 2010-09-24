@@ -773,9 +773,6 @@ YouMustRunCommandFromCommandLineAfterLoginToUser=Ta ukaz morate pognati iz ukazn
 YourPHPDoesNotHaveSSLSupport=SSL funkcije niso na voljo v vašem PHP
 DownloadMoreSkins=Prenos dodatnih preoblek
 SimpleNumRefModelDesc=Prikaže referenčno številko v formatu %syymm-nnnn pri čemer je YY leto, mm mesec in nnnn je zaporedje brez presledkov in brez resetiranja
-ListOfEntities=Seznam entitet
-AddEntity=Dodaj entiteto
-EditEntity=Uredi entiteto
 
 ##### Module za generiranje gesel
 PasswordGenerationStandard=Predlaga geslo, generirano glede na interni Dolibarr algoritem: 8 mest, ki vsebujejo različne številke in male črke.

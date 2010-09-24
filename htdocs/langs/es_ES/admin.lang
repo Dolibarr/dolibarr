@@ -788,9 +788,6 @@ YouMustRunCommandFromCommandLineAfterLoginToUser=Debe ejecutar el comando desde 
 YourPHPDoesNotHaveSSLSupport=Funciones SSL no disponibles en su PHP
 DownloadMoreSkins=Más temas para descargar
 SimpleNumRefModelDesc=Devuelve el número bajo el formato %syymm-nnnn donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0
-ListOfEntities=Listado de entidades
-AddEntity=Añadir entidad
-EditEntity=Editar entidad
 ##### Module password generation= undefined=
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
