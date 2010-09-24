@@ -206,9 +206,9 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 	{
 		if ($sql)
 		{
-			if (!empty($handler)) $newsql=preg_replace('/__HANDLER__/i',"'".$handler."'",$sql);
+			if (!empty($handler)) $sql=preg_replace('/__HANDLER__/i',"'".$handler."'",$sql);
 			
-			$newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$newsql);
+			$newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$sql);
 
 			// Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
 			if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$newsql."'</td></tr>\n";
