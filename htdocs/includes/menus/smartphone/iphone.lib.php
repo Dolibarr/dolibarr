@@ -38,7 +38,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 	
-	$submenu=array();
+	$submenus=array();
 
 	// On sauve en session le menu principal choisi
 	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
@@ -78,10 +78,10 @@ function print_iphone_menu($db,$atarget,$type_user)
 					
 					$newmenu = new Menu();
 					
-					$submenu[$i] = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'iphone');
+					$submenus[$i] = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'iphone');
 				}
 
-				print_start_menu_entry($idsel);
+				print_start_menu_entry();
 				print '<a href="#'.$tabMenu[$i]['titre'].'">';
 				print_text_menu_entry($tabMenu[$i]['titre']);
 				print '</a>';
@@ -89,26 +89,36 @@ function print_iphone_menu($db,$atarget,$type_user)
 			}
 		}
 	}
+	
+	print_start_menu_entry();
+	print '<a href="'.DOL_URL_ROOT.'/user/logout.php" target="_self">';
+	print_text_menu_entry($langs->trans('Logout'));
+	print '</a>';
+	print_end_menu_entry();
 
 	print_end_menu_array();
 
 	print "\n";
 
-	for($i=0; $i<count($submenu); $i++)
+	foreach($submenus as $submenu)
 	{
-		foreach($submenu[$i] as $menu)
+		$menu = $submenu->liste;
+		
+		if (is_array($menu) && !empty($menu))
 		{
 			print_start_menu_array($menu[0]['titre']);
-			
-			for($j=0; $j<count($menu); $j++)
+				
+			$num = count($menu);
+				
+			for($i=0; $i<$num; $i++)
 			{
 				print_start_menu_entry();
-				print '<a href="'.$url.'"'.($menu[$j]['atarget']?" target='".$menu[$j]['atarget']."'":($atarget?" target=$atarget":"")).'>';
-				print_text_menu_entry($menu[$j]['titre']);
+				print '<a href="'.$url.'"'.($menu[$i]['atarget']?" target='".$menu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
+				print_text_menu_entry($menu[$i]['titre']);
 				print '</a>';
 				print_end_menu_entry();
 			}
-			
+				
 			print_end_menu_array();
 		}
 	}
