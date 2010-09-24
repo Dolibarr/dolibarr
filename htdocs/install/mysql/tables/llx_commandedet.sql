@@ -23,8 +23,9 @@
 create table llx_commandedet
 (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
-  fk_commande        integer,
-  fk_product         integer,
+  fk_commande        integer	NOT NULL,
+  fk_parent_line	 integer	NULL,
+  fk_product         integer	NULL,
   description        text,
   tva_tx             double(6,3),	                  -- vat rate
   localtax1_tx       double(6,3),                     -- localtax1 rate

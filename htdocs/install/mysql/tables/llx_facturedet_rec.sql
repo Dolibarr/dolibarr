@@ -25,7 +25,8 @@ create table llx_facturedet_rec
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_facture      integer NOT NULL,
-  fk_product      integer,
+  fk_parent_line  integer NULL,
+  fk_product      integer NULL,
   product_type    integer DEFAULT 0,
   description     text,
   tva_tx          double(6,3) DEFAULT 19.6, -- taux tva

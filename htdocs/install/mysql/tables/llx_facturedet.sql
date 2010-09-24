@@ -26,6 +26,7 @@ create table llx_facturedet
 (
   rowid               integer    AUTO_INCREMENT PRIMARY KEY,
   fk_facture          integer    NOT NULL,
+  fk_parent_line	  integer	 NULL,
   fk_product          integer    NULL,					-- Doit pouvoir etre nul pour ligne detail sans produits
   description         text,
   tva_tx              double(6,3),								-- Taux tva produit/service (exemple 19.6)

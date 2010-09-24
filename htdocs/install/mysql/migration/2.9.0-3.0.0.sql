@@ -54,3 +54,8 @@ ALTER TABLE llx_actioncomm ADD COLUMN fk_supplier_invoice integer;
 
 
 ALTER TABLE llx_tmp_caisse MODIFY fk_article integer NOT NULL;
+
+ALTER TABLE llx_propaldet ADD COLUMN fk_parent_line	integer NULL AFTER fk_propal;
+ALTER TABLE llx_commandedet ADD COLUMN fk_parent_line integer NULL AFTER fk_commande;
+ALTER TABLE llx_facturedet ADD COLUMN fk_parent_line integer NULL AFTER fk_facture;
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_parent_line integer NULL AFTER fk_facture;
