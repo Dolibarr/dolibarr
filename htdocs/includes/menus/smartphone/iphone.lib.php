@@ -114,8 +114,17 @@ function print_iphone_menu($db,$atarget,$type_user)
 				
 			for($i=0; $i<$num; $i++)
 			{
+				$url=$menu[$i]['url'];
+				if (! preg_match('/\?/',$url)) $url.='?';
+				else $url.='&';
+				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
+				{
+					$url.='mainmenu='.$menu[$i]['mainmenu'].'&leftmenu=&';
+				}
+				$url.="idmenu=".$menu[$i]['rowid'];
+
 				print_start_menu_entry();
-				print '<a href="'.$url.'"'.($menu[$i]['atarget']?" target='".$menu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
+				print '<a href="'.$url.'"'.($menu[$i]['atarget']?" target='".$menu[$i]['atarget']."'":($atarget?" target=$atarget":' target="_self"')).'>';
 				print_text_menu_entry($menu[$i]['titre']);
 				print '</a>';
 				print_end_menu_entry();
