@@ -25,7 +25,7 @@ alter table llx_product_price change column envente tosell tinyint DEFAULT 1;
 
 ALTER TABLE llx_boxes_def DROP INDEX uk_boxes_def;
 ALTER TABLE llx_boxes_def MODIFY file varchar(200) NOT NULL;
-ALTER TABLE llx_boxes_def MODIFY note varchar(140);
+ALTER TABLE llx_boxes_def MODIFY note varchar(130);
 ALTER TABLE llx_boxes_def ADD UNIQUE INDEX uk_boxes_def (file, entity, note);
 
 ALTER TABLE llx_notify_def MODIFY fk_contact integer NULL;
