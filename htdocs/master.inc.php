@@ -202,6 +202,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	elseif (preg_match('/palm/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='palm';
 	elseif (preg_match('/symbian/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='symbian';
 	elseif (preg_match('/webos/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='webos';
+	elseif (preg_match('/maemo/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='maemo';
 	// MS products at end
 	elseif (preg_match('/iemobile/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='windowsmobile';
 	elseif (preg_match('/windows ce/i',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='windowsmobile';

@@ -51,7 +51,7 @@ class Smartphone {
     function getTemplateDir()
     {
     	// iWebKit template
-		if (preg_match('/android|blackberry|iphone/i',$this->phone))
+		if (preg_match('/android|blackberry|iphone|maemo/i',$this->phone))
 		{
 			$this->theme = 'default';
 			$this->template_dir=DOL_DOCUMENT_ROOT."/theme/phones/smartphone/tpl/";
