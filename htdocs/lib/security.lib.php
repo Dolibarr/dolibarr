@@ -27,7 +27,7 @@
 
 /**
  *	\brief      Show Dolibarr default login page
- *	\param		langs		Lang object
+ *	\param		langs		Lang object (must be initialized by a new).
  *	\param		conf		Conf object
  *	\param		mysoc		Company object
  */
@@ -66,7 +66,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 	else
 	{
-		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl"))
+		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl.php"))
 		{
 			$template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
 		}
@@ -76,11 +76,15 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		}
 	}
 
-	$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
+	$conf->css = "/theme/".$conf->theme."/style.css.php?lang=".$langs->defaultlang;
 	$conf_css = DOL_URL_ROOT.$conf->css;
+	
+	// Add real path in session name
+	$realpath='';
+	if ( preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs))	$realpath = isset($regs[1])?$regs[1]:'';
 
 	// Set cookie for timeout management
-	$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+	$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
 	if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', 0);
 
 	if (! empty($_REQUEST["urlfrom"])) $_SESSION["urlfrom"]=$_REQUEST["urlfrom"];
@@ -119,7 +123,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 			if (isset($_COOKIE[$entityCookieName]))
 			{
-				include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/cookie.class.php");
 
 				$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
 
@@ -159,12 +163,14 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$select_entity='';
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/multicompany/class/multicompany.class.php');
+		$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/multicompany.class.php');
+		if ($res)
+		{
+			$mc = new Multicompany($db);
+			$mc->getEntities(0,1);
 
-		$mc = new Multicompany($db);
-		$mc->getEntities(0,1);
-
-		$select_entity=$mc->select_entities($mc->entities,$lastentity,'tabindex="3"');
+			$select_entity=$mc->select_entities($mc->entities,$lastentity,'tabindex="3"');
+		}
 	}
 
 	// Security graphical code
