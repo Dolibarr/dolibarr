@@ -109,7 +109,7 @@ class DolCookie
 		$this->myExpire = $expire;
 		$this->myPath = $path;
 		$this->myDomain = $domain;
-		$this->mySsecure = $secure;
+		$this->mySecure = $secure;
 
 		//print 'key='.$this->myKey.' name='.$this->myCookie.' value='.$this->myValue.' expire='.$this->myExpire;
 
