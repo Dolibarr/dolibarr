@@ -1,5 +1,5 @@
-# Dolibarr language file - es_ES - withdrawals
-CHARSET= UTF-8
+# Dolibarr language file - es_ES - withdrawals 
+CHARSET=UTF-8
 StandingOrdersArea=Área domiciliaciones
 CustomersStandingOrdersArea=Área domiciliaciones de clientes
 StandingOrders=Domiciliaciones
@@ -20,6 +20,7 @@ RequestStandingOrderTreated=Pedidos de domiciliaciones procesados
 CustomersStandingOrders=Domiciliaciones de clientes
 CustomerStandingOrder=Domiciliación cliente
 NbOfInvoiceToWithdraw=Nº de facturas pendientes de domiciliación
+NbOfInvoiceToWithdrawWithInfo=Número de facturas en espera de domiciliación para el cliente con los siguientes datos bancarios
 InvoiceWaitingWithdraw=Facturas en espera de domiciliación
 AmountToWithdraw=Cantidad a domiciliar
 WithdrawsRefused=Domiciliaciones devueltas
@@ -69,3 +70,7 @@ NotifyTransmision=Envío de domiciliación
 NotifyEmision=Emisión de domiciliación
 NotifyCredit=Abono de domiciliación
 NumeroNationalEmetter=Número Nacional del Emisor
+PleaseSelectCustomerBankBANToWithdraw=Introduzca la información de la cuenta bancaria del cliente a domiciliar
+WithBankUsingRIB=Para las cuentas bancarias que utilizan CCC
+WithBankUsingBANBIC=Para las cuentas bancarias que utilizan el código BAN/BIC/SWIFT
+BankToReceiveWithdraw=Información de su cuenta bancaria receptora de las domiciliaciones

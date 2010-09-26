@@ -1,6 +1,5 @@
 # Dolibarr language file - es_AR - languages
 CHARSET=UTF-8
-
 Language_ar_AR=Árabe
 Language_ca_ES=Catalán
 Language_da_DA=Danés
@@ -16,6 +15,8 @@ Language_fr_BE=Francés (Bélgica)
 Language_fr_CA=Francés (Canadá)
 Language_fr_CH=Francés (Suiza)
 Language_fr_FR=Francés
+Language_hu_HU=Húngaro
+Language_is_IS=Islandés
 Language_it_IT=Italiano
 Language_nb_NO=Noruego (Bokmal)
 Language_nl_BE=Neerlandés (Bélgica)
@@ -29,4 +30,3 @@ Language_tr_TR=Turco
 Language_sl_SL=Esloveno
 Language_sv_SV=Sueco
 Language_zh_CN=Chino
-Language_is_IS=Islandés

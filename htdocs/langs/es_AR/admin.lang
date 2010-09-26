@@ -209,6 +209,7 @@ HelpCenterDesc1=Esta aplicación, independiente de Dolibarr, le permite ayudarle
 HelpCenterDesc2=Algunos de estos servicios sólo están disponibles en <b>inglés</b>.
 CurrentTopMenuHandler=Gestor de menú superior
 CurrentLeftMenuHandler=Gestor de menú izquierdo
+CurrentSmartphoneMenuHandler=Gestor menú smartphone actual
 MeasuringUnit=Unidad de medida
 Emails=E-Mails
 EMailsSetup=Configuración E-Mails
@@ -683,8 +684,10 @@ MenuCompanySetup=Empresa/Institución
 MenuNewUser=Nuevo usuario
 MenuTopManager=Gestión del menú superior
 MenuLeftManager=Gestión del menú izquierdo
+MenuSmartphoneManager=Gestor de menú smartphone
 DefaultMenuTopManager=Gestión del menú superior
 DefaultMenuLeftManager=Gestión del menú izquierdo
+DefaultMenuSmartphoneManager=Gestor de menú smartphone
 Skin=Tema visual
 DefaultSkin=Tema visual por defecto
 MaxSizeList=Longitud máxima de listados
@@ -788,6 +791,9 @@ YouMustRunCommandFromCommandLineAfterLoginToUser=Debe ejecutar el comando desde 
 YourPHPDoesNotHaveSSLSupport=Funciones SSL no disponibles en su PHP
 DownloadMoreSkins=Más temas para descargar
 SimpleNumRefModelDesc=Devuelve el número bajo el formato %syymm-nnnn donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0
+ShowProfIdInAddress=Mostrar el identificador profesional en las direcciones de los documentos
+TranslationUncomplete=Traducción parcial
+SomeTranslationAreUncomplete=Algunos idiomas están traducidos en parte o pueden contener errores. Si lo encuentra, puede corregir los archivos de texto <b>.lang</b> del directorio <b>htdocs/langs</b> y enviarlos al foro <a href="http://www.dolibarr.fr/forum" target="_blank">http://www.dolibarr.fr</a>. 
 ##### Module password generation= undefined=
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
@@ -877,10 +883,6 @@ HideTreadedOrders=Ocultar los pedidos procesados o anulados del listado
 ValidOrderAfterPropalClosed=Validar el pedido después del cierre del presupuesto, permite no pasar por el pedido provisional
 FreeLegalTextOnOrders=Texto libre en pedidos
 WatermarkOnDraftOrders=Marca de agua en pedidos borrador (en caso de estar vacío)
-##### Fiche inter #####
-FicheinterNumberingModules=Módulos de numeración de las fichas de intervención
-TemplatePDFInterventions=Modelo de documentos de las fichas de intervención
-WatermarkOnDraftInterventionCards=Marca de agua en fichas de intervención (en caso de estar vacío)
 ##### Clicktodial #####
 ClickToDialSetup=Configuración del módulo Click To Dial
 ClickToDialUrlDesc=Url de llamada haciendo click en el icono teléfono. <br>La 'url completa llamada será: URL?login=...&password=...&caller=...&called=telellamada
@@ -889,6 +891,9 @@ Bookmark4uSetup=Configuración del módulo Bookmark4u
 ##### Interventions #####
 InterventionsSetup=Configuración del módulo intervenciones
 FreeLegalTextOnInterventions=Texto adicional en las fichas de intervención
+FicheinterNumberingModules=Módulos de numeración de las fichas de intervención
+TemplatePDFInterventions=Modelo de documentos de las fichas de intervención
+WatermarkOnDraftInterventionCards=Marca de agua en fichas de intervención (en caso de estar vacío)
 ##### Members #####
 MembersSetup=Configuración del módulo Asociaciones
 MemberMainOptions=Opciones principales

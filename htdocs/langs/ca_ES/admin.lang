@@ -209,6 +209,7 @@ HelpCenterDesc1=Aquesta aplicació, independent de Dolibarr, us permet ajudar a 
 HelpCenterDesc2=Alguns d'aquests serveis només estan disponibles en <b>anglès</b>.
 CurrentTopMenuHandler=Gestor de menú superior
 CurrentLeftMenuHandler=Gestor de menú esquerre
+CurrentSmartphoneMenuHandler=Gestor menú smartphone actual
 MeasuringUnit=Unitat de mesura
 Emails=E-Mails
 EMailsSetup=Configuració E-Mails
@@ -282,7 +283,7 @@ ExampleOfDirectoriesForModelGen=Exemples de sintaxi:<br>c:\mydir<br>/home/mydir<
 FollowingSubstitutionKeysCanBeUsed=Posant les següents etiquetes a la plantilla, obtindrà una substitució amb el valor personalitzat en generar el document:
 FullListOnOnlineDocumentation=Llista completa de tags disponibles a la documentació d'usuari del mòdul Tercers del wiki http://wiki.dolibarr.org
 FirstnameNamePosition=Ordre visualització nom/cognoms
-# Modules
+# Modules= undefined==
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
 Module1Name=Tercers
@@ -683,8 +684,10 @@ MenuCompanySetup=Empresa/Institució
 MenuNewUser=Nou usuari
 MenuTopManager=Gestió del menú superior
 MenuLeftManager=Gestió del menú de l'esquerra
+MenuSmartphoneManager=Gestor de menú smartphone
 DefaultMenuTopManager=Gestió del menú superior
 DefaultMenuLeftManager=Gestió del menú de l'esquerra
+DefaultMenuSmartphoneManager=Gestor de menú smartphone
 Skin=Tema visual
 DefaultSkin=Tema visual por defecte
 MaxSizeList=Longuitud màxima de llistats
@@ -788,6 +791,10 @@ YouMustRunCommandFromCommandLineAfterLoginToUser=Ha d'executar la comanda des d'
 YourPHPDoesNotHaveSSLSupport=Funcions SSL no disponibles al vostre PHP
 DownloadMoreSkins=Més temes per descarregar
 SimpleNumRefModelDesc=Retorna el nombre sota el format %syymm-nnnn on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0
+ShowProfIdInAddress=Mostrar l'identificador professional en les direccions dels documents
+TranslationUncomplete=Traducció parcial
+SomeTranslationAreUncomplete=Alguns idiomes estan traduïts en part o poden contenir errors. Si ho troba, pot corregir els arxius de text <b>.lang</b> del directori <b>htdocs/langs</b> i enviar-los al fòrum <a href="http://www.dolibarr.fr/forum" target="_blank">http://www.dolibarr.fr</a>. 
+
 ##### Module password generation= undefined==
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.
@@ -877,10 +884,6 @@ HideTreadedOrders=Amaga les comandes processades o anul·lades del llistat
 ValidOrderAfterPropalClosed=Validar la comanda després del tancament del pressupost, permet no passar per la comanda provisional
 FreeLegalTextOnOrders=Text lliure en comandes
 WatermarkOnDraftOrders=Marca d'aigua en comandes esborrany (en cas d'estar buit)
-##### Fiche inter #####
-FicheinterNumberingModules=Mòduls de numeració de les fitxes d'intervenció
-TemplatePDFInterventions=Model de documents de les fitxes d'intervenció
-WatermarkOnDraftInterventionCards=Marca d'aigua en fitxes d'intervenció (en cas d'estar buit)
 ##### Clicktodial #####
 ClickToDialSetup=Configuració del mòdul Click To Dial
 ClickToDialUrlDesc=Url de trucada fent clic en la icona telèfon. Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacé par le téléphone de l'appelé<br><b>%%2$s</b> qui sera remplacé par le téléphone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
@@ -889,6 +892,9 @@ Bookmark4uSetup=Configuració del mòdul Bookmark4u
 ##### Interventions #####
 InterventionsSetup=Configuració del mòdul intervencions
 FreeLegalTextOnInterventions=Text addicional en les fitxes d'intervenció
+FicheinterNumberingModules=Mòduls de numeració de les fitxes d'intervenció
+TemplatePDFInterventions=Model de documents de les fitxes d'intervenció
+WatermarkOnDraftInterventionCards=Marca d'aigua en fitxes d'intervenció (en cas d'estar buit)
 ##### Members #####
 MembersSetup=Configuració del mòdulo Associacions
 MemberMainOptions=Opcions principals
