@@ -251,7 +251,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 
 		$adh->amount      = $_POST["amount"];
 
-		$adh->photo       = $_FILES['photo']['name'];
+		$adh->photo       = ($_FILES['photo']['name']?$_FILES['photo']['name']:$adh->oldcopy->photo);
 
 		// Get status and public property
 		$adh->statut      = $_POST["statut"];
@@ -284,7 +284,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		$result=$adh->update($user,0,$nosyncuser,$nosyncuserpass);
 		if ($result >= 0 && ! sizeof($adh->errors))
 		{
-			if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
+			if (!empty($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 			{
 				$dir= $conf->adherent->dir_output . '/' . get_exdir($adh->id,2,0,1).'/photos/';
 
