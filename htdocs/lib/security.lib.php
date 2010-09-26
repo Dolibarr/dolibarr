@@ -84,6 +84,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if ( preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs))	$realpath = isset($regs[1])?$regs[1]:'';
 
 	// Set cookie for timeout management
+	// FIXME le cookie n'est pas créé la première fois
 	$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
 	if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', 0);
 
@@ -116,7 +117,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 		if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
 		{
-			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
 			if (isset($_COOKIE[$entityCookieName]))
 			{
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/cookie.class.php");
@@ -153,19 +154,18 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 	}
 
-	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $rowspan++;
-
 	// Entity field
 	$select_entity='';
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
-		$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/multicompany.class.php');
+		$rowspan++;
+		
+		$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php');
 		if ($res)
 		{
-			$mc = new Multicompany($db);
-			$mc->getEntities(0,1);
+			$mc = new ActionsMulticompany($db);
 
-			$select_entity=$mc->select_entities($mc->entities,$lastentity,'tabindex="3"');
+			$select_entity=$mc->select_entities($lastentity,'tabindex="3"');
 		}
 	}
 
