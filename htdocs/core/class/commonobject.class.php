@@ -1374,7 +1374,9 @@ class CommonObject
 		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
-		print '<td width="48" colspan="3">&nbsp;</td>';
+		print '<td width="10">&nbsp;</td>';
+		print '<td width="10">&nbsp;</td>';
+		print '<td width="10">&nbsp;</td>';
 		print "</tr>\n";
 	}
 

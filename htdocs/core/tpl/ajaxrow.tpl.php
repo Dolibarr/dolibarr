@@ -23,8 +23,8 @@
 
 <script>
 jQuery(document).ready(function(){
-/*	jQuery(".imgup").hide(); */
-/*    jQuery(".imgdown").hide(); */
+	jQuery(".imgup").hide();
+	jQuery(".imgdown").hide();
     jQuery(".lineupdown").removeAttr('href');
 	jQuery("#objectline").tableDnD({
 		onDrop: function(table, row) {
@@ -34,10 +34,10 @@ jQuery(document).ready(function(){
         },
         dragHandle: "tdlineupdown"
 	});
-	 jQuery(".tdlineupdown").hover(function() {
-		 jQuery(this).addClass('showDragHandle');
+	 jQuery("#objectline tr").hover(function() {
+		 jQuery(this.cells[8]).addClass("showDragHandle");
    }, function() {
-	   jQuery(this).removeClass('showDragHandle');
+	   jQuery(this.cells[8]).removeClass("showDragHandle");
    });
 });
 </script>

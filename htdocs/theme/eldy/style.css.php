@@ -155,9 +155,6 @@ form {
     margin: 0em 0em 0em 0em;
 }
 
-.dragHandle {
-}
-
 .dragClass {
 	background: #b3c5cc;
 }
