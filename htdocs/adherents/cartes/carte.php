@@ -20,13 +20,13 @@
 
 /**
  *	\file 		htdocs/adherents/cartes/carte.php
- *	\ingroup    adherent
+ *	\ingroup    member
  *	\brief      Page to output members business cards
  *	\version    $Id$
  */
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/cards/modules_cards.php");
 
 
@@ -94,7 +94,7 @@ if ($result)
 		$objp->ville,
 		$objp->pays,
 		$objp->email,
-		$objp->naiss,
+		dol_print_date($objp->naiss,'day'),
 		$objp->type,
 		$objp->rowid,
 		$year,

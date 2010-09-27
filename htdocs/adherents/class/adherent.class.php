@@ -145,6 +145,8 @@ class Adherent extends CommonObject
 	$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=-1, $errors_to='')
 	{
 		global $conf,$langs;
+		
+		$birthday = dol_print_date($this->naiss,'day');
 
 		// Detect if message is HTML
 		if ($msgishtml == -1)
@@ -154,20 +156,20 @@ class Adherent extends CommonObject
 		}
 
 		$infos='';
-		if ($this->civilite_id) $infos.= $langs->trans("UserTitle").": ".$this->getCivilityLabel()."\n";
-		$infos.= $langs->trans("Lastname").": $this->nom\n";
-		$infos.= $langs->trans("Firstname").": $this->prenom\n";
-		$infos.= $langs->trans("Company").": $this->societe\n";
-		$infos.= $langs->trans("Address").": $this->adresse\n";
-		$infos.= $langs->trans("Zip").": $this->cp\n";
-		$infos.= $langs->trans("Town").": $this->ville\n";
-		$infos.= $langs->trans("Country").": $this->pays\n";
-		$infos.= $langs->trans("EMail").": $this->email\n";
-		$infos.= $langs->trans("Login").": $this->login\n";
-		$infos.= $langs->trans("Password").": $this->pass\n";
-		$infos.= $langs->trans("Birthday").": $this->naiss\n";
-		$infos.= $langs->trans("Photo").": $this->photo\n";
-		$infos.= $langs->trans("Public").": ".yn($this->public)."\n";
+		if ($this->civilite_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel()."\n";
+		$infos.= $langs->transnoentities("Lastname").": $this->nom\n";
+		$infos.= $langs->transnoentities("Firstname").": $this->prenom\n";
+		$infos.= $langs->transnoentities("Company").": $this->societe\n";
+		$infos.= $langs->transnoentities("Address").": $this->adresse\n";
+		$infos.= $langs->transnoentities("Zip").": $this->cp\n";
+		$infos.= $langs->transnoentities("Town").": $this->ville\n";
+		$infos.= $langs->transnoentities("Country").": $this->pays\n";
+		$infos.= $langs->transnoentities("EMail").": $this->email\n";
+		$infos.= $langs->transnoentities("Login").": $this->login\n";
+		$infos.= $langs->transnoentities("Password").": $this->pass\n";
+		$infos.= $langs->transnoentities("Birthday").": $birthday\n";
+		$infos.= $langs->transnoentities("Photo").": $this->photo\n";
+		$infos.= $langs->transnoentities("Public").": ".yn($this->public)."\n";
 		if ($msgishtml) $infos = dol_htmlentitiesbr($infos);
 
 		// Substitutions
@@ -200,7 +202,7 @@ class Adherent extends CommonObject
 		       $this->ville,
 		       $this->pays,
 		       $this->email,
-		       $this->naiss,
+		       $birthday,
 		       $this->photo,
 		       $this->login,
 		       $this->pass
