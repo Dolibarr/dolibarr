@@ -130,7 +130,7 @@ else
             '%VILLE%'=>$objp->ville,
             '%PAYS%'=>$objp->pays,
             '%EMAIL%'=>$objp->email,
-            '%NAISS%'=>$objp->naiss,
+            '%NAISS%'=>dol_print_date($objp->naiss,'day'),
             '%TYPE%'=>$objp->type,
             '%ID%'=>$objp->rowid,
             '%ANNEE%'=>$year,    // For backward compatibility

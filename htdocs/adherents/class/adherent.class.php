@@ -174,6 +174,8 @@ class Adherent extends CommonObject
     function makeSubstitution($text)
     {
         global $langs;
+        
+        $birthday = dol_print_date($this->naiss,'day');
 
         $msgishtml = 0;
         if (dol_textishtml($text,1)) $msgishtml = 1;
@@ -190,7 +192,7 @@ class Adherent extends CommonObject
         $infos.= $langs->transnoentities("EMail").": ".$this->email."\n";
         $infos.= $langs->transnoentities("Login").": ".$this->login."\n";
         $infos.= $langs->transnoentities("Password").": ".$this->pass."\n";
-        $infos.= $langs->transnoentities("Birthday").": ".$this->naiss."\n";
+        $infos.= $langs->transnoentities("Birthday").": ".$birthday."\n";
         $infos.= $langs->transnoentities("Photo").": ".$this->photo."\n";
         $infos.= $langs->transnoentities("Public").": ".yn($this->public);
 
@@ -207,7 +209,7 @@ class Adherent extends CommonObject
                '%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->ville):$this->ville,
                '%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->pays):$this->pays,
                '%EMAIL%'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
-               '%NAISS%'=>$msgishtml?dol_htmlentitiesbr($this->naiss):$this->naiss,
+               '%NAISS%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
                '%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
                '%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
                '%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass
