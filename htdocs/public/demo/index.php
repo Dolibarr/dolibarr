@@ -41,24 +41,27 @@ if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo mu
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock,tax',
+	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock,tax',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock',
+	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-	'disablemodules'=>'adherent,barcode,boutique,cashdesk,don,expedition,prelevement,projet,stock',
+	'disablemodules'=>'adherent,barcode,boutique,cashdesk,don,expedition,externalsite,prelevement,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
 	array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-	'disablemodules'=>'adherent,boutique,don,ficheinter,prelevement,produit,stock',
+	'disablemodules'=>'adherent,boutique,don,externalsite,ficheinter,prelevement,produit,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
-	'disablemodules'=>'adherent,boutique,cashdesk,don,ficheinter,prelevement,service',
+	'disablemodules'=>'adherent,boutique,don,externalsite,ficheinter,prelevement,service',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoall','label'=>'DemoCompanyAll',
-	'disablemodules'=>'adherent,boutique,cashdesk,don',
+	'disablemodules'=>'adherent,boutique,don,externalsite',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
 	);
+
+$alwaysdisabledmodules=array('memcached');
+//$alwaysdisabledmodules=array('boutique','clicktodial','externalsite','ftp','gravatar','ldap','memcached','webcalendar');
 
 
 function llxHeaderVierge($title, $head = "")
@@ -77,6 +80,10 @@ function llxHeaderVierge($title, $head = "")
 	print '<meta name="description" content="Dolibarr simple ERP/CRM demo. You can test here several profiles of Dolibarr ERP/CRM demos.">'."\n";
 	print "<title>".$title."</title>\n";
 	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php?lang='.$langs->defaultlang.'">'."\n";
+    print '<!-- Includes for JQuery -->'."\n";
+    print '<script type="text/javascript" src="/includes/jquery/js/jquery-1.4.2.min.js"></script>'."\n";
+    print '<script type="text/javascript" src="/includes/jquery/js/jquery-ui-1.8.4.custom.min.js"></script>'."\n";
+    print '<script type="text/javascript" src="/includes/jquery/js/jquery.tablednd_0_5.js"></script>'."\n";
 	if ($head) print $head."\n";
 	print '<style type="text/css">';
 	print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
@@ -98,23 +105,36 @@ function llxFooterVierge()
  * Actions
  */
 
-if ($_REQUEST["action"] == 'gotodemo')
+if (GETPOST("action") == 'gotodemo')
 {
-	//print 'ee'.$_POST["demochoice"];
+	//print 'ee'.GETPOST("demochoice");
 	$disablestring='';
-	foreach ($demoprofiles as $profilearray)
+	// If we disable modules using a profile choice
+	if (GETPOST("demochoice"))
 	{
-		if ($profilearray['key'] == $_REQUEST["demochoice"])
-		{
-			$disablestring=$profilearray['disablemodules'];
-			break;
-		}
+    	foreach ($demoprofiles as $profilearray)
+    	{
+    		if ($profilearray['key'] == GETPOST("demochoice"))
+    		{
+    			$disablestring=$profilearray['disablemodules'];
+    			break;
+    		}
+    	}
+	}
+	// If we disable modules using list
+	foreach($_POST as $key => $val)
+	{
+	    if ($val == '1')
+	    {
+	        $disablestring.=$key.',';
+	    }
+
 	}
 
 	if ($disablestring)
 	{
 		$url=DOL_URL_ROOT.'/index.php?disablemodules='.$disablestring;
-		if (! empty($_REQUEST["urlfrom"]))     $url.='&urlfrom='.$_REQUEST["urlfrom"];
+		if (GETPOST("urlfrom")) $url.='&urlfrom='.GETPOST("urlfrom");
 		header("Location: ".$url);
 		exit;
 	}
@@ -196,6 +216,31 @@ foreach ($dirlist as $dirroot)
 asort($orders);
 //var_dump($orders);
 
+
+?>
+<script type="text/javascript" language="javascript">
+var openedId='';
+jQuery(document).ready(function () {
+    jQuery('tr.moduleline').hide();
+    // Enable this to allow personalized setup
+/*    jQuery('.modulelineshow').attr('href','#');
+    jQuery(".modulelineshow").click(function() {
+        var currentId = $(this).attr('id').substring(2);
+        jQuery('tr.moduleline').hide();
+        if (currentId != openedId)
+        {
+            openedId=currentId;
+            jQuery("#tr1"+currentId).show();
+            jQuery("#tr2"+currentId).show();
+        }
+        else openedId = '';
+    });
+*/
+});
+</script>
+<?php
+
+
 print '<form name="choosedemo" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="username" value="demo">';
@@ -214,25 +259,54 @@ print '<font color="#555577"><b>'.$langs->trans("ChooseYourDemoProfil").'</b></f
 print '</td></tr>';
 print '<tr><td width="50%">';
 
-$NBOFCOLS=2;
 print '<table style="font-size:14px;" width="100%" summary="List of Dolibarr demos">'."\n";
 $i=0;
 foreach ($demoprofiles as $profilarray)
 {
 	if ($profilarray['default'] >= 0)
 	{
-		$url=$_SERVER["PHP_SELF"].'?action=gotodemo&amp;demochoice='.$profilarray['key'].'&amp;urlfrom='.urlencode($_SERVER["PHP_SELF"]);
+		$url=$_SERVER["PHP_SELF"].'?action=gotodemo&amp;urlfrom='.urlencode($_SERVER["PHP_SELF"]);
+		$urlwithmod=$url.'&amp;demochoice='.$profilarray['key'];
 		//if ($i % $NBOFCOLS == 0) print '<tr>';
 		print '<tr>';
-		print '<td>';
+		print '<td>'."\n";
+
+		print '<form method="POST" name="form'.$profilarray['key'].'" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="action" value="gotodemo">';
+        print '<input type="hidden" name="urlfrom" value="'.urlencode($_SERVER["PHP_SELF"]).'">';
 		print '<table summary="Dolibarr online demonstration for profile '.$profilarray['label'].'" style="font-size:14px;" width="100%" class="CTableRow'.($i%2==0?'1':'2').'">'."\n";
 		print '<tr>';
-		print '<td width="50"><a href="'.$url.'"><img src="'.$profilarray['icon'].'" width="48" border="0" alt="Demo '.$profilarray['label'].'"></a></td>';
+		print '<td width="50"><a href="'.$urlwithmod.'" id="a1'.$profilarray['key'].'" class="modulelineshow"><img src="'.$profilarray['icon'].'" width="48" border="0" alt="Demo '.$profilarray['label'].'"></a></td>';
 		//print '<td><input type="radio" name="demochoice"';
 		//if ($profilarray['default']) print ' checked="true"';
 		//print ' value="'.$profilarray['key'].'"></td>';
-		print '<td><a href="'.$url.'">'.$langs->trans($profilarray['label']).'</a></td></tr>';
+		print '<td><a href="'.$urlwithmod.'" id="a2'.$profilarray['key'].'" class="modulelineshow">'.$langs->trans($profilarray['label']).'</a></td></tr>'."\n";
+
+		print '<tr id="tr1'.$profilarray['key'].'" class="moduleline">';
+		print '<td colspan="2">';
+		print $langs->trans("ThisIsListOfModules").'<br>';
+		print '<table>';
+		$listofdisabledmodules=explode(',',$profilarray['disablemodules']);
+		$j=0;$nbcolsmod=4;
+		foreach($modules as $val) // Loop on qualified (enabled) modules
+		{
+		    $modulekeyname=strtolower($val->name);
+		    $modulo=($j % $nbcolsmod);
+		    if ($modulo == 0) print '<tr>';
+            print '<td><input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
+            if (! in_array($modulekeyname,$listofdisabledmodules)) print ' checked="true"';
+            if (! empty($val->always_enabled) || in_array($modulekeyname,$alwaysdisabledmodules)) print ' disabled="true"';
+            print '>'.$val->getName().' &nbsp;</td>';
+            if ($modulo == ($nbcolsmod - 1)) print '</tr>';
+            $j++;
+		}
 		print '</table>';
+		print '</td>';
+		print '</tr>'."\n";
+
+		print '<tr id="tr2'.$profilarray['key'].'" class="moduleline"><td colspan="'.$nbcolsmod.'" align="center"><input type="submit" value=" &nbsp; &nbsp; '.$langs->trans("Start").' &nbsp; &nbsp; " class="button"></td></tr>';
+		print '</table></form>'."\n";
+
 		print '</td>';
 		//if ($i % $NBOFCOLS == ($NBOFCOLS-1)) print '</tr>'."\n";
 		print '</tr>'."\n";

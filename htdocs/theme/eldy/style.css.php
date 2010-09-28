@@ -84,14 +84,6 @@ body {
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
 
-input {
-	font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-    background: #FDFDFD;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-}
 input.flat {
 	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
@@ -127,18 +119,18 @@ select.flat {
 }
 .button {
     font-family: <?php print $fontlist ?>;
-	border: 0px;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
+    border: 1px solid #ACBCBB;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }
 .button:focus  {
     font-family: <?php print $fontlist ?>;
 	color: #222244;
-	border: 0px;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
+    border: 1px solid #ACBCBB;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }

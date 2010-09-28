@@ -51,7 +51,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$php_self = $_SERVER['PHP_SELF'];
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
-	
+
 	// Title
 	$title='Dolibarr '.DOL_VERSION;
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
@@ -78,7 +78,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$conf->css = "/theme/".$conf->theme."/style.css.php?lang=".$langs->defaultlang;
 	$conf_css = DOL_URL_ROOT.$conf->css;
-	
+
 	// Add real path in session name
 	$realpath='';
 	if ( preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs))	$realpath = isset($regs[1])?$regs[1]:'';
@@ -87,10 +87,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
 	if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', 0);
 
-	if (! empty($_REQUEST["urlfrom"])) $_SESSION["urlfrom"]=$_REQUEST["urlfrom"];
+	if (GETPOST("urlfrom")) $_SESSION["urlfrom"]=GETPOST("urlfrom");
 	else unset($_SESSION["urlfrom"]);
 
-	if (! $_REQUEST["username"]) $focus_element='username';
+	if (GETPOST("username")) $focus_element='username';
 	else $focus_element='password';
 
 	$login_background=DOL_URL_ROOT.'/theme/login_background.png';
@@ -131,7 +131,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	// Login
-	$login = (!empty($lastuser)?$lastuser:(isset($_REQUEST["username"])?$_REQUEST["username"]:$demologin));
+	$login = (!empty($lastuser)?$lastuser:(GETPOST("username")?GETPOST("username"):$demologin));
 	$password = $demopassword;
 
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
@@ -158,7 +158,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
 		$rowspan++;
-		
+
 		$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php');
 		if ($res)
 		{
