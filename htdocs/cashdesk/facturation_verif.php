@@ -17,9 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-require ('../master.inc.php');
-require (DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
-require (DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php');
+require('../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
+require_once(DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php');
 
 $obj_facturation = unserialize ($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
@@ -132,4 +132,6 @@ switch ( $_GET['action'] )
 $_SESSION['serObjFacturation'] = serialize ($obj_facturation);
 
 header ('Location: '.$redirection);
+exit;
+
 ?>

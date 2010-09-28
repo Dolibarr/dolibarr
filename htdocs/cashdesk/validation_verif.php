@@ -17,14 +17,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-require ('../master.inc.php');
-require (DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
-require (DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php');
-require (DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
-require (DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
-require (DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
+require('../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
+require_once(DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
 
-$obj_facturation = unserialize ($_SESSION['serObjFacturation']);
+$obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
 
 switch ( $_GET['action'] )

@@ -20,9 +20,9 @@
  * We set here login choices into session.
  */
 
-include('../master.inc.php');
-require('include/environnement.php');
-require('class/Auth.class.php');
+include('../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
+require_once(DOL_DOCUMENT_ROOT.'/cashdesk/class/Auth.class.php');
 
 $langs->load("main");
 

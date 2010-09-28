@@ -24,8 +24,10 @@
  *	\brief      First page of point of sale module
  *	\version    $Id$
  */
-include_once('../master.inc.php');
-require_once('include/environnement.php');
+require('../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
+
+// Test if already logged
 if ( $_SESSION['uid'] <= 0 ) {
 	header ('Location: index.php');
 	exit;

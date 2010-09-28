@@ -36,7 +36,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 require("../main.inc.php");
-require(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
+require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
 
 //header("Content-type: text/html; charset=UTF-8");
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
