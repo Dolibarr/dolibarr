@@ -34,10 +34,10 @@
 class CommonObject
 {
 	var $db;
-	
+
 	// Instantiate hook classe of thirdparty module
 	var $hooks=array();
-	
+
 	/**
 	 *    Constructeur de la classe
 	 *    @param	DB		Handler acces base de donnees
@@ -778,15 +778,15 @@ class CommonObject
 			dol_print_error($this->db);
 		}
 	}
-	
+
 	/**
 	 * 	   Update position of line with ajax (rang)
 	 */
 	function line_ajaxorder($roworder)
-	{	
+	{
 		$rows = explode(',',$roworder);
 		$num = count($rows);
-		
+
 		for ($i = 0 ; $i < $num ; $i++)
 		{
 			$this->updateRangOfLine($rows[$i], ($i+1));
@@ -1376,7 +1376,7 @@ class CommonObject
 		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
 		print '<td width="10">&nbsp;</td>';
 		print '<td width="10">&nbsp;</td>';
-		print '<td width="10">&nbsp;</td>';
+		print '<td class="tdlineupdown" nowrap="nowrap">&nbsp;</td>'; // No width to allow autodim
 		print "</tr>\n";
 	}
 

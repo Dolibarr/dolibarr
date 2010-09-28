@@ -153,8 +153,18 @@ form
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-.showDragHandle {
-	cursor: move;
+
+.dragClass {
+    background: #b3c5cc;
+}
+td.showDragHandle {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/1updownarrow.png'; ?>);
+    background-repeat: no-repeat;
+    background-position: center center;
+    cursor: move;
+}
+.tdlineupdown {
+    white-space: nowrap;
 }
 
 

@@ -34,11 +34,11 @@ jQuery(document).ready(function(){
         },
         dragHandle: "tdlineupdown"
 	});
-	 jQuery("#objectline tr").hover(function() {
-		 jQuery(this.cells[8]).addClass("showDragHandle");
-   }, function() {
-	   jQuery(this.cells[8]).removeClass("showDragHandle");
-   });
+    jQuery(".tdlineupdown").hover(function() {
+  	     jQuery(this).addClass('showDragHandle');
+    }, function() {
+    	  jQuery(this).removeClass('showDragHandle');
+    });
 });
 </script>
 
