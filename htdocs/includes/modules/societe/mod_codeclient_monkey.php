@@ -107,7 +107,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(".$field.",".$posindice.")) as max";
+        $sql = "SELECT MAX(SUBSTRING(".$field." FROM ".$posindice.")) as max";   // This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
 
