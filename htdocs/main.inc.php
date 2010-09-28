@@ -238,7 +238,7 @@ if (! empty($_SESSION["disablemodules"]))
 	$disabled_modules=explode(',',$_SESSION["disablemodules"]);
 	foreach($disabled_modules as $module)
 	{
-		$conf->$module->enabled=false;
+		if ($module) $conf->$module->enabled=false;
 	}
 }
 
@@ -271,7 +271,7 @@ if (sizeof($conf->need_smarty) > 0)
 if (isset($conf->browser->phone))
 {
 	include_once(DOL_DOCUMENT_ROOT."/core/class/smartphone.class.php");
-		
+
 	$smartphone = new Smartphone($db);
 	$smartphone->phone = $conf->browser->phone;
 }
