@@ -316,7 +316,8 @@ DELETE from llx_const where name='USER_PASSWORD_GENERATED' and value='default';
 
 
 ALTER TABLE llx_boxes_def DROP INDEX uk_boxes_def;
-ALTER TABLE llx_boxes_def MODIFY note varchar(255);
+ALTER TABLE llx_boxes_def MODIFY file varchar(200) NOT NULL;
+ALTER TABLE llx_boxes_def MODIFY note varchar(130);
 ALTER TABLE llx_boxes_def ADD UNIQUE INDEX uk_boxes_def (file, entity, note);
 
 -- Fix bad old data
