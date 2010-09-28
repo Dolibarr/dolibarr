@@ -1376,7 +1376,7 @@ class CommonObject
 		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
 		print '<td width="10">&nbsp;</td>';
 		print '<td width="10">&nbsp;</td>';
-		print '<td class="tdlineupdown" nowrap="nowrap">&nbsp;</td>'; // No width to allow autodim
+		print '<td nowrap="nowrap">&nbsp;</td>'; // No width to allow autodim
 		print "</tr>\n";
 	}
 
