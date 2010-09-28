@@ -89,7 +89,12 @@ function versiondolibarrarray($fortest=0)
 
 
 /**
- *	Launch a sql file
+ *	Launch a sql file. Function used by:
+ *  - Migrate process (dolibarr-xyz-abc.sql)
+ *  - Loading sql menus (auguria)
+ *  - Running specific Sql by a module init
+ *  Install process however does not use it.
+ *  Note that Sql files must have all comments at start of line.
  *	@param		sqlfile			Full path to sql file
  * 	@param		silent			1=Do not output anything, 0=Output line for update page
  * 	@param		entity			Entity targeted for multicompany module
@@ -142,7 +147,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 
 			//          print $buf.'<br>';
 
-			if (preg_match('/;/',$buffer))
+			if (preg_match('/;/',$buffer))	// If string contains ';', it's end of a request string, we save it in arraysql.
 			{
 				// Found new request
 				if ($buffer) $arraysql[$i]=$buffer;
@@ -207,7 +212,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 		if ($sql)
 		{
 			if (!empty($handler)) $sql=preg_replace('/__HANDLER__/i',"'".$handler."'",$sql);
-			
+
 			$newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$sql);
 
 			// Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
