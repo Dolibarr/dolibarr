@@ -1,5 +1,6 @@
 <?php
 /* Copyright (c) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2010 Juanjo Menent  <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -266,7 +267,7 @@ class FormFile
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
 				{
-					include_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/modules_commandefournisseur.php');
+					include_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier/order/modules_commandefournisseur.php');
 					$model=new ModelePDFSuppliersOrders();
 					$modellist=$model->liste_modeles($this->db);
 				}

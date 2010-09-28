@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under the	terms of the GNU General Public	License	as published by
@@ -27,7 +28,7 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/modules_commandefournisseur.php');
+require_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier/order/modules_commandefournisseur.php');
 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fourn.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");

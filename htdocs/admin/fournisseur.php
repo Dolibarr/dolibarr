@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin           <regis@dolibarr.fr>
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2010      Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ if ($_GET["action"] == 'specimen')
 	$commande->initAsSpecimen();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/supplier_order/pdf/";
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/supplier/order/";
 	$file = "pdf_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
@@ -168,7 +169,7 @@ print "<br>";
 
 // Supplier order numbering module
 
-$dir = DOL_DOCUMENT_ROOT."/includes/modules/supplier_order/";
+$dir = DOL_DOCUMENT_ROOT."/includes/modules/supplier/order/";
 
 print_titre($langs->trans("OrdersNumberingModules"));
 
@@ -194,7 +195,7 @@ if ($handle)
 		{
 			$file = substr($file, 0, dol_strlen($file)-4);
 
-			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/supplier_order/".$file.".php");
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/supplier/order/".$file.".php");
 
 			$module = new $file;
 
@@ -262,7 +263,7 @@ print '</table><br>';
  * Modeles documents for supplier orders
  */
 
-$dir = DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/pdf/';
+$dir = DOL_DOCUMENT_ROOT.'/includes/modules/supplier/order/';
 
 print_titre($langs->trans("OrdersModelModule"));
 
