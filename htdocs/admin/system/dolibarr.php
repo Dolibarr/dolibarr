@@ -89,7 +89,7 @@ print "</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTopMenuHandler").'</td><td colspan="2">'.$conf->top_menu."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentMenuHandler").'</td><td colspan="2">'.$conf->top_menu."</td></tr>\n";
 //$var=!$var;
 //print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentLeftMenuHandler").'</td><td colspan="2">'.$conf->left_menu."</td></tr>\n";
 print '</table>';
