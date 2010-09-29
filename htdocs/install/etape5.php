@@ -103,7 +103,7 @@ if ($_POST["action"] == "set")
 pHeader($langs->trans("SetupEnd"),"etape5");
 
 // Test if we can run a first install process
-if (! is_writable($conffile))
+if (! GETPOST("versionfrom") && ! GETPOST("versionto") && ! is_writable($conffile))
 {
     print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
     pFooter(1,$setuplang,'jscheckparam');
