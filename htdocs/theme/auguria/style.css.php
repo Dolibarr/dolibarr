@@ -183,8 +183,8 @@ div.fiche {
 <?php
 if (! empty($conf->browser->phone))
 {
-	$minwidthtmenu=0;
-	$heightmenu=19;
+	$minwidthtmenu=70;
+	$heightmenu=39;
 }
 else
 {
@@ -227,9 +227,11 @@ div.mainmenu {
 	height: <?php echo ($heightmenu-19); ?>px;
 	margin-left: 0px;
 }
+*/
 
 <?php if (empty($conf->browser->phone)) { ?>
 
+/*
 div.mainmenu.home{
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/menus/home.png' ?>);
 }
@@ -337,7 +339,6 @@ foreach($mainmenuusedarray as $key => $val)
 ?>
 
 <?php
-
 }	// End test if not phone
 ?>
 
