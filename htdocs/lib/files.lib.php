@@ -258,9 +258,9 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 
 
 /**
- *  \brief      Test if filename is a directory
- *  \param      folder      Name of folder
- *  \return     boolean     True if it's a directory, False if not found
+ *  Test if filename is a directory
+ *  @param      folder      Name of folder
+ *  @return     boolean     True if it's a directory, False if not found
  */
 function dol_is_dir($folder)
 {
@@ -269,11 +269,21 @@ function dol_is_dir($folder)
     else return false;
 }
 
+/**
+ * Return if path is a file
+ * @param   $pathoffile
+ * @return  boolean         True or false
+ */
+function dol_is_file($pathoffile)
+{
+    $newpathoffile=dol_osencode($pathoffile);
+    return is_file($newpathoffile);
+}
 
 /**
- * 	\brief		Test if a folder is empty
- * 	\param		folder		Name of folder
- * 	\return 	boolean		True if dir is empty or non-existing, False if it contains files
+ * 	Test if a folder is empty
+ * 	@param		folder		Name of folder
+ * 	@return 	boolean		True if dir is empty or non-existing, False if it contains files
  */
 function dol_dir_is_emtpy($folder)
 {
@@ -297,9 +307,9 @@ function dol_dir_is_emtpy($folder)
 }
 
 /**
- * 	\brief		Count number of lines in a file
- * 	\param		file		Filename
- * 	\return 	int			<0 if KO, Number of lines in files if OK
+ * 	Count number of lines in a file
+ * 	@param		file		Filename
+ * 	@return 	int			<0 if KO, Number of lines in files if OK
  */
 function dol_count_nb_of_line($file)
 {
@@ -328,7 +338,6 @@ function dol_count_nb_of_line($file)
 
 /**
  * Return size of a file
- *
  * @param 	$pathoffile
  * @return 	string		File size
  */
@@ -348,18 +357,6 @@ function dol_filemtime($pathoffile)
 {
 	$newpathoffile=dol_osencode($pathoffile);
 	return filemtime($newpathoffile);
-}
-
-/**
- * Return if path is a file
- *
- * @param 	$pathoffile
- * @return 	boolean			True or false
- */
-function dol_is_file($pathoffile)
-{
-	$newpathoffile=dol_osencode($pathoffile);
-	return is_file($newpathoffile);
 }
 
 /**

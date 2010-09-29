@@ -2250,10 +2250,10 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
 
 
 /**
- *	\brief  	Remove a file or several files with a mask
- *	\param		file			File to delete or mask of file to delete
- * 	\param		disableglob		Disable usage of glob like *
- *	\param		boolean			True if file is deleted, False if error
+ *	Remove a file or several files with a mask
+ *	@param		file			File to delete or mask of file to delete
+ * 	@param		disableglob		Disable usage of glob like *
+ *	@param		boolean			True if file is deleted, False if error
  */
 function dol_delete_file($file,$disableglob=0)
 {
@@ -2279,10 +2279,10 @@ function dol_delete_file($file,$disableglob=0)
 }
 
 /**
- *	\brief  	Remove a directory
- *	\param		file			Directory to delete
- * 	\return		boolean			True if success, false if error
- * 	\remarks	If directory is not empty, return false
+ *	Remove a directory (not recursive, so content must be empty).
+ *  If directory is not empty, return false
+ *	@param		file			Directory to delete
+ * 	@return		boolean			True if success, false if error
  */
 function dol_delete_dir($dir)
 {
@@ -2291,10 +2291,10 @@ function dol_delete_dir($dir)
 }
 
 /**
- *	\brief  	Remove a directory $dir and its subdirectories
- *	\param		file			Dir to delete
- *	\param		count			Counter to count nb of deleted elements
- *	\return		int				Number of files and directory removed
+ *	Remove a directory $dir and its subdirectories
+ *	@param		file			Dir to delete
+ *	@param		count			Counter to count nb of deleted elements
+ *	@return		int				Number of files and directory removed
  */
 function dol_delete_dir_recursive($dir,$count=0)
 {
