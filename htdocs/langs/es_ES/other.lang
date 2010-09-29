@@ -143,6 +143,7 @@ CurrentInformationOnImage=Esta página le permite cambiar el tamaño o cuadrar l
 ImageEditor=Editor de imagen
 YouReceiveMailBecauseOfNotification=Usted está recibiendo este mensaje porque su correo electrónico está suscrito a algunas notificaciones automáticas para informarle acerca de eventos especiales del programa %s de %s.
 YouReceiveMailBecauseOfNotification2=El evento en cuestión es el siguiente:
+ThisIsListOfModules=Le mostramos un listado de módulos preseleccionados para este perfil de demostración (en esta demo sólo los más comunes son accesibles). Ajuste sus preferencias y haga clic en "Iniciar".
 ##### Bookmark #####=
 Bookmark=Marcador
 Bookmarks=Marcadores
