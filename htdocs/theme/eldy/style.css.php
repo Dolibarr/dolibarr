@@ -481,9 +481,10 @@ img.printer {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+<?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')
+|| (! empty($conf->browser->phone) && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
 .vmenu {
-	display: none;
+    display: none;
 }
 <?php } ?>
 
@@ -496,7 +497,8 @@ font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php p
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; }
 
 
-div.blockvmenupair, div.blockvmenuimpair {
+div.blockvmenupair, div.blockvmenuimpair
+{
     width:168px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
@@ -515,7 +517,8 @@ div.blockvmenupair, div.blockvmenuimpair {
     background-repeat:repeat-x;
 }
 
-div.blockvmenusearch, div.blockvmenubookmarks {
+div.blockvmenusearch
+{
     width:168px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
@@ -527,19 +530,36 @@ div.blockvmenusearch, div.blockvmenubookmarks {
     padding-right: 1px;
     padding-top: 3px;
     padding-bottom: 3px;
-    margin: 1px 0px 0px 0px;
+    margin: 4px 0px 0px 0px;
 	background: #E3E6E8;
 /*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>); */
     background-position:top;
     background-repeat:repeat-x;
 }
 
-div.blockvmenusearch
+div.blockvmenubookmarks
 {
-	margin-top: 4px;
+    width:168px;
+    border-right: 1px solid #555555;
+    border-bottom: 1px solid #555555;
+    font-family: <?php print $fontlist ?>;
+    color: #000000;
+    text-align: <?php print $left; ?>;
+    text-decoration: none;
+    padding-left: 3px;
+    padding-right: 1px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin: 1px 0px 0px 0px;
+    background: #E3E6E8;
+/*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>); */
+    background-position:top;
+    background-repeat:repeat-x;
 }
 
-div.blockvmenuhelp {
+div.blockvmenuhelp
+{
+<?php if (empty($conf->browser->phone)) { ?>
     width:168px;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
@@ -553,6 +573,9 @@ div.blockvmenuhelp {
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
+<?php } else { ?>
+    display: none;
+<?php } ?>
 }
 
 

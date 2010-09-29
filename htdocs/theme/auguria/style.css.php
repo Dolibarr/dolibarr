@@ -463,7 +463,8 @@ img.printer {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+<?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')
+|| (! empty($conf->browser->phone) && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
 .vmenu {
 	display: none;
 }
@@ -510,7 +511,8 @@ div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
 	margin-bottom: -12px;
 }
 
-div.menu_titre {
+div.menu_titre
+{
 	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/bg-titre-rubrique.png' ?>);
 	padding: 0px;
 	padding-top:5px;
@@ -524,7 +526,8 @@ div.menu_titre {
     font-weight: bold;
 }
 
-div.blockvmenusearch {
+div.blockvmenusearch
+{
 	margin: 3px 0px 2px 0px;
 	padding: 0px 0px 2px 2px;
 	border: 1px solid #c0c0d0;
@@ -532,7 +535,8 @@ div.blockvmenusearch {
 	background: #DDDDDD !important;
 }
 
-#blockvmenusearch div.menu_titre, #blockvmenusearch form {
+#blockvmenusearch div.menu_titre, #blockvmenusearch form
+{
 	padding-top: 1px;
 	padding-bottom: 1px;
 	height: 16px;
@@ -548,7 +552,9 @@ div.blockvmenubookmarks
     border : 0px solid #68ACCF;
 }
 
-div.blockvmenuhelp {
+div.blockvmenuhelp
+{
+<?php if (empty($conf->browser->phone)) { ?>
 	text-align: center;
 	border-spacing: 0px;
     width: 162px;
@@ -561,6 +567,9 @@ div.blockvmenuhelp {
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
+<?php } else { ?>
+    display: none;
+<?php } ?>
 }
 
 div.menu_contenu {

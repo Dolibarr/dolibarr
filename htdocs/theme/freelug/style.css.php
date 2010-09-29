@@ -394,9 +394,10 @@ img.printer
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+<?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')
+|| (! empty($conf->browser->phone) && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
 .vmenu {
-	display:none;
+    display: none;
 }
 <?php } ?>
 
@@ -439,7 +440,7 @@ div.blockvmenupair, div.blockvmenuimpair
     margin: 1px 0px 0px 0px;
 }
 
-div.blockvmenusearch, div.blockvmenubookmarks
+div.blockvmenusearch
 {
 	border-right: 1px solid #555555;
 	border-bottom: 1px solid #555555;
@@ -452,8 +453,22 @@ div.blockvmenusearch, div.blockvmenubookmarks
     margin: 1px 0px 0px 0px;
 }
 
+div.blockvmenubookmarks
+{
+    border-right: 1px solid #555555;
+    border-bottom: 1px solid #555555;
+    background: #dddddd;
+    font-family: helvetica, verdana, arial, sans-serif;
+    color: #202020;
+    text-align:left;
+    text-decoration: none;
+    padding: 3px;
+    margin: 1px 0px 0px 0px;
+}
+
 div.blockvmenuhelp
 {
+<?php if (empty($conf->browser->phone)) { ?>
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;
@@ -463,6 +478,9 @@ div.blockvmenuhelp
 	text-decoration: none;
     padding: 3px;
     margin: 1px 0px 0px 0px;
+<?php } else { ?>
+    display: none;
+<?php } ?>
 }
 
 td.barre {
