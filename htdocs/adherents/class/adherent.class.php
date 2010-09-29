@@ -50,7 +50,6 @@ class Adherent extends CommonObject
     var $civilite_id;
     var $prenom;
     var $nom;
-    var $fullname;
     var $login;
     var $pass;
     var $societe;
@@ -174,7 +173,7 @@ class Adherent extends CommonObject
     function makeSubstitution($text)
     {
         global $langs;
-        
+
         $birthday = dol_print_date($this->naiss,'day');
 
         $msgishtml = 0;

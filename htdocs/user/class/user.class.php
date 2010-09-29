@@ -47,7 +47,6 @@ class User extends CommonObject
 	var $id=0;
 	var $ldap_sid;
 	var $search_sid;
-	var $fullname;
 	var $nom;
 	var $prenom;
 	var $note;
