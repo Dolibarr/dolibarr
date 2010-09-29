@@ -143,7 +143,7 @@ CurrentInformationOnImage=Cette page permet de redimensionner ou recadrer un ima
 ImageEditor=Editeur d'image
 YouReceiveMailBecauseOfNotification=Vous recevez ce message car votre email a été abonnée à certaines notifications automatiques pour vous informer d'évenements particuliers issus du logiciel %s de %s.
 YouReceiveMailBecauseOfNotification2=L'événement en question est le suivant:
-ThisIsListOfModules=Voici la liste des modules standards présélectionnés par ce profil de démo. Affinez encore vos préférences et cliquez sur "Démarrer".
+ThisIsListOfModules=Voici une liste de modules présélectionnés par ce profil de démo (seuls les plus courants sont accessibles dans cette demo). Affinez encore vos préférences et cliquez sur "Démarrer".
 
 ##### Bookmark #####
 Bookmark=Marque-page

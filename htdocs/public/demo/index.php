@@ -60,45 +60,78 @@ $demoprofiles=array(
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
 	);
 
-$alwaysdisabledmodules=array('memcached');
-//$alwaysdisabledmodules=array('boutique','clicktodial','externalsite','ftp','gravatar','ldap','memcached','webcalendar');
+$alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
+$alwaysuncheckedmodules=array('paybox','filemanager');  // Module we never want
+$alwayshiddenmodules=array('barcode','bookmark','boutique','clicktodial','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','ldap','memcached','notification','syslog','user','webcalendar','webservices');
 
 
-function llxHeaderVierge($title, $head = "")
+// Search modules
+$dirlist=$conf->file->dol_document_root;
+
+$filename = array();
+$modules = array();
+$orders = array();
+$categ = array();
+$dirmod = array();
+$i = 0; // is a sequencer of modules found
+$j = 0; // j is module number. Automatically affeted if module number not defined.
+foreach ($dirlist as $dirroot)
 {
-	global $user, $conf, $langs;
+    $dir = $dirroot . "/includes/modules/";
 
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+    // Charge tableaux modules, nom, numero, orders depuis r�pertoire dir
+    $handle=opendir($dir);
+    while (($file = readdir($handle))!==false)
+    {
+        //print "$i ".$file."\n<br>";
+        if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
+        {
+            $modName = substr($file, 0, dol_strlen($file) - 10);
 
-	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
-	print "\n";
-	print "<html>\n";
-	print "<head>\n";
-	print '<meta name="robots" content="index,nofollow">'."\n";
-	print '<meta name="keywords" content="dolibarr,demo,online,demonstration,example,test,web,erp,crm,demos,online">'."\n";
-	print '<meta name="description" content="Dolibarr simple ERP/CRM demo. You can test here several profiles of Dolibarr ERP/CRM demos.">'."\n";
-	print "<title>".$title."</title>\n";
-	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php?lang='.$langs->defaultlang.'">'."\n";
-    print '<!-- Includes for JQuery -->'."\n";
-    print '<script type="text/javascript" src="/includes/jquery/js/jquery-1.4.2.min.js"></script>'."\n";
-    print '<script type="text/javascript" src="/includes/jquery/js/jquery-ui-1.8.4.custom.min.js"></script>'."\n";
-    print '<script type="text/javascript" src="/includes/jquery/js/jquery.tablednd_0_5.js"></script>'."\n";
-	if ($head) print $head."\n";
-	print '<style type="text/css">';
-	print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
-	print '.CTableRow2      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #FFFFFF; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
-	print '</style>';
-	print "</head>\n";
-	print '<body style="margin: 20px;">'."\n";
+            if ($modName)
+            {
+                include_once($dir.$file);
+                $objMod = new $modName($db);
+
+                if ($objMod->numero > 0)
+                {
+                    $j = $objMod->numero;
+                }
+                else
+                {
+                    $j = 1000 + $i;
+                }
+
+                $modulequalified=1;
+
+                // We discard modules that does not respect constraint on menu handlers
+                if ($objMod->needleftmenu && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
+                if ($objMod->needtopmenu  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
+
+                // We discard modules according to features level (PS: if module is activated we always show it)
+                $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+                if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
+                if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+
+                if ($modulequalified)
+                {
+                    $modules[$i] = $objMod;
+                    $filename[$i]= $modName;
+                    $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
+                    //print "x".$modName." ".$orders[$i]."\n<br>";
+                    $categ[$objMod->special]++;                 // Array of all different modules categories
+                    $dirmod[$i] = $dirroot;
+                    $j++;
+                    $i++;
+                }
+            }
+        }
+    }
+
 }
 
-function llxFooterVierge()
-{
-	print "\n";
-	print "</body>\n";
-	print "</html>\n";
-}
+asort($orders);
+//var_dump($orders);
 
 
 /*
@@ -121,16 +154,17 @@ if (GETPOST("action") == 'gotodemo')
     		}
     	}
 	}
-	// If we disable modules using list
-	foreach($_POST as $key => $val)
+	// If we disable modules using personalized list
+	foreach($modules as $val)
 	{
-	    if ($val == '1')
+	    $modulekeyname=strtolower($val->name);
+	    if (empty($_POST[$modulekeyname]) && empty($val->always_enabled) && ! in_array($modulekeyname,$alwayscheckedmodules))
 	    {
-	        $disablestring.=$key.',';
+	        $disablestring.=$modulekeyname.',';
 	    }
 
 	}
-
+    // Do redirect to login page
 	if ($disablestring)
 	{
 		$url=DOL_URL_ROOT.'/index.php?disablemodules='.$disablestring;
@@ -147,83 +181,13 @@ if (GETPOST("action") == 'gotodemo')
 
 llxHeaderVierge($langs->trans("DolibarrDemo"));
 
-
-// Search modules
-$dirlist=$conf->file->dol_document_root;
-
-$filename = array();
-$modules = array();
-$orders = array();
-$categ = array();
-$dirmod = array();
-$i = 0;	// is a sequencer of modules found
-$j = 0;	// j is module number. Automatically affeted if module number not defined.
-foreach ($dirlist as $dirroot)
-{
-	$dir = $dirroot . "/includes/modules/";
-
-	// Charge tableaux modules, nom, numero, orders depuis r�pertoire dir
-	$handle=opendir($dir);
-	while (($file = readdir($handle))!==false)
-	{
-		//print "$i ".$file."\n<br>";
-	    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
-	    {
-	        $modName = substr($file, 0, dol_strlen($file) - 10);
-
-	        if ($modName)
-	        {
-	            include_once($dir.$file);
-	            $objMod = new $modName($db);
-
-	            if ($objMod->numero > 0)
-	            {
-	                $j = $objMod->numero;
-	            }
-	            else
-	            {
-	                $j = 1000 + $i;
-	            }
-
-				$modulequalified=1;
-
-				// We discard modules that does not respect constraint on menu handlers
-				if ($objMod->needleftmenu && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
-				if ($objMod->needtopmenu  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
-
-				// We discard modules according to features level (PS: if module is activated we always show it)
-				$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-				if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
-				if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
-
-				if ($modulequalified)
-				{
-					$modules[$i] = $objMod;
-		            $filename[$i]= $modName;
-		            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
-					//print "x".$modName." ".$orders[$i]."\n<br>";
-					$categ[$objMod->special]++;					// Array of all different modules categories
-		            $dirmod[$i] = $dirroot;
-					$j++;
-		            $i++;
-				}
-	        }
-	    }
-	}
-
-}
-
-asort($orders);
-//var_dump($orders);
-
-
 ?>
 <script type="text/javascript" language="javascript">
 var openedId='';
 jQuery(document).ready(function () {
     jQuery('tr.moduleline').hide();
     // Enable this to allow personalized setup
-/*    jQuery('.modulelineshow').attr('href','#');
+    jQuery('.modulelineshow').attr('href','#');
     jQuery(".modulelineshow").click(function() {
         var currentId = $(this).attr('id').substring(2);
         jQuery('tr.moduleline').hide();
@@ -235,15 +199,11 @@ jQuery(document).ready(function () {
         }
         else openedId = '';
     });
-*/
 });
 </script>
 <?php
 
 
-print '<form name="choosedemo" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="username" value="demo">';
 print "\n";
 
 print '<table style="font-size:14px;" summary="List of Dolibarr demos">';
@@ -274,7 +234,9 @@ foreach ($demoprofiles as $profilarray)
 		print '<form method="POST" name="form'.$profilarray['key'].'" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="action" value="gotodemo">';
         print '<input type="hidden" name="urlfrom" value="'.urlencode($_SERVER["PHP_SELF"]).'">';
-		print '<table summary="Dolibarr online demonstration for profile '.$profilarray['label'].'" style="font-size:14px;" width="100%" class="CTableRow'.($i%2==0?'1':'2').'">'."\n";
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="username" value="demo">';
+        print '<table summary="Dolibarr online demonstration for profile '.$profilarray['label'].'" style="font-size:14px;" width="100%" class="CTableRow'.($i%2==0?'1':'2').'">'."\n";
 		print '<tr>';
 		print '<td width="50"><a href="'.$urlwithmod.'" id="a1'.$profilarray['key'].'" class="modulelineshow"><img src="'.$profilarray['icon'].'" width="48" border="0" alt="Demo '.$profilarray['label'].'"></a></td>';
 		//print '<td><input type="radio" name="demochoice"';
@@ -285,17 +247,24 @@ foreach ($demoprofiles as $profilarray)
 		print '<tr id="tr1'.$profilarray['key'].'" class="moduleline">';
 		print '<td colspan="2">';
 		print $langs->trans("ThisIsListOfModules").'<br>';
-		print '<table>';
+		print '<table width="100%">';
 		$listofdisabledmodules=explode(',',$profilarray['disablemodules']);
 		$j=0;$nbcolsmod=4;
 		foreach($modules as $val) // Loop on qualified (enabled) modules
 		{
 		    $modulekeyname=strtolower($val->name);
-		    $modulo=($j % $nbcolsmod);
+
+		    $modulequalified=1;
+            if (! empty($val->always_enabled) || in_array($modulekeyname,$alwayshiddenmodules)) $modulequalified=0;
+            if ($val->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
+            if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+            if (! $modulequalified) continue;
+
+            $modulo=($j % $nbcolsmod);
 		    if ($modulo == 0) print '<tr>';
             print '<td><input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
-            if (! in_array($modulekeyname,$listofdisabledmodules)) print ' checked="true"';
-            if (! empty($val->always_enabled) || in_array($modulekeyname,$alwaysdisabledmodules)) print ' disabled="true"';
+            if (in_array($modulekeyname,$alwaysuncheckedmodules)) print ' disabled="true"';
+            if (! in_array($modulekeyname,$alwaysuncheckedmodules)  && (! in_array($modulekeyname,$listofdisabledmodules) || in_array($modulekeyname,$alwayscheckedmodules))) print ' checked="true"';
             print '>'.$val->getName().' &nbsp;</td>';
             if ($modulo == ($nbcolsmod - 1)) print '</tr>';
             $j++;
@@ -334,8 +303,6 @@ print '</td></tr>';
 
 print '</table>';
 
-print '</form>';
-
 $db->close();
 
 // Google Adsense (ex: demo mode)
@@ -357,4 +324,44 @@ if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN
 }
 
 llxFooterVierge('$Date$ - $Revision$');
+
+
+
+
+function llxHeaderVierge($title, $head = "")
+{
+    global $user, $conf, $langs;
+
+    header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+    //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
+    print "\n";
+    print "<html>\n";
+    print "<head>\n";
+    print '<meta name="robots" content="index,nofollow">'."\n";
+    print '<meta name="keywords" content="dolibarr,demo,online,demonstration,example,test,web,erp,crm,demos,online">'."\n";
+    print '<meta name="description" content="Dolibarr simple ERP/CRM demo. You can test here several profiles of Dolibarr ERP/CRM demos.">'."\n";
+    print "<title>".$title."</title>\n";
+    print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php?lang='.$langs->defaultlang.'">'."\n";
+    print '<!-- Includes for JQuery -->'."\n";
+    print '<script type="text/javascript" src="/includes/jquery/js/jquery-1.4.2.min.js"></script>'."\n";
+    print '<script type="text/javascript" src="/includes/jquery/js/jquery-ui-1.8.4.custom.min.js"></script>'."\n";
+    print '<script type="text/javascript" src="/includes/jquery/js/jquery.tablednd_0_5.js"></script>'."\n";
+    if ($head) print $head."\n";
+    print '<style type="text/css">';
+    print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
+    print '.CTableRow2      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #FFFFFF; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
+    print '</style>';
+    print "</head>\n";
+    print '<body style="margin: 20px;">'."\n";
+}
+
+function llxFooterVierge()
+{
+    print "\n";
+    print "</body>\n";
+    print "</html>\n";
+}
+
 ?>
