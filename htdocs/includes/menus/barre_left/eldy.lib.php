@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010 Juanjo Menent		   <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +28,11 @@
 /**
  * Core function to output left menu eldy
  *
- * @param unknown_type $db
+ * @param      db                  Database handler
+ * @param      menu_array_before   Table of menu entries to show before entries of menu handler
+ * @param      menu_array_after    Table of menu entries to show after entries of menu handler
  */
-function print_left_eldy_menu($db,$menu_array)
+function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
@@ -62,7 +65,7 @@ function print_left_eldy_menu($db,$menu_array)
 			$_SESSION["leftmenuopened"]=$leftmenu;
 		}
 	} else {
-		// On va le chercher en session si non d�fini par le lien
+		// On va le chercher en session si non defini par le lien
 		$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
 	}
 
@@ -120,7 +123,7 @@ function print_left_eldy_menu($db,$menu_array)
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/constall.php", $langs->trans("AllParameters"),2);
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/modules.php", $langs->trans("Modules"),2);
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"),2);
-				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/about.php", $langs->trans("About"),2);
+				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/about.php", $langs->trans("About"),2);
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/os.php", $langs->trans("OS"),1);
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/web.php", $langs->trans("WebServer"),1);
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/phpinfo.php", $langs->trans("Php"),1);
@@ -157,12 +160,12 @@ function print_left_eldy_menu($db,$menu_array)
 			if ($conf->societe->enabled)
 			{
 				$langs->load("companies");
-				$newmenu->add(DOL_URL_ROOT."/societe.php", $langs->trans("ThirdParty"), 0, $user->rights->societe->lire);
+				$newmenu->add(DOL_URL_ROOT."/societe/societe.php", $langs->trans("ThirdParty"), 0, $user->rights->societe->lire);
 
 				if ($user->rights->societe->creer)
 				{
-					$newmenu->add(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewThirdParty"),1);
-					if (! $conf->use_javascript_ajax) $newmenu->add(DOL_URL_ROOT."/soc.php?action=create&amp;private=1",$langs->trans("MenuNewPrivateIndividual"),1);
+					$newmenu->add(DOL_URL_ROOT."/societe/soc.php?action=create", $langs->trans("MenuNewThirdParty"),1);
+					if (! $conf->use_javascript_ajax) $newmenu->add(DOL_URL_ROOT."/societe/soc.php?action=create&amp;private=1",$langs->trans("MenuNewPrivateIndividual"),1);
 				}
 
 				if(is_dir("societe/groupe"))
@@ -180,11 +183,10 @@ function print_left_eldy_menu($db,$menu_array)
 
 				if ($user->societe_id == 0)
 				{
-					$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("MenuNewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
+					$newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("MenuNewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
 				}
 				//$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("List"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 				//$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire && $user->rights->societe->contact->lire);
-				$newmenu->add(DOL_URL_ROOT."/fourn/stats.php",$langs->trans("Statistics"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 			}
 
 			// Prospects
@@ -193,7 +195,7 @@ function print_left_eldy_menu($db,$menu_array)
 				$langs->load("commercial");
 				$newmenu->add(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("ListProspectsShort"), 1, $user->rights->societe->lire);
 
-				$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 2, $user->rights->societe->creer);
+				$newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 2, $user->rights->societe->creer);
 				//$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=p", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
 			}
 
@@ -203,7 +205,7 @@ function print_left_eldy_menu($db,$menu_array)
 				$langs->load("commercial");
 				$newmenu->add(DOL_URL_ROOT."/comm/clients.php?leftmenu=customers", $langs->trans("ListCustomersShort"), 1, $user->rights->societe->lire);
 
-				$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 2, $user->rights->societe->creer);
+				$newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 2, $user->rights->societe->creer);
 				//$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
 			}
 
@@ -248,10 +250,20 @@ function print_left_eldy_menu($db,$menu_array)
 		{
 			$langs->load("companies");
 
+			// Suppliers
+			if ($conf->fournisseur->enabled)
+			{
+				$newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 0, $user->rights->societe->lire);
+
+				$newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f", $langs->trans("MenuNewSupplier"), 1, $user->rights->societe->creer);
+				$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=customers", $langs->trans("List"), 1, $user->rights->societe->lire);
+				$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f", $langs->trans("Contacts"), 1, $user->rights->societe->contact->lire);
+			}
+
 			// Prospects
 			$newmenu->add(DOL_URL_ROOT."/comm/prospect/index.php?leftmenu=prospects", $langs->trans("Prospects"), 0, $user->rights->societe->lire);
 
-			$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 1, $user->rights->societe->creer);
+			$newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 1, $user->rights->societe->creer);
 			$newmenu->add(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("List"), 1, $user->rights->societe->contact->lire);
 
 			if ($leftmenu=="prospects") $newmenu->add(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;stcomm=-1", $langs->trans("LastProspectDoNotContact"), 2, $user->rights->societe->lire);
@@ -262,10 +274,10 @@ function print_left_eldy_menu($db,$menu_array)
 
 			$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=prospects&amp;type=p", $langs->trans("Contacts"), 1, $user->rights->societe->contact->lire);
 
-			// Clients
+			// Customers
 			$newmenu->add(DOL_URL_ROOT."/comm/index.php?leftmenu=customers", $langs->trans("Customers"), 0, $user->rights->societe->lire);
 
-			$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 1, $user->rights->societe->creer);
+			$newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 1, $user->rights->societe->creer);
 			$newmenu->add(DOL_URL_ROOT."/comm/clients.php?leftmenu=customers", $langs->trans("List"), 1, $user->rights->societe->lire);
 			$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"), 1, $user->rights->societe->contact->lire);
 
@@ -283,7 +295,7 @@ function print_left_eldy_menu($db,$menu_array)
 			{
 				$langs->load("propal");
 				$newmenu->add(DOL_URL_ROOT."/comm/propal.php?leftmenu=propals", $langs->trans("Prop"), 0 ,$user->rights->propale->lire);
-				if ($leftmenu=="propals") $newmenu->add(DOL_URL_ROOT."/societe.php?leftmenu=propals", $langs->trans("NewPropal"), 1, $user->rights->propale->creer);
+				if ($leftmenu=="propals") $newmenu->add(DOL_URL_ROOT."/societe/societe.php?leftmenu=propals", $langs->trans("NewPropal"), 1, $user->rights->propale->creer);
 				if ($leftmenu=="propals") $newmenu->add(DOL_URL_ROOT."/comm/propal.php?leftmenu=propals", $langs->trans("List"), 1, $user->rights->propale->lire);
 				if ($leftmenu=="propals") $newmenu->add(DOL_URL_ROOT."/comm/propal.php?leftmenu=propals&viewstatut=0", $langs->trans("PropalsDraft"), 2, $user->rights->propale->lire);
 				if ($leftmenu=="propals") $newmenu->add(DOL_URL_ROOT."/comm/propal.php?leftmenu=propals&viewstatut=1", $langs->trans("PropalsOpened"), 2, $user->rights->propale->lire);
@@ -299,7 +311,7 @@ function print_left_eldy_menu($db,$menu_array)
 			{
 				$langs->load("orders");
 				$newmenu->add(DOL_URL_ROOT."/commande/index.php?leftmenu=orders", $langs->trans("CustomersOrders"), 0 ,$user->rights->commande->lire);
-				if ($leftmenu=="orders") $newmenu->add(DOL_URL_ROOT."/societe.php?leftmenu=orders", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
+				if ($leftmenu=="orders") $newmenu->add(DOL_URL_ROOT."/societe/societe.php?leftmenu=orders", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
 				if ($leftmenu=="orders") $newmenu->add(DOL_URL_ROOT."/commande/liste.php?leftmenu=orders", $langs->trans("List"), 1, $user->rights->commande->lire);
 				if ($leftmenu=="orders") $newmenu->add(DOL_URL_ROOT."/commande/liste.php?leftmenu=orders&viewstatut=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->commande->lire);
 				if ($leftmenu=="orders") $newmenu->add(DOL_URL_ROOT."/commande/liste.php?leftmenu=orders&viewstatut=1", $langs->trans("StatusOrderValidated"), 2, $user->rights->commande->lire);
@@ -315,7 +327,7 @@ function print_left_eldy_menu($db,$menu_array)
 			{
 				$langs->load("orders");
 				$newmenu->add(DOL_URL_ROOT."/fourn/commande/index.php?leftmenu=orders_suppliers",$langs->trans("SuppliersOrders"), 0, $user->rights->fournisseur->commande->lire);
-				if ($leftmenu=="orders_suppliers") $newmenu->add(DOL_URL_ROOT."/societe.php?leftmenu=orders_suppliers", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
+				if ($leftmenu=="orders_suppliers") $newmenu->add(DOL_URL_ROOT."/societe/societe.php?leftmenu=orders_suppliers", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
 				if ($leftmenu=="orders_suppliers") $newmenu->add(DOL_URL_ROOT."/fourn/commande/liste.php?leftmenu=orders_suppliers", $langs->trans("List"), 1, $user->rights->fournisseur->commande->lire);
 				if ($leftmenu=="orders_suppliers") $newmenu->add(DOL_URL_ROOT."/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1 ,$user->rights->fournisseur->commande->lire);
 			}
@@ -325,7 +337,7 @@ function print_left_eldy_menu($db,$menu_array)
 			{
 				$langs->load("contracts");
 				$newmenu->add(DOL_URL_ROOT."/contrat/index.php?leftmenu=contracts", $langs->trans("Contracts"), 0 ,$user->rights->contrat->lire);
-				if ($leftmenu=="contracts") $newmenu->add(DOL_URL_ROOT."/societe.php?leftmenu=contracts", $langs->trans("NewContract"), 1, $user->rights->contrat->creer);
+				if ($leftmenu=="contracts") $newmenu->add(DOL_URL_ROOT."/societe/societe.php?leftmenu=contracts", $langs->trans("NewContract"), 1, $user->rights->contrat->creer);
 				if ($leftmenu=="contracts") $newmenu->add(DOL_URL_ROOT."/contrat/liste.php?leftmenu=contracts", $langs->trans("List"), 1 ,$user->rights->contrat->lire);
 				if ($leftmenu=="contracts") $newmenu->add(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts", $langs->trans("MenuServices"), 1 ,$user->rights->contrat->lire);
 				if ($leftmenu=="contracts") $newmenu->add(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&amp;mode=0", $langs->trans("MenuInactiveServices"), 2 ,$user->rights->contrat->lire);
@@ -362,7 +374,7 @@ function print_left_eldy_menu($db,$menu_array)
 				// Security check
 				if ($user->societe_id == 0)
 				{
-					$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"),1,$user->rights->societe->creer && $user->rights->fournisseur->lire);
+					$newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"),1,$user->rights->societe->creer && $user->rights->fournisseur->lire);
 				}
 				$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("List"),1,$user->rights->societe->lire && $user->rights->fournisseur->lire);
 				if ($conf->societe->enabled)
@@ -390,7 +402,7 @@ function print_left_eldy_menu($db,$menu_array)
 				$newmenu->add(DOL_URL_ROOT."/compta/index.php?leftmenu=customers", $langs->trans("Customers"),0,$user->rights->societe->lire);
 				if ($user->societe_id == 0)
 				{
-					$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"),1,$user->rights->societe->creer);
+					$newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"),1,$user->rights->societe->creer);
 				}
 				$newmenu->add(DOL_URL_ROOT."/compta/clients.php?leftmenu=customers", $langs->trans("List"),1,$user->rights->societe->lire);
 				$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"),1,$user->rights->societe->contact->lire);
@@ -493,44 +505,6 @@ function print_left_eldy_menu($db,$menu_array)
 
 			}
 
-			// Prelevements
-			if ($conf->prelevement->enabled)
-			{
-				$langs->load("withdrawals");
-				$langs->load("banks");
-
-				$newmenu->add(DOL_URL_ROOT."/compta/prelevement/index.php?leftmenu=withdraw",$langs->trans("StandingOrders"),0,$user->rights->prelevement->bons->lire);
-
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/create.php",$langs->trans("NewStandingOrder"),1,$user->rights->prelevement->bons->creer);
-
-				//if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrder"),1,$user->rights->prelevement->bons->lire);
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=0",$langs->trans("StandingOrderToProcess"),1,$user->rights->prelevement->bons->lire);
-				//if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=1",$langs->trans("StandingOrderProcessed"),2,$user->rights->prelevement->bons->lire);
-
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/bons.php",$langs->trans("WithdrawalsReceipts"),1,$user->rights->prelevement->bons->lire);
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/liste.php",$langs->trans("WithdrawalsLines"),1,$user->rights->prelevement->bons->lire);
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/liste_factures.php",$langs->trans("WithdrawedBills"),1,$user->rights->prelevement->bons->lire);
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"),1,$user->rights->prelevement->bons->lire);
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"),1,$user->rights->prelevement->bons->lire);
-
-				if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Setup"),1,$user->rights->prelevement->bons->configurer);
-			}
-
-			// Gestion cheques
-			if ($conf->facture->enabled && $conf->banque->enabled)
-			{
-				$newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=checks",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
-				if (preg_match("/checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
-				if (preg_match("/checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
-			}
-
-			// Bank-Caisse
-			if ($conf->banque->enabled)
-			{
-				$langs->load("banks");
-				$newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
-			}
-
 			// Rapports
 			if ($conf->compta->enabled || $conf->accounting->enabled)
 			{
@@ -560,12 +534,66 @@ function print_left_eldy_menu($db,$menu_array)
 
 
 		/*
+		 * Menu BANK
+		 */
+        if ($mainmenu == 'bank')
+        {
+            $langs->load("withdrawals");
+            $langs->load("banks");
+            $langs->load("bills");
+
+            // Bank-Caisse
+            if ($conf->banque->enabled)
+            {
+                $langs->load("banks");
+                $newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire);
+
+                $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
+                $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/categ.php",$langs->trans("Rubriques"),1,$user->rights->banque->configurer);
+
+                $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
+                $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
+
+		        $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
+            }
+
+            // Prelevements
+            if ($conf->prelevement->enabled)
+            {
+                $newmenu->add(DOL_URL_ROOT."/compta/prelevement/index.php?leftmenu=withdraw&amp;mainmenu=bank",$langs->trans("StandingOrders"),0,$user->rights->prelevement->bons->lire);
+
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/create.php?mainmenu=bank",$langs->trans("NewStandingOrder"),1,$user->rights->prelevement->bons->creer);
+
+                //if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrder"),1,$user->rights->prelevement->bons->lire);
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=0&amp;mainmenu=bank",$langs->trans("StandingOrderToProcess"),1,$user->rights->prelevement->bons->lire);
+                //if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=1",$langs->trans("StandingOrderProcessed"),2,$user->rights->prelevement->bons->lire);
+
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/bons.php?mainmenu=bank",$langs->trans("WithdrawalsReceipts"),1,$user->rights->prelevement->bons->lire);
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/liste.php?mainmenu=bank",$langs->trans("WithdrawalsLines"),1,$user->rights->prelevement->bons->lire);
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/liste_factures.php?mainmenu=bank",$langs->trans("WithdrawedBills"),1,$user->rights->prelevement->bons->lire);
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/rejets.php?mainmenu=bank",$langs->trans("Rejects"),1,$user->rights->prelevement->bons->lire);
+                if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/stats.php?mainmenu=bank",$langs->trans("Statistics"),1,$user->rights->prelevement->bons->lire);
+
+                //if ($leftmenu=="withdraw") $newmenu->add(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Setup"),1,$user->rights->prelevement->bons->configurer);
+            }
+
+            // Gestion cheques
+            if ($conf->facture->enabled && $conf->banque->enabled)
+            {
+                $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
+                if (preg_match("/checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=checks&amp;action=new&amp;mainmenu=bank",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
+                if (preg_match("/checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=checks&amp;mainmenu=bank",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
+            }
+
+	   }
+
+		/*
 		 * Menu PRODUITS-SERVICES
 		 */
 		if ($mainmenu == 'products')
 		{
 			// Products
-			if ($conf->produit->enabled)
+			if ($conf->product->enabled)
 			{
 				$newmenu->add(DOL_URL_ROOT."/product/index.php?leftmenu=product&amp;type=0", $langs->trans("Products"), 0, $user->rights->produit->lire);
 				if ($user->societe_id == 0)
@@ -574,8 +602,8 @@ function print_left_eldy_menu($db,$menu_array)
 					$newmenu->add(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0", $langs->trans("List"), 1, $user->rights->produit->lire);
 					if (! empty($conf->droitpret->enabled))
 					{
-						$newmenu->add(DOL_URL_ROOT."/product/fiche.php?leftmenu=product&amp;action=create&amp;type=0&canvas=livre", $langs->trans("NewBook"), 1, $user->rights->produit->creer);
-						$newmenu->add(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0&amp;canvas=livre", $langs->trans("BookList"), 1, $user->rights->produit->creer);
+						$newmenu->add(DOL_URL_ROOT."/product/fiche.php?leftmenu=product&amp;action=create&amp;type=0&canvas=livre@droitpret", $langs->trans("NewBook"), 1, $user->rights->produit->creer);
+						$newmenu->add(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0&amp;canvas=livre@droitpret", $langs->trans("BookList"), 1, $user->rights->produit->creer);
 					}
 				}
 				if ($conf->propal->enabled)
@@ -630,7 +658,7 @@ function print_left_eldy_menu($db,$menu_array)
 			if ($conf->expedition->enabled)
 			{
 				$langs->load("sendings");
-				$newmenu->add(DOL_URL_ROOT."/expedition/index.php?leftmenu=sendings", $langs->trans("Sendings"), 0, $user->rights->expedition->lire);
+				$newmenu->add(DOL_URL_ROOT."/expedition/index.php?leftmenu=sendings", $langs->trans("Shipments"), 0, $user->rights->expedition->lire);
 				if ($leftmenu=="sendings") $newmenu->add(DOL_URL_ROOT."/expedition/liste.php?leftmenu=sendings", $langs->trans("List"), 1 ,$user->rights->expedition->lire);
 				if ($leftmenu=="sendings") $newmenu->add(DOL_URL_ROOT."/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1 ,$user->rights->expedition->lire);
 			}
@@ -652,7 +680,7 @@ function print_left_eldy_menu($db,$menu_array)
 				// Security check
 				if ($user->societe_id == 0)
 				{
-					$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer && $user->rights->fournisseur->lire);
+					$newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer && $user->rights->fournisseur->lire);
 				}
 				$newmenu->add(DOL_URL_ROOT."/fourn/liste.php",$langs->trans("List"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 				$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 1, $user->rights->societe->contact->lire && $user->rights->fournisseur->lire);
@@ -676,7 +704,7 @@ function print_left_eldy_menu($db,$menu_array)
 			{
 				$langs->load("orders");
 				$newmenu->add(DOL_URL_ROOT."/fourn/commande/index.php?leftmenu=suppliers",$langs->trans("Orders"), 0, $user->rights->fournisseur->commande->lire);
-				$newmenu->add(DOL_URL_ROOT."/societe.php?leftmenu=supplier", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
+				$newmenu->add(DOL_URL_ROOT."/societe/societe.php?leftmenu=supplier", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
 				$newmenu->add(DOL_URL_ROOT."/fourn/commande/liste.php?leftmenu=suppliers", $langs->trans("List"), 1, $user->rights->fournisseur->commande->lire);
 			}
 
@@ -694,7 +722,7 @@ function print_left_eldy_menu($db,$menu_array)
 		}
 
 		/*
-		 * Menu PROJETS
+		 * Menu PROJECTS
 		 */
 		if ($mainmenu == 'project')
 		{
@@ -702,23 +730,27 @@ function print_left_eldy_menu($db,$menu_array)
 			{
 				$langs->load("projects");
 
+				// Project affected to user
 				$newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects&mode=mine", $langs->trans("MyProjects"), 0, $user->rights->projet->lire);
 				$newmenu->add(DOL_URL_ROOT."/projet/fiche.php?leftmenu=projects&action=create&mode=mine", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
 				$newmenu->add(DOL_URL_ROOT."/projet/liste.php?leftmenu=projects&mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
 
-				$newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire);
-				$newmenu->add(DOL_URL_ROOT."/projet/fiche.php?leftmenu=projects&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
-				$newmenu->add(DOL_URL_ROOT."/projet/liste.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire);
+				// All project i have permission on
+				$newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire && $user->rights->projet->lire);
+				$newmenu->add(DOL_URL_ROOT."/projet/fiche.php?leftmenu=projects&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
+				$newmenu->add(DOL_URL_ROOT."/projet/liste.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
 
+				// Project affected to user
 				$newmenu->add(DOL_URL_ROOT."/projet/activity/index.php?mode=mine", $langs->trans("MyActivities"), 0, $user->rights->projet->lire);
-				$newmenu->add(DOL_URL_ROOT."/projet/tasks/fiche.php?action=create&mode=mine", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
+				$newmenu->add(DOL_URL_ROOT."/projet/tasks.php?action=create&mode=mine", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
 				$newmenu->add(DOL_URL_ROOT."/projet/tasks/index.php?mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
 				$newmenu->add(DOL_URL_ROOT."/projet/activity/list.php?mode=mine", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
 
-				$newmenu->add(DOL_URL_ROOT."/projet/activity/index.php", $langs->trans("Activities"), 0, $user->rights->projet->lire);
-				$newmenu->add(DOL_URL_ROOT."/projet/tasks/fiche.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
-				$newmenu->add(DOL_URL_ROOT."/projet/tasks/index.php", $langs->trans("List"), 1, $user->rights->projet->lire);
-				$newmenu->add(DOL_URL_ROOT."/projet/activity/list.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
+				// All project i have permission on
+				$newmenu->add(DOL_URL_ROOT."/projet/activity/index.php", $langs->trans("Activities"), 0, $user->rights->projet->lire && $user->rights->projet->lire);
+				$newmenu->add(DOL_URL_ROOT."/projet/tasks.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
+				$newmenu->add(DOL_URL_ROOT."/projet/tasks/index.php", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
+				$newmenu->add(DOL_URL_ROOT."/projet/activity/list.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
 			}
 		}
 
@@ -775,11 +807,11 @@ function print_left_eldy_menu($db,$menu_array)
 				$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&amp;mainmenu=members",$langs->trans("Members"),0,$user->rights->adherent->lire);
 				$newmenu->add(DOL_URL_ROOT."/adherents/fiche.php?leftmenu=members&amp;action=create",$langs->trans("NewMember"),1,$user->rights->adherent->creer);
 				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members",$langs->trans("List"),1,$user->rights->adherent->lire);
-				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=-1",$langs->trans("MenuMembersToValidate"),1,$user->rights->adherent->lire);
-				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1",$langs->trans("MenuMembersValidated"),1,$user->rights->adherent->lire);
-				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"),1,$user->rights->adherent->lire);
-				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=outofdate",$langs->trans("MenuMembersNotUpToDate"),1,$user->rights->adherent->lire);
-				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=0",$langs->trans("MenuMembersResiliated"),1,$user->rights->adherent->lire);
+				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=-1",$langs->trans("MenuMembersToValidate"),2,$user->rights->adherent->lire);
+				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1",$langs->trans("MenuMembersValidated"),2,$user->rights->adherent->lire);
+				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"),2,$user->rights->adherent->lire);
+				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=outofdate",$langs->trans("MenuMembersNotUpToDate"),2,$user->rights->adherent->lire);
+				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=0",$langs->trans("MenuMembersResiliated"),2,$user->rights->adherent->lire);
 
 				$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&amp;mainmenu=members",$langs->trans("Subscriptions"),0,$user->rights->adherent->cotisation->lire);
 				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=-1,1&amp;mainmenu=members",$langs->trans("NewSubscription"),1,$user->rights->adherent->cotisation->creer);
@@ -795,20 +827,6 @@ function print_left_eldy_menu($db,$menu_array)
 						$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=3", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
 					}
 					//if ($leftmenu=="cat") $newmenu->add(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
-				}
-
-				if ($conf->banque->enabled)
-				{
-					$langs->load("bills");
-					$newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=members_checks",$langs->trans("MenuChequeDeposits"),0,$user->rights->adherent->cotisation->lire);
-					if (preg_match("/members_checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=members_checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->adherent->cotisation->creer);
-					if (preg_match("/members_checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=members_checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->adherent->cotisation->lire);
-				}
-
-				if ($conf->banque->enabled)
-				{
-					$langs->load("banks");
-					$newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=members",$langs->trans("Banks"),0,$user->rights->adherent->lire);
 				}
 
 				$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&amp;mainmenu=members",$langs->trans("Exports"),0,$user->rights->adherent->export);
@@ -829,7 +847,7 @@ function print_left_eldy_menu($db,$menu_array)
 		}
 
 		// Affichage des menus personnalises
-		require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
 		$menuArbo = new Menubase($db,'eldy','left');
 		$overwritemenufor = $menuArbo->listeMainmenu();
@@ -849,19 +867,22 @@ function print_left_eldy_menu($db,$menu_array)
 	/**
 	 *  Si on est sur un cas gere de surcharge du menu, on ecrase celui par defaut
 	 */
-	if ($mainmenu) {
-		$menu_array=$newmenu->liste;
-	}
+    //var_dump($menu_array_before);exit;
+    //var_dump($menu_array_after);exit;
+	//if ($mainmenu) {
+	$menu_array=$newmenu->liste;
+    if (is_array($menu_array_before)) $menu_array=array_merge($menu_array_before, $menu_array);
+    if (is_array($menu_array_after))  $menu_array=array_merge($menu_array, $menu_array_after);
+	//}
 
 	// Affichage du menu
 	$alt=0;
 	if (is_array($menu_array))
 	{
-		$contenu = 0;
 		for ($i = 0 ; $i < sizeof($menu_array) ; $i++)
 		{
 			$alt++;
-			if ($menu_array[$i]['level']==0)
+			if (empty($menu_array[$i]['level']))
 			{
 				if (($alt%2==0))
 				{
@@ -887,7 +908,6 @@ function print_left_eldy_menu($db,$menu_array)
 			// Menu niveau 0
 			if ($menu_array[$i]['level'] == 0)
 			{
-				if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
 				if ($menu_array[$i]['enabled'])
 				{
 					print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$menu_array[$i]['url'].'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>'."\n";
@@ -896,36 +916,35 @@ function print_left_eldy_menu($db,$menu_array)
 				{
 					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
 				}
+				print '<div class="menu_top"></div>'."\n";
 			}
 			// Menu niveau > 0
 			if ($menu_array[$i]['level'] > 0)
 			{
-				if ($menu_array[$i]['level']==1) $contenu = 1;
+				print '<div class="menu_contenu">';
 				if ($menu_array[$i]['enabled'])
 				{
-					print '<div class="menu_contenu">';
-					print $tabstring.'<a class="vsmenu" href="'.$menu_array[$i]['url'].'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					print $tabstring;
+					if ($menu_array[$i]['url']) print '<a class="vsmenu" href="'.$menu_array[$i]['url'].'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
 					print $menu_array[$i]['titre'];
-					print '</a>';
+					if ($menu_array[$i]['url']) print '</a>';
 					// If title is not pure text and contains a table, no carriage return added
 					if (! strstr($menu_array[$i]['titre'],'<table')) print '<br>';
-					print '</div>'."\n";
 				}
 				else
 				{
-					print '<div class="menu_contenu">';
 					print $tabstring.'<font class="vsmenudisabled">'.$menu_array[$i]['titre'].'</font><br>';
-					print '</div>'."\n";
 				}
+				print '</div>'."\n";
 			}
 
-
-			if ($i == (sizeof($menu_array)-1) || $menu_array[$i+1]['level']==0)
+			// If next is a new block or end
+			if (empty($menu_array[$i+1]['level']))
 			{
+				print '<div class="menu_end"></div>'."\n";
 				print "</div>\n";
 			}
 		}
-		if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
 	}
 
 	return sizeof($menu_array);
