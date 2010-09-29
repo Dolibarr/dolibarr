@@ -267,8 +267,8 @@ if (sizeof($conf->need_smarty) > 0)
 	}
 }
 
-// Init Smartphone
-if (isset($conf->browser->phone))
+// Init Smartphone (for dev only)
+if ($conf->global->MAIN_FEATURES_LEVEL == 2 && isset($conf->browser->phone))
 {
 	include_once(DOL_DOCUMENT_ROOT."/core/class/smartphone.class.php");
 
@@ -663,22 +663,18 @@ if (! empty($_GET["theme"]))
 if (empty($user->societe_id))    // If internal user or not defined
 {
 	$conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
-	//$conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
 	$conf->smart_menu=$conf->global->MAIN_MENU_SMARTPHONE;
 	// For backward compatibility
     if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
-	//if ($conf->left_menu == 'eldy.php') $conf->left_menu='eldy_backoffice.php';
 	if ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_backoffice.php';
-	//if ($conf->left_menu == 'rodolphe.php') $conf->left_menu='eldy_backoffice.php';
 }
 else                        // If external user
 {
 	$conf->top_menu=$conf->global->MAIN_MENUFRONT_BARRETOP;
-	//$conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
 	$conf->smart_menu=$conf->global->MAIN_MENUFRONT_SMARTPHONE;
 	// For backward compatibility
+    if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_frontoffice.php';
 	if ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_frontoffice.php';
-	//if ($conf->left_menu == 'rodolphe.php') $conf->left_menu='eldy_frontoffice.php';
 }
 
 if (! defined('NOLOGIN'))

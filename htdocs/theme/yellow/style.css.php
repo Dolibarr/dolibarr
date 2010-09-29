@@ -35,7 +35,7 @@ if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 
-require_once("../../master.inc.php");
+require_once("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
 
 // Define css type
@@ -375,7 +375,7 @@ img.printer
 /* ============================================================================== */
 
 <?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')
-|| (! empty($conf->browser->phone) && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
+|| (! empty($conf->browser->phone) && class_exists('Smartphone') && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
 .vmenu {
     display: none;
 }

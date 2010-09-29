@@ -194,7 +194,7 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 // Detection browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
-	// If phone/smartphone, we set osname.
+	// If phone/smartphone, we set phone os name.
 	if (preg_match('/android/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='android';
 	elseif (preg_match('/blackberry/i',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='blackberry';
 	elseif (preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='iphone';
@@ -282,7 +282,7 @@ if (! defined('NOREQUIREDB'))
 		// Add real path in session name
 		$realpath='';
 		if ( preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs))	$realpath = isset($regs[1])?$regs[1]:'';
-		
+
 		$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
 		if (! empty($_COOKIE[$entityCookieName]) && ! empty($conf->file->cookie_cryptkey)) 						// Just for view specific login page
 		{
