@@ -3318,23 +3318,24 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort, $case_sensitive
 
 
 /**
- *      \brief      Check if a string is in UTF8
- *      \param      $Str        String to check
- * 		\return		boolean		True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special char or Binary)
+ *      Check if a string is in UTF8
+ *      @param      $Str        String to check
+ * 		@return		boolean		True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special char or Binary)
  */
-function utf8_check($Str)
+function utf8_check($str)
 {
-	for ($i=0; $i<dol_strlen($Str); $i++)
+    // We must use here a binary strlen function (so not dol_strlen)
+	for ($i=0; $i<strlen($str); $i++)
 	{
-		if (ord($Str[$i]) < 0x80) continue; # 0bbbbbbb
-		elseif ((ord($Str[$i]) & 0xE0) == 0xC0) $n=1; # 110bbbbb
-		elseif ((ord($Str[$i]) & 0xF0) == 0xE0) $n=2; # 1110bbbb
-		elseif ((ord($Str[$i]) & 0xF8) == 0xF0) $n=3; # 11110bbb
-		elseif ((ord($Str[$i]) & 0xFC) == 0xF8) $n=4; # 111110bb
-		elseif ((ord($Str[$i]) & 0xFE) == 0xFC) $n=5; # 1111110b
+		if (ord($str[$i]) < 0x80) continue; # 0bbbbbbb
+		elseif ((ord($str[$i]) & 0xE0) == 0xC0) $n=1; # 110bbbbb
+		elseif ((ord($str[$i]) & 0xF0) == 0xE0) $n=2; # 1110bbbb
+		elseif ((ord($str[$i]) & 0xF8) == 0xF0) $n=3; # 11110bbb
+		elseif ((ord($str[$i]) & 0xFC) == 0xF8) $n=4; # 111110bb
+		elseif ((ord($str[$i]) & 0xFE) == 0xFC) $n=5; # 1111110b
 		else return false; # Does not match any model
 		for ($j=0; $j<$n; $j++) { # n bytes matching 10bbbbbb follow ?
-			if ((++$i == dol_strlen($Str)) || ((ord($Str[$i]) & 0xC0) != 0x80))
+			if ((++$i == strlen($str)) || ((ord($str[$i]) & 0xC0) != 0x80))
 			return false;
 		}
 	}
