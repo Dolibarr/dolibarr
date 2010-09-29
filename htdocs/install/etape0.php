@@ -60,7 +60,7 @@ dolibarr_install_syslog("etape0: Entering etape0.php page");
 pHeader($langs->trans("ConfigurationFile"),"etape1");
 
 // Test if we can run a first install process
-if (is_writable($conffile))
+if (! is_writable($conffile))
 {
     print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
     pFooter(1,$setuplang,'jscheckparam');
