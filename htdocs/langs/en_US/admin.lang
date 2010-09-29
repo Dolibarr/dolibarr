@@ -678,6 +678,7 @@ MenuLeftManager=Left menu manager
 MenuSmartphoneManager=Smartphone menu manager
 DefaultMenuTopManager=Top menu manager
 DefaultMenuLeftManager=Left menu manager
+DefaultMenuManager= Standard menu manager
 DefaultMenuSmartphoneManager=Smartphone menu manager
 Skin=Skin theme
 DefaultSkin=Default skin theme

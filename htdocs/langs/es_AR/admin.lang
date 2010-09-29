@@ -688,6 +688,7 @@ MenuLeftManager=Gestión del menú izquierdo
 MenuSmartphoneManager=Gestor de menú smartphone
 DefaultMenuTopManager=Gestión del menú superior
 DefaultMenuLeftManager=Gestión del menú izquierdo
+DefaultMenuManager= Gestor del menú estándar
 DefaultMenuSmartphoneManager=Gestor de menú smartphone
 Skin=Tema visual
 DefaultSkin=Tema visual por defecto
