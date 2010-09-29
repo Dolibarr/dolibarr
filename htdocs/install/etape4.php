@@ -56,6 +56,14 @@ $ok = 0;
 
 pHeader($langs->trans("AdminAccountCreation"),"etape5");
 
+// Test if we can run a first install process
+if (! is_writable($conffile))
+{
+    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    pFooter(1,$setuplang,'jscheckparam');
+    exit;
+}
+
 print '<table cellspacing="0" cellpadding="2" width="100%">';
 
 $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);

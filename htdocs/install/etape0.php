@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007      Cyrille de Lambert   <cyrille.delambert@auguria.net>
- * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,14 @@ dolibarr_install_syslog("etape0: Entering etape0.php page");
  */
 
 pHeader($langs->trans("ConfigurationFile"),"etape1");
+
+// Test if we can run a first install process
+if (is_writable($conffile))
+{
+    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    pFooter(1,$setuplang,'jscheckparam');
+    exit;
+}
 
 // On reporte champ formulaire precedent pour propagation
 if ($_POST["action"] == "set")

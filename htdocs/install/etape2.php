@@ -64,6 +64,13 @@ dolibarr_install_syslog("etape2: Entering etape2.php page");
 
 pHeader($langs->trans("CreateDatabaseObjects"),"etape4");
 
+// Test if we can run a first install process
+if (! is_writable($conffile))
+{
+    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    pFooter(1,$setuplang,'jscheckparam');
+    exit;
+}
 
 if ($_POST["action"] == "set")
 {

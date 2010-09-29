@@ -48,6 +48,14 @@ dolibarr_install_syslog("etape1: Entering etape1.php page");
 
 pHeader($langs->trans("ConfigurationFile"),"etape2");
 
+// Test if we can run a first install process
+if (! is_writable($conffile))
+{
+    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    pFooter(1,$setuplang,'jscheckparam');
+    exit;
+}
+
 $error = 0;
 
 // Repertoire des pages dolibarr
@@ -68,11 +76,6 @@ if (substr($_POST["main_url"], dol_strlen($_POST["main_url"]) -1) == "/")
 // Directory for generated documents (invoices, orders, ecm, etc...)
 $main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
 if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
-
-
-/*
- * Actions
- */
 
 
 if ($_POST["action"] == "set")
@@ -499,7 +502,8 @@ pFooter($error,$setuplang,'jsinfo');
 
 
 /**
- * Save configuration file
+ *  Save configuration file. No particular permissions are set by installer.
+ *  @param      conffile        Path to conf file
  */
 function write_conf_file($conffile)
 {

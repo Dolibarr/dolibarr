@@ -102,6 +102,14 @@ if ($_POST["action"] == "set")
 
 pHeader($langs->trans("SetupEnd"),"etape5");
 
+// Test if we can run a first install process
+if (! is_writable($conffile))
+{
+    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    pFooter(1,$setuplang,'jscheckparam');
+    exit;
+}
+
 if ($_POST["action"] == "set" || preg_match('/upgrade/i',$_POST["action"]))
 {
 	print '<table cellspacing="0" cellpadding="2" width="100%">';

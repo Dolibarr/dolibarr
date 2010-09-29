@@ -27,10 +27,11 @@
 
 
 /**
- *  \brief      Renvoi le fichier $filename dans la version de la langue courante, sinon alternative
- *  \param      filename        nom du fichier a rechercher
- *  \param      searchalt       cherche aussi dans langue alternative
- *	\return		boolean
+ *  Output content of a file $filename in version of current language (otherwise may use an alternate language)
+ *  @param      langs           Object language to use for output
+ *  @param      filename        Relative filename to output
+ *  @param      searchalt       1=Search also in alternative languages
+ *	@return		boolean
  */
 function dol_print_file($langs,$filename,$searchalt=0)
 {
@@ -40,7 +41,7 @@ function dol_print_file($langs,$filename,$searchalt=0)
 	foreach($langs->dir as $searchdir)
 	{
 		$htmlfile=($searchdir."/langs/".$langs->defaultlang."/".$filename);
-		dol_syslog('Translate::print_file search file '.$htmlfile, LOG_DEBUG);
+		dol_syslog('functions2::dol_print_file search file '.$htmlfile, LOG_DEBUG);
 		if (is_readable($htmlfile))
 		{
 			$content=file_get_contents($htmlfile);
@@ -50,13 +51,13 @@ function dol_print_file($langs,$filename,$searchalt=0)
 			else print $content;
 			return true;
 		}
-		else dol_syslog('Translate::print_file not found', LOG_DEBUG);
+		else dol_syslog('functions2::dol_print_file not found', LOG_DEBUG);
 
 		if ($searchalt) {
 			// Test si fichier dans repertoire de la langue alternative
 			if ($langs->defaultlang != "en_US") $htmlfilealt = $searchdir."/langs/en_US/".$filename;
 			else $htmlfilealt = $searchdir."/langs/fr_FR/".$filename;
-			dol_syslog('Translate::print_file search alt file '.$htmlfilealt, LOG_DEBUG);
+			dol_syslog('functions2::dol_print_file search alt file '.$htmlfilealt, LOG_DEBUG);
 			//print 'getcwd='.getcwd().' htmlfilealt='.$htmlfilealt.' X '.file_exists(getcwd().'/'.$htmlfilealt);
 			if (is_readable($htmlfilealt))
 			{
@@ -67,7 +68,7 @@ function dol_print_file($langs,$filename,$searchalt=0)
 				else print $content;
 				return true;
 			}
-			else dol_syslog('Translate::print_file not found', LOG_DEBUG);
+			else dol_syslog('functions2::dol_print_file not found', LOG_DEBUG);
 		}
 	}
 

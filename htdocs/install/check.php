@@ -159,7 +159,7 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 	$confexists=1;
 	include_once($conffile);
 
-	$databaseok=1;	// TODO Check if database is ok
+	$databaseok=1;
 	if ($databaseok)
 	{
 		// Already installed for all parts (config and database). We can propose upgrade.
