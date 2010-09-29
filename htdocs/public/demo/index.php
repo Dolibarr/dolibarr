@@ -105,7 +105,7 @@ foreach ($dirlist as $dirroot)
                 $modulequalified=1;
 
                 // We discard modules that does not respect constraint on menu handlers
-                if ($objMod->needleftmenu && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
+                //if ($objMod->needleftmenu && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
                 if ($objMod->needtopmenu  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
 
                 // We discard modules according to features level (PS: if module is activated we always show it)

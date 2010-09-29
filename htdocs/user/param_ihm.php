@@ -93,7 +93,7 @@ if ($_POST["action"] == 'update' && ($caneditfield  || $user->admin))
         else $tabparam["MAIN_LANG_DEFAULT"]='';
 
         $tabparam["MAIN_MENU_BARRETOP"]=$_POST["main_menu_barretop"];
-        $tabparam["MAIN_MENU_BARRELEFT"]=$_POST["main_menu_barreleft"];
+        //$tabparam["MAIN_MENU_BARRELEFT"]=$_POST["main_menu_barreleft"];
 
         if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["MAIN_SIZE_LISTE_LIMIT"]=$_POST["main_size_liste_limit"];
         else $tabparam["MAIN_SIZE_LISTE_LIMIT"]='';

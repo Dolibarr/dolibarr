@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,7 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+$langs->load("admin");
 $langs->load("companies");
 $langs->load("users");
 $langs->load("other");

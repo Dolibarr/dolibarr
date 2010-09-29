@@ -84,6 +84,14 @@ body {
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
 
+input {
+    font-size: <?php print $fontsize ?>px;
+    font-family: <?php print $fontlist ?>;
+    background: #FDFDFD;
+    border: 1px solid #ACBCBB;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
 input.flat {
 	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;

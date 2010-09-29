@@ -77,6 +77,14 @@ a:link    { font-family: helvetica, verdana, arial, sans-serif; font-weight: bol
 a:visited { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
+input
+{
+    font-size: 12px;
+    font-family: helvetica, verdana, arial, sans-serif;
+    border: 1px solid #cccccc;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
 input.flat
 {
 	font-size: 12px;

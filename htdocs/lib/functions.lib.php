@@ -1919,7 +1919,8 @@ function dol_print_error($db='',$error='')
         $out.="<br>\n";
 		$out.="<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
         $out.="<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"])?$_SERVER["HTTP_REFERER"]:'')."<br>\n";;
-		$out.="<b>".$langs->trans("MenuManager").":</b> ".$conf->top_menu.($conf->top_menu||$conf->left_menu?'/':'').$conf->left_menu."<br>\n";
+		//$out.="<b>".$langs->trans("MenuManager").":</b> ".$conf->top_menu.($conf->top_menu||$conf->left_menu?'/':'').$conf->left_menu."<br>\n";
+		$out.="<b>".$langs->trans("MenuManager").":</b> ".$conf->top_menu."<br>\n";
 		$out.="<br>\n";
 		$syslog.="url=".$_SERVER["REQUEST_URI"];
 		$syslog.=", query_string=".$_SERVER["QUERY_STRING"];
@@ -2194,7 +2195,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		}
 		else
 		{
-			if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+			if (empty($conf->browser->phone) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 			print '<td class="nobordernopadding">';
 			print '<div class="titre">'.$titre.'</div>';
 			$pagelist.= $langs->trans('Page').' '.($page+1);
@@ -2203,7 +2204,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	}
 	else
 	{
-		if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+		if (empty($conf->browser->phone) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 		print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
 	}
 

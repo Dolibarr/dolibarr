@@ -663,21 +663,22 @@ if (! empty($_GET["theme"]))
 if (empty($user->societe_id))    // If internal user or not defined
 {
 	$conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
-	$conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
+	//$conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
 	$conf->smart_menu=$conf->global->MAIN_MENU_SMARTPHONE;
 	// For backward compatibility
-	if ($conf->left_menu == 'eldy.php') $conf->left_menu='eldy_backoffice.php';
+    if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
+	//if ($conf->left_menu == 'eldy.php') $conf->left_menu='eldy_backoffice.php';
 	if ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_backoffice.php';
-	if ($conf->left_menu == 'rodolphe.php') $conf->left_menu='eldy_backoffice.php';
+	//if ($conf->left_menu == 'rodolphe.php') $conf->left_menu='eldy_backoffice.php';
 }
 else                        // If external user
 {
 	$conf->top_menu=$conf->global->MAIN_MENUFRONT_BARRETOP;
-	$conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
+	//$conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
 	$conf->smart_menu=$conf->global->MAIN_MENUFRONT_SMARTPHONE;
 	// For backward compatibility
 	if ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_frontoffice.php';
-	if ($conf->left_menu == 'rodolphe.php') $conf->left_menu='eldy_frontoffice.php';
+	//if ($conf->left_menu == 'rodolphe.php') $conf->left_menu='eldy_frontoffice.php';
 }
 
 if (! defined('NOLOGIN'))
@@ -942,7 +943,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	$html=new Form($db);
 
 	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
-	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
+	//if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
 
 
 	// For backward compatibility with old modules
@@ -954,17 +955,17 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	/*
 	 * Top menu
 	 */
-	print "\n".'<!-- Start top horizontal menu -->'."\n";
-	print '<div class="tmenu">'."\n";
-
     $top_menu=$conf->top_menu;
     if (GETPOST('top_menu')) $top_menu=GETPOST('top_menu');
+
+    print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
+	print '<div class="tmenu">'."\n";
 
 	// Load the top menu manager
 	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$top_menu);
 	if (! $result)	// If failed to include, we try with standard
 	{
-		$conf->top_menu='eldy_backoffice.php';
+		$top_menu='eldy_backoffice.php';
 		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$top_menu);
 	}
 	$menutop = new MenuTop($db);
@@ -1106,18 +1107,19 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 
 
-	// Left column
-	print '<!-- Begin left vertical menu -->'."\n";
-	print '<div class="vmenu">'."\n";
-
-    $left_menu=$conf->left_menu;
+    //$left_menu=$conf->left_menu;
+    $left_menu=$conf->top_menu;
     if (GETPOST('left_menu')) $left_menu=GETPOST('left_menu');
+
+    // Left column
+	print '<!-- Begin left vertical menu '.$left_menu.' -->'."\n";
+	print '<div class="vmenu">'."\n";
 
     // Load the left menu manager
 	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$left_menu);
 	if (! $result)
 	{
-		$conf->left_menu='eldy_backoffice.php';
+		$left_menu='eldy_backoffice.php';
 		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$left_menu);
 	}
 	$menuleft=new MenuLeft($db,$menu_array_before,$menu_array_after);
