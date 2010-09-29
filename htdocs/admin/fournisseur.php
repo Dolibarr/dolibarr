@@ -61,7 +61,7 @@ if ($_GET["action"] == 'specimen')
 	$commande->initAsSpecimen();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/supplier/order/";
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/supplier_order/pdf/";
 	$file = "pdf_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
@@ -169,7 +169,7 @@ print "<br>";
 
 // Supplier order numbering module
 
-$dir = DOL_DOCUMENT_ROOT."/includes/modules/supplier/order/";
+$dir = DOL_DOCUMENT_ROOT."/includes/modules/supplier_order/";
 
 print_titre($langs->trans("OrdersNumberingModules"));
 
@@ -195,7 +195,7 @@ if ($handle)
 		{
 			$file = substr($file, 0, dol_strlen($file)-4);
 
-			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/supplier/order/".$file.".php");
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/supplier_order/".$file.".php");
 
 			$module = new $file;
 
@@ -263,7 +263,7 @@ print '</table><br>';
  * Modeles documents for supplier orders
  */
 
-$dir = DOL_DOCUMENT_ROOT.'/includes/modules/supplier/order/';
+$dir = DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/pdf/';
 
 print_titre($langs->trans("OrdersModelModule"));
 

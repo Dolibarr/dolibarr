@@ -267,7 +267,7 @@ class FormFile
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
 				{
-					include_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier/order/modules_commandefournisseur.php');
+					include_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/modules_commandefournisseur.php');
 					$model=new ModelePDFSuppliersOrders();
 					$modellist=$model->liste_modeles($this->db);
 				}

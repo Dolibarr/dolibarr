@@ -442,7 +442,7 @@ class CommandeFournisseur extends Commande
 		global $db, $langs, $conf;
 		$langs->load("orders");
 
-		$dir = DOL_DOCUMENT_ROOT .'/includes/modules/supplier/order/';
+		$dir = DOL_DOCUMENT_ROOT .'/includes/modules/supplier_order/';
 		$modelisok=0;
 		$liste=array();
 
