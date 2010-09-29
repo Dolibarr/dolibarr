@@ -1515,11 +1515,11 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Return full name (civility+' '+name+' '+lastname)
-	 *		\param		langs			Language object for translation of civility
-	 *		\param		option			0=No option, 1=Add civility
-	 * 		\param		nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
-	 * 		\return		string			String with full name
+	 *    	Return full name (civility+' '+name+' '+lastname)
+	 *		@param		langs			Language object for translation of civility
+	 *		@param		option			0=No option, 1=Add civility
+	 * 		@param		nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+	 * 		@return		string			String with full name
 	 */
 	function getFullName($langs,$option=0,$nameorder=-1)
 	{
