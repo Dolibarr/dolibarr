@@ -44,6 +44,15 @@ $dirleft = "../includes/menus/barre_left";
 $dirsmartphone = "../includes/menus/smartphone";
 
 
+// Cette page peut etre longue. On augmente le delai autorise.
+// Ne fonctionne que si on est pas en safe_mode.
+$err=error_reporting();
+error_reporting(0);     // Disable all errors
+//error_reporting(E_ALL);
+@set_time_limit(300);   // Need more than 240 on Windows 7/64
+error_reporting($err);
+
+
 /*
  * Actions
  */
@@ -71,7 +80,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	foreach ($listofmenuhandler as $key => $val)
 	{
 		$dir = DOL_DOCUMENT_ROOT."/includes/menus/";
-		
+
 		if ($key == 'auguria')
 		{
 			// Load sql init_menu_base.sql file
@@ -168,7 +177,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print $htmladmin->select_menu($conf->global->MAIN_MENUFRONT_BARRELEFT,'main_menufront_barreleft',$dirleft);
 	print '</td>';
 	print '</tr>';
-	
+
 	// Menu smartphone
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
@@ -229,7 +238,7 @@ else
 	print $filelib;
 	print '</td>';
 	print '</tr>';
-	
+
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
