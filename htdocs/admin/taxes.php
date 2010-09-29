@@ -35,6 +35,7 @@ $langs->load('taxes');
 if (!$user->admin)
   accessforbidden();
 
+
 /*
  * View
  */
@@ -43,7 +44,7 @@ llxHeader();
 
 
 // 0=normal, 1=option vat for services is on debit
-$tax_mode = defined('TAX_MODE')?TAX_MODE:0;
+$tax_mode = empty($conf->global->TAX_MODE)?0:$conf->global->TAX_MODE;
 
 // TAX_MODE=0 (most cases):
 //              Buy                     Sell
@@ -53,13 +54,29 @@ $tax_mode = defined('TAX_MODE')?TAX_MODE:0;
 // TAX_MODE=1 (option):
 //              Buy                     Sell
 // Product      On delivery             On delivery
-// Service      On payment              On invoice
+// Service      On invoice              On invoice
 
 
 if ($_POST['action'] == 'settaxmode')
 {
   $tax_mode = $_POST['tax_mode'];
   if (! dolibarr_set_const($db, 'TAX_MODE', $tax_mode,'chaine',0,'',$conf->entity)) { print $db->error(); }
+
+  if ($tax_mode == 0)
+  {
+      if (! dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
+      if (! dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
+      if (! dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', 'payment','chaine',0,'',$conf->entity)) { print $db->error(); }
+      if (! dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', 'payment','chaine',0,'',$conf->entity)) { print $db->error(); }
+  }
+  if ($tax_mode == 1)
+  {
+      if (! dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
+      if (! dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
+      if (! dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
+      if (! dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', 'invoice','chaine',0,'',$conf->entity)) { print $db->error(); }
+  }
+
 }
 
 if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
@@ -121,21 +138,31 @@ else
 
 	print '<table class="border" width="100%">';
 	print '<tr><td>&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
+
 	// Products
 	print '<tr><td>'.$langs->trans("Product").'</td>';
 	print '<td>';
 	print $langs->trans("OnDelivery");
-	print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+	print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
 	print '</td>';
 	print '<td>';
 	print $langs->trans("OnDelivery");
-	print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+	print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
 	print '</td></tr>';
+
 	// Services
 	print '<tr><td>'.$langs->trans("Services").'</td>';
 	print '<td>';
-	print $langs->trans("OnPayment");
-	print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+    if ($tax_mode == 0)
+    {
+        print $langs->trans("OnPayment");
+        print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+    }
+    if ($tax_mode == 1)
+    {
+        print $langs->trans("OnInvoice");
+        print ' ('.$langs->trans("InvoiceDateUsed").')';
+    }
 	print '</td>';
 	print '<td>';
 	if ($tax_mode == 0)
@@ -146,9 +173,10 @@ else
 	if ($tax_mode == 1)
 	{
 		print $langs->trans("OnInvoice");
-		print ' ('.$langs->trans("InvoiceValidateDateUsed").')';
+		print ' ('.$langs->trans("InvoiceDateUsed").')';
 	}
 	print '</td></tr>';
+
 	print '</table>';
 }
 

@@ -56,7 +56,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["c
     $new_pays_id=$_POST["pays_id"];
     $new_pays_code=getCountry($new_pays_id,2);
     $new_pays_label=getCountry($new_pays_id,0);
-    //dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS", $new_pays_id,'chaine',0,'',$conf->entity);
+
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS", $new_pays_id.':'.$new_pays_code.':'.$new_pays_label,'chaine',0,'',$conf->entity);
 
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"],'chaine',0,'',$conf->entity);

@@ -202,7 +202,6 @@ class Conf
 		//var_dump($this->modules);
 
 		// Clean some variables
-		// conf->menu_top is defined in main.inc.php
 		if (! $this->global->MAIN_MENU_BARRETOP) $this->global->MAIN_MENU_BARRETOP="eldy_backoffice.php";
 		if (! $this->global->MAIN_MENUFRONT_BARRETOP) $this->global->MAIN_MENUFRONT_BARRETOP="eldy_frontoffice.php";
 		if (empty($this->global->MAIN_MENU_SMARTPHONE)) $this->global->MAIN_MENU_SMARTPHONE="iphone_backoffice.php";
@@ -306,6 +305,7 @@ class Conf
 		// Module oscommerce 1
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
+
 
 		/*
 		 * Set some default values
@@ -420,11 +420,16 @@ class Conf
 		// Define umask
 		if (empty($this->global->MAIN_UMASK)) $this->global->MAIN_UMASK='0664';
 
-		/* TODO Ajouter une option Gestion de la TVA dans le module compta qui permet de desactiver la fonction TVA
-		 * (pour particuliers ou liberaux en franchise)
-		 * En attendant, valeur forcee a 1 car toujours interessant a avoir meme ceux qui veulent pas.
+		// Set default variable to calculate VAT as if option tax_mode was 0 (standard)
+        if (empty($this->global->TAX_MODE_SELL_PRODUCT)) $this->global->TAX_MODE_SELL_PRODUCT='invoice';
+        if (empty($this->global->TAX_MODE_BUY_PRODUCT))  $this->global->TAX_MODE_BUY_PRODUCT='invoice';
+        if (empty($this->global->TAX_MODE_SELL_SERVICE)) $this->global->TAX_MODE_SELL_SERVICE='payment';
+        if (empty($this->global->TAX_MODE_BUY_SERVICE))  $this->global->TAX_MODE_BUY_SERVICE='payment';
+
+		/* We always show vat menus if module tax is enabled.
+		 * Because even when vat option is 'franchise' and vat rate is 0, we have to pay vat.
 		 */
-		$this->compta->tva=1;
+		$this->compta->tva=1; // This option means "Show vat menus"
 
 		// Delais de tolerance des alertes
 		$this->actions->warning_delay=$this->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
