@@ -59,3 +59,9 @@ ALTER TABLE llx_propaldet ADD COLUMN fk_parent_line	integer NULL AFTER fk_propal
 ALTER TABLE llx_commandedet ADD COLUMN fk_parent_line integer NULL AFTER fk_commande;
 ALTER TABLE llx_facturedet ADD COLUMN fk_parent_line integer NULL AFTER fk_facture;
 ALTER TABLE llx_facturedet_rec ADD COLUMN fk_parent_line integer NULL AFTER fk_facture;
+
+--Remove old Spanish TVA
+UPDATE llx_c_tva SET taux = '18' WHERE rowid = 41;
+UPDATE llx_c_tva SET taux = '8' WHERE rowid = 42;
+DELETE FROM llx_c_tva WHERE rowid = 45;
+DELETE FROM llx_c_tva WHERE rowid = 46;
