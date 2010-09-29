@@ -174,22 +174,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 				}
 			}
 
-			// Fournisseurs
-			$langs->load("suppliers");
-
-			if ($conf->societe->enabled && $conf->fournisseur->enabled)
-			{
-				$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
-
-				if ($user->societe_id == 0)
-				{
-					$newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("MenuNewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
-				}
-				//$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("List"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
-				//$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire && $user->rights->societe->contact->lire);
-				$newmenu->add(DOL_URL_ROOT."/fourn/stats.php",$langs->trans("Statistics"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
-			}
-
 			// Prospects
 			if ($conf->societe->enabled)
 			{
@@ -210,6 +194,20 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 				//$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
 			}
 
+            // Fournisseurs
+            if ($conf->societe->enabled && $conf->fournisseur->enabled)
+            {
+                $langs->load("suppliers");
+                $newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
+
+                if ($user->societe_id == 0)
+                {
+                    $newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("MenuNewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
+                }
+                //$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("List"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
+                //$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire && $user->rights->societe->contact->lire);
+            }
+
 			// Contacts
 			$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("Contacts"), 0, $user->rights->societe->contact->lire);
 			$newmenu->add(DOL_URL_ROOT."/contact/fiche.php?leftmenu=contacts&amp;action=create", $langs->trans("NewContact"), 1, $user->rights->societe->contact->creer);
@@ -224,21 +222,21 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 			if ($conf->categorie->enabled)
 			{
 				$langs->load("categories");
-				// Categories suppliers
-				if ($conf->fournisseur->enabled)
-				{
-					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 0, $user->rights->categorie->lire);
-					if ($user->societe_id == 0)
-					{
-						$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=1", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
-					}
-				}
 				// Categories prospects/customers
 				$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=2", $langs->trans("CustomersProspectsCategoriesShort"), 0, $user->rights->categorie->lire);
 				if ($user->societe_id == 0)
 				{
 					$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=2", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
 				}
+                // Categories suppliers
+                if ($conf->fournisseur->enabled)
+                {
+                    $newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 0, $user->rights->categorie->lire);
+                    if ($user->societe_id == 0)
+                    {
+                        $newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=1", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
+                    }
+                }
 				//if ($leftmenu=="cat") $newmenu->add(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 			}
 

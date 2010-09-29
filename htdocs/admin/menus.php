@@ -62,19 +62,15 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
 
 	dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"],'chaine',0,'',$conf->entity);
-	//dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE",     $_POST["main_menu_smartphone"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRETOP", $_POST["main_menufront_barretop"],'chaine',0,'',$conf->entity);
-	//dolibarr_set_const($db, "MAIN_MENUFRONT_BARRELEFT",$_POST["main_menufront_barreleft"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE",$_POST["main_menufront_smartphone"],'chaine',0,'',$conf->entity);
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler=array();
 	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menu_barretop"])]=1;
 	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_barretop"])]=1;
-	//$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menu_barreleft"])]=1;
-	//$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_barreleft"])]=1;
 	if (isset($_POST["main_menu_smartphone"]))      $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menu_smartphone"])]=1;
 	if (isset($_POST["main_menufront_smartphone"])) $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_smartphone"])]=1;
 
@@ -160,18 +156,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '</td>';
 	print '</tr>';
 
-	// Menu left
-	/*$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
-	print '<td>';
-	print $htmladmin->select_menu($conf->global->MAIN_MENU_BARRELEFT,'main_menu_barreleft',$dirleft);
-	print '</td>';
-	print '<td>';
-	print $htmladmin->select_menu($conf->global->MAIN_MENUFRONT_BARRELEFT,'main_menufront_barreleft',$dirleft);
-	print '</td>';
-	print '</tr>';
-    */
-
 	// Menu smartphone
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
@@ -222,20 +206,6 @@ else
 	print $filelib;
 	print '</td>';
 	print '</tr>';
-
-	/*$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
-	print '<td>';
-	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENU_BARRELEFT);
-	print $filelib;
-	print '</td>';
-	print '<td>';
-	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENUFRONT_BARRELEFT);
-	print $filelib;
-	print '</td>';
-	print '</tr>';
-    */
 
     if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
     {
