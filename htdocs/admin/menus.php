@@ -75,26 +75,19 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_barretop"])]=1;
 	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menu_barreleft"])]=1;
 	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_barreleft"])]=1;
-	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menu_smartphone"])]=1;
-	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_smartphone"])]=1;
+	if (isset($_POST["main_menu_smartphone"]))      $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menu_smartphone"])]=1;
+	if (isset($_POST["main_menufront_smartphone"])) $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_smartphone"])]=1;
+
+	// Initialize menu handlers
 	foreach ($listofmenuhandler as $key => $val)
 	{
 		$dir = DOL_DOCUMENT_ROOT."/includes/menus/";
 
-		if ($key == 'auguria')
+		// Load sql init_menu_handler.sql file
+		$file='init_menu_'.$key.'.sql';
+		if (file_exists($dir.$file))
 		{
-			// Load sql init_menu_base.sql file
-			$file='init_menu_base.sql';
 			$result=run_sql($dir.$file,1,'',1,$key);
-		}
-		else
-		{
-			// Load sql init_menu_handler.sql file
-			$file='init_menu_'.$key.'.sql';
-			if (file_exists($dir.$file))
-			{
-				$result=run_sql($dir.$file,1,'',1,$key);
-			}
 		}
 	}
 
@@ -179,15 +172,18 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '</tr>';
 
 	// Menu smartphone
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
-	print '<td>';
-	print $htmladmin->select_menu($conf->global->MAIN_MENU_SMARTPHONE,'main_menu_smartphone',$dirsmartphone);
-	print '</td>';
-	print '<td>';
-	print $htmladmin->select_menu($conf->global->MAIN_MENUFRONT_SMARTPHONE,'main_menufront_smartphone',$dirsmartphone);
-	print '</td>';
-	print '</tr>';
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+	{
+    	$var=!$var;
+    	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
+    	print '<td>';
+    	print $htmladmin->select_menu($conf->global->MAIN_MENU_SMARTPHONE,'main_menu_smartphone',$dirsmartphone);
+    	print '</td>';
+    	print '<td>';
+    	print $htmladmin->select_menu($conf->global->MAIN_MENUFRONT_SMARTPHONE,'main_menufront_smartphone',$dirsmartphone);
+    	print '</td>';
+    	print '</tr>';
+	}
 
 	print '</table>';
 
@@ -239,18 +235,21 @@ else
 	print '</td>';
 	print '</tr>';
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
-	print '<td>';
-	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENU_SMARTPHONE);
-	print $filelib;
-	print '</td>';
-	print '<td>';
-	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENUFRONT_SMARTPHONE);
-	print $filelib;
-	print '</td>';
-	print '</tr>';
+    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+    {
+    	$var=!$var;
+    	print '<tr '.$bc[$var].'>';
+    	print '<td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
+    	print '<td>';
+    	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENU_SMARTPHONE);
+    	print $filelib;
+    	print '</td>';
+    	print '<td>';
+    	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENUFRONT_SMARTPHONE);
+    	print $filelib;
+    	print '</td>';
+    	print '</tr>';
+    }
 
 	print '</table>';
 }
