@@ -209,6 +209,7 @@ HelpCenterDesc1=Aquesta aplicació, independent de Dolibarr, us permet ajudar a 
 HelpCenterDesc2=Alguns d'aquests serveis només estan disponibles en <b>anglès</b>.
 CurrentTopMenuHandler=Gestor de menú superior
 CurrentLeftMenuHandler=Gestor de menú esquerre
+CurrentMenuHandler= Gestor de menú
 CurrentSmartphoneMenuHandler=Gestor menú smartphone actual
 MeasuringUnit=Unitat de mesura
 Emails=E-Mails
