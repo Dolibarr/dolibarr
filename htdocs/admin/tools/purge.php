@@ -167,7 +167,7 @@ if (preg_match('/^confirm/i',$_REQUEST["choice"]))
 {
 	print '<br>';
 	$formquestion=array();
-	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?choice=allfiles',$langs->trans('Purge'),$langs->trans('ConfirmPurge'),'purge',$formquestion,'no',2);
+	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?choice=allfiles',$langs->trans('Purge'),$langs->trans('ConfirmPurge').' '.img_warning(),'purge',$formquestion,'no',2);
 	if ($ret == 'html') print '<br>';
 }
 
