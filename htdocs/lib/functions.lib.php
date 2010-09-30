@@ -2360,17 +2360,18 @@ function vatrate($rate,$addpercent=false,$info_bits=0)
 
 
 /**
- *		\brief      Fonction qui formate un montant pour visualisation
- *		\remarks    Fonction utilisee dans les pdf et les pages html
- *		\param	    amount			Montant a formater
- *		\param	    html			Type de formatage, html ou pas (par defaut)
- *		\param	    outlangs		Objet langs pour formatage text
- *		\param		trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
- *		\param		rounding		Minimum number of decimal. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
- *		\return		string			Chaine avec montant formate
- *		\seealso	price2num		Revert function of price
+ *		Fonction qui formate un montant pour visualisation
+ *		Fonction utilisee dans les pdf et les pages html
+ *		@param	    amount			Montant a formater
+ *		@param	    html			Type de formatage, html ou pas (par defaut)
+ *		@param	    outlangs		Objet langs pour formatage text
+ *		@param		trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
+ *		@param		rounding		Minimum number of decimal. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
+ *		@param		forcerounding	Force the number of decimal
+ *		@return		string			Chaine avec montant formate
+ *		@see		price2num		Revert function of price
  */
-function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1)
+function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1)
 {
 	global $langs,$conf;
 
@@ -2412,6 +2413,9 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1)
 			$end='...';
 		}
 	}
+	
+	// If force rounding
+	if ($forcerounding >= 0) $nbdecimal = $forcerounding;
 
 	// Format number
 	if ($html)
