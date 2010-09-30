@@ -131,8 +131,8 @@ class Form
 
     /**
      *	Show a text and picto with tooltip on text or picto
-     *	@param  text				Texte to show
-     *	@param  htmltext	    	Contenu html du tooltip, code en Html / UTF8
+     *	@param  text				Text to show
+     *	@param  htmltext	    	Content html of tooltip, coded into HTML/UTF8
      *	@param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et force en Ajax
      *	@param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
      *	@param	img					Code img du picto (use img_xxx() function to get it)
@@ -193,7 +193,7 @@ class Form
             $s.='<table class="nobordernopadding" summary=""><tr>';
             if ($direction > 0)
             {
-                if (!empty($text) || $text == 0)
+                if ($text != '')
                 {
                     $s.='<td'.$paramfortooltiptext.'>'.$text;
                     if ($direction) $s.='&nbsp;';
@@ -204,7 +204,7 @@ class Form
             else
             {
                 if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
-                if (!empty($text) || $text == 0)
+                if ($text != '')
                 {
                     $s.='<td'.$paramfortooltiptext.'>';
                     if ($direction) $s.='&nbsp;';
