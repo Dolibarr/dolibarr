@@ -113,6 +113,7 @@ PublicMemberList=Liste des membres publics
 BlankSubscriptionForm=Formulaire inscription
 MemberPublicLinks=Liens/pages publiques
 ExportDataset_member_1=Adhérents et adhésions
+ImportDataset_member_1=Adhérents
 LastMembers=Les %s derniers adhérents
 LastMembersModified=Les %s derniers adhérents modifiés
 AttributeName=Nom de l'attribut

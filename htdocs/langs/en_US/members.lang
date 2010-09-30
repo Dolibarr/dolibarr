@@ -113,6 +113,7 @@ PublicMemberList=Public member list
 BlankSubscriptionForm=Subscription form
 MemberPublicLinks=Public links/pages
 ExportDataset_member_1=Members and subscriptions
+ImportDataset_member_1=Members
 LastMembers=Last %s members
 LastMembersModified=Last %s modified members
 AttributeName=Attribute name

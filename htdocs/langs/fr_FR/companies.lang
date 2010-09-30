@@ -273,6 +273,7 @@ DolibarrLogin=Login Dolibarr
 NoDolibarrAccess=Pas d'accès Dolibarr
 ExportDataset_company_1=Tiers (sociétés/institutions) et attributs
 ExportDataset_company_2=Contacts (de tiers) et attributs
+ImportDataset_company_1=Tiers (sociétés/institutions) et attributs
 PriceLevel=Niveau de prix
 DeliveriesAddress=Adresse(s) de livraison
 DeliveryAddress=Adresse de livraison

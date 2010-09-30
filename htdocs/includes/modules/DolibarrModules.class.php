@@ -303,8 +303,8 @@ class DolibarrModules
 
 
 	/**
-	 *	\brief      Retourne la liste des fichiers lang en rapport avec le module
-	 *	\return     array       Tableau des fichier lang
+	 *	Return list of lang files related to module
+	 *	@return     array       Array of lang files
 	 */
 	function getLangFilesArray()
 	{
@@ -312,10 +312,10 @@ class DolibarrModules
 	}
 
 	/**
-	 *	\brief      Retourne le libelle d'un lot de donnees exportable
-	 *	\return     string      Libelle du lot de donnees
+	 *	Return translated label of a export dataset
+	 *	@return     string      Label of databaset
 	 */
-	function getDatasetLabel($r)
+	function getExportDatasetLabel($r)
 	{
 		global $langs;
 
@@ -333,7 +333,29 @@ class DolibarrModules
 	}
 
 
-	/**
+    /**
+     *  Return translated label of an import dataset
+     *  @return     string      Label of databaset
+     */
+    function getImportDatasetLabel($r)
+    {
+        global $langs;
+
+        $langstring="ImportDataset_".$this->import_code[$r];
+        //print "x".$langstring;
+        if ($langs->trans($langstring) == $langstring)
+        {
+            // Traduction non trouvee
+            return $langs->trans($this->import_label[$r]);
+        }
+        else
+        {
+            // Traduction trouvee
+            return $langs->trans($langstring);
+        }
+    }
+
+    /**
 	 *	\brief      Insert line in dolibarr_modules table.
 	 *	\return     int		Nb of errors (0 if OK)
 	 * 	\remarks	Storage is made for information only, table is not required for Dolibarr usage.

@@ -143,7 +143,7 @@ class Export
 									// Code du dataset export
 									$this->array_export_code[$i]=$module->export_code[$r];
 									// Libelle du dataset export
-									$this->array_export_label[$i]=$module->getDatasetLabel($r);
+									$this->array_export_label[$i]=$module->getExportDatasetLabel($r);
 									// Tableau des champ a exporter (cle=champ, valeur=libelle)
 									$this->array_export_fields[$i]=$module->export_fields_array[$r];
 									// Tableau des entites a exporter (cle=champ, valeur=entite)

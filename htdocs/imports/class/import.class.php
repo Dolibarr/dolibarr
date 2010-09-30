@@ -53,9 +53,9 @@ class Import
 
 
 	/**
-	 *    \brief  Load description of an importable dataset
-	 *    \param  user      Object user making import
-	 *    \param  filter    Load a particular dataset only
+	 *    Load description of an importable dataset
+	 *    @param  user      Object user making import
+	 *    @param  filter    Load a particular dataset only
 	 */
 	function load_arrays($user,$filter='')
 	{
@@ -137,7 +137,7 @@ class Import
 									// Code du dataset export
 									$this->array_import_code[$i]=$module->import_code[$r];
 									// Libelle du dataset export
-									$this->array_import_label[$i]=$module->getDatasetLabel($r);
+									$this->array_import_label[$i]=$module->getImportDatasetLabel($r);
 									// Array of tables to import (key=alias, value=tablename)
 									$this->array_import_tables[$i]=$module->import_tables_array[$r];
 									// Array of tables creator field to import (key=alias, value=creator field)
