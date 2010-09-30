@@ -193,7 +193,7 @@ class Form
             $s.='<table class="nobordernopadding" summary=""><tr>';
             if ($direction > 0)
             {
-                if ($text)
+                if (!empty($text) || $text == 0)
                 {
                     $s.='<td'.$paramfortooltiptext.'>'.$text;
                     if ($direction) $s.='&nbsp;';
@@ -204,7 +204,7 @@ class Form
             else
             {
                 if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
-                if ($text)
+                if (!empty($text) || $text == 0)
                 {
                     $s.='<td'.$paramfortooltiptext.'>';
                     if ($direction) $s.='&nbsp;';
