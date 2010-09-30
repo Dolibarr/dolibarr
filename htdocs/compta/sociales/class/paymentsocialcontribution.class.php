@@ -568,15 +568,19 @@ class PaymentSocialContribution extends CommonObject
 		global $langs;
 
 		$result='';
-
+		
 		if (empty($this->ref)) $this->ref=$this->lib;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$this->id.'">';
-		$lienfin='</a>';
-
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment").': '.$this->ref,'payment').$lienfin.' ');
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
+		if (!empty($this->id))
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$this->id.'">';
+			$lienfin='</a>';
+			
+			if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment").': '.$this->ref,'payment').$lienfin.' ');
+			if ($withpicto && $withpicto != 2) $result.=' ';
+			if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
+		}
+		
 		return $result;
 	}
 }
