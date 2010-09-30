@@ -644,7 +644,7 @@ AlwaysActive=Siempre activo
 UpdateRequired=Su sistema necesita una actualización. Para actualizar haga clic en <a href="%s">Actualizar</a>.
 Upgrade=Actualización
 MenuUpgrade=Actualización / Extensión
-AddExtensionThemeModuleOrOther=Ajustar extensión (tema, módulo, etc.)
+AddExtensionThemeModuleOrOther=Añadir extensión (tema, módulo, etc.)
 WebServer=Servidor web
 DocumentRootServer=Directorio raíz de las páginas web
 DataRootServer=Directorio raíz de los archivos de datos
