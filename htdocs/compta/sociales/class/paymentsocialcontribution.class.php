@@ -71,6 +71,7 @@ class PaymentSocialContribution extends CommonObject
 	function create($user)
 	{
 		global $conf, $langs;
+		
 		$error=0;
 
 		// Validation parametres

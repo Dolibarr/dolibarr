@@ -46,6 +46,8 @@ if ($user->societe_id > 0)
  */
 if ($_POST["action"] == 'add_paiement')
 {
+	$error=0;
+	
 	if ($_POST["cancel"])
 	{
 		$loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
@@ -76,6 +78,7 @@ if ($_POST["action"] == 'add_paiement')
 		$paymentid = 0;
 
 		// Read possible payments
+		// FIXME add error message if no payment is defined
 		foreach ($_POST as $key => $value)
 		{
 			if (substr($key,0,7) == 'amount_')
@@ -99,7 +102,7 @@ if ($_POST["action"] == 'add_paiement')
 		if (! $error)
 		{
 		    $paymentid = $paiement->create($user);
-            if (! $paymentid > 0)
+            if ($paymentid < 0)
             {
                 $errmsg=$paiement->error;
                 $error++;
