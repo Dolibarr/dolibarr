@@ -181,6 +181,15 @@ $dolibarr_main_authentication='dolibarr';
 #
 $dolibarr_main_force_https='0';
 
+# dolibarr_nocsrfcheck
+# This parameter can be used to disable CSRF protection.
+# This might be required if you access Dolibarr behind a proxy that make
+# URL rewriting to avoid false alarms.
+# Default value: 0
+# Possible values: 0 or 1
+# Examples:
+# $dolibarr_nocsrfcheck='0';
+# 
 
 
 ##################
