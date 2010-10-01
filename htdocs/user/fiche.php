@@ -1083,7 +1083,7 @@ else
 				{
 					$adh=new Adherent($db);
 					$adh->fetch($fuser->fk_member);
-					$adh->ref=$adh->login;	// Force to show login instead of id
+					$adh->ref=$adh->getFullname($langs);	// Force to show login instead of id
 					print $adh->getNomUrl(1);
 				}
 				else
