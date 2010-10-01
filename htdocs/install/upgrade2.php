@@ -301,6 +301,9 @@ if (GETPOST('action') && preg_match('/upgrade/i',GETPOST("action")))
         {
             //print $langs->trans("AlreadyDone");
 
+			// Reload modules
+            migrate_reload_modules($db,$langs,$conf);
+
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
         }
@@ -3234,6 +3237,32 @@ function migrate_reload_modules($db,$langs,$conf)
         //$mod->remove('noboxes');
         $mod->init();
     }
+
+    if (! empty($conf->global->MAIN_MODULE_DEPLACEMENT))    // Permission has changed into 3.0
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Deplacement");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modDeplacement.class.php');
+        $mod=new modDeplacement($db);
+        //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
+        $mod->init();
+    }
+    if (! empty($conf->global->MAIN_MODULE_DON))    // Permission has changed into 3.0
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Don");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modDon.class.php');
+        $mod=new modDon($db);
+        //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
+        $mod->init();
+    }
+    if (! empty($conf->global->MAIN_MODULE_ECM))    // Permission has changed into 3.0
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ECM");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modECM.class.php');
+        $mod=new modECM($db);
+        //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
+        $mod->init();
+    }
+
 }
 
 

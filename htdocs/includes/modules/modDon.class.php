@@ -88,19 +88,19 @@ class modDon  extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'don';
 
-		$this->rights[1][0] = 700;
+		$this->rights[1][0] = 701;
 		$this->rights[1][1] = 'Lire les dons';
 		$this->rights[1][2] = 'r';
 		$this->rights[1][3] = 1;
 		$this->rights[1][4] = 'lire';
 
-		$this->rights[2][0] = 701;
+		$this->rights[2][0] = 702;
 		$this->rights[2][1] = 'Creer/modifier les dons';
 		$this->rights[2][2] = 'w';
 		$this->rights[2][3] = 0;
 		$this->rights[2][4] = 'creer';
 
-		$this->rights[3][0] = 702;
+		$this->rights[3][0] = 703;
 		$this->rights[3][1] = 'Supprimer les dons';
 		$this->rights[3][2] = 'd';
 		$this->rights[3][3] = 0;

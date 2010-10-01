@@ -90,7 +90,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (GETPOST("urlfrom")) $_SESSION["urlfrom"]=GETPOST("urlfrom");
 	else unset($_SESSION["urlfrom"]);
 
-	if (GETPOST("username")) $focus_element='username';
+	if (! GETPOST("username")) $focus_element='username';
 	else $focus_element='password';
 
 	$login_background=DOL_URL_ROOT.'/theme/login_background.png';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,14 +94,14 @@ class modECM extends DolibarrModules
 		$this->rights = array();		// Permission array used by this module
 
 		$r++;
-		$this->rights[$r][0] = 2500;
+		$this->rights[$r][0] = 2501;
 		$this->rights[$r][1] = 'Consulter les documents';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'download';
 
 		$r++;
-		$this->rights[$r][0] = 2501;
+		$this->rights[$r][0] = 2502;
 		$this->rights[$r][1] = 'Soumettre ou supprimer des documents';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 1;

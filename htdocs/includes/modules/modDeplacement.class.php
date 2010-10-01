@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -82,19 +82,19 @@ class modDeplacement extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'deplacement';
 
-		$this->rights[1][0] = 170;
+		$this->rights[1][0] = 171;
 		$this->rights[1][1] = 'Lire les deplacements';
 		$this->rights[1][2] = 'r';
 		$this->rights[1][3] = 1;
 		$this->rights[1][4] = 'lire';
 
-		$this->rights[2][0] = 171;
+		$this->rights[2][0] = 172;
 		$this->rights[2][1] = 'Creer/modifier les deplacements';
 		$this->rights[2][2] = 'w';
 		$this->rights[2][3] = 0;
 		$this->rights[2][4] = 'creer';
 
-		$this->rights[3][0] = 172;
+		$this->rights[3][0] = 173;
 		$this->rights[3][1] = 'Supprimer les deplacements';
 		$this->rights[3][2] = 'd';
 		$this->rights[3][3] = 0;
