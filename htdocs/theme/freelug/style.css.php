@@ -158,13 +158,13 @@ form
     background: #b3c5cc;
 }
 td.showDragHandle {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/1updownarrow.png'; ?>);
-    background-repeat: no-repeat;
-    background-position: center center;
-    cursor: move;
+	cursor: move;
 }
 .tdlineupdown {
-    white-space: nowrap;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/grip.png'; ?>);
+	background-repeat: no-repeat;
+	background-position: center center;
+	white-space: nowrap;
 }
 
 
