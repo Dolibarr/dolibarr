@@ -670,7 +670,7 @@ if ($action == 'create')
     print '</tr>';
 
     // Prenom
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</span></td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
     print '</tr>';
 
     // Login
@@ -887,7 +887,7 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Firstname
-	print '<tr><td width="20%"><span class="fieldrequired">'.$langs->trans("Firstname").'</span></td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
+	print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
 	print '</tr>';
 
 	// Login
