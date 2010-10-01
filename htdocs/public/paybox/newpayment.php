@@ -475,8 +475,6 @@ if ($_REQUEST["amount"] == 'contractline')
 	//}
 	if ($contractline->date_fin_validite)
 	{
-		//$dateactend = dol_time_plus_duree ($contractline->date_fin_validite, $product->duration_value, $product->duration_unit);
-		//print ', '.$langs->trans("DateEndPlanned").': '.dol_print_date($contractline->date_fin_validite);
 		$text.='<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_fin_validite);
 	}
 

@@ -1071,7 +1071,7 @@ if ($step == 4 && $datatoimport)
 }
 
 
-// STEP 5: Summary of choices
+// STEP 5: Summary of choices and launch simulation
 if ($step == 5 && $datatoimport)
 {
 	$model=$format;
@@ -1262,356 +1262,162 @@ if ($step == 5 && $datatoimport)
 	print '</div>';
 
 
-	// Show import id
-	print $langs->trans("NowClickToTestTheImport",$langs->transnoentitiesnoconv("RunSimulateImportFile")).'<br>';
-	print '<br>';
+    if (GETPOST('action') != 'launchsimu')
+    {
+        // Show import id
+        print $langs->trans("NowClickToTestTheImport",$langs->transnoentitiesnoconv("RunSimulateImportFile")).'<br>';
+        print '<br>';
 
+        // Actions
+        print '<center>';
+        if ($user->rights->import->run)
+        {
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=5&action=launchsimu'.$param.'">'.$langs->trans("RunSimulateImportFile").'</a>';
+        }
+        else
+        {
+            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
+        }
+        print '</center>';
+    }
+    else
+    {
 
-	// Actions
-	print '<center>';
-	if ($user->rights->import->run)
-	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=6'.$param.'">'.$langs->trans("RunSimulateImportFile").'</a>';
-	}
-	else
-	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
-	}
-	/*print '<form action="'.$_SERVER["PHP_SELF"].'?step=6&'.$param.'">';
-	print '<input class="button" type="submit" value="'.$langs->trans("RunSimulateImportFile").'">';
-	print '</form>';*/
-	print '</center>';
+        // Launch import
+        $arrayoferrors=array();
+        $arrayofwarnings=array();
+        $maxnboferrors=empty($conf->global->IMPORT_MAX_NB_OF_ERRORS)?50:$conf->global->IMPORT_MAX_NB_OF_ERRORS;
+        $maxnbofwarnings=empty($conf->global->IMPORT_MAX_NB_OF_WARNINGS)?50:$conf->global->IMPORT_MAX_NB_OF_WARNINGS;
+        $nboferrors=0;
+        $nbofwarnings=0;
 
-	if ($mesg) print $mesg;
+        $importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
+
+        //var_dump($array_match_file_to_database);
+
+        $db->begin();
+
+        // Open input file
+        $nbok=0;
+        $pathfile=$conf->import->dir_temp.'/'.$filetoimport;
+        $result=$obj->import_open_file($pathfile,$langs);
+        if ($result > 0)
+        {
+            $sourcelinenb=0;
+            // Loop on each input file record
+            while ($sourcelinenb < $nboflines)
+            {
+                $sourcelinenb++;
+                $arrayrecord=$obj->import_read_record();
+                if ($excludefirstline && $sourcelinenb == 1) continue;
+
+                $result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,sizeof($fieldssource),$importid);
+                if (sizeof($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
+                if (sizeof($obj->warnings)) $arrayofwarnings[$sourcelinenb]=$obj->warnings;
+                if (! sizeof($obj->errors) && ! sizeof($obj->warnings)) $nbok++;
+            }
+            // Close file
+            $obj->import_close_file();
+        }
+        else
+        {
+            print $langs->trans("ErrorFailedToOpenFile",$pathfile);
+        }
+
+        $db->rollback();    // We force rollback because this was just a simulation.
+
+        // Show OK
+        if (! sizeof($arrayoferrors) && ! sizeof($arrayofwarnings)) print img_tick().' <b>'.$langs->trans("NoError").'</b><br><br>';
+        else print $langs->trans("NbOfLinesOK",$nbok).'</b><br><br>';
+
+        // Show Errors
+        //var_dump($arrayoferrors);
+        if (sizeof($arrayoferrors))
+        {
+            print img_error().' <b>'.$langs->trans("ErrorsOnXLines",sizeof($arrayoferrors)).'</b><br>';
+            print '<table width="100%" class="border"><tr><td>';
+            foreach ($arrayoferrors as $key => $val)
+            {
+                $nboferrors++;
+                if ($nboferrors > $maxnboferrors)
+                {
+                    print $langs->trans("TooMuchErrors",(sizeof($arrayoferrors)-$nboferrors))."<br>";
+                    break;
+                }
+                print '* '.$langs->trans("Line").' '.$key.'<br>';
+                foreach($val as $i => $err)
+                {
+                    print ' &nbsp; &nbsp; > '.$err['lib'].'<br>';
+                }
+            }
+            print '</td></tr></table>';
+            print '<br>';
+        }
+
+        // Show Warnings
+        //var_dump($arrayoferrors);
+        if (sizeof($arrayofwarnings))
+        {
+            print img_warning().' <b>'.$langs->trans("WarningsOnXLines",sizeof($arrayofwarnings)).'</b><br>';
+            print '<table width="100%" class="border"><tr><td>';
+            foreach ($arrayofwarnings as $key => $val)
+            {
+                $nbofwarnings++;
+                if ($nbofwarnings > $maxnbofwarnings)
+                {
+                    print $langs->trans("TooMuchWarnings",(sizeof($arrayofwarnings)-$nbofwarnings))."<br>";
+                    break;
+                }
+                print ' * '.$langs->trans("Line").' '.$key.'<br>';
+                foreach($val as $i => $err)
+                {
+                    print ' &nbsp; &nbsp; > '.$err['lib'].'<br>';
+                }
+            }
+            print '</td></tr></table>';
+            print '<br>';
+        }
+
+        // Show import id
+        $importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
+
+        print '<center>';
+        print $langs->trans("NowClickToRunTheImport",$langs->transnoentitiesnoconv("RunImportFile")).'<br>';
+        print $langs->trans("DataLoadedWithId",$importid).'<br>';
+        print '</center>';
+
+        print '<br>';
+
+        // Actions
+        print '<center>';
+        if ($user->rights->import->run)
+        {
+            if (empty($nboferrors))
+            {
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=6&importid='.$importid.$param.'">'.$langs->trans("RunImportFile").'</a>';
+            }
+            else
+            {
+                //print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=5&action=launchsimu'.$param.'">'.$langs->trans("RunSimulateImportFile").'</a>';
+
+                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CorrectErrorBeforeRunningImport")).'">'.$langs->trans("RunImportFile").'</a>';
+            }
+        }
+        else
+        {
+            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
+
+            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("RunImportFile").'</a>';
+        }
+        print '</center>';
+    }
+
+    if ($mesg) print $mesg;
 }
 
 
-// STEP 6: Result of simulation
+// STEP 6: Real import
 if ($step == 6 && $datatoimport)
-{
-	$model=$format;
-	$liste=$objmodelimport->liste_modeles($db);
-
-	// Create classe to use for import
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
-	$file = "import_".$model.".modules.php";
-	$classname = "Import".ucfirst($model);
-	require_once($dir.$file);
-	$obj = new $classname($db);
-
-	// Load source fields in input file
-	$fieldssource=array();
-	$result=$obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport,$langs);
-	if ($result >= 0)
-	{
-		// Read first line
-		$arrayrecord=$obj->import_read_record();
-		// Put into array fieldssource starting with 1.
-		$i=1;
-		foreach($arrayrecord as $key => $val)
-		{
-			$fieldssource[$i]['example1']=dol_trunc($val['val'],24);
-			$i++;
-		}
-		$obj->import_close_file();
-	}
-
-	$nboflines=(! empty($_GET["nboflines"])?$_GET["nboflines"]:dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport));
-
-	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
-	if ($excludefirstline) $param.='&excludefirstline=1';
-
-	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
-
-	$h = 0;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
-	$head[$h][1] = $langs->trans("Step")." 1";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
-	$head[$h][1] = $langs->trans("Step")." 2";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3'.$param;
-	$head[$h][1] = $langs->trans("Step")." 3";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4'.$param;
-	$head[$h][1] = $langs->trans("Step")." 4";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5'.$param;
-	$head[$h][1] = $langs->trans("Step")." 5";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=6'.$param;
-	$head[$h][1] = $langs->trans("Step")." 6";
-	$hselected=$h;
-	$h++;
-
-	dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
-
-	print '<table width="100%" class="border">';
-
-	// Module
-	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
-	print '<td>';
-	//print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
-	print $objimport->array_import_module[0]->getName();
-	print '</td></tr>';
-
-	// Lot de donnees a importer
-	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
-	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
-	print $objimport->array_import_label[0];
-	print '</td></tr>';
-
-	print '</table><br>';
-	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
-	print '<table width="100%" class="border">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
-
-	// Source file format
-	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
-	print '<td>';
-    $text=$objmodelimport->getDriverDesc($format);
-    print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
-	print '</td></tr>';
-
-	// File to import
-	print '<tr><td>'.$langs->trans("FileToImport").'</td>';
-	print '<td>';
-	$modulepart='import';
-	//$relativepath=$filetoimport;
-    print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($filetoimport).'&step=4'.$param.'" target="_blank">';
-    print $filetoimport;
-    print '</a>';
-	print '</td></tr>';
-
-	// Nb of fields
-	print '<tr><td>';
-	print $langs->trans("NbOfSourceLines");
-	print '</td><td>';
-	print $nboflines;
-	print '</td></tr>';
-
-	// Checkbox do not import first line
-	print '<tr><td>';
-	print $langs->trans("Option");
-	print '</td><td>';
-	print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
-	print '<input type="checkbox" name="excludefirstlinebis" value="1" disabled="true"';
-	print ($excludefirstline?' checked="true"':'');
-	print '>';
-	print ' '.$langs->trans("DoNotImportFirstLine");
-	print '</td></tr>';
-
-	print '</table>';
-
-	print '<br>';
-
-	print '<b>'.$langs->trans("InformationOnTargetTables").'</b>';
-	print '<table width="100%" class="border">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
-
-	// Tables imported
-	print '<tr><td width="25%">';
-	print $langs->trans("TablesTarget");
-	print '</td><td>';
-	$listtables=array();
-	foreach($array_match_file_to_database as $code=>$label)
-	{
-		//var_dump($fieldssource);
-		if ($code > sizeof($fieldssource)) continue;
-		//print $code.'-'.$label;
-		$alias=preg_replace('/(\..*)$/i','',$label);
-		$listtables[$alias]=$objimport->array_import_tables[0][$alias];
-	}
-	if (sizeof($listtables))
-	{
-		$newval='';
-		foreach ($listtables as $val)
-		{
-			if ($newval) print ', ';
-			$newval=$val;
-			// Link to Dolibarr wiki pages
-			/*$helppagename='EN:Table_'.$newval;
-			if ($helppagename && empty($conf->global->MAIN_HELP_DISABLELINK))
-			{
-				// Get helpbaseurl, helppage and mode from helppagename and langs
-				$arrayres=getHelpParamFor($helppagename,$langs);
-				$helpbaseurl=$arrayres['helpbaseurl'];
-				$helppage=$arrayres['helppage'];
-				$mode=$arrayres['mode'];
-				$newval.=' <a href="'.sprintf($helpbaseurl,$helppage).'">'.img_picto($langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage'),DOL_URL_ROOT.'/theme/common/helpdoc.png','',1).'</a>';
-			}*/
-			print $newval;
-		}
-	}
-	else print $langs->trans("Error");
-	print '</td></tr>';
-
-	// Fields imported
-	print '<tr><td>';
-	print $langs->trans("FieldsTarget").'</td><td>';
-	$listfields=array();
-	$i=0;
-	$sort_array_match_file_to_database=$array_match_file_to_database;
-	ksort($sort_array_match_file_to_database);
-	//var_dump($sort_array_match_file_to_database);
-	foreach($sort_array_match_file_to_database as $code=>$label)
-	{
-		$i++;
-		//var_dump($fieldssource);
-		if ($code > sizeof($fieldssource)) continue;
-		//print $code.'-'.$label;
-		$alias=preg_replace('/(\..*)$/i','',$label);
-		$listfields[$i]=$langs->trans("Field").' '.$code.'->'.$label;
-	}
-	print sizeof($listfields)?(join(', ',$listfields)):$langs->trans("Error");
-	print '</td></tr>';
-
-	print '</table>';
-
-	// Launch import
-	$arrayoferrors=array();
-	$arrayofwarnings=array();
-	$maxnboferrors=empty($conf->global->IMPORT_MAX_NB_OF_ERRORS)?50:$conf->global->IMPORT_MAX_NB_OF_ERRORS;
-	$maxnbofwarnings=empty($conf->global->IMPORT_MAX_NB_OF_WARNINGS)?50:$conf->global->IMPORT_MAX_NB_OF_WARNINGS;
-	$nboferrors=0;
-	$nbofwarnings=0;
-
-	$importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
-
-	//var_dump($array_match_file_to_database);
-
-	$db->begin();
-
-	// Open input file
-	$nbok=0;
-	$pathfile=$conf->import->dir_temp.'/'.$filetoimport;
-	$result=$obj->import_open_file($pathfile,$langs);
-	if ($result > 0)
-	{
-		$sourcelinenb=0;
-		// Loop on each input file record
-		while ($sourcelinenb < $nboflines)
-		{
-			$sourcelinenb++;
-			$arrayrecord=$obj->import_read_record();
-			if ($excludefirstline && $sourcelinenb == 1) continue;
-
-			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,sizeof($fieldssource),$importid);
-			if (sizeof($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
-			if (sizeof($obj->warnings))	$arrayofwarnings[$sourcelinenb]=$obj->warnings;
-			if (! sizeof($obj->errors) && ! sizeof($obj->warnings)) $nbok++;
-		}
-		// Close file
-		$obj->import_close_file();
-	}
-	else
-	{
-		print $langs->trans("ErrorFailedToOpenFile",$pathfile);
-	}
-
-	$db->rollback();	// We force rollback because this was just a simulation.
-
-	print '</div>';
-
-	// Show OK
-	if (! sizeof($arrayoferrors) && ! sizeof($arrayofwarnings)) print img_tick().' <b>'.$langs->trans("NoError").'</b><br><br>';
-	else print $langs->trans("NbOfLinesOK",$nbok).'</b><br><br>';
-
-	// Show Errors
-	//var_dump($arrayoferrors);
-	if (sizeof($arrayoferrors))
-	{
-		print img_error().' <b>'.$langs->trans("ErrorsOnXLines",sizeof($arrayoferrors)).'</b><br>';
-		print '<table width="100%" class="border"><tr><td>';
-		foreach ($arrayoferrors as $key => $val)
-		{
-			$nboferrors++;
-			if ($nboferrors > $maxnboferrors)
-			{
-				print $langs->trans("TooMuchErrors",(sizeof($arrayoferrors)-$nboferrors))."<br>";
-				break;
-			}
-			print '* '.$langs->trans("Line").' '.$key.'<br>';
-			foreach($val as $i => $err)
-			{
-				print ' &nbsp; &nbsp; > '.$err['lib'].'<br>';
-			}
-		}
-		print '</td></tr></table>';
-		print '<br>';
-	}
-
-
-	// Show Warnings
-	//var_dump($arrayoferrors);
-	if (sizeof($arrayofwarnings))
-	{
-		print img_warning().' <b>'.$langs->trans("WarningsOnXLines",sizeof($arrayofwarnings)).'</b><br>';
-		print '<table width="100%" class="border"><tr><td>';
-		foreach ($arrayofwarnings as $key => $val)
-		{
-			$nbofwarnings++;
-			if ($nbofwarnings > $maxnbofwarnings)
-			{
-				print $langs->trans("TooMuchWarnings",(sizeof($arrayofwarnings)-$nbofwarnings))."<br>";
-				break;
-			}
-			print ' * '.$langs->trans("Line").' '.$key.'<br>';
-			foreach($val as $i => $err)
-			{
-				print ' &nbsp; &nbsp; > '.$err['lib'].'<br>';
-			}
-		}
-		print '</td></tr></table>';
-		print '<br>';
-	}
-
-	// Show import id
-	$importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
-
-	print '<center>';
-	print $langs->trans("NowClickToRunTheImport",$langs->transnoentitiesnoconv("RunImportFile")).'<br>';
-	print $langs->trans("DataLoadedWithId",$importid).'<br>';
-	print '</center>';
-
-	print '<br>';
-
-	// Actions
-	print '<center>';
-	if ($user->rights->import->run)
-	{
-		if (empty($nboferrors))
-		{
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=7&importid='.$importid.$param.'">'.$langs->trans("RunImportFile").'</a>';
-		}
-		else
-		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CorrectErrorBeforeRunningImport")).'">'.$langs->trans("RunImportFile").'</a>';
-		}
-	}
-	else
-	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("RunImportFile").'</a>';
-	}
-	/*print '<form action="'.$_SERVER["PHP_SELF"].'?step=6&'.$param.'">';
-	print '<input class="button" type="submit" value="'.$langs->trans("RunSimulateImportFile").'">';
-	print '</form>';*/
-	print '</center>';
-
-	if ($mesg) print $mesg;
-}
-
-
-
-// STEP 7: Real import
-if ($step == 7 && $datatoimport)
 {
 	$model=$format;
 	$liste=$objmodelimport->liste_modeles($db);
@@ -1673,10 +1479,6 @@ if ($step == 7 && $datatoimport)
 
 	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=6'.$param;
 	$head[$h][1] = $langs->trans("Step")." 6";
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=7'.$param;
-	$head[$h][1] = $langs->trans("Step")." 7";
 	$hselected=$h;
 	$h++;
 

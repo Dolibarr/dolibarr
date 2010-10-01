@@ -50,6 +50,8 @@ class ImportCsv extends ModeleImports
 
     var $handle;    // Handle fichier
 
+    var $cachefieldtable=array();   // Array to cache list of value into fields@tables
+
 
     /**
      *		\brief      Constructeur
@@ -330,7 +332,7 @@ class ImportCsv extends ModeleImports
 						else if ($arrayrecord[($key-1)]['type'] > 0)
 						{
 							$newval=$arrayrecord[($key-1)]['val'];
-							$listvalues.="'".addslashes($arrayrecord[($key-1)]['val'])."'";
+							$listvalues.="'".$this->db->escape($arrayrecord[($key-1)]['val'])."'";
 						}
 
 						// Make some tests
@@ -345,16 +347,55 @@ class ImportCsv extends ModeleImports
 						}
 						// Test format only if field is not a missing mandatory field
 						else {
-							if (! empty($objimport->array_import_regex[0][$val]) && ! preg_match('/'.$objimport->array_import_regex[0][$val].'/i',$newval))
+							if (! empty($objimport->array_import_regex[0][$val]))
 							{
-								$this->errors[$error]['lib']=$langs->trans('ErrorWrongValueForField',$key,$newval,$objimport->array_import_regex[0][$val]);
-								$this->errors[$error]['type']='REGEX';
-								$errorforthistable++;
-								$error++;
+							    // If test is "Must exist in a field@table"
+							    if (preg_match('/^(.*)@(.*)$/',$objimport->array_import_regex[0][$val],$reg))
+							    {
+							        $field=$reg[1];
+							        $table=$reg[2];
+
+							        if (! is_array($this->cachefieldtable[$field.'@'.$table])) // If content of field@table no already loaded into cache
+							        {
+                                        $sql="SELECT ".$field." as aliasfield FROM ".$table;
+                                        $resql=$this->db->query($sql);
+                                        if ($resql)
+                                        {
+                                            $num=$this->db->num_rows($resql);
+                                            $i=0;
+                                            while ($i < $num)
+                                            {
+                                                $obj=$this->db->fetch_object($resql);
+                                                if ($obj) $this->cachefieldtable[$field.'@'.$table][]=$obj->aliasfield;
+                                                $i++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            dol_print_error($this->db);
+                                        }
+							        }
+
+							        // Now we check in cache
+							        if (! in_array($newval,$this->cachefieldtable[$field.'@'.$table]))
+							        {
+                                        $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn',$key,$newval,$field,$table);
+                                        $this->errors[$error]['type']='FOREIGNKEY';
+							            $error++;
+							        }
+							    }
+							    // If test is just a static regex
+                                else if (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i',$newval))
+                                {
+    							    $this->errors[$error]['lib']=$langs->trans('ErrorWrongValueForField',$key,$newval,$objimport->array_import_regex[0][$val]);
+    								$this->errors[$error]['type']='REGEX';
+    								$errorforthistable++;
+    								$error++;
+                                }
 							}
 
-							// Other tests
-							// ...
+                            // Other tests
+                            // ...
 						}
 					}
 					$i++;

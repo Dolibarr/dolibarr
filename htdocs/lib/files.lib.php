@@ -24,16 +24,16 @@
  */
 
 /**
- *  \brief		Scan a directory and return a list of files/directories. Content for string is UTF8.
- *  \param		$path        	Starting path from which to search
- *  \param		$types        	Can be "directories", "files", or "all"
- *  \param		$recursive		Determines whether subdirectories are searched
- *  \param		$filter        	Regex for include filter
- *  \param		$exludefilter  	Regex for exclude filter (example: '\.meta$')
- *  \param		$sortcriteria	Sort criteria ("name","date","size")
- *  \param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
- *	\param		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower)
- *  \return		array			Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
+ *  Scan a directory and return a list of files/directories. Content for string is UTF8.
+ *  @param		$path        	Starting path from which to search
+ *  @param		$types        	Can be "directories", "files", or "all"
+ *  @param		$recursive		Determines whether subdirectories are searched
+ *  @param		$filter        	Regex for include filter
+ *  @param		$exludefilter  	Regex for exclude filter (example: '\.meta$')
+ *  @param		$sortcriteria	Sort criteria ("name","date","size")
+ *  @param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
+ *	@param		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower)
+ *  @return		array			Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
 {

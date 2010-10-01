@@ -27,6 +27,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_options.class.php");
@@ -755,7 +756,6 @@ if ($rowid)
         }
         if (! $dateto)
         {
-            //$dateto=dol_time_plus_duree(dol_time_plus_duree($datefrom,$defaultdelay,$defaultdelayunit),-1,'d');
             $dateto=-1;		// By default, no date is suggested
         }
         print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';

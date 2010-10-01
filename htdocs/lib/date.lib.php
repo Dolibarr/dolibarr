@@ -21,15 +21,34 @@
 /**
  *  \file		htdocs/lib/date.lib.php
  *  \brief		Ensemble de fonctions de base de dolibarr sous forme d'include
- *  \version		$Id$
+ *  \version	$Id$
  */
 
 
-/**   \brief      Converti les heures et minutes en secondes
- *    \param      iHours      Heures
- *    \param      iMinutes    Minutes
- *    \param      iSeconds    Secondes
- *    \return     iResult	    Temps en secondes
+/**
+ *  Add a delay to a date
+ *  @param      time                Date timestamp ou au format YYYY-MM-DD
+ *  @param      duration_value      Value of delay to add
+ *  @param      duration_unit       Unit of added delay (d, m, y)
+ *  @return     int                 New timestamp
+ */
+function dol_time_plus_duree($time,$duration_value,$duration_unit)
+{
+    if ($duration_value == 0) return $time;
+    if ($duration_value > 0) $deltastring="+".abs($duration_value);
+    if ($duration_value < 0) $deltastring="-".abs($duration_value);
+    if ($duration_unit == 'd') { $deltastring.=" day"; }
+    if ($duration_unit == 'm') { $deltastring.=" month"; }
+    if ($duration_unit == 'y') { $deltastring.=" year"; }
+    return strtotime($deltastring,$time);
+}
+
+
+/**   Converti les heures et minutes en secondes
+ *    @param      iHours      Heures
+ *    @param      iMinutes    Minutes
+ *    @param      iSeconds    Secondes
+ *    @return     iResult	    Temps en secondes
  */
 function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 {
@@ -38,13 +57,12 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 }
 
 
-/**	  	\brief      Return, in clear text, value of a number of seconds in days, hours and minutes
- *    	\param      iSecond		Number of seconds
- *    	\param      format		Output format (all: complete display, hour: displays only hours, min: displays only minutes)
- *    	\param      lengthOfDay	Length of day (default 86400 seconds)
- *    	\return     sTime		Formated text of duration
- * 		\example	0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
- *
+/**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
+ *    	@param      iSecond		Number of seconds
+ *    	@param      format		Output format (all: complete display, hour: displays only hours, min: displays only minutes)
+ *    	@param      lengthOfDay	Length of day (default 86400 seconds)
+ *    	@return     sTime		Formated text of duration
+ * 		@example	0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  */
 function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 {
@@ -86,10 +104,10 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 }
 
 
-/**	\brief		Return previous month
- *	\param		month	Month
- *	\param		year	Year
- *	\return		array	Previous year,month
+/**	Return previous month
+ *	@param		month	Month
+ *	@param		year	Year
+ *	@return		array	Previous year,month
  */
 function dol_get_prev_month($month, $year)
 {
@@ -106,10 +124,10 @@ function dol_get_prev_month($month, $year)
 	return array('year' => $prev_year, 'month' => $prev_month);
 }
 
-/**	\brief		Return next month
- *	\param		month	Month
- *	\param		year	Year
- *	\return		array	Next year,month
+/**	Return next month
+ *	@param		month	Month
+ *	@param		year	Year
+ *	@return		array	Next year,month
  */
 function dol_get_next_month($month, $year)
 {
@@ -127,13 +145,13 @@ function dol_get_next_month($month, $year)
 }
 
 
-/**	\brief		Return GMT time for first day of a month or year
- *	\param		year		Year
- * 	\param		month		Month
- * 	\param		gm			False = Return date to compare with server TZ, True to compare with GM date.
+/**	Return GMT time for first day of a month or year
+ *	@param		year		Year
+ * 	@param		month		Month
+ * 	@param		gm			False = Return date to compare with server TZ, True to compare with GM date.
  *                          Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after a dol_print_date will return 1970-01-01 00:00:00
  *                          Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after a dol_print_date will return 1970-01-01 00:00:00
- *  \return		Timestamp	Date for first day
+ *  @return		Timestamp	Date for first day
  */
 function dol_get_first_day($year,$month=1,$gm=false)
 {
@@ -141,11 +159,11 @@ function dol_get_first_day($year,$month=1,$gm=false)
 }
 
 
-/**	\brief		Return GMT time for last day of a month or year
- *	\param		year		Year
- * 	\param		month		Month
- * 	\param		gm			False = Return date to compare with server TZ, True to compare with GM date.
- *	\return		Timestamp	Date for first day
+/**	Return GMT time for last day of a month or year
+ *	@param		year		Year
+ * 	@param		month		Month
+ * 	@param		gm			False = Return date to compare with server TZ, True to compare with GM date.
+ *	@return		Timestamp	Date for first day
  */
 function dol_get_last_day($year,$month=12,$gm=false)
 {
@@ -168,11 +186,11 @@ function dol_get_last_day($year,$month=12,$gm=false)
 
 
 /**
- *	\brief     	Fonction retournant le nombre de jour fieries samedis et dimanches entre 2 dates entrees en timestamp
- *	\remarks	Called by function num_open_day
- *	\param	    timestampStart      Timestamp de debut
- *	\param	    timestampEnd        Timestamp de fin
- *	\return   	nbFerie             Nombre de jours feries
+ *	Fonction retournant le nombre de jour fieries samedis et dimanches entre 2 dates entrees en timestamp
+ *	@remarks	Called by function num_open_day
+ *	@param	    timestampStart      Timestamp de debut
+ *	@param	    timestampEnd        Timestamp de fin
+ *	@return   	nbFerie             Nombre de jours feries
  */
 function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 {
@@ -266,11 +284,11 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 }
 
 /**
- *	\brief     Fonction retournant le nombre de jour entre deux dates
- *	\param	   timestampStart      Timestamp de debut
- *	\param	   timestampEnd        Timestamp de fin
- *	\param     lastday             On prend en compte le dernier jour, 0: non, 1:oui
- *	\return    nbjours             Nombre de jours
+ *	Fonction retournant le nombre de jour entre deux dates
+ *	@param	   timestampStart      Timestamp de debut
+ *	@param	   timestampEnd        Timestamp de fin
+ *	@param     lastday             On prend en compte le dernier jour, 0: non, 1:oui
+ *	@return    nbjours             Nombre de jours
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 {
@@ -290,12 +308,12 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 }
 
 /**
- *	\brief     Fonction retournant le nombre de jour entre deux dates sans les jours feries (jours ouvres)
- *	\param	   timestampStart      Timestamp de debut
- *	\param	   timestampEnd        Timestamp de fin
- *	\param     inhour              0: sort le nombre de jour , 1: sort le nombre d'heure (72 max)
- *	\param     lastday             On prend en compte le dernier jour, 0: non, 1:oui
- *	\return    nbjours             Nombre de jours ou d'heures
+ *	Fonction retournant le nombre de jour entre deux dates sans les jours feries (jours ouvres)
+ *	@param	   timestampStart      Timestamp de debut
+ *	@param	   timestampEnd        Timestamp de fin
+ *	@param     inhour              0: sort le nombre de jour , 1: sort le nombre d'heure (72 max)
+ *	@param     lastday             On prend en compte le dernier jour, 0: non, 1:oui
+ *	@return    nbjours             Nombre de jours ou d'heures
  */
 function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 {

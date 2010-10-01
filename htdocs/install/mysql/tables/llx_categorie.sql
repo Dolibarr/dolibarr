@@ -25,10 +25,11 @@ create table llx_categorie
 	rowid 		    integer AUTO_INCREMENT PRIMARY KEY,
 	label 		    varchar(255),                       -- category name
 	type	        tinyint DEFAULT 1 NOT NULL,         -- category type (product, supplier, customer)
-	entity        integer DEFAULT 1 NOT NULL,	        -- multi company id
+	entity          integer DEFAULT 1 NOT NULL,	        -- multi company id
 	description 	text,                               -- description of the category
-	fk_soc        integer DEFAULT NULL,						  	-- attribution of the category has a company (for product only)
-	visible       tinyint DEFAULT 1 NOT NULL          -- determine if the products are visible or not
+	fk_soc          integer DEFAULT NULL,					-- attribution of the category has a company (for product only)
+	visible         tinyint DEFAULT 1 NOT NULL,           -- determine if the products are visible or not
+    import_key      varchar(14)                  -- Import key
 )type=innodb;
 
 -- 

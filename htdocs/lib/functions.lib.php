@@ -393,31 +393,12 @@ function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 }
 
 /**
- *	\brief      Show tab footer of a card
- *	\param      notab		0=Add tab footer, 1=no tab footer
+ *	Show tab footer of a card
+ *	@param      notab		0=Add tab footer, 1=no tab footer
  */
 function dol_fiche_end($notab=0)
 {
 	if (! $notab) print "\n</div>\n";
-}
-
-
-/**
- *	\brief      Add a delay to a date
- *	\param	    time                Date timestamp ou au format YYYY-MM-DD
- *	\param	    duration_value      Value of delay to add
- *	\param	    duration_unit       Unit of added delay (d, m, y)
- *	\return     int                 New timestamp
- */
-function dol_time_plus_duree($time,$duration_value,$duration_unit)
-{
-	if ($duration_value == 0) return $time;
-	if ($duration_value > 0) $deltastring="+".abs($duration_value);
-	if ($duration_value < 0) $deltastring="-".abs($duration_value);
-	if ($duration_unit == 'd') { $deltastring.=" day"; }
-	if ($duration_unit == 'm') { $deltastring.=" month"; }
-	if ($duration_unit == 'y') { $deltastring.=" year"; }
-	return strtotime($deltastring,$time);
 }
 
 
@@ -1101,15 +1082,15 @@ function img_object($alt, $object)
 function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 {
 	global $conf;
-	
+
 	$path =  'theme/'.$conf->theme;
-	
+
 	if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
 	{
 		$picto = $regs[1];
 		$path = $regs[2];
 	}
-	
+
 	if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
 	if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 	return '<img src="'.DOL_URL_ROOT.'/'.$path.'/img/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
@@ -2422,7 +2403,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 			$end='...';
 		}
 	}
-	
+
 	// If force rounding
 	if ($forcerounding >= 0) $nbdecimal = $forcerounding;
 

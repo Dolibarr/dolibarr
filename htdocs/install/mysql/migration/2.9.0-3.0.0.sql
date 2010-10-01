@@ -65,3 +65,7 @@ UPDATE llx_c_tva SET taux = '18' WHERE rowid = 41;
 UPDATE llx_c_tva SET taux = '8' WHERE rowid = 42;
 DELETE FROM llx_c_tva WHERE rowid = 45;
 DELETE FROM llx_c_tva WHERE rowid = 46;
+
+
+ALTER TABLE llx_adherent  ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_categorie ADD COLUMN import_key varchar(14);

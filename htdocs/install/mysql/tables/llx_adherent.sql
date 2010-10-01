@@ -59,5 +59,6 @@ create table llx_adherent
   tms              timestamp, -- date de modification
   fk_user_author   integer,   -- can be null because member can be create by a guest
   fk_user_mod      integer,
-  fk_user_valid    integer 
+  fk_user_valid    integer,
+  import_key       varchar(14)                  -- Import key
 )type=innodb;
