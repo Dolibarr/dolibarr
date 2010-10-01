@@ -111,18 +111,6 @@ function analyse_sql_and_script(&$var)
 analyse_sql_and_script($_GET);
 analyse_sql_and_script($_POST);
 
-// Security: CSRF protection
-// This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
-// when we post forms (we allow GET to allow direct link to access a particular page).
-// TODO If CSRF check fails on some setup with proxy rewriting, we need to move this part into master.inc.php after include of conf.php
-if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER']))
-{
-	//print 'HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
-	print "Access refused by CSRF protection in main.inc.php\n";
-	//print "If you access your server behind a proxy using url rewriting, you might add the line \$dolibarr_nocsrfcheck=1 into your conf.php file.";
-	exit;
-}
-
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 

@@ -64,11 +64,23 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 // Include configuration
 $result=@include_once("conf/conf.php");
-if (! $result && $_SERVER["GATEWAY_INTERFACE"])	// If install not done and we are in a web session
+if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
-	header("Location: install/index.php");
-	exit;
+    header("Location: install/index.php");
+    exit;
 }
+
+// Security: CSRF protection
+// This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
+// when we post forms (we allow GET to allow direct link to access a particular page).
+if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER']))
+{
+    //print 'HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
+    print "Access refused by CSRF protection in main.inc.php\n";
+    print "If you access your server behind a proxy using url rewriting, you might add the line \$dolibarr_nocsrfcheck=1 into your conf.php file.";
+    exit;
+}
+
 if (empty($dolibarr_main_db_host))
 {
 	print 'Dolibarr setup was run but was not completed.<br>'."\n";
