@@ -21,6 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
+<?php if ($_GET['action'] != 'editline') { ?>
 <script>
 jQuery(document).ready(function(){
 	jQuery(".imgup").hide();
@@ -41,5 +42,14 @@ jQuery(document).ready(function(){
     });
 });
 </script>
+<?php } else { ?>
+<script>
+jQuery(document).ready(function(){
+	jQuery(".imgup").hide();
+	jQuery(".imgdown").hide();
+    jQuery(".lineupdown").removeAttr('href');
+});
+</script>
+<?php } ?>
 
 <!-- END PHP TEMPLATE -->
