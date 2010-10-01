@@ -112,6 +112,7 @@ PublicMemberList=Llistat públic de membres
 BlankSubscriptionForm=Formulari d'inscripció
 MemberPublicLinks=Links/pàgines publiques
 ExportDataset_member_1=Membres i afiliacions
+ImportDataset_member_1=Membres
 LastMembers=Els %s darrers membres
 LastMembersModified=Els %s darrers membres modificats
 AttributeName=Nom de l'atribut
