@@ -907,7 +907,7 @@ class pdf_einstein extends ModelePDFCommandes
 			// Show sender information
 			$pdf->SetXY($posx+2,$posy+8);
 			$pdf->SetFont('','',9);
-			$pdf->MultiCell(80, 4, $carac_emetteur);
+			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
 
@@ -955,7 +955,7 @@ class pdf_einstein extends ModelePDFCommandes
 			// Show recipient information
 			$pdf->SetFont('','',9);
 			$pdf->SetXY($posx+2,$posy+8);
-			$pdf->MultiCell(86,4, $carac_client);
+			$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
 	}
 

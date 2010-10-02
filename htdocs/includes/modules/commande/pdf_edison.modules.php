@@ -548,7 +548,7 @@ class pdf_edison extends ModelePDFCommandes
 
 		$pdf->SetFont('','',9);
 		$pdf->SetXY($this->marge_gauche,$posy+7);
-		$pdf->MultiCell(80, 4, $carac_emetteur);
+		$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 		// Client destinataire
 		$client = new Societe($this->db);
@@ -583,10 +583,10 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','B',10);
 		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96, 4, $carac_client_name);
+		$pdf->MultiCell(96, 4, $carac_client_name, 0, 'L');
 		$pdf->SetFont('','',9);
 		$pdf->SetXY(102,$pdf->GetY());
-		$pdf->MultiCell(96, 4, $carac_client);
+		$pdf->MultiCell(96, 4, $carac_client, 0, 'L');
 
 		$pdf->rect(100, 40, 100, 40);
 

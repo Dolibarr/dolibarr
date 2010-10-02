@@ -442,7 +442,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		$pdf->SetFont('','',7);
 		$pdf->SetXY($blSocX,$blSocY+6);
-		$pdf->MultiCell(80, 2, $carac_emetteur);
+		$pdf->MultiCell(80, 2, $carac_emetteur, 0, 'L');
 
 
 		if ($object->client->code_client)
@@ -524,7 +524,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		$pdf->SetFont('','',7);
 		$pdf->SetXY($blDestX,$Yoff+4);
-		$pdf->MultiCell($blW,2, $carac_client);
+		$pdf->MultiCell($blW,2, $carac_client, 0, 'L');
 	}
 }
 ?>

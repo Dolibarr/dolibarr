@@ -236,10 +236,10 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetFont('','B',10);
 				$fichinter->fetch_thirdparty();
 				$pdf->SetXY(102,42);
-				$pdf->MultiCell(86,4, $outputlangs->convToOutputCharset($carac_client_name), 0, 'L');
+				$pdf->MultiCell(86,4, $carac_client_name, 0, 'L');
 				$pdf->SetFont('','',9);
 				$pdf->SetXY(102,$pdf->GetY());
-				$pdf->MultiCell(66,4, $outputlangs->convToOutputCharset($carac_client), 0, 'L');
+				$pdf->MultiCell(66,4, $carac_client, 0, 'L');
 				$pdf->rect(100, 40, 100, 40);
 
 

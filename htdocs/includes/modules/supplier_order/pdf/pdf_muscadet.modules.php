@@ -657,7 +657,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			$pdf->SetFont('','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+8);
-			$pdf->MultiCell(80, 4, $carac_emetteur);
+			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 			// Client destinataire
 			$posy=42;
@@ -696,7 +696,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			$pdf->SetFont('','',9);
 			$pdf->SetXY(102,$posy+8);
-			$pdf->MultiCell(96,4, $carac_client);
+			$pdf->MultiCell(96,4, $carac_client, 0, 'L');
 		}
 	}
 

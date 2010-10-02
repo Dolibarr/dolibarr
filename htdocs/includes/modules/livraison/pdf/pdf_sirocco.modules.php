@@ -369,7 +369,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		$pdf->SetFont('','',9);
 		$pdf->SetXY($this->marge_gauche,$posy+4);
-		$pdf->MultiCell(80, 3, $carac_emetteur);
+		$pdf->MultiCell(80, 3, $carac_emetteur, 0, 'L');
 
 
 		/*
@@ -404,10 +404,10 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$pdf->SetFont('','B',11);
 
 		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96,5, $carac_client_name);
+		$pdf->MultiCell(96,5, $carac_client_name, 0, 'L');
 		$pdf->SetFont('','B',10);
 		$pdf->SetXY(102,47);
-		$pdf->MultiCell(96,5, $carac_client);
+		$pdf->MultiCell(96,5, $carac_client, 0, 'L');
 		$pdf->rect(100, 40, 100, 40);
 
 

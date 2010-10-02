@@ -857,7 +857,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		$pdf->SetFont('','',9);
 		$pdf->SetXY($this->marge_gauche,$posy+9);
-		$pdf->MultiCell(80, 4, $carac_emetteur);
+		$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
 		// Client destinataire
@@ -898,7 +898,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		$pdf->SetFont('','B',9);
 		$pdf->SetXY($this->marges['g']+100,$posy+8);
-		$pdf->MultiCell(86,4, $carac_client);
+		$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 
 		/*
 		 * ref facture
