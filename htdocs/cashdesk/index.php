@@ -46,15 +46,10 @@ $formproduct=new FormProduct($db);
 <html>
 <head>
 <title>Point of Sale login</title>
-
 <meta name="robots" content="none" />
-
 <meta name="author" content="Jeremie Ollivier - jeremie.o@laposte.net" />
 <meta name="Generator" content="Kwrite, Gimp, Inkscape" />
-
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
-<meta http-equiv="Content-Language" content="fr" />
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
 <link href="<?php echo DOL_URL_ROOT.'/cashdesk/css/style.css'; ?>" rel="stylesheet" type="text/css" media="screen" />
 </head>

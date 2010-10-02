@@ -3339,10 +3339,10 @@ function utf8_check($str)
 
 
 /**
- *      \brief      Return an UTF8 string encoded into OS filesystem encoding. This function is used to define
+ *      Return an UTF-8 string encoded into OS filesystem encoding. This function is used to define
  * 	                value to pass to filesystem PHP functions.
- *      \param      $str        String to encode (UTF8)
- * 		\return		string		Encoded string (UTF8, ISO-8859-1)
+ *      @param      $str        String to encode (UTF-8)
+ * 		@return		string		Encoded string (UTF-8, ISO-8859-1)
  */
 function dol_osencode($str)
 {

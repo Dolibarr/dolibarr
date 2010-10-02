@@ -128,7 +128,6 @@ if ($format == 'ical' || $format == 'vcal')
 		if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
 		//$contenttype='text/plain';
 		$outputencoding='UTF-8';
-		//$contenttype='ISO-8859-1';
 
 		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
 		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$shortfilename.'"');
@@ -165,7 +164,6 @@ if ($format == 'rss')
 		if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
 		//$contenttype='text/plain';
 		$outputencoding='UTF-8';
-		//$contenttype='ISO-8859-1';
 
 		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
 		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');

@@ -113,8 +113,8 @@ class pdf_crabe extends ModelePDFFactures
 		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expect text encoded in ISO
-		$outputlangs->charset_output='ISO-8859-1';
+		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
+		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -253,10 +253,10 @@ class pdf_crabe extends ModelePDFFactures
 					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
-					
+
 					$curX = $this->posxdesc-1;
 					pdf_getlinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY);
-					
+
 					//$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
