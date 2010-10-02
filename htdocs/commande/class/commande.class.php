@@ -2253,8 +2253,8 @@ class Commande extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise la commande avec valeurs fictives aleatoire
-	 *					Sert a generer une commande pour l'aperu des modeles ou demo
+	 *		Initialise an example of instance with random values
+	 *		Used to build previews or test instances
 	 */
 	function initAsSpecimen()
 	{
@@ -2266,8 +2266,7 @@ class Commande extends CommonObject
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE tosell = 1";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " WHERE entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2293,13 +2292,11 @@ class Commande extends CommonObject
 		$this->note_public='This is a comment (public)';
 		$this->note='This is a comment (private)';
 		// Lines
-		$nbp = rand(1, 9);
+		$nbp = 5;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
 			$line=new OrderLine($this->db);
-
-			$prodid = rand(1, $num_prods);
 
 			$line->desc=$langs->trans("Description")." ".$xnbp;
 			$line->qty=1;
@@ -2310,9 +2307,9 @@ class Commande extends CommonObject
 			$line->total_ttc=119.6;
 			$line->total_tva=19.6;
 			$line->remise_percent=0;
+			$prodid = rand(1, $num_prods);
 			$line->fk_product=$prodids[$prodid];
 
-			$this->lignes[$xnbp]=$line; // TODO: deprecated
 			$this->lines[$xnbp]=$line;
 
 			$xnbp++;

@@ -2854,8 +2854,8 @@ class Facture extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise an example of invoice with random values
-	 *					Used to build preview of invoices or demo
+	 *		Initialise an example of invoice with random values
+	 *		Used to build previews or test instances
 	 */
 	function initAsSpecimen()
 	{
@@ -2864,8 +2864,7 @@ class Facture extends CommonObject
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE tosell = 1";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " WHERE entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2890,27 +2889,30 @@ class Facture extends CommonObject
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_id   = 7;
 		$this->mode_reglement_code = '';  // No particular payment mode defined
-		$this->note_public='SPECIMEN';
+		$this->note_public='This is a comment (public)';
+		$this->note='This is a comment (private)';
 		// Lines
 		$nbp = 5;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
-			$ligne=new FactureLigne($this->db);
-			$ligne->desc=$langs->trans("Description")." ".$xnbp;
-			$ligne->qty=1;
-			$ligne->subprice=100;
-			$ligne->price=100;
-			$ligne->tva_tx=19.6;
-			$ligne->localtax1_tx=0;
-			$ligne->localtax2_tx=0;
-			$ligne->remise_percent=10;
-			$ligne->total_ht=90;
-			$ligne->total_ttc=107.64;	// 90 * 1.196
-			$ligne->total_tva=17.64;
+			$line=new FactureLigne($this->db);
+			$line->desc=$langs->trans("Description")." ".$xnbp;
+			$line->qty=1;
+			$line->subprice=100;
+			$line->price=100;
+			$line->tva_tx=19.6;
+			$line->localtax1_tx=0;
+			$line->localtax2_tx=0;
+			$line->remise_percent=10;
+			$line->total_ht=90;
+			$line->total_ttc=107.64;	// 90 * 1.196
+			$line->total_tva=17.64;
 			$prodid = rand(1, $num_prods);
-			$ligne->fk_product=$prodids[$prodid];
-			$this->lignes[$xnbp]=$ligne;
+			$line->fk_product=$prodids[$prodid];
+
+			$this->lines[$xnbp]=$line;
+
 			$xnbp++;
 		}
 

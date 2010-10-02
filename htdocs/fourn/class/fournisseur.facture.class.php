@@ -968,42 +968,18 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 *		\brief		Initialise la facture avec valeurs fictives aleatoire
-	 *					Sert a generer une facture pour l'aperu des modeles ou demo
+	 *		Initialise an example of instance with random values
+	 *		Used to build previews or test instances
 	 */
 	function initAsSpecimen()
 	{
 		global $user,$langs,$conf;
-
-		// Charge tableau des id de societe socids
-		$socids = array();
-
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE fournisseur = 1";
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " LIMIT 10";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num_socs = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_socs)
-			{
-				$i++;
-
-				$row = $this->db->fetch_row($resql);
-				$socids[$i] = $row[0];
-			}
-		}
 
 		// Charge tableau des produits prodids
 		$prodids = array();
 
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE tobuy = 1";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
@@ -1023,28 +999,29 @@ class FactureFournisseur extends Facture
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
-		$socid = rand(1, $num_socs);
-		$this->socid = $socids[$socid];
+		$this->socid = 1;
 		$this->date = time();
 		$this->date_lim_reglement=$this->date+3600*24*30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
-		$this->note_public='SPECIMEN';
+		$this->note_public='This is a comment (public)';
+		$this->note='This is a comment (private)';
+		// Lines
 		$nbp = 5;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
-			$ligne=new FactureLigne($this->db);
-			$ligne->desc=$langs->trans("Description")." ".$xnbp;
-			$ligne->qty=1;
-			$ligne->subprice=100;
-			$ligne->price=100;
-			$ligne->tva_tx=19.6;
+			$line=new FactureLigne($this->db);
+			$line->desc=$langs->trans("Description")." ".$xnbp;
+			$line->qty=1;
+			$line->subprice=100;
+			$line->price=100;
+			$line->tva_tx=19.6;
 			$prodid = rand(1, $num_prods);
-			$ligne->fk_product=$prodids[$prodid];
-			$ligne->product_type=0;
+			$line->fk_product=$prodids[$prodid];
+			$line->product_type=0;
 
-			$this->lignes[$xnbp]=$ligne;
+			$this->lines[$xnbp]=$line;
 			$xnbp++;
 		}
 
