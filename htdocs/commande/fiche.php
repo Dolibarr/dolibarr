@@ -60,12 +60,12 @@ $result=restrictedArea($user,'commande',$comid,'');
 
 $mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
 
-$commande = new Commande($db);
+$object = new Commande($db);
 
 // Instantiate hooks of thirdparty module
 if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 {
-	$commande->callHooks('objectcard');
+	$object->callHooks('objectcard');
 }
 
 
@@ -74,11 +74,11 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /******************************************************************************/
 
 // Hook of thirdparty module
-if (! empty($commande->hooks))
+if (! empty($object->hooks))
 {
-	foreach($commande->hooks as $module)
+	foreach($object->hooks as $module)
 	{
-		$module->doActions($commande);
+		$module->doActions($object);
 		$mesg = $module->error;
 	}
 }
@@ -92,7 +92,7 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 	}
 	else
 	{
-		$result=$commande->createFromClone($comid);
+		$result=$object->createFromClone($comid);
 		if ($result > 0)
 		{
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -109,10 +109,10 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 // Reopen a closed order
 if ($_GET['action'] == 'reopen' && $user->rights->commande->creer)
 {
-	$commande->fetch($comid);
-	if ($commande->statut == 3)
+	$object->fetch($comid);
+	if ($object->statut == 3)
 	{
-		$result = $commande->set_reopen($user);
+		$result = $object->set_reopen($user);
 		if ($result > 0)
 		{
 			Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid);
@@ -130,8 +130,8 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
 	if ($user->rights->commande->supprimer)
 	{
-		$commande->fetch($comid);
-		$result=$commande->delete($user);
+		$object->fetch($comid);
+		$result=$object->delete($user);
 		if ($result > 0)
 		{
 			Header('Location: index.php');
@@ -139,7 +139,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 		}
 		else
 		{
-			$mesg=$commande->error;
+			$mesg=$object->error;
 		}
 	}
 }
@@ -149,27 +149,27 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 {
 	if ($user->rights->commande->creer)
 	{
-		$commande->fetch($comid);
-		$commande->fetch_thirdparty();
+		$object->fetch($comid);
+		$object->fetch_thirdparty();
 
-		$result = $commande->deleteline($_GET['lineid']);
+		$result = $object->deleteline($_GET['lineid']);
 		if ($result > 0)
 		{
 			// Define output language
 			$outputlangs = $langs;
 			$newlang='';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
+			commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
 		}
 		else
 		{
-			print $commande->error;
+			print $object->error;
 		}
 	}
 	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid);
@@ -179,8 +179,8 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 // Categorisation dans projet
 if ($_POST['action'] == 'classin')
 {
-	$commande->fetch($comid);
-	$commande->setProject($_POST['projectid']);
+	$object->fetch($comid);
+	$object->setProject($_POST['projectid']);
 }
 
 // Add order
@@ -190,23 +190,23 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$datecommande  = dol_mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
 	$datelivraison = dol_mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
 
-	$commande->socid=$_POST['socid'];
-	$commande->fetch_thirdparty();
+	$object->socid=$_POST['socid'];
+	$object->fetch_thirdparty();
 
 	$db->begin();
 
-	$commande->date_commande        = $datecommande;
-	$commande->note                 = $_POST['note'];
-	$commande->note_public          = $_POST['note_public'];
-	$commande->source               = $_POST['source_id'];
-	$commande->fk_project           = $_POST['projectid'];
-	$commande->ref_client           = $_POST['ref_client'];
-	$commande->modelpdf             = $_POST['model'];
-	$commande->cond_reglement_id    = $_POST['cond_reglement_id'];
-	$commande->mode_reglement_id    = $_POST['mode_reglement_id'];
-	$commande->date_livraison       = $datelivraison;
-	$commande->fk_delivery_address  = $_POST['fk_address'];
-	$commande->contactid            = $_POST['contactidp'];
+	$object->date_commande        = $datecommande;
+	$object->note                 = $_POST['note'];
+	$object->note_public          = $_POST['note_public'];
+	$object->source               = $_POST['source_id'];
+	$object->fk_project           = $_POST['projectid'];
+	$object->ref_client           = $_POST['ref_client'];
+	$object->modelpdf             = $_POST['model'];
+	$object->cond_reglement_id    = $_POST['cond_reglement_id'];
+	$object->mode_reglement_id    = $_POST['mode_reglement_id'];
+	$object->date_livraison       = $datelivraison;
+	$object->fk_delivery_address  = $_POST['fk_address'];
+	$object->contactid            = $_POST['contactidp'];
 
 	$NBLINES=8;
 	for ($i = 1 ; $i <= $NBLINES ; $i++)
@@ -216,18 +216,18 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 			$xid = 'idprod'.$i;
 			$xqty = 'qty'.$i;
 			$xremise = 'remise_percent'.$i;
-			$commande->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
+			$object->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
 		}
 	}
 
-	$commande_id = $commande->create($user);
+	$object_id = $object->create($user);
 
-	if ($commande_id > 0)
+	if ($object_id > 0)
 	{
 		// Insertion contact par defaut si defini
 		if ($_POST["contactidp"])
 		{
-			$result=$commande->add_contact($_POST["contactidp"],'CUSTOMER','external');
+			$result=$object->add_contact($_POST["contactidp"],'CUSTOMER','external');
 
 			if ($result > 0)
 			{
@@ -240,12 +240,12 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 			}
 		}
 
-		$comid = $commande_id;
+		$comid = $object_id;
 		$action = '';
 	}
 
 	// Fin creation facture, on l'affiche
-	if ($commande_id > 0 && ! $error)
+	if ($object_id > 0 && ! $error)
 	{
 		$db->commit();
 	}
@@ -254,42 +254,42 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 		$db->rollback();
 		$_GET["action"]='create';
 		$_GET['socid']=$_POST['socid'];
-		if (! $mesg) $mesg='<div class="error">'.$commande->error.'</div>';
+		if (! $mesg) $mesg='<div class="error">'.$object->error.'</div>';
 	}
 
 }
 
 if ($_GET["action"] == 'classifybilled')
 {
-	$commande->fetch($comid);
-	$commande->classer_facturee();
+	$object->fetch($comid);
+	$object->classer_facturee();
 }
 
 // Positionne ref commande client
 if ($_POST['action'] == 'set_ref_client' && $user->rights->commande->creer)
 {
-	$commande->fetch($comid);
-	$commande->set_ref_client($user, $_POST['ref_client']);
+	$object->fetch($comid);
+	$object->set_ref_client($user, $_POST['ref_client']);
 }
 
 if ($_POST['action'] == 'setremise' && $user->rights->commande->creer)
 {
-	$commande->fetch($comid);
-	$commande->set_remise($user, $_POST['remise']);
+	$object->fetch($comid);
+	$object->set_remise($user, $_POST['remise']);
 }
 
 if ($_POST['action'] == "setabsolutediscount" && $user->rights->commande->creer)
 {
 	if ($_POST["remise_id"])
 	{
-		$ret=$commande->fetch($comid);
+		$ret=$object->fetch($comid);
 		if ($ret > 0)
 		{
-	  		$commande->insert_discount($_POST["remise_id"]);
+	  		$object->insert_discount($_POST["remise_id"]);
 		}
 		else
 		{
-	 		dol_print_error($db,$commande->error);
+	 		dol_print_error($db,$object->error);
 		}
 	}
 }
@@ -299,11 +299,11 @@ if ($_POST['action'] == 'setdate' && $user->rights->commande->creer)
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 	$date=dol_mktime(0, 0, 0, $_POST['order_month'], $_POST['order_day'], $_POST['order_year']);
 
-	$commande->fetch($comid);
-	$result=$commande->set_date($user,$date);
+	$object->fetch($comid);
+	$result=$object->set_date($user,$date);
 	if ($result < 0)
 	{
-		$mesg='<div class="error">'.$commande->error.'</div>';
+		$mesg='<div class="error">'.$object->error.'</div>';
 	}
 }
 
@@ -312,44 +312,44 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 	$datelivraison=dol_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 
-	$commande->fetch($comid);
-	$result=$commande->set_date_livraison($user,$datelivraison);
+	$object->fetch($comid);
+	$result=$object->set_date_livraison($user,$datelivraison);
 	if ($result < 0)
 	{
-		$mesg='<div class="error">'.$commande->error.'</div>';
+		$mesg='<div class="error">'.$object->error.'</div>';
 	}
 }
 
 if ($_POST['action'] == 'setaddress' && $user->rights->commande->creer)
 {
-	$commande->fetch($comid);
-	$commande->set_adresse_livraison($user,$_POST['fk_address']);
+	$object->fetch($comid);
+	$object->set_adresse_livraison($user,$_POST['fk_address']);
 }
 
 if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
 {
-	$commande->fetch($comid);
-	$result=$commande->mode_reglement($_POST['mode_reglement_id']);
-	if ($result < 0) dol_print_error($db,$commande->error);
+	$object->fetch($comid);
+	$result=$object->mode_reglement($_POST['mode_reglement_id']);
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 {
-	$commande->fetch($comid);
-	$result=$commande->cond_reglement($_POST['cond_reglement_id']);
-	if ($result < 0) dol_print_error($db,$commande->error);
+	$object->fetch($comid);
+	$result=$object->cond_reglement($_POST['cond_reglement_id']);
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
 {
-	$commande->fetch($comid);
-	$result = $commande->set_remise($user, $_POST['remise_percent']);
+	$object->fetch($comid);
+	$result = $object->set_remise($user, $_POST['remise_percent']);
 }
 
 if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
 {
-	$commande->fetch($comid);
-	$result = $commande->set_remise_absolue($user, $_POST['remise_absolue']);
+	$object->fetch($comid);
+	$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 }
 
 /*
@@ -372,13 +372,13 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 
 	if ($result >= 0 && $_POST['qty'] && (($_POST['np_price'] != '' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
-		$ret=$commande->fetch($comid);
+		$ret=$object->fetch($comid);
 		if ($ret < 0)
 		{
-			dol_print_error($db,$commande->error);
+			dol_print_error($db,$object->error);
 			exit;
 		}
-		$ret=$commande->fetch_thirdparty();
+		$ret=$object->fetch_thirdparty();
 
 		// Clean parameters
 		$suffixe = $_POST['idprod'] ? '_predef' : '';
@@ -395,14 +395,14 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 			$prod = new Product($db, $_POST['idprod']);
 			$prod->fetch($_POST['idprod']);
 
-			$tva_tx = get_default_tva($mysoc,$commande->client,$prod->id);
+			$tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
 
 			// multiprix
-			if ($conf->global->PRODUIT_MULTIPRICES && $commande->client->price_level)
+			if ($conf->global->PRODUIT_MULTIPRICES && $object->client->price_level)
 			{
-				$pu_ht = $prod->multiprices[$commande->client->price_level];
-				$pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];
-				$price_base_type = $prod->multiprices_base_type[$commande->client->price_level];
+				$pu_ht = $prod->multiprices[$object->client->price_level];
+				$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
+				$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
 			}
 			else
 			{
@@ -440,8 +440,8 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 		}
 
 		// Local Taxes
-		$localtax1_tx= get_localtax($tva_tx, 1, $commande->client);
-	  	$localtax2_tx= get_localtax($tva_tx, 2, $commande->client);
+		$localtax1_tx= get_localtax($tva_tx, 1, $object->client);
+	  	$localtax2_tx= get_localtax($tva_tx, 2, $object->client);
 
 		$desc=dol_htmlcleanlastbr($desc);
 
@@ -457,7 +457,7 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 			else
 			{
 				// Insert line
-				$result = $commande->addline(
+				$result = $object->addline(
 				$comid,
 				$desc,
 				$pu_ht,
@@ -482,13 +482,13 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 					$outputlangs = $langs;
 					$newlang='';
 					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 					if (! empty($newlang))
 					{
 						$outputlangs = new Translate("",$conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
+					commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
 
 					unset($_POST['qty']);
 					unset($_POST['type']);
@@ -501,7 +501,7 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 				}
 				else
 				{
-					$mesg='<div class="error">'.$commande->error.'</div>';
+					$mesg='<div class="error">'.$object->error.'</div>';
 				}
 			}
 		}
@@ -513,8 +513,8 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
 {
-	if (! $commande->fetch($comid) > 0) dol_print_error($db);
-	$commande->fetch_thirdparty();
+	if (! $object->fetch($comid) > 0) dol_print_error($db);
+	$object->fetch_thirdparty();
 
 	// Clean parameters
 	$date_start='';
@@ -530,8 +530,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	// Define vat_rate
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=str_replace('*','',$vat_rate);
-	$localtax1_rate=get_localtax($vat_rate,1,$commande->client);
-	$localtax2_rate=get_localtax($vat_rate,2,$commande->client);
+	$localtax1_rate=get_localtax($vat_rate,1,$object->client);
+	$localtax2_rate=get_localtax($vat_rate,2,$object->client);
 
 	// Check parameters
 	if (empty($_POST['productid']) && $_POST["type"] < 0)
@@ -565,7 +565,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 
 	if ($result >= 0)
 	{
-		$result = $commande->updateline($_POST['lineid'],
+		$result = $object->updateline($_POST['lineid'],
 		$description,
 		$_POST['pu'],
 		$_POST['qty'],
@@ -586,17 +586,17 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 			$outputlangs = $langs;
 			$newlang='';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
+			commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
 		}
 		else
 		{
-			dol_print_error($db,$commande->error);
+			dol_print_error($db,$object->error);
 			exit;
 		}
 	}
@@ -610,38 +610,38 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 
 if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
-	$commande->fetch($comid);	// Load order and lines
-	$commande->fetch_thirdparty();
+	$object->fetch($comid);	// Load order and lines
+	$object->fetch_thirdparty();
 
-	$result=$commande->valid($user);
+	$result=$object->valid($user);
 	if ($result	>= 0)
 	{
 		// Define output language
 		$outputlangs = $langs;
 		$newlang='';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
+		commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
 	}
 }
 
 if ($_REQUEST['action'] == 'confirm_close' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->cloturer)
 {
-	$commande->fetch($comid);		// Load order and lines
+	$object->fetch($comid);		// Load order and lines
 
-	$result = $commande->cloture($user);
+	$result = $object->cloture($user);
 }
 
 if ($_REQUEST['action'] == 'confirm_cancel' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
-	$commande->fetch($comid);		// Load order and lines
+	$object->fetch($comid);		// Load order and lines
 
-	$result = $commande->cancel($user);
+	$result = $object->cancel($user);
 }
 
 if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
@@ -649,23 +649,23 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 	/*
 	 *  Repasse la commande en mode brouillon
 	 */
-	$commande->fetch($comid);		// Load order and lines
-	$commande->fetch_thirdparty();
+	$object->fetch($comid);		// Load order and lines
+	$object->fetch_thirdparty();
 
-	$result = $commande->set_draft($user);
+	$result = $object->set_draft($user);
 	if ($result	>= 0)
 	{
 		// Define output language
 		$outputlangs = $langs;
 		$newlang='';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
+		commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
 	}
 }
 
@@ -675,22 +675,22 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 
 if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 {
-	$commande->fetch($comid);
-	$commande->fetch_thirdparty();
-	$commande->line_up($_GET['rowid']);
+	$object->fetch($comid);
+	$object->fetch_thirdparty();
+	$object->line_up($_GET['rowid']);
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
 
-	commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
+	commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
 
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid.'#'.$_GET['rowid']);
 	exit;
@@ -698,21 +698,21 @@ if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 
 if ($_GET['action'] == 'down' && $user->rights->commande->creer)
 {
-	$commande->fetch($comid);
-	$commande->fetch_thirdparty();
-	$commande->line_down($_GET['rowid']);
+	$object->fetch($comid);
+	$object->fetch_thirdparty();
+	$object->line_down($_GET['rowid']);
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
+	commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
 
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid.'#'.$_GET['rowid']);
 	exit;
@@ -726,25 +726,25 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 	 */
 
 	// Sauvegarde le dernier modele choisi pour generer un document
-	$result=$commande->fetch($comid);
-	$commande->fetch_thirdparty();
+	$result=$object->fetch($comid);
+	$object->fetch_thirdparty();
 
 	if ($_REQUEST['model'])
 	{
-		$commande->setDocModel($user, $_REQUEST['model']);
+		$object->setDocModel($user, $_REQUEST['model']);
 	}
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=commande_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
+	$result=commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -752,7 +752,7 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 	}
 	else
 	{
-		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -760,7 +760,7 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 // Remove file in doc form
 if ($_REQUEST['action'] == 'remove_file')
 {
-	if ($commande->fetch($id))
+	if ($object->fetch($id))
 	{
 		$upload_dir = $conf->commande->dir_output . "/";
 		$file = $upload_dir . '/' . $_GET['file'];
@@ -810,12 +810,12 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 {
 	$langs->load('mails');
 
-	$result=$commande->fetch($_POST['orderid']);
-	$result=$commande->fetch_thirdparty();
+	$result=$object->fetch($_POST['orderid']);
+	$result=$object->fetch_thirdparty();
 
 	if ($result > 0)
 	{
-		$ref = dol_sanitizeFileName($commande->ref);
+		$ref = dol_sanitizeFileName($object->ref);
 		$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 		if (is_readable($file))
@@ -831,12 +831,12 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 				// Le destinataire a ete fourni via la liste deroulante
 				if ($_POST['receiver'] < 0)	// Id du tiers
 				{
-					$sendto = $commande->client->email;
+					$sendto = $object->client->email;
 					$sendtoid = 0;
 				}
 				else	// Id du contact
 				{
-					$sendto = $commande->client->contact_get_email($_POST['receiver']);
+					$sendto = $object->client->contact_get_email($_POST['receiver']);
 					$sendtoid = $_POST['receiver'];
 				}
 			}
@@ -854,7 +854,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 				if ($_POST['action'] == 'send')
 				{
 					if (dol_strlen($_POST['subject'])) $subject=$_POST['subject'];
-					else $subject = $langs->transnoentities('Order').' '.$commande->ref;
+					else $subject = $langs->transnoentities('Order').' '.$object->ref;
 					$actiontypecode='AC_COM';
 					$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
 					if ($message)
@@ -892,16 +892,16 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 						$error=0;
 
 						// Initialisation donnees
-						$commande->sendtoid=$sendtoid;
-						$commande->actiontypecode=$actiontypecode;
-						$commande->actionmsg = $actionmsg;
-						$commande->actionmsg2= $actionmsg2;
-						$commande->orderrowid=$commande->id;
+						$object->sendtoid=$sendtoid;
+						$object->actiontypecode=$actiontypecode;
+						$object->actionmsg = $actionmsg;
+						$object->actionmsg2= $actionmsg2;
+						$object->orderrowid=$object->id;
 
 						// Appel des triggers
 						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 						$interface=new Interfaces($db);
-						$result=$interface->run_triggers('ORDER_SENTBYMAIL',$commande,$user,$langs,$conf);
+						$result=$interface->run_triggers('ORDER_SENTBYMAIL',$object,$user,$langs,$conf);
 						if ($result < 0) { $error++; $this->errors=$interface->errors; }
 						// Fin appel triggers
 
@@ -913,7 +913,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 						{
 							// Redirect here
 							// This avoid sending mail twice if going out and then back to page
-							Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&mesg='.urlencode($mesg));
+							Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mesg='.urlencode($mesg));
 							exit;
 						}
 					}
@@ -1281,16 +1281,16 @@ else
 
 		$product_static=new Product($db);
 
-		$result=$commande->fetch($comid,$ref);
+		$result=$object->fetch($comid,$ref);
 		if ($result > 0)
 		{
 			$soc = new Societe($db);
-			$soc->fetch($commande->socid);
+			$soc->fetch($object->socid);
 
 			$author = new User($db);
-			$author->fetch($commande->user_author_id);
+			$author->fetch($object->user_author_id);
 
-			$head = commande_prepare_head($commande);
+			$head = commande_prepare_head($object);
 			dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), 0, 'order');
 
 			/*
@@ -1298,7 +1298,7 @@ else
 			 */
 			if ($_GET['action'] == 'delete')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1308,14 +1308,14 @@ else
 			if ($_GET['action'] == 'validate')
 			{
 				// on verifie si l'objet est en numerotation provisoire
-				$ref = substr($commande->ref, 1, 4);
+				$ref = substr($object->ref, 1, 4);
 				if ($ref == 'PROV')
 				{
-					$numref = $commande->getNextNumRef($soc);
+					$numref = $object->getNextNumRef($soc);
 				}
 				else
 				{
-					$numref = $commande->ref;
+					$numref = $object->ref;
 				}
 
 				$text=$langs->trans('ConfirmValidateOrder',$numref);
@@ -1324,9 +1324,9 @@ else
 					require_once(DOL_DOCUMENT_ROOT ."/core/class/notify.class.php");
 					$notify=new Notify($db);
 					$text.='<br>';
-					$text.=$notify->confirmMessage('NOTIFY_VAL_ORDER',$commande->socid);
+					$text.=$notify->confirmMessage('NOTIFY_VAL_ORDER',$object->socid);
 				}
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', '', 0, 1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1335,7 +1335,7 @@ else
 			 */
 			if ($_GET['action'] == 'close')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close', '', 0, 1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1344,7 +1344,7 @@ else
 			 */
 			if ($_GET['action'] == 'cancel')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel', '', 0, 1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1353,7 +1353,7 @@ else
 			 */
 			if ($_GET['action'] == 'ask_deleteline')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1362,7 +1362,7 @@ else
 			 */
 			if ($_GET['action'] == 'ask_deletemilestone')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteMilestone'), $langs->trans('ConfirmDeleteMilestone'), 'confirm_deletemilestone','',0,1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteMilestone'), $langs->trans('ConfirmDeleteMilestone'), 'confirm_deletemilestone','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1375,7 +1375,7 @@ else
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$commande->ref),'confirm_clone',$formquestion,'yes',1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1397,7 +1397,7 @@ else
 			// Ref
 			print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
 			print '<td colspan="3">';
-			print $html->showrefnav($commande,'ref','',1,'ref','ref');
+			print $html->showrefnav($object,'ref','',1,'ref','ref');
 			print '</td>';
 			print '</tr>';
 
@@ -1406,21 +1406,21 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
 			print $langs->trans('RefCustomer').'</td><td align="left">';
 			print '</td>';
-			if ($_GET['action'] != 'refcustomer' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcustomer&amp;id='.$commande->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+			if ($_GET['action'] != 'refcustomer' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcustomer&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($user->rights->commande->creer && $_GET['action'] == 'refcustomer')
 			{
-				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="set_ref_client">';
-				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
+				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$object->ref_client.'">';
 				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
 			else
 			{
-				print $commande->ref_client;
+				print $object->ref_client;
 			}
 			print '</td>';
 			print '</tr>';
@@ -1442,7 +1442,7 @@ else
 			$absolute_creditnote=price2num($absolute_creditnote,'MT');
 			if ($absolute_discount)
 			{
-				if ($commande->statut > 0)
+				if ($object->statut > 0)
 				{
 					print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
 				}
@@ -1451,7 +1451,7 @@ else
 					// Remise dispo de type non avoir
 					$filter='fk_facture_source IS NULL';
 					print '<br>';
-					$html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$commande->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
+					$html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
 				}
 			}
 			if ($absolute_creditnote)
@@ -1467,30 +1467,30 @@ else
 			print $langs->trans('Date');
 			print '</td>';
 
-			if ($_GET['action'] != 'editdate' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+			if ($_GET['action'] != 'editdate' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editdate')
 			{
-				print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
+				print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate">';
-				$html->select_date($commande->date,'order_','','','',"setdate");
+				$html->select_date($object->date,'order_','','','',"setdate");
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
 			else
 			{
-				print $commande->date ? dol_print_date($commande->date,'daytext') : '&nbsp;';
+				print $object->date ? dol_print_date($object->date,'daytext') : '&nbsp;';
 			}
 			print '</td>';
 
-			print '<td width="50%">'.$langs->trans('Source').' : '.$commande->getLabelSource();
-			if ($commande->source == 0 && $conf->propal->enabled && $commande->propale_id)
+			print '<td width="50%">'.$langs->trans('Source').' : '.$object->getLabelSource();
+			if ($object->source == 0 && $conf->propal->enabled && $object->propale_id)
 			{
 				// Si source = propal
 				$propal = new Propal($db);
-				$propal->fetch($commande->propale_id);
+				$propal->fetch($object->propale_id);
 				print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$propal->id.'">'.$propal->ref.'</a>';
 			}
 			print '</td>';
@@ -1502,25 +1502,25 @@ else
 			print $langs->trans('DateDeliveryPlanned');
 			print '</td>';
 
-			if ($_GET['action'] != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+			if ($_GET['action'] != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editdate_livraison')
 			{
-				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
+				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
-				$html->select_date($commande->date_livraison?$commande->date_livraison:-1,'liv_','','','',"setdate_livraison");
+				$html->select_date($object->date_livraison?$object->date_livraison:-1,'liv_','','','',"setdate_livraison");
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
 			else
 			{
-				print $commande->date_livraison ? dol_print_date($commande->date_livraison,'daytext') : '&nbsp;';
+				print $object->date_livraison ? dol_print_date($object->date_livraison,'daytext') : '&nbsp;';
 			}
 			print '</td>';
 			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-			print nl2br($commande->note_public);
+			print nl2br($object->note_public);
 			print '</td>';
 			print '</tr>';
 
@@ -1532,17 +1532,17 @@ else
 				print $langs->trans('DeliveryAddress');
 				print '</td>';
 
-				if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+				if ($_GET['action'] != 'editdelivery_adress' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 				print '</tr></table>';
 				print '</td><td colspan="2">';
 
 				if ($_GET['action'] == 'editdelivery_adress')
 				{
-					$html->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'fk_address','commande',$commande->id);
+					$html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'fk_address','commande',$object->id);
 				}
 				else
 				{
-					$html->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'none','commande',$commande->id);
+					$html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','commande',$object->id);
 				}
 				print '</td></tr>';
 			}
@@ -1553,16 +1553,16 @@ else
 			print $langs->trans('PaymentConditionsShort');
 			print '</td>';
 
-			if ($_GET['action'] != 'editconditions' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			if ($_GET['action'] != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editconditions')
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->cond_reglement_id,'cond_reglement_id');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
 			}
 			else
 			{
-				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->cond_reglement_id,'none');
+				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
 			}
 			print '</td>';
 
@@ -1573,16 +1573,16 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
 			print '</td>';
-			if ($_GET['action'] != 'editmode' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+			if ($_GET['action'] != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editmode')
 			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->mode_reglement_id,'mode_reglement_id');
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
 			}
 			else
 			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->mode_reglement_id,'none');
+				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
 			}
 			print '</td></tr>';
 
@@ -1594,17 +1594,17 @@ else
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $langs->trans('Project');
 				print '</td>';
-				if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+				if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 				print '</tr></table>';
 				print '</td><td colspan="2">';
-				//print "$commande->id, $commande->socid, $commande->fk_project";
+				//print "$object->id, $object->socid, $object->fk_project";
 				if ($_GET['action'] == 'classer')
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'projectid');
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
 				}
 				else
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'none');
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
 				}
 				print '</td></tr>';
 			}
@@ -1613,11 +1613,11 @@ else
 
 			// Total HT
 			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
-			print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
+			print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Total TVA
-			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($commande->total_tva).'</td>';
+			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Amount Local Taxes
@@ -1626,24 +1626,24 @@ else
 				if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 				{
 					print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
-					print '<td align="right">'.price($commande->total_localtax1).'</td>';
+					print '<td align="right">'.price($object->total_localtax1).'</td>';
 					print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				}
 				if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 				{
 					print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
-					print '<td align="right">'.price($commande->total_localtax2).'</td>';
+					print '<td align="right">'.price($object->total_localtax2).'</td>';
 					print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				}
 			}
 
 			// Total TTC
-			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Statut
 			print '<tr><td>'.$langs->trans('Status').'</td>';
-			print '<td colspan="2">'.$commande->getLibStatut(4).'</td>';
+			print '<td colspan="2">'.$object->getLibStatut(4).'</td>';
 			print '</tr>';
 
 			print '</table><br>';
@@ -1652,45 +1652,48 @@ else
 			/*
 			 * Lines
 			 */
-            $numlines=0;
+            $result = $object->getLinesArray();
 
-			print '<table class="noborder" width="100%">';
+            if ($conf->use_javascript_ajax && $object->statut == 0)
+            {
+                include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php');
+            }
 
-			$result = $commande->getLinesArray();
+            print '<table id="tablelines" class="noborder" width="100%">';
 
-			if (!empty($commande->lines))
-			{
-				$commande->print_title_list();
-				$commande->printLinesList(0,$mysoc,$soc);
-			}
+            if (!empty($object->lines))
+            {
+                $object->print_title_list();
+                $object->printLinesList(0,$mysoc,$soc);
+            }
 
-			$numlines=sizeof($commande->lines);
+			$numlines=sizeof($object->lines);
 
 			/*
 			 * Form to add new line
 			 */
-			if ($commande->statut == 0 && $user->rights->commande->creer)
+			if ($object->statut == 0 && $user->rights->commande->creer)
 			{
 				if ($_GET['action'] != 'editline')
 				{
 					$var=true;
 
-					$commande->showAddFreeProductForm(1,$mysoc,$soc);
+					$object->showAddFreeProductForm(1,$mysoc,$soc);
 
 					// Add predefined products/services
 					if ($conf->product->enabled || $conf->service->enabled)
 					{
 						$var=!$var;
-						$commande->showAddPredefinedProductForm(1,$mysoc,$soc);
+						$object->showAddPredefinedProductForm(1,$mysoc,$soc);
 					}
 
 					// Hook of thirdparty module
-					if (! empty($commande->hooks))
+					if (! empty($object->hooks))
 					{
-						foreach($commande->hooks as $module)
+						foreach($object->hooks as $module)
 						{
 							$var=!$var;
-							$module->formAddObject($commande);
+							$module->formAddObject($object);
 						}
 					}
 				}
@@ -1709,31 +1712,31 @@ else
 					print '<div class="tabsAction">';
 
 					// Valid
-					if ($commande->statut == 0 && $commande->total_ttc >= 0 && $numlines > 0 && $user->rights->commande->valider)
+					if ($object->statut == 0 && $object->total_ttc >= 0 && $numlines > 0 && $user->rights->commande->valider)
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=validate"';
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate"';
 						print '>'.$langs->trans('Validate').'</a>';
 					}
 
 					// Edit
-					if ($commande->statut == 1)
+					if ($object->statut == 1)
 					{
 						if ($user->rights->commande->creer)
 						{
-							print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
+							print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
 						}
 					}
 
 					// Send
-					if ($commande->statut > 0)
+					if ($object->statut > 0)
 					{
 						if ($user->rights->commande->envoyer)
 						{
-							$comref = dol_sanitizeFileName($commande->ref);
+							$comref = dol_sanitizeFileName($object->ref);
 							$file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
 							if (file_exists($file))
 							{
-								print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+								print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
 							}
 						}
 					}
@@ -1741,7 +1744,7 @@ else
 					// Ship
 					if ($conf->expedition->enabled)
 					{
-						if ($commande->statut > 0 && $commande->statut < 3 && $commande->getNbOfProductsLines() > 0)
+						if ($object->statut > 0 && $object->statut < 3 && $object->getNbOfProductsLines() > 0)
 						{
 							if ($user->rights->expedition->creer)
 							{
@@ -1766,31 +1769,31 @@ else
 					}
 
                     // Reopen a closed order
-                    if ($commande->statut == 3)
+                    if ($object->statut == 3)
                     {
-                        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$commande->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+                        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
                     }
 
 					// Create bill and Classify billed
-					if ($conf->facture->enabled && $commande->statut > 0  && ! $commande->facturee)
+					if ($conf->facture->enabled && $object->statut > 0  && ! $object->facturee)
 					{
 						if ($user->rights->facture->creer)
 						{
-							print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$commande->element.'&amp;originid='.$commande->id.'&amp;socid='.$commande->socid.'">'.$langs->trans("CreateBill").'</a>';
+							print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 						}
 
-						if ($user->rights->commande->creer && $commande->statut > 2)
+						if ($user->rights->commande->creer && $object->statut > 2)
 						{
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 						}
 					}
 
 					// Close
-					if ($commande->statut == 1 || $commande->statut == 2)
+					if ($object->statut == 1 || $object->statut == 2)
 					{
 						if ($user->rights->commande->cloturer)
 						{
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=close"';
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close"';
 							print '>'.$langs->trans('Close').'</a>';
 						}
 					}
@@ -1798,16 +1801,16 @@ else
 					// Clone
 					if ($user->rights->commande->creer)
 					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$commande->id.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
 					}
 
 					// Cancel order
-					if ($commande->statut == 1)
+					if ($object->statut == 1)
 					{
-						$nb_expedition = $commande->nb_expedition();
+						$nb_expedition = $object->nb_expedition();
 						if ($user->rights->commande->annuler && $nb_expedition == 0)
 						{
-							print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=cancel"';
+							print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel"';
 							print '>'.$langs->trans('Cancel').'</a>';
 						}
 					}
@@ -1815,7 +1818,7 @@ else
 					// Delete order
 					if ($user->rights->commande->supprimer)
 					{
-						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete"';
+						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
 						print '>'.$langs->trans('Delete').'</a>';
 					}
 
@@ -1834,26 +1837,26 @@ else
 				 * Documents generes
 				 *
 				 */
-				$comref = dol_sanitizeFileName($commande->ref);
+				$comref = dol_sanitizeFileName($object->ref);
 				$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
 				$relativepath = $comref.'/'.$comref.'.pdf';
 				$filedir = $conf->commande->dir_output . '/' . $comref;
-				$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
+				$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 				$genallowed=$user->rights->commande->creer;
 				$delallowed=$user->rights->commande->supprimer;
 
-				$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+				$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 				/*
 				 * Linked object block
 				 */
-				$commande->load_object_linked($commande->id,$commande->element);
+				$object->load_object_linked($object->id,$object->element);
 
-				foreach($commande->linked_object as $object => $objectid)
+				foreach($object->linked_object as $object => $objectid)
 				{
-					if($conf->$object->enabled && $object != $commande->element)
+					if($conf->$object->enabled && $object != $object->element)
 					{
-						$somethingshown=$commande->showLinkedObjectBlock($object,$objectid,$somethingshown);
+						$somethingshown=$object->showLinkedObjectBlock($object,$objectid,$somethingshown);
 					}
 				}
 
@@ -1862,7 +1865,7 @@ else
 				// List of actions on element
 				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
 				$formactions=new FormActions($db);
-				$somethingshown=$formactions->showactions($commande,'order',$socid);
+				$somethingshown=$formactions->showactions($object,'order',$socid);
 
 				print '</td></tr></table>';
 			}
@@ -1874,7 +1877,7 @@ else
 			 */
 			if ($_GET['action'] == 'presend')
 			{
-				$ref = dol_sanitizeFileName($commande->ref);
+				$ref = dol_sanitizeFileName($object->ref);
 				$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 				print '<br>';
@@ -1900,12 +1903,12 @@ else
 				$formmail->withdeliveryreceipt=1;
 				$formmail->withcancel=1;
 				// Tableau des substitutions
-				$formmail->substit['__ORDERREF__']=$commande->ref;
+				$formmail->substit['__ORDERREF__']=$object->ref;
 				// Tableau des parametres complementaires
 				$formmail->param['action']='send';
 				$formmail->param['models']='order_send';
-				$formmail->param['orderid']=$commande->id;
-				$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$commande->id;
+				$formmail->param['orderid']=$object->id;
+				$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
 				// Init list of files
 				if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
