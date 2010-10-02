@@ -945,11 +945,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (GETPOST('top_menu')) $top_menu=GETPOST('top_menu');
 
 	// Load the top menu manager
-	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$top_menu);
+	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$top_menu);
 	if (! $result)	// If failed to include, we try with standard
 	{
 		$top_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$top_menu);
+		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$top_menu);
 	}
 
     print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
@@ -1098,11 +1098,11 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     if (GETPOST('left_menu')) $left_menu=GETPOST('left_menu');
 
     // Load the left menu manager
-	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$left_menu);
+	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$left_menu);
 	if (! $result)
 	{
 		$left_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$left_menu);
+		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$left_menu);
 	}
 
     // Left column

@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/includes/menus/barre_top/auguria_frontoffice.php
+ *	\file       htdocs/includes/menus/standard/auguria_frontoffice.php
  *	\brief      Gestionnaire nomme Auguria du menu du haut
  *	\version    $Id$
  *
@@ -58,11 +58,56 @@ class MenuTop {
 	 */
 	function showmenu()
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/includes/menus/barre_top/auguria.lib.php');
+		require_once(DOL_DOCUMENT_ROOT.'/includes/menus/standard/auguria.lib.php');
 
 		print_auguria_menu($this->db,$this->atarget,$this->hideifnotallowed);
 	}
 
+}
+
+
+/**
+ *      \class      MenuLeft
+ *      \brief      Classe permettant la gestion du menu du gauche Auguria
+ */
+class MenuLeft {
+
+    var $require_top=array("auguria_frontoffice");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
+
+    var $db;
+    var $menu_array;
+    var $menu_array_after;
+
+
+    /**
+     *  Constructor
+     *  @param      db                  Database handler
+     *  @param      menu_array          Table of menu entries to show before entries of menu handler
+     *  @param      menu_array_after    Table of menu entries to show after entries of menu handler
+     */
+    function MenuLeft($db,&$menu_array,&$menu_array_after)
+    {
+        $this->db=$db;
+        $this->menu_array=$menu_array;
+        $this->menu_array_after=$menu_array_after;
+    }
+
+
+    /**
+     *      \brief      Show menu
+     *      \return     int     Number of menu entries shown
+     */
+    function showmenu()
+    {
+        require_once(DOL_DOCUMENT_ROOT.'/includes/menus/standard/auguria.lib.php');
+
+        $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after);
+
+        $conf->global->MAIN_SEARCHFORM_SOCIETE=0;
+        $conf->global->MAIN_SEARCHFORM_CONTACT=0;
+
+        return $res;
+    }
 }
 
 ?>

@@ -58,8 +58,8 @@ if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
 
 
 $id=! empty($_GET["id"])?$_GET["id"]:$_POST["id"];
-$dirtop = "../includes/menus/barre_top";
-$dirleft = "../includes/menus/barre_left";
+$dirtop = "../includes/menus/standard";
+$dirleft = "../includes/menus/standard";
 $dirtheme = "../theme";
 
 // Charge utilisateur edite

@@ -39,8 +39,8 @@ $langs->load("users");
 // Security check
 if (!$user->admin) accessforbidden();
 
-$dirtop = "../includes/menus/barre_top";
-$dirleft = "../includes/menus/barre_left";
+$dirtop = "../includes/menus/standard";
+$dirleft = "../includes/menus/standard";
 $dirsmartphone = "../includes/menus/smartphone";
 
 
