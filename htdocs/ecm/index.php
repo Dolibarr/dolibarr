@@ -224,7 +224,7 @@ html, body {
         ,   west__slidable:     true
         ,   west__resizable:    true
         ,   west__togglerLength_closed: '100%'
-        ,   useStateCookie:     false  /* Put this to false for dev */
+        ,   useStateCookie:     true  /* Put this to false for dev */
             });
 
         jQuery('div.ui-layout-center').layout({
@@ -234,7 +234,7 @@ html, body {
         ,   south__miSize:      34
         ,   south__resizable:   false
         ,   south__closable:    false
-        ,   useStateCookie:     false  /* Put this to false for dev */
+        ,   useStateCookie:     true  /* Put this to false for dev */
             });
     });
 </SCRIPT>";
