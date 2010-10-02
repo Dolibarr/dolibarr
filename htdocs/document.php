@@ -90,7 +90,7 @@ if (preg_match('/\.tiff$/i',$original_file)) 	{ $attachment = true; }
 // Calendar
 if (preg_match('/\.vcs$/i',$original_file))  	{ $attachment = true; }
 if (preg_match('/\.ics$/i',$original_file))  	{ $attachment = true; }
-if ($_REQUEST["attachment"])            { $attachment = true; }
+if (GETPOST("attachment"))                      { $attachment = true; }
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 //print "XX".$attachment;exit;
 
