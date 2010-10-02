@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,15 @@
  */
 
 /**
- \file       htdocs/compta/dons/liste.php
- \ingroup    don
- \brief      Page de liste des dons
- \version    $Id$
+ *	\file       htdocs/compta/dons/liste.php
+ *	\ingroup    don
+ *	\brief      Page de liste des dons
+ *	\version    $Id$
  */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
 $langs->load("companies");
 $langs->load("donations");
@@ -48,6 +49,8 @@ $pagenext = $page + 1;
  * View
  */
 
+if ($conf->projet->enabled) $projectstatic=new Project($db);
+
 llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones');
 
 $donationstatic=new Don($db);
@@ -55,7 +58,7 @@ $donationstatic=new Don($db);
 // Genere requete de liste des dons
 $sql = "SELECT d.rowid, d.datedon, d.prenom, d.nom, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
-$sql.= " p.title as projet";
+$sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
 $sql.= " ON p.rowid = d.fk_don_projet WHERE 1 = 1";
 if ($statut >= 0)
@@ -105,12 +108,24 @@ if ($result)
 		$donationstatic->id=$objp->rowid;
 		$donationstatic->ref=$objp->rowid;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>\n";
-		print "<td>".stripslashes($objp->prenom)."</td>\n";
-		print "<td>".stripslashes($objp->nom)."</td>\n";
-		print "<td>".stripslashes($objp->societe)."</td>\n";
+		print "<td>".$objp->prenom."</td>\n";
+		print "<td>".$objp->nom."</td>\n";
+		print "<td>".$objp->societe."</td>\n";
 		print '<td align="center">'.dol_print_date($db->jdate($objp->datedon)).'</td>';
-		if ($conf->projet->enabled) {
-			print "<td>$objp->projet</td>\n";
+		if ($conf->projet->enabled)
+		{
+			print "<td>";
+			if ($objp->pid)
+			{
+				$projectstatic->id=$objp->pid;
+				$projectstatic->ref=$objp->ref;
+				$projectstatic->id=$objp->pid;
+				$projectstatic->public=$objp->public;
+				$projectstatic->title=$objp->title;
+				print $projectstatic->getNomUrl(1);
+			}
+			else print '&nbsp;';
+			print "</td>\n";
 		}
 		print '<td align="right">'.price($objp->amount).'</td>';
 		print '<td align="right">'.$donationstatic->LibStatut($objp->statut,5).'</td>';
