@@ -1422,7 +1422,7 @@ class CommonObject
 	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer)
 	{
 		global $conf,$langs,$user;
-		global $html,$bc;
+		global $html,$bc,$bcdd;
 
 		$element = $this->element;
 		if ($element == 'propal') $element = 'propale';   // To work with non standard path

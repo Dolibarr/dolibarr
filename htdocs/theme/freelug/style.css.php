@@ -154,16 +154,15 @@ form
     margin: 0px 0px 0px 0px;
 }
 
+/* For dragging lines */
+
 .dragClass {
-    background: #b3c5cc;
+    color: #002255;
 }
 td.showDragHandle {
 	cursor: move;
 }
 .tdlineupdown {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/grip.png'; ?>);
-	background-repeat: no-repeat;
-	background-position: center center;
 	white-space: nowrap;
 }
 

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin       <regis@dolibarr.fr>
+ * Copyright (C) 2010 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,6 @@
 ?>
 
 <!-- BEGIN PHP TEMPLATE predefinedproductline_edit.tpl.php -->
-
 <form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'#'.$line->id; ?>" method="POST">
 <input type="hidden" name="token" value="<?php  echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="updateligne">
@@ -86,5 +86,4 @@
 <?php } ?>
 
 </form>
-
 <!-- END PHP TEMPLATE predefinedproductline_edit.tpl.php -->

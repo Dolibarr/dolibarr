@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin       <regis@dolibarr.fr>
+ * Copyright (C) 2010 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,6 @@
 ?>
 
 <!-- BEGIN PHP TEMPLATE predefinedproductline_create.tpl.php -->
-
 <?php
 if ($conf->global->PRODUIT_USE_MARKUP)
 $colspan = 'colspan="4"';
@@ -87,5 +87,4 @@ $colspan = 'colspan="3"';
 <?php } ?>
 
 </form>
-
 <!-- END PHP TEMPLATE predefinedproductline_create.tpl.php -->

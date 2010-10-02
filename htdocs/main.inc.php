@@ -700,6 +700,7 @@ if (! defined('NOREQUIRETRAN'))
 
 // Define some constants used for style of arrays
 $bc=array(0=>'class="impair"',1=>'class="pair"');
+$bcdd=array(0=>'class="impair drag drop"',1=>'class="pair drag drop"');
 $bcnd=array(0=>'class="impair nodrag nodrop"',1=>'class="pair nodrag nodrop"');
 
 // Constants used to defined number of lines in textarea

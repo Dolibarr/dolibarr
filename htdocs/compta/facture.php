@@ -2647,18 +2647,22 @@ else
 
 
 			/*
-			 * Inoice lines
+			 * Lines
 			 */
+            $result = $object->getLinesArray();
 
-			print '<table class="noborder" width="100%">';
+            if ($conf->use_javascript_ajax && $object->statut == 0)
+            {
+                include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php');
+            }
 
-			$result = $object->getLinesArray();
+			print '<table id="tablelines" class="noborder" width="100%">';
 
-			if (!empty($object->lines))
-			{
-				$object->print_title_list();
-				$object->printLinesList(0,$mysoc,$soc);
-			}
+		    if (!empty($object->lines))
+            {
+                $object->print_title_list();
+                $object->printLinesList(0,$mysoc,$soc);
+            }
 
 			/*
 			 * Form to add new line

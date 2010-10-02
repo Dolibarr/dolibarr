@@ -1367,15 +1367,14 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Lines
 	 */
-	// We disable with $conf->global->MAIN_FEATURES_LEVEL because until dev is finished.
-	if ($conf->global->MAIN_FEATURES_LEVEL == 2 && $conf->use_javascript_ajax && $object->statut == 0)
+    $result = $object->getLinesArray();
+
+	if ($conf->use_javascript_ajax && $object->statut == 0)
 	{
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php');
 	}
 
-	print '<table id="objectline" class="noborder" width="100%">';
-
-	$result = $object->getLinesArray();
+	print '<table id="tablelines" class="noborder" width="100%">';
 
 	if (!empty($object->lines))
 	{

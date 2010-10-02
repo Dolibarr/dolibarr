@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin       <regis@dolibarr.fr>
+ * Copyright (C) 2010 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,6 @@
 // TODO à déplacer
 if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 ?>
-
 <tr class="liste_titre nodrag nodrop">
 	<td <?php echo $colspan; ?>><a name="add"></a><?php echo $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone"); ?></td>
 	<td align="right"><?php echo $langs->trans('VAT'); ?></td>
@@ -80,5 +80,4 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 <?php } ?>
 
 </form>
-
 <!-- END PHP TEMPLATE freeproductline_create.tpl.php -->
