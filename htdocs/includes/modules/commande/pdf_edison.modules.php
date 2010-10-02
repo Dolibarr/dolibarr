@@ -96,8 +96,8 @@ class pdf_edison extends ModelePDFCommandes
 		global $user,$conf,$langs,$mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expect text encoded in ISO
-		$outputlangs->charset_output='ISO-8859-1';
+		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
+		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -194,15 +194,15 @@ class pdf_edison extends ModelePDFCommandes
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
-					
+
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					// Description de la ligne produit
 					pdf_getlinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1);
 					//$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
-					
+
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
-					
+
 					$nexY = $pdf->GetY();
 
 					$ref = pdf_getlineref($object, $i, $outputlangs);

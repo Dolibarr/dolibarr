@@ -84,9 +84,8 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		global $user,$conf,$langs;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expect text encoded in ISO
-		$sav_charset_output=$outputlangs->charset_output;
-		$outputlangs->charset_output='ISO-8859-1';
+		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
+		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -189,7 +188,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
-					
+
 					pdf_getlinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1);
 
 					//$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);

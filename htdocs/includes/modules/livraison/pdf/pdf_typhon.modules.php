@@ -105,9 +105,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expect text encoded in ISO
-		$sav_charset_output=$outputlangs->charset_output;
-		$outputlangs->charset_output='ISO-8859-1';
+		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
+		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -246,7 +245,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
-					
+
 					pdf_getlinedesc($pdf,$object,$i,$outputlangs,108,3,$this->posxdesc-1,$curY);
 
 					//$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);

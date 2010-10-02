@@ -86,9 +86,9 @@ class pdf_propale_jaune extends ModelePDFPropales
 		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because FPDF expect text to be encoded in ISO
+		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		$sav_charset_output=$outputlangs->charset_output;
-		$outputlangs->charset_output='ISO-8859-1';
+		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -188,7 +188,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 					// Description de la ligne produit
 					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs,1);
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
-					
+
 					pdf_getlinedesc($pdf,$object,$i,$outputlangs,102,4,30,$curY,1);
 
 					//$pdf->writeHTMLCell(102, 4, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
@@ -520,7 +520,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 		$pdf->SetFont('','',9);
 		$pdf->SetXY($this->marge_gauche+2,$posy+4);
-		$pdf->MultiCell(80, 4, $carac_emetteur);
+		$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
 		$pdf->rect(10, 40, 80, 40);
@@ -540,9 +540,9 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->rect(110, 90, 90, 10);
 
 		$pdf->SetXY(10,90);
-		$pdf->MultiCell(110, 10, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref));
+		$pdf->MultiCell(110, 10, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref), 0, 'L');
 		$pdf->SetXY(110,90);
-		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs,true));
+		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs,true), 0, 'L');
 
 		$posy=15;
 		$pdf->SetFont('','',10);
@@ -609,7 +609,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		// Show address
 		$pdf->SetFont('','',9);
 		$pdf->SetXY(102,$posy+8);
-		$pdf->MultiCell(86,4, $carac_client);
+		$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 	}
 
 	/**

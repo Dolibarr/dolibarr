@@ -221,8 +221,8 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$object->fetch_thirdparty();
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expect text encoded in ISO
-		$outputlangs->charset_output='ISO-8859-1';
+		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
+		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -335,7 +335,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					{
 						$pdf->i25($this->marge_gauche+3, ($curY - 2), "000000".$object->lines[$i]->fk_product, 1, 8);
 					}
-					
+
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					// Description de la ligne produit

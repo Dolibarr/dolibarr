@@ -111,8 +111,8 @@ class pdf_einstein extends ModelePDFCommandes
 		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expect text encoded in ISO
-		$outputlangs->charset_output='ISO-8859-1';
+		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
+		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -242,7 +242,7 @@ class pdf_einstein extends ModelePDFCommandes
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
-					
+
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					// Description of product line

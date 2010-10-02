@@ -110,9 +110,9 @@ class pdf_propale_azur extends ModelePDFPropales
 		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because FPDF expect text to be encoded in ISO
+		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		$sav_charset_output=$outputlangs->charset_output;
-		$outputlangs->charset_output='ISO-8859-1';
+		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -243,7 +243,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
-					
+
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					// Description de la ligne produit
@@ -948,7 +948,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','',8);
 			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetFillColor(230,230,230);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
@@ -962,7 +962,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Show sender information
 			$pdf->SetFont('','',9);
 			$pdf->SetXY($posx+2,$posy+8);
-			$pdf->MultiCell(80, 4, $carac_emetteur);
+			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
 			// If CUSTOMER contact defined, we use it
@@ -998,7 +998,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','',8);
 			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(80, 4, $outputlangs->transnoentities("BillTo").":");
+			$pdf->MultiCell(80, 4, $outputlangs->transnoentities("BillTo").":", 0, 'L');
 			$pdf->rect($posx, $posy, 100, $hautcadre);
 			$pdf->SetTextColor(0,0,0);
 
@@ -1010,7 +1010,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Show recipient information
 			$pdf->SetFont('','',9);
 			$pdf->SetXY($posx+2,$posy+8);
-			$pdf->MultiCell(86,4, $carac_client);
+			$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
 	}
 

@@ -111,8 +111,8 @@ class pdf_oursin extends ModelePDFFactures
 		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expect text encoded in ISO
-		$outputlangs->charset_output='ISO-8859-1';
+		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
+		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -215,7 +215,7 @@ class pdf_oursin extends ModelePDFFactures
 
 					// Description of product line
 					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
-					
+
 					pdf_getlinedesc($pdf,$object,$i,$outputlangs,108,3,$this->posxdesc-1,$curY+1);
 
 					//$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);

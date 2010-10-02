@@ -73,7 +73,7 @@ function pdf_format_address($outputlangs,$object)
  *   	@param      targetcompany	Target company object
  *      @param      targetcontact	Target contact object
  * 		@param		usecontact		Use contact instead of company
- * 		@return		string			Source of file
+ * 		@return		string			String with full address
  */
 function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$targetcontact='',$usecontact=0,$mode='source')
 {
@@ -468,7 +468,7 @@ function pdf_getlinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hidere
         $desc=$object->lines[$i]->desc; if (empty($desc))   $desc=$object->lines[$i]->description;
         $ref_supplier=$object->lines[$i]->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$object->lines[$i]->ref_fourn;	// TODO Not yeld saved for supplier invoices, only supplier orders
         $note=$object->lines[$i]->note;
-        
+
         if ($issupplierline) $prodser = new ProductFournisseur($db);
         else $prodser = new Product($db);
 
@@ -542,9 +542,9 @@ function pdf_getlinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hidere
                 $libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
             }
         }
-        
+
         $libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
-        
+
         if ($object->lines[$i]->date_start || $object->lines[$i]->date_end)
         {
         	// Show duration if exists
@@ -564,10 +564,10 @@ function pdf_getlinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hidere
         	$libelleproduitservice.="<br>".dol_htmlentitiesbr($period,1);
         	//print $libelleproduitservice;
         }
-        
+
         // Description
         $pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
-        
+
         // For compatibility
         return $libelleproduitservice;
     }
