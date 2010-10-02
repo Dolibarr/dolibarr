@@ -211,12 +211,11 @@ if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $rowspan++;
 // Entity field
 if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)  && ! $disabled)
 {
-	require_once(DOL_DOCUMENT_ROOT.'/multicompany/class/multicompany.class.php');
+	require_once(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php');
 
 	global $db;
 
-	$mc = new Multicompany($db);
-	$mc->getEntities();
+	$mc = new ActionsMulticompany($db);
 
 	$select_entity = $mc->select_entities($mc->entities,$conf->entity,'tabindex="2"');
 }
