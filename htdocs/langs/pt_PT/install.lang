@@ -46,11 +46,10 @@ GoToSetupArea=Prosseguir para a área de configuração
 Examples=Exemplos
 WithNoSlashAtTheEnd=Sem a barra "/" no final
 
-
 // Date 2009-01-18 18:56:33
 // START - Lines generated via parser
 // Reference language: en_US
-CHARSET=ISO-8859-1
+CHARSET=UTF-8
 MiscellanousChecks=Pré-requisitos check
 ConfFileDoesNotExists=Ficheiro de <b>configuração %s</b> não existe!
 ConfFileDoesNotExistsAndCouldNotBeCreated=Ficheiro de <b>configuração %s</b> não existe e não poderia ser criado!
