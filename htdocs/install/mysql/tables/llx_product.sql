@@ -33,6 +33,8 @@ create table llx_product
   label						varchar(255) NOT NULL,
   description				text,
   note						text,
+  customcode                varchar(32),                    -- Optionnal custom code
+  fk_country                integer,                        -- Optionnal id of original country 
   price						double(24,8) DEFAULT 0,
   price_ttc					double(24,8) DEFAULT 0,
   price_min					double(24,8) DEFAULT 0,

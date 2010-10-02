@@ -69,3 +69,7 @@ DELETE FROM llx_c_tva WHERE rowid = 46;
 
 ALTER TABLE llx_adherent  ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_categorie ADD COLUMN import_key varchar(14);
+
+
+ALTER TABLE llx_product ADD COLUMN customcode varchar(32) after note;
+ALTER TABLE llx_product ADD COLUMN fk_country integer after customcode; 
