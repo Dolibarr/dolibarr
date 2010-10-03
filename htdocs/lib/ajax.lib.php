@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,6 +133,37 @@ function ajax_autocompleter2($selected='', $htmlname, $url, $option='')
 	$script.= '</script>';
 
 	return $script;
+}
+
+/**
+ *	Show an ajax dialog 
+ */
+function ajax_dialog($title,$message,$w=350,$h=150)
+{
+	global $langs;
+	
+	$msg.= '<div id="dialog-info" title="'.dol_escape_htmltag($title).'">';
+	$msg.= $message;
+	$msg.= '</div>'."\n";
+    $msg.= '<script type="text/javascript">
+    jQuery(function() {
+        jQuery("#dialog-info").dialog({
+	        resizable: false,
+	        height:'.$h.',
+	        width:'.$w.',
+	        modal: true,
+	        buttons: {
+	        	Ok: function() {
+					jQuery( this ).dialog(\'close\');
+				}
+	        }
+	    });
+	});
+	</script>';
+    
+    $msg.= "\n";
+    
+    return $msg;
 }
 
 ?>

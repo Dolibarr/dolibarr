@@ -732,8 +732,6 @@ else
 $heightforframes=48;
 
 
-
-
 // Functions
 
 
@@ -1329,7 +1327,26 @@ if (! function_exists("llxFooter"))
 {
 	function llxFooter($foot='')
 	{
-		global $conf, $dolibarr_auto_user, $micro_start_time;
+		global $conf, $langs, $dolibarr_auto_user, $micro_start_time;
+		
+		// Core error message
+		if (defined("MAIN_CORE_ERROR") && constant("MAIN_CORE_ERROR") == 1)
+		{
+			// Ajax version
+			if ($conf->use_javascript_ajax)
+			{
+				$title = img_warning().' '.$langs->trans('CoreErrorTitle');
+				print ajax_dialog($title, $langs->trans('CoreErrorMessage'));
+			}
+			// html version
+			else
+			{
+				$msg = img_warning().' '.$langs->trans('CoreErrorMessage');
+				print '<div class="error">'.$msg.'</div>';
+			}
+			
+			define("MAIN_CORE_ERROR",0);
+		}
 
 		print "\n\n".'</div> <!-- end div class="fiche" -->'."\n";
 

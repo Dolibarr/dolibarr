@@ -1880,6 +1880,8 @@ function dolibarr_print_error($db='',$error='')
 function dol_print_error($db='',$error='')
 {
 	global $conf,$langs,$argv;
+	global $dolibarr_main_prod;
+	
 	$out = '';
 	$syslog = '';
 
@@ -1967,7 +1969,8 @@ function dol_print_error($db='',$error='')
 			$syslog.=", msg=".$msg;
 		}
 	}
-	if ($_SERVER['DOCUMENT_ROOT'] && function_exists('xdebug_call_file'))
+	
+	if (empty($dolibarr_main_prod) && $_SERVER['DOCUMENT_ROOT'] && function_exists('xdebug_call_file'))
 	{
 		xdebug_print_function_stack();
 		$out.='<b>XDebug informations:</b>'."<br>\n";
@@ -1977,9 +1980,9 @@ function dol_print_error($db='',$error='')
 		$out.="<br>\n";
 	}
 
-	global $dolibarr_main_prod;
 	if (empty($dolibarr_main_prod)) print $out;
-	else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported to your browser. Please read the log file for error message.';
+	else define("MAIN_CORE_ERROR", 1);
+	//else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported to your browser. Please read the log file for error message.';
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }
 
