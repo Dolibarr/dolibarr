@@ -56,10 +56,9 @@ class CommonObject
 		global $conf;
 
 		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->element;
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql.= " WHERE ref = '".$this->ref."'";
 		$sql.= " AND entity = ".$conf->entity;
-
 		dol_syslog("CommonObject::verifyNumRef sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1229,7 +1228,7 @@ class CommonObject
     function getCanvas($id=0,$ref='')
     {
         global $conf;
-        
+
         $ref = trim($ref);
 
         $sql = "SELECT rowid, canvas";
