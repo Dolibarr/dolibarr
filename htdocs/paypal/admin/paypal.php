@@ -38,17 +38,10 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'setvalue' && $user->admin)
 {
-	//$result=dolibarr_set_const($db, "PAYPAL_IBS_DEVISE",$_POST["PAYPAL_IBS_DEVISE"],'chaine',0,'',$conf->entity);
 	$result=dolibarr_set_const($db, "PAYPAL_CSS_URL",$_POST["PAYPAL_CSS_URL"],'chaine',0,'',$conf->entity);
-/*	$result=dolibarr_set_const($db, "PAYPAL_CREDITOR",$_POST["PAYPAL_CREDITOR"],'chaine',0,'',$conf->entity);
-	$result=dolibarr_set_const($db, "PAYPAL_CGI_URL_V1",$_POST["PAYPAL_CGI_URL_V1"],'chaine',0,'',$conf->entity);
-	$result=dolibarr_set_const($db, "PAYPAL_CGI_URL_V2",$_POST["PAYPAL_CGI_URL_V2"],'chaine',0,'',$conf->entity);
-	$result=dolibarr_set_const($db, "PAYPAL_IBS_SITE",$_POST["PAYPAL_IBS_SITE"],'chaine',0,'',$conf->entity);
-	$result=dolibarr_set_const($db, "PAYPAL_IBS_RANG",$_POST["PAYPAL_IBS_RANG"],'chaine',0,'',$conf->entity);
-	$result=dolibarr_set_const($db, "PAYPAL_PBX_IDENTIFIANT",$_POST["PAYPAL_PBX_IDENTIFIANT"],'chaine',0,'',$conf->entity);
-*/
+
     $result=dolibarr_set_const($db, "PAYPAL_API_SANDBOX",$_POST["PAYPAL_API_SANDBOX"],'chaine',0,'',$conf->entity);
-    $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL",$_POST["PAYPAL_API_INTEGRAL"],'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY",$_POST["PAYPAL_API_INTEGRAL_OR_PAYPALONLY"],'chaine',0,'',$conf->entity);
     $result=dolibarr_set_const($db, "PAYPAL_API_USER",$_POST["PAYPAL_API_USER"],'chaine',0,'',$conf->entity);
     $result=dolibarr_set_const($db, "PAYPAL_API_PASSWORD",$_POST["PAYPAL_API_PASSWORD"],'chaine',0,'',$conf->entity);
     $result=dolibarr_set_const($db, "PAYPAL_API_SIGNATURE",$_POST["PAYPAL_API_SIGNATURE"],'chaine',0,'',$conf->entity);
@@ -161,26 +154,26 @@ print '<br>';
 if ($conf->commande->enabled)
 {
 	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
-	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?amount=order&ref=<i>order_ref</i></b>'."<br>\n";
+	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?source=order&ref=<i>order_ref</i></b>'."<br>\n";
 	print '<br>';
 }
 if ($conf->facture->enabled)
 {
 	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
-	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?amount=invoice&ref=<i>invoice_ref</i></b>'."<br>\n";
+	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?source=invoice&ref=<i>invoice_ref</i></b>'."<br>\n";
 //	print $langs->trans("SetupPaypalToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
 	print '<br>';
 }
 if ($conf->contrat->enabled)
 {
 	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
-	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?amount=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
+	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?source=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
 	print '<br>';
 }
 if ($conf->adherent->enabled)
 {
 	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
-	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?amount=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
+	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
 	print '<br>';
 }
 print $langs->trans("YouCanAddTagOnUrl");

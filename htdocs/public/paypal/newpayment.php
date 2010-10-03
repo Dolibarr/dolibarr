@@ -71,20 +71,20 @@ $langs->load("paypal");
 
 if (empty($_REQUEST["currency"])) $currency=$conf->global->MAIN_MONNAIE;
 else $currency=$_REQUEST["currency"];
-if (empty($_REQUEST["amount"]))
+if (empty($_REQUEST["amount"]) && empty($_REQUEST["source"]))
 {
 	dol_print_error('','ErrorBadParameters');
 	session_destroy();
 	exit;
 }
 $amount=$_REQUEST["amount"];
-if (is_numeric($amount) && empty($_REQUEST["tag"]))
+if (is_numeric($amount) && empty($_REQUEST["tag"]) && empty($_REQUEST["source"]))
 {
 	dol_print_error('','ErrorBadParameters');
 	session_destroy();
 	exit;
 }
-if (! is_numeric($amount) && empty($_REQUEST["ref"]))
+if (! empty($REQUEST["source"]) && empty($_REQUEST["ref"]))
 {
 	dol_print_error('','ErrorBadParameters');
 	session_destroy();
@@ -99,23 +99,113 @@ $suffix=$_REQUEST["suffix"];
  */
 if ($_REQUEST["action"] == 'dopayment')
 {
-	$PRICE=$_REQUEST["newamount"];
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
+
+	$PAYPAL_API_PRICE=$_REQUEST["newamount"];
 	$EMAIL=$_REQUEST["EMAIL"];
-	$urlok='';
-	$urlko='';
+	$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php';
+	$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php';
 	$TAG=$_REQUEST["newtag"];
 	$ID=$_REQUEST["id"];
 
 	$mesg='';
-	if (empty($PRICE))              $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
+	if (empty($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
 	elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 	elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
 	elseif (empty($TAG))            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
 
 	if (empty($mesg))
 	{
-		print_paypal_redirect($PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG, $ID);
-		session_destroy();
+		//print_paypal_redirect($PAYPAL_API_PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG, $ID);
+
+		/*global $conf, $langs, $db;
+		global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
+		global $PAYPAL_API_DEVISE, $PAYPAL_API_OK, $PAYPAL_API_KO;
+		global $PAYPAL_API_SANDBOX;
+		*/
+
+		dol_syslog("newpayment.php call paypal api and do redirect", LOG_DEBUG);
+
+		// Clean parameters
+		$PAYPAL_API_USER="";
+		if ($conf->global->PAYPAL_API_USER) $PAYPAL_API_USER=$conf->global->PAYPAL_API_USER;
+		$PAYPAL_API_PASSWORD="";
+		if ($conf->global->PAYPAL_API_PASSWORD) $PAYPAL_API_PASSWORD=$conf->global->PAYPAL_API_PASSWORD;
+		$PAYPAL_API_SIGNATURE="";
+		if ($conf->global->PAYPAL_API_SIGNATURE) $PAYPAL_API_SIGNATURE=$conf->global->PAYPAL_API_SIGNATURE;
+		$PAYPAL_API_SANDBOX="";
+		if ($conf->global->PAYPAL_API_SANDBOX) $PAYPAL_API_SANDBOX=$conf->global->PAYPAL_API_SANDBOX;
+		$PAYPAL_API_OK="";
+		if ($urlok) $PAYPAL_API_OK=$urlok;
+		$PAYPAL_API_KO="";
+		if ($urlko) $PAYPAL_API_KO=$urlko;
+
+		if (empty($PAYPAL_API_USER))
+		{
+			dol_print_error('',"Paypal setup param PAYPAL_API_USER not defined");
+			return -1;
+		}
+		if (empty($PAYPAL_API_PASSWORD))
+		{
+			dol_print_error('',"Paypal setup param PAYPAL_API_PASSWORD not defined");
+			return -1;
+		}
+		if (empty($PAYPAL_API_SIGNATURE))
+		{
+			dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
+			return -1;
+		}
+
+		// Other
+		$PAYPAL_API_DEVISE="EUR";
+		if ($CURRENCY == 'EUR') $PAYPAL_API_DEVISE="EUR";
+		if ($CURRENCY == 'USD') $PAYPAL_API_DEVISE="USD";
+
+	    dol_syslog("Soumission Paypal", LOG_DEBUG);
+	    dol_syslog("PAYPAL_API_USER: $PAYPAL_API_USER", LOG_DEBUG);
+	    dol_syslog("PAYPAL_API_PASSWORD: $PAYPAL_API_PASSWORD", LOG_DEBUG);
+	    dol_syslog("PAYPAL_API_SIGNATURE: $PAYPAL_API_SIGNATURE", LOG_DEBUG);
+	    dol_syslog("PAYPAL_API_SANDBOX: $PAYPAL_API_SANDBOX", LOG_DEBUG);
+	    dol_syslog("PAYPAL_API_OK: $PAYPAL_API_OK", LOG_DEBUG);
+	    dol_syslog("PAYPAL_API_KO: $PAYPAL_API_KO", LOG_DEBUG);
+	    dol_syslog("PAYPAL_API_PRICE: $PAYPAL_API_PRICE", LOG_DEBUG);
+	    dol_syslog("PAYPAL_API_DEVISE: $PAYPAL_API_DEVISE", LOG_DEBUG);
+
+	    header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+	    print '<html>'."\n";
+	    print '<head>'."\n";
+	    print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->file->character_set_client."\">\n";
+	    print '</head>'."\n";
+	    print '<body>'."\n";
+	    print "\n";
+
+	    $_SESSION["Payment_Amount"]=$PAYPAL_API_PRICE;
+
+	    // A redirect is added if API call successfull
+	    require_once(DOL_DOCUMENT_ROOT."/paypal/expresscheckout.php");
+
+	    // Formulaire pour module Paybox
+	//    print '<form action="'.$URLPAYBOX.'" NAME="Submit" method="POST">'."\n";
+	//print "
+	//<form action='".DOL_URL_ROOT."/paypal/expresscheckout.php' METHOD='POST' NAME='Submit'>
+	//<input type='image' name='submit' src='https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif' border='0' align='top' alt='Check out with PayPal'/>
+	//</form>";
+	//    print '</form>'."\n";
+
+	//    print "\n";
+	//    print '<script type="text/javascript" language="javascript">'."\n";
+	//    print '	document.Submit.submit();'."\n";
+	//    print '</script>'."\n";
+	//    print "\n";
+
+
+	    print '</body></html>'."\n";
+	    print "\n";
+
+
+
+
 		exit;
 	}
 }
@@ -191,7 +281,7 @@ $var=false;
 
 
 // Free payment
-if (is_numeric($_REQUEST["amount"]))
+if (empty($_REQUEST["source"]))
 {
 	$found=true;
 	$tag=$_REQUEST["tag"];
@@ -212,8 +302,9 @@ if (is_numeric($_REQUEST["amount"]))
 		print '<b>'.price($amount).'</b>';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	print ' <b>'.$langs->trans("Currency".$conf->monnaie).'</b>';
-	print '<input type="hidden" name="currency" value="'.$conf->monnaie.'">';
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -233,7 +324,7 @@ if (is_numeric($_REQUEST["amount"]))
 
 
 // Payment on customer order
-if ($_REQUEST["amount"] == 'order')
+if ($_REQUEST["source"] == 'order')
 {
 	$found=true;
 	$langs->load("orders");
@@ -253,6 +344,7 @@ if ($_REQUEST["amount"] == 'order')
 	}
 
 	$amount=$order->total_ttc;
+	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
 	$newtag='IR='.$order->ref.'.TPID='.$order->client->id.'.TP='.strtr($order->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
@@ -286,8 +378,9 @@ if ($_REQUEST["amount"] == 'order')
 		print '<b>'.price($amount).'</b>';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	print ' <b>'.$langs->trans("Currency".$conf->monnaie).'</b>';
-	print '<input type="hidden" name="currency" value="'.$conf->monnaie.'">';
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -307,7 +400,7 @@ if ($_REQUEST["amount"] == 'order')
 
 
 // Payment on customer invoice
-if ($_REQUEST["amount"] == 'invoice')
+if ($_REQUEST["source"] == 'invoice')
 {
 	$found=true;
 	$langs->load("bills");
@@ -327,6 +420,7 @@ if ($_REQUEST["amount"] == 'invoice')
 	}
 
 	$amount=$invoice->total_ttc - $invoice->getSommePaiement();
+	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
 	$newtag='IR='.$invoice->ref.'.TPID='.$invoice->client->id.'.TP='.strtr($invoice->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
@@ -360,8 +454,9 @@ if ($_REQUEST["amount"] == 'invoice')
 		print '<b>'.price($amount).'</b>';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	print ' <b>'.$langs->trans("Currency".$conf->monnaie).'</b>';
-	print '<input type="hidden" name="currency" value="'.$conf->monnaie.'">';
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -380,7 +475,7 @@ if ($_REQUEST["amount"] == 'invoice')
 }
 
 // Payment on contract line
-if ($_REQUEST["amount"] == 'contractline')
+if ($_REQUEST["source"] == 'contractline')
 {
 	$found=true;
 	$langs->load("contracts");
@@ -444,6 +539,7 @@ if ($_REQUEST["amount"] == 'contractline')
 			exit;
 		}
 	}
+	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
 	$newtag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->client->id.'.TP='.strtr($contract->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
@@ -522,8 +618,9 @@ if ($_REQUEST["amount"] == 'contractline')
 		print '<b>'.price($amount).'</b>';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	print ' <b>'.$langs->trans("Currency".$conf->monnaie).'</b>';
-	print '<input type="hidden" name="currency" value="'.$conf->monnaie.'">';
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -543,7 +640,7 @@ if ($_REQUEST["amount"] == 'contractline')
 }
 
 // Payment on member subscription
-if ($_REQUEST["amount"] == 'membersubscription')
+if ($_REQUEST["source"] == 'membersubscription')
 {
 	$found=true;
 	$langs->load("members");
@@ -564,6 +661,7 @@ if ($_REQUEST["amount"] == 'membersubscription')
 	}
 
 	$amount=$subscription->total_ttc;
+	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
 	$newtag='MID='.$member->id.'.M='.strtr($member->getFullName($langs),"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
@@ -597,8 +695,9 @@ if ($_REQUEST["amount"] == 'membersubscription')
 		print '<b>'.price($amount).'</b>';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	print ' <b>'.$langs->trans("Currency".$conf->monnaie).'</b>';
-	print '<input type="hidden" name="currency" value="'.$conf->monnaie.'">';
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -627,8 +726,16 @@ print '</table>';
 
 if ($found && ! $error)	// We are in a management option and no error
 {
-	print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PayBoxDoPayment").'">';
-	//print '<tr><td align="center" colspan="2">'.$langs->trans("YouWillBeRedirectedOnPayBox").'...</td></tr>';
+	if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
+
+	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
+	{
+		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+	}
+	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
+	{
+		print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PaypalDoPayment").'">';
+	}
 }
 else
 {

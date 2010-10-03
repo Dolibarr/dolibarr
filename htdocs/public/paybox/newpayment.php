@@ -70,20 +70,20 @@ $langs->load("errors");
 
 if (empty($_REQUEST["currency"])) $currency=$conf->global->MAIN_MONNAIE;
 else $currency=$_REQUEST["currency"];
-if (empty($_REQUEST["amount"]))
+if (empty($_REQUEST["amount"]) && empty($_REQUEST["source"]))
 {
 	dol_print_error('','ErrorBadParameters');
 	session_destroy();
 	exit;
 }
 $amount=$_REQUEST["amount"];
-if (is_numeric($amount) && empty($_REQUEST["tag"]))
+if (is_numeric($amount) && empty($_REQUEST["tag"]) && empty($_REQUEST["source"]))
 {
 	dol_print_error('','ErrorBadParameters');
 	session_destroy();
 	exit;
 }
-if (! is_numeric($amount) && empty($_REQUEST["ref"]))
+if (! empty($REQUEST["source"]) && empty($_REQUEST["ref"]))
 {
 	dol_print_error('','ErrorBadParameters');
 	session_destroy();
@@ -98,10 +98,12 @@ $suffix=$_REQUEST["suffix"];
  */
 if ($_REQUEST["action"] == 'dopayment')
 {
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
+
 	$PRICE=$_REQUEST["newamount"];
 	$EMAIL=$_REQUEST["EMAIL"];
-	$urlok='';
-	$urlko='';
+	$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/paymentok.php';
+	$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/paymentko.php';
 	$TAG=$_REQUEST["newtag"];
 	$ID=$_REQUEST["id"];
 
@@ -190,7 +192,7 @@ $var=false;
 
 
 // Free payment
-if (is_numeric($_REQUEST["amount"]))
+if (empty($_REQUEST["source"]))
 {
 	$found=true;
 	$tag=$_REQUEST["tag"];
@@ -211,8 +213,9 @@ if (is_numeric($_REQUEST["amount"]))
 		print '<b>'.price($amount).'</b>';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	print ' <b>'.$langs->trans("Currency".$conf->monnaie).'</b>';
-	print '<input type="hidden" name="currency" value="'.$conf->monnaie.'">';
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -232,7 +235,7 @@ if (is_numeric($_REQUEST["amount"]))
 
 
 // Payment on customer order
-if ($_REQUEST["amount"] == 'order')
+if ($_REQUEST["source"] == 'order')
 {
 	$found=true;
 	$langs->load("orders");
@@ -252,6 +255,7 @@ if ($_REQUEST["amount"] == 'order')
 	}
 
 	$amount=$order->total_ttc;
+	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
 	$newtag='IR='.$order->ref.'.TPID='.$order->client->id.'.TP='.strtr($order->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
@@ -285,8 +289,9 @@ if ($_REQUEST["amount"] == 'order')
 		print '<b>'.price($amount).'</b>';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	print ' <b>'.$langs->trans("Currency".$conf->monnaie).'</b>';
-	print '<input type="hidden" name="currency" value="'.$conf->monnaie.'">';
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -306,7 +311,7 @@ if ($_REQUEST["amount"] == 'order')
 
 
 // Payment on customer invoice
-if ($_REQUEST["amount"] == 'invoice')
+if ($_REQUEST["source"] == 'invoice')
 {
 	$found=true;
 	$langs->load("bills");
@@ -326,6 +331,7 @@ if ($_REQUEST["amount"] == 'invoice')
 	}
 
 	$amount=$invoice->total_ttc - $invoice->getSommePaiement();
+	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
 	$newtag='IR='.$invoice->ref.'.TPID='.$invoice->client->id.'.TP='.strtr($invoice->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
@@ -359,8 +365,9 @@ if ($_REQUEST["amount"] == 'invoice')
 		print '<b>'.price($amount).'</b>';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	print ' <b>'.$langs->trans("Currency".$conf->monnaie).'</b>';
-	print '<input type="hidden" name="currency" value="'.$conf->monnaie.'">';
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -379,7 +386,7 @@ if ($_REQUEST["amount"] == 'invoice')
 }
 
 // Payment on contract line
-if ($_REQUEST["amount"] == 'contractline')
+if ($_REQUEST["source"] == 'contractline')
 {
 	$found=true;
 	$langs->load("contracts");
@@ -443,6 +450,7 @@ if ($_REQUEST["amount"] == 'contractline')
 			exit;
 		}
 	}
+	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
 	$newtag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->client->id.'.TP='.strtr($contract->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
@@ -521,8 +529,9 @@ if ($_REQUEST["amount"] == 'contractline')
 		print '<b>'.price($amount).'</b>';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	print ' <b>'.$langs->trans("Currency".$conf->monnaie).'</b>';
-	print '<input type="hidden" name="currency" value="'.$conf->monnaie.'">';
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -542,7 +551,7 @@ if ($_REQUEST["amount"] == 'contractline')
 }
 
 // Payment on member subscription
-if ($_REQUEST["amount"] == 'membersubscription')
+if ($_REQUEST["source"] == 'membersubscription')
 {
 	$found=true;
 	$langs->load("members");
@@ -563,6 +572,7 @@ if ($_REQUEST["amount"] == 'membersubscription')
 	}
 
 	$amount=$subscription->total_ttc;
+	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
 	$newtag='MID='.$member->id.'.M='.strtr($member->getFullName($langs),"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
@@ -596,8 +606,9 @@ if ($_REQUEST["amount"] == 'membersubscription')
 		print '<b>'.price($amount).'</b>';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	print ' <b>'.$langs->trans("Currency".$conf->monnaie).'</b>';
-	print '<input type="hidden" name="currency" value="'.$conf->monnaie.'">';
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag

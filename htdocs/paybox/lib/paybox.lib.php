@@ -19,12 +19,10 @@
  */
 
 /**
- *	\file			htdocs/paybox/paybox.lib.php
+ *	\file			htdocs/paybox/lib/paybox.lib.php
  *  \brief			Library for common paybox functions
  *  \version		$Id$
  */
-
-
 function llxHeaderPaybox($title, $head = "")
 {
 	global $user, $conf, $langs;
@@ -69,7 +67,7 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 {
 	global $conf, $langs, $db;
 
-	dol_syslog("Paypal.lib::print_paybox_redirect", LOG_DEBUG);
+	dol_syslog("Paybox.lib::print_paybox_redirect", LOG_DEBUG);
 
 	// Clean parameters
 	$PBX_IDENTIFIANT="2";	# Identifiant pour v2 test

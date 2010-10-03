@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,12 +19,10 @@
  */
 
 /**
- *	\file			htdocs/paypal/paypal.lib.php
+ *	\file			htdocs/paypal/lib/paypal.lib.php
  *  \brief			Library for common paypal functions
  *  \version		$Id$
  */
-
-
 function llxHeaderPaypal($title, $head = "")
 {
 	global $user, $conf, $langs;
@@ -68,90 +66,53 @@ function llxFooterPaypal()
 function print_paypal_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 {
 	global $conf, $langs, $db;
+	global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
+	global $PAYPAL_API_DEVISE, $PAYPAL_API_OK, $PAYPAL_API_KO;
+	global $PAYPAL_API_SANDBOX;
 
-	dol_syslog("Paypal.lib::print_paybox_redirect", LOG_DEBUG);
+	dol_syslog("Paypal.lib::print_paypal_redirect", LOG_DEBUG);
 
 	// Clean parameters
-	$PBX_IDENTIFIANT="2";	# Identifiant pour v2 test
-	if ($conf->global->PAYBOX_PBX_IDENTIFIANT) $PBX_IDENTIFIANT=$conf->global->PAYBOX_PBX_IDENTIFIANT;
-	$IBS_SITE="1999888";    # Site test
-	if ($conf->global->PAYBOX_IBS_SITE) $IBS_SITE=$conf->global->PAYBOX_IBS_SITE;
-	$IBS_RANG="99";         # Rang test
-	if ($conf->global->PAYBOX_IBS_RANG) $IBS_RANG=$conf->global->PAYBOX_IBS_RANG;
-	$IBS_DEVISE="840";			# Currency (Dollar US by default)
-	if ($CURRENCY == 'EUR') $IBS_DEVISE="978";
-	if ($CURRENCY == 'USD') $IBS_DEVISE="840";
+	$PAYPAL_API_USER="";
+	if ($conf->global->PAYPAL_API_USER) $PAYPAL_API_USER=$conf->global->PAYPAL_API_USER;
+	$PAYPAL_API_PASSWORD="";
+	if ($conf->global->PAYPAL_API_PASSWORD) $PAYPAL_API_PASSWORD=$conf->global->PAYPAL_API_PASSWORD;
+	$PAYPAL_API_SIGNATURE="";
+	if ($conf->global->PAYPAL_API_SIGNATURE) $PAYPAL_API_SIGNATURE=$conf->global->PAYPAL_API_SIGNATURE;
+	$PAYPAL_API_SANDBOX="";
+	if ($conf->global->PAYPAL_API_SANDBOX) $PAYPAL_API_SANDBOX=$conf->global->PAYPAL_API_SANDBOX;
 
-	$URLPAYBOX="";
-	if ($conf->global->PAYBOX_CGI_URL_V1) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V1;
-	if ($conf->global->PAYBOX_CGI_URL_V2) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V2;
-
-	if (empty($IBS_DEVISE))
+	if (empty($PAYPAL_API_USER))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_DEVISE not defined");
+		dol_print_error('',"Paypal setup param PAYPAL_API_USER not defined");
 		return -1;
 	}
-	if (empty($URLPAYBOX))
+	if (empty($PAYPAL_API_PASSWORD))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_CGI_URL_V1 and PAYBOX_CGI_URL_V2 undefined");
+		dol_print_error('',"Paypal setup param PAYPAL_API_PASSWORD not defined");
 		return -1;
 	}
-	if (empty($IBS_SITE))
+	if (empty($PAYPAL_API_SIGNATURE))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_SITE not defined");
-		return -1;
-	}
-	if (empty($IBS_RANG))
-	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_RANG not defined");
+		dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
 		return -1;
 	}
 
-	// Definition des parametres vente produit pour paybox
-    $IBS_CMD=$TAG;
-    $IBS_TOTAL=$PRICE*100;     	# En centimes
-    $IBS_MODE=1;            	# Mode formulaire
-    $IBS_PORTEUR=$EMAIL;
-	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   # Format des parametres du get de validation en reponse (url a definir sous paybox)
-    //$IBS_TXT="<center><b>".$langsiso->trans("YouWillBeRedirectedOnPayBox")."</b><br><i>".$langsiso->trans("PleaseBePatient")."...</i><br></center>";
-    $IBS_TXT=' ';	// Use a space
-    $IBS_BOUTPI=$langs->trans("Wait");
-    //$IBS_BOUTPI='';
-    $IBS_EFFECTUE=$urlok;
-    $IBS_ANNULE=$urlko;
-    $IBS_REFUSE=$urlko;
-    $IBS_BKGD="#FFFFFF";
-    $IBS_WAIT="2000";
-	$IBS_LANG="GBR"; 	// By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
-	if (preg_match('/^FR/i',$langs->defaultlang)) $IBS_LANG="FRA";
-	if (preg_match('/^ES/i',$langs->defaultlang)) $IBS_LANG="ESP";
-	if (preg_match('/^IT/i',$langs->defaultlang)) $IBS_LANG="ITA";
-	if (preg_match('/^DE/i',$langs->defaultlang)) $IBS_LANG="DEU";
-	if (preg_match('/^NL/i',$langs->defaultlang)) $IBS_LANG="NLD";
-	if (preg_match('/^SE/i',$langs->defaultlang)) $IBS_LANG="SWE";
-	$IBS_OUTPUT='E';
-	$PBX_SOURCE='HTML';
-	$PBX_TYPEPAIEMENT='CARTE';
+	// Other
+	$PAYPAL_API_DEVISE="EUR";
+	if ($CURRENCY == 'EUR') $PAYPAL_API_DEVISE="EUR";
+	if ($CURRENCY == 'USD') $PAYPAL_API_DEVISE="USD";
+	$PAYPAL_API_OK=$urlok;
+	$PAYPAL_API_KO=$urlko;
 
-    dol_syslog("Soumission Paybox", LOG_DEBUG);
-    dol_syslog("IBS_MODE: $IBS_MODE", LOG_DEBUG);
-    dol_syslog("IBS_SITE: $IBS_SITE", LOG_DEBUG);
-    dol_syslog("IBS_RANG: $IBS_RANG", LOG_DEBUG);
-    dol_syslog("IBS_TOTAL: $IBS_TOTAL", LOG_DEBUG);
-    dol_syslog("IBS_DEVISE: $IBS_DEVISE", LOG_DEBUG);
-    dol_syslog("IBS_CMD: $IBS_CMD", LOG_DEBUG);
-    dol_syslog("IBS_PORTEUR: $IBS_PORTEUR", LOG_DEBUG);
-    dol_syslog("IBS_RETOUR: $IBS_RETOUR", LOG_DEBUG);
-    dol_syslog("IBS_EFFECTUE: $IBS_EFFECTUE", LOG_DEBUG);
-    dol_syslog("IBS_ANNULE: $IBS_ANNULE", LOG_DEBUG);
-    dol_syslog("IBS_REFUSE: $IBS_REFUSE", LOG_DEBUG);
-    dol_syslog("IBS_BKGD: $IBS_BKGD", LOG_DEBUG);
-    dol_syslog("IBS_WAIT: $IBS_WAIT", LOG_DEBUG);
-    dol_syslog("IBS_LANG: $IBS_LANG", LOG_DEBUG);
-    dol_syslog("IBS_OUTPUT: $IBS_OUTPUT", LOG_DEBUG);
-    dol_syslog("PBX_IDENTIFIANT: $PBX_IDENTITIANT", LOG_DEBUG);
-    dol_syslog("PBX_SOURCE: $PBX_SOURCE", LOG_DEBUG);
-    dol_syslog("PBX_TYPEPAIEMENT: $PBX_TYPEPAIEMENT", LOG_DEBUG);
+    dol_syslog("Soumission Paypal", LOG_DEBUG);
+    dol_syslog("PAYPAL_API_USER: $PAYPAL_API_USER", LOG_DEBUG);
+    dol_syslog("PAYPAL_API_PASSWORD: $PAYPAL_API_PASSWORD", LOG_DEBUG);
+    dol_syslog("PAYPAL_API_SIGNATURE: $PAYPAL_API_SIGNATURE", LOG_DEBUG);
+    dol_syslog("PAYPAL_API_DEVISE: $PAYPAL_API_DEVISE", LOG_DEBUG);
+    dol_syslog("PAYPAL_API_OK: $PAYPAL_API_OK", LOG_DEBUG);
+    dol_syslog("PAYPAL_API_KO: $PAYPAL_API_KO", LOG_DEBUG);
+    dol_syslog("PAYPAL_API_SANDBOX: $PAYPAL_API_SANDBOX", LOG_DEBUG);
 
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -162,62 +123,26 @@ function print_paypal_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     print '<body>'."\n";
     print "\n";
 
+    $_SESSION["Payment_Amount"]=$PRICE;
+
+    // A redirect is added if API call successfull
+    require_once(DOL_DOCUMENT_ROOT."/paypal/expresscheckout.php");
+
     // Formulaire pour module Paybox
-    print '<form action="'.$URLPAYBOX.'" NAME="Submit" method="POST">'."\n";
+//    print '<form action="'.$URLPAYBOX.'" NAME="Submit" method="POST">'."\n";
+//print "
+//<form action='".DOL_URL_ROOT."/paypal/expresscheckout.php' METHOD='POST' NAME='Submit'>
+//<input type='image' name='submit' src='https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif' border='0' align='top' alt='Check out with PayPal'/>
+//</form>";
+//    print '</form>'."\n";
 
-    // For Paybox V1 (IBS_xxx)
-    /*
-    print '<!-- Param for Paybox v1 -->'."\n";
-    print '<input type="hidden" name="IBS_MODE" value="'.$IBS_MODE.'">'."\n";
-    print '<input type="hidden" name="IBS_SITE" value="'.$IBS_SITE.'">'."\n";
-    print '<input type="hidden" name="IBS_RANG" value="'.$IBS_RANG.'">'."\n";
-    print '<input type="hidden" name="IBS_TOTAL" value="'.$IBS_TOTAL.'">'."\n";
-    print '<input type="hidden" name="IBS_DEVISE" value="'.$IBS_DEVISE.'">'."\n";
-    print '<input type="hidden" name="IBS_CMD" value="'.$IBS_CMD.'">'."\n";
-    print '<input type="hidden" name="IBS_PORTEUR" value="'.$IBS_PORTEUR.'">'."\n";
-    print '<input type="hidden" name="IBS_RETOUR" value="'.$IBS_RETOUR.'">'."\n";
-    print '<input type="hidden" name="IBS_EFFECTUE" value="'.$IBS_EFFECTUE.'">'."\n";
-    print '<input type="hidden" name="IBS_ANNULE" value="'.$IBS_ANNULE.'">'."\n";
-    print '<input type="hidden" name="IBS_REFUSE" value="'.$IBS_REFUSE.'">'."\n";
-    print '<input type="hidden" name="IBS_TXT" value="'.$IBS_TXT.'">'."\n";
-    print '<input type="hidden" name="IBS_BKGD" value="'.$IBS_BKGD.'">'."\n";
-    print '<input type="hidden" name="IBS_WAIT" value="'.$IBS_WAIT.'">'."\n";
-    print '<input type="hidden" name="IBS_LANG" value="'.$IBS_LANG.'">'."\n";
-    print '<input type="hidden" name="IBS_OUTPUT" value="'.$IBS_OUTPUT.'">'."\n";
-	*/
-
-    // For Paybox V2 (PBX_xxx)
-    print '<!-- Param for Paybox v2 -->'."\n";
-    print '<input type="hidden" name="PBX_IDENTIFIANT" value="'.$PBX_IDENTIFIANT.'">'."\n";
-    print '<input type="hidden" name="PBX_MODE" value="'.$IBS_MODE.'">'."\n";
-    print '<input type="hidden" name="PBX_SITE" value="'.$IBS_SITE.'">'."\n";
-    print '<input type="hidden" name="PBX_RANG" value="'.$IBS_RANG.'">'."\n";
-    print '<input type="hidden" name="PBX_TOTAL" value="'.$IBS_TOTAL.'">'."\n";
-    print '<input type="hidden" name="PBX_DEVISE" value="'.$IBS_DEVISE.'">'."\n";
-    print '<input type="hidden" name="PBX_CMD" value="'.$IBS_CMD.'">'."\n";
-    print '<input type="hidden" name="PBX_PORTEUR" value="'.$IBS_PORTEUR.'">'."\n";
-    print '<input type="hidden" name="PBX_RETOUR" value="'.$IBS_RETOUR.'">'."\n";
-    print '<input type="hidden" name="PBX_EFFECTUE" value="'.$IBS_EFFECTUE.'">'."\n";
-    print '<input type="hidden" name="PBX_ANNULE" value="'.$IBS_ANNULE.'">'."\n";
-    print '<input type="hidden" name="PBX_REFUSE" value="'.$IBS_REFUSE.'">'."\n";
-    print '<input type="hidden" name="PBX_TXT" value="'.$IBS_TXT.'">'."\n";
-    print '<input type="hidden" name="PBX_BKGD" value="'.$IBS_BKGD.'">'."\n";
-    print '<input type="hidden" name="PBX_WAIT" value="'.$IBS_WAIT.'">'."\n";
-    print '<input type="hidden" name="PBX_LANG" value="'.$IBS_LANG.'">'."\n";
-    print '<input type="hidden" name="PBX_OUTPUT" value="'.$IBS_OUTPUT.'">'."\n";
-    print '<input type="hidden" name="PBX_SOURCE" value="'.$PBX_SOURCE.'">'."\n";
-    print '<input type="hidden" name="PBX_TYPEPAIEMENT" value="'.$PBX_TYPEPAIEMENT.'">'."\n";
-
-    print '</form>'."\n";
-
-    // Formulaire pour module Paybox v2 (PBX_xxx)
+//    print "\n";
+//    print '<script type="text/javascript" language="javascript">'."\n";
+//    print '	document.Submit.submit();'."\n";
+//    print '</script>'."\n";
+//    print "\n";
 
 
-    print "\n";
-    print '<script type="text/javascript" language="javascript">'."\n";
-    print '	document.Submit.submit();'."\n";
-    print '</script>'."\n";
-    print "\n";
     print '</body></html>'."\n";
     print "\n";
 
