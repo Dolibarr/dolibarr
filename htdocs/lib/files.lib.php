@@ -374,20 +374,49 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 	global $conf;
 	$result=false;
 
-	dol_syslog("files.lib.php::dol_copy srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask);
+	dol_syslog("files.lib.php::dol_copy srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwritifexists=".$overwriteifexists);
 	if ($overwriteifexists || ! dol_is_file($destfile))
 	{
-		$result=@copy($srcfile, $destfile);
+        $newpathofsrcfile=dol_osencode($srcfile);
+        $newpathofdestfile=dol_osencode($destfile);
+
+        $result=@copy($newpathofsrcfile, $newpathofdestfile);
 		//$result=copy($srcfile, $destfile);	// To see errors, remove @
 		if (! $result) dol_syslog("files.lib.php::dol_copy failed", LOG_WARNING);
 		if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-		@chmod($file, octdec($newmask));
+		@chmod($newpathofsrcfile, octdec($newmask));
 	}
 
 	return $result;
 }
 
+/**
+ * Move a file into another name
+ * @param   $srcfile            Source file (can't be a directory)
+ * @param   $destfile           Destination file (can't be a directory)
+ * @param   $newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param   $overwriteifexists  Overwrite file if exists (1 by default)
+ * @return  boolean             True if OK, false if KO
+ */
+function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
+{
+    global $conf;
+    $result=false;
 
+    dol_syslog("files.lib.php::dol_move srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwritifexists=".$overwriteifexists);
+    if ($overwriteifexists || ! dol_is_file($destfile))
+    {
+        $newpathofsrcfile=dol_osencode($srcfile);
+        $newpathofdestfile=dol_osencode($destfile);
+
+        $result=@rename($newpathofsrcfile, $newpathofdestfile); // To see errors, remove @
+        if (! $result) dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
+        if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+        @chmod($newpathofsrcfile, octdec($newmask));
+    }
+
+    return $result;
+}
 
 /**
  *	\brief  Move an uploaded file after some controls.

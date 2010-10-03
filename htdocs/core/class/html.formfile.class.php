@@ -455,17 +455,17 @@ class FormFile
 
 
 	/**
-	 *      \brief      Show list of documents in a directory
-	 *      \param      filearray			Array of files loaded by dol_dir_list function
-	 * 		\param		object				Object on which document is linked to
-	 * 		\param		modulepart			Value for modulepart used by download wrapper
-	 * 		\param		param				Parameters on sort links
-	 * 		\param		forcedownload		Force to open dialog box "Save As" when clicking on file
-	 * 		\param		relativepath		Relative path of docs (autodefined if not provided)
-	 * 		\param		permtodelete		Permission to delete
-	 * 		\param		useinecm			Change output for use in ecm module
-	 * 		\param		textifempty			Text to show if filearray is empty
-	 * 		\return		int					<0 if KO, nb of files shown if OK
+	 *      Show list of documents in a directory
+	 *      @param      filearray			Array of files loaded by dol_dir_list function
+	 * 		@param		object				Object on which document is linked to
+	 * 		@param		modulepart			Value for modulepart used by download wrapper
+	 * 		@param		param				Parameters on sort links
+	 * 		@param		forcedownload		Force to open dialog box "Save As" when clicking on file
+	 * 		@param		relativepath		Relative path of docs (autodefined if not provided)
+	 * 		@param		permtodelete		Permission to delete
+	 * 		@param		useinecm			Change output for use in ecm module
+	 * 		@param		textifempty			Text to show if filearray is empty
+	 * 		@return		int					<0 if KO, nb of files shown if OK
 	 */
 	function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0)
 	{
@@ -510,11 +510,9 @@ class FormFile
 				print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
 				print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
 				print '<td align="right">';
-				//print '&nbsp;';
-				if ($permtodelete)
-				print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
-				else
-				print '&nbsp;';
+				if (! empty($useinecm))  print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?section='.$_REQUEST["section"].'&urlfile='.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
+				if ($permtodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				else print '&nbsp;';
 				print "</td></tr>\n";
 			}
 		}

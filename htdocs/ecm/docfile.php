@@ -26,8 +26,9 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/ecm/class/htmlecm.form.class.php");
 require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ecm.lib.php");
 
 // Load traductions files
 $langs->load("ecm");
@@ -48,9 +49,6 @@ if (!$user->rights->ecm->setup) accessforbidden();
 // Get parameters
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
-$section=$_GET["section"];
-if (! $section) $section='misc';
-$upload_dir = $conf->ecm->dir_output.'/'.$section;
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
@@ -61,19 +59,29 @@ $offset = $limit * $page ;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
-$fileid=$_REQUEST["fileid"];
-if (! $fileid)
-{
-	dol_print_error('',"ErrorParamNotDefined");
-	exit;
-}
-$section=$_REQUEST["section"];
+$section=GETPOST("section");
 if (! $section)
 {
-	dol_print_error('',"ErrorSectionParamNotDefined");
-	exit;
+    dol_print_error('','Error, section parameter missing');
+    exit;
+}
+$urlfile=GETPOST("urlfile");
+if (! $urlfile)
+{
+    dol_print_error('',"ErrorParamNotDefined");
+    exit;
 }
 
+// Load ecm object
+$ecmdir = new ECMDirectory($db);
+$result=$ecmdir->fetch(GETPOST("section"));
+if (! $result > 0)
+{
+    dol_print_error($db,$ecmdir->error);
+    exit;
+}
+$relativepath=$ecmdir->getRelativePath();
+$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
 
 /*
@@ -97,6 +105,45 @@ if (! empty($_GET["fileid"]))
  * Put here all code to do according to value of "action" parameter
  ********************************************************************/
 
+// Rename file
+if (GETPOST('action') == 'update' && ! GETPOST('cancel'))
+{
+    $error=0;
+
+    $oldlabel=GETPOST('urlfile');
+    $newlabel=GETPOST('label');
+
+    //$db->begin();
+
+    $olddir=$ecmdir->getRelativePath(0);
+    $olddir=$conf->ecm->dir_output.'/'.$olddir;
+    $newdir=$olddir;
+
+    $oldfile=$olddir.$oldlabel;
+    $newfile=$newdir.$newlabel;
+
+    //print $oldfile.' - '.$newfile;
+    if ($newlabel != $oldlabel)
+    {
+        $result=dol_move($oldfile,$newfile);
+        if (! $result)
+        {
+            $langs->load('errors');
+            $mesg='<div class="error">'.$langs->trans('ErrorFailToRenameFile',$oldfile,$newfile).'</div>';
+            $error++;
+        }
+    }
+
+    if (! $error)
+    {
+        //$db->commit();
+        $urlfile=$newlabel;
+    }
+    else
+    {
+        //$db->rollback();
+    }
+}
 
 
 
@@ -109,18 +156,21 @@ if (! empty($_GET["fileid"]))
 llxHeader();
 
 $form=new Form($db);
-$formecm=new FormEcm($db);
 
+$fullpath=$conf->ecm->dir_output.'/'.$ecmdir->label.'/'.$urlfile;
 
+$file->section_id=$ecmdir->id;
+$file->label=$urlfile;
 
-$head = ecm_prepare_head($ecmdir);
-dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"));
+$head = ecm_file_prepare_head($file);
+dol_fiche_head($head, 'card', $langs->trans("File"), 0, 'generic');
 
 if ($_GET["action"] == 'edit')
 {
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="fileid" value="'.$fileid.'">';
+	print '<input type="hidden" name="section" value="'.$section.'">';
+    print '<input type="hidden" name="urlfile" value="'.$urlfile.'">';
 	print '<input type="hidden" name="action" value="update">';
 }
 
@@ -134,11 +184,7 @@ $i=0;
 while ($tmpecmdir && $result > 0)
 {
 	$tmpecmdir->ref=$tmpecmdir->label;
-	if ($i == 0 && $_GET["action"] == 'edit')
-	{
-		$s='<input type="text" name="label" size="32" value="'.$tmpecmdir->label.'">';
-	}
-	else $s=$tmpecmdir->getNomUrl(1).$s;
+    $s=$tmpecmdir->getNomUrl(1).$s;
 	if ($tmpecmdir->fk_parent)
 	{
 		$s=' -> '.$s;
@@ -153,8 +199,11 @@ while ($tmpecmdir && $result > 0)
 
 print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
 print $s;
+print ' -> ';
+if (GETPOST('action') == 'edit') print '<input type="text" name="label" size="64" value="'.$urlfile.'">';
+else print $urlfile;
 print '</td></tr>';
-print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+/*print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 if ($_GET["action"] == 'edit')
 {
 	print '<textarea class="flat" name="description" cols="80">';
@@ -168,11 +217,11 @@ $userecm=new User($db);
 $userecm->fetch($ecmdir->fk_user_c);
 print $userecm->getNomUrl(1);
 print '</td></tr>';
+*/
 print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';
-print dol_print_date($ecmdir->date_c,'dayhour');
+print dol_print_date(dol_filemtime($fullpath),'dayhour');
 print '</td></tr>';
-print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
-//print $conf->ecm->dir_output;
+/*print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
 print '/ecm/'.$relativepath;
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMNbOfDocs").'</td><td>';
@@ -181,6 +230,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
 print dol_print_size($totalsize);
 print '</td></tr>';
+*/
 if ($_GET["action"] == 'edit')
 {
 	print '<tr><td colspan="2" align="center">';
@@ -197,32 +247,36 @@ if ($_GET["action"] == 'edit')
 print '</div>';
 
 
-
-if (! $_GET["action"] || $_GET["action"] == 'delete_section')
+// Confirmation de la suppression d'une ligne categorie
+if ($_GET['action'] == 'delete_file')
 {
-	// Confirmation de la suppression d'une ligne categorie
-	if ($_GET['action'] == 'delete_section')
-	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urlencode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
-		if ($ret == 'html') print '<br>';
-	}
+    $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urlencode($_GET["section"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile',$urlfile), 'confirm_deletefile', '', 1, 1);
+    if ($ret == 'html') print '<br>';
+}
+
+if ($_GET["action"] != 'edit')
+{
 
 	if ($mesg) { print $mesg."<br>"; }
 
 
-	// Construit fiche  rubrique
-
-
 	// Actions buttons
 	print '<div class="tabsAction">';
+
+    if ($user->rights->ecm->setup)
+    {
+        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
+    }
+/*
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section">'.$langs->trans('Delete').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
 	}
 	else
 	{
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}
+*/
 	print '</div>';
 }
 

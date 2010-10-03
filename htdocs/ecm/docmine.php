@@ -56,7 +56,7 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$section=$_REQUEST["section"];
+$section=GETPOST("section");
 if (! $section)
 {
 	dol_print_error('',"ErrorSectionParamNotDefined");
@@ -66,12 +66,7 @@ if (! $section)
 
 // Load ecm object
 $ecmdir = new ECMDirectory($db);
-if (empty($_REQUEST["section"]))
-{
-	dol_print_error('','Error, section parameter missing');
-	exit;
-}
-$result=$ecmdir->fetch($_REQUEST["section"]);
+$result=$ecmdir->fetch(GETPOST("section"));
 if (! $result > 0)
 {
 	dol_print_error($db,$ecmdir->error);
@@ -155,7 +150,9 @@ if (GETPOST('action') == 'confirm_deletedir' && GETPOST('confirm') == 'yes')
 // Update description
 if (GETPOST('action') == 'update' && ! GETPOST('cancel'))
 {
-	$db->begin();
+	$error=0;
+
+    $db->begin();
 
 	$oldlabel=$ecmdir->label;
 	$olddir=$ecmdir->getRelativePath(0);
@@ -167,8 +164,6 @@ if (GETPOST('action') == 'update' && ! GETPOST('cancel'))
 	$result=$ecmdir->update($user);
 	if ($result > 0)
 	{
-		$error=0;
-
 		// Try to rename file if changed
 		if ($oldlabel != $ecmdir->label
 			&& file_exists($olddir))
@@ -227,7 +222,7 @@ foreach($filearray as $key => $file)
 
 
 $head = ecm_prepare_head($ecmdir);
-dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"));
+dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"), '', 'dir');
 
 if ($_GET["action"] == 'edit')
 {
@@ -285,7 +280,6 @@ print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';
 print dol_print_date($ecmdir->date_c,'dayhour');
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
-//print $conf->ecm->dir_output;
 print '/ecm/'.$relativepath;
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMNbOfDocs").'</td><td>';
