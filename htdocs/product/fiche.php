@@ -852,11 +852,9 @@ if ($_GET["id"] || $_GET["ref"])
 	{
 		if (empty($usecanvas))
 		{
-			if ($product->isservice()) {
-				print_fiche_titre($langs->trans('Modify').' '.$langs->trans('Service').' : '.$product->ref, "");
-			} else {
-				print_fiche_titre($langs->trans('Modify').' '.$langs->trans('Product').' : '.$product->ref, "");
-			}
+			$type = $langs->trans('Product');
+			if ($product->isservice()) $type = $langs->trans('Service');
+			print_fiche_titre($langs->trans('Modify').' '.$type.' : '.$product->ref, "");
 
 			if ($mesg) {
 				print '<br><div class="error">'.$mesg.'</div><br>';
