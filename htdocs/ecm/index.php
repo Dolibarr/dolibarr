@@ -208,7 +208,7 @@ if (GETPOST("action") == 'refreshmanual')
         {
             $txt="Directory found on disk ".$dirdesc['fullname'].", not found into database so we add it";
             dol_syslog($txt);
-            print $txt."<br>\n";
+            //print $txt."<br>\n";
 
             // We must first find the fk_parent of directory to create $dirdesc['fullname']
             $fk_parent=-1;
@@ -221,7 +221,7 @@ if (GETPOST("action") == 'refreshmanual')
                 $relativepathtosearchparent=preg_replace('/\/[^\/]*$/','',$relativepathtosearchparent);
                 $txt="Is relative parent path ".$relativepathtosearchparent." for ".$relativepathmissing." found in sql tree ?";
                 dol_syslog($txt);
-                print $txt." -> ";
+                //print $txt." -> ";
                 $parentdirisindatabase=0;
                 foreach($sqltree as $dirsqldesc)
                 {
@@ -234,14 +234,14 @@ if (GETPOST("action") == 'refreshmanual')
                 if ($parentdirisindatabase > 0)
                 {
                     dol_syslog("Yes with id ".$parentdirisindatabase);
-                    print "Yes with id ".$parentdirisindatabase."<br>\n";
+                    //print "Yes with id ".$parentdirisindatabase."<br>\n";
                     $fk_parent=$parentdirisindatabase;
                     //break;  // We found parent, we can stop the while loop
                 }
                 else
                 {
                     dol_syslog("No");
-                    print "No<br>\n";
+                    //print "No<br>\n";
                 }
             }
             else
@@ -259,9 +259,8 @@ if (GETPOST("action") == 'refreshmanual')
 
                 $txt="We create directory ".$ecmdirtmp->label." with parent ".$fk_parent;
                 dol_syslog($txt);
-                print $txt."<br>\n";
+                //print $txt."<br>\n";
                 $id = $ecmdirtmp->create($user);
-                //$id=999;
                 if ($id > 0)
                 {
                     $newdirsql=array('id'=>$id,
@@ -277,7 +276,7 @@ if (GETPOST("action") == 'refreshmanual')
             else {
                 $txt="Parent of ".$dirdesc['fullname']." not found";
                 dol_syslog($txt);
-                print $txt."<br>\n";
+                //print $txt."<br>\n";
             }
         }
     }
