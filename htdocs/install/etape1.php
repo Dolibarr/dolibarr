@@ -567,7 +567,13 @@ function write_conf_file($conffile)
 		fputs($fp, '$dolibarr_main_authentication=\'dolibarr\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_force_https=\''.$_POST["main_force_https"].'\';');
+        fputs($fp, '$dolibarr_main_prod=\'0\';');
+        fputs($fp,"\n");
+
+        fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
+        fputs($fp,"\n");
+
+        fputs($fp, '$dolibarr_main_force_https=\''.$_POST["main_force_https"].'\';');
 		fputs($fp,"\n");
 
 		fputs($fp, '?>');

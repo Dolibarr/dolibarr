@@ -190,6 +190,8 @@ $dolibarr_main_force_https='0';
 # Possible values: 0 or 1
 # Examples:
 # $dolibarr_nocsrfcheck='0';
+#
+$dolibarr_nocsrfcheck='0';
 
 # dolibarr_main_prod
 # When this parameter is defined, all errors messages are not reported.
@@ -197,7 +199,9 @@ $dolibarr_main_force_https='0';
 # Default value: 0
 # Possible values: 0 or 1
 # Examples:
-# $dolibarr_main_prod='1';
+# $dolibarr_main_prod='0';
+#
+$dolibarr_main_prod='0';
 
 
 
