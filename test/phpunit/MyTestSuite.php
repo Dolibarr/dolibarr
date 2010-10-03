@@ -62,11 +62,15 @@ class MyTestSuite
         $suite->addTestSuite('AdherentTest');
 		require_once dirname(__FILE__).'/CommandeTest.php';
         $suite->addTestSuite('CommandeTest');
-		require_once dirname(__FILE__).'/ContratTest.php';
+		require_once dirname(__FILE__).'/CommandeFournisseurTest.php';
+        $suite->addTestSuite('CommandeFournisseurTest');
+        require_once dirname(__FILE__).'/ContratTest.php';
         $suite->addTestSuite('ContratTest');
         require_once dirname(__FILE__).'/FactureTest.php';
         $suite->addTestSuite('FactureTest');
-		require_once dirname(__FILE__).'/PropalTest.php';
+        require_once dirname(__FILE__).'/FactureFournisseurTest.php';
+        $suite->addTestSuite('FactureFournisseurTest');
+        require_once dirname(__FILE__).'/PropalTest.php';
         $suite->addTestSuite('PropalTest');
 		require_once dirname(__FILE__).'/UserTest.php';
         $suite->addTestSuite('UserTest');

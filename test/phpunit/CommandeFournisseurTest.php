@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/CompanyBankAccount.php
+ *      \file       test/phpunit/CommandeFournisseurTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *      \version    $Id$
@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/societe/class/companybankaccount.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.commande.class.php';
 
 if (empty($user->id))
 {
@@ -42,11 +42,11 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers Commande
- * @covers OrderLine
+ * @covers CommandeFournisseur
+ * @covers OrderLineFournisseur
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
+class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -57,9 +57,9 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return CompanyBankAccountTest
+	 * @return CommandeFournisseurTest
 	 */
-	function CompanyBankAccountTest()
+	function CommandeFournisseurTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -111,7 +111,7 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testCompanyBankAccountCreate()
+    public function testCommandeFournisseurCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -119,7 +119,7 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new CompanyBankAccount($this->savdb);
+		$localobject=new CommandeFournisseur($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
@@ -129,10 +129,10 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testCompanyBankAccountCreate
+     * @depends	testCommandeFournisseurCreate
      * The depends says test is run only if previous is ok
      */
-    public function testCompanyBankAccountFetch($id)
+    public function testCommandeFournisseurFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -140,7 +140,7 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new CompanyBankAccount($this->savdb);
+		$localobject=new CommandeFournisseur($this->savdb);
     	$result=$localobject->fetch($id);
 
     	$this->assertLessThan($result, 0);
@@ -149,10 +149,10 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testCompanyBankAccountFetch
+     * @depends	testCommandeFournisseurFetch
      * The depends says test is run only if previous is ok
      */
-    public function testCompanyBankAccountUpdate($localobject)
+/*    public function testCommandeFournisseurUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -160,19 +160,19 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject->owner='New owner';
+		$localobject->note='New note after update';
     	$result=$localobject->update($user);
 
 	   	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
     	return $localobject->id;
     }
-
+*/
     /**
-     * @depends	testCompanyBankAccountUpdate
+     * @depends	testCommandeFournisseurFetch
      * The depends says test is run only if previous is ok
      */
-/*    public function testCompanyBankAccountDelete($id)
+    public function testCommandeFournisseurValid($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -180,7 +180,45 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new CompanyBankAccount($this->savdb);
+    	$result=$localobject->valid($user);
+
+    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+    	return $localobject;
+    }
+
+    /**
+     * @depends	testCommandeFournisseurValid
+     * The depends says test is run only if previous is ok
+     */
+    public function testCommandeFournisseurCancel($localobject)
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+    	$result=$localobject->cancel($user);
+
+    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+    	return $localobject->id;
+    }
+
+    /**
+     * @depends	testCommandeFournisseurCancel
+     * The depends says test is run only if previous is ok
+     */
+    public function testCommandeFournisseurDelete($id)
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new CommandeFournisseur($this->savdb);
     	$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 
@@ -188,6 +226,25 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0);
     	return $result;
     }
-*/
+
+    /**
+     *
+     */
+    public function testVerifyNumRef()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new CommandeFournisseur($this->savdb);
+    	$result=$localobject->ref='refthatdoesnotexists';
+		$result=$localobject->VerifyNumRef();
+
+		print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, 0);
+    	return $result;
+    }
 }
 ?>

@@ -19,7 +19,7 @@
 /**
  *      \file       test/phpunit/DateLibTest.php
  *		\ingroup    test
- *      \brief      This file is an example for a PHPUnit test
+ *      \brief      PHPUnit test
  *      \version    $Id$
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
