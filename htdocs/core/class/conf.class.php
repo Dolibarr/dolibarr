@@ -66,6 +66,9 @@ class Conf
 
 	var $logbuffer				= array();
 
+	var $filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
+
+
 	/**
 	 * Constructor
 	 *

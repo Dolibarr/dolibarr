@@ -73,3 +73,7 @@ ALTER TABLE llx_categorie ADD COLUMN import_key varchar(14);
 
 ALTER TABLE llx_product ADD COLUMN customcode varchar(32) after note;
 ALTER TABLE llx_product ADD COLUMN fk_country integer after customcode; 
+
+
+ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX idx_ecm_directories (label, fk_parent, entity);
+ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents (fullpath_dol);

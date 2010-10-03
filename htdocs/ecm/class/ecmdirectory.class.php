@@ -51,6 +51,8 @@ class EcmDirectory // extends CommonObject
 	var $cats=array();
 	var $motherof=array();
 
+    var $forbiddenchars = array('<','>',':','/','\\','?','*','|','"');
+
 
 	/**
 	 *      \brief      Constructor
@@ -64,24 +66,25 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	 *      \brief      Create record into database
-	 *      \param      user        User that create
-	 *      \return     int         <0 si ko, >0 si ok
+	 *      Create record into database
+	 *      @param      user        User that create
+	 *      @return     int         <0 if KO, >0 if OK
 	 */
 	function create($user)
 	{
 		global $conf, $langs;
 
-		$now=time();
+		$now=dol_now();
 
 		// Clean parameters
-		$this->label=dol_string_nospecial(trim($this->label));
+		$this->label=dol_sanitizeFileName(trim($this->label));
 		$this->fk_parent=trim($this->fk_parent);
 		$this->description=trim($this->description);
 		if (! $this->cachenbofdoc) $this->cachenbofdoc=0;
 		$this->date_c=$now;
 		$this->fk_user_c=$user->id;
 		if ($this->fk_parent <= 0) $this->fk_parent=0;
+
 
 		// Check if same directory does not exists with this name
 		$relativepath=$this->label;
@@ -99,7 +102,7 @@ class EcmDirectory // extends CommonObject
 		$pathfound=0;
 		foreach ($cate_arbo as $key => $categ)
 		{
-			$path=preg_replace('/([\s-><\/])+/i','/',$categ['fulllabel']);
+			$path=str_replace($this->forbiddenchars,'_',$categ['fulllabel']);
 			//print $path.'<br>';
 			if ($path == $relativepath)
 			{
@@ -352,7 +355,7 @@ class EcmDirectory // extends CommonObject
 		}
 		else
 		{
-			$this->error='ErrorFailedToDeleteDir';
+			$this->error='ErrorFailToDeleteDir';
 			dol_syslog("EcmDirectories::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			$error++;
@@ -408,7 +411,8 @@ class EcmDirectory // extends CommonObject
 		//$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';
 		$picto='dir';
 
-		$newref=str_replace('_',' ',$this->ref);
+		//$newref=str_replace('_',' ',$this->ref);
+		$newref=$this->ref;
 		$newlabel=$langs->trans("ShowECMSection").': '.$newref;
 
 		if ($withpicto) $result.=($lien.img_object($newlabel,$picto,'',1).$lienfin);
@@ -491,22 +495,22 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	 * 	\brief		Reconstruit l'arborescence des categories sous la forme d'un tableau
-	 *				Renvoi un tableau de tableau('id','id_mere',...) trie selon
-	 *				arbre et avec:
-	 *				id = id de la categorie
-	 *				id_mere = id de la categorie mere
-	 *				id_children = tableau des id enfant
-	 *				label = nom de la categorie
-	 *				cachenbofdoc = nb of documents
-	 *				date_c = date creation
-	 * 				fk_user_c = user creation
-	 *  			login_c = login creation
-	 * 				fullpath	Full path (Added by build_path_from_id_categ call)
-	 * 				fulllabel	Full label (Added by build_path_from_id_categ call)
-	 * 				level		Level of line (Added by build_path_from_id_categ call)
-	 *  \param		force		Force reload of full arbo even if already loaded
-	 *	\return		array		Tableau de array
+	 * 	Reconstruit l'arborescence des categories sous la forme d'un tableau
+	 *	Renvoi un tableau de tableau('id','id_mere',...) trie selon arbre et avec:
+	 *				id                  Id de la categorie
+	 *				id_mere             Id de la categorie mere
+	 *				id_children         Tableau des id enfant
+	 *				label               Name of directory
+	 *				cachenbofdoc        Nb of documents
+	 *				date_c              Date creation
+	 * 				fk_user_c           User creation
+	 *  			login_c             Login creation
+	 * 				fullpath	        Full path of id (Added by build_path_from_id_categ call)
+     *              fullrelativename    Full path name (Added by build_path_from_id_categ call)
+	 * 				fulllabel	        Full label (Added by build_path_from_id_categ call)
+	 * 				level		        Level of line (Added by build_path_from_id_categ call)
+	 *  @param		force		        Force reload of full arbo even if already loaded in cache $this->cats
+	 *	@return		array		        Tableau de array
 	 */
 	function get_full_arbo($force=0)
 	{
@@ -576,7 +580,7 @@ class EcmDirectory // extends CommonObject
 			return -1;
 		}
 
-		// On ajoute la propriete fullpath a tous les elements
+		// We add properties fullxxx to all elements
 		foreach($this->cats as $key => $val)
 		{
 			if (isset($motherof[$key])) continue;
@@ -590,7 +594,7 @@ class EcmDirectory // extends CommonObject
 	}
 
 	/**
-	 *	\brief		Calcule les proprietes fullpath et fulllabel d'une categorie
+	 *	\brief		Calcule les proprietes fullpath, fullrelativename, fulllabel d'un repertoire
 	 *				du tableau this->cats et de toutes ces enfants
 	 * 	\param		id_categ		id_categ entry to update
 	 * 	\param		protection		Deep counter to avoid infinite loop
@@ -602,16 +606,19 @@ class EcmDirectory // extends CommonObject
 		{
 			$this->cats[$id_categ]['fullpath'] =$this->cats[$this->cats[$id_categ]['id_mere']]['fullpath'];
 			$this->cats[$id_categ]['fullpath'].='_'.$id_categ;
+            $this->cats[$id_categ]['fullrelativename'] =$this->cats[$this->cats[$id_categ]['id_mere']]['fullrelativename'];
+            $this->cats[$id_categ]['fullrelativename'].='/'.$this->cats[$id_categ]['label'];
 			$this->cats[$id_categ]['fulllabel'] =$this->cats[$this->cats[$id_categ]['id_mere']]['fulllabel'];
 			$this->cats[$id_categ]['fulllabel'].=' >> '.$this->cats[$id_categ]['label'];
 		}
 		else
 		{
 			$this->cats[$id_categ]['fullpath']='_'.$id_categ;
+            $this->cats[$id_categ]['fullrelativename']=$this->cats[$id_categ]['label'];
 			$this->cats[$id_categ]['fulllabel']=$this->cats[$id_categ]['label'];
 		}
-		// We count number of _ to have level
-		$this->cats[$id_categ]['level']=dol_strlen(preg_replace('/([^_])/i','',$this->cats[$id_categ]['fullpath']));
+		// We count number of _ to have level (we use strlen that is faster than dol_strlen)
+		$this->cats[$id_categ]['level']=strlen(preg_replace('/([^_])/i','',$this->cats[$id_categ]['fullpath']));
 
 		// Traite ces enfants
 		$protection++;
@@ -647,7 +654,7 @@ class EcmDirectory // extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql.= " cachenbofdoc = '".sizeof($filelist)."'";
-		if (empty($all))
+		if (empty($all))  // By default
 		{
 			$sql.= " WHERE rowid = ".$this->id;
 		}

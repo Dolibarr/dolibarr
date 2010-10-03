@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,8 +88,8 @@ $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 
-// Envoie fichier
-if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+// Upload file
+if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
@@ -126,9 +126,9 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 }
 
 // Remove file
-if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
+if (GETPOST('action') == 'confirm_deletefile' && GETPOST('confirm') == 'yes')
 {
-  $file = $upload_dir . "/" . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+  $file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
   $result=dol_delete_file($file);
 
   $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -137,7 +137,7 @@ if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 }
 
 // Remove dir
-if ($_POST['action'] == 'confirm_deletedir' && $_POST['confirm'] == 'yes')
+if (GETPOST('action') == 'confirm_deletedir' && GETPOST('confirm') == 'yes')
 {
 	// Fetch was already done
 	$result=$ecmdir->delete($user);
@@ -148,12 +148,12 @@ if ($_POST['action'] == 'confirm_deletedir' && $_POST['confirm'] == 'yes')
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans($ecmdir->error).'</div>';
+		$mesg = '<div class="error">'.$langs->trans($ecmdir->error,$ecmdir->label).'</div>';
 	}
 }
 
 // Update description
-if ($_POST['action'] == 'update' && ! $_POST['cancel'])
+if (GETPOST('action') == 'update' && ! GETPOST('cancel'))
 {
 	$db->begin();
 
@@ -162,8 +162,8 @@ if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 	$olddir=$conf->ecm->dir_output.'/'.$olddir;
 
 	// Fetch was already done
-	$ecmdir->label = $_POST["label"];
-	$ecmdir->description = $_POST["description"];
+	$ecmdir->label = GETPOST("label");
+	$ecmdir->description = GETPOST("description");
 	$result=$ecmdir->update($user);
 	if ($result > 0)
 	{
@@ -218,7 +218,7 @@ $form=new Form($db);
 
 
 // Construit liste des fichiers
-$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),3);
 $totalsize=0;
 foreach($filearray as $key => $file)
 {
@@ -312,7 +312,7 @@ print '</div>';
 
 
 // Actions buttons
-if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete_dir' && $_GET['action'] != 'delete')
+if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete')
 {
 	print '<div class="tabsAction">';
 
@@ -361,7 +361,8 @@ if ($_GET['action'] == 'delete')
 // Confirm remove file
 if ($_GET['action'] == 'delete_dir')
 {
-	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"], $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection'), 'confirm_deletedir');
+	$relativepathwithoutslash=preg_replace('/[\/]$/','',$relativepath);
+    $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"], $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$relativepathwithoutslash), 'confirm_deletedir', '', 1, 1);
 	if ($ret == 'html') print '<br>';
 }
 

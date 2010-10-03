@@ -111,22 +111,23 @@ function dol_now($mode='tzserver')
 
 
 /**
- *	\brief          Clean a string to use it as a file name.
- *	\param          str             String to clean
- * 	\param			newstr			String to replace bad chars by
- *	\return         string          String cleaned (a-zA-Z_)
- * 	\seealso		dol_string_nospecial, dol_string_unaccent
+ *	Clean a string to use it as a file name.
+ *	@param          str             String to clean
+ * 	@param			newstr			String to replace bad chars with
+ *	@return         string          String cleaned (a-zA-Z_)
+ * 	@see        	dol_string_nospecial, dol_string_unaccent
  */
 function dol_sanitizeFileName($str,$newstr='_')
 {
-	return dol_string_nospecial(dol_string_unaccent($str),$newstr);
+    global $conf;
+	return dol_string_nospecial(dol_string_unaccent($str),$newstr,$conf->filesystem_forbidden_chars);
 }
 
 /**
- *	\brief          Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName.
- *	\param          str             String to clean
- *	\return         string          Cleaned string
- * 	\seealso		dol_sanitizeFilename, dol_string_nospecial
+ *	Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName.
+ *	@param          str             String to clean
+ *	@return         string          Cleaned string
+ * 	@see    		dol_sanitizeFilename, dol_string_nospecial
  */
 function dol_string_unaccent($str)
 {
@@ -169,19 +170,21 @@ function dol_string_unaccent($str)
 }
 
 /**
- *	\brief          Clean a string from all punctuation characters to use it as a ref or login.
- *	\param          str             String to clean
- * 	\param			newstr			String to replace bad chars by
- * 	\return         string          Cleaned string
- * 	\seealso		dol_sanitizeFilename, dol_string_unaccent
+ *	Clean a string from all punctuation characters to use it as a ref or login.
+ *	@param          str             String to clean
+ * 	@param			newstr			String to replace forbidden chars with
+ *  @param          badchars        List of forbidden characters
+ * 	@return         string          Cleaned string
+ * 	@see    		dol_sanitizeFilename, dol_string_unaccent
  */
-function dol_string_nospecial($str,$newstr='_')
+function dol_string_nospecial($str,$newstr='_',$badchars='')
 {
-	$forbidden_chars_to_underscore=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-	//$forbidden_chars_to_remove=array("(",")");
+	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 	$forbidden_chars_to_remove=array();
+    if (is_array($badchars)) $forbidden_chars_to_replace=$badchars;
+    //$forbidden_chars_to_remove=array("(",")");
 
-	return str_replace($forbidden_chars_to_underscore,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
+	return str_replace($forbidden_chars_to_replace,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
 }
 
 /**
