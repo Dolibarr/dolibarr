@@ -29,11 +29,11 @@ define("NOLOGIN",1);		// This means this output page does not require to be logg
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/paybox/lib/paybox.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 // Security check
-if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);
+if (empty($conf->paypal->enabled)) accessforbidden('',1,1,1);
 
 $langs->load("main");
 $langs->load("other");
@@ -44,12 +44,9 @@ $langs->load("paybox");
 $langs->load("paypal");
 
 
-
-
 /*
  * Actions
  */
-
 
 
 
@@ -58,16 +55,16 @@ $langs->load("paypal");
  * View
  */
 
-llxHeaderPayBox($langs->trans("PaymentForm"));
+llxHeaderPaypal($langs->trans("PaymentForm"));
 
 
 print $langs->trans("YourPaymentHasNotBeenRecorded");
 
 
-html_print_paybox_footer($mysoc,$langs);
+html_print_paypal_footer($mysoc,$langs);
 
 
 $db->close();
 
-llxFooterPayBox('$Date$ - $Revision$');
+llxFooterPaypal('$Date$ - $Revision$');
 ?>

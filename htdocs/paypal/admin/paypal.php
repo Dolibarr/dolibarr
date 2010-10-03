@@ -123,7 +123,7 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYPAL_API_INTEGRAL_OR_PAYPALONLY").'</span></td><td>';
-print $form->selectyesno("PAYPAL_API_INTEGRAL_OR_PAYPALONLY",$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY);
+print $form->selectarray("PAYPAL_API_INTEGRAL_OR_PAYPALONLY",array('integral'=>'Integral','paypalonly'=>'Paypal only'),$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY);
 print '</td></tr>';
 
 $var=!$var;

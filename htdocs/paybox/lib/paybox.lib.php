@@ -231,7 +231,7 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
  * @param   $fromcompany
  * @param   $langs
  */
-function html_print_footer($fromcompany,$langs)
+function html_print_paybox_footer($fromcompany,$langs)
 {
 	global $conf;
 

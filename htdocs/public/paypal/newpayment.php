@@ -19,8 +19,8 @@
  */
 
 /**
- *     	\file       htdocs/public/paybox/newpayment.php
- *		\ingroup    paybox
+ *     	\file       htdocs/public/paypal/newpayment.php
+ *		\ingroup    paypal
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
  *		\version    $Id$
@@ -30,13 +30,13 @@ define("NOLOGIN",1);		// This means this output page does not require to be logg
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/paybox/lib/paybox.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 // Security check
-if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);
+if (empty($conf->paypal->enabled)) accessforbidden('',1,1,1);
 
 // Creation d'un jeton contre les failles CSRF
 $token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
@@ -55,11 +55,12 @@ if (isset($_POST['token']) && isset($_SESSION['token']))
 
 $langs->load("main");
 $langs->load("other");
-$langs->load("paybox");
 $langs->load("dict");
 $langs->load("bills");
 $langs->load("companies");
 $langs->load("errors");
+$langs->load("paybox");
+$langs->load("paypal");
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -113,7 +114,7 @@ if ($_REQUEST["action"] == 'dopayment')
 
 	if (empty($mesg))
 	{
-		print_paybox_redirect($PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG, $ID);
+		print_paypal_redirect($PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG, $ID);
 		session_destroy();
 		exit;
 	}
@@ -125,7 +126,7 @@ if ($_REQUEST["action"] == 'dopayment')
  * View
  */
 
-llxHeaderPayBox($langs->trans("PaymentForm"));
+llxHeaderPaypal($langs->trans("PaymentForm"));
 
 
 // Common variables
@@ -642,9 +643,9 @@ print '</center>';
 print '<br>';
 
 
-html_print_paybox_footer($mysoc,$langs);
+html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPayBox('$Date$ - $Revision$');
+llxFooterPaypal('$Date$ - $Revision$');
 ?>
