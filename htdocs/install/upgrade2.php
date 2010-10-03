@@ -3262,6 +3262,14 @@ function migrate_reload_modules($db,$langs,$conf)
         //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
         $mod->init();
     }
+    if (! empty($conf->global->MAIN_MODULE_PAYBOX))    // Permission has changed into 3.0
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Paybox");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modPaybox.class.php');
+        $mod=new modPaybox($db);
+        $mod->remove('noboxes');  // We need to remove because id of module has changed
+        $mod->init();
+    }
 
 }
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,29 +94,6 @@ print "</tr>\n";
 /*
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_IBS_DEVISE").'</td><td>';
-print '<input size="32" type="text" name="PAYBOX_IBS_DEVISE" value="'.$conf->global->PAYBOX_IBS_DEVISE.'">';
-print '<br>'.$langs->trans("Example").': 978 (EUR)';
-print '</td></tr>';
-*/
-
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_CSS_URL").'</td><td>';
-print '<input size="64" type="text" name="PAYBOX_CSS_URL" value="'.$conf->global->PAYBOX_CSS_URL.'">';
-print '<br>'.$langs->trans("Example").': http://mysite/mycss.css';
-print '</td></tr>';
-
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_CREDITOR").'</td><td>';
-print '<input size="64" type="text" name="PAYBOX_CREDITOR" value="'.$conf->global->PAYBOX_CREDITOR.'">';
-print '<br>'.$langs->trans("Example").': '.$mysoc->nom;
-print '</td></tr>';
-
-/*
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
 print $langs->trans("PAYBOX_CGI_URL_V1").'</td><td>';
 print '<input size="64" type="text" name="PAYBOX_CGI_URL_V1" value="'.$conf->global->PAYBOX_CGI_URL_V1.'">';
 print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/module_linux.cgi';
@@ -149,6 +126,29 @@ print '<tr '.$bc[$var].'><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_IDENTIFIANT").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_PBX_IDENTIFIANT" value="'.$conf->global->PAYBOX_PBX_IDENTIFIANT.'">';
 print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
+print '</td></tr>';
+
+/*
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PAYBOX_IBS_DEVISE").'</td><td>';
+print '<input size="32" type="text" name="PAYBOX_IBS_DEVISE" value="'.$conf->global->PAYBOX_IBS_DEVISE.'">';
+print '<br>'.$langs->trans("Example").': 978 (EUR)';
+print '</td></tr>';
+*/
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PAYBOX_CREDITOR").'</td><td>';
+print '<input size="64" type="text" name="PAYBOX_CREDITOR" value="'.$conf->global->PAYBOX_CREDITOR.'">';
+print '<br>'.$langs->trans("Example").': '.$mysoc->nom;
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PAYBOX_CSS_URL").'</td><td>';
+print '<input size="64" type="text" name="PAYBOX_CSS_URL" value="'.$conf->global->PAYBOX_CSS_URL.'">';
+print '<br>'.$langs->trans("Example").': http://mysite/mycss.css';
 print '</td></tr>';
 
 

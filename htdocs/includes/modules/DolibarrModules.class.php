@@ -477,15 +477,17 @@ class DolibarrModules
 
 
 	/**
-	 *		\brief		Create tables and keys required by module
-	 * 					Files module.sql and module.key.sql with create table and create keys
-	 * 					commands must be stored in directory reldir='/module/sql/'
-	 *					This function is called by this->init.
-	 * 		\return		int		<=0 if KO, >0 if OK
+	 *		Create tables and keys required by module.
+	 * 		Files module.sql and module.key.sql with create table and create keys
+	 * 		commands must be stored in directory reldir='/module/sql/'
+	 *		This function is called by this->init.
+	 * 		@return		int		<=0 if KO, >0 if OK
 	 */
 	function _load_tables($reldir)
 	{
 		global $db,$conf;
+
+		$error=0;
 
 		include_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
 

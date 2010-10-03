@@ -120,12 +120,32 @@ if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_m
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 
 define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
+define('DOL_CLASS_PATH', 'class/');                             // Filsystem path to class dir
+define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root)?$dolibarr_main_url_root:''));           // URL relative root
+$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));  // $uri contains url without http*
+$suburi = strstr ($uri, '/');       // $suburi contains url without domain
+if ($suburi == '/') $suburi = '';   // If $suburi is /, it is now ''
+define('DOL_URL_ROOT', $suburi);    // URL relative root ('', '/dolibarr', ...)
+
+
 if (empty($conf->file->character_set_client))      	$conf->file->character_set_client="UTF-8";
 if (empty($conf->db->character_set))  				$conf->db->character_set='utf8';
 if (empty($conf->db->dolibarr_main_db_collation))  	$conf->db->dolibarr_main_db_collation='utf8_general_ci';
 if (empty($conf->db->dolibarr_main_db_encryption)) 	$conf->db->dolibarr_main_db_encryption=0;
 if (empty($conf->db->dolibarr_main_db_cryptkey))   	$conf->db->dolibarr_main_db_cryptkey='';
 if (empty($conf->db->user)) $conf->db->user='';
+
+// Define array of document root directories
+$conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
+if (! empty($dolibarr_main_document_root_alt))
+{
+    // dolibarr_main_document_root_alt contains several directories
+    $values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
+    foreach($values as $value)
+    {
+        $conf->file->dol_document_root[]=$value;
+    }
+}
 
 
 // Security check

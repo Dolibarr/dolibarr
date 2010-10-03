@@ -110,7 +110,7 @@ if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! em
 	$dolibarr_main_url_root=str_replace($_SERVER["SCRIPT_URL"],'',$_SERVER["SCRIPT_URI"]);
 }
 define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);			// URL relative root
-$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);	// $uri contains url without http*
+$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));	// $uri contains url without http*
 $suburi = strstr ($uri, '/');		// $suburi contains url without domain
 if ($suburi == '/') $suburi = '';	// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);	// URL relative root ('', '/dolibarr', ...)

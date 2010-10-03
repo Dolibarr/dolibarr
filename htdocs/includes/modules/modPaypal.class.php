@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,37 +17,37 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   paybox     Module paybox
- *      \brief      Add integration with Paybox online payment system.
+/**     \defgroup   paybox     Module paypal
+ *      \brief      Add integration with Paypal online payment system.
  */
 
 /**
- *      \file       htdocs/includes/modules/modPaybox.class.php
+ *      \file       htdocs/includes/modules/modPaypal.class.php
  *      \ingroup    mymodule
- *      \brief      Description and activation file for module Paybox
+ *      \brief      Description and activation file for module Paypal
  *		\version	$Id$
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     \class      modPayBox
- *      \brief      Description and activation class for module Paybox
+/**     \class      modPaypal
+ *      \brief      Description and activation class for module Paypal
  */
-class modPayBox extends DolibarrModules
+class modPaypal extends DolibarrModules
 {
     /**
     *   \brief      Constructor. Define names, constants, directories, boxes, permissions
     *   \param      DB      Database handler
     */
-	function modPayBox($DB)
+	function modPaypal($DB)
 	{
 		$this->db = $DB;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 50000;
+		$this->numero = 50200;
 		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'paybox';
+		$this->rights_class = 'paypal';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
@@ -55,9 +55,9 @@ class modPayBox extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Module to offer an online payment page by credit card with PayBox";
+		$this->description = "Module to offer an online payment page by credit card with PayPal";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+		$this->version = 'development';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=other)
@@ -65,22 +65,22 @@ class modPayBox extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory, use this->picto=DOL_URL_ROOT.'/module/img/file.png'
-		$this->picto=DOL_URL_ROOT.'/paybox/img/paybox.png';
+		$this->picto=DOL_URL_ROOT.'/paypal/img/paypal.png';
 
 		// Data directories to create when module is enabled.
-		$this->dirs = array('/paybox/temp');
+		$this->dirs = array('/paypal/temp');
 
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
 		$this->style_sheet = '';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array("paybox.php@paybox");
+		$this->config_page_url = array("paypal.php@paypal");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(2,6);	// Minimum version of Dolibarr required by module
+		$this->phpmin = array(4,1);					  // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(3,0,-2); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("paybox");
 
 		// Constants
