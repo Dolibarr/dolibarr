@@ -1226,14 +1226,17 @@ class CommonObject
      *  Load type of canvas of an object
      *  @param      id      element id
      */
-    function getCanvas($id)
+    function getCanvas($id=0,$ref='')
     {
         global $conf;
+        
+        $ref = trim($ref);
 
         $sql = "SELECT rowid, canvas";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE entity = ".$conf->entity;
-        $sql.= " AND rowid = ".$id;
+        if (!empty($id)) $sql.= " AND rowid = ".$id;
+        if (!empty($ref)) $sql.= " AND ref = '".$ref."'";
 
         $resql = $this->db->query($sql);
         if ($resql)
