@@ -3,6 +3,8 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.0 compared to 2.9 *****
 
 For users:
+- New: Reordering lines in invoice, orders, commercial proposal is faster (use Ajax
+       technology).      
 - New: Can import members using assistant.
 - New: Can exclude deposit, replacement or credit notes in script rebuild_merge_pdf.
 - New: task #10473 : Option MAIN_PROFIDx_IN_ADDRESS must no more be hidden.
@@ -46,6 +48,7 @@ For developers:
 - New: Add first Selenium GUI tests.
 - New: Enhance a lot of internal function to build external modules
        more easily.
+- Qual: Menu system code is simpler.
 - Qual: Mutualize some duplicate code.
 - Qual: Renamed some fields into database to be more internationnal.
 - Qual: Removed deprecated code.
