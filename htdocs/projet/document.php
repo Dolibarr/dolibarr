@@ -136,7 +136,7 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_head($head, 'document', $langs->trans("Project"), 0, ($project->public?'projectpub':'project'));
 
 	// Files list constructor
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),3);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{

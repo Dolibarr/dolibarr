@@ -93,6 +93,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 					// Add file into file_list array
 					if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
 					if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
+
 					if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
 					{
 						$file_list[] = array(

@@ -194,7 +194,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 					$arr_name = array();
 					$arr_css  = array();
 
-					$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,1);
+					$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
 					if (sizeof($listofpaths))
 					{
 						foreach($listofpaths as $key => $val)
@@ -324,7 +324,7 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 		$arr_css  = array();
 
 		// Attached files
-		$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,1);
+		$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
 		if (sizeof($listofpaths))
 		{
 			foreach($listofpaths as $key => $val)
@@ -426,7 +426,7 @@ if (! empty($_POST["removedfile"]))
 
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
 
-	$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,1);
+	$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
 
 	// Remove file
 	$filenb=($_POST["removedfile"]-1);
@@ -879,7 +879,7 @@ else
 				//$property='joined_file'.$i;
 				print '<tr><td>'.$langs->trans("MailFile").' '.$i.'</td><td colspan="3">';
 				// List of files
-				$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,1);
+				$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
 				if (sizeof($listofpaths))
 				{
 					foreach($listofpaths as $key => $val)
@@ -966,7 +966,7 @@ else
 				print '<tr><td>'.$langs->trans("MailFile").' '.$i.'</td>';
 				print '<td colspan="3">';
 				// List of files
-				$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,1);
+				$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
 				if (sizeof($listofpaths))
 				{
 					foreach($listofpaths as $key => $val)
