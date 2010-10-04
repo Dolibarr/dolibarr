@@ -3,6 +3,12 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.0 compared to 2.9 *****
 
 For users:
+- New: A lot of enhancements into ECM module:
+       Directories can contains special characters,
+       Speed enhancements,
+       Directories can be created outside of Dolibarr, refresh button will 
+       update database,
+       Can rename a file.
 - New: Reordering lines in invoice, orders, commercial proposal is faster (use Ajax
        technology).      
 - New: Can import members using assistant.
