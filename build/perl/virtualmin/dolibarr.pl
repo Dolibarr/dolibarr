@@ -2,7 +2,7 @@
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
 # \version      $Revision$
-# \author       (c)2009 Regis Houssin  <regis@dolibarr.fr>
+# \author       (c)2009-2010 Regis Houssin  <regis@dolibarr.fr>
 #----------------------------------------------------------------------------
 
 
@@ -89,7 +89,7 @@ else {
 					     "At top level"));
 	if ($d->{'ssl'} && $ver >= 2.9) {
 		$rv .= &ui_table_row("Force https connection?",
-				     &ui_yesno_radio("forcehttps", 0));
+					 &ui_yesno_radio("forcehttps", 0));
 		}
 	}
 return $rv;
