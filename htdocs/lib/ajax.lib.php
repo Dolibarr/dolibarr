@@ -136,7 +136,11 @@ function ajax_autocompleter2($selected='', $htmlname, $url, $option='')
 }
 
 /**
- *	Show an ajax dialog 
+ *	Show an ajax dialog
+ *	@param		title		Title of dialog box
+ *	@param		message		Message of dialog box
+ *	@param		w			Width of dialog box
+ *	@param		h			height of dialog box
  */
 function ajax_dialog($title,$message,$w=350,$h=150)
 {
