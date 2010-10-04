@@ -9,6 +9,7 @@ ErrorLoginAlreadyExists=El login %s ya existe.
 ErrorGroupAlreadyExists=El grupo %s ya existe.
 ErrorRecordNotFound=Registro no encontrado
 ErrorDuplicateTrigger=Un archivo trigger de nombre '<b>%s</b>' está cargado. Elimine el doble del directorio '<b>%s</b>'.
+ErrorFailToRenameFile=Error al renombrar el archivo '<b>%s</b>' a '<b>%s</b>'.
 ErrorFailToCreateFile=Error al crear el archivo  '<b>%s</b>'
 ErrorFailToDeleteFile=Error al eliminar el archivo '<b>%s</b>'.
 ErrorFailToRenameDir=Error al renombrar el directorio '<b>%s</b>' a '<b>%s</b>'.
