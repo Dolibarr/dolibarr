@@ -2,7 +2,7 @@
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
 # \version      $Revision$
-# \author       (c)2009 Regis Houssin  <regis@dolibarr.fr>
+# \author       (c)2009-2010 Regis Houssin  <regis@dolibarr.fr>
 #----------------------------------------------------------------------------
 
 
@@ -31,7 +31,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "2.9.0", "2.8.1", "2.7.1" );
+return ( "2.9.0", "2.8.1" );
 }
 
 sub script_dolibarr_category
@@ -46,7 +46,7 @@ return ( 5 );
 
 sub script_dolibarr_php_vars
 {
-return ( [ 'memory_limit', '32M', '+' ],
+return ( [ 'memory_limit', '64M', '+' ],
 	[ 'upload_max_filesize', '10M', '+' ],
 	[ 'max_execution_time', '60', '+' ] );
 }
@@ -87,6 +87,8 @@ else {
 	$rv .= &ui_table_row("Install sub-directory under <tt>$hdir</tt>",
 			     &ui_opt_textbox("dir", "dolibarr", 30,
 					     "At top level"));
+	$rv .= &ui_table_row("Force https connection?",
+			     &ui_yesno_radio("forcehttps", 0));
 	#$rv .= &ui_table_row("Install sample content?",
 	#		     &ui_yesno_radio("sample", 0));
 	}
@@ -253,6 +255,7 @@ else {
 			  [ "db_name", $dbname ],
 			  [ "db_user", $dbuser ],
 			  [ "db_pass", $dbpass ],
+			  [ "main_force_https", $forcehttps ],
 			  [ "action", "set" ],
 			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "etape1", $d, $opts);
