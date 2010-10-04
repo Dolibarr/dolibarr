@@ -2,7 +2,7 @@
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
 # \version      $Revision$
-# \author       (c)2009-2010 Regis Houssin  <regis@dolibarr.fr>
+# \author       (c)2009 Regis Houssin  <regis@dolibarr.fr>
 #----------------------------------------------------------------------------
 
 
@@ -87,10 +87,10 @@ else {
 	$rv .= &ui_table_row("Install sub-directory under <tt>$hdir</tt>",
 			     &ui_opt_textbox("dir", "dolibarr", 30,
 					     "At top level"));
-	$rv .= &ui_table_row("Force https connection?",
-			     &ui_yesno_radio("forcehttps", 0));
-	#$rv .= &ui_table_row("Install sample content?",
-	#		     &ui_yesno_radio("sample", 0));
+	if ($d->{'ssl'} && $ver >= 2.9) {
+		$rv .= &ui_table_row("Force https connection?",
+				     &ui_yesno_radio("forcehttps", 0));
+		}
 	}
 return $rv;
 }
@@ -114,7 +114,7 @@ else {
 		 'newdb' => $newdb,
 		 'dir' => $dir,
 		 'path' => $in->{'dir_def'} ? "/" : "/$in->{'dir'}",
-		 'sample' => $in->{'sample'}, };
+		 'forcehttps' => $in->{'forcehttps'}, };
 	}
 }
 
@@ -198,13 +198,13 @@ if ($opts->{'path'} =~ /\w/) {
 if (!$upgrade) {
         local $cdef = "$opts->{'dir'}/conf/conf.php.example";
         &run_as_domain_user($d, "cp ".quotemeta($cdef)." ".quotemeta($cfile));
-		&set_ownership_permissions(undef, undef, 0777, $cfiledir);
-		&set_ownership_permissions(undef, undef, 0666, $cfile);
-		&run_as_domain_user($d, "mkdir ".quotemeta($docdir));
-		&set_ownership_permissions(undef, undef, 0777, $docdir);
+	&set_ownership_permissions(undef, undef, 0777, $cfiledir);
+	&set_ownership_permissions(undef, undef, 0666, $cfile);
+	&run_as_domain_user($d, "mkdir ".quotemeta($docdir));
+	&set_ownership_permissions(undef, undef, 0777, $docdir);
         }
-# Preserve old config file and documents directory
 else {
+	# Preserve old config file and documents directory
 	&copy_source_dest($cfile, $oldcfile);
 	&copy_source_dest($docdir, $olddocdir);
 	}
@@ -213,7 +213,7 @@ if ($upgrade) {
 	# Put back original config file and documents directory
 	&copy_source_dest_as_domain_user($d, $oldcfile, $cfile);
 	&copy_source_dest_as_domain_user($d, $olddocdir, $docdir);
-
+	
 	# First page (Update database schema)
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
@@ -221,7 +221,7 @@ if ($upgrade) {
 	 		 );
 	local $err = &call_dolibarr_wizard_page(\@params, "upgrade", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Second page (Migrate some data)
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
@@ -229,7 +229,7 @@ if ($upgrade) {
 			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "upgrade2", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Third page (Update version number)
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
@@ -237,13 +237,13 @@ if ($upgrade) {
 			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "etape5", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Remove the installation directory.
 	local $dinstall = "$opts->{'dir'}/install";
 	$dinstall  =~ s/\/$//;
 	$out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall )."/* ");
 	$out = &run_as_domain_user($d, "rmdir ".quotemeta($dinstall ));
-
+	
 	}
 else {
 	# First page (Db connection and config file creation)
@@ -255,17 +255,17 @@ else {
 			  [ "db_name", $dbname ],
 			  [ "db_user", $dbuser ],
 			  [ "db_pass", $dbpass ],
-			  [ "main_force_https", $forcehttps ],
 			  [ "action", "set" ],
+			  [ "main_force_https", $opts->{'forcehttps'} ],
 			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "etape1", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Second page (Populate database)
 	local @params = ( [ "action", "set" ] );
 	local $err = &call_dolibarr_wizard_page(\@params, "etape2", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Third page (Add administrator account)
 	local @params = ( [ "action", "set" ],
 			  [ "login", "admin" ],
@@ -274,7 +274,7 @@ else {
 	 		 );
 	local $err = &call_dolibarr_wizard_page(\@params, "etape5", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-
+	
 	# Remove the installation directory and protect config file.
 	local $dinstall = "$opts->{'dir'}/install";
 	$dinstall  =~ s/\/$//;
@@ -282,7 +282,7 @@ else {
 	$out = &run_as_domain_user($d, "rmdir ".quotemeta($dinstall ));
 	&set_ownership_permissions(undef, undef, 0644, $cfile);
 	&set_ownership_permissions(undef, undef, 0755, $cfiledir);
-
+	
 	}
  
 # Return a URL for the user
