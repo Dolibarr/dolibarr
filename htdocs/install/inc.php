@@ -34,6 +34,8 @@ require_once('../lib/files.lib.php');
 
 // DOL_DOCUMENT_ROOT has been defined in function.inc.php to '..'
 
+error_reporting(E_ALL);	// To have all errors without disabled E_STRICT
+
 // Define $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"]=1;
 
