@@ -247,7 +247,7 @@ class langAutoParser {
 		if (! function_exists("curl_init"))
 		{
 		      print "Error, your PHP does not support curl functions.\n";
-		      die;
+		      die();
 		}
 
 		$ch = curl_init();
