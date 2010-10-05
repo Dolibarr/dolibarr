@@ -75,20 +75,22 @@ case "$1" in
 		for server in $webservers ; do
 			echo Complete config of server $server
 			
-			# Add info for PHP (might be obsolete)
+			# Add info for PHP (obsolete)
 			#typestr='application/x-httpd-php'
 			#extension='.php'
 			#. /usr/share/wwwconfig-common/apache-addtype_all.sh
 			
-			# Enable PHP module (might be obsolete)
+			# Enable PHP module (obsolete)
 			#. /usr/share/wwwconfig-common/apache-php.sh
 			#echo Result of enabling PHP modules: $status
 			
 			# Detect webuser and webgroup
 			webuser=
 			webgroup=
-			. /usr/share/wwwconfig-common/apache-run.get
-			echo Web user.group found is $webuser.$webgroup
+
+			# Search in httpd.conf (obsolete)
+			#. /usr/share/wwwconfig-common/apache-run.get
+			#echo Web user.group found is $webuser.$webgroup
 
 			if [ -z "$webuser" ] ; then
 				webuser=www-data
@@ -109,10 +111,12 @@ case "$1" in
 			#echo "$includefile $server" 
 			. /usr/share/wwwconfig-common/apache-include_all.sh
 			test "$status" = "uncomment" -o "$status" = "include" && restart="$server $restart"
-			for index in index.php; do
-				. /usr/share/wwwconfig-common/apache-index_all.sh
-				test "$status" = "added" && restart="$server $restart"
-			done
+			
+			# (useless)
+			#for index in index.php; do
+			#	. /usr/share/wwwconfig-common/apache-index_all.sh
+			#	test "$status" = "added" && restart="$server $restart"
+			#done
 		done
 
 		# Copy icon file
