@@ -9,9 +9,9 @@
 use Cwd;
 
 $PROJECT="dolibarr";
-$MAJOR="2";
-$MINOR="9";
-$BUILD="0";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
+$MAJOR="3";
+$MINOR="0";
+$BUILD="0-dev";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="1";		# A incrementer au moment de la release
 
 @LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
