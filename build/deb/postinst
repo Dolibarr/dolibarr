@@ -20,29 +20,6 @@ set -e
 
 db_version 2.0
 
-#
-# Description:	Verifies that the env module is loaded in the apache config file.
-# Needs:	$server the apache server to use,
-#			anything that matches /etc/$server/*.conf
-#
-env_enable()
-{
-    envverm="env_module"
-    if grep -e "^[[:space:]]*#[[:space:]]*LoadModule[[:space:]]\+$envverm" /etc/$server/httpd.conf > /dev/null 2>&1; then
-		# Uncommenting
-	sed -e "s#\([[:space:]]*\)\#[[:space:]]\+\(LoadModule $envverm\)#\1\2#" /etc/$server/httpd.conf > /etc/$server/httpd.conf.tmp
-	status=uncomment
-	if grep -e "^[[:space:]]*LoadModule[[:space:]]\+$envverm" /etc/$server/httpd.conf.tmp >/dev/null 2>&1; then
-			# Uncomment successful.
-	    cp /etc/$server/httpd.conf /etc/$server/httpd.conf.back >/dev/null 2>&1
-	    mv /etc/$server/httpd.conf.tmp /etc/$server/httpd.conf
-	else
-			# Uncomment unsuccessful.
-	    status=error
-	    rm /etc/$server/httpd.conf.tmp
-	fi
-    fi
-}
 
 echo Run the postinst script
 
@@ -93,18 +70,15 @@ case "$1" in
 			Both)		webservers="apache2 apache2-ssl" ;;
 			*)		    webservers="apache2 apache2-ssl" ;;
 		esac
-		# Define variable phpver and phpini
-		. /usr/share/wwwconfig-common/php.get
 
 		# Set up web server.
 		for server in $webservers ; do
 			echo Complete config of server $server
-			env_enable
 			
 			# Add info for PHP (might be obsolete)
-			typestr='application/x-httpd-php'
-			extension='.php'
-			. /usr/share/wwwconfig-common/apache-addtype_all.sh
+			#typestr='application/x-httpd-php'
+			#extension='.php'
+			#. /usr/share/wwwconfig-common/apache-addtype_all.sh
 			
 			# Enable PHP module (might be obsolete)
 			#. /usr/share/wwwconfig-common/apache-php.sh
@@ -152,7 +126,7 @@ case "$1" in
 		fileorig="/usr/share/dolibarr/build/deb/dolibarr.desktop"
 		target="/usr/share/applications/"
 		cp -p $fileorig $target
-		# Not sure this one is usefulle
+		# Not sure this one is usefull
 		if test -x /usr/bin/update-menus; then update-menus; fi
 		
 		# TODO Create the file to force parameters in Web installer
@@ -173,6 +147,7 @@ case "$1" in
 			# Another way to restart
 			for server in $servers ; do
         		if [ -x /usr/sbin/invoke-rc.d ]; then
+        		    # This on works with Debian 5
         	    	invoke-rc.d $server reload || true
         		else
         	    	/etc/init.d/$server reload || true
