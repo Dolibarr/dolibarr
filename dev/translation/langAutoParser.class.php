@@ -244,6 +244,12 @@ class langAutoParser {
 
 		//print "Url to translate: ".$url."\n";
 
+		if (! function_exists("curl_init"))
+		{
+		      print "Error, your PHP does not support curl functions.\n";
+		      die;
+		}
+
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
