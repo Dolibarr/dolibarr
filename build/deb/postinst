@@ -109,7 +109,7 @@ case "$1" in
 
 			includefile="/etc/dolibarr/apache.conf"
 			#echo "$includefile $server" 
-			. /usr/share/wwwconfig-common/apache-include_all.sh
+			. /usr/share/dolibarr/build/deb/apache-include_all.sh
 			test "$status" = "uncomment" -o "$status" = "include" && restart="$server $restart"
 			
 			# (useless)
@@ -151,7 +151,7 @@ case "$1" in
 			# Another way to restart
 			for server in $servers ; do
         		if [ -x /usr/sbin/invoke-rc.d ]; then
-        		    # This on works with Debian 5
+        		    # This on works with Debian (5.05,...) and Ubuntu (9.10,10.04,...)
         	    	invoke-rc.d $server reload || true
         		else
         	    	/etc/init.d/$server reload || true

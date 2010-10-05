@@ -99,7 +99,48 @@ case "$1" in
 			#               mysql
 			#               /usr/share/wwwconfig-common/mysql.get
 			echo "postrm Delete database $dbname on server $dbserver using account $dbadmin"
-			. /usr/share/wwwconfig-common/${dbtype}-dropdb.sh
+
+			# Define mysqlcmd
+			if [ -z "$dbserver" ] || [ "$dbserver" = "localhost" ]; then
+				hostopt=""
+			    dbserver=localhost
+			else
+			    case "$dbserver" in
+				:*)
+				    dbsocket=`echo $dbserver | sed -e 's/^://'`
+				    hostopt="-S $dbsocket"
+				    ;;
+				*)
+				    hostopt="-h $dbserver"
+				    ;;
+			    esac
+			fi
+			if [ -z "$dbadmpass" ] ; then
+			    log="${log}No password used."
+			    passopt=""
+			else
+			    passopt="--password='"`echo "$dbadmpass" | sed -e "s/'/'"'"'"'"'"'"'/g"`"'"
+			fi
+			mysqlcmd="mysql $hostopt $passopt -u $dbadmin"
+
+		    # Now run the drop commands
+		    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
+			log="${log}Droping database $dbname."
+			if eval $mysqlcmd -f -e "\"DROP DATABASE $dbname;\"" ; then
+			    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
+				error="Database $dbname NOT successfully droped. You have to do it manually."
+				echo $error
+			    else
+				status=drop
+			    fi
+			else
+			    error="Unable to run the drop database script."
+				echo $error
+			fi
+		    else
+			status=nothing
+			log="${log}Database $dbname already not exists."
+		    fi
 
 		else
 			echo "postrm Delete of dolibarr database not wanted" 
@@ -117,7 +158,13 @@ case "$1" in
 					# We disable set -e to avoid premature end of script if error
 					echo postrm remove dolibarr include from /etc/dolibarr/apache.conf
 					set +e
-					. /usr/share/wwwconfig-common/apache-uninclude.sh
+				    GREP="Include[[:space:]]\+$includefile\b"
+				    if grep -e "$GREP" $conffile > /dev/null 2>&1; then
+					log="${log}Include of $includefile found in $conffile file, purging."
+					status=purge
+					grep -v -e "$GREP" < $conffile > $conffile.purg
+					mv $conffile.purg $conffile
+					fi
 					set -e
 				fi
 			fi
