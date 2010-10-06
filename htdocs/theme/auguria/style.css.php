@@ -770,9 +770,9 @@ div.tabs {
 div.tabBar {
     color: #234046;
     padding-top: 12px;
-    padding-left: 4px;
-    padding-right: 4px;
-    padding-bottom: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-bottom: 6px;
     margin: 0px 0px 10px 0px;
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
