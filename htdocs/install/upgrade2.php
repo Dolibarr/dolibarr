@@ -198,8 +198,6 @@ if (GETPOST('action') && preg_match('/upgrade/i',GETPOST("action")))
 
 			migrate_price_commande_fournisseur($db,$langs,$conf);
 
-			migrate_price_facture($db,$langs,$conf);
-
 			migrate_price_contrat($db,$langs,$conf);
 
 			migrate_paiementfourn_facturefourn($db,$langs,$conf);
@@ -249,7 +247,9 @@ if (GETPOST('action') && preg_match('/upgrade/i',GETPOST("action")))
 		//print $versionto.' '.versioncompare($versiontoarray,$afterversionarray).' '.versioncompare($versiontoarray,$beforeversionarray);
 		if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
 		{
-			migrate_relationship_tables($db,$langs,$conf,'co_exp','fk_commande','commande','fk_expedition','shipping');
+            migrate_price_facture($db,$langs,$conf);     // Code of this function works for 2.8+ because need a field tva_tx
+
+		    migrate_relationship_tables($db,$langs,$conf,'co_exp','fk_commande','commande','fk_expedition','shipping');
 
 			migrate_relationship_tables($db,$langs,$conf,'pr_exp','fk_propal','propal','fk_expedition','shipping');
 
