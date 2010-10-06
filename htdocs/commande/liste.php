@@ -110,7 +110,7 @@ if ($viewstatut <> '')
 		$sql .= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
 	}
 }
-if ($_GET['ordemonth'] > 0)
+if ($_GET['ordermonth'] > 0)
 {
 	$sql.= " AND date_format(c.date_commande, '%Y-%m') = '$orderyear-$ordermonth'";
 }
