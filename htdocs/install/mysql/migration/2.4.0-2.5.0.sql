@@ -113,3 +113,5 @@ INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUE
 
 -- Not used. Just to be compatible with upgrade process of higher versions
 alter table llx_const add column entity integer DEFAULT 1 NOT NULL;
+-- Not used. Just to be compatible with 2.7 upgrade process or higher
+alter table llx_menu add column enabled varchar(255) NULL default '1';
