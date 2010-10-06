@@ -110,3 +110,6 @@ INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUE
 INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUES (2,'TRANS','Transporter','Generic transporter',1);
 INSERT INTO llx_expedition_methode (rowid,code,libelle,description,active) VALUES (3,'COLSUI','Colissimo Suivi','Colissimo Suivi',0);
 
+
+-- Not used. Just to be compatible with upgrade process of higher versions
+alter table llx_const add column entity integer DEFAULT 1 NOT NULL;

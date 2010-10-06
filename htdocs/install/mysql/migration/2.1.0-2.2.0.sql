@@ -1176,3 +1176,7 @@ ALTER TABLE llx_commande_fournisseurdet MODIFY fk_product integer;
 -- Le prix d'un produit ne doit pas avoir la valeur NULL
 UPDATE llx_product SET price = 0 WHERE price is NULL;
 UPDATE llx_product SET price_ttc = 0 WHERE price_ttc is NULL;
+
+
+-- Not used. Just to be compatible with upgrade process of higher versions
+alter table llx_const add column entity integer DEFAULT 1 NOT NULL;

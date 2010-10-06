@@ -955,3 +955,7 @@ UPDATE llx_usergroup_rights SET fk_id=fk_id+1 WHERE fk_id BETWEEN 1320 AND 1320;
 UPDATE llx_rights_def  SET ID=ID+1 WHERE ID BETWEEN 1420 AND 1420 AND module='commande';
 UPDATE llx_user_rights SET fk_id=fk_id+1 WHERE fk_id BETWEEN 1420 AND 1420;
 UPDATE llx_usergroup_rights SET fk_id=fk_id+1 WHERE fk_id BETWEEN 1420 AND 1420;
+
+
+-- Not used. Just to be compatible with upgrade process of higher versions
+alter table llx_const add column entity integer DEFAULT 1 NOT NULL;
