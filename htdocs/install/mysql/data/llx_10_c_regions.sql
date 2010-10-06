@@ -1,6 +1,6 @@
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
--- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -67,6 +67,28 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 201, 2, 201,     '',1,'Flandre');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 202, 2, 202,     '',2,'Wallonie');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 203, 2, 203,     '',3,'Bruxelles-Capitale');
+
+-- Regions Italy (id pays=3)
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (301,3,301,"NULL",1,"Abruzzo");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (302,3,302,"NULL",1,"Basilicata");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (303,3,303,"NULL",1,"Calabria");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (304,3,304,"NULL",1,"Campania");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (305,3,305,"NULL",1,"Emilia-Romagna");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (306,3,306,"NULL",1,"Friuli-Venezia Giulia");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (307,3,307,"NULL",1,"Lazio");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (308,3,308,"NULL",1,"Liguria");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (309,3,309,"NULL",1,"Lombardia");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (310,3,310,"NULL",1,"Marche");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (311,3,311,"NULL",1,"Molise");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (312,3,312,"NULL",1,"Piemonte");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (313,3,313,"NULL",1,"Puglia");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (314,3,314,"NULL",1,"Sardegna");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (315,3,315,"NULL",1,"Sicilia");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (316,3,316,"NULL",1,"Toscana");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (317,3,317,"NULL",1,"Trentino-Alto Adige");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (318,3,318,"NULL",1,"Umbria");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (319,3,319,"NULL",1,"Valle d Aosta");
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (320,3,320,"NULL",1,"Veneto");
 
 -- Regions Spain (id pays=4)
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (401,  4, 401, '', 0, 'Andalucia', 1);
