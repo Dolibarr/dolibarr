@@ -135,3 +135,7 @@ ALTER TABLE llx_usergroup DROP INDEX nom;
 ALTER TABLE llx_const ADD UNIQUE INDEX uk_const (name, entity);
 ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_login (login, entity);
 ALTER TABLE llx_usergroup ADD UNIQUE INDEX uk_usergroup_name (nom, entity);
+
+
+-- Not used. Just to be compatible with 2.7 upgrade process or higher
+alter table llx_menu add column enabled varchar(255) NULL default '1';

@@ -472,3 +472,7 @@ ALTER TABLE llx_propaldet ADD CONSTRAINT fk_propaldet_fk_propal FOREIGN KEY (fk_
 ALTER TABLE llx_bank_class DROP INDEX idx_bank_class_lineid;
 ALTER TABLE llx_bank_class DROP INDEX uk_bank_class_lineid;
 ALTER TABLE llx_bank_class ADD UNIQUE INDEX uk_bank_class_lineid (lineid, fk_categ);
+
+
+-- Not used. Just to be compatible with 2.7 upgrade process or higher
+alter table llx_menu add column enabled varchar(255) NULL default '1';
