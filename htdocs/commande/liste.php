@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin          <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin          <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,10 @@ require_once(DOL_DOCUMENT_ROOT ."/commande/class/commande.class.php");
 $langs->load('orders');
 $langs->load('companies');
 
-$year=isset($_GET["year"])?$_GET["year"]:$_POST["year"];
-$month=isset($_GET["month"])?$_GET["month"]:$_POST["month"];
+$orderyear=isset($_GET["orderyear"])?$_GET["orderyear"]:$_POST["orderyear"];
+$ordermonth=isset($_GET["ordermonth"])?$_GET["ordermonth"]:$_POST["ordermonth"];
+$deliveryyear=isset($_GET["deliveryyear"])?$_GET["deliveryyear"]:$_POST["deliveryyear"];
+$deliverymonth=isset($_GET["deliverymonth"])?$_GET["deliverymonth"]:$_POST["deliverymonth"];
 $sref=isset($_GET['sref'])?$_GET['sref']:$_POST['sref'];
 $sref_client=isset($_GET['sref_client'])?$_GET['sref_client']:(isset($_POST['sref_client'])?$_POST['sref_client']:'');
 $snom=isset($_GET['snom'])?$_GET['snom']:$_POST['snom'];
@@ -72,7 +74,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $_GET['page'] ;
 
 $sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
-$sql.= ' c.date_commande, c.fk_statut, c.facture as facturee';
+$sql.= ' c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -107,13 +109,21 @@ if ($viewstatut <> '')
 		$sql .= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
 	}
 }
-if ($_GET['month'] > 0)
+if ($_GET['ordemonth'] > 0)
 {
-	$sql.= " AND date_format(c.date_commande, '%Y-%m') = '$year-$month'";
+	$sql.= " AND date_format(c.date_commande, '%Y-%m') = '$orderyear-$ordermonth'";
 }
-if ($_GET['year'] > 0)
+if ($_GET['orderyear'] > 0)
 {
-	$sql.= " AND date_format(c.date_commande, '%Y') = $year";
+	$sql.= " AND date_format(c.date_commande, '%Y') = $orderyear";
+}
+if ($_GET['deliverymonth'] > 0)
+{
+	$sql.= " AND date_format(c.date_livraison, '%Y-%m') = '$deliveryyear-$deliverymonth'";
+}
+if ($_GET['deliveryyear'] > 0)
+{
+	$sql.= " AND date_format(c.date_livraison, '%Y') = $deliveryyear";
 }
 if (!empty($snom))
 {
@@ -164,7 +174,8 @@ if ($resql)
 	print_liste_field_titre($langs->trans('Ref'),'liste.php','c.ref','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="25%"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Company'),'liste.php','s.nom','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="30%"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomerOrder'),'liste.php','c.ref_client','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="15%"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Date'),'liste.php','c.date_commande','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'width="20%" align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('OrderDate'),'liste.php','c.date_commande','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'width="20%" align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DeliveryDate'),'liste.php','c.date_livraison','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'width="20%" align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),'liste.php','c.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="10%" align="center"',$sortfield,$sortorder);
 	print '</tr>';
 	// Lignes des champs de filtre
@@ -176,6 +187,7 @@ if ($resql)
 	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
 	print '</td><td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
+	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td align="right" class="liste_titre">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
@@ -221,18 +233,33 @@ if ($resql)
 
 		print '<td>'.$objp->ref_client.'</td>';
 
-		// Date
+		// Order date
 		$y = dol_print_date($db->jdate($objp->date_commande),'%Y');
 		$m = dol_print_date($db->jdate($objp->date_commande),'%m');
 		$ml = dol_print_date($db->jdate($objp->date_commande),'%B');
 		$d = dol_print_date($db->jdate($objp->date_commande),'%d');
 		print '<td align="right">';
 		print $d;
-		print ' <a href="liste.php?year='.$y.'&amp;month='.$m.'">'.$ml.'</a>';
-		print ' <a href="liste.php?year='.$y.'">'.$y.'</a>';
+		print ' <a href="'.$_SERVER['PHP_SELF'].'?orderyear='.$y.'&amp;ordermonth='.$m.'">'.$ml.'</a>';
+		print ' <a href="'.$_SERVER['PHP_SELF'].'?orderyear='.$y.'">'.$y.'</a>';
 		print '</td>';
+		
+		// Delivery date
+		$y = dol_print_date($db->jdate($objp->date_livraison),'%Y');
+		$m = dol_print_date($db->jdate($objp->date_livraison),'%m');
+		$ml = dol_print_date($db->jdate($objp->date_livraison),'%B');
+		$d = dol_print_date($db->jdate($objp->date_livraison),'%d');
+		print '<td align="right">';
+		print $d;
+		print ' <a href="'.$_SERVER['PHP_SELF'].'?deliveryyear='.$y.'&amp;deliverymonth='.$m.'">'.$ml.'</a>';
+		print ' <a href="'.$_SERVER['PHP_SELF'].'?deliveryyear='.$y.'">'.$y.'</a>';
+		print '</td>';
+		
+		// Statut
 		print '<td align="right">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
+		
 		print '</tr>';
+		
 		$total = $total + $objp->price;
 		$subtotal = $subtotal + $objp->price;
 		$i++;
