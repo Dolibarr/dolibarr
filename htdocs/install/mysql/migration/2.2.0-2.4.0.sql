@@ -345,3 +345,7 @@ update llx_societe set fk_typent = 0 where fk_typent is null;
 
 ALTER TABLE llx_surveys_answers_summary TYPE=INNODB;
 
+
+-- Not used. Just to be compatible with upgrade process of higher versions
+alter table llx_const add column entity integer DEFAULT 1 NOT NULL;
+
