@@ -723,6 +723,22 @@ a.tabimage {
     white-space: nowrap;
 }
 
+span.tabspan {
+    background: #dee7ec;
+    color: #436976;
+	font-family: <?php print $fontlist ?>;
+    padding: 0px 6px;
+    margin: 0em 0.2em;
+    text-decoration: none;
+    white-space: nowrap;
+    -moz-border-radius-topleft:6px;
+    -moz-border-radius-topright:6px;
+
+    border-<?php print $right; ?>: 1px solid #555555;
+    border-<?php print $left; ?>: 1px solid #D8D8D8;
+    border-top: 1px solid #D8D8D8;
+}
+
 
 /* ============================================================================== */
 /* Boutons actions                                                                */

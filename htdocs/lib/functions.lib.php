@@ -379,7 +379,7 @@ function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 			}
 			else
 			{
-				print $links[$i][1]."\n";
+				print '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 			}
 		}
 		else
