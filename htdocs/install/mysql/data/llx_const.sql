@@ -129,6 +129,7 @@ insert into llx_const (name, value, type, note, visible) values ('COMMANDE_ADDON
 insert into llx_const (name, value, type, note, visible) values ('COMMANDE_ADDON_PDF',  'einstein','chaine', '',0);
 insert into llx_const (name, value, type, note, visible) values ('COMMANDE_SUPPLIER_ADDON',      'mod_commande_fournisseur_muguet','chaine','',0);
 insert into llx_const (name, value, type, note, visible) values ('COMMANDE_SUPPLIER_ADDON_PDF',  'muscadet','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('INVOICE_SUPPLIER_ADDON_PDF',  'canelle','chaine','',0);
 insert into llx_const (name, value, type, note, visible) values ('EXPEDITION_ADDON',    'enlevement','chaine','',0);
 insert into llx_const (name, value, type, note, visible) values ('EXPEDITION_ADDON_PDF','rouget','chaine','',0);
 insert into llx_const (name, value, type, note, visible) values ('FICHEINTER_ADDON',    'pacific','chaine','',0);

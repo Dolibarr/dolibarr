@@ -77,3 +77,6 @@ ALTER TABLE llx_product ADD COLUMN fk_country integer after customcode;
 
 ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX idx_ecm_directories (label, fk_parent, entity);
 ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents (fullpath_dol);
+
+--Add modules facture fournisseur
+insert into llx_const (name, value, type, note, visible) values ('EXPEDITION_ADDON', 'enlevement','chaine','',0);
