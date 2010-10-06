@@ -73,15 +73,20 @@ class modPhpbarcode extends ModeleBarCode
 	 */
 	function encodingIsSupported($encoding)
 	{
+		global $genbarcode_loc;
+
 		$supported=0;
 		if ($encoding == 'EAN13') $supported=1;
 		if ($encoding == 'ISBN')  $supported=1;
 		// Formats that hangs on Windows (when genbarcode.exe for Windows is called, so they are not
 		// activated on Windows)
-		if ($encoding == 'EAN8' && empty($_SERVER["WINDIR"]))  $supported=1;
-		if ($encoding == 'UPC' && empty($_SERVER["WINDIR"]))   $supported=1;
-		if ($encoding == 'C39' && empty($_SERVER["WINDIR"]))   $supported=1;
-		if ($encoding == 'C128' && empty($_SERVER["WINDIR"]))  $supported=1;
+		if (file_exists($genbarcode_loc) && empty($_SERVER["WINDIR"]))
+		{
+			if ($encoding == 'EAN8')  $supported=1;
+			if ($encoding == 'UPC')   $supported=1;
+			if ($encoding == 'C39')   $supported=1;
+			if ($encoding == 'C128')  $supported=1;
+		}
 		return $supported;
 	}
 
