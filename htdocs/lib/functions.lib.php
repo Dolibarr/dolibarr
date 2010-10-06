@@ -373,7 +373,14 @@ function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 	{
 		if ($links[$i][2] == 'image')
 		{
-			print '<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+			if (!empty($links[$i][0]))
+			{
+				print '<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+			}
+			else
+			{
+				print $links[$i][1]."\n";
+			}
 		}
 		else
 		{
@@ -385,7 +392,7 @@ function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 			}
 			else
 			{
-				print '<a class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				print '<a id="'.$links[$i][2].'" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 		}
 	}
