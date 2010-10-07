@@ -184,6 +184,10 @@ local $cfile = $cfiledir."conf.php";
 local $oldcfile = &transname();
 local $olddocdir = &transname();
 local $url;
+$tmpl = &get_template($d->{'template'});
+$charset = $tmpl->{'mysql_charset'};
+$collate = $tmpl->{'mysql_collate'};
+$encoding = $tmpl->{'postgres_encoding'};
 $path = &script_path_url($d, $opts);
 if ($path =~ /^https:/) {
         $url = "https://$d->{'dom'}";
@@ -241,8 +245,7 @@ if ($upgrade) {
 	# Remove the installation directory.
 	local $dinstall = "$opts->{'dir'}/install";
 	$dinstall  =~ s/\/$//;
-	$out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall )."/* ");
-	$out = &run_as_domain_user($d, "rmdir ".quotemeta($dinstall ));
+	$out = &run_as_domain_user($d, "rm -Rf ".quotemeta($dinstall ));
 	
 	}
 else {
@@ -257,6 +260,8 @@ else {
 			  [ "db_pass", $dbpass ],
 			  [ "action", "set" ],
 			  [ "main_force_https", $opts->{'forcehttps'} ],
+			  [ "dolibarr_main_db_character_set", $charset ],
+			  [ "dolibarr_main_db_collation", $collate ],
 			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "etape1", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
@@ -278,8 +283,7 @@ else {
 	# Remove the installation directory and protect config file.
 	local $dinstall = "$opts->{'dir'}/install";
 	$dinstall  =~ s/\/$//;
-	$out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall )."/* ");
-	$out = &run_as_domain_user($d, "rmdir ".quotemeta($dinstall ));
+	$out = &run_as_domain_user($d, "rm -Rf ".quotemeta($dinstall ));
 	&set_ownership_permissions(undef, undef, 0644, $cfile);
 	&set_ownership_permissions(undef, undef, 0755, $cfiledir);
 	
