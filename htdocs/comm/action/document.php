@@ -138,7 +138,7 @@ if ($objectid > 0)
 		$contact->fetch($act->contact->id);
 		$act->contact=$contact;
 
-		$head=actions_prepare_head();
+		$head=actions_prepare_head($act);
 		dol_fiche_head($head, 'documents', $langs->trans("Action"),0,'task');
 
 		// Affichage fiche action en mode visu
