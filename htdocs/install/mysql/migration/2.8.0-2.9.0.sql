@@ -133,12 +133,16 @@ alter table llx_product add column   accountancy_code_buy        varchar(15) aft
 ALTER TABLE llx_product drop column stock_loc;
 ALTER TABLE llx_product_stock add column location        varchar(32);
 
+ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_adresse_livraison;
+ALTER TABLE llx_expedition DROP INDEX idx_expedition_fk_adresse_livraison;
 ALTER TABLE llx_expedition ADD COLUMN ref_customer varchar(30) AFTER entity;
 ALTER TABLE llx_expedition ADD COLUMN date_delivery date DEFAULT NULL AFTER date_expedition;
 ALTER TABLE llx_expedition CHANGE COLUMN fk_adresse_livraison fk_address integer DEFAULT NULL;
 
-ALTER TABLE llx_livraison CHANGE COLUMN ref_client ref_customer varchar(30);
-ALTER TABLE llx_livraison CHANGE COLUMN date_livraison date_delivery date		DEFAULT NULL;
+ALTER TABLE llx_livraison DROP FOREIGN KEY fk_livraison_fk_adresse_livraison;
+ALTER TABLE llx_livraison DROP INDEX idx_livraison_fk_adresse_livraison;
+ALTER TABLE llx_livraison change ref_client ref_customer varchar(30);
+ALTER TABLE llx_livraison change date_livraison date_delivery date		DEFAULT NULL;
 ALTER TABLE llx_livraison CHANGE COLUMN fk_adresse_livraison fk_address integer DEFAULT NULL;
 
 ALTER TABLE llx_c_actioncomm MODIFY libelle    varchar(48) NOT NULL;
@@ -249,10 +253,6 @@ insert into llx_c_actioncomm (id, code, type, libelle, module) values (30, 'AC_S
 insert into llx_c_actioncomm (id, code, type, libelle, module) values (31, 'AC_SUP_INV',  'system', 'Send supplier invoice by email'      ,'supplier_invoice');
 
 -- Rename llx_societe_adresse_livraison
-ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_adresse_livraison;
-ALTER TABLE llx_expedition DROP INDEX idx_expedition_fk_adresse_livraison;
-ALTER TABLE llx_livraison DROP FOREIGN KEY fk_livraison_fk_adresse_livraison;
-ALTER TABLE llx_livraison DROP INDEX idx_livraison_fk_adresse_livraison;
 ALTER TABLE llx_societe_adresse_livraison RENAME TO llx_societe_address;
 ALTER TABLE llx_societe_address CHANGE COLUMN nom name varchar(60);
 ALTER TABLE llx_societe_address CHANGE COLUMN fk_societe fk_soc integer DEFAULT 0;
