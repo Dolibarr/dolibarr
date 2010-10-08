@@ -91,11 +91,27 @@ function ajax_autocompleter($selected='',$htmlname,$value,$url,$indicator='worki
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
     				jQuery("#'.$htmlname.'").autocomplete({
-    					source: "'.$url.'",
+    					source: function( request, response ) {
+    						jQuery.ajax({
+    							url: "'.$url.'",
+    							dataType: "jsonp",
+    							data: {
+    								socid: request.term
+								},
+								success: function( data ) {
+									response( $.map( data.result, function( item ) {
+										return {
+											label: item.socname,
+											value: item.socid
+										}
+									}));
+								}
+							});
+						},		
     					minLength: 2,
     					select: function( event, ui ) {
-    						jQuery("#'.$htmlname.'").val(ui.item.socname);
-    						jQuery("#'.$value.'").val(ui.item.socid);
+    						jQuery("#'.$htmlname.'").val(ui.item.label);
+    						jQuery("#'.$value.'").val(ui.item.value);
     					}
 					});
   				});';

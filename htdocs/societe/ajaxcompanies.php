@@ -55,13 +55,13 @@ dol_syslog(join(',',$_GET));
 
 
 // Generation liste des societes
-if (! empty($_POST['newcompany']) || ! empty($_GET['term']) || ! empty($_POST['id_fourn']))
+if (! empty($_POST['newcompany']) || ! empty($_GET['socid']) || ! empty($_POST['id_fourn']))
 {
 	$return_arr = array();
 	
 	// Define filter on text typed
 	$socid = $_POST['newcompany']?$_POST['newcompany']:'';
-	if (! $socid) $socid = $_GET['term']?$_GET['term']:'';
+	if (! $socid) $socid = $_GET['socid']?$_GET['socid']:'';
 	if (! $socid) $socid = $_POST['id_fourn']?$_POST['id_fourn']:'';
 
 	$sql = "SELECT rowid, nom";
@@ -100,8 +100,8 @@ if (! empty($_POST['newcompany']) || ! empty($_GET['term']) || ! empty($_POST['i
 		}
 		print '</ul>';
 		*/
-	    
-	    echo json_encode($return_arr);
+	    $result = array('result' => $return_arr);
+	    echo json_encode($result);
 	}
 }
 else

@@ -553,11 +553,6 @@ class Form
                     $socid = $obj->rowid?$obj->rowid:'';
                 }
 
-                // We call a page after a small delay when a new input has been selected
-                //$javaScript = "window.location=\'...\'";
-                //$htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\')"';
-                $htmloption='';
-
                 print "\n".'<!-- Input text for third party with Ajax.Autocompleter (select_societes) -->'."\n";
                 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
                 print '<td class="nobordernopadding">';
@@ -565,12 +560,11 @@ class Form
                 print '<div class="ui-widget">';
                 if ($socid == 0)
                 {
-                    //$langs->load("companies");
-                    print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="" '.$htmloption.' />';
+                    print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="" />';
                 }
                 else
                 {
-                    print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
+                    print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'" />';
                 }
                 print '</div>';
                 //print ajax_autocompleter(($socid?$socid:-1),$htmlname,'socid',DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
