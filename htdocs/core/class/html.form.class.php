@@ -526,7 +526,7 @@ class Form
      * 		\param		showtype		Show third party type in combolist (customer, prospect or supplier)
      * 		\param		forcecombo		Force to use combo box
      */
-    function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
+    function select_societes($selected='',$htmlname='company',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
     {
         global $conf,$user,$langs;
 
@@ -570,7 +570,7 @@ class Form
                 {
                     print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
                 }
-                print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
+                print ajax_autocompleter(($socid?$socid:-1),$htmlname,'socid',DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
                 print '</td>';
                 print '<td class="nobordernopadding" align="left" width="16">';
                 print ajax_indicator($htmlname,'working');  // Indicator is here

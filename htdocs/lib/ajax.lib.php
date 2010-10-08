@@ -81,14 +81,25 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
  *	\param     	indicator           nom de l'image gif sans l'extension
  *	\return    	string              script complet
  */
-function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
+function ajax_autocompleter($selected='',$htmlname,$value,$url,$indicator='working')
 {
 	$script='';
 
-	$script.= '<input type="hidden" name="'.$htmlname.'_id" id="'.$htmlname.'_id" value="'.$selected.'" />';
+	$script.= '<input type="hidden" name="'.$value.'" id="'.$value.'" value="'.$selected.'" />';
 
 	$script.= '<div id="result'.$htmlname.'" class="autocomplete"></div>';
 	$script.= '<script type="text/javascript">';
+	$script.= 'jQuery(document).ready(function() {
+    				jQuery("input#'.$htmlname.'").autocomplete({
+    					source: "'.$url.'",
+    					minLength: 2,
+    					select: function( event, ui ) {
+    						'.$htmlname.': ui.item.value,
+    						'.$value.': ui.item.id
+    					}
+					});
+  				});';
+	/*
 	$script.= 'new Ajax.Autocompleter(\''.$htmlname.'\',\'result'.$htmlname.'\',\''.$url.'\',{
 	           method: \'post\',
 	           paramName: \'socid\',
@@ -98,7 +109,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 	         });';	// paramName must be 'socid', as it is the name of POST parameter to send value in htmlname field.
 					// and it is name of parameter read by ajaxcompanies.php
 		// Note: The ac_return will fill value inside field htmlname (param of Autocompleter constructor)
-		// and will also fill value inside field htmlname_id (using function ac_return)
+		// and will also fill value inside field htmlname_id (using function ac_return)*/
 	$script.= '</script>';
 
 	return $script;

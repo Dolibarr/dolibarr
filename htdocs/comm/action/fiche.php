@@ -480,7 +480,7 @@ if (GETPOST('action') == 'create')
 	}
 	else
 	{
-		print $html->select_societes('','socid','',1,1);
+		print $html->select_societes('','company','',1,1);
 	}
 	print '</td></tr>';
 
@@ -668,7 +668,7 @@ if ($id)
 		// Company
 		print '<tr><td>'.$langs->trans("Company").'</td>';
 		print '<td>';
-		print $html->select_societes($act->societe->id,'socid','',1,1);
+		print $html->select_societes($act->societe->id,'company','',1,1);
 		print '</td>';
 
 		// Contact
