@@ -572,9 +572,10 @@ class Form
                 }
                 print ajax_autocompleter(($socid?$socid:-1),$htmlname,'socid',DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
                 print '</td>';
-                print '<td class="nobordernopadding" align="left" width="16">';
-                print ajax_indicator($htmlname,'working');  // Indicator is here
-                print '</td></tr>';
+                //print '<td class="nobordernopadding" align="left" width="16">';
+                //print ajax_indicator($htmlname,'working');  // Indicator is here
+                //print '</td>';
+                print '</tr>';
                 print '</table>';
             }
             else

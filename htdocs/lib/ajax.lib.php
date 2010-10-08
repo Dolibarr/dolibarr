@@ -87,15 +87,15 @@ function ajax_autocompleter($selected='',$htmlname,$value,$url,$indicator='worki
 
 	$script.= '<input type="hidden" name="'.$value.'" id="'.$value.'" value="'.$selected.'" />';
 
-	$script.= '<div id="result'.$htmlname.'" class="autocomplete"></div>';
+	//$script.= '<div id="'.$htmlname.'" class="ui-widget"></div>';
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
-    				jQuery("input#'.$htmlname.'").autocomplete({
+    				jQuery("#'.$htmlname.'").autocomplete({
     					source: "'.$url.'",
     					minLength: 2,
     					select: function( event, ui ) {
-    						'.$htmlname.': ui.item.value,
-    						'.$value.': ui.item.id
+    						jQuery("#'.$htmlname.'").val(ui.item.value);
+    						jQuery("#'.$value.'").val(ui.item.id);
     					}
 					});
   				});';

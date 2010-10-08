@@ -51,19 +51,22 @@ print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY
 
 //print '<body id="mainbody">';
 
-dol_syslog(join(',',$_POST));
+dol_syslog(join(',',$_GET));
+
 
 // Generation liste des societes
-if (! empty($_POST['newcompany']) || ! empty($_POST['socid']) || ! empty($_POST['id_fourn']))
+if (! empty($_POST['newcompany']) || ! empty($_GET['term']) || ! empty($_POST['id_fourn']))
 {
+	$return_arr = array();
+	
 	// Define filter on text typed
 	$socid = $_POST['newcompany']?$_POST['newcompany']:'';
-	if (! $socid) $socid = $_POST['socid']?$_POST['socid']:'';
+	if (! $socid) $socid = $_GET['term']?$_GET['term']:'';
 	if (! $socid) $socid = $_POST['id_fourn']?$_POST['id_fourn']:'';
 
 	$sql = "SELECT rowid, nom";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= " WHERE 1=1";
+	$sql.= " WHERE s.entity = ".$conf->entity;
 	if ($socid)
 	{
 		$sql.=" AND (nom LIKE '%" . $socid . "%'";
@@ -79,6 +82,13 @@ if (! empty($_POST['newcompany']) || ! empty($_POST['socid']) || ! empty($_POST[
 	$resql=$db->query($sql);
 	if ($resql)
 	{
+	while ($row = $db->fetch_array($resql)) {
+	        $row_array['id'] = $row['rowid'];
+	        $row_array['value'] = $row['nom'];
+	 
+	        array_push($return_arr,$row_array);
+	    }
+		/*
 		print '<ul>';
 		while ($company = $db->fetch_object($resql))
 		{
@@ -89,6 +99,9 @@ if (! empty($_POST['newcompany']) || ! empty($_POST['socid']) || ! empty($_POST[
 			print '</li>';
 		}
 		print '</ul>';
+		*/
+	    
+	    echo json_encode($return_arr);
 	}
 }
 else

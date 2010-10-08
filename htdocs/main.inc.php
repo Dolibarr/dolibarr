@@ -815,7 +815,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         if (! defined('DISABLE_JQUERY'))
         {
             print '<!-- Includes for JQuery (Ajax library) -->'."\n";
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/smoothness/jquery-ui-1.8.4.custom.css" type="text/css" />'."\n";
+            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/smoothness/jquery-ui-1.8.5.custom.css" type="text/css" />'."\n";
         }
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
@@ -856,7 +856,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			// JQuery. Must be before other includes (prototype/scriptaculous)
 			print '<!-- Includes for JQuery -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-1.4.2.min'.$ext.'"></script>'."\n";
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-1.8.4.custom.min'.$ext.'"></script>'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-1.8.5.custom.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
 
             // This one is required for some Ajax features
