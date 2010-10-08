@@ -184,10 +184,14 @@ local $cfile = $cfiledir."conf.php";
 local $oldcfile = &transname();
 local $olddocdir = &transname();
 local $url;
+
 $tmpl = &get_template($d->{'template'});
-$charset = $tmpl->{'mysql_charset'};
-$collate = $tmpl->{'mysql_collate'};
-$encoding = $tmpl->{'postgres_encoding'};
+$mycharset = $tmpl->{'mysql_charset'};
+$mycollate = $tmpl->{'mysql_collate'};
+$pgcharset = $tmpl->{'postgres_encoding'};
+$charset = $dbtype eq "mysql" ? $mycharset : $pgcharset;
+$collate = $dbtype eq "mysql" ? $mycollate : "C";
+
 $path = &script_path_url($d, $opts);
 if ($path =~ /^https:/) {
         $url = "https://$d->{'dom'}";
