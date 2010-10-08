@@ -26,28 +26,28 @@
 /**
  * Enter description here...
  *
- * @param   $entrepot
+ * @param   $object
  * @return  array
  */
-function stock_prepare_head($entrepot)
+function stock_prepare_head($object)
 {
 	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
+	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("WarehouseCard");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
+	$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("StockMovements");
 	$head[$h][2] = 'movements';
 	$h++;
 
 	/*
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$entrepot->id;
+	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("EnhancedValue");
 	$head[$h][2] = 'value';
 	$h++;
@@ -58,17 +58,34 @@ function stock_prepare_head($entrepot)
 	{
 		// Should not be enabled by defaut because does not work yet correctly because
 		// personnal stocks are not tagged into table llx_entrepot
-		$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
+		$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Users");
 		$head[$h][2] = 'user';
 		$h++;
 	}
 	*/
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
+	$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
+	
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
+	if (is_array($conf->tabs_modules['stock']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['stock'] as $value)
+		{
+			$values=explode(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$object->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
 
 	return $head;
 }

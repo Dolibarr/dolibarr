@@ -108,6 +108,7 @@ class modMyModule extends DolibarrModules
 		// 'invoice'          to add a tab in customer invoice view
 		// 'order'            to add a tab in customer order view
 		// 'product'          to add a tab in product view
+		// 'stock'            to add a tab in stock view
 		// 'propal'           to add a tab in propal view
 		// 'member'           to add a tab in fundation member view
 		// 'contract'         to add a tab in contract view
