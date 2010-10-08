@@ -473,7 +473,7 @@ print '</table><br/>';
 
 $dir = DOL_DOCUMENT_ROOT.'/includes/modules/supplier_invoice/pdf/';
 
-print_titre($langs->trans("InvoicesModelModule"));
+print_titre($langs->trans("BillsPDFModules"));
 
 // Defini tableau def de modele
 $type='supplier_invoice';
