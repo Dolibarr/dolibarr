@@ -82,9 +82,9 @@ if (! empty($_POST['newcompany']) || ! empty($_GET['term']) || ! empty($_POST['i
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-	while ($row = $db->fetch_array($resql)) {
-	        $row_array['id'] = $row['rowid'];
-	        $row_array['value'] = $row['nom'];
+		while ($row = $db->fetch_array($resql)) {
+			$row_array['socname'] = $row['nom'];
+	        $row_array['socid'] = $row['rowid'];
 	 
 	        array_push($return_arr,$row_array);
 	    }

@@ -94,8 +94,8 @@ function ajax_autocompleter($selected='',$htmlname,$value,$url,$indicator='worki
     					source: "'.$url.'",
     					minLength: 2,
     					select: function( event, ui ) {
-    						jQuery("#'.$htmlname.'").val(ui.item.value);
-    						jQuery("#'.$value.'").val(ui.item.id);
+    						jQuery("#'.$htmlname.'").val(ui.item.socname);
+    						jQuery("#'.$value.'").val(ui.item.socid);
     					}
 					});
   				});';

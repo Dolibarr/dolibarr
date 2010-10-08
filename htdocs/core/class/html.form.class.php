@@ -561,6 +561,8 @@ class Form
                 print "\n".'<!-- Input text for third party with Ajax.Autocompleter (select_societes) -->'."\n";
                 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
                 print '<td class="nobordernopadding">';
+                print ajax_autocompleter(($socid?$socid:-1),$htmlname,'socid',DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
+                print '<div class="ui-widget">';
                 if ($socid == 0)
                 {
                     //$langs->load("companies");
@@ -570,7 +572,8 @@ class Form
                 {
                     print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
                 }
-                print ajax_autocompleter(($socid?$socid:-1),$htmlname,'socid',DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
+                print '</div>';
+                //print ajax_autocompleter(($socid?$socid:-1),$htmlname,'socid',DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
                 print '</td>';
                 //print '<td class="nobordernopadding" align="left" width="16">';
                 //print ajax_indicator($htmlname,'working');  // Indicator is here

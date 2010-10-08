@@ -1465,6 +1465,10 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
+.ui-autocomplete-loading {
+	background: white url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/working.gif' ?>) right center no-repeat;
+	}
+
 div.autocomplete {
       position:absolute;
       width:250px;
