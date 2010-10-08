@@ -79,4 +79,4 @@ ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX idx_ecm_directories (label, fk_
 ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents (fullpath_dol);
 
 --Add modules facture fournisseur
-insert into llx_const (name, value, type, note, visible) values ('EXPEDITION_ADDON', 'enlevement','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('FACTURE_SUPPLIER_ADDON_PDF', 'canelle','chaine','',0);
