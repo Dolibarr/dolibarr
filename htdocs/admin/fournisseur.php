@@ -32,6 +32,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 
 $langs->load("admin");
 $langs->load("bills");
@@ -577,7 +578,7 @@ while (($file = readdir($handle))!==false)
 		print $html->textwithpicto('',$htmltooltip,1,0);
 		print '</td>';
 		print '<td align="center">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimenfacture&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimenfacture&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
 		print '</td>';
 
 		print "</tr>\n";
