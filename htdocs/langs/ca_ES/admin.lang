@@ -1199,6 +1199,7 @@ MultiCompanySetup=Configuració del mòdul Multi-empresa
 ##### Suppliers #####
 SuppliersSetup=Configuració del mòdul Proveïdors
 SuppliersCommandModel=Model de comandes a proveïdors complet (logo...)
+SuppliersInvoiceModel=Model de factures de proveïdors complet (logo...)
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=Configuració del mòdul GeoIP  Maxmind
 PathToGeoIPMaxmindCountryDataFile=Ruta de l'arxiu Maxmind que conté les conversions IP-> País.<br>Exemple: /usr/local/share/GeoIP/GeoIP.dat

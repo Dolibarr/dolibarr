@@ -1189,6 +1189,7 @@ MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####
 SuppliersSetup=Supplier module setup
 SuppliersCommandModel=Complete template of supplier order (logo...)
+SuppliersInvoiceModel=Complete template of supplier invoice (logo...)
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=GeoIP Maxmind module setup
 PathToGeoIPMaxmindCountryDataFile=Path to file containing Maxmind ip to country translation.<br>Example: /usr/local/share/GeoIP/GeoIP.dat

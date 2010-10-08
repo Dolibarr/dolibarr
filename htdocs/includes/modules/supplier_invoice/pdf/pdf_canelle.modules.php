@@ -24,15 +24,15 @@
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/supplier_invoice/modules_invoicefournisseur.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/supplier_invoice/modules_facturefournisseur.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
- *	\class      pdf_muscadet
- *	\brief      Classe permettant de generer les factures fournisseurs au modele Muscadet
+ *	\class      pdf_canelle
+ *	\brief      Classe permettant de generer les factures fournisseurs au modele Canelle
  */
 class pdf_canelle extends ModelePDFSuppliersInvoices
 {
