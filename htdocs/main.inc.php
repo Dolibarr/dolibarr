@@ -1055,7 +1055,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	{
 		$langs->load("companies");
 		$searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php',
-		img_object('','company').' '.$langs->trans("Companies"), 'soc', 'socname');
+		img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname');
 	}
 
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
@@ -1328,7 +1328,7 @@ if (! function_exists("llxFooter"))
 	function llxFooter($foot='')
 	{
 		global $conf, $langs, $dolibarr_auto_user, $micro_start_time;
-		
+
 		// Core error message
 		if (defined("MAIN_CORE_ERROR") && constant("MAIN_CORE_ERROR") == 1)
 		{
@@ -1344,7 +1344,7 @@ if (! function_exists("llxFooter"))
 				$msg = img_warning().' '.$langs->trans('CoreErrorMessage');
 				print '<div class="error">'.$msg.'</div>';
 			}
-			
+
 			define("MAIN_CORE_ERROR",0);
 		}
 
