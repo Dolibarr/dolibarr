@@ -1464,7 +1464,7 @@ class CommonObject
 		}
 
 		// Ligne en mode update
-		if ($this->statut == 0 && $_GET["action"] == 'editline' && $user->rights->propale->creer && $_GET["lineid"] == $line->id)
+		if ($this->statut == 0 && $_GET["action"] == 'editline' && $_GET["lineid"] == $line->id)
 		{
 			if ($line->fk_product > 0)
 			{
