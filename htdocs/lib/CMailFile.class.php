@@ -24,7 +24,7 @@
 
 /**
  *      \file       htdocs/lib/CMailFile.class.php
- *      \brief      Fichier de la classe permettant d'envoyer des mail avec attachements
+ *      \brief      File of class to send emails (with attachments or not)
  *		\version    $Id$
  *      \author     Dan Potter.
  *      \author	    Eric Seigne
@@ -33,7 +33,7 @@
 
 /**
  *      \class      CMailFile
- *      \brief      Classe d'envoi de mails et pieces jointes. Encapsule mail() avec d'eventuels attachements.
+ *      \brief      Class to send emails (with attachments or not)
  *      \remarks    Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to);
  *      \remarks           $mailfile->sendfile();
  */
@@ -164,6 +164,9 @@ class CMailFile
 				dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i], LOG_DEBUG);
 			}
 		}
+
+		// Add autocopy to
+		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc.=($addr_bcc?', ':'').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 
 		// Action according to choosed sending method
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
@@ -334,7 +337,7 @@ class CMailFile
 				{
 					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
 
-					$bounce = '';
+					$bounce = '';	// By default
 					if ($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)
 					{
 						// le return-path dans les header ne fonctionne pas avec tous les MTA
@@ -347,7 +350,8 @@ class CMailFile
 
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
-					$res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
+					if (! empty($bounce)) $res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers, $bounce);
+					else $res = mail($dest,$this->encodetorfc2822($this->subject),$this->message,$this->headers);
 
 					if (! $res)
 					{
@@ -396,24 +400,25 @@ class CMailFile
 				{
 					$this->error="Failed to send mail to HOST=".$server.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					$res=false;
 				}
 				else
 				{
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->smtps->setDebug(true);
 					$result=$this->smtps->sendMsg();
 					//print $result;
+
+					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
+
+					$result=$this->smtps->getErrors();
+					if (empty($this->error) && empty($result)) $res=true;
+					else
+					{
+						if (empty($this->error)) $this->error=$result;
+						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+						$res=false;
+					}
 				}
-
-				if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
-
-				$result=$this->smtps->getErrors();
-				if (empty($this->error) && empty($result)) $res=true;
-				else
-				{
-					if (empty($this->error)) $this->error=$result;
-					$res=false;
-				}
-
 			}
 			else
 			{
@@ -428,7 +433,7 @@ class CMailFile
 		else
 		{
 			$this->error='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
-			dol_syslog("CMailFile::sendfile: ".$this->error, LOG_WARN);
+			dol_syslog("CMailFile::sendfile: ".$this->error, LOG_WARNING);
 		}
 
 		error_reporting($errorlevel);              // Reactive niveau erreur origine
@@ -470,7 +475,8 @@ class CMailFile
 
 
 	/**
-	 *  Ecrit le mail dans un fichier. Utilisation pour le debuggage.
+	 *  Write content of a SMTP request into a dump file (mode = all)
+	 *  Used for debugging.
 	 */
 	function dump_mail()
 	{
@@ -497,8 +503,64 @@ class CMailFile
 		}
 	}
 
+
+    /**
+     * Correct an uncomplete html string
+     *
+     * @param       $msg
+     * @return
+     */
+    function checkIfHTML($msg)
+    {
+        if (!preg_match('/^[\s\t]*<html/i',$msg))
+        {
+            $out = "<html><head><title></title>";
+            if (!empty($this->styleCSS)) $out.= $this->styleCSS;
+            $out.= "</head><body";
+            if (!empty($this->bodyCSS)) $out.= $this->bodyCSS;
+            $out.= ">";
+            $out.= $msg;
+            $out.= "</body></html>";
+        }
+        else
+        {
+            $out = $msg;
+        }
+
+        return $out;
+    }
+
+    /**
+     * Build a css style (mode = all)
+     *
+     * @return css
+     */
+    function buildCSS()
+    {
+        if (! empty($this->css))
+        {
+            // Style CSS
+            $this->styleCSS = '<style type="text/css">';
+            $this->styleCSS.= 'body {';
+
+            if ($this->css['bgcolor'])
+            {
+                $this->styleCSS.= '  background-color: '.$this->css['bgcolor'].';';
+                $this->bodyCSS.= ' BGCOLOR="'.$this->css['bgcolor'].'"';
+            }
+            if ($this->css['bgimage'])
+            {
+                // TODO recuperer cid
+                $this->styleCSS.= ' background-image: url("cid:'.$this->css['bgimage_cid'].'");';
+            }
+            $this->styleCSS.= '}';
+            $this->styleCSS.= '</style>';
+        }
+    }
+
+
 	/**
-	 * Create SMTP headers
+	 * Create SMTP headers (mode = 'mail')
 	 *
 	 * @return	smtp headers
 	 */
@@ -549,7 +611,8 @@ class CMailFile
 
 		if ($filename_list)
 		{
-			for ($i = 0; $i < count($filename_list); $i++)
+			$filename_list_size=count($filename_list);
+			for($i=0;$i < $filename_list_size;$i++)
 			{
 				if ($filename_list[$i])
 				{
@@ -577,12 +640,12 @@ class CMailFile
 		if ($this->msgishtml)
 		{
 			$out.= "--" . $this->mime_boundary . $this->eol;
-			$out.= "Content-Type: text/html; charset=\"".$conf->file->character_set_client."\"".$this->eol;
+			$out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
 		}
 		else
 		{
 			$out.= "--" . $this->mime_boundary . $this->eol;
-			$out.= "Content-Type: text/plain; charset=\"".$conf->file->character_set_client."\"".$this->eol;
+			$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 		}
 		$out.= $this->eol;
 
@@ -599,65 +662,12 @@ class CMailFile
 		// Make RFC821 Compliant, replace bare linefeeds
 		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent );
 
-		$strContent = rtrim(wordwrap($strContent));
+		//$strContent = rtrim(wordwrap($strContent));
+        $strContent = rtrim(chunk_split($strContent));
 
 		$out.=$strContent.$this->eol;
 
 		return $out;
-	}
-
-	/**
-	 * Correct an uncomplete html string
-	 *
-	 * @param unknown_type $msg
-	 * @return unknown
-	 */
-	function checkIfHTML($msg)
-	{
-		if (!preg_match('/^[\s\t]*<html/i',$msg))
-		{
-			$out = "<html><head><title></title>";
-			if (!empty($this->styleCSS)) $out.= $this->styleCSS;
-			$out.= "</head><body";
-			if (!empty($this->bodyCSS)) $out.= $this->bodyCSS;
-			$out.= ">";
-			$out.= $msg;
-			$out.= "</body></html>";
-		}
-		else
-		{
-			$out = $msg;
-		}
-
-		return $out;
-	}
-
-	/**
-	 * Build a css style
-	 *
-	 * @return css
-	 */
-	function buildCSS()
-	{
-		if (! empty($this->css))
-		{
-			// Style CSS
-			$this->styleCSS = '<style type="text/css">';
-			$this->styleCSS.= 'body {';
-
-			if ($this->css['bgcolor'])
-			{
-				$this->styleCSS.= '  background-color: '.$this->css['bgcolor'].';';
-				$this->bodyCSS.= ' BGCOLOR="'.$this->css['bgcolor'].'"';
-			}
-			if ($this->css['bgimage'])
-			{
-				// TODO recuperer cid
-				$this->styleCSS.= ' background-image: url("cid:'.$this->css['bgimage_cid'].'");';
-			}
-			$this->styleCSS.= '}';
-			$this->styleCSS.= '</style>';
-		}
 	}
 
 	/**
@@ -672,7 +682,8 @@ class CMailFile
 	{
 		$out = '';
 
-		for ($i = 0; $i < count($filename_list); $i++)
+		$filename_list_size=count($filename_list);
+		for($i=0;$i < $filename_list_size;$i++)
 		{
 			if ($filename_list[$i])
 			{
@@ -684,10 +695,10 @@ class CMailFile
 					if (! $mimetype_list[$i]) { $mimetype_list[$i] = "application/octet-stream"; }
 
 					$out.= "--" . $this->mime_boundary . $this->eol;
+                    $out.= "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"".$this->eol;
 					$out.= "Content-Type: " . $mimetype_list[$i] . "; name=\"".$filename_list[$i]."\"".$this->eol;
 					$out.= "Content-Transfer-Encoding: base64".$this->eol;
-					$out.= "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"".$this->eol;
-					$out.= "Content-Description: \""."File Attachment"."\"".$this->eol;
+					$out.= "Content-Description: File Attachment".$this->eol;
 					$out.= $this->eol;
 					$out.= $encoded;
 					$out.= $this->eol;
@@ -738,8 +749,8 @@ class CMailFile
 	/**
 	 * Try to create a socket connection
 	 *
-	 * @param 		unknown_type $host. Add ssl:// for SSL/TLS.
-	 * @param 		unknown_type $port. Example: 25, 465
+	 * @param 		$host. Add ssl:// for SSL/TLS.
+	 * @param 		$port. Example: 25, 465
 	 * @return 		Socket id if ok, 0 if KO
 	 */
 	function check_server_port($host,$port)
@@ -773,10 +784,14 @@ class CMailFile
 		return $_retVal;
 	}
 
-	// This function has been modified as provided
-	// by SirSir to allow multiline responses when
-	// using SMTP Extensions.
-	//
+	/**
+	 * This function has been modified as provided
+     * by SirSir to allow multiline responses when
+	 * using SMTP Extensions.
+	 * @param      socket
+	 * @param      response
+	 * @return     boolean
+	 */
 	function server_parse($socket, $response)
 	{
 		/**
