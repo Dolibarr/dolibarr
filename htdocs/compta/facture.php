@@ -3233,7 +3233,12 @@ else
 					}
 					print '</td>';
 
-					print '<td><a href="fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->nom,48).'</a></td>';
+					print '<td>';
+					$thirdparty=new Societe($db);
+					$thirdparty->id=$objp->socid;
+                    $thirdparty->nom=$objp->nom;
+                    print $thirdparty->getNomUrl(1,'customer');
+					print '</td>';
 
 					print '<td align="right">'.price($objp->total).'</td>';
 
