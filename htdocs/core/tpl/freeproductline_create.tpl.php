@@ -43,7 +43,7 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 	<td <?php echo $colspan; ?>>
 	<?php
 	echo $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
-	if ($conf->product->enabled && $conf->service->enabled) echo '<br>';
+	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
 
 	// Editor wysiwyg
 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
