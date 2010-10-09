@@ -90,24 +90,15 @@ function ajax_autocompleter($selected='',$htmlname,$value,$url,$indicator='worki
 	//$script.= '<div id="'.$htmlname.'" class="ui-widget"></div>';
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
-    				jQuery("#'.$htmlname.'").autocomplete({
+    				jQuery("input#'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
-    						jQuery.ajax({
-    							url: "'.$url.'",
-    							dataType: "jsonp",
-    							data: {
-    								socid: request.term
-								},
-								success: function( data ) {
-									response( $.map( data.result, function( item ) {
-										return {
-											label: item.socname,
-											value: item.socid
-										}
-									}));
-								}
-							});
-						},		
+    						jQuery.get("'.$url.'", { socid: request.term }, function(data){
+								response( jQuery.map( data, function( item ) {
+									return { label: item.socname, value: item.socid	}
+								}));
+							}, "json");
+						},
+						dataType: "json",		
     					minLength: 2,
     					select: function( event, ui ) {
     						jQuery("#'.$htmlname.'").val(ui.item.label);

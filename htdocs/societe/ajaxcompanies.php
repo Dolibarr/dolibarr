@@ -42,6 +42,7 @@ require('../main.inc.php');
 // Ajout directives pour resoudre bug IE
 //header('Cache-Control: Public, must-revalidate');
 //header('Pragma: public');
+header("Content-type: text/x-json");
 
 //top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
@@ -100,8 +101,8 @@ if (! empty($_POST['newcompany']) || ! empty($_GET['socid']) || ! empty($_POST['
 		}
 		print '</ul>';
 		*/
-	    $result = array('result' => $return_arr);
-	    echo json_encode($result);
+	    
+	    echo json_encode($return_arr);
 	}
 }
 else
