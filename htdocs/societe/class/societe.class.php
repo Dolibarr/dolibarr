@@ -181,6 +181,8 @@ class Societe extends CommonObject
             $this->error = $langs->trans("ErrorBadEMail",$this->email);
             return -1;
         }
+        if (empty($this->client)) $this->client=0;
+        if (empty($this->fournisseur)) $this->fournisseur=0;
 
         $this->db->begin();
 

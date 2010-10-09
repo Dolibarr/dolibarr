@@ -558,11 +558,12 @@ else
 		/*
 		 * Company Fact creation mode
 		 */
-		if ($_GET["type"]=='f')  { $soc->fournisseur=1; }
+        //if ($_GET["type"]=='cp') { $soc->client=3; }
+        if ($_GET["type"]!='f') $soc->client=3;
 		if ($_GET["type"]=='c')  { $soc->client=1; }
-		if ($_GET["type"]=='p')  { $soc->client=2; }
-		if ($_GET["type"]=='cp') { $soc->client=3; }
-		if ($_REQUEST["private"]==1) { $soc->particulier=1; }
+        if ($_GET["type"]=='p')  { $soc->client=2; }
+        if ($conf->fournisseur->enabled && ($_GET["type"]=='f' || $_GET["type"]==''))  { $soc->fournisseur=1; }
+        if ($_REQUEST["private"]==1) { $soc->particulier=1; }
 
 		$soc->nom=$_POST["nom"];
 		$soc->prenom=$_POST["prenom"];
@@ -717,37 +718,39 @@ else
 
 		print '</td></tr>';
 
-		// Supplier
-		print '<tr>';
-		print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
-		print $form->selectyesno("fournisseur",$soc->fournisseur,1);
-		print '</td>';
-		print '<td>'.$langs->trans('SupplierCode').'</td><td>';
-		print '<table class="nobordernopadding"><tr><td>';
-		$tmpcode=$soc->code_fournisseur;
-		if ($modCodeFournisseur->code_auto) $tmpcode=$modCodeFournisseur->getNextValue($soc,1);
-		print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
-		print '</td><td>';
-		$s=$modCodeFournisseur->getToolTip($langs,$soc,1);
-		print $form->textwithpicto('',$s,1);
-		print '</td></tr></table>';
-
-		print '</td></tr>';
-
-		// Category
-		if ($soc->fournisseur)
+		if ($conf->fournisseur->enabled)
 		{
-			$load = $soc->LoadSupplierCateg();
-			if ( $load == 0)
-			{
-				if (sizeof($soc->SupplierCategories) > 0)
-				{
-					print '<tr>';
-					print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-					print $form->selectarray("fournisseur_categorie",$soc->SupplierCategories,$_POST["fournisseur_categorie"],1);
-					print '</td></tr>';
-				}
-			}
+    		// Supplier
+    		print '<tr>';
+    		print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
+    		print $form->selectyesno("fournisseur",$soc->fournisseur,1);
+    		print '</td>';
+    		print '<td>'.$langs->trans('SupplierCode').'</td><td>';
+    		print '<table class="nobordernopadding"><tr><td>';
+    		$tmpcode=$soc->code_fournisseur;
+    		if ($modCodeFournisseur->code_auto) $tmpcode=$modCodeFournisseur->getNextValue($soc,1);
+    		print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
+    		print '</td><td>';
+    		$s=$modCodeFournisseur->getToolTip($langs,$soc,1);
+    		print $form->textwithpicto('',$s,1);
+    		print '</td></tr></table>';
+    		print '</td></tr>';
+
+    		// Category
+    		if ($soc->fournisseur)
+    		{
+    			$load = $soc->LoadSupplierCateg();
+    			if ( $load == 0)
+    			{
+    				if (sizeof($soc->SupplierCategories) > 0)
+    				{
+    					print '<tr>';
+    					print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
+    					print $form->selectarray("fournisseur_categorie",$soc->SupplierCategories,$_POST["fournisseur_categorie"],1);
+    					print '</td></tr>';
+    				}
+    			}
+    		}
 		}
 
 		// Barcode
