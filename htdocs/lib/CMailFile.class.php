@@ -475,7 +475,8 @@ class CMailFile
 
 
 	/**
-	 *  Ecrit le mail dans un fichier. Utilisation pour le debuggage.
+	 *  Write content of a SMTP request into a dump file (mode = all)
+	 *  Used for debugging.
 	 */
 	function dump_mail()
 	{
@@ -502,8 +503,64 @@ class CMailFile
 		}
 	}
 
+
+    /**
+     * Correct an uncomplete html string
+     *
+     * @param       $msg
+     * @return
+     */
+    function checkIfHTML($msg)
+    {
+        if (!preg_match('/^[\s\t]*<html/i',$msg))
+        {
+            $out = "<html><head><title></title>";
+            if (!empty($this->styleCSS)) $out.= $this->styleCSS;
+            $out.= "</head><body";
+            if (!empty($this->bodyCSS)) $out.= $this->bodyCSS;
+            $out.= ">";
+            $out.= $msg;
+            $out.= "</body></html>";
+        }
+        else
+        {
+            $out = $msg;
+        }
+
+        return $out;
+    }
+
+    /**
+     * Build a css style (mode = all)
+     *
+     * @return css
+     */
+    function buildCSS()
+    {
+        if (! empty($this->css))
+        {
+            // Style CSS
+            $this->styleCSS = '<style type="text/css">';
+            $this->styleCSS.= 'body {';
+
+            if ($this->css['bgcolor'])
+            {
+                $this->styleCSS.= '  background-color: '.$this->css['bgcolor'].';';
+                $this->bodyCSS.= ' BGCOLOR="'.$this->css['bgcolor'].'"';
+            }
+            if ($this->css['bgimage'])
+            {
+                // TODO recuperer cid
+                $this->styleCSS.= ' background-image: url("cid:'.$this->css['bgimage_cid'].'");';
+            }
+            $this->styleCSS.= '}';
+            $this->styleCSS.= '</style>';
+        }
+    }
+
+
 	/**
-	 * Create SMTP headers
+	 * Create SMTP headers (mode = 'mail')
 	 *
 	 * @return	smtp headers
 	 */
@@ -583,12 +640,12 @@ class CMailFile
 		if ($this->msgishtml)
 		{
 			$out.= "--" . $this->mime_boundary . $this->eol;
-			$out.= "Content-Type: text/html; charset=\"".$conf->file->character_set_client."\"".$this->eol;
+			$out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
 		}
 		else
 		{
 			$out.= "--" . $this->mime_boundary . $this->eol;
-			$out.= "Content-Type: text/plain; charset=\"".$conf->file->character_set_client."\"".$this->eol;
+			$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 		}
 		$out.= $this->eol;
 
@@ -605,65 +662,12 @@ class CMailFile
 		// Make RFC821 Compliant, replace bare linefeeds
 		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent );
 
-		$strContent = rtrim(wordwrap($strContent));
+		//$strContent = rtrim(wordwrap($strContent));
+        $strContent = rtrim(chunk_split($strContent));
 
 		$out.=$strContent.$this->eol;
 
 		return $out;
-	}
-
-	/**
-	 * Correct an uncomplete html string
-	 *
-	 * @param 		$msg
-	 * @return
-	 */
-	function checkIfHTML($msg)
-	{
-		if (!preg_match('/^[\s\t]*<html/i',$msg))
-		{
-			$out = "<html><head><title></title>";
-			if (!empty($this->styleCSS)) $out.= $this->styleCSS;
-			$out.= "</head><body";
-			if (!empty($this->bodyCSS)) $out.= $this->bodyCSS;
-			$out.= ">";
-			$out.= $msg;
-			$out.= "</body></html>";
-		}
-		else
-		{
-			$out = $msg;
-		}
-
-		return $out;
-	}
-
-	/**
-	 * Build a css style
-	 *
-	 * @return css
-	 */
-	function buildCSS()
-	{
-		if (! empty($this->css))
-		{
-			// Style CSS
-			$this->styleCSS = '<style type="text/css">';
-			$this->styleCSS.= 'body {';
-
-			if ($this->css['bgcolor'])
-			{
-				$this->styleCSS.= '  background-color: '.$this->css['bgcolor'].';';
-				$this->bodyCSS.= ' BGCOLOR="'.$this->css['bgcolor'].'"';
-			}
-			if ($this->css['bgimage'])
-			{
-				// TODO recuperer cid
-				$this->styleCSS.= ' background-image: url("cid:'.$this->css['bgimage_cid'].'");';
-			}
-			$this->styleCSS.= '}';
-			$this->styleCSS.= '</style>';
-		}
 	}
 
 	/**
@@ -691,10 +695,10 @@ class CMailFile
 					if (! $mimetype_list[$i]) { $mimetype_list[$i] = "application/octet-stream"; }
 
 					$out.= "--" . $this->mime_boundary . $this->eol;
+                    $out.= "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"".$this->eol;
 					$out.= "Content-Type: " . $mimetype_list[$i] . "; name=\"".$filename_list[$i]."\"".$this->eol;
 					$out.= "Content-Transfer-Encoding: base64".$this->eol;
-					$out.= "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"".$this->eol;
-					$out.= "Content-Description: \""."File Attachment"."\"".$this->eol;
+					$out.= "Content-Description: File Attachment".$this->eol;
 					$out.= $this->eol;
 					$out.= $encoded;
 					$out.= $this->eol;

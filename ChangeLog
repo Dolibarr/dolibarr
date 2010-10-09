@@ -43,6 +43,9 @@ For users:
 - Fix: Database name can contains "-" characters.
 - Fix: In coloring negative amounts.
 - Fix: Date input use date format of user and not dd/mm/yyyy format.
+- Fix: Fixed a very old bug making file attachment fails with some emails 
+       readers when using "mail php function".
+
 
 For translators:
 - New: Update and complete slovenian language sl_SL.
