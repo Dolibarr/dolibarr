@@ -41,7 +41,7 @@ $langs->load("install");
 if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
-dolibarr_install_syslog("check: Dolibarr install/upgrade process started");
+dolibarr_install_syslog("Dolibarr install/upgrade process started");
 
 
 /*
@@ -155,7 +155,7 @@ if ($memmaxorig != '')
 clearstatcache();
 if (is_readable($conffile) && filesize($conffile) > 8)
 {
-	dolibarr_install_syslog("check: conf file '$conffile' already defined");
+	dolibarr_install_syslog("conf file '$conffile' already defined");
 	$confexists=1;
 	include_once($conffile);
 
@@ -173,19 +173,19 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 else
 {
 	// If not, we create it
-	dolibarr_install_syslog("check: we try to create conf file '$conffile'");
+	dolibarr_install_syslog("we try to create conf file '$conffile'");
 	$confexists=0;
 
 	# First we try by copying example
 	if (@copy($conffile.".example", $conffile))
 	{
 		# Success
-		dolibarr_install_syslog("check: copied file ".$conffile.".example into ".$conffile." done successfully.");
+		dolibarr_install_syslog("copied file ".$conffile.".example into ".$conffile." done successfully.");
 	}
 	else
 	{
 		# If failed, we try to create an empty file
-		dolibarr_install_syslog("check: failed to copy file ".$conffile.".example into ".$conffile.". We try to create it.");
+		dolibarr_install_syslog("failed to copy file ".$conffile.".example into ".$conffile.". We try to create it.");
 
 		$fp = @fopen($conffile, "w");
 		if ($fp)
@@ -264,20 +264,29 @@ else
 			include_once($conffile);
 			if (! empty($dolibarr_main_db_type) && ! empty($dolibarr_main_document_root))
 			{
-				require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
-				require_once($dolibarr_main_document_root."/lib/admin.lib.php");
-				// $conf is already instancied inside inc.php
-				$conf->db->type = $dolibarr_main_db_type;
-				$conf->db->host = $dolibarr_main_db_host;
-				$conf->db->port = $dolibarr_main_db_port;
-				$conf->db->name = $dolibarr_main_db_name;
-				$conf->db->user = $dolibarr_main_db_user;
-				$conf->db->pass = $dolibarr_main_db_pass;
-				$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
-				if ($db->connected == 1 && $db->database_selected == 1)
+				if (! file_exists($dolibarr_main_document_root."/lib/admin.lib.php"))
 				{
-					$ok=1;
+				    print '<font class="error">A conf.php file exists with a dolibarr_main_document_root to '.$dolibarr_main_document_root.' that seems wrong. Try to fix or remove the conf.php file.</font><br>'."\n";
+				    dol_syslog("A conf.php file exists with a dolibarr_main_document_root to ".$dolibarr_main_document_root." that seems wrong. Try to fix or remove the conf.php file.", LOG_WARNING);
 				}
+				else
+				{
+                    require_once($dolibarr_main_document_root."/lib/admin.lib.php");
+                    require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
+
+    				// $conf is already instancied inside inc.php
+    				$conf->db->type = $dolibarr_main_db_type;
+    				$conf->db->host = $dolibarr_main_db_host;
+    				$conf->db->port = $dolibarr_main_db_port;
+    				$conf->db->name = $dolibarr_main_db_name;
+    				$conf->db->user = $dolibarr_main_db_user;
+    				$conf->db->pass = $dolibarr_main_db_pass;
+    				$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    				if ($db->connected == 1 && $db->database_selected == 1)
+    				{
+    					$ok=1;
+    				}
+                }
 			}
 		}
 
