@@ -529,7 +529,7 @@ class FormCompany
 				}
 
 				// We call a page after a small delay when a new input has been selected
-				$javaScript = "window.location=\'./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=\' + document.getElementById(\'".$htmlname."_id\').value;";
+				$javaScript = "window.location=\'./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=\' + document.getElementById(\'".$htmlname."\').value;";
 				$htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\')"';
 
 				print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
@@ -539,17 +539,15 @@ class FormCompany
 				{
 					//$langs->load("companies");
 					//print '<input type="text" size="30" id="'.$htmlname.'_label" name="'.$htmlname.'" value="'.$langs->trans("SelectCompany").'" '.$htmloption.' />';
-					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="" '.$htmloption.' />';
+					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="" '.$htmloption.' />';
 				}
 				else
 				{
-					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
+					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
 				}
-				print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php','');
+				print ajax_autocompleter(($socid?$socid:-1),$htmlname,'socname',DOL_URL_ROOT.'/societe/ajaxcompanies.php','');
 				print '</td>';
-				print '<td class="nobordernopadding" align="left" width="16">';
-				print ajax_indicator($htmlname,'working');
-				print '</td></tr>';
+				print '</tr>';
 				print '</table>';
 				print "\n";
 				return $socid;

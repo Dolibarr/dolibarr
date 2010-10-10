@@ -78,31 +78,29 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
  *	\brief     	Get value of field, do Ajax process and return result
  *	\param	    htmlname            nom et id du champ
  *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
- *	\param     	indicator           nom de l'image gif sans l'extension
  *	\return    	string              script complet
  */
-function ajax_autocompleter($selected='',$htmlname,$value,$url,$indicator='working')
+function ajax_autocompleter($selected='',$htmlname,$valname,$url)
 {
 	$script='';
 
-	$script.= '<input type="hidden" name="'.$value.'" id="'.$value.'" value="'.$selected.'" />';
+	$script.= '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
 
 	//$script.= '<div id="'.$htmlname.'" class="ui-widget"></div>';
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
-    				jQuery("input#'.$htmlname.'").autocomplete({
+    				jQuery("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
     						jQuery.get("'.$url.'", { socid: request.term }, function(data){
 								response( jQuery.map( data, function( item ) {
-									return { label: item.socname, value: item.socid	}
+									return { label: item.'.$valname.', value: item.'.$valname.', id: item.'.$htmlname.'}
 								}));
 							}, "json");
 						},
 						dataType: "json",		
     					minLength: 2,
     					select: function( event, ui ) {
-    						jQuery("#'.$htmlname.'").val(ui.item.label);
-    						jQuery("#'.$value.'").val(ui.item.value);
+    						jQuery("#'.$htmlname.'").val(ui.item.id);
     					}
 					});
   				});';

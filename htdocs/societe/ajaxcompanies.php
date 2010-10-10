@@ -42,15 +42,11 @@ require('../main.inc.php');
 // Ajout directives pour resoudre bug IE
 //header('Cache-Control: Public, must-revalidate');
 //header('Pragma: public');
-header("Content-type: text/x-json");
 
 //top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
-print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
-
-
-//print '<body id="mainbody">';
+//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 dol_syslog(join(',',$_GET));
 
@@ -89,18 +85,6 @@ if (! empty($_POST['newcompany']) || ! empty($_GET['socid']) || ! empty($_POST['
 	 
 	        array_push($return_arr,$row_array);
 	    }
-		/*
-		print '<ul>';
-		while ($company = $db->fetch_object($resql))
-		{
-			print '<li>';
-			print $company->nom;
-			// To output content that will not be inserted into selected field, we use span.
-			print '<span id="object" class="informal" style="display:none">'.$company->rowid.'-idcache</span>';
-			print '</li>';
-		}
-		print '</ul>';
-		*/
 	    
 	    echo json_encode($return_arr);
 	}
@@ -110,6 +94,4 @@ else
 
 }
 
-//print "</body>";
-//print "</html>";
 ?>
