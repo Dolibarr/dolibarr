@@ -44,15 +44,6 @@ $token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 $_SESSION['newtoken'] = $token;
 
-// Verification de la presence et de la validite du jeton
-if (isset($_POST['token']) && isset($_SESSION['token']))
-{
-	if ($_POST['token'] != $_SESSION['token'])
-	{
-		unset($_POST);
-	}
-}
-
 $langs->load("main");
 $langs->load("other");
 $langs->load("dict");
@@ -71,33 +62,35 @@ $langs->load("paypal");
 
 if (empty($_REQUEST["currency"])) $currency=$conf->global->MAIN_MONNAIE;
 else $currency=$_REQUEST["currency"];
-if (empty($_REQUEST["amount"]) && empty($_REQUEST["source"]))
+
+var_dump($_POST);
+if (! GETPOST("action"))
 {
-	dol_print_error('','ErrorBadParameters');
-	session_destroy();
-	exit;
+    if (empty($_REQUEST["amount"]) && empty($_REQUEST["source"]))
+    {
+    	dol_print_error('',$langs->trans('ErrorBadParameters')." - amount or source");
+    	exit;
+    }
+    $amount=$_REQUEST["amount"];
+    if (is_numeric($amount) && empty($_REQUEST["tag"]) && empty($_REQUEST["source"]))
+    {
+    	dol_print_error('',$langs->trans('ErrorBadParameters')." - tag or source");
+    	exit;
+    }
+    if (! empty($REQUEST["source"]) && empty($_REQUEST["ref"]))
+    {
+    	dol_print_error('',$langs->trans('ErrorBadParameters')." - ref");
+    	exit;
+    }
 }
-$amount=$_REQUEST["amount"];
-if (is_numeric($amount) && empty($_REQUEST["tag"]) && empty($_REQUEST["source"]))
-{
-	dol_print_error('','ErrorBadParameters');
-	session_destroy();
-	exit;
-}
-if (! empty($REQUEST["source"]) && empty($_REQUEST["ref"]))
-{
-	dol_print_error('','ErrorBadParameters');
-	session_destroy();
-	exit;
-}
-$suffix=$_REQUEST["suffix"];
+$suffix=GETPOST("suffix");
 
 
 
 /*
  * Actions
  */
-if ($_REQUEST["action"] == 'dopayment')
+if (GETPOST("action") == 'dopayment')
 {
 	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
 
@@ -116,9 +109,11 @@ if ($_REQUEST["action"] == 'dopayment')
 
 	if (empty($mesg))
 	{
-		//print_paypal_redirect($PAYPAL_API_PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG, $ID);
+		/*
+		print_paypal_redirect($PAYPAL_API_PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG, $ID);
+		exit;
 
-		/*global $conf, $langs, $db;
+		global $conf, $langs, $db;
 		global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 		global $PAYPAL_API_DEVISE, $PAYPAL_API_OK, $PAYPAL_API_KO;
 		global $PAYPAL_API_SANDBOX;
@@ -395,7 +390,9 @@ if ($_REQUEST["source"] == 'order')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+	$email=$order->client->email;
+	$email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 }
 
 
@@ -471,7 +468,9 @@ if ($_REQUEST["source"] == 'invoice')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+    $email=$invoice->client->email;
+    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 }
 
 // Payment on contract line
@@ -635,7 +634,9 @@ if ($_REQUEST["source"] == 'contractline')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+    $email=$contract->client->email;
+    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 
 }
 
@@ -712,7 +713,9 @@ if ($_REQUEST["source"] == 'membersubscription')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+    $email=$member->client->email;
+    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 }
 
 

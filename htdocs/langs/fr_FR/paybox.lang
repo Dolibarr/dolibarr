@@ -24,3 +24,6 @@ YouCanAddTagOnUrl=Vous pouvez de plus ajouter le paramètre url <b>&tag=<i>value
 SetupPayBoxToHavePaymentCreatedAutomatically=Configurez votre url PayBox à <b>%s</b> pour avoir le paiement créé automatiquement si validé.
 YourPaymentHasBeenRecorded=Cette page confirme que votre paiement a bien été enregistré. Merci.
 YourPaymentHasNotBeenRecorded=Votre paiement n'a pas été enregistré et la transaction a été annulée. Merci.
+AccountParameter=Paramètres du compte
+UsageParameter=Paramètres d'utilisation
+InformationToFindParameters=Informations pour trouver vos paramètres de compte %s

@@ -44,22 +44,13 @@ $token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 $_SESSION['newtoken'] = $token;
 
-// Verification de la presence et de la validite du jeton
-if (isset($_POST['token']) && isset($_SESSION['token']))
-{
-	if ($_POST['token'] != $_SESSION['token'])
-	{
-		unset($_POST);
-	}
-}
-
 $langs->load("main");
 $langs->load("other");
-$langs->load("paybox");
 $langs->load("dict");
 $langs->load("bills");
 $langs->load("companies");
 $langs->load("errors");
+$langs->load("paybox");
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -70,26 +61,27 @@ $langs->load("errors");
 
 if (empty($_REQUEST["currency"])) $currency=$conf->global->MAIN_MONNAIE;
 else $currency=$_REQUEST["currency"];
-if (empty($_REQUEST["amount"]) && empty($_REQUEST["source"]))
+
+if (! GETPOST("action"))
 {
-	dol_print_error('','ErrorBadParameters');
-	session_destroy();
-	exit;
+    if (empty($_REQUEST["amount"]) && empty($_REQUEST["source"]))
+    {
+        dol_print_error('',$langs->trans('ErrorBadParameters')." - amount or source");
+    	exit;
+    }
+    $amount=$_REQUEST["amount"];
+    if (is_numeric($amount) && empty($_REQUEST["tag"]) && empty($_REQUEST["source"]))
+    {
+        dol_print_error('',$langs->trans('ErrorBadParameters')." - tag or source");
+    	exit;
+    }
+    if (! empty($REQUEST["source"]) && empty($_REQUEST["ref"]))
+    {
+        dol_print_error('',$langs->trans('ErrorBadParameters')." - ref");
+    	exit;
+    }
 }
-$amount=$_REQUEST["amount"];
-if (is_numeric($amount) && empty($_REQUEST["tag"]) && empty($_REQUEST["source"]))
-{
-	dol_print_error('','ErrorBadParameters');
-	session_destroy();
-	exit;
-}
-if (! empty($REQUEST["source"]) && empty($_REQUEST["ref"]))
-{
-	dol_print_error('','ErrorBadParameters');
-	session_destroy();
-	exit;
-}
-$suffix=$_REQUEST["suffix"];
+$suffix=GETPOST("suffix");
 
 
 
@@ -306,7 +298,9 @@ if ($_REQUEST["source"] == 'order')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+	$email=$order->client->email;
+	$email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 }
 
 
@@ -382,7 +376,9 @@ if ($_REQUEST["source"] == 'invoice')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+    $email=$invoice->client->email;
+    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 }
 
 // Payment on contract line
@@ -546,7 +542,9 @@ if ($_REQUEST["source"] == 'contractline')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+    $email=$contract->client->email;
+    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 
 }
 
@@ -623,7 +621,9 @@ if ($_REQUEST["source"] == 'membersubscription')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+    $email=$member->client->email;
+    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 }
 
 

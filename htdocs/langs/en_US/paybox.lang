@@ -24,3 +24,7 @@ YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your PayBox with url <b>%s</b> to have payment created automatically when validated by paybox. 
 YourPaymentHasBeenRecorded=This page confirms that your payment has been recorded. Thank you.
 YourPaymentHasNotBeenRecorded=You payment has not been recorded and transaction has been canceled. Thank you.
+AccountParameter=Account parameters
+UsageParameter=Usage parameters
+InformationToFindParameters=Help to find your %s account information
+
