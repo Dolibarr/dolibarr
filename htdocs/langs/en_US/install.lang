@@ -26,6 +26,7 @@ ErrorWrongValueForParameter=You may have typed a wrong value for parameter '%s'.
 ErrorFailedToCreateDatabase=Failed to create database '%s'.
 ErrorFailedToConnectToDatabase=Failed to connect to database '%s'.
 ErrorPHPVersionTooLow=PHP version too old. Version %s is required.
+WarningPHPVersionTooLow=PHP version too old. Version %s or more is expected. This version should allow install but is not supported.
 ErrorConnectedButDatabaseNotFound=Connection to server successfull but database '%s' not found.
 ErrorDatabaseAlreadyExists=Database '%s' already exists.
 IfDatabaseNotExistsGoBackAndUncheckCreate=If database does not exists, go back and check option "Create database".
