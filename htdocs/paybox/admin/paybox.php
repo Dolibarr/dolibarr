@@ -29,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 $servicename='PayBox';
 
 $langs->load("admin");
+$langs->load("other");
 $langs->load("paybox");
 
 if (!$user->admin)
@@ -152,7 +153,7 @@ print '<br>'.$langs->trans("Example").': http://mysite/mycss.css';
 print '</td></tr>';
 
 
-print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
+print '<tr><td colspan="2" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
 
 print '<br><br>';
@@ -161,31 +162,31 @@ print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 // Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
 print '<br>';
-print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
+print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
 print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag</i></b>'."<br>\n";
 print '<br>';
 if ($conf->commande->enabled)
 {
-	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
+	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
 	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/newpayment.php?source=order&ref=<i>order_ref</i></b>'."<br>\n";
 	print '<br>';
 }
 if ($conf->facture->enabled)
 {
-	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
+	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
 	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/newpayment.php?source=invoice&ref=<i>invoice_ref</i></b>'."<br>\n";
 //	print $langs->trans("SetupPayBoxToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
 	print '<br>';
 }
 if ($conf->contrat->enabled)
 {
-	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
+	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
 	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/newpayment.php?source=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
 	print '<br>';
 }
 if ($conf->adherent->enabled)
 {
-	print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
+	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
 	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/newpayment.php?source=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
 	print '<br>';
 }
