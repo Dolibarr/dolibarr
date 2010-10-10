@@ -35,13 +35,6 @@ if ($conf->projet->enabled)
 
 $langs->load("trips");
 
-// If socid provided by ajax company selector
-if (! empty($_REQUEST['socid_id']))
-{
-	$_GET['socid'] = $_GET['socid_id'];
-	$_POST['socid'] = $_POST['socid_id'];
-	$_REQUEST['socid'] = $_REQUEST['socid_id'];
-}
 
 // Security check
 $id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];

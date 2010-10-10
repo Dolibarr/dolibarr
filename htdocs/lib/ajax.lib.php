@@ -86,7 +86,6 @@ function ajax_autocompleter($selected='',$htmlname,$valname,$url)
 
 	$script.= '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
 
-	//$script.= '<div id="'.$htmlname.'" class="ui-widget"></div>';
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
     				jQuery("input#search_'.$htmlname.'").autocomplete({
@@ -104,48 +103,6 @@ function ajax_autocompleter($selected='',$htmlname,$valname,$url)
     					}
 					});
   				});';
-	/*
-	$script.= 'new Ajax.Autocompleter(\''.$htmlname.'\',\'result'.$htmlname.'\',\''.$url.'\',{
-	           method: \'post\',
-	           paramName: \'socid\',
-	           minChars: \'1\',
-	           indicator: \'indicator'.$htmlname.'\',
-	           afterUpdateElement: ac_return
-	         });';	// paramName must be 'socid', as it is the name of POST parameter to send value in htmlname field.
-					// and it is name of parameter read by ajaxcompanies.php
-		// Note: The ac_return will fill value inside field htmlname (param of Autocompleter constructor)
-		// and will also fill value inside field htmlname_id (using function ac_return)*/
-	$script.= '</script>';
-
-	return $script;
-}
-
-/**
- *	\brief     	Get value of field, do Ajax process and return result. Use jQuery.
- *  \param      selected            Preselected value
- *	\param	    htmlname            Name of html field
- *	\param	    url                 Path of source file to get values: /path/ajaxpage.php
- *  \param      option              Not used
- *	\return    	string              script complet
- */
-function ajax_autocompleter2($selected='', $htmlname, $url, $option='')
-{
-	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
-
-	$script.= '<script type="text/javascript">';
-	$script.= 'jQuery(function() {
-					jQuery("input#'.$htmlname.'free").autocomplete({
-                        source: "'.$url.($option?'?'.$option:'').'",
-					    delay: 300,
-						minLength: 1,
-                        select: function(event, ui) {
-                            /* jQuery("#'.$htmlname.'free") is automatically affected with ui.item.key */
-                            /* jQuery("#'.$htmlname.'free").val(ui.item.fulltext); */
-                            jQuery("#'.$htmlname.'").val(ui.item.key);
-                            /* alert(ui.item.key); */
-                        }
-					});
-				});';
 	$script.= '</script>';
 
 	return $script;

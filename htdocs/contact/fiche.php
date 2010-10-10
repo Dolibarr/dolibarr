@@ -40,14 +40,6 @@ $langs->load("users");
 $errors = array();
 $socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
 
-// If socid provided by ajax company selector
-if (! empty($_REQUEST['socid_id']))
-{
-	$socid = $_GET['socid'] = $_GET['socid_id'];
-	$socid = $_POST['socid'] = $_POST['socid_id'];
-	$socid = $_REQUEST['socid'] = $_REQUEST['socid_id'];
-}
-
 // Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;

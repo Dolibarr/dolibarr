@@ -52,14 +52,14 @@ dol_syslog(join(',',$_GET));
 
 
 // Generation liste des societes
-if (! empty($_POST['newcompany']) || ! empty($_GET['socid']) || ! empty($_POST['id_fourn']))
+if (! empty($_GET['newcompany']) || ! empty($_GET['socid']) || ! empty($_GET['id_fourn']))
 {
 	$return_arr = array();
 	
 	// Define filter on text typed
-	$socid = $_POST['newcompany']?$_POST['newcompany']:'';
+	$socid = $_GET['newcompany']?$_GET['newcompany']:'';
 	if (! $socid) $socid = $_GET['socid']?$_GET['socid']:'';
-	if (! $socid) $socid = $_POST['id_fourn']?$_POST['id_fourn']:'';
+	if (! $socid) $socid = $_GET['id_fourn']?$_GET['id_fourn']:'';
 
 	$sql = "SELECT rowid, nom";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";

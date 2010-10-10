@@ -40,13 +40,6 @@ $langs->load("members");
 $langs->load("users");
 $langs->load("mails");
 
-// If socid provided by ajax company selector
-if (! empty($_REQUEST['socid_id']))
-{
-    $_GET['socid'] = $_GET['socid_id'];
-    $_POST['socid'] = $_POST['socid_id'];
-    $_REQUEST['socid'] = $_REQUEST['socid_id'];
-}
 
 // Security check
 if (! $user->rights->adherent->cotisation->lire) accessforbidden();

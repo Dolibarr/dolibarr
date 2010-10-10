@@ -37,13 +37,6 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 
-// If socid provided by ajax company selector
-if (! empty($_REQUEST['socid_id']))
-{
-	$_GET['socid'] = $_GET['socid_id'];
-	$_POST['socid'] = $_POST['socid_id'];
-	$_REQUEST['socid'] = $_REQUEST['socid_id'];
-}
 
 $langs->load('bills');
 $langs->load('suppliers');

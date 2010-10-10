@@ -37,14 +37,6 @@ $langs->load('companies');
 $projectid = (isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:''));
 $projectref = (isset($_GET["ref"])?$_GET["ref"]:'');
 
-// If socid provided by ajax company selector
-if (! empty($_REQUEST['socid_id']))
-{
-	$_GET['socid'] = $_GET['socid_id'];
-	$_POST['socid'] = $_POST['socid_id'];
-	$_REQUEST['socid'] = $_REQUEST['socid_id'];
-}
-
 if ($projectid == '' && $projectref == '' && ($_GET['action'] != "create" && $_POST['action'] != "add" && $_POST["action"] != "update" && !$_POST["cancel"])) accessforbidden();
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
