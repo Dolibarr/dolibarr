@@ -91,6 +91,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 					var cache = {};
     				jQuery("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
+    						if (this.length == 0) { jQuery(this).flushCache(); }
     						if (cache.term == request.term && cache.content) {
     							response(cache.content);
     							return;
