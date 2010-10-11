@@ -1466,31 +1466,30 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /* ============================================================================== */
 
 .ui-autocomplete-loading { background: white url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/working.gif' ?>) right center no-repeat; }
-.ui-autocomplete { 	 
-	       position:absolute; 	 
+.ui-autocomplete {
+	       position:absolute;
 	       width:auto;
-	       font-size: 1.0em; 	 
-	       background-color:white; 	 
-	       border:1px solid #888; 	 
-	       margin:0px; 	 
-	       padding:0px; 	 
-	     } 	 
-.ui-autocomplete ul { 	 
-	       list-style-type:none; 	 
-	       margin:0px; 	 
-	       padding:0px; 	 
-	     } 	 
-.ui-autocomplete ul li.selected { background-color: #D3E5EC;} 	 
-.ui-autocomplete ul li { 	 
-	       list-style-type:none; 	 
-	       display:block; 	 
-	       margin:0; 	 
-	       padding:2px; 	 
-	       height:16px; 	 
-	       cursor:pointer; 	 
+	       font-size: 1.0em;
+	       background-color:white;
+	       border:1px solid #888;
+	       margin:0px;
+	       padding:0px;
+	     }
+.ui-autocomplete ul {
+	       list-style-type:none;
+	       margin:0px;
+	       padding:0px;
+	     }
+.ui-autocomplete ul li.selected { background-color: #D3E5EC;}
+.ui-autocomplete ul li {
+	       list-style-type:none;
+	       display:block;
+	       margin:0;
+	       padding:2px;
+	       height:16px;
+	       cursor:pointer;
 	     }
 
-*/
 /* ============================================================================== */
 /*  Ajax - In place editor                                                        */
 /* ============================================================================== */
