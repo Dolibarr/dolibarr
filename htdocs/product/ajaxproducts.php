@@ -50,16 +50,16 @@ $langs->load("main");
 //top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
-print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 //print '<body class="nocellnopadd">'."\n";
 
 dol_syslog(join(',',$_POST));
 
-if (! isset($_GET['keysearch']) && ! isset($_GET['term'])) return;
+if (! isset($_GET['keysearch']) && ! isset($_GET['idprod'])) return;
 
 // When used from jQuery, the search term is added as GET param "term".
-$searchkey=isset($_GET['keysearch'])?$_GET['keysearch']:$_GET['term'];
+$searchkey=isset($_GET['keysearch'])?$_GET['keysearch']:$_GET['idprod'];
 $outjson=isset($_GET['outjson'])?$_GET['outjson']:0;
 
 // Get list of product.

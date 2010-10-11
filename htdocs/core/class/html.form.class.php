@@ -564,7 +564,7 @@ class Form
                 {
                     print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->nom.'" />';
                 }
-                print ajax_autocompleter(($socid?$socid:-1),$htmlname,'socname',DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
+                print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
                 print '</td>';
                 print '</tr>';
                 print '</table>';
@@ -862,11 +862,11 @@ class Form
             if ($conf->global->MAIN_USE_NEW_JQUERY)
             {
                 // mode=1 means customers products
-                print ajax_autocompleter2('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');
+                print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');
 
                 print '<div class="ui-widget">';
-                print '<label for="'.$htmlname.'free">'.$langs->trans("RefOrLabel").':</label>';
-                print '<input id="'.$htmlname.'free" />';
+                print '<label for="search_'.$htmlname.'">'.$langs->trans("RefOrLabel").':</label>';
+                print '<input id="search_'.$htmlname.'" />';
                 print '</div>';
             }
             else

@@ -545,7 +545,7 @@ class FormCompany
 				{
 					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
 				}
-				print ajax_autocompleter(($socid?$socid:-1),$htmlname,'socname',DOL_URL_ROOT.'/societe/ajaxcompanies.php','');
+				print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php','');
 				print '</td>';
 				print '</tr>';
 				print '</table>';

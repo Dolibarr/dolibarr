@@ -80,7 +80,7 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
  *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
  *	\return    	string              script complet
  */
-function ajax_autocompleter($selected='',$htmlname,$valname,$url)
+function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 {
 	$script='';
 
@@ -90,10 +90,10 @@ function ajax_autocompleter($selected='',$htmlname,$valname,$url)
 	$script.= 'jQuery(document).ready(function() {
     				jQuery("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
-    						jQuery.get("'.$url.'", { '.$htmlname.': request.term }, function(data){
+    						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$htmlname.': request.term }, function(data){
 								response( jQuery.map( data, function( item ) {
-									var label = item.'.$valname.'.toString().replace(new RegExp("("+request.term+")","i"),"<strong>$1</strong>");
-									return { label: label, value: item.'.$valname.', id: item.'.$htmlname.'}
+									var label = item.label.toString().replace(new RegExp("("+request.term+")","i"),"<strong>$1</strong>");
+									return { label: label, value: item.value, id: item.key}
 								}));
 							}, "json");
 						},

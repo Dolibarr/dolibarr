@@ -80,8 +80,9 @@ if (! empty($_GET['newcompany']) || ! empty($_GET['socid']) || ! empty($_GET['id
 	if ($resql)
 	{
 		while ($row = $db->fetch_array($resql)) {
-			$row_array['socname'] = $row['nom'];
-	        $row_array['socid'] = $row['rowid'];
+			$row_array['label'] = $row['nom'];
+			$row_array['value'] = $row['nom'];
+	        $row_array['key'] = $row['rowid'];
 	 
 	        array_push($return_arr,$row_array);
 	    }
