@@ -90,9 +90,10 @@ function ajax_autocompleter($selected='',$htmlname,$valname,$url)
 	$script.= 'jQuery(document).ready(function() {
     				jQuery("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
-    						jQuery.get("'.$url.'", { socid: request.term }, function(data){
+    						jQuery.get("'.$url.'", { '.$htmlname.': request.term }, function(data){
 								response( jQuery.map( data, function( item ) {
-									return { label: item.'.$valname.', value: item.'.$valname.', id: item.'.$htmlname.'}
+									var label = item.'.$valname.'.toString().replace(new RegExp("("+request.term+")","i"),"<strong>$1</strong>");
+									return { label: label, value: item.'.$valname.', id: item.'.$htmlname.'}
 								}));
 							}, "json");
 						},
@@ -101,7 +102,12 @@ function ajax_autocompleter($selected='',$htmlname,$valname,$url)
     					select: function( event, ui ) {
     						jQuery("#'.$htmlname.'").val(ui.item.id);
     					}
-					});
+					}).data( "autocomplete" )._renderItem = function( ul, item ) {
+						return jQuery( "<li></li>" )
+						.data( "item.autocomplete", item )
+						.append( \'<a href="#"><span class="tag">\' + item.label + "</span></a>" )
+						.appendTo( ul );
+					};
   				});';
 	$script.= '</script>';
 
