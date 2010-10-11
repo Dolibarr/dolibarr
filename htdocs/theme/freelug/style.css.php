@@ -527,7 +527,7 @@ td.photo {
 /* ============================================================================== */
 
 /*
- *  PANES & CONTENT-DIVs
+ *  PANES and CONTENT-DIVs
  */
 .ui-layout-pane { /* all 'panes' */
     background: #FFF;

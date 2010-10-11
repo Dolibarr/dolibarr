@@ -1465,46 +1465,9 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
-
-.ui-autocomplete {}
-.ui-autocomplete-results { overflow: hidden; z-index: 99999; padding: 1px; position: absolute; }
-.ui-autocomplete-results ul { width: 100%; list-style-position: outside; list-style: none; padding: 0; margin: 0; }
-
-/* if  the width: 100%, a horizontal scrollbar will appear when scroll: true. */
-/* !important! if line-height is not set, or is set to a relative unit, scroll will be broken in firefox */
-.ui-autocomplete-results li { margin: 0px; padding: 2px 5px; cursor: default; display: block; font: menu; font-size: 12px; line-height: 16px; overflow: hidden; border-collapse: collapse; }
-.ui-autocomplete-results li.ui-autocomplete-even { background-color: #fff; }
-.ui-autocomplete-results li.ui-autocomplete-odd { background-color: #eee; }
-
-.ui-autocomplete-results li.ui-autocomplete-state-default { background-color: #fff; border: 1px solid #fff; color: #212121; }
-.ui-autocomplete-results li.ui-autocomplete-state-active { color: #000; background:#E6E6E6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) repeat-x; border:1px solid #D3D3D3; }
-
 .ui-autocomplete-loading { background: white url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/working.gif' ?>) right center no-repeat; }
-.ui-autocomplete-over { background-color: #0A246A; color: white; }
 
-/*
-div.autocomplete {
-      position:absolute;
-      width:250px;
-      background-color:white;
-      border:1px solid #888;
-      margin:0px;
-      padding:0px;
-    }
-div.autocomplete ul {
-      list-style-type:none;
-      margin:0px;
-      padding:0px;
-    }
-div.autocomplete ul li.selected { background-color: #D3E5EC;}
-div.autocomplete ul li {
-      list-style-type:none;
-      display:block;
-      margin:0;
-      padding:2px;
-      height:16px;
-      cursor:pointer;
-    }
+
 */
 /* ============================================================================== */
 /*  Ajax - In place editor                                                        */

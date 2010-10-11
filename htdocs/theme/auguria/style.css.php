@@ -640,7 +640,7 @@ td.photo {
 /* ============================================================================== */
 
 /*
- *  PANES & CONTENT-DIVs
+ *  PANES and CONTENT-DIVs
  */
 .ui-layout-pane { /* all 'panes' */
     background: #FFF;
@@ -1483,28 +1483,8 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
-div.autocomplete {
-      position:absolute;
-      width:250px;
-      background-color:white;
-      border:1px solid #888;
-      margin:0px;
-      padding:0px;
-    }
-div.autocomplete ul {
-      list-style-type:none;
-      margin:0px;
-      padding:0px;
-    }
-div.autocomplete ul li.selected { background-color: #D3E5EC;}
-div.autocomplete ul li {
-      list-style-type:none;
-      display:block;
-      margin:0;
-      padding:2px;
-      height:16px;
-      cursor:pointer;
-    }
+.ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 0.9em; }
+.ui-autocomplete-loading { background: white url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/working.gif' ?>) right center no-repeat; }
 
 
 /* ============================================================================== */
