@@ -1147,11 +1147,11 @@ class Form
             if ($conf->global->MAIN_USE_NEW_JQUERY)
             {
                 // mode=2 means suppliers products
-                print ajax_autocompleter2('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished,'');
+                print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished,'');
 
                 print '<div class="ui-widget">';
-                print '<label for="'.$htmlname.'free">'.$langs->trans("RefOrLabel").':</label>';
-                print '<input id="'.$htmlname.'free" />';
+                print '<label for="search_'.$htmlname.'">'.$langs->trans("RefOrLabel").':</label>';
+                print '<input id="search_'.$htmlname.'" />';
                 print '</div>';
             }
             else
