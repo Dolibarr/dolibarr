@@ -95,10 +95,9 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 									if (data.length == 1) {
 										jQuery("#search_'.$htmlname.'").val(item.value);
 										jQuery("#'.$htmlname.'").val(item.key);
-									} else {
-										var label = item.label.toString().replace(new RegExp("("+request.term+")","i"),"<strong>$1</strong>");
-										return { label: label, value: item.value, id: item.key}
 									}
+									var label = item.label.toString().replace(new RegExp("("+request.term+")","i"),"<strong>$1</strong>");
+									return { label: label, value: item.value, id: item.key}
 								}));
 							}, "json");
 						},
