@@ -56,10 +56,10 @@ top_httphead();
 
 dol_syslog(join(',',$_POST));
 
-if (! isset($_GET['keysearch']) && ! isset($_GET['idprod']) && ! isset($_GET['idprodfournprice'])) return;
+if (! isset($_GET['idprod']) && ! isset($_GET['idprodfournprice'])) return;
 
 // When used from jQuery, the search term is added as GET param "term".
-$searchkey=isset($_GET['keysearch'])?$_GET['keysearch']:($_GET['idprod']?$_GET['idprod']:$_GET['idprodfournprice']);
+$searchkey=$_GET['idprod']?$_GET['idprod']:$_GET['idprodfournprice'];
 $outjson=isset($_GET['outjson'])?$_GET['outjson']:0;
 
 // Get list of product.

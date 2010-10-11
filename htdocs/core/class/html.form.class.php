@@ -859,32 +859,10 @@ class Form
 
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
-            if ($conf->global->MAIN_USE_NEW_JQUERY)
-            {
-                // mode=1 means customers products
-                print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');
-
-                print '<div class="ui-widget">';
-                print '<label for="search_'.$htmlname.'">'.$langs->trans("RefOrLabel").':</label>';
-                print '<input id="search_'.$htmlname.'" />';
-                print '</div>';
-            }
-            else
-            {
-                print '<table class="nobordernopadding" width="100%"><tr class="nocellnopadd">';
-                print '<td class="nobordernopadding" nowrap="nowrap" width="80">';
-                print $langs->trans("RefOrLabel").':</td>';
-                print '<td class="nobordernopadding" width="16">';
-                print ajax_indicator($htmlname,'working');	// Indicator is here
-                print '</td>';
-                print '<td><input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'"></td>';
-                print '</tr>';
-                print '<tr class="nocellnopadd">';
-                print '<td class="nobordernopadding" colspan="3">';
-                print ajax_updater($htmlname,'keysearch',DOL_URL_ROOT.'/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');	// Indicator is '' to disable it as it is alreay output
-                print '</td></tr>';
-                print '</table>';
-            }
+            // mode=1 means customers products
+            print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');
+            print $langs->trans("RefOrLabel").' : <input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
+            print '<br>';
         }
         else
         {
@@ -1144,21 +1122,10 @@ class Form
         global $langs,$conf;
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
-            if ($conf->global->MAIN_USE_NEW_JQUERY)
-            {
-                // mode=2 means suppliers products
-                print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished,'');
-
-                print '<div class="ui-widget">';
-                print '<label for="search_'.$htmlname.'">'.$langs->trans("RefOrLabel").':</label>';
-                print '<input id="search_'.$htmlname.'" />';
-                print '</div>';
-            }
-            else
-            {
-                print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
-                print ajax_updater($htmlname,'keysearch',DOL_URL_ROOT.'/product/ajaxproducts.php','&socid='.$socid.'&type='.$filtertype.'&mode=2','working');
-            }
+            // mode=2 means suppliers products
+            print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished,'');
+            print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
+            print '<br>';
         }
         else
         {

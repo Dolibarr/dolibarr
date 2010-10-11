@@ -120,37 +120,6 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 }
 
 /**
- *	\brief     	Get value of field, do Ajax process and return result. Use jQuery.
- *  \param      selected            Preselected value
- *	\param	    htmlname            Name of html field
- *	\param	    url                 Path of source file to get values: /path/ajaxpage.php
- *  \param      option              Not used
- *	\return    	string              script complet
- */
-function ajax_autocompleter2($selected='', $htmlname, $url, $option='')
-{
-	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
-
-	$script.= '<script type="text/javascript">';
-	$script.= 'jQuery(function() {
-					jQuery("input#'.$htmlname.'free").autocomplete({
-                        source: "'.$url.($option?'?'.$option:'').'",
-					    delay: 300,
-						minLength: 1,
-                        select: function(event, ui) {
-                            /* jQuery("#'.$htmlname.'free") is automatically affected with ui.item.key */
-                            /* jQuery("#'.$htmlname.'free").val(ui.item.fulltext); */
-                            jQuery("#'.$htmlname.'").val(ui.item.key);
-                            /* alert(ui.item.key); */
-                        }
-					});
-				});';
-	$script.= '</script>';
-
-	return $script;
-}
-
-/**
  *	Show an ajax dialog
  *	@param		title		Title of dialog box
  *	@param		message		Message of dialog box
