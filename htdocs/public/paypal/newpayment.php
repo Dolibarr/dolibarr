@@ -63,7 +63,6 @@ $langs->load("paypal");
 if (empty($_REQUEST["currency"])) $currency=$conf->global->MAIN_MONNAIE;
 else $currency=$_REQUEST["currency"];
 
-var_dump($_POST);
 if (! GETPOST("action"))
 {
     if (empty($_REQUEST["amount"]) && empty($_REQUEST["source"]))
@@ -107,6 +106,7 @@ if (GETPOST("action") == 'dopayment')
 	elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
 	elseif (empty($TAG))            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
 
+    var_dump($_POST);
 	if (empty($mesg))
 	{
 		/*
