@@ -249,7 +249,7 @@ class Adherent extends CommonObject
      *	Fonction qui cree l'adherent
      *	@param      user        	Objet user qui demande la creation
      *	@param      notrigger		1 ne declenche pas les triggers, 0 sinon
-     *	@return		int				<0 si ko, >0 si ok
+     *	@return		int				<0 if KO, >0 if OK
      */
     function create($user,$notrigger=0)
     {
