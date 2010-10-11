@@ -1468,7 +1468,8 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 .ui-autocomplete-loading { background: white url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/working.gif' ?>) right center no-repeat; }
 .ui-autocomplete { 	 
 	       position:absolute; 	 
-	       width:600px; 	 
+	       width:auto;
+	       font-size: 1.0em; 	 
 	       background-color:white; 	 
 	       border:1px solid #888; 	 
 	       margin:0px; 	 
