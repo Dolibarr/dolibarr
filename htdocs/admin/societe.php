@@ -63,9 +63,9 @@ if ($_GET["action"] == 'setcodecompta')
 	}
 }
 
-if ($_POST["action"] == 'usesearchtoselectcompany')
+if ($_POST["action"] == 'COMPANY_USE_SEARCH_TO_SELECT')
 {
-	if (dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectcompany"],'chaine',0,'',$conf->entity))
+	if (dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_COMPANY_USE_SEARCH_TO_SELECT"],'chaine',0,'',$conf->entity))
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -452,7 +452,7 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
 $var=!$var;
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="usesearchtoselectcompany">';
+print '<input type="hidden" name="action" value="COMPANY_USE_SEARCH_TO_SELECT">';
 print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("UseSearchToSelectCompany").'</td>';
 if (! $conf->use_javascript_ajax)
@@ -464,7 +464,7 @@ if (! $conf->use_javascript_ajax)
 else
 {
 	print '<td width="60" align="right">';
-	print $html->selectyesno("activate_usesearchtoselectcompany",$conf->global->COMPANY_USE_SEARCH_TO_SELECT,1);
+	print $html->selectyesno("activate_COMPANY_USE_SEARCH_TO_SELECT",$conf->global->COMPANY_USE_SEARCH_TO_SELECT,1);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td>";

@@ -922,7 +922,7 @@ class Form
         }
         if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
         // Add criteria on ref/label
-        if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
+        if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))   // Can use index
         {
             if ($filterkey && $filterkey != '')
             {

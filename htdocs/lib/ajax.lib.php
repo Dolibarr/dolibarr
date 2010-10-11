@@ -82,6 +82,8 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
  */
 function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 {
+    global $conf;
+
 	$script='';
 
 	$script.= '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
@@ -89,17 +91,27 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
 					var cache = {};
+					jQuery("input#search_'.$htmlname.'").blur(function() {
+    					//console.log(this.value.length);
+					    if (this.value.length == 0)
+					    {
+                            jQuery("#search_'.$htmlname.'").val("");
+                            jQuery("#'.$htmlname.'").val("");
+					    }
+                    });
     				jQuery("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
-    						if (this.length == 0) { jQuery(this).flushCache(); }
+    					if (this.length == 0) {
+    						  jQuery(this).flushCache();
+                            }
     						if (cache.term == request.term && cache.content) {
     							response(cache.content);
     							return;
     						}
-    						if (new RegExp(cache.term).test(request.term) && cache.content && cache.content.length < 13) {
-    							response($.ui.autocomplete.filter(cache.content, request.term));
+    						/*if (new RegExp(cache.term).test(request.term) && cache.content && cache.content.length < 13) {
+    							response(jQuery.ui.autocomplete.filter(cache.content, request.term));
     							return;
-    						}
+    						}*/
     						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$htmlname.': request.term }, function(data){
     							cache.term = request.term;
     							cache.content = data;
@@ -108,13 +120,13 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 										jQuery("#search_'.$htmlname.'").val(item.value);
 										jQuery("#'.$htmlname.'").val(item.key);
 									}
-									var label = item.label.toString().replace(new RegExp("("+request.term+")","i"),"<strong>$1</strong>");
+									var label = item.label.toString();
 									return { label: label, value: item.value, id: item.key}
 								}));
 							}, "json");
 						},
-						dataType: "json",		
-    					minLength: 2,
+						dataType: "json",
+    					minLength: '.$conf->global->COMPANY_USE_SEARCH_TO_SELECT.',
     					select: function( event, ui ) {
     						jQuery("#'.$htmlname.'").val(ui.item.id);
     					}
@@ -140,7 +152,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 function ajax_dialog($title,$message,$w=350,$h=150)
 {
 	global $langs;
-	
+
 	$msg.= '<div id="dialog-info" title="'.dol_escape_htmltag($title).'">';
 	$msg.= $message;
 	$msg.= '</div>'."\n";
@@ -159,9 +171,9 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 	    });
 	});
 	</script>';
-    
+
     $msg.= "\n";
-    
+
     return $msg;
 }
 

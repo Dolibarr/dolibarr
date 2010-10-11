@@ -55,7 +55,7 @@ dol_syslog(join(',',$_GET));
 if (! empty($_GET['newcompany']) || ! empty($_GET['socid']) || ! empty($_GET['id_fourn']))
 {
 	$return_arr = array();
-	
+
 	// Define filter on text typed
 	$socid = $_GET['newcompany']?$_GET['newcompany']:'';
 	if (! $socid) $socid = $_GET['socid']?$_GET['socid']:'';
@@ -66,10 +66,21 @@ if (! empty($_GET['newcompany']) || ! empty($_GET['socid']) || ! empty($_GET['id
 	$sql.= " WHERE s.entity = ".$conf->entity;
 	if ($socid)
 	{
-		$sql.=" AND (nom LIKE '%" . $socid . "%'";
-		$sql.=" OR code_client LIKE '%" . $socid . "%'";
-		$sql.=" OR code_fournisseur LIKE '%" . $socid . "%'";
-		if ($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID) $sql.=" OR rowid = '" . $socid . "'";
+        $sql.=" AND (";
+        // Add criteria on name/code
+        if (! empty($conf->global->SOCIETE_DONOTSEARCH_ANYWHERE))   // Can use index
+        {
+            $sql.="nom LIKE '" . $db->escape($socid) . "%'";
+            $sql.=" OR code_client LIKE '" . $db->escape($socid) . "%'";
+            $sql.=" OR code_fournisseur LIKE '" . $db->escape($socid) . "%'";
+        }
+        else
+        {
+    		$sql.="nom LIKE '%" . $db->escape($socid) . "%'";
+    		$sql.=" OR code_client LIKE '%" . $db->escape($socid) . "%'";
+    		$sql.=" OR code_fournisseur LIKE '%" . $db->escape($socid) . "%'";
+        }
+		if ($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID) $sql.=" OR rowid = '" . $db->escape($socid) . "'";
 		$sql.=")";
 	}
 	if (! empty($_GET["filter"])) $sql.= " AND ".$_GET["filter"]; // Add other filters
@@ -79,14 +90,17 @@ if (! empty($_GET['newcompany']) || ! empty($_GET['socid']) || ! empty($_GET['id
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		while ($row = $db->fetch_array($resql)) {
-			$row_array['label'] = $row['nom'];
+		while ($row = $db->fetch_array($resql))
+		{
+		    $label=$row['nom'];
+		    if ($socid) $label=preg_replace('/('.preg_quote($socid).')/','<strong>$1</strong>',$label,1);
+			$row_array['label'] = $label;
 			$row_array['value'] = $row['nom'];
 	        $row_array['key'] = $row['rowid'];
-	 
+
 	        array_push($return_arr,$row_array);
 	    }
-	    
+
 	    echo json_encode($return_arr);
 	}
 }
