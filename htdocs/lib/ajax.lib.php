@@ -88,9 +88,20 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
+					var cache = {};
     				jQuery("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
+    						if (cache.term == request.term && cache.content) {
+    							response(cache.content);
+    							return;
+    						}
+    						if (new RegExp(cache.term).test(request.term) && cache.content && cache.content.length < 13) {
+    							response($.ui.autocomplete.filter(cache.content, request.term));
+    							return;
+    						}
     						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$htmlname.': request.term }, function(data){
+    							cache.term = request.term;
+    							cache.content = data;
 								response( jQuery.map( data, function( item ) {
 									if (data.length == 1) {
 										jQuery("#search_'.$htmlname.'").val(item.value);
