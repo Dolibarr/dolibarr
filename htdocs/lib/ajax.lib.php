@@ -121,6 +121,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 										jQuery("#'.$htmlname.'").val(item.key);
 									}
 									var label = item.label.toString();
+									//label = label.replace(new RegExp("("+request.term+")","i"),"<strong>$1</strong>");
 									return { label: label, value: item.value, id: item.key}
 								}));
 							}, "json");
