@@ -36,6 +36,7 @@ class ChargeSociales extends CommonObject
 	var $db;
 	var $error;
 	var $element='rowid';
+    var $table='chargesociales';
 	var $table_element='chargesociales';
 
 	var $id;
@@ -227,13 +228,17 @@ class ChargeSociales extends CommonObject
 	}
 
 	/**
-	 *    \brief      Tag la charge comme payee completement
-	 *    \param      rowid       id de la ligne a modifier
+	 *    Tag social contribution as payed completely
+	 *    @param      user         Object user making change
 	 */
-	function set_paid($rowid)
+	function set_paid($user)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales set paye=1 WHERE rowid = ".$rowid;
-		$return = $this->db->query( $sql);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
+		$sql.= " set paye=1";
+		$sql.= " WHERE rowid = ".$this->id;
+		$return = $this->db->query($sql);
+		if ($return) return 1;
+		else return -1;
 	}
 
 	/**
@@ -316,8 +321,8 @@ class ChargeSociales extends CommonObject
 	}
 
 	/**
-	 * 	\brief     	Return amount of payments already done
-	 *	\return		int		Amount of payment already done, <0 if KO
+	 * 	Return amount of payments already done
+	 *	@return		int		Amount of payment already done, <0 if KO
 	 */
 	function getSommePaiement()
 	{
@@ -332,15 +337,41 @@ class ChargeSociales extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+		    $amount=0;
+
 			$obj = $this->db->fetch_object($resql);
+			if ($obj) $amount=$obj->amount?$obj->amount:0;
+
 			$this->db->free($resql);
-			return $obj->amount;
+			return $amount;
 		}
 		else
 		{
 			return -1;
 		}
 	}
+
+    /**
+     *      Initialise an example of social contribution with random values
+     *      Used to build previews or test instances
+     */
+    function initAsSpecimen()
+    {
+        global $user,$langs,$conf;
+
+        // Initialize parameters
+        $this->id=0;
+        $this->ref = 'SPECIMEN';
+        $this->specimen=1;
+        $this->paye = 0;
+        $this->date = time();
+        $this->date_ech=$this->date+3600*24*30;
+        $this->period=$this->date+3600*24*30;
+        $this->amount=100;
+        $this->lib = 0;
+        $this->type = 1;
+        $this->type_libelle = 'Social contribution label';
+    }
 }
 
 ?>

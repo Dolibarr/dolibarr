@@ -53,7 +53,8 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 if ($_REQUEST["action"] == 'confirm_paid' && $_REQUEST["confirm"] == 'yes')
 {
 	$chargesociales = new ChargeSociales($db);
-	$result = $chargesociales->set_paid($chid);
+	$chargesociales->fetch($chid);
+	$result = $chargesociales->set_paid($user);
 }
 
 /*
