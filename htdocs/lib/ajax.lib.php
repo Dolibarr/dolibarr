@@ -138,26 +138,26 @@ function ajax_autocompleter_ziptown($selected='',$field1,$field2,$field3,$url,$o
 {
 	$script='';
 	
-	$script.= '<input type="hidden" name="'.$field1.'" id="'.$field1.'" value="'.$selected.'" />';
+	//$script.= '<input type="hidden" name="'.$field1.'" id="'.$field1.'" value="'.$selected.'" />';
 
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
-					jQuery("input#search_'.$field1.'").blur(function() {
+					//jQuery("input#'.$field1.'").blur(function() {
     					//console.log(this.value.length);
-					    if (this.value.length == 0)
-					    {
-                            jQuery("#'.$field1.'").val("");
-                            jQuery("#'.$field2.'").val("");
-					    }
-                    });
-    				jQuery("input#search_'.$field1.'").autocomplete({
+					    //if (this.value.length == 0)
+					    //{
+                        //    jQuery("#'.$field1.'").val("");
+                        //    jQuery("#'.$field2.'").val("");
+					    //}
+                    //});
+    				jQuery("input#'.$field1.'").autocomplete({
     					source: function( request, response ) {
     						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$field1.': request.term }, function(data){
 								response( jQuery.map( data, function( item ) {
 									if (data.length == 1) {
-										jQuery("#'.$field1.'").val(item.value);
-										jQuery("#'.$field2.'").val(item.field2);
-										jQuery("#search_'.$field2.'").val(item.field2);
+										jQuery("input#'.$field1.'").val(item.value);
+										jQuery("input#'.$field2.'").val(item.field2);
+										//jQuery("#search_'.$field2.'").val(item.field2);
 										if (item.field3 > 0) {
 											jQuery("#'.$field3.'").val(item.field3);
 										}
@@ -174,11 +174,13 @@ function ajax_autocompleter_ziptown($selected='',$field1,$field2,$field3,$url,$o
 						dataType: "json",
     					minLength: 2,
     					select: function( event, ui ) {
-    						jQuery("#'.$field2.'").val(ui.item.field2);
-    						jQuery("#search_'.$field2.'").val(ui.item.field2);
+    						jQuery("input#'.$field1.'").val(ui.item.value);
+    						jQuery("input#'.$field2.'").val(ui.item.field2);
+    						//jQuery("#search_'.$field2.'").val(ui.item.field2);
     						if (ui.item.field3 > 0) {
     							jQuery("#'.$field3.'").val(ui.item.field3);
     						}
+    						//alert(ui.item.field2);
     					}
 					});
   				});';
