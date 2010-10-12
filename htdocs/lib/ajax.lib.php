@@ -134,20 +134,12 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
  *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
  *	\return    	string              script complet
  */
-function ajax_autocompleter_ziptown($selected='',$field1,$field2,$field3,$url,$option='')
+function ajax_autocompleter_ziptown($field1,$field2,$field3,$url,$option='')
 {
 	$script='';
 
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
-					jQuery("input#'.$field1.'").blur(function() {
-    					//console.log(this.value.length);
-					    if (this.value.length == 0)
-					    {
-                            jQuery("input#'.$field1.'").val("");
-                            jQuery("input#'.$field2.'").val("");
-					    }
-                    });
     				jQuery("input#'.$field1.'").autocomplete({
     					source: function( request, response ) {
     						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$field1.': request.term }, function(data){
