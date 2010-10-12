@@ -860,7 +860,7 @@ class Form
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
             // mode=1 means customers products
-            print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');
+            print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished);
             print $langs->trans("RefOrLabel").' : <input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
             print '<br>';
         }
@@ -985,6 +985,7 @@ class Form
 
                 $label=$objp->label;
                 if (! empty($objp->label_translated)) $label=$objp->label_translated;
+                if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
 
                 $outkey=$objp->rowid;
                 $outref=$objp->ref;
@@ -1004,7 +1005,10 @@ class Form
                 }
                 $opt.= '>';
                 $opt.= $langs->convToOutputCharset($objp->ref).' - '.$langs->convToOutputCharset(dol_trunc($label,32)).' - ';
-                $outval.=$objp->ref.' - '.dol_trunc($label,32).' - ';
+                
+                $objRef = $objp->ref;
+                if ($filterkey && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
+                $outval.=$objRef.' - '.dol_trunc($label,32).' - ';
 
                 $found=0;
                 $currencytext=$langs->trans("Currency".$conf->monnaie);
@@ -1123,7 +1127,7 @@ class Form
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
             // mode=2 means suppliers products
-            print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished,'');
+            print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished);
             print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
             print '<br>';
         }
@@ -1223,11 +1227,18 @@ class Form
                 if ($selected == $objp->idprodfournprice) $opt.= ' selected="true"';
                 if ($objp->fprice == '') $opt.=' disabled="disabled"';
                 $opt.= '>';
+                
+                $objRef = $objp->ref;
+                if ($filterkey && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
+                $objRefFourn = $objp->ref_fourn;
+                if ($filterkey && $filterkey != '') $objRefFourn=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRefFourn,1);
+                $label = $objp->label;
+                if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
 
                 $opt.=$langs->convToOutputCharset($objp->ref).' ('.$langs->convToOutputCharset($objp->ref_fourn).') - ';
-                $outval.=$objp->ref.' ('.$objp->ref_fourn.') - ';
+                $outval.=$objRef.' ('.$objRefFourn.') - ';
                 $opt.=$langs->convToOutputCharset(dol_trunc($objp->label,18)).' - ';
-                $outval.=dol_trunc($objp->label,18).' - ';
+                $outval.=dol_trunc($label,18).' - ';
 
                 if ($objp->fprice != '') 	// Keep != ''
                 {

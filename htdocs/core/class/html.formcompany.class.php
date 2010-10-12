@@ -606,7 +606,24 @@ class FormCompany
 		}
 		print "</select>\n";
 	}
-
+	
+	/**
+	 *    Retourne la liste deroulante des codes postaux et des villes associées
+	 */
+	function select_zipcode($selected='',$htmlname='zipcode')
+	{
+		print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/societe/ajaxziptown.php','',0)."\n";
+		print '<input id="'.$htmlname.'" type="text" name="'.$htmlname.'" size="6"  value="'.$selected.'">'."\n";
+	}
+	
+	/**
+	 *    Retourne la liste deroulante des villes et des codes postaux associés
+	 */
+	function select_town($selected='',$htmlname='town')
+	{
+		print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/societe/ajaxziptown.php','',0)."\n";
+		print '<input id="'.$htmlname.'" type="text" name="'.$htmlname.'" value="'.$selected.'">'."\n";
+	}
 
 }
 

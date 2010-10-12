@@ -90,7 +90,6 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
-					var cache = {};
 					jQuery("input#search_'.$htmlname.'").blur(function() {
     					//console.log(this.value.length);
 					    if (this.value.length == 0)
@@ -101,33 +100,19 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
                     });
     				jQuery("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
-    					if (this.length == 0) {
-    						  jQuery(this).flushCache();
-                            }
-    						if (cache.term == request.term && cache.content) {
-    							response(cache.content);
-    							return;
-    						}
-    						/*if (new RegExp(cache.term).test(request.term) && cache.content && cache.content.length < 13) {
-    							response(jQuery.ui.autocomplete.filter(cache.content, request.term));
-    							return;
-    						}*/
     						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$htmlname.': request.term }, function(data){
-    							cache.term = request.term;
-    							cache.content = data;
 								response( jQuery.map( data, function( item ) {
 									if (data.length == 1) {
 										jQuery("#search_'.$htmlname.'").val(item.value);
 										jQuery("#'.$htmlname.'").val(item.key);
 									}
 									var label = item.label.toString();
-									//label = label.replace(new RegExp("("+request.term+")","i"),"<strong>$1</strong>");
 									return { label: label, value: item.value, id: item.key}
 								}));
 							}, "json");
 						},
 						dataType: "json",
-    					minLength: '.$conf->global->COMPANY_USE_SEARCH_TO_SELECT.',
+    					minLength: 2,
     					select: function( event, ui ) {
     						jQuery("#'.$htmlname.'").val(ui.item.id);
     					}
