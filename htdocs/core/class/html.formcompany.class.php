@@ -612,8 +612,8 @@ class FormCompany
 	 */
 	function select_zipcode($selected='',$htmlname='zipcode')
 	{
-		print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/societe/ajaxziptown.php','',0)."\n";
-		print '<input id="'.$htmlname.'" type="text" name="'.$htmlname.'" size="6"  value="'.$selected.'">'."\n";
+		print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/societe/ajaxziptown.php')."\n";
+		print '<input id="search_'.$htmlname.'" type="text" name="'.$htmlname.'" size="6"  value="'.$selected.'">'."\n";
 	}
 	
 	/**
@@ -621,8 +621,8 @@ class FormCompany
 	 */
 	function select_town($selected='',$htmlname='town')
 	{
-		print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/societe/ajaxziptown.php','',0)."\n";
-		print '<input id="'.$htmlname.'" type="text" name="'.$htmlname.'" value="'.$selected.'">'."\n";
+		print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/societe/ajaxziptown.php')."\n";
+		print '<input id="search_'.$htmlname.'" type="text" name="'.$htmlname.'" value="'.$selected.'">'."\n";
 	}
 
 }
