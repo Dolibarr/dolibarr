@@ -125,8 +125,8 @@ else
 		}
 		$soc->address               = $_POST["adresse"];
 		$soc->adresse               = $_POST["adresse"]; // TODO obsolete
-		$soc->cp                    = $_POST["cp"];
-		$soc->ville                 = $_POST["ville"];
+		$soc->cp                    = $_POST["cp"]?$_POST["cp"]:$_POST["zipcode"];
+		$soc->ville                 = $_POST["ville"]?$_POST["ville"]:$_POST["town"];
 		$soc->pays_id               = $_POST["pays_id"];
 		$soc->departement_id        = $_POST["departement_id"];
 		$soc->tel                   = $_POST["tel"];
