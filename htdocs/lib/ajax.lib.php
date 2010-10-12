@@ -129,6 +129,61 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 }
 
 /**
+ *	\brief     	Get value of field, do Ajax process and return result
+ *	\param	    htmlname            nom et id du champ
+ *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
+ *	\return    	string              script complet
+ */
+function ajax_autocompleter_ziptown($field1,$field2,$field3,$url,$option='')
+{
+	$script='';
+
+	$script.= '<script type="text/javascript">';
+	$script.= 'jQuery(document).ready(function() {
+					jQuery("input#'.$field1.'").blur(function() {
+    					//console.log(this.value.length);
+					    if (this.value.length == 0)
+					    {
+                            jQuery("#'.$field1.'").val("");
+                            jQuery("#'.$field2.'").val("");
+					    }
+                    });
+    				jQuery("input#'.$field1.'").autocomplete({
+    					source: function( request, response ) {
+    						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$field1.': request.term }, function(data){
+								response( jQuery.map( data, function( item ) {
+									if (data.length == 1) {
+										jQuery("#'.$field1.'").val(item.value);
+										jQuery("#'.$field2.'").val(item.field2);
+										if (item.field3 > 0) {
+											jQuery("#'.$field3.'").val(ui.item.field3);
+										}
+									}
+									return {
+										label: item.label,
+										value: item.value,
+										field2: item.field2,
+										field3: item.field3
+									}
+								}));
+							}, "json");
+						},
+						dataType: "json",
+    					minLength: 2,
+    					select: function( event, ui ) {
+    						jQuery("#'.$field2.'").val(ui.item.field2);
+    						if (ui.item.field3 > 0) {
+    							jQuery("#'.$field3.'").val(ui.item.field3);
+    						}
+    					}
+					});
+  				});';
+	$script.= '</script>';
+
+	return $script;
+}
+
+/**
  *	Show an ajax dialog
  *	@param		title		Title of dialog box
  *	@param		message		Message of dialog box

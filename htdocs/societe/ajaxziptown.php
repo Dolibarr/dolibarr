@@ -95,10 +95,18 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 			{
 				$country = $row['fk_country']?($langs->trans('Country'.$row['country_code'])!='Country'.$row['country_code']?$langs->trans('Country'.$row['country_code']):$row['country']):'';
 				
-				$row_array['label'] 		= $row['zip'].' '.$row['town'].' ('.$country.')';
-				$row_array['zip'] 			= $row['zip'];
-				$row_array['town'] 			= $row['town'];
-				$row_array['fk_country'] 	= $row['fk_country'];
+				$row_array['label'] = $row['zip'].' '.$row['town'].' ('.$country.')';
+				if ($zipcode)
+				{
+					$row_array['value'] = $row['zip'];
+					$row_array['field2'] = $row['town'];
+				}
+				if ($town)
+				{
+					$row_array['value'] = $row['town'];
+					$row_array['field2'] = $row['zip'];
+				}
+				$row_array['field3'] = $row['fk_country'];
 				
 				array_push($return_arr,$row_array);
 			}
