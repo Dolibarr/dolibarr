@@ -80,3 +80,19 @@ ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents (fullpath_dol);
 
 --Add modules facture fournisseur
 insert into llx_const (name, value, type, note, visible) values ('INVOICE_SUPPLIER_ADDON_PDF', 'canelle','chaine','',0);
+
+create table llx_c_ziptown
+(
+  rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  code				varchar(5) DEFAULT NULL,
+  fk_country		integer NOT NULL,
+  fk_county			integer NOT NULL,
+  zip	 			varchar(10) NOT NULL,
+  town				varchar(255) NOT NULL,
+  active 			tinyint NOT NULL DEFAULT 1
+)type=innodb;
+
+ALTER TABLE llx_c_ziptown ADD INDEX idx_c_ziptown_fk_country (fk_country);
+ALTER TABLE llx_c_ziptown ADD INDEX idx_c_ziptown_fk_county (fk_county);
+ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_country	FOREIGN KEY (fk_country)  REFERENCES llx_c_pays (rowid);
+ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_county		FOREIGN KEY (fk_county)   REFERENCES llx_c_departements (rowid);
