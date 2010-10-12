@@ -223,7 +223,7 @@ class FormCompany
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			$out.= '<select class="flat" name="'.$htmlname.'">';
+			$out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
 			if ($pays_code) $out.= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
