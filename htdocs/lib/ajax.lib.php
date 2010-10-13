@@ -106,6 +106,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 								response( jQuery.map( data, function( item ) {
 									if (data.length == 1) {
 										jQuery("#'.$htmlname.'").val(item.value);
+										// TODO move this to specific request
 										if (item.states) {
 											jQuery("#departement_id").html(item.states);
 										}
@@ -120,6 +121,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 							});
     					},
     					select: function( event, ui ) {
+    						// TODO move this to specific request	
     						if (ui.item.states) {
     							jQuery("#departement_id").html(ui.item.states);
     						}
