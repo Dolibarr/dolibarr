@@ -125,8 +125,8 @@ else
 		}
 		$soc->address               = $_POST["adresse"];
 		$soc->adresse               = $_POST["adresse"]; // TODO obsolete
-		$soc->cp                    = $_POST["cp"]?$_POST["cp"]:$_POST["zipcode"];
-		$soc->ville                 = $_POST["ville"]?$_POST["ville"]:$_POST["town"];
+		$soc->cp                    = $_POST["zipcode"];
+		$soc->ville                 = $_POST["town"];
 		$soc->pays_id               = $_POST["pays_id"];
 		$soc->departement_id        = $_POST["departement_id"];
 		$soc->tel                   = $_POST["tel"];
@@ -575,8 +575,8 @@ else
 		$soc->code_fournisseur=$_POST["code_fournisseur"];
 		$soc->adresse=$_POST["adresse"];
 		$soc->address=$_POST["adresse"]; // TODO obsolete
-		$soc->cp=$_POST["cp"];
-		$soc->ville=$_POST["ville"];
+		$soc->cp=$_POST["zipcode"];
+		$soc->ville=$_POST["town"];
 		$soc->departement_id=$_POST["departement_id"];
 		$soc->tel=$_POST["tel"];
 		$soc->fax=$_POST["fax"];
