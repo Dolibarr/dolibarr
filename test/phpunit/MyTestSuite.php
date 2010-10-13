@@ -58,9 +58,12 @@ class MyTestSuite
         require_once dirname(__FILE__).'/CommonObjectTest.php';
         $suite->addTestSuite('CommonObjectTest');
 
+        require_once dirname(__FILE__).'/SocieteTest.php';
+        $suite->addTestSuite('SocieteTest');
         require_once dirname(__FILE__).'/AdherentTest.php';
         $suite->addTestSuite('AdherentTest');
-		require_once dirname(__FILE__).'/CommandeTest.php';
+
+        require_once dirname(__FILE__).'/CommandeTest.php';
         $suite->addTestSuite('CommandeTest');
 		require_once dirname(__FILE__).'/CommandeFournisseurTest.php';
         $suite->addTestSuite('CommandeFournisseurTest');
@@ -80,6 +83,9 @@ class MyTestSuite
         $suite->addTestSuite('CompanyBankAccountTest');
         require_once dirname(__FILE__).'/ChargeSocialesTest.php';
         $suite->addTestSuite('ChargeSocialesTest');
+
+        require_once dirname(__FILE__).'/ModulesTest.php';
+        $suite->addTestSuite('ModulesTest');
 
         return $suite;
     }

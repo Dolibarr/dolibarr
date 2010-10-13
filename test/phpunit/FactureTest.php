@@ -190,11 +190,35 @@ class FactureTest extends PHPUnit_Framework_TestCase
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
     	$this->assertLessThan($result, 0);
-    	return $localobject->id;
+    	return $localobject;
     }
 
-	/**
-     * @depends	testFactureValid
+   /**
+     * @depends testFactureValid
+     * The depends says test is run only if previous is ok
+     */
+    public function testFactureOther($localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        /*$result=$localobject->setstatus(0);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        */
+
+        $localobject->info($localobject->id);
+        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+        $this->assertNotEquals($localobject->date_creation, '');
+
+        return $localobject->id;
+    }
+
+    /**
+     * @depends	testFactureOther
      * The depends says test is run only if previous is ok
      */
     public function testFactureDelete($id)

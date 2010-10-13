@@ -2,38 +2,39 @@
 <filter>
   <blacklist>
     <directory>../CVS/</directory>
-    <directory>../test/</directory>
-    <directory>../htdocs/includes/adodbtime/</directory>
-    <directory>../htdocs/includes/artichow/</directory>
-    <directory>../htdocs/includes/barcode/php-barcode/</directory>
-    <directory>../htdocs/includes/efc_xfss/</directory>
-    <directory>../htdocs/includes/fckeditor/</directory>
-    <directory>../htdocs/includes/fpdf/</directory>
-    <directory>../htdocs/includes/geoip/</directory>
-    <directory>../htdocs/includes/iui/</directory>
-    <directory>../htdocs/includes/iwebkit/</directory>
-    <directory>../htdocs/includes/jcrop/</directory>
-    <directory>../htdocs/includes/jquery/</directory>
-    <directory>../htdocs/includes/jsgantt/</directory>
-    <directory>../htdocs/includes/magpierss/</directory>
-    <directory>../htdocs/includes/nusoap/</directory>
-    <directory>../htdocs/includes/odtphp/</directory>
-    <directory>../htdocs/includes/php_excelreader/</directory>
-    <directory>../htdocs/includes/php_writeexcel/</directory>
-    <directory>../htdocs/includes/smarty/</directory>
-    <directory>../htdocs/includes/smtps/</directory>
-    <directory>../htdocs/includes/tcpdf/</directory>
-    <directory>../htdocs/includes/vcard/</directory>
-    <file>../htdocs/lib/databases/mssql.lib.php</file>
-    <file>../htdocs/lib/databases/pgsql.lib.php</file>
-    <file>../htdocs/lib/databases/mysql.lib.php</file>
-    <!--  <file>../htdocs/lib/databases/mysqli.lib.php</file> -->
+    <directory>../../test/</directory>
+    <directory>../../htdocs/includes/adodbtime/</directory>
+    <directory>../../htdocs/includes/artichow/</directory>
+    <directory>../../htdocs/includes/barcode/php-barcode/</directory>
+    <directory>../../htdocs/includes/efc_xfss/</directory>
+    <directory>../../htdocs/includes/fckeditor/</directory>
+    <directory>../../htdocs/includes/fpdf/</directory>
+    <directory>../../htdocs/includes/geoip/</directory>
+    <directory>../../htdocs/includes/iui/</directory>
+    <directory>../../htdocs/includes/iwebkit/</directory>
+    <directory>../../htdocs/includes/jcrop/</directory>
+    <directory>../../htdocs/includes/jquery/</directory>
+    <directory>../../htdocs/includes/jsgantt/</directory>
+    <directory>../../htdocs/includes/magpierss/</directory>
+    <directory>../../htdocs/includes/nusoap/</directory>
+    <directory>../../htdocs/includes/odtphp/</directory>
+    <directory>../../htdocs/includes/php_excelreader/</directory>
+    <directory>../../htdocs/includes/php_writeexcel/</directory>
+    <directory>../../htdocs/includes/smarty/</directory>
+    <directory>../../htdocs/includes/smtps/</directory>
+    <directory>../../htdocs/includes/tcpdf/</directory>
+    <directory>../../htdocs/includes/vcard/</directory>
+    <directory>../../htdocs/includes/menus/smartphone/</directory>
+    <file>../../htdocs/lib/databases/mssql.lib.php</file>
+    <file>../../htdocs/lib/databases/pgsql.lib.php</file>
+    <file>../../htdocs/lib/databases/mysql.lib.php</file>
+    <!--  <file>../../htdocs/lib/databases/mysqli.lib.php</file> -->
   </blacklist>
   <whitelist>
-    <directory suffix=".class.php">../htdocs/</directory>
-    <directory suffix=".lib.php">../htdocs/</directory>
-    <directory suffix=".modules.php">../htdocs/</directory>
-    <file>../htdocs/includes/modules/facture/modules_facture.php</file>
+    <directory suffix=".class.php">../../htdocs/</directory>
+    <directory suffix=".lib.php">../../htdocs/</directory>
+    <directory suffix=".modules.php">../../htdocs/</directory>
+    <file>../../htdocs/includes/modules/facture/modules_facture.php</file>
   </whitelist>
 </filter>
 </phpunit>

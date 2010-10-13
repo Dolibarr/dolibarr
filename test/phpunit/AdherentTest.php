@@ -124,10 +124,11 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Adherent($this->savdb);
     	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
 
+    	$result=$localobject->create($user);
+        print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
+
     	return $result;
     }
 
@@ -145,10 +146,10 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Adherent($this->savdb);
     	$result=$localobject->fetch($id);
-
-    	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
+        $this->assertLessThan($result, 0);
+
+        return $localobject;
     }
 
     /**
@@ -165,9 +166,9 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
 		$localobject->note='New note after update';
     	$result=$localobject->update($user);
-
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
+
     	return $localobject;
     }
 
@@ -185,13 +186,37 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
     	$result=$localobject->validate($user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-
     	$this->assertLessThan($result, 0);
-    	return $localobject->id;
+
+    	return $localobject;
     }
 
-	/**
-     * @depends	testAdherentValid
+    /**
+     * @depends testAdherentValid
+     * The depends says test is run only if previous is ok
+     */
+    public function testAdherentOther($localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        /*$result=$localobject->setstatus(0);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        */
+
+        $localobject->info($localobject->id);
+        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+        $this->assertNotEquals($localobject->date_creation, '');
+
+        return $localobject->id;
+    }
+
+    /**
+     * @depends	testAdherentOther
      * The depends says test is run only if previous is ok
      */
     public function testAdherentDelete($id)
@@ -205,10 +230,10 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$localobject=new Adherent($this->savdb);
     	$result=$localobject->fetch($id);
 		$result=$localobject->delete($id);
-
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
+		$this->assertLessThan($result, 0);
+
+		return $result;
     }
 
     /**
@@ -225,9 +250,9 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$localobject=new Adherent($this->savdb);
     	$result=$localobject->ref='refthatdoesnotexists';
 		$result=$localobject->VerifyNumRef();
-
 		print __METHOD__." result=".$result."\n";
     	$this->assertEquals($result, 0);
+
     	return $result;
     }*/
 }

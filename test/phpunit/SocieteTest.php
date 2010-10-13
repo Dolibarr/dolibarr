@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/UserTest.php
+ *      \file       test/phpunit/SocieteTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *      \version    $Id$
@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/user/class/user.class.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 
 if (empty($user->id))
 {
@@ -43,14 +43,11 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @covers DoliDb
- * @covers Translate
  * @covers Conf
- * @covers Interfaces
- * @covers CommonObject
- * @covers User
+ * @covers Societe
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class UserTest extends PHPUnit_Framework_TestCase
+class SocieteTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -61,9 +58,9 @@ class UserTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return UserTest
+	 * @return SocieteTest
 	 */
-	function UserTest()
+	function SocieteTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -114,7 +111,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testUserCreate()
+    public function testSocieteCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -122,20 +119,21 @@ class UserTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new User($this->savdb);
+		$localobject=new Societe($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
+        print __METHOD__." result=".$result."\n";
+    	$this->assertLessThanOrEqual($result, 0);
+
     	return $result;
     }
 
     /**
-     * @depends	testUserCreate
+     * @depends	testSocieteCreate
      * The depends says test is run only if previous is ok
      */
-    public function testUserFetch($id)
+    public function testSocieteFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -143,19 +141,23 @@ class UserTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new User($this->savdb);
+		$localobject=new Societe($this->savdb);
     	$result=$localobject->fetch($id);
-
+        print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
+
+        $result=$localobject->verify();
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertEquals($result, 0);
+
     	return $localobject;
     }
 
     /**
-     * @depends	testUserFetch
+     * @depends	testSocieteFetch
      * The depends says test is run only if previous is ok
      */
-    public function testUserUpdate($localobject)
+    public function testSocieteUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -164,18 +166,18 @@ class UserTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		$localobject->note='New note after update';
-    	$result=$localobject->update($user);
-
+    	$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
+
     	return $localobject;
     }
 
     /**
-     * @depends	testUserUpdate
+     * @depends	testSocieteUpdate
      * The depends says test is run only if previous is ok
      */
-    public function testUserDisable($localobject)
+    public function testSocieteOther($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -183,29 +185,33 @@ class UserTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->setstatus(0);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$result=$localobject->factures_impayes();
+    	print __METHOD__." id=".$localobject->id." result=".join(',',$result)."\n";
+    	//$this->assertLessThan($result, 0);
 
-    	$this->assertLessThan($result, 0);
-    	return $localobject;
-    }
-
-    /**
-     * @depends testUserDisable
-     * The depends says test is run only if previous is ok
-     */
-    public function testUserOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        /*$result=$localobject->setstatus(0);
+        $result=$localobject->set_as_client();
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
-        */
+
+        $result=$localobject->set_price_level(1,$user);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+
+        $result=$localobject->set_remise_client(10,'Gift',$user);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+
+        $result=$localobject->getNomUrl(1);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertNotEquals($result, '');
+
+        $result=$localobject->getFullAddress();
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertContains('MyTown', $result);
+
+        $result=$localobject->isInEEC();
+        print __METHOD__." id=".$localobject->id." pays_code=".$this->pays_code." result=".$result."\n";
+        $this->assertTrue(true, $result);
 
         $localobject->info($localobject->id);
         print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
@@ -215,10 +221,10 @@ class UserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testUserOther
+     * @depends	testSocieteOther
      * The depends says test is run only if previous is ok
      */
-    public function testUserDelete($id)
+    public function testSocieteDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -226,12 +232,13 @@ class UserTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new User($this->savdb);
+		$localobject=new Societe($this->savdb);
     	$result=$localobject->fetch($id);
-		$result=$localobject->delete($id);
 
+    	$result=$localobject->delete($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
+
     	return $result;
     }
 
@@ -246,7 +253,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new User($this->savdb);
+		$localobject=new Adherent($this->savdb);
     	$result=$localobject->ref='refthatdoesnotexists';
 		$result=$localobject->VerifyNumRef();
 
@@ -255,5 +262,21 @@ class UserTest extends PHPUnit_Framework_TestCase
     	return $result;
     }*/
 
+
+    /**
+     */
+    public function testSocieteStatic()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $localobject=new Societe($db);
+
+
+        return;
+    }
 }
 ?>

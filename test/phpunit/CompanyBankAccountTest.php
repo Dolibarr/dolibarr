@@ -42,8 +42,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers Commande
- * @covers OrderLine
+ * @covers CompanyBankAccount
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
@@ -165,11 +164,31 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 
 	   	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-    	return $localobject->id;
+    	return $localobject;
     }
 
     /**
-     * @depends	testCompanyBankAccountUpdate
+     * @depends testCompanyBankAccountFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testCompanyBankAccountOther($localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $localobject->owner='New owner';
+        $result=$localobject->update($user);
+
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        return $localobject->id;
+    }
+
+    /**
+     * @depends	testCompanyBankAccountOther
      * The depends says test is run only if previous is ok
      */
 /*    public function testCompanyBankAccountDelete($id)
