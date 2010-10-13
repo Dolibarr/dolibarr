@@ -2136,15 +2136,19 @@ class Societe extends CommonObject
     {
         global $user,$langs,$conf,$mysoc;
 
+        $now=dol_now();
+
         // Initialize parameters
         $this->id=0;
-        $this->nom = 'SPECIMEN';
+        $this->nom = 'SPECIMEN'.'-'.dol_print_date($now,'dayhourlog');
         $this->specimen=1;
         $this->cp='99999';
         $this->ville='MyTown';
         $this->pays_id=1;
         $this->pays_code='FR';
 
+        $this->code_client='CC-'.dol_print_date($now,'dayhourlog');
+        $this->code_fournisseur='SC-'.dol_print_date($now,'dayhourlog');
         $this->siren='123456789';
         $this->siret='ABCDE';
         $this->capital=10000;
