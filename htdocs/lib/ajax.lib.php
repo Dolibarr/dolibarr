@@ -161,6 +161,9 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 								response( jQuery.map( data, function( item ) {
 									if (data.length == 1) {
 										jQuery("#'.$htmlname.'").val(item.value);
+										if (item.countydata) {
+											jQuery("#departement_id").html(item.countydata);
+										}
 										for (i=0;i<length;i++) {
 											if (item[fields[i]]) {
 												jQuery("#" + fields[i]).val(item[fields[i]]);
