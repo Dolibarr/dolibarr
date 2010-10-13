@@ -27,6 +27,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/class/address.class.php");
 
 $langs->load("companies");
@@ -55,8 +56,8 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     $address->label		= ($_POST["label"]!=$langs->trans('RequiredField')?$_POST["label"]:'');
     $address->name		= ($_POST["name"]!=$langs->trans('RequiredField')?$_POST["name"]:'');
     $address->address	= $_POST["address"];
-    $address->cp		= $_POST["cp"];
-    $address->ville		= $_POST["ville"];
+    $address->cp		= $_POST["zipcode"];
+    $address->ville		= $_POST["town"];
     $address->pays_id	= $_POST["pays_id"];
     $address->tel		= $_POST["tel"];
     $address->fax		= $_POST["fax"];
@@ -159,6 +160,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user-
 llxHeader();
 
 $form = new Form($db);
+$formcompany = new FormCompany($db);
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 if (!empty($mesg)) print '<div class="error">'.$mesg.'</div>';
@@ -185,8 +187,8 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             $address->label		=	$_POST["label"];
             $address->name		=	$_POST["name"];
             $address->address	=	$_POST["address"];
-            $address->cp		=	$_POST["cp"];
-            $address->ville		=	$_POST["ville"];
+            $address->cp		=	$_POST["zipcode"];
+            $address->ville		=	$_POST["town"];
             $address->tel		=	$_POST["tel"];
             $address->fax		=	$_POST["fax"];
             $address->note		=	$_POST["note"];
@@ -263,10 +265,16 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
         print $address->address;
         print '</textarea></td></tr>';
-
-        print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$address->cp.'">';
-        print '</td></tr>';
-        print '<tr><td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$address->ville.'"></td></tr>';
+        
+        // Zip
+		print '<tr><td>'.$langs->trans('Zip').'</td><td>';
+		$formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
+		print '</td></tr>';
+		
+		// Town
+		print '<tr><td>'.$langs->trans('Town').'</td><td>';
+		$formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
+		print '</td></tr>';
 
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
         $form->select_pays($address->pays_id,'pays_id');
@@ -318,8 +326,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $address->label		=	$_POST["label"];
             $address->name		=	$_POST["name"];
             $address->address	=	$_POST["address"];
-            $address->zip		=	$_POST["zip"];
-            $address->ville		=	$_POST["ville"];
+            $address->cp		=	$_POST["zipcode"];
+            $address->ville		=	$_POST["town"];
             $address->pays_id	=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
             $address->tel		=	$_POST["tel"];
             $address->fax		=	$_POST["fax"];
@@ -370,10 +378,15 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print $address->address;
         print '</textarea></td></tr>';
 
-        print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$address->cp.'">';
-        print '</td></tr>';
-
-        print '<tr><td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$address->ville.'"></td></tr>';
+        // Zip
+		print '<tr><td>'.$langs->trans('Zip').'</td><td>';
+		$formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
+		print '</td></tr>';
+		
+		// Town
+		print '<tr><td>'.$langs->trans('Town').'</td><td>';
+		$formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
+		print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
         $form->select_pays($address->pays_id,'pays_id');
