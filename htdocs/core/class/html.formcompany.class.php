@@ -610,19 +610,15 @@ class FormCompany
 	/**
 	 *    Retourne la liste deroulante des codes postaux et des villes associées
 	 */
-	function select_zipcode($selected='',$field1='zipcode',$field2='town',$field3='fk_pays')
+	function select_ziptown($selected='',$htmlname='zipcode',$fields='',$fieldsize=0)
 	{
-		print ajax_autocompleter_ziptown($field1,$field2,$field3,DOL_URL_ROOT.'/societe/ajaxziptown.php')."\n";
-		print '<input id="'.$field1.'" type="text" name="'.$field1.'" size="6"  value="'.$selected.'">'."\n";
-	}
-	
-	/**
-	 *    Retourne la liste deroulante des villes et des codes postaux associés
-	 */
-	function select_town($selected='',$field1='town',$field2='zipcode',$field3='fk_pays')
-	{
-		print ajax_autocompleter_ziptown($field1,$field2,$field3,DOL_URL_ROOT.'/societe/ajaxziptown.php')."\n";
-		print '<input id="'.$field1.'" type="text" name="'.$field1.'" value="'.$selected.'">'."\n";
+		global $conf;
+		
+		$size='';
+		if (!empty($fieldsize)) $size='size="'.$fieldsize.'"';
+		
+		if ($conf->use_javascript_ajax)	print ajax_multiautocompleter($htmlname,$fields,DOL_URL_ROOT.'/societe/ajaxziptown.php')."\n";
+		print '<input id="'.$htmlname.'" type="text" name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
 	}
 
 }

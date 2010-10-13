@@ -134,28 +134,33 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
  *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
  *	\return    	string              script complet
  */
-function ajax_autocompleter_ziptown($field1,$field2,$field3,$url,$option='')
+function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 {
 	$script='';
+	
+	$fields = php2js($fields);
 
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
-    				jQuery("input#'.$field1.'").autocomplete({
+					var fields = '.$fields.';
+					var length = fields.length;
+					//alert(fields + " " + length);
+					
+    				jQuery("input#'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
-    						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$field1.': request.term }, function(data){
+    						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$htmlname.': request.term }, function(data){
 								response( jQuery.map( data, function( item ) {
 									if (data.length == 1) {
-										jQuery("input#'.$field1.'").val(item.value);
-										jQuery("input#'.$field2.'").val(item.field2);
-										if (item.field3 > 0) {
-											jQuery("#'.$field3.'").val(item.field3);
+										jQuery("#'.$htmlname.'").val(item.value);
+										for (i=0;i<length;i++) {
+											if (item[fields[i]]) {
+												jQuery("#" + fields[i]).val(item[fields[i]]);
+											}
 										}
 									}
 									return {
 										label: item.label,
-										value: item.value,
-										field2: item.field2,
-										field3: item.field3
+										value: item.value
 									}
 								}));
 							}, "json");
@@ -163,11 +168,12 @@ function ajax_autocompleter_ziptown($field1,$field2,$field3,$url,$option='')
 						dataType: "json",
     					minLength: 2,
     					select: function( event, ui ) {
-    						jQuery("input#'.$field1.'").val(ui.item.value);
-    						jQuery("input#'.$field2.'").val(ui.item.field2);
-    						if (ui.item.field3 > 0) {
-    							jQuery("#'.$field3.'").val(ui.item.field3);
-    						}
+    						for (i=0;i<length;i++) {
+    							//alert(fields[i] + " = " + ui.item[fields[i]]);
+								if (ui.item[fields[i]]) {
+									jQuery("#" + fields[i]).val(ui.item[fields[i]]);
+								}
+							}
     					}
 					});
   				});';
@@ -210,5 +216,34 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 
     return $msg;
 }
+
+/**
+ * 
+ * Enter description here ...
+ * @param unknown_type $var
+ */
+function php2js($var)
+{
+    if (is_array($var)) {
+        $res = "[";
+        $array = array();
+        foreach ($var as $a_var) {
+            $array[] = php2js($a_var);
+        }
+        return "[" . join(",", $array) . "]";
+    }
+    elseif (is_bool($var)) {
+        return $var ? "true" : "false";
+    }
+    elseif (is_int($var) || is_integer($var) || is_double($var) || is_float($var)) {
+        return $var;
+    }
+    elseif (is_string($var)) {
+        return "\"" . addslashes(stripslashes($var)) . "\"";
+    }
+    // autres cas: objets, on ne les gère pas
+    return FALSE;
+}
+
 
 ?>

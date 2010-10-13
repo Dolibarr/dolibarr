@@ -99,14 +99,14 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 				if ($zipcode)
 				{
 					$row_array['value'] = $row['zip'];
-					$row_array['field2'] = $row['town'];
+					$row_array['town'] = $row['town'];
 				}
 				if ($town)
 				{
 					$row_array['value'] = $row['town'];
-					$row_array['field2'] = $row['zip'];
+					$row_array['zipcode'] = $row['zip'];
 				}
-				$row_array['field3'] = $row['fk_country'];
+				$row_array['selectpays_id'] = $row['fk_country'];
 				
 				array_push($return_arr,$row_array);
 			}
