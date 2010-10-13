@@ -116,7 +116,8 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         }
 
 		//$date=time();
-        $date=$object->date_commande;
+        $date=$object->date_commande;   // Not always defined
+        if (empty($date)) $date=$object->date;  // Creation date is order date for suppliers orders
         $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
 
