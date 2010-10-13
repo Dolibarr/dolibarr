@@ -223,7 +223,7 @@ class FormCompany
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			$out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
+			if (!empty($htmlname)) $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
 			if ($pays_code) $out.= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
@@ -264,8 +264,9 @@ class FormCompany
 					$i++;
 				}
 			}
-			$out.= '</select>';
-			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			$noselect.=$out;
+			if (!empty($htmlname)) $out.= '</select>';
+			if (!empty($htmlname) && $user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		}
 		else
 		{

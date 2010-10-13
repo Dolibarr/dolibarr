@@ -172,9 +172,12 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 							});
     					},
     					select: function( event, ui ) {
+    						if (ui.item.countydata) {
+    							jQuery("#departement_id").html(ui.item.countydata);
+    						}
     						for (i=0;i<length;i++) {
     							//alert(fields[i] + " = " + ui.item[fields[i]]);
-								if (ui.item[fields[i]]) {
+								if (ui.item[fields[i]]) {	
 									jQuery("#" + fields[i]).val(ui.item[fields[i]]);
 								}
 							}

@@ -30,7 +30,7 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 
 require('../main.inc.php');
-
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 
 /*
  * View
@@ -52,6 +52,7 @@ dol_syslog(join(',',$_GET));
 if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 {
 	$return_arr = array();
+	$formcompany = new FormCompany($db);
 
 	// Define filter on text typed
 	$zipcode = $_GET['zipcode']?$_GET['zipcode']:'';
@@ -120,6 +121,8 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 				}
 				$row_array['selectpays_id'] = $row['fk_country'];
 				$row_array['departement_id'] = $row['fk_county'];
+				
+				$row_array['countydata'] = $formcompany->select_state('',$row['fk_country'],'');
 				
 				array_push($return_arr,$row_array);
 			}
