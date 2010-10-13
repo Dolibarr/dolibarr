@@ -24,6 +24,11 @@
  *  \version	$Id$
  */
 
+/**
+ * 
+ * Enter description here ...
+ * @deprecated
+ */
 function ajax_indicator($htmlname,$indicator='working')
 {
 	$script.='<span id="indicator'.$htmlname.'" style="display: none">'.img_picto('Working...',$indicator.'.gif').'</span>';
@@ -38,6 +43,7 @@ function ajax_indicator($htmlname,$indicator='working')
  *  \param     option              champ supplementaire de recherche dans les parametres
  *  \param     indicator           Nom de l'image gif sans l'extension
  *  \return    string              script complet
+ *  @deprecated
  */
 function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 {
@@ -75,10 +81,10 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 }
 
 /**
- *	\brief     	Get value of field, do Ajax process and return result
- *	\param	    htmlname            nom et id du champ
- *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
- *	\return    	string              script complet
+ *	Get value of field, do Ajax process and return result
+ *	@param	    htmlname            nom et id du champ
+ *	@param	    url                 chemin du fichier de reponse : /chemin/fichier.php
+ *	@return    	string              script complet
  */
 function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 {
@@ -129,10 +135,11 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 }
 
 /**
- *	\brief     	Get value of field, do Ajax process and return result
- *	\param	    htmlname            nom et id du champ
- *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
- *	\return    	string              script complet
+ *	Get value of field, do Ajax process and return result
+ *	@param	    htmlname            nom et id du champ
+ *	@param		fields				other fields to autocomplete
+ *	@param	    url                 chemin du fichier de reponse : /chemin/fichier.php
+ *	@return    	string              script complet
  */
 function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 {
