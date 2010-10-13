@@ -122,7 +122,7 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 				$row_array['selectpays_id'] = $row['fk_country'];
 				$row_array['departement_id'] = $row['fk_county'];
 				
-				$row_array['countydata'] = $formcompany->select_state('',$row['fk_country'],'');
+				$row_array['states'] = $formcompany->select_state('',$row['fk_country'],'');
 				
 				array_push($return_arr,$row_array);
 			}
