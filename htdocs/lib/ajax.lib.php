@@ -162,7 +162,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 									if (data.length == 1) {
 										jQuery("#'.$htmlname.'").val(item.value);
 										if (item.countydata) {
-											jQuery("#departement_id").html(item.countydata);
+											jQuery("#departement_id").html(item.states);
 										}
 										for (i=0;i<length;i++) {
 											if (item[fields[i]]) {
@@ -176,7 +176,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
     					},
     					select: function( event, ui ) {
     						if (ui.item.countydata) {
-    							jQuery("#departement_id").html(ui.item.countydata);
+    							jQuery("#departement_id").html(ui.item.states);
     						}
     						for (i=0;i<length;i++) {
     							//alert(fields[i] + " = " + ui.item[fields[i]]);
