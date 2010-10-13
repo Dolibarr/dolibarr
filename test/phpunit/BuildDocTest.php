@@ -29,6 +29,8 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
+require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
 
 if (empty($user->id))
 {
@@ -147,5 +149,76 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     	return 0;
     }
 
+    /**
+     * @covers  ModelePDFCommandes
+     * @covers  pdf_edison
+     * @covers  pdf_einstein
+     */
+    public function testCommandeBuild()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
+        $conf->commande->dir_output.='/temp';
+        $localobject=new Commande($this->savdb);
+        $localobject->initAsSpecimen();
+        $localobject->socid=1;
+
+        // Einstein
+        $localobject->modelpdf='einstein';
+        $result=commande_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+
+        // Edison
+        $localobject->modelpdf='edison';
+        $result=commande_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+
+        return 0;
+    }
+
+    /**
+     * @covers  ModelePDFPropales
+     * @covers  pdf_propale_azur
+     * @covers  pdf_propale_jaune
+     */
+    public function testPropalBuild()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
+        $conf->propale->dir_output.='/temp';
+        $localobject=new Propal($this->savdb);
+        $localobject->initAsSpecimen();
+        $localobject->socid=1;
+
+        // Einstein
+        $localobject->modelpdf='azur';
+        $result=propale_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+
+        // Edison
+        $localobject->modelpdf='jaune';
+        $result=propale_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+
+        return 0;
+    }
 }
 ?>
