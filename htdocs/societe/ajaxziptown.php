@@ -57,18 +57,22 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 	$zipcode = $_GET['zipcode']?$_GET['zipcode']:'';
 	$town = $_GET['town']?$_GET['town']:'';
 
-	$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county, z.fk_country";
-	$sql.= ", p.code as country_code, p.libelle as country";
+	$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county";
+	$sql.= ", p.rowid as fk_country, p.code as country_code, p.libelle as country";
+	$sql.= ", d.rowid as fk_county, d.code_departement as county_code , d.nom as county";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as z";
-	$sql.= ", ".MAIN_DB_PREFIX."c_pays as p";
-	$sql.= " WHERE z.active = 1";
-	$sql.= " AND p.active = 1";
-	$sql.= " AND z.fk_country = p.rowid";
+	$sql.= ", ".MAIN_DB_PREFIX ."c_departements as d";
+	$sql.= ", ".MAIN_DB_PREFIX."c_regions as r";
+	$sql.= ",".MAIN_DB_PREFIX."c_pays as p";
+	$sql.= " WHERE z.fk_county = d.rowid";
+	$sql.= " AND d.fk_region = r.code_region";
+	$sql.= " AND r.fk_pays = p.rowid";
+	$sql.= " AND z.active = 1 AND d.active = 1 AND r.active = 1 AND p.active = 1";
 	if ($zipcode) " AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
 	if ($town) " AND z.town LIKE '%" . $db->escape($town) . "%'";
 	$sql.= " ORDER BY z.fk_country, z.zip, z.town";
 
-	//dol_syslog("ajaxcompanies sql=".$sql);
+	//print $sql;
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -78,7 +82,9 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 		{
 			$sql = "SELECT DISTINCT s.cp as zip, s.ville as town, s.fk_departement as fk_county, s.fk_pays as fk_country";
 			$sql.= ", p.code as country_code, p.libelle as country";
+			$sql.= ", d.code_departement as county_code , d.nom as county";
 			$sql.= " FROM ".MAIN_DB_PREFIX.'societe as s';
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON fk_departement = d.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.'c_pays as p ON fk_pays = p.rowid';
 			$sql.= " WHERE";
 			if ($zipcode) $sql.= " s.cp LIKE '".$db->escape($zipcode)."%'";
@@ -94,8 +100,9 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 			while ($row = $db->fetch_array($resql))
 			{
 				$country = $row['fk_country']?($langs->trans('Country'.$row['country_code'])!='Country'.$row['country_code']?$langs->trans('Country'.$row['country_code']):$row['country']):'';
+				$county = $row['fk_county']?($langs->trans($row['county_code'])!=$row['county_code']?$langs->trans($row['county_code']):($row['county']!='-'?$row['county']:'')):'';
 				
-				$row_array['label'] = $row['zip'].' '.$row['town'].' ('.$country.')';
+				$row_array['label'] = $row['zip'].' '.$row['town'].' ('.($county?$county.' - ':'').$country.')';
 				if ($zipcode)
 				{
 					$row_array['value'] = $row['zip'];
@@ -107,6 +114,7 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 					$row_array['zipcode'] = $row['zip'];
 				}
 				$row_array['selectpays_id'] = $row['fk_country'];
+				$row_array['departement_id'] = $row['fk_county'];
 				
 				array_push($return_arr,$row_array);
 			}
