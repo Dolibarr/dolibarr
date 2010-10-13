@@ -24,61 +24,6 @@
  *  \version	$Id$
  */
 
-/**
- * 
- * Enter description here ...
- * @deprecated
- */
-function ajax_indicator($htmlname,$indicator='working')
-{
-	$script.='<span id="indicator'.$htmlname.'" style="display: none">'.img_picto('Working...',$indicator.'.gif').'</span>';
-	return $script;
-}
-
-/**
- *	\brief     Get value of a field, do Ajax process and show result
- *  \param	   htmlname            Name and id of field
- *  \param     keysearch           Optional field to filter
- *  \param	   url                 Full relative URL of page
- *  \param     option              champ supplementaire de recherche dans les parametres
- *  \param     indicator           Nom de l'image gif sans l'extension
- *  \return    string              script complet
- *  @deprecated
- */
-function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
-{
-	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
-	if ($indicator) $script.=ajax_indicator($htmlname,$indicator);
-	$script.='<script type="text/javascript">';
-	$script.='var myIndicator'.$htmlname.' = {
-                     onCreate: function(){
-                            if($F("'.$keysearch.$htmlname.'")){
-                                  Element.show(\'indicator'.$htmlname.'\');
-                            }
-                     },
-
-                     onComplete: function() {
-                            if(Ajax.activeRequestCount == 0){
-                                  Element.hide(\'indicator'.$htmlname.'\');
-                            }
-                     }
-             };';
-	$script.='Ajax.Responders.register(myIndicator'.$htmlname.');';
-	//print 'param='.$keysearch.'="+$F("'.$keysearch.$htmlname.'")+"&htmlname='.$htmlname.$option; exit;
-	$script.='new Form.Element.Observer($("'.$keysearch.$htmlname.'"), 1,
-			   function(){
-				  var myAjax = new Ajax.Updater( {
-					 success: \'ajdynfield'.$htmlname.'\'},
-					 \''.$url.'\', {
-						method: \'get\',
-						parameters: "'.$keysearch.'="+$F("'.$keysearch.$htmlname.'")+"&htmlname='.$htmlname.$option.'"
-					 });
-				   });';
-	$script.='</script>';
-	$script.='<div class="nocellnopadd" id="ajdynfield'.$htmlname.'"></div>';
-
-	return $script;
-}
 
 /**
  *	Get value of field, do Ajax process and return result
