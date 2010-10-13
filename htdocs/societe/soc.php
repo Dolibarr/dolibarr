@@ -559,11 +559,11 @@ else
 		 * Company Fact creation mode
 		 */
         //if ($_GET["type"]=='cp') { $soc->client=3; }
-        if ($_GET["type"]!='f') $soc->client=3;
-		if ($_GET["type"]=='c')  { $soc->client=1; }
-        if ($_GET["type"]=='p')  { $soc->client=2; }
-        if ($conf->fournisseur->enabled && ($_GET["type"]=='f' || $_GET["type"]==''))  { $soc->fournisseur=1; }
-        if ($_REQUEST["private"]==1) { $soc->particulier=1; }
+        if (GETPOST("type")!='f') $soc->client=3;
+		if (GETPOST("type")=='c')  { $soc->client=1; }
+        if (GETPOST("type")=='p')  { $soc->client=2; }
+        if ($conf->fournisseur->enabled && (GETPOST("type")=='f' || GETPOST("type")==''))  { $soc->fournisseur=1; }
+        if (GETPOST("private")==1) { $soc->particulier=1; }
 
 		$soc->nom=$_POST["nom"];
 		$soc->prenom=$_POST["prenom"];
@@ -673,6 +673,7 @@ else
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="private" value='.$soc->particulier.'>';
+		print '<input type="hidden" name="type" value='.GETPOST("type").'>';
 		if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
 		print '<table class="border" width="100%">';
