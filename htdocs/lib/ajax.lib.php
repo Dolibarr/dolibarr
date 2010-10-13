@@ -148,23 +148,8 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 					
     				jQuery("input#'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
-    						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$htmlname.': request.term }, function(data){
-								response( jQuery.map( data, function( item ) {
-									if (data.length == 1) {
-										jQuery("#'.$htmlname.'").val(item.value);
-										for (i=0;i<length;i++) {
-											if (item[fields[i]]) {
-												jQuery("#" + fields[i]).val(item[fields[i]]);
-											}
-										}
-									}
-									return {
-										label: item.label,
-										value: item.value
-									}
-								}));
-							}, "json");
-						},
+    						jQuery.getJSON( "'.$url.($option?'?'.$option:'').'", { '.$htmlname.': request.term }, response );
+    					},
 						dataType: "json",
     					minLength: 2,
     					select: function( event, ui ) {
