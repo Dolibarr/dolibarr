@@ -768,9 +768,9 @@ else
 
 		// Zip / Town
 		print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-		$formcompany->select_ziptown($soc->cp,'zipcode',array('town','selectpays_id','departement_id'),6);
+		print $formcompany->select_ziptown($soc->cp,'zipcode',array('town','selectpays_id','departement_id'),6);
 		print '</td><td>'.$langs->trans('Town').'</td><td>';
-		$formcompany->select_ziptown($soc->ville,'town',array('zipcode','selectpays_id','departement_id'));
+		print $formcompany->select_ziptown($soc->ville,'town',array('zipcode','selectpays_id','departement_id'));
 		print '</td></tr>';
 
 		// Country
@@ -1181,9 +1181,9 @@ else
 			
 			// Zip / Town
 			print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-			$formcompany->select_ziptown($soc->cp,'zipcode',array('town','selectpays_id','departement_id'),6);
+			print $formcompany->select_ziptown($soc->cp,'zipcode',array('town','selectpays_id','departement_id'),6);
 			print '</td><td>'.$langs->trans('Town').'</td><td>';
-			$formcompany->select_ziptown($soc->ville,'town',array('zipcode','selectpays_id','departement_id'));
+			print $formcompany->select_ziptown($soc->ville,'town',array('zipcode','selectpays_id','departement_id'));
 			print '</td></tr>';
 
 			// Country

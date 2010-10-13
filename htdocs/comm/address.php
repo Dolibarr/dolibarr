@@ -268,12 +268,12 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         
         // Zip
 		print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-		$formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
+		print $formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
 		print '</td></tr>';
 		
 		// Town
 		print '<tr><td>'.$langs->trans('Town').'</td><td>';
-		$formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
+		print $formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
 		print '</td></tr>';
 
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
@@ -380,12 +380,12 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
         // Zip
 		print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-		$formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
+		print $formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
 		print '</td></tr>';
 		
 		// Town
 		print '<tr><td>'.$langs->trans('Town').'</td><td>';
-		$formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
+		print $formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
 		print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';

@@ -614,11 +614,15 @@ class FormCompany
 	{
 		global $conf;
 		
+		$out='';
+		
 		$size='';
 		if (!empty($fieldsize)) $size='size="'.$fieldsize.'"';
 		
-		if ($conf->use_javascript_ajax)	print ajax_multiautocompleter($htmlname,$fields,DOL_URL_ROOT.'/core/ajaxziptown.php')."\n";
-		print '<input id="'.$htmlname.'" type="text" name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
+		if ($conf->use_javascript_ajax)	$out.= ajax_multiautocompleter($htmlname,$fields,DOL_URL_ROOT.'/core/ajaxziptown.php')."\n";
+		$out.= '<input id="'.$htmlname.'" type="text" name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
+		
+		return $out;
 	}
 
 }

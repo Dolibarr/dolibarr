@@ -129,9 +129,9 @@ if ($this->control->tpl['fournisseur']) {
 
 <tr>
 	<td><?php echo $langs->trans('Zip'); ?></td>
-	<td><input size="6" type="text" name="cp" value="<?php echo $this->control->tpl['cp']; ?>"><?php echo $this->control->tpl['autofilltownfromzip']; ?></td>
+	<td><?php echo $this->control->tpl['select_zip']; ?></td>
 	<td><?php echo $langs->trans('Town'); ?></td>
-	<td><input type="text" name="ville" value="<?php echo $this->control->tpl['ville']; ?>"></td>
+	<td><?php echo $this->control->tpl['select_town']; ?></td>
 </tr>
 
 <tr>

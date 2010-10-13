@@ -123,6 +123,12 @@ class ActionsCardCommon
             $this->object->LoadSupplierCateg();
             $this->tpl['suppliercategory'] = $this->object->SupplierCategories;
             $this->tpl['select_suppliercategory'] = $form->selectarray("fournisseur_categorie",$this->object->SupplierCategories,$_POST["fournisseur_categorie"],1);
+            
+            // Zip
+            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->cp,'zipcode',array('town','selectpays_id','departement_id'),6);
+            
+            // Town
+            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->ville,'town',array('zipcode','selectpays_id','departement_id'));
 
             // Country
             $this->tpl['select_country'] = $form->select_country($this->object->pays_id,'pays_id');

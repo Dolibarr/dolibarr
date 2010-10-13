@@ -103,7 +103,7 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 				$county = $row['fk_county']?($langs->trans($row['county_code'])!=$row['county_code']?$langs->trans($row['county_code']):($row['county']!='-'?$row['county']:'')):'';
 				
 				$row_array['label'] = $row['zip'].' '.$row['town'];
-				$row_array['label'] .= ($county || $country)?'(':'';
+				$row_array['label'] .= ($county || $country)?' (':'';
                 $row_array['label'] .= $county;
 				$row_array['label'] .= ($county && $country?' - ':'');
                 $row_array['label'] .= $country;
