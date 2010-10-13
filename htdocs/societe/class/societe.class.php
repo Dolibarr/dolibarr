@@ -238,7 +238,7 @@ class Societe extends CommonObject
 
                     dol_syslog("Societe::Create success id=".$this->id);
                     $this->db->commit();
-                    return 0;
+                    return $this->id;
                 }
                 else
                 {
@@ -550,26 +550,6 @@ class Societe extends CommonObject
 
         if (empty($socid) && empty($ref)) return -1;
 
-        // Init data for telephonie module
-        if ($conf->telephonie->enabled && $user && $user->id)
-        {
-            /* Lecture des permissions */
-            $sql = "SELECT p.pread, p.pwrite, p.pperms";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe_perms as p";
-            $sql .= " WHERE p.fk_user = '".$user->id."'";
-            $sql .= " AND p.fk_soc = '".$socid."';";
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                if ($row = $this->db->fetch_row($resql))
-                {
-                    $this->perm_read  = $row[0];
-                    $this->perm_write = $row[1];
-                    $this->perm_perms = $row[2];
-                }
-            }
-        }
-
         $sql = 'SELECT s.rowid, s.nom, s.entity, s.address, s.datec as dc, s.prefix_comm';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
@@ -785,8 +765,8 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Suppression d'une societe de la base avec ses dependances (contacts, rib...)
-     *    \param      id      id de la societe a supprimer
+     *    Delete a third party from database and all its dependencies (contacts, rib...)
+     *    @param      id      id of third party to delete
      */
     function delete($id)
     {
@@ -921,7 +901,7 @@ class Societe extends CommonObject
                     dol_delete_dir_recursive($docdir);
                 }
 
-                return 0;
+                return 1;
             }
             else
             {
@@ -1244,8 +1224,11 @@ class Societe extends CommonObject
             if (! $this->db->query($sql) )
             {
                 dol_print_error($this->db);
+                return -1;
             }
+            return 1;
         }
+        return -1;
     }
 
     /**
@@ -1861,8 +1844,8 @@ class Societe extends CommonObject
     }
 
     /**
-     *       \brief     Charge les informations d'ordre info dans l'objet societe
-     *       \param     id     id de la societe a charger
+     *       Charge les informations d'ordre info dans l'objet societe
+     *       @param     id     id de la societe a charger
      */
     function info($id)
     {
@@ -2142,6 +2125,34 @@ class Societe extends CommonObject
             $this->db->rollback();
             return $result;
         }
+    }
+
+
+    /**
+     *      Initialise an example of company with random values
+     *      Used to build previews or test instances
+     */
+    function initAsSpecimen()
+    {
+        global $user,$langs,$conf,$mysoc;
+
+        // Initialize parameters
+        $this->id=0;
+        $this->nom = 'SPECIMEN';
+        $this->specimen=1;
+        $this->cp='99999';
+        $this->ville='MyTown';
+        $this->pays_id=1;
+        $this->pays_code='FR';
+
+        $this->siren='123456789';
+        $this->siret='ABCDE';
+        $this->capital=10000;
+        $this->client=1;
+        $this->prospect=1;
+        $this->fournisseur=1;
+        $this->note_public='This is a comment (public)';
+        $this->note='This is a comment (private)';
     }
 
 }
