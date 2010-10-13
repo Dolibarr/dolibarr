@@ -53,6 +53,18 @@ class CommandeFournisseur extends Commande
 	//                                                          -> 7=Canceled/Never received -> (reopen) 3=Process runing
 	//										-> 6=Canceled -> (reopen) 2=Approved
 	//  		              -> 9=Refused  -> (reopen) 1=Validated
+    var $socid;
+    var $fourn_id;
+	var $date;
+    var $date_commande;
+    var $total_ht;
+    var $total_tva;
+    var $total_ttc;
+    var $source;
+    var $note;
+    var $note_public;
+    var $model_pdf;
+    var $fk_project;
 
 
 	/**   \brief      Constructeur
@@ -79,10 +91,10 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *	\brief      Get object and lines from database
-	 * 	\param		id			Id of order to load
-	 * 	\param		ref			Ref of object
-	 *	\return     int         >0 if OK, <0 if KO
+	 *	Get object and lines from database
+	 * 	@param		id			Id of order to load
+	 * 	@param		ref			Ref of object
+	 *	@return     int         >0 if OK, <0 if KO
 	 */
 	function fetch($id,$ref='')
 	{
@@ -103,6 +115,7 @@ class CommandeFournisseur extends Commande
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
+			if (! $obj) return -1;
 
 			$this->id                  = $obj->rowid;
 			$this->ref                 = $obj->ref;
@@ -142,7 +155,7 @@ class CommandeFournisseur extends Commande
 			$sql.= " ORDER BY l.rowid";
 			//print $sql;
 
-			dol_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
+			dol_syslog("CommandeFournisseur::fetch get lines sql=".$sql,LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -700,15 +713,17 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *      \brief      Create order with draft status
-	 *      \param      user        User making creation
-	 *      \return     int         <0 if KO, >0 if OK
+	 *      Create order with draft status
+	 *      @param      user        User making creation
+	 *      @return     int         <0 if KO, Id of supplier order if OK
 	 */
 	function create($user)
 	{
 		global $langs,$conf;
 
 		$this->db->begin();
+
+		$now=dol_now();
 
 		/* On positionne en mode brouillon la commande */
 		$this->brouillon = 1;
@@ -727,7 +742,7 @@ class CommandeFournisseur extends Commande
 		$sql.= "''";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$this->socid;
-		$sql.= ", ".$this->db->idate(mktime());
+		$sql.= ", ".$this->db->idate($now);
 		$sql.= ", ".$user->id;
 		$sql.= ", 0";
 		$sql.= ", 0";
@@ -756,7 +771,7 @@ class CommandeFournisseur extends Commande
 				// Fin appel triggers
 
 				$this->db->commit();
-				return 1;
+				return $this->id;
 			}
 			else
 			{
@@ -1431,7 +1446,7 @@ class CommandeFournisseur extends Commande
 
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " WHERE entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1452,6 +1467,7 @@ class CommandeFournisseur extends Commande
 		$this->specimen=1;
 		$this->socid = 1;
 		$this->date = time();
+        $this->date_commande = time();
 		$this->date_lim_reglement=$this->date+3600*24*30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';

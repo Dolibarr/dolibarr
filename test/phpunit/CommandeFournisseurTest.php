@@ -39,11 +39,12 @@ if (empty($user->id))
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
+
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @covers CommandeFournisseur
- * @covers OrderLineFournisseur
+ * @covers CommandeFournisseurLigne
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
@@ -123,8 +124,8 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
+        print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
     	return $result;
     }
 
@@ -143,8 +144,8 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
 		$localobject=new CommandeFournisseur($this->savdb);
     	$result=$localobject->fetch($id);
 
-    	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
     	return $localobject;
     }
 
