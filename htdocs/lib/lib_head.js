@@ -11,24 +11,6 @@
 //
 
 
-/*=================================================================
-	Purpose:  Pour la fonction de saisie auto des villes
-	Input:    postalcode,objecttown,objectcountry,objectstate
-	Author:   Eric Seigne
-	Licence:  GPL
-==================================================================*/
-function autofilltownfromzip_PopupPostalCode(url_root, postalcode,objecttown,objectcountry,objectstate)
-{
-    var url = url_root + '/core/searchpostalcode.php?cp=' + postalcode;
-    url = url + '&targettown=window.opener.document.formsoc.' + objecttown.name;
-    url = url + '&targetcountry=window.opener.document.formsoc.' + objectcountry.name;
-    url = url + '&targetstate=window.opener.document.formsoc.' + objectstate.name;
-    // alert(url);
-    var hWnd = window.open(url, "SearchPostalCodeWindow", "width=" + 300 + ",height=" + 150 + ",resizable=yes,scrollbars=yes");
-    if((document.window != null) && (!hWnd.opener)) hWnd.opener = document.window;
-}
-
-
 /*
  * ================================================================= 
  * Purpose:
