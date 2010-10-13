@@ -19,8 +19,6 @@
 -- ========================================================================
 
 
-ALTER TABLE llx_c_ziptown ADD INDEX idx_c_ziptown_fk_country (fk_country);
 ALTER TABLE llx_c_ziptown ADD INDEX idx_c_ziptown_fk_county (fk_county);
 
-ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_country	FOREIGN KEY (fk_country)  REFERENCES llx_c_pays (rowid);
 ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_county		FOREIGN KEY (fk_county)   REFERENCES llx_c_departements (rowid);
