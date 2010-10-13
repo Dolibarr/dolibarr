@@ -124,8 +124,6 @@ class ActionsCardCommon
             $this->tpl['suppliercategory'] = $this->object->SupplierCategories;
             $this->tpl['select_suppliercategory'] = $form->selectarray("fournisseur_categorie",$this->object->SupplierCategories,$_POST["fournisseur_categorie"],1);
 
-            if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) $this->tpl['autofilltownfromzip'] = '<input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(\''.DOL_URL_ROOT.'\',cp.value,ville,pays_id,departement_id)">';
-
             // Country
             $this->tpl['select_country'] = $form->select_country($this->object->pays_id,'pays_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
