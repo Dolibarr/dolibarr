@@ -80,6 +80,7 @@ ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents (fullpath_dol);
 
 --Add modules facture fournisseur
 insert into llx_const (name, value, type, note, visible) values ('INVOICE_SUPPLIER_ADDON_PDF', 'canelle','chaine','',0);
+ALTER TABLE llx_facture_fourn ADD COLUMN model_pdf varchar(50) after note_public;
 
 create table llx_c_ziptown
 (
