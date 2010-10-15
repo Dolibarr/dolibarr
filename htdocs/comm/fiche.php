@@ -121,7 +121,6 @@ if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
 llxHeader('',$langs->trans('CustomerCard'));
 
 
-$facturestatic=new Facture($db);
 $contactstatic = new Contact($db);
 $userstatic=new User($db);
 $form = new Form($db);
