@@ -574,6 +574,7 @@ Permission1231=Consultar factures de proveïdors
 Permission1232=Crear factures de proveïdors
 Permission1233=Validar factures de proveïdors
 Permission1234=Eliminar factures de proveïdors
+Permission1235=Enviar factures de proveïdors per correu
 Permission1236=Exporta factures de proveïdors, atributs i pagaments
 Permission1251=Llançar les importacions en massa a la base de dades (càrrega de dades)
 Permission1321=Exporta factures a clients, atributs i cobraments

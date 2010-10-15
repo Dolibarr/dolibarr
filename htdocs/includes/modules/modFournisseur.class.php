@@ -89,6 +89,11 @@ class modFournisseur extends DolibarrModules
 		                    $this->const[$r][1] = "chaine";
 		                    $this->const[$r][2] = "mod_commande_fournisseur_muguet";
 							$r++;
+							
+							$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
+		                    $this->const[$r][1] = "chaine";
+		                    $this->const[$r][2] = "canelle";
+							$r++;
 
 		                    // Boxes
 		                    $this->boxes = array();
@@ -202,6 +207,13 @@ class modFournisseur extends DolibarrModules
 		                    $this->rights[$r][3] = 0;
 		                    $this->rights[$r][4] = 'facture';
 		                    $this->rights[$r][5] = 'supprimer';
+		                    
+		                    $this->rights[$r][0] = 1235;
+							$this->rights[$r][1] = 'Envoyer les factures par mail';
+							$this->rights[$r][2] = 'a';
+							$this->rights[$r][3] = 0;
+							$this->rights[$r][4] = 'facture';
+							$this->rights[$r][5] = 'envoyer';
 
 		                    $r++;
 		                    $this->rights[$r][0] = 1236;

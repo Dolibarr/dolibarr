@@ -575,6 +575,7 @@ Permission1231= Consulter les factures fournisseur
 Permission1232= Créer une facture fournisseur
 Permission1233= Valider une facture fournisseur
 Permission1234= Supprimer une facture fournisseur
+Permission1235= Envoyer les factures fournisseur par courriel
 Permission1236= Exporter les factures fournisseurs, attributs et règlements
 Permission1251= Lancer des imports de masse dans la base (chargement de données)
 Permission1321= Exporter les factures clients, attributs et règlements

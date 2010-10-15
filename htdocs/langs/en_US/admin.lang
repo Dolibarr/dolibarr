@@ -573,6 +573,7 @@ Permission1231=Read supplier invoices
 Permission1232=Create/modify supplier invoices
 Permission1233=Validate supplier invoices
 Permission1234=Delete supplier invoices
+Permission1235=Send supplier invoices by email
 Permission1236=Export supplier invoices, attributes and payments
 Permission1251=Run mass imports of external data into database (data load)
 Permission1321=Export customer invoices, attributes and payments
