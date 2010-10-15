@@ -31,6 +31,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_invoice/modules_facturefournisseur.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
@@ -463,7 +464,57 @@ if ($_GET['action'] == 'reopen' && $user->rights->fournisseur->facture->creer)
 	}
 }
 
+/*
+ * Build document
+ */
 
+if ($_REQUEST['action']	== 'builddoc')	
+{
+	/*
+	 * Generation de la	facture
+	 * definit dans	/includes/modules/supplier_invoice/modules_facturefournisseur.php
+	 */
+
+	// Sauvegarde le dernier module	choisi pour	generer	un document
+	$facture=	new	FactureFournisseur($db);
+	$facture->fetch($_REQUEST['facid']);
+	if ($_REQUEST['model'])
+	{
+		$facture->setDocModel($user, $_REQUEST['model']);
+	}
+
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+	$result=supplier_invoice_pdf_create($db, $facture,$facture->modelpdf,$outputlangs);
+	if ($result	<= 0)
+	{
+		dol_print_error($db,$result);
+		exit;
+	}
+	else
+	{
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facture->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		exit;
+	}
+}
+
+// Delete file in doc form
+if ($action=='remove_file')
+{
+	$facture = new FactureFournisseur($db);
+
+	if ($facture->fetch($id))
+	{
+		$upload_dir =	$conf->fournisseur->facture->dir_output . "/";
+		$file =	$upload_dir	. '/' .	$_GET['file'];
+		dol_delete_file($file);
+		$mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+	}
+}
 
 
 /*
@@ -1234,40 +1285,34 @@ else
 		print '</div>';
 
 
+		print '<table width="100%"><tr><td width="50%" valign="top">';
+		print '<a name="builddoc"></a>'; // ancre
 
-		if ($_GET['action'] != 'presend')
-		{
-			print '<table width="100%"><tr><td width="50%" valign="top">';
-			print '<a name="builddoc"></a>'; // ancre
+		/*
+		* Documents generes
+		*/
+			
+		$facfournref=dol_sanitizeFileName($fac->ref);
+		$file=$conf->fournisseur->dir_output.'/facture/'. $facfournref .	'/'	. $facfournref . '.pdf';
+		$relativepath =	$facfournref.'/'.$facfournref.'.pdf';
+		$filedir = $conf->fournisseur->dir_output	. '/facture/' .	$facfournref;
+		$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
+		$genallowed=$user->rights->fournisseur->facture->creer;
+		$delallowed=$user->rights->fournisseur->facture->supprimer;
 
-			/*
-			 * Documents generes
-			 */
-			$filename=dol_sanitizeFileName($fac->ref);
-			$filedir=$conf->fournisseur->dir_output.'/facture/'.get_exdir($fac->id,2).$fac->id;
-			$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
-			//$genallowed=$user->rights->fournisseur->facture->creer;
-			$genallowed=false;	// TODO Waiting for supplier invoice generation
-			$delallowed=$user->rights->fournisseur->facture->supprimer;
+		$somethingshown=$formfile->show_documents('facture_fournisseur',$facfournref,$filedir,$urlsource,$genallowed,$delallowed,$facture->modelpdf);
+			
+		print '</td><td valign="top" width="50%">';
+		print '<br>';
 
-			$var=true;
+		// List of actions on element
+		/*
+		include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+		$formactions=new FormActions($db);
+		$somethingshown=$formactions->showactions($fac,'invoice_supplier',$socid);
+		*/
 
-			$somethingshown=$formfile->show_documents('facture_fournisseur',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
-
-
-			print '</td><td valign="top" width="50%">';
-
-			print '<br>';
-
-			// List of actions on element
-			/*
-			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
-			$formactions=new FormActions($db);
-			$somethingshown=$formactions->showactions($fac,'invoice_supplier',$socid);
-			*/
-
-			print '</td></tr></table>';
-		}
+		print '</td></tr></table>';
 	}
 }
 

@@ -277,8 +277,8 @@ class FormFile
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
 				{
-					include_once(DOL_DOCUMENT_ROOT.'/fourn/facture/modules/modules_facturefournisseur.php');
-					$model=new ModelePDFFacturesSuppliers();
+					include_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_invoice/modules_facturefournisseur.php');
+					$model=new ModelePDFSuppliersInvoices();
 					$modellist=$model->liste_modeles($this->db);
 				}
 			}
