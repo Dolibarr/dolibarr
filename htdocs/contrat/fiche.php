@@ -933,7 +933,7 @@ else
 						print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 						print img_object($langs->trans("ShowService"),"service").' '.$objp->ref.'</a>';
 						print $objp->label?' - '.$objp->label:'';
-						print '</br>';
+						print '<br>';
 					}
 					else
 					{
