@@ -1794,21 +1794,21 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *      \brief     	Update line
-	 *      \param     	rowid           Id of line to update
-	 *      \param     	desc            Description of line
-	 *      \param     	pu              Prix unitaire (HT ou TTC selon price_base_type)
-	 *      \param     	qty             Quantity
-	 *      \param     	remise_percent  Pourcentage de remise de la ligne
-	 *      \param     	date_start      Date de debut de validite du service
-	 *      \param     	date_end        Date de fin de validite du service
-	 *      \param     	tva_tx          VAT Rate
-	 * 		\param		txlocaltax1		Local tax 1 rate
-	 *  	\param		txlocaltax2		Local tax 2 rate
-	 * 	   	\param     	price_base_type HT or TTC
-	 * 	   	\param     	info_bits       Miscellanous informations
-	 * 		\param		type			Type of line (0=product, 1=service)
-	 *      \return    	int             < 0 si erreur, > 0 si ok
+	 *      Update a detail line
+	 *      @param     	rowid           Id of line to update
+	 *      @param     	desc            Description of line
+	 *      @param     	pu              Prix unitaire (HT ou TTC selon price_base_type)
+	 *      @param     	qty             Quantity
+	 *      @param     	remise_percent  Pourcentage de remise de la ligne
+	 *      @param     	date_start      Date de debut de validite du service
+	 *      @param     	date_end        Date de fin de validite du service
+	 *      @param     	tva_tx          VAT Rate
+	 * 		@param		txlocaltax1		Local tax 1 rate
+	 *  	@param		txlocaltax2		Local tax 2 rate
+	 * 	   	@param     	price_base_type HT or TTC
+	 * 	   	@param     	info_bits       Miscellanous informations
+	 * 		@param		type			Type of line (0=product, 1=service)
+	 *      @return    	int             < 0 si erreur, > 0 si ok
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0,$price_base_type='HT', $info_bits=0, $type=0)
 	{

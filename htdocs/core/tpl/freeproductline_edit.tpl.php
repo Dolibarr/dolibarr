@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
+ *
+ * Need to have object $this (invoice, order, ...) and $line defined
  */
 ?>
 
@@ -25,7 +27,8 @@
 <input type="hidden" name="token" value="<?php  echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="updateligne">
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
-<input type="hidden" name="lineid" value="<?php echo $_GET["lineid"]; ?>">
+<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
+<input type="hidden" name="type" value="<?php echo $line->product_type; ?>">
 
 <tr <?php echo $bc[$var]; ?>>
 	<td>

@@ -966,24 +966,24 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 
 	// Define info_bits
 	$info_bits=0;
-	if (preg_match('/\*/',$_POST['np_tva_tx'])) $info_bits |= 0x01;
+	if (preg_match('/\*/',$_POST['tva_tx'])) $info_bits |= 0x01;
 
 	// Define vat_rate
-	$vat_rate=$_POST['np_tva_tx'];
+	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=str_replace('*','',$vat_rate);
 	$localtax1_rate=get_localtax($vat_rate,1,$object->client);
 	$localtax2_rate=get_localtax($vat_rate,2,$object->client);
 
 	// Check parameters
-	if (empty($_POST['productid']) && $_POST["type"] < 0)
+	if (! GETPOST('productid') && GETPOST("type") < 0)
 	{
 		$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
 		$result = -1 ;
 	}
 	// Check minimum price
-	if(! empty($_POST['productid']))
+	if (GETPOST('productid'))
 	{
-		$productid = $_POST['productid'];
+		$productid = GETPOST('productid');
 		$product = new Product($db);
 		$product->fetch($productid);
 		$type=$product->type;
@@ -995,23 +995,17 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	}
 
 	// Define params
-	if (! empty($_POST['productid']))
-	{
-		$type=$product->type;
-	}
-	else
-	{
-		$type=$_POST["type"];
-	}
+	if (GETPOST('productid')) $type=$product->type;
+	else $type=GETPOST("type");
 
 	// Update line
 	if ($result >= 0)
 	{
-		$result = $object->updateline($_POST['rowid'],
+		$result = $object->updateline(GETPOST('lineid'),
 		$description,
-		$_POST['price'],
-		$_POST['qty'],
-		$_POST['remise_percent'],
+		GETPOST('subprice'),
+		GETPOST('qty'),
+		GETPOST('remise_percent'),
 		$date_start,
 		$date_end,
 		$vat_rate,
@@ -1025,7 +1019,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		// Define output language
 		$outputlangs = $langs;
 		$newlang='';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 		if (! empty($newlang))
 		{
