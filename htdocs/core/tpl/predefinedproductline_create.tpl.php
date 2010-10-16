@@ -17,6 +17,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
+ *
+ * Need to have following variables defined:
+ * $conf
+ * $langs
+ * $dateSelector
+ * $this (invoice, order, ...)
+ * $line defined
  */
 ?>
 

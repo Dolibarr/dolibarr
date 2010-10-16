@@ -18,7 +18,12 @@
  *
  * $Id$
  *
- * Need to have object $this (invoice, order, ...) and $line defined
+ * Need to have following variables defined:
+ * $conf
+ * $langs
+ * $dateSelector
+ * $this (invoice, order, ...)
+ * $line defined
  */
 ?>
 
@@ -67,7 +72,7 @@
 	<br><input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></td>
 </tr>
 
-<?php if ($conf->service->enabled && $dateSelector)	{ ?>
+<?php if ($conf->service->enabled && $dateSelector && $line->product_type == 1)	{ ?>
 <tr <?php echo $bc[$var]; ?>>
 	<td colspan="9"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php

@@ -1383,7 +1383,11 @@ class CommonObject
 	}
 
 	/**
-	 * 	Return HTML with object lines list
+	 * 	Return HTML with object lines list.
+	 *  Array $this->lines must be defined.
+	 *  @param     $dateSelector       Show date input fields (if service)
+	 *  @param     $seller             Object of seller third party
+	 *  @param     uyer                Object of buyer third party
      *  FIXME This must be moved into a html.class file instead of a business class.
 	 */
 	function printLinesList($dateSelector=0,$seller,$buyer)

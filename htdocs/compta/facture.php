@@ -2655,7 +2655,7 @@ else
 		    if (!empty($object->lines))
             {
                 $object->print_title_list();
-                $object->printLinesList(0,$mysoc,$soc);
+                $object->printLinesList(1,$mysoc,$soc);
             }
 
 			/*

@@ -521,7 +521,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	$date_end='';
 	$date_start=dol_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
 	$date_end=dol_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
-	$description=dol_htmlcleanlastbr($_POST['eldesc']);
+	$description=dol_htmlcleanlastbr($_POST['desc']);
 
 	// Define info_bits
 	$info_bits=0;
@@ -1664,7 +1664,7 @@ else
             if (!empty($object->lines))
             {
                 $object->print_title_list();
-                $object->printLinesList(0,$mysoc,$soc);
+                $object->printLinesList(1,$mysoc,$soc);
             }
 
 			$numlines=sizeof($object->lines);

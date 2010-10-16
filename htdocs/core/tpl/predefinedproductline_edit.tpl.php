@@ -17,6 +17,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
+ *
+ * Need to have following variables defined:
+ * $conf
+ * $langs
+ * $dateSelector
+ * $this (invoice, order, ...)
+ * $line defined
  */
 ?>
 
@@ -34,7 +41,7 @@
 	<input type="hidden" name="productid" value="<?php echo $line->fk_product; ?>">
 	<a href="<?php echo DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product; ?>">
 	<?php
-	if ($line->fk_product_type==1) echo img_object($langs->trans('ShowService'),'service');
+	if ($line->product_type==1) echo img_object($langs->trans('ShowService'),'service');
 	else print img_object($langs->trans('ShowProduct'),'product');
 	echo ' '.$line->ref.'</a>';
 	echo ' - '.nl2br($line->product_label);
@@ -73,7 +80,7 @@
 	<br><input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></td>
 </tr>
 
-<?php if ($conf->service->enabled && $dateSelector)	{ ?>
+<?php if ($conf->service->enabled && $dateSelector && $line->product_type == 1)	{ ?>
 <tr <?php echo $bc[$var]; ?>>
 	<td colspan="9"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
