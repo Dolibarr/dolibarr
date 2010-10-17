@@ -1,7 +1,7 @@
 /**
- * @preserve jquery.layout 1.3.0 - Release Candidate 29.4
+ * @preserve jquery.layout 1.3.0 - Release Candidate 29.8
  * $Date$
- * $Rev: 30294 $
+ * $Rev: 30298 $
  *
  * Copyright (c) 2010 
  *   Fabrizio Balliano (http://www.fabrizioballiano.net)
@@ -1276,9 +1276,7 @@ $.fn.layout = function (opts) {
 
 		// initialize all layout elements
 		initContainer();	// set CSS as needed and init state.container dimensions
-		initPanes();		// size & position all panes - calls initHandles()
-		//initHandles();	// create and position all resize bars & togglers buttons
-		initResizable();	// activate resizing on all panes where resizable=true
+		initPanes();		// size & position panes - calls initHandles() - which calls initResizable()
 		sizeContent();		// AFTER panes & handles have been initialized, size 'content' divs
 
 		if (o.scrollToBookmarkOnLoad) {
@@ -1820,6 +1818,9 @@ $.fn.layout = function (opts) {
 					;
 			}
 
+			// add Draggable events
+			initResizable(pane);
+
 			// ADD CLASSNAMES & SLIDE-BINDINGS - eg: class="resizer resizer-west resizer-open"
 			if (s.isVisible)
 				setAsOpen(pane);	// onOpen will be called, but NOT onResize
@@ -2335,16 +2336,16 @@ $.fn.layout = function (opts) {
 		// if this pane has a resizer bar, move it NOW - before animation
 		setAsClosed(pane);
 
-		// ANIMATE 'CLOSE' - if no animation, then was ALREADY shown above
-		if (doFX) {
+		// CLOSE THE PANE
+		if (doFX) { // animate the close
 			lockPaneForFX(pane, true); // need to set left/top so animation will work
 			$P.hide( o.fxName_close, o.fxSettings_close, o.fxSpeed_close, function () {
 				lockPaneForFX(pane, false); // undo
 				close_2();
 			});
 		}
-		else {
-			$P.hide(); // hide pane NOW
+		else { // hide the pane without animation
+			$P.hide();
 			close_2();
 		};
 
@@ -2363,7 +2364,7 @@ $.fn.layout = function (opts) {
 
 				if (!skipCallback && (state.initialized || o.triggerEventsOnLoad)) {
 					// onclose callback - UNLESS just 'showing' a hidden pane as 'closed'
-					if (!isShowing && !wasSliding) _execCallback(pane, o.onclose_end || o.onclose);
+					if (!isShowing) _execCallback(pane, o.onclose_end || o.onclose);
 					// onhide OR onshow callback
 					if (isShowing)	_execCallback(pane, o.onshow_end || o.onshow);
 					if (isHiding)	_execCallback(pane, o.onhide_end || o.onhide);
@@ -2603,7 +2604,10 @@ $.fn.layout = function (opts) {
 			// onshow callback - TODO: should this be here?
 			if (s.isShowing) _execCallback(pane, o.onshow_end || o.onshow);
 			// ALSO call onresize because layout-size *may* have changed while pane was closed
-			if (state.initialized) _execCallback(pane, o.onresize_end || o.onresize); // if (state.initialized)
+			if (state.initialized) {
+				_execCallback(pane, o.onresize_end || o.onresize);
+				resizeNestedLayout(pane);
+			}
 		}
 	};
 
@@ -2623,7 +2627,7 @@ $.fn.layout = function (opts) {
 
 		if (state[pane].isClosed)
 			open(pane, true); // true = slide - ie, called from here!
-		else // skip 'open' if already open!
+		else // skip 'open' if already open! // TODO: does this use-case make sense???
 			bindStopSlidingEvents(pane, true); // BIND trigger events to close sliding-pane
 	};
 
@@ -2678,7 +2682,7 @@ $.fn.layout = function (opts) {
 		}
 		else { // animation DONE - RESET CSS
 			// TODO: see if this can be deleted. It causes a quick-close when sliding in Chrome
-			//$P.css({ zIndex: (state[pane].isSliding ? _c.zIndex.pane_sliding : _c.zIndex.pane_normal) });
+			$P.css({ zIndex: (state[pane].isSliding ? _c.zIndex.pane_sliding : _c.zIndex.pane_normal) });
 			if (pane=="south")
 				$P.css({ top: "auto" });
 			else if (pane=="east")
@@ -2701,7 +2705,6 @@ $.fn.layout = function (opts) {
 	var bindStartSlidingEvent = function (pane, enable) {
 		var 
 			o		= options[pane]
-		,	z		= _c.zIndex
 		,	$P		= $Ps[pane]
 		,	$R		= $Rs[pane]
 		,	trigger	= o.slideTrigger_open
@@ -2713,10 +2716,6 @@ $.fn.layout = function (opts) {
 			trigger = o.slideTrigger_open = "mouseenter";
 		else if (!trigger.match(/click|dblclick|mouseenter/)) 
 			trigger = o.slideTrigger_open = "click";
-
-		// RE/SET zIndex - increases when pane is opening, resets to normal after close
-		$R.css("zIndex", !enable ? z.pane_sliding : z.resizer_normal);
-		$P.css("zIndex", !enable ? z.pane_sliding : z.pane_normal);
 
 		$R
 			// add or remove trigger event
@@ -2740,6 +2739,7 @@ $.fn.layout = function (opts) {
 		var 
 			o		= options[pane]
 		,	s		= state[pane]
+		,	z		= _c.zIndex
 		,	trigger	= o.slideTrigger_close
 		,	action	= (enable ? "bind" : "unbind")
 		,	$P		= $Ps[pane]
@@ -2751,6 +2751,10 @@ $.fn.layout = function (opts) {
 		// remove 'slideOpen' trigger event from resizer
 		// ALSO will raise the zIndex of the pane & resizer
 		if (enable) bindStartSlidingEvent(pane, false);
+
+		// RE/SET zIndex - increases when pane is sliding-open, resets to normal when not
+		$P.css("zIndex", enable ? z.pane_sliding : z.pane_normal);
+		$R.css("zIndex", enable ? z.pane_sliding : z.resizer_normal);
 
 		// make sure we have a valid event
 		if (!trigger.match(/click|mouseleave/))
@@ -2941,9 +2945,7 @@ $.fn.layout = function (opts) {
 
 		if (!skipCallback && !skipResizeWhileDragging && state.initialized && s.isVisible) {
 			_execCallback(pane, o.onresize_end || o.onresize);
-			// if Pane is the container for a nested layout, trigger resizeAll for that now
-			if (o.resizeNestedLayout && $P.data("layoutContainer"))
-				$P.layout().resizeAll();
+			resizeNestedLayout(pane);
 		}
 
 		// resize all the adjacent panes, and adjust their toggler buttons
@@ -3074,9 +3076,7 @@ $.fn.layout = function (opts) {
 			// resizeAll passes skipCallback because it triggers callbacks after ALL panes are resized
 			if (!skipCallback && state.initialized && s.isVisible) {
 				_execCallback(pane, o.onresize_end || o.onresize);
-				// if Pane is the container for a nested layout, trigger resizeAll for that now
-				if (o.resizeNestedLayout && $P.data("layoutContainer"))
-					$P.layout().resizeAll();
+				resizeNestedLayout(pane);
 			}
 		});
 	};
@@ -3128,12 +3128,30 @@ $.fn.layout = function (opts) {
 			if (!$P) return; // SKIP
 			if (state[pane].isVisible) // undefined for non-existent panes
 				_execCallback(pane, o[pane].onresize_end || o[pane].onresize); // callback - if exists
-			// if Pane is the container for a nested layout, trigger resizeAll for that now
-			if (o[pane].resizeNestedLayout && $P.data("layoutContainer"))
-				$P.layout().resizeAll();
+			resizeNestedLayout(pane);
 		});
 
 		_execCallback(null, o.onresizeall_end || o.onresizeall); // onresizeall callback, if exists
+	};
+
+
+	/**
+	* Whenever a pane resizes or opens that has a nested layout, trigger resizeAll
+	*
+	* @param {string}		pane		The pane just resized or opened
+	*/
+	var resizeNestedLayout = function (pane) {
+		var
+			$P	= $Ps[pane]
+		,	$C	= $Cs[pane]
+		,	d	= "layoutContainer"
+		;
+		if (options[pane].resizeNestedLayout) {
+			if ($P.data( d ))
+				$P.layout().resizeAll();
+			else if ($C && $C.data( d ))
+				$C.layout().resizeAll();
+		}
 	};
 
 
@@ -3179,9 +3197,7 @@ $.fn.layout = function (opts) {
 
 			if (state.initialized) {
 				_execCallback(pane, o.onsizecontent_end || o.onsizecontent);
-				// if Content-DIV is the container for a nested layout, trigger resizeAll for that now
-				if (o.resizeNestedLayout && $C.data("layoutContainer"))
-					$C.layout().resizeAll();
+				resizeNestedLayout(pane);
 			}
 
 
@@ -3468,7 +3484,6 @@ $.fn.layout = function (opts) {
 
 			// ALWAYS regenerate the resizer & toggler elements
 			initHandles(pane); // create the required resizer & toggler
-			initResizable(pane);
 
 			// if moving to different orientation, then keep 'target' pane size
 			if (c.dir != _c[oldPane].dir) {
