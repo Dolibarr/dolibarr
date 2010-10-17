@@ -1146,7 +1146,9 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
  */
 function migrate_price_facture($db,$langs,$conf)
 {
-	$db->begin();
+	$err=0;
+
+    $db->begin();
 
 	print '<tr><td colspan="4">';
 
