@@ -89,7 +89,7 @@ else {
 					     "At top level"));
 	if ($d->{'ssl'} && $ver >= 2.9) {
 		$rv .= &ui_table_row("Force https connection?",
-					 &ui_yesno_radio("forcehttps", 0));
+				     &ui_yesno_radio("forcehttps", 0));
 		}
 	}
 return $rv;
@@ -193,7 +193,7 @@ $charset = $dbtype eq "mysql" ? $mycharset : $pgcharset;
 $collate = $dbtype eq "mysql" ? $mycollate : "C";
 
 $path = &script_path_url($d, $opts);
-if ($path =~ /^https:/) {
+if ($path =~ /^https:/ || $d->{'ssl'}) {
         $url = "https://$d->{'dom'}";
 }
 else {
@@ -249,7 +249,7 @@ if ($upgrade) {
 	# Remove the installation directory.
 	local $dinstall = "$opts->{'dir'}/install";
 	$dinstall  =~ s/\/$//;
-	$out = &run_as_domain_user($d, "rm -Rf ".quotemeta($dinstall ));
+	$out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
 	
 	}
 else {
@@ -287,10 +287,9 @@ else {
 	# Remove the installation directory and protect config file.
 	local $dinstall = "$opts->{'dir'}/install";
 	$dinstall  =~ s/\/$//;
-	$out = &run_as_domain_user($d, "rm -Rf ".quotemeta($dinstall ));
+	$out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
 	&set_ownership_permissions(undef, undef, 0644, $cfile);
 	&set_ownership_permissions(undef, undef, 0755, $cfiledir);
-	
 	}
  
 # Return a URL for the user
@@ -347,7 +346,7 @@ return (1, "Dolibarr directory and tables deleted.");
 sub script_dolibarr_latest
 {
 local ($ver) = @_;
-if ($ver >= 2.8) {
+if ($ver >= 2.9) {
 	return ( "http://www.dolibarr.fr/files/stable/",
 		 "dolibarr\\-(2\\.[0-9\\.]+)" );
 	}
