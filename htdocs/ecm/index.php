@@ -292,7 +292,7 @@ if (GETPOST("action") == 'refreshmanual')
  ********************************************************************/
 
 $morejs=array(
-"/includes/jquery/js/jquery.layout-latest.js"
+"/includes/jquery/plugins/layout/jquery.layout-latest.js"
 );
 $morehead="<style type=\"text/css\">
 html, body {
