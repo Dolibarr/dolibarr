@@ -662,8 +662,8 @@ class CMailFile
 		// Make RFC821 Compliant, replace bare linefeeds
 		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent );
 
-		//$strContent = rtrim(wordwrap($strContent));
-        $strContent = rtrim(chunk_split($strContent));
+        //$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems bugged
+        $strContent = rtrim(wordwrap($strContent));
 
 		$out.=$strContent.$this->eol;
 
