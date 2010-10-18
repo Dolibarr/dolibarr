@@ -2550,11 +2550,11 @@ class Facture extends CommonObject
 
 
 	/**
-	 *   \brief     Renvoi si une facture peut etre supprimee completement.
+	 *   Renvoi si une facture peut etre supprimee completement.
 	 *				La regle est la suivante:
 	 *				Si facture derniere, non provisoire, sans paiement et non exporte en compta -> oui fin de regle
 	 *       		Si facture brouillon et provisoire -> oui
-	 *   \return    int         <0 si ko, 0=non, 1=oui
+	 *   @return    int         <0 si ko, 0=non, 1=oui
 	 */
 	function is_erasable()
 	{
@@ -2568,6 +2568,8 @@ class Facture extends CommonObject
 		{
 			// On ne peut supprimer que la derniere facture validee
 			// pour ne pas avoir de trou dans la numerotation
+			// FIXME Le dernier num de facture n'est pas forcement le max !
+			// Utiliser le module de numérotation pour trouver le max.
 			$sql = "SELECT MAX(facnumber)";
 			$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 			$sql.= " WHERE entity = ".$conf->entity;
