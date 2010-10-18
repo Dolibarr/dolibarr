@@ -559,9 +559,9 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 *      \brief      Set invoice status as validated
-	 *      \param      user        Object user
-	 *      \return     int         <0 if KO, =0 if nothing to do, >0 if OK
+	 *      Set invoice status as validated
+	 *      @param      user        Object user
+	 *      @return     int         <0 if KO, =0 if nothing to do, >0 if OK
 	 */
 	function validate($user)
 	{
@@ -574,6 +574,13 @@ class FactureFournisseur extends Facture
 		{
 			dol_syslog("FactureFournisseur::validate no draft status", LOG_WARNING);
 			return 0;
+		}
+
+		// Check parameters
+		if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->ref_supplier))
+		{
+		      $this->error=$langs->trans("ErrorFieldFormat",$langs->transnoentities("RefSupplier"));
+		      return -1;
 		}
 
 		$this->db->begin();

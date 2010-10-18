@@ -89,6 +89,10 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 	$facturefourn=new FactureFournisseur($db);
 	$facturefourn->fetch($_GET['facid']);
 	$result = $facturefourn->validate($user);
+	if ($result < 0)
+	{
+        $mesg='<div class="error">'.$facturefourn->error.'</div>';
+	}
 }
 
 if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
@@ -468,7 +472,7 @@ if ($_GET['action'] == 'reopen' && $user->rights->fournisseur->facture->creer)
  * Build document
  */
 
-if ($_REQUEST['action']	== 'builddoc')	
+if ($_REQUEST['action']	== 'builddoc')
 {
 	/*
 	 * Generation de la	facture
@@ -626,7 +630,7 @@ else
 		/*                                                                             */
 		/* *************************************************************************** */
 
-		$now=gmmktime();
+		$now=dol_now();
 
 		$productstatic = new Product($db);
 
@@ -1291,7 +1295,7 @@ else
 		/*
 		* Documents generes
 		*/
-			
+
 		$facfournref=dol_sanitizeFileName($fac->ref);
 		$file=$conf->fournisseur->dir_output.'/facture/'. $facfournref .	'/'	. $facfournref . '.pdf';
 		$relativepath =	$facfournref.'/'.$facfournref.'.pdf';
@@ -1301,7 +1305,7 @@ else
 		$delallowed=$user->rights->fournisseur->facture->supprimer;
 
 		$somethingshown=$formfile->show_documents('facture_fournisseur',$facfournref,$filedir,$urlsource,$genallowed,$delallowed,$facture->modelpdf);
-			
+
 		print '</td><td valign="top" width="50%">';
 		print '<br>';
 
