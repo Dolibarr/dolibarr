@@ -789,16 +789,6 @@ else
     }
 
     // TVA
-    if ($conf->use_javascript_ajax)
-    {
-        print "\n";
-        print '<script language="JavaScript" type="text/javascript">';
-        print "function CheckVAT(a) {\n";
-        print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,260);\n";
-        print "}\n";
-        print '</script>';
-        print "\n";
-    }
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("VATIntra").'</td>';
     print '<td>';
@@ -810,6 +800,13 @@ else
         $s.=' &nbsp; ';
         if ($conf->use_javascript_ajax)
         {
+            print "\n";
+            print '<script language="JavaScript" type="text/javascript">';
+            print "function CheckVAT(a) {\n";
+            print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
+            print "}\n";
+            print '</script>';
+            print "\n";
             $s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
             print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
         }
