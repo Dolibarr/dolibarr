@@ -1035,7 +1035,7 @@ border-left-style: solid;
 }
 
 table.noborder td {
-padding: 1px 2px;			/* t r b l */
+padding: 1px 2px 0px 1px;			/* t r b l */
 }
 
 table.nobordernopadding {

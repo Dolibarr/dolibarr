@@ -1001,10 +1001,7 @@ border-bottom-width: 1px;
 border-bottom-color: #BBBBBB;
 border-bottom-style: solid;
 
-margin-left: 1px;
-margin-right: 1px;
-margin-bottom: 2px;
-margin-top: 0px;
+margin: 0px 0px 2px 0px;
 }
 
 table.noborder tr {
@@ -1020,7 +1017,7 @@ border-left-style: solid;
 }
 
 table.noborder td {
-padding: 1px 2px;			/* t r b l */
+padding: 1px 2px 0px 1px;			/* t r b l */
 }
 
 table.nobordernopadding {
