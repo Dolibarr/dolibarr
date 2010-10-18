@@ -977,10 +977,10 @@ function version_webserver()
 
 
 /**
- * 	\brief		Return list of activated modules usable for document generation.
- * 	\param		$db				Database handler
- * 	\param		$type			Type of models (company, invoice, ...)
- * 	\return		int or array	0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
+ * 	Return list of activated modules usable for document generation.
+ * 	@param		$db				Database handler
+ * 	@param		$type			Type of models (company, invoice, ...)
+ * 	@return		int or array	0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
  */
 function getListOfModels($db,$type)
 {
@@ -1050,7 +1050,7 @@ function getListOfModels($db,$type)
 	}
 	else
 	{
-		$this->error=$db->error();
+        dol_print_error($db);
 		return -1;
 	}
 
