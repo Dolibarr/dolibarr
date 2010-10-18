@@ -14,14 +14,15 @@
 UPDATE llx_bank_url SET type='payment' WHERE type='?' AND label='(payment)' AND url LIKE '%compta/paiement/fiche.php%';
 
 -- Add recuperableonly field
-alter table llx_product       add column recuperableonly integer NOT NULL DEFAULT '0' after tva_tx;
-alter table llx_product_price add column recuperableonly integer NOT NULL DEFAULT '0' after tva_tx;
+ALTER TABLE llx_product       add column recuperableonly integer NOT NULL DEFAULT '0' after tva_tx;
+ALTER TABLE llx_product_price add column recuperableonly integer NOT NULL DEFAULT '0' after tva_tx;
 
 -- Rename envente into tosell and add tobuy
-alter table llx_product change column envente tosell tinyint DEFAULT 1;
-alter table llx_product add column tobuy tinyint DEFAULT 1 after tosell;
-alter table llx_product_price change column envente tosell tinyint DEFAULT 1;
+ALTER TABLE llx_product CHANGE column envente tosell tinyint DEFAULT 1;
+ALTER TABLE llx_product add column tobuy tinyint DEFAULT 1 after tosell;
+ALTER TABLE llx_product_price CHANGE column envente tosell tinyint DEFAULT 1;
  
+ALTER TABLE llx_bank MODIFY column fk_type varchar(6);
 
 ALTER TABLE llx_boxes_def DROP INDEX uk_boxes_def;
 ALTER TABLE llx_boxes_def MODIFY file varchar(200) NOT NULL;

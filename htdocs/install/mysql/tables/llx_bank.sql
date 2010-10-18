@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2000-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ create table llx_bank
   fk_account      integer,
   fk_user_author  integer,
   fk_user_rappro  integer,
-  fk_type         varchar(4),                -- CB, Virement, cheque
+  fk_type         varchar(6),                -- TIP,VIR,PRE,CB,CHQ,... (Code in llx_c_paiement)
   num_releve      varchar(50),
   num_chq         varchar(50),
   rappro          tinyint default 0,

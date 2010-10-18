@@ -340,7 +340,8 @@ class Translate {
 	}
 
 	/**
-	 * Return translated value of key
+	 * Return translated value of key. Search in lang file, then into database.
+	 * If not found, return key
 	 *
 	 * @param  key
 	 * @return string
@@ -361,22 +362,26 @@ class Translate {
 		{
 			$newstr=$this->getLabelFromKey($db,$reg[1],'c_shipment_mode','code','libelle');
 		}
+        else if (preg_match('/PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
+        {
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle');
+        }
 		return $newstr;
 	}
 
 
 	/**
-	 *  \brief      Retourne la version traduite du texte passe en parametre en la codant en HTML
+	 *  Return text translated of text received as parameter (and encode it into HTML)
 	 *              Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
 	 *              et si toujours pas trouve, il est retourne tel quel
 	 *              Les parametres de cette methode peuvent contenir de balises HTML.
-	 *  \param      key         cle de chaine a traduire
-	 *  \param      param1      chaine de param1
-	 *  \param      param2      chaine de param2
-	 *  \param      param3      chaine de param3
-	 *  \param      param4      chaine de param4
-	 *	\param		maxsize		taille max
-	 *  \return     string      Chaine traduite et code en HTML
+	 *  @param      key         cle de chaine a traduire
+	 *  @param      param1      chaine de param1
+	 *  @param      param2      chaine de param2
+	 *  @param      param3      chaine de param3
+	 *  @param      param4      chaine de param4
+	 *	@param		maxsize		taille max
+	 *  @return     string      Chaine traduite et code en HTML
 	 */
 	function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
 	{
@@ -605,14 +610,14 @@ class Translate {
 
 
 	/**
-	 *      \brief      Return a label for a key. Store key-label in a cache.
-	 * 		\param		db			Database handler
-	 * 		\param		key			Key to get label (key in language file)
-	 * 		\param		tablename	Table name without prefix
-	 * 		\param		fieldkey	Field for key
-	 * 		\param		fieldlabel	Field for label
-	 *      \return     string		Label in UTF8 (but without entities)
-	 *		\remarks	This function can be used to get label in database but more often to get code from key id.
+	 *      Return a label for a key. Store key-label into cache variable $this->cache_labels to save SQL requests to get labels.
+	 * 		@param		db			Database handler
+	 * 		@param		key			Key to get label (key in language file)
+	 * 		@param		tablename	Table name without prefix
+	 * 		@param		fieldkey	Field for key
+	 * 		@param		fieldlabel	Field for label
+	 *      @return     string		Label in UTF8 (but without entities)
+	 *		@remarks	This function can be used to get label in database but more often to get code from key id.
 	 */
 	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel)
 	{
@@ -640,7 +645,8 @@ class Translate {
 		{
 			$obj = $db->fetch_object($resql);
 			if ($obj) $this->cache_labels[$tablename][$key]=$obj->label;
-			else $this->cache_labels[$tablename][$key]='';
+			else $this->cache_labels[$tablename][$key]=$key;
+
 			$db->free($resql);
 			return $this->cache_labels[$tablename][$key];
 		}
