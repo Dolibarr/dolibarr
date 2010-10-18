@@ -1,0 +1,479 @@
+2010-05-23  Martin Haecker  <spamfaenger@gmx.de>
+
+	split out the callback tests from main test file
+
+2010-05-23  Martin Haecker  <spamfaenger@gmx.de>
+
+	figured out how to have two more tests be in the generic suite
+
+2010-05-23  Martin Haecker  <spamfaenger@gmx.de>
+
+	started splitting the testsuite into multiple files and also started breaking down the tests for the different editor types into their own describe blocks that share behaviour with more generic blocks
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	starte splitting test suite into multiple files for more clarity. First stage involves pushing out setup into 'shared setup' and referencing that with should_behave_like in each testsuite. Works fine so far. :) 
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	more todos
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	started experimenting with jquery 1.4 - it all seems to work quite fine, apart from a few testsuite fixes because hasClass has become stricter in jquery 1.4
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	applied patch from superami to allow the callback to handle the dom reset itself. Thanks again! 
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	documented that input sizing via css is preferred
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	applied patch from superami to add input size support
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	more thoughts on the future...
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	better documentation
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	no longer accidentally committing in textareas when entering a newline
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	deprecated preinit and postclose callbacks as better alternatives are now implemented
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	added missing semicolons
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	added some documentation on the callbacks
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	changed openEditor to return the :input field directly to shorten testcode
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	added should- will- and did- open / close callbacks to the inplace editor
+
+2010-05-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	what I'm up to changes...
+
+2010-05-20  Martin Haecker  <spamfaenger@gmx.de>
+
+	renamed back to release notes, thats what they really are
+
+2010-05-14  Martin Haecker  <spamfaenger@gmx.de>
+
+	renamed release notes to backwards compatibility notes as I won't be writing real release notes for now
+
+2010-05-14  Martin Haecker  <spamfaenger@gmx.de>
+
+	switched default behaviour of editor to use .text() to extract values from dom. Use use_html:true to switch this behaviour
+
+2010-05-14  Martin Haecker  <spamfaenger@gmx.de>
+
+	should really use JSpect context to bring in my helpers
+
+2010-05-14  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated version for next release
+
+2010-05-14  Martin Haecker  <spamfaenger@gmx.de>
+
+	changed deprecation marker to denote the version something was deprecated for easier removal and extended it to the documentation too
+
+2010-05-14  Martin Haecker  <spamfaenger@gmx.de>
+
+	worked on todos and on designing the callback interface
+
+2010-05-14  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated changelog before release
+
+2010-05-14  Martin Haecker  <spamfaenger@gmx.de>
+
+	markdowned the documentation and moved more of it out of the source file so the source code is shorter and it is clearer where to find what information
+
+2010-05-13  Martin Haecker  <spamfaenger@gmx.de>
+
+	added some documentation and moved a test to a more logical location
+
+2010-05-13  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated changelog before release
+
+2010-05-13  Martin Haecker  <spamfaenger@gmx.de>
+
+	simplified test suite by introducing edit openEditor and enableEditor helpers that set some default default settings
+
+2010-05-13  Martin Haecker  <spamfaenger@gmx.de>
+
+	reworked all callbacks to receive the editor dom node as their this argument
+
+2010-05-13  Martin Haecker  <spamfaenger@gmx.de>
+
+	moved documentation into RELEASE NOTES and TODO files
+
+2010-05-13  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated changelog before release
+
+2010-05-13  Martin Haecker  <spamfaenger@gmx.de>
+
+	the editor will now throw if you provide neither a callback or a url parameter to it. This lead to quite some fallout in the testsuite as it still enabled lots of editors with neither option...
+
+2010-05-13  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated to jspec 4.3.1
+
+2010-05-13  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated documentation to be easier to grasp and more in line to what the documentation of the homepage has been
+
+2010-05-11  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated version to something more sane for the next release
+
+2010-05-11  Martin Haecker  <spamfaenger@gmx.de>
+
+	more documentation fixes and some generall small cleanup
+
+2010-05-11  Martin Haecker  <spamfaenger@gmx.de>
+
+	small enhancements to documentation but mostly removed and reordered TODOs and REFACTs
+
+2010-05-11  Martin Haecker  <spamfaenger@gmx.de>
+
+	improved documentation with an overview of how the inline editor works
+
+2010-05-11  Martin Haecker  <spamfaenger@gmx.de>
+
+	fixed missing var statements
+
+2010-05-11  Martin Haecker  <spamfaenger@gmx.de>
+
+	applied patch from robert that adds a cancel option like in jquery-ui to not open the editor when the click event happened on a cancel event
+
+2010-05-10  Martin Haecker  <spamfaenger@gmx.de>
+
+	added missing documentation
+
+2010-05-10  Martin Haecker  <spamfaenger@gmx.de>
+
+	enhanced callback protocol, added postclose and now checking the returnvalue of preinit. If it returns false, the editor is not opened
+
+2010-05-07  Martin Haecker  <spamfaenger@gmx.de>
+
+	fixed postclose callback to always be called after the editor has restored the new value either from the server or from the callback
+
+2010-05-07  Martin Haecker  <spamfaenger@gmx.de>
+
+	added postclose callback to do cleanup work after the editor has closed
+
+2010-05-07  Martin Haecker  <spamfaenger@gmx.de>
+
+	added preinit callback to the options
+
+2010-05-06  Martin Haecker  <spamfaenger@gmx.de>
+
+	added test and fix that return commits in all browsers
+
+2010-05-04  Martin Haecker  <spamfaenger@gmx.de>
+
+	removed stray debugger statement
+
+2010-04-27  Martin Haecker  <spamfaenger@gmx.de>
+
+	fixed test in firefox (background-color was not returned as part of background and transparent was used as the default background color for p elements (instead of inherit as we expected)) and added another fix for firefox to send blur events to other open editors.
+
+2010-04-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	added documentation on how to use the callback interface for the callback submit
+
+2010-04-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	added tests to verify that the animation color can be specified by a parameter
+
+2010-04-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	added jquery ui
+
+2010-04-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	added saving animation support
+
+2010-04-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	fixed failuresOnly by not overwriting this.options in the tests and some small cleanups
+
+2010-04-21  Martin Haecker  <spamfaenger@gmx.de>
+
+	added a callback interface to submit to callback that allows the editor to know when the callback is done saving it's values
+
+2010-04-21  Martin Haecker  <spamfaenger@gmx.de>
+
+	added field type to tests that where applied to text, textarea and select fields
+
+2010-04-21  Martin Haecker  <spamfaenger@gmx.de>
+
+	added todos
+
+2010-04-21  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated to 4.2.1 of jspec
+
+2010-03-28  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated jspec to 4.1.0
+
+2010-03-28  Martin Haecker  <spamfaenger@gmx.de>
+
+	added testcase to ensure all commits include the params optional parameter
+
+2010-03-25  mhaecker
+
+	setting correct mime types for the demo files
+
+2010-03-23  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated changelog before release
+
+2010-03-23  Martin Haecker  <spamfaenger@gmx.de>
+
+	removed todos from release script
+
+2010-03-23  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated release script to say what it does and tagg and push the release
+
+2010-03-23  Martin Haecker  <spamfaenger@gmx.de>
+
+	added changelog updating to the release script
+
+2010-03-23  Martin Haecker  <spamfaenger@gmx.de>
+
+	ignoring script file that stores my username and password, so I don't accidentally commit it. :)
+
+2010-03-23  Martin Haecker  <spamfaenger@gmx.de>
+
+	added scripts to automate releasing to google code
+
+2010-03-23  Martin Haecker  <spamfaenger@gmx.de>
+
+	ignoring build directory
+
+2010-03-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	fixed select support to not submit the default choice accidentally
+
+2010-03-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	experimental changes to get rhino to work (still a total failure though)
+
+2010-03-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	reworked demo to go all through the callback function so no server side functionality is required for the demo
+
+2010-03-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	bugfix for testfailure resulting from jspec 3.3.3's strictire matching comparison
+
+2010-03-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated jspec to 3.3.3
+
+2010-03-22  Martin Haecker  <spamfaenger@gmx.de>
+
+	tried to activate failures only mode
+
+2010-03-18  Martin Haecker  <spamfaenger@gmx.de>
+
+	cleanup and comments
+
+2010-03-05  Martin Haecker  <spamfaenger@gmx.de>
+
+	fixed bug where changing the text of an inline editor that put its own default text in the editor after it was created would lead to it loosing that value on click
+
+2010-03-05  Martin Haecker  <spamfaenger@gmx.de>
+
+	new version of env.js
+
+2010-03-01  Martin Haecker  <spamfaenger@gmx.de>
+
+	setting background color directly and not via the background property
+
+2010-03-01  Martin Haecker  <spamfaenger@gmx.de>
+
+	do not overwrite background-color if it hover_class is specified
+
+2010-02-19  Martin Haecker  <spamfaenger@gmx.de>
+
+	trying failuresOnly option but it doesn't seem to work. :/
+
+2010-02-19  Martin Haecker  <spamfaenger@gmx.de>
+
+	updated jspec version
+
+2010-02-19  Martin Haecker  <spamfaenger@gmx.de>
+
+	removed callbackShowErrors option as there is now an error sink that can be used to disable all errors if required
+
+2010-02-19  Martin Haecker  <spamfaenger@gmx.de>
+
+	changed refact comments
+
+2010-02-18  Martin Haecker  <spamfaenger@gmx.de>
+
+	added error_sink option to get all error messages via a callback out of the editor
+
+2010-02-14  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	removed leftover bug comment
+
+2010-02-14  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	allow 0 or empty string as valid return values from submit callback
+
+2010-02-14  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	do not commit if nothing was changed in the editor
+
+2010-02-14  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	changes to not commit if nothing was changed in the editor - even if commit was pressed
+
+2010-02-14  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	escape submitted text so that special charactes like &/=<> do not make problems
+
+2010-02-14  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	removed stray debugger statements
+
+2010-02-14  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	added changelog entry and added information about patches
+
+2010-02-14  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	added changelog entry and added information about patches
+
+2010-02-14  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	removed unneeded demo files
+
+2010-02-14  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	new feature: allow css class for hover instead of immediate values
+
+2010-02-14  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	updated testrunners to allow mocking of ajax requests
+
+2010-02-13  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	preventing multiple editors on the same element and changed the way the editor is preventing opening it twice to not use an instance variable
+
+2010-02-13  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	finished objectifying the editor and the first round of method breakdown into relatively manageable bits
+
+2010-02-13  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	more preparation for breakdown into smaller functions + small reorganizaton of testsuite to make it shorter and sweeter
+
+2010-02-13  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	expanded checks and documentation for select element to allow extra speces and real arrays for select option definitions
+
+2010-02-13  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	more cleanup and small bugfixes to how selects are generated
+
+2010-02-11  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	slowly moving the methods into the InlineEditor object and breaking them down into smaller ones. Plus fix to the escaping of stuff in the inline editor
+
+2010-02-11  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	even more breaking down into functions for prettier code
+
+2010-02-11  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	running the demo from the latest source
+
+2010-02-07  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	wrapped in (function($){})(jQuery) for more compatibility and removed the String prototype changes
+
+2010-02-07  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	reworked intro comment to contain refact and todo sections
+
+2010-02-07  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	merged documentation and custom settings declaration to get rid of duplication
+
+2010-02-07  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	first batch of testcases for the inline editor
+
+2010-02-07  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	added some todos
+
+2010-02-07  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	updated testrunners to run jquery.editinplace.js (rhino doesn't work yet as the latest release of env.js fails to load propperly
+
+2010-02-07  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	added support libraries for rhino and jquery
+
+2010-02-07  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	removed leftover from template - tests are now written for jquery.editinplace.js
+
+2010-02-06  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	moved edit in place into lib folder
+
+2010-02-06  Martin Haecker  <mhaecker@cs.tu-berlin.de>
+
+	added local jspec instance
+
+2009-06-09  DaveHauenstein
+
+	added a new parameter
+
+2009-04-09  davehauenstein
+
+	- Minor Updates
+	- Script: Changed default save and cancel input fields to button elements
+	- Demo: Minor text changes and added link to demo.js file
+	- Demo: Added local version of jQuery lib instead of linking to google's
+
+2009-04-06  davehauenstein
+
+	updated link in demo
+
+2009-04-06  davehauenstein
+
+	initial import
+
+2009-04-06  
+
+	Initial directory structure.
+

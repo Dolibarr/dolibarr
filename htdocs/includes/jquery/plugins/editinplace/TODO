@@ -1,0 +1,140 @@
+TODO
+====
+- do not change editor content on cancel if callback doesn't return anything
+- saving animation doesn't work when jquery-ui isn't present. Find workaround or have other default saving animation
+- Consider to deprecate the ajax callbacks in favor of the delegate interface.
+- consider to remove / deprecate the textarea sizing support, css is a much better interface to this
+- Find a workable solution to the textareay enters are not preserved problem. Many people have stumbled about it, either document solutions to it or create a default behaviour that works nicely.
+- consolidate documentation for options and callbacks
+- Rename settings so they make more sense (e.g. saving_image -> saving_image_url) but keep backwards compatible to old settings
+  also make all settings consistent in their underscore usage (i.e. don't use any. :)
+  params -> extra_submit_parameters / context_parametes
+- consider to accept string parameters like jquery UI for 'disable', 'enable', 'remove' etc.
+- Rework parameters of success and error server callback
+- Change deprecation notes to state the version the deprecation was put in, not when it will be removed.
+- rename RELEASE NOTES to BACKWARDS COMPATIBILITY NOTES or BACKWARDS INCOMPATIBLE CHANGES or BACKWARDS COMPATIBILITY CHANGES as I don't see myself as writing release notes anytime soon
+- Allow the user to chose if html source should be edited or text (default to text). Probably needs a way
+  for the user to decide how the result should be embedded (think about editing wiki-text and inserting rendered html)
+- Update to jQuery 1.4.x, aparently something breaks
+- expand the interface to submit to functions to make it easier to integrate into custom applications
+  (fold in show progress, offer callbacks for different lifecycle events, ...)
+- consider to pass the original dom element instead of it's id in the callback function. (However $('#' + original_id) also accomplishes this)
+- support live events to trigger inline editing to ease highly dynamic websites better
+  - when using live events, the editor can't guarantee the order of ediors if multiple editors register for the same element.
+  - could add debug mode to raise / show error if this is detected on click (multiple editors where bound, mixture of live / immediate events)
+- select on choosing if no buttons are shown (should be able to disable this if wanted)
+- Allow the editor to show up on hoverig above it (make sure to do it in a way that doesn't crash IE 7)
+- More animations during submit: show spinner
+- Unify usage of text and html to take and deliver content to the inline editor and enable the user to choose with a setting (document carefully as that will change the default behaviour)
+  Solve by callback interface that can transform the code if needed.
+- Allow continous validation / transformation while the user types. I.e. wiki-edit with live preview (from server / function)
+- add validation callback to be asked before any submitting (this could also be called continuous while editing 
+  (for each character?) maybe a dedicated callback for each would be valuable)
+- allow aditional_params to be set as json/object that is then serialized with correct encoding on submit
+- consider size parameter for the inline edit box (but this can already nicely accomplished through css)
+- Replace argument list of saving callback with dictionary
+- Option to always restore the original content, could help for editors that you would always want to render empty, i.e. they display their results somewhere else
+- Change all callbacks to get the editor dom node as the first argument, so the editor object itself is never exposed
+- Consider to expose the options argument as a second argument to all callbacks
+- Consider adding $(..).editInPlace().destroy() or something similar to completely remove the editor
+- Support overriding individual options with the metadata plugin
+- Option to load URL for editor content
+- Group options sensibly and have section headers for them.
+- Move documentation out of edit in place into the README and update that
+- deprecate callback arguments that are no longer usefull / needed. For example:
+  - The first argument of the 'callback' option was removed. Use $(this).attr('id') instead if you need it.
+  - success and error callbacks got the editor DOM element as the second argument. Use $(this) instead.
+- Consider editor types as subclasses so different inline editors can be built more easily.
+- Could also break out functional classes, callback handling, lifecycle events / delegate behaviour
+- Consider every optional callback as optional delegete call?
+- dependencies of editors, i.e. typing in one will update another aka bindings?
+  - Could also be live updating of delegate / calling of callbacks
+-  consider to trigger all the callbacks as events?
+  - could be an alternative, might be more idiomatic event driven dom programming
+- include spinner image as data url into javascript (add code that writes this as mime thingy for IE)
+- consider to enable the client to specify a prefix / namespace for all css-classes in the inplace editor to make it easier to avoid clashes with outside css
+
+Expansions to jspec
+-------------------
+- add jspec with focus support
+- change the way the grammar works to have less magic and more plain javascript (i.e. use 'with' statement less, support real throwaway this objects for the tests)
+
+REFACT
+------
+- Find a way to share enableEditor, openEditor and edit between different testsuites
+- Extract parts of the testsuite to be run with should_behave_like
+- Split testsuite into different files, at least one per editor type that should just inlcude generic tests with should_behave_like
+
+
+Thoughts about a detailed callback
+----------------------------------
+
+Could also use callbacks to interact with child-classes, i.e. do the actual work. That could be a really nice interface for child-classes, not sure if it works for everything though, so deeper subclassing may be neccessary
+
+// these would come just before shouldOpen when using live events
+shouldInit:
+willInit:
+init:
+didInit:
+
+shouldHover:
+willHover:
+hover:
+didHover:
+
+shouldUnhover:
+willUnhover:
+unHover:
+didUnhover:
+
+// prio 1
+// maybe combine should and will callbacks?
+shouldOpen:
+willOpen: // could be usefull to customize settings? // transform content here
+open:
+didOpen:
+
+// for open editor?
+// user enters stuff, keypress / changed selection on select
+// how to deal with validation?
+shouldChangeContent: // should this be accepted
+willChangeContent: // transform?
+changeContent:
+didChangeContent: // do something with the new information
+
+shouldSubmitContent: // first callback after submit was called - does it make sense to call something like this if validation didn't work?
+shouldEnableSubmit: // didChangeContent
+willSubmitContent: // maybe transform what goes to the server
+submit:
+didSubmitContent:
+// seems not enough, doesn't handle select fields
+
+// for closed editor? would be really nice to unify with open editor
+// could be a generic interface to update the displayed values
+// what about when the editor is open? what interface to use then?
+shouldUpdateContent: // get notification to update the content, either the view, wrong direction..., something should call this¿
+willUpdateContent: // could be callback after we get something from the server (also didUpdateContent)
+updateContent: // could use this to decide between html() and text(), could call changeContent
+didUpdateContent: 
+
+// maybe
+shouldSendToServer:
+willSendToServer:
+sendToServer
+didSendToServer:
+progressFromServer: // probably impossible
+
+
+// prio 1
+shouldClose: // willChangeContent / didChangeContent ?
+willClose: // transform content, could be willSubmitContent
+close:
+didClose: // could return false to prevent reinit - not very clear though
+
+// this should also work when the editor submits the data to the server itself
+// need callback to compute the data that is sent to the server (e.g. to provide arbitrary json)
+// need ability to specify http verb to use (PUT, POST, DELETE, etc.)
+
+shouldReinit: // could be able to customize reinit behaviour?, maybe better shouldOpen? didClose could also remove editor
+
+Consider to all suffix them with .editInPlace?

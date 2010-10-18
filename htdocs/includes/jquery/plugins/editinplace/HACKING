@@ -1,0 +1,8 @@
+Hacking
+=======
+
+To run the teststuite just open [the testrunner](spec/dom.html) in your browser of choice. (I found Webkit Nightlies to be most pleasant to debug in). For more comfort install jspec via `gem install jspec` then you can run `jspec bind --browser <yourprobwser>` in the root directory of the project to re-execute the testsuite whenever you save changes to a file.
+
+If you don't see any tests when executing the testsuite, don't worry, it is set up to only show failing tests.
+
+If you see an enhancement or happen to need one of the things mentioned in the [TODO](TODO) file, please don't hesitate to implement them with a testsuite to boost and send me a patch.
