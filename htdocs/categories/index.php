@@ -207,7 +207,7 @@ $oldvallevel=0;
 $var=true;
 foreach($fulltree as $key => $val)
 {
-	$var=false;
+	$var=!$var;
 
 	//$fullpathparent=preg_replace('/_[^_]+$/i','',$val['fullpath']);
 
@@ -229,7 +229,7 @@ foreach($fulltree as $key => $val)
 		else $option='indexnotexpanded';
 		//print $option;
 
-		print '<tr>';
+        print "<tr ".$bc[$var].">";
 
 		// Show tree graph pictos
 		print '<td align="left">';
