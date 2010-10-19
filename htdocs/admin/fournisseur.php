@@ -126,6 +126,7 @@ if ($_GET["action"] == 'specimenfacture')
 
 if ($_GET["action"] == 'set')
 {
+	$type='supplier_order';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$_GET["type"]."',".$conf->entity.")";
 	if ($db->query($sql))
 	{
