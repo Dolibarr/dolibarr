@@ -340,7 +340,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
 		$pdf->SetXY ($tab3_posx+21, $tab3_top-1 );
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
-		$pdf->SetXY ($tab3_posx+41, $tab3_top-1 );
+		$pdf->SetXY ($tab3_posx+40, $tab3_top-1 );
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Type"), 0, 'L', 0);
 		$pdf->SetXY ($tab3_posx+58, $tab3_top-1 );
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Num"), 0, 'L', 0);
@@ -376,9 +376,9 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->MultiCell(20, 3, dol_print_date($obj->datef,'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($obj->amount_ttc), 0, 'L', 0);
-				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
+				$pdf->SetXY ($tab3_posx+40, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, $text, 0, 'L', 0);
-				$pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
+				$pdf->SetXY ($tab3_posx+58, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, $invoice->ref, 0, 'L', 0);
 
 				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
@@ -413,7 +413,7 @@ class pdf_oursin extends ModelePDFFactures
                 $pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date),'day',false,$outputlangs,true), 0, 'L', 0);
                 $pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
                 $pdf->MultiCell(20, 3, price($row->amount), 0, 'L', 0);
-                $pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
+                $pdf->SetXY ($tab3_posx+40, $tab3_top+$y);
                 $oper = $outputlangs->getTradFromKey("PaymentTypeShort" . $row->code);
 
                 $pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
