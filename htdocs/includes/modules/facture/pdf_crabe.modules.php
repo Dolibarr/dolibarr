@@ -448,7 +448,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
 		$pdf->SetXY ($tab3_posx+41, $tab3_top );
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		$pdf->SetXY ($tab3_posx+60, $tab3_top );
+		$pdf->SetXY ($tab3_posx+58, $tab3_top );
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
 
 		$y=0;
@@ -500,10 +500,12 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		// Loop on each payment
-		$sql = "SELECT p.datep as date, pf.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
-		$sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
-		$sql.= "WHERE pf.fk_paiement = p.rowid and pf.fk_facture = ".$object->id." ";
-		$sql.= "ORDER BY p.datep";
+		$sql = "SELECT p.datep as date, p.fk_paiement as type, p.num_paiement as num, pf.amount as amount,";
+		$sql.= " cp.code";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
+		$sql.= " WHERE pf.fk_paiement = p.rowid and pf.fk_facture = ".$object->id;
+		$sql.= " ORDER BY p.datep";
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -511,41 +513,18 @@ class pdf_crabe extends ModelePDFFactures
 			$i=0;
 			while ($i < $num) {
 				$y+=3;
-				$row = $this->db->fetch_row($resql);
+				$row = $this->db->fetch_object($resql);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row[0]),'day',false,$outputlangs,true), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date),'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
-				$pdf->MultiCell(20, 3, price($row[1]), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price($row->amount), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
-				switch ($row[2])
-				{
-					case 1:
-						$oper = 'TIP';
-						break;
-					case 2:
-						$oper = 'VIR';
-						break;
-					case 3:
-						$oper = 'PRE';
-						break;
-					case 4:
-						$oper = 'LIQ';
-						break;
-					case 5:
-						$oper = 'VAD';
-						break;
-					case 6:
-						$oper = 'CB';
-						break;
-					case 7:
-						$oper = 'CHQ';
-						break;
-				}
-				$oper = $outputlangs->transnoentities("PaymentTypeShort" . $oper);
+				$oper = $outputlangs->getTradFromKey("PaymentTypeShort" . $row->code);
+
 				$pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
-				$pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
-				$pdf->MultiCell(20, 3, $row[3], 0, 'L', 0);
+				$pdf->SetXY ($tab3_posx+58, $tab3_top+$y);
+				$pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
 
 				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
 
@@ -915,8 +894,8 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 	/**
-	 *   \brief      Affiche la grille des lignes de factures
-	 *   \param      pdf     objet PDF
+	 *   Affiche la grille des lignes de factures
+	 *   @param      pdf     objet PDF
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
