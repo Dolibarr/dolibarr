@@ -126,18 +126,7 @@ if ($_GET["action"] == 'specimenfacture')
 
 if ($_GET["action"] == 'set')
 {
-	$type='supplier_order';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
-	if ($db->query($sql))
-	{
-
-	}
-}
-
-if ($_GET["action"] == 'setfacture')
-{
-	$type='supplier_invoice';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$_GET["type"]."',".$conf->entity.")";
 	if ($db->query($sql))
 	{
 
@@ -146,23 +135,9 @@ if ($_GET["action"] == 'setfacture')
 
 if ($_GET["action"] == 'del')
 {
-	$type='supplier_order';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
 	$sql.= " WHERE nom = '".$_GET["value"]."'";
-	$sql.= " AND type = '".$type."'";
-	$sql.= " AND entity = ".$conf->entity;
-	if ($db->query($sql))
-	{
-
-	}
-}
-
-if ($_GET["action"] == 'delfacture')
-{
-	$type='supplier_invoice';
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$_GET["value"]."'";
-	$sql.= " AND type = '".$type."'";
+	$sql.= " AND type = '".$_GET["type"]."'";
 	$sql.= " AND entity = ".$conf->entity;
 	if ($db->query($sql))
 	{
@@ -174,19 +149,24 @@ if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
 
-	if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+	if ($_GET["type"] == 'supplier_order' && dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
 	{
 		$conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $_GET["value"];
+	}
+	
+	if ($_GET["type"] == 'supplier_invoice' && dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+	{
+		$conf->global->INVOICE_SUPPLIER_ADDON_PDF = $_GET["value"];
 	}
 
 	// On active le modele
 	$type='supplier_order';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
 	$sql_del.= " WHERE nom = '".$_GET["value"]."'";
-	$sql_del.= " AND type = '".$type."'";
+	$sql_del.= " AND type = '".$_GET["type"]."'";
 	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$_GET["type"]."',".$conf->entity.")";
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -197,35 +177,6 @@ if ($_GET["action"] == 'setdoc')
 		$db->rollback();
 	}
 }
-
-if ($_GET["action"] == 'setdocfacture')
-{
-	$db->begin();
-
-	if (dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
-	{
-		$conf->global->INVOICE_SUPPLIER_ADDON_PDF = $_GET["value"];
-	}
-
-	// On active le modele
-	$type='supplier_invoice';
-	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$_GET["value"]."'";
-	$sql_del.= " AND type = '".$type."'";
-	$sql_del.= " AND entity = ".$conf->entity;
-	$result1=$db->query($sql_del);
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
-	$result2=$db->query($sql);
-	if ($result1 && $result2)
-	{
-		$db->commit();
-	}
-	else
-	{
-		$db->rollback();
-	}
-}
-
 
 if ($_GET["action"] == 'setmod')
 {
@@ -381,14 +332,14 @@ else
 	dol_print_error($db);
 }
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print '  <td width="100">'.$langs->trans("Name")."</td>\n";
-print "  <td>".$langs->trans("Description")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
+print '<table class="noborder" width="100%">'."\n";
+print '<tr class="liste_titre">'."\n";
+print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
+print '<td>'.$langs->trans("Description").'</td>'."\n";
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>'."\n";
+print '<td align="center" width="60">'.$langs->trans("Default").'</td>'."\n";
 print '<td align="center" width="32" colspan="2">'.$langs->trans("Info").'</td>';
-print "</tr>\n";
+print '</tr>'."\n";
 
 clearstatcache();
 
@@ -413,10 +364,10 @@ while (($file = readdir($handle))!==false)
 		// Active
 		if (in_array($name, $def))
 		{
-			print "<td align=\"center\">\n";
+			print '<td align="center">'."\n";
 			if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name")
 			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;type=supplier_order">';
 				print img_picto($langs->trans("Enabled"),'on');
 				print '</a>';
 			}
@@ -428,20 +379,20 @@ while (($file = readdir($handle))!==false)
 		}
 		else
 		{
-			print "<td align=\"center\">\n";
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+			print '<td align="center">'."\n";
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;type=supplier_order">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 			print "</td>";
 		}
 
 		// Defaut
-		print "<td align=\"center\">";
+		print '<td align="center">';
 		if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$name")
 		{
 	  		print img_picto($langs->trans("Default"),'on');
 		}
 		else
 		{
-	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
+	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;type=supplier_order"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
 		}
 		print '</td>';
 
@@ -502,19 +453,19 @@ else
 	dol_print_error($db);
 }
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print '  <td width="100">'.$langs->trans("Name")."</td>\n";
-print "  <td>".$langs->trans("Description")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
+print '<table class="noborder" width="100%">'."\n";
+print '<tr class="liste_titre">'."\n";
+print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
+print '<td>'.$langs->trans("Description").'</td>'."\n";
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>'."\n";
+print '<td align="center" width="60">'.$langs->trans("Default").'</td>'."\n";
 print '<td align="center" width="32" colspan="2">'.$langs->trans("Info").'</td>';
-print "</tr>\n";
+print '</tr>'."\n";
 
 clearstatcache();
 
 $handle=opendir($dir);
-
+print 'xxx='.$conf->global->INVOICE_SUPPLIER_ADDON_PDF;
 $var=true;
 while (($file = readdir($handle))!==false)
 {
@@ -537,7 +488,7 @@ while (($file = readdir($handle))!==false)
 			print "<td align=\"center\">\n";
 			if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF != "$name")
 			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delfacture&amp;value='.$name.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;type=supplier_invoice">';
 				print img_picto($langs->trans("Enabled"),'on');
 				print '</a>';
 			}
@@ -550,7 +501,7 @@ while (($file = readdir($handle))!==false)
 		else
 		{
 			print "<td align=\"center\">\n";
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setfacture&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;type=supplier_invoice">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 			print "</td>";
 		}
 
@@ -562,7 +513,7 @@ while (($file = readdir($handle))!==false)
 		}
 		else
 		{
-	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdocfacture&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
+	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;type=supplier_invoice" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
 		}
 		print '</td>';
 

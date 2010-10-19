@@ -65,7 +65,8 @@ class ModelePDFSuppliersInvoices
  */
 function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
 {
-	global $langs;
+	global $conf, $langs;
+	
 	$langs->load("suppliers");
 
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/supplier_invoice/pdf/";
