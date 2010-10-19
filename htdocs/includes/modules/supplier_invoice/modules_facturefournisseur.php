@@ -80,8 +80,9 @@ function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("Error_INVOICE_SUPPLIER_ADDON_PDF_NotDefined");
-			return 0;
+		    $model = 'canelle';
+			//print $langs->trans("Error")." ".$langs->trans("Error_INVOICE_SUPPLIER_ADDON_PDF_NotDefined");
+			//return 0;
 		}
 	}
 	// Charge le modele

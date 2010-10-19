@@ -155,17 +155,32 @@ if($_GET['action'] == 'deletepaiement')
 
 if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 {
-	$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+    $error=0;
+
+	$date = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 	$date_echeance = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
 
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set ';
-	$sql .= " facnumber='".addslashes(trim($_POST['facnumber']))."'";
-	$sql .= ", libelle='".addslashes(trim($_POST['libelle']))."'";
-	$sql .= ", note='".$_POST['note']."'";
-	$sql .= ", datef = '".$db->idate($datefacture)."'";
-	$sql .= ", date_lim_reglement = '".$db->idate($date_echeance)."'";
-	$sql .= ' WHERE rowid = '.$_GET['facid'].' ;';
-	$result = $db->query($sql);
+	if (! $date)
+	{
+        $msg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEch"));
+        $error++;
+	}
+	if ($date_echeance && $date_echeance < $date)
+    {
+        $date_echeance = $date;
+    }
+
+    if (! $error)
+    {
+    	$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn set ';
+    	$sql .= " facnumber='".$db->escape(trim($_POST['facnumber']))."'";
+    	$sql .= ", libelle='".$db->escape(trim($_POST['libelle']))."'";
+    	$sql .= ", note='".$db->escape($_POST['note'])."'";
+    	$sql .= ", datef = '".$db->idate($date)."'";
+    	$sql .= ", date_lim_reglement = '".$db->idate($date_echeance)."'";
+    	$sql .= ' WHERE rowid = '.$_GET['facid'].' ;';
+    	$result = $db->query($sql);
+    }
 }
 /*
  * Action creation
@@ -399,7 +414,7 @@ if ($_POST['action'] == 'classin')
 {
 	$facture = new FactureFournisseur($db,'',$_GET['facid']);
 	$facture->fetch($_GET['facid']);
-	$facture->setProject($_POST['projectid']);
+	$result=$facture->setProject($_POST['projectid']);
 }
 
 
@@ -1288,35 +1303,37 @@ else
 		}
 		print '</div>';
 
+		if ($_GET['action'] != 'edit')
+		{
+    		print '<table width="100%"><tr><td width="50%" valign="top">';
+    		print '<a name="builddoc"></a>'; // ancre
 
-		print '<table width="100%"><tr><td width="50%" valign="top">';
-		print '<a name="builddoc"></a>'; // ancre
+    		/*
+    		* Documents generes
+    		*/
 
-		/*
-		* Documents generes
-		*/
+    		$facfournref=dol_sanitizeFileName($fac->ref);
+    		$file=$conf->fournisseur->dir_output.'/facture/'. $facfournref .	'/'	. $facfournref . '.pdf';
+    		$relativepath =	$facfournref.'/'.$facfournref.'.pdf';
+    		$filedir = $conf->fournisseur->dir_output	. '/facture/' .	$facfournref;
+    		$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
+    		$genallowed=$user->rights->fournisseur->facture->creer;
+    		$delallowed=$user->rights->fournisseur->facture->supprimer;
 
-		$facfournref=dol_sanitizeFileName($fac->ref);
-		$file=$conf->fournisseur->dir_output.'/facture/'. $facfournref .	'/'	. $facfournref . '.pdf';
-		$relativepath =	$facfournref.'/'.$facfournref.'.pdf';
-		$filedir = $conf->fournisseur->dir_output	. '/facture/' .	$facfournref;
-		$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
-		$genallowed=$user->rights->fournisseur->facture->creer;
-		$delallowed=$user->rights->fournisseur->facture->supprimer;
+    		$somethingshown=$formfile->show_documents('facture_fournisseur',$facfournref,$filedir,$urlsource,$genallowed,$delallowed,$facture->modelpdf);
 
-		$somethingshown=$formfile->show_documents('facture_fournisseur',$facfournref,$filedir,$urlsource,$genallowed,$delallowed,$facture->modelpdf);
+    		print '</td><td valign="top" width="50%">';
+    		print '<br>';
 
-		print '</td><td valign="top" width="50%">';
-		print '<br>';
+    		// List of actions on element
+    		/*
+    		include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+    		$formactions=new FormActions($db);
+    		$somethingshown=$formactions->showactions($fac,'invoice_supplier',$socid);
+    		*/
 
-		// List of actions on element
-		/*
-		include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
-		$formactions=new FormActions($db);
-		$somethingshown=$formactions->showactions($fac,'invoice_supplier',$socid);
-		*/
-
-		print '</td></tr></table>';
+    		print '</td></tr></table>';
+		}
 	}
 }
 

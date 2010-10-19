@@ -108,7 +108,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
-		
+
 		if ($conf->fournisseur->dir_output.'/facture')
 		{
 			$deja_regle = "";
@@ -614,10 +614,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$posy+=6;
 		$pdf->SetXY(100,$posy);
-		if ($object->date_facture)
+		if ($object->date)
 		{
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_facture,"day",false,$outputlangs,true), '', 'R');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,"day",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{

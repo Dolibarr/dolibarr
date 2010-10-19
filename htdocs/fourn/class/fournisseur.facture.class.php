@@ -982,6 +982,8 @@ class FactureFournisseur extends Facture
 	{
 		global $user,$langs,$conf;
 
+		$now = dol_now();
+
 		// Charge tableau des produits prodids
 		$prodids = array();
 
@@ -1007,7 +1009,7 @@ class FactureFournisseur extends Facture
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->socid = 1;
-		$this->date = time();
+		$this->date = $now;
 		$this->date_lim_reglement=$this->date+3600*24*30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
