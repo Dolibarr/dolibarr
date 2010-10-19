@@ -161,8 +161,7 @@ print "</div>";
 
 
 
-
-$cats = $c->get_filles ();
+$cats = $c->get_filles();
 if ($cats < 0)
 {
 	dol_print_error();
@@ -209,7 +208,7 @@ else
 	}
 	else
 	{
-		print "<tr><td>".$langs->trans("NoSubCat")."</td></tr>";
+		print "<tr ".$bc[false].'><td colspan="3">'.$langs->trans("NoSubCat")."</td></tr>";
 	}
 	print "</table>\n";
 }
@@ -227,7 +226,7 @@ if ($c->type == 0)
 	{
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("ProductsAndServices")."</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ProductsAndServices")."</td></tr>\n";
 
 		if (sizeof ($prods) > 0)
 		{
@@ -248,7 +247,7 @@ if ($c->type == 0)
 		}
 		else
 		{
-			print "<tr><td>".$langs->trans("ThisCategoryHasNoProduct")."</td></tr>";
+			print "<tr ".$bc[false].'><td colspan="2">'.$langs->trans("ThisCategoryHasNoProduct")."</td></tr>";
 		}
 		print "</table>\n";
 	}
@@ -286,7 +285,7 @@ if ($c->type == 1)
 		}
 		else
 		{
-			print "<tr><td>".$langs->trans ("ThisCategoryHasNoSupplier")."</td></tr>";
+			print "<tr ".$bc[false]."><td>".$langs->trans ("ThisCategoryHasNoSupplier")."</td></tr>";
 		}
 		print "</table>\n";
 	}
@@ -323,7 +322,7 @@ if($c->type == 2)
 		}
 		else
 		{
-			print "<tr><td>".$langs->trans("ThisCategoryHasNoCustomer")."</td></tr>";
+			print "<tr ".$bc[false]."><td>".$langs->trans("ThisCategoryHasNoCustomer")."</td></tr>";
 		}
 		print "</table>\n";
 	}
@@ -343,7 +342,7 @@ if ($c->type == 3)
 	{
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print "<tr class='liste_titre'><td colspan='3'>".$langs->trans("Member")."</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Member")."</td></tr>\n";
 
 		if (sizeof ($prods) > 0)
 		{
@@ -364,7 +363,7 @@ if ($c->type == 3)
 		}
 		else
 		{
-			print "<tr><td>".$langs->trans("ThisCategoryHasNoMember")."</td></tr>";
+			print "<tr ".$bc[false].'><td colspan="3">'.$langs->trans("ThisCategoryHasNoMember")."</td></tr>";
 		}
 		print "</table>\n";
 	}

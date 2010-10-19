@@ -220,15 +220,20 @@ if ($user->rights->categorie->creer)
 		}
 
 		print '<table width="100%" class="border">';
+
+		// Ref
 		print '<tr>';
 		print '<td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input name="nom" size="25" value="'.$categorie->label.'">';
 		print'</td></tr>';
+
+		// Description
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 		$doleditor=new DolEditor('description',$categorie->description,200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,50);
 		$doleditor->Create();
 		print '</td></tr>';
 
+		// Parent category
 		print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
 		print $html->select_all_categories($_GET['type'],$_REQUEST['catorigin']);
 		print '</td></tr>';

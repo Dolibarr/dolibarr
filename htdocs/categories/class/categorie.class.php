@@ -520,19 +520,19 @@ class Categorie
 
 
 	/**
-	 * 	\brief		Reconstruit l'arborescence des categories sous la forme d'un tableau
-	 *				Renvoi un tableau de tableau('id','id_mere',...) trie selon
-	 *				arbre et avec:
+	 * 	Reconstruit l'arborescence des categories sous la forme d'un tableau
+	 *	Renvoi un tableau de tableau('id','id_mere',...) trie selon arbre et avec:
 	 *				id = id de la categorie
 	 *				id_mere = id de la categorie mere
 	 *				id_children = tableau des id enfant
 	 *				label = nom de la categorie
 	 *				fulllabel = nom avec chemin complet de la categorie
 	 *				fullpath = chemin complet compose des id
-	 *	\param    	type		Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
-	 *	\return		array		Array of categories
+	 *	@param      type		      Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
+     *  @param      markafterid       Mark all categories after this leaf in category tree.
+	 *	@return		array		      Array of categories
 	 */
-	function get_full_arbo($type)
+	function get_full_arbo($type,$markafterid=0)
 	{
 		$this->cats = array();
 
@@ -540,6 +540,7 @@ class Categorie
 		$sql = "SELECT fk_categorie_mere as id_mere, fk_categorie_fille as id_fille";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
 
+		// Load array this->motherof
 		dol_syslog("Categorie::get_full_arbo build motherof array sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -588,13 +589,33 @@ class Categorie
 			return -1;
 		}
 
-		// We add the fulpath property to each elements of first level (no parent exists)
+		// We add the fullpath property to each elements of first level (no parent exists)
 		dol_syslog("Categorie::get_full_arbo call to build_path_from_id_categ", LOG_DEBUG);
 		foreach($this->cats as $key => $val)
 		{
 			if (isset($this->motherof[$key])) continue;
-			$this->build_path_from_id_categ($key,0);	// Process a path of a root category (no parent exists)
+			$this->build_path_from_id_categ($key,0);	// Process a branch from the root category key (this category has no parent)
 		}
+
+        // Exclude tree for $markafterid
+        if ($markafterid)
+        {
+            //print "Look to discard category ".$markafterid."\n";
+            $keyfilter1='^'.$markafterid.'$';
+            $keyfilter2='_'.$markafterid.'$';
+            $keyfilter3='^'.$markafterid.'_';
+            $keyfilter4='_'.$markafterid.'_';
+            foreach($this->cats as $key => $val)
+            {
+                if (preg_match('/'.$keyfilter1.'/',$val['fullpath']) || preg_match('/'.$keyfilter2.'/',$val['fullpath'])
+                || preg_match('/'.$keyfilter3.'/',$val['fullpath']) || preg_match('/'.$keyfilter4.'/',$val['fullpath']))
+                {
+                    //print "Categ discarded ".$this->cats[$key]['fullpath']."\n";
+                    //$this->cats[$key]['marked']=1;
+                    unset($this->cats[$key]);
+                }
+            }
+        }
 
 		dol_syslog("Categorie::get_full_arbo dol_sort_array", LOG_DEBUG);
 		$this->cats=dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
@@ -605,9 +626,9 @@ class Categorie
 	}
 
 	/**
-	 *	\brief		For category id_categ and its child available in this->cats, define property fullpath and fulllabel
-	 * 	\param		id_categ		id_categ entry to update
-	 * 	\param		protection		Deep counter to avoid infinite loop
+	 *	For category id_categ and its childs available in this->cats, define property fullpath and fulllabel
+	 * 	@param		id_categ		id_categ entry to update
+	 * 	@param		protection		Deep counter to avoid infinite loop
 	 */
 	function build_path_from_id_categ($id_categ,$protection=0)
 	{

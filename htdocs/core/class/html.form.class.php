@@ -1005,7 +1005,7 @@ class Form
                 }
                 $opt.= '>';
                 $opt.= $langs->convToOutputCharset($objp->ref).' - '.$langs->convToOutputCharset(dol_trunc($label,32)).' - ';
-                
+
                 $objRef = $objp->ref;
                 if ($filterkey && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
                 $outval.=$objRef.' - '.dol_trunc($label,32).' - ';
@@ -1227,7 +1227,7 @@ class Form
                 if ($selected == $objp->idprodfournprice) $opt.= ' selected="true"';
                 if ($objp->fprice == '') $opt.=' disabled="disabled"';
                 $opt.= '>';
-                
+
                 $objRef = $objp->ref;
                 if ($filterkey && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
                 $objRefFourn = $objp->ref_fourn;
@@ -1749,12 +1749,14 @@ class Form
     }
 
     /**
-     *    \brief    Retourne la liste des categories du type choisi
-     *    \param    type			Type de categories (0=produit, 1=fournisseur, 2=client)
-     *    \param    selected    	Id categorie preselectionnee
-     *    \param    select_name		Nom formulaire HTML
+     *    Return list of categories having choosed type
+     *    @param    type			Type de categories (0=product, 1=supplier, 2=customer, 3=member)
+     *    @param    selected    	Id of category preselected
+     *    @param    select_name		HTML field name
+     *    @param    maxlength       Maximum length for labels
+     *    @param    excludeafterid  Exclude all categories after this leaf in category tree.
      */
-    function select_all_categories($type,$selected='',$select_name="",$maxlength=64)
+    function select_all_categories($type, $selected='', $select_name="", $maxlength=64, $excludeafterid=0)
     {
         global $langs;
         $langs->load("categories");
@@ -1762,7 +1764,7 @@ class Form
         if ($select_name=="") $select_name="catMere";
 
         $cat = new Categorie($this->db);
-        $cate_arbo = $cat->get_full_arbo($type);
+        $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 
         $output = '<select class="flat" name="'.$select_name.'">';
         if (is_array($cate_arbo))

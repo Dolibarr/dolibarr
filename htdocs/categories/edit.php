@@ -119,11 +119,14 @@ print '<input type="hidden" name="id" value="'.$categorie->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 
 print '<table class="border" width="100%">';
+
+// Ref
 print '<tr><td class="fieldrequired">';
 print $langs->trans("Ref").'</td>';
 print '<td><input type="text" size="25" id="nom" name ="nom" value="'.$categorie->label.'" />';
 print '</tr>';
 
+// Description
 print '<tr>';
 print '<td width="25%">'.$langs->trans("Description").'</td>';
 print '<td>';
@@ -131,6 +134,12 @@ require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 $doleditor=new DolEditor('description',$categorie->description,200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
 $doleditor->Create();
 print '</td></tr>';
+
+// Parent category
+print '<tr><td>'.$langs->trans ("In").'</td><td>';
+print $html->select_all_categories($type,$categorie->id_mere,'catMere',64,$categorie->id);
+print '</td></tr>';
+
 print '</table>';
 print '<br>';
 
