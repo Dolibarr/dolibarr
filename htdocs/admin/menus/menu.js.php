@@ -110,10 +110,10 @@ function listenlink(ul) {
 }
 // Action Plier / deplier tout
 function plier(ul,act) {
-    for (var i=0; i<ul.childNodes.length; i++) {
+    for (var i=0; i < ul.childNodes.length; i++) {
         var li = ul.childNodes[i];
         if (li.nodeName == 'LI') {
-            for (var j=0; j<li.childNodes.length; j++) {
+            for (var j=0; j < li.childNodes.length; j++) {
                 var child = li.childNodes[j];
                 if (child.nodeName==balise) {
                     var strong = child;
@@ -139,14 +139,14 @@ function plier(ul,act) {
 function processULEL(ul) {
     if (!ul.childNodes || ul.childNodes.length == 0) return;
     // Iterate LIs
-    for (var itemi=0;itemi<ul.childNodes.length;itemi++) {
+    for (var itemi=0;itemi < ul.childNodes.length;itemi++) {
         var item = ul.childNodes[itemi];
         if (item.nodeName == "LI") {
             // Contenu des balises LI
             var a;
             var subul;
             subul = "";
-            for (var sitemi=0;sitemi<item.childNodes.length;sitemi++) {
+            for (var sitemi=0;sitemi < item.childNodes.length;sitemi++) {
                 // Uniquement pour moz-firefox
                 if (MOZ) {item.style.background = "";}
                 // Enfants des li : balise ou sous-ul
@@ -193,7 +193,7 @@ function associateEL(a,ul) {
 function getElBy(tag,attr,val) {
 	var dbRes = [];
 	var dbEl = document.getElementsByTagName(tag);
-	for (e=0; e<dbEl.length; e++) {
+	for (e=0; e < dbEl.length; e++) {
 		if (attr == 'class') {if (dbEl[e].className==val) {dbRes.push(dbEl[e]);}}
 		else {if (dbEl[e].getAttribute(attr)==val) {dbRes.push(dbEl[e]);}}
 	}
