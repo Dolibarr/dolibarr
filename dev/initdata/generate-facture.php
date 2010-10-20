@@ -113,7 +113,7 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 				$prodid = rand(1, $num_prods);
 				$product=new Product($db);
 				$result=$product->fetch($prodids[$prodid]);
-				$result=$facture->addline($facture->id,$product->description,$product->price, rand(1,5), 0, 0, $product->localtax2_tx, $prodids[$prodid], 0, '', '', 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+				$result=$facture->addline($facture->id,$product->description,$product->price, rand(1,5), 0, 0, 0, $prodids[$prodid], 0, '', '', 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 				$xnbp++;
 			}
 

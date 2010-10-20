@@ -130,6 +130,7 @@ class Commande extends CommonObject
 
 			// Chargement de la classe de numerotation
 			$classname = $conf->global->COMMANDE_ADDON;
+
 			$result=include_once($dir.'/'.$file);
 			if ($result)
 			{
@@ -630,6 +631,8 @@ class Commande extends CommonObject
 				{
 					if ($this->id)
 					{
+					    $this->ref="(PROV".$this->id.")";
+
 						// Add linked object
 						if ($this->origin && $this->origin_id)
 						{
@@ -641,7 +644,7 @@ class Commande extends CommonObject
 						if ($this->origin == 'propal' && $this->origin_id)
 						{
 							// On recupere les differents contact interne et externe
-							$prop = New Propal($this->db, $this->socid, $this->origin_id);
+							$prop = new Propal($this->db, $this->socid, $this->origin_id);
 
 							// On recupere le commercial suivi propale
 							$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
@@ -788,12 +791,12 @@ class Commande extends CommonObject
 	 * 	   @param      date_end         End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 	 * 	   @param      type				Type of line (0=product, 1=service)
 	 *     @param      rang             Position of line
-	 *     @return     int             	>0 si ok, <0 si ko
+	 *     @return     int             	>0 if OK, <0 if KO
 	 *     @see        add_product
-	 * 	   @remarks	   Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-	 *		           	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
-	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	 * 	   Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+	 *	   de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
+	 *	   par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
+	 *	   et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
 	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0)
 	{

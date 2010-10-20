@@ -50,6 +50,15 @@ include_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 define (GEN_NUMBER_COMMANDE, 10);
 
 
+$ret=$user->fetch('','admin');
+if ($ret <= 0)
+{
+    print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+    exit;
+}
+$user->getrights();
+
+
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 $resql=$db->query($sql);
 if ($resql) {
@@ -80,14 +89,14 @@ else { print "err"; }
 $prodids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE tosell=1";
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
   $num_prods = $db->num_rows($resql);
   $i = 0;
   while ($i < $num_prods)
     {
       $i++;
-      
+
       $row = $db->fetch_row($resql);
       $prodids[$i] = $row[0];
     }
@@ -152,47 +161,56 @@ require(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 print "Build ".GEN_NUMBER_COMMANDE." orders\n";
 for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
 {
-    print "Order ".$s;
+    print "Process order ".$s."\n";
 
     $com = new Commande($db);
-    
+
     $com->socid         = 4;
     $com->date_commande  = $dates[rand(1, sizeof($dates)-1)];
-    $com->note           = $_POST["note"];
+    $com->note           = 'A comment';
     $com->source         = 1;
     $com->fk_project     = 0;
     $com->remise_percent = 0;
-    
-	$nbp = rand(2, 5);
-	$xnbp = 0;
-	while ($xnbp < $nbp)
-	{
-	    // \TODO Utiliser addline plutot que add_product
-		$prodid = rand(1, $num_prods);
-	    $result=$com->add_product($prodids[$prodid],rand(1,11),rand(1,6),rand(0,20));
-		if ($result < 0)
-		{
-			dol_print_error($db,$propal->error);
-		}
-		$xnbp++;
-	}
-	
+
+    $db->begin();
+
     $result=$com->create($user);
 	if ($result >= 0)
 	{
 		$result=$com->valid($user);
-		if ($result) print " OK";
+		if ($result > 0)
+		{
+            $nbp = rand(2, 5);
+            $xnbp = 0;
+            while ($xnbp < $nbp)
+            {
+                $prodid = rand(1, $num_prods);
+                $product=new Product($db);
+                $result=$product->fetch($prodids[$prodid]);
+                $result=$com->addline($com->id, $product->description, $product->price, rand(1,5), 0, 0, 0, $prodids[$prodid], 0, 0, 0,  $product->price_base_type, $product->price_ttc, '', '', $product->type);
+                if ($result < 0)
+                {
+                    dol_print_error($db,$propal->error);
+                }
+                $xnbp++;
+            }
+
+            $db->commit();
+            print " OK with ref ".$com->ref."\n";
+		}
 		else
 		{
-			dol_print_error($db,$com->error);
+            print " KO\n";
+		    $db->rollback();
+		    dol_print_error($db,$com->error);
 		}
 	}
 	else
 	{
-		dol_print_error($db,$com->error);
+        print " KO\n";
+	    $db->rollback();
+	    dol_print_error($db,$com->error);
 	}
-
-	print "\n";
 }
 
 ?>

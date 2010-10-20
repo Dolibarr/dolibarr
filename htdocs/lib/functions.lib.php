@@ -1888,7 +1888,7 @@ function dol_print_error($db='',$error='')
 {
 	global $conf,$langs,$argv;
 	global $dolibarr_main_prod;
-	
+
 	$out = '';
 	$syslog = '';
 
@@ -1976,7 +1976,6 @@ function dol_print_error($db='',$error='')
 			$syslog.=", msg=".$msg;
 		}
 	}
-	
 	if (empty($dolibarr_main_prod) && $_SERVER['DOCUMENT_ROOT'] && function_exists('xdebug_call_file'))
 	{
 		xdebug_print_function_stack();

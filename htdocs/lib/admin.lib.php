@@ -40,12 +40,14 @@ function versiontostring($versionarray)
 }
 
 /**
- *	\brief      Compare 2 versions
- *	\param      versionarray1       Array of version (vermajor,verminor,patch)
- *	\param      versionarray2       Array of version (vermajor,verminor,patch)
- *	\return     int                 -4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
+ *	Compare 2 versions
+ *	@param      versionarray1       Array of version (vermajor,verminor,patch)
+ *	@param      versionarray2       Array of version (vermajor,verminor,patch)
+ *	@return     int                 -4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
  * 									0 if =
  * 									1,2,3,4 if versionarray1>versionarray2 (value depends on level of difference)
+ *
+ * TODO
  */
 function versioncompare($versionarray1,$versionarray2)
 {

@@ -140,7 +140,7 @@ if ($ok)
 	//print '<td align="right">'.join('.',$versionarray).'</td></tr>';
 }
 
- 	// Force l'affichage de la progression
+// Force l'affichage de la progression
 print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'</td></tr>';
 flush();
 
