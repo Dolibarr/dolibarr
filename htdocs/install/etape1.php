@@ -514,6 +514,8 @@ function write_conf_file($conffile)
 	global $dolibarr_main_db_type,$dolibarr_main_db_character_set,$dolibarr_main_db_collation,$dolibarr_main_authentication;
 
 	$error=0;
+	
+	$key = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 
 	$fp = fopen("$conffile", "w");
 	if($fp)
@@ -574,6 +576,9 @@ function write_conf_file($conffile)
         fputs($fp,"\n");
 
         fputs($fp, '$dolibarr_main_force_https=\''.$_POST["main_force_https"].'\';');
+		fputs($fp,"\n");
+		
+		fputs($fp, '$dolibarr_main_cookie_cryptkey=\''.$key.'\';');
 		fputs($fp,"\n");
 
 		fputs($fp, '?>');
