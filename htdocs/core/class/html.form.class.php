@@ -133,16 +133,13 @@ class Form
      *	Show a text and picto with tooltip on text or picto
      *	@param  text				Text to show
      *	@param  htmltext	    	Content html of tooltip, coded into HTML/UTF8
-     *	@param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et force en Ajax
+     *	@param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
      *	@param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
      *	@param	img					Code img du picto (use img_xxx() function to get it)
-     * 	@param	i					Numero of tooltip
-     * 	@param	width				Width of tooltip
-     * 	@param	shiftX				Shift of tooltip
      *	@return	string				Code html du tooltip (texte+picto)
      * 	@see	Use function textwithpicto if you can.
      */
-    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$i=1,$width='200',$shiftX='10')
+    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='')
     {
         global $conf;
 
@@ -159,60 +156,45 @@ class Form
         $htmltext=str_replace("<br>\n","<br>",$htmltext);
         $htmltext=str_replace("\n","",$htmltext);
 
-        if ($conf->use_javascript_ajax && $tooltipon == 4)
+        if ($conf->use_javascript_ajax)
         {
-            $s = '<div id="tip'.$i.'">'."\n";
-            $s.= $text;
-            $s.= '</div>'."\n";
-            $s.= '<div id="tooltip_content" style="display:none">'."\n";
-            $s.= $htmltext."\n";
-            $s.= '</div>'."\n";
-            $s.= '<script type=\'text/javascript\'>'."\n";
-            $s.= 'TooltipManager.init("","",{width:'.dol_size($width,'width').', shiftX:'.$shiftX.'});'."\n";
-            $s.= 'TooltipManager.addHTML("tip'.$i.'", "tooltip_content");'."\n";
-            $s.= '</script>'."\n";
-        }
-        else
-        {
-            if ($conf->use_javascript_ajax)
-            {
-                $htmltext=str_replace('"',"&quot;",$htmltext);
-                if ($tooltipon==1 || $tooltipon==3)
-                {
-                    $paramfortooltiptext.=' onmouseover="showtip(\''.$htmltext.'\')"';
-                    $paramfortooltiptext.=' onMouseout="hidetip()"';
-                }
-                if ($tooltipon==2 || $tooltipon==3)
-                {
-                    $paramfortooltippicto.=' onmouseover="showtip(\''.$htmltext.'\')"';
-                    $paramfortooltippicto.=' onMouseout="hidetip()"';
-                }
+        	$htmltext=str_replace('"',"&quot;",$htmltext);
+        	if ($tooltipon==1 || $tooltipon==3)
+        	{
+        		$paramfortooltiptext.=' onmouseover="showtip(\''.$htmltext.'\')"';
+        		$paramfortooltiptext.=' onMouseout="hidetip()"';
             }
+            if ($tooltipon==2 || $tooltipon==3)
+            {
+            	$paramfortooltippicto.=' onmouseover="showtip(\''.$htmltext.'\')"';
+            	$paramfortooltippicto.=' onMouseout="hidetip()"';
+            }
+        }
+        
+        $s="";
+        $s.='<table class="nobordernopadding" summary=""><tr>';
+        if ($direction > 0)
+        {
+        	if ($text != '')
+        	{
+        		$s.='<td'.$paramfortooltiptext.'>'.$text;
+				if ($direction) $s.='&nbsp;';
+				$s.='</td>';
+			}
+			if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
+		}
+		else
+		{
+			if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
+			if ($text != '')
+			{
+				$s.='<td'.$paramfortooltiptext.'>';
+				if ($direction) $s.='&nbsp;';
+				$s.=$text.'</td>';
+			}
+		}
+		$s.='</tr></table>';
 
-            $s="";
-            $s.='<table class="nobordernopadding" summary=""><tr>';
-            if ($direction > 0)
-            {
-                if ($text != '')
-                {
-                    $s.='<td'.$paramfortooltiptext.'>'.$text;
-                    if ($direction) $s.='&nbsp;';
-                    $s.='</td>';
-                }
-                if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
-            }
-            else
-            {
-                if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
-                if ($text != '')
-                {
-                    $s.='<td'.$paramfortooltiptext.'>';
-                    if ($direction) $s.='&nbsp;';
-                    $s.=$text.'</td>';
-                }
-            }
-            $s.='</tr></table>';
-        }
         return $s;
     }
 
