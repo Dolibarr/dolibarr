@@ -1546,6 +1546,7 @@ if ($id > 0 || ! empty($ref))
 		 * Linked object block
 		 */
 		$object->load_object_linked($object->id,$object->element);
+		//var_dump($object->linked_object);
 
 		foreach($object->linked_object as $linked_object => $linked_objectid)
 		{

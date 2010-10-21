@@ -49,7 +49,6 @@ for ($i = 0 ; $i < $num ; $i++)
 </tr>
 <?php
 $total = $total + $linkedObjectBlock->total_ht;
-$i++;
 }
 ?>
 <tr class="liste_total">
