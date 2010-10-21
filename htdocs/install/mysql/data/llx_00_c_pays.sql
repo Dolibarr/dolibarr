@@ -40,7 +40,7 @@ insert into llx_c_pays (rowid,code,libelle) values (3,  'IT', 'Italy'          )
 insert into llx_c_pays (rowid,code,libelle) values (4,  'ES', 'Spain'          );
 insert into llx_c_pays (rowid,code,libelle) values (5,  'DE', 'Germany'        );
 insert into llx_c_pays (rowid,code,libelle) values (6,  'CH', 'Suisse'         );
-insert into llx_c_pays (rowid,code,libelle) values (7,  'GB', 'United Kingdow' );
+insert into llx_c_pays (rowid,code,libelle) values (7,  'GB', 'United Kingdom' );
 insert into llx_c_pays (rowid,code,libelle) values (8,  'IE', 'Irland'         );
 insert into llx_c_pays (rowid,code,libelle) values (9,  'CN', 'China'          );
 insert into llx_c_pays (rowid,code,libelle) values (10, 'TN', 'Tunisie'        );
