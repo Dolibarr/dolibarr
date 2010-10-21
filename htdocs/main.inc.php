@@ -860,6 +860,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-1.4.2.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-1.8.5.custom.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.min'.$ext.'"></script>'."\n";
 
             // This one is required for some Ajax features
 			if (! defined('DISABLE_PROTOTYPE') && $conf->global->MAIN_USE_PROTOTYPE)
@@ -970,7 +971,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			{
 				//$mc = new ActionsMulticompany($db);
 				$entitytext = img_object('', 'globe','entity');
-				print $entitytext;
+				$entityhtmltext = 'text';
+				print $html->textwithtooltip('',$entityhtmltext,2,1,$entitytext);
 				//$select_entity = '<div class="loginSelectEntity">'.$mc->select_entities($conf->entity).'</div>';
 				//if ($mc->numEntity >= 1) print $select_entity;
 			}
