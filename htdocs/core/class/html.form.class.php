@@ -2283,15 +2283,28 @@ class Form
     }
 
     /**
+     *    Retourne la liste des devises, dans la langue de l'utilisateur
+     *    @param     selected    code devise pre-selectionne
+     *    @param     htmlname    nom de la liste deroulante
+     *    TODO      trier liste sur noms apres traduction plutot que avant
+     */
+    function select_currency($selected='',$htmlname='currency_id')
+    {
+    	print $this->selectcurrency($selected,$htmlname);
+    }
+    
+    /**
      *    \brief     Retourne la liste des devises, dans la langue de l'utilisateur
      *    \param     selected    code devise pre-selectionne
      *    \param     htmlname    nom de la liste deroulante
      *    \todo      trier liste sur noms apres traduction plutot que avant
      */
-    function select_currency($selected='',$htmlname='currency_id')
+    function selectcurrency($selected='',$htmlname='currency_id')
     {
         global $conf,$langs,$user;
         $langs->load("dict");
+        
+        $out='';
 
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
@@ -2303,7 +2316,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
+            $out.= '<select class="flat" name="'.$htmlname.'">';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -2315,26 +2328,26 @@ class Form
                     if ($selected && $selected == $obj->code_iso)
                     {
                         $foundselected=true;
-                        print '<option value="'.$obj->code_iso.'" selected="true">';
+                        $out.= '<option value="'.$obj->code_iso.'" selected="true">';
                     }
                     else
                     {
-                        print '<option value="'.$obj->code_iso.'">';
+                        $out.= '<option value="'.$obj->code_iso.'">';
                     }
-                    if ($obj->code_iso) { print $obj->code_iso . ' - '; }
+                    if ($obj->code_iso) { $out.= $obj->code_iso . ' - '; }
                     // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                    print ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                    print '</option>';
+                    $out.= ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
+                    $out.= '</option>';
                     $i++;
                 }
             }
-            print '</select>';
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-            return 0;
+            $out.= '</select>';
+            if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            return $out;
         }
-        else {
+        else
+        {
             dol_print_error($this->db);
-            return 1;
         }
     }
 

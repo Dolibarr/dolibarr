@@ -357,39 +357,42 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc=new Societe($db);
 
 	$mysoc->id=0;
-	$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM; // TODO obsolete
+	$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM; 			// TODO deprecated
 	$mysoc->name=$conf->global->MAIN_INFO_SOCIETE_NOM;
-	$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE; // TODO obsolete
+	$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE; 	// TODO deprecated
 	$mysoc->address=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
-	$mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP; // TODO obsolete
+	$mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP; 			// TODO deprecated
 	$mysoc->zip=$conf->global->MAIN_INFO_SOCIETE_CP;
-	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE; // TODO obsolete
+	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE; 		// TODO deprecated
 	$mysoc->town=$conf->global->MAIN_INFO_SOCIETE_VILLE;
-	$mysoc->departement_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
+	$mysoc->state_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
+	$mysoc->departement_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;	// TODO deprecated
 	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
     // We define pays_id, pays_code and pays_label
     $tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_PAYS);
-    $pays_id=$tmp[0];
+    $country_id=$tmp[0];
     if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_PAYS is "id:code:label"
     {
-        $pays_code=$tmp[1];
-        $pays_label=$tmp[2];
+        $country_code=$tmp[1];
+        $country_label=$tmp[2];
     }
     else                    // For backward compatibility
     {
         dol_syslog("Your country setup use an old syntax. Reedit it in setup area.", LOG_WARNING);
         include_once(DOL_DOCUMENT_ROOT.'/lib/company.lib.php');
-        $pays_code=getCountry($pays_id,2,$db);  // This need a SQL request, but it's the old feature
-        $pays_label=getCountry($pays_id,0,$db);  // This need a SQL request, but it's the old feature
+        $country_code=getCountry($country_id,2,$db);  // This need a SQL request, but it's the old feature
+        $country_label=getCountry($country_id,0,$db);  // This need a SQL request, but it's the old feature
     }
-    $mysoc->pays_id=$pays_id;
-    $mysoc->pays_code=$pays_code;
-    $mysoc->country=$pays_label;
-    if (is_object($langs)) $mysoc->country=($langs->trans('Country'.$pays_code)!='Country'.$pays_code)?$langs->trans('Country'.$pays_code):$pays_label;
-    $mysoc->pays=$mysoc->country;    // deprecated
+    $mysoc->pays_id=$country_id;		// TODO deprecated
+    $mysoc->country_id=$country_id;
+    $mysoc->pays_code=$country_code;	// TODO deprecated
+    $mysoc->country_code=$country_code;
+    $mysoc->country=$country_label;
+    if (is_object($langs)) $mysoc->country=($langs->trans('Country'.$country_code)!='Country'.$country_code)?$langs->trans('Country'.$country_code):$country_label;
+    $mysoc->pays=$mysoc->country;    	// TODO deprecated
 
-	$mysoc->tel=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;   // deprecated
+	$mysoc->tel=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;   // TODO deprecated
 	$mysoc->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
 	$mysoc->fax=empty($conf->global->MAIN_INFO_SOCIETE_FAX)?'':$conf->global->MAIN_INFO_SOCIETE_FAX;
 	$mysoc->url=empty($conf->global->MAIN_INFO_SOCIETE_WEB)?'':$conf->global->MAIN_INFO_SOCIETE_WEB;
