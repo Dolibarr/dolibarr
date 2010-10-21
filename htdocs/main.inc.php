@@ -968,10 +968,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php');
 			if ($res)
 			{
-				$mc = new ActionsMulticompany($db);
-				
-				$select_entity = '<div class="loginSelectEntity">'.$mc->select_entities($conf->entity).'</div>';
-				if ($mc->numEntity > 1) print $select_entity;
+				//$mc = new ActionsMulticompany($db);
+				$entitytext = img_object('', 'globe','entity');
+				print $entitytext;
+				//$select_entity = '<div class="loginSelectEntity">'.$mc->select_entities($conf->entity).'</div>';
+				//if ($mc->numEntity >= 1) print $select_entity;
 			}
 		}
 	}
