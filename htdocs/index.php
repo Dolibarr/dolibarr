@@ -56,6 +56,13 @@ if (class_exists('Smartphone'))
 	exit;
 }
 
+// Check if company name is defined (first install)
+if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM))
+{
+	header("Location: ".DOL_URL_ROOT."/admin/company.php?mainmenu=home&leftmenu=setup");
+	exit;
+}
+
 llxHeader();
 
 print_fiche_titre($langs->trans("HomeArea"));
