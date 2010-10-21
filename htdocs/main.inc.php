@@ -959,6 +959,22 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     $menutop = new MenuTop($db);
 	$menutop->atarget=$target;
 	$menutop->showmenu();
+	
+	// Select entity
+	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+	{
+		if ($user->admin && ! $user->entity)
+		{
+			$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php');
+			if ($res)
+			{
+				$mc = new ActionsMulticompany($db);
+				
+				$select_entity = '<div class="loginSelectEntity">'.$mc->select_entities($conf->entity).'</div>';
+				if ($mc->numEntity > 1) print $select_entity;
+			}
+		}
+	}
 
 	// Link to login card
 	$loginhtmltext=''; $logintext='';
@@ -1011,7 +1027,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
 		$logouttext.='>';
 	}
-
+	
 	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext);
 
 	print $html->textwithtooltip('',$logouthtmltext,2,1,$logouttext);
