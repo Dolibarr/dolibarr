@@ -22,86 +22,65 @@ $smartphone->smartheader();
 
 <!-- START LOGIN SMARTPHONE TEMPLATE -->
 
-<div id="topbar">
-	<div id="title"><?php echo $title; ?></div>
-</div>
+<div data-role="page" id="dol-home" data-theme="b">
 
-<div id="content">
-	<form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
-	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
-	<input type="hidden" name="loginfunction" value="loginfunction" />
+	<div data-role="content">
 	
-	<div align="center">
-		<img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/dolibarr.png'; ?>">
+	<div id="dol-homeheader">
+		<h1><img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/dolibarr.png'; ?>"></h1>
 	</div>
 	
-	<br>
-	
-	<span class="graytitle"><?php echo $langs->trans('Identification'); ?></span>
-	<ul class="pageitem">
-		<li class="bigfield">
-			<input placeholder="<?php echo $langs->trans('Login'); ?>" type="text" id="username" name="username" value="<?php echo $login; ?>" />
-		</li>
+		<form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
+		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="loginfunction" value="loginfunction" />
 		
-		<li class="bigfield">
-			<input placeholder="<?php echo $langs->trans('Password'); ?>" type="password" id="password" name="password" value="<?php echo $password; ?>" />
-		</li>
-
-	</ul>
-	
-	<?php if ($select_entity) { ?>
-	<span class="graytitle"><?php echo $langs->trans('Entity'); ?></span>
-	<ul class="pageitem">
-		<li class="select">
+		<div data-role="fieldcontain">
+			<label for="username"><?php echo $langs->trans('Login'); ?></label>
+			<input type="text" name="username" id="username" value="<?php echo $login; ?>"  />
+			
+			<label for="password"><?php echo $langs->trans('Password'); ?></label>
+			<input type="password" name="password" id="password" value="<?php echo $password; ?>" />
+			
+			<?php if ($select_entity) { ?>
+			<label for="entity" class="select"><?php echo $langs->trans('Entity'); ?></label>
 			<?php echo $select_entity; ?>
-			<span class="arrow"></span>
-        </li>
-	</ul>
-	<?php } ?>
-	
-	<?php if ($captcha) { ?>
-	<span class="graytitle"><?php echo $langs->trans('SecurityCode'); ?></span>
-	<ul class="pageitem">
-		<li class="smallfield">
-			<input placeholder="<?php echo $langs->trans('SecurityCode'); ?>" type="text" id="securitycode" name="code" />
-			<img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="128" height="36" />
-		</li>
-	</ul>
-	<?php } ?>
-	
-	<ul class="pageitem">
-		<li class="button">
-			<input name="input Button" type="submit" value="<?php echo $langs->trans('Connection'); ?>" />
-		</li>
-	</ul>
-	
-	</form>
-</div>
+			<?php } ?>
+			
+			<?php if ($captcha) { ?>
+			<label for="securitycode"><?php echo $langs->trans('SecurityCode'); ?></label>
+			<input type="text" id="securitycode" name="securitycode" />
+			<div align="center"><img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="128" height="36" /></div>
+			<?php } ?>
+		</div>
+		
+		<input type="submit" data-theme="b" value="<?php echo $langs->trans('Connection'); ?>" />
+		
+		</form>	
 
-<?php if ($forgetpasslink || $helpcenterlink) { ?>
-	<span class="graytitle"><?php echo $langs->trans('Tools'); ?></span>
-	<ul class="pageitem">
-	<?php if ($forgetpasslink) { ?>
-		<li class="menu">
-			<a href="<?php echo $dol_url_root.'/user/passwordforgotten.php'; ?>">
-				<img alt="tools" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/tools.png'; ?>" />
-				<span class="name"><?php echo $langs->trans('PasswordForgotten'); ?></span>
-				<span class="arrow"></span>
-			</a>
-		</li>
-	<?php } ?>
-	
-	<?php if ($helpcenterlink) { ?>
-		<li class="menu">
-			<a href="<?php echo $dol_url_root.'/support/index.php'; ?>">
-				<img alt="support" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/support.png'; ?>" />
-				<span class="name"><?php echo $langs->trans('NeedHelpCenter'); ?></span>
-				<span class="arrow"></span>
-			</a>
-		</li>
-	<?php } ?>
-	</ul>
-<?php } ?>
+		<?php if ($forgetpasslink || $helpcenterlink) { ?>
+		<br />
+		<ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="b">
+			<li data-role="list-divider"><?php echo $langs->trans('Tools'); ?></li>
+		
+		<?php if ($forgetpasslink) { ?>
+			<li>
+				<img alt="tools" class="ui-li-icon" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/tools.png'; ?>" />
+				<a href="<?php echo './user/passwordforgotten.php'; ?>"><?php echo $langs->trans('PasswordForgotten'); ?></a>
+			</li>
+		<?php } ?>
+		
+		<?php if ($helpcenterlink) { ?>
+			<li>
+				<img alt="support" class="ui-li-icon" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/support.png'; ?>" />
+				<a href="<?php echo './support/index.php'; ?>"><?php echo $langs->trans('NeedHelpCenter'); ?></a>
+			</li>
+		<?php } ?>
+		</ul>
+		<?php } ?>
+
+	</div><!-- /content -->
+
+</div><!-- /page -->
 
 <?php if ($dol_loginmesg) { ?>
 	<script type="text/javascript" language="javascript">

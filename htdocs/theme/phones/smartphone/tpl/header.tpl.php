@@ -21,21 +21,31 @@ header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 
 <!-- BEGIN HEADER SMARTPHONE TEMPLATE -->
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 <title><?php echo $this->title; ?></title>
 <meta name="robots" content="noindex,nofollow" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <link rel="apple-touch-icon" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/'.$this->theme.'/thumbs/homescreen.png'; ?>" />
-<meta name="viewport"content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
-<link type="text/css" rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/'.$this->theme.'/'.$this->theme.'.css.php'; ?>" />
-<script type="text/javascript" src="<?php echo DOL_URL_ROOT.'/includes/iwebkit/Framework/javascript/functions.js'; ?>"></script>
+
+<link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-1.0a1.min.css'; ?>" />
+<!--
+<link rel="stylesheet"  href="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.css" />
+-->
+<link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/mobiledefault.css.php'; ?>" />
+
+<script src="<?php echo DOL_URL_ROOT.'/includes/jquery/js/jquery-1.4.3.min.js'; ?>"></script>
+<script src="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-1.0a1.min.js'; ?>"></script>
+<!--
+<script src="http://code.jquery.com/jquery-1.4.3.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.js"></script>
+-->
+
 </head>
 
 <body>
