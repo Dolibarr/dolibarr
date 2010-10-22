@@ -2284,7 +2284,7 @@ class Form
     {
     	print $this->selectcurrency($selected,$htmlname);
     }
-    
+
     /**
      *    \brief     Retourne la liste des devises, dans la langue de l'utilisateur
      *    \param     selected    code devise pre-selectionne
@@ -2295,7 +2295,7 @@ class Form
     {
         global $conf,$langs,$user;
         $langs->load("dict");
-        
+
         $out='';
 
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
@@ -2862,18 +2862,18 @@ class Form
 
 
     /**
-     *	\brief  Show a select form from an array
-     *	\param	htmlname        Nom de la zone select
-     *	\param	array           Tableau de key+valeur
-     *	\param	id              Preselected key
-     *	\param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
-     *	\param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
-     *	\param	value_as_key    1 to use value as key
-     *	\param  option          Valeur de l'option en fonction du type choisi
-     *	\param  translate       Traduire la valeur
-     * 	\param	maxlen			Length maximum for labels
-     * 	\param	disabled		Html select box is disabled
-     * 	\return	string			HTML select string
+     *	Show a select form from an array
+     *	@param	htmlname        Name of html select area
+     *	@param	array           Array with key+value
+     *	@param	id              Preselected key
+     *	@param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
+     *	@param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
+     *	@param	value_as_key    1 to use value as key
+     *	@param  option          Valeur de l'option en fonction du type choisi
+     *	@param  translate       Traduire la valeur
+     * 	@param	maxlen			Length maximum for labels
+     * 	@param	disabled		Html select box is disabled
+     * 	@return	string			HTML select string
      */
     function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0)
     {

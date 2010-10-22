@@ -464,7 +464,12 @@ if (! $conf->use_javascript_ajax)
 else
 {
 	print '<td width="60" align="right">';
-	print $html->selectyesno("activate_COMPANY_USE_SEARCH_TO_SELECT",$conf->global->COMPANY_USE_SEARCH_TO_SELECT,1);
+	$arrval=array('0'=>$langs->trans("No"),
+	'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",1).')',
+    '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
+    '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
+	);
+	print $html->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT",$arrval,$conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td>";

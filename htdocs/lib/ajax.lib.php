@@ -35,6 +35,9 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 {
     global $conf;
 
+    if (empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) return "COMPANY_USE_SEARCH_TO_SELECT is empty. This should not happens";
+    if (! is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) return "COMPANY_USE_SEARCH_TO_SELECT is not a numeric. This should not happens";
+
 	$script='';
 
 	$script.= '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
@@ -63,7 +66,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 							}, "json");
 						},
 						dataType: "json",
-    					minLength: 2,
+    					minLength: '.$conf->global->COMPANY_USE_SEARCH_TO_SELECT.',
     					select: function( event, ui ) {
     						jQuery("#'.$htmlname.'").val(ui.item.id);
     					}
@@ -89,7 +92,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 {
 	$script='';
-	
+
 	$fields = php2js($fields);
 
 	$script.= '<script type="text/javascript">';
@@ -97,7 +100,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 					var fields = '.$fields.';
 					var length = fields.length;
 					//alert(fields + " " + length);
-					
+
     				jQuery("input#'.$htmlname.'").autocomplete({
     					dataType: "json",
     					minLength: 2,
@@ -121,13 +124,13 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 							});
     					},
     					select: function( event, ui ) {
-    						// TODO move this to specific request	
+    						// TODO move this to specific request
     						if (ui.item.states) {
     							jQuery("#departement_id").html(ui.item.states);
     						}
     						for (i=0;i<length;i++) {
     							//alert(fields[i] + " = " + ui.item[fields[i]]);
-								if (ui.item[fields[i]]) {	
+								if (ui.item[fields[i]]) {
 									jQuery("#" + fields[i]).val(ui.item[fields[i]]);
 								}
 							}
@@ -175,7 +178,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 }
 
 /**
- * 
+ *
  * Enter description here ...
  * @param unknown_type $var
  */
