@@ -938,7 +938,22 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 
-	print '<body id="mainbody"><div id="dhtmltooltip"></div>';
+	print '<body id="mainbody">';
+
+    // Wrapper to show tooltips
+    print '<script type="text/javascript">
+                jQuery(function() {
+                    jQuery(".classfortooltip").tooltip({
+                        track: true,
+                        delay: 0,
+                        showURL: false,
+                        positionLeft: true,
+                        bodyHandler: function() {
+                        /*console.log(jQuery(this).attr("tooltipText"));*/
+                        return jQuery(this).attr("tooltipText"); }
+                    });
+                });
+    </script>';
 
 	/*
 	 * Top menu
@@ -955,16 +970,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	}
 
     print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
-    print '<script type="text/javascript">
-    			jQuery(function() {
-    				jQuery("#tmenu_tooltip *").tooltip({
-    					track: true, 
-    					delay: 0,
-    					showURL: false,
-    					positionLeft: true
-					});
-    			});
-    		</script>';
+
     print '<div id="tmenu_tooltip" class="tmenu">'."\n";
 
     // Show menu
@@ -1410,11 +1416,6 @@ if (! function_exists("llxFooter"))
 
 			// Add Xdebug coverage of code
 			if (defined('XDEBUGCOVERAGE')) { var_dump(xdebug_get_code_coverage()); }
-		}
-
-		if ($conf->use_javascript_ajax)
-		{
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>'."\n";
 		}
 
 		// If there is some logs in buffer to show

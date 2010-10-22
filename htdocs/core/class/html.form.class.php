@@ -155,13 +155,10 @@ class Form
         $htmltext=str_replace("<br>\n","<br>",$htmltext);
         $htmltext=str_replace("\n","",$htmltext);
 
-        if ($conf->use_javascript_ajax)
-        {
-        	$htmltext=str_replace('"',"&quot;",$htmltext);
-        	$paramfortooltip.=' title="'.$htmltext.'"';
-        }
-        
-        $s="";
+       	$htmltext=str_replace('"',"&quot;",$htmltext);
+       	$paramfortooltip.=' class="classfortooltip" title="'.$htmltext.'"'; // Attribut to put on td tag to store tooltip
+
+       	$s="";
         $s.='<table class="nobordernopadding" summary=""><tr>';
         if ($direction > 0)
         {
