@@ -466,7 +466,7 @@ class Menubase
 				$title=$langs->trans($objm->titre);
 				if ($title == $objm->titre)	// Translation not found
 				{
-					if (! empty($objm->langs)) // If there is a dedicated translation file
+				    if (! empty($objm->langs)) // If there is a dedicated translation file
 					{
 						$langs->load($objm->langs);
 					}
@@ -513,6 +513,7 @@ class Menubase
 				else $tabMenu[$b]['right'] = ($tabMenu[$b]['right'] && $perms);
 				if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $enabled;
 				else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $enabled);
+                $tabMenu[$b]['lang'] = $objm->langs;
 
 				//var_dump($tabMenu);
 				$a++;
