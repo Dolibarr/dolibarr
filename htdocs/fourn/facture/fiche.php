@@ -1283,12 +1283,20 @@ else
 			//print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
 		}
 
-		if ($_GET['action'] != 'edit' && $fac->statut == 0 && $user->rights->fournisseur->facture->valider)
+		if ($_GET['action'] != 'edit' && $fac->statut == 0)
 		{
 			if (sizeof($fac->lignes))
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid"';
-				print '>'.$langs->trans('Validate').'</a>';
+			    if ($user->rights->fournisseur->facture->valider)
+			    {
+				    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid"';
+				    print '>'.$langs->trans('Validate').'</a>';
+			    }
+			    else
+			    {
+                    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
+                    print '>'.$langs->trans('Validate').'</a>';
+			    }
 			}
 		}
 
