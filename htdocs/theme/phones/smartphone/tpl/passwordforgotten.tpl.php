@@ -46,22 +46,23 @@ $smartphone->smartheader();
 			<?php if ($captcha) { ?>
 			<label for="securitycode"><?php echo $langs->trans('SecurityCode'); ?></label>
 			<input type="text" id="securitycode" name="securitycode" />
-			<div align="center"><img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="128" height="36" /></div>
+			<div align="center"><img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="256" height="48" /></div>
 			<?php } ?>
 		</div>
 		
 		<input type="submit" data-theme="b" value="<?php echo $langs->trans('SendByMail'); ?>" />
 		
-		<span class="header"><?php echo $langs->trans('Infos'); ?></span>
+		</form>
+
+	</div><!-- /content -->
+	
+	<div data-role="footer" data-theme="b">
 		<?php if ($mode == 'dolibarr' || ! $disabled) {
 			echo $langs->trans('SendNewPasswordDesc');
 		}else{
 			echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode);
 		} ?>
-		
-		</form>
-
-	</div><!-- /content -->
+	</div>
 
 </div><!-- /page -->
 
