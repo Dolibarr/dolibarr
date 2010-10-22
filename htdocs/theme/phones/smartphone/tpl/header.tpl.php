@@ -32,20 +32,10 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <meta name="robots" content="noindex,nofollow" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <link rel="apple-touch-icon" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/'.$this->theme.'/thumbs/homescreen.png'; ?>" />
-
 <link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-1.0a1.min.css'; ?>" />
-<!--
-<link rel="stylesheet"  href="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.css" />
--->
-<link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/mobiledefault.css.php'; ?>" />
-
+<link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/default.css.php'; ?>" />
 <script src="<?php echo DOL_URL_ROOT.'/includes/jquery/js/jquery-1.4.3.min.js'; ?>"></script>
 <script src="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-1.0a1.min.js'; ?>"></script>
-<!--
-<script src="http://code.jquery.com/jquery-1.4.3.min.js"></script>
-<script src="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.js"></script>
--->
-
 </head>
 
 <body>

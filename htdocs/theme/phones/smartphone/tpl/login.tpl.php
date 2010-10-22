@@ -24,11 +24,14 @@ $smartphone->smartheader();
 
 <div data-role="page" id="dol-home" data-theme="b">
 
-	<div data-role="content">
-	
+	<div data-role="header" data-nobackbtn="true" data-theme="b">
 	<div id="dol-homeheader">
-		<h1><img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/dolibarr.png'; ?>"></h1>
+		<img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/dolibarr.png'; ?>">
+		<a href="index.html" data-icon="gear" class="ui-btn-right"><?php echo $langs->trans('Tools'); ?></a>
 	</div>
+	</div>
+
+	<div data-role="content">
 	
 		<form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -65,14 +68,14 @@ $smartphone->smartheader();
 		<?php if ($forgetpasslink) { ?>
 			<li>
 				<img alt="tools" class="ui-li-icon" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/tools.png'; ?>" />
-				<a href="<?php echo './user/passwordforgotten.php'; ?>"><?php echo $langs->trans('PasswordForgotten'); ?></a>
+				<a href="<?php echo 'user/passwordforgotten.php'; ?>"><?php echo $langs->trans('PasswordForgotten'); ?></a>
 			</li>
 		<?php } ?>
 		
 		<?php if ($helpcenterlink) { ?>
 			<li>
 				<img alt="support" class="ui-li-icon" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/support.png'; ?>" />
-				<a href="<?php echo './support/index.php'; ?>"><?php echo $langs->trans('NeedHelpCenter'); ?></a>
+				<a href="<?php echo 'support/index.php'; ?>"><?php echo $langs->trans('NeedHelpCenter'); ?></a>
 			</li>
 		<?php } ?>
 		</ul>

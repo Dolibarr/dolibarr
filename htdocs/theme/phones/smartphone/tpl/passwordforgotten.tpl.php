@@ -22,76 +22,54 @@ $smartphone->smartheader();
 
 <!-- BEGIN SMARTPHONE TEMPLATE -->
 
-<div id="topbar">
-	<div id="title"><?php echo $langs->trans('Password'); ?></div>
-	<div id="leftnav">
-		<a href="<?php echo $dol_url_root; ?>/">
-			<img alt="home" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/img/home.png'; ?>"/>
-		</a>
-	</div>
-</div>
+<div data-role="page" id="dol-home" data-theme="b">
 
-<div id="content">
-	<form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
-	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
-	<input type="hidden" name="action" value="buildnewpassword">
-	
-	<div align="center">
+	<div data-role="header" data-theme="b">
+	<div id="dol-homeheader">
 		<img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/dolibarr.png'; ?>">
 	</div>
-	
-	<br>
-	
-	<span class="graytitle"><?php echo $langs->trans('Identification'); ?></span>
-	<ul class="pageitem">
-		<li class="bigfield">
-			<input placeholder="<?php echo $langs->trans('Login'); ?>" type="text" <?php echo $disabled; ?> id="username" name="username" value="<?php echo $login; ?>" />
-		</li>
-	</ul>
-	
-	<?php if ($select_entity) { ?>
-	<span class="graytitle"><?php echo $langs->trans('Entity'); ?></span>
-	<ul class="pageitem">
-		<li class="select">
-			<?php echo $select_entity; ?>
-			<span class="arrow"></span>
-        </li>
-	</ul>
-	<?php } ?>
-	
-	<?php if ($captcha) { ?>
-	<span class="graytitle"><?php echo $langs->trans('SecurityCode'); ?></span>
-	<ul class="pageitem">
-		<li class="smallfield">
-			<input placeholder="<?php echo $langs->trans('SecurityCode'); ?>" type="text" id="securitycode" name="code" />
-			<img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="128" height="36" />
-		</li>
-	</ul>
-	<?php } ?>
-	
-	<ul class="pageitem">
-		<li class="button">
-			<input name="input Button" <?php echo $disabled; ?> type="submit" value="<?php echo $langs->trans('SendByMail'); ?>" />
-		</li>
-	</ul>
-	
-	</form>
-</div>
+	</div>
 
-<ul class="pageitem">
-	<li class="textbox">
-	<span class="header"><?php echo $langs->trans('Infos'); ?></span>
-	<?php if ($mode == 'dolibarr' || ! $disabled) {
+	<div data-role="content">
+	
+		<form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
+		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="loginfunction" value="buildnewpassword" />
+		
+		<div data-role="fieldcontain">
+			<label for="username"><?php echo $langs->trans('Login'); ?></label>
+			<input type="text" name="username" id="username" value="<?php echo $login; ?>"  />
+			
+			<?php if ($select_entity) { ?>
+			<label for="entity" class="select"><?php echo $langs->trans('Entity'); ?></label>
+			<?php echo $select_entity; ?>
+			<?php } ?>
+			
+			<?php if ($captcha) { ?>
+			<label for="securitycode"><?php echo $langs->trans('SecurityCode'); ?></label>
+			<input type="text" id="securitycode" name="securitycode" />
+			<div align="center"><img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="128" height="36" /></div>
+			<?php } ?>
+		</div>
+		
+		<input type="submit" data-theme="b" value="<?php echo $langs->trans('SendByMail'); ?>" />
+		
+		<span class="header"><?php echo $langs->trans('Infos'); ?></span>
+		<?php if ($mode == 'dolibarr' || ! $disabled) {
 			echo $langs->trans('SendNewPasswordDesc');
 		}else{
 			echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode);
 		} ?>
-	</li>
-</ul>
+		
+		</form>
 
-<?php if ($message) { ?>
+	</div><!-- /content -->
+
+</div><!-- /page -->
+
+<?php if ($dol_loginmesg) { ?>
 	<script type="text/javascript" language="javascript">
-		alert('<?php echo $message; ?>');
+		alert('<?php echo $dol_loginmesg; ?>');
 	</script>
 <?php } ?>
 
