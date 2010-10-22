@@ -29,28 +29,18 @@ $conf_db_pass = $dolibarr_main_db_pass;
 $conf_db_base = $dolibarr_main_db_name;
 
 // Identifiant unique correspondant au tiers generique pour la vente
-$conf_fksoc = $conf->global->CASHDESK_ID_THIRDPARTY;
+$conf_fksoc = (! empty($_SESSION["CASHDESK_ID_THIRDPARTY"]))?$_SESSION["CASHDESK_ID_THIRDPARTY"]:($conf->global->CASHDESK_ID_THIRDPARTY>0?$conf->global->CASHDESK_ID_THIRDPARTY:0);
+// Identifiant unique correspondant a l'entrepot a utiliser
+$conf_fkentrepot = (! empty($_SESSION["CASHDESK_ID_WAREHOUSE"]))?$_SESSION["CASHDESK_ID_WAREHOUSE"]:($conf->global->CASHDESK_ID_WAREHOUSE>0?$conf->global->CASHDESK_ID_WAREHOUSE:0);
+
 // Identifiant unique correspondant au compte caisse / liquide
 $conf_fkaccount_cash = (! empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"]))?$_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"]:($conf->global->CASHDESK_ID_BANKACCOUNT_CASH>0?$conf->global->CASHDESK_ID_BANKACCOUNT_CASH:0);
 // Identifiant unique correspondant au compte cheque
 $conf_fkaccount_cheque = (! empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"]))?$_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"]:($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE>0?$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE:0);
 // Identifiant unique correspondant au compte cb
 $conf_fkaccount_cb = (! empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]))?$_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]:($conf->global->CASHDESK_ID_BANKACCOUNT_CB>0?$conf->global->CASHDESK_ID_BANKACCOUNT_CB:0);
-// Identifiant unique correspondant a l'entrepot a utiliser
-$conf_fkentrepot = (! empty($_SESSION["CASHDESK_ID_WAREHOUSE"]))?$_SESSION["CASHDESK_ID_WAREHOUSE"]:($conf->global->CASHDESK_ID_WAREHOUSE>0?$conf->global->CASHDESK_ID_WAREHOUSE:0);
 //var_dump($_SESSION);
 
-
-// Check if setup ok
-$error = '';
-if (empty($conf_fksoc))
-{
-	$error.= '<div class="error">Setup of CashDesk module not complete. Third party not defined</div>';
-}
-if ($conf->banque->enabled && (empty($conf_fkaccount_cash) || empty($conf_fkaccount_cheque) || empty($conf_fkaccount_cb)))
-{
-	$error.= '<div class="error">Setup of CashDesk module not complete. Bank account not defined</div>';
-}
 
 // Parametres d'affichage
 $conf_taille_listes = 200;	// Nombre max de lignes a afficher dans les listes

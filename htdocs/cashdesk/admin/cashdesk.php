@@ -40,7 +40,7 @@ if (!$user->admin)
 accessforbidden();
 
 $langs->load("admin");
-$langs->load("@cashdesk");
+$langs->load("cashdesk");
 
 
 /*
@@ -91,7 +91,7 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'socid','',1,1);
+print $form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client=1',1,1);
 print '</td></tr>';
 if ($conf->banque->enabled)
 {

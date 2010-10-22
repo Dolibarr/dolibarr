@@ -773,13 +773,13 @@ function top_httphead()
 
 
 /**
- *  \brief      Show HTML header
- *  \param      head    	Optionnal head lines
- *  \param      title   	Web page title
- *	\param		disablejs	Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
- *	\param		disablehead	Do not output head section
- *	\param		arrayofjs	Array of js files to add in header
- *	\param		arrayofcss	Array of css files to add in header
+ *  Show HTML header
+ *  @param      head    	Optionnal head lines
+ *  @param      title   	Web page title
+ *	@param		disablejs	Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	@param		disablehead	Do not output head section
+ *	@param		arrayofjs	Array of js files to add in header
+ *	@param		arrayofcss	Array of css files to add in header
  */
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
@@ -960,7 +960,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     $menutop = new MenuTop($db);
 	$menutop->atarget=$target;
 	$menutop->showmenu();
-	
+
 	// Select entity
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
@@ -1030,7 +1030,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
 		$logouttext.='>';
 	}
-	
+
 	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext);
 
 	print $html->textwithtooltip('',$logouthtmltext,2,1,$logouttext);

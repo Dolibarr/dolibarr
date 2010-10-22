@@ -98,7 +98,7 @@ if ( dol_strlen ($_GET["code"]) >= 0 )	// If search criteria is on char length a
 		}
 		else
 		{
-			$langs->load("cashdesk@cashdesk");
+			$langs->load("cashdesk");
 
 			print '<ul class="dhtml_bloc">';
 			print '<li class="dhtml_defaut">'.$langs->trans("NoResults").'</li>';

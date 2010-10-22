@@ -1,7 +1,7 @@
 <?php
 $langs->load("main");
 $langs->load("bills");
-$langs->load("@cashdesk");
+$langs->load("cashdesk");
 ?>
 <!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 

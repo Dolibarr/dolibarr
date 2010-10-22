@@ -26,6 +26,10 @@
 // Set and init common variables
 // This include will set: config file variable $dolibarr_xxx, $conf, $langs and $mysoc objects
 require_once("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+
+$langs->load("admin");
+$langs->load("cashdesk");
 
 // Test if user logged
 if ( $_SESSION['uid'] > 0 )
@@ -35,24 +39,16 @@ if ( $_SESSION['uid'] > 0 )
 }
 
 
-require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+/*
+ * View
+ */
 
+$form=new Form($db);
 $formproduct=new FormProduct($db);
 
+$arrayofcss=array(DOL_URL_ROOT.'/cashdesk/css/style.css');
+top_htmlhead('','',0,0,'',$arrayofcss);
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html>
-<head>
-<title>Point of Sale login</title>
-<meta name="robots" content="none" />
-<meta name="author" content="Jeremie Ollivier - jeremie.o@laposte.net" />
-<meta name="Generator" content="Kwrite, Gimp, Inkscape" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<link href="<?php echo DOL_URL_ROOT.'/cashdesk/css/style.css'; ?>" rel="stylesheet" type="text/css" media="screen" />
-</head>
 
 <body>
 <div class="conteneur">
@@ -68,7 +64,7 @@ $formproduct=new FormProduct($db);
 <div class="principal_login">
 <?php if (! empty($_GET["err"])) print $_GET["err"]."<br><br>\n"; ?>
 <fieldset class="cadre_facturation"><legend class="titre1">Identification</legend>
-<form class="formulaire_login" id="frmLogin" method="post" action="index_verif.php">
+<form id="frmLogin" method="post" action="index_verif.php">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 
 <table>
@@ -82,6 +78,16 @@ $formproduct=new FormProduct($db);
 		<td><input name="pwdPassword" class="texte_login" type="password"	value="" /></td>
 	</tr>
 <?php
+print "<tr>";
+print '<td class="label1">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
+print '<td>';
+$disabled=0;
+if (! empty($conf->global->CASHDESK_ID_THIRDPARTY)) $disabled=1; // If a particular third party is defined, we disable choice
+$form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client=1',!$disabled,$disabled,1);
+//print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
+print '</td>';
+print "</tr>\n";
+
 if ($conf->stock->enabled)
 {
 	$langs->load("stocks");
@@ -93,12 +99,12 @@ if ($conf->stock->enabled)
 	$formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'warehouseid','',!$disabled,$disabled);
 	//print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
 	print '</td>';
-	print "</tr>";
+	print "</tr>\n";
 }
 ?>
 </table>
 
-<span class="bouton_login"><input name="sbmtConnexion" type="submit" value="Connexion" /></span>
+<center><span class="bouton_login"><input name="sbmtConnexion" type="submit" value="Connexion" /></span></center>
 
 </form>
 </fieldset>

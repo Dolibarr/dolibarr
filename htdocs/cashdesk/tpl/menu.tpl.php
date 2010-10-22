@@ -22,10 +22,10 @@ include_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php');
 
-if (!empty($conf->global->CASHDESK_ID_THIRDPARTY))
+if (!empty($_SESSION["CASHDESK_ID_THIRDPARTY"]))
 {
 	$company=new Societe($db);
-	$company->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
+	$company->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
 	$companyLink = $company->getNomUrl(1);
 }
 if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
@@ -55,7 +55,7 @@ if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && $conf->stock->enabled)
 }
 
 
-$langs->load("@cashdesk");
+$langs->load("cashdesk");
 $langs->load("main");
 
 $logout='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png">';

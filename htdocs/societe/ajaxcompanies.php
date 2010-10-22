@@ -52,7 +52,7 @@ dol_syslog(join(',',$_GET));
 
 
 // Generation liste des societes
-if (! empty($_GET['newcompany']) || ! empty($_GET['socid']) || ! empty($_GET['id_fourn']))
+if (GETPOST('newcompany') || GETPOST('socid') || GETPOST('id_fourn'))
 {
 	$return_arr = array();
 
@@ -103,10 +103,14 @@ if (! empty($_GET['newcompany']) || ! empty($_GET['socid']) || ! empty($_GET['id
 
 	    echo json_encode($return_arr);
 	}
+	else
+	{
+	    echo json_encode(array('nom'=>'Error','label'=>'Error','key'=>'Error','value'=>'Error'));
+	}
 }
 else
 {
-
+    echo json_encode(array('nom'=>'ErrorBadParameter','label'=>'ErrorBadParameter','key'=>'ErrorBadParameter','value'=>'ErrorBadParameter'));
 }
 
 ?>

@@ -25,11 +25,15 @@ require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
 require_once(DOL_DOCUMENT_ROOT.'/cashdesk/class/Auth.class.php');
 
 $langs->load("main");
+$langs->load("admin");
+$langs->load("cashdesk");
 
 $username = $_POST['txtUsername'];
 $password = $_POST['pwdPassword'];
-$warehouseid = isset($_POST['warehouseid'])?$_POST['warehouseid']:0;
+$thirdpartyid = isset($_POST['socid'])?$_POST['socid']:$conf->global->CASHDESK_ID_THIRDPARTY;
+$warehouseid = isset($_POST['warehouseid'])?$_POST['warehouseid']:$conf->global->CASHDESK_ID_WAREHOUSE;
 
+$error = '';
 
 // Check username
 if (empty($username))
@@ -37,6 +41,13 @@ if (empty($username))
 	$retour=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login"));
 	header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username);
 	exit;
+}
+// Check third party id
+if (! ($thirdpartyid > 0))
+{
+    $retour=$langs->trans("ErrorFieldRequired",$langs->transnoentities("CashDeskThirdPartyForSell"));
+    header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username);
+    exit;
 }
 
 // If we setup stock module to ask movement on invoices, we must not allow access if required setup not finished.
@@ -46,6 +57,14 @@ if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL && ! ($wareh
 	header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username);
 	exit;
 }
+
+if (! empty($_POST['txtUsername']) && $conf->banque->enabled && (empty($conf_fkaccount_cash) || empty($conf_fkaccount_cheque) || empty($conf_fkaccount_cb)))
+{
+//  $error.= '<div class="error"></div>';
+    header("Location: index.php?err=".urlencode('Setup of Point of Sale module not complete. Bank account not defined').'&user='.$username);
+    exit;
+}
+
 
 
 // Check password
@@ -75,8 +94,9 @@ if ( $retour >= 0 )
 		$_SESSION['uname'] = $username;
 		$_SESSION['nom'] = $tab['name'];
 		$_SESSION['prenom'] = $tab['firstname'];
-		$_SESSION['CASHDESK_ID_WAREHOUSE'] = $warehouseid;
-		//var_dump($_SESSION);
+		$_SESSION['CASHDESK_ID_THIRDPARTY'] = $thirdpartyid;
+        $_SESSION['CASHDESK_ID_WAREHOUSE'] = $warehouseid;
+		//var_dump($_SESSION);exit;
 
 		header ('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&id=NOUV');
 		exit;
