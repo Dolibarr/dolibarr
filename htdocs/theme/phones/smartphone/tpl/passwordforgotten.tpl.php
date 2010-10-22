@@ -67,9 +67,9 @@ $smartphone->smartheader();
 
 </div><!-- /page -->
 
-<?php if ($dol_loginmesg) { ?>
+<?php if ($message) { ?>
 	<script type="text/javascript" language="javascript">
-		alert('<?php echo $dol_loginmesg; ?>');
+		alert('<?php echo $message; ?>');
 	</script>
 <?php } ?>
 
