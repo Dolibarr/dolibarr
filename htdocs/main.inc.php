@@ -818,6 +818,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             $jquerytheme = 'smoothness';
             if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
             print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-1.8.5.custom.css" type="text/css" />'."\n";
+            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.css" type="text/css" />'."\n";
         }
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
@@ -954,7 +955,17 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	}
 
     print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
-    print '<div class="tmenu">'."\n";
+    print '<script type="text/javascript">
+    			jQuery(function() {
+    				jQuery("#tmenu_tooltip *").tooltip({
+    					track: true, 
+    					delay: 0,
+    					showURL: false,
+    					positionLeft: true
+					});
+    			});
+    		</script>';
+    print '<div id="tmenu_tooltip" class="tmenu">'."\n";
 
     // Show menu
     $menutop = new MenuTop($db);
@@ -971,7 +982,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			{
 				//$mc = new ActionsMulticompany($db);
 				$entitytext = img_object('', 'globe','entity');
-				$entityhtmltext = 'text';
+				$entityhtmltext = 'EntityName';
 				print $html->textwithtooltip('',$entityhtmltext,2,1,$entitytext);
 				//$select_entity = '<div class="loginSelectEntity">'.$mc->select_entities($conf->entity).'</div>';
 				//if ($mc->numEntity >= 1) print $select_entity;

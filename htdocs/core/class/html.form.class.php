@@ -150,8 +150,8 @@ class Form
 
         // Sanitize tooltip
         $htmltext=str_replace("\\","\\\\",$htmltext);
-        $htmltext=str_replace("'","\'",$htmltext);
-        $htmltext=str_replace("&#039;","\'",$htmltext);
+        //$htmltext=str_replace("'","\'",$htmltext);
+        //$htmltext=str_replace("&#039;","\'",$htmltext);
         $htmltext=str_replace("\r","",$htmltext);
         $htmltext=str_replace("<br>\n","<br>",$htmltext);
         $htmltext=str_replace("\n","",$htmltext);
@@ -159,6 +159,7 @@ class Form
         if ($conf->use_javascript_ajax)
         {
         	$htmltext=str_replace('"',"&quot;",$htmltext);
+        	/*
         	if ($tooltipon==1 || $tooltipon==3)
         	{
         		$paramfortooltiptext.=' onmouseover="showtip(\''.$htmltext.'\')"';
@@ -168,6 +169,15 @@ class Form
             {
             	$paramfortooltippicto.=' onmouseover="showtip(\''.$htmltext.'\')"';
             	$paramfortooltippicto.=' onMouseout="hidetip()"';
+            }
+            */
+        	if ($tooltipon==1 || $tooltipon==3)
+        	{
+        		$paramfortooltiptext.=' title="'.$htmltext.'"';
+            }
+            if ($tooltipon==2 || $tooltipon==3)
+            {
+            	$paramfortooltippicto.=' title="'.$htmltext.'"';
             }
         }
         
