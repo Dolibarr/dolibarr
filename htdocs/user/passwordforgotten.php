@@ -37,7 +37,10 @@ $langs->load("ldap");
 
 // Security check
 if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
-	accessforbidden();
+{
+	header("Location: ".DOL_URL_ROOT.'/');
+	exit;
+}
 
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $mode=$dolibarr_main_authentication;
