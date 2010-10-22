@@ -24,10 +24,8 @@ $smartphone->smartheader();
 
 <div data-role="page" id="dol-home" data-theme="b">
 
-	<div data-role="header" data-theme="b">
-	<div id="dol-homeheader">
-		<img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/dolibarr.png'; ?>">
-	</div>
+	<div data-role="header" data-theme="b" data-position="inline">
+			<h1><?php echo $langs->trans('Identification'); ?></h1>
 	</div>
 
 	<div data-role="content">

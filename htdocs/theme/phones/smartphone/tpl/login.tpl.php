@@ -67,14 +67,14 @@ $smartphone->smartheader();
 		<?php if ($forgetpasslink) { ?>
 			<li>
 				<img alt="tools" class="ui-li-icon" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/tools.png'; ?>" />
-				<a href="<?php echo 'user/passwordforgotten.php'; ?>" data-icon="gear"><?php echo $langs->trans('PasswordForgotten'); ?></a>
+				<a href="<?php echo 'user/passwordforgotten.php'; ?>"><?php echo $langs->trans('PasswordForgotten'); ?></a>
 			</li>
 		<?php } ?>
 		
 		<?php if ($helpcenterlink) { ?>
 			<li>
 				<img alt="support" class="ui-li-icon" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/support.png'; ?>" />
-				<a href="<?php echo 'support/index.php'; ?>" data-icon="gear"><?php echo $langs->trans('NeedHelpCenter'); ?></a>
+				<a href="<?php echo 'support/index.php'; ?>"><?php echo $langs->trans('NeedHelpCenter'); ?></a>
 			</li>
 		<?php } ?>
 		</ul>
