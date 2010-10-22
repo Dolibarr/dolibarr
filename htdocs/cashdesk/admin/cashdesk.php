@@ -48,11 +48,11 @@ $langs->load("@cashdesk");
  */
 if ($_POST["action"] == 'set')
 {
-	if ($_POST["CASHDESK_ID_THIRDPARTY"] < 0) $_POST["CASHDESK_ID_THIRDPARTY"]='';
+	if ($_POST["socid"] < 0) $_POST["socid"]='';
 	if ($_POST["CASHDESK_ID_BANKACCOUNT"] < 0)  $_POST["CASHDESK_ID_BANKACCOUNT"]='';
 	if ($_POST["CASHDESK_ID_WAREHOUSE"] < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';
 
-	dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",$_POST["CASHDESK_ID_THIRDPARTY"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",$_POST["socid"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CASH",$_POST["CASHDESK_ID_BANKACCOUNT_CASH"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CHEQUE",$_POST["CASHDESK_ID_BANKACCOUNT_CHEQUE"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CB",$_POST["CASHDESK_ID_BANKACCOUNT_CB"],'chaine',0,'',$conf->entity);
@@ -91,7 +91,7 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'CASHDESK_ID_THIRDPARTY','',1,1);
+print $form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'socid','',1,1);
 print '</td></tr>';
 if ($conf->banque->enabled)
 {
