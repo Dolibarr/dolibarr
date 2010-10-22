@@ -60,8 +60,8 @@ $smartphone->smartheader();
 		</form>	
 
 		<?php if ($forgetpasslink || $helpcenterlink) { ?>
-		<br />
-		<ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="b">
+		<br /><br />
+		<ul data-role="listview" data-theme="c" data-dividertheme="b">
 			<li data-role="list-divider"><?php echo $langs->trans('Tools'); ?></li>
 		
 		<?php if ($forgetpasslink) { ?>
@@ -80,7 +80,11 @@ $smartphone->smartheader();
 		</ul>
 		<?php } ?>
 
-	<br /><br /></div><!-- /content -->
+	</div><!-- /content -->
+	
+	<div data-role="footer" data-theme="b">
+		<h1></h1>
+	</div>
 
 </div><!-- /page -->
 
