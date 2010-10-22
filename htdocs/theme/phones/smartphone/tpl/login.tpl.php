@@ -25,10 +25,9 @@ $smartphone->smartheader();
 <div data-role="page" id="dol-home" data-theme="b">
 
 	<div data-role="header" data-nobackbtn="true" data-theme="b">
-	<div id="dol-homeheader">
-		<img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/dolibarr.png'; ?>">
-		<a href="index.html" data-icon="gear" class="ui-btn-right"><?php echo $langs->trans('Tools'); ?></a>
-	</div>
+		<div id="dol-homeheader">
+			<img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/dolibarr.png'; ?>">
+		</div>
 	</div>
 
 	<div data-role="content">
@@ -68,20 +67,20 @@ $smartphone->smartheader();
 		<?php if ($forgetpasslink) { ?>
 			<li>
 				<img alt="tools" class="ui-li-icon" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/tools.png'; ?>" />
-				<a href="<?php echo 'user/passwordforgotten.php'; ?>"><?php echo $langs->trans('PasswordForgotten'); ?></a>
+				<a href="<?php echo 'user/passwordforgotten.php'; ?>" data-icon="gear"><?php echo $langs->trans('PasswordForgotten'); ?></a>
 			</li>
 		<?php } ?>
 		
 		<?php if ($helpcenterlink) { ?>
 			<li>
 				<img alt="support" class="ui-li-icon" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/support.png'; ?>" />
-				<a href="<?php echo 'support/index.php'; ?>"><?php echo $langs->trans('NeedHelpCenter'); ?></a>
+				<a href="<?php echo 'support/index.php'; ?>" data-icon="gear"><?php echo $langs->trans('NeedHelpCenter'); ?></a>
 			</li>
 		<?php } ?>
 		</ul>
 		<?php } ?>
 
-	</div><!-- /content -->
+	<br /><br /></div><!-- /content -->
 
 </div><!-- /page -->
 
