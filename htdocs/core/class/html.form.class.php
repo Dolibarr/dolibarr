@@ -145,8 +145,7 @@ class Form
 
         if (! $htmltext) return $text;
 
-        $paramfortooltiptext ='';
-        $paramfortooltippicto ='';
+        $paramfortooltip ='';
 
         // Sanitize tooltip
         $htmltext=str_replace("\\","\\\\",$htmltext);
@@ -159,26 +158,7 @@ class Form
         if ($conf->use_javascript_ajax)
         {
         	$htmltext=str_replace('"',"&quot;",$htmltext);
-        	/*
-        	if ($tooltipon==1 || $tooltipon==3)
-        	{
-        		$paramfortooltiptext.=' onmouseover="showtip(\''.$htmltext.'\')"';
-        		$paramfortooltiptext.=' onMouseout="hidetip()"';
-            }
-            if ($tooltipon==2 || $tooltipon==3)
-            {
-            	$paramfortooltippicto.=' onmouseover="showtip(\''.$htmltext.'\')"';
-            	$paramfortooltippicto.=' onMouseout="hidetip()"';
-            }
-            */
-        	if ($tooltipon==1 || $tooltipon==3)
-        	{
-        		$paramfortooltiptext.=' title="'.$htmltext.'"';
-            }
-            if ($tooltipon==2 || $tooltipon==3)
-            {
-            	$paramfortooltippicto.=' title="'.$htmltext.'"';
-            }
+        	$paramfortooltip.=' title="'.$htmltext.'"';
         }
         
         $s="";
@@ -187,18 +167,18 @@ class Form
         {
         	if ($text != '')
         	{
-        		$s.='<td'.$paramfortooltiptext.'>'.$text;
+        		$s.='<td'.$paramfortooltip.'>'.$text;
 				if ($direction) $s.='&nbsp;';
 				$s.='</td>';
 			}
-			if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
+			if ($direction) $s.='<td'.$paramfortooltip.' valign="top" width="14">'.$img.'</td>';
 		}
 		else
 		{
-			if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
+			if ($direction) $s.='<td'.$paramfortooltip.' valign="top" width="14">'.$img.'</td>';
 			if ($text != '')
 			{
-				$s.='<td'.$paramfortooltiptext.'>';
+				$s.='<td'.$paramfortooltip.'>';
 				if ($direction) $s.='&nbsp;';
 				$s.=$text.'</td>';
 			}
