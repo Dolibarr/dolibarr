@@ -76,7 +76,7 @@ class modCashDesk extends DolibarrModules
 		$this->requiredby = array();			// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
-		$this->langfiles = array("@cashdesk");
+		$this->langfiles = array("cashdesk");
 
 		// Constantes
 		$this->const = array();
@@ -98,7 +98,7 @@ class modCashDesk extends DolibarrModules
 									'mainmenu'=>'cashdesk',
 									'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 									'url'=>'/cashdesk/index.php',
-									'langs'=>'@cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
 									'perms'=>1,		// Use 'perms'=>'1' if you want your menu with no permission rules
 									'target'=>'pointofsale',
