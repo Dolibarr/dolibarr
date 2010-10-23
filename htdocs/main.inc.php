@@ -947,9 +947,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
                         track: true,
                         delay: 0,
                         showURL: false,
-                        extraClass: "pretty fancy",
-//                        fixPNG: true,
-//                        positionLeft: false,
+/*                        extraClass: "pretty fancy",
+                        fixPNG: true,*/
+                        positionLeft: false,
                         bodyHandler: function() {
                         /*console.log(jQuery(this).attr("tooltipText"));*/
                         return jQuery(this).attr("tooltipText"); }
