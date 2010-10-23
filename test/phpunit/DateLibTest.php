@@ -55,7 +55,7 @@ class DateLibTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return FactureTest
+	 * @return DateLibTest
 	 */
 	function DateLibTest()
 	{
