@@ -46,7 +46,6 @@ class Categorie
 	var $label;
 	var $description;
 	var $socid;
-	var $statut;
 	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member
 
 	var $cats=array();			// Tableau en memoire des categories
@@ -513,7 +512,7 @@ class Categorie
 
 		$res  = $this->db->query ($sql);
 
-		$n    = $this->db->fetch_array ($res);
+		$n    = $this->db->fetch_array($res);
 
 		return ($n[0] > 0);
 	}
@@ -1167,5 +1166,25 @@ class Categorie
 		$this->imgHeight = $infoImg[1]; // Hauteur de l'image
 	}
 
+
+    /**
+     *      Initialise an example of instance with random values
+     *      Used to build previews or test instances
+     */
+    function initAsSpecimen()
+    {
+        global $user,$langs,$conf;
+
+        dol_syslog("Categorie::initAsSpecimen");
+
+        // Initialise parametres
+        $this->id=0;
+        $this->id_mere=0;
+        $this->label = 'SPECIMEN';
+        $this->specimen=1;
+        $this->description = 'This is a description';
+        $this->socid = 1;
+        $this->type = 0;
+    }
 }
 ?>
