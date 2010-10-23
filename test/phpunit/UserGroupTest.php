@@ -234,7 +234,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testUserOther
+     * @depends	testUserGroupOther
      * The depends says test is run only if previous is ok
      */
     public function testUserGroupDelete($id)

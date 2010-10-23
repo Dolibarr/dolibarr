@@ -70,7 +70,7 @@ class MyTestSuite
         require_once dirname(__FILE__).'/ContratTest.php';
         $suite->addTestSuite('ContratTest');
         require_once dirname(__FILE__).'/FactureTest.php';
-        $suite->addTestSuite('FactureTest');
+        $suite->addTestSuite('FactureTest');    // This one covers also triggers
         require_once dirname(__FILE__).'/FactureFournisseurTest.php';
         $suite->addTestSuite('FactureFournisseurTest');
         require_once dirname(__FILE__).'/PropalTest.php';
@@ -83,6 +83,9 @@ class MyTestSuite
         $suite->addTestSuite('CompanyBankAccountTest');
         require_once dirname(__FILE__).'/ChargeSocialesTest.php';
         $suite->addTestSuite('ChargeSocialesTest');
+
+        require_once dirname(__FILE__).'/CategorieTest.php';
+        $suite->addTestSuite('CategorieTest');
 
         require_once dirname(__FILE__).'/ModulesTest.php';
         $suite->addTestSuite('ModulesTest');
