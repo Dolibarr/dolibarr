@@ -46,3 +46,8 @@ else header('Cache-Control: no-cache');
 .ui-mobile #dol-homeheader h1 { margin: 0 0 10px; }
 .ui-mobile #dol-homeheader p { margin: 0; }
 
+.ui-li-icon {
+	left:5px;
+	top:0.3em;
+}
+
