@@ -138,12 +138,12 @@ class ModeleNumRefFicheinter
 
 
 /**
- \brief      Cree une fiche intervention sur disque en fonction du modele de FICHEINTER_ADDON_PDF
- \param	    db  			objet base de donnee
- \param	    object			Object fichinter
- \param	    modele			force le modele a utiliser ('' par defaut)
- \param		outputlangs		objet lang a utiliser pour traduction
- \return     int         	0 si KO, 1 si OK
+ *  Create an intervention document on disk using template defined into FICHEINTER_ADDON_PDF
+ *  @param	    db  			objet base de donnee
+ *  @param	    object			Object fichinter
+ *  @param	    modele			force le modele a utiliser ('' par defaut)
+ *  @param		outputlangs		objet lang a utiliser pour traduction
+ *  @return     int         	0 si KO, 1 si OK
  */
 function fichinter_create($db, $object, $modele='', $outputlangs='')
 {
@@ -161,9 +161,10 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 		}
 		else
 		{
-			dol_syslog("Error ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined"), LOG_ERR);
-			print "Error ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined");
-			return 0;
+			$modele = 'soleil';
+		    //dol_syslog("Error ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined"), LOG_ERR);
+			//print "Error ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined");
+			//return 0;
 		}
 	}
 

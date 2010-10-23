@@ -11,7 +11,6 @@
     <directory>../../htdocs/includes/fpdf/</directory>
     <directory>../../htdocs/includes/geoip/</directory>
     <directory>../../htdocs/includes/iui/</directory>
-    <directory>../../htdocs/includes/iwebkit/</directory>
     <directory>../../htdocs/includes/jcrop/</directory>
     <directory>../../htdocs/includes/jquery/</directory>
     <directory>../../htdocs/includes/jsgantt/</directory>

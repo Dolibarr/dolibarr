@@ -49,6 +49,49 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @covers modBarcode
  * @covers modBookmark
  * @covers modBoutique
+ * @covers modCashDesk
+ * @covers modCategorie
+ * @covers modClickToDial
+ * @covers modCommande
+ * @covers modComptabilite
+ * @covers modContrat
+ * @covers modDeplacement
+ * @covers modDocument
+ * @covers modDomain
+ * @covers modDon
+ * @covers modECM
+ * @covers modExpedition
+ * @covers modExport
+ * @covers modExternalRss
+ * @covers modExternalSite
+ * @covers modFacture
+ * @covers modFckeditor
+ * @covers modFicheinter
+ * @covers modFournisseur
+ * @covers modFTP
+ * @covers modGeoIPMaxmind
+ * @covers modGravatar
+ * @covers modImport
+ * @covers modLabel
+ * @covers modLdap
+ * @covers modMailing
+ * @covers modMantis
+ * @covers modNotification
+ * @covers modPaybox
+ * @covers modPaypal
+ * @covers modPhenix
+ * @covers modPrelevement
+ * @covers modProduct
+ * @covers modProjet
+ * @covers modPropale
+ * @covers modService
+ * @covers modSociete
+ * @covers modStock
+ * @covers modSyslog
+ * @covers modTax
+ * @covers modUser
+ * @covers modWebcalendar
+ * @covers modWebServices
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class ModulesTest extends PHPUnit_Framework_TestCase

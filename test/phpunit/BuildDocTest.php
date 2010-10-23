@@ -33,6 +33,8 @@ require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php'
 require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fichinter/class/fichinter.class.php';
 require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
+require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
+require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
 
 if (empty($user->id))
 {
@@ -216,6 +218,34 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         // Edison
         $localobject->modelpdf='jaune';
         $result=propale_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+
+        return 0;
+    }
+
+    /**
+     * @covers  ModelePDFProjects
+     * @covers  pdf_baleine
+     */
+    public function testProjectBuild()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/project/modules_project.php');
+        $conf->project->dir_output.='/temp';
+        $localobject=new Project($this->savdb);
+        $localobject->initAsSpecimen();
+        $localobject->socid=1;
+
+        // Soleil
+        $localobject->modelpdf='baleine';
+        $result=project_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
