@@ -186,12 +186,12 @@ class Form
     }
 
     /**
-     *	\brief     	Show a text with a picto and a tooltip on picto
-     *	\param     	text				Text to show
-     *	\param   	htmltooltip     	Content of tooltip
-     *	\param		direction			1=Icon is after text, -1=Icon is before text
-     * 	\param		type				Type of picto (info, help, warning, superadmin...)
-     * 	\return		string				HTML code of text, picto, tooltip
+     *	Show a text with a picto and a tooltip on picto
+     *	@param     	text				Text to show
+     *	@param   	htmltooltip     	Content of tooltip
+     *	@param		direction			1=Icon is after text, -1=Icon is before text
+     * 	@param		type				Type of picto (info, help, warning, superadmin...)
+     * 	@return		string				HTML code of text, picto, tooltip
      */
     function textwithpicto($text,$htmltext,$direction=1,$type='help')
     {
