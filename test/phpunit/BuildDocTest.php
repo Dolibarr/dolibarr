@@ -31,6 +31,8 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fichinter/class/fichinter.class.php';
+require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
 
 if (empty($user->id))
 {
@@ -214,6 +216,70 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         // Edison
         $localobject->modelpdf='jaune';
         $result=propale_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+
+        return 0;
+    }
+
+    /**
+     * @covers  ModelePDFFicheinter
+     * @covers  pdf_soleil
+     */
+    public function testFichinterBuild()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/fichinter/modules_fichinter.php');
+        $conf->fichinter->dir_output.='/temp';
+        $localobject=new Fichinter($this->savdb);
+        $localobject->initAsSpecimen();
+        $localobject->socid=1;
+
+        // Soleil
+        $localobject->modelpdf='soleil';
+        $result=fichinter_create($db, $localobject, $localobject->modelpdf, $langs);
+
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+
+        return 0;
+    }
+
+    /**
+     * @covers  ModelePDFExpedition
+     * @covers  pdf_expedition_merou
+     * @covers  pdf_expedition_rouget
+     */
+    public function testExpeditionBuild()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/expedition/pdf/ModelePdfExpedition.class.php');
+        $conf->expedition->dir_output.='/temp';
+        $localobject=new Expedition($this->savdb);
+        $localobject->initAsSpecimen();
+        $localobject->socid=1;
+
+        // Soleil
+        $localobject->modelpdf='merou';
+        $result=expedition_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
+
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+
+        // Soleil
+        $localobject->modelpdf='rouget';
+        $result=expedition_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
