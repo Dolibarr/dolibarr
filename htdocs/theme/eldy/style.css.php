@@ -1295,20 +1295,6 @@ table.valid {
 /* Tooltips                                                                       */
 /* ============================================================================== */
 
-#dhtmltooltipx
-{
-position: absolute;
-width: <?php print dol_size(450,'width'); ?>px;
-border-top: solid 1px #BBBBBB;
-border-<?php print $left; ?>: solid 1px #BBBBBB;
-border-<?php print $right; ?>: solid 1px #444444;
-border-bottom: solid 1px #444444;
-padding: 2px;
-background-color: #FFFFE0;
-visibility: hidden;
-z-index: 100;
-}
-
 #tooltip {
 position: absolute;
 width: <?php print dol_size(450,'width'); ?>px;
@@ -1320,6 +1306,7 @@ padding: 2px;
 z-index: 3000;
 background-color: #FFFFF0;
 opacity: 1;
+-moz-border-radius:6px;
 }
 
 

@@ -1067,19 +1067,20 @@ table.valid {
 /* Tooltips                                                                       */
 /* ============================================================================== */
 
-#dhtmltooltip
-{
+#tooltip {
 position: absolute;
 width: <?php print dol_size(450,'width'); ?>px;
 border-top: solid 1px #BBBBBB;
-border-left: solid 1px #BBBBBB;
-border-right: solid 1px #444444;
+border-<?php print $left; ?>: solid 1px #BBBBBB;
+border-<?php print $right; ?>: solid 1px #444444;
 border-bottom: solid 1px #444444;
 padding: 2px;
-background-color: #FFFFE0;
-visibility: hidden;
-z-index: 100;
+z-index: 3000;
+background-color: #FFFFF0;
+opacity: 1;
+-moz-border-radius:6px;
 }
+
 
 
 /* ============================================================================== */
