@@ -54,7 +54,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 	{
 		if ($tabMenu[$i]['enabled'] == true)
 		{
-			print_start_top_menu($tabMenu[$i]['titre'],$i);
+			print_start_top_menu($tabMenu[$i]['rowid'],$tabMenu[$i]['titre'],$i);
 			
 			$idsel=(empty($tabMenu[$i]['mainmenu'])?'none':$tabMenu[$i]['mainmenu']);
 			if ($tabMenu[$i]['right'] == true)	// Is allowed
@@ -86,15 +86,32 @@ function print_iphone_menu($db,$atarget,$type_user)
 						print_start_left_menu();
 						
 						$num = count($menus);
+						//var_dump($menus);
 						
 						for($j=0; $j<$num; $j++)
 						{
-							$url=$menus[$j]['url'];
-							print_start_menu_entry();
-							print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
-							print_text_menu_entry($menus[$j]['titre']);
-							print '</a>';
-							print_end_menu_entry();
+							/*
+							if ($menus[$j]['level'] == 0)
+							{
+								print_start_top_menu($tabMenu[$i]['rowid'].'_'.$j, $menus[$j]['titre'], 1, 'c');
+								print_start_left_menu();
+							}*/
+							
+							if ($menus[$j]['level'] == 0)
+							{
+								$url=$menus[$j]['url'];
+								print_start_menu_entry();
+								print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
+								print_text_menu_entry($menus[$j]['titre']);
+								print '</a>';
+								print_end_menu_entry();
+							}
+							/*
+							if (empty($menus[$j+1]['level']))
+							{
+								print_end_left_menu();
+								print_end_top_menu();
+							}*/
 						}
 						
 						print_end_left_menu();
@@ -120,9 +137,9 @@ function print_iphone_menu($db,$atarget,$type_user)
 
 
 
-function print_start_top_menu($title,$selected=0)
+function print_start_top_menu($id,$title,$collapsed=1,$theme='b')
 {
-	print '<div data-role="collapsible"'.($selected?'data-state="collapsed"':'').' data-theme="b">';
+	print '<div id="collapse_'.$id.'" data-role="collapsible"'.($collapsed?' data-state="collapsed"':'').' data-theme="'.$theme.'">';
 	print '<h3>'.$title.'</h3>';
 	print "\n";
 }

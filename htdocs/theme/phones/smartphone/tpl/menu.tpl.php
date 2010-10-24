@@ -23,6 +23,12 @@ $this->smartheader();
 <!-- START MENU SMARTPHONE TEMPLATE -->
 
 <div data-role="page" id="dol-home">
+	
+	<div data-role="header" data-nobackbtn="true" data-theme="b">
+		<div id="dol-homeheader">
+			<img src="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/'.$this->theme.'/thumbs/dolibarr.png'; ?>">
+		</div>
+	</div>
 
 	<div data-role="content">
 
