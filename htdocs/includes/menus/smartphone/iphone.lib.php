@@ -38,7 +38,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 	
-	//$submenus=array();
+	$submenus='';
 
 	// On sauve en session le menu principal choisi
 	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
@@ -54,7 +54,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 	{
 		if ($tabMenu[$i]['enabled'] == true)
 		{
-			print_start_top_menu($tabMenu[$i]['rowid'],$tabMenu[$i]['titre'],$i);
+			print print_start_top_menu($tabMenu[$i]['rowid'],$tabMenu[$i]['titre'],$i);
 			
 			$idsel=(empty($tabMenu[$i]['mainmenu'])?'none':$tabMenu[$i]['mainmenu']);
 			if ($tabMenu[$i]['right'] == true)	// Is allowed
@@ -83,55 +83,61 @@ function print_iphone_menu($db,$atarget,$type_user)
 					
 					if (is_array($menus) && !empty($menus))
 					{
-						print_start_left_menu();
+						print print_start_left_menu();
 						
 						$num = count($menus);
 						//var_dump($menus);
 						
 						for($j=0; $j<$num; $j++)
 						{
-							/*
-							if ($menus[$j]['level'] == 0)
-							{
-								print_start_top_menu($tabMenu[$i]['rowid'].'_'.$j, $menus[$j]['titre'], 1, 'c');
-								print_start_left_menu();
-							}*/
-							
 							if ($menus[$j]['level'] == 0)
 							{
 								$url=$menus[$j]['url'];
-								print_start_menu_entry();
-								print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
-								print_text_menu_entry($menus[$j]['titre']);
-								print '</a>';
-								print_end_menu_entry();
+								print print_start_menu_entry();
+								if (empty($menus[$j+1]['level'])) print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
+								print print_text_menu_entry($menus[$j]['titre']);
+								if (empty($menus[$j+1]['level'])) print '</a>';
+								//if (empty($menus[$j+1]['level'])) print print_end_menu_entry();
 							}
-							/*
-							if (empty($menus[$j+1]['level']))
+							
+							if ($menus[$j]['level'] == 1)
 							{
-								print_end_left_menu();
-								print_end_top_menu();
-							}*/
+								if ($menus[$j-1]['level'] == 0) print '<ul>';
+
+								//$submenus.= print_start_top_menu($tabMenu[$i]['rowid'].'_'.$j, $menus[$j]['titre'], 1, 'c');
+								//$submenus.= print_start_left_menu();
+								
+								$url=$menus[$j]['url'];
+								print print_start_menu_entry();
+								print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
+								print print_text_menu_entry($menus[$j]['titre']);
+								print '</a>';
+								print print_end_menu_entry();
+								
+								if (empty($menus[$j+1]['level'])) print print_end_left_menu();
+							}
+							
+							if (empty($menus[$j+1]['level'])) print print_end_menu_entry();
 						}
 						
-						print_end_left_menu();
+						print print_end_left_menu();
 					}
 				}
 				
-				print_end_top_menu();
+				print print_end_top_menu();
 			}
 		}
 	}
-	
+	print $submenus;
 	print '<br>';
 	
-	print_start_left_menu('false','e');
-	print_start_menu_entry();
+	print print_start_left_menu('false','e');
+	print print_start_menu_entry();
 	print '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
-	print_text_menu_entry($langs->trans('Logout'));
+	print print_text_menu_entry($langs->trans('Logout'));
 	print '</a>';
-	print_end_menu_entry();
-	print_end_left_menu();
+	print print_end_menu_entry();
+	print print_end_left_menu();
 
 	print "\n";
 
@@ -141,43 +147,57 @@ function print_iphone_menu($db,$atarget,$type_user)
 
 function print_start_top_menu($id,$title,$collapsed=1,$theme='b')
 {
-	print '<div id="collapse_'.$id.'" data-role="collapsible"'.($collapsed?' data-state="collapsed"':'').' data-theme="'.$theme.'">';
-	print '<h3>'.$title.'</h3>';
-	print "\n";
+	$out = '<div id="collapse_'.$id.'" data-role="collapsible"'.($collapsed?' data-state="collapsed"':'').' data-theme="'.$theme.'">';
+	$out.= '<h3>'.$title.'</h3>';
+	$out.= "\n";
+	
+	return $out;
 }
 
 function print_start_left_menu($inset='true', $theme='c')
 {
-	print '<ul data-inset="'.$inset.'" data-role="listview" data-theme="'.$theme.'">';
-	print "\n";
+	$out = '<ul data-inset="'.$inset.'" data-role="listview" data-theme="'.$theme.'">';
+	$out.= "\n";
+	
+	return $out;
 }
 
 function print_start_menu_entry()
 {
-	print '<li>';
+	$out = '<li>';
+	
+	return $out;
 }
 
 function print_text_menu_entry($text)
 {
-	print $text;
+	$out = $text;
+	
+	return $out;
 }
 
 function print_end_menu_entry()
 {
-	print '</li>';
-	print "\n";
+	$out = '</li>';
+	$out.= "\n";
+	
+	return $out;
 }
 
 function print_end_left_menu()
 {
-	print '</ul>';
-	print "\n";
+	$out = '</ul>';
+	$out.= "\n";
+	
+	return $out;
 }
 
 function print_end_top_menu()
 {
-	print '</div>';
-	print "\n";
+	$out = '</div>';
+	$out.= "\n";
+	
+	return $out;
 }
 
 ?>
