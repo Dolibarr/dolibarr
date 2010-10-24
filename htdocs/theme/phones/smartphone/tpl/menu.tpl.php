@@ -36,10 +36,16 @@ $this->smartheader();
 	
 	</div><!-- /content -->
 	
-	<div data-role="footer" data-theme="b">
-		<h1></h1>
-	</div>
-
+	<div data-role="footer" data-id="foo1" data-position="fixed" data-theme="b">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="<?php echo DOL_URL_ROOT.'/user/logout.php'; ?>"><?php echo $langs->trans("Logout"); ?></a></li>
+				<li>&nbsp;</li>
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->
+	</div><!-- /footer -->
+	
 </div><!-- /page -->
 
 <!-- END MENU SMARTPHONE TEMPLATE -->
