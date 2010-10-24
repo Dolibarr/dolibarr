@@ -90,16 +90,8 @@ function print_iphone_menu($db,$atarget,$type_user)
 						for($j=0; $j<$num; $j++)
 						{
 							$url=$menus[$j]['url'];
-							if (! preg_match('/\?/',$url)) $url.='?';
-							else $url.='&';
-							if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
-							{
-								$url.='mainmenu='.$menus[$j]['mainmenu'].'&leftmenu=&';
-							}
-							$url.="idmenu=".$menus[$j]['rowid'];
-							
 							print_start_menu_entry();
-							print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":' target="_self"')).'>';
+							print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
 							print_text_menu_entry($menus[$j]['titre']);
 							print '</a>';
 							print_end_menu_entry();
@@ -116,7 +108,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 	
 	print_start_left_menu();
 	print_start_menu_entry();
-	print '<a href="'.DOL_URL_ROOT.'/user/logout.php" target="_self">';
+	print '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
 	print_text_menu_entry($langs->trans('Logout'));
 	print '</a>';
 	print_end_menu_entry();
