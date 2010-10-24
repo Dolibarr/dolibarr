@@ -41,7 +41,8 @@ else header('Cache-Control: no-cache');
 
 ?>
 
-.ui-mobile #dol-home {  background: #e5e5e5 url(../images/jqm-sitebg.png) top center repeat-x; }
+/*.ui-mobile #dol-home {  background: #e5e5e5 url(<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/menu/pinstripes.png'; ?>) top center repeat-x; }*/
+.ui-mobile #dol-home {  background: #e5e5e5 }
 .ui-mobile #dol-homeheader { padding: 5px 5px 0; text-align: center }
 .ui-mobile #dol-homeheader h1 { margin: 0 0 10px; }
 .ui-mobile #dol-homeheader p { margin: 0; }

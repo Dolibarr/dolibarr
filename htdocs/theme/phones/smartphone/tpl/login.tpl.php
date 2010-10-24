@@ -26,7 +26,7 @@ $smartphone->smartheader();
 
 	<div data-role="header" data-nobackbtn="true" data-theme="b">
 		<div id="dol-homeheader">
-			<img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/dolibarr.png'; ?>">
+			<img src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/img/dolibarr.png'; ?>">
 		</div>
 	</div>
 
