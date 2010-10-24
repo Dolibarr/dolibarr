@@ -123,7 +123,9 @@ function print_iphone_menu($db,$atarget,$type_user)
 		}
 	}
 	
-	print_start_left_menu();
+	print '<br>';
+	
+	print_start_left_menu('false','e');
 	print_start_menu_entry();
 	print '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
 	print_text_menu_entry($langs->trans('Logout'));
@@ -144,9 +146,9 @@ function print_start_top_menu($id,$title,$collapsed=1,$theme='b')
 	print "\n";
 }
 
-function print_start_left_menu()
+function print_start_left_menu($inset='true', $theme='c')
 {
-	print '<ul data-inset="true" data-role="listview">';
+	print '<ul data-inset="'.$inset.'" data-role="listview" data-theme="'.$theme.'">';
 	print "\n";
 }
 
