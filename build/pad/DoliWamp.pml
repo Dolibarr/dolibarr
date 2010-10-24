@@ -42,19 +42,24 @@
 			<Char_Desc_80>DoliWamp, the easy to use Dolibarr for Windows to manage your company,foundation</Char_Desc_80>
 			<Char_Desc_250>DoliWamp is the Dolibarr ERP/CRM for Windows, the easy to use open source software to manage your activity (invoices, customers, suppliers, contracts, agenda, emailings...) and any other things a small or mid-sized business or a foundation needs.</Char_Desc_250>
 			<Char_Desc_450>DoliWamp is the Dolibarr ERP/CRM autoinstaller for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or mid-sized businesses, freelancers or foundations.</Char_Desc_450>
-			<Char_Desc_2000>DoliWamp is the Dolibarr ERP/CRM for Windows.
-Dolibarr ERP &amp; CRM is a software built by modules addition (you enable only features you need), to manage small or mid-sized businesses, freelancers or foundations (You can manage or follow contacts, invoices, orders, commercial proposals, products, stock management, agenda, mass emailings, members of a foundation, bank accounts...).
-It's an OpenSource project, based on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems). Dolibarr differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, OpenERP, Neogia, Compiere, etc) because everything was made to be more simple: Simple to install, Simple to use, Simple to develop. 
-DoliWamp is the auto-installer for Windows users with no technical knowledge to install Dolibarr ERP/CRM and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file.
+			<Char_Desc_2000>DoliWamp is the Dolibarr ERP/CRM for Windows.
+Dolibarr ERP &amp; CRM is a software built by modules addition (you enable only features you need), to manage small or mid-sized businesses, freelancers or foundations (You can manage or follow contacts, invoices, orders, commercial proposals, products, stock management, agenda, mass emailings, members of a foundation, bank accounts...).
+It's an OpenSource project, based on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems). Dolibarr differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, OpenERP, Neogia, Compiere, etc) because everything was made to be more simple: Simple to install, Simple to use, Simple to develop. 
+DoliWamp is the auto-installer for Windows users with no technical knowledge to install Dolibarr ERP/CRM and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file.
 </Char_Desc_2000>
 		</English>
 		<French>
-			<Keywords>doliwamp, dolibarr, grc, pgi, factures, facturation, devis, trésorerie, stock, produits, agenda, banque, affaire, société, association, gestion</Keywords>
-			<Char_Desc_45>DoliWamp, le Dolibarr ERP/CRM pour Windows</Char_Desc_45>
-			<Char_Desc_80>DoliWamp, la version simple pour Windows de gestion Dolibarr ERP/CRM</Char_Desc_80>
-			<Char_Desc_250>DoliWamp est la version de Dolibarr ERP/CRM pour Windows, le logiciel simple de gestion de votre entreprise, PME, association ou auto-entreprenariat (contacts, factures, devis, commandes, fournisseurs, contrats, agenda, emailings, trésorerie...).</Char_Desc_250>
-			<Char_Desc_450 />
-			<Char_Desc_2000 />
+			<Keywords>doliwamp, dolibarr, erp, crm, factures, devis, commandes, trésorerie, stock, produits, agenda, banques, affaires, sociétés, association, gestion</Keywords>
+			<Char_Desc_45>DoliWamp, Dolibarr ERP/CRM pour Windows</Char_Desc_45>
+			<Char_Desc_80>DoliWamp, la version simple à installer de Dolibarr ERP/CRM</Char_Desc_80>
+			<Char_Desc_250>Dolibarr ERP/CRM est un logiciel modulaire de gestions de TPE/PME, d'indépendants, d'entrepreneurs ou d'associations. En terme plus courtsc'est un ERP et CRM OpenSource simple à installer et utiliser.</Char_Desc_250>
+			<Char_Desc_450>Dolibarr ERP/CRM est un logiciel modulaire (on n'active que les fonctions que l'on désire) de gestions de TPE/PME, d'indépendants, d'entrepreneurs ou d'associations. En terme plus techniques, c'est un ERP et CRM. C'est un projet OpenSource qui s'execute au sein d'un serveur Web et peut donc être accessible depuis n'importe quel lieu disposant d'une connexion Internet (Projet basé sur un serveur WAMP, MAMP ou LAMP: Apache, MySQL, PHP).</Char_Desc_450>
+			<Char_Desc_2000>Dolibarr ERP/CRM est un logiciel modulaire (on n'active que les fonctions que l'on désire) de gestions de TPE/PME, d'indépendants, d'entrepreneurs ou d'associations. En terme plus techniques, c'est un ERP et CRM. C'est un projet OpenSource qui s'execute au sein d'un serveur Web et peut donc être accessible depuis n'importe quel lieu disposant d'une connexion Internet (Projet basé sur un serveur WAMP, MAMP ou LAMP: Apache, MySQL, PHP).
+
+Dolibarr vient compléter les offres déjà nombreuses de logiciels de cette catégorie (comme OpenBravo, OpenERP, SugarCRM, Neogia, Compiere, etc.) mais se démarque par le fait qu'ici tout est fait pour offrir de la simplicité (règle des 3 S):
+ * Simple pour l'installation (avec au choix des installeurs clé en main pour ceux qui ignorent comment installer un serveur Web, ou une installation manuelle)
+ * Simple pour l'utilisation (fonctions modulaires pour ne pas surcharger les menus, informations claires à la saisie)
+ * Simple pour le développement (pas de frameworks lourds). Dolibarr intègre en effet sa propre architecture (design patterns) permettant à tout développeur d'être tout de suite opérationnel sans connaissances particulières autre que le PHP. </Char_Desc_2000>
 		</French>
 	</Program_Descriptions>
 	<Web_Info>
@@ -76,6 +81,11 @@ DoliWamp is the auto-installer for Windows users with no technical knowledge to 
 		<Distribution_Permissions>GNU GPL</Distribution_Permissions>
 		<EULA>GNU GPL</EULA>
 	</Permissions>
+	<ASP>
+		<ASP_FORM>Y</ASP_FORM>
+		<ASP_Member>N</ASP_Member>
+		<ASP_Member_Number />
+	</ASP>
 	<Affiliates>
 		<Affiliates_FORM>Y</Affiliates_FORM>
 		<Affiliates_VERSION>1.4</Affiliates_VERSION>
@@ -182,9 +192,4 @@ DoliWamp is the auto-installer for Windows users with no technical knowledge to 
 		<Affiliates_Yaskifo_Product_ID />
 		<Affiliates_Yaskifo_Maximum_Commission_Rate />
 	</Affiliates>
-	<ASP>
-		<ASP_FORM>Y</ASP_FORM>
-		<ASP_Member>N</ASP_Member>
-		<ASP_Member_Number />
-	</ASP>
 </PADGEN_PML>
