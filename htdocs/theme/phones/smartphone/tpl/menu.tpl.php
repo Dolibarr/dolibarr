@@ -17,17 +17,24 @@
  *
  * $Id$
  */
-$this->smartheader('menu');
+$this->smartheader();
 ?>
 
 <!-- START MENU SMARTPHONE TEMPLATE -->
 
-<div class="toolbar">
-	<h1 id="pageTitle"></h1>
-	<a id="backButton" class="button" href="#"></a>
-</div>
+<div data-role="page" id="dol-home">
 
-<?php $menusmart->showmenu(); ?>
+	<div data-role="content">
+
+	<?php $menusmart->showmenu(); ?>
+	
+	</div><!-- /content -->
+	
+	<div data-role="footer" data-theme="b">
+		<h1></h1>
+	</div>
+
+</div><!-- /page -->
 
 <!-- END MENU SMARTPHONE TEMPLATE -->
 

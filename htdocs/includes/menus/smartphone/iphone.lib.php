@@ -38,7 +38,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 	
-	$submenus=array();
+	//$submenus=array();
 
 	// On sauve en session le menu principal choisi
 	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
@@ -48,15 +48,14 @@ function print_iphone_menu($db,$atarget,$type_user)
 	$menutop = new Menubase($db,'iphone','top');
 	$menuleft = new Menubase($db,'iphone','left');
 	$tabMenu = $menutop->menuTopCharger($type_user,$_SESSION['mainmenu'], 'iphone');
-	//var_dump($newmenu);
-	
-	
-	print_start_menu_array('home',$langs->trans('Home'),1);
+	//var_dump($tabMenu);
 
 	for($i=0; $i<count($tabMenu); $i++)
 	{
 		if ($tabMenu[$i]['enabled'] == true)
 		{
+			print_start_top_menu($tabMenu[$i]['titre'],$i);
+			
 			$idsel=(empty($tabMenu[$i]['mainmenu'])?'none':$tabMenu[$i]['mainmenu']);
 			if ($tabMenu[$i]['right'] == true)	// Is allowed
 			{
@@ -78,68 +77,67 @@ function print_iphone_menu($db,$atarget,$type_user)
 					
 					$newmenu = new Menu();
 					
-					$submenus[$i] = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'iphone');
+					$leftmenu = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'iphone');
+					
+					$menus = $leftmenu->liste;
+					
+					if (is_array($menus) && !empty($menus))
+					{
+						print_start_left_menu();
+						
+						$num = count($menus);
+						
+						for($j=0; $j<$num; $j++)
+						{
+							$url=$menus[$j]['url'];
+							if (! preg_match('/\?/',$url)) $url.='?';
+							else $url.='&';
+							if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
+							{
+								$url.='mainmenu='.$menus[$j]['mainmenu'].'&leftmenu=&';
+							}
+							$url.="idmenu=".$menus[$j]['rowid'];
+							
+							print_start_menu_entry();
+							print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":' target="_self"')).'>';
+							print_text_menu_entry($menus[$j]['titre']);
+							print '</a>';
+							print_end_menu_entry();
+						}
+						
+						print_end_left_menu();
+					}
 				}
-
-				print_start_menu_entry();
-				print '<a href="#'.$tabMenu[$i]['mainmenu'].'">';
-				print_text_menu_entry($tabMenu[$i]['titre']);
-				print '</a>';
-				print_end_menu_entry();
+				
+				print_end_top_menu();
 			}
 		}
 	}
 	
+	print_start_left_menu();
 	print_start_menu_entry();
 	print '<a href="'.DOL_URL_ROOT.'/user/logout.php" target="_self">';
 	print_text_menu_entry($langs->trans('Logout'));
 	print '</a>';
 	print_end_menu_entry();
-
-	print_end_menu_array();
+	print_end_left_menu();
 
 	print "\n";
 
-	foreach($submenus as $submenu)
-	{
-		$menu = $submenu->liste;
-		
-		//var_dump($menu);
-		
-		if (is_array($menu) && !empty($menu))
-		{
-			print_start_menu_array($menu[0]['mainmenu'],$menu[0]['titre']);
-				
-			$num = count($menu);
-				
-			for($i=0; $i<$num; $i++)
-			{
-				$url=$menu[$i]['url'];
-				if (! preg_match('/\?/',$url)) $url.='?';
-				else $url.='&';
-				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
-				{
-					$url.='mainmenu='.$menu[$i]['mainmenu'].'&leftmenu=&';
-				}
-				$url.="idmenu=".$menu[$i]['rowid'];
-
-				print_start_menu_entry();
-				print '<a href="'.$url.'"'.($menu[$i]['atarget']?" target='".$menu[$i]['atarget']."'":($atarget?" target=$atarget":' target="_self"')).'>';
-				print_text_menu_entry($menu[$i]['titre']);
-				print '</a>';
-				print_end_menu_entry();
-			}
-				
-			print_end_menu_array();
-		}
-	}
 }
 
 
 
-function print_start_menu_array($id,$title,$selected=0)
+function print_start_top_menu($title,$selected=0)
 {
-	print '<ul id="'.$id.'" title="'.$title.'" '.($selected?'selected="true"':'').'>';
+	print '<div data-role="collapsible"'.($selected?'data-state="collapsed"':'').' data-theme="b">';
+	print '<h3>'.$title.'</h3>';
+	print "\n";
+}
+
+function print_start_left_menu()
+{
+	print '<ul data-inset="true" data-role="listview">';
 	print "\n";
 }
 
@@ -150,8 +148,7 @@ function print_start_menu_entry()
 
 function print_text_menu_entry($text)
 {
-	print '<span class="name">'.$text.'</span>';
-	print '<span class="arrow"></span>';
+	print $text;
 }
 
 function print_end_menu_entry()
@@ -160,9 +157,15 @@ function print_end_menu_entry()
 	print "\n";
 }
 
-function print_end_menu_array()
+function print_end_left_menu()
 {
 	print '</ul>';
+	print "\n";
+}
+
+function print_end_top_menu()
+{
+	print '</div>';
 	print "\n";
 }
 

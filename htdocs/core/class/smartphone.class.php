@@ -78,7 +78,6 @@ class Smartphone {
     	global $conf;
     	
     	if ($type == 'default') include_once($this->template_dir.'header.tpl.php');
-    	if ($type == 'menu') include_once($this->template_dir.'menuheader.tpl.php');
     }
     
 	/**
