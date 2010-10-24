@@ -100,7 +100,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 								//if (empty($menus[$j+1]['level'])) print print_end_menu_entry();
 							}
 							
-							if ($menus[$j]['level'] == 1)
+							if ($menus[$j]['level'] > 0)
 							{
 								if ($menus[$j-1]['level'] == 0) print '<ul>';
 
