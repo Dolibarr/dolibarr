@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="" />
-<title>Création tiers (UCTP01)</title>
+<title>test_thirdparty</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">Création tiers (UCTP01)</td></tr>
+<tr><td rowspan="1" colspan="3">test_thirdparty</td></tr>
 </thead><tbody>
 <tr>
 	<td>open</td>
@@ -43,12 +43,12 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>cp</td>
+	<td>zipcode</td>
 	<td>59500</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>ville</td>
+	<td>town</td>
 	<td>ville</td>
 </tr>
 <tr>
