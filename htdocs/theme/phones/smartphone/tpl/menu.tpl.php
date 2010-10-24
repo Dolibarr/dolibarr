@@ -36,12 +36,11 @@ $this->smartheader();
 	
 	</div><!-- /content -->
 	
-	<div data-role="footer" data-id="foo1" data-theme="b">
+	<div data-role="footer" data-theme="b">
 		<div data-role="navbar">
 			<ul>
-				<li><a href="<?php echo DOL_URL_ROOT.'/user/logout.php'; ?>"><?php echo $langs->trans("Logout"); ?></a></li>
-				<li>&nbsp;</li>
-				<li>&nbsp;</li>
+				<li><a href="<?php echo DOL_URL_ROOT.'/user/logout.php'; ?>" data-icon="grid"><?php echo $langs->trans("Logout"); ?></a></li>
+				<li><a href="">&nbsp;</a></li>
 			</ul>
 		</div><!-- /navbar -->
 	</div><!-- /footer -->
