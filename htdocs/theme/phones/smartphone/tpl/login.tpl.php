@@ -40,11 +40,11 @@ $smartphone->smartheader();
 			<label for="username"><?php echo $langs->trans('Login'); ?></label>
 			<input type="text" name="username" id="username" value="<?php echo $login; ?>"  />
 			
-			<label for="password"><?php echo $langs->trans('Password'); ?></label>
+			<br><label for="password"><?php echo $langs->trans('Password'); ?></label>
 			<input type="password" name="password" id="password" value="<?php echo $password; ?>" />
 			
 			<?php if ($select_entity) { ?>
-			<label for="entity" class="select"><?php echo $langs->trans('Entity'); ?></label>
+			<br><label for="entity" class="select"><?php echo $langs->trans('Entity'); ?></label>
 			<?php echo $select_entity; ?>
 			<?php } ?>
 			
@@ -57,12 +57,12 @@ $smartphone->smartheader();
 		
 		<input type="submit" data-theme="b" value="<?php echo $langs->trans('Connection'); ?>" />
 		
-		</form>
+		</form><br>
 
 	</div><!-- /content -->
 	
 	<?php if ($forgetpasslink || $helpcenterlink) { ?>
-	<div data-role="footer" data-id="foo1" data-theme="c">
+	<div data-role="footer" data-id="foo1" data-theme="b">
 		<div data-role="navbar">
 			<ul>
 
