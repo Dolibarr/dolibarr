@@ -57,34 +57,26 @@ $smartphone->smartheader();
 		
 		<input type="submit" data-theme="b" value="<?php echo $langs->trans('Connection'); ?>" />
 		
-		</form>	
-
-		<?php if ($forgetpasslink || $helpcenterlink) { ?>
-		<br /><br />
-		<ul data-role="listview" data-theme="c" data-dividertheme="b">
-			<li data-role="list-divider"><?php echo $langs->trans('Tools'); ?></li>
-		
-		<?php if ($forgetpasslink) { ?>
-			<li>
-				<img alt="tools" class="ui-li-icon" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/tools.png'; ?>" />
-				<a href="<?php echo 'user/passwordforgotten.php'; ?>"><?php echo $langs->trans('PasswordForgotten'); ?></a>
-			</li>
-		<?php } ?>
-		
-		<?php if ($helpcenterlink) { ?>
-			<li>
-				<img alt="support" class="ui-li-icon" src="<?php echo $dol_url_root.'/theme/phones/smartphone/theme/'.$smartphone->theme.'/thumbs/support.png'; ?>" />
-				<a href="<?php echo 'support/index.php'; ?>"><?php echo $langs->trans('NeedHelpCenter'); ?></a>
-			</li>
-		<?php } ?>
-		</ul>
-		<?php } ?>
+		</form>
 
 	</div><!-- /content -->
 	
-	<div data-role="footer" data-theme="b">
-		<h1></h1>
-	</div>
+	<?php if ($forgetpasslink || $helpcenterlink) { ?>
+	<div data-role="footer" data-id="foo1" data-theme="c">
+		<div data-role="navbar">
+			<ul>
+
+		<?php if ($forgetpasslink) { ?>
+			<li><a href="<?php echo 'user/passwordforgotten.php'; ?>" data-icon="gear"><?php echo $langs->trans('PasswordForgotten'); ?></a></li>
+		<?php } ?>
+		
+		<?php if ($helpcenterlink) { ?>
+			<li><a href="<?php echo 'support/index.php'; ?>" data-icon="info"><?php echo $langs->trans('NeedHelpCenter'); ?></a></li>
+		<?php } ?>
+			</ul>
+		</div><!-- /navbar -->
+	</div><!-- /footer -->
+	<?php } ?>
 
 </div><!-- /page -->
 
