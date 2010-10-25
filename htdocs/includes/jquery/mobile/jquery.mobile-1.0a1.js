@@ -2268,7 +2268,9 @@ $.widget( "mobile.listview", $.mobile.widget, {
 			var list = $( this ),
 				parent = list.parent(),
 				title = parent.contents()[ 0 ].nodeValue.split("\n")[0],
-				id = parentId + "&" + $.mobile.subPageUrlKey + "=" + $.mobile.idStringEscape(title + " " + i),
+				// DOLFIX - Regis - bug in nested list
+				//id = parentId + "&" + $.mobile.subPageUrlKey + "=" + $.mobile.idStringEscape(title + " " + i),
+				id = parentId + "&" + $.mobile.subPageUrlKey + "=" + $.mobile.idStringEscape(title + "-" + i),
 				theme = list.data( "theme" ) || o.theme,
 				countTheme = list.data( "counttheme" ) || parentList.data( "counttheme" ) || o.countTheme,
 				newPage = list.wrap( "<div data-role='page'><div data-role='content'></div></div>" )

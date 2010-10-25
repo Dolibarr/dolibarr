@@ -35,7 +35,10 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-1.0a1.min.css'; ?>" />
 <link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/default.css.php'; ?>" />
 <script src="<?php echo DOL_URL_ROOT.'/includes/jquery/js/jquery-1.4.3.min.js'; ?>"></script>
+<script src="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-1.0a1.js'; ?>"></script>
+<!--
 <script src="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-1.0a1.min.js'; ?>"></script>
+-->
 </head>
 
 <body>
