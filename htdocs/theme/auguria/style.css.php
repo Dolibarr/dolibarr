@@ -400,7 +400,7 @@ foreach($mainmenuusedarray as $key => $val)
 	cursor:pointer;
 }
 
-.tmenu ul li a.tmenusel,.tmenu ul li a.tmenusel{
+.tmenu ul li a.tmenusel{
 	color:#fff;
 	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria' ?>/img/menus/topmenu_left.gif) no-repeat top left;
 	line-height:305%;
