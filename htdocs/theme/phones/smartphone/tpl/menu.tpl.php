@@ -32,11 +32,7 @@ $this->smartheader();
 
 	<div data-role="content">
 
-	<?php
-		ob_start();
-		$menusmart->showmenu();
-		ob_end_flush();
-	?>
+	<?php $menusmart->showmenu(); ?>
 	
 	</div><!-- /content -->
 	
