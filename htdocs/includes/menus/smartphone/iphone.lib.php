@@ -47,12 +47,14 @@ function print_iphone_menu($db,$atarget,$type_user)
 
 	$menutop = new Menubase($db,'iphone','top');
 	$menuleft = new Menubase($db,'iphone','left');
-	$tabMenu = $menutop->menuTopCharger($type_user,$_SESSION['mainmenu'], 'iphone');
+	$tabMenu = $menutop->menuTopCharger($type_user, $_SESSION['mainmenu'], 'iphone');
 	//var_dump($tabMenu);
+	
+	$numTabMenu = count($tabMenu);
 	
 	print_start_menu_array();
 
-	for($i=0; $i<count($tabMenu); $i++)
+	for($i=0; $i<$numTabMenu; $i++)
 	{
 		if ($tabMenu[$i]['enabled'] == true)
 		{	
