@@ -40,14 +40,15 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
+ * @xcovers DoliDb
+ * @xcovers Translate
+ * @xcovers Conf
+ * @xcovers Interfaces
+ * @xcovers CommonObject
+ * @xcovers ChargeSociales
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers DoliDb
- * @covers Translate
- * @covers Conf
- * @covers Interfaces
- * @covers CommonObject
- * @covers ChargeSociales
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class ChargeSocialesTest extends PHPUnit_Framework_TestCase

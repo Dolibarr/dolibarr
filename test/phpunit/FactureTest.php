@@ -40,24 +40,25 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
+ * @xcovers DoliDb
+ * @xcovers User
+ * @xcovers Translate
+ * @xcovers Conf
+ * @xcovers Interfaces
+ * @xcovers CommonObject
+ * @xcovers Facture
+ * @xcovers FactureLigne
+ * @xcovers ModeleNumRefFactures
+ * @xcovers InterfaceLogevents
+ * @xcovers InterfaceActionsAuto
+ * @xcovers InterfaceLdapsynchro
+ * @xcovers InterfaceNotification
+ * @xcovers InterfacePhenixsynchro
+ * @xcovers InterfacePropalWorkflow
+ * @xcovers InterfaceWebcalsynchro
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers DoliDb
- * @covers User
- * @covers Translate
- * @covers Conf
- * @covers Interfaces
- * @covers CommonObject
- * @covers Facture
- * @covers FactureLigne
- * @covers ModeleNumRefFactures
- * @covers InterfaceLogevents
- * @covers InterfaceActionsAuto
- * @covers InterfaceLdapsynchro
- * @covers InterfaceNotification
- * @covers InterfacePhenixsynchro
- * @covers InterfacePropalWorkflow
- * @covers InterfaceWebcalsynchro
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class FactureTest extends PHPUnit_Framework_TestCase

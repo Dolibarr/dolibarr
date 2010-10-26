@@ -89,6 +89,8 @@ class MyTestSuite
 
         require_once dirname(__FILE__).'/ModulesTest.php';
         $suite->addTestSuite('ModulesTest');
+        require_once dirname(__FILE__).'/CMailFileTest.php';
+        $suite->addTestSuite('CMailFileTest');
 
         return $suite;
     }

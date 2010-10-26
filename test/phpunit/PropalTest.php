@@ -40,10 +40,11 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
+ * @xcovers Propal
+ * @xcovers PropaleLigne
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers Propal
- * @covers PropaleLigne
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class PropalTest extends PHPUnit_Framework_TestCase

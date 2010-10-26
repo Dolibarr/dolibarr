@@ -41,10 +41,11 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
+ * @xcovers CommandeFournisseur
+ * @xcovers CommandeFournisseurLigne
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers CommandeFournisseur
- * @covers CommandeFournisseurLigne
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CommandeFournisseurTest extends PHPUnit_Framework_TestCase

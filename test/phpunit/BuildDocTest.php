@@ -35,6 +35,24 @@ require_once dirname(__FILE__).'/../../htdocs/fichinter/class/fichinter.class.ph
 require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
+require_once dirname(__FILE__).'/../../htdocs/lib/pdf.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/pdf_crabe.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/pdf_oursin.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/commande/pdf_edison.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/commande/pdf_einstein.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/propale/pdf_propale_azur.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/propale/pdf_propale_jaune.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/project/pdf/pdf_baleine.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/fichinter/pdf_soleil.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/expedition/pdf/pdf_expedition_merou.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/expedition/pdf/pdf_expedition_rouget.modules.php';
+// Mother classes of pdf generators
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/modules_facture.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/commande/modules_commande.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/propale/modules_propale.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/project/modules_project.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/fichinter/modules_fichinter.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/expedition/pdf/ModelePdfExpedition.class.php';
 
 if (empty($user->id))
 {
@@ -46,19 +64,42 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
+ * @xcovers DoliDb
+ * @xcovers User
+ * @xcovers Translate
+ * @xcovers Conf
+ * @xcovers CommonObject
+ * @xcovers Facture
+ * @xcovers Commande
+ * @xcovers Propal
+ * @xcovers Expedition
+ * @xcovers Fichinter
+ * @xcovers Project
+ *
+ * @xcovers ModelePDFFactures
+ * @xcovers pdf_crabe
+ * @xcovers pdf_oursin
+ *
+ * @xcovers ModelePDFCommandes
+ * @xcovers pdf_edison
+ * @xcovers pdf_einstein
+ *
+ * @xcovers ModelePDFPropales
+ * @xcovers pdf_propale_azur
+ * @xcovers pdf_propale_jaune
+ *
+ * @xcovers ModelePDFProjects
+ * @xcovers pdf_baleine
+ *
+ * @xcovers ModelePDFFicheinter
+ * @xcovers pdf_soleil
+ *
+ * @xcovers ModelePDFExpedition
+ * @xcovers pdf_expedition_merou
+ * @xcovers pdf_expedition_rouget
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers DoliDb
- * @covers User
- * @covers Translate
- * @covers Conf
- * @covers CommonObject
- * @covers Facture
- * @covers Commande
- * @covers Propal
- * @covers Expedition
- * @covers Fichinter
- * @covers Project
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class BuildDocTest extends PHPUnit_Framework_TestCase
@@ -124,9 +165,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers	ModelePDFFactures
-     * @covers	pdf_crabe
-     * @covers	pdf_oursin
      */
     public function testFactureBuild()
     {
@@ -136,7 +174,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 		$conf->facture->dir_output.='/temp';
 		$localobject=new Facture($this->savdb);
     	$localobject->initAsSpecimen();
@@ -160,9 +197,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers  ModelePDFCommandes
-     * @covers  pdf_edison
-     * @covers  pdf_einstein
      */
     public function testCommandeBuild()
     {
@@ -172,7 +206,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
         $conf->commande->dir_output.='/temp';
         $localobject=new Commande($this->savdb);
         $localobject->initAsSpecimen();
@@ -196,9 +229,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers  ModelePDFPropales
-     * @covers  pdf_propale_azur
-     * @covers  pdf_propale_jaune
      */
     public function testPropalBuild()
     {
@@ -208,7 +238,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
         $conf->propale->dir_output.='/temp';
         $localobject=new Propal($this->savdb);
         $localobject->initAsSpecimen();
@@ -232,8 +261,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers  ModelePDFProjects
-     * @covers  pdf_baleine
      */
     public function testProjectBuild()
     {
@@ -243,7 +270,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/project/modules_project.php');
         $conf->project->dir_output.='/temp';
         $localobject=new Project($this->savdb);
         $localobject->initAsSpecimen();
@@ -260,8 +286,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers  ModelePDFFicheinter
-     * @covers  pdf_soleil
      */
     public function testFichinterBuild()
     {
@@ -271,7 +295,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/fichinter/modules_fichinter.php');
         $conf->fichinter->dir_output.='/temp';
         $localobject=new Fichinter($this->savdb);
         $localobject->initAsSpecimen();
@@ -288,9 +311,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers  ModelePDFExpedition
-     * @covers  pdf_expedition_merou
-     * @covers  pdf_expedition_rouget
      */
     public function testExpeditionBuild()
     {
@@ -300,7 +320,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/expedition/pdf/ModelePdfExpedition.class.php');
         $conf->expedition->dir_output.='/temp';
         $localobject=new Expedition($this->savdb);
         $localobject->initAsSpecimen();

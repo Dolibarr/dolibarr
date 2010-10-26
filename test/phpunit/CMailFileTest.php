@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/DateLibTest.php
+ *      \file       test/phpunit/CMailFileTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *      \version    $Id$
@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/lib/date.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/lib/CMailFile.class.php';
 
 if (empty($user->id))
 {
@@ -40,13 +40,18 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
- * When not cover is provided. We use everything.
+ * @xcovers DoliDb
+ * @xcovers Translate
+ * @xcovers Conf
+ * @xcovers Interfaces
+ * @xcovers CommonObject
+ * @xcovers Adherent
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class DateLibTest extends PHPUnit_Framework_TestCase
+class CMailFileTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -57,9 +62,9 @@ class DateLibTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return DateLibTest
+	 * @return CMailFile
 	 */
-	function DateLibTest()
+	function CMailFileTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -108,9 +113,9 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     	print __METHOD__."\n";
     }
 
-   /**
+    /**
      */
-    public function testConvertTime2Seconds()
+    public function testCMailFileText()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -118,33 +123,39 @@ class DateLibTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$result=ConvertTime2Seconds(1,1,2);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(3662,$result);
+		$localobject=new CMailFile('Test','test@test.com','from@from.com',
+		'Message txt',array(),array(),array(),'','',1,0);
 
-		return $result;
+    	$result=$localobject->sendfile();
+        print __METHOD__." result=".$result."\n";
+    	$this->assertFalse($result);   // False because mail send disabled
+
+    	return $result;
     }
 
     /**
      */
-    public function testConvertSecondToTime()
+    public function testCMailFileStatic()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$result=ConvertSecondToTime(0,'all',86400);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('0',$result);
+        $localobject=new CMailFile('','','','');
 
-		$result=ConvertSecondToTime(86400,'all',86400);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertSame('1 '.$langs->trans("Day"),$result);
+        $src='John Doe <john@doe.com>';
+        $result=$localobject->getValidAddress($src,1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,'<john@doe.com>');
 
+        $src='John Doe <john@doe.com>';
+        $result=$localobject->getValidAddress($src,2);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,'john@doe.com');
 
-		return $result;
+        return $result;
     }
 
 }

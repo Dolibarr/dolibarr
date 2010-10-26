@@ -40,10 +40,11 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
+ * @xcovers Commande
+ * @xcovers OrderLine
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers Commande
- * @covers OrderLine
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CommandeTest extends PHPUnit_Framework_TestCase

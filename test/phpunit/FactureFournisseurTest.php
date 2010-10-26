@@ -40,15 +40,16 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
 /**
+ * @xcovers DoliDb
+ * @xcovers User
+ * @xcovers Translate
+ * @xcovers Conf
+ * @xcovers Interfaces
+ * @xcovers CommonObject
+ * @xcovers FactureFournisseur
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers DoliDb
- * @covers User
- * @covers Translate
- * @covers Conf
- * @covers Interfaces
- * @covers CommonObject
- * @covers FactureFournisseur
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class FactureFournisseurTest extends PHPUnit_Framework_TestCase
