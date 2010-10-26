@@ -75,6 +75,7 @@ class FactureFournisseur extends Facture
 	var $propalid;
 
 	var $lignes;
+	var $lines; //For write pdf compatibility.
 	var $fournisseur;
 
 	/**
@@ -102,6 +103,7 @@ class FactureFournisseur extends Facture
 
 		$this->products = array();
 		$this->lignes = array();
+		$this->lines = array(); //For write pdf compatibility
 	}
 
 	/**
@@ -352,6 +354,7 @@ class FactureFournisseur extends Facture
 					$this->lignes[$i]->total_ttc        = $obj->total_ttc;
 					$this->lignes[$i]->fk_product       = $obj->fk_product;
 					$this->lignes[$i]->product_type     = $obj->product_type;
+					$this->lines[$i] = $this->lignes[$i]; //For write pdf compatibility.
 					$i++;
 				}
 			}
