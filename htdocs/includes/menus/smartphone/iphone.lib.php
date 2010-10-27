@@ -40,14 +40,9 @@ function print_iphone_menu($db,$atarget,$type_user)
 	
 	$submenus='';
 
-	// On sauve en session le menu principal choisi
-	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
-	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
-	$_SESSION["leftmenuopened"]="";
-
 	$menutop = new Menubase($db,'iphone','top');
 	$menuleft = new Menubase($db,'iphone','left');
-	$tabMenu = $menutop->menuTopCharger($type_user, $_SESSION['mainmenu'], 'iphone');
+	$tabMenu = $menutop->menuTopCharger($type_user, '', 'iphone');
 	//var_dump($tabMenu);
 	
 	$numTabMenu = count($tabMenu);
@@ -57,8 +52,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 	for($i=0; $i<$numTabMenu; $i++)
 	{
 		if ($tabMenu[$i]['enabled'] == true)
-		{	
-			$idsel=(empty($tabMenu[$i]['mainmenu'])?'none':$tabMenu[$i]['mainmenu']);
+		{
 			if ($tabMenu[$i]['right'] == true)	// Is allowed
 			{
 				// Define url
@@ -74,6 +68,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 					$newmenu = new Menu();
 					$leftmenu = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'iphone');
 					$menus = $leftmenu->liste;
+					//var_dump($menus);
 					
 					print '<ul>';
 					
