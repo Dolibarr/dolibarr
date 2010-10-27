@@ -348,7 +348,8 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
 	$menu = new Menubase($db);
 	$result=$menu->fetch($_GET['menuId']);
-
+	//var_dump($menu);
+	
 	// MenuId Parent
 	print '<tr><td>'.$langs->trans('MenuIdParent').'</td>';
 	//$menu_handler

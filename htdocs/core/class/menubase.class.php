@@ -281,7 +281,7 @@ class Menubase
 				$this->level = $obj->level;
 				$this->leftmenu = $obj->leftmenu;
 				$this->perms = $obj->perms;
-				$this->enabled = $obj->enabled;
+				$this->enabled = str_replace("\"","'",$obj->enabled);
 				$this->user = $obj->user;
 				$this->tms = $this->db->jdate($obj->tms);
 			}
