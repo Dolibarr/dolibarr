@@ -51,8 +51,8 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);  // If language was forced on URL
 if (! empty($_GET["theme"])) $conf->theme=$_GET["theme"];  // If theme was forced on URL
 $langs->load("main",0,1);
-$right=($langs->direction=='rtl'?'left':'right');
-$left=($langs->direction=='rtl'?'right':'left');
+$right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
+$left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 ?>
 
 /* ============================================================================== */

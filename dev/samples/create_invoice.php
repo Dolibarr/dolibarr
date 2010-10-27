@@ -85,7 +85,7 @@ $line1->qty=1;
 $line1->total_ht=100;
 $line1->total_tva=10;
 $line1->total_ttc=110;
-$obj->lignes[]=$line1;
+$obj->lines[]=$line1;
 
 // Create invoice
 $idobject=$obj->create($user);

@@ -237,16 +237,16 @@ class Translate {
 								{
 									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
 
-									if (preg_match('/^CHARSET$/',$key))		// This is to declare in which charset files are encoded
+									if ($key == 'CHARSET')		// This is to declare in which charset files are encoded
 									{
 										$this->charset_inputfile[$newdomain]=strtoupper($value);
 										//print 'File '.$file_lang.' is declared to have format '.$this->charset_inputfile[$newdomain].'<br>';
 									}
-									elseif (preg_match('/^DIRECTION$/',$key))	// This is to declare direction of language
+									elseif ($key == 'DIRECTION')	// This is to declare direction of language
 									{
 										if ($alt < 2)	// We do not load direction for alternate files 2
 										{
-											$this->direction=$value;
+                                            $this->tab_translate[$key]=$value;
 											if ($stopafterdirection) break;
 										}
 									}

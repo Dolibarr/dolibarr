@@ -134,12 +134,12 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *	\brief     	Create invoice in database
-	 *	\param     	user       		Object user that create
-	 *	\param      notrigger		1 ne declenche pas les triggers, 0 sinon
-	 * 	\param		forceduedate	Do not recalculate due date from payment condition but force it with value
-	 *	\return		int				<0 if KO, >0 if OK
-	 *	\remarks	this->ref can be set or empty. If empty, we will use "(PROV)"
+	 *	Create invoice in database
+	 *	@param     	user       		Object user that create
+	 *	@param      notrigger		1=Does not execute triggers, 0 otherwise
+	 * 	@param		forceduedate	1=Do not recalculate due date from payment condition but force it with value
+	 *	@return		int				<0 if KO, >0 if OK
+	 *	@remarks	this->ref can be set or empty. If empty, we will use "(PROV)"
 	 */
 	function create($user,$notrigger=0,$forceduedate=0)
 	{

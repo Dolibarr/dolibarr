@@ -52,8 +52,8 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL
 if (! empty($_GET["theme"])) $conf->theme=$_GET["theme"];  // If theme was forced on URL
 $langs->load("main",0,1);
-$right=($langs->direction=='rtl'?'left':'right');
-$left=($langs->direction=='rtl'?'right':'left');
+$right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
+$left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 $fontsize=empty($conf->browser->phone)?'12':'12';
 $fontsizesmaller=empty($conf->browser->phone)?'11':'11';
 
@@ -79,7 +79,7 @@ body {
     margin-bottom: 0;
     margin-right: 0;
     margin-left: 0;
-    <?php print 'direction: '.$langs->direction.";\n"; ?>
+    <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }

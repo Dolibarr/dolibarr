@@ -171,13 +171,13 @@ class InterfaceExportsynchro
            							);
             
         $i=0;
-        while ($i < count($propal->lignes))
+        while ($i < count($propal->lines))
         {
         	$objPropalLine_data[$i] = array(	"Ref"=>$propal->ref,
-            									"ProductRef"=>$propal->lignes[$i]->ref,
-            									"Label"=>$propal->lignes[$i]->libelle,
-            									"LineQty"=>$propal->lignes[$i]->qty,
-            									"LineTotalHT"=>$propal->lignes[$i]->total_ht
+            									"ProductRef"=>$propal->lines[$i]->ref,
+            									"Label"=>$propal->lines[$i]->libelle,
+            									"LineQty"=>$propal->lines[$i]->qty,
+            									"LineTotalHT"=>$propal->lines[$i]->total_ht
            									);
            	$i++;
         }

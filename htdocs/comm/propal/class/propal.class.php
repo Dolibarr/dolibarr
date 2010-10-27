@@ -954,10 +954,12 @@ class Propal extends CommonObject
 					$this->brouillon = 1;
 				}
 
-				$this->lignes = array();
-				$this->db->free($resql);
+                $this->db->free($resql);
 
-				/*
+                $this->lignes = array(); // TODO: deprecated
+                $this->lines = array();
+
+                /*
 				 * Lignes propales liees a un produit ou non
 				 */
 				$sql = "SELECT d.rowid, d.fk_propal, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
@@ -1012,8 +1014,8 @@ class Propal extends CommonObject
 
 						$this->lignes[$i]       = $line; // TODO: deprecated
 						$this->lines[$i]        = $line;
-						//dol_syslog("1 ".$ligne->fk_product);
-						//print "xx $i ".$this->lignes[$i]->fk_product;
+						//dol_syslog("1 ".$line->fk_product);
+						//print "xx $i ".$this->lines[$i]->fk_product;
 						$i++;
 					}
 					$this->db->free($result);

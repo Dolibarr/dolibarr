@@ -41,8 +41,8 @@ require_once("../main.inc.php");
 
 if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
 $langs->load("main");
-$right=($langs->direction=='rtl'?'left':'right');
-$left=($langs->direction=='rtl'?'right':'left');
+$right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
+$left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 
 //var_dump($langs->defaultlang);
 //var_dump($conf->format_date_short_java);
