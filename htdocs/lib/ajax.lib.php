@@ -31,16 +31,9 @@
  *	@param	    url                 chemin du fichier de reponse : /chemin/fichier.php
  *	@return    	string              script complet
  */
-function ajax_autocompleter($selected='',$htmlname,$url,$option='')
+function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2)
 {
-    global $conf;
-
-    if (empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) return "COMPANY_USE_SEARCH_TO_SELECT is empty. This should not happens";
-    if (! is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) return "COMPANY_USE_SEARCH_TO_SELECT is not a numeric. This should not happens";
-
-	$script='';
-
-	$script.= '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
+	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
 
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
@@ -66,7 +59,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='')
 							}, "json");
 						},
 						dataType: "json",
-    					minLength: '.$conf->global->COMPANY_USE_SEARCH_TO_SELECT.',
+    					minLength: '.$minLength.',
     					select: function( event, ui ) {
     						jQuery("#'.$htmlname.'").val(ui.item.id);
     					}
