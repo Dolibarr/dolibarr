@@ -468,7 +468,7 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
     }
     else
     {
-        $libellproduitservice=pdf_getlinedesc($object,$i,$outputlangs,$hideref,$hidedesc,$issupplierline);
+        $libellproduitservice=$this->pdf_getlinedesc($object,$i,$outputlangs,$hideref,$hidedesc,$issupplierline);
 
         // Description
         $pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
@@ -680,7 +680,6 @@ function pdf_getlineqty($object,$i,$outputlangs)
  */
 function pdf_getlineremisepercent($object,$i,$outputlangs)
 {
-    include_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
     if ($object->lines[$i]->special_code != 3)
     {
         if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
