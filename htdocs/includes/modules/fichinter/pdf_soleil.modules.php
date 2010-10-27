@@ -298,7 +298,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3. Then writeMultiCell must use 3 also.
 
 				//dol_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
-				$nblignes = sizeof($fichinter->lignes);
+				$nblignes = sizeof($fichinter->lines);
 
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
@@ -306,7 +306,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				// Loop on each lines
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
-					$fichinterligne = $fichinter->lignes[$i];
+					$fichinterligne = $fichinter->lines[$i];
 
 					$valide = $fichinterligne->id ? $fichinterligne->fetch($fichinterligne->id) : 0;
 					if ($valide>0)

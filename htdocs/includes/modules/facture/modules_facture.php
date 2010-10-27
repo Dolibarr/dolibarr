@@ -203,12 +203,11 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs)
 }
 
 /**
- *	\brief      Cree un meta fichier a cote de la facture sur le disque pour faciliter les recherches en texte plein.
- *              Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de
- *              connexion internet "rapide" pour retrouver en 2 secondes une facture non payee ou compliquee a gerer ... avec un rgrep c'est vite fait bien fait [eric seigne]
- *	\param	    db  		Objet base de donnee
- *	\param	    facid		Id de la facture a creer
- *	\param      message     Message
+ *	Create a meta file with document file into same directory.
+ *  This should allow rgrep search.
+ *	@param	    db  		Objet base de donnee
+ *	@param	    facid		Id de la facture a creer
+ *	@param      message     Message
  */
 function facture_meta_create($db, $facid, $message="")
 {
@@ -231,7 +230,7 @@ function facture_meta_create($db, $facid, $message="")
 
 		if (is_dir($dir))
 		{
-			$nblignes = sizeof($fac->lignes);
+			$nblignes = sizeof($fac->lines);
 			$client = $fac->client->nom . " " . $fac->client->address . " " . $fac->client->cp . " " . $fac->client->ville;
 			$meta = "REFERENCE=\"" . $fac->ref . "\"
 			DATE=\"" . dol_print_date($fac->date,'') . "\"
@@ -243,10 +242,10 @@ function facture_meta_create($db, $facid, $message="")
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
 				//Pour les articles
-				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lignes[$i]->qty . "\"
-				ITEM_" . $i . "_UNIT_PRICE=\"" . $fac->lignes[$i]->price . "\"
-				ITEM_" . $i . "_TVA=\"" .$fac->lignes[$i]->tva_tx . "\"
-				ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->desc)) . "\"
+				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lines[$i]->qty . "\"
+				ITEM_" . $i . "_UNIT_PRICE=\"" . $fac->lines[$i]->price . "\"
+				ITEM_" . $i . "_TVA=\"" .$fac->lines[$i]->tva_tx . "\"
+				ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lines[$i]->desc)) . "\"
 				";
 			}
 		}

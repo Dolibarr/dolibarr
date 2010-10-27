@@ -740,15 +740,16 @@ class Fichinter extends CommonObject
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
-			$ligne=new FichinterLigne($this->db);
-			$ligne->desc=$langs->trans("Description")." ".$xnbp;
-			$ligne->qty=1;
-			$ligne->subprice=100;
-			$ligne->price=100;
-			$ligne->tva_tx=19.6;
+			$line=new FichinterLigne($this->db);
+			$line->desc=$langs->trans("Description")." ".$xnbp;
+			$line->qty=1;
+			$line->subprice=100;
+			$line->price=100;
+			$line->tva_tx=19.6;
 			$prodid = rand(1, $num_prods);
-			$ligne->fk_product=$prodids[$prodid];
-			$this->lignes[$xnbp]=$ligne;
+			$line->fk_product=$prodids[$prodid];
+
+			$this->lines[$xnbp]=$line;
 			$xnbp++;
 		}
 
@@ -783,11 +784,14 @@ class Fichinter extends CommonObject
 				$fichinterligne->id = $objp->rowid;
 				//...
 
-				$this->lignes[$i] = $fichinterligne;
+				$this->lines[$i] = $fichinterligne;
 
 				$i++;
 			}
 			$this->db->free($result);
+
+			$this->lignes=$this->lines;  // For backward compatibility
+
 			return 1;
 		}
 		else
