@@ -86,31 +86,32 @@ class InterfaceActionsAuto
     }
 
     /**
-     *      \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
-     *                  D'autres fonctions run_trigger peuvent etre presentes dans includes/triggers
-     *      \param      action      Code de l'evenement
-     *      \param      object      Objet concerne
-     *      \param      user        Objet user
-     *      \param      langs       Objet langs
-     *      \param      conf        Objet conf
-     *      \return     int         <0 si ko, 0 si aucune action faite, >0 si ok
+     *      Function called when a Dolibarrr business event is done.
+     *      All functions run_trigger are triggered if file is inside directory includes/triggers
+     *
+     *      Following properties must be filled:
+     *      $object->actiontypecode (translation action code: AC_OTH, ...)
+     *      $object->actionmsg (note, long text)
+     *      $object->actionmsg2 (label, short text)
+     *      $object->sendtoid (id of contact)
+     *      $object->socid
+     *      Optionnal:
+     *      $object->facid
+     *      $object->propalrowid
+     *      $object->orderrowid
+     *
+     *      @param      action      Event code (COMPANY_CREATE, PROPAL_VALIDATE, ...)
+     *      @param      object      Object action is done on
+     *      @param      user        Object user
+     *      @param      langs       Object langs
+     *      @param      conf        Object conf
+     *      @return     int         <0 if KO, 0 if no action are done, >0 if OK
      */
     function run_trigger($action,$object,$user,$langs,$conf)
     {
 		$key='MAIN_AGENDA_ACTIONAUTO_'.$action;
 		//dol_syslog("xxxxxxxxxxx".$key);
 		if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
-
-		// Following properties must be filled:
-		// $object->actiontypecode;
-		// $object->actionmsg (note, long text)
-		// $object->actionmsg2 (label, short text)
-		// $object->sendtoid
-		// $object->socid
-		// Optionnal:
-		// $object->facid
-		// $object->propalrowid
-		// $object->orderrowid
 
 		$ok=0;
 
@@ -122,7 +123,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
             $object->actionmsg=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
             if ($object->prefix) $object->actionmsg.=" (".$object->prefix.")";
             //$this->desc.="\n".$langs->transnoentities("Customer").': '.yn($object->client);
@@ -142,7 +143,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -157,7 +158,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("PropalValidatedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("PropalValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -173,9 +174,12 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
             $object->actiontypecode='AC_EMAIL';
-            $object->actionmsg2=$langs->transnoentities("ProposalSentByEMail",$object->ref);
-            $object->actionmsg=$langs->transnoentities("ProposalSentByEMail",$object->ref);
-            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProposalSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+                $object->actionmsg=$langs->transnoentities("ProposalSentByEMail",$object->ref);
+                $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            }
 
             $object->sendtoid=0;
             $object->propalrowid=$object->id;
@@ -189,7 +193,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -205,7 +209,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -221,7 +225,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -237,9 +241,12 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
             $object->actiontypecode='AC_EMAIL';
-            $object->actionmsg2=$langs->transnoentities("OrderSentByEMail",$object->ref);
-            $object->actionmsg=$langs->transnoentities("OrderSentByEMail",$object->ref);
-            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+                $object->actionmsg=$langs->transnoentities("OrderSentByEMail",$object->ref);
+                $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            }
 
             $object->sendtoid=0;
             $object->facid=$object->id;
@@ -256,7 +263,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -273,9 +280,12 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
             $object->actiontypecode='AC_EMAIL';
-            $object->actionmsg2=$langs->transnoentities("InvoiceSentByEMail",$object->ref);
-            $object->actionmsg=$langs->transnoentities("InvoiceSentByEMail",$object->ref);
-            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+                $object->actionmsg=$langs->transnoentities("InvoiceSentByEMail",$object->ref);
+                $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            }
 
             $object->facid=$object->id;
             $object->orderrowid=$object->propalrowid=0;
@@ -291,7 +301,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -308,7 +318,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -325,7 +335,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -339,7 +349,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -357,9 +367,12 @@ class InterfaceActionsAuto
             $langs->load("orders");
 
             $object->actiontypecode='AC_EMAIL';
-            $object->actionmsg2=$langs->transnoentities("SupplierOrderSentByEMail",$object->ref);
-            $object->actionmsg=$langs->transnoentities("SupplierOrderSentByEMail",$object->ref);
-            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+                $object->actionmsg=$langs->transnoentities("SupplierOrderSentByEMail",$object->ref);
+                $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            }
 
             $object->sendtoid=0;
             $object->supplierorderrowid=$object->id;
@@ -374,7 +387,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -392,9 +405,12 @@ class InterfaceActionsAuto
             $langs->load("orders");
 
             $object->actiontypecode='AC_EMAIL';
-            $object->actionmsg2=$langs->transnoentities("SupplierInvoiceSentByEMail",$object->ref);
-            $object->actionmsg=$langs->transnoentities("SupplierInvoiceSentByEMail",$object->ref);
-            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierInvoiceSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+                $object->actionmsg=$langs->transnoentities("SupplierInvoiceSentByEMail",$object->ref);
+                $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            }
 
             $object->sendtoid=0;
             $object->supplierorderrowid=$object->id;
@@ -409,7 +425,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -426,7 +442,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
@@ -445,7 +461,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("MemberValidatedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("MemberValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
@@ -463,7 +479,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
@@ -487,7 +503,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
@@ -505,7 +521,7 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
@@ -517,13 +533,13 @@ class InterfaceActionsAuto
         }
 
 		// If not found
-/*
+        /*
         else
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return 0;
         }
-*/
+        */
 
         // Add entry in event table
         if ($ok)

@@ -1127,6 +1127,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 {
 	$langs->load('mails');
 
+	$actiontypecode='';$subject='';$actionmsg='';$actionmsg2='';
+
 	$result=$object->fetch($facid);
 	$result=$object->fetch_thirdparty();
 
@@ -1180,7 +1182,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 						$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 						$actionmsg.=$message;
 					}
-					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
+					//$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 				}
 				if ($_POST['action'] == 'relance')
 				{
@@ -1193,7 +1195,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 						$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 						$actionmsg.=$message;
 					}
-					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
+					//$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 				}
 
 				// Create form object
@@ -1224,8 +1226,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 						// Initialisation donnees
 						$object->sendtoid=$sendtoid;
 						$object->actiontypecode=$actiontypecode;
-						$object->actionmsg = $actionmsg;
-						$object->actionmsg2= $actionmsg2;
+						$object->actionmsg = $actionmsg;  // Long text
+						$object->actionmsg2= $actionmsg2; // Short text
 						$object->facid=$object->id;
 
 						// Appel des triggers

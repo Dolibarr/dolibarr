@@ -1419,13 +1419,12 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Renvoie l'email d'un contact depuis son id
-     *    \param      rowid       id du contact
-     *    \return     string      email du contact
+     *    Return email of contact from its id
+     *    @param      rowid       id of contact
+     *    @return     string      email of contact
      */
     function contact_get_email($rowid)
     {
-
         $sql = "SELECT rowid, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE rowid = '".$rowid."'";
 
         $resql=$this->db->query($sql);

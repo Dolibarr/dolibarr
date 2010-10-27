@@ -1831,8 +1831,7 @@ class Facture extends CommonObject
 			// Check parameters
 			if ($type < 0) return -1;
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
+			// Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
@@ -1845,7 +1844,7 @@ class Facture extends CommonObject
 			$pu_tva = $tabprice[4];
 			$pu_ttc = $tabprice[5];
 
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
+			// Old properties: $price, $remise (deprecated)
 			$price = $pu;
 			$remise = 0;
 			if ($remise_percent > 0)
@@ -1855,7 +1854,7 @@ class Facture extends CommonObject
 			}
 			$price    = price2num($price);
 
-			// Mise a jour ligne en base
+			// Update line into database
 			$this->line=new FactureLigne($this->db);
 			$this->line->rowid=$rowid;
 			$this->line->fetch($rowid);
@@ -3310,8 +3309,8 @@ class FactureLigne
 
 
 	/**
-	 *  	\brief     	Update line in database
-	 *		\return		int		<0 if KO, >0 if OK
+	 *  	Update line into database
+	 *		@return		int		<0 if KO, >0 if OK
 	 */
 	function update()
 	{
