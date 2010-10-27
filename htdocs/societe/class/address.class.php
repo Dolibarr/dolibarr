@@ -28,7 +28,7 @@
 
 /**
  *  \class 		Address
- *  \brief 		Classe permettant la gestion des adresses des tiers
+ *  \brief 		Class to manage addresses
  */
 class Address
 {

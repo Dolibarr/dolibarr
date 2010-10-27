@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 /**
  *	\class      User
- *	\brief      Classe permettant la gestion d'un utilisateur
+ *	\brief      Class to manage users
  */
 class User extends CommonObject
 {

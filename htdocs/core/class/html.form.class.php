@@ -222,11 +222,11 @@ class Form
     }
 
     /**
-     *    \brief     Return combo list of activated countries, into language of user
-     *    \param     selected         Id or Code or Label of preselected country
-     *    \param     htmlname         Name of html select object
-     *    \param     htmloption       Options html on select object
-     *    \TODO      trier liste sur noms apres traduction plutot que avant
+     *    Return combo list of activated countries, into language of user
+     *    @param     selected         Id or Code or Label of preselected country
+     *    @param     htmlname         Name of html select object
+     *    @param     htmloption       Options html on select object
+     *    TODO       trier liste sur noms apres traduction plutot que avant
      */
     function select_pays($selected='',$htmlname='pays_id',$htmloption='')
     {
@@ -234,11 +234,11 @@ class Form
     }
 
     /**
-     *    \brief     Return combo list of activated countries, into language of user
-     *    \param     selected         Id or Code or Label of preselected country
-     *    \param     htmlname         Name of html select object
-     *    \param     htmloption       Options html on select object
-     *    \TODO      trier liste sur noms apres traduction plutot que avant
+     *    Return combo list of activated countries, into language of user
+     *    @param     selected         Id or Code or Label of preselected country
+     *    @param     htmlname         Name of html select object
+     *    @param     htmloption       Options html on select object
+     *    TODO       trier liste sur noms apres traduction plutot que avant
      */
     function select_country($selected='',$htmlname='pays_id',$htmloption='')
     {
@@ -398,12 +398,12 @@ class Form
 
     /**
      *		Return list of types of lines (product or service)
+     * 		Example: 0=product, 1=service, 9=other (for external module)
      *		@param      selected        Preselected type
      *		@param      htmlname        Name of field in html form
      * 		@param		showempty		Add an empty field
      * 		@param		hidetext		Do not show label before combo box
      * 		@param		forceall		Force to show products and services in combo list, whatever are activated modules
-     * 		@example	0=product, 1=service, 9=other (for external module)
      */
     function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0,$forceall=0)
     {
@@ -516,7 +516,7 @@ class Form
             if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
             {
                 $minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
-                
+
             	$socid = 0;
                 if ($selected)
                 {

@@ -24,13 +24,13 @@
 /**
  * 	\file 		htdocs/adherents/class/adherent_options.class.php
  *	\ingroup    member
- *	\brief      Fichier de la classe de gestion de la table des champs optionels adherents
+ *	\brief      File of class to manage optionnal fields
  *	\version    $Id$
  */
 
 /**
  * 	\class 		AdherentOptions
- *	\brief      Classe de gestion de la table des champs optionels adherents
+ *	\brief      Class to manage table of optionnal fields
  */
 class AdherentOptions
 {
@@ -156,9 +156,9 @@ class AdherentOptions
 	}
 
 	/**
-	 *	\brief 		Fonction qui supprime un attribut
-	 *	\param		attrname			nom de l'atribut
-	 *  \TODO pouvoir gerer les entités
+	 *	Fonction qui supprime un attribut
+	 *	@param		$attrname			nom de l'atribut
+	 *  TODO pouvoir gerer les entités
 	 */
 	function delete($attrname)
 	{

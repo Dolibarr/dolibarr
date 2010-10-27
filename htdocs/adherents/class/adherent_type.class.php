@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/adherents/class/adherent_type.class.php
  *	\ingroup    member
- *	\brief      Fichier de la classe gerant les types d'adherents
+ *	\brief      File of class to manage members types
  *	\author     Rodolphe Quiedeville
  *	\version    $Id$
  */
@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
 /**
  *	\class      AdherentType
- *	\brief      Classe gerant les types d'adherents
+ *	\brief      Class to manage members type
  */
 class AdherentType extends CommonObject
 {

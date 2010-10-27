@@ -853,7 +853,7 @@ class Commande extends CommonObject
 				$rangtouse = $rangmax + 1;
 			}
 
-			// \TODO A virer
+			// TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
@@ -889,7 +889,7 @@ class Commande extends CommonObject
 			$this->line->date_start=$date_start;
 			$this->line->date_end=$date_end;
 
-			// \TODO Ne plus utiliser
+			// TODO Ne plus utiliser
 			$this->line->price=$price;
 			$this->line->remise=$remise;
 
@@ -897,7 +897,7 @@ class Commande extends CommonObject
 			if ($result > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la commande meme
-				$this->id=$commandeid;	// \TODO A virer
+				$this->id=$commandeid;	// TODO A virer
 				$result=$this->update_price($commandeid);
 				if ($result > 0)
 				{
@@ -922,15 +922,15 @@ class Commande extends CommonObject
 
 
 	/**
-	 * 		\brief				Ajoute une ligne dans tableau lines
-	 *		\param				idproduct			Id du produit a ajouter
-	 *		\param				qty					Quantite
-	 * 		\param    	date_start             	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	 * 		\param    	date_end             	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	 *		\remise_percent		remise_percent		Remise relative effectuee sur le produit
-	 * 		\return    			void
-	 *		\remarks			$this->client doit etre charge
-	 *		\TODO	Remplacer les appels a cette fonction par generation objet Ligne
+	 * 		Add line into array
+	 *		$this->client doit etre charge
+	 *		@param				idproduct			Id du produit a ajouter
+	 *		@param				qty					Quantite
+	 * 		@param    	date_start             	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 * 		@param    	date_end             	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 *		@remise_percent		remise_percent		Remise relative effectuee sur le produit
+	 * 		@return    			void
+	 *		TODO	Remplacer les appels a cette fonction par generation objet Ligne
 	 *				insere dans tableau $this->products
 	 */
 	function add_product($idproduct, $qty, $remise_percent=0, $date_start='', $date_end='')

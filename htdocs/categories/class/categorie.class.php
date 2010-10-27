@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/categories/class/categorie.class.php
  *	\ingroup    categorie
- *	\brief      Fichier de la classe des categorie
+ *	\brief      File of class to manage categories
  *	\version	$Id$
  */
 
@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php");
 
 /**
  *	\class      Categorie
- *	\brief      Classe permettant la gestion des categories
+ *	\brief      Class to manage categories
  */
 class Categorie
 {

@@ -1166,7 +1166,7 @@ class AccountLine extends CommonObject
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				//$this->date_rappro       = $obj->daterappro;    // \todo pas encore g�r�e
+				//$this->date_rappro       = $obj->daterappro;    // Not yet managed
 			}
 			$this->db->free($result);
 		}

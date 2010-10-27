@@ -481,7 +481,7 @@ if ($user->rights->agenda->myactions->read)
  * Derniers contrats
  *
  */
-if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
+if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
 	$langs->load("contracts");
 

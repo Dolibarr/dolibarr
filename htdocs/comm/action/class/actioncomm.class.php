@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/comm/action/class/actioncomm.class.php
  *       \ingroup    commercial
- *       \brief      Fichier de la classe des actions commerciales
+ *       \brief      File of class to manage agenda events (actions)
  *       \version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php');
@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');
 
 
 /**     \class      ActionComm
- *	    \brief      Classe permettant la gestion des actions commerciales
+ *	    \brief      Class to manage agenda events (actions)
  */
 class ActionComm extends CommonObject
 {

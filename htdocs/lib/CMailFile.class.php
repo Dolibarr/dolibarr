@@ -794,17 +794,7 @@ class CMailFile
 	 */
 	function server_parse($socket, $response)
 	{
-		/**
-		 * Default return value
-		 *
-		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
-		 *
-		 * @var mixed $_retVal Indicates if Object was created or not
-		 * @access private
-		 * @static
-		 */
-		$_retVal = true;
+		$_retVal = true;	// Indicates if Object was created or not
 		$server_response = '';
 
 		while ( substr($server_response,3,1) != ' ' )

@@ -135,7 +135,7 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-	// \todo Verifier si module numerotation choisi peut etre active
+	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "PROJECT_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);

@@ -1415,13 +1415,12 @@ if ($_GET['action'] == 'create')
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
 	/*
-	 \todo
 	 L'info "Reference commande client" est une carac de la commande et non de la facture.
 	 Elle devrait donc etre stockee sur l'objet commande liee a la facture et non sur la facture.
 	 Pour ceux qui veulent l'utiliser au niveau de la facture, positionner la
 	 constante FAC_USE_CUSTOMER_ORDER_REF a 1.
 	 */
-	if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
+	if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)	// deprecated
 	{
 		print '<tr><td>'.$langs->trans('RefCustomerOrder').'</td><td>';
 		print '<input type="text" name="ref_client" value="'.$ref_client.'">';
@@ -2148,12 +2147,11 @@ else
 
 			// Ref client
 			/*
-			\todo
 			L'info "Reference commande client" est une carac de la commande et non de la facture.
 			Elle devrait donc etre stockee sur l'objet commande lie a la facture et non sur la facture.
 			Pour ceux qui utilisent ainsi, positionner la constante FAC_USE_CUSTOMER_ORDER_REF a 1.
 			*/
-			if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
+			if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)	// deprecated
 			{
 				print '<tr><td>';
 				print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';

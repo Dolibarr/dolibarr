@@ -145,12 +145,12 @@ class Propal extends CommonObject
 
 
 	/**
-	 * 	\brief     	Ajoute une ligne dans tableau products
-	 * 	\param     	idproduct       	Id du produit a ajouter
-	 * 	\param     	qty             	Quantity
-	 * 	\param     	remise_percent  	Remise relative effectuee sur le produit
-	 *	\remarks	$this->client doit etre charge
-	 *	\TODO	Remplacer les appels a cette fonction par generation objet Ligne
+	 * 	Add line into array products
+	 *	$this->client doit etre charge
+	 * 	@param     	idproduct       	Id du produit a ajouter
+	 * 	@param     	qty             	Quantity
+	 * 	@param      remise_percent  	Remise relative effectuee sur le produit
+	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
 	 *			insere dans tableau $this->products
 	 */
 	function add_product($idproduct, $qty, $remise_percent=0)

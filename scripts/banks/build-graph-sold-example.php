@@ -158,7 +158,7 @@ foreach ($accounts as $account)
 //	print strftime("%Y%m%d",$max);
 
 	// Chargement du tableau $amounts
-	// \todo peut etre optimise en virant les date_format
+	// TODO peut etre optimise en virant les date_format
 	$amounts = array();
 	$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
@@ -252,7 +252,7 @@ foreach ($accounts as $account)
 
 
 	// Chargement du tableau $amounts
-	// \todo peut etre optimise en virant les date_format
+	// TODO peut etre optimise en virant les date_format
 	$amounts = array();
 	$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
@@ -346,7 +346,7 @@ foreach ($accounts as $account)
 
 
 	// Chargement du tableau $amounts
-	// \todo peut etre optimise en virant les date_format
+	// TODO peut etre optimise en virant les date_format
 	$amounts = array();
 	$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank";

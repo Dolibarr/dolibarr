@@ -19,16 +19,15 @@
 /**
  *      \file       htdocs/bookmarks/class/bookmark.class.php
  *      \ingroup    bookmark
- *      \brief      File the bookmark class
+ *      \brief      File of class to manage bookmarks
  *      \version    $Id$
  */
 
 
 /**
  *		\class      Bookmark
- *		\brief      Class for managing bookmarks
+ *		\brief      Class to manage bookmarks
  */
-
 class Bookmark
 {
     var $db;

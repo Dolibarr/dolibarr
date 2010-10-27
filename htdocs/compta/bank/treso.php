@@ -257,7 +257,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 			if ($obj->family == 'supplier_invoice')
 			{
-				// \TODO This code is to avoid to count suppliers credit note (ff.type = 2)
+				// TODO This code is to avoid to count suppliers credit note (ff.type = 2)
 				// Ajouter gestion des avoirs fournisseurs, champ
 				if (($obj->total_ttc < 0 && $obj->type != 2)
 				 || ($obj->total_ttc > 0 && $obj->type == 2))

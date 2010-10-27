@@ -20,7 +20,7 @@
 /**
  *		\file 		htdocs/adherents/class/cotisation.class.php
  *      \ingroup    member
- *		\brief      File of class to manage subscriptions
+ *		\brief      File of class to manage subscriptions of foundation members
  *		\version    $Id$
  */
 
@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
 /**
  *	\class 		Cotisation
- *	\brief      Class to manage subscriptions
+ *	\brief      Class to manage subscriptions of foundation members
  */
 class Cotisation extends CommonObject
 {

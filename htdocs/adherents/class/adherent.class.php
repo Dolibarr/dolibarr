@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/adherents/class/adherent.class.php
  *	\ingroup    member
- *	\brief      Fichier de la classe permettant la gestion d'un adherent
+ *	\brief      File of class to manage members of a foundation
  *	\version    $Id$
  */
 
@@ -36,7 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 /**
  *      \class      Adherent
- *		\brief      Classe permettant la gestion d'un adherent
+ *		\brief      Class to manage members of a foundation
  */
 class Adherent extends CommonObject
 {

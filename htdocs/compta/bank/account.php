@@ -457,7 +457,7 @@ if ($account || $_GET["ref"])
     }
     if ($mode_search && $conf->adherent->enabled)
     {
-        // \TODO Mettre jointure sur adherent pour recherche sur un adherent
+        // TODO Mettre jointure sur adherent pour recherche sur un adherent
         //$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='company'";
         //$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu3.url_id = s.rowid";
     }

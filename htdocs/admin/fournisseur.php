@@ -126,7 +126,6 @@ if ($_GET["action"] == 'specimenfacture')
 
 if ($_GET["action"] == 'set')
 {
-	$type='supplier_order';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$_GET["type"]."',".$conf->entity.")";
 	if ($db->query($sql))
 	{
@@ -154,7 +153,7 @@ if ($_GET["action"] == 'setdoc')
 	{
 		$conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $_GET["value"];
 	}
-	
+
 	if ($_GET["type"] == 'supplier_invoice' && dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
 	{
 		$conf->global->INVOICE_SUPPLIER_ADDON_PDF = $_GET["value"];
@@ -181,7 +180,7 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-	// \todo Verifier si module numerotation choisi peut etre active
+	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);

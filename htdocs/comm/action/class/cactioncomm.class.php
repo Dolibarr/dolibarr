@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/comm/action/class/cactioncomm.class.php
  *       \ingroup    commercial
- *       \brief      Fichier de la classe des types d'actions commerciales
+ *       \brief      File of class to manage type of agenda events
  *       \version    $Id$
 */
 
