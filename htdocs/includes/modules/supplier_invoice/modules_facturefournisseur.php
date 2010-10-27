@@ -18,8 +18,8 @@
  */
 
 /**
- *		\file       htdocs/includes/modules/supplier_invoice/modules_invoicefournisseur.php
- *      \ingroup    facture
+ *		\file       htdocs/includes/modules/supplier_invoice/modules_facturefournisseur.php
+ *      \ingroup    facture fourniseur
  *      \brief      File that contain parent class for supplier invoices models
  *      \version    $Id$
  */
@@ -66,7 +66,7 @@ class ModelePDFSuppliersInvoices
 function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
 {
 	global $conf, $langs;
-	
+
 	$langs->load("suppliers");
 
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/supplier_invoice/pdf/";

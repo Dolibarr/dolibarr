@@ -17,9 +17,10 @@
  */
 
 /**
- *       \file       htdocs/societe/ajaxziptown.php
- *       \brief      File to return Ajax response on zipcode or town request
- *       \version    $Id$
+ *       \file      htdocs/core/ajaxziptown.php
+ *       \ingroup	core
+ *       \brief     File to return Ajax response on zipcode or town request
+ *       \version   $Id$
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
@@ -78,7 +79,7 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
-		
+
 		if (! $num)
 		{
 			$sql = "SELECT DISTINCT s.cp as zip, s.ville as town, s.fk_departement as fk_county, s.fk_pays as fk_country";
@@ -95,14 +96,14 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 			//print $sql;
 			$resql=$db->query($sql);
 		}
-		
+
 		if ($resql)
 		{
 			while ($row = $db->fetch_array($resql))
 			{
 				$country = $row['fk_country']?($langs->trans('Country'.$row['country_code'])!='Country'.$row['country_code']?$langs->trans('Country'.$row['country_code']):$row['country']):'';
 				$county = $row['fk_county']?($langs->trans($row['county_code'])!=$row['county_code']?$langs->trans($row['county_code']):($row['county']!='-'?$row['county']:'')):'';
-				
+
 				$row_array['label'] = $row['zip'].' '.$row['town'];
 				$row_array['label'] .= ($county || $country)?' (':'';
                 $row_array['label'] .= $county;
@@ -121,14 +122,14 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 				}
 				$row_array['selectpays_id'] = $row['fk_country'];
 				$row_array['departement_id'] = $row['fk_county'];
-				
+
 				$row_array['states'] = $formcompany->select_state('',$row['fk_country'],'');
-				
+
 				array_push($return_arr,$row_array);
 			}
 		}
 	}
-	
+
 	echo json_encode($return_arr);
 }
 else

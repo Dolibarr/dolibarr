@@ -20,6 +20,7 @@
 
 /**
  *	\file			htdocs/paybox/lib/paybox.lib.php
+ *	\ingroup		paybox
  *  \brief			Library for common paybox functions
  *  \version		$Id$
  */

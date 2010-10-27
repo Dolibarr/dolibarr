@@ -20,6 +20,7 @@
 
 /**
  *	\file			htdocs/paypal/lib/paypal.lib.php
+ *  \ingroup		paypal
  *  \brief			Library for common paypal functions
  *  \version		$Id$
  */

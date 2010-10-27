@@ -17,13 +17,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   paybox     Module paypal
+/**     \defgroup   paypal     Module paypal
  *      \brief      Add integration with Paypal online payment system.
  */
 
 /**
  *      \file       htdocs/includes/modules/modPaypal.class.php
- *      \ingroup    mymodule
+ *      \ingroup    paypal
  *      \brief      Description and activation file for module Paypal
  *		\version	$Id$
  */

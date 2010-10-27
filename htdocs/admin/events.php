@@ -124,6 +124,7 @@ print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td colspan=\"2\">".$langs->trans("LogEvents")."</td>";
 print "</tr>\n";
+// Loop on each event type
 foreach ($eventstolog as $key => $arr)
 {
 	if ($arr['id'])

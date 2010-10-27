@@ -54,7 +54,7 @@
 ////////////////////////////////////////////////////
 
 /**
- *	\file       htdocs/includes/modules/member/pdf_standardlabel.class.php
+ *	\file       htdocs/includes/modules/member/labels/pdf_standardlabel.class.php
  *	\ingroup    member
  *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  *	\author     Steve Dillon

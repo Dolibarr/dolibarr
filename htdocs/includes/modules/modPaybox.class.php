@@ -23,7 +23,7 @@
 
 /**
  *      \file       htdocs/includes/modules/modPaybox.class.php
- *      \ingroup    mymodule
+ *      \ingroup    paybox
  *      \brief      Description and activation file for module Paybox
  *		\version	$Id$
  */
