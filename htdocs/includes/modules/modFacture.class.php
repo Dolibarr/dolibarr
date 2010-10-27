@@ -207,15 +207,16 @@ class modFacture extends DolibarrModules
 
 
 	/**
-	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-	 *               Definit egalement les repertoires de donnees a creer pour ce module.
+	 *  Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *  Definit egalement les repertoires de donnees a creer pour ce module.
+	 *	@param		options		Options when enabling module
 	 */
-	function init()
+	function init($options='')
 	{
 		global $conf;
 
 		// Remove permissions and default values
-		$this->remove();
+		$this->remove($options);
 
 		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/invoices';
@@ -227,23 +228,19 @@ class modFacture extends DolibarrModules
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','invoice',".$conf->entity.")",
 		);
 
-		return $this->_init($sql);
+		return $this->_init($sql,$option);
 	}
 
 	/**
-	 *    \brief      Fonction appelee lors de la desactivation d'un module.
-	 *                Supprime de la base les constantes, boites et permissions du module.
+	 *  Fonction appelee lors de la desactivation d'un module.
+	 *  Supprime de la base les constantes, boites et permissions du module.
+	 *	@param		options		Options when disabling module
 	 */
-	function remove()
+	function remove($options='')
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/invoices';
-		create_exdir($dirodt);
-		dol_copy(DOL_DOCUMENT_ROOT.'/install/doctemplates/invoices/template_invoice.odt',$dirodt.'/template_invoice.odt',0,0);
-
 		$sql = array();
 
-		return $this->_remove($sql);
+		return $this->_remove($sql,$options);
 	}
 }
 ?>

@@ -41,7 +41,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	var $emetteur;	// Objet societe qui emet
 
 	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-
+	var $version = 'development';
 
 	/**
 	 *		\brief  Constructor
@@ -70,6 +70,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$this->marge_basse=0;
 
 		$this->option_logo = 1;                    // Affiche logo
+		$this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
+		$this->option_modereg = 0;                 // Affiche mode reglement
+		$this->option_condreg = 0;                 // Affiche conditions reglement
+		$this->option_codeproduitservice = 0;      // Affiche code produit-service
+		$this->option_multilang = 1;               // Dispo en plusieurs langues
+		$this->option_escompte = 0;                // Affiche si il y a eu escompte
+		$this->option_credit_note = 0;             // Support credit notes
+		$this->option_freetext = 1;				   // Support add of a personalised text
+		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;

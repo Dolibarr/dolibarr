@@ -300,14 +300,13 @@ if ($handle)
 print "</table>\n";
 
 
-//
 /*
- *  Modeles de documents
+ *  Document templates generators
  */
 print '<br>';
 print_titre($langs->trans("ModelModules"));
 
-// Defini tableau def de modele invoice
+// Load array def with activated templates
 $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
@@ -355,78 +354,87 @@ foreach ($conf->file->dol_document_root as $dirroot)
 			{
 				if (preg_match('/\.modules\.php$/i',$file))
 				{
-					$var = !$var;
 					$name = substr($file, 4, dol_strlen($file) -16);
 					$classname = substr($file, 0, dol_strlen($file) -12);
 
 					require_once($dir.'/'.$file);
 					$module = new $classname($db);
 
-					print '<tr '.$bc[$var].'><td width="100">';
-					print $module->name;
-					print "</td><td>\n";
-					if (method_exists($module,'info')) print $module->info($langs);
-					else print $module->description;
-					print '</td>';
+					$modulequalified=1;
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
-					// Activate / Disable
-					if (in_array($name, $def))
+					if ($modulequalified)
 					{
-						print "<td align=\"center\">\n";
-						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
-						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-							print img_picto($langs->trans("Enabled"),'on');
-							print '</a>';
-						//}
-						//else
-						//{
-						//	print img_picto($langs->trans("Enabled"),'on');
-						//}
-						print "</td>";
-					}
-					else
-					{
-						if (versioncompare($module->phpmin,versionphparray()) > 0)
+						$var = !$var;
+						print '<tr '.$bc[$var].'><td width="100">';
+						print $module->name;
+						print "</td><td>\n";
+						if (method_exists($module,'info')) print $module->info($langs);
+						else print $module->description;
+						print '</td>';
+
+						// Activate / Disable
+						if (in_array($name, $def))
 						{
 							print "<td align=\"center\">\n";
-							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion",join('.',$module->phpmin))),'off');
+							//if ($conf->global->COMPANY_ADDON_PDF != "$name")
+							//{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+								print img_picto($langs->trans("Enabled"),'on');
+								print '</a>';
+							//}
+							//else
+							//{
+							//	print img_picto($langs->trans("Enabled"),'on');
+							//}
 							print "</td>";
 						}
 						else
 						{
-							print "<td align=\"center\">\n";
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-							print "</td>";
+							if (versioncompare($module->phpmin,versionphparray()) > 0)
+							{
+								print "<td align=\"center\">\n";
+								print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion",join('.',$module->phpmin))),'off');
+								print "</td>";
+							}
+							else
+							{
+								print "<td align=\"center\">\n";
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+								print "</td>";
+							}
 						}
-					}
 
-					// Info
-					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-					$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-					if ($modele->type == 'pdf')
-					{
-						$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
-					}
-					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn($module->option_draft_watermark,1,1);
+						// Info
+						$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+						$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+						if ($modele->type == 'pdf')
+						{
+							$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+						}
+						$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+						$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn($module->option_draft_watermark,1,1);
 
 
-					print '<td align="center">';
-					print $form->textwithpicto('',$htmltooltip,1,0);
-					print '</td>';
-					print '<td align="center">';
-					if ($modele->type == 'pdf')
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
-					}
-					else
-					{
-						print img_object($langs->trans("PreviewNotAvailable"),'generic');
-					}
-					print '</td>';
+						print '<td align="center">';
+						print $form->textwithpicto('',$htmltooltip,1,0);
+						print '</td>';
 
-					print "</tr>\n";
+						// Preview
+						print '<td align="center">';
+						if ($modele->type == 'pdf')
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
+						}
+						else
+						{
+							print img_object($langs->trans("PreviewNotAvailable"),'generic');
+						}
+						print '</td>';
+
+						print "</tr>\n";
+					}
 				}
 			}
 			closedir($handle);
