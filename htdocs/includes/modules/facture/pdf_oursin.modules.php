@@ -226,8 +226,8 @@ class pdf_oursin extends ModelePDFFactures
 						if ($this->franchise!=1)
 						{
 							$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
-							$pdf->SetXY ($this->marges['g']+119, $curY);
-							$pdf->MultiCell(10, 3, $vat_rate, 0, 'R');
+							$pdf->SetXY ($this->marges['g']+118, $curY);
+							$pdf->MultiCell(12, 3, $vat_rate, 0, 'R');
 						}
 					}
 
