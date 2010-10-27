@@ -268,10 +268,11 @@ class Address
 				$this->fournisseur	= $obj->fournisseur;
 			}
 
-			$this->lignes = array();
 			$this->db->free($resqlsoc);
 
-			// Adresses liees a la societe
+            $this->lines = array();
+
+            // Adresses liees a la societe
 			if ($this->socid)
 			{
 				$sql = 'SELECT a.rowid as id, a.label, a.name, a.address, a.datec as dc';

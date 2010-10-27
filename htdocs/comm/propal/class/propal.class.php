@@ -762,7 +762,7 @@ class Propal extends CommonObject
 	 */
 	function create_from($user)
 	{
-		$this->products=$this->lignes;
+		$this->products=$this->lines;
 
 		return $this->create();
 	}
@@ -956,7 +956,6 @@ class Propal extends CommonObject
 
                 $this->db->free($resql);
 
-                $this->lignes = array(); // TODO: deprecated
                 $this->lines = array();
 
                 /*
@@ -1012,7 +1011,6 @@ class Propal extends CommonObject
 						$line->product_desc     = $objp->product_desc; // Description produit
 						$line->ref              = $objp->ref;
 
-						$this->lignes[$i]       = $line; // TODO: deprecated
 						$this->lines[$i]        = $line;
 						//dol_syslog("1 ".$line->fk_product);
 						//print "xx $i ".$this->lines[$i]->fk_product;
