@@ -198,11 +198,10 @@ class pdf_edison extends ModelePDFCommandes
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 
 					// Description de la ligne produit
-					pdf_getlinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1);
 					//$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
-
 					$nexY = $pdf->GetY();
 
 					$ref = pdf_getlineref($object, $i, $outputlangs);

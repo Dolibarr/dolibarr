@@ -247,7 +247,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 					// Description of product line
 					$curX = $this->posxdesc-1;
-					pdf_getlinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY);
 
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();

@@ -185,12 +185,11 @@ class pdf_propale_jaune extends ModelePDFPropales
 				{
 					$curY = $nexY;
 
-					// Description de la ligne produit
+                    $pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
+
+                    // Description de la ligne produit
 					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs,1);
-					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
-
-					pdf_getlinedesc($pdf,$object,$i,$outputlangs,102,4,30,$curY,1);
-
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,102,4,30,$curY,1);
 					//$pdf->writeHTMLCell(102, 4, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut

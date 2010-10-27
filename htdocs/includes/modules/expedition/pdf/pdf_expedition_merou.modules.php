@@ -205,8 +205,6 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					// Description de la ligne produit
-					//$libelleproduitservice=pdf_getlinedesc($pdf,$object->$origin,$i,$outputlangs);
-					//if ($i==1) { print $object->commande->lignes[$i]->libelle.' - '.$libelleproduitservice; exit; }
 
 					//Creation des cases a cocher
 					$pdf->rect(10+3, $curY+1, 3, 3);
@@ -218,7 +216,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					//Insertion du libelle
 					$pdf->SetFont('','', 7);
 					$pdf->SetXY (50, $curY+1 );
-					$libelleproduitservice = pdf_getlinedesc($pdf,$object->$origin,$i,$outputlangs,90,3,50,$curY+1,1);
+                    //$libelleproduitservice=pdf_getlinedesc($object->$origin,$i,$outputlangs);
+					$libelleproduitservice = pdf_writelinedesc($pdf,$object->$origin,$i,$outputlangs,90,3,50,$curY+1,1);
 					//$pdf->writeHTMLCell(90, 3, 50, $curY+1, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 'L', 0);
 					//Insertion de la quantite commandee
 					$pdf->SetFont('','', 7);

@@ -340,8 +340,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 					// Description de la ligne produit
 					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
-					pdf_getlinedesc($pdf,$object,$i,$outputlangs,150,3,$this->posxdesc,$curY);
-
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,150,3,$this->posxdesc,$curY);
 					//$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
