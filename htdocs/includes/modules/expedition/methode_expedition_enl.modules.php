@@ -15,14 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
+/**
+ *	\file       htdocs/includes/modules/expedition/methode_expedition_enl.modules.php
+ *	\ingroup    expedition
  * 	\version	$Id$
  */
-
 include_once "methode_expedition.modules.php";
 
 
-Class methode_expedition_enl extends methode_expedition
+class methode_expedition_enl extends ModeleShippingMethod
 {
 
 	function methode_expedition_enl($db=0)
@@ -34,11 +35,11 @@ Class methode_expedition_enl extends methode_expedition
 		$this->code = "ENL";
 		$this->description = $langs->trans("Enlevement");
 	}
-	
+
 	Function provider_url_status($tracking_number)
-  {
-  	return '';
-  }
+	{
+		return '';
+	}
 }
 
 ?>

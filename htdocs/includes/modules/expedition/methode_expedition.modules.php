@@ -25,19 +25,18 @@
  *				et la classe mere de numerotation des bons de livraisons
  * 	\version	$Id$
  */
-
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
- *	\class      methode_expedition
- *	\brief      Classe mere des methodes expeditions
+ *	\class      ModeleShippingMethod
+ *	\brief      Parent class for shipping method classes
  */
-class methode_expedition
+class ModeleShippingMethod
 {
 
-	function methode_expedition($db=0)
+	function ModeleShippingMethod($db=0)
 	{
 		$this->db = $db;
 		$this->name = "NOT DEFINED";
@@ -46,8 +45,8 @@ class methode_expedition
 
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *      Return list of active generation modules
+	 * 		@param		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{

@@ -78,7 +78,7 @@ print "Makepack theme version $VERSION\n";
 print "Enter name of theme to package: ";
 $PROJECT=<STDIN>;
 chomp($PROJECT);
-# \todo Autodetect version
+# TODO Autodetect version
 # Ask and set version $MAJOR and $MINOR
 print "Enter value for version: ";
 $PROJVERSION=<STDIN>;

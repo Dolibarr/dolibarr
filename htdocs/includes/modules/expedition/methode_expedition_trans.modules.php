@@ -15,31 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
+/**
+ *	\file       htdocs/includes/modules/expedition/methode_expedition_trans.modules.php
+ *	\ingroup    expedition
  * 	\version	$Id$
  */
-
 include_once "methode_expedition.modules.php";
 
 
-Class methode_expedition_trans extends methode_expedition
+class methode_expedition_trans extends ModeleShippingMethod
 {
 
 	function methode_expedition_trans($db=0)
 	{
 		global $langs;
-		
+
 		$this->db = $db;
 		$this->id = 2; // Ne pas changer cette valeur
 		$this->code = "TRANS";
 		$this->name = "Transporteur";
 		$this->description = $langs->trans("GenericTransport");
 	}
-	
+
 	Function provider_url_status($tracking_number)
-  {
-  	return '';
-  }
+	{
+		return '';
+	}
 }
 
 ?>

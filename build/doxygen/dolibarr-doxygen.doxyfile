@@ -625,6 +625,7 @@ EXCLUDE                = ../../mssql \
                          ../../htdocs/includes/adodbtime \
                          ../../htdocs/includes/artichow \
                          ../../htdocs/includes/barcode \
+                         ../../htdocs/includes/ckeditor \
                          ../../htdocs/includes/efc_xfss \
                          ../../htdocs/includes/fckeditor \
                          ../../htdocs/includes/fpdf \

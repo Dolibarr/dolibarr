@@ -16,29 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
+/**
+ *	\file       htdocs/includes/modules/expedition/methode_expedition_colsui.modules.php
+ *	\ingroup    expedition
  * 	\version	$Id$
  */
-
 include_once "methode_expedition.modules.php";
 
 
-Class methode_expedition_colsui extends methode_expedition
+class methode_expedition_colsui extends ModeleShippingMethod
 {
 
-  	function methode_expedition_colsui($db=0)
-    { 
-      $this->db = $db;
-      $this->id = 3; // Do not change this value
-      $this->code = "COLSUI";  // Do not change this value
-      $this->name = "Colissimo Suivi";
-      $this->description = "Colissimo Suivi";
-    }
+	function methode_expedition_colsui($db=0)
+	{
+		$this->db = $db;
+		$this->id = 3; // Do not change this value
+		$this->code = "COLSUI";  // Do not change this value
+		$this->name = "Colissimo Suivi";
+		$this->description = "Colissimo Suivi";
+	}
 
-  Function provider_url_status($tracking_number)
-    {
-      return sprintf("http://www.coliposte.net/particulier/suivi_particulier.jsp?colispart=%s",$tracking_number);
-    }
+	function provider_url_status($tracking_number)
+	{
+		return sprintf("http://www.coliposte.net/particulier/suivi_particulier.jsp?colispart=%s",$tracking_number);
+	}
 }
 
 ?>
