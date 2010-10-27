@@ -233,14 +233,14 @@ class Commande extends CommonObject
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
 				// Loop on each line
-				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
+					if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We decrement stock of product (and sub-products)
 						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
+						$result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
 						if ($result < 0) { $error++; }
 					}
 				}
@@ -338,14 +338,14 @@ class Commande extends CommonObject
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
+					if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We increment stock of product (and sub-products)
 						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
+						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
 						if ($result < 0) { $error++; }
 					}
 				}
@@ -492,12 +492,12 @@ class Commande extends CommonObject
 				{
 					require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-					if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
+					if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We increment stock of product (and sub-products)
 						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
+						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
 						if ($result < 0) { $error++; }
 					}
 				}
@@ -1275,13 +1275,13 @@ class Commande extends CommonObject
 
 
 	/**
-	 *      \brief      Renvoie nombre de lignes de type produits. Doit etre appele apres fetch_lines
-	 *		\return		int		<0 si ko, Nbre de lignes produits sinon
+	 *      Return number of line with type product.
+	 *		@return		int		<0 if KO, Nbr of product lines if OK
 	 */
 	function getNbOfProductsLines()
 	{
 		$nb=0;
-		foreach($this->lignes as $ligne)
+		foreach($this->lines as $ligne)
 		{
 			if ($ligne->fk_product_type == 0) $nb++;
 		}
