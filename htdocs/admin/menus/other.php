@@ -1,0 +1,118 @@
+<?php
+/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/**
+ *	    \file       htdocs/menus/other.php
+ *      \ingroup    core
+ *      \brief      Menus options setup
+ *		\version    $Id$
+ */
+
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+
+$langs->load("users");
+$langs->load("admin");
+$langs->load("other");
+
+if (!$user->admin) accessforbidden();
+
+
+/*
+ * Actions
+ */
+
+if ($_GET["action"] == 'activate_hidemenu')
+{
+	dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1','chaine',0,'',$conf->entity);
+	Header("Location: ".$_SERVER["PHP_SELF"]);
+	exit;
+}
+else if ($_GET["action"] == 'disable_hidemenu')
+{
+	dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED",$conf->entity);
+	Header("Location: ".$_SERVER["PHP_SELF"]);
+	exit;
+}
+
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+
+llxHeader('',$langs->trans("Setup"));
+
+print_fiche_titre($langs->trans("Menus"),'','setup');
+
+print "<br>\n";
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/menus.php";
+$head[$h][1] = $langs->trans("MenuHandlers");
+$head[$h][2] = 'handler';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/menus/index.php";
+$head[$h][1] = $langs->trans("MenuAdmin");
+$head[$h][2] = 'editor';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/menus/other.php";
+$head[$h][1] = $langs->trans("Miscellanous");
+$head[$h][2] = 'misc';
+$h++;
+
+dol_fiche_head($head, 'misc', $langs->trans("Menus"));
+
+
+// Other Options
+$var=true;
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
+print '</tr>';
+
+// hide unauthorized menu
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
+print '<td align="center">';
+if ($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED == 0)
+{
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+}
+if($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED == 1)
+{
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+}
+print "</td>";
+
+print '</tr>';
+
+print '</table>';
+
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
+?>
