@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - admin 
+# Dolibarr language file - es_AR - admin 
 CHARSET=UTF-8
 Version=Versión
 VersionProgram=Versión programa
@@ -285,7 +285,8 @@ ExampleOfDirectoriesForModelGen=Ejemplos de sintaxis:<br>c:\mydir<br>/home/mydir
 FollowingSubstitutionKeysCanBeUsed=Colocando los siguientes tags en la plantilla, obtendrá una sustitución con el valor personalizado al generar el documento:
 FullListOnOnlineDocumentation=Listado completo de tags disponibles en la documentación de usuario del módulo Terceros del wiki http://wiki.dolibarr.org
 FirstnameNamePosition=Orden visualización nombre/apellidos
-# Modules= undefined=
+
+# Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -685,8 +686,9 @@ SystemUpdate=Actualización del sistema
 SystemSuccessfulyUpdate=Su sistema se actualizó correctamente
 MenuCompanySetup=Empresa/Institución
 MenuNewUser=Nuevo usuario
-MenuTopManager=Gestión del menú superior
-MenuLeftManager=Gestión del menú izquierdo
+MenuTopManager=Gestor del menú superior
+MenuLeftManager=Gestor del menú izquierdo
+MenuManager= Gestor del menú estándar
 MenuSmartphoneManager=Gestor de menú smartphone
 DefaultMenuTopManager=Gestor del menú superior
 DefaultMenuLeftManager=Gestor del menú izquierdo
@@ -798,7 +800,8 @@ SimpleNumRefModelDesc=Devuelve el número bajo el formato %syymm-nnnn donde yy e
 ShowProfIdInAddress=Mostrar el identificador profesional en las direcciones de los documentos
 TranslationUncomplete=Traducción parcial
 SomeTranslationAreUncomplete=Algunos idiomas están traducidos en parte o pueden contener errores. Si lo encuentra, puede corregir los archivos de texto <b>.lang</b> del directorio <b>htdocs/langs</b> y enviarlos al foro <a href="http://www.dolibarr.fr/forum" target="_blank">http://www.dolibarr.fr</a>. 
-##### Module password generation= undefined=
+
+##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
@@ -1133,6 +1136,7 @@ MenuConf=Configuración de los menús
 Menu=Selección de los menús
 MenuHandler=Gestor de menús
 MenuModule=Módulo origen
+HideUnauthorizedMenu=Ocultar menús no autorizados (grises)
 DetailId=Identificador del menú
 DetailMenuHandler=Nombre del gestor de menús
 DetailMenuModule=Nombre del módulo si la entrada del menú es resultante de un módulo

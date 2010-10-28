@@ -285,7 +285,8 @@ ExampleOfDirectoriesForModelGen=Exemples de sintaxi:<br>c:\mydir<br>/home/mydir<
 FollowingSubstitutionKeysCanBeUsed=Posant les següents etiquetes a la plantilla, obtindrà una substitució amb el valor personalitzat en generar el document:
 FullListOnOnlineDocumentation=Llista completa de tags disponibles a la documentació d'usuari del mòdul Tercers del wiki http://wiki.dolibarr.org
 FirstnameNamePosition=Ordre visualització nom/cognoms
-# Modules= undefined==
+
+# Modules
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
 Module1Name=Tercers
@@ -687,6 +688,7 @@ MenuCompanySetup=Empresa/Institució
 MenuNewUser=Nou usuari
 MenuTopManager=Gestió del menú superior
 MenuLeftManager=Gestió del menú de l'esquerra
+MenuManager= Gestor del menú de menú estàndard
 MenuSmartphoneManager=Gestor de menú smartphone
 DefaultMenuTopManager=Gestor del menú superior
 DefaultMenuLeftManager=Gestor del menú de l'esquerra
@@ -1134,6 +1136,7 @@ MenuConf=Configuració dels menús
 Menu=Selecció dels menús
 MenuHandler=Gestor de menús
 MenuModule=Mòdul origen
+HideUnauthorizedMenu=Amagar menús no autoritzats (grisos)
 DetailId=Identificador del menú
 DetailMenuHandler=Nom del gestor de menús
 DetailMenuModule=Nom del mòdul si l'entrada del menú és resultant d'un mòdul
