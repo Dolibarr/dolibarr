@@ -527,7 +527,7 @@ if (! empty($_POST['removedfile']))
 /*
  * Send mail
  */
-if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
+if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
 {
 	$langs->load('mails');
 
@@ -622,7 +622,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 						// Appel des triggers
 						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 						$interface=new Interfaces($db);
-						$result=$interface->run_triggers('ORDER_SUPPLIER_SENTBYMAIL',$facturefourn,$user,$langs,$conf);
+						$result=$interface->run_triggers('BILL_SUPPLIER_SENTBYMAIL',$facturefourn,$user,$langs,$conf);
 						if ($result < 0) { $error++; $this->errors=$interface->errors; }
 						// Fin appel triggers
 
@@ -634,7 +634,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 						{
 							// Redirect here
 							// This avoid sending mail twice if going out and then back to page
-							Header('Location: '.$_SERVER["PHP_SELF"].'?faid='.$facturefourn->id.'&mesg='.urlencode($mesg));
+							Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facturefourn->id.'&mesg='.urlencode($mesg));
 							exit;
 						}
 					}
@@ -677,7 +677,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 		dol_syslog('Unable to read data from the invoice. The invoice file has perhaps not been generated.');
 	}
 
-	$_GET['action'] = 'presend';
+	//$_GET['action'] = 'presend';
 }
 
 /*
