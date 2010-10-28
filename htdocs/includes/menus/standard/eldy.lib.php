@@ -94,7 +94,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else
+		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 		{
 			if (! $type_user)
 			{
@@ -140,7 +140,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else
+		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 		{
 			if (! $type_user)
 			{
@@ -181,7 +181,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else
+		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 		{
 			if (! $type_user)
 			{
@@ -224,7 +224,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else
+		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 		{
 			if (! $type_user)
 			{
@@ -266,7 +266,7 @@ function print_eldy_menu($db,$atarget,$type_user)
             print '</a>';
             print_end_menu_entry();
         }
-        else
+        else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
         {
             if (! $type_user)
             {
@@ -307,7 +307,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else
+		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 		{
 			if (! $type_user)
 			{
@@ -348,7 +348,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else
+		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 		{
 			if (! $type_user)
 			{
@@ -415,7 +415,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else
+		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 		{
 			if (! $type_user)
 			{
@@ -476,7 +476,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 				print '</a>';
 				print_end_menu_entry();
 			}
-			else
+			else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 			{
 				if (! $type_user)
 				{
@@ -1415,7 +1415,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 {
                     print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$menu_array[$i]['url'].'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>'."\n";
                 }
-                else
+                else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
                 {
                     print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
                 }
@@ -1424,21 +1424,20 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             // Menu niveau > 0
             if ($menu_array[$i]['level'] > 0)
             {
-                print '<div class="menu_contenu">';
                 if ($menu_array[$i]['enabled'])
                 {
-                    print $tabstring;
+                	print '<div class="menu_contenu">'.$tabstring;
                     if ($menu_array[$i]['url']) print '<a class="vsmenu" href="'.$menu_array[$i]['url'].'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
                     print $menu_array[$i]['titre'];
                     if ($menu_array[$i]['url']) print '</a>';
                     // If title is not pure text and contains a table, no carriage return added
                     if (! strstr($menu_array[$i]['titre'],'<table')) print '<br>';
+                    print '</div>'."\n";
                 }
-                else
+                else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
                 {
-                    print $tabstring.'<font class="vsmenudisabled">'.$menu_array[$i]['titre'].'</font><br>';
+                	print '<div class="menu_contenu">'.$tabstring.'<font class="vsmenudisabled">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
                 }
-                print '</div>'."\n";
             }
 
             // If next is a new block or end

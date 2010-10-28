@@ -84,7 +84,7 @@ function print_auguria_menu($db,$atarget,$type_user)
 				print '</a>';
 				print_end_menu_entry_auguria();
 			}
-			else
+			else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 			{
 				if (! $type_user)
 				{
@@ -282,7 +282,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
 
                     print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
                 }
-                else
+                else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
                 {
                     print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>';
                 }
@@ -295,7 +295,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
                 {
                     print '<div class="menu_contenu">'.$tabstring.'<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
                 }
-                else
+                else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
                 {
                     print '<div class="menu_contenu">'.$tabstring.'<font class="vsmenudisabled">'.$menu_array[$i]['titre'].'</font></div>';
                 }

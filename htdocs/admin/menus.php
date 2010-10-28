@@ -35,6 +35,7 @@ $langs->load("companies");
 $langs->load("products");
 $langs->load("admin");
 $langs->load("users");
+$langs->load("other");
 
 // Security check
 if (!$user->admin) accessforbidden();
@@ -118,6 +119,11 @@ $h++;
 $head[$h][0] = DOL_URL_ROOT."/admin/menus/index.php";
 $head[$h][1] = $langs->trans("MenuAdmin");
 $head[$h][2] = 'editor';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/menus/other.php";
+$head[$h][1] = $langs->trans("Miscellanous");
+$head[$h][2] = 'misc';
 $h++;
 
 

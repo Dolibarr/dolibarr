@@ -1124,6 +1124,7 @@ MenuConf=Menus setup
 Menu=Selection of menu
 MenuHandler=Menu handler
 MenuModule=Source module
+HideUnauthorizedMenu= Hide unauthorized menus (gray)
 DetailId=Id menu
 DetailMenuHandler=Menu handler where to show new menu
 DetailMenuModule=Module name if menu entry come from a module

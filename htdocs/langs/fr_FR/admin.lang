@@ -804,7 +804,7 @@ SomeTranslationAreUncomplete=Certaines langues sont traduites partiellement ou p
 ##### Module password generation= undefined
 PasswordGenerationStandard= Renvoie un mot de passe généré selon algorithme interne Dolibarr: 8 caractères, chiffres et caractères en minuscules mélangés.
 PasswordGenerationNone= Ne propose pas de mots de passe générés. Le mot de passe est à saisir manuellement.
-##### Users setup #####= undefined
+##### Users setup #####
 UserGroupSetup= Configuration module utilisateurs et groupes
 GeneratePassword= Proposer un mot de passe généré
 RuleForGeneratedPasswords= Règle pour la génération des mots de passe proposés et leur validation
@@ -813,7 +813,7 @@ EncryptedPasswordInDatabase= Permettre le chiffrement des mots de passe dans la 
 DisableForgetPasswordLinkOnLogonPage= Ne pas afficher le lien "Mot de passe oublié" sur la page de connexion
 UsersSetup=Configuration du module utilisateurs
 UserMailRequired=EMail requis pour créer un nouvel utilisateur
-##### Company setup #####= undefined
+##### Company setup #####
 CompanySetup= Configuration du module Tiers
 CompanyCodeChecker= Modèle de génération et contrôle des codes tiers (clients/fournisseurs)
 AccountCodeManager= Modèle de génération des codes compta (clients/fournisseurs)
@@ -825,7 +825,7 @@ NotificationsDesc= La fonction des notifications par emails permet d'envoyer aut
 ModelModules=Modèle de documents
 DocumentModelOdt=Genération depuis des modèles OpenDocument (Fichier .ODT OpenOffice, KOffice, TextEdit...)
 WatermarkOnDraft=Filigrame sur les documents brouillons
-##### Webcal setup #####= undefined
+##### Webcal setup #####
 WebCalSetup= Configuration du lien vers le calendrier Webcalendar
 WebCalSyncro= Intégrer les événements Dolibarr dans WebCalendar
 WebCalAllways= Toujours, sans demander
@@ -849,7 +849,7 @@ WebCalAddEventOnStatusBill= Ajouter un événement dans le calendrier sur change
 WebCalAddEventOnStatusMember= Ajouter un événement dans le calendrier sur changement de statut des adhérents
 WebCalUrlForVCalExport= Un lien d'export du calendrier au format <b>%s</b> sera disponible à l'url:<br>%s
 WebCalCheckWebcalSetup= La configuration du module Webcal est peut-être incorrecte.
-##### Invoices #####= undefined
+##### Invoices #####
 BillsSetup= Configuration du module Factures
 BillsDate= Date des factures
 BillsNumberingModule= Modèle de numérotation des factures et avoirs
@@ -866,7 +866,7 @@ SuggestPaymentByRIBOnAccount= Proposer paiement par virement sur le compte
 SuggestPaymentByChequeToAddress= Proposer paiement par chèque à l'ordre et adresse de
 FreeLegalTextOnInvoices= Mention complémentaire sur les factures
 WatermarkOnDraftInvoices= Filigrane sur les brouillons de factures (aucun si vide)
-##### Proposals #####= undefined
+##### Proposals #####
 PropalSetup= Configuration du module Propositions Commerciales
 CreateForm= Création formulaire
 NumberOfProductLines= Nombre de lignes produits
@@ -882,7 +882,7 @@ AddDeliveryAddressAbility= Possibilité de sélectionner une adresse de livraiso
 UseOptionLineIfNoQuantity= Une ligne de produit/service ayant une quantité nulle est considérée comme une option
 FreeLegalTextOnProposal= Mention complémentaire sur les propositions
 WatermarkOnDraftProposal= Filigrane sur les brouillons de propositions (aucun si vide)
-##### Orders #####= undefined
+##### Orders #####
 OrdersSetup= Configuration du module Commandes
 OrdersNumberingModules= Modèles de numérotation des commandes
 OrdersModelModule= Modèles de document des commandes
@@ -890,24 +890,24 @@ HideTreadedOrders= Cacher les commandes traitées ou annulées de la liste
 ValidOrderAfterPropalClosed= Valider la commande après la clôture de la propale, permet de ne pas passer par la commande provisoire
 FreeLegalTextOnOrders= Mention complémentaire sur les commandes
 WatermarkOnDraftOrders= Filigrane sur les brouillons de commandes (aucun si vide)
-##### Clicktodial #####= undefined
+##### Clicktodial #####
 ClickToDialSetup= Configuration du module Click To Dial
 ClickToDialUrlDesc= Url appelée lors dun clic sur le picto téléphone. Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacé par le téléphone de l'appelé<br><b>%%2$s</b> qui sera remplacé par le téléphone de l'appelant (le votre, défini sur votre fiche utilisateur)<br><b>%%3$s</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
-##### Bookmark4u #####= undefined
+##### Bookmark4u #####
 Bookmark4uSetup= Configuration du module Bookmark4u
-##### Interventions #####= undefined
+##### Interventions #####
 InterventionsSetup= Configuration du module Interventions
 FreeLegalTextOnInterventions= Mention complémentaire sur les fiches d'intervention
 FicheinterNumberingModules= Modèles de numérotation des fiches d'intervention
 TemplatePDFInterventions= Modèle de document des fiches d'intervention
 WatermarkOnDraftInterventionCards= Filigrane sur les brouillons des fiches d'intervention (aucun si vide)
-##### Members #####= undefined
+##### Members #####
 MembersSetup= Configuration du module Adhérents
 MemberMainOptions= Options principales
 AddSubscriptionIntoAccount= Proposer par défaut la création d'une écriture bancaire, dans le module banque, à l'enregistrement d'une adhésion payante
 AdherentMailRequired= EMail obligatoire pour créer un nouvel adhérent
 MemberSendInformationByMailByDefault= Case à cocher pour envoyer un mail de confirmation (validation ou nouvelle cotisation) aux adhérents est à oui par défaut.
-##### LDAP setup #####= undefined
+##### LDAP setup #####
 LDAPSetup= Configuration du module LDAP
 LDAPGlobalParameters= Paramètres globals
 LDAPUsersSynchro= Utilisateurs
@@ -1039,7 +1039,7 @@ LDAPDescGroups= Cette page permet de définir le nom des attributs de l'arbre LD
 LDAPDescMembers= Cette page permet de définir le nom des attributs de l'arbre LDAP pour chaque information des membres du module adhérents Dolibarr.
 LDAPDescValues= Les valeurs exemples sont adaptées à <b>OpenLDAP</b> avec les schémas suivant chargés: <b>core.schema, cosine.schema, inetorgperson.schema</b>). Si vous utilisez les valeurs suggérées et OpenLDAP, modifiez votre fichier de configuration LDAP <b>slapd.conf</b> pour avoir tous ces schémas actifs.
 ForANonAnonymousAccess= Pour un accès authentifié (pour accès en écriture par exemple)
-##### Products #####= undefined
+##### Products #####
 ProductSetup= Configuration du module Produits
 NumberOfProductShowInSelect= Nombre de produits max dans les listes déroulantes (0=aucune limite)
 ConfirmDeleteProductLineAbility= Confirmation de suppression d'une ligne produit dans les formulaires
@@ -1049,7 +1049,7 @@ UseSearchToSelectProduct= Utiliser un formulaire de recherche pour le choix d'un
 UseEcoTaxeAbility= Prise en charge des éco-taxes (DEEE)
 SetDefaultBarcodeTypeProducts= Type de code-barres utilisé par défaut pour les produits
 SetDefaultBarcodeTypeThirdParties= Type de code-barres utilisé par défaut pour les tiers
-##### Syslog #####= undefined
+##### Syslog #####
 SyslogSetup= Configuration du module Syslog
 SyslogOutput= Sortie des log
 SyslogSyslog= Syslog
@@ -1059,10 +1059,10 @@ SyslogSimpleFile= Fichier
 SyslogFilename= Nom et chemin du fichier
 YouCanUseDOL_DATA_ROOT= Vous pouvez utiliser DOL_DATA_ROOT/dolibarr.log pour un log dans le répertoire "documents" de Dolibarr. Vous pouvez néanmoins définir un chemin différent pour stocker ce fichier.
 ErrorUnknownSyslogConstant= La constante %s n'est pas une constante syslog connue
-##### Donations #####= undefined
+##### Donations #####
 DonationsSetup= Configuration du module Dons
 DonationsReceiptModel= Modèle de reçu de dons
-##### Barcode #####= undefined
+##### Barcode #####
 BarcodeSetup= Configuration des codes-barres
 PaperFormatModule= Modules de format d'impression
 BarcodeEncodeModule= Modules d'encodage des codes-barres
@@ -1076,29 +1076,29 @@ BarcodeDescUPC= code-barres de type UPC
 BarcodeDescISBN= code-barres de type ISBN
 BarcodeDescC39= code-barres de type C39
 BarcodeDescC128= code-barres de type C128
-##### Prelevements #####= undefined
+##### Prelevements #####
 WithdrawalsSetup= Configuration du module prélèvement
-##### ExternalRSS #####= undefined
+##### ExternalRSS #####
 ExternalRSSSetup= Configuration des imports de flux RSS
 NewRSS= Syndication d'un nouveau flux RSS
-##### Mailing #####= undefined
+##### Mailing #####
 MailingSetup= Configuration du module EMailing
 MailingEMailFrom= Email émetteur (From) des mails envoyés par EMailing
 MailingEMailError= EMail retour (Errors-to) pour les réponses lors des envois par EMailing en erreur. 
-##### Notification #####= undefined
+##### Notification #####
 NotificationSetup= Configuration du module Notification
 NotificationEMailFrom= Email émetteur (From) des mails envoyés lors des notifications
-##### Sendings #####= undefined
+##### Sendings #####
 SendingsSetup= Configuration du module Expédition/Livraison
 SendingsReceiptModel= Modèle du bordereau d'expédition
 SendingsAbility= Prise en charge des bons d'expédition/livraison vers le client
 NoNeedForDeliveryReceipts= Dans la plupart des cas, ce sont les bons d'expédition/livraison (liste des produits à envoyer par le transporteur) qui font office de bons de réception et qui sont signés par le client. La gestion des bons de réception fait donc double emploi et sera rarement activée.
 FreeLegalTextOnDeliveryReceipts= Mention complémentaire sur les bons de réception
-##### Deliveries #####= undefined
+##### Deliveries #####
 DeliveryOrderNumberingModules= Modèle de numérotation des bons de réception client
 DeliveryOrderModel= Modèle de bon de réception client
 DeliveriesOrderAbility= Prise en charge des bons de réception client
-##### FCKeditor #####= undefined
+##### FCKeditor #####
 ActivateFCKeditor= Activer FCKeditor pour :
 FCKeditorForUsers= Création/édition WYSIWIG de la description et note des utilisateurs
 FCKeditorForCompany= Création/édition WYSIWIG de la description et note des tiers
@@ -1107,12 +1107,12 @@ FCKeditorForMembers= Création/édition WYSIWIG de la description et note des ad
 FCKeditorForProductDetails= Création/édition WYSIWIG des lignes détails produits (sur commandes, propales, factures, etc...). <font class="warning">Attention: L'utilisation pour ce cas est fortement déconseillée car peut poser des problèmes dans la gestion de caractères et mise en page des fichiers PDF générés.</font>
 FCKeditorForProductDetailsPerso= Création/édition WYSIWIG des lignes détails produits personnalisées (sur commandes, propales, factures, etc...)
 FCKeditorForMailing= Création/édition WYSIWIG des mailings
-##### OSCommerce 1 #####= undefined
+##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase= La connexion a réussi mais la base ne semble pas être une base OSCommerce (clé %s  non trouvée dans la table %s).
 OSCommerceTestOk= La connexion au serveur '%s' sur la base '%s' par l'utilisateur '%s' a réussi.
 OSCommerceTestKo1= La connexion au serveur '%s' a réussi mais la base '%s' n'a pu être atteinte.
 OSCommerceTestKo2= La connexion au serveur '%s' par l'utilisateur '%s' à échoué.
-##### Mantis #####= undefined
+##### Mantis #####
 MantisSetup= Configuration du lien avec le Bug Tracking Mantis
 MantisURL= Adresse (URL) d'accès à Mantis
 MantisServer= Serveur de la base de données de Mantis
@@ -1123,10 +1123,10 @@ MantisTestOk= La connexion au serveur '%s' sur la base '%s' par l'utilisateur '%
 MantisTestKo1= La connexion au serveur '%s' a réussi mais la base '%s' n'a pu être atteinte.
 MantisTestKo2= La connexion au serveur '%s' par l'utilisateur '%s' à échoué.
 MantisErrorConnectOkButWrongDatabase= La connexion a réussie mais la base ne semble pas être une base Mantis.
-##### Stock #####= undefined
+##### Stock #####
 StockSetup= Configuration module stock
 UserWarehouse= Utiliser des stocks personnels aux utilisateurs
-##### Menu #####= undefined
+##### Menu #####
 MenuDeleted= Menu supprimé
 TreeMenu= Arborescence des menus
 Menus= Menus
@@ -1136,6 +1136,7 @@ MenuConf= Configuration des menus
 Menu= Sélection des menus
 MenuHandler= Gestionnaire de menu
 MenuModule= Module source
+HideUnauthorizedMenu= Masquer les menus non autorisés (grisés)
 DetailId= Identifiant du menu
 DetailMenuHandler= Nom du gestionnaire menu dans lequel faire apparaitre le nouveau menu
 DetailMenuModule= Nom du module si l'entrée menu est issue d'un module
@@ -1155,7 +1156,7 @@ DeleteMenu= Effacer entrée de menu
 ConfirmDeleteMenu= Êtes-vous sûr de vouloir supprimer l'entrée de menu <b>%s</b> ?
 DeleteLine= Suppression de ligne
 ConfirmDeleteLine= Êtes-vous sûr de vouloir effacer cette ligne ?
-##### Tax #####= undefined
+##### Tax #####
 TaxSetup= Configuration du module Taxes, charges sociales et dividendes
 OptionVatMode= Option d'exigibilité de TVA par défaut
 OptionVATDefault= Standard
@@ -1172,11 +1173,11 @@ Buy=Achat
 Sell=Vente
 InvoiceDateUsed=Date de facture utilisée
 YourCompanyDoesNotUseVAT=Votre institution est configurée comme non assujettie à la TVA (Accueil - Configuration - Société/Institution), aussi il n'y a aucune option sur la gestion TVA à paramétrer.  
-##### Agenda #####= undefined
+##### Agenda #####
 AgendaSetup= Configuration du module actions et agenda
 PasswordTogetVCalExport= Clé pour autoriser lien export
 PastDelayVCalExport=Ne pas exporter les événements de plus de
-##### ClickToDial #####= undefined
+##### ClickToDial #####
 ClickToDialDesc= Ce module permet d'ajouter un petit picto à côté des numéros de téléphones. Un clic sur ce picto provoque l'appel de l'URL définie dans ce paramétrage. Ceci permet de provoquer des appels à un serveur de téléphonie depuis Dolibarr qui peut alors composer le numéro sur un système SIP par exemple.
 ##### Point Of Sales (CashDesk) #####
 CashDesk=Caisse enregistreuse
@@ -1186,7 +1187,7 @@ CashDeskBankAccountForSell= Compte à utiliser pour l'encaissement en liquide (c
 CashDeskBankAccountForCheque= Compte à utiliser pour l'encaissement en chèque
 CashDeskBankAccountForCB= Compte à utiliser pour l'encaissement par carte de crédit
 CashDeskIdWareHouse= Entrepôt à utiliser pour les ventes
-##### Bookmark #####= undefined
+##### Bookmark #####
 BookmarkSetup= Configuration du module Bookmark
 BookmarkDesc= Ce module vous permet de gérer des liens et raccourcis. Il permet aussi d'ajouter n'importe quelle page de Dolibarr ou lien web dans le menu d'accès rapide sur la gauche.
 NbOfBoomarkToShow= Nombre maximum de marques-pages à afficher dans le menu  
