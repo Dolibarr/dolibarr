@@ -47,6 +47,7 @@ PredefinedMailContentSendInvoiceReminder=We would like to warn you that the invo
 PredefinedMailContentSendProposal=You will find here the commercial propoal __PROPREF__\n\nSincerely\n\n
 PredefinedMailContentSendOrder=You will find here the order __ORDERREF__\n\nSincerely\n\n
 PredefinedMailContentSendSupplierOrder=You will find here our order __ORDERREF__\n\nSincerely\n\n
+PredefinedMailContentSendSupplierInvoice=You will find here the invoice __FACREF__\n\nSincerely\n\n
 DemoDesc=Dolibarr is a compact ERP/CRM composed by several functional modules. A demo that includes all modules does not mean anything as this never occurs. So, several demo profiles are available.
 ChooseYourDemoProfil=Choose the demo profile that match your activity...
 DemoFundation=Manage members of a foundation

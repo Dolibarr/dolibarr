@@ -471,6 +471,7 @@ class FormMail
 			if ($this->param["models"]=='propal_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
 			if ($this->param["models"]=='order_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
 			if ($this->param["models"]=='supplier_order_send') { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
+			if ($this->param["models"]=='supplier_facture_send') { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
 			$defaultmessage=make_substitutions($defaultmessage,$this->substit,$langs);
 			if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 			$defaultmessage=str_replace('\n',"\n",$defaultmessage);

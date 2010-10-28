@@ -483,6 +483,203 @@ if ($_GET['action'] == 'reopen' && $user->rights->fournisseur->facture->creer)
 	}
 }
 
+
+/*********************************************************************
+ *
+ * Mail Actions
+ *
+ **********************************************************************/
+
+/*
+ * Add file in email form
+ */
+if ($_POST['addfile'])
+{
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+	// Set tmp user directory TODO Use a dedicated directory for temp mails files
+	$vardir=$conf->user->dir_output."/".$user->id;
+	$upload_dir = $vardir.'/temp/';
+
+	$mesg=dol_add_file_process($upload_dir,0,0);
+
+	$_GET["action"]='presend';
+	$_POST["action"]='presend';
+}
+
+/*
+ * Remove file in email form
+ */
+if (! empty($_POST['removedfile']))
+{
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+	// Set tmp user directory
+	$vardir=$conf->user->dir_output."/".$user->id;
+	$upload_dir = $vardir.'/temp/';
+
+	$mesg=dol_remove_file_process($_POST['removedfile'],0);
+
+	$_GET["action"]='presend';
+	$_POST["action"]='presend';
+}
+
+/*
+ * Send mail
+ */
+if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
+{
+	$langs->load('mails');
+
+	$facturefourn=new FactureFournisseur($db);
+	$facturefourn->fetch($_GET['facid']);
+	$result=$facturefourn->fetch_thirdparty();
+	if ($result > 0)
+	{
+		$ref = dol_sanitizeFileName($facturefourn->ref);
+		$file = $conf->fournisseur->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+
+		if (is_readable($file))
+		{
+			if ($_POST['sendto'])
+			{
+				// Le destinataire a ete fourni via le champ libre
+				$sendto = $_POST['sendto'];
+				$sendtoid = 0;
+			}
+			elseif ($_POST['receiver'])
+			{
+				// Le destinataire a ete fourni via la liste deroulante
+				if ($_POST['receiver'] < 0)	// Id du tiers
+				{
+					$sendto = $facturefourn->client->email;
+					$sendtoid = 0;
+				}
+				else	// Id du contact
+				{
+					$sendto = $facturefourn->client->contact_get_email($_POST['receiver']);
+					$sendtoid = $_POST['receiver'];
+				}
+			}
+
+			if (dol_strlen($sendto))
+			{
+				$langs->load("commercial");
+
+				$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+				$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
+				$message = $_POST['message'];
+				$sendtocc = $_POST['sendtocc'];
+				$deliveryreceipt = $_POST['deliveryreceipt'];
+
+				if ($_POST['action'] == 'send')
+				{
+					if (dol_strlen($_POST['subject'])) $subject=$_POST['subject'];
+					else $subject = $langs->transnoentities('CustomerOrder').' '.$facturefourn->ref;
+					$actiontypecode='AC_SUP_ORD';
+					$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+					if ($message)
+					{
+						$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
+						$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
+						$actionmsg.=$message;
+					}
+					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
+				}
+
+				// Create form object
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+				$formmail = new FormMail($db);
+
+				$attachedfiles=$formmail->get_attached_files();
+				$filepath = $attachedfiles['paths'];
+				$filename = $attachedfiles['names'];
+				$mimetype = $attachedfiles['mimes'];
+
+				// Send mail
+				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+				if ($mailfile->error)
+				{
+					$mesg='<div class="error">'.$mailfile->error.'</div>';
+				}
+				else
+				{
+					$result=$mailfile->sendfile();
+					if ($result)
+					{
+						$mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+
+						$error=0;
+
+						// Initialisation donnees
+						$facturefourn->sendtoid=$sendtoid;
+						$facturefourn->actiontypecode=$actiontypecode;
+						$facturefourn->actionmsg = $actionmsg;
+						$facturefourn->actionmsg2= $actionmsg2;
+						$facturefourn->supplierorderrowid=$facturefourn->id;
+
+						// Appel des triggers
+						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+						$interface=new Interfaces($db);
+						$result=$interface->run_triggers('ORDER_SUPPLIER_SENTBYMAIL',$facturefourn,$user,$langs,$conf);
+						if ($result < 0) { $error++; $this->errors=$interface->errors; }
+						// Fin appel triggers
+
+						if ($error)
+						{
+							dol_print_error($db);
+						}
+						else
+						{
+							// Redirect here
+							// This avoid sending mail twice if going out and then back to page
+							Header('Location: '.$_SERVER["PHP_SELF"].'?faid='.$facturefourn->id.'&mesg='.urlencode($mesg));
+							exit;
+						}
+					}
+					else
+					{
+						$langs->load("other");
+						$mesg='<div class="error">';
+						if ($mailfile->error)
+						{
+							$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+							$mesg.='<br>'.$mailfile->error;
+						}
+						else
+						{
+							$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+						}
+						$mesg.='</div>';
+					}
+				}
+			}
+	
+			else
+			{
+				$langs->load("other");
+				$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
+				dol_syslog('Recipient email is empty');
+			}
+		}
+		else
+		{
+			$langs->load("other");
+			$mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
+			dol_syslog('Failed to read file: '.$file);
+		}
+	}
+	else
+	{
+		$langs->load("other");
+		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
+		dol_syslog('Unable to read data from the invoice. The invoice file has perhaps not been generated.');
+	}
+
+	$_GET['action'] = 'presend';
+}
+
 /*
  * Build document
  */
@@ -1245,103 +1442,169 @@ else
 			print '</div>';
 		}
 
-
-		/*
-		 * Boutons actions
-		 */
-
-		print '<div class="tabsAction">';
-
-		// Reopen a standard paid invoice
-		if (($fac->type == 0 || $fac->type == 1) && ($fac->statut == 2 || $fac->statut == 3))				// A paid invoice (partially or completely)
+		if ($_GET['action'] != 'presend')
 		{
-			if (! $facidnext && $fac->close_code != 'replaced')	// Not replaced by another invoice
+
+			/*
+			 * Boutons actions
+			 */
+	
+			print '<div class="tabsAction">';
+	
+			// Reopen a standard paid invoice
+			if (($fac->type == 0 || $fac->type == 1) && ($fac->statut == 2 || $fac->statut == 3))				// A paid invoice (partially or completely)
 			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+				if (! $facidnext && $fac->close_code != 'replaced')	// Not replaced by another invoice
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+				}
+				else
+				{
+					print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
+				}
 			}
-			else
+			
+			//Modify
+			if ($_GET['action'] != 'edit' && $fac->statut <= 1 && $fac->getSommePaiement() <= 0 && $user->rights->fournisseur->facture->creer)
 			{
-				print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
+				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 			}
-		}
-
-		if ($_GET['action'] != 'edit' && $fac->statut <= 1 && $fac->getSommePaiement() <= 0 && $user->rights->fournisseur->facture->creer)
-		{
-			print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
-		}
-
-		if ($_GET['action'] != 'edit' && $fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
-		{
-			print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
-		}
-
-		if ($_GET['action'] != 'edit' && $fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
-		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=paid"';
-			print '>'.$langs->trans('ClassifyPaid').'</a>';
-
-			//print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
-		}
-
-		if ($_GET['action'] != 'edit' && $fac->statut == 0)
-		{
-			if (sizeof($fac->lines))
+			
+			// Send by mail
+			if (($fac->statut == 1 || $fac->statut == 2) && $user->rights->facture->envoyer)
 			{
-			    if ($user->rights->fournisseur->facture->valider)
-			    {
-				    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid"';
-				    print '>'.$langs->trans('Validate').'</a>';
-			    }
-			    else
-			    {
-                    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
-                    print '>'.$langs->trans('Validate').'</a>';
-			    }
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
 			}
-		}
+			
+			
+			//Make payments
+			if ($_GET['action'] != 'edit' && $fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
+			{
+				print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
+			}
+	
+			//Classify paid
+			if ($_GET['action'] != 'edit' && $fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
+			{
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=paid"';
+				print '>'.$langs->trans('ClassifyPaid').'</a>';
+	
+				//print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
+			}
+	
+			//Validate
+			if ($_GET['action'] != 'edit' && $fac->statut == 0)
+			{
+				if (sizeof($fac->lines))
+				{
+				    if ($user->rights->fournisseur->facture->valider)
+				    {
+					    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid"';
+					    print '>'.$langs->trans('Validate').'</a>';
+				    }
+				    else
+				    {
+	                    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
+	                    print '>'.$langs->trans('Validate').'</a>';
+				    }
+				}
+			}
+				
+			//Clone
+			if ($_GET['action'] != 'edit' && $user->rights->fournisseur->facture->creer)
+			{
+				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=clone&amp;socid='.$fac->socid.'">'.$langs->trans('ToClone').'</a>';
+			}
+	
+			//Delete
+			if ($_GET['action'] != 'edit' && $user->rights->fournisseur->facture->supprimer)
+			{
+				print '<a class="butActionDelete" href="fiche.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			}
+			print '</div>';
+	
+			if ($_GET['action'] != 'edit')
+			{
+	    		print '<table width="100%"><tr><td width="50%" valign="top">';
+	    		print '<a name="builddoc"></a>'; // ancre
+	
+	    		/*
+	    		* Documents generes
+	    		*/
+	
+	    		$facfournref=dol_sanitizeFileName($fac->ref);
+	    		$file=$conf->fournisseur->dir_output.'/facture/'. $facfournref .	'/'	. $facfournref . '.pdf';
+	    		$relativepath =	$facfournref.'/'.$facfournref.'.pdf';
+	    		$filedir = $conf->fournisseur->dir_output	. '/facture/' .	$facfournref;
+	    		$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
+	    		$genallowed=$user->rights->fournisseur->facture->creer;
+	    		$delallowed=$user->rights->fournisseur->facture->supprimer;
+	
+	    		$somethingshown=$formfile->show_documents('facture_fournisseur',$facfournref,$filedir,$urlsource,$genallowed,$delallowed,$facture->modelpdf);
+	
+	    		print '</td><td valign="top" width="50%">';
+	    		print '<br>';
+	
+	    		// List of actions on element
+	    		/*
+	    		include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+	    		$formactions=new FormActions($db);
+	    		$somethingshown=$formactions->showactions($fac,'invoice_supplier',$socid);
+	    		*/
+	
+	    		print '</td></tr></table>';
+			}
+		}    		
+    	/*
+		* Show mail form
+		*/
+    	if ($_GET['action'] == 'presend')
+    	{
+			$ref = dol_sanitizeFileName($fac->ref);
+			$file = $conf->fournisseur->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+			
+			print '<br>';
+			print_titre($langs->trans('SendBillByMail'));
 
-		if ($_GET['action'] != 'edit' && $user->rights->fournisseur->facture->creer)
-		{
-			print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=clone&amp;socid='.$fac->socid.'">'.$langs->trans('ToClone').'</a>';
-		}
+			// Cree l'objet formulaire mail
+			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+			$formmail = new FormMail($db);
+			$formmail->fromtype = 'user';
+			$formmail->fromid   = $user->id;
+			$formmail->fromname = $user->getFullName($langs);
+			$formmail->frommail = $user->email;
+			$formmail->withfrom=1;
+			$formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
+			$formmail->withtosocid=$soc->id;
+			$formmail->withtocc=1;
+			$formmail->withtoccsocid=0;
+			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+			$formmail->withtocccsocid=0;
+			$formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
+			$formmail->withfile=2;
+			$formmail->withbody=1;
+			$formmail->withdeliveryreceipt=1;
+			$formmail->withcancel=1;
+			// Tableau des substitutions
+			$formmail->substit['__FACREF__']=$fac->ref;
+			// Tableau des parametres complementaires
+			$formmail->param['action']='send';
+			$formmail->param['models']='supplier_facture_send';
+			$formmail->param['facid']=$fac->id;
+			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?facid='.$fac->id;
 
-		if ($_GET['action'] != 'edit' && $user->rights->fournisseur->facture->supprimer)
-		{
-			print '<a class="butActionDelete" href="fiche.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
-		print '</div>';
+			// Init list of files
+			if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+			{
+				$formmail->clear_attached_files();
+				$formmail->add_attached_files($file,$ref.'.pdf','application/pdf');
+			}
 
-		if ($_GET['action'] != 'edit')
-		{
-    		print '<table width="100%"><tr><td width="50%" valign="top">';
-    		print '<a name="builddoc"></a>'; // ancre
+			// Show form
+			$formmail->show_form();
 
-    		/*
-    		* Documents generes
-    		*/
-
-    		$facfournref=dol_sanitizeFileName($fac->ref);
-    		$file=$conf->fournisseur->dir_output.'/facture/'. $facfournref .	'/'	. $facfournref . '.pdf';
-    		$relativepath =	$facfournref.'/'.$facfournref.'.pdf';
-    		$filedir = $conf->fournisseur->dir_output	. '/facture/' .	$facfournref;
-    		$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
-    		$genallowed=$user->rights->fournisseur->facture->creer;
-    		$delallowed=$user->rights->fournisseur->facture->supprimer;
-
-    		$somethingshown=$formfile->show_documents('facture_fournisseur',$facfournref,$filedir,$urlsource,$genallowed,$delallowed,$facture->modelpdf);
-
-    		print '</td><td valign="top" width="50%">';
-    		print '<br>';
-
-    		// List of actions on element
-    		/*
-    		include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
-    		$formactions=new FormActions($db);
-    		$somethingshown=$formactions->showactions($fac,'invoice_supplier',$socid);
-    		*/
-
-    		print '</td></tr></table>';
-		}
+			print '<br>';
+    	}
 	}
 }
 
