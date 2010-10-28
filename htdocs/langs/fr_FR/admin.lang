@@ -521,7 +521,6 @@ Permission254= Supprimer ou désactiver les autres utilisateurs
 Permission255= Créer/modifier ses propres infos utilisateur
 Permission256= Modifier son propre mot de passe
 Permission258= Exporter les utilisateurs
-Permission261= Accéder au menu commercial
 Permission262= Étendre l'accès à tous les tiers (Pas seulement ceux liés à l'utilisateur). Non effectif pour utilisateurs externes (toujours limité à eux-même). 
 Permission271= Consulter le CA
 Permission272= Consulter les factures

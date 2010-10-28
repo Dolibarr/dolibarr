@@ -519,7 +519,6 @@ Permission254=Delete or disable other users
 Permission255=Create/modify his own user information
 Permission256=Modify his own password
 Permission258=Export users
-Permission261=Access commercial menu
 Permission262=Extend access to all third parties (not only those linked to user). Not effective for external users (always limited to themselves).
 Permission271=Read CA
 Permission272=Read invoices
