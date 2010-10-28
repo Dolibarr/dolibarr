@@ -36,7 +36,7 @@ $module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 
 // Defini si peux modifier utilisateurs et permisssions
 $caneditperms=($user->admin || $user->rights->user->user->creer);
-
+$caneditselfperms=($user->admin || $user->rights->user->self->perms);
 
 /**
  * Actions
@@ -213,7 +213,7 @@ if ($_GET["id"])
                 $oldmod = $obj->module;
                 $var = !$var;
 
-                // Rupture d�tect�e, on r�cup�re objMod
+                // Rupture detectee, on recupere objMod
                 $objMod = $modules[$obj->module];
                 $picto=($objMod->picto?$objMod->picto:'generic');
 

@@ -3239,7 +3239,15 @@ function migrate_reload_modules($db,$langs,$conf)
         //$mod->remove('noboxes');
         $mod->init();
     }
-
+    
+	if (! empty($conf->global->MAIN_MODULE_USER))    // Permission has changed into 3.0
+    {
+        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module User");
+        require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modUser.class.php');
+        $mod=new modUser($db);
+        //$mod->remove('noboxes');  // We need to remove because id of module has changed
+        $mod->init();
+    }
     if (! empty($conf->global->MAIN_MODULE_DEPLACEMENT))    // Permission has changed into 3.0
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Deplacement");

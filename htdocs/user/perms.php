@@ -36,11 +36,14 @@ $module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 
 if (! isset($_GET["id"]) || empty($_GET["id"])) accessforbidden();
 
-// Defini si peux lire/modifier permisssions
+// Defini si peux lire les permissions
 $canreaduser=($user->admin || $user->rights->user->user->lire);
 
-// Defini si peux modifier utilisateurs et permisssions
+// Defini si peux modifier les autres utilisateurs et leurs permisssions
 $caneditperms=($user->admin || $user->rights->user->user->creer);
+
+// Defini si peux modifier ses propres permissions
+$caneditselfperms=($user->admin || $user->rights->user->self->perms);
 
 // Security check
 $socid=0;

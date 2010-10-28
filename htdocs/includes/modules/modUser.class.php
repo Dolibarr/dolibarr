@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@ class modUser extends DolibarrModules
 {
 
 	/**
-	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acces base
+	 *   Constructeur. Definit les noms, constantes et boites
+	 *   @param      DB      handler d'acces base
 	 */
 	function modUser($DB)
 	{
@@ -87,38 +87,46 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 251;
-		$this->rights[$r][1] = 'Consulter les autres utilisateurs, leurs groupes et permissions';
+		$this->rights[$r][1] = 'Consulter les autres utilisateurs';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'lire';
-
+		
 		$r++;
 		$this->rights[$r][0] = 252;
-		$this->rights[$r][1] = 'Creer/modifier les autres utilisateurs, les groupes et leurs permissions';
+		$this->rights[$r][1] = 'Consulter les permissions des autres utilisateurs';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'user';
+		$this->rights[$r][5] = 'readperms';
+		
+		$r++;
+		$this->rights[$r][0] = 253;
+		$this->rights[$r][1] = 'Creer/modifier les autres utilisateurs et leurs permissions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'creer';
-
+		
 		$r++;
-		$this->rights[$r][0] = 253;
-		$this->rights[$r][1] = 'Modifier mot de passe des autres utilisateurs';
+		$this->rights[$r][0] = 254;
+		$this->rights[$r][1] = 'Modifier le mot de passe des autres utilisateurs';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'password';
 
 		$r++;
-		$this->rights[$r][0] = 254;
+		$this->rights[$r][0] = 255;
 		$this->rights[$r][1] = 'Supprimer ou desactiver les autres utilisateurs';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'supprimer';
-
+		
 		$r++;
-		$this->rights[$r][0] = 255;
+		$this->rights[$r][0] = 256;
 		$this->rights[$r][1] = 'Creer/modifier ses propres infos utilisateur';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 1;
@@ -126,15 +134,55 @@ class modUser extends DolibarrModules
 		$this->rights[$r][5] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 256;
+		$this->rights[$r][0] = 257;
 		$this->rights[$r][1] = 'Modifier son propre mot de passe';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'self';
 		$this->rights[$r][5] = 'password';
-
+		
 		$r++;
 		$this->rights[$r][0] = 258;
+		$this->rights[$r][1] = 'Modifier ses propres permissions';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'self';
+		$this->rights[$r][5] = 'writeperms';
+		
+		$r++;
+		$this->rights[$r][0] = 351;
+		$this->rights[$r][1] = 'Consulter les groupes';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'group';
+		$this->rights[$r][5] = 'read';
+		
+		$r++;
+		$this->rights[$r][0] = 352;
+		$this->rights[$r][1] = 'Consulter les permissions des groupes';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'group';
+		$this->rights[$r][5] = 'readperms';
+		
+		$r++;
+		$this->rights[$r][0] = 353;
+		$this->rights[$r][1] = 'Creer/modifier les groupes et leurs permissions';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'group';
+		$this->rights[$r][5] = 'write';
+		
+		$r++;
+		$this->rights[$r][0] = 354;
+		$this->rights[$r][1] = 'Supprimer ou desactiver les groupes';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'group';
+		$this->rights[$r][5] = 'delete';
+
+		$r++;
+		$this->rights[$r][0] = 358;
 		$this->rights[$r][1] = 'Exporter les utilisateurs';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
