@@ -139,7 +139,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 			if (file_exists($dir))
 			{
-				$nblignes = sizeof($object->lignes);
+				$nblignes = sizeof($object->lines);
 
 				// Protection et encryption du pdf
 				if ($conf->global->PDF_SECURITY_ENCRYPTION)
@@ -233,33 +233,33 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 					// TVA
 					$pdf->SetXY ($this->posxtva, $curY);
-					$pdf->MultiCell(10, 3, ($object->lignes[$i]->tva_tx < 0 ? '*':'').abs($object->lignes[$i]->tva_tx), 0, 'R');
+					$pdf->MultiCell(10, 3, ($object->lines[$i]->tva_tx < 0 ? '*':'').abs($object->lines[$i]->tva_tx), 0, 'R');
 
 					// Unit price before discount
 					$pdf->SetXY ($this->posxup, $curY);
-					$pdf->MultiCell(18, 3, price($object->lignes[$i]->pu_ht), 0, 'R', 0);
+					$pdf->MultiCell(18, 3, price($object->lines[$i]->pu_ht), 0, 'R', 0);
 
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell(10, 3, $object->lignes[$i]->qty, 0, 'R');
+					$pdf->MultiCell(10, 3, $object->lines[$i]->qty, 0, 'R');
 
 					// Discount on line
 					$pdf->SetXY ($this->posxdiscount, $curY);
-					if ($object->lignes[$i]->remise_percent)
+					if ($object->lines[$i]->remise_percent)
 					{
-						$pdf->MultiCell(14, 3, $object->lignes[$i]->remise_percent."%", 0, 'R');
+						$pdf->MultiCell(14, 3, $object->lines[$i]->remise_percent."%", 0, 'R');
 					}
 
 					// Total HT line
 					$pdf->SetXY ($this->postotalht, $curY);
-					$total = price($object->lignes[$i]->total_ht);
+					$total = price($object->lines[$i]->total_ht);
 					$pdf->MultiCell(23, 3, $total, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$tvaligne=$object->lignes[$i]->total_tva;
+					$tvaligne=$object->lines[$i]->total_tva;
 					if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
-					$vatrate=(string) $object->lignes[$i]->tva_tx;
-					if (($object->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
+					$vatrate=(string) $object->lines[$i]->tva_tx;
+					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
 
 					$nexY+=2;    // Passe espace entre les lignes

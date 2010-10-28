@@ -995,7 +995,7 @@ else
 			print '<br>';
 			print '<table class="noborder" width="100%">';
 			$var=1;
-			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
+			for ($i = 0 ; $i < sizeof($fac->lines) ; $i++)
 			{
 				if ($i == 0)
 				{
@@ -1012,29 +1012,29 @@ else
 				}
 
 				// Show product and description
-				$type=$fac->lignes[$i]->product_type?$fac->lignes[$i]->product_type:$fac->lignes[$i]->fk_product_type;
+				$type=$fac->lines[$i]->product_type?$fac->lines[$i]->product_type:$fac->lines[$i]->fk_product_type;
 				// Try to enhance type detection using date_start and date_end for free lines where type
 				// was not saved.
-				if (! empty($fac->lignes[$i]->date_start)) $type=1;
-				if (! empty($fac->lignes[$i]->date_end)) $type=1;
+				if (! empty($fac->lines[$i]->date_start)) $type=1;
+				if (! empty($fac->lines[$i]->date_end)) $type=1;
 
 				$var=!$var;
 
 				// Edit line
-				if ($fac->statut == 0 && $_GET['action'] == 'mod_ligne' && $_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lignes[$i]->rowid)
+				if ($fac->statut == 0 && $_GET['action'] == 'mod_ligne' && $_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lines[$i]->rowid)
 				{
-					print '<form action="fiche.php?facid='.$fac->id.'&amp;etat=1&amp;ligne_id='.$fac->lignes[$i]->rowid.'" method="post">';
+					print '<form action="fiche.php?facid='.$fac->id.'&amp;etat=1&amp;ligne_id='.$fac->lines[$i]->rowid.'" method="post">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="update_line">';
 					print '<tr '.$bc[$var].'>';
 
 					// Show product and description
 					print '<td>';
-					if (($conf->product->enabled || $conf->service->enabled) && $fac->lignes[$i]->fk_product)
+					if (($conf->product->enabled || $conf->service->enabled) && $fac->lines[$i]->fk_product)
 					{
-						print '<input type="hidden" name="idprod" value="'.$fac->lignes[$i]->fk_product.'">';
+						print '<input type="hidden" name="idprod" value="'.$fac->lines[$i]->fk_product.'">';
 						$product_static=new ProductFournisseur($db);
-						$product_static->fetch($fac->lignes[$i]->fk_product);
+						$product_static->fetch($fac->lines[$i]->fk_product);
 						$text=$product_static->getNomUrl(1);
 						$text.= ' - '.$product_static->libelle;
 						print $text;
@@ -1042,7 +1042,7 @@ else
 					}
 					else
 					{
-						print $html->select_type_of_lines($fac->lignes[$i]->product_type,'type',1);
+						print $html->select_type_of_lines($fac->lines[$i]->product_type,'type',1);
 						if ($conf->product->enabled && $conf->service->enabled) print '<br>';
 					}
 
@@ -1050,21 +1050,21 @@ else
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
                     $nbrows=ROWS_2;
                     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-					$doleditor=new DolEditor('label',$fac->lignes[$i]->description,200,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+					$doleditor=new DolEditor('label',$fac->lines[$i]->description,200,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
 					$doleditor->Create();
 					print '</td>';
 
 					// VAT
 					print '<td align="right">';
-					$html->select_tva('tauxtva',$fac->lignes[$i]->tva_tx,$societe,$mysoc);
+					$html->select_tva('tauxtva',$fac->lines[$i]->tva_tx,$societe,$mysoc);
 					print '</td>';
 
 					// Unit price
-					print '<td align="right" nowrap="nowrap"><input size="4" name="puht" type="text" value="'.price($fac->lignes[$i]->pu_ht).'"></td>';
+					print '<td align="right" nowrap="nowrap"><input size="4" name="puht" type="text" value="'.price($fac->lines[$i]->pu_ht).'"></td>';
 
 					print '<td align="right" nowrap="nowrap"><input size="4" name="puttc" type="text" value=""></td>';
 
-					print '<td align="right"><input size="1" name="qty" type="text" value="'.$fac->lignes[$i]->qty.'"></td>';
+					print '<td align="right"><input size="1" name="qty" type="text" value="'.$fac->lines[$i]->qty.'"></td>';
 
 					print '<td align="right" nowrap="nowrap">&nbsp;</td>';
 
@@ -1082,57 +1082,57 @@ else
 
 					// Show product and description
 					print '<td>';
-					if ($fac->lignes[$i]->fk_product)
+					if ($fac->lines[$i]->fk_product)
 					{
 						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
 						$product_static=new ProductFournisseur($db);
-						$product_static->fetch($fac->lignes[$i]->fk_product);
+						$product_static->fetch($fac->lines[$i]->fk_product);
 						$text=$product_static->getNomUrl(1);
 						$text.= ' - '.$product_static->libelle;
-						$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($fac->lignes[$i]->description));
+						$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($fac->lines[$i]->description));
 						print $html->textwithtooltip($text,$description,3,'','',$i);
 
 						// Show range
-						print_date_range($fac->lignes[$i]->date_start,$fac->lignes[$i]->date_end);
+						print_date_range($fac->lines[$i]->date_start,$fac->lines[$i]->date_end);
 
 						// Add description in form
-						if ($conf->global->PRODUIT_DESC_IN_FORM) print ($fac->lignes[$i]->description && $fac->lignes[$i]->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($fac->lignes[$i]->description):'';
+						if ($conf->global->PRODUIT_DESC_IN_FORM) print ($fac->lines[$i]->description && $fac->lines[$i]->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($fac->lines[$i]->description):'';
 					}
 
 					// Description - Editor wysiwyg
-					if (! $fac->lignes[$i]->fk_product)
+					if (! $fac->lines[$i]->fk_product)
 					{
 						if ($type==1) $text = img_object($langs->trans('Service'),'service');
 						else $text = img_object($langs->trans('Product'),'product');
-						print $text.' '.nl2br($fac->lignes[$i]->description);
+						print $text.' '.nl2br($fac->lines[$i]->description);
 
 						// Show range
-						print_date_range($fac->lignes[$i]->date_start,$fac->lignes[$i]->date_end);
+						print_date_range($fac->lines[$i]->date_start,$fac->lines[$i]->date_end);
 					}
 					print '</td>';
 
 					// VAT
-					print '<td align="right">'.vatrate($fac->lignes[$i]->tva_tx).'%</td>';
+					print '<td align="right">'.vatrate($fac->lines[$i]->tva_tx).'%</td>';
 
 					// Unit price
-					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht,'MU').'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lines[$i]->pu_ht,'MU').'</td>';
 
-					print '<td align="right" nowrap="nowrap">'.($fac->lignes[$i]->pu_ttc?price($fac->lignes[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
+					print '<td align="right" nowrap="nowrap">'.($fac->lines[$i]->pu_ttc?price($fac->lines[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
 
-					print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
+					print '<td align="right">'.$fac->lines[$i]->qty.'</td>';
 
-					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht).'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lines[$i]->total_ht).'</td>';
 
-					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc).'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lines[$i]->total_ttc).'</td>';
 
 					print '<td align="center" width="16">';
-					if ($fac->statut == 0) print '<a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a>';
+					if ($fac->statut == 0) print '<a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lines[$i]->rowid.'">'.img_edit().'</a>';
 					else print '&nbsp;';
 					print '</td>';
 
 					print '<td align="center" width="16">';
-					if ($fac->statut == 0) print '<a href="fiche.php?facid='.$fac->id.'&amp;action=confirm_delete_line&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a>';
+					if ($fac->statut == 0) print '<a href="fiche.php?facid='.$fac->id.'&amp;action=confirm_delete_line&amp;ligne_id='.$fac->lines[$i]->rowid.'">'.img_delete().'</a>';
 					else print '&nbsp;';
 					print '</td>';
 
@@ -1285,7 +1285,7 @@ else
 
 		if ($_GET['action'] != 'edit' && $fac->statut == 0)
 		{
-			if (sizeof($fac->lignes))
+			if (sizeof($fac->lines))
 			{
 			    if ($user->rights->fournisseur->facture->valider)
 			    {

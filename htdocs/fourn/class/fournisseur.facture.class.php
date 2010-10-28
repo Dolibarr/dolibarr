@@ -74,8 +74,7 @@ class FactureFournisseur extends Facture
 	var $note_public;
 	var $propalid;
 
-	var $lignes;
-	var $lines; //For write pdf compatibility.
+	var $lines; 
 	var $fournisseur;
 
 	/**
@@ -102,8 +101,7 @@ class FactureFournisseur extends Facture
 		$this->propalid = 0;
 
 		$this->products = array();
-		$this->lignes = array();
-		$this->lines = array(); //For write pdf compatibility
+		$this->lines = array(); 
 	}
 
 	/**
@@ -158,7 +156,7 @@ class FactureFournisseur extends Facture
 		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn');
-			foreach ($this->lignes as $i => $val)
+			foreach ($this->lines as $i => $val)
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 				$sql .= ' VALUES ('.$this->id.');';
@@ -170,14 +168,14 @@ class FactureFournisseur extends Facture
 					$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
 					$this->updateline($idligne,
-					$this->lignes[$i]->description,
-					$this->lignes[$i]->pu_ht,
-					$this->lignes[$i]->tva_tx,
-					$this->lignes[$i]->qty,
-					$this->lignes[$i]->fk_product,
+					$this->lines[$i]->description,
+					$this->lines[$i]->pu_ht,
+					$this->lines[$i]->tva_tx,
+					$this->lines[$i]->qty,
+					$this->lines[$i]->fk_product,
 					'HT',
-					$this->lignes[$i]->info_bits,
-					$this->lignes[$i]->product_type
+					$this->lines[$i]->info_bits,
+					$this->lines[$i]->product_type
 					);
 				}
 			}
@@ -313,7 +311,7 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 *	\brief      Load this->lignes
+	 *	\brief      Load this->lines
 	 *	\return     int         1 si ok, < 0 si erreur
 	 */
 	function fetch_lines()
@@ -338,23 +336,23 @@ class FactureFournisseur extends Facture
 				while ($i < $num_rows)
 				{
 					$obj = $this->db->fetch_object($resql_rows);
-					$this->lignes[$i]->rowid            = $obj->rowid;
-					$this->lignes[$i]->description      = $obj->description;
-					$this->lignes[$i]->ref              = $obj->ref;             // Reference interne du produit
-					//$this->lignes[$i]->ref_fourn        = $obj->ref_fourn;       // Reference fournisseur du produit
-					$this->lignes[$i]->libelle          = $obj->label;           // Label du produit
-					$this->lignes[$i]->product_desc     = $obj->product_desc;    // Description du produit
-					$this->lignes[$i]->pu_ht            = $obj->pu_ht;
-					$this->lignes[$i]->pu_ttc           = $obj->pu_ttc;
-					$this->lignes[$i]->tva_tx           = $obj->tva_tx;
-					$this->lignes[$i]->qty              = $obj->qty;
-					$this->lignes[$i]->tva              = $obj->tva;
-					$this->lignes[$i]->total_ht         = $obj->total_ht;
-					$this->lignes[$i]->total_tva        = $obj->total_tva;
-					$this->lignes[$i]->total_ttc        = $obj->total_ttc;
-					$this->lignes[$i]->fk_product       = $obj->fk_product;
-					$this->lignes[$i]->product_type     = $obj->product_type;
-					$this->lines[$i] = $this->lignes[$i]; //For write pdf compatibility.
+					$this->lines[$i]->rowid            = $obj->rowid;
+					$this->lines[$i]->description      = $obj->description;
+					$this->lines[$i]->ref              = $obj->ref;             // Reference interne du produit
+					//$this->lines[$i]->ref_fourn        = $obj->ref_fourn;       // Reference fournisseur du produit
+					$this->lines[$i]->libelle          = $obj->label;           // Label du produit
+					$this->lines[$i]->product_desc     = $obj->product_desc;    // Description du produit
+					$this->lines[$i]->pu_ht            = $obj->pu_ht;
+					$this->lines[$i]->pu_ttc           = $obj->pu_ttc;
+					$this->lines[$i]->tva_tx           = $obj->tva_tx;
+					$this->lines[$i]->qty              = $obj->qty;
+					$this->lines[$i]->tva              = $obj->tva;
+					$this->lines[$i]->total_ht         = $obj->total_ht;
+					$this->lines[$i]->total_tva        = $obj->total_tva;
+					$this->lines[$i]->total_ttc        = $obj->total_ttc;
+					$this->lines[$i]->fk_product       = $obj->fk_product;
+					$this->lines[$i]->product_type     = $obj->product_type;
+					
 					$i++;
 				}
 			}
@@ -601,14 +599,14 @@ class FactureFournisseur extends Facture
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
+					if ($this->lines[$i]->fk_product && $this->lines[$i]->product_type == 0)
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We increase stock for product
 						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->pu_ht);
+						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->pu_ht);
 						if ($result < 0) { $error++; }
 					}
 				}
@@ -675,14 +673,14 @@ class FactureFournisseur extends Facture
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
+					if ($this->lines[$i]->fk_product && $this->lines[$i]->product_type == 0)
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We increase stock for product
 						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
+						$result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
 					}
 				}
 			}
@@ -718,7 +716,7 @@ class FactureFournisseur extends Facture
 	 * 		\param    	date_start      Date de debut de validite du service
 	 * 		\param    	date_end        Date de fin de validite du service
 	 * 		\param    	ventil          Code de ventilation comptable
-	 * 		\param    	info_bits		Bits de type de lignes
+	 * 		\param    	info_bits		Bits de type de lines
 	 * 		\param    	price_base_type HT ou TTC
 	 * 		\param		type			Type of line (0=product, 1=service)
 	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
@@ -1077,11 +1075,11 @@ class FactureFournisseur extends Facture
 		$object->close_note         = '';
 
 		// Loop on each line of new invoice
-		foreach($object->lignes as $i => $line)
+		foreach($object->lines as $i => $line)
 		{
-			if (($object->lignes[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
+			if (($object->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
 			{
-				unset($object->lignes[$i]);
+				unset($object->lines[$i]);
 			}
 		}
 
