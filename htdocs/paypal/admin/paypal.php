@@ -163,9 +163,12 @@ print '<br><br>';
 print '<u>'.$langs->trans("InformationToFindParameters","Paypal").'</u>:<br>';
 if ($conf->use_javascript_ajax) print '<a href="#" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
 
+$realpaypalurl='www.paypal.com';
+$sandboxpaypalurl='developer.paypal.com';
+
 print '<div id="apidoc">';
 print 'Your API authentication information can be found with following steps. We recommend that you open a separate Web browser session when carrying out this procedure.<br>
-1. Log in to your PayPal Premier or Business account.<br>
+1. Log in to your PayPal Premier or Business account (on real paypal <a href="https://'.$realpaypalurl.'" target="_blank">'.$realpaypalurl.'</a> (or sandbox <a href="https://'.$sandboxpaypalurl.'" target="_blank">'.$sandboxpaypalurl.'</a>).<br>
 2. Click the Profile subtab located under the My Account heading.<br>
 3. Click the API Access link under the Account Information header.<br>
 4. Click the View API Certificate link in the right column.<br>
