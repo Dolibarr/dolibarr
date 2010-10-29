@@ -34,9 +34,14 @@ $langs->load("users");
 
 $module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 
-// Defini si peux modifier utilisateurs et permisssions
-$caneditperms=($user->admin || $user->rights->user->user->creer);
-$caneditselfperms=($user->admin || $user->rights->user->self->perms);
+// Defini si peux lire les permissions
+$canreadperms=($user->admin || ($user->rights->user->group->read && $user->rights->user->group->readperms));
+
+if (! $canreadperms) accessforbidden();
+
+// Defini si peux modifier les permissions
+$caneditperms=($user->admin || $user->rights->user->group->write);
+
 
 /**
  * Actions
