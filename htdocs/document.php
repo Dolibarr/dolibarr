@@ -385,6 +385,16 @@ if ($modulepart)
 		$original_file=$conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
 	}
 
+    // Wrapping pour Foundation module
+    else if ($modulepart == 'member')
+    {
+        if ($user->rights->adherent->lire || preg_match('/^specimen/i',$original_file))
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->adherent->dir_output.'/'.$original_file;
+    }
+
 	// Generic wrapping
 	else
 	{
