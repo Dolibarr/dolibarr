@@ -1296,25 +1296,25 @@ class Societe extends CommonObject
         {
             if ($this->client == 1)
             {
-                $lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">';
-                $lienfin='</a>';
+                $lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id;
             }
             elseif($this->client == 2)
             {
-                $lien= '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$this->id.'">';
-                $lienfin='</a>';
+                $lien = '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$this->id;
             }
         }
         if ($option == 'supplier')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$this->id.'">';
-            $lienfin='</a>';
+            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$this->id;
         }
         if (empty($lien))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id.'">';
-            $lienfin='</a>';
+            $lien = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
         }
+        
+        // Add type of canvas
+        $lien.=(!empty($this->canvas)?'&amp;canvas='.$this->canvas:'').'">';
+        $lienfin='</a>';
 
         if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->nom,'company').$lienfin.' ');
         $result.=$lien.($maxlen?dol_trunc($this->nom,$maxlen):$this->nom).$lienfin;
