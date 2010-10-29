@@ -33,6 +33,10 @@ if (! $user->rights->user->user->lire && !$user->admin)
 
 $langs->load("users");
 
+// Security check (for external users)
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
+
 
 /*
  * View
@@ -89,6 +93,7 @@ $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
 $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+if (!empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
 $sql.= $db->order("u.datec","DESC");
 $sql.= $db->plimit($max);
 

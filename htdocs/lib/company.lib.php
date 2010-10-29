@@ -65,20 +65,13 @@ function societe_prepare_head($objsoc)
         $head[$h][2] = 'supplier';
         $h++;
     }
-    /*if ($conf->facture->enabled || $conf->compta->enabled || $conf->accounting->enabled)
+    if ($conf->agenda->enabled)
     {
-        $langs->load("compta");
-        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
-        $head[$h][1] = $langs->trans("Accountancy");
-        $head[$h][2] = 'compta';
-        $h++;
-    }*/
-
-    $head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Agenda");
-    $head[$h][2] = 'agenda';
-    $h++;
-
+    	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$objsoc->id;
+    	$head[$h][1] = $langs->trans("Agenda");
+    	$head[$h][2] = 'agenda';
+    	$h++;
+    }
     //show categorie tab
     if ($conf->categorie->enabled)
     {
@@ -103,7 +96,6 @@ function societe_prepare_head($objsoc)
         $head[$h][2] = 'document';
         $h++;
     }
-
     if ($conf->notification->enabled && $user->societe_id == 0)
     {
         $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
@@ -111,7 +103,6 @@ function societe_prepare_head($objsoc)
         $head[$h][2] = 'notify';
         $h++;
     }
-
     if ($user->societe_id == 0)
     {
         $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$objsoc->id;
