@@ -61,7 +61,7 @@ print "</table><br>\n";
 print '</form>';
 
 // Search Group
-if ($user->rights->user->group->read)
+if ($user->admin || $user->rights->user->group->read)
 {
 	$var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
@@ -84,7 +84,8 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 $max=10;
 
 $sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.fk_societe, u.datec,";
-$sql.= " u.entity, u.ldap_sid, s.nom";
+$sql.= " u.entity, u.ldap_sid,";
+$sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
 $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
@@ -106,7 +107,7 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr $bc[$var]>";
-		print "<td><a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowUser"),"user")." ".$obj->firstname." ".$obj->name."</a>";
+		print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->firstname.' '.$obj->name.'</a>';
 		if ($conf->global->MAIN_MODULE_MULTICOMPANY && $obj->admin && ! $obj->entity)
 		{
 			print img_redstar($langs->trans("SuperAdministrator"));
@@ -116,11 +117,11 @@ if ($resql)
 			print img_picto($langs->trans("Administrator"),'star');
 		}
 		print "</td>";
-		print "<td align=\"left\">".$obj->login.'</td>';
+		print '<td align="left">'.$obj->login.'</td>';
 		print "<td>";
 		if ($obj->fk_societe)
 		{
-			print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$obj->fk_societe.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$obj->fk_societe.'&amp;canvas='.$obj->canvas.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
 		}
 		else if ($obj->ldap_sid)
 		{
@@ -128,7 +129,7 @@ if ($resql)
 		}
 		else print $langs->trans("InternalUser");
 		print '</td>';
-		print "<td align=\"right\">".dol_print_date($db->jdate($obj->datec),'dayhour')."</td>";
+		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
 		print '</tr>';
 		$i++;
 	}
@@ -145,7 +146,7 @@ else
 /*
  * Derniers groupes crees
  */
-if ($user->rights->user->group->read)
+if ($user->admin || $user->rights->user->group->read)
 {
 	$max=5;
 	
@@ -176,7 +177,7 @@ if ($user->rights->user->group->read)
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
 			}
 			print "</td>";
-			print "<td width=\"80\" align=\"center\">".dol_print_date($db->jdate($obj->datec))."</td>";
+			print '<td width="80" align="center">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 			print "</tr>";
 			$i++;
 		}

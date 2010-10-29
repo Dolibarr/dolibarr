@@ -44,10 +44,8 @@ $langs->load("banks");
 $langs->load("users");
 if ($conf->notification->enabled) $langs->load("mails");
 
-// Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe', $socid);
 
 $soc = new Societe($db);
 
@@ -58,6 +56,16 @@ if (! empty($canvas))
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
 	$soccanvas = new Canvas($db);
+	
+	$soccanvas->getCanvas('thirdparty','card',$canvas);
+	
+	// Security check
+	$result = $soccanvas->restrictedArea($user, 'societe', $socid);
+}
+else
+{
+	// Security check
+	$result = restrictedArea($user, 'societe', $socid);
 }
 
 
@@ -74,7 +82,6 @@ if (! empty($canvas))
 	// -----------------------------------------
 	// When used with CANVAS
 	// -----------------------------------------
-	$soccanvas->getCanvas('thirdparty','card',$canvas);
 
 	// Load data control
 	$soccanvas->doActions($socid);
