@@ -127,6 +127,14 @@ class modUser extends DolibarrModules
 		
 		$r++;
 		$this->rights[$r][0] = 256;
+		$this->rights[$r][1] = 'Consulter ses propres permissions';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'self';
+		$this->rights[$r][5] = 'readperms';
+		
+		$r++;
+		$this->rights[$r][0] = 257;
 		$this->rights[$r][1] = 'Creer/modifier ses propres infos utilisateur';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 1;
@@ -134,7 +142,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][5] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 257;
+		$this->rights[$r][0] = 258;
 		$this->rights[$r][1] = 'Modifier son propre mot de passe';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 1;
@@ -142,7 +150,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][5] = 'password';
 		
 		$r++;
-		$this->rights[$r][0] = 258;
+		$this->rights[$r][0] = 259;
 		$this->rights[$r][1] = 'Modifier ses propres permissions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 1;

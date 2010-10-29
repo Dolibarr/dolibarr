@@ -26,8 +26,11 @@
  */
 function user_prepare_head($object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
+	
 	$langs->load("users");
+	
+	$canreadperms=($user->admin || ($user->id != $object->id && $user->user->user->readperms) || ($user->id == $object->id && $user->user->self->readperms));
 
 	$h = 0;
 	$head = array();
@@ -45,11 +48,14 @@ function user_prepare_head($object)
 	    $head[$h][2] = 'ldap';
 	    $h++;
 	}
-
-    $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("UserRights");
-    $head[$h][2] = 'rights';
-    $h++;
+	
+	if ($canreadperms)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("UserRights");
+		$head[$h][2] = 'rights';
+		$h++;
+	}
 
     $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
     $head[$h][1] = $langs->trans("UserGUISetup");
@@ -97,7 +103,9 @@ function user_prepare_head($object)
 
 function group_prepare_head($object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
+	
+	$canreadperms=($user->admin || $user->user->group->readperms);
 
 	$h = 0;
 	$head = array();
@@ -115,11 +123,14 @@ function group_prepare_head($object)
 	    $head[$h][2] = 'ldap';
 	    $h++;
 	}
-
-    $head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("GroupRights");
-    $head[$h][2] = 'rights';
-    $h++;
+	
+	if ($canreadperms)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("GroupRights");
+		$head[$h][2] = 'rights';
+		$h++;
+	}
     
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
