@@ -753,6 +753,7 @@ if (! function_exists("llxHeader"))
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 		top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 		left_menu('', $help_url);
+		main_area();
 	}
 }
 
@@ -862,6 +863,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-1.8.5.custom.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.min'.$ext.'"></script>'."\n";
+			//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
 
             // This one is required for some Ajax features
 			if (! defined('DISABLE_PROTOTYPE') && $conf->global->MAIN_USE_PROTOTYPE)
@@ -1228,14 +1230,25 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	print "<!-- End left vertical menu -->\n";
 
 	print "\n";
+	
+	print '</td>';
 
 	print '<!-- End of left column, begin right area -->'."\n";
 	//	    print '</div>'."\n";
 	//		print '<div class="vmenuplusfiche">'."\n";
-	print '</td><td valign="top">'."\n";
+}
 
-
+/**
+ *  Begin main area
+ */
+function main_area()
+{
+	global $conf, $langs;
+	
+	print '<td valign="top">'."\n";
+	
 	print "\n";
+	
 	print '<div class="fiche"> <!-- begin main area -->'."\n";
 
 	if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode",$conf->global->MAIN_ONLY_LOGIN_ALLOWED));
