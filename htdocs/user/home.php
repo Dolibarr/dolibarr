@@ -37,6 +37,7 @@ $langs->load("users");
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 
+$companystatic = new Societe($db);
 
 /*
  * View
@@ -126,7 +127,10 @@ if ($resql)
 		print "<td>";
 		if ($obj->fk_societe)
 		{
-			print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$obj->fk_societe.(!empty($obj->canvas)?'&amp;canvas='.$obj->canvas:'').'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
+			$companystatic->id=$obj->fk_societe;
+            $companystatic->nom=$obj->nom;
+            $companystatic->canvas=$obj->canvas;
+            print $companystatic->getNomUrl(1);
 		}
 		else if ($obj->ldap_sid)
 		{

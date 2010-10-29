@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,10 @@ if (! $user->rights->user->user->lire && ! $user->admin) accessforbidden();
 $langs->load("users");
 $langs->load("companies");
 
+// Security check (for external users)
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
+
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
@@ -46,7 +50,7 @@ if (! $sortfield) $sortfield="u.login";
 if (! $sortorder) $sortorder="ASC";
 
 $userstatic=new User($db);
-
+$companystatic = new Societe($db);
 
 /*
  * View
@@ -61,10 +65,11 @@ $sql.= " u.datec,";
 $sql.= " u.tms as datem,";
 $sql.= " u.datelastlogin,";
 $sql.= " u.ldap_sid, u.statut, u.entity,";
-$sql.= " s.nom";
+$sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
 $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+if (!empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
 if ($_POST["search_user"])
 {
     $sql.= " AND (u.login like '%".$_POST["search_user"]."%' OR u.name like '%".$_POST["search_user"]."%' OR u.firstname like '%".$_POST["search_user"]."%')";
@@ -111,7 +116,10 @@ if ($result)
         print "<td>";
         if ($obj->fk_societe)
         {
-            print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$obj->fk_societe.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
+            $companystatic->id=$obj->fk_societe;
+            $companystatic->nom=$obj->nom;
+            $companystatic->canvas=$obj->canvas;
+            print $companystatic->getNomUrl(1);
         }
         else if ($obj->ldap_sid)
         {
