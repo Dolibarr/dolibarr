@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
-// Recherche User
+// Search User
 $var=false;
 print '<form method="post" action="'.DOL_URL_ROOT.'/user/index.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -60,17 +60,20 @@ print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input t
 print "</table><br>\n";
 print '</form>';
 
-// Recherche Group
-$var=false;
-print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAGroup").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("Ref").':</td><td><input class="flat" type="text" name="search_group" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
-print "</table><br>\n";
-print '</form>';
+// Search Group
+if ($user->user->group->read)
+{
+	$var=false;
+	print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAGroup").'</td></tr>';
+	print '<tr '.$bc[$var].'><td>';
+	print $langs->trans("Ref").':</td><td><input class="flat" type="text" name="search_group" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
+	print "</table><br>\n";
+	print '</form>';
+}
 
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
@@ -142,48 +145,50 @@ else
 /*
  * Derniers groupes crees
  */
-$max=5;
-
-$sql = "SELECT g.rowid, g.nom, g.note, g.entity, g.datec";
-$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
-$sql.= $db->order("g.datec","DESC");
-$sql.= $db->plimit($max);
-
-$resql=$db->query($sql);
-if ($resql)
+if ($user->user->group->read)
 {
-	$num = $db->num_rows($resql);
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
-	$var = true;
-	$i = 0;
-
-	while ($i < $num && (! $max || $i < $max))
+	$max=5;
+	
+	$sql = "SELECT g.rowid, g.nom, g.note, g.entity, g.datec";
+	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
+	$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+	$sql.= $db->order("g.datec","DESC");
+	$sql.= $db->plimit($max);
+	
+	$resql=$db->query($sql);
+	if ($resql)
 	{
-		$obj = $db->fetch_object($resql);
-		$var=!$var;
-
-		print "<tr $bc[$var]>";
-		print '<td><a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
-		if (!$obj->entity)
+		$num = $db->num_rows($resql);
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
+		$var = true;
+		$i = 0;
+		
+		while ($i < $num && (! $max || $i < $max))
 		{
-			print img_picto($langs->trans("GlobalGroup"),'redstar');
+			$obj = $db->fetch_object($resql);
+			$var=!$var;
+			
+			print "<tr $bc[$var]>";
+			print '<td><a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
+			if (!$obj->entity)
+			{
+				print img_picto($langs->trans("GlobalGroup"),'redstar');
+			}
+			print "</td>";
+			print "<td width=\"80\" align=\"center\">".dol_print_date($db->jdate($obj->datec))."</td>";
+			print "</tr>";
+			$i++;
 		}
-		print "</td>";
-		print "<td width=\"80\" align=\"center\">".dol_print_date($db->jdate($obj->datec))."</td>";
-		print "</tr>";
-		$i++;
+		print "</table><br>";
+		
+		$db->free($resql);
 	}
-	print "</table><br>";
-
-	$db->free($resql);
+	else
+	{
+		dol_print_error($db);
+	}
 }
-else
-{
-	dol_print_error($db);
-}
-
 
 print '</td></tr>';
 print '</table>';

@@ -39,8 +39,8 @@ if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/a
 // Define value to know what current user can do on users
 $canadduser=($user->admin || $user->rights->user->user->creer);
 $canreaduser=($user->admin || $user->rights->user->user->lire);
-$caneditperms=($user->admin || $user->rights->user->user->creer);
-$candisableperms=($user->admin || $user->rights->user->user->supprimer);
+$canedituser=($user->admin || $user->rights->user->user->creer);
+$candisableuser=($user->admin || $user->rights->user->user->supprimer);
 // Define value to know what current user can do on properties of edited user
 if ($_GET["id"])
 {
@@ -81,14 +81,14 @@ $quality = 80;
 /**
  * Actions
  */
-if ($_GET["subaction"] == 'addrights' && $caneditperms)
+if ($_GET["subaction"] == 'addrights' && $canedituser)
 {
 	$edituser = new User($db);
 	$edituser->fetch($_GET["id"]);
 	$edituser->addrights($_GET["rights"]);
 }
 
-if ($_GET["subaction"] == 'delrights' && $caneditperms)
+if ($_GET["subaction"] == 'delrights' && $canedituser)
 {
 	$edituser = new User($db);
 	$edituser->fetch($_GET["id"]);
@@ -1143,19 +1143,19 @@ else
 			}
 
 			// Activer
-			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 0 &&
+			if ($user->id <> $_GET["id"] && $candisableuser && $fuser->statut == 0 &&
 			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
 			}
 			// Desactiver
-			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 1 &&
+			if ($user->id <> $_GET["id"] && $candisableuser && $fuser->statut == 1 &&
 			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
 			}
 			// Delete
-			if ($user->id <> $_GET["id"] && $candisableperms &&
+			if ($user->id <> $_GET["id"] && $candisableuser &&
 			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
@@ -1256,7 +1256,7 @@ else
 			}
 			$db->free($resql);
 
-			if ($caneditperms)
+			if ($canedituser)
 			{
 				$form = new Form($db);
 				print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
@@ -1309,7 +1309,7 @@ else
 					print '</td>';
 					print '<td align="right">';
 
-					if ($caneditperms)
+					if ($canedituser)
 					{
 						print '<a href="fiche.php?id='.$_GET["id"].'&amp;action=removegroup&amp;group='.$group->id.'">';
 						print img_delete($langs->trans("RemoveFromGroup"));
@@ -1335,7 +1335,7 @@ else
 		 * Fiche en mode edition
 		 */
 
-		if ($_GET["action"] == 'edit' && ($caneditperms || ($user->id == $fuser->id)))
+		if ($_GET["action"] == 'edit' && ($canedituser || ($user->id == $fuser->id)))
 		{
 
 			print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
