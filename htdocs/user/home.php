@@ -61,7 +61,7 @@ print "</table><br>\n";
 print '</form>';
 
 // Search Group
-if ($user->user->group->read)
+if ($user->rights->user->group->read)
 {
 	$var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
@@ -145,7 +145,7 @@ else
 /*
  * Derniers groupes crees
  */
-if ($user->user->group->read)
+if ($user->rights->user->group->read)
 {
 	$max=5;
 	
