@@ -121,7 +121,7 @@ if ($resql)
 		print "<td>";
 		if ($obj->fk_societe)
 		{
-			print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$obj->fk_societe.'&amp;canvas='.$obj->canvas.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$obj->fk_societe.(!empty($obj->canvas)?'&amp;canvas='.$obj->canvas:'').'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
 		}
 		else if ($obj->ldap_sid)
 		{
