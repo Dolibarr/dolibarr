@@ -178,7 +178,7 @@ if ($facid > 0)
 
 		// List of document
 		$param='&facid='.$facture->id;
-		$formfile->list_of_documents($filearray,$facture,'facture_fournisseur',$param);
+		$formfile->list_of_documents($filearray,$facture,'facture_fournisseur',$param,0,get_exdir($facture->id,2,0).$facture->id.'/');
 
 	}
 	else
