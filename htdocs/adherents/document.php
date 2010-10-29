@@ -63,7 +63,7 @@ $sortfield=$_GET["sortfield"];
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-$upload_dir = $conf->adherent->dir_output . "/" . get_exdir($id,2,0,1);
+$upload_dir = $conf->adherent->dir_output . "/" . get_exdir($id,2,0,1) . '/' . $id;
 
 
 
@@ -201,7 +201,7 @@ if ($id > 0)
 
 		// List of document
 		$param='&socid='.$societe->id;
-		$formfile->list_of_documents($filearray,$member,'member',$param);
+		$formfile->list_of_documents($filearray,$member,'member',$param, 0, get_exdir($id,2,0,1).'/'.$id.'/');
 
 		print "<br><br>";
 	}
