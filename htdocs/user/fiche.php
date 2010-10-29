@@ -41,6 +41,8 @@ $canadduser=($user->admin || $user->rights->user->user->creer);
 $canreaduser=($user->admin || $user->rights->user->user->lire);
 $canedituser=($user->admin || $user->rights->user->user->creer);
 $candisableuser=($user->admin || $user->rights->user->user->supprimer);
+$canreadgroup=($user->admin || $user->rights->user->group->read);
+$caneditgroup=($user->admin || $user->rights->user->group->write);
 // Define value to know what current user can do on properties of edited user
 if ($_GET["id"])
 {
@@ -1173,167 +1175,170 @@ else
 			/*
 			 * Liste des groupes dans lequel est l'utilisateur
 			 */
-
-			print_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
-
-			// On selectionne les groups
-			$grouplistid = array();
-			$uss = array();
-
-			$sql = "SELECT ug.fk_usergroup";
-			$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
-			$sql.= ", ".MAIN_DB_PREFIX."usergroup as u";
-			$sql.= " WHERE ug.fk_user = ".$fuser->id;
-			$sql.= " AND ug.fk_usergroup = u.rowid";
-			$sql.= " AND u.entity IN (0,".$conf->entity.")";
-
-			$result = $db->query($sql);
-			if ($result)
+			
+			if ($canreadgroup)
 			{
-				$num = $db->num_rows($result);
-				$i = 0;
-
-				while ($i < $num)
+				print_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
+				
+				// On selectionne les groups
+				$grouplistid = array();
+				$uss = array();
+				
+				$sql = "SELECT ug.fk_usergroup";
+				$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
+				$sql.= ", ".MAIN_DB_PREFIX."usergroup as u";
+				$sql.= " WHERE ug.fk_user = ".$fuser->id;
+				$sql.= " AND ug.fk_usergroup = u.rowid";
+				$sql.= " AND u.entity IN (0,".$conf->entity.")";
+				
+				$result = $db->query($sql);
+				if ($result)
 				{
-					$obj = $db->fetch_object($result);
-
-					$grouplistid[]=$obj->fk_usergroup;
-					$i++;
-				}
-			}
-			else {
-				dol_print_error($db);
-			}
-
-			$idList = implode(",",$grouplistid);
-
-			if (!empty($idList))
-			{
-				$sql = "SELECT ug.rowid, ug.nom ";
-				$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-				$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
-				$sql.= " AND ug.rowid NOT IN (".$idList.")";
-				$sql.= " ORDER BY ug.nom";
-
-				$resql = $db->query($sql);
-				if ($resql)
-				{
-					$num = $db->num_rows($resql);
+					$num = $db->num_rows($result);
 					$i = 0;
-
+					
 					while ($i < $num)
 					{
-						$obj = $db->fetch_object($resql);
-
-						$uss[$obj->rowid] = $obj->nom;
+						$obj = $db->fetch_object($result);
+						
+						$grouplistid[]=$obj->fk_usergroup;
 						$i++;
 					}
 				}
 				else {
 					dol_print_error($db);
 				}
-			}
-			else
-			{
-				$sql = "SELECT ug.rowid, ug.nom ";
-				$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-				$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
-				$sql.= " ORDER BY ug.nom";
-
-				$resql = $db->query($sql);
-				if ($resql)
+				
+				$idList = implode(",",$grouplistid);
+				
+				if (!empty($idList))
 				{
-					$num = $db->num_rows($resql);
-					$i = 0;
-
-					while ($i < $num)
+					$sql = "SELECT ug.rowid, ug.nom ";
+					$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+					$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
+					$sql.= " AND ug.rowid NOT IN (".$idList.")";
+					$sql.= " ORDER BY ug.nom";
+					
+					$resql = $db->query($sql);
+					if ($resql)
 					{
-						$obj = $db->fetch_object($resql);
-
-						$uss[$obj->rowid] = $obj->nom;
-						$i++;
+						$num = $db->num_rows($resql);
+						$i = 0;
+						
+						while ($i < $num)
+						{
+							$obj = $db->fetch_object($resql);
+							$uss[$obj->rowid] = $obj->nom;
+							$i++;
+						}
+					}
+					else {
+						dol_print_error($db);
 					}
 				}
-				else {
-					dol_print_error($db);
-				}
-			}
-			$db->free($resql);
-
-			if ($canedituser)
-			{
-				$form = new Form($db);
-				print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="addgroup">';
-				print '<table class="noborder" width="100%">'."\n";
-				print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
-				print '<td>';
-				print $form->selectarray("group",$uss);
-				print ' &nbsp; ';
-				print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-				print '</td></tr>'."\n";
-				print '</table></form>'."\n";
-
-				print '<br>';
-			}
-
-			/*
-			 * Groupes affectes
-			 */
-			$usergroup=new UserGroup($db);
-			$listofgroups=$usergroup->listGroupsForUser($fuser);
-			$num=sizeof($listofgroups);
-
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
-			print "<td>&nbsp;</td></tr>\n";
-
-			if ($num > 0)
-			{
-				$i = 0;
-
-				$var=true;
-				while ($i < $num)
+				else
 				{
-					$group = $listofgroups[$i];
-					$var=!$var;
-
-					print "<tr ".$bc[$var].">";
+					$sql = "SELECT ug.rowid, ug.nom ";
+					$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+					$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
+					$sql.= " ORDER BY ug.nom";
+					
+					$resql = $db->query($sql);
+					if ($resql)
+					{
+						$num = $db->num_rows($resql);
+						$i = 0;
+						
+						while ($i < $num)
+						{
+							$obj = $db->fetch_object($resql);
+							
+							$uss[$obj->rowid] = $obj->nom;
+							$i++;
+						}
+					}
+					else {
+						dol_print_error($db);
+					}
+				}
+				$db->free($resql);
+				
+				if ($caneditgroup)
+				{
+					$form = new Form($db);
+					print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="action" value="addgroup">';
+					print '<table class="noborder" width="100%">'."\n";
+					print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
 					print '<td>';
-					if ($canreaduser)
-					{
-						print '<a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->nom.'</a>';
-					}
-					else
-					{
-						print img_object($langs->trans("ShowGroup"),"group").' '.$group->nom;
-					}
-					print '</td>';
-					print '<td align="right">';
-
-					if ($canedituser)
-					{
-						print '<a href="fiche.php?id='.$_GET["id"].'&amp;action=removegroup&amp;group='.$group->id.'">';
-						print img_delete($langs->trans("RemoveFromGroup"));
-					}
-					else
-					{
-						print "&nbsp;";
-					}
-					print "</td></tr>\n";
-					$i++;
+					print $form->selectarray("group",$uss);
+					print ' &nbsp; ';
+					print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+					print '</td></tr>'."\n";
+					print '</table></form>'."\n";
+					
+					print '<br>';
 				}
+				
+				/*
+				 * Groupes affectes
+				 */
+				$usergroup=new UserGroup($db);
+				$listofgroups=$usergroup->listGroupsForUser($fuser);
+				$num=sizeof($listofgroups);
+				
+				print '<table class="noborder" width="100%">';
+				print '<tr class="liste_titre">';
+				print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
+				print "<td>&nbsp;</td></tr>\n";
+				
+				if ($num > 0)
+				{
+					$i = 0;
+					
+					$var=true;
+					while ($i < $num)
+					{
+						$group = $listofgroups[$i];
+						$var=!$var;
+						
+						print "<tr ".$bc[$var].">";
+						print '<td>';
+						if ($caneditgroup)
+						{
+							print '<a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->nom.'</a>';
+						}
+						else
+						{
+							print img_object($langs->trans("ShowGroup"),"group").' '.$group->nom;
+						}
+						print '</td>';
+						print '<td align="right">';
+						
+						if ($caneditgroup)
+						{
+							print '<a href="fiche.php?id='.$_GET["id"].'&amp;action=removegroup&amp;group='.$group->id.'">';
+							print img_delete($langs->trans("RemoveFromGroup"));
+						}
+						else
+						{
+							print "&nbsp;";
+						}
+						print "</td></tr>\n";
+						$i++;
+					}
+				}
+				else
+				{
+					print '<tr '.$bc[false].'><td colspan=2>'.$langs->trans("None").'</td></tr>';
+				}
+				
+				print "</table>";
+				print "<br>";
 			}
-			else
-			{
-				print '<tr '.$bc[false].'><td colspan=2>'.$langs->trans("None").'</td></tr>';
-			}
-
-			print "</table>";
-			print "<br>";
 		}
+
 
 		/*
 		 * Fiche en mode edition
