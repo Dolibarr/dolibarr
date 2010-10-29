@@ -51,10 +51,16 @@ if ($_GET["id"])
 	|| (($user->id != $_GET["id"]) && $user->rights->user->user->password) );
 }
 
+$action=GETPOST("action");
+$confirm=GETPOST("confirm");
+
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
-$feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+if ($user->societe_id > 0)
+{
+	$socid = $user->societe_id;
+	$feature2='user';
+}
 if ($user->id == $_GET["id"])	// A user can always read its own card
 {
 	$feature2='';
@@ -66,8 +72,6 @@ if ($user->id <> $_GET["id"] && ! $canreaduser) accessforbidden();
 $langs->load("users");
 $langs->load("companies");
 $langs->load("ldap");
-
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 $form = new Form($db);
 
@@ -95,7 +99,7 @@ if ($_GET["subaction"] == 'delrights' && $canedituser)
 	$edituser->delrights($_GET["rights"]);
 }
 
-if ($_REQUEST["action"] == 'confirm_disable' && $_REQUEST["confirm"] == "yes")
+if ($action == 'confirm_disable' && $confirm == "yes")
 {
 	if ($_GET["id"] <> $user->id)
 	{
@@ -106,7 +110,7 @@ if ($_REQUEST["action"] == 'confirm_disable' && $_REQUEST["confirm"] == "yes")
 		exit;
 	}
 }
-if ($_REQUEST["action"] == 'confirm_enable' && $_REQUEST["confirm"] == "yes")
+if ($action == 'confirm_enable' && $confirm == "yes")
 {
 	if ($_GET["id"] <> $user->id)
 	{
@@ -133,7 +137,7 @@ if ($_REQUEST["action"] == 'confirm_enable' && $_REQUEST["confirm"] == "yes")
 	}
 }
 
-if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes")
+if ($action == 'confirm_delete' && $confirm == "yes")
 {
 	if ($_GET["id"] <> $user->id)
 	{
@@ -370,8 +374,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 }
 
 // Change password with a new generated one
-if ((($_REQUEST["action"] == 'confirm_password' && $_REQUEST["confirm"] == 'yes')
-|| ($_REQUEST["action"] == 'confirm_passwordsend' && $_REQUEST["confirm"] == 'yes')) && $caneditpassword)
+if ((($action == 'confirm_password' && $confirm == 'yes')
+|| ($action == 'confirm_passwordsend' && $confirm == 'yes')) && $caneditpassword)
 {
 	$edituser = new User($db);
 	$edituser->fetch($_GET["id"]);
@@ -385,7 +389,7 @@ if ((($_REQUEST["action"] == 'confirm_password' && $_REQUEST["confirm"] == 'yes'
 	else
 	{
 		// Succes
-		if ($_REQUEST["action"] == 'confirm_passwordsend' && $_REQUEST["confirm"] == 'yes')
+		if ($action == 'confirm_passwordsend' && $confirm == 'yes')
 		{
 			if ($edituser->send_password($user,$newpassword) > 0)
 			{

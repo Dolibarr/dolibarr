@@ -1573,6 +1573,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 
 	// More features to check
 	$features = explode("&",$features);
+	//var_dump($features);
 
 	// Check read permission from module
 	// TODO Replace "feature" param by permission for reading
@@ -1633,8 +1634,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 
 	// Check write permission from module
 	$createok=1;
-	if ( (isset($_GET["action"])  && $_GET["action"]  == 'create')
-	|| (isset($_POST["action"]) && $_POST["action"] == 'create') )
+	if ( GETPOST("action") && GETPOST("action")  == 'create')
 	{
 		foreach ($features as $feature)
 		{
@@ -1673,6 +1673,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 			}
 			else if (! empty($feature))		// This is for old permissions
 			{
+				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write;
 				if (empty($user->rights->$feature->creer)
 				&& empty($user->rights->$feature->write)) $createok=0;
 			}
