@@ -956,9 +956,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						paneClass: "pane",
 						//resizerClass: "resizer",
 						//togglerClass: "toggler",
-						buttonClass: "button",
-						contentSelector: ".content",
-						contentIgnoreSelector: "span",
+						//buttonClass: "button",
+						//contentSelector: ".content",
+						//contentIgnoreSelector: "span",
 						togglerLength_open:	35,
 						togglerLength_closed: 35,
 						hideTogglerOnSlide:	true,
@@ -976,7 +976,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						paneClass: "none",
 						resizerClass: "none",
 						togglerClass: "none",
-						spacing_open: 1,
+						spacing_open: 0,
 						togglerLength_open:	0,
 						togglerLength_closed: -1,
 						resizable: false,
@@ -984,10 +984,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						fxName:	"none"
 					},
 					center: {
-						applyDefaultStyles:	true,
-						//paneClass: "none",
-						//resizerClass: "none",
-						//togglerClass: "none",
+						// TODO Problem with right scrollbar
+						paneClass:    "ui-layout-pane",
+						//resizerClass: "ui-layout-resizer",
+						//togglerClass: "ui-layout-toggler",
 						paneSelector: "#mainContent"
 					}
 				}
