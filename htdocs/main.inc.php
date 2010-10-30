@@ -989,10 +989,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						fxName:	"none"
 					},
 					center: {
-						// TODO Problem with right scrollbar
-						paneClass:    "ui-layout-pane",
-						//resizerClass: "ui-layout-resizer",
-						//togglerClass: "ui-layout-toggler",
+						paneClass:    "ui-layout-content",
 						paneSelector: "#mainContent"
 					}
 				}
