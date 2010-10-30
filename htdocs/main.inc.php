@@ -951,6 +951,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 				});
 				var layoutSettings = {
 					defaults: {
+						useStateCookie: true,
 						size: "auto",
 						//minSize: 50,
 						paneClass: "pane",
