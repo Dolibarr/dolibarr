@@ -984,9 +984,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						fxName:	"none"
 					},
 					center: {
-						paneClass: "none",
-						resizerClass: "none",
-						togglerClass: "none",
+						applyDefaultStyles:	true,
+						//paneClass: "none",
+						//resizerClass: "none",
+						//togglerClass: "none",
 						paneSelector: "#mainContent"
 					}
 				}
