@@ -74,7 +74,7 @@ class FactureFournisseur extends Facture
 	var $note_public;
 	var $propalid;
 
-	var $lines; 
+	var $lines;
 	var $fournisseur;
 
 	/**
@@ -101,7 +101,7 @@ class FactureFournisseur extends Facture
 		$this->propalid = 0;
 
 		$this->products = array();
-		$this->lines = array(); 
+		$this->lines = array();
 	}
 
 	/**
@@ -352,7 +352,7 @@ class FactureFournisseur extends Facture
 					$this->lines[$i]->total_ttc        = $obj->total_ttc;
 					$this->lines[$i]->fk_product       = $obj->fk_product;
 					$this->lines[$i]->product_type     = $obj->product_type;
-					
+
 					$i++;
 				}
 			}
@@ -771,19 +771,19 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 * \brief     	Update line
-	 * \param     	id            	Id of line invoice
-	 * \param     	label         	Description of line
-	 * \param     	pu          	Prix unitaire (HT ou TTC selon price_base_type)
-	 * \param     	tauxtva       	VAT Rate
-	 * \param     	qty           	Quantity
-	 * \param     	idproduct		Id produit
-	 * \param	  	price_base_type	HT or TTC
-	 * \param	  	info_bits		Miscellanous informations of line
-	 * \param		type			Type of line (0=product, 1=service)
-	 * \return    	int           	<0 if KO, >0 if OK
+	 * Update a line detail into database
+	 * @param     	id            	Id of line invoice
+	 * @param     	label         	Description of line
+	 * @param     	pu          	Prix unitaire (HT ou TTC selon price_base_type)
+	 * @param     	vatrate       	VAT Rate
+	 * @param     	qty           	Quantity
+	 * @param     	idproduct		Id produit
+	 * @param	  	price_base_type	HT or TTC
+	 * @param	  	info_bits		Miscellanous informations of line
+	 * @param		type			Type of line (0=product, 1=service)
+	 * @return    	int           	<0 if KO, >0 if OK
 	 */
-	function updateline($id, $label, $pu, $tauxtva, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0)
+	function updateline($id, $label, $pu, $vatrate, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
@@ -794,11 +794,14 @@ class FactureFournisseur extends Facture
 		if (! is_numeric($pu) || ! is_numeric($qty)) return -1;
 		if ($type < 0) return -1;
 
+		// Clean parameters
+		if (empty($vatrate)) $vatrate=0;
+
 		// Calcul du total TTC et de la TVA pour la ligne a partir de
 		// qty, pu, remise_percent et txtva
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-		$tabprice = calcul_price_total($qty, $pu, 0, $tauxtva, 0,0, 0, $price_base_type, $info_bits);
+		$tabprice = calcul_price_total($qty, $pu, 0, $vatrate, 0,0, 0, $price_base_type, $info_bits);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
@@ -822,7 +825,7 @@ class FactureFournisseur extends Facture
 		$sql.= ", pu_ht = ".price2num($pu_ht);
 		$sql.= ", pu_ttc = ".price2num($pu_ttc);
 		$sql.= ", qty = ".price2num($qty);
-		$sql.= ", tva_tx = ".price2num($tauxtva);
+		$sql.= ", tva_tx = ".price2num($vatrate);
 		$sql.= ", total_ht = ".price2num($total_ht);
 		$sql.= ", tva= ".price2num($total_tva);
 		$sql.= ", total_ttc = ".price2num($total_ttc);
@@ -835,20 +838,22 @@ class FactureFournisseur extends Facture
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			// Mise a jour prix total facture
-			return $this->update_price();
+			// Update total price into invoice record
+			$result=$this->update_price();
+
+			return $result;
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			dol_syslog("Fournisseur.facture::updateline error=".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
 
 	/**
-	 * \brief     Supprime une ligne facture de la base
-	 * \param     rowid      id de la ligne de facture a supprimer
+	 * Delete a detail line from database
+	 * @param     rowid      id of line to delete
 	 */
 	function deleteline($rowid)
 	{
