@@ -1010,8 +1010,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
                         return jQuery(this).attr("tooltipText"); }
                     });
                 });
-                
-                jQuery("body").layout({ applyDefaultStyles: true });
     </script>';
 
 	/*
