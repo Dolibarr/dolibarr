@@ -1,6 +1,6 @@
 <?php
-/* Copyright (c) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (c) 2010 Juanjo Menent  <jmenent@2byte.es>
+/* Copyright (c) 2008-2010 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (c) 2010      Juanjo Menent       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +19,14 @@
 
 /**
  *	\file       htdocs/core/class/html.formfile.class.php
- *	\brief      Fichier de la classe des fonctions predefinie de composants html fichiers
+ *	\brief      File of class to offer components to list and upload files
  *	\version	$Id$
  */
 
 
 /**
  *	\class      FormFile
- *	\brief      Classe permettant la generation de composants html fichiers
+ *	\brief      Class to offer components to list and upload files
  */
 class FormFile
 {
@@ -35,8 +35,8 @@ class FormFile
 
 
 	/**
-	 *		\brief     Constructeur
-	 *		\param     DB      handler d'acces base de donnee
+	 *		Constructor
+	 *		@param     DB      handler d'acces base de donnee
 	 */
 	function FormFile($DB)
 	{
@@ -47,13 +47,13 @@ class FormFile
 
 
 	/**
-	 *    	\brief      Show file add form
-	 *    	\param      url				Url
-	 *    	\param      title			Title zone (Title or '' or 'none')
-	 *    	\param      addcancel		1=Add 'Cancel' button
-	 *		\param		sectionid		If upload must be done inside a particular ECM section
-	 * 		\param		perm			Value of permission to allow upload
-	 * 		\return		int				<0 si ko, >0 si ok
+	 *    	Show form to upload a new file
+	 *    	@param      url				Url
+	 *    	@param      title			Title zone (Title or '' or 'none')
+	 *    	@param      addcancel		1=Add 'Cancel' button
+	 *		@param		sectionid		If upload must be done inside a particular ECM section
+	 * 		@param		perm			Value of permission to allow upload
+	 * 		@return		int				<0 ij KO, >0 if OK
 	 */
 	function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1)
 	{
@@ -124,24 +124,24 @@ class FormFile
 
 
 	/**
-	 *      \brief      Show the box with list of available documents for object
-	 *      \param      modulepart          propal=propal, facture=facture, ...
-	 *      \param      filename            Sub dir to scan (Example: '9/9', 'FA9999'). Use '' if filedir already complete)
-	 *      \param      filedir             Dir to scan
-	 *      \param      urlsource           Url of origin page (for return)
-	 *      \param      genallowed          Generation is allowed (1/0 or array of formats)
-	 *      \param      delallowed          Remove is allowed (1/0)
-	 *      \param      modelselected       Model to preselect by default
-	 *      \param      allowgenifempty			Show warning if no model activated
-	 *      \param      forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
-	 *      \param      iconPDF             Show only PDF icon with link (1/0)
-	 * 		\param		maxfilenamelength	Max length for filename shown
-	 * 		\param		noform				Do not output html form tags
-	 * 		\param		param				More param on http links
-	 * 		\param		title				Title to show on top of form
-	 * 		\param		buttonlabel			Label on submit button
-	 * 		\param		codelang			Default language code to use on lang combo box if multilang is enabled
-	 * 		\return		int					<0 if KO, number of shown files if OK
+	 *      Show the box with list of available documents for object
+	 *      @param      modulepart          propal=propal, facture=facture, ...
+	 *      @param      filename            Sub dir to scan (Example: '9/9', 'FA9999'). Use '' if filedir already complete)
+	 *      @param      filedir             Dir to scan
+	 *      @param      urlsource           Url of origin page (for return)
+	 *      @param      genallowed          Generation is allowed (1/0 or array of formats)
+	 *      @param      delallowed          Remove is allowed (1/0)
+	 *      @param      modelselected       Model to preselect by default
+	 *      @param      allowgenifempty			Show warning if no model activated
+	 *      @param      forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
+	 *      @param      iconPDF             Show only PDF icon with link (1/0)
+	 * 		@param		maxfilenamelength	Max length for filename shown
+	 * 		@param		noform				Do not output html form tags
+	 * 		@param		param				More param on http links
+	 * 		@param		title				Title to show on top of form
+	 * 		@param		buttonlabel			Label on submit button
+	 * 		@param		codelang			Default language code to use on lang combo box if multilang is enabled
+	 * 		@return		int					<0 if KO, number of shown files if OK
 	 */
 	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
 	{
