@@ -863,7 +863,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-1.8.5.custom.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.min'.$ext.'"></script>'."\n";
-			//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
+			
+			if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
+			{
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
+			}
 
             // This one is required for some Ajax features
 			if (! defined('DISABLE_PROTOTYPE') && $conf->global->MAIN_USE_PROTOTYPE)
@@ -938,7 +942,56 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	// For backward compatibility with old modules
 	if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-
+	
+	if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
+	{
+		print '<script type="text/javascript">
+				jQuery(document).ready(function () {
+					jQuery("body").layout( layoutSettings );
+				});
+				var layoutSettings = {
+					defaults: {
+						size: "auto",
+						//minSize: 50,
+						paneClass: "pane",
+						//resizerClass: "resizer",
+						//togglerClass: "toggler",
+						buttonClass: "button",
+						contentSelector: ".content",
+						contentIgnoreSelector: "span",
+						togglerLength_open:	35,
+						togglerLength_closed: 35,
+						hideTogglerOnSlide:	true,
+						togglerTip_open: "Close This Pane",
+						togglerTip_closed: "Open This Pane",
+						resizerTip:	"Resize This Pane",
+						//	effect defaults - overridden on some panes
+						fxName:	"slide",
+						fxSpeed_open: 750,
+						fxSpeed_close: 1500,
+						fxSettings_open: { easing: "easeInQuint" },
+						fxSettings_close: { easing: "easeOutQuint" }
+					},
+					north: {
+						paneClass: "none",
+						resizerClass: "none",
+						togglerClass: "none",
+						spacing_open: 1,
+						togglerLength_open:	0,
+						togglerLength_closed: -1,
+						resizable: false,
+						slidable: false,
+						fxName:	"none"
+					},
+					center: {
+						paneClass: "none",
+						resizerClass: "none",
+						togglerClass: "none",
+						paneSelector: "#mainContent"
+					}
+				}
+    		</script>';
+	}
 
 	print '<body id="mainbody">';
 
@@ -957,6 +1010,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
                         return jQuery(this).attr("tooltipText"); }
                     });
                 });
+                
+                jQuery("body").layout({ applyDefaultStyles: true });
     </script>';
 
 	/*
@@ -974,6 +1029,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	}
 
     print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
+    
+    print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
 
     print '<div id="tmenu_tooltip" class="tmenu">'."\n";
 
@@ -1067,6 +1124,13 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	}
 
 	print "\n</div>\n<!-- End top horizontal menu -->\n";
+	
+	print "</div><!-- End top layout -->\n";
+	
+	if (! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
+	{
+		print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
+	}
 }
 
 
@@ -1087,7 +1151,10 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	$bookmarks='';
 
 	//    print '<div class="vmenuplusfiche">'."\n";
-	print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr><td class="vmenu" valign="top">';
+	
+	print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
+	
+	if (! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<td class="vmenu" valign="top">';
 
 	print "\n";
 
@@ -1231,7 +1298,9 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	print "\n";
 	
-	print '</td>';
+	if (! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</td>';
+	
+	print '</div> <!-- End left layout -->'."\n";
 
 	print '<!-- End of left column, begin right area -->'."\n";
 	//	    print '</div>'."\n";
@@ -1244,6 +1313,10 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 function main_area()
 {
 	global $conf, $langs;
+	
+	print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
+	
+	if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
 	
 	print '<td valign="top">'."\n";
 	
@@ -1405,6 +1478,7 @@ if (! function_exists("llxFooter"))
 
 		//    print "\n".'</div> <!-- end div class="vmenuplusfiche" -->'."\n";
 		print "\n".'</td></tr></table> <!-- end right area -->'."\n";
+		print '</div></div> <!-- end main layout -->'."\n";
 
 		if (! empty($_SERVER['DOL_TUNING']))
 		{
