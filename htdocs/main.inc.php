@@ -957,8 +957,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 					defaults: {
 						useStateCookie: true,
 						size: "auto",
-						//minSize: 50,
-						paneClass: "pane",
+						resizable: false,
+						paneClass: "none",
 						//resizerClass: "resizer",
 						//togglerClass: "toggler",
 						//buttonClass: "button",
@@ -984,7 +984,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						spacing_open: 0,
 						togglerLength_open:	0,
 						togglerLength_closed: -1,
-						resizable: false,
 						slidable: false,
 						fxName:	"none"
 					},
