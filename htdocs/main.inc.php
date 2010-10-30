@@ -943,9 +943,13 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	// For backward compatibility with old modules
 	if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 	
-	if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
+	print '<body id="mainbody">';
+	
+	if ($conf->use_javascript_ajax)
 	{
-		print '<script type="text/javascript">
+		if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
+		{
+			print '<script type="text/javascript">
 				jQuery(document).ready(function () {
 					jQuery("body").layout( layoutSettings );
 				});
@@ -993,26 +997,25 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 					}
 				}
     		</script>';
-	}
+		}
 
-	print '<body id="mainbody">';
-
-    // Wrapper to show tooltips
-    print '<script type="text/javascript">
+    	// Wrapper to show tooltips
+    	print '<script type="text/javascript">
                 jQuery(function() {
                     jQuery(".classfortooltip").tooltip({
                         track: true,
                         delay: 0,
                         showURL: false,
-/*                        extraClass: "pretty fancy",
-                        fixPNG: true,*/
+                        //extraClass: "pretty fancy",
+                        //fixPNG: true,
                         positionLeft: false,
                         bodyHandler: function() {
-                        /*console.log(jQuery(this).attr("tooltipText"));*/
+                        //console.log(jQuery(this).attr("tooltipText"));
                         return jQuery(this).attr("tooltipText"); }
                     });
                 });
-    </script>';
+    	</script>';
+	}
 
 	/*
 	 * Top menu
@@ -1127,7 +1130,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	
 	print "</div><!-- End top layout -->\n";
 	
-	if (! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
+	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
 	{
 		print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
 	}
@@ -1154,7 +1157,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	
 	print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
 	
-	if (! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<td class="vmenu" valign="top">';
+	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<td class="vmenu" valign="top">';
 
 	print "\n";
 
@@ -1298,7 +1301,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	print "\n";
 	
-	if (! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</td>';
+	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</td>';
 	
 	print '</div> <!-- End left layout -->'."\n";
 
@@ -1316,7 +1319,7 @@ function main_area()
 	
 	print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
 	
-	if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
+	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
 	
 	print '<td valign="top">'."\n";
 	
