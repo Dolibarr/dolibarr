@@ -989,7 +989,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						fxName:	"none"
 					},
 					center: {
-						paneClass:    "ui-layout-content",
+						paneClass:    ".ui-layout-content",
 						paneSelector: "#mainContent"
 					}
 				}
