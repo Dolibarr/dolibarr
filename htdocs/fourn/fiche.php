@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/fourn/fiche.php
  *	\ingroup    fournisseur, facture
- *	\brief      Page de fiche fournisseur
+ *	\brief      Page for supplier third party card (view, edit)
  *	\version	$Id$
  */
 

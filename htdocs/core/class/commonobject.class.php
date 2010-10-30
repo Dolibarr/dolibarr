@@ -963,8 +963,8 @@ class CommonObject
 	}
 
 	/**
-	 *	 \brief     	Update total_ht, total_ttc and total_vat for an object (sum of lines)
-	 *	 \return		int			<0 si ko, >0 si ok
+	 *	 Update total_ht, total_ttc and total_vat for an object (sum of lines)
+	 *	 @return		int			<0 if KO, >0 if OK
 	 */
 	function update_price()
 	{
