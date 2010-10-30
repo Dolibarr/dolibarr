@@ -964,18 +964,21 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						//buttonClass: "button",
 						//contentSelector: ".content",
 						//contentIgnoreSelector: "span",
-						togglerLength_open:	35,
-						togglerLength_closed: 35,
-						hideTogglerOnSlide:	true,
 						togglerTip_open: "Close This Pane",
 						togglerTip_closed: "Open This Pane",
-						resizerTip:	"Resize This Pane",
+						resizerTip:	"Resize This Pane"
+					},
+					west: {
+						spacing_closed:	14,
+						togglerLength_closed: 14,
+						togglerAlign_closed: "top",
+						//togglerLength_open: 0,
 						//	effect defaults - overridden on some panes
-						fxName:	"slide",
-						fxSpeed_open: 750,
-						fxSpeed_close: 1500,
-						fxSettings_open: { easing: "easeInQuint" },
-						fxSettings_close: { easing: "easeOutQuint" }
+						//slideTrigger_open:	"mouseover",
+						initClosed:	true,
+						fxName:	"drop",
+						fxSpeed: "normal",
+						fxSettings: { easing: "" }
 					},
 					north: {
 						paneClass: "none",
