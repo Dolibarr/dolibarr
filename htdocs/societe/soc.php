@@ -56,9 +56,9 @@ if (! empty($canvas))
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
 	$soccanvas = new Canvas($db);
-	
+
 	$soccanvas->getCanvas('thirdparty','card',$canvas);
-	
+
 	// Security check
 	$result = $soccanvas->restrictedArea($user, 'societe', $socid);
 }
@@ -1010,8 +1010,8 @@ else
 				$soc->code_fournisseur=$_POST["code_fournisseur"];
 				$soc->adresse=$_POST["adresse"]; // TODO obsolete
 				$soc->address=$_POST["adresse"];
-				$soc->cp=$_POST["cp"];
-				$soc->ville=$_POST["ville"];
+				$soc->cp=$_POST["zipcode"];
+				$soc->ville=$_POST["town"];
 				$soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
 				$soc->departement_id=$_POST["departement_id"];
 				$soc->tel=$_POST["tel"];
