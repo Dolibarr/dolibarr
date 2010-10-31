@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -23,7 +23,7 @@
 /**
  *    \file       htdocs/webcalendar/admin/webcalendar.php
  *    \ingroup    webcalendar
- *    \brief      Page de configuration du module webcalendar
+ *    \brief      Page to setup webcalendar module
  *    \version    $Id$
  */
 
@@ -49,7 +49,7 @@ if ($actionsave)
     $i=0;
 
     $db->begin();
-    
+
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_URL',trim($_POST["phpwebcalendar_url"]),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_HOST',trim($_POST["phpwebcalendar_host"]),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_DBNAME',trim($_POST["phpwebcalendar_dbname"]),'chaine',0,'',$conf->entity);
@@ -93,7 +93,7 @@ elseif ($actiontest)
 
     //print "D ".$db." - ".$db->db."<br>\n";
     //print "W ".$webcal->localdb." - ".$webcal->localdb->db."<br>\n";
-    
+
     if ($webcal->localdb->connected == 1 && $webcal->localdb->database_selected == 1)
     {
         // Verifie si bonne base
@@ -145,8 +145,8 @@ elseif ($actiontest)
 }
 
 
-/**
- * Affichage du formulaire de saisie
+/*
+ * View
  */
 
 llxHeader();
@@ -315,11 +315,12 @@ print "<br>";
 $message='';
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
 $urlvcal='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'</a>';
-$message.=$langs->trans("WebCalUrlForVCalExport",'vcal',$urlvcal);
+$message.=img_picto('','object_globe.png').' '.$langs->trans("WebCalUrlForVCalExport",'vcal',$urlvcal);
 $message.='<br>';
 $urlical='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'</a>';
-$message.=$langs->trans("WebCalUrlForVCalExport",'ical',$urlical);
-print info_admin($message);
+$message.=img_picto('','object_globe.png').' '.$langs->trans("WebCalUrlForVCalExport",'ical',$urlical);
+//print info_admin($message);
+print $message;
 
 $db->close();
 

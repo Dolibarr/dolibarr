@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /**
  *     	\file       htdocs/adherents/public.php
  *		\ingroup    member
- *		\brief      Fichier de la page de l'espace publique adherent
+ *		\brief      File of main public page for member module
  *		\author	    Laurent Destailleur
  *		\version    $Id$
  */
@@ -49,9 +49,9 @@ print '<table class="border" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("URL").'</td></tr>';
 // Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
-print '<tr><td>'.$langs->trans("BlankSubscriptionForm").'</td><td><a target="_blank" href="'.DOL_URL_ROOT.'/public/members/new.php'.'">'.$urlwithouturlroot.DOL_URL_ROOT.'/public/members/new.php'.'</a></td></tr>';
-print '<tr><td>'.$langs->trans("PublicMemberList").'</td><td><a target="_blank" href="'.DOL_URL_ROOT.'/public/members/public_list.php'.'">'.$urlwithouturlroot.DOL_URL_ROOT.'/public/members/public_list.php'.'</a></td></tr>';
-print '<tr><td>'.$langs->trans("PublicMemberCard").'</td><td>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/members/public_card.php?id=xxx'.'</td></tr>';
+print '<tr><td>'.$langs->trans("BlankSubscriptionForm").'</td><td>'.img_picto('','object_globe.png').' '.'<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/new.php'.'">'.$urlwithouturlroot.DOL_URL_ROOT.'/public/members/new.php'.'</a></td></tr>';
+print '<tr><td>'.$langs->trans("PublicMemberList").'</td><td>'.img_picto('','object_globe.png').' '.'<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/public_list.php'.'">'.$urlwithouturlroot.DOL_URL_ROOT.'/public/members/public_list.php'.'</a></td></tr>';
+print '<tr><td>'.$langs->trans("PublicMemberCard").'</td><td>'.img_picto('','object_globe.png').' '.$urlwithouturlroot.DOL_URL_ROOT.'/public/members/public_card.php?id=xxx'.'</td></tr>';
 print '</table>';
 
 

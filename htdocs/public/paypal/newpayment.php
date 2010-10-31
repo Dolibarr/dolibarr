@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -216,17 +216,20 @@ llxHeaderPaypal($langs->trans("PaymentForm"));
 
 // Common variables
 $creditor=$mysoc->nom;
-$paramcreditor='PAYBOX_CREDITOR_'.$suffix;
+$paramcreditor='PAYPAL_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
-else if (! empty($conf->global->PAYBOX_CREDITOR)) $creditor=$conf->global->PAYBOX_CREDITOR;
+else if (! empty($conf->global->PAYPAL_CREDITOR)) $creditor=$conf->global->PAYPAL_CREDITOR;
 
-print '<center>';
-print '<form name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="dopayment">';
-print '<input type="hidden" name="amount" value="'.$_REQUEST["amount"].'">';
-print '<input type="hidden" name="tag" value="'.$_REQUEST["tag"].'">';
-print '<input type="hidden" name="suffix" value="'.$_REQUEST["suffix"].'">';
+print '<center>'."\n";
+print '<form name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+print '<input type="hidden" name="action" value="dopayment">'."\n";
+print '<input type="hidden" name="amount" value="'.$_REQUEST["amount"].'">'."\n";
+print '<input type="hidden" name="tag" value="'.$_REQUEST["tag"].'">'."\n";
+print '<input type="hidden" name="suffix" value="'.$_REQUEST["suffix"].'">'."\n";
+print "\n";
+print '<!-- Form to send a Paypal payment -->'."\n";
+print '<!-- Sandbox = '.$conf->global->PAYPAL_SANDBOX.' -->'."\n";
 print "\n";
 
 print '<table style="font-size:14px;" summary="Logo" width="80%">'."\n";
@@ -723,9 +726,10 @@ if ($_REQUEST["source"] == 'membersubscription')
 
 if (! $found && ! $mesg) $mesg=$langs->trans("ErrorBadParameters");
 
-if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>';
+if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>'."\n";
 
-print '</table>';
+print '</table>'."\n";
+print "\n";
 
 if ($found && ! $error)	// We are in a management option and no error
 {
@@ -745,10 +749,10 @@ else
 	dol_print_error_email();
 }
 
-print '</td></tr>';
+print '</td></tr>'."\n";
 
-print '</table>';
-print '</form>';
+print '</table>'."\n";
+print '</form>'."\n";
 print '</center>';
 print '<br>';
 

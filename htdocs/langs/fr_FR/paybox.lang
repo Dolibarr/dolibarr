@@ -27,3 +27,6 @@ YourPaymentHasNotBeenRecorded=Votre paiement n'a pas été enregistré et la tra
 AccountParameter=Paramètres du compte
 UsageParameter=Paramètres d'utilisation
 InformationToFindParameters=Informations pour trouver vos paramètres de compte %s
+PAYBOX_CGI_URL_V2=Url du module CGI Paybox de paiement
+VendorName=Nom du vendeur
+CSSUrlForPaymentForm=Url feuille style css pour le formulaire de paiement
