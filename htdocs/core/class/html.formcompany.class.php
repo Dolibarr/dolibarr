@@ -174,7 +174,7 @@ class FormCompany
 		print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 		print '</tr></table></form>';
 	}
-	
+
 	/**
 	 *    \brief      Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
 	 *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
@@ -207,7 +207,7 @@ class FormCompany
 		dol_syslog("FormCompany::select_departement selected=$selected, pays_code=$pays_code",LOG_DEBUG);
 
 		$langs->load("dict");
-		
+
 		$out='';
 
 		// On recherche les departements/cantons/province active d'une region et pays actif
@@ -272,7 +272,7 @@ class FormCompany
 		{
 			dol_print_error($this->db);
 		}
-		
+
 		return $out;
 	}
 
@@ -337,7 +337,7 @@ class FormCompany
 			dol_print_error($this->db);
 		}
 	}
-	
+
 	/**
 	 *    	\brief      Retourne la liste deroulante des civilite actives
 	 *    	\param      selected    civilite pre-selectionnee
@@ -357,7 +357,7 @@ class FormCompany
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
-		
+
 		$out='';
 
 		$sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
@@ -397,10 +397,10 @@ class FormCompany
 		{
 			dol_print_error($this->db);
 		}
-		
+
 		return $out;
 	}
-	
+
 	/**
 	 *    \brief      Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
 	 *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
@@ -422,7 +422,7 @@ class FormCompany
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
-		
+
 		$out='';
 
 		// On recherche les formes juridiques actives des pays actifs
@@ -484,7 +484,7 @@ class FormCompany
 		{
 			dol_print_error($this->db);
 		}
-		
+
 		return $out;
 	}
 
@@ -523,7 +523,7 @@ class FormCompany
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
 			{
 				$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
-				
+
 				$socid=0;
 				if ($selected)
 				{
@@ -609,22 +609,22 @@ class FormCompany
 		}
 		print "</select>\n";
 	}
-	
+
 	/**
 	 *    Retourne la liste deroulante des codes postaux et des villes associées
 	 */
 	function select_ziptown($selected='',$htmlname='zipcode',$fields='',$fieldsize=0)
 	{
 		global $conf;
-		
+
 		$out='';
-		
+
 		$size='';
 		if (!empty($fieldsize)) $size='size="'.$fieldsize.'"';
-		
+
 		if ($conf->use_javascript_ajax)	$out.= ajax_multiautocompleter($htmlname,$fields,DOL_URL_ROOT.'/core/ajaxziptown.php')."\n";
 		$out.= '<input id="'.$htmlname.'" type="text" name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
-		
+
 		return $out;
 	}
 

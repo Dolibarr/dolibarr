@@ -62,6 +62,8 @@ $langs->load("paypal");
 llxHeaderPaypal($langs->trans("PaymentForm"));
 
 
+print '<span id="dolpaymentspan"></span>'."\n";
+
 print $langs->trans("YourPaymentHasBeenRecorded");
 
 //require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.php");

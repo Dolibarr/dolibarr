@@ -88,6 +88,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 
 	$fields = php2js($fields);
 
+	$script.= '<!-- Autocomplete -->'."\n";
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
 					var fields = '.$fields.';
@@ -107,8 +108,9 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 											jQuery("#departement_id").html(item.states);
 										}
 										for (i=0;i<length;i++) {
-											if (item[fields[i]]) {
-												jQuery("#" + fields[i]).val(item[fields[i]]);
+											if (item[fields[i]]) {   // If defined
+                                                //alert(item[fields[i]]);
+											    jQuery("#" + fields[i]).val(item[fields[i]]);
 											}
 										}
 									}
@@ -117,14 +119,31 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 							});
     					},
     					select: function( event, ui ) {
-    						// TODO move this to specific request
-    						if (ui.item.states) {
-    							jQuery("#departement_id").html(ui.item.states);
-    						}
+
     						for (i=0;i<length;i++) {
     							//alert(fields[i] + " = " + ui.item[fields[i]]);
-								if (ui.item[fields[i]]) {
-									jQuery("#" + fields[i]).val(ui.item[fields[i]]);
+								if (fields[i]=="selectpays_id")
+								{
+								    if (ui.item[fields[i]] > 0)     // Do not erase country if unknown
+								    {
+								        jQuery("#" + fields[i]).val(ui.item[fields[i]]);
+								        // If we set new country and new state, we need to set a new list of state to allow change
+                                        if (ui.item.states && ui.item["departement_id"] != jQuery("#departement_id").value) {
+                                            jQuery("#departement_id").html(ui.item.states);
+                                        }
+								    }
+								}
+                                else if (fields[i]=="departement_id")
+                                {
+                                    if (ui.item[fields[i]] > 0)     // Do not erase state if unknown
+                                    {
+                                        jQuery("#" + fields[i]).val(ui.item[fields[i]]);    // This may fails if not correct country
+                                    }
+                                }
+								else if (ui.item[fields[i]]) {   // If defined
+								    //alert(fields[i]);
+								    //alert(ui.item[fields[i]]);
+							        jQuery("#" + fields[i]).val(ui.item[fields[i]]);
 								}
 							}
     					}

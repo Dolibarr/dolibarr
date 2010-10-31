@@ -60,6 +60,8 @@ $langs->load("paypal");
 llxHeaderPayBox($langs->trans("PaymentForm"));
 
 
+print '<span id="dolpaymentspan"></span>'."\n";
+
 print $langs->trans("YourPaymentHasBeenRecorded");
 
 

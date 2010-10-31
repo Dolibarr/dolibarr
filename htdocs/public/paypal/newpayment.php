@@ -411,6 +411,14 @@ if ($_REQUEST["source"] == 'order')
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 
 	// Shipping address
+	$shipToName=$order->client->nom;
+    $shipToStreet=$order->client->address;
+    $shipToCity=$order->client->ville;
+    $shipToState=$order->client->departement_code;
+    $shipToCountryCode=$order->client->pays_code;
+    $shipToZip=$order->client->cp;
+    $shipToStreet2='';
+    $phoneNum=$order->client->tel;
     print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
     print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
     print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
