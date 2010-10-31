@@ -21,6 +21,8 @@
  *     	\file       htdocs/public/paypal/paymentok.php
  *		\ingroup    paypal
  *		\brief      File to show page after a successful payment
+ *                  This page is called by paypal with url provided to payal competed with parameter TOKEN=xxx
+ *                  This token can be used to get more informations.
  *		\author	    Laurent Destailleur
  *		\version    $Id$
  */

@@ -84,6 +84,24 @@ if (! GETPOST("action"))
 }
 $suffix=GETPOST("suffix");
 
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
+$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php?';
+$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php?';
+
+$TAG=GETPOST("tag");
+$FULLTAG=GETPOST("fulltag");  // fulltag is tag with more informations
+
+if (!empty($TAG))
+{
+    $urlok.='tag='.$TAG.'&';
+    $urlko.='tag='.$TAG.'&';
+}
+if (!empty($FULLTAG))
+{
+    $urlok.='fulltag='.$FULLTAG.'&';
+    $urlko.='fulltag='.$FULLTAG.'&';
+}
+
 
 
 /*
@@ -91,22 +109,17 @@ $suffix=GETPOST("suffix");
  */
 if (GETPOST("action") == 'dopayment')
 {
-	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
-
-	$PAYPAL_API_PRICE=$_REQUEST["newamount"];
-	$EMAIL=$_REQUEST["EMAIL"];
-	$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php';
-	$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php';
-	$TAG=$_REQUEST["newtag"];
-	$ID=$_REQUEST["id"];
+	$PAYPAL_API_PRICE=GETPOST("newamount");
+	$EMAIL=GETPOST("EMAIL");
+	$ID=GETPOST("id");
 
 	$mesg='';
 	if (empty($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
 	elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 	elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
-	elseif (empty($TAG))            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
 
-    var_dump($_POST);
+    //var_dump($_POST);
 	if (empty($mesg))
 	{
 		/*
@@ -158,7 +171,7 @@ if (GETPOST("action") == 'dopayment')
 
 	    dol_syslog("Soumission Paypal", LOG_DEBUG);
 	    dol_syslog("PAYPAL_API_USER: $PAYPAL_API_USER", LOG_DEBUG);
-	    dol_syslog("PAYPAL_API_PASSWORD: $PAYPAL_API_PASSWORD", LOG_DEBUG);
+	    //dol_syslog("PAYPAL_API_PASSWORD: $PAYPAL_API_PASSWORD", LOG_DEBUG);  // No password into log files
 	    dol_syslog("PAYPAL_API_SIGNATURE: $PAYPAL_API_SIGNATURE", LOG_DEBUG);
 	    dol_syslog("PAYPAL_API_SANDBOX: $PAYPAL_API_SANDBOX", LOG_DEBUG);
 	    dol_syslog("PAYPAL_API_OK: $PAYPAL_API_OK", LOG_DEBUG);
@@ -178,7 +191,7 @@ if (GETPOST("action") == 'dopayment')
 	    $_SESSION["Payment_Amount"]=$PAYPAL_API_PRICE;
 
 	    // A redirect is added if API call successfull
-	    require_once(DOL_DOCUMENT_ROOT."/paypal/expresscheckout.php");
+	    require_once(DOL_DOCUMENT_ROOT."/public/paypal/expresscheckout.php");
 
 	    // Formulaire pour module Paybox
 	//    print '<form action="'.$URLPAYBOX.'" NAME="Submit" method="POST">'."\n";
@@ -229,7 +242,11 @@ print '<input type="hidden" name="tag" value="'.$_REQUEST["tag"].'">'."\n";
 print '<input type="hidden" name="suffix" value="'.$_REQUEST["suffix"].'">'."\n";
 print "\n";
 print '<!-- Form to send a Paypal payment -->'."\n";
-print '<!-- Sandbox = '.$conf->global->PAYPAL_SANDBOX.' -->'."\n";
+print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
+print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY.' -->'."\n";
+print '<!-- PAYPAL_CREDITOR = '.$conf->global->PAYPAL_CREDITOR.' -->'."\n";
+print '<!-- urlok = '.$urlok.' -->'."\n";
+print '<!-- urlko = '.$urlko.' -->'."\n";
 print "\n";
 
 print '<table style="font-size:14px;" summary="Logo" width="80%">'."\n";
@@ -283,7 +300,7 @@ if (empty($_REQUEST["source"]))
 {
 	$found=true;
 	$tag=$_REQUEST["tag"];
-	$newtag=$tag;
+	$fulltag=$tag;
 
 	// Creditor
 	$var=!$var;
@@ -308,9 +325,9 @@ if (empty($_REQUEST["source"]))
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$newtag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="newtag" value="'.$newtag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
 	// EMail
@@ -344,9 +361,9 @@ if ($_REQUEST["source"] == 'order')
 	$amount=$order->total_ttc;
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$newtag='IR='.$order->ref.'.TPID='.$order->client->id.'.TP='.strtr($order->client->nom,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
-	$newtag=dol_string_unaccent($newtag);
+	$fulltag='IR='.$order->ref.'.TPID='.$order->client->id.'.TP='.strtr($order->client->nom,"-"," ");
+	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
 	$var=!$var;
@@ -384,9 +401,9 @@ if ($_REQUEST["source"] == 'order')
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$newtag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="newtag" value="'.$newtag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
 	// EMail
@@ -396,6 +413,9 @@ if ($_REQUEST["source"] == 'order')
 	$email=$order->client->email;
 	$email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
+
+    // We do not add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
+    // as they don't exists (buyer is unknown, tag is free).
 }
 
 
@@ -422,9 +442,9 @@ if ($_REQUEST["source"] == 'invoice')
 	$amount=$invoice->total_ttc - $invoice->getSommePaiement();
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$newtag='IR='.$invoice->ref.'.TPID='.$invoice->client->id.'.TP='.strtr($invoice->client->nom,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
-	$newtag=dol_string_unaccent($newtag);
+	$fulltag='IR='.$invoice->ref.'.TPID='.$invoice->client->id.'.TP='.strtr($invoice->client->nom,"-"," ");
+	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
 	$var=!$var;
@@ -462,9 +482,9 @@ if ($_REQUEST["source"] == 'invoice')
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$newtag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="newtag" value="'.$newtag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
 	// EMail
@@ -474,6 +494,9 @@ if ($_REQUEST["source"] == 'invoice')
     $email=$invoice->client->email;
     $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
+
+    // TODO Add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
+
 }
 
 // Payment on contract line
@@ -543,9 +566,9 @@ if ($_REQUEST["source"] == 'contractline')
 	}
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$newtag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->client->id.'.TP='.strtr($contract->client->nom,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
-	$newtag=dol_string_unaccent($newtag);
+	$fulltag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->client->id.'.TP='.strtr($contract->client->nom,"-"," ");
+	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag=dol_string_unaccent($fulltag);
 
 	$qty=1;
 	if (isset($_REQUEST["qty"])) $qty=$_REQUEST["qty"];
@@ -628,9 +651,9 @@ if ($_REQUEST["source"] == 'contractline')
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$newtag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="newtag" value="'.$newtag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
 	// EMail
@@ -641,6 +664,7 @@ if ($_REQUEST["source"] == 'contractline')
     $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 
+    // TODO Add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
 }
 
 // Payment on member subscription
@@ -667,9 +691,9 @@ if ($_REQUEST["source"] == 'membersubscription')
 	$amount=$subscription->total_ttc;
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$newtag='MID='.$member->id.'.M='.strtr($member->getFullName($langs),"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
-	$newtag=dol_string_unaccent($newtag);
+	$fulltag='MID='.$member->id.'.M='.strtr($member->getFullName($langs),"-"," ");
+	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
 	$var=!$var;
@@ -707,9 +731,9 @@ if ($_REQUEST["source"] == 'membersubscription')
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$newtag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="newtag" value="'.$newtag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
 	// EMail
@@ -719,6 +743,8 @@ if ($_REQUEST["source"] == 'membersubscription')
     $email=$member->client->email;
     $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
+
+    // TODO Add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
 }
 
 

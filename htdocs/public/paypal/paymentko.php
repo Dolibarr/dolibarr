@@ -20,7 +20,9 @@
 /**
  *     	\file       htdocs/public/paybox/paymentko.php
  *		\ingroup    paybox
- *		\brief      File to show page after a failed payment
+ *		\brief      File to show page after a failed payment.
+ *                  This page is called by paypal with url provided to payal competed with parameter TOKEN=xxx
+ *                  This token can be used to get more informations.
  *		\author	    Laurent Destailleur
  *		\version    $Id$
  */

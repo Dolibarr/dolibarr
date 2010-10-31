@@ -16,13 +16,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**	    \file       htdocs/paypal/expresscheckout.php
+/**	    \file       htdocs/public/paypal/expresscheckout.php
  *		\ingroup    paypal
- *		\brief      Page with Paypal functions
+ *		\brief      Page with Paypal redirect page. Code provided by Paypal.
  *		\version    $Id$
  */
 
-require_once ("paypalfunctions.php");
+// This file is not called directly but is included into another one
+require_once (DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.php");
+
 // ==================================
 // PayPal Express Checkout Module
 // ==================================
@@ -40,7 +42,7 @@ $paymentAmount = $_SESSION["Payment_Amount"];
 //' The currencyCodeType and paymentType
 //' are set to the selections made on the Integration Assistant
 //'------------------------------------
-$currencyCodeType = "EUR";
+$currencyCodeType = $PAYPAL_API_DEVISE; // "EUR"
 $paymentType = "Sale";
 
 //'------------------------------------
@@ -69,12 +71,25 @@ if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYP
 // For payment with Paypal only
 if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
 {
-	$resArray = CallShortcutExpressCheckout ($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL);
+	dol_syslog("expresscheckout redirect with CallShortcutExpressCheckout $paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL");
+    $resArray = CallShortcutExpressCheckout ($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL);
 }
 // For payment with Credit card or Paypal
 if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
 {
-	$resArray = CallMarkExpressCheckout ($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL);
+    $shipToName=GETPOST("shipToName");
+    $shipToStreet=GETPOST("shipToStreet");
+    $shipToCity=GETPOST("shipToCity");
+    $shipToState=GETPOST("shipToState");
+    $shipToCountryCode=GETPOST("shipToCountryCode");
+    $shipToZip=GETPOST("shipToZip");
+    $shipToStreet2=GETPOST("shipToStreet2");
+    $phoneNum=GETPOST("phoneNum");
+
+    dol_syslog("expresscheckout redirect with CallMarkExpressCheckout $paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum");
+    //$resArray = CallMarkExpressCheckout ($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL);
+    $resArray = CallMarkExpressCheckout ($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL,
+    $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum);
 }
 // For direct payment with credit card
 if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'cconly')

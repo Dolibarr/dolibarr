@@ -69,12 +69,12 @@ $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolib
 
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
 $url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server.php?wsdl';
-print img_picto('','puce.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 print '<br>';
 
 print '<u>'.$langs->trans("EndPointIs").':</u><br>';
 $url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server.php';
-print img_picto('','puce.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 print '<br>';
 
 $db->close();
