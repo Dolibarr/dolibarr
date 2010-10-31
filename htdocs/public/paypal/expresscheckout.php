@@ -77,19 +77,10 @@ if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
 // For payment with Credit card or Paypal
 if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
 {
-    $shipToName=GETPOST("shipToName");
-    $shipToStreet=GETPOST("shipToStreet");
-    $shipToCity=GETPOST("shipToCity");
-    $shipToState=GETPOST("shipToState");
-    $shipToCountryCode=GETPOST("shipToCountryCode");
-    $shipToZip=GETPOST("shipToZip");
-    $shipToStreet2=GETPOST("shipToStreet2");
-    $phoneNum=GETPOST("phoneNum");
-
     dol_syslog("expresscheckout redirect with CallMarkExpressCheckout $paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum");
-    //$resArray = CallMarkExpressCheckout ($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL);
-    $resArray = CallMarkExpressCheckout ($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL,
-    $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum);
+    $resArray = CallMarkExpressCheckout ($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL);
+    //$resArray = CallMarkExpressCheckout ($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL,
+    //$shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum);
 }
 // For direct payment with credit card
 if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'cconly')

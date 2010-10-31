@@ -452,7 +452,8 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 		{
 			if($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
 			{
-				$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
+                //print "CantBeLessThanMinPrice ".$up_ht." - ".GETPOST('remise_percent')." - ".$product->price_min;
+			    $mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
 			}
 			else
 			{
@@ -522,6 +523,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	$date_start=dol_mktime(0, 0, 0, $_POST['date_start'.$suffixe.'month'], $_POST['date_start'.$suffixe.'day'], $_POST['date_start'.$suffixe.'year']);
 	$date_end=dol_mktime(0, 0, 0, $_POST['date_end'.$suffixe.'month'], $_POST['date_end'.$suffixe.'day'], $_POST['date_end'.$suffixe.'year']);
 	$description=dol_htmlcleanlastbr($_POST['desc']);
+    $up_ht=GETPOST('pu')?GETPOST('pu'):GETPOST('subprice');
 
 	// Define info_bits
 	$info_bits=0;
@@ -547,7 +549,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 		$product->fetch($productid);
 		$type=$product->type;
 	}
-	if ($product->price_min && ($_POST['productid']!='') && ( price2num($_POST['pu'])*(1-price2num($_POST['elremise_percent'])/100) < price2num($product->price_min)))
+	if ($product->price_min && GETPOST('productid') && (price2num($up_ht)*(1-price2num($_POST['elremise_percent'])/100) < price2num($product->price_min)))
 	{
 		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($product->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
 		$result=-1;
@@ -567,7 +569,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	{
 		$result = $object->updateline($_POST['lineid'],
 		$description,
-		$_POST['pu'],
+		$up_ht,
 		$_POST['qty'],
 		$_POST['elremise_percent'],
 		$vat_rate,

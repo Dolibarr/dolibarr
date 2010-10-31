@@ -60,17 +60,18 @@ $langs->load("paypal");
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-if (empty($_REQUEST["currency"])) $currency=$conf->global->MAIN_MONNAIE;
-else $currency=$_REQUEST["currency"];
+$suffix=GETPOST("suffix");
+$amount=GETPOST("amount");
+if (! GETPOST("currency")) $currency=$conf->global->MAIN_MONNAIE;
+else $currency=GETPOST("currency");
 
 if (! GETPOST("action"))
 {
-    if (empty($_REQUEST["amount"]) && empty($_REQUEST["source"]))
+    if (! GETPOST("amount") && ! GETPOST("source"))
     {
     	dol_print_error('',$langs->trans('ErrorBadParameters')." - amount or source");
     	exit;
     }
-    $amount=$_REQUEST["amount"];
     if (is_numeric($amount) && empty($_REQUEST["tag"]) && empty($_REQUEST["source"]))
     {
     	dol_print_error('',$langs->trans('ErrorBadParameters')." - tag or source");
@@ -82,7 +83,6 @@ if (! GETPOST("action"))
     	exit;
     }
 }
-$suffix=GETPOST("suffix");
 
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
 $urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php?';
@@ -109,9 +109,18 @@ if (!empty($FULLTAG))
  */
 if (GETPOST("action") == 'dopayment')
 {
-	$PAYPAL_API_PRICE=GETPOST("newamount");
+	$PAYPAL_API_PRICE=price2num(GETPOST("newamount"));
 	$EMAIL=GETPOST("EMAIL");
 	$ID=GETPOST("id");
+
+    $shipToName=GETPOST("shipToName");
+    $shipToStreet=GETPOST("shipToStreet");
+    $shipToCity=GETPOST("shipToCity");
+    $shipToState=GETPOST("shipToState");
+    $shipToCountryCode=GETPOST("shipToCountryCode");
+    $shipToZip=GETPOST("shipToZip");
+    $shipToStreet2=GETPOST("shipToStreet2");
+    $phoneNum=GETPOST("phoneNum");
 
 	$mesg='';
 	if (empty($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
@@ -122,16 +131,6 @@ if (GETPOST("action") == 'dopayment')
     //var_dump($_POST);
 	if (empty($mesg))
 	{
-		/*
-		print_paypal_redirect($PAYPAL_API_PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG, $ID);
-		exit;
-
-		global $conf, $langs, $db;
-		global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
-		global $PAYPAL_API_DEVISE, $PAYPAL_API_OK, $PAYPAL_API_KO;
-		global $PAYPAL_API_SANDBOX;
-		*/
-
 		dol_syslog("newpayment.php call paypal api and do redirect", LOG_DEBUG);
 
 		// Clean parameters
@@ -169,7 +168,7 @@ if (GETPOST("action") == 'dopayment')
 		if ($CURRENCY == 'EUR') $PAYPAL_API_DEVISE="EUR";
 		if ($CURRENCY == 'USD') $PAYPAL_API_DEVISE="USD";
 
-	    dol_syslog("Soumission Paypal", LOG_DEBUG);
+	    dol_syslog("Submit Paypal form", LOG_DEBUG);
 	    dol_syslog("PAYPAL_API_USER: $PAYPAL_API_USER", LOG_DEBUG);
 	    //dol_syslog("PAYPAL_API_PASSWORD: $PAYPAL_API_PASSWORD", LOG_DEBUG);  // No password into log files
 	    dol_syslog("PAYPAL_API_SIGNATURE: $PAYPAL_API_SIGNATURE", LOG_DEBUG);
@@ -178,6 +177,14 @@ if (GETPOST("action") == 'dopayment')
 	    dol_syslog("PAYPAL_API_KO: $PAYPAL_API_KO", LOG_DEBUG);
 	    dol_syslog("PAYPAL_API_PRICE: $PAYPAL_API_PRICE", LOG_DEBUG);
 	    dol_syslog("PAYPAL_API_DEVISE: $PAYPAL_API_DEVISE", LOG_DEBUG);
+        dol_syslog("shipToName: $shipToName", LOG_DEBUG);
+        dol_syslog("shipToStreet: $shipToStreet", LOG_DEBUG);
+        dol_syslog("shipToCity: $shipToCity", LOG_DEBUG);
+        dol_syslog("shipToState: $shipToState", LOG_DEBUG);
+        dol_syslog("shipToCountryCode: $shipToCountryCode", LOG_DEBUG);
+        dol_syslog("shipToZip: $shipToZip", LOG_DEBUG);
+        dol_syslog("shipToStreet2: $shipToStreet2", LOG_DEBUG);
+        dol_syslog("phoneNum: $phoneNum", LOG_DEBUG);
 
 	    header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -193,26 +200,8 @@ if (GETPOST("action") == 'dopayment')
 	    // A redirect is added if API call successfull
 	    require_once(DOL_DOCUMENT_ROOT."/public/paypal/expresscheckout.php");
 
-	    // Formulaire pour module Paybox
-	//    print '<form action="'.$URLPAYBOX.'" NAME="Submit" method="POST">'."\n";
-	//print "
-	//<form action='".DOL_URL_ROOT."/paypal/expresscheckout.php' METHOD='POST' NAME='Submit'>
-	//<input type='image' name='submit' src='https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif' border='0' align='top' alt='Check out with PayPal'/>
-	//</form>";
-	//    print '</form>'."\n";
-
-	//    print "\n";
-	//    print '<script type="text/javascript" language="javascript">'."\n";
-	//    print '	document.Submit.submit();'."\n";
-	//    print '</script>'."\n";
-	//    print "\n";
-
-
 	    print '</body></html>'."\n";
 	    print "\n";
-
-
-
 
 		exit;
 	}
@@ -233,8 +222,9 @@ $paramcreditor='PAYPAL_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
 else if (! empty($conf->global->PAYPAL_CREDITOR)) $creditor=$conf->global->PAYPAL_CREDITOR;
 
+print '<span id="dolpaymentspan"></span>'."\n";
 print '<center>'."\n";
-print '<form name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+print '<form id="dolpaymentform" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="amount" value="'.$_REQUEST["amount"].'">'."\n";
@@ -249,7 +239,7 @@ print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
 print "\n";
 
-print '<table style="font-size:14px;" summary="Logo" width="80%">'."\n";
+print '<table id="dolpaymenttable" style="font-size:14px;" summary="Payment form" width="80%">'."\n";
 
 // Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
 $width=0;
@@ -275,7 +265,7 @@ elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$lo
 if ($urllogo)
 {
 	print '<tr>';
-	print '<td align="center"><img title="'.$title.'" src="'.$urllogo.'"';
+	print '<td align="center"><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
 	print '></td>';
 	print '</tr>'."\n";
@@ -315,6 +305,7 @@ if (empty($_REQUEST["source"]))
 	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
 	else {
 		print '<b>'.price($amount).'</b>';
+        print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	// Currency
@@ -335,6 +326,9 @@ if (empty($_REQUEST["source"]))
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+
+    // We do not add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
+    // as they don't exists (buyer is unknown, tag is free).
 }
 
 
@@ -380,6 +374,7 @@ if ($_REQUEST["source"] == 'order')
 	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
 	print '<input type="hidden" name="ref" value="'.$order->ref.'">';
 	print '</td></tr>'."\n";
 
@@ -391,6 +386,7 @@ if ($_REQUEST["source"] == 'order')
 	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
 	else {
 		print '<b>'.price($amount).'</b>';
+        print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	// Currency
@@ -414,8 +410,15 @@ if ($_REQUEST["source"] == 'order')
 	$email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 
-    // We do not add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
-    // as they don't exists (buyer is unknown, tag is free).
+	// Shipping address
+    print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
+    print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
+    print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
+    print '<input type="hidden" name="shipToState" value="'.$shipToState.'">'."\n";
+    print '<input type="hidden" name="shipToCountryCode" value="'.$shipToCountryCode.'">'."\n";
+    print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
+    print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
+    print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
 }
 
 
@@ -461,6 +464,7 @@ if ($_REQUEST["source"] == 'invoice')
 	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
 	print '<input type="hidden" name="ref" value="'.$invoice->ref.'">';
 	print '</td></tr>'."\n";
 
@@ -472,6 +476,7 @@ if ($_REQUEST["source"] == 'invoice')
 	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
 	else {
 		print '<b>'.price($amount).'</b>';
+        print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	// Currency
@@ -602,6 +607,7 @@ if ($_REQUEST["source"] == 'contractline')
 
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
 	print '<input type="hidden" name="ref" value="'.$contractline->ref.'">';
 	print '</td></tr>'."\n";
 
@@ -641,6 +647,7 @@ if ($_REQUEST["source"] == 'contractline')
 	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
 	else {
 		print '<b>'.price($amount).'</b>';
+        print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	// Currency
@@ -710,6 +717,7 @@ if ($_REQUEST["source"] == 'membersubscription')
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
 	print '<input type="hidden" name="ref" value="'.$member->ref.'">';
 	print '</td></tr>'."\n";
 
@@ -721,6 +729,7 @@ if ($_REQUEST["source"] == 'membersubscription')
 	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
 	else {
 		print '<b>'.price($amount).'</b>';
+        print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	// Currency
@@ -779,7 +788,7 @@ print '</td></tr>'."\n";
 
 print '</table>'."\n";
 print '</form>'."\n";
-print '</center>';
+print '</center>'."\n";
 print '<br>';
 
 

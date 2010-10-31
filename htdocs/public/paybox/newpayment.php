@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,17 +59,18 @@ $langs->load("paybox");
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-if (empty($_REQUEST["currency"])) $currency=$conf->global->MAIN_MONNAIE;
-else $currency=$_REQUEST["currency"];
+$suffix=GETPOST("suffix");
+$amount=GETPOST("amount");
+if (! GETPOST("currency")) $currency=$conf->global->MAIN_MONNAIE;
+else $currency=GETPOST("currency");
 
 if (! GETPOST("action"))
 {
-    if (empty($_REQUEST["amount"]) && empty($_REQUEST["source"]))
+    if (! GETPOST("amount") && ! GETPOST("source"))
     {
         dol_print_error('',$langs->trans('ErrorBadParameters')." - amount or source");
     	exit;
     }
-    $amount=$_REQUEST["amount"];
     if (is_numeric($amount) && empty($_REQUEST["tag"]) && empty($_REQUEST["source"]))
     {
         dol_print_error('',$langs->trans('ErrorBadParameters')." - tag or source");
@@ -81,8 +82,24 @@ if (! GETPOST("action"))
     	exit;
     }
 }
-$suffix=GETPOST("suffix");
 
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
+$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php?';
+$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php?';
+
+$TAG=GETPOST("tag");
+$FULLTAG=GETPOST("fulltag");  // fulltag is tag with more informations
+
+if (!empty($TAG))
+{
+    $urlok.='tag='.$TAG.'&';
+    $urlko.='tag='.$TAG.'&';
+}
+if (!empty($FULLTAG))
+{
+    $urlok.='fulltag='.$FULLTAG.'&';
+    $urlko.='fulltag='.$FULLTAG.'&';
+}
 
 
 /*
@@ -90,24 +107,22 @@ $suffix=GETPOST("suffix");
  */
 if ($_REQUEST["action"] == 'dopayment')
 {
-	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
-
-	$PRICE=$_REQUEST["newamount"];
-	$EMAIL=$_REQUEST["EMAIL"];
-	$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/paymentok.php';
-	$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/paymentko.php';
-	$TAG=$_REQUEST["newtag"];
-	$ID=$_REQUEST["id"];
+    $PAYPAL_API_PRICE=price2num(GETPOST("newamount"));
+    $EMAIL=GETPOST("EMAIL");
+    $ID=GETPOST("id");
 
 	$mesg='';
 	if (empty($PRICE))              $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
 	elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 	elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
-	elseif (empty($TAG))            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
 
 	if (empty($mesg))
 	{
+		dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG);
+
 		print_paybox_redirect($PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG, $ID);
+
 		session_destroy();
 		exit;
 	}
@@ -128,16 +143,22 @@ $paramcreditor='PAYBOX_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
 else if (! empty($conf->global->PAYBOX_CREDITOR)) $creditor=$conf->global->PAYBOX_CREDITOR;
 
+print '<span id="dolpaymentspan"></span>'."\n";
 print '<center>';
-print '<form name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form id="dolpaymentform" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="dopayment">';
 print '<input type="hidden" name="amount" value="'.$_REQUEST["amount"].'">';
 print '<input type="hidden" name="tag" value="'.$_REQUEST["tag"].'">';
 print '<input type="hidden" name="suffix" value="'.$_REQUEST["suffix"].'">';
 print "\n";
+print '<!-- Form to send a Paybox payment -->'."\n";
+print '<!-- PAYBOX_CREDITOR = '.$conf->global->PAYPAL_CREDITOR.' -->'."\n";
+print '<!-- urlok = '.$urlok.' -->'."\n";
+print '<!-- urlko = '.$urlko.' -->'."\n";
+print "\n";
 
-print '<table style="font-size:14px;" summary="Logo" width="80%">'."\n";
+print '<table id="dolpaymenttable" style="font-size:14px;" summary="Payment form" width="80%">'."\n";
 
 // Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
 $width=0;
@@ -163,7 +184,7 @@ elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$lo
 if ($urllogo)
 {
 	print '<tr>';
-	print '<td align="center"><img title="'.$title.'" src="'.$urllogo.'"';
+	print '<td align="center"><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
 	print '></td>';
 	print '</tr>'."\n";
@@ -188,7 +209,7 @@ if (empty($_REQUEST["source"]))
 {
 	$found=true;
 	$tag=$_REQUEST["tag"];
-	$newtag=$tag;
+	$fulltag=$tag;
 
 	// Creditor
 	$var=!$var;
@@ -203,6 +224,7 @@ if (empty($_REQUEST["source"]))
 	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
 	else {
 		print '<b>'.price($amount).'</b>';
+        print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	// Currency
@@ -213,9 +235,9 @@ if (empty($_REQUEST["source"]))
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$newtag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="newtag" value="'.$newtag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
 	// EMail
@@ -249,9 +271,9 @@ if ($_REQUEST["source"] == 'order')
 	$amount=$order->total_ttc;
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$newtag='IR='.$order->ref.'.TPID='.$order->client->id.'.TP='.strtr($order->client->nom,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
-	$newtag=dol_string_unaccent($newtag);
+	$fulltag='IR='.$order->ref.'.TPID='.$order->client->id.'.TP='.strtr($order->client->nom,"-"," ");
+	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
 	$var=!$var;
@@ -268,6 +290,7 @@ if ($_REQUEST["source"] == 'order')
 	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
 	print '<input type="hidden" name="ref" value="'.$order->ref.'">';
 	print '</td></tr>'."\n";
 
@@ -279,6 +302,7 @@ if ($_REQUEST["source"] == 'order')
 	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
 	else {
 		print '<b>'.price($amount).'</b>';
+        print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	// Currency
@@ -289,9 +313,9 @@ if ($_REQUEST["source"] == 'order')
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$newtag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="newtag" value="'.$newtag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
 	// EMail
@@ -327,9 +351,9 @@ if ($_REQUEST["source"] == 'invoice')
 	$amount=$invoice->total_ttc - $invoice->getSommePaiement();
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$newtag='IR='.$invoice->ref.'.TPID='.$invoice->client->id.'.TP='.strtr($invoice->client->nom,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
-	$newtag=dol_string_unaccent($newtag);
+	$fulltag='IR='.$invoice->ref.'.TPID='.$invoice->client->id.'.TP='.strtr($invoice->client->nom,"-"," ");
+	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
 	$var=!$var;
@@ -346,6 +370,7 @@ if ($_REQUEST["source"] == 'invoice')
 	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
 	print '<input type="hidden" name="ref" value="'.$invoice->ref.'">';
 	print '</td></tr>'."\n";
 
@@ -357,6 +382,7 @@ if ($_REQUEST["source"] == 'invoice')
 	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
 	else {
 		print '<b>'.price($amount).'</b>';
+        print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	// Currency
@@ -367,9 +393,9 @@ if ($_REQUEST["source"] == 'invoice')
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$newtag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="newtag" value="'.$newtag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
 	// EMail
@@ -448,9 +474,9 @@ if ($_REQUEST["source"] == 'contractline')
 	}
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$newtag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->client->id.'.TP='.strtr($contract->client->nom,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
-	$newtag=dol_string_unaccent($newtag);
+	$fulltag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->client->id.'.TP='.strtr($contract->client->nom,"-"," ");
+	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag=dol_string_unaccent($fulltag);
 
 	$qty=1;
 	if (isset($_REQUEST["qty"])) $qty=$_REQUEST["qty"];
@@ -484,6 +510,7 @@ if ($_REQUEST["source"] == 'contractline')
 
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
 	print '<input type="hidden" name="ref" value="'.$contractline->ref.'">';
 	print '</td></tr>'."\n";
 
@@ -523,6 +550,7 @@ if ($_REQUEST["source"] == 'contractline')
 	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
 	else {
 		print '<b>'.price($amount).'</b>';
+        print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	// Currency
@@ -533,9 +561,9 @@ if ($_REQUEST["source"] == 'contractline')
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$newtag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="newtag" value="'.$newtag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
 	// EMail
@@ -572,9 +600,9 @@ if ($_REQUEST["source"] == 'membersubscription')
 	$amount=$subscription->total_ttc;
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$newtag='MID='.$member->id.'.M='.strtr($member->getFullName($langs),"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $newtag.='.TAG='.$_REQUEST["tag"]; }
-	$newtag=dol_string_unaccent($newtag);
+	$fulltag='MID='.$member->id.'.M='.strtr($member->getFullName($langs),"-"," ");
+	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
 	$var=!$var;
@@ -591,6 +619,7 @@ if ($_REQUEST["source"] == 'membersubscription')
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
 	print '<input type="hidden" name="ref" value="'.$member->ref.'">';
 	print '</td></tr>'."\n";
 
@@ -602,6 +631,7 @@ if ($_REQUEST["source"] == 'membersubscription')
 	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
 	else {
 		print '<b>'.price($amount).'</b>';
+        print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	// Currency
@@ -612,9 +642,9 @@ if ($_REQUEST["source"] == 'membersubscription')
 	// Tag
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$newtag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
-	print '<input type="hidden" name="newtag" value="'.$newtag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
 	// EMail
@@ -631,9 +661,10 @@ if ($_REQUEST["source"] == 'membersubscription')
 
 if (! $found && ! $mesg) $mesg=$langs->trans("ErrorBadParameters");
 
-if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>';
+if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>'."\n";
 
-print '</table>';
+print '</table>'."\n";
+print "\n";
 
 if ($found && ! $error)	// We are in a management option and no error
 {
@@ -645,11 +676,11 @@ else
 	dol_print_error_email();
 }
 
-print '</td></tr>';
+print '</td></tr>'."\n";
 
-print '</table>';
-print '</form>';
-print '</center>';
+print '</table>'."\n";
+print '</form>'."\n";
+print '</center>'."\n";
 print '<br>';
 
 

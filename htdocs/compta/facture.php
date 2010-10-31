@@ -963,6 +963,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	$date_start=dol_mktime($_POST['date_start'.$suffixe.'hour'],$_POST['date_start'.$suffixe.'min'],$_POST['date_start'.$suffixe.'sec'],$_POST['date_start'.$suffixe.'month'],$_POST['date_start'.$suffixe.'day'],$_POST['date_start'.$suffixe.'year']);
 	$date_end=dol_mktime($_POST['date_end'.$suffixe.'hour'],$_POST['date_end'.$suffixe.'min'],$_POST['date_end'.$suffixe.'sec'],$_POST['date_end'.$suffixe.'month'],$_POST['date_end'.$suffixe.'day'],$_POST['date_end'.$suffixe.'year']);
 	$description=dol_htmlcleanlastbr($_POST['desc']);
+    $up_ht=GETPOST('pu')?GETPOST('pu'):GETPOST('subprice');
 
 	// Define info_bits
 	$info_bits=0;
@@ -988,9 +989,9 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$product->fetch($productid);
 		$type=$product->type;
 	}
-	if ($product->price_min && GETPOST('productid') && (price2num(GETPOST('subprice'))*(1-price2num(GETPOST('remise_percent'))/100) < price2num($product->price_min)))
+	if ($product->price_min && GETPOST('productid') && (price2num($up_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($product->price_min)))
 	{
-	    print "CantBeLessThanMinPrice ".GETPOST('subprice')." - ".GETPOST('remise_percent')." - ".$product->price_min;
+	    //print "CantBeLessThanMinPrice ".$up_ht." - ".GETPOST('remise_percent')." - ".$product->price_min;
 		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($product->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>';
 		$result=-1;
 	}
@@ -1004,7 +1005,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	{
 		$result = $object->updateline(GETPOST('lineid'),
 		$description,
-		GETPOST('subprice'),
+		$up_ht,
 		GETPOST('qty'),
 		GETPOST('remise_percent'),
 		$date_start,

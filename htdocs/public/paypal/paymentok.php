@@ -64,6 +64,10 @@ llxHeaderPaypal($langs->trans("PaymentForm"));
 
 print $langs->trans("YourPaymentHasBeenRecorded");
 
+//require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.php");
+//$PAYPALTOKEN=GETPOST('paypaltoken');
+//$resarray=GetShippingDetails($PAYPALTOKEN);
+//var_dump($resarray);
 
 html_print_paypal_footer($mysoc,$langs);
 

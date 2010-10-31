@@ -786,6 +786,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	$vat_rate=str_replace('*','',$vat_rate);
 	$localtax1_rate=get_localtax($vat_rate,1,$object->client);
 	$localtax2_rate=get_localtax($vat_rate,2,$object->client);
+    $up_ht=GETPOST('pu')?GETPOST('pu'):GETPOST('subprice');
 
 	// On verifie que le prix minimum est respecte
 	$productid = $_POST['productid'] ;
@@ -794,21 +795,21 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 		$product = new Product($db) ;
 		$res=$product->fetch($productid) ;
 	}
-	if ($productid && $product->price_min && ( price2num($_POST['subprice'])*(1-price2num($_POST['remise_percent'])/100) < price2num($product->price_min)))
+	if ($productid && $product->price_min && (price2num($up_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($product->price_min)))
 	{
 		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($product->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
 	}
 	else
 	{
 		$result = $object->updateline($_POST['lineid'],
-		$_POST['subprice'],
+		$up_ht,
 		$_POST['qty'],
 		$_POST['remise_percent'],
 		$vat_rate,
 		$localtax1_rate,
 		$localtax2_rate,
 		$_POST['desc'],
-			'HT',
+		'HT',
 		$info_bits);
 
 		// Define output language
