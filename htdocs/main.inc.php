@@ -958,7 +958,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						useStateCookie: true,
 						size: "auto",
 						resizable: false,
-						paneClass: "none",
+						//paneClass: "none",
 						//resizerClass: "resizer",
 						//togglerClass: "toggler",
 						//buttonClass: "button",
@@ -969,6 +969,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						resizerTip:	"Resize This Pane"
 					},
 					west: {
+						paneClass: "leftContent",
 						spacing_closed:	14,
 						togglerLength_closed: 14,
 						togglerAlign_closed: "top",
@@ -991,7 +992,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						fxName:	"none"
 					},
 					center: {
-						paneClass:    ".ui-layout-content",
 						paneSelector: "#mainContent"
 					}
 				}

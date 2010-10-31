@@ -600,6 +600,37 @@ td.photo {
     border: 1px solid #b3c5cc;
 }
 
+/* ============================================================================== */
+/* Panes for Main                                                   */
+/* ============================================================================== */
+
+/*
+ *  PANES and CONTENT-DIVs
+ */
+#mainContent .ui-layout-pane {
+    padding:    0px;
+    overflow:	auto;
+}
+
+#mainContent .ui-layout-center {
+	background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg2.jpg' ?>) 0 0 no-repeat;
+	padding:    0px;
+	position:   relative; /* contain floated or positioned elements */
+    overflow:   auto;  /* add scrolling to content-div */
+}
+
+#leftContent .ui-layout-pane {
+    padding:    0px;
+    overflow:	auto;
+}
+
+#leftContent .ui-layout-center {
+	background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg2.jpg' ?>) 0 0 no-repeat;
+	padding:    0px;
+	position:   relative; /* contain floated or positioned elements */
+    overflow:   auto;  /* add scrolling to content-div */
+}
+
 
 /* ============================================================================== */
 /* Toolbar for ECM or Filemanager                                                 */
