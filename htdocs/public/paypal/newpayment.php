@@ -419,14 +419,21 @@ if ($_REQUEST["source"] == 'order')
     $shipToZip=$order->client->cp;
     $shipToStreet2='';
     $phoneNum=$order->client->tel;
-    print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
-    print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
-    print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
-    print '<input type="hidden" name="shipToState" value="'.$shipToState.'">'."\n";
-    print '<input type="hidden" name="shipToCountryCode" value="'.$shipToCountryCode.'">'."\n";
-    print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
-    print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
-    print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
+    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
+    {
+        print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
+        print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
+        print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
+        print '<input type="hidden" name="shipToState" value="'.$shipToState.'">'."\n";
+        print '<input type="hidden" name="shipToCountryCode" value="'.$shipToCountryCode.'">'."\n";
+        print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
+        print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
+        print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
+    }
+    else
+    {
+        print '<!-- Shipping address not complete, so we don t use it -->'."\n";
+    }
 }
 
 
@@ -508,8 +515,30 @@ if ($_REQUEST["source"] == 'invoice')
     $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 
-    // TODO Add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
-
+    // Shipping address
+    $shipToName=$invoice->client->nom;
+    $shipToStreet=$invoice->client->address;
+    $shipToCity=$invoice->client->ville;
+    $shipToState=$invoice->client->departement_code;
+    $shipToCountryCode=$invoice->client->pays_code;
+    $shipToZip=$invoice->client->cp;
+    $shipToStreet2='';
+    $phoneNum=$invoice->client->tel;
+    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
+    {
+        print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
+        print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
+        print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
+        print '<input type="hidden" name="shipToState" value="'.$shipToState.'">'."\n";
+        print '<input type="hidden" name="shipToCountryCode" value="'.$shipToCountryCode.'">'."\n";
+        print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
+        print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
+        print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
+    }
+    else
+    {
+        print '<!-- Shipping address not complete, so we don t use it -->'."\n";
+    }
 }
 
 // Payment on contract line
@@ -679,7 +708,30 @@ if ($_REQUEST["source"] == 'contractline')
     $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 
-    // TODO Add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
+    // Shipping address
+    $shipToName=$contract->client->nom;
+    $shipToStreet=$contract->client->address;
+    $shipToCity=$contract->client->ville;
+    $shipToState=$contract->client->departement_code;
+    $shipToCountryCode=$contract->client->pays_code;
+    $shipToZip=$contract->client->cp;
+    $shipToStreet2='';
+    $phoneNum=$contract->client->tel;
+    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
+    {
+        print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
+        print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
+        print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
+        print '<input type="hidden" name="shipToState" value="'.$shipToState.'">'."\n";
+        print '<input type="hidden" name="shipToCountryCode" value="'.$shipToCountryCode.'">'."\n";
+        print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
+        print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
+        print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
+    }
+    else
+    {
+        print '<!-- Shipping address not complete, so we don t use it -->'."\n";
+    }
 }
 
 // Payment on member subscription
@@ -757,11 +809,34 @@ if ($_REQUEST["source"] == 'membersubscription')
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-    $email=$member->client->email;
+    $email=$member->email;
     $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 
-    // TODO Add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
+    // Shipping address
+    $shipToName=$member->getFullName();
+    $shipToStreet=$member->adresse;
+    $shipToCity=$member->ville;
+    $shipToState=$member->departement_code;
+    $shipToCountryCode=$member->pays_code;
+    $shipToZip=$member->cp;
+    $shipToStreet2='';
+    $phoneNum=$member->tel;
+    if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
+    {
+        print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
+        print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
+        print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
+        print '<input type="hidden" name="shipToState" value="'.$shipToState.'">'."\n";
+        print '<input type="hidden" name="shipToCountryCode" value="'.$shipToCountryCode.'">'."\n";
+        print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
+        print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
+        print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
+    }
+    else
+    {
+        print '<!-- Shipping address not complete, so we don t use it -->'."\n";
+    }
 }
 
 
