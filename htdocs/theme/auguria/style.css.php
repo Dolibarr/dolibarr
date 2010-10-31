@@ -623,25 +623,17 @@ td.photo {
 /*
  *  PANES and CONTENT-DIVs
  */
-#mainContent .ui-layout-pane {
+
+#mainContent {
+	background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/headbg2.jpg' ?>) 0 0 no-repeat;
+}
+
+#mainContent, #leftContent .ui-layout-pane {
     padding:    0px;
     overflow:	auto;
 }
 
-#mainContent .ui-layout-center {
-	background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/headbg2.jpg' ?>) 0 0 no-repeat;
-	padding:    0px;
-	position:   relative; /* contain floated or positioned elements */
-    overflow:   auto;  /* add scrolling to content-div */
-}
-
-#leftContent .ui-layout-pane {
-    padding:    0px;
-    overflow:	auto;
-}
-
-#leftContent .ui-layout-center {
-	background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/headbg2.jpg' ?>) 0 0 no-repeat;
+#mainContent, #leftContent .ui-layout-center {
 	padding:    0px;
 	position:   relative; /* contain floated or positioned elements */
     overflow:   auto;  /* add scrolling to content-div */
