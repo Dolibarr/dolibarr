@@ -121,6 +121,8 @@ print "</td>";
 print '</tr>';
 
 // hide unauthorized menu
+if ($conf->global->MAIN_FEATURES_LEVEL > 0)     // TODO There is still a bug with ecm when this option is on so deinfed as experimental feature
+{
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("MenuUseLayout").'</td>';
@@ -135,6 +137,7 @@ if($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT == 1)
 }
 print "</td>";
 print '</tr>';
+}
 
 print '</table>';
 
