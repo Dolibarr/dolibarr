@@ -87,11 +87,11 @@ class FormActions
 
 
 	/**
-	*    	\brief      Show list of actions for element
-	*    	\param      object			Object
-	*    	\param      typeelement		'invoice','propal','order'
-	*		\param		socid			socid of user
-	*		\return		int				<0 if KO, >=0 if OK
+	*    	Show list of actions for element
+	*    	@param      object			Object
+	*    	@param      typeelement		'invoice','propal','order'
+	*		@param		socid			socid of user
+	*		@return		int				<0 if KO, >=0 if OK
 	*/
 	function showactions($object,$typeelement,$socid=0)
 	{

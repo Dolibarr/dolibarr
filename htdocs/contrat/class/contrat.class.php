@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
@@ -74,8 +74,8 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *    \brief      Constructeur de la classe
-	 *    \param      DB          Databse handler
+	 *    Constructor of classe
+	 *    @param      DB          Databse handler
 	 */
 	function Contrat($DB)
 	{
@@ -264,9 +264,9 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *    \brief      Load a contract from database
-	 *    \param      id      Id of contract to load
-	 *    \return     int     <0 if KO, id of contract if OK
+	 *    Load a contract from database
+	 *    @param      id      Id of contract to load
+	 *    @return     int     <0 if KO, id of contract if OK
 	 */
 	function fetch($id,$ref='')
 	{
@@ -335,7 +335,8 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *      \brief      Load lignes array
+	 *      Load lignes array into this->lignes
+	 *      @return    Array   Return array of contract lines
 	 */
 	function fetch_lignes()
 	{
@@ -344,7 +345,11 @@ class Contrat extends CommonObject
 		$this->nbofservicesexpired=0;
 		$this->nbofservicesclosed=0;
 
-		$now=gmmktime();
+		$total_ttc=0;
+		$total_vat=0;
+		$total_ht=0;
+
+		$now=dol_now();
 
 		// Selectionne les lignes contrats liees a un produit
 		$sql = "SELECT p.label, p.description as product_desc, p.ref,";
@@ -382,7 +387,7 @@ class Contrat extends CommonObject
 				$ligne->desc           = $objp->description;  // Description ligne
 				$ligne->qty            = $objp->qty;
 				$ligne->tva_tx         = $objp->tva_tx;
-				$ligne->localtax1_tx   = $objp->localtax1_tx; 
+				$ligne->localtax1_tx   = $objp->localtax1_tx;
 				$ligne->localtax2_tx   = $objp->localtax2_tx;
 				$ligne->subprice       = $objp->subprice;
 				$ligne->statut 		   = $objp->statut;
@@ -425,6 +430,10 @@ class Contrat extends CommonObject
 				if ($ligne->statut == 4 && (empty($ligne->date_fin_prevue) || $ligne->date_fin_prevue >= $now)) $this->nbofservicesopened++;
 				if ($ligne->statut == 4 && $ligne->date_fin_prevue < $now) $this->nbofservicesexpired++;
 				if ($ligne->statut == 5) $this->nbofservicesclosed++;
+
+				$total_ttc+=$objp->total_ttc;   // TODO Not saved into database
+                $total_vat+=$objp->total_tva;
+                $total_ht+=$objp->total_ht;
 
 				$i++;
 			}
@@ -508,7 +517,12 @@ class Contrat extends CommonObject
 				if ($ligne->statut == 5) $this->nbofservicesclosed++;
 
 				$this->lignes[]        = $ligne;
-				$i++;
+
+				$total_ttc+=$objp->total_ttc;
+                $total_vat+=$objp->total_tva;
+                $total_ht+=$objp->total_ht;
+
+                $i++;
 			}
 
 			$this->db->free($result);
@@ -521,6 +535,9 @@ class Contrat extends CommonObject
 		}
 
 		$this->nbofservices=sizeof($this->lignes);
+        $this->total_ttc = price2num($total_ttc);   // TODO For the moment value is false as value is not stored in database for line linked to products
+        $this->total_vat = price2num($total_vat);   // TODO For the moment value is false as value is not stored in database for line linked to products
+        $this->total_ht = price2num($total_ht);     // TODO For the moment value is false as value is not stored in database for line linked to products
 
 		return $this->lignes;
 	}
@@ -884,7 +901,7 @@ class Contrat extends CommonObject
 	 *      \return    int              < 0 si erreur, > 0 si ok
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0,
-	$date_start='', $date_end='', $tvatx, $localtax1tx=0, $localtax2tx=0, 
+	$date_start='', $date_end='', $tvatx, $localtax1tx=0, $localtax2tx=0,
 	$date_debut_reel='', $date_fin_reel='')
 	{
 		global $user, $conf, $langs;
@@ -1021,9 +1038,9 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *    	\brief      Retourne le libelle du statut du contrat
-	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string      	Label
+	 *    	Return label of a contract status
+	 *    	@param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *    	@return     string      	Label
 	 */
 	function getLibStatut($mode)
 	{
@@ -1031,10 +1048,10 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libelle d'un statut donne
-	 *    	\param      statut      	id statut
-	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *		\return     string      	Libelle
+	 *    	Renvoi label of a given contrat status
+	 *    	@param      statut      	Status id
+	 *    	@param      mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *		@return     string      	Label
 	 */
 	function LibStatut($statut,$mode)
 	{
@@ -1694,7 +1711,7 @@ class ContratLigne
 	function update($user, $notrigger=0)
 	{
 		global $conf, $langs;
-		
+
 		// Clean parameters
 		$this->fk_contrat=trim($this->fk_contrat);
 		$this->fk_product=trim($this->fk_product);

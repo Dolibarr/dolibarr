@@ -30,7 +30,7 @@ print_titre($langs->trans('RelatedContracts'));
 <tr class="liste_titre">
 	<td><?php echo $langs->trans("Ref"); ?></td>
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
+	<td align="right">&nbsp;</td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
 </tr>
 <?php
@@ -38,13 +38,14 @@ $var=true;
 for ($i = 0 ; $i < $num ; $i++)
 {
 	$linkedObjectBlock->fetch($objectid[$i]);
+    $linkedObjectBlock->fetch_lignes();
 	$var=!$var;
 ?>
 <tr <?php echo $bc[$var]; ?> ><td>
 	<a href="<?php echo DOL_URL_ROOT.'/contrat/fiche.php?id='.$linkedObjectBlock->id ?>"><?php echo img_object($langs->trans("ShowContract"),"contract").' '.$linkedObjectBlock->ref; ?></a></td>
-	<td align="center"><?php echo dol_print_date($linkedObjectBlock->date,'day'); ?></td>
-	<td align="right"><?php echo price($linkedObjectBlock->total_ht); ?></td>
-	<td align="right"><?php echo $linkedObjectBlock->getLibStatut(3); ?></td>
+	<td align="center"><?php echo dol_print_date($linkedObjectBlock->date_contrat,'day'); ?></td>
+	<td align="right">&nbsp;</td>
+	<td align="right"><?php echo $linkedObjectBlock->getLibStatut(6); ?></td>
 </tr>
 <?php
 $total = $total + $linkedObjectBlock->total_ht;

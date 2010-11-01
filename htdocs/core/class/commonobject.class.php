@@ -1351,6 +1351,7 @@ class CommonObject
 			if ($object == 'facture') $tplpath = 'compta/'.$object; $classpath = $tplpath.'/class';  // To work with non standard path
 			if ($object == 'propal') $tplpath = 'comm/'.$object; $classpath = $tplpath.'/class';     // To work with non standard path
 
+			//print $classpath." - ".$tplpath;
 			$classname = ucfirst($object);
 			if(!class_exists($classname)) require(DOL_DOCUMENT_ROOT."/".$classpath."/".$object.".class.php");
 			$linkedObjectBlock = new $classname($this->db);
