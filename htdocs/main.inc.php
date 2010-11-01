@@ -997,9 +997,22 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 				}
     		</script>';
 		}
+		
+		if ($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION)
+		{
+			print "\n".'<script type="text/javascript">
+					jQuery(document).ready(function () {
+						jQuery( ".vmenu" ).accordion({
+							autoHeight: false,
+							event: "mouseover",
+							header: "> .blockvmenupair > .menu_titre"
+						});
+					});
+					</script>';
+		}
 
     	// Wrapper to show tooltips
-    	print '<script type="text/javascript">
+    	print "\n".'<script type="text/javascript">
                 jQuery(function() {
                     jQuery(".classfortooltip").tooltip({
                         track: true,
@@ -1216,6 +1229,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
     // Left column
     print '<!-- Begin left vertical menu '.$left_menu.' -->'."\n";
+    
     print '<div class="vmenu">'."\n";
 
 	$menuleft=new MenuLeft($db,$menu_array_before,$menu_array_after);

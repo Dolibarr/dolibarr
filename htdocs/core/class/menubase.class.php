@@ -379,7 +379,7 @@ class Menubase
 
 					if ($leftmenuConstraint)
 					{
-						//				print "x".$pere." ".$tab[$x][6];
+						//print 'name='.$tab[$x][3].' pere='.$pere." ".$tab[$x][6];
 
 						$this->newmenu->add((! preg_match("/^(http:\/\/|https:\/\/)/i",$tab[$x][2])) ? DOL_URL_ROOT . $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5], $tab[$x][8]);
 						$this->recur($tab, $tab[$x][0], $rang +1);
@@ -609,8 +609,9 @@ class Menubase
                 $enabled = true;
                 if ($menu['enabled'])
                 {
-                    $enabled = verifCond($menu['enabled']);
-                    //print "verifCond rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
+                	$enabled = verifCond($menu['enabled']);
+                	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_ACCORDION && preg_match('/^\$leftmenu/',$menu['enabled'])) $enabled=1;
+                	//print "verifCond chaine=".$chaine." rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
                 }
 
                 if ($menu['rowid'] != $oldrowid && $oldrowid) $b++; // Break on new entry

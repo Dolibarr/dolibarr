@@ -215,6 +215,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
         $menuArbo = new Menubase($db,'auguria','left');
         $overwritemenufor = $menuArbo->listeMainmenu();
         $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria');
+        //var_dump($newmenu);
 
         /*
          * Menu AUTRES (Pour les menus du haut qui ne serait pas geres)
@@ -246,7 +247,14 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
             {
                 if (($alt%2==0))
                 {
-                    print '<div class="blockvmenuimpair">'."\n";
+                	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_ACCORDION)
+                	{
+                		print '<div class="blockvmenupair">'."\n";
+                	}
+                	else
+                	{
+                		print '<div class="blockvmenuimpair">'."\n";
+                	}
                 }
                 else
                 {
@@ -279,13 +287,13 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
             {
                 if ($menu_array[$i]['enabled'])
                 {
-
                     print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
                 }
                 else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
                 {
                     print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>';
                 }
+                print "\n".'<div id="section_content">'."\n";
                 print '<div class="menu_top"></div>'."\n";
             }
             // Menu niveau > 0
@@ -305,7 +313,8 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
             if (empty($menu_array[$i+1]['level']))
             {
                 print '<div class="menu_end"></div>'."\n";
-                print "</div>\n";
+                print "</div><!-- end section content -->\n";
+                print "</div><!-- end blockvmenu  pair/impair -->\n";
             }
         }
     }
