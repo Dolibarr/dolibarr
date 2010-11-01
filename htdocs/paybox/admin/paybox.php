@@ -25,6 +25,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 
 $servicename='PayBox';
 
@@ -47,6 +48,9 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 
     $result=dolibarr_set_const($db, "PAYBOX_CREDITOR",$_POST["PAYBOX_CREDITOR"],'chaine',0,'',$conf->entity);
 	$result=dolibarr_set_const($db, "PAYBOX_CSS_URL",$_POST["PAYBOX_CSS_URL"],'chaine',0,'',$conf->entity);
+
+    $result=dolibarr_set_const($db, "PAYBOX_MESSAGE_OK",$_POST["PAYBOX_MESSAGE_OK"],'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYBOX_MESSAGE_KO",$_POST["PAYBOX_MESSAGE_KO"],'chaine',0,'',$conf->entity);
 
     if ($result >= 0)
   	{
@@ -159,6 +163,19 @@ print '<input size="64" type="text" name="PAYBOX_CSS_URL" value="'.$conf->global
 print '<br>'.$langs->trans("Example").': http://mysite/mycss.css';
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("MessageOK").'</td><td>';
+$doleditor=new DolEditor('PAYBOX_MESSAGE_OK',$conf->global->PAYBOX_MESSAGE_OK,60,'Basic','In',false,true,true,ROWS_2,60);
+$doleditor->Create();
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("MessageKO").'</td><td>';
+$doleditor=new DolEditor('PAYBOX_MESSAGE_KO',$conf->global->PAYBOX_MESSAGE_KO,60,'Basic','In',false,true,true,ROWS_2,60);
+$doleditor->Create();
+print '</td></tr>';
 
 print '<tr><td colspan="2" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
@@ -168,36 +185,32 @@ print '<br><br>';
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 // Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
-print '<br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
 print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag</i></b>'."<br>\n";
-print '<br>';
 if ($conf->commande->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
 	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/newpayment.php?source=order&ref=<i>order_ref</i></b>'."<br>\n";
-	print '<br>';
 }
 if ($conf->facture->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
 	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/newpayment.php?source=invoice&ref=<i>invoice_ref</i></b>'."<br>\n";
 //	print $langs->trans("SetupPayBoxToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
-	print '<br>';
 }
 if ($conf->contrat->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
 	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/newpayment.php?source=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
-	print '<br>';
 }
 if ($conf->adherent->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
 	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/newpayment.php?source=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
-	print '<br>';
 }
-print $langs->trans("YouCanAddTagOnUrl");
+
+print "<br>";
+print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 $db->close();
 

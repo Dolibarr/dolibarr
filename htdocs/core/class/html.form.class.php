@@ -2910,11 +2910,11 @@ class Form
 
 
     /**
-     *    	\brief      Return an html string with a select combo box to choose yes or no
-     *    	\param      name            Name of html select field
-     *    	\param      value           Pre-selected value
-     *  	\param      option          0 return yes/no, 1 return 1/0
-     * 		\return		int or string	See option
+     *    	Return an html string with a select combo box to choose yes or no
+     *    	@param      name            Name of html select field
+     *    	@param      value           Pre-selected value
+     *  	@param      option          0 return yes/no, 1 return 1/0
+     * 		@return		int or string	See option
      */
     function selectyesno($htmlname,$value='',$option=0)
     {

@@ -32,6 +32,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 // Security check
@@ -45,6 +46,34 @@ $langs->load("companies");
 $langs->load("paybox");
 $langs->load("paypal");
 
+// Clean parameters
+$PAYPAL_API_USER="";
+if ($conf->global->PAYPAL_API_USER) $PAYPAL_API_USER=$conf->global->PAYPAL_API_USER;
+$PAYPAL_API_PASSWORD="";
+if ($conf->global->PAYPAL_API_PASSWORD) $PAYPAL_API_PASSWORD=$conf->global->PAYPAL_API_PASSWORD;
+$PAYPAL_API_SIGNATURE="";
+if ($conf->global->PAYPAL_API_SIGNATURE) $PAYPAL_API_SIGNATURE=$conf->global->PAYPAL_API_SIGNATURE;
+$PAYPAL_API_SANDBOX="";
+if ($conf->global->PAYPAL_API_SANDBOX) $PAYPAL_API_SANDBOX=$conf->global->PAYPAL_API_SANDBOX;
+$PAYPAL_API_OK="";
+if ($urlok) $PAYPAL_API_OK=$urlok;
+$PAYPAL_API_KO="";
+if ($urlko) $PAYPAL_API_KO=$urlko;
+if (empty($PAYPAL_API_USER))
+{
+    dol_print_error('',"Paypal setup param PAYPAL_API_USER not defined");
+    return -1;
+}
+if (empty($PAYPAL_API_PASSWORD))
+{
+    dol_print_error('',"Paypal setup param PAYPAL_API_PASSWORD not defined");
+    return -1;
+}
+if (empty($PAYPAL_API_SIGNATURE))
+{
+    dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
+    return -1;
+}
 
 
 /*
@@ -59,17 +88,79 @@ $langs->load("paypal");
  * View
  */
 
+dol_syslog("Callback url when a PayPal payment was done ".$_SERVER["QUERY_STRING"]);
+
 llxHeaderPaypal($langs->trans("PaymentForm"));
 
 
 print '<span id="dolpaymentspan"></span>'."\n";
+print '<div id="dolpaymentdiv" align="center">'."\n";
 
-print $langs->trans("YourPaymentHasBeenRecorded");
+$PAYPALTOKEN=GETPOST('TOKEN');
+if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
+$PAYPALPAYERID=GETPOST('PAYERID');
+if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
+$PAYPALFULLTAG=GETPOST('FULLTAG');
+if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
 
-//require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.php");
-//$PAYPALTOKEN=GETPOST('paypaltoken');
-//$resarray=GetShippingDetails($PAYPALTOKEN);
-//var_dump($resarray);
+if ($PAYPALTOKEN)
+{
+    // Get on url call
+    $token              = $PAYPALTOKEN;
+    $fulltag            = $PAYPALFULLTAG;
+    $payerID            = $PAYPALPAYERID;
+    // Set by newpayment.php
+    $paymentType        = $_SESSION['PaymentType'];
+    $currencyCodeType   = $_SESSION['currencyCodeType'];
+    $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
+    // From env
+    $ipaddress          = $_SERVER['REMOTE_ADDR '];  // Payer ip
+
+
+    dol_syslog("We call GetExpressCheckoutDetails");
+    $resArray=GetDetails($token);
+    //var_dump($resarray);
+
+    dol_syslog("We call DoExpressCheckoutPayment token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag);
+    $resArray=ConfirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
+
+    $ack = strtoupper($resArray["ACK"]);
+    if($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
+    {
+        // resArray was built from a string like that
+        // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
+        $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
+        $TRANSACTIONID=urldecode($resArray["TRANSACTIONID"]);
+
+        print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
+        print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br>\n";
+        if (! empty($conf->global->PAYPAL_MESSAGE_OK)) print $conf->global->PAYPAL_MESSAGE_OK;
+    }
+    else
+    {
+        //Display a user friendly Error on the page using any of the following error information returned by PayPal
+        $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
+        $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
+        $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
+        $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
+
+        echo "DoExpressCheckoutPayment API call failed. ";
+        echo "Detailed Error Message: " . $ErrorLongMsg;
+        echo "Short Error Message: " . $ErrorShortMsg;
+        echo "Error Code: " . $ErrorCode;
+        echo "Error Severity Code: " . $ErrorSeverityCode;
+
+        if ($mysoc->email) echo "\nPlease, send a screenshot of this page to ".$mysoc->email;
+    }
+}
+else
+{
+    // No TOKEN parameter in URL
+    dol_print_error($langs->trans("ErrorBadPArameter"));
+    dol_syslog("No TOKEN parameter in URL");
+}
+
+print "\n</div>\n";
 
 html_print_paypal_footer($mysoc,$langs);
 

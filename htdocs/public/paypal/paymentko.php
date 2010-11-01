@@ -32,6 +32,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 // Security check
@@ -57,17 +58,24 @@ $langs->load("paypal");
  * View
  */
 
+dol_syslog("Callback url when a PayPal payment was canceled ".$_SERVER["QUERY_STRING"]);
+
 llxHeaderPaypal($langs->trans("PaymentForm"));
 
 
+// Show ko message
 print '<span id="dolpaymentspan"></span>'."\n";
+print '<div id="dolpaymentdiv" align="center">'."\n";
+print $langs->trans("YourPaymentHasNotBeenRecorded")."<br>";
 
-print $langs->trans("YourPaymentHasNotBeenRecorded");
+$PAYPALTOKEN=GETPOST('TOKEN');
+if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
+$PAYPALFULLTAG=GETPOST('FULLTAG');
+if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
 
-//require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.php");
-//$PAYPALTOKEN=GETPOST('paypaltoken');
-//$resarray=GetShippingDetails($PAYPALTOKEN);
-//var_dump($resarray);
+if (! empty($conf->global->PAYPAL_MESSAGE_KO)) print $conf->global->PAYPAL_MESSAGE_KO;
+print "\n</div>\n";
+
 
 html_print_paypal_footer($mysoc,$langs);
 

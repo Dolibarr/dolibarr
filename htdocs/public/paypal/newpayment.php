@@ -31,18 +31,13 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 // Security check
 if (empty($conf->paypal->enabled)) accessforbidden('',1,1,1);
-
-// Creation d'un jeton contre les failles CSRF
-$token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
-// roulement des jetons car cree a chaque appel
-if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
-$_SESSION['newtoken'] = $token;
 
 $langs->load("main");
 $langs->load("other");
@@ -52,6 +47,10 @@ $langs->load("companies");
 $langs->load("errors");
 $langs->load("paybox");
 $langs->load("paypal");
+
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
+$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php?';
+$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php?';
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -84,24 +83,50 @@ if (! GETPOST("action"))
     }
 }
 
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
-$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php?';
-$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php?';
-
+// Complete urls
 $TAG=GETPOST("tag");
 $FULLTAG=GETPOST("fulltag");  // fulltag is tag with more informations
-
 if (!empty($TAG))
 {
-    $urlok.='tag='.$TAG.'&';
-    $urlko.='tag='.$TAG.'&';
+    $urlok.='tag='.urlencode($TAG).'&';
+    $urlko.='tag='.urlencode($TAG).'&';
 }
 if (!empty($FULLTAG))
 {
-    $urlok.='fulltag='.$FULLTAG.'&';
-    $urlko.='fulltag='.$FULLTAG.'&';
+    $urlok.='fulltag='.urlencode($FULLTAG).'&';
+    $urlko.='fulltag='.urlencode($FULLTAG).'&';
 }
+$urlok=preg_replace('/&$/','',$urlok);  // Remove last &
+$urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 
+// Clean parameters
+$PAYPAL_API_USER="";
+if ($conf->global->PAYPAL_API_USER) $PAYPAL_API_USER=$conf->global->PAYPAL_API_USER;
+$PAYPAL_API_PASSWORD="";
+if ($conf->global->PAYPAL_API_PASSWORD) $PAYPAL_API_PASSWORD=$conf->global->PAYPAL_API_PASSWORD;
+$PAYPAL_API_SIGNATURE="";
+if ($conf->global->PAYPAL_API_SIGNATURE) $PAYPAL_API_SIGNATURE=$conf->global->PAYPAL_API_SIGNATURE;
+$PAYPAL_API_SANDBOX="";
+if ($conf->global->PAYPAL_API_SANDBOX) $PAYPAL_API_SANDBOX=$conf->global->PAYPAL_API_SANDBOX;
+$PAYPAL_API_OK="";
+if ($urlok) $PAYPAL_API_OK=$urlok;
+$PAYPAL_API_KO="";
+if ($urlko) $PAYPAL_API_KO=$urlko;
+if (empty($PAYPAL_API_USER))
+{
+    dol_print_error('',"Paypal setup param PAYPAL_API_USER not defined");
+    return -1;
+}
+if (empty($PAYPAL_API_PASSWORD))
+{
+    dol_print_error('',"Paypal setup param PAYPAL_API_PASSWORD not defined");
+    return -1;
+}
+if (empty($PAYPAL_API_SIGNATURE))
+{
+    dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
+    return -1;
+}
 
 
 /*
@@ -109,9 +134,10 @@ if (!empty($FULLTAG))
  */
 if (GETPOST("action") == 'dopayment')
 {
-	$PAYPAL_API_PRICE=price2num(GETPOST("newamount"));
+	$PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
 	$EMAIL=GETPOST("EMAIL");
 	$ID=GETPOST("id");
+    $PAYPAL_PAYMENT_TYPE='Sale';
 
     $shipToName=GETPOST("shipToName");
     $shipToStreet=GETPOST("shipToStreet");
@@ -123,7 +149,7 @@ if (GETPOST("action") == 'dopayment')
     $phoneNum=GETPOST("phoneNum");
 
 	$mesg='';
-	if (empty($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
+	if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
 	elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 	elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
 	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
@@ -132,36 +158,6 @@ if (GETPOST("action") == 'dopayment')
 	if (empty($mesg))
 	{
 		dol_syslog("newpayment.php call paypal api and do redirect", LOG_DEBUG);
-
-		// Clean parameters
-		$PAYPAL_API_USER="";
-		if ($conf->global->PAYPAL_API_USER) $PAYPAL_API_USER=$conf->global->PAYPAL_API_USER;
-		$PAYPAL_API_PASSWORD="";
-		if ($conf->global->PAYPAL_API_PASSWORD) $PAYPAL_API_PASSWORD=$conf->global->PAYPAL_API_PASSWORD;
-		$PAYPAL_API_SIGNATURE="";
-		if ($conf->global->PAYPAL_API_SIGNATURE) $PAYPAL_API_SIGNATURE=$conf->global->PAYPAL_API_SIGNATURE;
-		$PAYPAL_API_SANDBOX="";
-		if ($conf->global->PAYPAL_API_SANDBOX) $PAYPAL_API_SANDBOX=$conf->global->PAYPAL_API_SANDBOX;
-		$PAYPAL_API_OK="";
-		if ($urlok) $PAYPAL_API_OK=$urlok;
-		$PAYPAL_API_KO="";
-		if ($urlko) $PAYPAL_API_KO=$urlko;
-
-		if (empty($PAYPAL_API_USER))
-		{
-			dol_print_error('',"Paypal setup param PAYPAL_API_USER not defined");
-			return -1;
-		}
-		if (empty($PAYPAL_API_PASSWORD))
-		{
-			dol_print_error('',"Paypal setup param PAYPAL_API_PASSWORD not defined");
-			return -1;
-		}
-		if (empty($PAYPAL_API_SIGNATURE))
-		{
-			dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
-			return -1;
-		}
 
 		// Other
 		$PAYPAL_API_DEVISE="EUR";
@@ -198,7 +194,7 @@ if (GETPOST("action") == 'dopayment')
 	    $_SESSION["Payment_Amount"]=$PAYPAL_API_PRICE;
 
 	    // A redirect is added if API call successfull
-	    require_once(DOL_DOCUMENT_ROOT."/public/paypal/expresscheckout.php");
+        RedirectToPaypal($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
 
 	    print '</body></html>'."\n";
 	    print "\n";
@@ -234,7 +230,7 @@ print "\n";
 print '<!-- Form to send a Paypal payment -->'."\n";
 print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
 print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY.' -->'."\n";
-print '<!-- PAYPAL_CREDITOR = '.$conf->global->PAYPAL_CREDITOR.' -->'."\n";
+print '<!-- creditor = '.$creditor.' -->'."\n";
 print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
 print "\n";
@@ -295,7 +291,9 @@ if (empty($_REQUEST["source"]))
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '</td></tr>'."\n";
 
 	// Amount
 	$var=!$var;
@@ -362,7 +360,9 @@ if ($_REQUEST["source"] == 'order')
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '</td></tr>'."\n";
 
 	// Debitor
 	$var=!$var;
@@ -467,7 +467,9 @@ if ($_REQUEST["source"] == 'invoice')
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '</td></tr>'."\n";
 
 	// Debitor
 	$var=!$var;
@@ -618,7 +620,9 @@ if ($_REQUEST["source"] == 'contractline')
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+	print '</td></tr>'."\n";
 
 	// Debitor
 	$var=!$var;
@@ -765,7 +769,9 @@ if ($_REQUEST["source"] == 'membersubscription')
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '</td></tr>'."\n";
 
 	// Debitor
 	$var=!$var;

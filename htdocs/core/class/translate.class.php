@@ -113,13 +113,15 @@ class Translate {
 
 
 	/**
-	 *  \brief      Return active language code for current user
-	 * 	\remarks	Accessor for this->defaultlang
-	 *  \return     string      Language code used (en_US, en_AU, fr_FR, ...)
+	 *  Return active language code for current user
+	 * 	It's an accessor for this->defaultlang
+	 *  @param     mode        0=Long language code, 1=Short language code
+	 *  @return    string      Language code used (en_US, en_AU, fr_FR, ...)
 	 */
-	function getDefaultLang()
+	function getDefaultLang($mode=0)
 	{
-		return $this->defaultlang;
+	    if (empty($mode)) return $this->defaultlang;
+	    else return substr($this->defaultlang,0,2);
 	}
 
 

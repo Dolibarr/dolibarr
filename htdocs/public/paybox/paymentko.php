@@ -58,16 +58,23 @@ $langs->load("paypal");
  * View
  */
 
+dol_syslog("Callback url when a PayBox payment was canceled ".$_SERVER["QUERY_STRING"]);
+
 llxHeaderPayBox($langs->trans("PaymentForm"));
 
 
+// Show message
 print '<span id="dolpaymentspan"></span>'."\n";
+print '<div id="dolpaymentdiv" align="center">'."\n";
 
-print $langs->trans("YourPaymentHasNotBeenRecorded");
+print $langs->trans("YourPaymentHasNotBeenRecorded")."<br>\n";
+
+if (! empty($conf->global->PAYBOX_MESSAGE_KO)) print $conf->global->PAYBOX_MESSAGE_KO;
+
+print "\n</div>\n";
 
 
 html_print_paybox_footer($mysoc,$langs);
-
 
 $db->close();
 

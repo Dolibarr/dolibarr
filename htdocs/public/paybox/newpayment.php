@@ -38,12 +38,6 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 // Security check
 if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);
 
-// Creation d'un jeton contre les failles CSRF
-$token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
-// roulement des jetons car cree a chaque appel
-if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
-$_SESSION['newtoken'] = $token;
-
 $langs->load("main");
 $langs->load("other");
 $langs->load("dict");
@@ -107,12 +101,12 @@ if (!empty($FULLTAG))
  */
 if ($_REQUEST["action"] == 'dopayment')
 {
-    $PAYPAL_API_PRICE=price2num(GETPOST("newamount"));
+    $PRICE=price2num(GETPOST("newamount"),'MT');
     $EMAIL=GETPOST("EMAIL");
     $ID=GETPOST("id");
 
 	$mesg='';
-	if (empty($PRICE))              $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
+	if (empty($PRICE) || ! is_numeric($PRICE)) $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
 	elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 	elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
 	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
@@ -214,7 +208,9 @@ if (empty($_REQUEST["source"]))
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '</td></tr>'."\n";
 
 	// Amount
 	$var=!$var;
@@ -278,7 +274,9 @@ if ($_REQUEST["source"] == 'order')
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '</td></tr>'."\n";
 
 	// Debitor
 	$var=!$var;
@@ -358,7 +356,9 @@ if ($_REQUEST["source"] == 'invoice')
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '</td></tr>'."\n";
 
 	// Debitor
 	$var=!$var;
@@ -484,7 +484,9 @@ if ($_REQUEST["source"] == 'contractline')
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '</td></tr>'."\n";
 
 	// Debitor
 	$var=!$var;
@@ -607,7 +609,9 @@ if ($_REQUEST["source"] == 'membersubscription')
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b></td></tr>'."\n";
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '</td></tr>'."\n";
 
 	// Debitor
 	$var=!$var;

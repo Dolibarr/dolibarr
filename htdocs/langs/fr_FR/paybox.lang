@@ -30,3 +30,5 @@ InformationToFindParameters=Informations pour trouver vos paramètres de compte 
 PAYBOX_CGI_URL_V2=Url du module CGI Paybox de paiement
 VendorName=Nom du vendeur
 CSSUrlForPaymentForm=Url feuille style css pour le formulaire de paiement
+MessageOK=Message sur page de retour de paiement validé
+MessageKO=Message sur page de retour de paiement annulé

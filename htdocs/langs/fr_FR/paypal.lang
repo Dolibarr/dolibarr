@@ -11,3 +11,4 @@ PAYPAL_API_PASSWORD=Mot de passe utilisateur API
 PAYPAL_API_SIGNATURE=Signature API
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proposer le paiement intégral (Carte+Paypal) ou Paypal seul
 PAYPAL_CSS_URL=Url optionnelle de la feuille de style CSS de la page de paiement
+ThisIsTransactionId=Voici l'identifiant de la transaction: <b>%s</b> 
