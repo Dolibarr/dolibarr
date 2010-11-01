@@ -117,48 +117,54 @@ if ($PAYPALTOKEN)
     $ipaddress          = $_SESSION['ipaddress'];
 
 
-    dol_syslog("We call GetExpressCheckoutDetails");
-    $resArray=GetDetails($token);
-    //var_dump($resarray);
-
-    dol_syslog("We call DoExpressCheckoutPayment token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag);
-    $resArray=ConfirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
-
-    $ack = strtoupper($resArray["ACK"]);
-    if($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
+    if (! empty($paymentType))
     {
-        // resArray was built from a string like that
-        // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
-        $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
-        $TRANSACTIONID=urldecode($resArray["TRANSACTIONID"]);
-        $NOTE=urldecode($resArray["NOTE"]);
+        dol_syslog("We call GetExpressCheckoutDetails");
+        $resArray=GetDetails($token);
+        //var_dump($resarray);
 
-        print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
-        print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br>\n";
-        if (! empty($conf->global->PAYPAL_MESSAGE_OK)) print $conf->global->PAYPAL_MESSAGE_OK;
+        dol_syslog("We call DoExpressCheckoutPayment token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag);
+        $resArray=ConfirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
+
+        $ack = strtoupper($resArray["ACK"]);
+        if($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
+        {
+            // resArray was built from a string like that
+            // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
+            $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
+            $TRANSACTIONID=urldecode($resArray["TRANSACTIONID"]);
+            $NOTE=urldecode($resArray["NOTE"]);
+
+            print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
+            print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br>\n";
+            if (! empty($conf->global->PAYPAL_MESSAGE_OK)) print $conf->global->PAYPAL_MESSAGE_OK;
+        }
+        else
+        {
+            //Display a user friendly Error on the page using any of the following error information returned by PayPal
+            $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
+            $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
+            $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
+            $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
+
+            echo "DoExpressCheckoutPayment API call failed. ";
+            echo "Detailed Error Message: " . $ErrorLongMsg;
+            echo "Short Error Message: " . $ErrorShortMsg;
+            echo "Error Code: " . $ErrorCode;
+            echo "Error Severity Code: " . $ErrorSeverityCode;
+
+            if ($mysoc->email) echo "\nPlease, send a screenshot of this page to ".$mysoc->email;
+        }
     }
     else
     {
-        //Display a user friendly Error on the page using any of the following error information returned by PayPal
-        $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
-        $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
-        $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
-        $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
-
-        echo "DoExpressCheckoutPayment API call failed. ";
-        echo "Detailed Error Message: " . $ErrorLongMsg;
-        echo "Short Error Message: " . $ErrorShortMsg;
-        echo "Error Code: " . $ErrorCode;
-        echo "Error Severity Code: " . $ErrorSeverityCode;
-
-        if ($mysoc->email) echo "\nPlease, send a screenshot of this page to ".$mysoc->email;
+        dol_print_error('','Session expired');
     }
 }
 else
 {
     // No TOKEN parameter in URL
-    dol_print_error($langs->trans("ErrorBadPArameter"));
-    dol_syslog("No TOKEN parameter in URL");
+    dol_print_error('','No TOKEN parameter in URL');
 }
 
 print "\n</div>\n";
