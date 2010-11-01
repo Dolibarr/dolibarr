@@ -123,7 +123,7 @@ class FormProduct
 		{
 			print '<option value="'.$id.'"';
 			// Si selected est text, on compare avec code, sinon avec id
-			if ($selected == $id) print ' selected="true"';
+			if ($selected == $id) print ' selected="selected"';
 			print '>';
 			print $arraytypes['label'];
 			if ($fk_product) print ' ('.$langs->trans("Stock").': '.($arraytypes['stock']>0?$arraytypes['stock']:'?').')';
@@ -177,7 +177,7 @@ class FormProduct
 			$return.= '<option value="'.$key.'"';
 			if ($key == $default)
 			{
-				$return.= ' selected="true"';
+				$return.= ' selected="selected"';
 			}
 			//$return.= '>'.$value.'</option>';
 			$return.= '>'.measuring_units_string($key,$measuring_style).'</option>';

@@ -84,7 +84,7 @@ class FormOther
 				$obj = $this->db->fetch_object($result);
 				if ($selected == $obj->rowid)
 				{
-					print '<option value="'.$obj->rowid.'" selected="true">';
+					print '<option value="'.$obj->rowid.'" selected="selected">';
 				}
 				else
 				{
@@ -131,7 +131,7 @@ class FormOther
 				$obj = $this->db->fetch_object($result);
 				if ($selected == $obj->rowid)
 				{
-					print '<option value="'.$obj->rowid.'" selected="true">';
+					print '<option value="'.$obj->rowid.'" selected="selected">';
 				}
 				else
 				{
@@ -178,7 +178,7 @@ class FormOther
 					$obj = $this->db->fetch_object($resql);
 					if ($selected && $selected == $obj->rowid)
 					{
-						print '<option value="'.$obj->rowid.'" selected="true">';
+						print '<option value="'.$obj->rowid.'" selected="selected">';
 					}
 					else
 					{
@@ -218,7 +218,7 @@ class FormOther
 		{
 			if ($selected == $i)
 			{
-				$return.= '<option value="'.$i.'" selected="true">';
+				$return.= '<option value="'.$i.'" selected="selected">';
 			}
 			else
 			{
@@ -258,7 +258,7 @@ class FormOther
 	 		foreach ($tab_categs as $categ)
 	 		{
 	 			$moreforfilter.='<option value="'.$categ['id'].'"';
-	 			if ($categ['id'] == $selected) $moreforfilter.=' selected="true"';
+	 			if ($categ['id'] == $selected) $moreforfilter.=' selected="selected"';
 	 			$moreforfilter.='>'.dol_trunc($categ['fulllabel'],50,'middle').'</option>';
 	 		}
 	 	}
@@ -307,7 +307,7 @@ class FormOther
  			{
  				$moreforfilter.='<option value="'.$obj_usr->rowid.'"';
 
- 				if ($obj_usr->rowid == $selected) $moreforfilter.=' selected="true"';
+ 				if ($obj_usr->rowid == $selected) $moreforfilter.=' selected="selected"';
 
  				$moreforfilter.='>';
  				$moreforfilter.=$obj_usr->firstname." ".$obj_usr->name." (".$obj_usr->login.')';
@@ -416,7 +416,7 @@ class FormOther
 			foreach ($arrayofcolors as $val)
 			{
 				print '<option value="'.$val.'"';
-				if ($set_color == $val) print ' selected="true"';
+				if ($set_color == $val) print ' selected="selected"';
 				print '>'.$val.'</option>';
 			}
 			print '</select>';
@@ -501,7 +501,7 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selecte
 				{
 					if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="true">----------</option>';
 					print '<option value="'.$lines[$i]->fk_project.'_0"';
-					if ($selectedproject == $lines[$i]->fk_project) print ' selected="true"';
+					if ($selectedproject == $lines[$i]->fk_project) print ' selected="selected"';
 					print '>';	// Project -> Task
 					print $langs->trans("Project").' '.$lines[$i]->projectref;
 					if (empty($lines[$i]->public))
@@ -524,7 +524,7 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selecte
 			if ($lines[$i]->id > 0)
 			{
 				print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
-				if ($lines[$i]->id == $selectedtask) print ' selected="true"';
+				if ($lines[$i]->id == $selectedtask) print ' selected="selected"';
 				print '>';
 				print $langs->trans("Project").' '.$lines[$i]->projectref;
 				if (empty($lines[$i]->public))

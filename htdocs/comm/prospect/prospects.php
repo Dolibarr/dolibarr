@@ -313,7 +313,7 @@ if ($resql)
  	$options_from = '<option value="">&nbsp;</option>';
  	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
  	{
- 		$options_from .= '<option value="'.$tab_level_sortorder.'"'.($search_level_from == $tab_level_sortorder ? ' selected="true"':'').'>';
+ 		$options_from .= '<option value="'.$tab_level_sortorder.'"'.($search_level_from == $tab_level_sortorder ? ' selected="selected"':'').'>';
  		$options_from .= $langs->trans($tab_level_label);
  		$options_from .= '</option>';
  	}
@@ -325,7 +325,7 @@ if ($resql)
  	$options_to = '<option value="">&nbsp;</option>';
  	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
  	{
- 		$options_to .= '<option value="'.$tab_level_sortorder.'"'.($search_level_to == $tab_level_sortorder ? ' selected="true"':'').'>';
+ 		$options_to .= '<option value="'.$tab_level_sortorder.'"'.($search_level_to == $tab_level_sortorder ? ' selected="selected"':'').'>';
  		$options_to .= $langs->trans($tab_level_label);
  		$options_to .= '</option>';
  	}

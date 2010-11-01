@@ -72,7 +72,7 @@ class FormActions
 			print '<select '.($canedit?'':'disabled="true" ').'name="status" class="flat" onChange="select_status(document.'.$formname.'.status.value)">';
 			foreach($listofstatus as $key => $val)
 			{
-				print '<option value="'.$key.'"'.($selected == $key?' selected="true"':'').'>'.$val.'</option>';
+				print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>'.$val.'</option>';
 			}
 			print '</select>';
 			if ($selected == 0 || $selected == 100) $canedit=0;

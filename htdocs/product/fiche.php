@@ -875,13 +875,13 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<select class="flat" name="statut">';
 			if ($product->status)
 			{
-				print '<option value="1" selected="true">'.$langs->trans("OnSell").'</option>';
+				print '<option value="1" selected="selected">'.$langs->trans("OnSell").'</option>';
 				print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
 			}
 			else
 			{
 				print '<option value="1">'.$langs->trans("OnSell").'</option>';
-				print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
+				print '<option value="0" selected="selected">'.$langs->trans("NotOnSell").'</option>';
 			}
 			print '</select>';
 			print '</td></tr>';
@@ -891,13 +891,13 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<select class="flat" name="statut_buy">';
 			if ($product->status_buy)
 			{
-				print '<option value="1" selected="true">'.$langs->trans("ProductStatusOnBuy").'</option>';
+				print '<option value="1" selected="selected">'.$langs->trans("ProductStatusOnBuy").'</option>';
 				print '<option value="0">'.$langs->trans("ProductStatusNotOnBuy").'</option>';
 			}
 			else
 			{
 				print '<option value="1">'.$langs->trans("ProductStatusOnBuy").'</option>';
-				print '<option value="0" selected="true">'.$langs->trans("ProductStatusNotOnBuy").'</option>';
+				print '<option value="0" selected="selected">'.$langs->trans("ProductStatusNotOnBuy").'</option>';
 			}
 			print '</select>';
 			print '</td></tr>';

@@ -708,10 +708,10 @@ else
 
 		// Prospect/Customer
 		print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%"><select class="flat" name="client">';
-		print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
-		print '<option value="3"'.($soc->client==3?' selected="true"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-		print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
-		print '<option value="0"'.($soc->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
+		print '<option value="2"'.($soc->client==2?' selected="selected"':'').'>'.$langs->trans('Prospect').'</option>';
+		print '<option value="3"'.($soc->client==3?' selected="selected"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+		print '<option value="1"'.($soc->client==1?' selected="selected"':'').'>'.$langs->trans('Customer').'</option>';
+		print '<option value="0"'.($soc->client==0?' selected="selected"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
 		print '</select></td>';
 
 		print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
@@ -1095,10 +1095,10 @@ else
 
 			// Prospect/Customer
 			print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%"><select class="flat" name="client">';
-			print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
-			print '<option value="3"'.($soc->client==3?' selected="true"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-			print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
-			print '<option value="0"'.($soc->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
+			print '<option value="2"'.($soc->client==2?' selected="selected"':'').'>'.$langs->trans('Prospect').'</option>';
+			print '<option value="3"'.($soc->client==3?' selected="selected"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+			print '<option value="1"'.($soc->client==1?' selected="selected"':'').'>'.$langs->trans('Customer').'</option>';
+			print '<option value="0"'.($soc->client==0?' selected="selected"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
 			print '</select></td>';
 			print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 

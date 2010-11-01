@@ -176,7 +176,7 @@ if ($_GET["id"])
 		print '<td colspan="2" class="valid">';
 		print '<select name="confirm">';
 		print '<option value="yes">'.$langs->trans("Yes").'</option>';
-		print '<option value="no" selected="true">'.$langs->trans("No").'</option>';
+		print '<option value="no" selected="selected">'.$langs->trans("No").'</option>';
 		print '</select>';
 		print '</td></tr>';
 

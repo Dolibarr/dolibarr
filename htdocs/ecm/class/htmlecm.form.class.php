@@ -73,7 +73,7 @@ class FormEcm
 				{
 					if ($cate_arbo[$key]['id'] == $selected)
 					{
-						$add = 'selected="true" ';
+						$add = 'selected="selected" ';
 					}
 					else
 					{

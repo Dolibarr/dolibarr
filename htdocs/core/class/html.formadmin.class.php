@@ -80,13 +80,13 @@ class FormAdmin
 		if ($showempty)
 		{
 			$out.= '<option value=""';
-			if ($selected == '') $out.= ' selected="true"';
+			if ($selected == '') $out.= ' selected="selected"';
 			$out.= '>&nbsp;</option>';
 		}
 		if ($showauto)
 		{
 			$out.= '<option value="auto"';
-			if ($selected == 'auto') $out.= ' selected="true"';
+			if ($selected == 'auto') $out.= ' selected="selected"';
 			$out.= '>'.$langs->trans("AutoDetectLang").'</option>';
 		}
 
@@ -108,7 +108,7 @@ class FormAdmin
 			}
 			else if ($selected == $key)
 			{
-				$out.= '<option value="'.$key.'" selected="true">'.$value.'</option>';
+				$out.= '<option value="'.$key.'" selected="selected">'.$value.'</option>';
 			}
 			else
 			{
@@ -146,7 +146,7 @@ class FormAdmin
 
                 if ($file == $selected)
                 {
-					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="true">'.$filelib.'</option>';
+					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="selected">'.$filelib.'</option>';
                 }
                 else
                 {
@@ -189,7 +189,7 @@ class FormAdmin
 		global $langs,$conf;
 
 		$menuarray=array();
-		
+
 		foreach($dirmenuarray as $dirmenu)
 		{
 			$handle=opendir($dirmenu);
@@ -201,14 +201,14 @@ class FormAdmin
 					if (preg_match('/^default/i',$filelib)) continue;
 					if (preg_match('/^empty/i',$filelib)) continue;
 					if (preg_match('/\.lib/i',$filelib)) continue;
-					
+
 					$menuarray[$filelib]=1;
 				}
 				$menuarray['all']=1;
 			}
 			closedir($handle);
 		}
-        
+
 		ksort($menuarray);
 
 		// Affichage liste deroulante des menus
@@ -221,7 +221,7 @@ class FormAdmin
 			print '<option value="'.$key.'"';
             if ($key == $selected)
 			{
-				print '	selected="true"';
+				print '	selected="selected"';
 			}
             //if ($key == 'rodolphe') print ' disabled="true"';
 			print '>';
@@ -276,7 +276,7 @@ class FormAdmin
 		foreach ($arraytz as $lib => $gmt)
 		{
 			print '<option value="'.$lib.'"';
-			if ($selected == $lib || $selected == $gmt) print ' selected="true"';
+			if ($selected == $lib || $selected == $gmt) print ' selected="selected"';
 			print '>'.$gmt.'</option>'."\n";
 		}
 		print '</select>';
@@ -302,7 +302,7 @@ class FormAdmin
 		foreach ($arrayofcolors as $val)
 		{
 			print '<option value="'.$val.'"';
-			if ($selected == $val) print ' selected="true"';
+			if ($selected == $val) print ' selected="selected"';
 			print '>'.$val.'</option>';
 		}
 		print '</select>';

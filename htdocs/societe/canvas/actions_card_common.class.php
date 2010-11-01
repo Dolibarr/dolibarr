@@ -99,10 +99,10 @@ class ActionsCardCommon
 
             // TODO create a function
             $this->tpl['select_customertype'] = '<select class="flat" name="client">';
-            $this->tpl['select_customertype'].= '<option value="2"'.($this->object->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
-            $this->tpl['select_customertype'].= '<option value="3"'.($this->object->client==3?' selected="true"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="1"'.($this->object->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="0"'.($this->object->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
+            $this->tpl['select_customertype'].= '<option value="2"'.($this->object->client==2?' selected="selected"':'').'>'.$langs->trans('Prospect').'</option>';
+            $this->tpl['select_customertype'].= '<option value="3"'.($this->object->client==3?' selected="selected"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+            $this->tpl['select_customertype'].= '<option value="1"'.($this->object->client==1?' selected="selected"':'').'>'.$langs->trans('Customer').'</option>';
+            $this->tpl['select_customertype'].= '<option value="0"'.($this->object->client==0?' selected="selected"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
             $this->tpl['select_customertype'].= '</select>';
 
             // Customer
@@ -123,10 +123,10 @@ class ActionsCardCommon
             $this->object->LoadSupplierCateg();
             $this->tpl['suppliercategory'] = $this->object->SupplierCategories;
             $this->tpl['select_suppliercategory'] = $form->selectarray("fournisseur_categorie",$this->object->SupplierCategories,$_POST["fournisseur_categorie"],1);
-            
+
             // Zip
             $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->cp,'zipcode',array('town','selectpays_id','departement_id'),6);
-            
+
             // Town
             $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->ville,'town',array('zipcode','selectpays_id','departement_id'));
 

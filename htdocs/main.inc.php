@@ -1142,12 +1142,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	print "\n</div>\n<!-- End top horizontal menu -->\n";
 
-	print "</div><!-- End top layout -->\n";
-
-	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
-	{
-		print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
-	}
+	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "</div><!-- End top layout -->\n";
+    else print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
 }
 
 
@@ -1170,8 +1166,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	//    print '<div class="vmenuplusfiche">'."\n";
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
-
-	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<td class="vmenu" valign="top">';
+    else print '<td class="vmenu" valign="top">';
 
 	print "\n";
 
@@ -1316,9 +1311,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	print "\n";
 
-	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</td>';
-
-	print '</div> <!-- End left layout -->'."\n";
+	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div> <!-- End left layout -->'."\n";
+	else print '</td>';
 
 	print '<!-- End of left column, begin right area -->'."\n";
 	//	    print '</div>'."\n";
@@ -1332,11 +1326,12 @@ function main_area()
 {
 	global $conf, $langs;
 
-	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
-
-	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
-
-	print '<td valign="top">'."\n";
+	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
+	{
+	    print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
+        print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr><td valign="top">'."\n";
+	}
+    else print '<td valign="top">'."\n";
 
 	print "\n";
 
@@ -1496,7 +1491,8 @@ if (! function_exists("llxFooter"))
 
 		//    print "\n".'</div> <!-- end div class="vmenuplusfiche" -->'."\n";
 		print "\n".'</td></tr></table> <!-- end right area -->'."\n";
-		print '</div></div> <!-- end main layout -->'."\n";
+
+		if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div></div> <!-- end main layout -->'."\n";
 
 		if (! empty($_SERVER['DOL_TUNING']))
 		{

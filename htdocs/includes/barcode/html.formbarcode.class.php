@@ -88,11 +88,11 @@ class FormBarCode
 		$select_encoder.= '<input type="hidden" name="action" value="update">';
 		$select_encoder.= '<input type="hidden" name="code_id" value="'.$code_id.'">';
 		$select_encoder.= '<select id="select'.$idForm.'" class="flat" name="coder">';
-		$select_encoder.= '<option value="0"'.($selected==0?' selected="true"':'').' '.$disable.'>'.$langs->trans('Disable').'</option>';
+		$select_encoder.= '<option value="0"'.($selected==0?' selected="selected"':'').' '.$disable.'>'.$langs->trans('Disable').'</option>';
 		$select_encoder.= '<option value="-1" disabled="disabled">--------------------</option>';
 		foreach($barcodelist as $key => $value)
 		{
-			$select_encoder.= '<option value="'.$key.'"'.($selected==$key?' selected="true"':'').'>'.$value.'</option>';
+			$select_encoder.= '<option value="'.$key.'"'.($selected==$key?' selected="selected"':'').'>'.$value.'</option>';
 		}
 		$select_encoder.= '</select></form>';
 
@@ -129,7 +129,7 @@ class FormBarCode
             else
             {
             	print '<select disabled="disabled" class="flat" name="'.$htmlname.'">';
-            	print '<option value="0" selected="true">'.$langs->trans('NoActivatedBarcode').'</option>';
+            	print '<option value="0" selected="selected">'.$langs->trans('NoActivatedBarcode').'</option>';
             }
 
             while ($i < $num)
@@ -137,7 +137,7 @@ class FormBarCode
                 $obj = $this->db->fetch_object($result);
                 if ($selected == $obj->rowid)
                 {
-                    print '<option value="'.$obj->rowid.'" selected="true">';
+                    print '<option value="'.$obj->rowid.'" selected="selected">';
                 }
                 else
                 {

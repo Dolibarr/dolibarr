@@ -564,7 +564,7 @@ if ($conf->banque->enabled)
 				$row = $db->fetch_row($resql);
 
 				print '<option value="'.$row[0].'"';
-				print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected="true"':'';
+				print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected="selected"':'';
 				print '>'.$row[1].'</option>';
 
 				$i++;
@@ -586,7 +586,7 @@ print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
 print '<select name="chq">';
 print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
-print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected="true"':'').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->nom?$mysoc->nom:$langs->trans("NotDefined")).')</option>';
+print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected="selected"':'').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->nom?$mysoc->nom:$langs->trans("NotDefined")).')</option>';
 
 $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
@@ -605,7 +605,7 @@ if ($resql)
 		$row = $db->fetch_row($resql);
 
 		print '<option value="'.$row[0].'"';
-		print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected="true"':'';
+		print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected="selected"':'';
 		print '>'.$langs->trans("OwnerOfBankAccount",$row[1]).'</option>';
 
 		$i++;

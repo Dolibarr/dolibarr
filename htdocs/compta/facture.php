@@ -1445,12 +1445,12 @@ if ($_GET['action'] == 'create')
 			{
 				print '<tr><td>'.$langs->trans('CreateFromRepeatableInvoice').'</td><td>';
 				print '<select class="flat" name="fac_rec">';
-				print '<option value="0" selected="true"></option>';
+				print '<option value="0" selected="selected"></option>';
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
 					print '<option value="'.$objp->rowid.'"';
-					if ($_POST["fac_rec"] == $objp->rowid) print ' selected="true"';
+					if ($_POST["fac_rec"] == $objp->rowid) print ' selected="selected"';
 					print '>'.$objp->titre.' ('.price($objp->total_ttc).' '.$langs->trans("TTC").')</option>';
 					$i++;
 				}
@@ -1482,7 +1482,7 @@ if ($_GET['action'] == 'create')
 	foreach ($facids as $facparam)
 	{
 		$options.='<option value="'.$facparam['id'].'"';
-		if ($facparam['id'] == $_POST['fac_replacement']) $options.=' selected="true"';
+		if ($facparam['id'] == $_POST['fac_replacement']) $options.=' selected="selected"';
 		$options.='>'.$facparam['ref'];
 		$options.=' ('.$facturestatic->LibStatut(0,$facparam['status']).')';
 		$options.='</option>';
@@ -1500,7 +1500,7 @@ if ($_GET['action'] == 'create')
 		$newinvoice=new Facture($db);
 		$newinvoice->fetch($key);
 		$optionsav.='<option value="'.$key.'"';
-		if ($key == $_POST['fac_avoir']) $optionsav.=' selected="true"';
+		if ($key == $_POST['fac_avoir']) $optionsav.=' selected="selected"';
 		$optionsav.='>';
 		$optionsav.=$newinvoice->ref;
 		$optionsav.=' ('.$newinvoice->getLibStatut(1,$value).')';

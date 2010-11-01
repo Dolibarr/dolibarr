@@ -269,7 +269,7 @@ class Form
                     ($selected == $obj->rowid || $selected == $obj->code || $selected == $obj->libelle) )
                     {
                         $foundselected=true;
-                        $out.= '<option value="'.$obj->rowid.'" selected="true">';
+                        $out.= '<option value="'.$obj->rowid.'" selected="selected">';
                     }
                     else
                     {
@@ -314,7 +314,7 @@ class Form
             {
                 if ($selected == $type_available[$i])
                 {
-                    print '<option value="'.$type_available[$i].'" selected="true">'.$langs->trans("BankType".$type_available[$i]).'</option>';
+                    print '<option value="'.$type_available[$i].'" selected="selected">'.$langs->trans("BankType".$type_available[$i]).'</option>';
                 }
                 else
                 {
@@ -378,7 +378,7 @@ class Form
                 {
                     $obj = $db->fetch_object($resql);
                     print '<option value="'.$obj->id.'"';
-                    if ($obj->id == $selected) print ' selected="true"';
+                    if ($obj->id == $selected) print ' selected="selected"';
                     print '>'.dol_trunc($obj->type,$maxlen);
                     $i++;
                 }
@@ -418,16 +418,16 @@ class Form
             if ($showempty)
             {
                 print '<option value="-1"';
-                if ($selected == -1) print ' selected="true"';
+                if ($selected == -1) print ' selected="selected"';
                 print '>&nbsp;</option>';
             }
 
             print '<option value="0"';
-            if (0 == $selected) print ' selected="true"';
+            if (0 == $selected) print ' selected="selected"';
             print '>'.$langs->trans("Product");
 
             print '<option value="1"';
-            if (1 == $selected) print ' selected="true"';
+            if (1 == $selected) print ' selected="selected"';
             print '>'.$langs->trans("Service");
 
             print '</select>';
@@ -459,7 +459,7 @@ class Form
         if ($showempty)
         {
             print '<option value="-1"';
-            if ($selected == -1) print ' selected="true"';
+            if ($selected == -1) print ' selected="selected"';
             print '>&nbsp;</option>';
         }
 
@@ -475,7 +475,7 @@ class Form
             {
                 $obj = $db->fetch_object($resql);
                 print '<option value="'.$obj->code.'"';
-                if ($obj->code == $selected) print ' selected="true"';
+                if ($obj->code == $selected) print ' selected="selected"';
                 print '>';
                 if ($obj->code != $langs->trans($obj->code)) print $langs->trans($obj->code);
                 else print $langs->trans($obj->type);
@@ -562,7 +562,7 @@ class Form
                         }
                         if ($selected > 0 && $selected == $obj->rowid)
                         {
-                            print '<option value="'.$obj->rowid.'" selected="true">'.$label.'</option>';
+                            print '<option value="'.$obj->rowid.'" selected="selected">'.$label.'</option>';
                         }
                         else
                         {
@@ -622,7 +622,7 @@ class Form
                     if ($desc=='(DEPOSIT)')     $desc=$langs->trans("Deposit");
 
                     $selectstring='';
-                    if ($selected > 0 && $selected == $obj->rowid) $selectstring=' selected="true"';
+                    if ($selected > 0 && $selected == $obj->rowid) $selectstring=' selected="selected"';
 
                     $disabled='';
                     if ($maxvalue && $obj->amount_ttc > $maxvalue)
@@ -695,7 +695,7 @@ class Form
                         {
                             print '<option value="'.$obj->rowid.'"';
                             if ($disabled) print ' disabled="true"';
-                            print ' selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
+                            print ' selected="selected">'.$obj->name.' '.$obj->firstname.'</option>';
                         }
                         else
                         {
@@ -773,7 +773,7 @@ class Form
         if ($resql)
         {
             $out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
-            if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
+            if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -788,7 +788,7 @@ class Form
                     {
                         $out.= '<option value="'.$obj->rowid.'"';
                         if ($disableline) $out.= ' disabled="true"';
-                        $out.= ' selected="true">';
+                        $out.= ' selected="selected">';
                     }
                     else
                     {
@@ -937,12 +937,12 @@ class Form
                 }
                 else
                 {
-                    $outselect.='<option value="0" selected="true">-- '.$langs->trans("MatchingProducts").' --</option>';
+                    $outselect.='<option value="0" selected="selected">-- '.$langs->trans("MatchingProducts").' --</option>';
                 }
             }
             else
             {
-                $outselect.='<option value="0" selected="true">&nbsp;</option>';
+                $outselect.='<option value="0" selected="selected">&nbsp;</option>';
             }
 
             $i = 0;
@@ -962,7 +962,7 @@ class Form
                 $outref=$objp->ref;
 
                 $opt = '<option value="'.$objp->rowid.'"';
-                $opt.= ($objp->rowid == $selected)?' selected="true"':'';
+                $opt.= ($objp->rowid == $selected)?' selected="selected"':'';
                 if ($conf->stock->enabled && $objp->fk_product_type == 0 && isset($objp->stock))
                 {
                     if ($objp->stock > 0)
@@ -1173,12 +1173,12 @@ class Form
                 }
                 else
                 {
-                    $outselect.='<option value="0" selected="true">-- '.$langs->trans("MatchingProducts").' --</option>';
+                    $outselect.='<option value="0" selected="selected">-- '.$langs->trans("MatchingProducts").' --</option>';
                 }
             }
             else
             {
-                if (! $selected) $outselect.='<option value="0" selected="true">&nbsp;</option>';
+                if (! $selected) $outselect.='<option value="0" selected="selected">&nbsp;</option>';
                 else $outselect.='<option value="0">&nbsp;</option>';
             }
 
@@ -1195,7 +1195,7 @@ class Form
                 $outref=$objp->ref;
 
                 $opt = '<option value="'.$objp->idprodfournprice.'"';
-                if ($selected == $objp->idprodfournprice) $opt.= ' selected="true"';
+                if ($selected == $objp->idprodfournprice) $opt.= ' selected="selected"';
                 if ($objp->fprice == '') $opt.=' disabled="disabled"';
                 $opt.= '>';
 
@@ -1390,7 +1390,7 @@ class Form
 
                     if ($selected && $selected == $obj->rowid)
                     {
-                        print '<option value="'.$obj->rowid.'" selected="true">'.$obj->label.'</option>';
+                        print '<option value="'.$obj->rowid.'" selected="selected">'.$obj->label.'</option>';
                     }
                     else
                     {
@@ -1506,7 +1506,7 @@ class Form
         {
             if ($selected == $id)
             {
-                print '<option value="'.$id.'" selected="true">';
+                print '<option value="'.$id.'" selected="selected">';
             }
             else
             {
@@ -1556,8 +1556,8 @@ class Form
             if ($format == 1) print '<option value="'.$arraytypes['code'].'"';
             if ($format == 2) print '<option value="'.$arraytypes['code'].'"';
             // Si selected est text, on compare avec code, sinon avec id
-            if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected="true"';
-            elseif ($selected == $id) print ' selected="true"';
+            if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected="selected"';
+            elseif ($selected == $id) print ' selected="selected"';
             print '>';
             if ($format == 0) $value=$arraytypes['label'];
             if ($format == 1) $value=$arraytypes['code'];
@@ -1599,7 +1599,7 @@ class Form
         {
             if ($selected == $id)
             {
-                $return.= '<option value="'.$id.'" selected="true">'.$value;
+                $return.= '<option value="'.$id.'" selected="selected">'.$value;
             }
             else
             {
@@ -1637,7 +1637,7 @@ class Form
                     $obj = $this->db->fetch_object($resql);
                     if ($selected == $obj->id)
                     {
-                        print '<option value="'.$obj->id.'" selected="true">';
+                        print '<option value="'.$obj->id.'" selected="selected">';
                     }
                     else
                     {
@@ -1697,7 +1697,7 @@ class Form
                     $obj = $this->db->fetch_object($result);
                     if ($selected == $obj->rowid)
                     {
-                        print '<option value="'.$obj->rowid.'" selected="true">';
+                        print '<option value="'.$obj->rowid.'" selected="selected">';
                     }
                     else
                     {
@@ -1748,7 +1748,7 @@ class Form
                 {
                     if ($cate_arbo[$key]['id'] == $selected)
                     {
-                        $add = 'selected="true" ';
+                        $add = 'selected="selected" ';
                     }
                     else
                     {
@@ -2299,7 +2299,7 @@ class Form
                     if ($selected && $selected == $obj->code_iso)
                     {
                         $foundselected=true;
-                        $out.= '<option value="'.$obj->code_iso.'" selected="true">';
+                        $out.= '<option value="'.$obj->code_iso.'" selected="selected">';
                     }
                     else
                     {
@@ -2485,7 +2485,7 @@ class Form
                 $return.= '"';
                 if ($txtva[$i] == $defaulttx && $nprtva[$i] == $defaultnpr)
                 {
-                    $return.= ' selected="true"';
+                    $return.= ' selected="selected"';
                 }
                 $return.= '>'.vatrate($libtva[$i]);
                 $return.= $nprtva[$i] ? ' *': '';
@@ -2642,14 +2642,14 @@ class Form
 
                 if ($empty || $set_time == -1)
                 {
-                    $retstring.='<option value="0" selected="true">&nbsp;</option>';
+                    $retstring.='<option value="0" selected="selected">&nbsp;</option>';
                 }
 
                 for ($day = 1 ; $day <= 31; $day++)
                 {
                     if ($day == $sday)
                     {
-                        $retstring.="<option value=\"$day\" selected=\"true\">$day";
+                        $retstring.="<option value=\"$day\" selected=\"selected\">$day";
                     }
                     else
                     {
@@ -2663,13 +2663,13 @@ class Form
                 $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'month">';
                 if ($empty || $set_time == -1)
                 {
-                    $retstring.='<option value="0" selected="true">&nbsp;</option>';
+                    $retstring.='<option value="0" selected="selected">&nbsp;</option>';
                 }
 
                 // Month
                 for ($month = 1 ; $month <= 12 ; $month++)
                 {
-                    $retstring.='<option value="'.$month.'"'.($month == $smonth?' selected="true"':'').'>';
+                    $retstring.='<option value="'.$month.'"'.($month == $smonth?' selected="selected"':'').'>';
                     $retstring.=dol_print_date(mktime(12,0,0,$month,1,2000),"%b");
                     $retstring.="</option>";
                 }
@@ -2832,7 +2832,7 @@ class Form
         for ($min = 0; $min <= 55; $min=$min+5)
         {
             print '<option value="'.$min.'"';
-            if ($minSelected == $min) print ' selected="true"';
+            if ($minSelected == $min) print ' selected="selected"';
             print '>'.$min.'</option>';
         }
         print "</select>";
@@ -2862,7 +2862,7 @@ class Form
 
         if ($show_empty)
         {
-            $out.='<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
+            $out.='<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
         }
 
         if (is_array($array))
@@ -2873,7 +2873,7 @@ class Form
                 // Si il faut pre-selectionner une valeur
                 if ($id != '' && ($id == $key || $id == $value))
                 {
-                    $out.=' selected="true"';
+                    $out.=' selected="selected"';
                 }
 
                 $out.='>';
@@ -2931,13 +2931,13 @@ class Form
         $resultyesno = '<select class="flat" name="'.$htmlname.'">'."\n";
         if (("$value" == 'yes') || ($value == 1))
         {
-            $resultyesno .= '<option value="'.$yes.'" selected="true">'.$langs->trans("Yes").'</option>'."\n";
+            $resultyesno .= '<option value="'.$yes.'" selected="selected">'.$langs->trans("Yes").'</option>'."\n";
             $resultyesno .= '<option value="'.$no.'">'.$langs->trans("No").'</option>'."\n";
         }
         else
         {
             $resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
-            $resultyesno .= '<option value="'.$no.'" selected="true">'.$langs->trans("No").'</option>'."\n";
+            $resultyesno .= '<option value="'.$no.'" selected="selected">'.$langs->trans("No").'</option>'."\n";
         }
         $resultyesno .= '</select>'."\n";
         return $resultyesno;
@@ -2975,7 +2975,7 @@ class Form
                 $obj = $this->db->fetch_object($result);
                 if ($selected == $obj->rowid)
                 {
-                    print '<option value="'.$obj->rowid.'" selected="true">';
+                    print '<option value="'.$obj->rowid.'" selected="selected">';
                 }
                 else
                 {
@@ -3020,7 +3020,7 @@ class Form
         {
             if ($selected == $key)
             {
-                $select_week .= '<option value="'.$key.'" selected="true">';
+                $select_week .= '<option value="'.$key.'" selected="selected">';
             }
             else
             {
@@ -3052,7 +3052,7 @@ class Form
         {
             if ($selected == $key)
             {
-                $select_month .= '<option value="'.$key.'" selected="true">';
+                $select_month .= '<option value="'.$key.'" selected="selected">';
             }
             else
             {
@@ -3084,7 +3084,7 @@ class Form
         if($useempty)
         {
             if($selected == '')
-            $selected_html = 'selected="true"';
+            $selected_html = 'selected="selected"';
             print '<option value="" ' . $selected_html . ' >&nbsp;</option>';
         }
         for ($y = $max_year; $y >= $min_year; $y--)
@@ -3092,7 +3092,7 @@ class Form
             $selected_html='';
             if ($y == $selected)
             {
-                $selected_html = 'selected="true"';
+                $selected_html = 'selected="selected"';
             }
             print "<option value=\"$y\" $selected_html >$y";
             print "</option>";

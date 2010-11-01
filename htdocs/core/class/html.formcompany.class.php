@@ -157,7 +157,7 @@ class FormCompany
 				$obj = $this->db->fetch_object($resql);
 
 				print '<option value="'.$obj->code.'"';
-				if ($selected == $obj->code) print ' selected="true"';
+				if ($selected == $obj->code) print ' selected="selected"';
 				print '>';
 				$level=$langs->trans($obj->code);
 				if ($level == $obj->code) $level=$langs->trans($obj->label);
@@ -251,7 +251,7 @@ class FormCompany
 
 						if ($selected > 0 && $selected == $obj->rowid)
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected="true">';
+							$out.= '<option value="'.$obj->rowid.'" selected="selected">';
 						}
 						else
 						{
@@ -320,7 +320,7 @@ class FormCompany
 
 						if ($selected > 0 && $selected == $obj->code)
 						{
-							print '<option value="'.$obj->code.'" selected="true">'.$obj->libelle.'</option>';
+							print '<option value="'.$obj->code.'" selected="selected">'.$obj->libelle.'</option>';
 						}
 						else
 						{
@@ -378,7 +378,7 @@ class FormCompany
 					$obj = $this->db->fetch_object($resql);
 					if ($selected == $obj->code)
 					{
-						$out.= '<option value="'.$obj->code.'" selected="true">';
+						$out.= '<option value="'.$obj->code.'" selected="selected">';
 					}
 					else
 					{
@@ -462,7 +462,7 @@ class FormCompany
 
 						if ($selected > 0 && $selected == $obj->code)
 						{
-							$out.= '<option value="'.$obj->code.'" selected="true">';
+							$out.= '<option value="'.$obj->code.'" selected="selected">';
 						}
 						else
 						{
@@ -573,7 +573,7 @@ class FormCompany
 						{
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled="true"';
-							print ' selected="true">'.dol_trunc($obj->nom,24).'</option>';
+							print ' selected="selected">'.dol_trunc($obj->nom,24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
 						else
