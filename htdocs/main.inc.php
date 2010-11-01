@@ -863,7 +863,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-1.8.5.custom.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.min'.$ext.'"></script>'."\n";
-			
+
 			if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
 			{
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
@@ -942,9 +942,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	// For backward compatibility with old modules
 	if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-	
+
 	print '<body id="mainbody">';
-	
+
 	if ($conf->use_javascript_ajax)
 	{
 		if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
@@ -997,7 +997,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 				}
     		</script>';
 		}
-		
+
 		if ($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION)
 		{
 			print "\n".'<script type="text/javascript">
@@ -1046,8 +1046,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	}
 
     print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
-    
-    print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
+
+    if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
 
     print '<div id="tmenu_tooltip" class="tmenu">'."\n";
 
@@ -1141,9 +1141,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	}
 
 	print "\n</div>\n<!-- End top horizontal menu -->\n";
-	
+
 	print "</div><!-- End top layout -->\n";
-	
+
 	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
 	{
 		print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
@@ -1168,9 +1168,9 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	$bookmarks='';
 
 	//    print '<div class="vmenuplusfiche">'."\n";
-	
-	print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
-	
+
+	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
+
 	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<td class="vmenu" valign="top">';
 
 	print "\n";
@@ -1231,7 +1231,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
     // Left column
     print '<!-- Begin left vertical menu '.$left_menu.' -->'."\n";
-    
+
     print '<div class="vmenu">'."\n";
 
 	$menuleft=new MenuLeft($db,$menu_array_before,$menu_array_after);
@@ -1315,9 +1315,9 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	print "<!-- End left vertical menu -->\n";
 
 	print "\n";
-	
+
 	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</td>';
-	
+
 	print '</div> <!-- End left layout -->'."\n";
 
 	print '<!-- End of left column, begin right area -->'."\n";
@@ -1331,15 +1331,15 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 function main_area()
 {
 	global $conf, $langs;
-	
-	print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
-	
+
+	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
+
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
-	
+
 	print '<td valign="top">'."\n";
-	
+
 	print "\n";
-	
+
 	print '<div class="fiche"> <!-- begin main area -->'."\n";
 
 	if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode",$conf->global->MAIN_ONLY_LOGIN_ALLOWED));
