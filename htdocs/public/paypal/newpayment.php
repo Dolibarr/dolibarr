@@ -353,7 +353,8 @@ if ($_REQUEST["source"] == 'order')
 	$amount=$order->total_ttc;
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$fulltag='IR='.$order->ref.'.TPID='.$order->client->id.'.TP='.strtr($order->client->nom,"-"," ");
+	$fulltag='ORD='.$order->ref.'.CUS='.$order->client->id;
+	//$fulltag.='.NAM='.strtr($order->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
 	$fulltag=dol_string_unaccent($fulltag);
 
@@ -460,7 +461,8 @@ if ($_REQUEST["source"] == 'invoice')
 	$amount=$invoice->total_ttc - $invoice->getSommePaiement();
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$fulltag='IR='.$invoice->ref.'.TPID='.$invoice->client->id.'.TP='.strtr($invoice->client->nom,"-"," ");
+	$fulltag='INV='.$invoice->ref.'.CUS='.$invoice->client->id;
+	//$fulltag.='.NAM='.strtr($invoice->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
 	$fulltag=dol_string_unaccent($fulltag);
 
@@ -610,7 +612,8 @@ if ($_REQUEST["source"] == 'contractline')
 	}
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$fulltag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->client->id.'.TP='.strtr($contract->client->nom,"-"," ");
+	$fulltag='COL='.$contractline->ref.'.CON='.$contract->ref.'.CUS='.$contract->client->id;
+	//$fulltag.='.NAM='.strtr($contract->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
 	$fulltag=dol_string_unaccent($fulltag);
 
@@ -762,7 +765,8 @@ if ($_REQUEST["source"] == 'membersubscription')
 	$amount=$subscription->total_ttc;
 	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
 
-	$fulltag='MID='.$member->id.'.M='.strtr($member->getFullName($langs),"-"," ");
+	$fulltag='MEM='.$member->id;
+	//$fulltag.='.NAM='.strtr($member->getFullName($langs),"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
 	$fulltag=dol_string_unaccent($fulltag);
 

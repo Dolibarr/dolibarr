@@ -114,7 +114,7 @@ if ($PAYPALTOKEN)
     $currencyCodeType   = $_SESSION['currencyCodeType'];
     $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
     // From env
-    $ipaddress          = $_SERVER['REMOTE_ADDR '];  // Payer ip
+    $ipaddress          = $_SESSION['ipaddress'];
 
 
     dol_syslog("We call GetExpressCheckoutDetails");
@@ -131,6 +131,7 @@ if ($PAYPALTOKEN)
         // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
         $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
         $TRANSACTIONID=urldecode($resArray["TRANSACTIONID"]);
+        $NOTE=urldecode($resArray["NOTE"]);
 
         print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
         print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br>\n";

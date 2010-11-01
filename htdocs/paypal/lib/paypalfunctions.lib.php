@@ -194,6 +194,9 @@ $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $ship
     $nvpstr = $nvpstr . "&PHONENUM=" . urlencode($phoneNum);
     $nvpstr = $nvpstr . "&SOLUTIONTYPE=" . urlencode($solutionType);
     $nvpstr = $nvpstr . "&LANDINGPAGE=" . urlencode($landingPage);
+    //$nvpstr = $nvpstr . "&CUSTOMERSERVICENUMBER=" . urlencode($tag);
+    $nvpstr = $nvpstr . "&INVNUM=" . urlencode($tag);
+
 
 
     $_SESSION["currencyCodeType"] = $currencyCodeType;
@@ -210,6 +213,7 @@ $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $ship
     {
         $token = urldecode($resArray["TOKEN"]);
         $_SESSION['TOKEN']=$token;
+        $_SESSION['ipaddress']=$_SERVER['REMOTE_ADDR '];  // Payer ip
     }
 
     return $resArray;
@@ -283,6 +287,8 @@ function ConfirmPayment( $token, $paymentType, $currencyCodeType, $payerID, $ipa
 
     $nvpstr  = '&TOKEN=' . urlencode($token) . '&PAYERID=' . urlencode($payerID) . '&PAYMENTACTION=' . urlencode($paymentType) . '&AMT=' . urlencode($FinalPaymentAmt);
     $nvpstr .= '&CURRENCYCODE=' . urlencode($currencyCodeType) . '&IPADDRESS=' . urlencode($ipaddress);
+    //$nvpstr .= '&CUSTOM=' . urlencode($tag);
+    $nvpstr .= '&INVNUM=' . urlencode($tag);
 
     /* Make the call to PayPal to finalize payment
      If an error occured, show the resulting errors
@@ -336,20 +342,21 @@ $countryCode, $currencyCode, $tag )
     global $sBNCode;
 
     //Construct the parameter string that describes DoDirectPayment
-    $nvpstr = "&AMT=" . $paymentAmount;
-    $nvpstr = $nvpstr . "&CURRENCYCODE=" . $currencyCode;
-    $nvpstr = $nvpstr . "&PAYMENTACTION=" . $paymentType;
-    $nvpstr = $nvpstr . "&CREDITCARDTYPE=" . $creditCardType;
-    $nvpstr = $nvpstr . "&ACCT=" . $creditCardNumber;
-    $nvpstr = $nvpstr . "&EXPDATE=" . $expDate;
-    $nvpstr = $nvpstr . "&CVV2=" . $cvv2;
-    $nvpstr = $nvpstr . "&FIRSTNAME=" . $firstName;
-    $nvpstr = $nvpstr . "&LASTNAME=" . $lastName;
-    $nvpstr = $nvpstr . "&STREET=" . $street;
-    $nvpstr = $nvpstr . "&CITY=" . $city;
-    $nvpstr = $nvpstr . "&STATE=" . $state;
-    $nvpstr = $nvpstr . "&COUNTRYCODE=" . $countryCode;
+    $nvpstr = "&AMT=" . urlencode($paymentAmount);
+    $nvpstr = $nvpstr . "&CURRENCYCODE=" . urlencode($currencyCode);
+    $nvpstr = $nvpstr . "&PAYMENTACTION=" . urlencode($paymentType);
+    $nvpstr = $nvpstr . "&CREDITCARDTYPE=" . urlencode($creditCardType);
+    $nvpstr = $nvpstr . "&ACCT=" . urlencode($creditCardNumber);
+    $nvpstr = $nvpstr . "&EXPDATE=" . urlencode($expDate);
+    $nvpstr = $nvpstr . "&CVV2=" . urlencode($cvv2);
+    $nvpstr = $nvpstr . "&FIRSTNAME=" . urlencode($firstName);
+    $nvpstr = $nvpstr . "&LASTNAME=" . urlencode($lastName);
+    $nvpstr = $nvpstr . "&STREET=" . urlencode($street);
+    $nvpstr = $nvpstr . "&CITY=" . urlencode($city);
+    $nvpstr = $nvpstr . "&STATE=" . urlencode($state);
+    $nvpstr = $nvpstr . "&COUNTRYCODE=" . urlencode($countryCode);
     $nvpstr = $nvpstr . "&IPADDRESS=" . $_SERVER['REMOTE_ADDR'];
+    $nvpstr = $nvpstr . "&INVNUM=" . urlencode($tag);
 
     $resArray=hash_call("DoDirectPayment", $nvpstr);
 
@@ -397,7 +404,7 @@ function hash_call($methodName,$nvpStr)
     if($USE_PROXY) curl_setopt ($ch, CURLOPT_PROXY, $PROXY_HOST. ":" . $PROXY_PORT);
 
     //NVPRequest for submitting to server
-    $nvpreq="METHOD=" . urlencode($methodName) . "&VERSION=" . urlencode($API_version) . "&PWD=" . urlencode($PAYPAL_API_PASSWORD) . "&USER=" . urlencode($PAYPAL_API_USER) . "&SIGNATURE=" . urlencode($PAYPAL_API_SIGNATURE) . $nvpStr . "&BUTTONSOURCE=" . urlencode($sBNCode);
+    $nvpreq ="METHOD=" . urlencode($methodName) . "&VERSION=" . urlencode($API_version) . "&PWD=" . urlencode($PAYPAL_API_PASSWORD) . "&USER=" . urlencode($PAYPAL_API_USER) . "&SIGNATURE=" . urlencode($PAYPAL_API_SIGNATURE) . $nvpStr . "&BUTTONSOURCE=" . urlencode($sBNCode);
     $nvpreq.="&LOCALE=".strtoupper($langs->getDefaultLang(1));
     //$nvpreq.="&BRANDNAME=".urlencode();       // Override merchant name
     //$nvpreq.="&NOTIFYURL=".urlencode();       // For Instant Payment Notification url
