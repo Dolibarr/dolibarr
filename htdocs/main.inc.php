@@ -1005,6 +1005,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						jQuery( ".vmenu" ).accordion({
 							autoHeight: false,
 							event: "mouseover",
+							//collapsible: true,
+							//active: 2,
 							header: "> .blockvmenupair > .menu_titre"
 						});
 					});
