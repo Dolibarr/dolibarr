@@ -53,6 +53,7 @@ function llxHeader($head = '', $title='', $help_url='', $morehtml='')
 	}
 
 
-	left_menu($menu->liste, $help_url, $morehtml, '');
+	left_menu($menu->liste, $help_url, $morehtml, '', 1);
+	main_area();
 }
 ?>

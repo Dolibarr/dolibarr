@@ -96,7 +96,8 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 		$db->free($resql);
 	}
 
-	left_menu('', $help_url, '', $menu->liste);
+	left_menu('', $help_url, '', $menu->liste, 1);
+	main_area();
 }
 
 ?>
