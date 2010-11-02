@@ -138,3 +138,4 @@ BankTransactionLine=Transancción bancaria
 AllAccounts=Todas las cuentas bancarias/de caja
 BackToAccount=Volver a la cuenta
 ShowAllAccounts=Mostrar para todas las cuentas
+FutureTransaction=Transacción futura. No es posible conciliar.

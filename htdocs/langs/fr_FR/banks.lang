@@ -138,3 +138,4 @@ BankTransactionLine=Écriture bancaire
 AllAccounts=Tous les comptes bancaires/caisses
 BackToAccount=Retour au compte
 ShowAllAccounts=Afficher pour tous les comptes
+FutureTransaction=Transaction future. Pas moyen de concilier.

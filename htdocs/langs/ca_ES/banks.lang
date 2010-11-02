@@ -138,3 +138,4 @@ BankTransactionLine=Transancció bancària
 AllAccounts=Tots els comptes bancaris/de caixa
 BackToAccount=Tornar al compte
 ShowAllAccounts=Mostra per a tots els comptes
+FutureTransaction=Transacció futura. No és possible conciliar.
