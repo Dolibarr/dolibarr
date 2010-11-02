@@ -766,13 +766,13 @@ td.photo {
         padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
     }
 
-.ui-in-layout-center {
+.ecm-in-layout-center {
     border-left: 0px !important;
     border-right: 0px !important;
     border-top: 0px !important;
 }
 
-.ui-in-layout-south {
+.ecm-in-layout-south {
     border-left: 0px !important;
     border-right: 0px !important;
     border-bottom: 0px !important;
