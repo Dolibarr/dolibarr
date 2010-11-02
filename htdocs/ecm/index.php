@@ -390,7 +390,7 @@ $head = ecm_prepare_head_fm($fac);
 if ($conf->use_javascript_ajax)
 {
 ?>
-<div id="containerlayout">
+<div id="containerlayout"> <!-- begin div id="containerlayout" -->
     <div id="ecm-layout-north" class="pane toolbar">
 <?php
 }
@@ -854,7 +854,7 @@ if ($conf->use_javascript_ajax)
 
 <!--    <div class="pane ecm-layout-south"></div> -->
 
-</div>
+</div> <!-- end div id="containerlayout" -->
 
 
 <?php
