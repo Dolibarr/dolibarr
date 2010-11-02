@@ -164,3 +164,6 @@ ProductIsUsed=This product is used
 NewRefForClone=Ref. of new product/service
 CustomerPrices=Customers prices
 SuppliersPrices=Suppliers prices
+CustomCode=Custom code
+CountryOrigin=Origin country
+HiddenIntoCombo=Hidden into select lists

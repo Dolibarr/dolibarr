@@ -91,6 +91,11 @@ class Product extends CommonObject
 	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
 	var $finished;
 
+	var $customcode;       // Custom code
+    var $country_id;       // Country origin id
+	var $country_code;     // Country origin code (US, FR, ...)
+
+	// Hidden into combo boxes
 	var $hidden;
 
 	//! Unites de mesure
@@ -185,9 +190,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *	\brief    Insert product into database
-	 *	\param    user     	User making insert
-	 *	\return   int     	id of product/service if OK or number of error < 0
+	 *	Insert product into database
+	 *	@param    user     	User making insert
+	 *	@return   int     	id of product/service if OK or number of error < 0
 	 */
 	function create($user)
 	{
@@ -405,10 +410,10 @@ class Product extends CommonObject
 
 
 	/**
-	 *	\brief      Mise a jour du produit en base
-	 *	\param      id          id du produit
-	 *	\param      user        utilisateur qui effectue l'insertion
-	 *	\return     int         1 si ok, -1 si ref deja existante, -2 autre erreur
+	 *	Update a record into database
+	 *	@param      id          Id of product
+	 *	@param      user        Object user making update
+	 *	@return     int         1 if OK, -1 if ref already exists, -2 if other error
 	 */
 	function update($id, $user)
 	{
@@ -417,7 +422,7 @@ class Product extends CommonObject
 		// Verification parametres
 		if (! $this->libelle) $this->libelle = 'LIBELLE MANQUANT';
 
-		// Nettoyage parametres
+		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->libelle = trim($this->libelle);
 		$this->description = trim($this->description);
@@ -437,6 +442,8 @@ class Product extends CommonObject
 
 		if (empty($this->finished))  			$this->finished = 0;
 		if (empty($this->hidden))   			$this->hidden = 0;
+        if (empty($this->country_id))           $this->country_id = 0;
+
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
@@ -463,7 +470,9 @@ class Product extends CommonObject
 		$sql.= ",volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
 		$sql.= ",seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
 		$sql.= ",description = '" . addslashes($this->description) ."'";
-		$sql.= ",note = '" .        addslashes($this->note) ."'";
+        $sql.= ",customcode = '" .        addslashes($this->customcode) ."'";
+        $sql.= ",fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
+        $sql.= ",note = '" .        addslashes($this->note) ."'";
 		$sql.= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
 		$sql.= ",accountancy_code_buy = '" . $this->accountancy_code_buy."'";
 		$sql.= ",accountancy_code_sell= '" . $this->accountancy_code_sell."'";
@@ -538,9 +547,9 @@ class Product extends CommonObject
 
 
 	/**
-	 *  \brief      Delete a product from database (if not used)
-	 *	\param      id          Product id
-	 * 	\return		int			< 0 if KO, >= 0 if OK
+	 *  Delete a product from database (if not used)
+	 *	@param      id          Product id
+	 * 	@return		int			< 0 if KO, >= 0 if OK
 	 */
 	function delete($id)
 	{
@@ -951,13 +960,15 @@ class Product extends CommonObject
 
 
 	/**
-	 *      \brief      Load a product in memory from database
-	 *      \param      id      Id of product/service to load
-	 *      \param      ref     Ref of product/service to load
-	 *      \return     int     <0 if KO, >0 if OK
+	 *      Load a product in memory from database
+	 *      @param      id      Id of product/service to load
+	 *      @param      ref     Ref of product/service to load
+	 *      @return     int     <0 if KO, >0 if OK
 	 */
 	function fetch($id='',$ref='')
 	{
+	    include_once(DOL_DOCUMENT_ROOT.'/lib/company.lib.php');
+
 		global $langs;
 		global $conf;
 
@@ -971,7 +982,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc,";
+		$sql = "SELECT rowid, ref, label, description, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
@@ -992,7 +1003,10 @@ class Product extends CommonObject
 			$this->libelle            = $result["label"];
 			$this->description        = $result["description"];
 			$this->note               = $result["note"];
-			$this->price              = $result["price"];
+            $this->customcode         = $result["customcode"];
+            $this->country_id         = $result["fk_country"];
+            $this->country_code       = getCountry($this->country_id,2,$this->db);
+            $this->price              = $result["price"];
 			$this->price_ttc          = $result["price_ttc"];
 			$this->price_min          = $result["price_min"];
 			$this->price_min_ttc      = $result["price_min_ttc"];

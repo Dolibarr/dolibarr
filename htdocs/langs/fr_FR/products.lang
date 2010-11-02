@@ -164,3 +164,6 @@ ProductIsUsed=Ce produit est utilisé
 NewRefForClone=Réf. du nouveau produit/service
 CustomerPrices=Prix clients
 SuppliersPrices=Prix fournisseurs
+CustomCode=Code douane
+CountryOrigin=Pays d'origine
+HiddenIntoCombo=Caché dans les listes

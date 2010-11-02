@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
@@ -159,6 +160,8 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		$product->status_buy           	= $_POST["statut_buy"];
 		$product->description        	= dol_htmlcleanlastbr($_POST["desc"]);
 		$product->note               	= dol_htmlcleanlastbr($_POST["note"]);
+        $product->customcode            = $_POST["customcode"];
+        $product->country_id            = $_POST["country_id"];
 		$product->duration_value     	= $_POST["duration_value"];
 		$product->duration_unit      	= $_POST["duration_unit"];
 		$product->seuil_stock_alerte 	= $_POST["seuil_stock_alerte"]?$_POST["seuil_stock_alerte"]:0;
@@ -234,6 +237,8 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 			$product->libelle            = $_POST["libelle"];
 			$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
 			$product->note               = dol_htmlcleanlastbr($_POST["note"]);
+            $product->customcode         = $_POST["customcode"];
+            $product->country_id         = $_POST["country_id"];
 			$product->status             = $_POST["statut"];
 			$product->status_buy         = $_POST["statut_buy"];
 			$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
@@ -745,7 +750,17 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 			print '</td></tr>';
 		}
 
-		// Hidden
+        // Custom code
+        print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.$_POST["customcode"].'"></td></tr>';
+
+        // Origin country
+        print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
+        $html->select_pays($_POST["country_id"],'country_id');
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        print '</td></tr>';
+
+        // Hidden
+		/*
 		if (($_GET["type"] != 1 && $user->rights->produit->hidden)
 		|| ($_GET["type"] == 1 && $user->rights->service->hidden))
 		{
@@ -759,6 +774,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 			print yn("No");
 			print '</td></tr>';
 		}
+        */
 
 		// Note (invisible sur facture, propales...)
 		print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
@@ -867,7 +883,11 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<input type="hidden" name="id" value="'.$product->id.'">';
 			print '<input type="hidden" name="canvas" value="'.$product->canvas.'">';
 			print '<table class="border" width="100%">';
+
+			// Ref
 			print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="32" value="'.$product->ref.'"></td></tr>';
+
+			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
 			// Status
@@ -971,20 +991,31 @@ if ($_GET["id"] || $_GET["ref"])
 				print '</td></tr>';
 			}
 
-			// Hidden
+            // Custom code
+            print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.$product->customcode.'"></td></tr>';
+
+            // Origin country
+            print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
+            $html->select_pays($product->country_id,'country_id');
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            print '</td></tr>';
+
+            // Hidden
+			/*
 			if ((! $product->isservice() && $user->rights->produit->hidden)
 			|| ($product->isservice() && $user->rights->service->hidden))
 			{
-				print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
+				print '<tr><td>'.$langs->trans("HiddenIntoCombo").'</td><td>';
 				print $html->selectyesno('hidden',$product->hidden);
 				print '</td></tr>';
 			}
 			else
 			{
-				print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
+				print '<tr><td>'.$langs->trans("HiddenIntoCombo").'</td><td>';
 				print yn("No");
 				print '</td></tr>';
 			}
+            */
 
 			// Note
 			print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
@@ -1145,20 +1176,27 @@ if ($_GET["id"] || $_GET["ref"])
 				print "</td></tr>\n";
 			}
 
+            // Custom code
+            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$product->customcode.'</td>';
+            // Origin country code
+            print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>'.getCountry($product->country_id,0,$db).'</td>';
+
 			// Hidden
+			/*
 			if ((! $product->isservice() && $user->rights->produit->hidden)
 			|| ($product->isservice() && $user->rights->service->hidden))
 			{
-				print '<tr><td>'.$langs->trans("Hidden").'</td><td colspan="2">';
+				print '<tr><td>'.$langs->trans("HiddenIntoCombo").'</td><td colspan="2">';
 				print yn($product->hidden);
 				print "</td></tr>\n";
 			}
 			else
 			{
-				print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
+				print '<tr><td>'.$langs->trans("HiddenIntoCombo").'</td><td>';
 				print yn("No");
 				print '</td></tr>';
 			}
+            */
 
 			// Note
 			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.nl2br($product->note).'</td></tr>';

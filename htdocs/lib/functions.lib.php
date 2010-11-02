@@ -1073,7 +1073,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
 function img_object($alt, $object, $cssclass='')
 {
 	global $conf,$langs;
-	
+
 	$cssclass = (!empty($cssclass)?'class="'.$cssclass.'"':'');
 
 	if (preg_match('/^([^@]+)@([^@]+)$/i',$object,$regs))
@@ -3373,13 +3373,13 @@ function dol_osencode($str)
 
 
 /**
- *      \brief      Return an id from a Code. Store Code-Id in a cache.
- * 		\param		db			Database handler
- * 		\param		key			Code to get Id
- * 		\param		tablename	Table name without prefix
- * 		\param		fieldkey	Field for code
- * 		\param		fieldid		Field for id
- *      \return     int			Id of code
+ *      Return an id from a Code. Store Code-Id in a cache.
+ * 		@param		db			Database handler
+ * 		@param		key			Code to get Id
+ * 		@param		tablename	Table name without prefix
+ * 		@param		fieldkey	Field for code
+ * 		@param		fieldid		Field for id
+ *      @return     int			Id of code
  */
 function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 {
