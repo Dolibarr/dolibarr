@@ -752,7 +752,7 @@ if (! function_exists("llxHeader"))
 	{
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 		top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-		left_menu('', $help_url);
+		left_menu('', $help_url, '', '', 1);
 		main_area();
 	}
 }
@@ -1047,7 +1047,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
     
-    print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
+    if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
 
     print '<div id="tmenu_tooltip" class="tmenu">'."\n";
 
@@ -1169,7 +1169,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	//    print '<div class="vmenuplusfiche">'."\n";
 	
-	print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
+	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
 	
 	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<td class="vmenu" valign="top">';
 
@@ -1332,7 +1332,7 @@ function main_area()
 {
 	global $conf, $langs;
 	
-	print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
+	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
 	
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
 	
