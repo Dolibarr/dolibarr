@@ -1140,10 +1140,13 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		print $html->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text);
 	}
 
-	print "\n</div>\n<!-- End top horizontal menu -->\n";
+	print "\n</div>\n";
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "</div><!-- End top layout -->\n";
-	else print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
+
+	print "<!-- End top horizontal menu -->\n";
+
+	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
 }
 
 
@@ -1315,7 +1318,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div> <!-- End left layout -->'."\n";
 	else print '</td>';
 
-	print '<!-- End of left column, begin right area -->'."\n";
+	print "\n".'<!-- End of left column, begin right area -->'."\n\n";
 	//	    print '</div>'."\n";
 	//		print '<div class="vmenuplusfiche">'."\n";
 }
