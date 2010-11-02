@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
  *	\version    $Id$
  *	\author		Laurent Destailleur
  */
+
+if (! defined('REQUIRE_JQUERY_LAYOUT'))  define('REQUIRE_JQUERY_LAYOUT','1');
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
@@ -290,10 +292,11 @@ if (GETPOST("action") == 'refreshmanual')
 /*******************************************************************
  * View
  ********************************************************************/
-
+/*
 $morejs=array(
 "/includes/jquery/plugins/layout/jquery.layout-latest.js"
 );
+*/
 $morehead="<style type=\"text/css\">
 html, body {
         width:      100%;
@@ -343,7 +346,7 @@ html, body {
     });
 </SCRIPT>";
 
-llxHeader($morehead,$langs->trans("ECM"),'','','','',$morejs,'',0,0);
+llxHeader($morehead,$langs->trans("ECM"),'','','','','','',0,0);
 
 // Ajout rubriques automatiques
 $rowspan=0;
