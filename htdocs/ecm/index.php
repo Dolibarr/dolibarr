@@ -320,9 +320,9 @@ html, body {
 <SCRIPT type=\"text/javascript\">
     jQuery(document).ready(function () {
         jQuery('#containerlayout').layout({
-            center__paneSelector:   \".ui-layout-center\"
-        ,   north__paneSelector:    \".ui-layout-north\"
-        ,   west__paneSelector:     \".ui-layout-west\"
+            center__paneSelector:   \"#ecm-layout-center\"
+        ,   north__paneSelector:    \"#ecm-layout-north\"
+        ,   west__paneSelector:     \"#ecm-layout-west\"
         ,   resizable: true
         ,   north__size:        34
         ,   north__resizable:   false
@@ -335,9 +335,9 @@ html, body {
         ,   useStateCookie:     true
             });
 
-        jQuery('div.ui-layout-center').layout({
-            center__paneSelector:   \".ui-in-layout-center\"
-        ,   south__paneSelector:    \".ui-in-layout-south\"
+        jQuery('#ecm-layout-center').layout({
+            center__paneSelector:   \".ecm-in-layout-center\"
+        ,   south__paneSelector:    \".ecm-in-layout-south\"
         ,   resizable: false
         ,   south__minSize:      32
         ,   south__resizable:   false
@@ -391,7 +391,7 @@ if ($conf->use_javascript_ajax)
 {
 ?>
 <div id="containerlayout">
-    <div class="pane ui-layout-north toolbar">
+    <div id="ecm-layout-north" class="pane toolbar">
 <?php
 }
 else
@@ -431,7 +431,7 @@ if ($conf->use_javascript_ajax)
 ?>
    </div>
 
-    <div class="pane ui-layout-west">
+    <div id="ecm-layout-west" class="pane">
 <?php
 }
 else
@@ -793,9 +793,9 @@ if ($conf->use_javascript_ajax)
 ?>
     </div>
 
-    <div class="pane ui-layout-center">
+    <div id="ecm-layout-center" class="pane">
 
-        <div class="pane-in ui-in-layout-center">
+        <div class="pane-in ecm-in-layout-center">
 <?php
 }
 else
@@ -823,7 +823,7 @@ if ($conf->use_javascript_ajax)
 {
 ?>
         </div>
-        <div class="pane-in ui-in-layout-south">
+        <div class="pane-in ecm-in-layout-south">
 <?php
 }
 else
@@ -850,9 +850,9 @@ if ($conf->use_javascript_ajax)
         </div>
     </div>
 
-<!--    <div class="pane ui-layout-east"></div> -->
+<!--    <div class="pane ecm-layout-east"></div> -->
 
-<!--    <div class="pane ui-layout-south"></div> -->
+<!--    <div class="pane ecm-layout-south"></div> -->
 
 </div>
 

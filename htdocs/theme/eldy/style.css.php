@@ -650,7 +650,7 @@ td.photo {
 /*
  *  PANES and CONTENT-DIVs
  */
-.ui-layout-pane { /* all 'panes' */
+#containerlayout .ui-layout-pane { /* all 'panes' */
     background: #FFF;
     border:     1px solid #BBB;
     /* DO NOT add scrolling (or padding) to 'panes' that have a content-div,
@@ -658,13 +658,13 @@ td.photo {
     */
     padding:    0px;
     overflow:   auto;
-    }
-    /* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
-    .ui-layout-content {
-        padding:    10px;
-        position:   relative; /* contain floated or positioned elements */
-        overflow:   auto; /* add scrolling to content-div */
-    }
+}
+/* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
+#containerlayout .ui-layout-content {
+	padding:    10px;
+	position:   relative; /* contain floated or positioned elements */
+	overflow:   auto; /* add scrolling to content-div */
+}
 
 /*
  *  RESIZER-BARS
