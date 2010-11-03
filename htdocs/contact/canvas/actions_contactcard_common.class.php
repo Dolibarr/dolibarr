@@ -265,6 +265,8 @@ class ActionsContactCardCommon
     {
     	global $conf, $user, $langs;
     	
+    	$errors='';
+    	
     	// Creation utilisateur depuis contact
     	if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes' && $user->rights->user->user->creer)
     	{
@@ -279,13 +281,15 @@ class ActionsContactCardCommon
     			
     			if ($result < 0)
     			{
-    				$msg=$nuser->error;
+    				$errors=$nuser->error;
     			}
     		}
     		else
     		{
-    			$msg=$object->error;
+    			$errors=$this->object->error;
     		}
+    		
+    		return $errors;
     	}
     	
     	// Creation contact
@@ -313,6 +317,8 @@ class ActionsContactCardCommon
     				$_GET["action"] = $_POST["action"] = 'create';
     			}
     		}
+    		
+    		return $errors;
     	}
     	
     	if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes' && $user->rights->societe->contact->supprimer)
@@ -330,8 +336,10 @@ class ActionsContactCardCommon
     		}
     		else
     		{
-    			$mesg=$this->object->error;
+    			$errors=$this->object->error;
     		}
+    		
+    		return $errors;
     	}
     	
     	if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
@@ -360,9 +368,11 @@ class ActionsContactCardCommon
     			}
     			else
     			{
-    				$mesg=$this->object->error;
+    				$errors=$this->object->error;
     			}
     		}
+    		
+    		return $errors;
     	}
     }
 

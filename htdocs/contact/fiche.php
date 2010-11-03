@@ -80,7 +80,7 @@ if (! empty($canvas))
 	// -----------------------------------------
 
 	// Load data control
-	$objcanvas->doActions($id);
+	$msg = $objcanvas->doActions($id);
 }
 else
 {
@@ -249,6 +249,18 @@ if (! empty($canvas))
 	// When used with CANVAS
 	// -----------------------------------------
 	
+	/*
+	 * Confirmation de la suppression du contact
+	 */
+	if ($user->rights->societe->contact->supprimer)
+	{
+		if ($_GET["action"] == 'delete')
+		{
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
+			if ($ret == 'html') print '<br>';
+		}
+	}
+	
 	if ($user->rights->societe->contact->creer)
 	{
 		if (GETPOST("action") == 'create')
@@ -313,6 +325,23 @@ if (! empty($canvas))
 	{
 		// Set action type
 		$objcanvas->setAction('view');
+		
+		if ($msg)
+		{
+			$langs->load("errors");
+			print '<div class="error">'.$langs->trans($msg).'</div>';
+		}
+		
+		if ($_GET["action"] == 'create_user')
+		{
+			$login=strtolower(substr($object->prenom, 0, 4)) . strtolower(substr($object->nom, 0, 4));
+			
+			// Create a form array
+			$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
+			
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
+			if ($ret == 'html') print '<br>';
+		}
 
 		// Fetch object
 		$result=$objcanvas->fetch($id);
