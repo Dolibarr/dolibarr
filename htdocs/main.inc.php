@@ -64,7 +64,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 }
 
 
-// Security: SQL and Script Injection protection (Filters on GET, POST)
+// Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST)
 function test_sql_and_script_inject($val)
 {
 	$sql_inj = 0;
