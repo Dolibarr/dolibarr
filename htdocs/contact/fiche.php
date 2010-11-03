@@ -332,19 +332,20 @@ if (! empty($canvas))
 			print '<div class="error">'.$langs->trans($msg).'</div>';
 		}
 		
+		// Fetch object
+		$result=$objcanvas->fetch($id);
+		
 		if ($_GET["action"] == 'create_user')
 		{
-			$login=strtolower(substr($object->prenom, 0, 4)) . strtolower(substr($object->nom, 0, 4));
+			$login=strtolower(substr($objcanvas->control->object->prenom, 0, 4)) . strtolower(substr($objcanvas->control->object->nom, 0, 4));
 			
 			// Create a form array
 			$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
 			
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
 			if ($ret == 'html') print '<br>';
 		}
 
-		// Fetch object
-		$result=$objcanvas->fetch($id);
 		if ($result > 0)
 		{
 			// Card header
@@ -365,25 +366,25 @@ if (! empty($canvas))
 				
 				if ($user->rights->societe->contact->creer)
 				{
-					print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+					print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
 				}
 				
-				if (! $object->user_id && $user->rights->user->user->creer)
+				if (! $objcanvas->control->object->user_id && $user->rights->user->user->creer)
 				{
-					print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+					print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=create_user&amp;canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 				}
 
 				if ($user->rights->societe->contact->supprimer)
 				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+					print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
 				}
 				
 				print "</div><br>";
 			}
 			
-			print show_actions_todo($conf,$langs,$db,$objsoc,$object);
+			print show_actions_todo($conf,$langs,$db,$objsoc,$objcanvas->control->object);
 			
-			print show_actions_done($conf,$langs,$db,$objsoc,$object);
+			print show_actions_done($conf,$langs,$db,$objsoc,$objcanvas->control->object);
 		}
 		else
 		{
