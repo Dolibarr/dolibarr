@@ -102,7 +102,7 @@
 
 <tr>
 	<td><?php echo $langs->trans("ContactVisibility"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['select_civility']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['select_visibility']; ?></td>
 </tr>
 
 <tr>
