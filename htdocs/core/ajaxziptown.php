@@ -72,13 +72,15 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 	$sql.= " AND z.active = 1 AND d.active = 1 AND r.active = 1 AND p.active = 1";
 	if ($zipcode) " AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
 	if ($town) " AND z.town LIKE '%" . $db->escape($town) . "%'";
-	$sql.= " ORDER BY z.fk_country, z.zip, z.town";
+	$sql.= " ORDER BY p.rowid, z.zip, z.town";
 
 	//print $sql;
 	$resql=$db->query($sql);
+	//var_dump($db);
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
+		//print 'num='.$num;
 
 		if (! $num)
 		{
