@@ -67,10 +67,11 @@ class ActionsContactCardCommon
         {
         	if ($conf->use_javascript_ajax)
 			{
-				$this->tpl['ajax_selectpays'] = "\n".'<script type="text/javascript" language="javascript">
+				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function () {
 						jQuery("#selectpays_id").change(function() {
 							document.formsoc.action.value="'.$action.'";
+							document.formsoc.canvas.value="'.$canvas.'";
 							document.formsoc.submit();
 						});
 					})
@@ -130,7 +131,7 @@ class ActionsContactCardCommon
         	if ($conf->mailing->enabled)
 			{
 				$langs->load("mails");
-				$this->tpl['nb_emailing'] = $object->getNbOfEMailings();
+				$this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
 			}
         	
         	// Linked element

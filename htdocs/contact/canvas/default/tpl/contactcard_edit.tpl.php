@@ -21,12 +21,13 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php echo $this->tpl['ajax_selectpays']; ?>
+<?php echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <br>
 
 <form method="post" name="formsoc" action="<?php echo $_SERVER["PHP_SELF"].'?id='.GETPOST("id"); ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="canvas" value="<?php echo $canvas ?>">
 <input type="hidden" name="id" value="<?php echo GETPOST("id"); ?>">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="contactid" value="<?php echo $this->control->tpl['id']; ?>">

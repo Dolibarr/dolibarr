@@ -71,6 +71,19 @@ class ActionsCardCommon
 
         if ($action == 'create' || $action == 'edit')
         {
+        	if ($conf->use_javascript_ajax)
+			{
+				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function () {
+						jQuery("#selectpays_id").change(function() {
+							document.formsoc.action.value="'.$action.'";
+							document.formsoc.canvas.value="'.$canvas.'";
+							document.formsoc.submit();
+						});
+					})
+				</script>'."\n";
+			}
+        	
             // Load object modCodeClient
             $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
             if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));

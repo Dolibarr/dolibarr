@@ -21,17 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php if ($conf->use_javascript_ajax) { ?>
-<script type="text/javascript" language="javascript">
-jQuery(document).ready(function () {
-                        jQuery("#selectpays_id").change(function() {
-                            document.formsoc.action.value="update";
-                            document.formsoc.canvas.value="<?php echo $canvas ?>";
-                            document.formsoc.submit();
-                        });
-                   });
-</script>
-<?php } ?>
+<?php echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id']; ?>" method="POST" name="formsoc">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
@@ -127,9 +117,9 @@ if ($this->control->tpl['fournisseur']) {
 
 <tr>
 	<td><?php echo $langs->trans('Zip'); ?></td>
-	<td><input size="6" type="text" name="cp" value="<?php echo $this->control->tpl['cp']; ?>"><?php echo $this->control->tpl['autofilltownfromzip']; ?></td>
+	<td><?php echo $this->control->tpl['select_zip']; ?></td>
 	<td><?php echo $langs->trans('Town'); ?></td>
-	<td><input type="text" name="ville" value="<?php echo $this->control->tpl['ville']; ?>"></td>
+	<td><?php echo $this->control->tpl['select_town']; ?></td>
 </tr>
 
 <tr>

@@ -46,16 +46,7 @@ jQuery(document).ready(function () {
 <input type="radio" id="radioprivate" class="flat" name="private" value="1"'<?php echo (! $_REQUEST["private"]?'':' checked="true"'); ?>> <?php echo $langs->trans("Individual"); ?> (<?php echo $langs->trans("ToCreateContactWithSameName") ?>)
 <br>
 <br>
-
-<script type="text/javascript" language="javascript">
-jQuery(document).ready(function () {
-                        jQuery("#selectpays_id").change(function() {
-                            document.formsoc.action.value="create";
-                            document.formsoc.canvas.value="<?php echo $canvas ?>";
-                            document.formsoc.submit();
-                        });
-                   });
-</script>
+<?php echo $this->control->tpl['ajax_selectcountry']; ?>
 <?php } ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" name="formsoc">
