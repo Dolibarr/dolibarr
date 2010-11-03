@@ -228,8 +228,8 @@ class ActionsContactCardCommon
         $this->object->civilite_id			= 	$_POST["civilite_id"];
         $this->object->poste				= 	$_POST["poste"];
         $this->object->address				=	$_POST["address"];
-        $this->object->cp					=	$_POST["cp"];
-        $this->object->ville				=	$_POST["ville"];
+        $this->object->cp					=	$_POST["zipcode"];
+        $this->object->ville				=	$_POST["town"];
         $this->object->fk_pays				=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
         $this->object->fk_departement		=	$_POST["departement_id"];
         $this->object->phone_pro			= 	$_POST["phone_pro"];
