@@ -104,14 +104,16 @@ class Contact extends CommonObject
 		$this->name=trim($this->name);
 		if (! $this->socid) $this->socid = 0;
 		if (! $this->priv) $this->priv = 0;
+		if (! $this->canvas) $this->canvas = 'default@contact';
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_creat, priv)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_creat, priv, canvas)";
 		$sql.= " VALUES ('".$this->db->idate($now)."',";
 		if ($this->socid > 0) $sql.= " ".$this->socid.",";
 		else $sql.= "null,";
 		$sql.= "'".addslashes($this->name)."',";
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
-		$sql.= $this->priv;
+		$sql.= " ".$this->priv.",";
+		$sql.= "'".$this->canvas."'";
 		$sql.= ")";
 
 		dol_syslog("Contact::create sql=".$sql);
@@ -406,7 +408,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
-		$sql.= " c.priv, c.note, c.default_lang,";
+		$sql.= " c.priv, c.note, c.default_lang, c.canvas,";
 		$sql.= " p.libelle as pays, p.code as pays_code,";
 		$sql.= " d.nom as departement, d.code_departement as departement_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
@@ -469,6 +471,7 @@ class Contact extends CommonObject
 				$this->default_lang   = $obj->default_lang;
 				$this->user_id        = $obj->user_id;
 				$this->user_login     = $obj->user_login;
+				$this->canvas 		  = $obj->canvas;
 
 				// Recherche le user Dolibarr lie a ce contact
 				$sql = "SELECT u.rowid ";
