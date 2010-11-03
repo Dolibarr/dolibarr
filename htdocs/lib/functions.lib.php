@@ -38,9 +38,9 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 
 
 /**
- *  \brief          Return value of a param into get or post variable
- *  \param          paramname   Name of parameter to found
- *  \return         string      Value found
+ *  Return value of a param into get or post variable
+ *  @param          paramname   Name of parameter to found
+ *  @return         string      Value found
  */
 function GETPOST($paramname)
 {
@@ -48,10 +48,10 @@ function GETPOST($paramname)
 }
 
 /**
- *	\brief          Create a clone of instance of object (new instance with same properties)
- * 					This function works for both PHP4 and PHP5
- * 	\param			object		Object to clone
- *	\return         date		Timestamp
+ *	Create a clone of instance of object (new instance with same properties)
+ * 	This function works for both PHP4 and PHP5.
+ * 	@param			object		Object to clone
+ *	@return         date		Timestamp
  */
 function dol_clone($object)
 {
