@@ -187,9 +187,9 @@ class ActionsCardCommon
             $this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();
             $this->tpl['address'] 			= dol_nl2br($this->object->address);
 
-            $img=picto_from_langcode($this->pays_code);
-            if ($this->object->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->object->pays,$langs->trans("CountryIsInEEC"),1,0);
-            $this->tpl['country'] = ($img?$img.' ':'').$this->pays;
+            $img=picto_from_langcode($this->object->pays_code);
+            if ($this->object->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->object->country,$langs->trans("CountryIsInEEC"),1,0);
+            $this->tpl['country'] = ($img?$img.' ':'').$this->object->country;
 
             $this->tpl['phone'] 	= dol_print_phone($this->object->tel,$this->object->pays_code,0,$this->object->id,'AC_TEL');
             $this->tpl['fax'] 		= dol_print_phone($this->object->fax,$this->object->pays_code,0,$this->object->id,'AC_FAX');

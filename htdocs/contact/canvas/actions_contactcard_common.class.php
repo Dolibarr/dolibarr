@@ -55,8 +55,8 @@ class ActionsContactCardCommon
      */
     function assign_values($action='')
     {
-        global $conf, $langs, $user, $mysoc, $canvas;
-        global $form, $formadmin, $formcompany;
+        global $conf, $langs, $user, $canvas;
+        global $form, $formcompany, $objsoc;
 
         foreach($this->object as $key => $value)
         {
@@ -65,183 +65,147 @@ class ActionsContactCardCommon
 
         if ($action == 'create' || $action == 'edit')
         {
-            // Load object modCodeClient
-            $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-            if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
-            if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
-            {
-                $module = substr($module, 0, dol_strlen($module)-4);
-            }
-            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
-            $modCodeClient = new $module;
-            $this->tpl['auto_customercode'] = $modCodeClient->code_auto;
-            // We verified if the tag prefix is used
-            if ($modCodeClient->code_auto) $this->tpl['prefix_customercode'] = $modCodeClient->verif_prefixIsUsed();
-
-            // Load object modCodeFournisseur
-            $module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
-            if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-            if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
-            {
-                $module = substr($module, 0, dol_strlen($module)-4);
-            }
-            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
-            $modCodeFournisseur = new $module;
-            $this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
-            // We verified if the tag prefix is used
-            if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
-
-            // TODO create a function
-            $this->tpl['select_customertype'] = '<select class="flat" name="client">';
-            $this->tpl['select_customertype'].= '<option value="2"'.($this->object->client==2?' selected="selected"':'').'>'.$langs->trans('Prospect').'</option>';
-            $this->tpl['select_customertype'].= '<option value="3"'.($this->object->client==3?' selected="selected"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="1"'.($this->object->client==1?' selected="selected"':'').'>'.$langs->trans('Customer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="0"'.($this->object->client==0?' selected="selected"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
-            $this->tpl['select_customertype'].= '</select>';
-
-            // Customer
-            $this->tpl['customercode'] = $this->object->code_client;
-            if ((!$this->object->code_client || $this->object->code_client == -1) && $modCodeClient->code_auto) $this->tpl['customercode'] = $modCodeClient->getNextValue($this->object,0);
-            $this->tpl['ismodifiable_customercode'] = $this->object->codeclient_modifiable();
-            $s=$modCodeClient->getToolTip($langs,$this->object,0);
-            $this->tpl['help_customercode'] = $form->textwithpicto('',$s,1);
-
-            // Supplier
-            $this->tpl['yn_supplier'] = $form->selectyesno("fournisseur",$this->object->fournisseur,1);
-            $this->tpl['suppliercode'] = $this->object->code_fournisseur;
-            if ((!$this->object->code_fournisseur || $this->object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this->object,1);
-            $this->tpl['ismodifiable_suppliercode'] = $this->object->codefournisseur_modifiable();
-            $s=$modCodeFournisseur->getToolTip($langs,$this->object,1);
-            $this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
-
-            $this->object->LoadSupplierCateg();
-            $this->tpl['suppliercategory'] = $this->object->SupplierCategories;
-            $this->tpl['select_suppliercategory'] = $form->selectarray("fournisseur_categorie",$this->object->SupplierCategories,$_POST["fournisseur_categorie"],1);
-
+        	if ($conf->use_javascript_ajax)
+			{
+				$this->tpl['ajax_selectpays'] = "\n".'<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function () {
+						jQuery("#selectpays_id").change(function() {
+							document.formsoc.action.value="'.$action.'";
+							document.formsoc.submit();
+						});
+					})
+				</script>'."\n";
+			}
+			
+        	if (is_object($objsoc) && $objsoc->id > 0)
+        	{
+        		$this->tpl['company'] = $objsoc->getNomUrl(1);
+        		$this->tpl['company_id'] = $objsoc->id;
+        	}
+        	else
+        	{
+        		$this->tpl['company'] = $form->select_company($this->object->socid,'socid','',1);
+        	}
+        	
+        	// Civility
+        	$this->tpl[select_civility] = $formcompany->select_civility($this->object->civilite_id);
+        	
+        	// Predefined with third party
+        	if ($objsoc->typent_code == 'TE_PRIVATE')
+        	{
+        		if (dol_strlen(trim($this->object->address)) == 0) $this->tpl['address'] = $objsoc->address;
+        		if (dol_strlen(trim($this->object->zip)) == 0) $this->object->zip = $objsoc->cp;
+        		if (dol_strlen(trim($this->object->town)) == 0) $this->object->town = $objsoc->ville;
+        		if (dol_strlen(trim($this->object->phone_pro)) == 0) $this->object->phone_pro = $objsoc->tel;
+        		if (dol_strlen(trim($this->object->fax)) == 0) $this->object->fax = $objsoc->fax;
+        		if (dol_strlen(trim($this->object->email)) == 0) $this->object->email = $objsoc->email;
+        	}
+        	
             // Zip
             $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->cp,'zipcode',array('town','selectpays_id','departement_id'),6);
 
             // Town
             $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->ville,'town',array('zipcode','selectpays_id','departement_id'));
+            
+            if (dol_strlen(trim($this->object->fk_pays)) == 0) $this->object->fk_pays = $objsoc->pays_id;
 
             // Country
-            $this->tpl['select_country'] = $form->select_country($this->object->pays_id,'pays_id');
+            $this->tpl['select_country'] = $form->select_country($this->object->fk_pays,'pays_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
             if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 
             // State
-            if ($this->object->pays_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->departement_id,$this->object->pays_code);
+            if ($this->object->fk_pays) $this->tpl['select_state'] = $formcompany->select_state($this->object->departement_id,$this->object->pays_code);
             else $this->tpl['select_state'] = $countrynotdefined;
-
-            // Language
-            if ($conf->global->MAIN_MULTILANGS) $this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang?$this->object->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
-
-            // VAT
-            $this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value',$this->tpl['tva_assuj'],1);	// Assujeti par defaut en creation
-
-            // Select users
-            $this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id,'commercial_id',1);
-
-            // Local Tax
-            // TODO mettre dans une classe propre au pays
-            if($mysoc->pays_code=='ES')
-            {
-                $this->tpl['localtax'] = '';
-
-                if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-                {
-                    $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->object->localtax1_assuj,1);
-                    $this->tpl['localtax'].= '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->object->localtax1_assuj,1);
-                    $this->tpl['localtax'].= '</td></tr>';
-                }
-                elseif($mysoc->localtax1_assuj=="1")
-                {
-                    $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->object->localtax1_assuj,1);
-                    $this->tpl['localtax'].= '</td><tr>';
-                }
-                elseif($mysoc->localtax2_assuj=="1")
-                {
-                    $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->object->localtax1_assuj,1);
-                    $this->tpl['localtax'].= '</td><tr>';
-                }
-            }
-
+            
+            // Public or private
+            $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
+            $this->tpl['select_visibility'] = $form->selectarray('priv',$selectarray,$this->object->priv,0);
+        }
+        
+        if ($action == 'view' || $action == 'edit')
+        {
+        	// Emailing
+        	if ($conf->mailing->enabled)
+			{
+				$langs->load("mails");
+				$this->tpl['nb_emailing'] = $object->getNbOfEMailings();
+			}
+        	
+        	// Linked element
+        	$this->tpl['contact_element'] = array();
+        	$i=0;
+        	
+        	$this->object->load_ref_elements();
+        	
+        	if ($conf->commande->enabled)
+        	{
+        		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForOrders");
+        		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_commande?$this->object->ref_commande:$langs->trans("NoContactForAnyOrder");
+        		$i++;
+        	}
+        	if ($conf->propal->enabled)
+        	{
+        		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForProposals");
+        		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_propal?$this->object->ref_propal:$langs->trans("NoContactForAnyProposal");
+        		$i++;
+        	}
+        	if ($conf->contrat->enabled)
+        	{
+        		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForContracts");
+        		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_contrat?$this->object->ref_contrat:$langs->trans("NoContactForAnyContract");
+        		$i++;
+        	}
+        	if ($conf->facture->enabled)
+        	{
+        		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForInvoices");
+        		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_facturation?$this->object->ref_facturation:$langs->trans("NoContactForAnyInvoice");
+        		$i++;
+        	}
+        	
+        	// Dolibarr user
+        	if ($this->object->user_id)
+			{
+				$dolibarr_user=new User($this->db);
+				$result=$dolibarr_user->fetch($this->object->user_id);
+				$this->tpl['dolibarr_user'] = $dolibarr_user->getLoginUrl(1);
+			}
+			else $this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
         }
 
         if ($action == 'view')
         {
-        	$this->tpl['showrefnav'] 		= $form->showrefnav($this->object,'socid','',($user->societe_id?0:1),'rowid','nom');
+        	$this->tpl['showrefnav'] 		= $form->showrefnav($this->object,'id');
+        	
+        	if (is_object($objsoc) && $this->object->socid > 0)
+        	{
+        		$objsoc->fetch($this->object->socid);
+        		$this->tpl['company'] = $objsoc->getNomUrl(1);
+        	}
+        	else
+        	{
+        		$this->tpl['company'] = $langs->trans("ContactNotLinkedToCompany");
+        	}
+        	
+        	$this->tpl['civility'] = $this->object->getCivilityLabel();
 
-            $this->tpl['checkcustomercode'] = $this->object->check_codeclient();
-            $this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();
-            $this->tpl['address'] 			= dol_nl2br($this->object->address);
+            $this->tpl['address'] = dol_nl2br($this->object->address);
+            
+            $this->tpl['zip'] = ($this->object->cp?$this->object->cp.'&nbsp;':'');
 
             $img=picto_from_langcode($this->pays_code);
-            if ($this->object->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->object->pays,$langs->trans("CountryIsInEEC"),1,0);
             $this->tpl['country'] = ($img?$img.' ':'').$this->pays;
 
-            $this->tpl['phone'] 	= dol_print_phone($this->object->tel,$this->object->pays_code,0,$this->object->id,'AC_TEL');
+            $this->tpl['phone_pro'] 	= dol_print_phone($this->object->phone_pro,$this->object->pays_code,0,$this->object->id,'AC_TEL');
+            $this->tpl['phone_perso'] 	= dol_print_phone($this->object->phone_perso,$this->object->pays_code,0,$this->object->id,'AC_TEL');
+            $this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile,$this->object->pays_code,0,$this->object->id,'AC_TEL');
             $this->tpl['fax'] 		= dol_print_phone($this->object->fax,$this->object->pays_code,0,$this->object->id,'AC_FAX');
             $this->tpl['email'] 	= dol_print_email($this->object->email,0,$this->object->id,'AC_EMAIL');
-            $this->tpl['url'] 		= dol_print_url($this->object->url);
-
-            $this->tpl['tva_assuj']		= yn($this->object->tva_assuj);
-
-            // Third party type
-            $arr = $formcompany->typent_array(1);
-            $this->tpl['typent'] = $arr[$this->object->typent_code];
-
-            if ($conf->global->MAIN_MULTILANGS)
-            {
-                require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-                //$s=picto_from_langcode($this->default_lang);
-                //print ($s?$s.' ':'');
-                $langs->load("languages");
-                $this->tpl['default_lang'] = ($this->default_lang?$langs->trans('Language_'.$this->object->default_lang):'');
-            }
-
-            $this->tpl['image_edit']	= img_edit();
-
-            $this->tpl['display_rib']	= $this->object->display_rib();
-
-            // Sales representatives
-            // TODO move in business class
-            $sql = "SELECT count(sc.rowid) as nb";
-            $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql.= " WHERE sc.fk_soc =".$this->object->id;
-            $resql = $this->db->query($sql);
-            if ($resql)
-            {
-                $num = $this->db->num_rows($resql);
-                $obj = $this->db->fetch_object($resql);
-                $this->tpl['sales_representatives'] = $obj->nb?($obj->nb):$langs->trans("NoSalesRepresentativeAffected");
-            }
-            else
-            {
-                dol_print_error($this->db);
-            }
-
-            // Linked member
-            if ($conf->adherent->enabled)
-            {
-                $langs->load("members");
-                $adh=new Adherent($this->db);
-                $result=$adh->fetch('','',$this->object->id);
-                if ($result > 0)
-                {
-                    $adh->ref=$adh->getFullName($langs);
-                    $this->tpl['linked_member'] = $adh->getNomUrl(1);
-                }
-                else
-                {
-                    $this->tpl['linked_member'] = $langs->trans("UserNotLinkedToMember");
-                }
-            }
+            
+            $this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
+            
+            $this->tpl['note'] = nl2br($this->object->note);
         }
     }
 
@@ -252,47 +216,34 @@ class ActionsContactCardCommon
     {
         global $langs, $mysoc;
 
-        $this->object->id					=	$_POST["socid"];
-        $this->object->nom					=	$_POST["nom"];
-        $this->object->prefix_comm			=	$_POST["prefix_comm"];
-        $this->object->client				=	$_POST["client"];
-        $this->object->code_client			=	$_POST["code_client"];
-        $this->object->fournisseur			=	$_POST["fournisseur"];
-        $this->object->code_fournisseur		=	$_POST["code_fournisseur"];
-        $this->object->adresse				=	$_POST["adresse"]; // TODO obsolete
-        $this->object->address				=	$_POST["adresse"];
+        $this->object->old_name 			= 	$_POST["old_name"];
+        $this->object->old_firstname 		= 	$_POST["old_firstname"];
+        
+        $this->object->socid				=	$_POST["socid"];
+        $this->object->name					=	$_POST["name"];
+        $this->object->firstname			= 	$_POST["firstname"];
+        $this->object->civilite_id			= 	$_POST["civilite_id"];
+        $this->object->poste				= 	$_POST["poste"];
+        $this->object->address				=	$_POST["address"];
         $this->object->cp					=	$_POST["cp"];
         $this->object->ville				=	$_POST["ville"];
-        $this->object->pays_id				=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
-        $this->object->departement_id		=	$_POST["departement_id"];
-        $this->object->tel					=	$_POST["tel"];
+        $this->object->fk_pays				=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
+        $this->object->fk_departement		=	$_POST["departement_id"];
+        $this->object->phone_pro			= 	$_POST["phone_pro"];
+        $this->object->phone_perso			= 	$_POST["phone_perso"];
+        $this->object->phone_mobile			= 	$_POST["phone_mobile"];
         $this->object->fax					=	$_POST["fax"];
         $this->object->email				=	$_POST["email"];
-        $this->object->url					=	$_POST["url"];
-        $this->object->capital				=	$_POST["capital"];
-        $this->object->siren				=	$_POST["idprof1"];
-        $this->object->siret				=	$_POST["idprof2"];
-        $this->object->ape					=	$_POST["idprof3"];
-        $this->object->idprof4				=	$_POST["idprof4"];
-        $this->object->typent_id			=	$_POST["typent_id"];
-        $this->object->effectif_id			=	$_POST["effectif_id"];
-        $this->object->gencod				=	$_POST["gencod"];
-        $this->object->forme_juridique_code	=	$_POST["forme_juridique_code"];
-        $this->object->default_lang			=	$_POST["default_lang"];
-        $this->object->commercial_id		=	$_POST["commercial_id"];
+        $this->object->jabberid				= 	$_POST["jabberid"];
+        $this->object->priv					= 	$_POST["priv"];
+        $this->object->note					=	$_POST["note"];
 
-        $this->object->tva_assuj 			= 	$_POST["assujtva_value"]?$_POST["assujtva_value"]:1;
-        $this->object->tva_intra			=	$_POST["tva_intra"];
-
-        //Local Taxes
-        $this->object->localtax1_assuj		= 	$_POST["localtax1assuj_value"];
-        $this->object->localtax2_assuj		= 	$_POST["localtax2assuj_value"];
 
         // We set pays_id, and pays_code label of the chosen country
         // TODO move in business class
-        if ($this->object->pays_id)
+        if ($this->object->fk_pays)
         {
-            $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_pays WHERE rowid = ".$this->object->pays_id;
+            $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_pays WHERE rowid = ".$this->object->fk_pays;
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -310,11 +261,109 @@ class ActionsContactCardCommon
     /**
      *    Load data control
      */
-    function doActions($socid)
+    function doActions($id)
     {
     	global $conf, $user, $langs;
     	
+    	// Creation utilisateur depuis contact
+    	if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes' && $user->rights->user->user->creer)
+    	{
+    		// Recuperation contact actuel
+    		$result = $this->object->fetch($id);
+    		
+    		if ($result > 0)
+    		{
+    			// Creation user
+    			$nuser = new User($this->db);
+    			$result=$nuser->create_from_contact($this->object,$_POST["login"]);
+    			
+    			if ($result < 0)
+    			{
+    				$msg=$nuser->error;
+    			}
+    		}
+    		else
+    		{
+    			$msg=$object->error;
+    		}
+    	}
     	
+    	// Creation contact
+    	if ($_POST["action"] == 'add' && $user->rights->societe->contact->creer)
+    	{
+    		$this->assign_post();
+    		
+    		if (! $_POST["name"])
+    		{
+    			array_push($errors,$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label")));
+    			$_GET["action"] = $_POST["action"] = 'create';
+    		}
+
+    		if ($_POST["name"])
+    		{
+    			$id =  $this->object->create($user);
+    			if ($id > 0)
+    			{
+    				Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    				exit;
+    			}
+    			else
+    			{
+    				$errors=array($this->object->error);
+    				$_GET["action"] = $_POST["action"] = 'create';
+    			}
+    		}
+    	}
+    	
+    	if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes' && $user->rights->societe->contact->supprimer)
+    	{
+    		$result=$this->object->fetch($id);
+    		
+    		$this->object->old_name = $_POST["old_name"];
+    		$this->object->old_firstname = $_POST["old_firstname"];
+    		
+    		$result = $this->object->delete();
+    		if ($result > 0)
+    		{
+    			Header("Location: index.php");
+    			exit;
+    		}
+    		else
+    		{
+    			$mesg=$this->object->error;
+    		}
+    	}
+    	
+    	if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
+    	{
+    		if (empty($_POST["name"]))
+    		{
+    			$errors=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
+    			$error++;
+    			$_GET["action"] = $_POST["action"] = 'edit';
+    		}
+
+    		if (! sizeof($errors))
+    		{
+    			$this->object->fetch($_POST["contactid"]);
+    			
+    			$this->object->oldcopy=dol_clone($this->object);
+    			
+    			$this->assign_post();
+    			
+    			$result = $this->object->update($_POST["contactid"], $user);
+    			
+    			if ($result > 0)
+    			{
+    				$this->object->old_name='';
+    				$this->object->old_firstname='';
+    			}
+    			else
+    			{
+    				$mesg=$this->object->error;
+    			}
+    		}
+    	}
     }
 
 }

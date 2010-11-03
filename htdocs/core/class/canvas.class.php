@@ -84,9 +84,9 @@ class Canvas
 	 * 	Execute actions
 	 * 	@param 		Id of object (may be empty for creation)
 	 */
-	function doActions($socid)
+	function doActions($id)
 	{
-		return $this->control->doActions($socid);
+		return $this->control->doActions($id);
 	}
 
 	/**
@@ -118,13 +118,19 @@ class Canvas
 		{
 			$childmodule = $this->aliasmodule = $this->module = $regs[2];
 			$this->canvas = $regs[1];
-
-			// For compatibility
-			if ($childmodule == 'thirdparty') $childmodule = $this->aliasmodule = 'societe';
-			if ($targetmodule == 'thirdparty') $targetmodule = 'societe';
+		}
+		
+		// For compatibility
+		if ($childmodule == 'thirdparty') $childmodule = $this->aliasmodule = 'societe';
+		if ($targetmodule == 'thirdparty') $targetmodule = 'societe';
+		if ($childmodule == 'contact') 
+		{
+			$childmodule = 'societe';
+			$this->targetmodule = 'contact';
 		}
 
 		//print 'childmodule='.$childmodule.' targetmodule='.$targetmodule.'<br>';
+		//print 'this->aliasmodule='.$this->aliasmodule.' this->targetmodule='.$this->targetmodule.'<br>';
 		//print 'childmodule='.$conf->$childmodule->enabled.' targetmodule='.$conf->$targetmodule->enabled.'<br>';
 
 		if (! $conf->$childmodule->enabled || ! $conf->$targetmodule->enabled) accessforbidden();
@@ -159,6 +165,7 @@ class Canvas
 		}
 		else
 		{
+			//print 'access ko';
 			accessforbidden();
 		}
 

@@ -485,19 +485,35 @@ class Form
         print '</select>';
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
-
+    
     /**
-     *    	\brief      Output html form to select a third party
-     *		\param      selected        Preselected type
-     *		\param      htmlname        Name of field in form
-     *    	\param      filter          Optionnal filters criteras
-     *		\param		showempty		Add an empty field
-     * 		\param		showtype		Show third party type in combolist (customer, prospect or supplier)
-     * 		\param		forcecombo		Force to use combo box
+     *    	Output html form to select a third party
+     *		@param      selected        Preselected type
+     *		@param      htmlname        Name of field in form
+     *    	@param      filter          Optionnal filters criteras
+     *		@param		showempty		Add an empty field
+     * 		@param		showtype		Show third party type in combolist (customer, prospect or supplier)
+     * 		@param		forcecombo		Force to use combo box
      */
     function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
     {
+    	print $this->select_company($selected,$htmlname,$filter,$showempty,$showtype,$forcecombo);
+    }
+
+    /**
+     *    	Output html form to select a third party
+     *		@param      selected        Preselected type
+     *		@param      htmlname        Name of field in form
+     *    	@param      filter          Optionnal filters criteras
+     *		@param		showempty		Add an empty field
+     * 		@param		showtype		Show third party type in combolist (customer, prospect or supplier)
+     * 		@param		forcecombo		Force to use combo box
+     */
+    function select_company($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
+    {
         global $conf,$user,$langs;
+        
+        $out='';
 
         // On recherche les societes
         $sql = "SELECT s.rowid, s.nom, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
@@ -524,26 +540,26 @@ class Form
                     $socid = $obj->rowid?$obj->rowid:'';
                 }
 
-                print "\n".'<!-- Input text for third party with Ajax.Autocompleter (select_societes) -->'."\n";
-                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-                print '<td class="nobordernopadding">';
+                $out.= "\n".'<!-- Input text for third party with Ajax.Autocompleter (select_societes) -->'."\n";
+                $out.= '<table class="nobordernopadding"><tr class="nocellnopadd">';
+                $out.= '<td class="nobordernopadding">';
                 if ($socid == 0)
                 {
-                	print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="" />';
+                	$out.= '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="" />';
                 }
                 else
                 {
-                    print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->nom.'" />';
+                    $out.= '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->nom.'" />';
                 }
-                print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '', $minLength);
-                print '</td>';
-                print '</tr>';
-                print '</table>';
+                $out.= ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '', $minLength);
+                $out.= '</td>';
+                $out.= '</tr>';
+                $out.= '</table>';
             }
             else
             {
-                print '<select id="select'.$htmlname.'" class="flat" name="'.$htmlname.'">';
-                if ($showempty) print '<option value="-1">&nbsp;</option>';
+                $out.= '<select id="select'.$htmlname.'" class="flat" name="'.$htmlname.'">';
+                if ($showempty) $out.=$out.= '<option value="-1">&nbsp;</option>';
                 $num = $this->db->num_rows($resql);
                 $i = 0;
                 if ($num)
@@ -562,22 +578,24 @@ class Form
                         }
                         if ($selected > 0 && $selected == $obj->rowid)
                         {
-                            print '<option value="'.$obj->rowid.'" selected="selected">'.$label.'</option>';
+                            $out.= '<option value="'.$obj->rowid.'" selected="selected">'.$label.'</option>';
                         }
                         else
                         {
-                            print '<option value="'.$obj->rowid.'">'.$label.'</option>';
+                            $out.= '<option value="'.$obj->rowid.'">'.$label.'</option>';
                         }
                         $i++;
                     }
                 }
-                print '</select>';
+                $out.= '</select>';
             }
         }
         else
         {
             dol_print_error($this->db);
         }
+        
+        return $out;
     }
 
 

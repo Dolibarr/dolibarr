@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,39 +22,32 @@
 
 create table llx_socpeople
 (
-  rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  datec          datetime,
-  tms            timestamp,
-  fk_soc         integer,                       -- lien vers la societe
-  entity         integer DEFAULT 1 NOT NULL,	  -- multi company id
-  civilite       varchar(6),
-  name           varchar(50),
-  firstname      varchar(50),
-  address        varchar(255),
-  cp             varchar(25),
-  ville          varchar(255),
-  fk_departement integer,
-  fk_pays        integer        DEFAULT 0,
-  birthday       date,
-  poste          varchar(80),
-  phone          varchar(30),
-  phone_perso    varchar(30),
-  phone_mobile   varchar(30),
-  fax            varchar(30),
-  email          varchar(255),
-  jabberid       varchar(255),
-  priv           smallint NOT NULL DEFAULT 0,
-  fk_user_creat  integer DEFAULT 0,             -- user qui a creel'enregistrement
-  fk_user_modif  integer,
-  note           text,
-  default_lang   varchar(6),
-  import_key     varchar(14)
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  datec				datetime,
+  tms				timestamp,
+  fk_soc			integer,									-- lien vers la societe
+  entity			integer DEFAULT 1 NOT NULL,					-- multi company id
+  civilite			varchar(6),
+  name				varchar(50),
+  firstname			varchar(50),
+  address			varchar(255),
+  cp				varchar(25),
+  ville				varchar(255),
+  fk_departement	integer,
+  fk_pays			integer        DEFAULT 0,
+  birthday			date,
+  poste				varchar(80),
+  phone				varchar(30),
+  phone_perso		varchar(30),
+  phone_mobile		varchar(30),
+  fax				varchar(30),
+  email				varchar(255),
+  jabberid			varchar(255),
+  priv				smallint NOT NULL DEFAULT 0,
+  fk_user_creat		integer DEFAULT 0,							-- user qui a creel'enregistrement
+  fk_user_modif		integer,
+  note				text,
+  default_lang		varchar(6),
+  canvas			varchar(32)	  DEFAULT 'default@contact',	-- type of canvas
+  import_key		varchar(14)
 )type=innodb;
-
--- 
--- List of codes for the field entity
---
--- 1 : first company contact
--- 2 : second company contact
--- 3 : etc...
---

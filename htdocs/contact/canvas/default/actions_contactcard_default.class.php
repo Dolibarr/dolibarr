@@ -53,9 +53,8 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
 		$out='';
 
-		if ($action == 'view') 		$out.= $langs->trans("ThirdParty");
-		if ($action == 'edit') 		$out.= $langs->trans("EditCompany");
-		if ($action == 'create')	$out.= $langs->trans("NewCompany");
+		if ($action == 'view' || $action == 'edit') $out.= $langs->trans("Contact");
+		if ($action == 'create') $out.= $langs->trans("AddContact");
 
 		return $out;
 	}
@@ -72,9 +71,9 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 * 	Execute actions
 	 * 	@param 		Id of object (may be empty for creation)
 	 */
-	function doActions($socid)
+	function doActions($id)
 	{
-		$return = parent::doActions($socid);
+		$return = parent::doActions($id);
 
 		return $return;
 	}
