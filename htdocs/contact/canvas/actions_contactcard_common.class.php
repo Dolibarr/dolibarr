@@ -178,8 +178,10 @@ class ActionsContactCardCommon
         {
         	$this->tpl['showrefnav'] 		= $form->showrefnav($this->object,'id');
         	
-        	if (is_object($objsoc) && $this->object->socid > 0)
+        	if ($this->object->socid > 0)
         	{
+        		$objsoc = new Societe($this->db);
+        		
         		$objsoc->fetch($this->object->socid);
         		$this->tpl['company'] = $objsoc->getNomUrl(1);
         	}
@@ -351,7 +353,7 @@ class ActionsContactCardCommon
     			$_GET["action"] = $_POST["action"] = 'edit';
     		}
 
-    		if (! sizeof($errors))
+    		if (empty($errors))
     		{
     			$this->object->fetch($_POST["contactid"]);
     			

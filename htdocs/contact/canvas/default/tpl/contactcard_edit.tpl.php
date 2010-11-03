@@ -29,9 +29,9 @@
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="id" value="<?php echo GETPOST("id"); ?>">
 <input type="hidden" name="action" value="update">
-<input type="hidden" name="contactid" value="<?php echo $object->id; ?>">
-<input type="hidden" name="old_name" value="<?php echo $object->name; ?>">
-<input type="hidden" name="old_firstname" value="<?php echo $object->firstname; ?>">
+<input type="hidden" name="contactid" value="<?php echo $this->control->tpl['id']; ?>">
+<input type="hidden" name="old_name" value="<?php echo $this->control->tpl['name']; ?>">
+<input type="hidden" name="old_firstname" value="<?php echo $this->control->tpl['firstname']; ?>">
 <?php if ($this->control->tpl['company_id']) { ?>
 <input type="hidden" name="socid" value="<?php echo $this->control->tpl['company_id']; ?>">
 <?php } ?>
