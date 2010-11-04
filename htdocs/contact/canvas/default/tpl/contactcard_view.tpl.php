@@ -126,4 +126,22 @@
 
 </div>
 
+<?php if (! $user->societe_id) { ?>
+<div class="tabsAction">
+				
+<?php if ($user->rights->societe->contact->creer) { ?>
+<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Modify'); ?></a>
+<?php } ?>
+
+<?php if (! $this->control->tpl['user_id'] && $user->rights->user->user->creer) { ?>
+<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=create_user&amp;canvas='.$canvas; ?>"><?php echo $langs->trans("CreateDolibarrLogin"); ?></a>
+<?php } ?>
+
+<?php if ($user->rights->societe->contact->supprimer) { ?>
+<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
+<?php } ?>
+
+</div><br>
+<?php } ?>
+
 <!-- END PHP TEMPLATE -->

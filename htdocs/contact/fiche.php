@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -358,29 +358,6 @@ if (! empty($canvas))
 
 			// Display canvas
 			$objcanvas->display_canvas();
-			
-			// Barre d'actions
-			if (! $user->societe_id)
-			{
-				print '<div class="tabsAction">';
-				
-				if ($user->rights->societe->contact->creer)
-				{
-					print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
-				}
-				
-				if (! $objcanvas->control->object->user_id && $user->rights->user->user->creer)
-				{
-					print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=create_user&amp;canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
-				}
-
-				if ($user->rights->societe->contact->supprimer)
-				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
-				}
-				
-				print "</div><br>";
-			}
 			
 			print show_actions_todo($conf,$langs,$db,$objsoc,$objcanvas->control->object);
 			

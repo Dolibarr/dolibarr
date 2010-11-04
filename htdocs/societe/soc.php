@@ -470,32 +470,6 @@ if (! empty($canvas))
 			// Display canvas
 			$soccanvas->display_canvas();
 
-			/*
-			 *	Actions
-			 */
-			if ($_GET["action"] == '')
-			{
-				print '<div class="tabsAction">';
-
-				if ($user->rights->societe->creer)
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans("Modify").'</a>';
-				}
-
-				if ($user->rights->societe->contact->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create&amp;canvas='.$canvas.'">'.$langs->trans("AddContact").'</a>';
-				}
-
-				if ($user->rights->societe->supprimer)
-				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
-				}
-
-				print '</div>';
-				print '<br>';
-			}
-
 
 			print '<table width="100%"><tr><td valign="top" width="50%">';
 			print '<a name="builddoc"></a>'; // ancre
@@ -513,8 +487,7 @@ if (! empty($canvas))
 			$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$soccanvas->control->object->default_lang);
 
 			print '</td>';
-			print '<td>';
-			print '</td>';
+			print '<td></td>';
 			print '</tr>';
 			print '</table>';
 
