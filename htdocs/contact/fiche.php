@@ -80,7 +80,7 @@ if (! empty($canvas))
 	// -----------------------------------------
 
 	// Load data control
-	$msg = $objcanvas->doActions($id);
+	$objcanvas->doActions($id);
 }
 else
 {
@@ -261,63 +261,60 @@ if (! empty($canvas))
 		}
 	}
 	
-	if ($user->rights->societe->contact->creer)
+	if (GETPOST("action") == 'create')
 	{
-		if (GETPOST("action") == 'create')
+		// Set action type
+		$objcanvas->setAction(GETPOST("action"));
+			
+		// Card header
+		$title = $objcanvas->getTitle();
+		print_fiche_titre($title);
+			
+		// Assign _POST data
+		$objcanvas->assign_post();
+			
+		// Assign template values
+		$objcanvas->assign_values();
+
+		// Show errors
+		dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
+			
+		// Display canvas
+		$objcanvas->display_canvas();
+	}
+	else if (GETPOST("id") && GETPOST("action") == 'edit')
+	{
+		/*
+		 * Mode edition
+		 */
+			
+		// Set action type
+		$objcanvas->setAction(GETPOST("action"));
+		
+		// Fetch object
+		$result=$objcanvas->fetch($id);
+		if ($result > 0)
 		{
-			// Set action type
-			$objcanvas->setAction(GETPOST("action"));
-			
 			// Card header
+			$head = contact_prepare_head($objcanvas->control->object);
 			$title = $objcanvas->getTitle();
-			print_fiche_titre($title);
-			
-			// Assign _POST data
-			$objcanvas->assign_post();
-			
-			// Assign template values
+			dol_fiche_head($head, 'general', $title, 0, 'contact');
+				
+			if ($_POST["name"])
+			{
+				// Assign _POST data
+				$objcanvas->assign_post();
+			}
+				
+			// Assign values
 			$objcanvas->assign_values();
-			
-			dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
 			
 			// Display canvas
 			$objcanvas->display_canvas();
 		}
-		else if (GETPOST("id") && GETPOST("action") == 'edit')
+		else
 		{
-			/*
-			 * Mode edition
-			 */
-			
-			// Set action type
-			$objcanvas->setAction(GETPOST("action"));
-			
-			// Fetch object
-			$result=$objcanvas->fetch($id);
-			if ($result > 0)
-			{
-				// Card header
-				$head = contact_prepare_head($objcanvas->control->object);
-				$title = $objcanvas->getTitle();
-				dol_fiche_head($head, 'general', $title, 0, 'contact');
-				
-				if ($_POST["name"])
-				{
-					// Assign _POST data
-					$objcanvas->assign_post();
-				}
-				
-				// Assign values
-				$objcanvas->assign_values();
-				
-				// Display canvas
-				$objcanvas->display_canvas();
-			}
-			else
-			{
-				dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
-			}
-			
+			dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
 		}
 	}
 	

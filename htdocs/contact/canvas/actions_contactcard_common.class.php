@@ -39,6 +39,10 @@ class ActionsContactCardCommon
 	var $object;
 	//! Canvas
 	var $canvas;
+	//! Error string
+	var $error;
+	//! Error array
+	var $errors=array();
 
 	/**
 	 *    Constructeur de la classe
@@ -269,8 +273,6 @@ class ActionsContactCardCommon
     {
     	global $conf, $user, $langs;
     	
-    	$errors='';
-    	
     	// Creation utilisateur depuis contact
     	if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes' && $user->rights->user->user->creer)
     	{
@@ -285,15 +287,13 @@ class ActionsContactCardCommon
     			
     			if ($result < 0)
     			{
-    				$errors=$nuser->error;
+    				$this->errors=$nuser->errors;
     			}
     		}
     		else
     		{
-    			$errors=$this->object->error;
+    			$this->errors=$this->object->errors;
     		}
-    		
-    		return $errors;
     	}
     	
     	// Creation contact
@@ -303,7 +303,7 @@ class ActionsContactCardCommon
     		
     		if (! $_POST["name"])
     		{
-    			array_push($errors,$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label")));
+    			array_push($this->errors,$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label")));
     			$_GET["action"] = $_POST["action"] = 'create';
     		}
 
@@ -317,12 +317,10 @@ class ActionsContactCardCommon
     			}
     			else
     			{
-    				$errors=array($this->object->error);
+    				$this->errors=$this->object->errors;
     				$_GET["action"] = $_POST["action"] = 'create';
     			}
     		}
-    		
-    		return $errors;
     	}
     	
     	if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes' && $user->rights->societe->contact->supprimer)
@@ -340,22 +338,19 @@ class ActionsContactCardCommon
     		}
     		else
     		{
-    			$errors=$this->object->error;
+    			$this->errors=$this->object->errors;
     		}
-    		
-    		return $errors;
     	}
     	
     	if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
     	{
     		if (empty($_POST["name"]))
     		{
-    			$errors=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
-    			$error++;
+    			$this->error=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
     			$_GET["action"] = $_POST["action"] = 'edit';
     		}
 
-    		if (empty($errors))
+    		if (empty($this->error))
     		{
     			$this->object->fetch($_POST["contactid"]);
     			
@@ -372,11 +367,9 @@ class ActionsContactCardCommon
     			}
     			else
     			{
-    				$errors=$this->object->error;
+    				$this->errors=$this->object->errors;
     			}
     		}
-    		
-    		return $errors;
     	}
     }
 

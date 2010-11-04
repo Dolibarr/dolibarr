@@ -32,6 +32,8 @@
 class Canvas
 {
 	var $db;
+	var $error;
+	var $errors;
 
 	var $card;
 	var $canvas;
@@ -44,8 +46,7 @@ class Canvas
 	var $template_dir;		// Directory with all core and external templates files
 	var $action;
 	var $smarty;
-
-	var $error;
+	
 
    /**
 	*   Constructor.
@@ -86,7 +87,12 @@ class Canvas
 	 */
 	function doActions($id)
 	{
-		return $this->control->doActions($id);
+		$out = $this->control->doActions($id);
+		
+		$this->errors = ($this->control->errors?$this->control->errors:$this->control->object->errors);
+		$this->error = ($this->control->error?$this->control->error:$this->control->object->error);
+		
+		return $out;
 	}
 
 	/**

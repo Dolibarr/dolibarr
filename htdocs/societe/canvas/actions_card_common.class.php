@@ -39,6 +39,10 @@ class ActionsCardCommon
 	var $object;
 	//! Canvas
 	var $canvas;
+	//! Error string
+	var $error;
+	//! Error array
+	var $errors=array();
 
 	/**
 	 *    Constructeur de la classe
@@ -477,21 +481,21 @@ class ActionsCardCommon
         		{
         			$error = 1;
         			$langs->load("errors");
-        			$this->object->error = $langs->trans("ErrorBadEMail",$this->object->email);
+        			$this->error = $langs->trans("ErrorBadEMail",$this->object->email);
         			$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
         		}
         		if (! empty($this->object->url) && ! isValidUrl($this->object->url))
         		{
         			$error = 1;
         			$langs->load("errors");
-        			$this->object->error = $langs->trans("ErrorBadUrl",$this->object->url);
+        			$this->error = $langs->trans("ErrorBadUrl",$this->object->url);
         			$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
         		}
         		if ($this->object->fournisseur && ! $conf->fournisseur->enabled)
         		{
         			$error = 1;
         			$langs->load("errors");
-        			$this->object->error = $langs->trans("ErrorSupplierModuleNotEnabled");
+        			$this->error = $langs->trans("ErrorSupplierModuleNotEnabled");
         			$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
         		}
         	}
@@ -530,7 +534,7 @@ class ActionsCardCommon
         			}
         			else
         			{
-        				$mesg=$this->object->error;
+        				$this->errors=$this->object->errors;
         			}
 
         			if ($result >= 0)
@@ -561,8 +565,7 @@ class ActionsCardCommon
         			{
         				$this->db->rollback();
 
-        				$langs->load("errors");
-        				$mesg=$langs->trans($this->object->error);
+        				$this->errors=$this->object->errors;
         				$_GET["action"]='create';
         			}
         		}
@@ -594,8 +597,7 @@ class ActionsCardCommon
         			{
         				$this->object->id = $socid;
         				$reload = 0;
-
-        				$mesg = $this->object->error;
+        				$this->errors = $this->object->errors;
         				$_GET["action"]= "edit";
         			}
         		}
@@ -616,8 +618,7 @@ class ActionsCardCommon
         	else
         	{
         		$reload = 0;
-        		$langs->load("errors");
-        		$mesg=$langs->trans($this->object->error);
+        		$this->errors=$this->object->errors;
         		$_GET["action"]='';
         	}
         }
@@ -629,7 +630,7 @@ class ActionsCardCommon
         {
         	if (is_numeric($_REQUEST['model']))
         	{
-        		$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
+        		$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
         	}
         	else
         	{

@@ -409,6 +409,7 @@ if (! empty($canvas))
 		// Assign template values
 		$soccanvas->assign_values();
 
+		// Show errors
 		dol_htmloutput_errors($soccanvas->error,$soccanvas->errors);
 
 		// Display canvas
