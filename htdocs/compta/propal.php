@@ -535,11 +535,11 @@ else
 {
 	/**
 	 *
-	 * Mode Liste des propales
+	 * Mode List
 	 *
 	 */
 
-	$now=gmmktime();
+	$now=dol_now();
 
 	$limit = $conf->liste_limit;
 	$offset = $limit * $page ;
@@ -649,7 +649,7 @@ else
 			//Ref
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
-			print $propalstatic->getNomUrl(1, 'compta', "&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder");
+			print $propalstatic->getNomUrl(1, '', "&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder");
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';

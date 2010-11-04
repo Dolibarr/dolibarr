@@ -2169,11 +2169,11 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Return clicable link of object (with eventually picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
-	 *		\param		option			Sur quoi pointe le lien
-	 *		\param		maxlength		Maxlength of ref
-	 *		\return		string			Chaine avec URL
+	 *    	Return clicable link of object (with eventually picto)
+	 *		@param		withpicto		Add picto into link
+	 *		@param		option			Where point the link
+	 *		@param		maxlength		Maxlength of ref
+	 *		@return		string			String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{

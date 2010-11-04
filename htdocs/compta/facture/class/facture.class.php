@@ -564,11 +564,11 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\param		option			Sur quoi pointe le lien ('', 'withdraw')
-	 * 	\param		max				Max length of shown ref
-	 *	\return		string			Chaine avec URL
+     *      Return clicable link of object (with eventually picto)
+     *      @param      withpicto       Add picto into link
+     *      @param      option          Where point the link
+     *      @param      max             Maxlength of ref
+     *      @return     string          String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='',$max=0)
 	{

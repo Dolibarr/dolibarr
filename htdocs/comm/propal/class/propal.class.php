@@ -2048,12 +2048,12 @@ class Propal extends CommonObject
 		}
 	}
 
-	/**
-	 * 		\brief    	Renvoie nom clicable (avec eventuellement le picto)
-	 * 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 * 		\param		option			Sur quoi pointe le lien
-	 * 		\param      get_params		Parametres added to url
-	 * 		\return		string			Chaine avec URL
+    /**
+     *      Return clicable link of object (with eventually picto)
+     *      @param      withpicto       Add picto into link
+     *      @param      option          Where point the link
+     *      @param      get_params      Parametres added to url
+     *      @return     string          String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='', $get_params='')
 	{
@@ -2064,9 +2064,9 @@ class Propal extends CommonObject
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .'">';
 		}
-		if($option == 'compta')
+		if($option == 'compta')   // deprecated
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/compta/propal.php?id='.$this->id. $get_params .'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .'">';
 		}
 		if($option == 'expedition')
 		{
