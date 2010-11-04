@@ -10,7 +10,6 @@
     <directory>../../htdocs/includes/fckeditor/</directory>
     <directory>../../htdocs/includes/fpdf/</directory>
     <directory>../../htdocs/includes/geoip/</directory>
-    <directory>../../htdocs/includes/iui/</directory>
     <directory>../../htdocs/includes/jcrop/</directory>
     <directory>../../htdocs/includes/jquery/</directory>
     <directory>../../htdocs/includes/jsgantt/</directory>
@@ -39,7 +38,6 @@
     <file>../../htdocs/includes/modules/propale/modules_propale.php</file>
     <file>../../htdocs/includes/modules/project/modules_project.php</file>
     <file>../../htdocs/includes/modules/fichinter/modules_fichinter.php</file>
-    
   </whitelist>
 </filter>
 </phpunit>
