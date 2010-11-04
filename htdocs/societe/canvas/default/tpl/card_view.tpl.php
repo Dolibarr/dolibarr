@@ -247,7 +247,7 @@ function CheckVAT(a) {
 <?php } ?>
 
 <?php if ($user->rights->societe->contact->creer) { ?>
-<a class="butAction" href="<?php echo DOL_URL_ROOT.'/contact/fiche.php?socid='.$this->control->tpl['id']; ?>&amp;action=create&amp;canvas=default@contact"><?php echo $langs->trans("AddContact"); ?></a>
+<a class="butAction" href="<?php echo DOL_URL_ROOT.'/contact/fiche.php?socid='.$this->control->tpl['id'].'&amp;action=create&amp;canvas='.$canvas; ?>"><?php echo $langs->trans("AddContact"); ?></a>
 <?php } ?>
 
 <?php if ($user->rights->societe->supprimer) { ?>
