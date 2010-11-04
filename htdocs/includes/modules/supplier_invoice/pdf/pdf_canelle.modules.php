@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/includes/modules/supplier_invoice/pdf/pdf_canelle.modules.php
  *	\ingroup    fournisseur
- *	\brief      Fichier de la classe permettant de generer les factures fournisseurs au modele canelle
+ *	\brief      Class file to generate the supplier invoices with the canelle model
  *	\version    $Id$
  */
 
@@ -33,14 +33,14 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  *	\class      pdf_canelle
- *	\brief      Classe permettant de generer les factures fournisseurs au modele Canelle
+ *	\brief      Class to generate the supplier invoices with the canelle model
  */
 class pdf_canelle extends ModelePDFSuppliersInvoices
 {
 
 	/**
-	 *	\brief      Constructeur
-	 *	\param	    db		Handler acces base de donnee
+	 *	\brief      Constructor
+	 *	\param	    db		Handler access data base
 	 */
 	function pdf_canelle($db)
 	{
@@ -91,8 +91,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 
 	/**
-	 * 	\brief      Fonction generant la facture sur le disque
-	 * 	\param	    id	        	Id de la facture a generer
+	 * 	\brief      Write the invoice to disk
+	 * 	\param	    id	        	Id invoice to write
 	 *	\param		outputlangs		Lang output object
 	 *	\return	    int         	1=ok, 0=ko
 	 */
@@ -112,7 +112,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		if ($conf->fournisseur->dir_output.'/facture')
 		{
-			$deja_regle = "";
+			$object->fetch_thirdparty();
+			$deja_regle = $object->getSommePaiement();
 
 			// Definition de $dir et $file
 			if ($object->specimen)
@@ -317,7 +318,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				if ($deja_regle)
 				{
-					$this->_tableau_versements($pdf, $fac, $posy);
+					$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 
 				/*
@@ -363,11 +364,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	}
 
 	/**
-	 *   \brief      Affiche le total a payer
-	 *   \param      pdf         	Objet PDF
-	 *   \param      object        	Objet invoice
-	 *   \param      deja_regle  	Montant deja regle
-	 *   \return     y              Position pour suite
+	 *   \brief      Show total to pay
+	 *   \param      pdf         	Object PDF
+	 *   \param      object        	Object invoice
+	 *   \param      deja_regle  	Amount payed
+	 *   \return     y              Next position
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -494,8 +495,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	}
 
 	/**
-	 *   \brief      Affiche la grille des lignes de propales
-	 *   \param      pdf     objet PDF
+	 *   \brief      Show the lines of invoice
+	 *   \param      pdf     object PDF
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
@@ -544,6 +545,82 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 		$pdf->SetXY ($this->postotalht-1, $tab_top+2);
 		$pdf->MultiCell(23,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
+
+	}
+	
+	/**
+	 *  \brief      Show payments table
+	 *  \param      pdf     		Object PDF
+	 *  \param      fac     		Object facture
+	 *	\param		posy			Position y in PDF
+	 *	\param		outputlangs		Object langs for output
+	 *	\return 	int				<0 if KO, >0 if OK
+	 */
+	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	{
+		$tab3_posx = 120;
+		$tab3_top = $posy + 8;
+		$tab3_width = 80;
+		$tab3_height = 4;
+
+		$pdf->SetFont('','',8);
+		$pdf->SetXY ($tab3_posx, $tab3_top - 5);
+		$pdf->MultiCell(60, 5, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
+
+		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
+
+		$pdf->SetFont('','',6);
+		$pdf->SetXY ($tab3_posx, $tab3_top );
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
+		$pdf->SetXY ($tab3_posx+21, $tab3_top );
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
+		$pdf->SetXY ($tab3_posx+40, $tab3_top );
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
+		$pdf->SetXY ($tab3_posx+58, $tab3_top );
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
+
+		$y=0;
+
+		$pdf->SetFont('','',6);
+
+		// Loop on each payment
+		$sql = "SELECT p.datep as date, p.fk_paiement as type, p.num_paiement as num, pf.amount as amount,";
+		$sql.= " cp.code";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf, ".MAIN_DB_PREFIX."paiementfourn as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
+		$sql.= " WHERE pf.fk_paiementfourn = p.rowid and pf.fk_facturefourn = ".$object->id;
+		$sql.= " ORDER BY p.datep";
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i=0;
+			while ($i < $num) {
+				$y+=3;
+				$row = $this->db->fetch_object($resql);
+
+				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
+				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date),'day',false,$outputlangs,true), 0, 'L', 0);
+				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
+				$pdf->MultiCell(20, 3, price($row->amount), 0, 'L', 0);
+				$pdf->SetXY ($tab3_posx+40, $tab3_top+$y);
+				$oper = $outputlangs->getTradFromKey("PaymentTypeShort" . $row->code);
+
+				$pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
+				$pdf->SetXY ($tab3_posx+58, $tab3_top+$y);
+				$pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
+
+				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
+
+				$i++;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog($this->db,$this->error, LOG_ERR);
+			return -1;
+		}
 
 	}
 
