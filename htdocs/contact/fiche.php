@@ -249,18 +249,6 @@ if (! empty($canvas))
 	// When used with CANVAS
 	// -----------------------------------------
 	
-	/*
-	 * Confirmation de la suppression du contact
-	 */
-	if ($user->rights->societe->contact->supprimer)
-	{
-		if ($_GET["action"] == 'delete')
-		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
-			if ($ret == 'html') print '<br>';
-		}
-	}
-	
 	if (GETPOST("action") == 'create')
 	{
 		// Set action type

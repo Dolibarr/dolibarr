@@ -21,6 +21,8 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
+<?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
+
 <table class="border" width="100%">
 		
 <tr>

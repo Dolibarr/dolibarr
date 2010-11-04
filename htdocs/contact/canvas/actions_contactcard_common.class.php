@@ -181,7 +181,7 @@ class ActionsContactCardCommon
 
         if ($action == 'view')
         {
-        	$this->tpl['showrefnav'] 		= $form->showrefnav($this->object,'id');
+        	$this->tpl['showrefnav'] = $form->showrefnav($this->object,'id');
         	
         	if ($this->object->socid > 0)
         	{
@@ -207,8 +207,8 @@ class ActionsContactCardCommon
             $this->tpl['phone_pro'] 	= dol_print_phone($this->object->phone_pro,$this->object->pays_code,0,$this->object->id,'AC_TEL');
             $this->tpl['phone_perso'] 	= dol_print_phone($this->object->phone_perso,$this->object->pays_code,0,$this->object->id,'AC_TEL');
             $this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile,$this->object->pays_code,0,$this->object->id,'AC_TEL');
-            $this->tpl['fax'] 		= dol_print_phone($this->object->fax,$this->object->pays_code,0,$this->object->id,'AC_FAX');
-            $this->tpl['email'] 	= dol_print_email($this->object->email,0,$this->object->id,'AC_EMAIL');
+            $this->tpl['fax'] 			= dol_print_phone($this->object->fax,$this->object->pays_code,0,$this->object->id,'AC_FAX');
+            $this->tpl['email'] 		= dol_print_email($this->object->email,0,$this->object->id,'AC_EMAIL');
             
             $this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
             

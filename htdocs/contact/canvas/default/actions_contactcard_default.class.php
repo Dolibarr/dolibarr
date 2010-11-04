@@ -84,23 +84,21 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 */
 	function assign_values($action='')
 	{
-		global $conf, $langs, $user, $mysoc;
-		global $form, $formadmin, $formcompany;
+		global $langs, $user;
+		global $form;
 
 		parent::assign_values($action);
 
-		if ($action == 'create' || $action == 'edit')
-		{
-
-		}
-
 		if ($action == 'view')
 		{
-			// Confirm delete third party
-			if ($_GET["action"] == 'delete')
-			{
-				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
-			}
+			// Confirm delete contact
+        	if ($user->rights->societe->contact->supprimer)
+        	{
+        		if ($_GET["action"] == 'delete')
+        		{
+        			$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
+        		}
+        	}
 		}
 	}
 	

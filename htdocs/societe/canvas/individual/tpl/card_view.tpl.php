@@ -23,10 +23,6 @@
 
 <?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
 
-<?php if ($mesg) { ?>
-<div class="error"><?php echo $mesg; ?></div>
-<?php } ?>
-
 <form name="formsoc" method="POST">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
