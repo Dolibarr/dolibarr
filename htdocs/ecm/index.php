@@ -320,7 +320,8 @@ html, body {
 <SCRIPT type=\"text/javascript\">
     jQuery(document).ready(function () {
         jQuery('#containerlayout').layout({
-            center__paneSelector:   \"#ecm-layout-center\"
+        	name: \"ecmlayout\"
+        ,   center__paneSelector:   \"#ecm-layout-center\"
         ,   north__paneSelector:    \"#ecm-layout-north\"
         ,   west__paneSelector:     \"#ecm-layout-west\"
         ,   resizable: true

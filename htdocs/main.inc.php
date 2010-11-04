@@ -954,6 +954,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 					jQuery("body").layout( layoutSettings );
 				});
 				var layoutSettings = {
+					name: "mainlayout",
 					defaults: {
 						useStateCookie: true,
 						size: "auto",
@@ -976,7 +977,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						//togglerLength_open: 0,
 						//	effect defaults - overridden on some panes
 						//slideTrigger_open:	"mouseover",
-						initClosed:	true,
+						//initClosed:	true,
 						fxName:	"drop",
 						fxSpeed: "normal",
 						fxSettings: { easing: "" }
