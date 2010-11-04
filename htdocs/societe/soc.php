@@ -613,15 +613,15 @@ else
 			print 'jQuery(document).ready(function () {
                          id_te_private=8;
                          id_ef15=1;
-                         jQuery("#individualline").hide();
+                         jQuery(".individualline").hide();
                          jQuery("#radiocompany").click(function() {
-                               jQuery("#individualline").hide();
+                               jQuery(".individualline").hide();
                                jQuery("#typent_id").val(0);
                                jQuery("#effectif_id").val(0);
                                document.formsoc.private.value=0;
                          });
                           jQuery("#radioprivate").click(function() {
-                               jQuery("#individualline").show();
+                               jQuery(".individualline").show();
                                jQuery("#typent_id").val(id_te_private);
                                jQuery("#effectif_id").val(id_ef15);
                                document.formsoc.private.value=1;
@@ -672,9 +672,9 @@ else
 		// If javascript on, we show option individual
 		if ($conf->use_javascript_ajax)
 		{
-			print '<tr id="individualline"><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$soc->firstname.'"></td>';
+			print '<tr class="individualline"><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$soc->firstname.'"></td>';
 			print '<td colspan=2>&nbsp;</td></tr>';
-			print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
+			print '<tr class="individualline"><td>'.$langs->trans("UserTitle").'</td><td>';
 			print $formcompany->select_civilite($contact->civilite_id).'</td>';
 			print '<td colspan=2>&nbsp;</td></tr>';
 		}
