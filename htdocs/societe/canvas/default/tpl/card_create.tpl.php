@@ -22,23 +22,7 @@
 <!-- BEGIN PHP TEMPLATE -->
 
 <?php if ($conf->use_javascript_ajax) { ?>
-<script type="text/javascript" language="javascript">
-jQuery(document).ready(function () {
-		              jQuery("#radiocompany").click(function() {
-                            document.formsoc.action.value="create";
-                            document.formsoc.canvas.value="default";
-                            document.formsoc.private.value=0;
-                            document.formsoc.submit();
-		              });
-		               jQuery("#radioprivate").click(function() {
-                            document.formsoc.action.value="create";
-                            document.formsoc.canvas.value="individual";
-                            document.formsoc.private.value=1;
-                            document.formsoc.submit();
-                      });
-		          });
-</script>
-
+<?php echo $this->control->tpl['ajax_selecttype']; ?>
 <br>
 <?php echo $langs->trans("ThirdPartyType") ?>: &nbsp;
 <input type="radio" id="radiocompany" class="flat" name="private" value="0"'<?php echo (! $_REQUEST["private"]?' checked="true"':''); ?>>
@@ -83,6 +67,7 @@ jQuery(document).ready(function () {
 	</td>
 </tr>
 
+<?php if ($this->control->tpl['supplier_enabled']) { ?>
 <tr>
 	<td><span class="fieldrequired"><?php echo $langs->trans('Supplier'); ?></span></td>
 	<td><?php echo $this->control->tpl['yn_supplier']; ?></td>
@@ -97,9 +82,7 @@ jQuery(document).ready(function () {
 	</td>
 </tr>
 
-<?php
-if ($this->control->tpl['fournisseur']) {
-	if (sizeof($this->control->tpl['suppliercategory']) > 0) { ?>
+<?php if (sizeof($this->control->tpl['suppliercategory']) > 0) { ?>
 <tr>
 	<td><?php echo $langs->trans('SupplierCategory'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>

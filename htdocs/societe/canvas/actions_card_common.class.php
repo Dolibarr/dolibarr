@@ -68,6 +68,29 @@ class ActionsCardCommon
         {
             $this->tpl[$key] = $value;
         }
+        
+        if ($action == 'create')
+        {
+        	if ($conf->use_javascript_ajax)
+			{
+				$this->tpl['ajax_selecttype'] = "\n".'<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function () {
+		              jQuery("#radiocompany").click(function() {
+                            document.formsoc.action.value="create";
+                            document.formsoc.canvas.value="default";
+                            document.formsoc.private.value=0;
+                            document.formsoc.submit();
+		              });
+		               jQuery("#radioprivate").click(function() {
+                            document.formsoc.action.value="create";
+                            document.formsoc.canvas.value="individual";
+                            document.formsoc.private.value=1;
+                            document.formsoc.submit();
+                      });
+		          });
+                </script>'."\n";
+			}
+        }
 
         if ($action == 'create' || $action == 'edit')
         {
@@ -97,19 +120,6 @@ class ActionsCardCommon
             // We verified if the tag prefix is used
             if ($modCodeClient->code_auto) $this->tpl['prefix_customercode'] = $modCodeClient->verif_prefixIsUsed();
 
-            // Load object modCodeFournisseur
-            $module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
-            if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-            if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
-            {
-                $module = substr($module, 0, dol_strlen($module)-4);
-            }
-            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
-            $modCodeFournisseur = new $module;
-            $this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
-            // We verified if the tag prefix is used
-            if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
-
             // TODO create a function
             $this->tpl['select_customertype'] = '<select class="flat" name="client">';
             $this->tpl['select_customertype'].= '<option value="2"'.($this->object->client==2?' selected="selected"':'').'>'.$langs->trans('Prospect').'</option>';
@@ -124,18 +134,36 @@ class ActionsCardCommon
             $this->tpl['ismodifiable_customercode'] = $this->object->codeclient_modifiable();
             $s=$modCodeClient->getToolTip($langs,$this->object,0);
             $this->tpl['help_customercode'] = $form->textwithpicto('',$s,1);
-
-            // Supplier
-            $this->tpl['yn_supplier'] = $form->selectyesno("fournisseur",$this->object->fournisseur,1);
-            $this->tpl['suppliercode'] = $this->object->code_fournisseur;
-            if ((!$this->object->code_fournisseur || $this->object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this->object,1);
-            $this->tpl['ismodifiable_suppliercode'] = $this->object->codefournisseur_modifiable();
-            $s=$modCodeFournisseur->getToolTip($langs,$this->object,1);
-            $this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
-
-            $this->object->LoadSupplierCateg();
-            $this->tpl['suppliercategory'] = $this->object->SupplierCategories;
-            $this->tpl['select_suppliercategory'] = $form->selectarray("fournisseur_categorie",$this->object->SupplierCategories,$_POST["fournisseur_categorie"],1);
+            
+            if ($conf->fournisseur->enabled)
+            {
+            	$this->tpl['supplier_enabled'] = 1;
+            	
+            	// Load object modCodeFournisseur
+            	$module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+            	if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+            	if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+            	{
+            		$module = substr($module, 0, dol_strlen($module)-4);
+            	}
+            	require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+            	$modCodeFournisseur = new $module;
+            	$this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
+            	// We verified if the tag prefix is used
+            	if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
+            	
+            	// Supplier
+            	$this->tpl['yn_supplier'] = $form->selectyesno("fournisseur",$this->object->fournisseur,1);
+            	$this->tpl['suppliercode'] = $this->object->code_fournisseur;
+            	if ((!$this->object->code_fournisseur || $this->object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this->object,1);
+            	$this->tpl['ismodifiable_suppliercode'] = $this->object->codefournisseur_modifiable();
+            	$s=$modCodeFournisseur->getToolTip($langs,$this->object,1);
+            	$this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
+            	
+            	$this->object->LoadSupplierCateg();
+            	$this->tpl['suppliercategory'] = $this->object->SupplierCategories;
+            	$this->tpl['select_suppliercategory'] = $form->selectarray("fournisseur_categorie",$this->object->SupplierCategories,$_POST["fournisseur_categorie"],1);
+            }
 
             // Zip
             $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->cp,'zipcode',array('town','selectpays_id','departement_id'),6);
