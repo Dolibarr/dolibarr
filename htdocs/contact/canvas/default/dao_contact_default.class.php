@@ -87,9 +87,9 @@ class DaoContactDefault extends Contact
      *    Delete third party in database
      *    @param      id      id de la societe a supprimer
      */
-    function delete($id)
+    function delete()
     {
-    	$result = parent::delete($id);
+    	$result = parent::delete();
 
     	return $result;
     }

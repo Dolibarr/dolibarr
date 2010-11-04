@@ -26,13 +26,13 @@
 jQuery(document).ready(function () {
 		              jQuery("#radiocompany").click(function() {
                             document.formsoc.action.value="create";
-                            document.formsoc.canvas.value="default@societe";
+                            document.formsoc.canvas.value="default";
                             document.formsoc.private.value=0;
                             document.formsoc.submit();
 		              });
 		               jQuery("#radioprivate").click(function() {
                             document.formsoc.action.value="create";
-                            document.formsoc.canvas.value="individual@societe";
+                            document.formsoc.canvas.value="individual";
                             document.formsoc.private.value=1;
                             document.formsoc.submit();
                       });

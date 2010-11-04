@@ -48,6 +48,6 @@ create table llx_socpeople
   fk_user_modif		integer,
   note				text,
   default_lang		varchar(6),
-  canvas			varchar(32)	  DEFAULT 'default@contact',	-- type of canvas
+  canvas			varchar(32)	  DEFAULT 'default',			-- type of canvas
   import_key		varchar(14)
 )type=innodb;

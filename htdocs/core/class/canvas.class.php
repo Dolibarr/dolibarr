@@ -111,23 +111,21 @@ class Canvas
 		$error='';
 		$this->card = $card;
 		$this->canvas = $canvas;
-		$childmodule = $this->aliasmodule = $this->module = $module;
-		$targetmodule = $this->aliastargetmodule = $this->targetmodule = $module;
+		$childmodule = $this->aliasmodule =  $module;
+		$targetmodule = $this->targetmodule = $module;
 
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
 		{
-			$childmodule = $this->aliasmodule = $this->module = $regs[2];
+			$childmodule = $this->aliasmodule = $regs[2];
 			$this->canvas = $regs[1];
 		}
 		
 		// For compatibility
-		if ($childmodule == 'thirdparty') $childmodule = $this->aliasmodule = 'societe';
-		if ($targetmodule == 'thirdparty') $targetmodule = 'societe';
-		if ($childmodule == 'contact') 
-		{
-			$childmodule = 'societe';
-			$this->targetmodule = 'contact';
-		}
+		if ($childmodule == 'thirdparty') { $childmodule = $this->aliasmodule = 'societe'; }
+		if ($targetmodule == 'thirdparty') { $targetmodule = 'societe'; }
+		if ($childmodule == 'contact') { $childmodule = 'societe'; }
+		if ($targetmodule == 'contact') { $targetmodule = 'societe'; }
+
 
 		//print 'childmodule='.$childmodule.' targetmodule='.$targetmodule.'<br>';
 		//print 'this->aliasmodule='.$this->aliasmodule.' this->targetmodule='.$this->targetmodule.'<br>';

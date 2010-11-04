@@ -54,7 +54,7 @@ if (! empty($canvas))
 	require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
 	$objcanvas = new Canvas($db);
 
-	$objcanvas->getCanvas('thirdparty','contactcard',$canvas);
+	$objcanvas->getCanvas('contact','contactcard',$canvas);
 
 	// Security check
 	$result = $objcanvas->restrictedArea($user, 'contact', $id, 'socpeople');

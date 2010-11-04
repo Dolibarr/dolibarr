@@ -117,7 +117,7 @@ class ActionsContactCardCommon
             if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 
             // State
-            if ($this->object->fk_pays) $this->tpl['select_state'] = $formcompany->select_state($this->object->departement_id,$this->object->pays_code);
+            if ($this->object->fk_pays) $this->tpl['select_state'] = $formcompany->select_state($this->object->fk_departement,$this->object->pays_code);
             else $this->tpl['select_state'] = $countrynotdefined;
             
             // Public or private
@@ -240,6 +240,7 @@ class ActionsContactCardCommon
         $this->object->jabberid				= 	$_POST["jabberid"];
         $this->object->priv					= 	$_POST["priv"];
         $this->object->note					=	$_POST["note"];
+        $this->object->canvas				=	$_POST["canvas"];
 
 
         // We set pays_id, and pays_code label of the chosen country

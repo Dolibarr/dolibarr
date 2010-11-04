@@ -104,7 +104,7 @@ class Contact extends CommonObject
 		$this->name=trim($this->name);
 		if (! $this->socid) $this->socid = 0;
 		if (! $this->priv) $this->priv = 0;
-		if (! $this->canvas) $this->canvas = 'default@contact';
+		if (! $this->canvas) $this->canvas = 'default';
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_creat, priv, canvas)";
 		$sql.= " VALUES ('".$this->db->idate($now)."',";
