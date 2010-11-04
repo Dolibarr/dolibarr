@@ -311,26 +311,8 @@ if (! empty($canvas))
 		// Set action type
 		$objcanvas->setAction('view');
 		
-		if ($msg)
-		{
-			$langs->load("errors");
-			print '<div class="error">'.$langs->trans($msg).'</div>';
-		}
-		
 		// Fetch object
 		$result=$objcanvas->fetch($id);
-		
-		if ($_GET["action"] == 'create_user')
-		{
-			$login=strtolower(substr($objcanvas->control->object->prenom, 0, 4)) . strtolower(substr($objcanvas->control->object->nom, 0, 4));
-			
-			// Create a form array
-			$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
-			
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
-			if ($ret == 'html') print '<br>';
-		}
-
 		if ($result > 0)
 		{
 			// Card header
@@ -340,6 +322,9 @@ if (! empty($canvas))
 
 			// Assign values
 			$objcanvas->assign_values();
+			
+			//Show errors
+			dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
 
 			// Display canvas
 			$objcanvas->display_canvas();

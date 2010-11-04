@@ -21,6 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
+<?php if ($this->control->tpl['action_create_user']) echo $this->control->tpl['action_create_user']; ?>
 <?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
 
 <table class="border" width="100%">

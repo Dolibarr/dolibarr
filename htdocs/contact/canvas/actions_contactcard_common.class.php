@@ -181,6 +181,16 @@ class ActionsContactCardCommon
 
         if ($action == 'view')
         {
+        	if ($_GET["action"] == 'create_user')
+        	{
+        		$login=strtolower(substr($this->object->prenom, 0, 4)) . strtolower(substr($this->object->nom, 0, 4));
+        		
+        		// Create a form array
+        		$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
+        		
+        		$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
+        	}
+        	
         	$this->tpl['showrefnav'] = $form->showrefnav($this->object,'id');
         	
         	if ($this->object->socid > 0)
