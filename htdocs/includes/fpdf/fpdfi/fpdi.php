@@ -29,8 +29,9 @@ if (defined('DOL_URL_ROOT')) define ("K_PATH_URL_CACHE", DOL_URL_ROOT."/document
 /* End DOLCHANGE Added by Regis */
 
 // DOLCHANGE LDR
-if (empty($conf->MAIN_USE_TCPDF)) require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdf/fpdf.php');
+if (empty($conf->global->MAIN_USE_TCPDF)) require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdf/fpdf.php');
 else require_once(DOL_DOCUMENT_ROOT.'/includes/tcpdf/tcpdf.php');
+//require_once(DOL_DOCUMENT_ROOT.'/includes/tcpdf/tcpdf.php');
 
 
 // Check for TCPDF and remap TCPDF to FPDF
