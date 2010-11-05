@@ -160,7 +160,6 @@ if ($_GET["action"] == 'setdoc')
 	}
 
 	// On active le modele
-	$type='supplier_order';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
 	$sql_del.= " WHERE nom = '".$_GET["value"]."'";
 	$sql_del.= " AND type = '".$_GET["type"]."'";
@@ -465,7 +464,6 @@ print '</tr>'."\n";
 clearstatcache();
 
 $handle=opendir($dir);
-print 'xxx='.$conf->global->INVOICE_SUPPLIER_ADDON_PDF;
 $var=true;
 while (($file = readdir($handle))!==false)
 {
