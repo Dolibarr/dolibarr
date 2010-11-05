@@ -185,7 +185,7 @@ $sql.= ', '.MAIN_DB_PREFIX.'user as u';
 $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.fk_user_author = u.rowid';
 $sql.= ' AND u.entity in (0,'.$conf->entity.')';	// To limit to entity
-if ($user->societe_id) $sql.= ' AND u.fk_societe = '.$user->societe_id; // To limit to user company
+if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
 if ($pid) $sql.=" AND a.fk_project=".addslashes($pid);
 if ($_GET["action"] == 'show_day')
 {
