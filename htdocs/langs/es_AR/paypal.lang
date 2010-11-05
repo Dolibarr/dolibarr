@@ -1,4 +1,14 @@
-# Dolibarr language file - es_AR - paypal
+# Dolibarr language file - es_AR - paypal 
 CHARSET=UTF-8
 PaypalSetup=Configuración del módulo PayPal
 PaypalDesc=Este módulo ofrece una página  de pago a través del proveedor <a href="http://www.paypal.com" target="_blank">Paypal</a> para realizar cualquier pago o un pago en relación con un objeto Dolibarr (facturas, pedidos ...)
+PaypalOrCBDoPayment=Continuar el pago mediante tarjeta o Paypal
+PaypalDoPayment=Continuar el pago mediante Paypal
+PaypalCBDoPayment=Continuar el pago mediante tarjeta
+PAYPAL_API_SANDBOX=Modo de prueba/caja de arena (sandbox)
+PAYPAL_API_USER=Nombre usuario API
+PAYPAL_API_PASSWORD=Contraseña usuario API
+PAYPAL_API_SIGNATURE=Firma API
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proponer pago integral (Tarjeta+Paypal) o sólo Paypal
+PAYPAL_CSS_URL=Url opcional de la hoja de estilo CSS de la página de pago
+ThisIsTransactionId=Identificador de la transacción: <b>%s</b> 
