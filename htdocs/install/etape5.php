@@ -74,7 +74,7 @@ dolibarr_install_syslog("etape5: Entering etape5.php page", LOG_INFO);
  */
 
 // If install, check pass and pass_verif used to create admin account
-if ($_POST["action"] == "set")
+if (isset($_POST['action']) && $_POST["action"] == "set")
 {
 	if ($_POST["pass"] <> $_POST["pass_verif"])
 	{
