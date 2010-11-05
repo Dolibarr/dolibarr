@@ -1155,15 +1155,16 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 
 /**
- *  \brief      Show left menu bar
- *  \param      menu_array_before 	Table of menu entries to show before entries of menu handler
- *  \param      helppagename    	Name of wiki page for help ('' by default).
- * 				                    Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- * 									           For other external page: http://server/url
- *  \param      moresearchform     	Search Form Permanent Supplemental
- *  \param      menu_array_after    Table of menu entries to show after entries of menu handler
+ *  Show left menu bar
+ *  @param      menu_array_before 	       Table of menu entries to show before entries of menu handler
+ *  @param      helppagename    	       Name of wiki page for help ('' by default).
+ * 				                           Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+ * 									                  For other external page: http://server/url
+ *  @param      moresearchform             Search Form Permanent Supplemental
+ *  @param      menu_array_after           Table of menu entries to show after entries of menu handler
+ *  @param      leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
  */
-function left_menu($menu_array_before, $helppagename='', $moresearchform='', $menu_array_after='')
+function left_menu($menu_array_before, $helppagename='', $moresearchform='', $menu_array_after='', $leftmenuwithoutmainarea=0)
 {
 	global $user, $conf, $langs, $db;
 
@@ -1325,6 +1326,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	print "\n".'<!-- End of left column, begin right area -->'."\n\n";
 	//	    print '</div>'."\n";
 	//		print '<div class="vmenuplusfiche">'."\n";
+
+	if (empty($leftmenuwithoutmainarea)) main_area();
 }
 
 /**
@@ -1335,7 +1338,7 @@ function main_area()
 	global $conf, $langs;
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
-	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
+	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<table width="100%" class="notopnoleftnoright" summary="centermenutable" id="undertopmenu"><tr>';
 
 	print '<td valign="top"><!-- Begin right area --> '."\n";
 

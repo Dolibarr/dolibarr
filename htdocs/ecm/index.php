@@ -851,9 +851,9 @@ if ($conf->use_javascript_ajax)
         </div>
     </div>
 
-<!--    <div class="pane ecm-layout-east"></div> -->
+<!--    <div id="ecm-layout-east" class="pane"></div> -->
 
-<!--    <div class="pane ecm-layout-south"></div> -->
+<!--    <div id="ecm-layout-south" class="pane"></div> -->
 
 </div> <!-- end div id="containerlayout" -->
 

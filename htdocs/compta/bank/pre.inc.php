@@ -20,11 +20,11 @@
  */
 
 /**
-		\file   	htdocs/compta/bank/pre.inc.php
-		\ingroup    compta
-		\brief  	Fichier gestionnaire du menu compta banque
-		\version	$Id$
-*/
+ *		\file   	htdocs/compta/bank/pre.inc.php
+ *		\ingroup    compta
+ *		\brief  	Fichier gestionnaire du menu compta banque
+ *		\version	$Id$
+ */
 
 require_once("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
@@ -34,7 +34,7 @@ $langs->load("categories");
 
 
 /**
- *
+ * Replace the default llxHeader function
  * @param $head
  * @param $title
  * @param $help_url
