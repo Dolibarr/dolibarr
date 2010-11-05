@@ -70,15 +70,18 @@ function user_prepare_head($object)
         $h++;
     }
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Note");
-    $head[$h][2] = 'note';
-    $h++;
-
-    $head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Info");
-    $head[$h][2] = 'info';
-    $h++;
+    if (! $user->societe_id)
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
+    	$head[$h][1] = $langs->trans("Note");
+    	$head[$h][2] = 'note';
+    	$h++;
+    	
+    	$head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
+    	$head[$h][1] = $langs->trans("Info");
+    	$head[$h][2] = 'info';
+    	$h++;
+    }
     
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
