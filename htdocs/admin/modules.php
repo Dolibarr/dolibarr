@@ -410,7 +410,7 @@ if ($mode != 4)
         //print "<tr><td>xx".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
         //if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
         if ($family!=$oldfamily) {
-            print "<tr class=\"liste_titre\">\n  <td colspan=\"6\">";
+            print '<tr class="liste_titre">'."\n  <td colspan=\"6\">";
             $familytext=empty($familylib[$family])?$family:$familylib[$family];
             print $familytext;
             print "</td>\n</tr>\n";
@@ -423,7 +423,7 @@ if ($mode != 4)
             $atleastoneforfamily++;
             $var=!$var;
 
-            print "<tr ".$bc[$var].">\n";
+            print '<tr height="16" '.$bc[$var].">\n";
 
             //print '  <td valign="top" nowrap="nowrap">';
             if ($family!=$oldfamily)
