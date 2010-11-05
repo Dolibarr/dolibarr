@@ -164,3 +164,6 @@ ProductIsUsed=Aquest producte és utilitzat
 NewRefForClone=Ref. del nou producte/servei
 CustomerPrices=Preus clients
 SuppliersPrices=Preus proveïdors
+CustomCode=Codi duaner
+CountryOrigin=País d'origen
+HiddenIntoCombo=Ocult en les llistes
