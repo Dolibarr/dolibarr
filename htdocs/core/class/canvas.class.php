@@ -153,16 +153,16 @@ class Canvas
 		{
 			// Include dataservice class (model)
 			$modelclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php';
-			include_once($modelclassfile);
+			require_once($modelclassfile);
 
 			// Include actions class (controller)
 			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php';
-			include_once($controlclassfile);
+			require_once($controlclassfile);
 			
 			// Include specific library
 			if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/lib/'.$this->aliasmodule.'.lib.php'))
 			{
-				include_once(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/lib/'.$this->aliasmodule.'.lib.php');
+				require_once(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/lib/'.$this->aliasmodule.'.lib.php');
 			}
 
 			// Instantiate actions class (controller)

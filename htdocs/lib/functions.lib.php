@@ -1550,7 +1550,7 @@ function info_admin($texte,$infoonimgalt=0)
 
 /**
  *	\brief      Check permissions of a user to show a page and an object. Check read permission
- * 				If $_REQUEST['action'] defined, we also check write permission.
+ * 				If $_REQUEST['action'] defined, we also check write and delete permission.
  *	\param      user      	  	User to check
  *	\param      features	    Features to check (in most cases, it's module name)
  *	\param      objectid      	Object ID if we want to check permission on a particular record (optionnal)
@@ -1638,11 +1638,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 	{
 		foreach ($features as $feature)
 		{
-			if ($feature == 'societe')
-			{
-				if (! $user->rights->societe->creer && ! $user->rights->fournisseur->creer) $createok=0;
-			}
-			else if ($feature == 'contact')
+			if ($feature == 'contact')
 			{
 				if (! $user->rights->societe->contact->creer) $createok=0;
 			}
@@ -1681,6 +1677,49 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 
 		if (! $createok) accessforbidden();
 		//print "Write access is ok";
+	}
+	
+	// Check delete permission from module
+	$deleteok=1;
+	if ( (GETPOST("action") && GETPOST("action")  == 'confirm_delete') && (GETPOST("confirm") && GETPOST("confirm") == 'yes') )
+	{
+		foreach ($features as $feature)
+		{
+			if ($feature == 'contact')
+			{
+				if (! $user->rights->societe->contact->supprimer) $deleteok=0;
+			}
+			else if ($feature == 'produit|service')
+			{
+				if (! $user->rights->produit->supprimer && ! $user->rights->service->supprimer) $deleteok=0;
+			}
+			else if ($feature == 'commande_fournisseur')
+			{
+				if (! $user->rights->fournisseur->commande->supprimer) $deleteok=0;
+			}
+			else if ($feature == 'banque')
+			{
+				if (! $user->rights->banque->modifier) $deleteok=0;
+			}
+			else if ($feature == 'cheque')
+			{
+				if (! $user->rights->banque->cheque) $deleteok=0;
+			}
+			else if (! empty($feature2))	// This should be used for future changes
+			{
+				if (empty($user->rights->$feature->$feature2->supprimer)
+				&& empty($user->rights->$feature->$feature2->delete)) $deleteok=0;
+			}
+			else if (! empty($feature))		// This is for old permissions
+			{
+				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
+				if (empty($user->rights->$feature->supprimer)
+				&& empty($user->rights->$feature->delete)) $deleteok=0;
+			}
+		}
+
+		if (! $deleteok) accessforbidden();
+		//print "Delete access is ok";
 	}
 
 	// If we have a particular object to check permissions on, we check this object

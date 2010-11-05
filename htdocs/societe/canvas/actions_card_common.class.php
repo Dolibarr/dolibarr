@@ -337,8 +337,8 @@ class ActionsCardCommon
         $this->object->code_fournisseur		=	$_POST["code_fournisseur"];
         $this->object->adresse				=	$_POST["adresse"]; // TODO obsolete
         $this->object->address				=	$_POST["adresse"];
-        $this->object->cp					=	$_POST["cp"];
-        $this->object->ville				=	$_POST["ville"];
+        $this->object->cp					=	$_POST["zipcode"];
+        $this->object->ville				=	$_POST["town"];
         $this->object->pays_id				=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
         $this->object->departement_id		=	$_POST["departement_id"];
         $this->object->tel					=	$_POST["tel"];
@@ -404,7 +404,7 @@ class ActionsCardCommon
 
     	// Add new third party
     	if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
-    	&& ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
+    	&& ($_POST["action"] == 'add' || $_POST["action"] == 'update'))
     	{
     		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
     		$error=0;
@@ -431,8 +431,8 @@ class ActionsCardCommon
 
     		$this->object->address					= $_POST["adresse"];
     		$this->object->adresse					= $_POST["adresse"]; // TODO obsolete
-    		$this->object->cp						= $_POST["cp"];
-    		$this->object->ville					= $_POST["ville"];
+    		$this->object->cp						= $_POST["zipcode"];
+    		$this->object->ville					= $_POST["town"];
     		$this->object->pays_id					= $_POST["pays_id"];
     		$this->object->departement_id			= $_POST["departement_id"];
     		$this->object->tel						= $_POST["tel"];
@@ -604,7 +604,7 @@ class ActionsCardCommon
         	}
         }
 
-        if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->supprimer)
+        if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes')
         {
         	$this->object->fetch($socid);
 
@@ -626,9 +626,9 @@ class ActionsCardCommon
         /*
          * Generate document
          */
-        if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
+        if (GETPOST('action') == 'builddoc')	// En get ou en post
         {
-        	if (is_numeric($_REQUEST['model']))
+        	if (is_numeric(GETPOST('model')))
         	{
         		$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
         	}
@@ -639,23 +639,17 @@ class ActionsCardCommon
         		$this->object->fetch($socid);
         		$this->object->fetch_thirdparty();
 
-            	/*if ($_REQUEST['model'])
-             	{
-             		$fac->setDocModel($user, $_REQUEST['model']);
-             	}
-             	*/
-
         		// Define output language
         		$outputlangs = $langs;
         		$newlang='';
-        		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+        		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id') ) $newlang=GETPOST('lang_id');
         		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$this->object->default_lang;
         		if (! empty($newlang))
         		{
         			$outputlangs = new Translate("",$conf);
         			$outputlangs->setDefaultLang($newlang);
         		}
-        		$result=thirdparty_doc_create($this->db, $this->object->id, '', $_REQUEST['model'], $outputlangs);
+        		$result=thirdparty_doc_create($this->db, $this->object->id, '', GETPOST('model'), $outputlangs);
         		if ($result <= 0)
         		{
         			dol_print_error($this->db,$result);

@@ -463,8 +463,8 @@ class Societe extends CommonObject
 
             $sql .= ",fk_forme_juridique = ".($this->forme_juridique_code?"'".$this->forme_juridique_code."'":"null");
 
-            $sql .= ",client = " . $this->client;
-            $sql .= ",fournisseur = " . $this->fournisseur;
+            $sql .= ",client = " . ($this->client?$this->client:0);
+            $sql .= ",fournisseur = " . ($this->fournisseur?$this->fournisseur:0);
             $sql .= ",gencod = ".($this->gencod?"'".$this->gencod."'":"null");
             $sql .= ",default_lang = ".($this->default_lang?"'".$this->default_lang."'":"null");
 
