@@ -284,7 +284,7 @@ class ActionsContactCardCommon
     	global $conf, $user, $langs;
     	
     	// Creation utilisateur depuis contact
-    	if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes' && $user->rights->user->user->creer)
+    	if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes')
     	{
     		// Recuperation contact actuel
     		$result = $this->object->fetch($id);
@@ -307,7 +307,7 @@ class ActionsContactCardCommon
     	}
     	
     	// Creation contact
-    	if ($_POST["action"] == 'add' && $user->rights->societe->contact->creer)
+    	if ($_POST["action"] == 'add')
     	{
     		$this->assign_post();
     		
@@ -333,7 +333,7 @@ class ActionsContactCardCommon
     		}
     	}
     	
-    	if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes' && $user->rights->societe->contact->supprimer)
+    	if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes')
     	{
     		$result=$this->object->fetch($id);
     		
@@ -352,7 +352,7 @@ class ActionsContactCardCommon
     		}
     	}
     	
-    	if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
+    	if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     	{
     		if (empty($_POST["name"]))
     		{

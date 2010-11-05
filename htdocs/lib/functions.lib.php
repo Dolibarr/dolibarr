@@ -1679,9 +1679,19 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 		//print "Write access is ok";
 	}
 	
+	// Check create user permission
+	$createuserok=1;
+	if ( GETPOST("action") && (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes') )
+	{
+		if (! $user->rights->user->user->creer) $createuserok=0;
+		
+		if (! $createuserok) accessforbidden();
+		//print "Create user access is ok";
+	}
+	
 	// Check delete permission from module
 	$deleteok=1;
-	if ( (GETPOST("action") && GETPOST("action")  == 'confirm_delete') && (GETPOST("confirm") && GETPOST("confirm") == 'yes') )
+	if ( GETPOST("action") && ( (GETPOST("action")  == 'confirm_delete' && GETPOST("confirm") && GETPOST("confirm") == 'yes') || GETPOST("action")  == 'delete') )
 	{
 		foreach ($features as $feature)
 		{
