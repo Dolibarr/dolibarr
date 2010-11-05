@@ -59,6 +59,17 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 		return $out;
 	}
+	
+	/**
+	 * 	Return the head of card (tabs)
+	 */
+	function showHead($action)
+	{
+		$head = societe_prepare_head($this->object);
+		$title = $this->getTitle($action);
+		
+		return dol_fiche_head($head, 'card', $title, 0, 'company');
+	}
 
 	/**
      *    Assigne les valeurs POST dans l'objet

@@ -41,7 +41,7 @@ function contact_prepare_head($object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'general';
+	$head[$h][2] = 'card';
 	$h++;
 
 	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)

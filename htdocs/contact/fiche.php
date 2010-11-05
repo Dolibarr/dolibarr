@@ -284,9 +284,7 @@ if (! empty($canvas))
 		if ($result > 0)
 		{
 			// Card header
-			$head = contact_prepare_head($objcanvas->control->object);
-			$title = $objcanvas->getTitle();
-			dol_fiche_head($head, 'general', $title, 0, 'contact');
+			$objcanvas->showHead();
 				
 			if ($_POST["name"])
 			{
@@ -316,9 +314,7 @@ if (! empty($canvas))
 		if ($result > 0)
 		{
 			// Card header
-			$head = contact_prepare_head($objcanvas->control->object);
-			$title = $objcanvas->getTitle();
-			dol_fiche_head($head, 'general', $title, 0, 'contact');
+			$objcanvas->showHead();
 
 			// Assign values
 			$objcanvas->assign_values();
@@ -377,7 +373,7 @@ else
 		 */
 		$head = contact_prepare_head($contact);
 		
-		dol_fiche_head($head, 'general', $langs->trans("Contact"), 0, 'contact');
+		dol_fiche_head($head, 'card', $langs->trans("Contact"), 0, 'contact');
 	}
 	
 	if ($user->rights->societe->contact->creer)

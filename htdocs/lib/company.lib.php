@@ -41,7 +41,7 @@ function societe_prepare_head($objsoc)
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$objsoc->id;
     $head[$h][1] = $langs->trans("Card");
-    $head[$h][2] = 'company';
+    $head[$h][2] = 'card';
     $h++;
 
     if ($objsoc->client==1 || $objsoc->client==3 || $objsoc->object->client==1 || $objsoc->object->client==3)

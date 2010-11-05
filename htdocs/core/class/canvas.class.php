@@ -56,6 +56,15 @@ class Canvas
 	{
 		$this->db = $DB;
 	}
+	
+	/**
+     *    Set action type
+     */
+	function setAction($action='view')
+	{
+		return $this->action = $action;
+	}
+	
 
 	/**
 	 * 	Return the title of card
@@ -64,6 +73,14 @@ class Canvas
 	{
 		return $this->control->getTitle($this->action);
 	}
+	
+	/**
+	 * 	Return the head of card (tabs)
+	 */
+	function showHead()
+	{
+		return $this->control->showHead($this->action);
+	}
 
 	/**
      *    Assigne les valeurs POST dans l'objet
@@ -71,14 +88,6 @@ class Canvas
 	function assign_post()
 	{
 		return $this->control->assign_post();
-	}
-
-	/**
-     *    Set action type
-     */
-	function setAction($action='view')
-	{
-		return $this->action = $action;
 	}
 
 	/**

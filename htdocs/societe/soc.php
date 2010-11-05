@@ -461,9 +461,7 @@ if (! empty($canvas))
 		if ($result > 0)
 		{
 			// Card header
-			$head = societe_prepare_head($soccanvas->control->object);
-			$title = $soccanvas->getTitle();
-			dol_fiche_head($head, 'company', $title, 0, 'company');
+			$soccanvas->showHead();
 
 			// Assign values
 			$soccanvas->assign_values();
@@ -1330,7 +1328,7 @@ else
 
 		$head = societe_prepare_head($soc);
 
-		dol_fiche_head($head, 'company', $langs->trans("ThirdParty"),0,'company');
+		dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
 		$html = new Form($db);
 
