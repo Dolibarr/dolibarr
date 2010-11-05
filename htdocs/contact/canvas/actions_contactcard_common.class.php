@@ -211,8 +211,8 @@ class ActionsContactCardCommon
             
             $this->tpl['zip'] = ($this->object->cp?$this->object->cp.'&nbsp;':'');
 
-            $img=picto_from_langcode($this->pays_code);
-            $this->tpl['country'] = ($img?$img.' ':'').$this->pays;
+            $img=picto_from_langcode($this->object->pays_code);
+            $this->tpl['country'] = ($img?$img.' ':'').$this->object->pays;
 
             $this->tpl['phone_pro'] 	= dol_print_phone($this->object->phone_pro,$this->object->pays_code,0,$this->object->id,'AC_TEL');
             $this->tpl['phone_perso'] 	= dol_print_phone($this->object->phone_perso,$this->object->pays_code,0,$this->object->id,'AC_TEL');
