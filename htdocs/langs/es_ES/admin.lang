@@ -285,7 +285,7 @@ ExampleOfDirectoriesForModelGen=Ejemplos de sintaxis:<br>c:\mydir<br>/home/mydir
 FollowingSubstitutionKeysCanBeUsed=Colocando los siguientes tags en la plantilla, obtendrá una sustitución con el valor personalizado al generar el documento:
 FullListOnOnlineDocumentation=Listado completo de tags disponibles en la documentación de usuario del módulo Terceros del wiki http://wiki.dolibarr.org
 FirstnameNamePosition=Orden visualización nombre/apellidos
-# Modules= undefined=
+# Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -805,8 +805,8 @@ SimpleNumRefModelDesc=Devuelve el número bajo el formato %syymm-nnnn donde yy e
 ShowProfIdInAddress=Mostrar el identificador profesional en las direcciones de los documentos
 TranslationUncomplete=Traducción parcial
 SomeTranslationAreUncomplete=Algunos idiomas están traducidos en parte o pueden contener errores. Si lo encuentra, puede corregir los archivos de texto <b>.lang</b> del directorio <b>htdocs/langs</b> y enviarlos al foro <a href="http://www.dolibarr.fr/forum" target="_blank">http://www.dolibarr.fr</a>. 
-MenuUseLayout=Hacer el menú izquierdo cacheable (la opción javascript no debería deshabilitarse)
-##### Module password generation= undefined=
+MenuUseLayout=Hacer el menú izquierdo ocultable (la opción javascript no debería deshabilitarse)
+##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
