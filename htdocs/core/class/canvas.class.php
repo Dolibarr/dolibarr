@@ -158,6 +158,12 @@ class Canvas
 			// Include actions class (controller)
 			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php';
 			include_once($controlclassfile);
+			
+			// Include specific library
+			if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/lib/'.$this->aliasmodule.'.lib.php'))
+			{
+				include_once(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/lib/'.$this->aliasmodule.'.lib.php');
+			}
 
 			// Instantiate actions class (controller)
 			$controlclassname = 'Actions'.ucfirst($this->card).ucfirst($this->canvas);
