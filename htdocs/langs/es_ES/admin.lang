@@ -1,4 +1,4 @@
-# Dolibarr language file - es_AR - admin 
+# Dolibarr language file - es_ES - admin 
 CHARSET=UTF-8
 Version=Versión
 VersionProgram=Versión programa
@@ -210,7 +210,7 @@ HelpCenterDesc1=Esta aplicación, independiente de Dolibarr, le permite ayudarle
 HelpCenterDesc2=Algunos de estos servicios sólo están disponibles en <b>inglés</b>.
 CurrentTopMenuHandler=Gestor de menú superior
 CurrentLeftMenuHandler=Gestor de menú izquierdo
-CurrentMenuHandler= Gestor de menú
+CurrentMenuHandler=Gestor de menú
 CurrentSmartphoneMenuHandler=Gestor menú smartphone actual
 MeasuringUnit=Unidad de medida
 Emails=E-Mails
@@ -285,8 +285,7 @@ ExampleOfDirectoriesForModelGen=Ejemplos de sintaxis:<br>c:\mydir<br>/home/mydir
 FollowingSubstitutionKeysCanBeUsed=Colocando los siguientes tags en la plantilla, obtendrá una sustitución con el valor personalizado al generar el documento:
 FullListOnOnlineDocumentation=Listado completo de tags disponibles en la documentación de usuario del módulo Terceros del wiki http://wiki.dolibarr.org
 FirstnameNamePosition=Orden visualización nombre/apellidos
-
-# Modules
+# Modules= undefined=
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -514,14 +513,15 @@ Permission241=Consultar categorías
 Permission242=Crear/modificar categorías
 Permission243=Eliminar categorías
 Permission244=Ver contenido de categorías ocultas
-Permission251=Consultar otros usuarios, grupos y permisos
-Permission252=Crear/modificar otros usuarios, grupos y sus permisos
-Permission253=Modificar la contraseña de otros usuarios
-Permission254=Eliminar o desactivar otros usuarios
-Permission255=Crear/modificar su propia información de usuario
-Permission256=Modificar su propia contraseña
-Permission258=Exportar usuarios
-Permission261=Consultar información comercial
+Permission251=Consultar otros usuarios
+Permission252=Consultar los permisos de otros usuarios
+Permission253=Crear/modificar otros usuarios y sus permisos
+Permission254=Modificar la contraseña de otros usuarios
+Permission255=Eliminar o desactivar otros usuarios
+Permission256=Consultar sus permisos
+Permission257=Crear/modificar su información de usuario
+Permission258=Modificar su contraseña
+Permission259=Modificar sus permisos
 Permission262=Consultar todas las empresas (Solamente usuarios internos. Los externos están limitados a ellos mismos)
 Permission271=Consultar el CA
 Permission272=Consultar las facturas
@@ -541,6 +541,11 @@ Permission312=Asignar servicios a un contrato
 Permission331=Consultar marcadores
 Permission332=Crear/modificar marcadores
 Permission333=Eliminar marcadores
+Permission351=Consultar los grupos
+Permission352=Consultar los permisos de grupos
+Permission353=Crear/modificar los grupos y sus permisos
+Permission354=Eliminar o desactivar grupos
+Permission358=Exportar usuarios
 Permission401=Consultar haberes
 Permission402=Crear/modificar haberes
 Permission403=Validar haberes
@@ -688,11 +693,11 @@ MenuCompanySetup=Empresa/Institución
 MenuNewUser=Nuevo usuario
 MenuTopManager=Gestor del menú superior
 MenuLeftManager=Gestor del menú izquierdo
-MenuManager= Gestor del menú estándar
+MenuManager=Gestor del menú estándar
 MenuSmartphoneManager=Gestor de menú smartphone
 DefaultMenuTopManager=Gestor del menú superior
 DefaultMenuLeftManager=Gestor del menú izquierdo
-DefaultMenuManager= Gestor del menú estándar
+DefaultMenuManager=Gestor del menú estándar
 DefaultMenuSmartphoneManager=Gestor de menú smartphone
 Skin=Tema visual
 DefaultSkin=Tema visual por defecto
@@ -800,8 +805,8 @@ SimpleNumRefModelDesc=Devuelve el número bajo el formato %syymm-nnnn donde yy e
 ShowProfIdInAddress=Mostrar el identificador profesional en las direcciones de los documentos
 TranslationUncomplete=Traducción parcial
 SomeTranslationAreUncomplete=Algunos idiomas están traducidos en parte o pueden contener errores. Si lo encuentra, puede corregir los archivos de texto <b>.lang</b> del directorio <b>htdocs/langs</b> y enviarlos al foro <a href="http://www.dolibarr.fr/forum" target="_blank">http://www.dolibarr.fr</a>. 
-
-##### Module password generation
+MenuUseLayout=Hacer el menú izquierdo cacheable (la opción javascript no debería deshabilitarse)
+##### Module password generation= undefined=
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
@@ -1136,7 +1141,7 @@ MenuConf=Configuración de los menús
 Menu=Selección de los menús
 MenuHandler=Gestor de menús
 MenuModule=Módulo origen
-HideUnauthorizedMenu=Ocultar menús no autorizados (grises)
+HideUnauthorizedMenu=Ocultar también los menús no autorizados a usuarios internos (si no sólo atenuados)
 DetailId=Identificador del menú
 DetailMenuHandler=Nombre del gestor de menús
 DetailMenuModule=Nombre del módulo si la entrada del menú es resultante de un módulo
