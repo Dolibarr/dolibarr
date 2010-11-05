@@ -329,22 +329,22 @@ li.tmenu a:link
 
 /* Login */
 
-a.login
-{
+div.login {
   position: absolute;
   <?php print $right; ?>: 30px;
   top: 2px;
-
-  color: #234046;
   padding: 0px 8px;
   margin: 0px 0px 1px 0px;
   border: 1px solid #dcdcb3;
   font-weight:bold;
   font-size:12px;
 }
-a.login:hover
-{
-  color:black;
+div.login a {
+	color: #234046;
+}
+div.login a:hover {
+	color: black;
+	text-decoration:underline;
 }
 
 img.login

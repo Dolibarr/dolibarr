@@ -1077,20 +1077,23 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	// Link to login card
 	$loginhtmltext=''; $logintext='';
-	$logintext='<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
-	$logintext.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-	$logintext.='>'.$user->login.'</a>';
-	$loginhtmltext.='<u>'.$langs->trans("User").'</u>';
-	$loginhtmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->getFullName($langs);
-	$loginhtmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
-	$loginhtmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
-	$type=($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
 	if ($user->societe_id)
 	{
 		$thirdpartystatic=new Societe($db);
 		$thirdpartystatic->fetch($user->societe_id);
-		$type.=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
+		$companylink=' ('.$thirdpartystatic->getNomUrl('','').')';
+		$company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 	}
+	$logintext='<div class="login"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
+	$logintext.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+	$logintext.='>'.$user->login.'</a>';
+	if ($user->societe_id) $logintext.=$companylink;
+	$logintext.='</div>';
+	$loginhtmltext.='<u>'.$langs->trans("User").'</u>';
+	$loginhtmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->getFullName($langs);
+	$loginhtmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
+	$loginhtmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
+	$type=($user->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
 	$loginhtmltext.='<br><b>'.$langs->trans("Type").'</b>: '.$type;
 	$loginhtmltext.='<br>';
 	$loginhtmltext.='<br><u>'.$langs->trans("Connection").'</u>';

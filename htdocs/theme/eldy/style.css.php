@@ -448,20 +448,20 @@ foreach($mainmenuusedarray as $key => $val)
 
 /* Login */
 
-a.login
-{
+div.login {
   position: absolute;
   <?php print $right; ?>: 30px;
   top: 3px;
-
-  color: #234046;
   padding: 0px 8px;
   margin: 0px 0px 1px 0px;
   font-weight: bold;
 }
-a.login:hover
-{
-  color: black;
+div.login a {
+	color: #234046;
+}
+div.login a:hover {
+	color: black;
+	text-decoration:underline;
 }
 
 img.login, img.printer {
