@@ -575,16 +575,17 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
                 {
                     $var = !$var;
 
-                    $datep=$obj->dp;
-
                     $obj = $db->fetch_object($result);
+                    
+                    $datep=$obj->dp;
+                    
                     print "<tr ".$bc[$var].">";
 
                     print '<td width="100" align="left" nowrap="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
 
                     // Picto warning
                     print '<td width="16">';
-                    if ($datep && $datep < time()) print ' '.img_warning("Late");
+                    if ($datep && $datep < time()) print ' '.img_warning($langs->trans("Late"));
                     else print '&nbsp;';
                     print '</td>';
 

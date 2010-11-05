@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,8 +183,9 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 $sql.= ', '.MAIN_DB_PREFIX.'c_actioncomm as ca';
 $sql.= ', '.MAIN_DB_PREFIX.'user as u';
 $sql.= ' WHERE a.fk_action = ca.id';
-$sql.= ' AND a.fk_user_author = u.rowid';			// To limit to entity
+$sql.= ' AND a.fk_user_author = u.rowid';
 $sql.= ' AND u.entity in (0,'.$conf->entity.')';	// To limit to entity
+if ($user->societe_id) $sql.= ' AND u.fk_societe = '.$user->societe_id; // To limit to user company
 if ($pid) $sql.=" AND a.fk_project=".addslashes($pid);
 if ($_GET["action"] == 'show_day')
 {
