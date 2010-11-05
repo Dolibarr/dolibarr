@@ -24,3 +24,11 @@ YouCanAddTagOnUrl= També pot afegir el paràmetre url <b>&tag=<i>value</i></b> 
 SetupPayBoxToHavePaymentCreatedAutomatically= Configureu la vostra url Paybox <b>%s</b> per tal que el pagament es creu automàticament al validar.
 YourPaymentHasBeenRecorded=Aquesta pàgina confirma que el pagament s'ha registrat correctament. Gràcies.
 YourPaymentHasNotBeenRecorded=El seu pagament no ha estat registrat i la transacció ha estat anul.lada. Gràcies.
+AccountParameter=Paràmetres del compte
+UsageParameter=Paràmetres d'ús
+InformationToFindParameters=Informació per trobar la seva configuració de compte %s
+PAYBOX_CGI_URL_V2=Url del mòdul CGI Paybox de pagament
+VendorName=Nom del venedor
+CSSUrlForPaymentForm=Url del full d'estil CSS per al formulari de pagament
+MessageOK=Missatge a la pàgina de retorn de pagament confirmat
+MessageKO=Missatge a la pàgina de retorn de pagament cancel·lat
