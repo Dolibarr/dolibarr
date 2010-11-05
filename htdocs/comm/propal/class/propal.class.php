@@ -2348,6 +2348,10 @@ class PropaleLigne
 		$this->db->begin();
 
 		// Clean parameters
+		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
+		if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
+		if (empty($this->total_localtax1)) $this->total_localtax1=0;
+		if (empty($this->total_localtax2)) $this->total_localtax2=0;
 		if (! $this->remise) $this->remise=0;
 		if (! $this->remise_percent) $this->remise_percent=0;
 		if (! $this->info_bits) $this->info_bits=0;
