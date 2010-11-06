@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,33 +69,31 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 
 if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 {
-	// TODO probleme si que des minutes
-	foreach ($_POST as $key => $time)
-	{
-		if (substr($key,-4) == 'hour')
-  		{
-  			if ($time > 0)
-		  	{
-				$id = str_replace("hour","",$key);
+	foreach($_POST as $key => $time)
+ 	{
+		if(intval($time)>0)
+		{
+			// Hours or minutes
+			if(preg_match("/([0-9]+)(hour|min)/",$key,$matches))
+			{
+ 				$task = new Task($db);
+				$task->fetch($matches[1]);
+				
+				// We store HOURS in seconds
+				if($matches[2]=='hour') $task->timespent_duration = $time*60*60;
 
-				$task = new Task($db);
-				$task->fetch($id);
+				// We store MINUTES in seconds
+				if($matches[2]=='min') $task->timespent_duration = $time*60;
+					
+				$task->timespent_fk_user = $user->id;
+				$task->timespent_date = dol_mktime(12,0,0,$_POST["{$matches[1]}month"],$_POST["{$matches[1]}day"],$_POST["{$matches[1]}year"]);	
+				$task->addTimeSpent($user);
+			}
+ 		}
 
-		  		$task->timespent_fk_user = $user->id;
-				$task->timespent_duration = $_POST[$id."hour"]*60*60;	// We store duration in seconds
-		  		$task->timespent_duration+= $_POST[$id."min"]*60;		// We store duration in seconds
-				$task->timespent_date = dol_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
-
-		  		$task->addTimeSpent($user);
-		  	}
-		  	else
-		  	{
-		  		if ($time != '') $mesg='<div class="error">'.$langs->trans("ErrorBadValue").'</div>';
-		  	}
-		}
-	}
-}
-
+		if(intval($time)<0) $mesg='<div class="error">'.$langs->trans("ErrorBadValue").'</div>';
+	}	
+ }
 
 /*
  * View
