@@ -2674,8 +2674,7 @@ function migrate_project_task_time($db,$langs,$conf)
 				{
 					// convert to second
 					// only for int time and float time ex: 1,75 for 1h45
-					$time = str_replace(',','.',$obj->task_duration);
-					$time = floatval($time);
+					$time = floatval($obj->task_duration);
 					list($hour,$min) = explode('.',$time);
 					$hour = $hour*60*60;
 					$min = ($min/100)*60*60;
