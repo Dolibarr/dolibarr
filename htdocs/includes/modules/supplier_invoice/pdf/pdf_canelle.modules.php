@@ -772,7 +772,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'FACTURESUPPLIER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
+		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
 	}
 
 }
