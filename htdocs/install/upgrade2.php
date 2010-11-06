@@ -2697,9 +2697,16 @@ function migrate_project_task_time($db,$langs,$conf)
 			{
 				$obj = $db->fetch_object($resql);
 
-				if ($obj->task_duration > 0 && dol_strlen($obj->task_duration) < 3)
+				if ($obj->task_duration > 0)
 				{
-					$newtime = $obj->task_duration*60*60;
+					// convert to second
+					// only for int time and float time ex: 1,75 for 1h45
+					$time = str_replace(',','.',$obj->task_duration);
+					$time = floatval($time);
+					list($hour,$min) = explode('.',$time);
+					$hour = $hour*60*60;
+					$min = ($min/100)*60*60;
+					$newtime = $hour+$min;
 
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
 					$sql2.= " task_duration = ".$newtime;
