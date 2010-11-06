@@ -93,7 +93,7 @@ if (GETPOST('newcompany') || GETPOST('socid') || GETPOST('id_fourn'))
 		while ($row = $db->fetch_array($resql))
 		{
 		    $label=$row['nom'];
-		    if ($socid) $label=preg_replace('/('.preg_quote($socid).')/i','<strong>$1</strong>',$label,1);
+		    if ($socid) $label=preg_replace('/('.preg_quote($socid,'/').')/i','<strong>$1</strong>',$label,1);
 			$row_array['label'] = $label;
 			$row_array['value'] = $row['nom'];
 	        $row_array['key'] = $row['rowid'];
