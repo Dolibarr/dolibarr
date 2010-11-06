@@ -54,12 +54,16 @@ top_httphead();
 
 //print '<body class="nocellnopadd">'."\n";
 
-dol_syslog(join(',',$_POST));
+dol_syslog(join(',',$_GET));
 
-if (! isset($_GET['idprod']) && ! isset($_GET['idprodfournprice'])) return;
+$match = preg_grep('/(idprod[0-9]+)/',array_keys($_GET));
+$idprod = $match[6]; // 6eme valeur du GET
+//print $_GET[$idprod];
+
+if (! isset($_GET['idprod']) && ! isset($_GET[$idprod]) && ! isset($_GET['idprodfournprice'])) return;
 
 // When used from jQuery, the search term is added as GET param "term".
-$searchkey=$_GET['idprod']?$_GET['idprod']:$_GET['idprodfournprice'];
+$searchkey=($_GET[$idprod]?$_GET[$idprod]:($_GET['idprod']?$_GET['idprod']:$_GET['idprodfournprice']));
 $outjson=isset($_GET['outjson'])?$_GET['outjson']:0;
 
 // Get list of product.
