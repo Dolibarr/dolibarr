@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/viewimage.php
  *		\brief      Wrapper permettant l'affichage de fichiers images Dolibarr
- *      \remarks    L'appel est viewimage.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
+ *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?file=pathrelatifdufichier&modulepart=repfichierconcerne">'
  *		\version    $Id$
  */
 
@@ -282,7 +282,14 @@ if ($modulepart)
 		$original_file='';
 	}
 
-	// Wrapping pour les icones de background des mailings
+    // Wrapping pour les icones de background des mailings
+    elseif ($modulepart == 'phpsane')
+    {
+        $accessallowed=1;
+        $original_file=$conf->phpsane->dir_temp.'/'.$user->id.'/'.$original_file;
+    }
+
+    // Wrapping pour les icones de background des mailings
 	elseif ($modulepart == 'iconmailing')
 	{
 		$accessallowed=1;
