@@ -1678,17 +1678,17 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 		if (! $createok) accessforbidden();
 		//print "Write access is ok";
 	}
-	
+
 	// Check create user permission
 	$createuserok=1;
 	if ( GETPOST("action") && (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes') )
 	{
 		if (! $user->rights->user->user->creer) $createuserok=0;
-		
+
 		if (! $createuserok) accessforbidden();
 		//print "Create user access is ok";
 	}
-	
+
 	// Check delete permission from module
 	$deleteok=1;
 	if ( GETPOST("action") && ( (GETPOST("action")  == 'confirm_delete' && GETPOST("confirm") && GETPOST("confirm") == 'yes') || GETPOST("action")  == 'delete') )
@@ -2838,13 +2838,13 @@ function yn($yesno, $case=1, $color=0)
 
 
 /**
- *	\brief      Return a path to have a directory according to an id
- *	\param      $num            Id to develop
- *	\param      $level		    Level of development (1, 2 or 3 level)
- * 	\param		$alpha		    Use alpha ref
- *  \param      withoutslash    0=With slash at end, 1=without slash at end
- *	\remarks    Examples: 	    '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
- *	\remarks    Examples: 	    'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
+ *	Return a path to have a directory according to an id
+ *  Examples:       '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
+ *  Examples:       'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
+ *	@param      $num            Id to develop
+ *	@param      $level		    Level of development (1, 2 or 3 level)
+ * 	@param		$alpha		    Use alpha ref
+ *  @param      withoutslash    0=With slash at end, 1=without slash at end
  */
 function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
 {
@@ -2859,14 +2859,20 @@ function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
 	return $path;
 }
 
-/**
- *	\brief      Creation of a directory (recursive)
- *	\param      $dir        Directory to create
- *	\return     int         < 0 if KO, 0 = already exists, > 0 if OK
- */
+// For backward compatibility
 function create_exdir($dir)
 {
-	global $conf;
+    dol_mkdir($dir);
+}
+
+/**
+ *	Creation of a directory (recursive)
+ *	@param      $dir        Directory to create
+ *	@return     int         < 0 if KO, 0 = already exists, > 0 if OK
+ */
+function dol_mkdir($dir)
+{
+    global $conf;
 
 	dol_syslog("functions.lib::create_exdir: dir=".$dir,LOG_INFO);
 
