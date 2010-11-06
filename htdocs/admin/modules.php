@@ -423,7 +423,7 @@ if ($mode != 4)
             $atleastoneforfamily++;
             $var=!$var;
 
-            print '<tr height="16" '.$bc[$var].">\n";
+            print '<tr height="18" '.$bc[$var].">\n";
 
             //print '  <td valign="top" nowrap="nowrap">';
             if ($family!=$oldfamily)
