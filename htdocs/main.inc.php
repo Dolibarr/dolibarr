@@ -857,7 +857,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			$mini='';$ext='.js';
 			if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) { $mini='_mini'; $ext='.jgz'; }	// mini='_mini', ext='.gz'
 
-			// JQuery. Must be before other includes (prototype/scriptaculous/...)
+			// JQuery. Must be before other includes (prototype/scriptaculous)
 			print '<!-- Includes for JQuery -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-1.4.3.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-1.8.5.custom.min'.$ext.'"></script>'."\n";
@@ -867,6 +867,13 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT || defined('REQUIRE_JQUERY_LAYOUT'))
 			{
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
+			}
+
+            // This one is required for some Ajax features
+			if (! empty($conf->global->MAIN_USE_PROTOTYPE))
+			{
+                print '<!-- Includes for Prototype -->'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype'.$mini.$ext.'"></script>'."\n";
 			}
 		}
 
