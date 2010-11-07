@@ -51,22 +51,6 @@ $result = restrictedArea($user, 'projet', $projectid);
  * Actions
  */
 
-if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
-{
-	$task = new Task($db);
-
-	$task->fk_task_parent = $_POST["task_parent"]?$_POST["task_parent"]:0;
-	$task->label = $_POST["task_name"];
-
-	$result = $task->create($user);
-
-	if ($result == 0)
-	{
-		Header("Location:fiche.php?id=".$projectid);
-		exit;
-	}
-}
-
 if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 {
 	$task = new Task($db);
@@ -101,7 +85,7 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorBadValue").'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorTimeSpentIsEmpty").'</div>';
 	}
  }
 
