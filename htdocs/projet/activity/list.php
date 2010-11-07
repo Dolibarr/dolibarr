@@ -69,6 +69,10 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 
 if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 {
+	$task = new Task($db);
+	
+	$timespent_duration=0;
+	
 	foreach($_POST as $key => $time)
  	{
 		if(intval($time)>0)
@@ -76,23 +80,24 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 			// Hours or minutes
 			if(preg_match("/([0-9]+)(hour|min)/",$key,$matches))
 			{
- 				$task = new Task($db);
-				$task->fetch($matches[1]);
+				$id = $matches[1];
 				
 				// We store HOURS in seconds
-				if($matches[2]=='hour') $task->timespent_duration = $time*60*60;
+				if($matches[2]=='hour') $timespent_duration += $time*60*60;
 
 				// We store MINUTES in seconds
-				if($matches[2]=='min') $task->timespent_duration = $time*60;
-					
-				$task->timespent_fk_user = $user->id;
-				$task->timespent_date = dol_mktime(12,0,0,$_POST["{$matches[1]}month"],$_POST["{$matches[1]}day"],$_POST["{$matches[1]}year"]);	
-				$task->addTimeSpent($user);
+				if($matches[2]=='min') $timespent_duration += $time*60;
 			}
  		}
 
 		if(intval($time)<0) $mesg='<div class="error">'.$langs->trans("ErrorBadValue").'</div>';
-	}	
+	}
+	
+	$task->fetch($id);
+	$task->timespent_duration = $timespent_duration;
+	$task->timespent_fk_user = $user->id;
+	$task->timespent_date = dol_mktime(12,0,0,$_POST["{$id}month"],$_POST["{$id}day"],$_POST["{$id}year"]);	
+	$task->addTimeSpent($user);
  }
 
 /*
