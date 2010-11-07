@@ -33,31 +33,31 @@ $langs->load("categories");
 
 
 // Security check
-$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
+$socid=GETPOST('socid');
 if (!$user->rights->categorie->lire) accessforbidden();
 
-if (isset ($_REQUEST['choix']))
+if (GETPOST('choix'))
 {
-	$nbcats = $_REQUEST['choix'];
+	$nbcats = GETPOST('choix');
 }
 else
 { // par default, une nouvelle categorie sera dans une seule categorie mere
 	$nbcats = 1;
 }
 
-if ($_REQUEST['origin'])
+if (GETPOST('origin'))
 {
-	if ($_GET['type'] == 0) $idProdOrigin = $_REQUEST['origin'];
-	if ($_GET['type'] == 1) $idSupplierOrigin = $_REQUEST['origin'];
-	if ($_GET['type'] == 2) $idCompanyOrigin = $_REQUEST['origin'];
-	if ($_GET['type'] == 3) $idMemberOrigin = $_REQUEST['origin'];
+	if ($_GET['type'] == 0) $idProdOrigin = GETPOST('origin');
+	if ($_GET['type'] == 1) $idSupplierOrigin = GETPOST('origin');
+	if ($_GET['type'] == 2) $idCompanyOrigin = GETPOST('origin');
+	if ($_GET['type'] == 3) $idMemberOrigin = GETPOST('origin');
 }
 
-if ($_REQUEST['catorigin'])
+if (GETPOST('catorigin'))
 {
-	if ($_GET['type'] == 0) $idCatOrigin = $_REQUEST['catorigin'];
+	if ($_GET['type'] == 0) $idCatOrigin = GETPOST('catorigin');
 }
-$urlfrom=isset($_REQUEST["urlfrom"])?$_REQUEST["urlfrom"]:'';
+$urlfrom=GETPOST("urlfrom");
 
 
 /*
@@ -198,15 +198,15 @@ if ($user->rights->categorie->creer)
 		print '<input type="hidden" name="urlfrom" value="'.$urlfrom.'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
-		print '<input type="hidden" name="id" value="'.$_REQUEST['origin'].'">';
+		print '<input type="hidden" name="id" value="'.GETPOST('origin').'">';
 		print '<input type="hidden" name="type" value="'.$_GET['type'].'">';
-		if ($_REQUEST['origin'])
+		if (GETPOST('origin'))
 		{
-			print '<input type="hidden" name="origin" value="'.$_REQUEST['origin'].'">';
+			print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 		}
-		if ($_REQUEST['catorigin'])
+		if (GETPOST('catorigin'))
 		{
-			print '<input type="hidden" name="catorigin" value="'.$_REQUEST['catorigin'].'">';
+			print '<input type="hidden" name="catorigin" value="'.GETPOST('catorigin').'">';
 		}
 		print '<input type="hidden" name="nom" value="'.dol_escape_htmltag($nom).'">';
 
@@ -235,7 +235,7 @@ if ($user->rights->categorie->creer)
 
 		// Parent category
 		print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
-		print $html->select_all_categories($_GET['type'],$_REQUEST['catorigin']);
+		print $html->select_all_categories($_GET['type'],GETPOST('catorigin'));
 		print '</td></tr>';
 
 		print '</table>';

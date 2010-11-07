@@ -37,14 +37,14 @@ if (! $user->rights->categorie->lire)
 
 $mesg = '';
 
-if ($_REQUEST['id'] == "")
+if (GETPOST('id') == "")
 {
 	dol_print_error('','Missing parameter id');
 	exit();
 }
 
 $c = new Categorie($db);
-$result=$c->fetch($_REQUEST['id']);
+$result=$c->fetch(GETPOST('id'));
 if ($result <= 0)
 {
 	dol_print_error($db,$c->error);
