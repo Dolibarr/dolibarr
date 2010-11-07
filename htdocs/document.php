@@ -101,6 +101,8 @@ $original_file = str_replace("../","/", $original_file);
 // find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");
 
+// Security check
+if (empty($modulepart)) accessforbidden('Bad value for modulepart');
 $accessallowed=0;
 $sqlprotectagainstexternals='';
 if ($modulepart)

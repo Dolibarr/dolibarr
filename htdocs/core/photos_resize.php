@@ -45,10 +45,26 @@ if (isset($_GET["id"]))
 }
 $original_file = isset($_REQUEST["file"])?urldecode($_REQUEST["file"]):'';
 
+
 // Security check
-if ($modulepart=='produit|service') $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
-else accessforbidden('Bad value for modulepart');
-if ($modulepart=='produit|service' && (! $user->rights->produit->lire && ! $user->rights->service->lire)) accessforbidden();
+if (empty($modulepart)) accessforbidden('Bad value for modulepart');
+$accessallowed=0;
+if ($modulepart)
+{
+	if ($modulepart=='produit|service')
+	{
+		$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
+		if ($modulepart=='produit|service' && (! $user->rights->produit->lire && ! $user->rights->service->lire)) accessforbidden();
+		$accessallowed=1;
+	}
+}
+
+// Security:
+// Limit access if permissions are wrong
+if (! $accessallowed)
+{
+	accessforbidden();
+}
 
 
 

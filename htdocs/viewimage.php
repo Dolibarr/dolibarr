@@ -60,6 +60,8 @@ else $type=dol_mimetype($original_file);
 // Suppression de la chaine de caractere ../ dans $original_file
 $original_file = str_replace("../","/", $original_file);
 
+// Security check
+if (empty($modulepart)) accessforbidden('Bad value for modulepart');
 $accessallowed=0;
 if ($modulepart)
 {

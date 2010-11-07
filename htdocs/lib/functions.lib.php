@@ -1568,7 +1568,7 @@ function info_admin($texte,$infoonimgalt=0)
  *	\param      feature2		Feature to check (second level of permission)
  *  \param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
  *  \param      dbt_select      Field name for select if not rowid. (optionnal)
- * 	\return		int				1
+ * 	@return		int				Always 1, die process if not allowed
  */
 function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
 {
@@ -1890,10 +1890,10 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 
 
 /**
- *	\brief      Affiche message erreur de type acces interdit et arrete le programme
- *	\param		message			Force error message
- *	\param		printheader		Affiche avant le header
- *	\remarks    L'appel a cette fonction termine le code.
+ *	Affiche message erreur de type acces interdit et arrete le programme
+ *	L'appel a cette fonction termine le code.
+ *	@param		message			Force error message
+ *	@param		printheader		Affiche avant le header
  */
 function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymessage=0)
 {

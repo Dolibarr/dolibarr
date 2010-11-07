@@ -2473,15 +2473,15 @@ class Product extends CommonObject
 
 
 	/**
-	 *    	\brief      Show photos of a product (nbmax maximum)
-	 *    	\param      sdir        	Directory to scan
-	 *    	\param      size        	0=original size, 1 use thumbnail if possible
-	 *    	\param      nbmax       	Nombre maximum de photos (0=pas de max)
-	 *    	\param      nbbyrow     	Nombre vignettes par ligne (si mode vignette)
-	 * 		\param		showfilename	1=Show filename
-	 * 		\param		showaction		1=Show icon with action links (resize, delete)
-	 * 		\param		maxheight		Max height of image when size=1
-	 *    	\return     string			Html code to show photo. Number of photos shown is saved in this->nbphoto
+	 *    	Show photos of a product (nbmax maximum)
+	 *    	@param      sdir        	Directory to scan
+	 *    	@param      size        	0=original size, 1 use thumbnail if possible
+	 *    	@param      nbmax       	Nombre maximum de photos (0=pas de max)
+	 *    	@param      nbbyrow     	Nombre vignettes par ligne (si mode vignette)
+	 * 		@param		showfilename	1=Show filename
+	 * 		@param		showaction		1=Show icon with action links (resize, delete)
+	 * 		@param		maxheight		Max height of image when size=1
+	 *    	@return     string			Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
 	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxheight=120)
 	{
@@ -2560,7 +2560,7 @@ class Product extends CommonObject
 							if ($user->rights->produit->creer || $user->rights->service->creer)
 							{
 								// Link to resize
-			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
 			               		// Link to delete
 								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
@@ -2583,7 +2583,7 @@ class Product extends CommonObject
 							if ($user->rights->produit->creer || $user->rights->service->creer)
 							{
 								// Link to resize
-			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
 			               		// Link to delete
 			               		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
