@@ -81,7 +81,7 @@ print $langs->trans("URL").'</td><td>';
 print '<input size="48" type="text" name="url" value="'.$conf->global->CLICKTODIAL_URL.'">';
 print '</td><td>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
-print $langs->trans("Example").': http://myphoneserver/mypage?login=%3$s&password=%4$s&caller=%2$s&called=%1$s';
+print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__';
 print '</td></tr>';
 
 print '<tr><td colspan="3" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';

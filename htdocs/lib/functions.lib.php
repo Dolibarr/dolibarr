@@ -825,14 +825,14 @@ function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$s
 }
 
 /**
- * 	\brief 		Format phone numbers according to country
- * 	\param 		phone 		Phone number to format
- * 	\param 		country 	Country to use for formatting
- * 	\param 		cid 		Id of contact if known
- * 	\param 		socid 		Id of third party if known
- * 	\param 		addlink		0=no link to create action
- * 	\param 		separ 		separation between numbers for a better visibility example : xx.xx.xx.xx.xx
- * 	\return 	string 		Formated phone number
+ * 	Format phone numbers according to country
+ * 	@param 		phone 		Phone number to format
+ * 	@param 		country 	Country to use for formatting
+ * 	@param 		cid 		Id of contact if known
+ * 	@param 		socid 		Id of third party if known
+ * 	@param 		addlink		0=no link to create action
+ * 	@param 		separ 		separation between numbers for a better visibility example : xx.xx.xx.xx.xx
+ * 	@return 	string 		Formated phone number
  */
 function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ="&nbsp;")
 {
@@ -875,8 +875,18 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 
 			if (empty($conf->global->CLICKTODIAL_URL)) $urlmask='ErrorClickToDialModuleNotConfigured';
 			else $urlmask=$conf->global->CLICKTODIAL_URL;
+			// This line is for backward compatibility
 			$url = sprintf($urlmask, urlencode($phone), urlencode($user->clicktodial_poste), urlencode($user->clicktodial_login), urlencode($user->clicktodial_password));
-			$newphone='<a href="'.$url.'">'.$newphone.'</a>';
+			// Thoose lines are for substitution
+			$substitarray=array('__PHONEFROM__'=>$user->clicktodial_poste,
+			               		'__PHONETO__'=>$phone,
+						   		'__LOGIN__'=>$user->clicktodial_login,
+			               		'__PASS__'=>$user->clicktodial_password);
+			$url = make_substitutions($url, $substitarray, $langs);
+			$newphonesav=$newphone;
+			$newphone ='<a href="'.$url.'"';
+			if (! empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) $newphone.=' target="_blank"';
+			$newphone.='>'.$newphonesav.'</a>';
 		}
 
 		//if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
@@ -893,10 +903,10 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 }
 
 /**
- * 	\brief 		Return an IP formated to be shown on screen
- * 	\param 		ip			IP
- * 	\param		mode		1=return only country/flag,2=return only IP
- * 	\return 	string 		Formated IP, with country if GeoIP module is enabled
+ * 	Return an IP formated to be shown on screen
+ * 	@param 		ip			IP
+ * 	@param		mode		1=return only country/flag,2=return only IP
+ * 	@return 	string 		Formated IP, with country if GeoIP module is enabled
  */
 function dol_print_ip($ip,$mode=0)
 {

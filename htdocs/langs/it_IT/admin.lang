@@ -695,7 +695,7 @@ TemplatePDFInterventions						   =Modelli per i documenti di intervento
 WatermarkOnDraftInterventionCards					   =Filigrana su carta di documenti d'intervento (nessuna se vuoto)
 ##### Clicktodial #####							   
 ClickToDialSetup							   =Impostazioni modulo ClickToDial (clic per telefonare)
-ClickToDialUrlDesc							   =Url richiamata quando si clicca sull'icona del telefono. Nell'url, potetete utilizzare i codici <br><b>%%1$s</b> che verrà sostituito con il numero telefonico a cui collegarsi, <br><b>%%2$s</b> che verrà sostituito con il numero chiamante (il vostro), <br><b>%%3$s</b> che verrà sostituito con il nome utente usato per il servizio e <br><b>%%4$s</b> che verrà sostituito con la password del servizio clicktodial.
+ClickToDialUrlDesc							   =Url richiamata quando si clicca sull'icona del telefono. Nell'url, potetete utilizzare i codici <br><b>__PHONETO__</b> che verrà sostituito con il numero telefonico a cui collegarsi, <br><b>__PHONEFROM__</b> che verrà sostituito con il numero chiamante (il vostro), <br><b>__LOGIN__</b> che verrà sostituito con il nome utente usato per il servizio e <br><b>__PASS__</b> che verrà sostituito con la password del servizio clicktodial.
 ##### Bookmark4u #####							   
 Bookmark4uSetup								   =Impostazioni modulo Bookmark4u
 ##### Interventions #####						   

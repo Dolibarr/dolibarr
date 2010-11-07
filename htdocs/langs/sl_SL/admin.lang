@@ -869,7 +869,7 @@ TemplatePDFInterventions=Modeli obrazcev intervencijskih kartic
 WatermarkOnDraftInterventionCards=Vodni tisk na dokumentih intervencijskih kartic (brez, če je prazno)
 ##### Clicktodial #####
 ClickToDialSetup=Nastavitve modula za klicanje s klikom
-ClickToDialUrlDesc=Po kliku na piktogram se izvede klic na Url.  Na url lahko uporabite ikono<br><b>%%1$s</b> ki predstavlja telefon klicanega<br><b>%%2$s</b> ki predstavlja telefon klicatelja (vaša številka)<br><b>%%3$s</b> ki predstavlja vašo prijavo na klicanje s klikom (določena z vašo uporabniško kodo)<br><b>%%4$s</b> ki predstavlja vaše geslo za klicanje s klikom (določena z vašo uporabniško kodo).
+ClickToDialUrlDesc=Po kliku na piktogram se izvede klic na Url.  Na url lahko uporabite ikono<br><b>__PHONETO__</b> ki predstavlja telefon klicanega<br><b>__PHONEFROM__</b> ki predstavlja telefon klicatelja (vaša številka)<br><b>__LOGIN__</b> ki predstavlja vašo prijavo na klicanje s klikom (določena z vašo uporabniško kodo)<br><b>__PASS__</b> ki predstavlja vaše geslo za klicanje s klikom (določena z vašo uporabniško kodo).
 ##### Bookmark4u #####
 Bookmark4uSetup=Nastavitve modula vaših zaznamkov
 ##### Interventions #####

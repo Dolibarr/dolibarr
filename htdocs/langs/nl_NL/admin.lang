@@ -860,7 +860,7 @@ TemplatePDFInterventions=Interventie kaart documenten modellen
 WatermarkOnDraftInterventionCards=Watermerk op voorbeeld Interventie kaarten (elke als leeg)
 ##### Clicktodial #####
 ClickToDialSetup=Click to Dial module setup
-ClickToDialUrlDesc=Url aangeroepen wanneer een klik op een telefoon picto wordt gedaan.  Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacÃ© par le tÃ©lÃ©phone de l'appelÃ©<br><b>%%2$s</b> qui sera remplacÃ© par le tÃ©lÃ©phone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplacÃ© par votre login clicktodial (dÃ©fini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacÃ© par votre mot de passe clicktodial (dÃ©fini sur votre fiche utilisateur).
+ClickToDialUrlDesc=Url aangeroepen wanneer een klik op een telefoon picto wordt gedaan.  Dans l'url, vous pouvez utiliser les balises<br><b>__PHONETO__</b> qui sera remplacÃ© par le tÃ©lÃ©phone de l'appelÃ©<br><b>__PHONEFROM__</b> qui sera remplacÃ© par le tÃ©lÃ©phone de l'appelant (le votre)<br><b>__LOGIN__</b> qui sera remplacÃ© par votre login clicktodial (dÃ©fini sur votre fiche utilisateur)<br><b>__PASS__</b> qui sera remplacÃ© par votre mot de passe clicktodial (dÃ©fini sur votre fiche utilisateur).
 ##### Bookmark4u #####
 Bookmark4uSetup=Bookmark4u module setup
 ##### Interventions #####

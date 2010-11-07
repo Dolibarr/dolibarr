@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.0 compared to 2.9 *****
 
 For users:
+- New: Add a Paypal module
 - New: Can choose third party to use in point of sale module during logon.
 - New: A lot of enhancements into ECM module:
        Directories can contains special characters,
@@ -38,6 +39,7 @@ For users:
 - New: task #10100 : Add button to create invoice from a subscription
 - New: Reorganize tabs on third parties.
 - New: Option MAIN_INVERT_SENDER_RECIPIENT is available in einstein pdf template.
+- New: Easier way to define url for clicktodial module.
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Better Postgresql compatibility.
