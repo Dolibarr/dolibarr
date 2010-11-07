@@ -57,7 +57,8 @@ top_httphead();
 dol_syslog(join(',',$_GET));
 
 $match = preg_grep('/(idprod[0-9]+)/',array_keys($_GET));
-$idprod = $match[6]; // 6eme valeur du GET		// FIXME Ne pas avoir de code qui dépend d'une position mais d'une valeur de clé.
+sort($match);
+$idprod = $match[0];
 //print $_GET[$idprod];
 
 if (! isset($_GET['idprod']) && ! isset($_GET[$idprod]) && ! isset($_GET['idprodfournprice'])) return;
