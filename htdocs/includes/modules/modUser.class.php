@@ -92,7 +92,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'lire';
-		
+
 		$r++;
 		$this->rights[$r][0] = 252;
 		$this->rights[$r][1] = 'Consulter les permissions des autres utilisateurs';
@@ -100,7 +100,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'readperms';
-		
+
 		$r++;
 		$this->rights[$r][0] = 253;
 		$this->rights[$r][1] = 'Creer/modifier les autres utilisateurs et leurs permissions';
@@ -108,7 +108,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'creer';
-		
+
 		$r++;
 		$this->rights[$r][0] = 254;
 		$this->rights[$r][1] = 'Modifier le mot de passe des autres utilisateurs';
@@ -124,7 +124,8 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'supprimer';
-		
+
+		/* Removed useless permission
 		$r++;
 		$this->rights[$r][0] = 256;
 		$this->rights[$r][1] = 'Consulter ses propres permissions';
@@ -132,7 +133,8 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'self';
 		$this->rights[$r][5] = 'readperms';
-		
+		*/
+
 		$r++;
 		$this->rights[$r][0] = 257;
 		$this->rights[$r][1] = 'Creer/modifier ses propres infos utilisateur';
@@ -148,7 +150,8 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'self';
 		$this->rights[$r][5] = 'password';
-		
+
+		/* Removed useless permission
 		$r++;
 		$this->rights[$r][0] = 259;
 		$this->rights[$r][1] = 'Modifier ses propres permissions';
@@ -156,7 +159,8 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'self';
 		$this->rights[$r][5] = 'writeperms';
-		
+		*/
+
 		$r++;
 		$this->rights[$r][0] = 351;
 		$this->rights[$r][1] = 'Consulter les groupes';
@@ -164,7 +168,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'group';
 		$this->rights[$r][5] = 'read';
-		
+
 		$r++;
 		$this->rights[$r][0] = 352;
 		$this->rights[$r][1] = 'Consulter les permissions des groupes';
@@ -172,7 +176,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'group';
 		$this->rights[$r][5] = 'readperms';
-		
+
 		$r++;
 		$this->rights[$r][0] = 353;
 		$this->rights[$r][1] = 'Creer/modifier les groupes et leurs permissions';
@@ -180,7 +184,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'group';
 		$this->rights[$r][5] = 'write';
-		
+
 		$r++;
 		$this->rights[$r][0] = 354;
 		$this->rights[$r][1] = 'Supprimer ou desactiver les groupes';

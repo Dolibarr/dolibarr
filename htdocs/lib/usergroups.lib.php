@@ -27,10 +27,10 @@
 function user_prepare_head($object)
 {
 	global $langs, $conf, $user;
-	
+
 	$langs->load("users");
-	
-	$canreadperms=($user->admin || ($user->id != $object->id && $user->rights->user->user->readperms) || ($user->id == $object->id && $user->rights->user->self->readperms));
+
+	$canreadperms=($user->admin || ($user->id != $object->id && $user->rights->user->user->readperms) || ($user->id == $object->id));
 
 	$h = 0;
 	$head = array();
@@ -48,7 +48,7 @@ function user_prepare_head($object)
 	    $head[$h][2] = 'ldap';
 	    $h++;
 	}
-	
+
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
@@ -76,13 +76,13 @@ function user_prepare_head($object)
     	$head[$h][1] = $langs->trans("Note");
     	$head[$h][2] = 'note';
     	$h++;
-    	
+
     	$head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
     	$head[$h][1] = $langs->trans("Info");
     	$head[$h][2] = 'info';
     	$h++;
     }
-    
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
@@ -107,7 +107,7 @@ function user_prepare_head($object)
 function group_prepare_head($object)
 {
 	global $langs, $conf, $user;
-	
+
 	$canreadperms=($user->admin || $user->rights->user->group->readperms);
 
 	$h = 0;
@@ -126,7 +126,7 @@ function group_prepare_head($object)
 	    $head[$h][2] = 'ldap';
 	    $h++;
 	}
-	
+
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$object->id;
@@ -134,7 +134,7 @@ function group_prepare_head($object)
 		$head[$h][2] = 'rights';
 		$h++;
 	}
-    
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');

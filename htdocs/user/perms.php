@@ -43,7 +43,7 @@ $canreaduser=($user->admin || ($user->rights->user->user->lire && $user->rights-
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 
 // Defini si peux modifier ses propres permissions
-$caneditselfperms=($user->admin || ($user->id == $_GET["id"] && $user->rights->user->self->writeperms));
+//$caneditselfperms=($user->admin || ($user->id == $_GET["id"]));
 
 // Security check
 $socid=0;
