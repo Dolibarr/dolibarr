@@ -193,7 +193,7 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
     if (preg_match('/\.(cpp)$/i',$file))                    { $mime='text/plain'; $imgmime='text.png'; $srclang='cpp'; }
     if (preg_match('/\.(h)$/i',$file))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='h'; }
     if (preg_match('/\.(java|jsp)$/i',$file))               { $mime='text/plain'; $imgmime='text.png'; $srclang='java'; }
-	if (preg_match('/\.php$/i',$file))                      { $mime='text/plain'; $imgmime='php.png'; $srclang='php'; }
+	if (preg_match('/\.(php|php3)$/i',$file))                      { $mime='text/plain'; $imgmime='php.png'; $srclang='php'; }
 	if (preg_match('/\.(pl|pm)$/i',$file))                  { $mime='text/plain'; $imgmime='pl.png'; $srclang='perl'; }
 	if (preg_match('/\.sql$/i',$file))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='sql'; }
 	if (preg_match('/\.js$/i',$file))                       { $mime='text/x-javascript'; $imgmime='jscript.png'; $srclang='js'; }
