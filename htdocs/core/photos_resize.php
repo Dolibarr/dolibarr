@@ -27,9 +27,6 @@
 //if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
 //if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
-if (! defined("DISABLE_PROTOTYPE"))     define("DISABLE_PROTOTYPE",'1');     // If this page is public (can be called outside logged session)
-if (! defined("DISABLE_SCRIPTACULOUS")) define("DISABLE_SCRIPTACULOUS",'1'); // If this page is public (can be called outside logged session)
-if (! defined("DISABLE_PWC"))           define("DISABLE_PWC",'1');           // If this page is public (can be called outside logged session)
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");

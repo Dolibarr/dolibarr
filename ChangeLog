@@ -58,6 +58,7 @@ For developers:
 - New: Add jquery by default.
 - New: Removed PWC libraries.
 - New: Removed Scriptaculous libraries.
+- New: Removed Prototype libraries.
 - New: Add first Selenium GUI tests.
 - New: Enhance a lot of internal function to build external modules
        more easily.

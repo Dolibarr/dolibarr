@@ -25,10 +25,6 @@
  *	\version    $Id$
  */
 
-define('DISABLE_PROTOTYPE',1);
-define('DISABLE_SCRIPTACULOUS',1);
-define('DISABLE_PWC',1);
-
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");

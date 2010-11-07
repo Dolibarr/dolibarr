@@ -18,7 +18,6 @@
     <directory>../../htdocs/includes/odtphp/</directory>
     <directory>../../htdocs/includes/php_excelreader/</directory>
     <directory>../../htdocs/includes/php_writeexcel/</directory>
-    <directory>../../htdocs/includes/scriptaculous/</directory>
     <directory>../../htdocs/includes/smarty/</directory>
     <directory>../../htdocs/includes/smtps/</directory>
     <directory>../../htdocs/includes/tcpdf/</directory>
