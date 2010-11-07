@@ -81,6 +81,7 @@ ProjectsDedicatedToThisThirdParty=Projects dedicated to this third party
 NoTasks=No tasks for this project
 LinkedToAnotherCompany=Linked to other third party
 TaskIsNotAffectedToYou=Task not allocated to you
+ErrorTimeSpentIsEmpty=Time spent is empty
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leader
 TypeContact_project_external_PROJECTLEADER=Project leader

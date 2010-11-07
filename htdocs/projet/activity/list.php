@@ -75,7 +75,7 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
  		}
 	}
 	
-	if ($timespent_duration > O)
+	if ($timespent_duration > 0)
 	{
 		$task->fetch($id);
 		$task->timespent_duration = $timespent_duration;
