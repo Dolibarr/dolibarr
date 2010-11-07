@@ -65,21 +65,21 @@ if ($modulepart)
 {
 	// Check permissions and define directory
 
-	// Wrapping pour les photo utilisateurs
+	// Wrapping for company logo
 	if ($modulepart == 'companylogo')
 	{
 		$accessallowed=1;
 		$original_file=$conf->mycompany->dir_output.'/logos/'.$original_file;
 	}
 
-	// Wrapping pour les photos utilisateurs
+	// Wrapping for users photos
 	elseif ($modulepart == 'userphoto')
 	{
 		$accessallowed=1;
 		$original_file=$conf->user->dir_output.'/'.$original_file;
 	}
 
-	// Wrapping pour les photos adherents
+	// Wrapping for members photos
 	elseif ($modulepart == 'memberphoto')
 	{
 		$accessallowed=1;
@@ -230,27 +230,6 @@ if ($modulepart)
 		$original_file=$conf->prelevement->dir_output.'/receipts/'.$original_file;
 	}
 
-	// Wrapping pour les graph bank
-	elseif ($modulepart == 'bank')
-	{
-		$accessallowed=1;
-		$original_file=$conf->banque->dir_temp.'/'.$original_file;
-	}
-
-	// Wrapping pour les images wysiwyg
-	elseif ($modulepart == 'fckeditor')
-	{
-		$accessallowed=1;
-		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
-	}
-
-	// Wrapping pour les images wysiwyg mailing
-	elseif ($modulepart == 'mailing')
-	{
-		$accessallowed=1;
-		$original_file=$conf->mailing->dir_output.'/'.$original_file;
-	}
-
 	// Wrapping pour les graph energie
 	elseif ($modulepart == 'graph_stock')
 	{
@@ -283,25 +262,39 @@ if ($modulepart)
 	}
 
     // Wrapping pour les icones de background des mailings
-    elseif ($modulepart == 'phpsane')
-    {
-        $accessallowed=1;
-        $original_file=$conf->phpsane->dir_temp.'/'.$user->id.'/'.$original_file;
-    }
-
-    // Wrapping pour les icones de background des mailings
 	elseif ($modulepart == 'iconmailing')
 	{
 		$accessallowed=1;
 		$original_file=$conf->mailing->dir_temp.'/'.$original_file;
 	}
 
-	// Wrapping generique (allows any module to open a file if file is in directory
-	// called DOL_DATA_ROOT/modulepart).
+	// GENERIC Wrapping
+	// If modulepart=module_user_temp	Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp/iduser
+	// If modulepart=module_temp		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp
+	// If modulepart=module				Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/iduser
+	// If modulepart=module_user		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart
 	else
 	{
-		$accessallowed=1;
-		$original_file=DOL_DATA_ROOT.'/'.$modulepart.'/'.$original_file;
+		if (preg_match('/^([a-z]+)_user_temp$/i',$modulepart,$reg))
+		{
+			if ($user->rights->$reg[1]->lire || $user->rights->$reg[1]->read) $accessallowed=1;
+		   	$original_file=$conf->$reg[1]->dir_temp.'/'.$user->id.'/'.$original_file;
+    	}
+		else if (preg_match('/^([a-z]+)_temp$/i',$modulepart,$reg))
+		{
+			if ($user->rights->$reg[1]->lire || $user->rights->$reg[1]->read) $accessallowed=1;
+		   	$original_file=$conf->$reg[1]->dir_temp.'/'.$original_file;
+		}
+		else if (preg_match('/^([a-z]+)_user$/i',$modulepart,$reg))
+		{
+			if ($user->rights->$reg[1]->lire || $user->rights->$reg[1]->read) $accessallowed=1;
+		   	$original_file=$conf->$reg[1]->dir_output.'/'.$user->id.'/'.$original_file;
+    	}
+    	else
+		{
+			if ($user->rights->$reg[1]->lire || $user->rights->$reg[1]->read) $accessallowed=1;
+			$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
+		}
 	}
 }
 

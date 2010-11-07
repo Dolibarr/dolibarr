@@ -819,11 +819,11 @@ if ($mode == 'standard')
 
 	print '<tr><td align="center">';
 	$file = "movement".$account."-".$year.$month.".png";
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='.$file.'" alt="" title="">';
 
 	print '<tr><td align="center">';
 	$file = "balance".$account."-".$year.$month.".png";
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='.$file.'" alt="" title="">';
 	print '</td></tr>';
 
 	// For year
@@ -833,12 +833,12 @@ if ($mode == 'standard')
 
 	print '<tr><td align="center">';
 	$file = "movement".$account."-".$year.".png";
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='.$file.'" alt="" title="">';
 	print '</td></tr>';
 
 	print '<tr><td align="center">';
 	$file = "balance".$account."-".$year.".png";
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='.$file.'" alt="" title="">';
 	print '</td></tr>';
 }
 
@@ -846,7 +846,7 @@ if ($mode == 'showalltime')
 {
 	print '<tr><td align="center">';
 	$file = "balance".$account.".png";
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank_temp&file='.$file.'" alt="" title="">';
 	print '</td></tr>';
 }
 
