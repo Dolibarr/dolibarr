@@ -89,15 +89,20 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 				if($matches[2]=='min') $timespent_duration += $time*60;
 			}
  		}
-
-		if(intval($time)<0) $mesg='<div class="error">'.$langs->trans("ErrorBadValue").'</div>';
 	}
 	
-	$task->fetch($id);
-	$task->timespent_duration = $timespent_duration;
-	$task->timespent_fk_user = $user->id;
-	$task->timespent_date = dol_mktime(12,0,0,$_POST["{$id}month"],$_POST["{$id}day"],$_POST["{$id}year"]);	
-	$task->addTimeSpent($user);
+	if ($timespent_duration > O)
+	{
+		$task->fetch($id);
+		$task->timespent_duration = $timespent_duration;
+		$task->timespent_fk_user = $user->id;
+		$task->timespent_date = dol_mktime(12,0,0,$_POST["{$id}month"],$_POST["{$id}day"],$_POST["{$id}year"]);
+		$task->addTimeSpent($user);
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorBadValue").'</div>';
+	}
  }
 
 /*
