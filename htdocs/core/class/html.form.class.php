@@ -786,7 +786,7 @@ class Form
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
         $sql.= " ORDER BY u.name ASC";
 
-        dol_syslog("Form::select_users sql=".$sql);
+        dol_syslog("Form::select_dolusers sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -3224,6 +3224,76 @@ class Form
 
         return $ret;
     }
+    
+    /**
+     *	Return select list of groups
+     *  @param      selected        Id group preselected
+     *  @param      htmlname        Field name in form
+     *  @param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *  @param      exclude         Array list of groups id to exclude
+     * 	@param		disabled		If select list must be disabled
+     *  @param      include         Array list of groups id to include
+     * 	@param		enableonly		Array list of groups id to be enabled. All other must be disabled
+     */
+    function select_dolgroups($selected='',$htmlname='groupid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
+    {
+        global $conf;
+
+        // Permettre l'exclusion de groupes
+        if (is_array($exclude))	$excludeGroups = implode("','",$exclude);
+        // Permettre l'inclusion de groupes
+        if (is_array($include))	$includeGroups = implode("','",$include);
+
+        $out='';
+
+        // On recherche les groupes
+        $sql = "SELECT ug.rowid, ug.nom ";
+		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+		$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
+		if (is_array($exclude) && $excludeGroups) $sql.= " AND ug.rowid NOT IN ('".$excludeGroups."')";
+        if (is_array($include) && $includeGroups) $sql.= " AND ug.rowid IN ('".$includeGroups."')";
+		$sql.= " ORDER BY ug.nom ASC";
+
+        dol_syslog("Form::select_dolgroups sql=".$sql);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
+            if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            if ($num)
+            {
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $disableline=0;
+                    if (is_array($enableonly) && sizeof($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
+
+                    $out.= '<option value="'.$obj->rowid.'"';
+                    if ($disableline) $out.= ' disabled="true"';
+                    if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
+                    {
+                        $out.= ' selected="selected"';
+                    }
+                    $out.= '>';
+                    
+                    $out.= $obj->nom;
+                    
+                    $out.= '</option>';
+                    $i++;
+                }
+            }
+            $out.= '</select>';
+        }
+        else
+        {
+            dol_print_error($this->db);
+        }
+
+        return $out;
+    }
+    
 }
 
 ?>

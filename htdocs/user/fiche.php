@@ -1214,58 +1214,6 @@ else
 					dol_print_error($db);
 				}
 				
-				$idList = implode(",",$grouplistid);
-				
-				if (!empty($idList))
-				{
-					$sql = "SELECT ug.rowid, ug.nom ";
-					$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-					$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
-					$sql.= " AND ug.rowid NOT IN (".$idList.")";
-					$sql.= " ORDER BY ug.nom";
-					
-					$resql = $db->query($sql);
-					if ($resql)
-					{
-						$num = $db->num_rows($resql);
-						$i = 0;
-						
-						while ($i < $num)
-						{
-							$obj = $db->fetch_object($resql);
-							$uss[$obj->rowid] = $obj->nom;
-							$i++;
-						}
-					}
-					else {
-						dol_print_error($db);
-					}
-				}
-				else
-				{
-					$sql = "SELECT ug.rowid, ug.nom ";
-					$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-					$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
-					$sql.= " ORDER BY ug.nom";
-					
-					$resql = $db->query($sql);
-					if ($resql)
-					{
-						$num = $db->num_rows($resql);
-						$i = 0;
-						
-						while ($i < $num)
-						{
-							$obj = $db->fetch_object($resql);
-							
-							$uss[$obj->rowid] = $obj->nom;
-							$i++;
-						}
-					}
-					else {
-						dol_print_error($db);
-					}
-				}
 				$db->free($resql);
 				
 				if ($caneditgroup)
@@ -1277,7 +1225,7 @@ else
 					print '<table class="noborder" width="100%">'."\n";
 					print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
 					print '<td>';
-					print $form->selectarray("group",$uss);
+					print $form->select_dolgroups('','group',0,$grouplistid);
 					print ' &nbsp; ';
 					print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 					print '</td></tr>'."\n";
