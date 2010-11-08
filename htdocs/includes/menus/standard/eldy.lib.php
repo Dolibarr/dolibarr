@@ -658,8 +658,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             $newmenu->add(DOL_URL_ROOT."/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"));
             if ($leftmenu=="users") $newmenu->add(DOL_URL_ROOT."/user/index.php", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
             if ($leftmenu=="users") $newmenu->add(DOL_URL_ROOT."/user/fiche.php?action=create", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin);
-            if ($leftmenu=="users") $newmenu->add(DOL_URL_ROOT."/user/group/index.php", $langs->trans("Groups"), 1, $user->rights->user->group->read || $user->admin);
-            if ($leftmenu=="users") $newmenu->add(DOL_URL_ROOT."/user/group/fiche.php?action=create", $langs->trans("NewGroup"), 2, $user->rights->user->group->write || $user->admin);
+            if ($leftmenu=="users") $newmenu->add(DOL_URL_ROOT."/user/group/index.php", $langs->trans("Groups"), 1, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin);
+            if ($leftmenu=="users") $newmenu->add(DOL_URL_ROOT."/user/group/fiche.php?action=create", $langs->trans("NewGroup"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin);
         }
 
 

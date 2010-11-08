@@ -33,6 +33,12 @@ if (! $user->rights->user->user->lire && !$user->admin)
 
 $langs->load("users");
 
+$canreadperms=true;
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+{
+	$canreadperms=($user->admin || $user->rights->user->group_advance->read);
+}
+
 // Security check (for external users)
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -66,7 +72,7 @@ print "</table><br>\n";
 print '</form>';
 
 // Search Group
-if ($user->admin || $user->rights->user->group->read)
+if ($canreadperms)
 {
 	$var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
@@ -155,7 +161,7 @@ else
 /*
  * Derniers groupes crees
  */
-if ($user->admin || $user->rights->user->group->read)
+if ($canreadperms)
 {
 	$max=5;
 	

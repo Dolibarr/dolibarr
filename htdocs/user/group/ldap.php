@@ -35,6 +35,12 @@ $langs->load("companies");
 $langs->load("ldap");
 $langs->load("users");
 
+$canreadperms=true;
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+{
+	$canreadperms=($user->admin || $user->rights->user->group_advance->read);
+}
+
 // Protection quand utilisateur externe
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
 
@@ -101,7 +107,7 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
 print '<td colspan="2">';
-print $form->showrefnav($fgroup,'id','',$user->rights->user->group->lire || $user->admin);
+print $form->showrefnav($fgroup,'id','',$canreadperms);
 print '</td>';
 print '</tr>';
 
