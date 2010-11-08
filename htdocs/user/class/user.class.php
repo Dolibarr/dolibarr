@@ -803,7 +803,7 @@ class User extends CommonObject
 	 */
 	function create_from_contact($contact,$login='')
 	{
-		global $user,$langs;
+		global $conf,$user,$langs;
 
 		// Positionne parametres
 		$this->admin = 0;
@@ -829,6 +829,13 @@ class User extends CommonObject
 			dol_syslog("User::create_from_contact sql=".$sql, LOG_DEBUG);
 			if ($resql)
 			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface = new Interfaces($this->db);
+				$result = $interface->run_triggers('USER_CREATE_FROM_CONTACT',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+				
 				$this->db->commit();
 				return $this->id;
 			}
