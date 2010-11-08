@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,6 +101,19 @@ if ($_GET["action"] == 'activate_captcha')
 else if ($_GET["action"] == 'disable_captcha')
 {
 	dolibarr_del_const($db, "MAIN_SECURITY_ENABLECAPTCHA",$conf->entity);
+	Header("Location: security_other.php");
+	exit;
+}
+
+if ($_GET["action"] == 'activate_advancedperms')
+{
+	dolibarr_set_const($db, "MAIN_USE_ADVANCED_PERMS", '1','chaine',0,'',$conf->entity);
+	Header("Location: security_other.php");
+	exit;
+}
+else if ($_GET["action"] == 'disable_advancedperms')
+{
+	dolibarr_del_const($db, "MAIN_USE_ADVANCED_PERMS",$conf->entity);
 	Header("Location: security_other.php");
 	exit;
 }
@@ -212,6 +226,24 @@ else
 	$html = new Form($db);
 	$desc = $html->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
 	print $desc;
+}
+print "</td>";
+
+print "</td>";
+print '</tr>';
+
+// Enable advanced perms
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
+print '<td align="center">';
+if ($conf->global->MAIN_USE_ADVANCED_PERMS == 0)
+{
+	print '<a href="security_other.php?action=activate_advancedperms">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+}
+if($conf->global->MAIN_USE_ADVANCED_PERMS == 1)
+{
+	print '<a href="security_other.php?action=disable_advancedperms">'.img_picto($langs->trans("Enabled"),'on').'</a>';
 }
 print "</td>";
 

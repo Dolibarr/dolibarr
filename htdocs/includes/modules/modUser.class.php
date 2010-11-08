@@ -125,7 +125,6 @@ class modUser extends DolibarrModules
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'supprimer';
 
-		/* Removed useless permission
 		$r++;
 		$this->rights[$r][0] = 256;
 		$this->rights[$r][1] = 'Consulter ses propres permissions';
@@ -133,7 +132,6 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'self_advance';
 		$this->rights[$r][5] = 'readperms';
-		*/
 
 		$r++;
 		$this->rights[$r][0] = 257;
@@ -151,7 +149,6 @@ class modUser extends DolibarrModules
 		$this->rights[$r][4] = 'self';
 		$this->rights[$r][5] = 'password';
 
-		/* Removed useless permission
 		$r++;
 		$this->rights[$r][0] = 259;
 		$this->rights[$r][1] = 'Modifier ses propres permissions';
@@ -159,7 +156,6 @@ class modUser extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'self_advance';
 		$this->rights[$r][5] = 'writeperms';
-		*/
 
 		$r++;
 		$this->rights[$r][0] = 351;

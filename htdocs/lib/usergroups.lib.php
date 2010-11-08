@@ -30,7 +30,11 @@ function user_prepare_head($object)
 
 	$langs->load("users");
 
-	$canreadperms=($user->admin || ($user->id != $object->id && $user->rights->user->user->readperms) || ($user->id == $object->id));
+	$canreadperms=true;
+	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+	{
+		$canreadperms=($user->admin || ($user->id != $object->id && $user->rights->user->user_advance->readperms) || ($user->id == $object->id && $user->rights->user->self_advance->readperms));
+	}
 
 	$h = 0;
 	$head = array();
@@ -108,7 +112,11 @@ function group_prepare_head($object)
 {
 	global $langs, $conf, $user;
 
-	$canreadperms=($user->admin || $user->rights->user->group->readperms);
+	$canreadperms=true;
+	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+	{
+		$canreadperms=($user->admin || $user->rights->user->group_advance->readperms);
+	}
 
 	$h = 0;
 	$head = array();

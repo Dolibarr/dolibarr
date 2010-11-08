@@ -32,6 +32,13 @@ require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 $canreadperms=($user->admin || $user->rights->user->user->lire);
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 $candisableperms=($user->admin || $user->rights->user->user->supprimer);
+// Advanced permissions
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+{
+	$canreadperms=($user->admin || $user->rights->user->group_advance->read);
+	$caneditperms=($user->admin || $user->rights->user->group_advance->write);
+	$candisableperms=($user->admin || $user->rights->user->group_advance->delete);
+}
 
 $langs->load("users");
 $langs->load("other");
@@ -39,13 +46,14 @@ $langs->load("other");
 // Security check
 $result = restrictedArea($user, 'user', $_GET["id"], 'usergroup', 'user');
 
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$action=GETPOST("action");
+$confirm=GETPOST("confirm");
 
 
 /**
  *  Action remove group
  */
-if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes")
+if ($action == 'confirm_delete' && $confirm == "yes")
 {
 	if ($caneditperms)
 	{

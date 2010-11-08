@@ -27,8 +27,10 @@
 
 require("../../main.inc.php");
 
-
-if (! $user->rights->user->group->lire && ! $user->admin) accessforbidden();
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+{
+	if (! $user->rights->user->group_advance->read && ! $user->admin) accessforbidden();
+}
 
 $langs->load("users");
 

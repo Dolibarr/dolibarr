@@ -37,13 +37,16 @@ $module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 if (! isset($_GET["id"]) || empty($_GET["id"])) accessforbidden();
 
 // Defini si peux lire les permissions
-$canreaduser=($user->admin || ($user->rights->user->user->lire && $user->rights->user->user->readperms));
-
+$canreaduser=($user->admin || $user->rights->user->user->lire);
 // Defini si peux modifier les autres utilisateurs et leurs permisssions
 $caneditperms=($user->admin || $user->rights->user->user->creer);
-
-// Defini si peux modifier ses propres permissions
-//$caneditselfperms=($user->admin || ($user->id == $_GET["id"]));
+// Advanced permissions
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+{
+	$canreaduser=($user->admin || ($user->rights->user->user->lire && $user->rights->user->user_advance->readperms));
+	$caneditselfperms=($user->id == $_GET["id"] && $user->rights->user->self_advance->writeperms);
+	$caneditperms = '('.$caneditperms.' || '.$caneditselfperms.')';
+}
 
 // Security check
 $socid=0;
@@ -247,6 +250,7 @@ $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND r.entity = ".$conf->entity;
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
 $sql.= " ORDER BY r.module, r.id";
 
 $result=$db->query($sql);

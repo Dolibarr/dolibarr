@@ -41,8 +41,13 @@ $canadduser=($user->admin || $user->rights->user->user->creer);
 $canreaduser=($user->admin || $user->rights->user->user->lire);
 $canedituser=($user->admin || $user->rights->user->user->creer);
 $candisableuser=($user->admin || $user->rights->user->user->supprimer);
-$canreadgroup=($user->admin || $user->rights->user->group->read);
-$caneditgroup=($user->admin || $user->rights->user->group->write);
+$canreadgroup=true;
+$caneditgroup=true;
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+{
+	$canreadgroup=($user->admin || $user->rights->user->group_advance->read);
+	$caneditgroup=($user->admin || $user->rights->user->group_advance->write);
+}
 // Define value to know what current user can do on properties of edited user
 if ($_GET["id"])
 {

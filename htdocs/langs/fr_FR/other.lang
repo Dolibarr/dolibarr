@@ -146,6 +146,7 @@ YouReceiveMailBecauseOfNotification=Vous recevez ce message car votre email a é
 YouReceiveMailBecauseOfNotification2=L'événement en question est le suivant:
 ThisIsListOfModules=Voici une liste de modules présélectionnés par ce profil de démo (seuls les plus courants sont accessibles dans cette demo). Affinez encore vos préférences et cliquez sur "Démarrer".
 ClickHere=Cliquez ici
+UseAdvancedPerms=Utiliser les droits avancés dans les permissions des modules
 
 ##### Bookmark #####
 Bookmark=Marque-page

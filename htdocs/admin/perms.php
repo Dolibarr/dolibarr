@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,6 +117,7 @@ $sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND entity = ".$conf->entity;
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
 $sql.= " ORDER BY r.module, r.id";
 
 $result = $db->query($sql);

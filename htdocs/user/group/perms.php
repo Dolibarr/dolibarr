@@ -35,12 +35,19 @@ $langs->load("users");
 $module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 
 // Defini si peux lire les permissions
-$canreadperms=($user->admin || ($user->rights->user->group->read && $user->rights->user->group->readperms));
+$canreadperms=($user->admin || $user->rights->user->user->lire);
+// Defini si peux modifier les permissions
+$caneditperms=($user->admin || $user->rights->user->user->creer);
+// Advanced permissions
+$advancedpermsactive=false;
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+{
+	$advancedpermsactive=true;
+	$canreadperms=($user->admin || ($user->rights->user->group_advance->read && $user->rights->user->group_advance->readperms));
+	$caneditperms=($user->admin || $user->rights->user->group_advance->write);
+}
 
 if (! $canreadperms) accessforbidden();
-
-// Defini si peux modifier les permissions
-$caneditperms=($user->admin || $user->rights->user->group->write);
 
 
 /**
@@ -194,6 +201,7 @@ if ($_GET["id"])
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
     $sql.= " AND r.entity = ".$conf->entity;
+    if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
     $sql.= " ORDER BY r.module, r.id";
 
     $result=$db->query($sql);
