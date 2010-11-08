@@ -447,7 +447,7 @@ if (GETPOST('action') == 'create')
 	print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
 	if (GETPOST("actioncode"))
 	{
-		print '<input type="hidden" name="actioncode" value="'.$_GET["actioncode"].'">'."\n";
+		print '<input type="hidden" name="actioncode" value="'.GETPOST("actioncode").'">'."\n";
 		$cactioncomm->fetch(GETPOST("actioncode"));
 		print $cactioncomm->getNomUrl();
 	}
@@ -458,10 +458,57 @@ if (GETPOST('action') == 'create')
 	print '</td></tr>';
 
 	// Title
-	print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="60" value="'.$actioncomm->label.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
 
 	// Location
-	print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" size="60" value="'.$actioncomm->location.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" size="60" value="'.GETPOST('location').'"></td></tr>';
+
+	// Date start
+	print '<tr><td width="30%" nowrap="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
+	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action",1,1);
+	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
+	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
+	print '</td></tr>';
+	// Date end
+	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
+	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
+	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
+	else $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
+	print '</td></tr>';
+
+	// Avancement
+	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
+	print '<td>';
+	$percent=0;
+	if (GETPOST('percentage'))
+	{
+		$percent=GETPOST('percentage');
+	}
+	else
+	{
+		if (GETPOST("afaire") == 1) $percent=0;
+		if (GETPOST("afaire") == 2) $percent=100;
+	}
+	print $htmlactions->form_select_status_action('formaction',$percent,1);
+	print '</td></tr>';
+
+	print '</table>';
+	print '<br>';
+	print '<table class="border" width="100%">';
+
+	// Affected by
+	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
+	$html->select_users(GETPOST("affectedto")?GETPOST("affectedto"):($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
+	print '</td></tr>';
+
+	// Realised by
+	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
+	$html->select_users(GETPOST("doneby")?GETPOST("doneby"):$actioncomm->userdone,'doneby',1);
+	print '</td></tr>';
+
+	print '</table>';
+	print '<br>';
+	print '<table class="border" width="100%">';
 
 	// Societe, contact
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
@@ -501,57 +548,10 @@ if (GETPOST('action') == 'create')
 		print '</td></tr>';
 	}
 
-	print '</table>';
-	print '<br>';
-	print '<table class="border" width="100%">';
-
-	// Affected by
-	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-	$html->select_users(GETPOST("affectedto")?GETPOST("affectedto"):($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
-	print '</td></tr>';
-
-	// Realised by
-	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-	$html->select_users(GETPOST("doneby")?GETPOST("doneby"):$actioncomm->userdone,'doneby',1);
-	print '</td></tr>';
-
-	print '</table>';
-	print '<br>';
-	print '<table class="border" width="100%">';
-
 	if (GETPOST("datep") && preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/',GETPOST("datep"),$reg))
 	{
 		$actioncomm->datep=dol_mktime(0,0,0,$reg[2],$reg[3],$reg[1]);
 	}
-
-	// Date start
-	print '<tr><td width="30%" nowrap="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
-	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action",1,1);
-	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
-	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
-	print '</td></tr>';
-	// Date end
-	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
-	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
-	else $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
-	print '</td></tr>';
-
-	// Avancement
-	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
-	print '<td>';
-	$percent=0;
-	if (GETPOST('percentage'))
-	{
-		$percent=GETPOST('percentage');
-	}
-	else
-	{
-		if (GETPOST("afaire") == 1) $percent=0;
-		if (GETPOST("afaire") == 2) $percent=100;
-	}
-	print $htmlactions->form_select_status_action('formaction',$percent,1);
-	print '</td></tr>';
 
 	// Priority
 	print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
@@ -659,8 +659,48 @@ if ($id)
 		// Location
 		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$act->location.'"></td></tr>';
 
+		// Date start
+		print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
+		if (GETPOST("afaire") == 1) $html->select_date($act->datep,'ap',1,1,0,"action",1,1);
+		else if (GETPOST("afaire") == 2) $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
+		else $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
+		print '</td></tr>';
+		// Date end
+		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
+		if (GETPOST("afaire") == 1) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
+		else if (GETPOST("afaire") == 2) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
+		else $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
+		print '</td></tr>';
+
+		// Status
+		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		$percent=GETPOST("percentage")?GETPOST("percentage"):$act->percentage;
+		print $htmlactions->form_select_status_action('formaction',$percent,1);
+		print '</td></tr>';
+
+		print '</table><br><table class="border" width="100%">';
+
+		// Input by
+		print '<tr><td width="30%" nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
+		print $act->author->getNomUrl(1);
+		print '</td></tr>';
+
+		// Affected to
+		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		$html->select_users($act->usertodo->id,'affectedto',1);
+		print '</td></tr>';
+
+		// Realised by
+		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+		$html->select_users($act->userdone->id,'doneby',1);
+		print '</td></tr>';
+
+		print '</table><br>';
+
+		print '<table class="border" width="100%">';
+
 		// Company
-		print '<tr><td>'.$langs->trans("Company").'</td>';
+		print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td>';
 		print '<td>';
 		print $html->select_societes($act->societe->id,'socid','',1,1);
 		print '</td>';
@@ -684,44 +724,6 @@ if ($id)
 			}
 			print '</td></tr>';
 		}
-
-		print '</table><br><table class="border" width="100%">';
-
-		// Input by
-		print '<tr><td width="30%" nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
-		print $act->author->getNomUrl(1);
-		print '</td></tr>';
-
-		// Affected to
-		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
-		$html->select_users($act->usertodo->id,'affectedto',1);
-		print '</td></tr>';
-
-		// Realised by
-		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-		$html->select_users($act->userdone->id,'doneby',1);
-		print '</td></tr>';
-
-		print '</table><br><table class="border" width="100%">';
-
-		// Date start
-		print '<tr><td width="30%" nowrap="nowrap" class="fieldrequired">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $html->select_date($act->datep,'ap',1,1,0,"action",1,1);
-		else if (GETPOST("afaire") == 2) $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
-		else $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
-		print '</td></tr>';
-		// Date end
-		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
-		else if (GETPOST("afaire") == 2) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
-		else $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
-		print '</td></tr>';
-
-		// Status
-		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-		$percent=GETPOST("percentage")?GETPOST("percentage"):$act->percentage;
-		print $htmlactions->form_select_status_action('formaction',$percent,1);
-		print '</td></tr>';
 
 		// Priority
 		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
@@ -770,8 +772,45 @@ if ($id)
 		// Location
 		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
 
+		// Date debut
+		print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
+		print dol_print_date($act->datep,'dayhour');
+		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
+		print '</td></tr>';
+
+		// Date fin
+		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
+		print dol_print_date($act->datef,'dayhour');
+		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
+		print '</td></tr>';
+
+		// Statut
+		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		print $act->getLibStatut(4);
+		print '</td></tr>';
+
+		print '</table><br><table class="border" width="100%">';
+
+		// Input by
+		print '<tr><td width="30%" nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
+		if ($act->author->id > 0) print $act->author->getNomUrl(1);
+		else print '&nbsp;';
+		print '</td></tr>';
+
+		// Affecte a
+		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		if ($act->usertodo->id > 0) print $act->usertodo->getNomUrl(1);
+		print '</td></tr>';
+
+		// Realise par
+		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+		if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
+		print '</td></tr>';
+
+		print '</table><br><table class="border" width="100%">';
+
 		// Societe - contact
-		print '<tr><td>'.$langs->trans("Company").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
+		print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
 		if ($act->societe->id && $act->type_code == 'AC_TEL')
 		{
 			if ($act->societe->fetch($act->societe->id))
@@ -812,43 +851,6 @@ if ($id)
 			}
 			print '</td></tr>';
 		}
-
-		print '</table><br><table class="border" width="100%">';
-
-		// Input by
-		print '<tr><td width="30%" nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
-		if ($act->author->id > 0) print $act->author->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td></tr>';
-
-		// Affecte a
-		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
-		if ($act->usertodo->id > 0) print $act->usertodo->getNomUrl(1);
-		print '</td></tr>';
-
-		// Realise par
-		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-		if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
-		print '</td></tr>';
-
-		print '</table><br><table class="border" width="100%">';
-
-		// Date debut
-		print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-		print dol_print_date($act->datep,'dayhour');
-		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
-		print '</td></tr>';
-
-		// Date fin
-		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		print dol_print_date($act->datef,'dayhour');
-		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
-		print '</td></tr>';
-
-		// Statut
-		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-		print $act->getLibStatut(4);
-		print '</td></tr>';
 
 		// Priority
 		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
