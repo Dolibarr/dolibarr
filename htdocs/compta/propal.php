@@ -512,11 +512,11 @@ if ($id > 0 || ! empty($ref))
 	 */
 	$propal->load_object_linked($propal->id,$propal->element);
 
-	foreach($propal->linked_object as $object => $objectid)
+	foreach($propal->linked_object as $linked_object => $linked_objectid)
 	{
-		if($conf->$object->enabled && $object != $propal->element)
+		if($conf->$linked_object->enabled && $linked_object != $propal->element)
 		{
-			$somethingshown=$propal->showLinkedObjectBlock($object,$objectid,$somethingshown);
+			$somethingshown=$propal->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
 		}
 	}
 

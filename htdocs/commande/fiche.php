@@ -1854,11 +1854,11 @@ else
 				 */
 				$object->load_object_linked($object->id,$object->element);
 
-				foreach($object->linked_object as $object => $objectid)
+				foreach($object->linked_object as $linked_object => $linked_objectid)
 				{
-					if($conf->$object->enabled && $object != $object->element)
+					if($conf->$linked_object->enabled && $linked_object != $object->element)
 					{
-						$somethingshown=$object->showLinkedObjectBlock($object,$objectid,$somethingshown);
+						$somethingshown=$object->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
 					}
 				}
 

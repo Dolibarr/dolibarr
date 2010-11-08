@@ -1347,11 +1347,11 @@ else
 		{
 			print '<table width="100%"><tr><td width="50%" valign="top">';
 
-			foreach($contrat->linked_object as $object => $objectid)
+			foreach($contrat->linked_object as $linked_object => $linked_objectid)
 			{
-				if($conf->$object->enabled && $object != $contrat->element)
+				if($conf->$linked_object->enabled && $linked_object != $contrat->element)
 				{
-					$somethingshown=$contrat->showLinkedObjectBlock($object,$objectid,$somethingshown);
+					$somethingshown=$contrat->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
 				}
 			}
 

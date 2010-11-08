@@ -580,11 +580,11 @@ if ($id > 0 || ! empty($ref))
 		 */
 		$commande->load_object_linked($commande->id,$commande->element);
 
-		foreach($commande->linked_object as $object => $objectid)
+		foreach($commande->linked_object as $linked_object => $linked_objectid)
 		{
-			if($conf->$object->enabled && $object != $commande->element)
+			if($conf->$linked_object->enabled && $linked_object != $commande->element)
 			{
-				$somethingshown=$commande->showLinkedObjectBlock($object,$objectid,$somethingshown);
+				$somethingshown=$commande->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
 			}
 		}
 

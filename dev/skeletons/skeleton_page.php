@@ -105,11 +105,11 @@ $form=new Form($db);
 ****************************************************/
 $myobject->load_object_linked($myobject->id,$myobject->element);
 
-foreach($myobject->linked_object as $object => $objectid)
+foreach($myobject->linked_object as $linked_object => $linked_objectid)
 {
-	if($conf->$object->enabled)
+	if ($conf->$linked_object->enabled)
 	{
-		$somethingshown=$myobject->showLinkedObjectBlock($object,$objectid,$somethingshown);
+		$somethingshown=$myobject->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
 	}
 }
 

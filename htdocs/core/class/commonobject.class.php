@@ -1333,11 +1333,11 @@ class CommonObject
 
 	/**
 	 *	Show linked object block
+     *  TODO This must be moved into a html.class file instead of a business class.
+     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
 	 *	@param	$object
 	 *	@param	$objectid
 	 *	@param	$somethingshown
-     *  TODO This must be moved into a html.class file instead of a business class.
-     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
 	 */
 	function showLinkedObjectBlock($object,$objectid,$somethingshown=0)
 	{
