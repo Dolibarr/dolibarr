@@ -239,9 +239,9 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	 *      \brief      Update database
-	 * 		\sign		'+' or '-'
-	 *      \return     int         	<0 if KO, >0 if OK
+	 *      Update cache of nb of documents into database
+	 * 		@param		sign		'+' or '-'
+	 *      @return     int         	<0 if KO, >0 if OK
 	 */
 	function changeNbOfFiles($sign)
 	{
