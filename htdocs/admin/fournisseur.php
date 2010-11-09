@@ -469,7 +469,7 @@ clearstatcache();
 
 $handle=opendir($dir);
 $var=true;
-while (($file = readdir($handle))!==false)
+while (($file = readdir($handle)) !== false)
 {
 	if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
 	{

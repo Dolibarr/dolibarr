@@ -22,8 +22,7 @@ include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 
 /**
- * Enter description here...
- *
+ * Class ot manage invoices for pos module (cashdesk)
  */
 class Facturation {
 
