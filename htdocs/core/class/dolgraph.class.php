@@ -21,7 +21,8 @@
  *	\file       htdocs/core/class/dolgraph.class.php
  *	\brief      Fichier de la classe mere de gestion des graph
  *	\version    $Id$
- *	\remarks    Usage:
+ *
+ *	Usage:
  *	$graph_data = array(array('labelA',yA),array('labelB',yB));
  *	array(array('labelA',yA1,...,yAn),array('labelB',yB1,...yBn));
  *	$px = new DolGraph();
@@ -392,8 +393,8 @@ class DolGraph
 	}
 
 	/**
-	 *    \brief      Genere le fichier graphique sur le disque
-	 *    \param      file    Nom du fichier image
+	 *    	Build a graph onto disk
+	 *    	@param      file    Image file name on disk
 	 */
 	function draw($file)
 	{
@@ -409,8 +410,8 @@ class DolGraph
 
 
 	/**
-	 * 	\brief		Generation graph a partir de la lib Artichow
-	 *	\param		file		Nom fichier a generer
+	 * 		Build a graph onto disk using Artichow library
+	 *    	@param      file    Image file name on disk
 	 */
 	function draw_artichow($file)
 	{
@@ -576,248 +577,6 @@ class DolGraph
 
 		// Generate file
 		$graph->draw($file);
-	}
-
-
-
-	/**
-	 * Special function
-	 * \TODO Replace by standard code
-	 */
-	function BarLineAnnualArtichow($file='', $barvalues, $linevalues, $legends='')
-	{
-		require_once DOL_DOCUMENT_ROOT."/includes/artichow/BarPlot.class.php";
-		require_once DOL_DOCUMENT_ROOT."/includes/artichow/LinePlot.class.php";
-
-		$graph = new Graph(240, 200);
-
-		$graph->title->set($this->title);
-		$graph->title->setFont(new Tuffy(10));
-
-		$graph->border->hide();
-
-		$color = new Color(222,231,236);
-		//new Color(0xF4, 0xF4, 0xF4)
-		$graph->setAntiAliasing(TRUE);
-		$graph->setBackgroundColor($color);
-
-		$group = new PlotGroup;
-		$group->setSize(0.82, 1);
-		$group->setCenter(0.41, 0.5);
-		$group->setPadding(35, 26, 40, 27);
-		$group->setSpace(2, 2);
-
-		$group->grid->setColor(new Color(0xC4, 0xC4, 0xC4));
-		//    $group->grid->setType(Line::DASHED);
-		$group->grid->hideVertical(TRUE);
-		$group->grid->setBackgroundColor(new White);
-
-		$group->axis->left->setColor(new DarkGreen);
-		$group->axis->left->label->setFont(new Font2);
-
-		$group->axis->right->setColor(new DarkBlue);
-		$group->axis->right->label->setFont(new Font2);
-
-		$group->axis->bottom->label->setFont(new Font2);
-
-		//$group->legend->setPosition(1.18);
-		//$group->legend->setTextFont(new Tuffy(8));
-		//$group->legend->setSpace(10);
-
-		// Add a bar plot
-		$plot = new BarPlot($barvalues);
-		//$plot->setBarColor(new MidYellow);
-		$plot->setBarGradient(new LinearGradient(new Color(244,244,244),new Color(222,231,236),90 ) );
-		$plot->setBarPadding(0.15, 0.15);
-		$plot->barShadow->setSize(3);
-		$plot->barShadow->smooth(TRUE);
-		$plot->barShadow->setColor(new Color(200, 200, 200, 10));
-		//$plot->move(1, 0);
-
-		//    $group->legend->add($plot, "Yellow bar", Legend::BACKGROUND);
-		// // $group->legend->add($plot, "CA (HT)", 2);
-		$group->add($plot);
-
-		// Add a line plot
-		$plot = new LinePlot($linevalues, 1);
-		$plot->setColor(new DarkBlue);
-		$plot->setThickness(3);
-		$plot->setYAxis('right');
-
-		$plot->mark->setType(1);
-		$plot->mark->setSize(6);
-		$plot->mark->setFill(new LightBlue);
-		$plot->mark->border->show();
-
-		// // $group->legend->add($plot, "Unites", 3);
-		$group->add($plot);
-		/*
-		 *
-		 */
-		$group->axis->right->setColor(new DarkBlue);
-		$group->axis->right->label->setColor(new DarkBlue);
-
-		$group->axis->bottom->setLabelText($legends);
-		$group->axis->bottom->hideTicks(TRUE);
-		/*
-		 *
-		 */
-		$graph->add($group);
-		$graph->draw($file);
-	}
-
-	/**
-	 * Special function
-	 * \TODO Replace by standard code
-	 */
-	function BarLineOneYearArtichow($file='', $barvalues, $linevalues, $legends='')
-	{
-		$ok = 0;
-		foreach($linevalues as $val)
-		{
-			$sum1 += abs($val);
-		}
-		foreach($barvalues as $val)
-		{
-			$sum2 += abs($val);
-		}
-		$ok = sizeof($values) * $sum1 * $sum2;
-
-		if (( sizeof($barvalues) * sizeof($linevalues) ) > 0)
-		{
-			require_once DOL_DOCUMENT_ROOT."/includes/artichow/BarPlot.class.php";
-			require_once DOL_DOCUMENT_ROOT."/includes/artichow/LinePlot.class.php";
-
-			$graph = new Graph(540, 200);
-
-			$graph->title->set($this->title);
-			$graph->title->setFont(new Tuffy(10));
-
-			$graph->border->hide();
-
-			$color = new Color(222,231,236);
-			//new Color(0xF4, 0xF4, 0xF4)
-			$graph->setAntiAliasing(TRUE);
-			$graph->setBackgroundColor($color);
-
-			$group = new PlotGroup;
-			$group->setSize(0.82, 1);
-			$group->setCenter(0.41, 0.5);
-			$group->setPadding(35, 26, 40, 27);
-			$group->setSpace(2, 2);
-
-			$group->grid->setColor(new Color(0xC4, 0xC4, 0xC4));
-			//    $group->grid->setType(Line::DASHED);
-			$group->grid->hideVertical(TRUE);
-			$group->grid->setBackgroundColor(new White);
-
-			$group->axis->left->setColor(new DarkGreen);
-			$group->axis->left->label->setFont(new Font2);
-
-			$group->axis->right->setColor(new DarkBlue);
-			$group->axis->right->label->setFont(new Font2);
-
-			$group->axis->bottom->label->setFont(new Font2);
-
-			$group->legend->setPosition(1.18);
-			$group->legend->setTextFont(new Tuffy(8));
-			$group->legend->setSpace(10);
-
-			// Add a bar plot
-			$plot = new BarPlot($barvalues);
-			//$plot->setBarColor(new MidYellow);
-			$plot->setBarGradient(new LinearGradient(new Color(244,244,244),new Color(222,231,236),90 ) );
-			$plot->setBarPadding(0.15, 0.15);
-			$plot->barShadow->setSize(3);
-			$plot->barShadow->smooth(TRUE);
-			$plot->barShadow->setColor(new Color(200, 200, 200, 10));
-			//$plot->move(1, 0);
-
-			//    $group->legend->add($plot, "Yellow bar", Legend::BACKGROUND);
-			$group->legend->add($plot, "CA (HT)", 2);
-			$group->add($plot);
-
-			// Add a line plot
-			$plot = new LinePlot($linevalues, 1);
-			$plot->setColor(new DarkBlue);
-			$plot->setThickness(3);
-			$plot->setYAxis('right');
-
-			$plot->mark->setType(1);
-			$plot->mark->setSize(6);
-			$plot->mark->setFill(new LightBlue);
-			$plot->mark->border->show();
-
-			$group->legend->add($plot, "Unites", 3);
-			$group->add($plot);
-			/*
-			 *
-			 */
-			$group->axis->right->setColor(new DarkBlue);
-			$group->axis->right->label->setColor(new DarkBlue);
-
-			$group->axis->bottom->setLabelText($legends);
-			$group->axis->bottom->hideTicks(TRUE);
-			/*
-			 *
-			 */
-			$graph->add($group);
-			$graph->draw($file);
-		}
-	}
-
-	/**
-	 * Special function
-	 * \TODO Replace by standard code
-	 */
-	function BarAnnualArtichow($file='', $values='', $legends='')
-	{
-		require_once DOL_DOCUMENT_ROOT."/includes/artichow/BarPlot.class.php";
-
-		$ok = 0;
-		foreach($values as $val)
-		{
-			$sum += abs($val);
-		}
-		$ok = sizeof($values) * $sum;
-
-		if ($ok > 0)
-		{
-			$graph = new Graph(500, 200);
-			$graph->title->set($this->title);
-			$graph->title->setFont(new Tuffy(10));
-			$graph->border->hide();
-
-			$color = new Color(222,231,236);
-
-			$graph->setAntiAliasing(TRUE);
-			$graph->setBackgroundColor( $color );
-
-			$plot = new BarPlot($values);
-
-			$plot->setBarGradient(
-			new LinearGradient(
-			new Color(244,244,244),
-			new Color(222,231,236),
-			90
-			)
-			);
-
-			$plot->setSpace(5, 5, NULL, NULL);
-
-			$plot->barShadow->setSize(4);
-			$plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
-			$plot->barShadow->setColor(new Color(180, 180, 180, 10));
-			$plot->barShadow->smooth(TRUE);
-
-			$plot->xAxis->hideTicks();
-
-			$plot->xAxis->setLabelText($legends);
-			$plot->xAxis->label->setFont(new Tuffy(7));
-
-			$graph->add($plot);
-			$graph->draw($file);
-		}
 	}
 
 }

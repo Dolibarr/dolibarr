@@ -17,7 +17,7 @@
  */
 
 /**
- *	    \file       htdocs/menus/other.php
+ *	    \file       htdocs/admin/menus/other.php
  *      \ingroup    core
  *      \brief      Menus options setup
  *		\version    $Id$
@@ -121,22 +121,22 @@ print "</td>";
 print '</tr>';
 
 // hide unauthorized menu
-if ($conf->global->MAIN_FEATURES_LEVEL > 0)     // TODO There is still a bug with ecm when this option is on so deinfed as experimental feature
+if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 {
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td colspan="3">'.$langs->trans("MenuUseLayout").'</td>';
-print '<td align="center">';
-if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT == 0)
-{
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_layoutmenu">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-}
-if($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT == 1)
-{
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_layoutmenu">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-}
-print "</td>";
-print '</tr>';
+	$var=!$var;
+	print "<tr ".$bc[$var].">";
+	print '<td colspan="3">'.$langs->trans("MenuUseLayout").'</td>';
+	print '<td align="center">';
+	if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT == 0)
+	{
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_layoutmenu">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	}
+	if($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT == 1)
+	{
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_layoutmenu">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	}
+	print "</td>";
+	print '</tr>';
 }
 
 print '</table>';
