@@ -1185,9 +1185,9 @@ else
 			{
 				print_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
 				
-				// On selectionne les groups
+				// On selectionne les groupes auquel fait parti le user
+				// TODO move sql query to dao class
 				$grouplistid = array();
-				$uss = array();
 				
 				$sql = "SELECT ug.fk_usergroup";
 				$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
