@@ -33,14 +33,14 @@ require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
-$filtera = isset($_REQUEST["userasked"])?$_REQUEST["userasked"]:(isset($_REQUEST["filtera"])?$_REQUEST["filtera"]:'');
-$filtert = isset($_REQUEST["usertodo"])?$_REQUEST["usertodo"]:(isset($_REQUEST["filtert"])?$_REQUEST["filtert"]:'');
-$filterd = isset($_REQUEST["userdone"])?$_REQUEST["userdone"]:(isset($_REQUEST["filterd"])?$_REQUEST["filterd"]:'');
-$showbirthday = isset($_REQUEST["showbirthday"])?$_REQUEST["showbirthday"]:0;
+$filtera = GETPOST("userasked","int")?GETPOST("userasked","int"):GETPOST("filtera","int");
+$filtert = GETPOST("usertodo","int")?GETPOST("usertodo","int"):GETPOST("filtert","int");
+$filterd = GETPOST("userdone","int")?GETPOST("userdone","int"):GETPOST("filterd","int");
+$showbirthday = GETPOST("showbirthday","int")?GETPOST("showbirthday","int"):0;
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page","int");
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -62,12 +62,12 @@ if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')	// If 
 	$filterd=$user->id;
 }
 
-$action=! empty($_REQUEST['action'])?$_REQUEST['action']:'';
-$year=! empty($_REQUEST["year"])?$_REQUEST["year"]:date("Y");
-$month=! empty($_REQUEST["month"])?$_REQUEST["month"]:date("m");
-$day=! empty($_REQUEST["day"])?$_REQUEST["day"]:0;
-$pid=! empty($_REQUEST["projectid"])?$_REQUEST["projectid"]:0;
-$status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
+$action=GETPOST('action');
+$year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
+$month=GETPOST("month","int")?GETPOST("month","int"):date("m");
+$day=GETPOST("day","int")?GETPOST("day","int"):0;
+$pid=GETPOST("projectid","int")?GETPOST("projectid","int"):0;
+$status=GETPOST("status","int");
 
 $langs->load("other");
 $langs->load("commercial");

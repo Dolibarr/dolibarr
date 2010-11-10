@@ -40,14 +40,20 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 /**
  *  Return value of a param into get or post variable
  *  @param          paramname   Name of parameter to found
- *  @param			length		Length of string (security)
+ *  @param			check		Type of check (security)
  *  @return         string      Value found
  */
-function GETPOST($paramname,$length=0)
+function GETPOST($paramname,$check='')
 {
     $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
     $out = trim($out);
-    if ($length > 0 && strlen($out) > $length) $out='';
+    
+    if (!empty($check))
+    {
+    	// Check if integer
+    	if ($check = 'int' && is_int($out)) $out='';
+    }
+    
     return $out;
 }
 

@@ -37,7 +37,7 @@ $sref=GETPOST("sref");
 $sbarcode=GETPOST("sbarcode");
 $snom=GETPOST("snom");
 $sall=GETPOST("sall");
-$type=GETPOST("type",1);
+$type=GETPOST("type","int");
 
 
 $sortfield = GETPOST("sortfield");
