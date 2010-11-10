@@ -83,16 +83,12 @@ if (! empty($_POST["viewlist"]))
 	$param='';
 	foreach($_POST as $key => $val)
 	{
+		if ($key=='token') continue;
 		$param.='&'.$key.'='.urlencode($val);
 	}
 	//print $param;
 	header("Location: ".DOL_URL_ROOT.'/comm/action/listactions.php?'.$param);
 	exit;
-}
-if ($_GET["action"] == 'builddoc')
-{
-	$cat = new CommActionRapport($db, $_GET["month"], $_GET["year"]);
-	$result=$cat->generate($_GET["id"]);
 }
 
 if ($action=='delete_action')
@@ -190,14 +186,14 @@ if ($pid) $sql.=" AND a.fk_project=".addslashes($pid);
 if ($_GET["action"] == 'show_day')
 {
 	$sql.= " AND (";
-	$sql.= " (datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year))."'";
-	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year))."')";
+	$sql.= " (datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
+	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$day,$year))."')";
 	$sql.= " OR ";
-	$sql.= " (datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year))."'";
-	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year))."')";
+	$sql.= " (datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
+	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$day,$year))."')";
 	$sql.= " OR ";
-	$sql.= " (datep < '".$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year))."'";
-	$sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year))."')";
+	$sql.= " (datep < '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
+	$sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,$day,$year))."')";
 	$sql.= ')';
 }
 else
@@ -324,7 +320,7 @@ if ($showbirthday)
 	if ($_GET["action"] == 'show_day')
 	{
 		$sql.= ' AND MONTH(birthday) = '.$month;
-		$sql.= ' AND DAY(birthday) = '.$_GET["day"];
+		$sql.= ' AND DAY(birthday) = '.$day;
 	}
 	else
 	{
@@ -462,15 +458,15 @@ else	// View by day
 {
 	// Code to show just one day
 	$style='cal_current_month';
-	$timestamp=dol_mktime(12,0,0,$month,$_GET["day"],$year);
-	$arraytimestamp=adodb_getdate(dol_mktime(12,0,0,$month,$_GET["day"],$year));
+	$timestamp=dol_mktime(12,0,0,$month,$day,$year);
+	$arraytimestamp=adodb_getdate(dol_mktime(12,0,0,$month,$day,$year));
 	echo '<table width="100%" class="nocellnopadd">';
 	echo ' <tr class="liste_titre">';
 	echo '  <td align="center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
 	echo " </tr>\n";
 	echo " <tr>\n";
 	echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-	show_day_events ($db, $_GET["day"], $month, $year, $month, $style, $actionarray, 0, 0);
+	show_day_events ($db, $day, $month, $year, $month, $style, $actionarray, 0, 0);
 	echo "</td>\n";
 	echo " </tr>\n";
 	echo '</table>';
