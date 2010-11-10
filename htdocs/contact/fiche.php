@@ -706,7 +706,7 @@ else
 		
 		if ($_GET["action"] == 'create_user')
 		{
-			$login=strtolower(substr($object->prenom, 0, 4)) . strtolower(substr($object->nom, 0, 4));
+			$login=strtolower(substr(dol_string_unaccent($object->prenom), 0, 4)) . strtolower(substr(dol_string_unaccent($object->nom), 0, 4));
 			
 			// Create a form array
 			$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));

@@ -183,7 +183,8 @@ class ActionsContactCardCommon
         {
         	if ($_GET["action"] == 'create_user')
         	{
-        		$login=strtolower(substr($this->object->prenom, 0, 4)) . strtolower(substr($this->object->nom, 0, 4));
+        		$login=strtolower(substr(dol_string_unaccent($this->object->prenom), 0, 4)) . strtolower(substr(dol_string_unaccent($this->object->nom), 0, 4));
+        		//$login=dol_string_unaccent($login);
         		
         		// Create a form array
         		$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
