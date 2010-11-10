@@ -40,7 +40,7 @@ $showbirthday = GETPOST("showbirthday","int")?GETPOST("showbirthday","int"):0;
 
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
-$page = GETPOST("page");
+$page = GETPOST("page","int");
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -48,14 +48,14 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="a.datec";
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid","int",1);
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 
 $canedit=1;
 if (! $user->rights->agenda->myactions->read) accessforbidden();
 if (! $user->rights->agenda->allactions->read) $canedit=0;
-if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')	// If no permission to see all, we show only affected to me
+if (! $user->rights->agenda->allactions->read || GETPOST("filter","",1)=='mine')	// If no permission to see all, we show only affected to me
 {
 	$filtera=$user->id;
 	$filtert=$user->id;

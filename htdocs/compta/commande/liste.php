@@ -38,14 +38,22 @@ $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande',$orderid,'');
 
-$begin=$_GET["begin"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
+// Assign and check variable
+$year=GETPOST('year','int',1);
+$month=GETPOST('month','int',1);
+$status=GETPOST('status','int',1);
+$onbill=GETPOST('afacturer','int',1);
+$page=GETPOST('page','int',1);
+$sf_ref=GETPOST('sf_ref','',2);
+
+$begin=GETPOST('begin','',1);  // TODO used ?
+$sortorder=GETPOST('sortorder','',1);
+$sortfield=GETPOST('sortfield','',1);
 if (! $sortfield) $sortfield="c.rowid";
 if (! $sortorder) $sortorder="DESC";
 
 $limit = $conf->liste_limit;
-$offset = $limit * $_GET["page"] ;
+$offset = $limit * $page ;
 
 $html = new Form($db);
 $formfile = new FormFile($db);
@@ -69,25 +77,25 @@ $sql.= " WHERE c.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-if ($_GET["month"] > 0)
+if ($month > 0)
 {
-    $sql.= " AND date_format(c.date_commande, '%Y-%m') = '".$_GET["year"]."-".$_GET["month"]."'";
+    $sql.= " AND date_format(c.date_commande, '%Y-%m') = '".$year."-".$month."'";
 }
-if ($_GET["year"] > 0)
+if ($year > 0)
 {
-    $sql.= " AND date_format(c.date_commande, '%Y') = '".$_GET["year"]."'";
+    $sql.= " AND date_format(c.date_commande, '%Y') = '".$year."'";
 }
-if (isset($_GET["status"]))
+if ($status)
 {
-    $sql.= " AND fk_statut = ".$_GET["status"];
+    $sql.= " AND fk_statut = ".$status;
 }
-if (isset($_GET["afacturer"]) && $_GET['afacturer'] == 1)
+if ($onbill == 1)
 {
     $sql.= " AND fk_statut >=1	AND c.facture = 0";
 }
-if (dol_strlen($_POST["sf_ref"]) > 0)
+if (dol_strlen($sf_ref) > 0)
 {
-    $sql.= " AND c.ref like '%".$_POST["sf_ref"] . "%'";
+    $sql.= " AND c.ref like '%".$sf_ref . "%'";
 }
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($limit + 1,$offset);
@@ -109,10 +117,10 @@ if ($resql)
     // Si page des commandes a facturer
     $link=DOL_URL_ROOT."/compta/commande/fiche.php";
     $title.=" - ".$langs->trans("StatusOrderToBill");
-    $param="&amp;socid=".$socid."&amp;year=".$_GET["year"]."&amp;month=".$_GET["month"];
+    $param="&amp;socid=".$socid."&amp;year=".$year."&amp;month=".$month;
 
     $num = $db->num_rows($resql);
-    print_barre_liste($title, $_GET["page"], "liste.php",$param,$sortfield,$sortorder,'',$num);
+    print_barre_liste($title, $page, "liste.php",$param,$sortfield,$sortorder,'',$num);
 
     $i = 0;
     print '<table class="noborder" width="100%">';
