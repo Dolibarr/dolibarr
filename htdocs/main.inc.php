@@ -1030,7 +1030,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	 * Top menu
 	 */
     $top_menu=$conf->top_menu;
-    if (GETPOST('top_menu')) $top_menu=GETPOST('top_menu');
+    if (GETPOST('menu')) $top_menu=GETPOST('menu'); // menu=eldy_backoffice.php
 
 	// Load the top menu manager
 	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$top_menu);
@@ -1217,7 +1217,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
     //$left_menu=$conf->left_menu;
     $left_menu=$conf->top_menu;
-    if (GETPOST('left_menu')) $left_menu=GETPOST('left_menu');
+    if (GETPOST('menu')) $left_menu=GETPOST('menu');     // menu=eldy_backoffice.php
 
     // Load the left menu manager
 	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$left_menu);

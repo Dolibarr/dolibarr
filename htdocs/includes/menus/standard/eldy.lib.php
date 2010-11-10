@@ -721,7 +721,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             }
 
             // Contacts
-            $newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("Contacts"), 0, $user->rights->societe->contact->lire);
+            $newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("ContactsAddresses"), 0, $user->rights->societe->contact->lire);
             $newmenu->add(DOL_URL_ROOT."/contact/fiche.php?leftmenu=contacts&amp;action=create", $langs->trans("NewContact"), 1, $user->rights->societe->contact->creer);
             $newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("List"), 1, $user->rights->societe->contact->lire);
             $newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=p", $langs->trans("Prospects"), 2, $user->rights->societe->contact->lire);
@@ -876,71 +876,46 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
         {
             $langs->load("companies");
 
-            // Fournisseurs
+            // Suppliers
             if ($conf->societe->enabled && $conf->fournisseur->enabled)
             {
-                $langs->load("suppliers");
-                $newmenu->add(DOL_URL_ROOT."/compta/index.php?leftmenu=suppliers", $langs->trans("Suppliers"),0,$user->rights->societe->lire && $user->rights->fournisseur->lire);
-
-                // Security check
-                if ($user->societe_id == 0)
-                {
-                    $newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"),1,$user->rights->societe->creer && $user->rights->fournisseur->lire);
-                }
-                $newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("List"),1,$user->rights->societe->lire && $user->rights->fournisseur->lire);
-                if ($conf->societe->enabled)
-                {
-                    $newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"),1,$user->rights->societe->contact->lire && $user->rights->fournisseur->lire);
-                }
                 if ($conf->facture->enabled)
                 {
                     $langs->load("bills");
-                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),1,$user->rights->fournisseur->facture->lire);
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),0,$user->rights->fournisseur->facture->lire);
                     if ($user->societe_id == 0)
                     {
-                        if ($leftmenu=="suppliers_bills") $newmenu->add(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),2,$user->rights->fournisseur->facture->creer);
+                        $newmenu->add(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),1,$user->rights->fournisseur->facture->creer);
                     }
-                    if ($leftmenu=="suppliers_bills") $newmenu->add(DOL_URL_ROOT."/fourn/facture/impayees.php", $langs->trans("Unpaid"),2,$user->rights->fournisseur->facture->lire);
-                    if ($leftmenu=="suppliers_bills") $newmenu->add(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),2,$user->rights->fournisseur->facture->lire);
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/impayees.php", $langs->trans("Unpaid"),1,$user->rights->fournisseur->facture->lire);
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),1,$user->rights->fournisseur->facture->lire);
 
-                    if ($leftmenu=="suppliers_bills") $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=suppliers_bills&mode=supplier", $langs->trans("Statistics"),2,$user->rights->fournisseur->facture->lire);
+                    $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=suppliers_bills&mode=supplier", $langs->trans("Statistics"),1,$user->rights->fournisseur->facture->lire);
                 }
             }
 
-            // Customers
-            if ($conf->societe->enabled)
-            {
-                $newmenu->add(DOL_URL_ROOT."/compta/index.php?leftmenu=customers", $langs->trans("Customers"),0,$user->rights->societe->lire);
-                if ($user->societe_id == 0)
-                {
-                    $newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"),1,$user->rights->societe->creer);
-                }
-                $newmenu->add(DOL_URL_ROOT."/compta/clients.php?leftmenu=customers", $langs->trans("List"),1,$user->rights->societe->lire);
-                $newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"),1,$user->rights->societe->contact->lire);
-            }
-
-            // Invoices
+            // Customers invoices
             if ($conf->facture->enabled)
             {
                 $langs->load("bills");
-                $newmenu->add(DOL_URL_ROOT."/compta/facture.php?leftmenu=customers_bills",$langs->trans("BillsCustomers"),1,$user->rights->facture->lire);
+                $newmenu->add(DOL_URL_ROOT."/compta/facture.php?leftmenu=customers_bills",$langs->trans("BillsCustomers"),0,$user->rights->facture->lire);
                 if ($user->societe_id == 0)
                 {
-                    if (preg_match("/customers_bills/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/clients.php?action=facturer&amp;leftmenu=customers_bills",$langs->trans("NewBill"),2,$user->rights->facture->creer);
+                    $newmenu->add(DOL_URL_ROOT."/compta/clients.php?action=facturer&amp;leftmenu=customers_bills",$langs->trans("NewBill"),1,$user->rights->facture->creer);
                 }
-                if (preg_match("/customers_bills/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/fiche-rec.php?leftmenu=customers_bills",$langs->trans("Repeatables"),2,$user->rights->facture->lire);
+                $newmenu->add(DOL_URL_ROOT."/compta/facture/fiche-rec.php?leftmenu=customers_bills",$langs->trans("Repeatables"),1,$user->rights->facture->lire);
 
-                if (preg_match("/customers_bills/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/impayees.php?leftmenu=customers_bills",$langs->trans("Unpaid"),2,$user->rights->facture->lire);
+                $newmenu->add(DOL_URL_ROOT."/compta/facture/impayees.php?leftmenu=customers_bills",$langs->trans("Unpaid"),1,$user->rights->facture->lire);
 
-                if (preg_match("/customers_bills/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/liste.php?leftmenu=customers_bills_payments",$langs->trans("Payments"),2,$user->rights->facture->lire);
+                $newmenu->add(DOL_URL_ROOT."/compta/paiement/liste.php?leftmenu=customers_bills_payments",$langs->trans("Payments"),1,$user->rights->facture->lire);
 
                 if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
                 {
-                    if (preg_match("/customers_bills_payments/i",$leftmenu))  $newmenu->add(DOL_URL_ROOT."/compta/paiement/avalider.php?leftmenu=customers_bills_payments",$langs->trans("MenuToValid"),3,$user->rights->facture->lire);
+                    $newmenu->add(DOL_URL_ROOT."/compta/paiement/avalider.php?leftmenu=customers_bills_payments",$langs->trans("MenuToValid"),2,$user->rights->facture->lire);
                 }
-                if (preg_match("/customers_bills_payments/i",$leftmenu))  $newmenu->add(DOL_URL_ROOT."/compta/paiement/rapport.php?leftmenu=customers_bills_payments",$langs->trans("Reportings"),3,$user->rights->facture->lire);
+                $newmenu->add(DOL_URL_ROOT."/compta/paiement/rapport.php?leftmenu=customers_bills_payments",$langs->trans("Reportings"),2,$user->rights->facture->lire);
 
-                if (preg_match("/customers_bills/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),2,$user->rights->facture->lire);
+                $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),1,$user->rights->facture->lire);
             }
 
             // Proposals
