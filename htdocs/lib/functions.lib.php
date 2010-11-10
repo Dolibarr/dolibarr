@@ -1577,9 +1577,9 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename,$feature2,$dbt_socfield,$dbt_select");
 	if ($dbt_select != 'rowid') $objectid = "'".$objectid."'";
 
-	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", object_id=".$objectid;
+	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
 	//print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
-	//print ", user_societe_contact_lire=".$user->rights->societe->contact->lire."<br>";
+	//print ", perm: ".$features."->".$feature2."=".$user->rights->$features->$feature2->lire."<br>";
 
 	// More features to check
 	$features = explode("&",$features);
@@ -1738,6 +1738,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 			}
 		}
 
+		//print "Delete access is ko";
 		if (! $deleteok) accessforbidden();
 		//print "Delete access is ok";
 	}

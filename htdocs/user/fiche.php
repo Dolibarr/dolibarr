@@ -63,16 +63,9 @@ $confirm=GETPOST("confirm");
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)
-{
-	$socid = $user->societe_id;
-	$feature2='user';
-}
-if ($user->id == $_GET["id"])	// A user can always read its own card
-{
-	$feature2='';
-	$canreaduser=1;
-}
+if ($user->societe_id > 0) $socid = $user->societe_id;
+$feature2='user';
+if ($user->id == $_GET["id"]) { $feature2=''; $canreaduser=1; } // A user can always read its own card
 $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
 if ($user->id <> $_GET["id"] && ! $canreaduser) accessforbidden();
 
@@ -106,7 +99,7 @@ if ($_GET["subaction"] == 'delrights' && $canedituser)
 	$edituser->delrights($_GET["rights"]);
 }
 
-if ($action == 'confirm_disable' && $confirm == "yes")
+if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser)
 {
 	if ($_GET["id"] <> $user->id)
 	{
@@ -117,7 +110,7 @@ if ($action == 'confirm_disable' && $confirm == "yes")
 		exit;
 	}
 }
-if ($action == 'confirm_enable' && $confirm == "yes")
+if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser)
 {
 	if ($_GET["id"] <> $user->id)
 	{
@@ -144,7 +137,7 @@ if ($action == 'confirm_enable' && $confirm == "yes")
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == "yes")
+if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser)
 {
 	if ($_GET["id"] <> $user->id)
 	{

@@ -635,6 +635,13 @@ class User extends CommonObject
 		{
 
 		}
+		
+		// Remove group
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user WHERE fk_user  = ".$this->id;
+		if ($this->db->query($sql))
+		{
+			
+		}
 
 		// Si contact, supprime lien
 		if ($this->contact_id)
