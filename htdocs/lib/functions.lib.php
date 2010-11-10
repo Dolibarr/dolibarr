@@ -40,11 +40,15 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 /**
  *  Return value of a param into get or post variable
  *  @param          paramname   Name of parameter to found
+ *  @param			length		Length of string (security)
  *  @return         string      Value found
  */
-function GETPOST($paramname)
+function GETPOST($paramname,$length=0)
 {
-    return isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
+    $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
+    $out = trim($out);
+    if ($length > 0 && strlen($out) > $length) $out='';
+    return $out;
 }
 
 /**
