@@ -33,12 +33,13 @@ if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/class
 $langs->load("products");
 $langs->load("stocks");
 
+$canvas=GETPOST('canvas','',1);
+
 $sref=GETPOST("sref");
 $sbarcode=GETPOST("sbarcode");
 $snom=GETPOST("snom");
 $sall=GETPOST("sall");
 $type=GETPOST("type","int");
-
 
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
@@ -54,8 +55,8 @@ else if ($type=='1') $result=restrictedArea($user,'service',$id,'service','','',
 else $result=restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
 
 // Load sale and categ filters
-$search_sale = isset($_GET["search_sale"])?$_GET["search_sale"]:$_POST["search_sale"];
-$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
+$search_sale = GETPOST("search_sale");
+$search_categ = GETPOST("search_categ");
 
 
 
@@ -70,9 +71,9 @@ if (isset($_POST["button_removefilter_x"]))
 	$snom="";
 }
 
-if ($conf->categorie->enabled && isset($_REQUEST['catid']))
+if ($conf->categorie->enabled && GETPOST('catid'))
 {
-	$catid = $_REQUEST['catid'];
+	$catid = GETPOST('catid','int');
 }
 
 
@@ -83,10 +84,10 @@ if ($conf->categorie->enabled && isset($_REQUEST['catid']))
 
 $htmlother=new FormOther($db);
 
-if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php') )
+if (!empty($canvas) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$canvas.'/product.'.$canvas.'.class.php') )
 {
-	$classname = 'Product'.ucfirst($_GET["canvas"]);
-	include_once(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php');
+	$classname = 'Product'.ucfirst($canvas);
+	include_once(DOL_DOCUMENT_ROOT.'/product/canvas/'.$canvas.'/product.'.$canvas.'.class.php');
 
 	$object = new $classname($db);
 	$object->getFieldList();
@@ -97,7 +98,7 @@ else
 {
 	$title=$langs->trans("ProductsAndServices");
 
-	if (isset($_GET["type"]) || isset($_POST["type"]))
+	if ($type)
 	{
 		if ($type==1)
 		{
@@ -134,7 +135,7 @@ if ($sall)
 	$sql.= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
 }
 # if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($_GET["type"]) || dol_strlen($_POST["type"]))
+if (dol_strlen($type))
 {
 	if ($type==1) {
 		$sql.= " AND p.fk_product_type = '1'";
@@ -149,9 +150,9 @@ if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 {
 	$sql.= " AND p.tosell = ".addslashes($_GET["tosell"]);
 }
-if (isset($_GET["canvas"]) && dol_strlen($_GET["canvas"]) > 0)
+if (dol_strlen($canvas) > 0)
 {
-	$sql.= " AND p.canvas = '".addslashes($_GET["canvas"])."'";
+	$sql.= " AND p.canvas = '".addslashes($canvas)."'";
 }
 if($catid)
 {
