@@ -35,15 +35,15 @@ $langs->load('orders');
 $langs->load('deliveries');
 $langs->load('companies');
 
-$orderyear=isset($_GET["orderyear"])?$_GET["orderyear"]:$_POST["orderyear"];
-$ordermonth=isset($_GET["ordermonth"])?$_GET["ordermonth"]:$_POST["ordermonth"];
-$deliveryyear=isset($_GET["deliveryyear"])?$_GET["deliveryyear"]:$_POST["deliveryyear"];
-$deliverymonth=isset($_GET["deliverymonth"])?$_GET["deliverymonth"]:$_POST["deliverymonth"];
-$sref=isset($_GET['sref'])?$_GET['sref']:$_POST['sref'];
-$sref_client=isset($_GET['sref_client'])?$_GET['sref_client']:(isset($_POST['sref_client'])?$_POST['sref_client']:'');
-$snom=isset($_GET['snom'])?$_GET['snom']:$_POST['snom'];
-$sall=isset($_GET['sall'])?$_GET['sall']:$_POST['sall'];
-$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
+$orderyear=GETPOST("orderyear","int");
+$ordermonth=GETPOST("ordermonth","int");
+$deliveryyear=GETPOST("deliveryyear","int");
+$deliverymonth=GETPOST("deliverymonth","int");
+$sref=GETPOST('sref');
+$sref_client=GETPOST('sref_client');
+$snom=GETPOST('snom');
+$sall=GETPOST('sall');
+$socid=GETPOST('socid','int');
 
 // Security check
 $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
