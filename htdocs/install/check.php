@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/install/check.php
  *	\ingroup    install
- *	\brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilite de le creer
+ *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
  *	\version    $Id$
  */
 include_once("./inc.php");
@@ -44,11 +44,14 @@ if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 dolibarr_install_syslog("Dolibarr install/upgrade process started");
 
 
+
 /*
  *	View
  */
 
-pHeader('',"");   // Etape suivante = license
+pHeader('','');     // No next step for navigation buttons. Next step is defined by clik on links.
+
+
 
 print '<center>';
 print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
@@ -348,7 +351,8 @@ else
 		print '<td align="center">';
 		if ($allowinstall)
 		{
-			print '<a href="licence.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
+			//print '<a href="licence.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';   // To restore licence page
+			print '<a href="fileconf.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
 		}
 		else
 		{

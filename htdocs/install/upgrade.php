@@ -72,7 +72,7 @@ pHeader('',"upgrade2",isset($_REQUEST['action'])?$_REQUEST['action']:'','version
 $actiondone=0;
 
 // Action to launch the repair or migrate script
-if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
+if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 {
 	$actiondone=1;
 

@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/install/upgrade2.php
- *	\brief      Effectue la migration de donnees diverses
+ *	\brief      Upgrade some data
  *	\version    $Id$
  */
 
@@ -80,7 +80,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
 pHeader('','etape5',GETPOST("action"),'versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 
-if (GETPOST('action') && preg_match('/upgrade/i',GETPOST("action")))
+if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 {
 	print '<h3>'.$langs->trans('DataMigration').'</h3>';
 
@@ -3244,7 +3244,7 @@ function migrate_reload_modules($db,$langs,$conf)
         //$mod->remove('noboxes');
         $mod->init();
     }
-    
+
 	if (! empty($conf->global->MAIN_MODULE_USER))    // Permission has changed into 3.0
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module User");

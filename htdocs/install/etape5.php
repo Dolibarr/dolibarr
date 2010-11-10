@@ -280,7 +280,7 @@ print "<br>";
 // Create lock file
 
 // If first install
-if ($_POST["action"] == "set")
+if (GETPOST("action") == "set")
 {
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
 	{
@@ -330,7 +330,7 @@ if ($_POST["action"] == "set")
 	}
 }
 // If upgrade
-elseif (preg_match('/upgrade/i',$_POST["action"]))
+elseif (preg_match('/upgrade/i',GETPOST("action")))
 {
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
 	{

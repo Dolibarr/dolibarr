@@ -279,7 +279,7 @@ function conf($dolibarr_main_document_root)
  *
  * @param 	$soutitre
  * @param 	$next
- * @param 	$action
+ * @param 	$action      Action code ('set' or 'upgrade')
  * @param 	$param
  */
 function pHeader($soutitre,$next,$action='set',$param='')

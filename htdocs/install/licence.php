@@ -20,7 +20,7 @@
 /**
  *	 \file       htdocs/install/licence.php
  *   \ingroup    install
- *	 \brief      Page affichage license
+ *	 \brief      Page to show licence (Removed from install process to save time)
  *	 \version    $Id$
  */
 
