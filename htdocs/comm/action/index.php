@@ -40,7 +40,7 @@ $showbirthday = GETPOST("showbirthday","int")?GETPOST("showbirthday","int"):0;
 
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
-$page = GETPOST("page","int");
+$page = GETPOST("page");
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
