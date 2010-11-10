@@ -41,13 +41,13 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
  *  Return value of a param into get or post variable
  *  @param          paramname   Name of parameter to found
  *  @param			check		Type of check
- *  @param			type		Type of method (0 = get or post, 1 = only get, 2 = only post)
+ *  @param			method		Type of method (0 = get or post, 1 = only get, 2 = only post)
  *  @return         string      Value found
  */
-function GETPOST($paramname,$check='',$type=0)
+function GETPOST($paramname,$check='',$method=0)
 {
-    if ($type=1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
-    else if ($type=2) isset($_POST[$paramname])?$_POST[$paramname]:'';
+    if ($method=1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
+    else if ($method=2) isset($_POST[$paramname])?$_POST[$paramname]:'';
     else $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
     
     // Clean value
