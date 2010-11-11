@@ -556,10 +556,10 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      \brief      Create commercial proposal
-	 * 		\param		user	User that create
-	 *      \return     int     <0 if KO, >=0 if OK
-	 * 		\remarks	this->ref can be set or empty. If empty, we will use "(PROV)"
+	 *      Create commercial proposal into database
+	 * 		this->ref can be set or empty. If empty, we will use "(PROVid)"
+	 * 		@param		user		User that create
+	 *      @return     int     	<0 if KO, >=0 if OK
 	 */
 	function create($user='', $notrigger=0)
 	{
@@ -578,7 +578,7 @@ class Propal extends CommonObject
 		{
 			$this->error="Failed to fetch company";
 			dol_syslog("Propal::create ".$this->error, LOG_ERR);
-			return -2;
+			return -3;
 		}
 		if (! empty($this->ref))
 		{
@@ -590,7 +590,7 @@ class Propal extends CommonObject
 
 		$this->fetch_thirdparty();
 
-		// Insertion dans la base
+		// Insert into database
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (";
 		$sql.= "fk_soc";
 		$sql.= ", price";
@@ -654,43 +654,47 @@ class Propal extends CommonObject
 				/*
 				 *  Insertion du detail des produits dans la base
 				 */
-				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+				if (! $error)
 				{
-					$resql = $this->addline(
-					$this->id,
-					$this->lines[$i]->desc,
-					$this->lines[$i]->subprice,
-					$this->lines[$i]->qty,
-					$this->lines[$i]->tva_tx,
-					$this->lines[$i]->localtax1_tx,
-                    $this->lines[$i]->localtax2_tx,
-					$this->lines[$i]->fk_product,
-					$this->lines[$i]->remise_percent,
-					'HT',
-					0,
-					0,
-					$this->lines[$i]->product_type,
-					$this->lines[$i]->rang,
-					$this->lines[$i]->special_code
+					for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+					{
+						$resql = $this->addline(
+						$this->id,
+						$this->lines[$i]->desc,
+						$this->lines[$i]->subprice,
+						$this->lines[$i]->qty,
+						$this->lines[$i]->tva_tx,
+						$this->lines[$i]->localtax1_tx,
+						$this->lines[$i]->localtax2_tx,
+						$this->lines[$i]->fk_product,
+						$this->lines[$i]->remise_percent,
+						'HT',
+						0,
+						0,
+						$this->lines[$i]->product_type,
+						$this->lines[$i]->rang,
+						$this->lines[$i]->special_code
 						);
 
 						if ($resql < 0)
 						{
+							$error++;
 							$this->error=$this->db->error;
 							dol_print_error($this->db);
 							break;
 						}
+					}
 				}
 
 				// Add linked object
-				if ($this->origin && $this->origin_id)
+				if (! $error && $this->origin && $this->origin_id)
 				{
 					$ret = $this->add_object_linked();
 					if (! $ret)	dol_print_error($this->db);
 				}
 
 				// Affectation au projet
-				if ($resql && $this->fk_project)
+				if (! $error && $this->fk_project)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
 					$sql.= " SET fk_projet=".$this->fk_project;
@@ -701,7 +705,7 @@ class Propal extends CommonObject
 				}
 
 				// Affectation de l'adresse de livraison
-				if ($resql && $this->fk_delivery_address)
+				if (! $error && $this->fk_delivery_address)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
 					$sql.= " SET fk_adresse_livraison = ".$this->fk_delivery_address;
@@ -711,7 +715,7 @@ class Propal extends CommonObject
 					$result=$this->db->query($sql);
 				}
 
-				if ($resql)
+				if (! $error)
 				{
 					// Mise a jour infos denormalisees
 					$resql=$this->update_price();
@@ -726,19 +730,30 @@ class Propal extends CommonObject
 							if ($result < 0) { $error++; $this->errors=$interface->errors; }
 							// Fin appel triggers
 						}
-
-						$this->db->commit();
-						dol_syslog("Propal::ass::Create done id=".$this->id);
-						return $this->id;
 					}
 					else
 					{
-						$this->error=$this->db->error();
-						dol_syslog("Propal::Create -2 ".$this->error, LOG_ERR);
-						$this->db->rollback();
-						return -2;
+						$error++;
 					}
 				}
+			}
+			else
+			{
+				$error++;
+			}
+
+			if (! $error)
+			{
+				$this->db->commit();
+				dol_syslog("Propal::Create done id=".$this->id);
+				return $this->id;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Propal::Create -2 ".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
 			}
 		}
 		else
@@ -748,10 +763,6 @@ class Propal extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
-		$this->db->commit();
-		dol_syslog("Propal::Create done id=".$this->id, LOG_ERR);
-		return $this->id;
 	}
 
 
@@ -954,11 +965,11 @@ class Propal extends CommonObject
 					$this->brouillon = 1;
 				}
 
-                $this->db->free($resql);
+				$this->db->free($resql);
 
-                $this->lines = array();
+				$this->lines = array();
 
-                /*
+				/*
 				 * Lignes propales liees a un produit ou non
 				 */
 				$sql = "SELECT d.rowid, d.fk_propal, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
@@ -2048,12 +2059,12 @@ class Propal extends CommonObject
 		}
 	}
 
-    /**
-     *      Return clicable link of object (with eventually picto)
-     *      @param      withpicto       Add picto into link
-     *      @param      option          Where point the link
-     *      @param      get_params      Parametres added to url
-     *      @return     string          String with URL
+	/**
+	 *      Return clicable link of object (with eventually picto)
+	 *      @param      withpicto       Add picto into link
+	 *      @param      option          Where point the link
+	 *      @param      get_params      Parametres added to url
+	 *      @return     string          String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='', $get_params='')
 	{
