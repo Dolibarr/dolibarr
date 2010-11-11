@@ -20,11 +20,12 @@
 
 /**
  *	    \file       htdocs/lib/project.lib.php
- *		\brief      Ensemble de fonctions de base pour le module projet
- *      \ingroup    societe
+ *		\brief      Functions used by project module
+ *      \ingroup    project
  *      \version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+
 
 function project_prepare_head($object)
 {
@@ -37,18 +38,19 @@ function project_prepare_head($object)
     $head[$h][2] = 'project';
 	$h++;
 
-	if ($conf->propal->enabled || $conf->commande->enabled || $conf->facture->enabled)
+    $head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("ProjectContact");
+    $head[$h][2] = 'contact';
+    $h++;
+
+	if ($conf->fournisseur->enabled || $conf->propal->enabled || $conf->commande->enabled || $conf->facture->enabled || $conf->contrat->enabled
+	|| $conf->ficheinter->enabled || $conf->agenda->enabled || $conf->deplacement->enabled)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
 	    $head[$h][2] = 'element';
 		$h++;
 	}
-
-	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("ProjectContact");
-    $head[$h][2] = 'contact';
-	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
 	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
