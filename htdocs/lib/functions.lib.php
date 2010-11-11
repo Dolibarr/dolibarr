@@ -56,7 +56,7 @@ function GETPOST($paramname,$check='',$method=0)
     if (!empty($check))
     {
     	// Check if integer
-    	if ($check = 'int' && ! is_int($out)) $out='';
+        if ($check == 'int' && ! is_numeric($out)) $out='';
     }
 
     return $out;
