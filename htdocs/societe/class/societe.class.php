@@ -1311,7 +1311,7 @@ class Societe extends CommonObject
         {
             $lien = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
         }
-        
+
         // Add type of canvas
         $lien.=(!empty($this->canvas)?'&amp;canvas='.$this->canvas:'').'">';
         $lienfin='</a>';
@@ -2139,7 +2139,7 @@ class Societe extends CommonObject
 
         // Initialize parameters
         $this->id=0;
-        $this->nom = 'SPECIMEN'.'-'.dol_print_date($now,'dayhourlog');
+        $this->nom = 'THIRDPARTY SPECIMEN '.dol_print_date($now,'dayhourlog');
         $this->specimen=1;
         $this->cp='99999';
         $this->ville='MyTown';
@@ -2154,6 +2154,8 @@ class Societe extends CommonObject
         $this->client=1;
         $this->prospect=1;
         $this->fournisseur=1;
+        $this->tva_assuj=1;
+        $this->tva_intra='EU1234567';
         $this->note_public='This is a comment (public)';
         $this->note='This is a comment (private)';
     }

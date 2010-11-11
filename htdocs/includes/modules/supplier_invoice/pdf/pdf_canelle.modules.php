@@ -73,7 +73,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->franchise=!$mysoc->tva_assuj;
 
         // Get source company
-        $object->fetch_thirdparty();
+        if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
         $this->emetteur=$object->thirdparty;
         if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 

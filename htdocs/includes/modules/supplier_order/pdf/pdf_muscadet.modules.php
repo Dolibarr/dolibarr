@@ -334,6 +334,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				/*
 				 * Mode de reglement
 				 */
+				/* Not for supplier orders
 				if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER))
 				{
 					$pdf->SetXY ($this->marge_gauche, 228);
@@ -343,6 +344,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorCreateBankAccount"),0,'L',0);
 					$pdf->SetTextColor(0,0,0);
 				}
+                */
 
 				/*
 				 * Pied de page

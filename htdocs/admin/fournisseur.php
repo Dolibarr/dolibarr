@@ -42,6 +42,9 @@ $langs->load("orders");
 if (!$user->admin)
 accessforbidden();
 
+$specimenthirdparty=new Societe($db);
+$specimenthirdparty->initAsSpecimen();
+
 
 /*
  * Actions
@@ -54,12 +57,13 @@ if ($_POST["action"] == 'updateMask')
 	if ($maskconstorder)  dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
 }
 
-if ($_GET["action"] == 'specimen')
+if ($_GET["action"] == 'specimen')  // For orders
 {
 	$modele=$_GET["module"];
 
 	$commande = new CommandeFournisseur($db);
 	$commande->initAsSpecimen();
+    $commande->thirdparty=$specimenthirdparty;
 
 	// Charge le modele
 	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/supplier_order/pdf/";
@@ -69,7 +73,7 @@ if ($_GET["action"] == 'specimen')
 		$classname = "pdf_".$modele;
 		require_once($dir.$file);
 
-		$obj = new $classname($db);
+		$obj = new $classname($db,$commande);
 
 		if ($obj->write_file($commande,$langs) > 0)
 		{
@@ -89,12 +93,13 @@ if ($_GET["action"] == 'specimen')
 	}
 }
 
-if ($_GET["action"] == 'specimenfacture')
+if ($_GET["action"] == 'specimenfacture')   // For invoices
 {
 	$modele=$_GET["module"];
 
 	$facture = new FactureFournisseur($db);
 	$facture->initAsSpecimen();
+    $facture->thirdparty=$specimenthirdparty;
 
 	// Charge le modele
 	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/supplier_invoice/pdf/";
@@ -104,7 +109,7 @@ if ($_GET["action"] == 'specimenfacture')
 		$classname = "pdf_".$modele;
 		require_once($dir.$file);
 
-		$obj = new $classname($db);
+		$obj = new $classname($db,$facture);
 
 		if ($obj->write_file($facture,$langs) > 0)
 		{
@@ -301,6 +306,8 @@ if ($handle)
 print '</table><br>';
 
 
+
+
 /*
  * Modeles documents for supplier orders
  */
@@ -360,7 +367,7 @@ while (($file = readdir($handle))!==false)
 		print "<tr ".$bc[$var].">\n  <td>$name";
 		print "</td>\n  <td>\n";
 		require_once($dir.$file);
-		$module = new $classname($db);
+		$module = new $classname($db,$specimenthirdparty);
 		print $module->description;
 		print "</td>\n";
 
@@ -480,7 +487,7 @@ while (($file = readdir($handle)) !== false)
 		print "<tr ".$bc[$var].">\n  <td>$name";
 		print "</td>\n  <td>\n";
 		require_once($dir.$file);
-		$module = new $classname($db);
+		$module = new $classname($db,$specimenthirdparty);
 		print $module->description;
 		print "</td>\n";
 
