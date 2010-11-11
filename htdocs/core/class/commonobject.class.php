@@ -447,8 +447,8 @@ class CommonObject
 	}
 
 	/**
-	 *    	\brief      Load the third party of object from id $this->socid into this->client
-	 *		\return		int			<0 if KO, >0 if OK
+	 *    	Load the third party of object from id $this->socid into this->thirdpary
+	 *		@return		int			<0 if KO, >0 if OK
 	 */
 	function fetch_thirdparty()
 	{
@@ -456,12 +456,17 @@ class CommonObject
 
 		if (empty($this->socid)) return 0;
 
-		$client = new Societe($this->db);
-		$result=$client->fetch($this->socid);
-		$this->client = $client;
+		$thirdparty = new Societe($this->db);
+		$result=$thirdparty->fetch($this->socid);
+		$this->client = $thirdparty;  // deprecated
+		$this->thirdparty = $thirdparty;
 
 		// Use first price level if level not defined for third party
-		if ($conf->global->PRODUIT_MULTIPRICES && empty($this->client->price_level)) $this->client->price_level=1;
+		if ($conf->global->PRODUIT_MULTIPRICES && empty($this->thirdparty->price_level))
+		{
+		    $this->client->price_level=1; // deprecated
+            $this->thirdparty->price_level=1;
+		}
 
 		return $result;
 	}

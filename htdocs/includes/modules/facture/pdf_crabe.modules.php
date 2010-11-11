@@ -82,7 +82,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		$this->franchise=!$mysoc->tva_assuj;
 
-		// Recupere emmetteur
+		// Get source company
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
@@ -103,10 +103,10 @@ class pdf_crabe extends ModelePDFFactures
 
 
 	/**
-	 *		\brief      Fonction generant la facture sur le disque
-	 *		\param	    object			Object invoice to build (or id if old method)
-	 *		\param		outputlangs		Lang object for output language
-	 *		\return	    int     		1=ok, 0=ko
+	 *		Write the invoice to disk
+	 *		@param	    object			Object invoice to build (or id if old method)
+	 *		@param		outputlangs		Lang object for output language
+	 *		@return	    int     		1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs)
 	{

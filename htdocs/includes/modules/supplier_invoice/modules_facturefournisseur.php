@@ -92,7 +92,7 @@ function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
 		$classname = "pdf_".$model;
 		require_once($dir.$file);
 
-		$obj = new $classname($db);
+		$obj = new $classname($db,$object);
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.

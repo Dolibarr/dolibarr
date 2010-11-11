@@ -42,7 +42,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *	\brief      Constructor
 	 *	\param	    db		Handler access data base
 	 */
-	function pdf_canelle($db)
+	function pdf_canelle($db,$object)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -72,11 +72,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$this->franchise=!$mysoc->tva_assuj;
 
-		// Recupere emmetteur
-		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
+        // Get source company
+        $object->fetch_thirdparty();
+        $this->emetteur=$object->thirdparty;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
-		// Defini position des colonnes
+        // Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
 		$this->posxtva=121;
 		$this->posxup=132;
@@ -91,14 +92,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 
 	/**
-	 * 	\brief      Write the invoice to disk
-	 * 	\param	    id	        	Id invoice to write
-	 *	\param		outputlangs		Lang output object
-	 *	\return	    int         	1=ok, 0=ko
+     *      Write the invoice to disk
+     *      @param      object          Object invoice to build (or id if old method)
+     *      @param      outputlangs     Lang object for output language
+     *      @return     int             1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs='')
 	{
-		global $user,$langs,$conf;
+		global $user,$langs,$conf,$mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -112,7 +113,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		if ($conf->fournisseur->dir_output.'/facture')
 		{
-			$object->fetch_thirdparty();
 			$deja_regle = $object->getSommePaiement();
 
 			// Definition de $dir et $file
@@ -322,8 +322,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				}
 
 				/*
-				 * Mode de reglement
+				 * Payment mode
 				 */
+				/* Hidden for supplier invoices
 				if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER))
 				{
 					$pdf->SetXY ($this->marge_gauche, 228);
@@ -332,7 +333,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
 					$pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorCreateBankAccount"),0,'L',0);
 					$pdf->SetTextColor(0,0,0);
-				}
+				}*/
 
 				/*
 				 * Pied de page
@@ -547,7 +548,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->MultiCell(23,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
 
 	}
-	
+
 	/**
 	 *  \brief      Show payments table
 	 *  \param      pdf     		Object PDF
@@ -651,6 +652,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
+		/*
 		$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
 		if ($mysoc->logo)
 		{
@@ -667,10 +669,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			}
 		}
 		else
-		{
+		{*/
 			$text=$this->emetteur->nom;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
-		}
+		//}
 
 		$pdf->SetFont('','B',13);
 		$pdf->SetXY(100,$posy);

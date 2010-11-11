@@ -696,8 +696,8 @@ if ($_REQUEST['action']	== 'builddoc')
      * definit dans	/includes/modules/supplier_invoice/modules_facturefournisseur.php
      */
 
-    // Sauvegarde le dernier module	choisi pour	generer	un document
-    $facture=	new	FactureFournisseur($db);
+    // Save modele used
+    $facture=new FactureFournisseur($db);
     $facture->fetch($_REQUEST['facid']);
     if ($_REQUEST['model'])
     {
