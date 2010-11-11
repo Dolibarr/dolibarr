@@ -805,6 +805,7 @@ class Project extends CommonObject
         {
             // No filter. Use this if user has permission to see all project
         }
+        //print $sql;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
