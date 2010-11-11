@@ -61,10 +61,11 @@ class html_cerfafr extends ModeleDon
 
 
     /**
-    		\brief      Fonction generant le recu sur le disque
-    		\param	    id	        Id du recu a generer
-    		\return	    int         >0 si ok, <0 si ko
-    */
+     *  Write the object to document file to disk
+     *	@param	    don	            Donation object
+     *  @param      outputlangs     Lang object for output language
+     *	@return	    int             >0 if OK, <0 if KO
+     */
     function write_file($don,$outputlangs)
     {
 		global $user,$conf,$langs,$mysoc;

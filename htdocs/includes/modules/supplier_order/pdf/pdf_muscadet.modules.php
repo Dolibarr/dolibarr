@@ -91,12 +91,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	}
 
 
-	/**
-	 * 	\brief      Fonction generant la commande sur le disque
-	 * 	\param	    id	        	Id de la commande a generer
-	 *	\param		outputlangs		Lang output object
-	 *	\return	    int         	1=ok, 0=ko
-	 */
+    /**
+     *      Write the order as a document onto disk
+     *      @param      object          Object invoice to build (or id if old method)
+     *      @param      outputlangs     Lang object for output language
+     *      @return     int             1=OK, 0=KO
+     */
 	function write_file($object,$outputlangs='')
 	{
 		global $user,$langs,$conf;

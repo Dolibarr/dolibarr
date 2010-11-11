@@ -77,11 +77,11 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	}
 
 	/**
-	 *	\brief  	Fonction generant le rapport sur le disque
-	 *	\param		_dir			Directory
-	 *	\param		number			Number
-	 *	\param		outputlangs		Lang output object
-     *	\return	    int     		1=ok, 0=ko
+	 *	Fonction generant le rapport sur le disque
+	 *	@param		_dir			Directory
+	 *	@param		number			Number
+	 *	@param		outputlangs		Lang output object
+     *	@return	    int     		1=ok, 0=ko
 	 */
 	function write_file($_dir, $number, $outputlangs)
 	{

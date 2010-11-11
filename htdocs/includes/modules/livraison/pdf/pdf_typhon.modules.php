@@ -95,10 +95,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 
 	/**
-	 *	\brief      Fonction generant le bon de livraison sur le disque
-	 *	\param	    delivery		Object livraison a generer
-	 *	\param		outputlangs		Lang output object
-	 *	\return	    int         	1 if OK, <=0 if KO
+	 *	Fonction generant le bon de livraison sur le disque
+	 *	@param	    object   		Object livraison a generer
+	 *	@param		outputlangs		Lang output object
+	 *	@return	    int         	1 if OK, <=0 if KO
 	 */
 	function write_file($object,$outputlangs)
 	{

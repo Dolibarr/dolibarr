@@ -70,7 +70,14 @@ class CommActionRapport
 		$this->subject=$langs->trans("ActionsReport").' '.$this->year."-".$this->month;
 	}
 
-	function generate($socid = 0, $catid = 0, $outputlangs='')
+	/**
+     *      Write the object to document file to disk
+     *      @param      socid
+     *      @param      catid
+     *      @param      outputlangs     Lang object for output language
+     *      @return     int             1=OK, 0=KO
+	 */
+	function write_file($socid = 0, $catid = 0, $outputlangs='')
 	{
 		global $user,$conf,$langs;
 

@@ -103,7 +103,7 @@ class pdf_crabe extends ModelePDFFactures
 
 
 	/**
-	 *		Write the invoice to disk
+	 *		Write the object to document file to disk
 	 *		@param	    object			Object invoice to build (or id if old method)
 	 *		@param		outputlangs		Lang object for output language
 	 *		@return	    int     		1=OK, 0=KO

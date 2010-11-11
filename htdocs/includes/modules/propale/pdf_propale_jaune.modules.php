@@ -77,7 +77,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 	/**
 	 *	\brief      Fonction generant la propale sur le disque
-	 *	\param	    propale			Objet propal
+	 *	\param	    object			Objet propal
 	 *	\param		outputlangs		Lang object for output language
 	 *	\return	    int     		1=ok, 0=ko
 	 */

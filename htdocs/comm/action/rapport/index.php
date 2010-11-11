@@ -54,7 +54,7 @@ $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 if ($_GET["action"] == 'builddoc')
 {
 	$cat = new CommActionRapport($db, $_GET["month"], $_GET["year"]);
-	$result=$cat->generate($_GET["id"]);
+	$result=$cat->write_file(GETPOST("id"));
 	if ($result < 0)
 	{
 		$mesg=$cat->error;

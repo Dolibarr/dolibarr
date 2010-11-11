@@ -85,7 +85,7 @@ class pdf_baleine extends ModelePDFProjects
 
 	/**
 	 *	\brief      Fonction generant le projet sur le disque
-	 *	\param	    delivery		Object project a generer
+	 *	\param	    object   		Object project a generer
 	 *	\param		outputlangs		Lang output object
 	 *	\return	    int         	1 if OK, <=0 if KO
 	 */
