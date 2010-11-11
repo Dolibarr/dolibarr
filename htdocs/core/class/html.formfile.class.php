@@ -132,7 +132,7 @@ class FormFile
 	 *      @param      genallowed          Generation is allowed (1/0 or array of formats)
 	 *      @param      delallowed          Remove is allowed (1/0)
 	 *      @param      modelselected       Model to preselect by default
-	 *      @param      allowgenifempty			Show warning if no model activated
+	 *      @param      allowgenifempty		Show warning if no model activated
 	 *      @param      forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
 	 *      @param      iconPDF             Show only PDF icon with link (1/0)
 	 * 		@param		maxfilenamelength	Max length for filename shown

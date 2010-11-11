@@ -37,11 +37,11 @@ $langs->load("suppliers");
 $langs->load("bills");
 
 // If socid provided by ajax company selector
-if (! empty($_REQUEST['id_fourn_id']))
+if (! empty($_REQUEST['search_fourn_id']))
 {
-	$_GET['id_fourn'] = $_GET['id_fourn_id'];
-	$_POST['id_fourn'] = $_POST['id_fourn_id'];
-	$_REQUEST['id_fourn'] = $_REQUEST['id_fourn_id'];
+	$_GET['id_fourn'] = $_GET['search_fourn_id'];
+	$_POST['id_fourn'] = $_POST['search_fourn_id'];
+	$_REQUEST['id_fourn'] = $_REQUEST['search_fourn_id'];
 }
 
 // Security check
@@ -89,19 +89,24 @@ if ($_GET["action"] == 'remove_pf')
 
 if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
+    $id_fourn=GETPOST("id_fourn");
+    if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
+    $ref_fourn=GETPOST("ref_fourn");
+    if (empty($ref_fourn)) $id_fourn=GETPOST("search_ref_fourn");
+
 	$product = new ProductFournisseur($db);
-	$result=$product->fetch($_REQUEST["id"]);
+	$result=$product->fetch(GETPOST("id"));
 	if ($result > 0)
 	{
 		$db->begin();
 
 		$error=0;
-		if (! $_POST["ref_fourn"])
+		if (! $ref_fourn)
 		{
 			$error++;
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
 		}
-		if ($_POST["id_fourn"] <= 0)
+		if ($id_fourn <= 0)
 		{
 			//print "eee".$_POST["id_fourn"];
 			$error++;
@@ -110,7 +115,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 
 		if (! $error)
 		{
-			$ret=$product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]);
+			$ret=$product->add_fournisseur($user, $id_fourn, $ref_fourn);
 			if ($ret == -3)
 			{
 				$error++;
@@ -134,7 +139,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 				if ($_POST["price"] >= 0)
 				{
 					$supplier=new Fournisseur($db);
-					$result=$supplier->fetch($_POST["id_fourn"]);
+					$result=$supplier->fetch($id_fourn);
 
 					$ret=$product->update_buyprice($_POST["qty"], $_POST["price"], $user, $_POST["price_base_type"], $supplier);
 					if ($ret < 0)

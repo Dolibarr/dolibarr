@@ -270,7 +270,14 @@ if ($modulepart)
 		$original_file=$conf->mailing->dir_temp.'/'.$original_file;
 	}
 
-	// GENERIC Wrapping
+    // Wrapping pour les icones de background des mailings
+    elseif ($modulepart == 'phpsane_user_temp')
+    {
+        $accessallowed=1;
+        $original_file=$conf->phpsane->dir_temp.'/'.$user->id.'/'.$original_file;
+    }
+
+    // GENERIC Wrapping
 	// If modulepart=module_user_temp	Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp/iduser
 	// If modulepart=module_temp		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp
 	// If modulepart=module				Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/iduser
