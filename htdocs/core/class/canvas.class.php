@@ -46,7 +46,7 @@ class Canvas
 	var $template_dir;		// Directory with all core and external templates files
 	var $action;
 	var $smarty;
-	
+
 
    /**
 	*   Constructor.
@@ -56,7 +56,7 @@ class Canvas
 	{
 		$this->db = $DB;
 	}
-	
+
 	/**
      *    Set action type
      */
@@ -64,7 +64,7 @@ class Canvas
 	{
 		return $this->action = $action;
 	}
-	
+
 
 	/**
 	 * 	Return the title of card
@@ -73,7 +73,7 @@ class Canvas
 	{
 		return $this->control->getTitle($this->action);
 	}
-	
+
 	/**
 	 * 	Return the head of card (tabs)
 	 */
@@ -97,10 +97,10 @@ class Canvas
 	function doActions($id)
 	{
 		$out = $this->control->doActions($id);
-		
+
 		$this->errors = ($this->control->errors?$this->control->errors:$this->control->object->errors);
 		$this->error = ($this->control->error?$this->control->error:$this->control->object->error);
-		
+
 		return $out;
 	}
 
@@ -134,7 +134,7 @@ class Canvas
 			$childmodule = $this->aliasmodule = $regs[2];
 			$this->canvas = $regs[1];
 		}
-		
+
 		// For compatibility
 		if ($childmodule == 'thirdparty') { $childmodule = $this->aliasmodule = 'societe'; }
 		if ($targetmodule == 'thirdparty') { $targetmodule = 'societe'; }
@@ -158,7 +158,7 @@ class Canvas
 			// Include actions class (controller)
 			$controlclassfile = DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php';
 			require_once($controlclassfile);
-			
+
 			// Include specific library
 			if (file_exists(DOL_DOCUMENT_ROOT.'/'.$this->aliasmodule.'/lib/'.$this->aliasmodule.'.lib.php'))
 			{
@@ -190,7 +190,7 @@ class Canvas
 
 		return 1;
 	}
-	
+
 	/**
 	 * 	Check permissions of a user to show a page and an object. Check read permission
 	 * 	If $_REQUEST['action'] defined, we also check write permission.
@@ -209,12 +209,12 @@ class Canvas
 	}
 
 	/**
-	 * 	Assign templates values
+	 * 	Shared method for canvas to assign values of templates
 	 * 	@param	action	Type of action
 	 */
 	function assign_values()
 	{
-		if (!empty($this->smarty))
+		/*if (!empty($this->smarty))
 		{
 			global $smarty;
 
@@ -222,10 +222,9 @@ class Canvas
 			$smarty->template_dir = $this->template_dir;
 		}
 		else
-		{
-			$this->control->assign_values($this->action);
-		}
-
+		{*/
+		$this->control->assign_values($this->action);
+		/*}*/
 	}
 
 	/**
@@ -235,16 +234,16 @@ class Canvas
 	{
 		global $conf, $langs, $user, $canvas;
 
-		if (!empty($this->smarty))
+		/*if (!empty($this->smarty))
 		{
 			global $smarty;
 
 			$smarty->display($this->action.'.tpl');
 		}
 		else
-		{
-			include($this->template_dir.$this->card.'_'.$this->action.'.tpl.php');
-		}
+		{*/
+		include($this->template_dir.$this->card.'_'.$this->action.'.tpl.php');        // Include native PHP template
+		/*}*/
 	}
 
 }

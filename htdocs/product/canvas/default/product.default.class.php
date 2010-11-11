@@ -44,11 +44,11 @@ class ProductDefault extends Product
 		$this->db 				= $DB;
 		$this->id 				= $id ;
 		$this->user 			= $user;
-		$this->smarty			= 0;
+		//$this->smarty			= 0;
 		$this->module 			= "produit";
 		$this->canvas 			= "default";
 		$this->name 			= "default";
-		$this->definition 		= "Canvas des produits (défaut)";
+		$this->definition 		= "Product canvas (défaut)";
 		$this->fieldListName    = "product_default";
 
 		$this->next_prev_filter = "canvas='default'";

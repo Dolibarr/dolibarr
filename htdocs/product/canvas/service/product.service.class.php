@@ -31,9 +31,9 @@ class ProductService extends Product
 {
 	//! Numero d'erreur Plage 1280-1535
 	var $errno = 0;
-	
+
 	var $tpl = array();
-	
+
 	/**
 	 *    \brief      Constructeur de la classe
 	 *    \param      DB          Handler acces base de donnees
@@ -44,21 +44,21 @@ class ProductService extends Product
 		$this->db 				= $DB;
 		$this->id 				= $id ;
 		$this->user 			= $user;
-		$this->smarty			= 0;
+		//$this->smarty			= 0;
 		$this->module 			= "service";
 		$this->canvas 			= "service";
 		$this->name 			= "service";
-		$this->definition 		= "Canvas des services";
+		$this->definition 		= "Services canvas";
 		$this->fieldListName	= "product_service";
 
 		$this->next_prev_filter = "canvas='service'";
 	}
-	
+
 	function getTitle()
 	{
 		return 'Services';
 	}
-	
+
 	/**
 	 *    \brief      Lecture des donnees dans la base
 	 *    \param      id          Product id
@@ -69,7 +69,7 @@ class ProductService extends Product
 
 		return $result;
 	}
-	
+
 	/**
 	 *    \brief      Assigne les valeurs pour les templates
 	 *    \param      object     object
@@ -77,25 +77,25 @@ class ProductService extends Product
 	function assign_values($action='')
 	{
 		global $conf,$langs;
-		
+
 		parent::assign_values($action);
-		
+
 		// Duration
 		$this->tpl['duration_value'] = $this->duration_value;
-		
+
 		if ($action == 'create')
 		{
 			// Title
 			$this->tpl['title'] = load_fiche_titre($langs->trans("NewService"));
 		}
-		
+
 		if ($action == 'edit')
 		{
 			$this->tpl['title'] = load_fiche_titre($langs->trans('Modify').' '.$langs->trans('Service').' : '.$this->ref, "");
 		}
-		
+
 		if ($action == 'create' || $action == 'edit')
-		{	
+		{
 			// Duration unit
 			// TODO creer fonction
 			$duration_unit = '<input name="duration_unit" type="radio" value="h"'.($this->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
@@ -109,9 +109,9 @@ class ProductService extends Product
 			$duration_unit.= '<input name="duration_unit" type="radio" value="y"'.($this->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
 			$this->tpl['duration_unit'] = $duration_unit;
 		}
-		
+
 		if ($action == 'view')
-		{	
+		{
 			// Photo
 			$this->tpl['nblignes'] = 4;
 			if ($this->is_photo_available($conf->service->dir_output))
@@ -131,14 +131,14 @@ class ProductService extends Product
 			$this->tpl['duration_unit'] = $langs->trans($dur[$this->duration_unit]);
 		}
 	}
-	
+
 	/**
 	 * 	\brief	Fetch datas list
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
 		global $conf;
-		
+
 		$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 		$sql.= ' p.fk_product_type, p.tms as datem,';
 		$sql.= ' p.duration, p.tosell as statut, p.seuil_stock_alerte';
@@ -183,7 +183,7 @@ class ProductService extends Product
 		}
 		$sql.= $this->db->order($sortfield,$sortorder);
 		$sql.= $this->db->plimit($limit + 1 ,$offset);
-		
+
 		$this->list_datas = array();
 
 		$resql = $this->db->query($sql);
@@ -214,7 +214,7 @@ class ProductService extends Product
 			print $sql;
 		}
 	}
-	
+
 }
- 
+
 ?>

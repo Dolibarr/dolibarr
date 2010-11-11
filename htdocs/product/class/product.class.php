@@ -2856,31 +2856,6 @@ class Product extends CommonObject
 
             $this->tpl['description'] = $this->description;
             $this->tpl['note'] = $this->note;
-
-			/* Fix: La presentation ne doit pas etre gérée dans une classe métier
-			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
-			{
-				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-
-				$doleditor=new DolEditor('desc',$this->description,160,'dolibarr_notes','',false);
-                $this->tpl['doleditor_description'] = $doleditor;
-
-				$doleditor=new DolEditor('note',$this->note,180,'dolibarr_notes','',false);
-				$this->tpl['doleditor_note'] = $doleditor;
-			}
-			else
-			{
-				$textarea = '<textarea name="desc" rows="4" cols="90">';
-				$textarea.= $this->description;
-				$textarea.= '</textarea>';
-				$this->tpl['description'] = $this->description
-
-				$textarea = '<textarea name="note" rows="8" cols="70">';
-				$textarea.= $this->note;
-				$textarea.= '</textarea>';
-				$this->tpl['textarea_note'] = $textarea;
-			}
-			*/
 		}
 
 		if ($action == 'view')
@@ -2898,16 +2873,10 @@ class Product extends CommonObject
 		}
 	}
 
-	/**
-	 *  \brief Affecte les valeurs smarty
-	 *  \remarks Rodolphe : pour l'instant la fonction est vide mais necessaire pour compatibilite
-	 *   avec les canvas A terme la fiche produit utilisera aussi smarty
-	 */
-	function assign_smarty_values(&$smarty)
-	{
-
-	}
-
+    /**
+     * Return if object is a product
+     * @return  boolean     True if it's a product
+     */
 	function isproduct()
 	{
 		if ($this->type != 1)
@@ -2920,6 +2889,10 @@ class Product extends CommonObject
 		}
 	}
 
+    /**
+     * Return if object is a product
+     * @return  boolean     True if it's a service
+     */
 	function isservice()
 	{
 		if ($this->type==1)

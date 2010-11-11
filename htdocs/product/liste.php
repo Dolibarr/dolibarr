@@ -243,7 +243,7 @@ if ($resql)
 			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/';
 		}
 
-		if ($object->smarty)
+		/*if ($object->smarty)
 		{
 			$template = 'list.tpl';
 			$smarty->template_dir = $template_dir;
@@ -267,9 +267,9 @@ if ($resql)
 			$smarty->clear_compiled_tpl($template);
 		}
 		else
-		{
-			include($template_dir.'list.tpl.php');	// To use native PHP
-		}
+		{*/
+	   include($template_dir.'list.tpl.php');	// Include native PHP templates
+		/*}*/
 	}
 	else
 	{
