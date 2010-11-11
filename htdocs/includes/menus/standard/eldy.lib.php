@@ -918,13 +918,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),1,$user->rights->facture->lire);
             }
 
-            // Proposals
-            if ($conf->propal->enabled)
-            {
-                $langs->load("propal");
-                $newmenu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"),0,$user->rights->propale->lire);
-            }
-
             // Orders
             if ($conf->commande->enabled)
             {
