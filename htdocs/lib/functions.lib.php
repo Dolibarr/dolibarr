@@ -40,7 +40,7 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 /**
  *  Return value of a param into get or post variable
  *  @param          paramname   Name of parameter to found
- *  @param			check		Type of check
+ *  @param			check		Type of check ('' or 'int')
  *  @param			method		Type of method (0 = get or post, 1 = only get, 2 = only post)
  *  @return         string      Value found
  */
