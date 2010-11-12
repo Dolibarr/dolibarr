@@ -1,6 +1,7 @@
 google
 .htaccess
 .DS_Store
+.documents
 dolibarr_mail
 demo_pwc
 phpsane
