@@ -28,6 +28,24 @@
  */
 
 
+/**
+ *      Return font name to use for PDF generation
+ *      @param      outputlangs     Output langs object
+ *      @return     string          Name of font to use
+ */
+function pdf_getPDFFont($outputlangs)
+{
+    $font='Helvetica'; // By default, for FPDI
+    if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower)
+    {
+        if ($outputlangs->trans('FONTFORPDF')!='FONTFORPDF')
+        {
+            $font=$outputlangs->trans('FONTFORPDF');
+        }
+    }
+    return $font;
+}
+
 
 /**
  *      Return a formated address (part address/zip/town/state) according to country rules

@@ -27,6 +27,7 @@
  */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 
 /**
@@ -144,7 +145,7 @@ class pdf_soleil extends ModelePDFFicheinter
                     $pdf->setPrintHeader(false);
                     $pdf->setPrintFooter(false);
                 }
-                $pdf->SetFont('Helvetica');
+                $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 				$pdf->Open();
 				$pagenb=0;

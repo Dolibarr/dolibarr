@@ -122,7 +122,7 @@ class pdf_paiement
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
         }
-		$pdf->SetFont('Helvetica');
+        $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 		$sql = "SELECT p.datep as dp, f.facnumber";
 		//$sql .= ", c.libelle as paiement_type, p.num_paiement";

@@ -396,7 +396,7 @@ class pdf_standardlabel {
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
         }
-        $pdf->SetFont('Helvetica');
+        $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
         $pdf->SetTitle($outputlangs->transnoentities('MembersLabels'));
         $pdf->SetSubject($outputlangs->transnoentities("MembersLabels"));

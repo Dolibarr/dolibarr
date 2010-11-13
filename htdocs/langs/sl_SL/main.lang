@@ -1,6 +1,7 @@
 ﻿# Dolibarr language file - sl_SL - main
 CHARSET=UTF-8
 DIRECTION=ltr
+FONTFORPDF=DejaVuSans
 SeparatorDecimal=,
 SeparatorThousand=.
 FormatDateShort=%d/%m/%Y

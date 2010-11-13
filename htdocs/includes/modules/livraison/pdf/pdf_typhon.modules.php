@@ -31,6 +31,7 @@
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/class/livraison.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 
 /**
@@ -157,7 +158,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     $pdf->setPrintHeader(false);
                     $pdf->setPrintFooter(false);
                 }
-				$pdf->SetFont('Helvetica');
+                $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 				// Complete object by loading several other informations
 				$expedition=new Expedition($this->db);

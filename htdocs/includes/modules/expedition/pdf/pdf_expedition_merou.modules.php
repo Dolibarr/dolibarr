@@ -29,6 +29,7 @@
 require_once DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php";
 require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 
 /**
@@ -159,7 +160,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
                     $pdf->setPrintHeader(false);
                     $pdf->setPrintFooter(false);
                 }
-				$pdf->SetFont('Helvetica');
+                $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 				$pdf->Open();
 				$pagenb=0;

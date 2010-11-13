@@ -277,7 +277,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
                     $pdf->setPrintHeader(false);
                     $pdf->setPrintFooter(false);
                 }
-				$pdf->SetFont('Helvetica');
+                $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 				$pdf->Open();
 				$pagenb=0;

@@ -31,7 +31,6 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/fpdf/fpdfi/fpdi.php");
 
 
 $langs->load("bills");
@@ -54,6 +53,9 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 {
 	if (is_array($_POST['toGenerate']))
 	{
+        require_once(DOL_DOCUMENT_ROOT."/includes/fpdf/fpdfi/fpdi.php");
+        require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+
 		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('\.pdf|',$_POST['toGenerate']).'\.pdf','\.meta$|\.png','date',SORT_DESC) ;
 
 		// liste les fichiers
@@ -77,7 +79,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 			$pdf->setPrintHeader(false);
 			$pdf->setPrintFooter(false);
 		}
-		$pdf->SetFont('Helvetica');
+        $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 		//$pdf->Open();
 		//$pdf->AddPage();
@@ -156,7 +158,7 @@ jQuery(document).ready(function() {
  *                                                                         *
  ***************************************************************************/
 
-$now=gmmktime();
+$now=dol_now();
 
 $page = $_GET["page"];
 $sortfield=$_GET["sortfield"];

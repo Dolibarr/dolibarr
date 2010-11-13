@@ -417,7 +417,7 @@ class pdf_standard {
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
         }
-		$pdf->SetFont('Helvetica');
+        $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 		$pdf->SetTitle($outputlangs->transnoentities('MembersCards'));
 		$pdf->SetSubject($outputlangs->transnoentities("MembersCards"));

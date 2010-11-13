@@ -29,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 
 /**
@@ -141,7 +142,7 @@ class pdf_baleine extends ModelePDFProjects
                     $pdf->setPrintHeader(false);
                     $pdf->setPrintFooter(false);
                 }
-				$pdf->SetFont('Helvetica');
+                $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 				// Complete object by loading several other informations
 				$task = new Task($this->db);

@@ -9,6 +9,7 @@
 // Reference language: en_US
 CHARSET=UTF-8
 DIRECTION=升
+FONTFORPDF=?????
 SeparatorDecimal=。
 SeparatorThousand=，
 FormatDateShort=%d/%m/%Y

@@ -29,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/supplier_invoice/modules_factu
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 
 /**
@@ -161,7 +162,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
                     $pdf->setPrintHeader(false);
                     $pdf->setPrintFooter(false);
                 }
-				$pdf->SetFont('Helvetica');
+                $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 				$pdf->Open();
 				$pagenb=0;

@@ -29,13 +29,13 @@
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 
 /**
  *	\class      pdf_sirocco
  *	\brief      Classe permettant de generer les bons de livraison au modele Sirocco
  */
-
 class pdf_sirocco extends ModelePDFDeliveryOrder
 {
 
@@ -135,7 +135,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
                     $pdf->setPrintHeader(false);
                     $pdf->setPrintFooter(false);
                 }
-				$pdf->SetFont('Helvetica');
+                $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 				// Complete object by loading several other informations
 				$expedition=new Expedition($this->db);

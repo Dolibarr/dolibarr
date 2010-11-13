@@ -41,6 +41,7 @@ require_once(DOL_DOCUMENT_ROOT."/cron/functions_cron.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/fpdf/fpdfi/fpdi.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 
 // Load main language strings
@@ -298,7 +299,7 @@ if ( $resql=$db->query($sql) )
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
         }
-		$pdf->SetFont('Helvetica');
+        $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 		//$pdf->Open();
 		//$pdf->AddPage();
