@@ -40,6 +40,7 @@ For users:
 - New: Reorganize tabs on third parties.
 - New: Option MAIN_INVERT_SENDER_RECIPIENT is available in einstein pdf template.
 - New: Easier way to define url for clicktodial module.
+- New: Add a fckeditor test area in fckeditor module setup.
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Better Postgresql compatibility.

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur       <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin             <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 
 $langs->load("admin");
 $langs->load("fckeditor");
@@ -64,6 +65,12 @@ $picto = array(
 );
 
 
+
+/*
+ *  Actions
+ */
+
+
 foreach($modules as $const => $desc)
 {
 	if ($_GET["action"] == 'activate_'.strtolower($const))
@@ -85,9 +92,15 @@ foreach($modules as $const => $desc)
 	}
 }
 
+if ($_POST["save"])
+{
+    dolibarr_set_const($db, "FCKEDITOR_TEST", $_POST["formtestfield"],'chaine',0,'',$conf->entity);
+}
+
+
 
 /*
- * Affiche page
+ * View
  */
 
 llxHeader();
@@ -113,7 +126,7 @@ foreach($modules as $const => $desc)
 {
 	// Si condition non remplie, on ne propose pas l'option
 	if (! $conditions[$const]) continue;
-	
+
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
 	print '<td width="16">'.img_object("",$picto[$const]).'</td>';
@@ -143,6 +156,13 @@ foreach($modules as $const => $desc)
 
 print '</table>';
 
+print '<br>';
+print_fiche_titre($langs->trans("Test"),'','');
+print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+$editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test',200,'dolibarr_notes','In', true);
+$editor->Create();
+print '<center><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></center>'."\n";
+print '</form>'."\n";
 
 $db->close();
 
