@@ -1497,7 +1497,51 @@ class CommandeFournisseur extends Commande
 		$this->total_tva      = $xnbp*19.6;
 		$this->total_ttc      = $xnbp*119.6;
 	}
+
+    /**
+     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *      @param          user    Objet user
+     *      @return         int     <0 if KO, >0 if OK
+     */
+    function load_board($user)
+    {
+        global $conf, $user;
+
+        $now=gmmktime();
+
+        $this->nbtodo=$this->nbtodolate=0;
+        $clause = " WHERE";
+
+        $sql = "SELECT c.rowid, c.date_creation as datec, c.fk_statut";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+        if (!$user->rights->societe->client->voir && !$user->societe_id)
+        {
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
+            $sql.= " WHERE sc.fk_user = " .$user->id;
+            $clause = " AND";
+        }
+        $sql.= $clause." c.entity = ".$conf->entity;
+        $sql.= " AND (c.fk_statut BETWEEN 1 AND 2)";
+        if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nbtodo++;
+                if ($obj->fk_statut != 3 && $this->db->jdate($obj->datec) < ($now - $conf->commande->fournisseur->warning_delay)) $this->nbtodolate++;
+            }
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
 }
+
 
 
 /**

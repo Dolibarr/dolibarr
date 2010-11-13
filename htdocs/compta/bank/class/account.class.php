@@ -792,12 +792,11 @@ class Account extends CommonObject
 		}
 	}
 
-
 	/**
-	 *      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *      @param      user        		Objet user
 	 *		@param		filteraccountid		To get info for a particular account id
-	 *      @return     int         		<0 si ko, >0 si ok
+	 *      @return     int         		<0 if KO, >0 if OK
 	 */
 	function load_board($user,$filteraccountid=0)
 	{

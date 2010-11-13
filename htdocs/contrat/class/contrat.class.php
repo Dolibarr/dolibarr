@@ -1252,10 +1252,10 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
-	 *      \param      user        Objet user
-	 *      \param      mode        "inactive" pour services a activer, "expired" pour services expires
-	 *      \return     int         <0 si ko, >0 si ok
+     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *      @param      user                Objet user
+     *      @param      mode                "inactive" pour services a activer, "expired" pour services expires
+     *      @return     int                 <0 if KO, >0 if OK
 	 */
 	function load_board($user,$mode)
 	{

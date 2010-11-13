@@ -299,9 +299,23 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 	$board=new Commande($db);
 	$board->load_board($user);
-    $board->warning_delay=$conf->commande->traitement->warning_delay/60/60/24;
+    $board->warning_delay=$conf->commande->client->warning_delay/60/60/24;
     $board->label=$langs->trans("OrdersToProcess");
     $board->url=DOL_URL_ROOT.'/commande/liste.php?viewstatut=-2';
+    $board->img=img_object($langs->trans("Orders"),"order");
+    $rowspan++;
+    $dashboardlines[]=$board;
+}
+
+// Number of suppliers orders a deal
+if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire)
+{
+    include_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");
+    $board=new CommandeFournisseur($db);
+    $board->load_board($user);
+    $board->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
+    $board->label=$langs->trans("SuppliersOrdersToProcess");
+    $board->url=DOL_URL_ROOT.'/fourn/commande/index.php';
     $board->img=img_object($langs->trans("Orders"),"order");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -370,23 +384,6 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
     $rowspan++;
     $dashboardlines[]=$board;
 }
-
-// Number of supplier invoices (has paid)
-if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->facture->lire)
-{
-	$langs->load("bills");
-
-	include_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
-	$board=new FactureFournisseur($db);
-	$board->load_board($user);
-    $board->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
-    $board->label=$langs->trans("SupplierBillsToPay");
-    $board->url=DOL_URL_ROOT.'/fourn/facture/index.php?filtre=paye:0';
-    $board->img=img_object($langs->trans("Bills"),"bill");
-    $rowspan++;
-    $dashboardlines[]=$board;
-}
-
 // Number of invoices customers (has paid)
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
@@ -398,6 +395,22 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
     $board->warning_delay=$conf->facture->client->warning_delay/60/60/24;
     $board->label=$langs->trans("CustomerBillsUnpaid");
     $board->url=DOL_URL_ROOT.'/compta/facture/impayees.php';
+    $board->img=img_object($langs->trans("Bills"),"bill");
+    $rowspan++;
+    $dashboardlines[]=$board;
+}
+
+// Number of supplier invoices (has paid)
+if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->facture->lire)
+{
+    $langs->load("bills");
+
+    include_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
+    $board=new FactureFournisseur($db);
+    $board->load_board($user);
+    $board->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
+    $board->label=$langs->trans("SupplierBillsToPay");
+    $board->url=DOL_URL_ROOT.'/fourn/facture/index.php?filtre=paye:0';
     $board->img=img_object($langs->trans("Bills"),"bill");
     $rowspan++;
     $dashboardlines[]=$board;

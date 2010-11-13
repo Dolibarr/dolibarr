@@ -35,23 +35,23 @@ $langs->load("contracts");
 $langs->load("bills");
 $langs->load("banks");
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
 if ( (isset($_POST["action"]) && $_POST["action"] == 'update'))
 {
-	//Conversion des jours en secondes
-  if ($_POST["ActionsToDo"]) dolibarr_set_const($db, "MAIN_DELAY_ACTIONS_TODO",$_POST["ActionsToDo"],'chaine',0,'',$conf->entity);
-  if ($_POST["OrdersToProcess"]) dolibarr_set_const($db, "MAIN_DELAY_ORDERS_TO_PROCESS",$_POST["OrdersToProcess"],'chaine',0,'',$conf->entity);
-  if ($_POST["PropalsToClose"]) dolibarr_set_const($db, "MAIN_DELAY_PROPALS_TO_CLOSE",$_POST["PropalsToClose"],'chaine',0,'',$conf->entity);
-  if ($_POST["PropalsToBill"]) dolibarr_set_const($db, "MAIN_DELAY_PROPALS_TO_BILL",$_POST["PropalsToBill"],'chaine',0,'',$conf->entity);
-  if ($_POST["BoardNotActivatedServices"]) dolibarr_set_const($db, "MAIN_DELAY_NOT_ACTIVATED_SERVICES",$_POST["BoardNotActivatedServices"],'chaine',0,'',$conf->entity);
-  if ($_POST["BoardRunningServices"]) dolibarr_set_const($db, "MAIN_DELAY_RUNNING_SERVICES",$_POST["BoardRunningServices"],'chaine',0,'',$conf->entity);
-  if ($_POST["SupplierBillsToPay"]) dolibarr_set_const($db, "MAIN_DELAY_SUPPLIER_BILLS_TO_PAY",$_POST["SupplierBillsToPay"],'chaine',0,'',$conf->entity);
-  if ($_POST["CustomerBillsUnpaid"]) dolibarr_set_const($db, "MAIN_DELAY_CUSTOMER_BILLS_UNPAYED",$_POST["CustomerBillsUnpaid"],'chaine',0,'',$conf->entity);
-  if ($_POST["TransactionsToConciliate"]) dolibarr_set_const($db, "MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE",$_POST["TransactionsToConciliate"],'chaine',0,'',$conf->entity);
-  if ($_POST["ChequesToDeposit"]) dolibarr_set_const($db, "MAIN_DELAY_CHEQUES_TO_DEPOSIT",$_POST["ChequesToDeposit"],'chaine',0,'',$conf->entity);
-	if ($_POST["Members"]) dolibarr_set_const($db, "MAIN_DELAY_MEMBERS",$_POST["Members"],'chaine',0,'',$conf->entity);
+    //Conversion des jours en secondes
+    if ($_POST["ActionsToDo"]) dolibarr_set_const($db, "MAIN_DELAY_ACTIONS_TODO",$_POST["ActionsToDo"],'chaine',0,'',$conf->entity);
+    if ($_POST["OrdersToProcess"]) dolibarr_set_const($db, "MAIN_DELAY_ORDERS_TO_PROCESS",$_POST["OrdersToProcess"],'chaine',0,'',$conf->entity);
+    if ($_POST["SuppliersOrdersToProcess"]) dolibarr_set_const($db, "MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS",$_POST["SuppliersOrdersToProcess"],'chaine',0,'',$conf->entity);
+    if ($_POST["PropalsToClose"]) dolibarr_set_const($db, "MAIN_DELAY_PROPALS_TO_CLOSE",$_POST["PropalsToClose"],'chaine',0,'',$conf->entity);
+    if ($_POST["PropalsToBill"]) dolibarr_set_const($db, "MAIN_DELAY_PROPALS_TO_BILL",$_POST["PropalsToBill"],'chaine',0,'',$conf->entity);
+    if ($_POST["BoardNotActivatedServices"]) dolibarr_set_const($db, "MAIN_DELAY_NOT_ACTIVATED_SERVICES",$_POST["BoardNotActivatedServices"],'chaine',0,'',$conf->entity);
+    if ($_POST["BoardRunningServices"]) dolibarr_set_const($db, "MAIN_DELAY_RUNNING_SERVICES",$_POST["BoardRunningServices"],'chaine',0,'',$conf->entity);
+    if ($_POST["CustomerBillsUnpaid"]) dolibarr_set_const($db, "MAIN_DELAY_CUSTOMER_BILLS_UNPAYED",$_POST["CustomerBillsUnpaid"],'chaine',0,'',$conf->entity);
+    if ($_POST["SupplierBillsToPay"]) dolibarr_set_const($db, "MAIN_DELAY_SUPPLIER_BILLS_TO_PAY",$_POST["SupplierBillsToPay"],'chaine',0,'',$conf->entity);
+    if ($_POST["TransactionsToConciliate"]) dolibarr_set_const($db, "MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE",$_POST["TransactionsToConciliate"],'chaine',0,'',$conf->entity);
+    if ($_POST["ChequesToDeposit"]) dolibarr_set_const($db, "MAIN_DELAY_CHEQUES_TO_DEPOSIT",$_POST["ChequesToDeposit"],'chaine',0,'',$conf->entity);
+    if ($_POST["Members"]) dolibarr_set_const($db, "MAIN_DELAY_MEMBERS",$_POST["Members"],'chaine',0,'',$conf->entity);
 }
 
 
@@ -81,7 +81,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	//
+    //
     if ($conf->agenda->enabled)
     {
         $var=!$var;
@@ -97,6 +97,14 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td width="20px">'.img_object('','order').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceOrdersToProcess").'</td><td>';
         print '<input size="5" name="OrdersToProcess" value="'. ($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS+0) . '"> ' . $langs->trans("days") . '</td></tr>';
+    }
+    if ($conf->fournisseur->enabled)
+    {
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','order').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceSuppliersOrdersToProcess").'</td><td>';
+        print '<input size="5" name="SuppliersOrdersToProcess" value="'. ($conf->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
     if ($conf->propal->enabled)
     {
@@ -130,14 +138,6 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td>'.$langs->trans("DelaysOfToleranceRunningServices").'</td><td>';
         print '<input size="5" name="BoardRunningServices" value="'. ($conf->global->MAIN_DELAY_RUNNING_SERVICES +0). '"> ' . $langs->trans("days") . '</td></tr>';
     }
-    if ($conf->fournisseur->enabled)
-    {
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
-        print '<td width="20px">'.img_object('','bill').'</td>';
-        print '<td>'.$langs->trans("DelaysOfToleranceSupplierBillsToPay").'</td><td>';
-        print '<input size="5" name="SupplierBillsToPay" value="'. ($conf->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY+0) . '"> ' . $langs->trans("days") . '</td></tr>';
-    }
     if ($conf->facture->enabled)
     {
         $var=!$var;
@@ -145,6 +145,14 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td width="20px">'.img_object('','bill').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpaid").'</td><td>';
         print '<input size="5" name="CustomerBillsUnpaid" value="'. ($conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED+0) . '"> ' . $langs->trans("days") . '</td></tr>';
+    }
+    if ($conf->fournisseur->enabled)
+    {
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','bill').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceSupplierBillsToPay").'</td><td>';
+        print '<input size="5" name="SupplierBillsToPay" value="'. ($conf->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
     if ($conf->banque->enabled)
     {
@@ -197,15 +205,23 @@ else
 
     if ($conf->commande->enabled)
     {
-    	$var=!$var;
+        $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','order').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceOrdersToProcess").'</td><td>' . ($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
+    if ($conf->fournisseur->enabled)
+    {
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','order').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceSuppliersOrdersToProcess").'</td><td>' . ($conf->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS+0) . ' ' . $langs->trans("days") . '</td></tr>';
+    }
+
     if ($conf->propal->enabled)
     {
-    	$var=!$var;
+        $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','propal').'</td>';
         print '<td>'.$langs->trans("DelaysOfTolerancePropalsToClose").'</td><td>' . ($conf->global->MAIN_DELAY_PROPALS_TO_CLOSE+0). ' ' . $langs->trans("days") . '</td></tr>';
@@ -213,7 +229,7 @@ else
 
     if ($conf->propal->enabled)
     {
-    	$var=!$var;
+        $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','propal').'</td>';
         print '<td>'.$langs->trans("DelaysOfTolerancePropalsToBill").'</td><td>' . ($conf->global->MAIN_DELAY_PROPALS_TO_BILL+0) . ' ' . $langs->trans("days") . '</td></tr>';
@@ -221,7 +237,7 @@ else
 
     if ($conf->service->enabled)
     {
-    	$var=!$var;
+        $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','service').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceNotActivatedServices").'</td><td>' . ($conf->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES+0) . ' ' . $langs->trans("days") . '</td></tr>';
@@ -229,18 +245,10 @@ else
 
     if ($conf->service->enabled)
     {
-    	$var=!$var;
+        $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','service').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceRunningServices").'</td><td>' . ($conf->global->MAIN_DELAY_RUNNING_SERVICES+0). ' ' . $langs->trans("days") . '</td></tr>';
-    }
-
-    if ($conf->fournisseur->enabled)
-    {
-    	$var=!$var;
-        print '<tr '.$bc[$var].'>';
-        print '<td width="20px">'.img_object('','bill').'</td>';
-        print '<td>'.$langs->trans("DelaysOfToleranceSupplierBillsToPay").'</td><td>' . ($conf->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
     if ($conf->facture->enabled)
@@ -251,13 +259,21 @@ else
         print '<td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpaid").'</td><td>' . ($conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
+    if ($conf->fournisseur->enabled)
+    {
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','bill').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceSupplierBillsToPay").'</td><td>' . ($conf->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY+0) . ' ' . $langs->trans("days") . '</td></tr>';
+    }
+
     if ($conf->banque->enabled)
     {
-    	$var=!$var;
+        $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','account').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceTransactionsToConciliate").'</td><td>' . ($conf->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE+0) . ' ' . $langs->trans("days") . '</td></tr>';
-    	$var=!$var;
+        $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','account').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceChequesToDeposit").'</td><td>' . ($conf->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT+0) . ' ' . $langs->trans("days") . '</td></tr>';

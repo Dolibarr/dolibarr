@@ -152,7 +152,7 @@ if ($resql)
         print '</td>';
 
         print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-        if (($db->jdate($objp->date_commande) < ($now - $conf->commande->traitement->warning_delay)) && $objp->statutid == 1 ) print img_picto($langs->trans("Late"),"warning");
+        if (($db->jdate($objp->date_commande) < ($now - $conf->commande->client->warning_delay)) && $objp->statutid == 1 ) print img_picto($langs->trans("Late"),"warning");
         print '</td>';
 
         print '<td width="16" align="right" class="nobordernopadding">';

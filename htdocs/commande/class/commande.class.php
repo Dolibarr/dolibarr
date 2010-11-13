@@ -2035,9 +2035,9 @@ class Commande extends CommonObject
 
 
 	/**
-	 *      \brief          Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
-	 *      \param          user    Objet user
-	 *      \return         int     <0 si ko, >0 si ok
+     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *      @param          user    Objet user
+     *      @return         int     <0 if KO, >0 if OK
 	 */
 	function load_board($user)
 	{
@@ -2066,7 +2066,7 @@ class Commande extends CommonObject
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nbtodo++;
-				if ($obj->fk_statut != 3 && $this->db->jdate($obj->datec) < ($now - $conf->commande->traitement->warning_delay)) $this->nbtodolate++;
+				if ($obj->fk_statut != 3 && $this->db->jdate($obj->datec) < ($now - $conf->commande->client->warning_delay)) $this->nbtodolate++;
 			}
 			return 1;
 		}

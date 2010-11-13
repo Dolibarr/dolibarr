@@ -437,11 +437,12 @@ class Conf
 
 		// Delais de tolerance des alertes
 		$this->actions->warning_delay=$this->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
-		$this->commande->traitement->warning_delay=$this->global->MAIN_DELAY_ORDERS_TO_PROCESS*24*60*60;
+		$this->commande->client->warning_delay=$this->global->MAIN_DELAY_ORDERS_TO_PROCESS*24*60*60;
+        $this->commande->fournisseur->warning_delay=$this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS*24*60*60;
 		$this->propal->cloture->warning_delay=$this->global->MAIN_DELAY_PROPALS_TO_CLOSE*24*60*60;
 		$this->propal->facturation->warning_delay=$this->global->MAIN_DELAY_PROPALS_TO_BILL*24*60*60;
-		$this->facture->fournisseur->warning_delay=$this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY*24*60*60;
 		$this->facture->client->warning_delay=$this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED*24*60*60;
+        $this->facture->fournisseur->warning_delay=$this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY*24*60*60;
 		$this->contrat->services->inactifs->warning_delay=$this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES*24*60*60;
 		$this->contrat->services->expires->warning_delay=$this->global->MAIN_DELAY_RUNNING_SERVICES*24*60*60;
 		$this->adherent->cotisation->warning_delay=$this->global->MAIN_DELAY_MEMBERS*24*60*60;

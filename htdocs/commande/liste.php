@@ -212,7 +212,7 @@ if ($resql)
 		print '</td>';
 
 		print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_commande) < ($now - $conf->commande->traitement->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_commande) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 
 		print '<td width="16" align="right" class="nobordernopadding">';
@@ -244,7 +244,7 @@ if ($resql)
 		print ' <a href="'.$_SERVER['PHP_SELF'].'?orderyear='.$y.'&amp;ordermonth='.$m.'">'.$ml.'</a>';
 		print ' <a href="'.$_SERVER['PHP_SELF'].'?orderyear='.$y.'">'.$y.'</a>';
 		print '</td>';
-		
+
 		// Delivery date
 		$y = dol_print_date($db->jdate($objp->date_livraison),'%Y');
 		$m = dol_print_date($db->jdate($objp->date_livraison),'%m');
@@ -255,12 +255,12 @@ if ($resql)
 		print ' <a href="'.$_SERVER['PHP_SELF'].'?deliveryyear='.$y.'&amp;deliverymonth='.$m.'">'.$ml.'</a>';
 		print ' <a href="'.$_SERVER['PHP_SELF'].'?deliveryyear='.$y.'">'.$y.'</a>';
 		print '</td>';
-		
+
 		// Statut
 		print '<td align="right" nowrap="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
-		
+
 		print '</tr>';
-		
+
 		$total = $total + $objp->price;
 		$subtotal = $subtotal + $objp->price;
 		$i++;

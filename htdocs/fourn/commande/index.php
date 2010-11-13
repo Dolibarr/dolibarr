@@ -34,6 +34,9 @@ $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $orderid,'');
 
+$langs->load("suppliers");
+$langs->load("orders");
+
 
 /*
 * 	View
