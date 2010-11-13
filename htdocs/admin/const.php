@@ -110,7 +110,7 @@ if ($_GET["action"] == 'delete')
 
 llxHeader('',$langs->trans("OtherSetup"));
 
-// Add logic to shoow/hide buttons
+// Add logic to show/hide buttons
 if ($conf->use_javascript_ajax)
 {
 ?>
@@ -151,7 +151,7 @@ print "</tr>\n";
 $form = new Form($db);
 
 
-# Affiche ligne d'ajout
+// Line to add new record
 $var=false;
 print "\n";
 print '<form action="const.php" method="POST">';
