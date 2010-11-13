@@ -410,7 +410,10 @@ class FormFile
 
 			// Show file name with link to download
 			if (!$iconPDF) print '<td nowrap="nowrap">';
-			print '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">';
+			print '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+			$mime=dol_mimetype($relativepath,'',0);
+			if (preg_match('/text/',$mime)) print ' target="_blank"';
+			print '>';
 			if (!$iconPDF)
 			{
 				print img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
