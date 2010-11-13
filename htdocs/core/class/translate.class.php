@@ -448,17 +448,17 @@ class Translate {
 
 
 	/**
-	 *  \brief       Return translated value of a text string
+	 *  Return translated value of a text string
 	 *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
 	 *               et si toujours pas trouve, il est retourne tel quel.
 	 *               No convert to encoding charset of lang object is done.
 	 *               Parameters of this method must not contains any HTML tags.
-	 *  \param       key         key of string to translate
-	 *  \param       param1      chaine de param1
-	 *  \param       param2      chaine de param1
-	 *  \param       param3      chaine de param1
-	 *  \param       param4      chaine de param1
-	 *  \return      string      chaine traduite
+	 *  @param       key         key of string to translate
+	 *  @param       param1      chaine de param1
+	 *  @param       param2      chaine de param1
+	 *  @param       param3      chaine de param1
+	 *  @param       param4      chaine de param1
+	 *  @return      string      chaine traduite
 	 */
 	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='')
 	{
@@ -476,10 +476,10 @@ class Translate {
 
 
 	/**
-	 *  \brief       Return translation of a key depending on country
-	 *  \param       str            string root to translate
-	 *  \param       countrycode    country code (FR, ...)
-	 *  \return      string         translated string
+	 *  Return translation of a key depending on country
+	 *  @param       str            string root to translate
+	 *  @param       countrycode    country code (FR, ...)
+	 *  @return      string         translated string
 	 */
 	function transcountry($str, $countrycode)
 	{
@@ -502,10 +502,10 @@ class Translate {
 
 
 	/**
-	 *  \brief      Convert a string into output charset (this->charset_output that should be defined to conf->file->character_set_client)
-	 *  \param      str            	String to convert
-	 *  \param		pagecodefrom	Page code of src string
-	 *  \return     string         	Converted string
+	 *  Convert a string into output charset (this->charset_output that should be defined to conf->file->character_set_client)
+	 *  @param      str            	String to convert
+	 *  @param		pagecodefrom	Page code of src string
+	 *  @return     string         	Converted string
 	 */
 	function convToOutputCharset($str,$pagecodefrom='UTF-8')
 	{
@@ -516,9 +516,9 @@ class Translate {
 
 
 	/**
-	 *  \brief      Return list of all available languages
-	 * 	\param		langdir		Directory to scan
-	 *  \return     array     	List of languages
+	 *  Return list of all available languages
+	 * 	@param		langdir		Directory to scan
+	 *  @return     array     	List of languages
 	 */
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0)
 	{
@@ -548,10 +548,10 @@ class Translate {
 
 
 	/**
-	 *  \brief      Return if a filename $filename exists for current language (or alternate language)
-	 *  \param      filename        Language filename to search
-	 *  \param      searchalt       Search also alernate language file
-	 *  \return     boolean         true if exists and readable
+	 *  Return if a filename $filename exists for current language (or alternate language)
+	 *  @param      filename        Language filename to search
+	 *  @param      searchalt       Search also alernate language file
+	 *  @return     boolean         true if exists and readable
 	 */
 	function file_exists($filename,$searchalt=0)
 	{
@@ -574,14 +574,14 @@ class Translate {
 
 
 	/**
-	 *      \brief      Return full text translated to language label for a key. Store key-label in a cache.
-	 *		\param		number		Number to encode in full text
-	 * 		\param		isamount	1=It's an amount, 0=it's just a number
-	 *      \return     string		Label translated in UTF8 (but without entities)
+	 *      Return full text translated to language label for a key. Store key-label in a cache.
+     *      This function need module "numberwords" to be installed. If not it will return
+     *                  same number (this module is not provided by default as it use non GPL source code).
+	 *		@param		number		Number to encode in full text
+	 * 		@param		isamount	1=It's an amount, 0=it's just a number
+	 *      @return     string		Label translated in UTF8 (but without entities)
 	 * 								10 if setDefaultLang was en_US => ten
 	 * 								123 if setDefaultLang was fr_FR => cent vingt trois
-	 * 		\remarks	This function need module "numberwords" to be installed. If not it will return
-	 * 					same number (this module is not provided by default as it use non GPL source code).
 	 */
 	function getLabelFromNumber($number,$isamount=0)
 	{
