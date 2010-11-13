@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.0 compared to 2.9 *****
 
 For users:
+- New: Add a weather on dashboard
 - New: Add a Paypal module
 - New: Can choose third party to use in point of sale module during logon.
 - New: A lot of enhancements into ECM module:

@@ -280,6 +280,36 @@ else
 
 }
 
+// Show logo for weather
+print $langs->trans("DescWeather").'<br>';
+
+$offset=0;
+$cursor=10; // By default
+//if (! empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
+//if (! empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
+$level0=$offset;           if (! empty($conf->global->MAIN_METEO_LEVEL0)) $level0=$conf->global->MAIN_METEO_LEVEL0;
+$level1=$offset+1*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL1)) $level1=$conf->global->MAIN_METEO_LEVEL1;
+$level2=$offset+2*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL2)) $level2=$conf->global->MAIN_METEO_LEVEL2;
+$level3=$offset+3*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL3)) $level3=$conf->global->MAIN_METEO_LEVEL3;
+$text=''; $options='height="64px"';
+print '<table>';
+print '<tr><td>';
+print img_picto_common($text,'weather/weather-clear.png',$options);
+print '</td><td><= '.$level0.'</td></tr>';
+print '<tr><td>';
+print img_picto_common($text,'weather/weather-few-clouds.png',$options);
+print '</td><td><= '.$level1.'</td></tr>';
+print '<tr><td>';
+print img_picto_common($text,'weather/weather-clouds.png',$options);
+print '</td><td><= '.$level2.'</td></tr>';
+print '<tr><td>';
+print img_picto_common($text,'weather/weather-many-clouds.png',$options);
+print '</td><td><= '.$level3.'</td></tr>';
+print '<tr><td>';
+print img_picto_common($text,'weather/weather-storm.png',$options);
+print '</td><td>> '.$level3.'</td></tr>';
+
+
 
 $db->close();
 

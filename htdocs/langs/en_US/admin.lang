@@ -283,6 +283,7 @@ ListOfDirectoriesForModelGenODT=List of directories containing templates files w
 NumberOfModelFilesFound=Number of ODT templates files found in those directories
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 FirstnameNamePosition=Position of firstname/name
+DescWeather=The following pictures will be shown on dashboard when number of late actions reach the following values:
 
 # Modules
 Module0Name=Users & groups

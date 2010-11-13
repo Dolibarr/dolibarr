@@ -1110,12 +1110,15 @@ function img_object($alt, $object, $cssclass='')
 }
 
 /**
- *	\brief      Show picto (generic function)
- *	\param      alt         		Text on alt and title of image
- *	\param      picto       		Name of image file to show (I no extension provided, we use '.png')
- *	\param		options				Attribut supplementaire a la balise img
- *	\param		pictoisfullpath		If 1, image path is a full path
- *	\return     string      		Retourne tag img
+ *	Show picto (generic function)
+ *	@param      alt         		Text on alt and title of image
+ *	@param      picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into img directory.
+ *                                  Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
+ *                                  Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
+ *                                  Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
+ *	@param		options				Add more attribute on img tag
+ *	@param		pictoisfullpath		If 1, image path is a full path
+ *	@return     string      		Retourne tag img
  */
 function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 {
@@ -1135,12 +1138,12 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 }
 
 /**
- *	\brief      Show picto (generic function)
- *	\param      alt         		Text on alt and title of image
- *	\param      picto       		Nom de l'image a afficher (Si pas d'extension, on met '.png')
- *	\param		options				Attribut supplementaire a la balise img
- *	\param		pictoisfullpath		If 1, image path is a full path
- *	\return     string      		Retourne tag img
+ *	Show picto (generic function)
+ *	@param      alt         		Text on alt and title of image
+ *	@param      picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
+ *	@param		options				Add more attribute on img tag
+ *	@param		pictoisfullpath		If 1, image path is a full path
+ *	@return     string      		Retourne tag img
  */
 function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 {

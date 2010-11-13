@@ -285,6 +285,7 @@ ExampleOfDirectoriesForModelGen=Exemples de syntaxe:<br>c:\mydir<br>/home/mydir<
 FollowingSubstitutionKeysCanBeUsed=En plaçant les tags suivant dans le modèle, vous obtiendrez une subsitution avec la valeur personnalisée lors de la génération du document: 
 FullListOnOnlineDocumentation=Liste complète des tags disponibles sur la documentation utilisateur du module Tiers sur le wiki http://wiki.dolibarr.org
 FirstnameNamePosition=Ordre affichage prénom/nom
+DescWeather=Les graphiques suivant seront affichées sur le tableau de bord si le nombre d'éléments en retard atteints ces valeurs:
 
 # Modules= undefined
 Module0Name= Utilisateurs & groupes

@@ -35,6 +35,7 @@ MenuMembersValidated=Validated members
 MenuMembersUpToDate=Up to date members
 MenuMembersNotUpToDate=Out of date members
 MenuMembersResiliated=Resiliated members
+MembersWithSubscriptionToReceive=Members with subscription to receive
 DateAbonment=Subscription date
 DateSubscription=Subscription date
 DateNextSubscription=Next subscription
