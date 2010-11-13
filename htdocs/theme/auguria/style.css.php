@@ -1313,7 +1313,17 @@ div.titre {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation (HTML)                                                 */
+/* Formulaire confirmation (When Ajax JQuery is used)                             */
+/* ============================================================================== */
+
+.ui-dialog-titlebar {
+}
+.ui-dialog-content {
+    font-size: <?php print $fontsize; ?>px !important;
+}
+
+/* ============================================================================== */
+/* Formulaire confirmation (When HTML is used)                                    */
 /* ============================================================================== */
 
 table.valid {

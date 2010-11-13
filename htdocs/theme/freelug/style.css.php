@@ -1037,7 +1037,17 @@ tr.fiche {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation (HTML)                                                 */
+/* Formulaire confirmation (When Ajax JQuery is used)                             */
+/* ============================================================================== */
+
+.ui-dialog-titlebar {
+}
+.ui-dialog-content {
+    font-size: 12px !important;
+}
+
+/* ============================================================================== */
+/* Formulaire confirmation (When HTML is used)                                    */
 /* ============================================================================== */
 
 table.valid {

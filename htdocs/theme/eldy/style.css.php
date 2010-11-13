@@ -1292,10 +1292,21 @@ div.titre {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation (HTML)                                                 */
+/* Formulaire confirmation (When Ajax JQuery is used)                             */
+/* ============================================================================== */
+
+.ui-dialog-titlebar {
+}
+.ui-dialog-content {
+    font-size: <?php print $fontsize; ?>px !important;
+}
+
+/* ============================================================================== */
+/* Formulaire confirmation (When HTML is used)                                    */
 /* ============================================================================== */
 
 table.valid {
+    font-size: 8px;
     border-top: solid 1px #E6E6E6;
     border-<?php print $left; ?>: solid 1px #E6E6E6;
     border-<?php print $right; ?>: solid 1px #444444;
@@ -1550,7 +1561,7 @@ form.inplaceeditor-form a { /* The cancel link */
 /* Admin Menu                                                                     */
 /* ============================================================================== */
 
-/* CSS a  appliquer a  l'arbre hierarchique */
+/* CSS for treeview */
 
 /* Lien plier /deplier tout */
 .arbre-switch {
