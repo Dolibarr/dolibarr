@@ -181,7 +181,7 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 	if (preg_match('/\.tsv$/i',$file))						{ $mime='text/tab-separated-values'; $imgmime='text.png'; }
 	if (preg_match('/\.(cf|conf|log)$/i',$file))            { $mime='text/plain'; $imgmime='text.png'; }
     if (preg_match('/\.ini$/i',$file))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='ini'; }
-    if (preg_match('/\.css$/i',$file))                      { $mime='text/css'; $imgmime='text.png'; $srclang='css'; }
+    if (preg_match('/\.css$/i',$file))                      { $mime='text/css'; $imgmime='css.png'; $srclang='css'; }
 	// Certificate files
 	if (preg_match('/\.(crt|cer|key|pub)$/i',$file))        { $mime='text/plain'; $imgmime='text.png'; }
 	// HTML/XML
@@ -198,11 +198,11 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 	if (preg_match('/\.sql$/i',$file))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='sql'; }
 	if (preg_match('/\.js$/i',$file))                       { $mime='text/x-javascript'; $imgmime='jscript.png'; $srclang='js'; }
 	// Open office
-	if (preg_match('/\.odp$/i',$file))                      { $mime='application/vnd.oasis.opendocument.presentation'; $imgmime='other.png'; }
-	if (preg_match('/\.ods$/i',$file))                      { $mime='application/vnd.oasis.opendocument.spreadsheet'; $imgmime='other.png'; }
-	if (preg_match('/\.odt$/i',$file))                      { $mime='application/vnd.oasis.opendocument.text'; $imgmime='other.png'; }
+	if (preg_match('/\.odp$/i',$file))                      { $mime='application/vnd.oasis.opendocument.presentation'; $imgmime='ooffice.png'; }
+	if (preg_match('/\.ods$/i',$file))                      { $mime='application/vnd.oasis.opendocument.spreadsheet'; $imgmime='ooffice.png'; }
+	if (preg_match('/\.odt$/i',$file))                      { $mime='application/vnd.oasis.opendocument.text'; $imgmime='ooffice.png'; }
 	// MS Office
-	if (preg_match('/\.mdb$/i',$file))						{ $mime='application/msaccess'; $imgmime='other.png'; }
+	if (preg_match('/\.mdb$/i',$file))						{ $mime='application/msaccess'; $imgmime='mdb.png'; }
 	if (preg_match('/\.doc(x|m)?$/i',$file))				{ $mime='application/msword'; $imgmime='doc.png'; }
 	if (preg_match('/\.dot(x|m)?$/i',$file))				{ $mime='application/msword'; $imgmime='doc.png'; }
 	if (preg_match('/\.xls(b|m|x)?$/i',$file))				{ $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
@@ -238,7 +238,7 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 	// Exe
 	if (preg_match('/\.(exe|com)$/i',$file))               { $mime='application/octet-stream'; $imgmime='other.png'; }
 	// Exe
-	if (preg_match('/\.(dll|lib|o|so|a)$/i',$file))        { $mime='library'; $imgmime='other.png'; }
+	if (preg_match('/\.(dll|lib|o|so|a)$/i',$file))        { $mime='library'; $imgmime='library.png'; }
 
 	// Return string
 	if ($mode == 1)
