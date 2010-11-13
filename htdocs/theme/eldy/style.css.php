@@ -1306,7 +1306,6 @@ div.titre {
 /* ============================================================================== */
 
 table.valid {
-    font-size: 8px;
     border-top: solid 1px #E6E6E6;
     border-<?php print $left; ?>: solid 1px #E6E6E6;
     border-<?php print $right; ?>: solid 1px #444444;
