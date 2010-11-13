@@ -564,4 +564,148 @@ function purgeSessions($mysessionid)
 	if (! $error) return 1;
 	else return -$error;
 }
+
+
+
+/**
+ *  Enable a module
+ *  @param      value       Nom du module a activer
+ *  @param      withdeps    Active/desactive aussi les dependances
+ *  @return     string      Error message or '';
+ */
+function Activate($value,$withdeps=1)
+{
+    global $db, $modules, $langs, $conf;
+
+    $modName = $value;
+
+    $ret='';
+
+    // Activate module
+    if ($modName)
+    {
+        $file = $modName . ".class.php";
+
+        // Loop on each directory
+        foreach ($conf->file->dol_document_root as $dol_document_root)
+        {
+            $found=@include_once($dol_document_root."/includes/modules/".$file);
+            if ($found) break;
+        }
+
+        $objMod = new $modName($db);
+
+        // Test if PHP version ok
+        $verphp=versionphparray();
+        $vermin=$objMod->phpmin;
+        if (is_array($vermin) && versioncompare($verphp,$vermin) < 0)
+        {
+            return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
+        }
+
+        // Test if Dolibarr version ok
+        $verdol=versiondolibarrarray();
+        $vermin=$objMod->need_dolibarr_version;
+        //print 'eee'.versioncompare($verdol,$vermin).join(',',$verdol).' - '.join(',',$vermin);exit;
+        if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
+        {
+            return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));
+        }
+
+        // Test if javascript requirement ok
+        if (! empty($objMod->need_javascript_ajax) && empty($conf->use_javascript_ajax))
+        {
+            return $langs->trans("ErrorModuleRequireJavascript");
+        }
+
+        $result=$objMod->init();
+        if ($result <= 0) $ret=$objMod->error;
+    }
+
+    if ($withdeps)
+    {
+        if (is_array($objMod->depends) && !empty($objMod->depends))
+        {
+            // Activation des modules dont le module depend
+            for ($i = 0; $i < sizeof($objMod->depends); $i++)
+            {
+                if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/".$objMod->depends[$i].".class.php"))
+                {
+                    Activate($objMod->depends[$i]);
+                }
+            }
+        }
+
+        if (is_array($objMod->conflictwith) && !empty($objMod->conflictwith))
+        {
+            // Desactivation des modules qui entrent en conflit
+            for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
+            {
+                if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/".$objMod->conflictwith[$i].".class.php"))
+                {
+                    UnActivate($objMod->conflictwith[$i],0);
+                }
+            }
+        }
+    }
+
+    return $ret;
+}
+
+
+/**
+ *  Disable a module
+ *  @param      value               Nom du module a desactiver
+ *  @param      requiredby          1=Desactive aussi modules dependants
+ *  @return     string              Error message or '';
+ */
+function UnActivate($value,$requiredby=1)
+{
+    global $db, $modules, $conf;
+
+    $modName = $value;
+
+    $ret='';
+
+    // Desactivation du module
+    if ($modName)
+    {
+        $file = $modName . ".class.php";
+
+        // Loop on each directory
+        foreach ($conf->file->dol_document_root as $dol_document_root)
+        {
+            $found=@include_once($dol_document_root."/includes/modules/".$file);
+            if ($found) break;
+        }
+
+        if ($found)
+        {
+            $objMod = new $modName($db);
+            $result=$objMod->remove();
+        }
+        else
+        {
+            $genericMod = new DolibarrModules($db);
+            $genericMod->name=preg_replace('/^mod/i','',$modName);
+            $genericMod->style_sheet=1;
+            $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
+            $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
+            dol_syslog("modules::UnActivate Failed to find module file, we use generic function with name ".$genericMod->name);
+            $genericMod->_remove();
+        }
+    }
+
+    // Desactivation des modules qui dependent de lui
+    if ($requiredby)
+    {
+        for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
+        {
+            UnActivate($objMod->requiredby[$i]);
+        }
+    }
+
+    return $ret;
+}
+
 ?>
