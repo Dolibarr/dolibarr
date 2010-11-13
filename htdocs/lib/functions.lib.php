@@ -1514,36 +1514,19 @@ function img_allow($allow,$alt='default')
 
 
 /**
- *	\brief      Show mime picto
- *	\param      file		Filename
- * 	\param		alt			Alternate text
- *	\return     string     	Return img tag
+ *	Show MIME img of a file
+ *	@param      file		Filename
+ * 	@param		alt			Alternate text to show on img mous hover
+ *	@return     string     	Return img tag
  */
 function img_mime($file,$alt='')
 {
-	$mime='other';
+    $mimetype=dol_mimetype($file,'',1);
+    $mimeimg=dol_mimetype($file,'',2);
 
-	if (preg_match('/\.xls(x)?$/i',$file))							$mime='xls';
-	if (preg_match('/\.ppt(x)?$/i',$file))							$mime='ppt';
-	if (preg_match('/\.doc(x)?$/i',$file))							$mime='doc';
+	if (empty($alt)) $alt='Mime type: '.$mimetype;
 
-	if (preg_match('/\.pdf$/i',$file))								$mime='pdf';
-	if (preg_match('/\.(html|htm)$/i',$file))						$mime='html';
-	if (preg_match('/\.txt$/i',$file))								$mime='other';
-	if (preg_match('/\.php$/i',$file))								$mime='php';
-	if (preg_match('/\.pl$/i',$file))								$mime='pl';
-	if (preg_match('/\.js$/i',$file))								$mime='jscript';
-	if (preg_match('/\.(png|bmp|jpg|jpeg|gif)$/i',$file)) 			$mime='image';
-	if (preg_match('/\.(mp3|ogg|au|wav|wma)$/i',$file))				$mime='audio';
-	if (preg_match('/\.(avi|divx|xvid|wmv|mpg|mpeg)$/i',$file))		$mime='video';
-	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z)$/i',$file))	$mime='archive';
-
-	if (preg_match('/\.err$/i',$file))								$mime='error';
-
-	if (empty($alt)) $alt='Mime type: '.$mime;
-
-	$mime.='.png';
-	return '<img src="'.DOL_URL_ROOT.'/theme/common/mime/'.$mime.'" border="0" alt="'.$alt.'" title="'.$alt.'">';
+	return '<img src="'.DOL_URL_ROOT.'/theme/common/mime/'.$mimeimg.'" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
