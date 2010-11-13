@@ -397,11 +397,11 @@ if ($modulepart)
         $original_file=$conf->adherent->dir_output.'/'.$original_file;
     }
 
-    // Wrapping for PHPSane
-    else if ($modulepart == 'phpsane_user_temp')
+    // Wrapping for Scanner
+    else if ($modulepart == 'scanner_user_temp')
     {
         $accessallowed=1;
-        $original_file=$conf->phpsane->dir_temp.'/'.$user->id.'/'.$original_file;
+        $original_file=$conf->scanner->dir_temp.'/'.$user->id.'/'.$original_file;
     }
 
 	// Generic wrapping

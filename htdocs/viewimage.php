@@ -271,10 +271,10 @@ if ($modulepart)
 	}
 
     // Wrapping pour les icones de background des mailings
-    elseif ($modulepart == 'phpsane_user_temp')
+    elseif ($modulepart == 'scanner_user_temp')
     {
         $accessallowed=1;
-        $original_file=$conf->phpsane->dir_temp.'/'.$user->id.'/'.$original_file;
+        $original_file=$conf->scanner->dir_temp.'/'.$user->id.'/'.$original_file;
     }
 
     // GENERIC Wrapping
