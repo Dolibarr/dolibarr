@@ -207,8 +207,6 @@ $oldvallevel=0;
 $var=true;
 foreach($fulltree as $key => $val)
 {
-	$var=!$var;
-
 	//$fullpathparent=preg_replace('/_[^_]+$/i','',$val['fullpath']);
 
 	// Define showline
@@ -225,7 +223,9 @@ foreach($fulltree as $key => $val)
 
 	if ($showline)
 	{
-		if (in_array($val['id'],$expandedsectionarray)) $option='indexexpanded';
+        $var=!$var;
+
+	    if (in_array($val['id'],$expandedsectionarray)) $option='indexexpanded';
 		else $option='indexnotexpanded';
 		//print $option;
 
