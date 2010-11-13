@@ -622,7 +622,7 @@ function Activate($value,$withdeps=1)
         if ($result <= 0) $ret=$objMod->error;
     }
 
-    if ($withdeps)
+    if (! $ret && $withdeps)
     {
         if (is_array($objMod->depends) && !empty($objMod->depends))
         {
