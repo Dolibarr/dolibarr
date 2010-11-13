@@ -2963,10 +2963,10 @@ function picto_required()
 
 
 /**
- *	\brief   	Clean a string from all HTML tags and entities
- *	\param   	StringHtml			String to clean
- *	\param		removelinefeed		Replace also all lines feeds by a space
- *	\return  	string	    		String cleaned
+ *	Clean a string from all HTML tags and entities
+ *	@param   	StringHtml			String to clean
+ *	@param		removelinefeed		Replace also all lines feeds by a space
+ *	@return  	string	    		String cleaned
  */
 function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
 {
