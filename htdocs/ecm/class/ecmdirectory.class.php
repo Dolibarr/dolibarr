@@ -552,7 +552,7 @@ class EcmDirectory // extends CommonObject
 				$this->cats[$obj->rowid]['label'] = $obj->label;
 				$this->cats[$obj->rowid]['description'] = $obj->description;
 				$this->cats[$obj->rowid]['cachenbofdoc'] = $obj->cachenbofdoc;
-				$this->cats[$obj->rowid]['date_c'] = $obj->date_c;
+				$this->cats[$obj->rowid]['date_c'] = $this->db->jdate($obj->date_c);
 				$this->cats[$obj->rowid]['fk_user_c'] = $obj->fk_user_c;
 				$this->cats[$obj->rowid]['login_c'] = $obj->login_c;
 
