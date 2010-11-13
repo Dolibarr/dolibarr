@@ -508,6 +508,7 @@ class DolibarrModules
 						if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
 						{
 							$result=run_sql($dir.$file,1,'',1);
+							if ($result <= 0) $error++;
 						}
 					}
 					closedir($handle);
@@ -522,6 +523,7 @@ class DolibarrModules
 						if (preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
 						{
 							$result=run_sql($dir.$file,1,'',1);
+                            if ($result <= 0) $error++;
 						}
 					}
 					closedir($handle);
@@ -536,6 +538,7 @@ class DolibarrModules
 						if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'data')
 						{
 							$result=run_sql($dir.$file,1,'',1);
+                            if ($result <= 0) $error++;
 						}
 					}
 					closedir($handle);
