@@ -172,7 +172,7 @@ if ($_POST["action"] == 'add' && $canadduser)
 
 	$edituser = new User($db);
 
-	if (!empty($conf->file->main_limit_users))
+	if (!empty($conf->file->main_limit_users)) // If option to limit users is set
 	{
 		$nb = $edituser->getNbOfUsers(1);
 		if ($nb >= $conf->file->main_limit_users)
@@ -197,7 +197,7 @@ if ($_POST["action"] == 'add' && $canadduser)
 		$edituser->phenix_pass   = $_POST["phenix_pass"];
 		$edituser->note          = $_POST["note"];
 		$edituser->ldap_sid      = $_POST["ldap_sid"];
-		$edituser->entity        = $_POST["entity"];
+		$edituser->entity        = ($_POST["admin"] && empty($conf->multicompany->enabled))?0:$_POST["entity"];   // If multicompany is off, admin users must all be on entity 0.
 
 		$db->begin();
 
@@ -1173,32 +1173,32 @@ else
 			/*
 			 * Liste des groupes dans lequel est l'utilisateur
 			 */
-			
+
 			if ($canreadgroup)
 			{
 				print_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
-				
+
 				// On selectionne les groupes auquel fait parti le user
 				// TODO move sql query to dao class
 				$grouplistid = array();
-				
+
 				$sql = "SELECT ug.fk_usergroup";
 				$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
 				$sql.= ", ".MAIN_DB_PREFIX."usergroup as u";
 				$sql.= " WHERE ug.fk_user = ".$fuser->id;
 				$sql.= " AND ug.fk_usergroup = u.rowid";
 				$sql.= " AND u.entity IN (0,".$conf->entity.")";
-				
+
 				$result = $db->query($sql);
 				if ($result)
 				{
 					$num = $db->num_rows($result);
 					$i = 0;
-					
+
 					while ($i < $num)
 					{
 						$obj = $db->fetch_object($result);
-						
+
 						$grouplistid[]=$obj->fk_usergroup;
 						$i++;
 					}
@@ -1206,9 +1206,9 @@ else
 				else {
 					dol_print_error($db);
 				}
-				
+
 				$db->free($resql);
-				
+
 				if ($caneditgroup)
 				{
 					$form = new Form($db);
@@ -1223,32 +1223,32 @@ else
 					print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 					print '</td></tr>'."\n";
 					print '</table></form>'."\n";
-					
+
 					print '<br>';
 				}
-				
+
 				/*
 				 * Groupes affectes
 				 */
 				$usergroup=new UserGroup($db);
 				$listofgroups=$usergroup->listGroupsForUser($fuser);
 				$num=sizeof($listofgroups);
-				
+
 				print '<table class="noborder" width="100%">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
 				print "<td>&nbsp;</td></tr>\n";
-				
+
 				if ($num > 0)
 				{
 					$i = 0;
-					
+
 					$var=true;
 					while ($i < $num)
 					{
 						$group = $listofgroups[$i];
 						$var=!$var;
-						
+
 						print "<tr ".$bc[$var].">";
 						print '<td>';
 						if ($caneditgroup)
@@ -1261,7 +1261,7 @@ else
 						}
 						print '</td>';
 						print '<td align="right">';
-						
+
 						if ($caneditgroup)
 						{
 							print '<a href="fiche.php?id='.$_GET["id"].'&amp;action=removegroup&amp;group='.$group->id.'">';
@@ -1279,7 +1279,7 @@ else
 				{
 					print '<tr '.$bc[false].'><td colspan=2>'.$langs->trans("None").'</td></tr>';
 				}
-				
+
 				print "</table>";
 				print "<br>";
 			}
