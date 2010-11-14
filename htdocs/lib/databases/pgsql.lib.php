@@ -196,7 +196,7 @@ class DoliDb
 			$line=preg_replace('/datetime/i','timestamp',$line);
 
 			# double -> numeric
-			// TODO problem if value contain "double" word
+			// FIXME problem if value contain "double" word
 			$line=preg_replace('/^double/i','numeric',$line);
 			$line=preg_replace('/(\s*)double/i','\\1numeric',$line);
 			# float -> numeric
