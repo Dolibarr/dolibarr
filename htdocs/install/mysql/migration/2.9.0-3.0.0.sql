@@ -102,3 +102,5 @@ ALTER TABLE llx_socpeople MODIFY canvas	varchar(32)	DEFAULT 'default';
 UPDATE llx_socpeople SET canvas = 'default' WHERE canvas = 'default@contact';
 UPDATE llx_societe SET canvas = 'default' WHERE canvas = 'default@thirdparty';
 UPDATE llx_societe SET canvas = 'individual' WHERE canvas = 'individual@thirdparty';
+
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS','7','chaine','Tolérance de retard avant alerte (en jours) sur commandes fournisseurs non traitées',0);
