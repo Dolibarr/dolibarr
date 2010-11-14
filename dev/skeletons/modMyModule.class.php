@@ -90,7 +90,7 @@ class modMyModule extends DolibarrModules
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,3);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2,5);	// Minimum version of Dolibarr required by module
-		$this->langfiles = array("mymodule");
+		$this->langfiles = array("langfiles@mymodule");
 
 		// Constants
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
