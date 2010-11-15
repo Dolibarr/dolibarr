@@ -386,17 +386,19 @@ class CommonObject
 	}
 
 	/**
-	 *      \brief      Retourne id des contacts d'une source et d'un type actif donne
-	 *                  Exemple: contact client de facturation ('external', 'BILLING')
-	 *                  Exemple: contact client de livraison ('external', 'SHIPPING')
-	 *                  Exemple: contact interne suivi paiement ('internal', 'SALESREPFOLL')
-	 *		\param		source		'external' or 'internal'
-	 *		\param		code		'BILLING', 'SHIPPING', 'SALESREPFOLL', ...
-	 **		\param		status		limited to a certain status
-	 *      \return     array       Liste des id contacts
+	 *      Return id of contacts for a source and a contact code.
+	 *      Example: contact client de facturation ('external', 'BILLING')
+	 *      Example: contact client de livraison ('external', 'SHIPPING')
+	 *      Example: contact interne suivi paiement ('internal', 'SALESREPFOLL')
+	 *		@param		source		'external' or 'internal'
+	 *		@param		code		'BILLING', 'SHIPPING', 'SALESREPFOLL', ...
+	 *		@param		status		limited to a certain status
+	 *      @return     array       List of id for such contacts
 	 */
 	function getIdContact($source,$code,$status=0)
 	{
+	    global $conf;
+
 		$result=array();
 		$i=0;
 
@@ -410,7 +412,7 @@ class CommonObject
 		$sql.= " AND tc.code = '".$code."'";
 		$sql.= " AND tc.active = 1";
 		if ($status) $sql.= " AND ec.statut = ".$status;
-		// FIXME Add filter on entity
+        $sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("CommonObject::getIdContact sql=".$sql);
 		$resql=$this->db->query($sql);
