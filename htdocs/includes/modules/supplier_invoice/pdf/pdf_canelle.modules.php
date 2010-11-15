@@ -384,7 +384,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		// If France, show VAT mention if not applicable
 		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
 		{
-			$pdf->MultiCell(100, $tab2_hl, "* TVA non applicable art-293B du CGI", 0, 'L', 0);
+			$pdf->MultiCell(100, $tab2_hl, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 		}
 
 		// Tableau total
