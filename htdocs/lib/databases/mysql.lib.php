@@ -74,14 +74,14 @@ class DoliDb
 
 
 	/**
-	 *	\brief     Ouverture d'une connexion vers le serveur et eventuellement une database.
-	 *	\param     type		Type de base de donnees (mysql ou pgsql)
-	 *	\param	    host		Addresse de la base de donnees
-	 *	\param	    user		Nom de l'utilisateur autorise
-	 *	\param	    pass		Mot de passe
-	 *	\param	    name		Nom de la database
-	 *	\param	    port		Port of database server
-	 *	\return	int			1 en cas de succes, 0 sinon
+	 *	Ouverture d'une connexion vers le serveur et eventuellement une database.
+	 *	@param      type		Type de base de donnees (mysql ou pgsql)
+	 *	@param	    host		Addresse de la base de donnees
+	 *	@param	    user		Nom de l'utilisateur autorise
+	 *	@param	    pass		Mot de passe
+	 *	@param	    name		Nom de la database
+	 *	@param	    port		Port of database server
+	 *	@return	    int			1 en cas de succes, 0 sinon
 	 */
 	function DoliDb($type='mysql', $host, $user, $pass, $name='', $port=0)
 	{
@@ -181,12 +181,13 @@ class DoliDb
 	}
 
 
-	/**
-	 *	\brief		Convert a SQL request in mysql syntax to database syntax
-	 * 	\param		line		SQL request line to convert
-	 * 	\return		string		SQL request line converted
-	 */
-	function convertSQLFromMysql($line)
+    /**
+     *  Convert a SQL request in Mysql syntax to PostgreSQL syntax
+     *  @param     line     SQL request line to convert
+     *  @param     type     Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+     *  @return    string   SQL request line converted
+     */
+	function convertSQLFromMysql($line,$type='ddl')
 	{
 		return $line;
 	}
@@ -309,9 +310,9 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief      Validation d'une transaction
-	 * 	\param		log			Add more log to default log line
-	 * 	\return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
+     * Validate a database transaction
+     * @param       log         Add more log to default log line
+     * @return      int         1 if validation is OK or transaction level no started, 0 if ERROR
 	 */
 	function commit($log='')
 	{
@@ -354,13 +355,14 @@ class DoliDb
 	}
 
 	/**
-	 * 	\brief     	Execute a SQL request and return the resultset
-	 * 	\param		query			SQL query string
-	 * 	\param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
+	 * Execute a SQL request and return the resultset
+	 * @param		query			SQL query string
+	 * @param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
 	 * 								Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-	 *	\return	    resource    	Resultset of answer
+     * @param       type            Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @return	    resource    	Resultset of answer
 	 */
-	function query($query,$usesavepoint=0)
+	function query($query,$usesavepoint=0,$type='ddl')
 	{
 		$query = trim($query);
 
@@ -399,7 +401,7 @@ class DoliDb
 	 */
 	function fetch_object($resultset)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+		// If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return mysql_fetch_object($resultset);
 	}
@@ -411,7 +413,7 @@ class DoliDb
 	 */
 	function fetch_array($resultset)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+        // If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return mysql_fetch_array($resultset);
 	}
@@ -424,7 +426,7 @@ class DoliDb
 	 */
 	function fetch_row($resultset)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+        // If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return @mysql_fetch_row($resultset);
 	}
@@ -437,7 +439,7 @@ class DoliDb
 	 */
 	function num_rows($resultset)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+        // If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return mysql_num_rows($resultset);
 	}
@@ -450,7 +452,7 @@ class DoliDb
 	 */
 	function affected_rows($resultset)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+        // If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		// mysql necessite un link de base pour cette fonction contrairement
 		// a pqsql qui prend un resultset
@@ -464,7 +466,7 @@ class DoliDb
 	 */
 	function free($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+        // If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		// Si resultset en est un, on libere la memoire
 		if (is_resource($resultset)) mysql_free_result($resultset);

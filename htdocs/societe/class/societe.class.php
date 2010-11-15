@@ -1283,7 +1283,6 @@ class Societe extends CommonObject
      *		\param		option			Sur quoi pointe le lien ('', 'customer', 'supplier', 'compta')
      *		\param		maxlen			Longueur max libelle
      *		\return		string			Chaine avec URL
-     *	FIXME not in business class
      */
     function getNomUrl($withpicto=0,$option='customer',$maxlen=0)
     {
@@ -1791,7 +1790,7 @@ class Societe extends CommonObject
      *   @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *   @param      soc             Objet societe
      *   @return     string          url ou chaine vide si aucune url connue
-     *   FIXME	not in business class
+     *   FIXME not in business class
      */
     function id_prof_url($idprof,$soc)
     {

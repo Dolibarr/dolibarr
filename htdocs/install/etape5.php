@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -170,6 +170,7 @@ if ($_POST["action"] == "set" || preg_match('/upgrade/i',$_POST["action"]))
 			$newuser->admin=1;
 			$newuser->entity=0;
 
+			$conf->global->USER_MAIL_REQUIRED=0;     // Force global option to be sure to create a new user with no email
 			$result=$newuser->create($createuser,1);
 			if ($result > 0)
 			{

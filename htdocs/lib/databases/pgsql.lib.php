@@ -149,11 +149,12 @@ class DoliDb
 
 
 	/**
-	 *	\brief		Convert a SQL request in Mysql syntax to PostgreSQL syntax
-	 * 	\param		line		SQL request line to convert
-	 * 	\return		string		SQL request line converted
+	 *	Convert a SQL request in Mysql syntax to PostgreSQL syntax
+	 * 	@param     line		SQL request line to convert
+	 *  @param     type     Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * 	@return    string	SQL request line converted
 	 */
-	function convertSQLFromMysql($line)
+	function convertSQLFromMysql($line,$type='ddl')
 	{
 		# Removed empty line if this is a comment line for SVN tagging
 		if (preg_match('/^--\s\$Id/i',$line)) {
@@ -166,103 +167,105 @@ class DoliDb
 		}
 		if ($line != "")
 		{
-			# we are inside create table statement so lets process datatypes
-			if (preg_match('/(ISAM|innodb)/i',$line)) { # end of create table sequence
-				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
-				$line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
-				$line=preg_replace('/,$/','',$line);
-			}
+		    if ($type == 'dml')
+		    {
+    			# we are inside create table statement so lets process datatypes
+    			if (preg_match('/(ISAM|innodb)/i',$line)) { # end of create table sequence
+    				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
+    				$line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
+    				$line=preg_replace('/,$/','',$line);
+    			}
 
-			if (preg_match('/[\s\t]*(\w*)\s*.*int.*auto_increment/i',$line,$reg)) {
-				$line=preg_replace('/[\s\t]*([a-zA-Z_0-9]*)[\s\t]*.*int.*auto_increment[^,]*/i','\\1 SERIAL PRIMARY KEY',$line);
-			}
+    			if (preg_match('/[\s\t]*(\w*)\s*.*int.*auto_increment/i',$line,$reg)) {
+    				$line=preg_replace('/[\s\t]*([a-zA-Z_0-9]*)[\s\t]*.*int.*auto_increment[^,]*/i','\\1 SERIAL PRIMARY KEY',$line);
+    			}
 
-			# tinyint type conversion
-			$line=str_replace('tinyint','smallint',$line);
+    			# tinyint type conversion
+    			$line=str_replace('tinyint','smallint',$line);
 
-			# nuke unsigned
-			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);
+    			# nuke unsigned
+    			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);
 
-			# blob -> text
-			$line=preg_replace('/\w*blob/i','text',$line);
+    			# blob -> text
+    			$line=preg_replace('/\w*blob/i','text',$line);
 
-			# tinytext/mediumtext -> text
-			$line=preg_replace('/tinytext/i','text',$line);
-			$line=preg_replace('/mediumtext/i','text',$line);
+    			# tinytext/mediumtext -> text
+    			$line=preg_replace('/tinytext/i','text',$line);
+    			$line=preg_replace('/mediumtext/i','text',$line);
 
-			# change not null datetime field to null valid ones
-			# (to support remapping of "zero time" to null
-			$line=preg_replace('/datetime not null/i','datetime',$line);
-			$line=preg_replace('/datetime/i','timestamp',$line);
+    			# change not null datetime field to null valid ones
+    			# (to support remapping of "zero time" to null
+    			$line=preg_replace('/datetime not null/i','datetime',$line);
+    			$line=preg_replace('/datetime/i','timestamp',$line);
 
-			# double -> numeric
-			// FIXME problem if value contain "double" word
-			$line=preg_replace('/^double/i','numeric',$line);
-			$line=preg_replace('/(\s*)double/i','\\1numeric',$line);
-			# float -> numeric
-			$line=preg_replace('/^float/i','numeric',$line);
-			$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
+    			# double -> numeric
+    			$line=preg_replace('/^double/i','numeric',$line);
+    			$line=preg_replace('/(\s*)double/i','\\1numeric',$line);
+    			# float -> numeric
+    			$line=preg_replace('/^float/i','numeric',$line);
+    			$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
 
-			# unique index(field1,field2)
-			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
-			{
-				$line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i','UNIQUE\(\\1\)',$line);
-			}
+    			# unique index(field1,field2)
+    			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
+    			{
+    				$line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i','UNIQUE\(\\1\)',$line);
+    			}
+
+    			# We remove end of requests "AFTER fieldxxx"
+    			$line=preg_replace('/AFTER [a-z0-9_]+/i','',$line);
+
+    			# We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
+    			$line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
+
+                # Translate order to rename fields
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+) CHANGE(?: COLUMN)? ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
+                {
+                	$line = "-- ".$line." replaced by --\n";
+                    $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
+                }
+
+                # Translate order to modify field format
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+) MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i',$line,$reg))
+                {
+                    $line = "-- ".$line." replaced by --\n";
+                    $newreg3=$reg[3];
+                    $newreg3=preg_replace('/ NOT NULL/i','',$newreg3);
+                    $newreg3=preg_replace('/ NULL/i','',$newreg3);
+                    $newreg3=preg_replace('/ DEFAULT 0/i','',$newreg3);
+                    $newreg3=preg_replace('/ DEFAULT \'[0-9a-zA-Z_@]*\'/i','',$newreg3);
+                    $line.= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." TYPE ".$newreg3;
+                }
+
+                # alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
+    			# ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
+    			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+PRIMARY\s+KEY\s*(.*)\s*\((.*)$/i',$line,$reg))
+    			{
+    				$line = "-- ".$line." replaced by --\n";
+    				$line.= "ALTER TABLE ".$reg[1]." ADD PRIMARY KEY (".$reg[3];
+    			}
+
+                # Translate order to drop foreign keys
+                # ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx;
+                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
+                {
+                    $line = "-- ".$line." replaced by --\n";
+                    $line.= "ALTER TABLE ".$reg[1]." DROP CONSTRAINT ".$reg[2];
+                }
+
+    			# alter table add [unique] [index] (field1, field2 ...)
+    			# ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
+    			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+(UNIQUE INDEX|INDEX|UNIQUE)\s+(.*)\s*\(([\w,\s]+)\)/i',$line,$reg))
+    			{
+    				$fieldlist=$reg[4];
+    				$idxname=$reg[3];
+    				$tablename=$reg[1];
+    				$line = "-- ".$line." replaced by --\n";
+    				$line.= "CREATE ".(preg_match('/UNIQUE/',$reg[2])?'UNIQUE ':'')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
+    			}
+            }
 
             // To have postgresql case sensitive
             $line=str_replace(' LIKE \'',' ILIKE \'',$line);
-
-			# We remove end of requests "AFTER fieldxxx"
-			$line=preg_replace('/AFTER [a-z0-9_]+/i','',$line);
-
-			# We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
-			$line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
-
-            # Translate order to rename fields
-            if (preg_match('/ALTER TABLE ([a-z0-9_]+) CHANGE(?: COLUMN)? ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
-            {
-            	$line = "-- ".$line." replaced by --\n";
-                $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
-            }
-
-            # Translate order to modify field format
-            if (preg_match('/ALTER TABLE ([a-z0-9_]+) MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i',$line,$reg))
-            {
-                $line = "-- ".$line." replaced by --\n";
-                $newreg3=$reg[3];
-                $newreg3=preg_replace('/ NOT NULL/i','',$newreg3);
-                $newreg3=preg_replace('/ NULL/i','',$newreg3);
-                $newreg3=preg_replace('/ DEFAULT 0/i','',$newreg3);
-                $newreg3=preg_replace('/ DEFAULT \'[0-9a-zA-Z_@]*\'/i','',$newreg3);
-                $line.= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." TYPE ".$newreg3;
-            }
-
-            # alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
-			# ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
-			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+PRIMARY\s+KEY\s*(.*)\s*\((.*)$/i',$line,$reg))
-			{
-				$line = "-- ".$line." replaced by --\n";
-				$line.= "ALTER TABLE ".$reg[1]." ADD PRIMARY KEY (".$reg[3];
-			}
-
-            # Translate order to drop foreign keys
-            # ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx;
-            if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
-            {
-                $line = "-- ".$line." replaced by --\n";
-                $line.= "ALTER TABLE ".$reg[1]." DROP CONSTRAINT ".$reg[2];
-            }
-
-			# alter table add [unique] [index] (field1, field2 ...)
-			# ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
-			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+(UNIQUE INDEX|INDEX|UNIQUE)\s+(.*)\s*\(([\w,\s]+)\)/i',$line,$reg))
-			{
-				$fieldlist=$reg[4];
-				$idxname=$reg[3];
-				$tablename=$reg[1];
-				$line = "-- ".$line." replaced by --\n";
-				$line.= "CREATE ".(preg_match('/UNIQUE/',$reg[2])?'UNIQUE ':'')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
-			}
 
 			// Delete using criteria on other table must not declare twice the deleted table
 			// DELETE FROM tabletodelete USING tabletodelete, othertable -> DELETE FROM tabletodelete USING othertable
@@ -306,28 +309,26 @@ class DoliDb
 	}
 
 	/**
-	 * \brief      	Select a database
-	 * \param		database		nom de la database
-	 * \return		boolean         true si ok, false si ko
-	 * \remarks 	Ici postgresql n'a aucune fonction equivalente de mysql_select_db
-	 * \remarks 	On compare juste manuellement si la database choisie est bien celle activee par la connexion
+	 * Select a database.
+     * Ici postgresql n'a aucune fonction equivalente de mysql_select_db
+     * On compare juste manuellement si la database choisie est bien celle activee par la connexion
+	 * @param		database		nom de la database
+	 * @return		boolean         true si ok, false si ko
 	 */
 	function select_db($database)
 	{
-		if ($database == $this->database_name)
-		return true;
-		else
-		return false;
+		if ($database == $this->database_name) return true;
+		else return false;
 	}
 
 	/**
-	 * \brief      Connection vers le serveur
-	 * \param		host		addresse de la base de donnees
-	 * \param		login		nom de l'utilisateur autorise
-	 * \param		passwd		mot de passe
-	 * \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
-	 * \param		port		Port of database server
-	 * \return		resource	handler d'acces a la base
+	 * Connection vers le serveur
+	 * @param		host		addresse de la base de donnees
+	 * @param		login		nom de l'utilisateur autorise
+	 * @param		passwd		mot de passe
+	 * @param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
+	 * @param		port		Port of database server
+	 * @return		resource	handler d'acces a la base
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
@@ -432,10 +433,11 @@ class DoliDb
 	}
 
 	/**
-	 * \brief      Validation d'une transaction
-	 * \return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
+     * Validate a database transaction
+     * @param       log         Add more log to default log line
+     * @return      int         1 if validation is OK or transaction level no started, 0 if ERROR
 	 */
-	function commit()
+	function commit($log='')
 	{
 		if ($this->transaction_opened<=1)
 		{
@@ -476,17 +478,18 @@ class DoliDb
 
 
 	/**
-	 * \brief      	Convert request to PostgreSQL syntax, execute it and return the resultset
-	 * \param		query			SQL query string
-	 * \param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
-	 * \return	    resource    	Resultset of answer
+	 * Convert request to PostgreSQL syntax, execute it and return the resultset.
+	 * @param		query			SQL query string
+	 * @param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+     * @param       type            Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @return	    resource    	Resultset of answer
 	 */
-	function query($query,$usesavepoint=0)
+	function query($query,$usesavepoint=0,$type='ddl')
 	{
 		$query = trim($query);
 
 		// Convert MySQL syntax to PostgresSQL syntax
-		$query=$this->convertSQLFromMysql($query);
+		$query=$this->convertSQLFromMysql($query,$type);
 		//print "FF\n".$query."<br>\n";
 
 		// Fix bad formed requests. If request contains a date without quotes, we fix this but this should not occurs.
@@ -538,7 +541,7 @@ class DoliDb
 	 */
 	function fetch_object($resultset)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+        // If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return pg_fetch_object($resultset);
 	}
@@ -550,7 +553,7 @@ class DoliDb
 	 */
 	function fetch_array($resultset)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+        // If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return pg_fetch_array($resultset);
 	}
@@ -569,26 +572,26 @@ class DoliDb
 
 	/**
 	 * \brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
-	 * \see    	affected_rows
+	 * \see    	   affected_rows
 	 * \param      resultset   Curseur de la requete voulue
 	 * \return     int		    Nombre de lignes
 	 */
 	function num_rows($resultset)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+        // If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return pg_num_rows($resultset);
 	}
 
 	/**
 	 * \brief      Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
-	 * \see    	num_rows
+	 * \see    	   num_rows
 	 * \param      resultset   Curseur de la requete voulue
 	 * \return     int		    Nombre de lignes
 	 */
 	function affected_rows($resultset)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+        // If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		// pgsql necessite un resultset pour cette fonction contrairement
 		// a mysql qui prend un link de base
@@ -602,15 +605,15 @@ class DoliDb
 	 */
 	function free($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+        // If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
-		// Si resultset en est un, on libere la m�moire
+		// Si resultset en est un, on libere la memoire
 		if (is_resource($resultset)) pg_free_result($resultset);
 	}
 
 
 	/**
-	 * \brief      Defini les limites de la requete.
+	 * \brief       Defini les limites de la requete.
 	 * \param	    limit       nombre maximum de lignes retournees
 	 * \param	    offset      numero de la ligne a partir de laquelle recuperer les lignes
 	 * \return	    string      chaine exprimant la syntax sql de la limite
@@ -625,7 +628,7 @@ class DoliDb
 
 
 	/**
-	 * \brief      Defini le tri de la requete.
+	 * \brief       Defini le tri de la requete.
 	 * \param	    sortfield   liste des champ de tri
 	 * \param	    sortorder   ordre du tri
 	 * \return	    string      chaine exprimant la syntax sql de l'ordre de tri
@@ -655,9 +658,9 @@ class DoliDb
 
 
 	/**
-	 * \brief      Escape a string to insert data.
-	 * \param	    stringtoencode		String to escape
-	 * \return	    string				String escaped
+	 *   \brief     Escape a string to insert data.
+	 *   \param	    stringtoencode		String to escape
+	 *   \return	string				String escaped
 	 */
 	function escape($stringtoencode)
 	{

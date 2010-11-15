@@ -954,9 +954,9 @@ function dol_print_ip($ip,$mode=0)
 }
 
 /**
- *	Return true if email syntax is ok
+ *	Return true if email syntax is ok.
  *	@param	    address     email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	@return     boolean     true if email syntax is OK, false if KO
+ *	@return     boolean     true if email syntax is OK, false if KO or empty string/
  */
 function isValidEmail($address)
 {

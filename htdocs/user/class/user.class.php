@@ -635,12 +635,12 @@ class User extends CommonObject
 		{
 
 		}
-		
+
 		// Remove group
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user WHERE fk_user  = ".$this->id;
 		if ($this->db->query($sql))
 		{
-			
+
 		}
 
 		// Si contact, supprime lien
@@ -677,10 +677,10 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  \brief      Create user in database
-	 *  \param      user        	Objet user qui demande la creation
-	 *  \param      notrigger		1 ne declenche pas les triggers, 0 sinon
-	 *  \return     int         	<0 si KO, id compte cree si OK
+	 *  Create a user into database
+	 *  @param      user        	Objet user qui demande la creation
+	 *  @param      notrigger		1 ne declenche pas les triggers, 0 sinon
+	 *  @return     int         	<0 si KO, id compte cree si OK
 	 */
 	function create($user,$notrigger=0)
 	{
@@ -842,7 +842,7 @@ class User extends CommonObject
 				$result = $interface->run_triggers('USER_CREATE_FROM_CONTACT',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
-				
+
 				$this->db->commit();
 				return $this->id;
 			}

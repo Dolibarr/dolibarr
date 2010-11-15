@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/install/etape2.php
  *		\ingroup	install
- *      \brief      Cree les tables, cles primaires, cles etrangeres, index et fonctions en base puis charge les donnees de reference
+ *      \brief      Create tables, primary keys, foreign keys, indexes and functions into database and then load reference data
  *      \version    $Id$
  */
 
@@ -173,11 +173,12 @@ if ($_POST["action"] == "set")
 					$buf = fgets($fp, 4096);
 					if (substr($buf, 0, 2) <> '--')
 					{
+						/* I disable this as it is already done into the query function
 						if ($choix != 1)	// All databases except Mysql
 						{
-							$buf=$db->convertSQLFromMysql($buf);
+							$buf=$db->convertSQLFromMysql($buf,'dml');
 						}
-
+                        */
 						$buffer .= $buf;
 					}
 				}
@@ -193,7 +194,7 @@ if ($_POST["action"] == "set")
 				}
 
 				dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
-				$resql=$db->query($buffer);
+				$resql=$db->query($buffer,0,'dml');
 				if ($resql)
 				{
 					// print "<td>OK requete ==== $buffer</td></tr>";

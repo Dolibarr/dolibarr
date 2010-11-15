@@ -75,14 +75,14 @@ class DoliDb
 
 
 	/**
-	 *	\brief      Ouverture d'une connexion vers le serveur et eventuellement une database.
-	 *	\param      type		Type de base de donnees (mysql ou pgsql)
-	 *	\param	    host		Addresse de la base de donnees
-	 *	\param	    user		Nom de l'utilisateur autorise
-	 *	\param	    pass		Mot de passe
-	 *	\param	    name		Nom de la database
-	 *	\param	    port		Port of database server
-	 *	\return     int			1 en cas de succes, 0 sinon
+	 *	Ouverture d'une connexion vers le serveur et eventuellement une database.
+	 *	@param      type		Type de base de donnees (mysql ou pgsql)
+	 *	@param	    host		Addresse de la base de donnees
+	 *	@param	    user		Nom de l'utilisateur autorise
+	 *	@param	    pass		Mot de passe
+	 *	@param	    name		Nom de la database
+	 *	@param	    port		Port of database server
+	 *	@return     int			1 en cas de succes, 0 sinon
 	 */
 	function DoliDb($type='mssql', $host, $user, $pass, $name='', $port=0)
 	{
@@ -154,20 +154,21 @@ class DoliDb
 		return $this->ok;
 	}
 
-	/**
-	 *	\brief		Convert a SQL request in mysql syntax to database syntax
-	 * 	\param		line		SQL request line to convert
-	 * 	\return		string		SQL request line converted
-	 */
-	function convertSQLFromMysql($line)
+    /**
+     *  Convert a SQL request in Mysql syntax to PostgreSQL syntax
+     *  @param     line     SQL request line to convert
+     *  @param     type     Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+     *  @return    string   SQL request line converted
+     */
+	function convertSQLFromMysql($line,$type='ddl')
 	{
 		return $line;
 	}
 
 	/**
-	 * 	\brief      Selectionne une database.
-	 *	\param	    database		Nom de la database
-	 *	\return	    boolean         true si ok, false si ko
+	 * 	Selectionne une database.
+	 *	@param	    database		Nom de la database
+	 *	@return	    boolean         true si ok, false si ko
 	 */
 	function select_db($database)
 	{
@@ -175,14 +176,14 @@ class DoliDb
 	}
 
 	/**
-	 \brief		Connection vers le serveur
-	 \param	    host		addresse de la base de donnees
-	 \param	    login		nom de l'utilisateur autoris
-	 \param	    passwd		mot de passe
-	 \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
-	 \param		port		Port of database server
-	 \return	resource	handler d'acces a la base
-	 \seealso	close
+	 *     Connection vers le serveur
+	 *     @param	host		addresse de la base de donnees
+	 *     @param	login		nom de l'utilisateur autoris
+	 *     @param	passwd		mot de passe
+	 *     @param	name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
+	 *     @param	port		Port of database server
+	 *     @return	resource	handler d'acces a la base
+	 *     @see    	close
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
@@ -230,9 +231,9 @@ class DoliDb
 
 
 	/**
-	 \brief      Fermeture d'une connexion vers une database.
-	 \return	    resource
-	 \seealso	connect
+	 * \brief       Fermeture d'une connexion vers une database.
+	 * \return	    resource
+	 * \see        	connect
 	 */
 	function close()
 	{
@@ -242,9 +243,9 @@ class DoliDb
 
 
 	/**
-		\brief      Debut d'une transaction.
-		\return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
-		*/
+	 *	\brief      Debut d'une transaction.
+	 *	\return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
+	 */
 	function begin()
 	{
 		if (! $this->transaction_opened)
@@ -265,9 +266,10 @@ class DoliDb
 	}
 
 	/**
-		\brief      Validation d'une transaction
-		\return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
-		*/
+     * Validate a database transaction
+     * @param       log         Add more log to default log line
+     * @return      int         1 if validation is OK or transaction level no started, 0 if ERROR
+	 */
 	function commit()
 	{
 		if ($this->transaction_opened <= 1)
@@ -288,8 +290,8 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Annulation d'une transaction et retour aux anciennes valeurs
-	 \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * \brief      Annulation d'une transaction et retour aux anciennes valeurs
+	 * \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
 	function rollback()
 	{
@@ -308,12 +310,14 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief      Effectue une requete et renvoi le resultset de reponse de la base
-	 *	\param	    query	    	SQL query string
-	 * 	\param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
-	 * 	\return	    resource    	Resultset of answer
+     *  Execute a SQL request and return the resultset
+     *  @param      query           SQL query string
+     *  @param      usesavepoint    0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
+     *                              Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+     *  @param      type            Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+     *  @return     resource        Resultset of answer
 	 */
-	function query($query,$usesavepoint=0)
+	function query($query,$usesavepoint=0,$type='ddl')
 	{
 		$query = trim($query);
 
@@ -409,9 +413,9 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie les donnees dans un tableau.
-	 \param      resultset   Curseur de la requete voulue
-	 \return	    array
+	 * \brief      Renvoie les donnees dans un tableau.
+	 * \param      resultset           Curseur de la requete voulue
+	 * \return	   array
 	 */
 	function fetch_array($resultset)
 	{
@@ -422,9 +426,9 @@ class DoliDb
 
 
 	/**
-	 \brief      Renvoie les donnees comme un tableau.
-	 \param      resultset   Curseur de la requete voulue
-	 \return	    array
+	 * \brief      Renvoie les donnees comme un tableau.
+	 * \param      resultset           Curseur de la requete voulue
+	 * \return	   array
 	 */
 	function fetch_row($resultset)
 	{
@@ -434,10 +438,10 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
-	 \see    	affected_rows
-	 \param      resultset   Curseur de la requete voulue
-	 \return     int		    Nombre de lignes
+	 * \brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
+	 * \see    	   affected_rows
+	 * \param      resultset           Curseur de la requete voulue
+	 * \return     int		           Nombre de lignes
 	 */
 	function num_rows($resultset)
 	{
