@@ -105,7 +105,7 @@ class Menubase
         // Get the max rowid in llx_menu and use it as rowid in insert because postgresql
         // may use an already used value because its internal cursor does not increase when we do
         // an insert with a forced id.
-        // Two solution: Disable menu handler with database for postgres or update couter when
+        // Two solution: Disable menu handler using database when database is postgresql or update counter when
         // enabling such menus.
 
 		// Insert request

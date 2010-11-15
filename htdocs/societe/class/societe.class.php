@@ -1738,7 +1738,7 @@ class Societe extends CommonObject
      *    @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *    @param      soc             Objet societe
      *    @return     int             <0 si ko, >0 si ok
-     *    FIXME not in business class
+     *    TODO not in business class
      */
     function id_prof_check($idprof,$soc)
     {
@@ -1790,7 +1790,7 @@ class Societe extends CommonObject
      *   @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *   @param      soc             Objet societe
      *   @return     string          url ou chaine vide si aucune url connue
-     *   FIXME not in business class
+     *   TODO not in business class
      */
     function id_prof_url($idprof,$soc)
     {
@@ -2025,7 +2025,7 @@ class Societe extends CommonObject
      *  @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *  @param      htmlname        Nom de la zone input
      * 	@param		preselected		Default value to show
-     * 	FIXME not in business class
+     * 	TODO not in business class
      */
     function show_input_id_prof($idprof,$htmlname,$preselected)
     {
@@ -2037,7 +2037,7 @@ class Societe extends CommonObject
      *  @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *  @param      htmlname        Nom de la zone input
      * 	@param		preselected		Default value to show
-     * 	FIXME not in business class
+     * 	TODO not in business class
      */
     function get_input_id_prof($idprof,$htmlname,$preselected)
     {
