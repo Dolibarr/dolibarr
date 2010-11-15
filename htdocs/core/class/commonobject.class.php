@@ -397,8 +397,6 @@ class CommonObject
 	 */
 	function getIdContact($source,$code,$status=0)
 	{
-	    global $conf;
-
 		$result=array();
 		$i=0;
 
@@ -412,7 +410,6 @@ class CommonObject
 		$sql.= " AND tc.code = '".$code."'";
 		$sql.= " AND tc.active = 1";
 		if ($status) $sql.= " AND ec.statut = ".$status;
-        $sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("CommonObject::getIdContact sql=".$sql);
 		$resql=$this->db->query($sql);
