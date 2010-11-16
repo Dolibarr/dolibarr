@@ -302,7 +302,7 @@ class DoliDb
                 }
 			}
 
-			//print $line."\n";
+			//print "type=".$type." newline=".$line."<br>\n";
 		}
 
 		return $line;
@@ -518,7 +518,7 @@ class DoliDb
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
-				dol_syslog("Pgsql.lib::query SQL error: ".$query, LOG_WARNING);
+				dol_syslog("Pgsql.lib::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
 				//print "\n>> ".$query."<br>\n";
 				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
 
@@ -920,7 +920,7 @@ class DoliDb
 
 		$like = '';
 		if ($table) $like = " AND table_name LIKE '".$table."'";
-		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$like);
+		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$like." ORDER BY table_name");
 		while($row = $this->fetch_row($result))
 		{
 			$listtables[] = $row[0];

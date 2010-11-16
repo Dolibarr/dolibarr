@@ -282,7 +282,8 @@ if ($_POST["action"] == "set")
 					}
 					else
 					{
-						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
+						|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS')
 						{
 							dolibarr_install_syslog("etape1: User already exists");
 							print '<tr><td>';
@@ -337,7 +338,9 @@ if ($_POST["action"] == "set")
 
 			if ($db->connected)
 			{
-				if ($db->DDLCreateDb($dolibarr_main_db_name, $dolibarr_main_db_character_set, $dolibarr_main_db_collation, $dolibarr_main_db_user))
+				$result=$db->DDLCreateDb($dolibarr_main_db_name, $dolibarr_main_db_character_set, $dolibarr_main_db_collation, $dolibarr_main_db_user);
+
+				if ($result)
 				{
 					print '<tr><td>';
 					print $langs->trans("DatabaseCreation")." (".$langs->trans("User")." ".$userroot.") : ";
@@ -355,12 +358,6 @@ if ($_POST["action"] == "set")
 				}
 				else
 				{
-					print '<tr><td>';
-					print $langs->trans("DatabaseCreation")." (".$langs->trans("User")." ".$userroot.") : ";
-					print $dolibarr_main_db_name;
-					print '</td>';
-					print '<td>'.$langs->trans("Error").' '.$db->lasterrno().'<br>'.$db->lasterror().'</td></tr>';
-
 					// Affiche aide diagnostique
 					print '<tr><td colspan="2"><br>';
 					print $langs->trans("ErrorFailedToCreateDatabase",$dolibarr_main_db_name).'<br>';
@@ -514,7 +511,7 @@ function write_conf_file($conffile)
 	global $dolibarr_main_db_type,$dolibarr_main_db_character_set,$dolibarr_main_db_collation,$dolibarr_main_authentication;
 
 	$error=0;
-	
+
 	$key = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
 
 	$fp = fopen("$conffile", "w");
@@ -577,7 +574,7 @@ function write_conf_file($conffile)
 
         fputs($fp, '$dolibarr_main_force_https=\''.$_POST["main_force_https"].'\';');
 		fputs($fp,"\n");
-		
+
 		fputs($fp, '$dolibarr_main_cookie_cryptkey=\''.$key.'\';');
 		fputs($fp,"\n");
 

@@ -173,12 +173,6 @@ if ($_POST["action"] == "set")
 					$buf = fgets($fp, 4096);
 					if (substr($buf, 0, 2) <> '--')
 					{
-						/* I disable this as it is already done into the query function
-						if ($choix != 1)	// All databases except Mysql
-						{
-							$buf=$db->convertSQLFromMysql($buf,'dml');
-						}
-                        */
 						$buffer .= $buf;
 					}
 				}
@@ -332,7 +326,7 @@ if ($_POST["action"] == "set")
 						}
 
 						dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
-						$resql=$db->query($buffer);
+						$resql=$db->query($buffer,0,'dml');
 						if ($resql)
 						{
 							//print "<td>OK requete ==== $buffer</td></tr>";
@@ -422,7 +416,7 @@ if ($_POST["action"] == "set")
 				{
 					dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
 					print "<!-- Insert line : ".$buffer."<br>-->\n";
-					$resql=$db->query($buffer);
+					$resql=$db->query($buffer,0,'dml');
 					if ($resql)
 					{
 						$ok = 1;
