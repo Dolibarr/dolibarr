@@ -493,7 +493,7 @@ foreach($dashboardlines as $key => $board)
     {
         print '<td rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
         $text='';
-        if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate");
+        if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
         $options='height="64px"';
         if ($rowspan <= 2) $options='height="24"';  // Weather logo is smaller if dashboard has few elements
         else if ($rowspan <= 3) $options='height="48"';  // Weather logo is smaller if dashboard has few elements

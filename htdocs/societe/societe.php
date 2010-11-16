@@ -37,6 +37,8 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
 $search_nom=trim(isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"]);
+$search_nom_only=trim(isset($_GET["search_nom_only"])?$_GET["search_nom_only"]:$_POST["search_nom_only"]);
+$search_all=trim(isset($_GET["search_all"])?$_GET["search_all"]:$_POST["search_all"]);
 $search_ville=trim(isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"]);
 $socname=trim(isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"]);
 $search_idprof1=trim($_REQUEST['search_idprof1']);
@@ -171,7 +173,19 @@ if (! $user->rights->societe->lire || ! $user->rights->fournisseur->lire)
 {
 	if (! $user->rights->fournisseur->lire) $sql.=" AND s.fournisseur != 1";
 }
-
+if ($search_nom_only)
+{
+	$sql.= " AND s.nom LIKE '%".addslashes($search_nom_only)."%'";
+}
+if ($search_all)
+{
+	$sql.= " AND (";
+	$sql.= "s.nom LIKE '%".addslashes($search_all)."%'";
+	$sql.= " OR s.code_client LIKE '%".addslashes($search_all)."%'";
+	$sql.= " OR s.email like '%".addslashes($search_all)."%'";
+	$sql.= " OR s.url like '%".addslashes($search_all)."%'";
+	$sql.= ")";
+}
 if ($search_nom)
 {
 	$sql.= " AND (";
@@ -202,6 +216,7 @@ if ($search_idprof4)
 {
 	$sql .= " AND s.idprof4 LIKE '%".addslashes($search_idprof4)."%'";
 }
+//print $sql;
 
 // Count total nb of records
 $nbtotalofrecords = 0;
@@ -260,6 +275,7 @@ if ($resql)
 	print '<td class="liste_titre">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	if (! empty($search_nom_only) && empty($search_nom)) $search_nom=$search_nom_only;
 	print '<input class="flat" type="text" name="search_nom" value="'.$search_nom.'">';
 	print '</td><td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_ville" value="'.$search_ville.'">';
@@ -319,8 +335,8 @@ if ($resql)
 			if ($obj->client) print " / ";
 			print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
 		}
-
-		print '</td></tr>'."\n";
+		print '</td>';
+		print '</tr>'."\n";
 		$i++;
 	}
 
