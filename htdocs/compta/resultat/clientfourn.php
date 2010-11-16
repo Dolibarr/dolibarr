@@ -146,8 +146,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 }
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-$sql.= " GROUP BY nom";
-$sql.= " ORDER BY nom";
+$sql.= " GROUP BY s.nom, s.rowid";
+$sql.= " ORDER BY s.nom";
 
 /*
 print dol_print_date($date_end,'dayhour',true).'<br>';
@@ -204,7 +204,7 @@ if ($modecompta != 'CREANCES-DETTES')
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= " AND ba.entity = ".$conf->entity;
 	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-	$sql.= " GROUP BY nom";
+	$sql.= " GROUP BY nom, idp";
 	$sql.= " ORDER BY nom";
 
 	dol_syslog("get old customer payments not linked to invoices sql=".$sql);
@@ -255,7 +255,7 @@ print '</tr>';
  */
 if ($modecompta == 'CREANCES-DETTES')
 {
-	$sql = "SELECT s.nom, s.rowid as socid, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
+	$sql = "SELECT s.nom, s.rowid as socid, date_format(f.datef,'%Y-%m') as dm, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql.= " WHERE f.fk_soc = s.rowid";
@@ -274,8 +274,8 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-$sql .= " GROUP BY nom, s.rowid";
-$sql .= " ORDER BY nom, s.rowid";
+$sql .= " GROUP BY s.nom, s.rowid, dm";
+$sql .= " ORDER BY s.nom, s.rowid";
 
 print '<tr><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
 
@@ -490,7 +490,7 @@ if ($modecompta == 'CREANCES-DETTES')
 {
 	// TVA a payer
 	$amount=0;
-	$sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm";
+	$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.tva) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut in (1,2)";
 	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -527,7 +527,7 @@ if ($modecompta == 'CREANCES-DETTES')
 
 	// TVA a recuperer
 	$amount=0;
-	$sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm";
+	$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total_tva) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql.= " WHERE f.fk_statut in (1,2)";
 	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -567,7 +567,7 @@ else
 {
 	// TVA reellement deja payee
 	$amount=0;
-	$sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
+	$sql = "SELECT date_format(t.datev,'%Y-%m') as dm, sum(t.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 	$sql.= " WHERE amount > 0";
 	if ($date_start && $date_end) $sql.= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
@@ -606,7 +606,7 @@ else
 
 	// TVA recuperee
 	$amount=0;
-	$sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
+	$sql = "SELECT date_format(t.datev,'%Y-%m') as dm, sum(t.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 	$sql.= " WHERE amount < 0";
 	if ($date_start && $date_end) $sql.= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";

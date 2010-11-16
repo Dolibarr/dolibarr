@@ -135,8 +135,8 @@ else
 }
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-$sql .= " GROUP BY rowid, name, firstname";
-$sql .= " ORDER BY rowid";
+$sql .= " GROUP BY u.rowid, u.name, u.firstname";
+$sql .= " ORDER BY u.rowid";
 
 $result = $db->query($sql);
 if ($result)
@@ -159,7 +159,7 @@ else {
 // On ajoute les paiements anciennes version, non lies par paiement_facture
 if ($modecompta != 'CREANCES-DETTES')
 {
-    $sql = "SELECT -1 as rowid, '' as name, '' as firstname, sum(p.amount) as amount_ttc";
+    $sql = "SELECT -1 as rowidx, '' as name, '' as firstname, sum(p.amount) as amount_ttc";
     $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
     $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
     $sql.= ", ".MAIN_DB_PREFIX."paiement as p";
@@ -169,8 +169,8 @@ if ($modecompta != 'CREANCES-DETTES')
     $sql.= " AND b.fk_account = ba.rowid";
     $sql.= " AND ba.entity = ".$conf->entity;
 	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-    $sql.= " GROUP BY rowid";
-    $sql.= " ORDER BY rowid";
+    $sql.= " GROUP BY rowidx, name, firstname";
+    $sql.= " ORDER BY rowidx";
 
     $result = $db->query($sql);
     if ($result)
@@ -180,8 +180,8 @@ if ($modecompta != 'CREANCES-DETTES')
         while ($i < $num)
         {
             $obj = $db->fetch_object($result);
-            $amount[$obj->rowid] = $obj->amount_ttc;
-            $name[$obj->rowid] = $obj->name.' '.$obj->firstname;
+            $amount[$obj->rowidx] = $obj->amount_ttc;
+            $name[$obj->rowidx] = $obj->name.' '.$obj->firstname;
             $catotal+=$obj->amount_ttc;
             $i++;
         }
