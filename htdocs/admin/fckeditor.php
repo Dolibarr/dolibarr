@@ -157,12 +157,19 @@ foreach($modules as $const => $desc)
 print '</table>';
 
 print '<br>';
-print_fiche_titre($langs->trans("Test"),'','');
+print_fiche_titre($langs->trans("TestSubmitForm"),'','');
 print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 $editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test',200,'dolibarr_notes','In', true);
 $editor->Create();
 print '<center><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></center>'."\n";
 print '</form>'."\n";
+
+/*
+print '<!-- Result -->';
+print $_POST["formtestfield"];
+print '<!-- Result -->';
+print $conf->global->FCKEDITOR_TEST;
+*/
 
 $db->close();
 
