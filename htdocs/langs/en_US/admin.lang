@@ -799,7 +799,7 @@ SimpleNumRefModelDesc=Return the reference number with format %syymm-nnnn where 
 ShowProfIdInAddress=Show professionnal id with addresses on documents
 TranslationUncomplete=Partial translation
 SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix <b>.lang</b> text files into directory <b>htdocs/langs</b> and submit them on the forum at <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a>. 
-MenuUseLayout=Make vertical menu hidable (option javascript must ne be disabled)
+MenuUseLayout=Make vertical menu hidable (option javascript must not be disabled)
 
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
