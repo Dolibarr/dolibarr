@@ -177,6 +177,7 @@ td.vmenu {
     margin-<?php print $right; ?>: 2px;
     padding: 0px;
     padding-bottom: 0px;
+    padding-top: 1px;
     width: 168px;
 }
 
@@ -214,7 +215,7 @@ div.tmenu {
     border-<?php print $right; ?>: 0px solid #555555;
     border-bottom: 1px solid #ABB9B9;
     padding: 0px 0px 0px 0px;	/* t r b l */
-    margin: 0px 0px 3px 0px;	/* t r b l */
+    margin: 0px 0px 5px 0px;	/* t r b l */
     font-weight: normal;
     height: <?php print $heightmenu; ?>px;
 /*    background: #b3c5cc; */
