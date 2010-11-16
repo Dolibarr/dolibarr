@@ -58,18 +58,48 @@ if ($_GET["action"] == 'setgeneraterule')
 
 if ($_GET["action"] == 'activate_encrypt')
 {
+    $error=0;
+
 	$db->begin();
 
     dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1",'chaine',0,'',$conf->entity);
 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."user as u";
-	$sql.= " SET u.pass_crypted = MD5(u.pass), u.pass = NULL";
-	$sql.= " WHERE u.pass IS NOT NULL AND LENGTH(u.pass) < 32";	// Not a MD5 value
-	$sql.= " AND MD5(u.pass) IS NOT NULL";
+    $sql = "SELECT u.rowid, u.pass, u.pass_crypted";
+    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+    $sql.= " WHERE u.pass IS NOT NULL AND LENGTH(u.pass) < 32"; // Not a MD5 value
 
-	//print $sql;
-	$result = $db->query($sql);
-    if ($result)
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $numrows=$db->num_rows($resql);
+        $i=0;
+        while ($i < $numrows)
+        {
+            $obj=$db->fetch_object($resql);
+            if (md5($obj->pass))
+            {
+                $sql = "UPDATE ".MAIN_DB_PREFIX."user";
+                $sql.= " SET pass_crypted = '".md5($obj->pass)."', pass = NULL";
+                $sql.= " WHERE rowid=".$obj->rowid;
+                //print $sql;
+
+                $resql2 = $db->query($sql);
+                if (! $resql2)
+                {
+                    dol_print_error($db);
+                    $error++;
+                    break;
+                }
+
+                $i++;
+            }
+        }
+    }
+    else dol_print_error($db);
+
+	//print $error." ".$sql;
+    //exit;
+    if (! $error)
 	{
 		$db->commit();
 		Header("Location: security.php");
