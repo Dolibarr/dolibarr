@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -84,7 +84,8 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 if ($search_nom)      $sql.= " AND s.nom like '%".addslashes($search_nom)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".addslashes($search_contract)."'";
 if ($sall)            $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR cd.label like '%".addslashes($sall)."%' OR cd.description like '%".addslashes($sall)."%')";
-$sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.rowid";
+$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut,";
+$sql.= " s.nom, s.rowid";
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($conf->liste_limit + 1 ,$offset);
 

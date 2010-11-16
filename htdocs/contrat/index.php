@@ -245,7 +245,7 @@ $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " AND c.statut > 0";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-$sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.rowid";
+$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.statut, s.nom, s.rowid";
 $sql.= " ORDER BY c.tms DESC";
 $sql.= " LIMIT ".$max;
 
