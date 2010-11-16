@@ -72,14 +72,13 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		// Create empty PDF
 		$pdf=new FPDI('P','mm','A4');
 		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
-		//$pdf->SetCompression(false);
 
 		if (class_exists('TCPDF'))
 		{
 			$pdf->setPrintHeader(false);
 			$pdf->setPrintFooter(false);
 		}
-        $pdf->SetFont(pdf_getPDFFont($outputlangs));
+        //$pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 		//$pdf->Open();
 		//$pdf->AddPage();
