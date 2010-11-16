@@ -101,7 +101,7 @@ class pdf_paiement
 
 		$month = sprintf("%02d",$month);
 		$year = sprintf("%04d",$year);
-		$file = $dir . "/payments-".$month."-".$year.".pdf";
+		$file = $dir . "/payments-".$year."-".$month.".pdf";
 
 		// Protection et encryption du pdf
 		if ($conf->global->PDF_SECURITY_ENCRYPTION)
