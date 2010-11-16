@@ -1,0 +1,11 @@
+# Dolibarr language file - fr_CH - bills
+CHARSET=UTF-8
+AlreadyPaidNoCreditNotesNoDeposits=Déjà réglé (hors notes de crédit et acomptes)
+ShowDiscount=Visualiser la note de crédit
+CreditNote=Note de crédit
+CreditNotes=Notes de crédit
+DiscountFromCreditNote=Remise issue de la note de crédit %s
+CreditNoteConvertedIntoDiscount=Cette note de crédit ou acompte a été converti en %s
+
+# NumRef Modules
+TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et %syymm-nnnn pour les notes de crédit où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
