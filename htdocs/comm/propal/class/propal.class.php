@@ -120,7 +120,7 @@ class Propal extends CommonObject
 	 */
 	function Propal($DB, $socid="", $propalid=0)
 	{
-		global $langs;
+		global $conf,$langs;
 
 		$this->db = $DB ;
 		$this->socid = $socid;
@@ -129,6 +129,8 @@ class Propal extends CommonObject
 		$this->remise = 0;
 		$this->remise_percent = 0;
 		$this->remise_absolue = 0;
+
+		$this->duree_validite=$conf->global->PROPALE_VALIDITY_DURATION;
 
 		$langs->load("propal");
 		$this->labelstatut[0]=$langs->trans("PropalStatusDraft");
@@ -566,6 +568,8 @@ class Propal extends CommonObject
 		global $langs,$conf,$mysoc;
 		$error=0;
 
+		$now=dol_now('gmt');
+
 		// Clean parameters
 		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 
@@ -622,7 +626,7 @@ class Propal extends CommonObject
 		$sql.= ", 0";
 		$sql.= ", 0";
 		$sql.= ", '".$this->db->idate($this->datep)."'";
-		$sql.= ", '".$this->db->idate(mktime())."'";
+		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", '(PROV)'";
 		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql.= ", '".addslashes($this->note)."'";
@@ -790,6 +794,8 @@ class Propal extends CommonObject
 
 		$error=0;
 
+		$now=dol_now('gmt');
+
 		$object=new Propal($this->db);
 
 		// Instantiate hooks of thirdparty module
@@ -821,8 +827,8 @@ class Propal extends CommonObject
 		$object->user_author        = $user->id;
 		$object->user_valid         = '';
 		$object->date               = '';
-		$object->datep 				= dol_now('gmt');
-		$object->fin_validite       = '';
+		$object->datep 				= $now;
+		$object->fin_validite       = $object->datep + ($this->duree_validite * 24 * 3600);
 		$object->ref_client         = '';
 
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
