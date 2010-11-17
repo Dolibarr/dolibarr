@@ -81,6 +81,7 @@ ProjectsDedicatedToThisThirdParty=Projectes dedicats a aquest tercer
 NoTasks=Cap tasca per a aquest projecte
 LinkedToAnotherCompany=Enllaçat a una altra empresa
 TaskIsNotAffectedToYou=Tasca que no l'afecta
+ErrorTimeSpentIsEmpty=No s'ha establert el temps consumit
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Cap de projecte
 TypeContact_project_external_PROJECTLEADER=Cap de projecte
