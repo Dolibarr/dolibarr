@@ -285,6 +285,7 @@ ExampleOfDirectoriesForModelGen=Ejemplos de sintaxis:<br>c:\mydir<br>/home/mydir
 FollowingSubstitutionKeysCanBeUsed=Colocando los siguientes tags en la plantilla, obtendrá una sustitución con el valor personalizado al generar el documento:
 FullListOnOnlineDocumentation=Listado completo de tags disponibles en la documentación de usuario del módulo Terceros del wiki http://wiki.dolibarr.org
 FirstnameNamePosition=Orden visualización nombre/apellidos
+DescWeather=Los siguientes gráficos se mostrarán en el panel si el número de elementos llegan a estos valores:
 # Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
@@ -732,7 +733,8 @@ DelaysBeforeWarning=Plazos antes de alerta
 DelaysOfToleranceBeforeWarning=Plazos de tolerancia antes de alerta
 DelaysOfToleranceDesc=Esta pantalla permite configura los plazos de tolerancia antes de que se alerte con el símbolo %s, sobre cada elemento en retraso.
 DelaysOfToleranceActionsToDo=Tolerancia de retraso antes de la alerta (en días) sobre acciones planificadas no realizadas
-DelaysOfToleranceOrdersToProcess=Tolerancia de retraso antes de la alerta (en días) sobre pedidos no procesados
+DelaysOfToleranceOrdersToProcess=Tolerancia de retraso antes de la alerta (en días) sobre pedidos de clientes no procesados
+DelaysOfToleranceSuppliersOrdersToProcess= Tolerancia de retraso antes de la alerta (en días) sobre pedidos a proveedores no procesados
 DelaysOfTolerancePropalsToClose=Tolerancia de retraso antes de la alerta (en días) sobre presupuestos a cerrar
 DelaysOfTolerancePropalsToBill=Tolerancia de retraso antes de la alerta (en días) sobre presupuestos no facturados
 DelaysOfToleranceNotActivatedServices=Tolerancia de retraso antes de la alerta (en días) sobre servicios a activar

@@ -285,7 +285,8 @@ ExampleOfDirectoriesForModelGen=Exemples de sintaxi:<br>c:\mydir<br>/home/mydir<
 FollowingSubstitutionKeysCanBeUsed=Posant les següents etiquetes a la plantilla, obtindrà una substitució amb el valor personalitzat en generar el document:
 FullListOnOnlineDocumentation=Llista completa de tags disponibles a la documentació d'usuari del mòdul Tercers del wiki http://wiki.dolibarr.org
 FirstnameNamePosition=Ordre visualització nom/cognoms
-# Modules= undefined==
+DescWeather=Els següents gràfics es mostraran en el panell si el nombre d'elements arriben a aquests valors:
+# Modules
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
 Module1Name=Tercers
@@ -732,7 +733,8 @@ DelaysBeforeWarning=Terminis abans d'alerta
 DelaysOfToleranceBeforeWarning=Terminis de tolerància abans d'alerta
 DelaysOfToleranceDesc=Aquesta pantalla permet configura els terminis de tolerància abans que es alerti amb el símbol %s, sobre cada element en retard.
 DelaysOfToleranceActionsToDo=Tolerància de retard abans de l'alerta (en dies) sobre accions planificades no realitzades
-DelaysOfToleranceOrdersToProcess=Tolerància de retard abans de l'alerta (en dies) sobre comandes no processades
+DelaysOfToleranceOrdersToProcess=Tolerància de retard abans de l'alerta (en dies) sobre comandes de clients no processades
+DelaysOfToleranceSuppliersOrdersToProcess=Tolerància de retard abans de l'alerta (en dies) sobre comandes a proveïdors no processades
 DelaysOfTolerancePropalsToClose=Tolerància de retard abans de l'alerta (en dies) sobre pressupostos a tancar
 DelaysOfTolerancePropalsToBill=Tolerància de retard abans de l'alerta (en dies) sobre pressupostos no facturats
 DelaysOfToleranceNotActivatedServices=Tolerància de retard abans de l'alerta (en dies) sobre serveis a activar
