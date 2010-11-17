@@ -3232,10 +3232,10 @@ function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
         foreach ($conf->file->dol_document_root as $dirroot)
 	    {
 	        // If module enabled and complete
-    		if (! empty($conf->$fonc->enabled) && file_exists($dir.'/functions_'.$fonc.'.lib.php'))
+    		if (! empty($conf->$fonc->enabled) && file_exists($dirroot.'/includes/modules/substitutions/functions_'.$fonc.'.lib.php'))
     		{
-    			dol_syslog("Library functions_".$fonc.".lib.php found into ".$dir);
-    			require_once($dir."/functions_".$fonc.".lib.php");
+    			dol_syslog("Library functions_".$fonc.".lib.php found into ".$dirroot);
+    			require_once($dirroot."/includes/modules/substitutions/functions_".$fonc.".lib.php");
     			numberwords_completesubstitutionarray($substitutionarray,$outputlangs,$object);
     			break;
     		}

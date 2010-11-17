@@ -43,6 +43,7 @@ $outputlangs->setDefaultLang($langs->defaultlang);
 /*
  * Actions
  */
+
 if (! empty($_POST["action"]) && $_POST["action"] == 'setlevel')
 {
 	dolibarr_set_const($db,"SYSLOG_LEVEL",$_POST["level"],'chaine',0,'',0);
@@ -94,12 +95,12 @@ if ($_POST["action"] == 'test' && trim($_POST["value"]) != '')
 
 	if ($_POST["level"])
 	{
-		$object->total_ttc=$_POST["value"];
+		$object->total_ttc=price2num($_POST["value"]);
 		$source='__TOTAL_TTC_WORDS__';
 	}
 	else
 	{
-		$object->number=$_POST["value"];
+		$object->number=price2num($_POST["value"]);
 		$source='__NUMBER_WORDS__';
 	}
 	$newvaltest=make_substitutions($source,array(),$outputlangs,$object);
