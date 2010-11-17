@@ -92,7 +92,7 @@ class FormAdmin
 
 		asort($langs_available);
 
-		$uncompletelanguages=array('de_DE','da_DA','fi_FI','hu_HU','is_IS','pl_PL','ro_RO','ru_RU','sv_SV','tr_TR','zh_CN');
+		$uncompletelanguages=array('da_DA','fi_FI','hu_HU','is_IS','pl_PL','ro_RO','ru_RU','sv_SV','tr_TR','zh_CN');
 		foreach ($langs_available as $key => $value)
 		{
 		    if ($showwarning && in_array($key,$uncompletelanguages))

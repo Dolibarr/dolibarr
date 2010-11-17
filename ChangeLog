@@ -51,10 +51,12 @@ For users:
 - Fix: Date input use date format of user and not dd/mm/yyyy format.
 - Fix: Fixed a very old bug making file attachment fails with some emails 
        readers when using "mail php function".
-
+- Fix: When cloning commercial proposal, due date is creation date + delay
+       by default.
 
 For translators:
 - New: Update and complete slovenian language sl_SL.
+- New: Add full manually translated files for de_AT en de_DE (thanks to eCleaner.at).
 
 For developers:
 - New: Add jquery by default.
