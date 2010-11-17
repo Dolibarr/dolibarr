@@ -302,7 +302,7 @@ ListSuppliersShort=Listado de proveedores
 ListProspectsShort=Listado de clientes potenciales
 ListCustomersShort=Listado de clientes
 ThirdPartiesArea=Área Terceros
-LastModifiedThirdParties=Loss %s últimos terceros modificados
+LastModifiedThirdParties=Los %s últimos terceros modificados
 UniqueThirdParties=Total de terceros únicos
 # Monkey
 MonkeyNumRefModelDesc=Devuelve un número bajo el formato %syymm-nnnn para los códigos de clientes y %syymm-nnnn para los códigos de los proveedores, donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0.
