@@ -11,6 +11,7 @@ DoneBy= Done by
 Events= Events
 ListOfActions=List of events
 Location=Location
+EventOnFullDay=Event on full day
 SearchAnAction= Search an action/task
 MenuToDoActions= All incomplete actions
 MenuDoneActions= All terminated actions

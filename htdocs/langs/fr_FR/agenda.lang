@@ -10,6 +10,7 @@ AffectedTo=Affecté à
 DoneBy=Réalisé par
 Events=Evénements
 ListOfActions=Liste des événements
+EventOnFullDay=Evênement sur la journée
 Location=Lieu
 SearchAnAction=Rechercher une action/tâche
 MenuToDoActions=Les actions incomplètes

@@ -75,22 +75,26 @@ if ($_POST["action"] == 'add_action')
 		if (! empty($_POST["backtopage"])) $backtopage=$_POST["backtopage"];
 		if (! $backtopage)
 		{
-			if ($socid) $backtopage = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
+			if ($socid > 0) $backtopage = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
 			else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
 		}
 		header("Location: ".$backtopage);
 		exit;
 	}
 
-	// Clean parameters
-	$datep=dol_mktime($_POST["aphour"],
-	$_POST["apmin"],
+    $fulldayevent=$_POST["fullday"];
+
+    // Clean parameters
+	$datep=dol_mktime(
+	$fulldayevent?'00':$_POST["aphour"],
+	$fulldayevent?'00':$_POST["apmin"],
 	0,
 	$_POST["apmonth"],
 	$_POST["apday"],
 	$_POST["apyear"]);
-	$datep2=dol_mktime($_POST["p2hour"],
-	$_POST["p2min"],
+	$datep2=dol_mktime(
+	$fulldayevent?'23':$_POST["p2hour"],
+	$fulldayevent?'59':$_POST["p2min"],
 	0,
 	$_POST["p2month"],
 	$_POST["p2day"],
@@ -120,6 +124,7 @@ if ($_POST["action"] == 'add_action')
 	$actioncomm->type_id = $cactioncomm->id;
 	$actioncomm->type_code = $cactioncomm->code;
 	$actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
+	$actioncomm->fulldayevent = $_POST["fullday"]?1:0;
 	$actioncomm->location = isset($_POST["location"])?$_POST["location"]:'';
 	$actioncomm->label = trim($_POST["label"]);
 	if (! $_POST["label"])
@@ -286,7 +291,9 @@ if (GETPOST("action") == 'update')
 {
 	if (! $_POST["cancel"])
 	{
-		// Clean parameters
+        $fulldayevent=$_POST["fullday"];
+
+	    // Clean parameters
 		if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
 		if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
 		if ($_POST["p2hour"] == -1) $_POST["p2hour"]='0';
@@ -297,15 +304,17 @@ if (GETPOST("action") == 'update')
 		$actioncomm = new Actioncomm($db);
 		$actioncomm->fetch($id);
 
-		$datep=dol_mktime($_POST["aphour"],
-		$_POST["apmin"],
+		$datep=dol_mktime(
+        $fulldayevent?'00':$_POST["aphour"],
+        $fulldayevent?'00':$_POST["apmin"],
 		0,
 		$_POST["apmonth"],
 		$_POST["apday"],
 		$_POST["apyear"]);
 
-		$datep2=dol_mktime($_POST["p2hour"],
-		$_POST["p2min"],
+		$datep2=dol_mktime(
+        $fulldayevent?'23':$_POST["p2hour"],
+        $fulldayevent?'59':$_POST["p2min"],
 		0,
 		$_POST["p2month"],
 		$_POST["p2day"],
@@ -334,6 +343,7 @@ if (GETPOST("action") == 'update')
 		//$actioncomm->dateend     = $datea2;
 		$actioncomm->percentage  = $_POST["percentage"];
 		$actioncomm->priority    = $_POST["priority"];
+        $actioncomm->fulldayevent= $_POST["fullday"]?1:0;
 		$actioncomm->location    = isset($_POST["location"])?$_POST["location"]:'';
 		$actioncomm->societe->id = $_POST["socid"];
 		$actioncomm->contact->id = $_POST["contactid"];
@@ -418,19 +428,40 @@ if (GETPOST('action') == 'create')
 
     if ($conf->use_javascript_ajax)
     {
-    /*
         print "\n".'<script type="text/javascript" language="javascript">';
         print 'jQuery(document).ready(function () {
-                    jQuery("#selectsocid").change(function() {
-                        document.formaction.action.value="create";
-                        document.formaction.submit();
+                     function setdatefields()
+                     {
+                            if (jQuery("#fullday:checked").val() == null)
+                            {
+                                jQuery(".fulldaystarthour").attr(\'disabled\', false);
+                                jQuery(".fulldaystartmin").attr(\'disabled\', false);
+                                jQuery(".fulldayendhour").attr(\'disabled\', false);
+                                jQuery(".fulldayendmin").attr(\'disabled\', false);
+                            }
+                            else
+                            {
+                                jQuery(".fulldaystarthour").attr(\'disabled\', true);
+                                jQuery(".fulldaystartmin").attr(\'disabled\', true);
+                                jQuery(".fulldayendhour").attr(\'disabled\', true);
+                                jQuery(".fulldayendmin").attr(\'disabled\', true);
+                                jQuery(".fulldaystarthour").val("00");
+                                jQuery(".fulldaystartmin").val("00");
+                                //jQuery(".fulldayendhour").val("00");
+                                //jQuery(".fulldayendmin").val("00");
+                                jQuery(".fulldayendhour").val("23");
+                                jQuery(".fulldayendmin").val("59");
+                        }
+                    }
+                    setdatefields();
+                    jQuery("#fullday").change(function() {
+                        setdatefields();
                     });
                })';
         print '</script>'."\n";
-    */
     }
 
-	print '<form name="formaction" action="fiche.php" method="POST">';
+	print '<form name="formaction" action="'.DOL_URL_ROOT.'/comm/action/fiche.php" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add_action">';
 	if (GETPOST("backtopage")) print '<input type="hidden" name="backtopage" value="'.(GETPOST("backtopage") != 1 ? GETPOST("backtopage") : $_SERVER["HTTP_REFERER"]).'">';
@@ -463,17 +494,20 @@ if (GETPOST('action') == 'create')
 	// Location
 	print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" size="60" value="'.GETPOST('location').'"></td></tr>';
 
+    // Full day
+    print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
+
 	// Date start
 	print '<tr><td width="30%" nowrap="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
-	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action",1,1);
-	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
-	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
+	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
+	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
+	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 	print '</td></tr>';
 	// Date end
 	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
-	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
-	else $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
+	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	else $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 	print '</td></tr>';
 
 	// Avancement
@@ -578,9 +612,7 @@ if (GETPOST('action') == 'create')
 	print "</form>";
 }
 
-/*
- * Affichage action en mode edition ou visu
- */
+// View or edit
 if ($id)
 {
 	if ($error)
@@ -638,8 +670,43 @@ if ($id)
 
 	if (GETPOST("action") == 'edit')
 	{
-		// Fiche action en mode edition
-		print '<form name="formaction" action="fiche.php" method="post">';
+	    if ($conf->use_javascript_ajax)
+        {
+            print "\n".'<script type="text/javascript" language="javascript">';
+            print 'jQuery(document).ready(function () {
+                         function setdatefields()
+                         {
+                                if (jQuery("#fullday:checked").val() == null)
+                                {
+                                    jQuery(".fulldaystarthour").attr(\'disabled\', false);
+                                    jQuery(".fulldaystartmin").attr(\'disabled\', false);
+                                    jQuery(".fulldayendhour").attr(\'disabled\', false);
+                                    jQuery(".fulldayendmin").attr(\'disabled\', false);
+                                }
+                                else
+                                {
+                                    jQuery(".fulldaystarthour").attr(\'disabled\', true);
+                                    jQuery(".fulldaystartmin").attr(\'disabled\', true);
+                                    jQuery(".fulldayendhour").attr(\'disabled\', true);
+                                    jQuery(".fulldayendmin").attr(\'disabled\', true);
+                                    jQuery(".fulldaystarthour").val("00");
+                                    jQuery(".fulldaystartmin").val("00");
+                                    //jQuery(".fulldayendhour").val("00");
+                                    //jQuery(".fulldayendmin").val("00");
+                                    jQuery(".fulldayendhour").val("23");
+                                    jQuery(".fulldayendmin").val("59");
+                            }
+                        }
+                        setdatefields();
+                        jQuery("#fullday").change(function() {
+                            setdatefields();
+                        });
+                   })';
+            print '</script>'."\n";
+        }
+
+        // Fiche action en mode edition
+		print '<form name="formaction" action="'.DOL_URL_ROOT.'/comm/action/fiche.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
@@ -659,17 +726,20 @@ if ($id)
 		// Location
 		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$act->location.'"></td></tr>';
 
+        // Full day event
+        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($act->fulldayevent?' checked="true"':'').'></td></tr>';
+
 		// Date start
 		print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $html->select_date($act->datep,'ap',1,1,0,"action",1,1);
-		else if (GETPOST("afaire") == 2) $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
-		else $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
+		if (GETPOST("afaire") == 1) $html->select_date($act->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
+		else if (GETPOST("afaire") == 2) $html->select_date($act->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		else $html->select_date($act->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
-		else if (GETPOST("afaire") == 2) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
-		else $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
+		if (GETPOST("afaire") == 1) $html->select_date($act->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else if (GETPOST("afaire") == 2) $html->select_date($act->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else $html->select_date($act->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		print '</td></tr>';
 
 		// Status
@@ -771,6 +841,9 @@ if ($id)
 
 		// Location
 		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
+
+        // Full day event
+        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($act->fulldayevent).'</td></tr>';
 
 		// Date debut
 		print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="3">';

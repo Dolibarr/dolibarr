@@ -59,6 +59,7 @@ class ActionComm extends CommonObject
     //var $dateend; 		// Date action realise fin (datea2)		// deprecated
     //var $durationa = -1;	// deprecated
 	var $priority;
+	var $fulldayevent = 0;  // 1=Event on full day
 	var $punctual = 1;
 
     var $usertodo;		// Object user that must do action
@@ -100,10 +101,10 @@ class ActionComm extends CommonObject
     }
 
     /**
-     *    \brief      Add an action into database
-     *    \param      user      	auteur de la creation de l'action
- 	 *    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
-     *    \return     int         	id de l'action creee, < 0 if KO
+     *    Add an action into database
+     *    @param      user      	auteur de la creation de l'action
+ 	 *    @param      notrigger		1 ne declenche pas les triggers, 0 sinon
+     *    @return     int         	id de l'action creee, < 0 if KO
      */
     function add($user,$notrigger=0)
     {
@@ -115,9 +116,10 @@ class ActionComm extends CommonObject
 		$this->label=dol_trunc(trim($this->label),128);
 		$this->location=dol_trunc(trim($this->location),128);
 		$this->note=dol_htmlcleanlastbr(trim($this->note));
-        if (! $this->percentage) $this->percentage = 0;
-        if (! $this->priority)   $this->priority = 0;
-        if (! $this->punctual)   $this->punctual = 0;
+        if (empty($this->percentage))   $this->percentage = 0;
+        if (empty($this->priority))     $this->priority = 0;
+        if (empty($this->fulldayevent)) $this->fuldayevent = 0;
+        if (empty($this->punctual))     $this->punctual = 0;
         if ($this->percentage > 100) $this->percentage = 100;
         if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
         if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);
@@ -168,7 +170,7 @@ class ActionComm extends CommonObject
 		$sql.= "fk_user_author,";
 		$sql.= "fk_user_action,";
 		$sql.= "fk_user_done,";
-		$sql.= "label,percent,priority,location,punctual,";
+		$sql.= "label,percent,priority,fulldayevent,location,punctual,";
         $sql.= "fk_facture,";
         $sql.= "propalrowid,";
         $sql.= "fk_commande,";
@@ -190,7 +192,7 @@ class ActionComm extends CommonObject
         $sql.= ($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= ($this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
 		$sql.= ($this->userdone->id > 0?"'".$this->userdone->id."'":"null").",";
-		$sql.= "'".addslashes($this->label)."','".$this->percentage."','".$this->priority."','".addslashes($this->location)."','".$this->punctual."',";
+		$sql.= "'".addslashes($this->label)."','".$this->percentage."','".$this->priority."','".$this->fulldayevent."','".addslashes($this->location)."','".$this->punctual."',";
         $sql.= ($this->facid?$this->facid:"null").",";
         $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
         $sql.= ($this->orderrowid?$this->orderrowid:"null").",";
@@ -227,8 +229,8 @@ class ActionComm extends CommonObject
     }
 
 	/**
-	*    \brief      Charge l'objet action depuis la base
-	*    \param      id      id de l'action a recuperer
+	*    Charge l'objet action depuis la base
+	*    @param      id      id de l'action a recuperer
 	*/
 	function fetch($id)
 	{
@@ -246,7 +248,7 @@ class ActionComm extends CommonObject
 		$sql.= " a.fk_user_author, a.fk_user_mod,";
 		$sql.= " a.fk_user_action, a.fk_user_done,";
 		$sql.= " a.fk_contact, a.percent as percentage, a.fk_facture, a.fk_commande, a.propalrowid,";
-		$sql.= " a.priority, a.location,";
+		$sql.= " a.priority, a.fulldayevent, a.location,";
 		$sql.= " c.id as type_id, c.code as type_code, c.libelle,";
 		$sql.= " s.nom as socname,";
 		$sql.= " u.firstname, u.name";
@@ -288,6 +290,7 @@ class ActionComm extends CommonObject
 				$this->usertodo->id  = $obj->fk_user_action;
 				$this->userdone->id  = $obj->fk_user_done;
 				$this->priority = $obj->priority;
+                $this->fulldayevent = $obj->fulldayevent;
 				$this->location = $obj->location;
 
 				$this->socid       = $obj->fk_soc;	// To have fetch_thirdparty method working
@@ -328,8 +331,8 @@ class ActionComm extends CommonObject
 	}
 
 	/**
-	*    \brief      Supprime l'action de la base
-	*    \return     int     <0 si ko, >0 si ok
+	*    Supprime l'action de la base
+	*    @return     int     <0 si ko, >0 si ok
 	*/
 	function delete()
     {
@@ -349,17 +352,18 @@ class ActionComm extends CommonObject
     }
 
 	/**
- 	 *    \brief      	Met a jour l'action en base.
- 	 *					Si percentage = 100, on met a jour date 100%
- 	 *    \return     	int     <0 si ko, >0 si ok
+ 	 *    Met a jour l'action en base.
+ 	 *	  Si percentage = 100, on met a jour date 100%
+ 	 *    @return     	int     <0 si ko, >0 si ok
 	 */
     function update($user)
     {
         // Clean parameters
 		$this->label=trim($this->label);
         $this->note=trim($this->note);
-		if (! $this->percentage) $this->percentage = 0;
-        if (! $this->priority)   $this->priority = 0;
+		if (empty($this->percentage))    $this->percentage = 0;
+        if (empty($this->priority))      $this->priority = 0;
+        if (empty($this->fulldayevent))  $this->fulldayevent = 0;
         if ($this->percentage > 100) $this->percentage = 100;
         if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
 		if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);
@@ -388,6 +392,7 @@ class ActionComm extends CommonObject
         $sql.= ", fk_project =". ($this->fk_project > 0 ? "'".$this->fk_project."'":"null");
         $sql.= ", fk_contact =". ($this->contact->id > 0 ? "'".$this->contact->id."'":"null");
         $sql.= ", priority = '".$this->priority."'";
+        $sql.= ", fulldayevent = '".$this->fulldayevent."'";
         $sql.= ", location = ".($this->location ? "'".addslashes($this->location)."'":"null");
         $sql.= ", fk_user_mod = '".$user->id."'";
 		$sql.= ", fk_user_action=".($this->usertodo->id > 0 ? "'".$this->usertodo->id."'":"null");

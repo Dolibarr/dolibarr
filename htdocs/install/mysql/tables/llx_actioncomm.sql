@@ -45,6 +45,7 @@ create table llx_actioncomm
   fk_user_action integer,              -- id de la personne qui doit effectuer l'action
   fk_user_done   integer,              -- id de la personne qui a effectue l'action
   priority       smallint,
+  fulldayevent   smallint NOT NULL default 0,
   punctual       smallint NOT NULL default 1,
   percent        smallint NOT NULL default 0,
   location       varchar(128),

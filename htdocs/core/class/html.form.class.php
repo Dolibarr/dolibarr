@@ -485,7 +485,7 @@ class Form
         print '</select>';
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
-    
+
     /**
      *    	Output html form to select a third party
      *		@param      selected        Preselected type
@@ -512,7 +512,7 @@ class Form
     function select_company($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
     {
         global $conf,$user,$langs;
-        
+
         $out='';
 
         // On recherche les societes
@@ -594,7 +594,7 @@ class Form
         {
             dol_print_error($this->db);
         }
-        
+
         return $out;
     }
 
@@ -2521,25 +2521,25 @@ class Form
 
 
     /**
-     *		Affiche zone de selection de date
-     *      Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
-     *      Les champs sont pre-selectionnes avec:
-     *            	- La date set_time (Local PHP server timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
-     *            	- La date local du server PHP si set_time vaut ''
-     *            	- Aucune date (champs vides) si set_time vaut -1 (dans ce cas empty doit valoir 1)
+     *		Show a HTML widget to input a date or combo list for daye, month, years and optionnaly hours and minutes
+     *      Fields are preselected with :
+     *            	- set_time date (Local PHP server timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
+     *            	- local date of PHP server if set_time is ''
+     *            	- Empty (fields empty) if set_time is -1 (in this case, parameter empty must also have value 1)
      *		@param	set_time 		Pre-selected date (must be a local PHP server timestamp)
-     *		@param	prefix			Prefix pour nom champ
-     *		@param	h				1=Affiche aussi les heures
-     *		@param	m				1=Affiche aussi les minutes
-     *		@param	empty			0=Champ obligatoire, 1=Permet une saisie vide
-     *		@param	form_name 		Nom du formulaire de provenance. Utilise pour les dates en popup.
-     *		@param	d				1=Affiche aussi les jours, mois, annees
+     *		@param	prefix			Prefix for fields name
+     *		@param	h				1=Show also hours
+     *		@param	m				1=Show also minutes
+     *		@param	empty			0=Fields required, 1=Empty input is allowed
+     *		@param	form_name 		Form name. Used by popup dates.
+     *		@param	d				1=Show days, month, years
      * 		@param	addnowbutton	Add a button "Now"
      * 		@param	nooutput		Do not output html string but return it
      * 		@param 	disabled		Disable input fields
+     *      @param  fullday         When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
      * 		@return	nothing or string if nooutput is 1
      */
-    function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowbutton=0, $nooutput=0, $disabled=0)
+    function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowbutton=0, $nooutput=0, $disabled=0, $fullday='')
     {
         global $conf,$langs;
 
@@ -2651,7 +2651,7 @@ class Form
             }
 
             /*
-             * Affiche date en select
+             * Show date with combo selects
              */
             if (! $conf->use_javascript_ajax || ! $conf->use_popup_calendar)
             {
@@ -2726,7 +2726,7 @@ class Form
             /*
              * Affiche heure en select
              */
-            $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'hour">';
+            $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat '.($fullday?$fullday.'hour':'').'" name="'.$prefix.'hour">';
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($hour = 0; $hour < 24; $hour++)
             {
@@ -2752,7 +2752,7 @@ class Form
             /*
              * Affiche min en select
              */
-            $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'min">';
+            $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat '.($fullday?$fullday.'min':'').'" name="'.$prefix.'min">';
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($min = 0; $min < 60 ; $min++)
             {
@@ -2773,8 +2773,7 @@ class Form
             $retstring.="M\n";
         }
 
-        // Added by Matelli http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
-        // "Now" button
+        // Add a "Now" button
         if ($conf->use_javascript_ajax && $addnowbutton)
         {
             // Script which will be inserted in the OnClick of the "Now" button
@@ -2795,17 +2794,21 @@ class Form
             // Generate the hour part
             if ($h)
             {
+                if ($fullday) $reset_scripts .= " if (jQuery('#fullday:checked').val() == null) {";
                 $reset_scripts .= 'this.form.elements[\''.$prefix.'hour\'].value=formatDate(new Date(), \'HH\'); ';
+                if ($fullday) $reset_scripts .= ' } ';
             }
             // Generate the minute part
             if ($m)
             {
+                if ($fullday) $reset_scripts .= " if (jQuery('#fullday:checked').val() == null) {";
                 $reset_scripts .= 'this.form.elements[\''.$prefix.'min\'].value=formatDate(new Date(), \'mm\'); ';
+                if ($fullday) $reset_scripts .= ' } ';
             }
             // If reset_scripts is not empty, print the button with the reset_scripts in OnClick
             if ($reset_scripts)
             {
-                $retstring.='<button class="dpInvisibleButtons" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="Maintenant" onClick="'.$reset_scripts.'">';
+                $retstring.='<button class="dpInvisibleButtons" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="Now" onClick="'.$reset_scripts.'">';
                 $retstring.=$langs->trans("Now");
                 //print img_refresh($langs->trans("Now"));
                 $retstring.='</button> ';
@@ -3224,7 +3227,7 @@ class Form
 
         return $ret;
     }
-    
+
     /**
      *	Return select list of groups
      *  @param      selected        Id group preselected
@@ -3277,9 +3280,9 @@ class Form
                         $out.= ' selected="selected"';
                     }
                     $out.= '>';
-                    
+
                     $out.= $obj->nom;
-                    
+
                     $out.= '</option>';
                     $i++;
                 }
@@ -3293,7 +3296,7 @@ class Form
 
         return $out;
     }
-    
+
 }
 
 ?>
