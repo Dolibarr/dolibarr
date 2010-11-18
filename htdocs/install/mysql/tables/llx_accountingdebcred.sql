@@ -22,7 +22,7 @@
 create table llx_accountingdebcred
 (
 	fk_transaction  integer		NOT NULL,
-	fk_account      integer		NOT NULL,
+	account_number  varchar(20) NOT NULL,
 	amount          real		NOT NULL,
 	direction       varchar(1)	NOT NULL
 )type=innodb;

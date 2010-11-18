@@ -25,7 +25,7 @@ create table llx_accountingaccount
   fk_pcg_version  varchar(12)  NOT NULL,
   pcg_type        varchar(20)  NOT NULL,
   pcg_subtype     varchar(20)  NOT NULL,
-  label           varchar(128) NOT NULL,
   account_number  varchar(20)  NOT NULL,
-  account_parent  varchar(20)
+  account_parent  varchar(20),
+  label           varchar(128) NOT NULL
 )type=innodb;
