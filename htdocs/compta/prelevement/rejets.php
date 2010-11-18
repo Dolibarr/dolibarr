@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,26 +42,6 @@ $result = restrictedArea($user, 'prelevement','','','bons');
 
 llxHeader('',$langs->trans("WithdrawsRefused"));
 
-$h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Card");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Bills");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/rejets.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Rejects");
-$hselected = $h;
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Statistics");
-$h++;
-
-$prev_id = $_GET["id"];
-
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
@@ -94,46 +75,46 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
+	$num = $db->num_rows($result);
+	$i = 0;
 
-  print_barre_liste($langs->trans("WithdrawsRefused"), $page, "rejets.php", $urladd, $sortfield, $sortorder, '', $num);
-  print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Nb"),"rejets.php","p.ref",'',$urladd);
-  print_liste_field_titre($langs->trans("ThirdParty"),"rejets.php","s.nom",'',$urladd);
-  print_liste_field_titre($langs->trans("Reason"),"rejets.php","pr.motif","",$urladd);
-  print '</tr>';
+	print_barre_liste($langs->trans("WithdrawsRefused"), $page, "rejets.php", $urladd, $sortfield, $sortorder, '', $num);
+	print"\n<!-- debut table -->\n";
+	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Nb"),"rejets.php","p.ref",'',$urladd);
+	print_liste_field_titre($langs->trans("ThirdParty"),"rejets.php","s.nom",'',$urladd);
+	print_liste_field_titre($langs->trans("Reason"),"rejets.php","pr.motif","",$urladd);
+	print '</tr>';
 
-  $var=True;
+	$var=True;
 
-  $total = 0;
+	$total = 0;
 
-  while ($i < min($num,$conf->liste_limit))
-    {
-      $obj = $db->fetch_object($result);
+	while ($i < min($num,$conf->liste_limit))
+	{
+		$obj = $db->fetch_object($result);
 
-      print "<tr $bc[$var]><td>";
-      print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
-      print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+		print "<tr $bc[$var]><td>";
+		print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
+		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 
-      print substr('000000'.$obj->rowid, -6)."</a></td>";
+		print substr('000000'.$obj->rowid, -6)."</a></td>";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
+		print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
 
-      print '<td>'.$rej->motifs[$obj->motif].'</td>';
-      print "</tr>\n";
-      $var=!$var;
-      $i++;
-    }
+		print '<td>'.$rej->motifs[$obj->motif].'</td>';
+		print "</tr>\n";
+		$var=!$var;
+		$i++;
+	}
 
-  print "</table>";
-  $db->free($result);
+	print "</table>";
+	$db->free($result);
 }
 else
 {
-  dol_print_error($db);
+	dol_print_error($db);
 }
 
 $db->close();

@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010 Juanjo Menent 	   <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +26,11 @@
  */
 
 require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
 require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php";
 
 $langs->load("bills");
 $langs->load("categories");
-
 
 /*
  * Securite acces client
@@ -39,107 +40,75 @@ if (!$user->rights->prelevement->bons->lire) accessforbidden();
 
 llxHeader('','Bon de prelevement');
 
-$h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Card");
-$h++;
-
-if ($conf->use_preview_tabs)
-{
-    $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans("Preview");
-    $hselected = $h;
-    $h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Lines");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Bills");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Rejets");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Statistics");
-$h++;
-
-$prev_id = $_GET["id"];
-
 $html = new Form($db);
 
 if ($_GET["id"])
 {
-  $bon = new BonPrelevement($db,"");
+	$bon = new BonPrelevement($db,"");
 
-  if ($bon->fetch($_GET["id"]) == 0)
+	if ($bon->fetch($_GET["id"]) == 0)
     {
-      dol_fiche_head($head, $hselected, 'Prelevement : '. $bon->ref);
+		$head = prelevement_prepare_head($bon);	
+		dol_fiche_head($head, 'preview', 'Prelevement : '. $bon->ref);
 
-      print '<table class="border" width="100%">';
+		print '<table class="border" width="100%">';
 
-      print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->ref.'</td></tr>';
-      print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
-      print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->ref.'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 
-      $relativepath = 'bon/'.$bon->ref;
+		$relativepath = 'bon/'.$bon->ref;
 
-      print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$bon->ref.'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$bon->ref.'</a>';
 
-      print '</td></tr>';
-      print '</table><br>';
+		print '</td></tr>';
+		print '</table><br>';
 
-      $fileimage = $conf->prelevement->dir_output.'/receipts/'.$bon->ref.'.ps.png.0';
-      $fileps = $conf->prelevement->dir_output.'/receipts/'.$bon->ref.'.ps';
+		$fileimage = $conf->prelevement->dir_output.'/receipts/'.$bon->ref.'.ps.png.0';
+		$fileps = $conf->prelevement->dir_output.'/receipts/'.$bon->ref.'.ps';
 
-      // Conversion du PDF en image png si fichier png non existant
-      if (!file_exists($fileimage))
+		// Conversion du PDF en image png si fichier png non existant
+		if (!file_exists($fileimage))
         {
-	  print $fileimage;
-	  if (function_exists(imagick_readimage))
-	    {
+			print $fileimage;
+			if (function_exists(imagick_readimage))
+			{
 
-	      $handle = imagick_readimage( $fileps ) ;
+				$handle = imagick_readimage( $fileps ) ;
 
-	      if ( imagick_iserror( $handle ) )
-		{
-		  $reason      = imagick_failedreason( $handle ) ;
-		  $description = imagick_faileddescription( $handle ) ;
+				if ( imagick_iserror( $handle ) )
+				{
+					$reason      = imagick_failedreason( $handle ) ;
+					$description = imagick_faileddescription( $handle ) ;
 
-		  print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
+					print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
+				}
+				imagick_convert( $handle, "PNG" ) ;
+
+				if ( imagick_iserror( $handle ) )
+				{
+					$reason      = imagick_failedreason( $handle ) ;
+					$description = imagick_faileddescription( $handle ) ;
+
+					print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
+				}
+				imagick_writeimage( $handle, $fileps .".png");
+			}
+			else
+			{
+				print "Les fonctions <i>imagick</i> ne sont pas disponibles sur ce PHP";
+			}
 		}
 
-	      imagick_convert( $handle, "PNG" ) ;
-
-	      if ( imagick_iserror( $handle ) )
+		if (file_exists($fileimage))
 		{
-		  $reason      = imagick_failedreason( $handle ) ;
-		  $description = imagick_faileddescription( $handle ) ;
+			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=prelevement&file='.urlencode(basename($fileimage)).'">';
 
-		  print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
 		}
-
-	      imagick_writeimage( $handle, $fileps .".png");
-	    }
-	  else
-	    {
-	      print "Les fonctions <i>imagick</i> ne sont pas disponibles sur ce PHP";
-	    }
-        }
-
-      if (file_exists($fileimage))
-	{
-	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=prelevement&file='.urlencode(basename($fileimage)).'">';
-
 	}
-    }
-  else
-    {
-      dol_print_error($db);
+	else
+	{
+		dol_print_error($db);
     }
 }
 

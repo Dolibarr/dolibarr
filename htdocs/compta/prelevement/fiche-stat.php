@@ -25,6 +25,7 @@
  */
 
 require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
 
 // Security check
@@ -40,35 +41,6 @@ $langs->load("categories");
 
 llxHeader('',$langs->trans("WithdrawalReceipt"));
 
-$h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Card");
-$h++;
-
-if ($conf->use_preview_tabs)
-{
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans("Preview");
-	$h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Lines");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Bills");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Rejects");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Statistics");
-$hselected = $h;
-$h++;
-
 $prev_id = $_GET["id"];
 
 if ($prev_id)
@@ -77,7 +49,8 @@ if ($prev_id)
 
 	if ($bon->fetch($_GET["id"]) == 0)
 	{
-		dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"), '', 'payment');
+		$head = prelevement_prepare_head($bon);
+		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalReceipt"), '', 'payment');
 
 		print '<table class="border" width="100%">';
 

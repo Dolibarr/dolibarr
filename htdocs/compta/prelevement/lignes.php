@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
  */
 
 require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
@@ -41,35 +43,6 @@ $langs->load("categories");
 
 llxHeader('',$langs->trans("WithdrawalReceipt"));
 
-$h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Card");
-$h++;
-
-if ($conf->use_preview_tabs)
-{
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans("Preview");
-	$h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Lines");
-$hselected = $h;
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Bills");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Rejects");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Statistics");
-$h++;
-
 $prev_id = $_GET["id"];
 
 if ($_GET["id"])
@@ -78,9 +51,8 @@ if ($_GET["id"])
 
 	if ($bon->fetch($_GET["id"]) == 0)
 	{
-
-		dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"), '', 'payment');
-
+		$head = prelevement_prepare_head($bon);
+		dol_fiche_head($head, 'lines', $langs->trans("WithdrawalReceipt"), '', 'payment');
 
 		print '<table class="border" width="100%">';
 

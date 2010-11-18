@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2010      Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  */
 
 require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
 
 if (!$user->rights->prelevement->bons->lire)
@@ -108,37 +109,6 @@ if (GETPOST("action") == 'infocredit')
 
 llxHeader('',$langs->trans("WithdrawalReceipt"));
 
-$h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Card");
-$hselected = $h;
-$h++;
-
-if ($conf->use_preview_tabs)
-{
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans("Preview");
-	$h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Lines");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Bills");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Rejects");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Statistics");
-$h++;
-
-$prev_id = $_GET["id"];
-
 $html = new Form($db);
 
 if ($_GET["id"])
@@ -147,7 +117,8 @@ if ($_GET["id"])
 
 	if ($bon->fetch($_GET["id"]) == 0)
 	{
-		dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"), '', 'payment');
+		$head = prelevement_prepare_head($bon);
+		dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalReceipt"), '', 'payment');
 
 		if (isset($_GET["error"]))
 		{

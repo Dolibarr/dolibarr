@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010	   Juanjo Menent 	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
  */
 
 require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
@@ -38,55 +40,24 @@ if ($user->societe_id > 0) accessforbidden();
 
 llxHeader('',$langs->trans("WithdrawalReceipt"));
 
-$h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Card");
-$h++;
-
-if ($conf->use_preview_tabs)
-{
-    $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans("Preview");
-    $h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Lines");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Bills");
-$hselected = $h;
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Rejects");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Statistics");
-$h++;
-
-
 if ($_GET["id"])
 {
-  $prev_id = $_GET["id"];
+  	$bon = new BonPrelevement($db,"");
 
-  $bon = new BonPrelevement($db,"");
-
-  if ($bon->fetch($_GET["id"]) == 0)
+  	if ($bon->fetch($_GET["id"]) == 0)
     {
-      dol_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"), '', 'payment');
+    	$head = prelevement_prepare_head($bon);	
+      	dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalReceipt"), '', 'payment');
 
-      print '<table class="border" width="100%">';
-      print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
-      print '</table>';
+      	print '<table class="border" width="100%">';
+      	print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
+      	print '</table>';
 
-      print '</div>';
+      	print '</div>';
     }
-  else
+  	else
     {
-      print "Erreur";
+      	dol_print_error($db);
     }
 }
 
@@ -121,83 +92,83 @@ $result = $db->query($sql);
 
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
+  	$num = $db->num_rows($result);
+  	$i = 0;
 
-  $urladd = "&amp;id=".$_GET["id"];
+  	$urladd = "&amp;id=".$_GET["id"];
 
-  print_barre_liste("", $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num);
+  	print_barre_liste("", $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num);
 
-  print"\n<!-- debut table -->\n";
-  print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Bill"),"factures.php","p.ref",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Company"),"factures.php","s.nom",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Amount"),"factures.php","f.total_ttc","",$urladd,'class="liste_titre" align="center"',$sortfield,$sortorder);
-  print '<td class="liste_titre" colspan="2">&nbsp;</td></tr>';
+  	print"\n<!-- debut table -->\n";
+  	print '<table class="liste" width="100%">';
+  	print '<tr class="liste_titre">';
+  	print_liste_field_titre($langs->trans("Bill"),"factures.php","p.ref",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
+  	print_liste_field_titre($langs->trans("Company"),"factures.php","s.nom",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
+  	print_liste_field_titre($langs->trans("Amount"),"factures.php","f.total_ttc","",$urladd,'class="liste_titre" align="center"',$sortfield,$sortorder);
+  	print '<td class="liste_titre" colspan="2">&nbsp;</td></tr>';
 
-  $var=false;
+  	$var=false;
 
-  $total = 0;
+  	$total = 0;
 
-  while ($i < min($num,$conf->liste_limit))
+  	while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($result);
+     	$obj = $db->fetch_object($result);
 
-      print "<tr $bc[$var]><td>";
+      	print "<tr $bc[$var]><td>";
 
-      print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
-      print img_object($langs->trans("ShowBill"),"bill");
-      print '</a>&nbsp;';
+      	print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
+      	print img_object($langs->trans("ShowBill"),"bill");
+      	print '</a>&nbsp;';
 
-      print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+      	print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">';
-      print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
+      	print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">';
+      	print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
 
-      print '<td align="center">'.price($obj->total_ttc)."</td>\n";
+      	print '<td align="center">'.price($obj->total_ttc)."</td>\n";
 
-      print '<td>';
+      	print '<td>';
 
-      if ($obj->statut == 0)
-	{
-	  print '-';
-	}
-      elseif ($obj->statut == 1)
-	{
-	  print 'Credite';
-	}
-      elseif ($obj->statut == 2)
-	{
-	  print '<b>Rejete</b>';
-	}
+      	if ($obj->statut == 0)
+		{
+	  		print '-';
+		}
+      	elseif ($obj->statut == 1)
+		{
+	  		print 'Credite';
+		}
+      	elseif ($obj->statut == 2)
+		{
+	  		print '<b>Rejete</b>';
+		}
 
-      print "</td></tr>\n";
+      	print "</td></tr>\n";
 
-      $total += $obj->total_ttc;
-      $var=!$var;
-      $i++;
+      	$total += $obj->total_ttc;
+      	$var=!$var;
+      	$i++;
     }
 
-  if($_GET["socid"])
+  	if($_GET["socid"])
     {
-      print "<tr $bc[$var]><td>";
+      	print "<tr $bc[$var]><td>";
 
-      print '<td>Total</td>';
+     	print '<td>Total</td>';
 
-      print '<td align="center">'.price($total)."</td>\n";
+      	print '<td align="center">'.price($total)."</td>\n";
 
-      print '<td>&nbsp;</td>';
+      	print '<td>&nbsp;</td>';
 
-      print "</tr>\n";
+      	print "</tr>\n";
     }
 
-  print "</table>";
-  $db->free($result);
+  	print "</table>";
+  	$db->free($result);
 }
 else
 {
-  dol_print_error($db);
+	dol_print_error($db);
 }
 
 $db->close();
