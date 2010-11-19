@@ -1524,6 +1524,8 @@ function img_allow($allow,$alt='default')
  */
 function img_mime($file,$alt='')
 {
+	require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+	
     $mimetype=dol_mimetype($file,'',1);
     $mimeimg=dol_mimetype($file,'',2);
 
