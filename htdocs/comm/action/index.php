@@ -27,12 +27,14 @@
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
+$filter=GETPOST("filter");
 $filtera = GETPOST("userasked","int")?GETPOST("userasked","int"):GETPOST("filtera","int");
 $filtert = GETPOST("usertodo","int")?GETPOST("usertodo","int"):GETPOST("filtert","int");
 $filterd = GETPOST("userdone","int")?GETPOST("userdone","int"):GETPOST("filterd","int");
@@ -55,7 +57,7 @@ $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 $canedit=1;
 if (! $user->rights->agenda->myactions->read) accessforbidden();
 if (! $user->rights->agenda->allactions->read) $canedit=0;
-if (! $user->rights->agenda->allactions->read || GETPOST("filter","",1)=='mine')	// If no permission to see all, we show only affected to me
+if (! $user->rights->agenda->allactions->read || $filter =='mine')	// If no permission to see all, we show only affected to me
 {
 	$filtera=$user->id;
 	$filtert=$user->id;
@@ -67,7 +69,7 @@ $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $day=GETPOST("day","int")?GETPOST("day","int"):0;
 $pid=GETPOST("projectid","int")?GETPOST("projectid","int"):0;
-$status=GETPOST("status","int");
+$status=GETPOST("status");
 
 $langs->load("other");
 $langs->load("commercial");
@@ -108,6 +110,8 @@ $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('',$langs->trans("Agenda"),$help_url);
 
 $form=new Form($db);
+$companystatic=new Societe($db);
+$contactstatic=new Contact($db);
 
 //print $langs->trans("FeatureNotYetAvailable");
 $now=dol_now('tzref');
@@ -168,12 +172,13 @@ print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$act
 $actionarray=array();
 
 $sql = 'SELECT a.id,a.label,';
-$sql.= ' datep,';
-$sql.= ' datep2,';
-$sql.= ' datea,';
-$sql.= ' datea2,';
+$sql.= ' a.datep,';
+$sql.= ' a.datep2,';
+$sql.= ' a.datea,';
+$sql.= ' a.datea2,';
 $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
+$sql.= ' a.fk_soc, a.fk_contact,';
 $sql.= ' ca.code';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 $sql.= ', '.MAIN_DB_PREFIX.'c_actioncomm as ca';
@@ -245,6 +250,9 @@ if ($resql)
 		$action->author->id=$obj->fk_user_author;
 		$action->usertodo->id=$obj->fk_user_action;
 		$action->userdone->id=$obj->fk_user_done;
+
+        $action->societe->id=$obj->fk_soc;
+        $action->contact->id=$obj->fk_contact;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
 		// They are date start and end of action but modified to not be outside calendar view.
@@ -376,6 +384,10 @@ if ($showbirthday)
 	}
 }
 
+$maxlength=16;
+$cachethirdparties=array();
+$cachecontact=array();
+
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
 if (is_readable($color_file))
@@ -421,7 +433,7 @@ if ($_GET["action"] != 'show_day')		// View by month
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength);
 				echo "  </td>\n";
 			}
 			/* Show days of the current month */
@@ -437,7 +449,7 @@ if ($_GET["action"] != 'show_day')		// View by month
 				$style='cal_current_month';
 
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday, $month, $year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+				show_day_events($db, $tmpday, $month, $year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength);
 				echo "  </td>\n";
 			}
 			/* Show days after the current month (next month) */
@@ -445,7 +457,7 @@ if ($_GET["action"] != 'show_day')		// View by month
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength);
 				echo "</td>\n";
 			}
 			$tmpday++;
@@ -466,7 +478,7 @@ else	// View by day
 	echo " </tr>\n";
 	echo " <tr>\n";
 	echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-	show_day_events ($db, $day, $month, $year, $month, $style, $actionarray, 0, 0);
+	show_day_events ($db, $day, $month, $year, $month, $style, $actionarray, 0, 0, $maxlength);
 	echo "</td>\n";
 	echo " </tr>\n";
 	echo '</table>';
@@ -482,21 +494,25 @@ llxFooter('$Date$ - $Revision$');
 /**
  * Show event of a particular day
  *
- * @param 	$db				Database handler
- * @param 	$day			Day
- * @param 	$month			Month
- * @param 	$year			Year
- * @param 	$monthshown     Month shown in calendar view
- * @param 	$style			Style to use for this day
- * @param 	$actionarray	Array of actions
- * @param 	$maxPrint		Nb of actions to show each day on month view (0 means non limit)
- * @param 	nbofchartoshow	Nb of characters to show for event line
+ * @param 	$db				 Database handler
+ * @param 	$day			 Day
+ * @param 	$month			 Month
+ * @param 	$year			 Year
+ * @param 	$monthshown      Month shown in calendar view
+ * @param 	$style	         Style to use for this day
+ * @param 	$actionarray     Array of actions
+ * @param 	$maxPrint		 Nb of actions to show each day on month view (0 means non limit)
+ * @param 	maxnbofchar	     Nb of characters to show for event line
+ * @param   companystatic    Object thirdparty
+ * @param   contactstatic    Object contact
  */
-function show_day_events($db, $day, $month, $year, $monthshown, $style, &$actionarray, $maxPrint=0, $nbofchartoshow=14)
+function show_day_events($db, $day, $month, $year, $monthshown, $style, &$actionarray, $maxPrint=0, $maxnbofchar=14)
 {
 	global $user, $conf, $langs;
-	global $filtera, $filtert, $filted;
+	global $filter, $filtera, $filtert, $filterd, $status;
 	global $theme_datacolor;
+	global $cachethirdparty, $cachecontact;
+
 	if ($_GET["action"] == 'maxPrint')
 	{
 		$maxPrint=0;
@@ -573,11 +589,38 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$action
 							print dol_print_date($action->date_end_in_calendar,'%H:%M');
 						}
 						print '<br>';
-						print $action->getNomUrl(0,$nbofchartoshow,'cal_event');
+						// If action related to company / contact
+						$linerelatedto='';$length=16;
+						if (! empty($action->societe->id) && ! empty($action->contact->id)) $length=8;
+                        if (! empty($action->societe->id))
+                        {
+                            if (empty($cachethirdparties[$action->societe->id]))
+                            {
+                                $thirdparty=new Societe($db);
+                                $thirdparty->fetch($action->societe->id);
+                                $cachethirdparties[$action->societe->id]=$thirdparty;
+                            }
+                            $linerelatedto.=$thirdparty->getNomUrl(1,'',$length);
+                        }
+                        if (! empty($action->contact->id))
+                        {
+                            if (empty($cachetcontact[$action->societe->id]))
+                            {
+                                $contact=new Contact($db);
+                                $contact->fetch($action->contact->id);
+                                $cachethirdparties[$action->contact->id]=$thirdparty;
+                            }
+                            if ($linerelatedto) $linerelatedto.=' / ';
+                            $linerelatedto.=$contact->getNomUrl(1,'',$length);
+                        }
+                        if ($linerelatedto) print $linerelatedto.'<br>';
+
+						// Show label
+						print $action->getNomUrl(0,$maxnbofchar,'cal_event');
 					}
 					else	// It's a birthday
 					{
-						print $action->getNomUrl(0,$nbofchartoshow,'cal_event','birthday');
+						print $action->getNomUrl(1,$maxnbofchar,'cal_event','birthday','contact');
 					}
 					print '</td>';
                     // Status - Percent
@@ -589,7 +632,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$action
 				}
 				else
 				{
-					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=maxPrint&month='.$monthshown.'&year='.$year.'">'.img_picto("all","1downarrow_selected.png").' ...';
+					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=maxPrint&month='.$monthshown.'&year='.$year;
+					print ($status?'&status='.$status:'').($filter?'&filter='.$filter:'');
+                    print ($filtera?'&filtera='.$filtera:'').($filtert?'&filtert='.$filtert:'').($filterd?'&filterd='.$filterd:'');
+					print '">'.img_picto("all","1downarrow_selected.png").' ...';
 					print ' +'.(sizeof($actionarray[$daykey])-$maxPrint);
 					print '</a>';
 					break;

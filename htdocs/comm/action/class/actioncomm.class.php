@@ -568,12 +568,12 @@ class ActionComm extends CommonObject
 	 *		@return		string			Chaine avec URL
 	 *		@remarks	Utilise $this->id, $this->code et $this->libelle
 	 */
-	function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='')
+	function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto='')
 	{
 		global $langs;
 
 		$result='';
-		if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">'.img_object('','contact').' ';
+		if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
 		else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
@@ -588,7 +588,7 @@ class ActionComm extends CommonObject
         	$libelleshort=dol_trunc($this->libelle,$maxlength);
         }
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAction").': '.$libelle,'task').$lienfin);
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAction").': '.$libelle,($overwritepicto?$overwritepicto:'task')).$lienfin);
 		if ($withpicto==1) $result.=' ';
 		$result.=$lien.$libelleshort.$lienfin;
 		return $result;
