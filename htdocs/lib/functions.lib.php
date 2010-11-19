@@ -469,6 +469,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 	if ($format == 'dayhourlog')        $format='%Y%m%d%H%M%S';
 	if ($format == 'dayhourldap')       $format='%Y%m%d%H%M%SZ';
 	if ($format == 'dayhourxcard')      $format='%Y%m%dT%H%M%SZ';
+    if ($format == 'dayxcard')          $format='%Y%m%d';
 
 	// If date undefined or "", we return ""
 	if (dol_strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)

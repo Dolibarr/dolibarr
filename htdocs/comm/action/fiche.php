@@ -847,13 +847,15 @@ if ($id)
 
 		// Date debut
 		print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-		print dol_print_date($act->datep,'dayhour');
+		if (! $act->fulldayevent) print dol_print_date($act->datep,'dayhour');
+		else print dol_print_date($act->datep,'day');
 		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
 		// Date fin
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		print dol_print_date($act->datef,'dayhour');
+        if (! $act->fulldayevent) print dol_print_date($act->datef,'dayhour');
+		else print dol_print_date($act->datef,'day');
 		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
@@ -875,7 +877,7 @@ if ($id)
 		if ($act->usertodo->id > 0) print $act->usertodo->getNomUrl(1);
 		print '</td></tr>';
 
-		// Realise par
+		// Done by
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
 		if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
 		print '</td></tr>';

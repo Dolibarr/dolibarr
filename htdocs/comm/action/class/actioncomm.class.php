@@ -596,13 +596,13 @@ class ActionComm extends CommonObject
 
 
     /**
-     *		\brief      Export events from database into a cal file.
-	 *		\param		format			'ical' or 'vcal'
-	 *		\param		type			'event' or 'journal'
-	 *		\param		cachedelay		Do not rebuild file if date older than cachedelay seconds
-	 *		\param		filename		Force filename
-	 *		\param		filters			Array of filters
-     *		\return     int     		<0 if error, nb of events in new file if ok
+     *		Export events from database into a cal file.
+	 *		@param		format			'ical' or 'vcal'
+	 *		@param		type			'event' or 'journal'
+	 *		@param		cachedelay		Do not rebuild file if date older than cachedelay seconds
+	 *		@param		filename		Force filename
+	 *		@param		filters			Array of filters
+     *		@return     int     		<0 if error, nb of events in new file if ok
      */
 	function build_exportfile($format,$type,$cachedelay,$filename,$filters)
 	{
@@ -661,7 +661,7 @@ class ActionComm extends CommonObject
 			$sql.= " a.fk_user_author, a.fk_user_mod,";
 			$sql.= " a.fk_user_action, a.fk_user_done,";
 			$sql.= " a.fk_contact, a.fk_facture, a.percent as percentage, a.fk_commande,";
-			$sql.= " a.priority, a.location,";
+			$sql.= " a.priority, a.fulldayevent, a.location,";
 			$sql.= " u.firstname, u.name,";
 			$sql.= " s.nom as socname,";
 			$sql.= " c.id as type_id, c.code as type_code, c.libelle";
@@ -740,6 +740,7 @@ class ActionComm extends CommonObject
 					$event['enddate']=$dateend;		// Not required with type 'journal'
 					$event['author']=$obj->firstname.($obj->name?" ".$obj->name:"");
 					$event['priority']=$obj->priority;
+                    $event['fulldayevent']=$obj->fulldayevent;
 					$event['location']=$langs->convToOutputCharset($obj->location);
 					$event['transparency']='TRANSPARENT';		// TRANSPARENT or OPAQUE
 					$event['category']=$langs->convToOutputCharset($obj->libelle);	// libelle type action

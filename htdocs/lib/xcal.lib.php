@@ -25,6 +25,7 @@
 
 /**
  *	\brief		Build a file from an array of events
+ *              All input params and data must be encoded in $conf->charset_output
  *	\param		format				'vcal' or 'ical'
  *	\param		title				Title of export
  *	\param		desc				Description of export
@@ -32,7 +33,6 @@
  *	\param		outputfile			Output file
  *	\param		filter				Filter
  *	\return		int					<0 if ko, Nb of events in file if ok
- *	\remarks	All input params and data must be encoded in $conf->charset_output
  */
 function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$filter='')
 {
@@ -83,7 +83,9 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				$enddate	  = $event['enddate'];
 				$summary  	  = $event['summary'];
 				$category	  = $event['category'];
-				$location	  = $event['location'];
+                $priority     = $event['priority'];
+                $fulldayevent = $event['fulldayevent'];
+				$location     = $event['location'];
 				$email 		  = $event['email'];
 				$url		  = $event['url'];
 				$transparency = $event['transparency'];		// OPAQUE or TRANSPARENT
@@ -144,12 +146,15 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 
 					// Date must be GMT dates
 					fwrite($calfileh,"DTSTAMP:".dol_print_date($now,'dayhourxcard',true)."\n");
-					$startdatef = dol_print_date($startdate,'dayhourxcard',true);
+					if (! $fulldayevent) $startdatef = dol_print_date($startdate,'dayhourxcard',true);
+					else $startdatef = dol_print_date($startdate,'dayxcard',true);
 					fwrite($calfileh,"DTSTART:".$startdatef."\n");
 					if (empty($enddate)) $enddate=$startdate+$duration;
-					$enddatef = dol_print_date($enddate,'dayhourxcard',true);
-					fwrite($calfileh,"DTEND:".$enddatef."\n");
-
+					if (! $fulldayevent)
+					{
+					    $enddatef = dol_print_date($enddate,'dayhourxcard',true);
+					   fwrite($calfileh,"DTEND:".$enddatef."\n");
+					}
 					if (! empty($transparency)) fwrite($calfileh,"TRANSP:".$transparency."\n");
 					if (! empty($category)) fwrite($calfileh,"CATEGORIES:".$encoding.$category."\n");
 					fwrite($calfileh,"END:VEVENT\n");
@@ -218,6 +223,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 
 /**
  *	\brief		Build a file from an array of events
+ *              All input data must be encoded in $conf->charset_output
  *	\param		format				'rss'
  *	\param		title				Title of export
  *	\param		desc				Description of export
@@ -225,7 +231,6 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
  *	\param		outputfile			Output file
  *	\param		filter				Filter
  *	\return		int					<0 if ko, Nb of events in file if ok
- *	\remarks	All input data must be encoded in $conf->charset_output
  */
 function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$filter='')
 {
@@ -296,6 +301,12 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 				$url		  = $event['url'];
 				$author		  = $event['author'];
 				$category	  = $event['category'];
+				/* No place inside a RSS
+                $priority     = $event['priority'];
+                $fulldayevent = $event['fulldayevent'];
+                $location     = $event['location'];
+                $email        = $event['email'];
+                */
 				$description=preg_replace('/<br[\s\/]?>/i',"\n",$event['desc']);
  				$description=dol_string_nohtmltag($description,0);	// Remove html tags
 
