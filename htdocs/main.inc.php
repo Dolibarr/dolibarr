@@ -1168,8 +1168,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	//    print '<div class="vmenuplusfiche">'."\n";
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
-
-	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<td class="vmenu" valign="top">';
+	else print '<td class="vmenu" valign="top">';
 
 	print "\n";
 
@@ -1331,8 +1330,11 @@ function main_area()
 {
 	global $conf, $langs;
 
-	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
-	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<table width="100%" class="notopnoleftnoright" summary="centermenutable" id="undertopmenu"><tr>';
+	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
+	{
+		print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
+		print '<table width="100%" class="notopnoleftnoright" summary="centermenutable" id="undertopmenu"><tr>';
+	}
 
 	print '<td valign="top"><!-- Begin right area --> '."\n";
 
