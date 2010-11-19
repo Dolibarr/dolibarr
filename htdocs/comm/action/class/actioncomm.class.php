@@ -454,8 +454,8 @@ class ActionComm extends CommonObject
 
 
 	/**
-	 *      \brief     Charge les informations d'ordre info dans l'objet facture
-	 *      \param     id       	Id de la facture a charger
+	 *      Charge les informations d'ordre info dans l'objet facture
+	 *      @param     id       	Id de la facture a charger
 	 */
 	function info($id)
 	{
@@ -502,9 +502,9 @@ class ActionComm extends CommonObject
 
 
 	/**
-	 *    	\brief      Retourne le libelle du statut de la commande
-	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string      Libelle
+	 *    	Return label of status
+	 *    	@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	@return     string      Libelle
 	 */
 	function getLibStatut($mode)
 	{
@@ -512,10 +512,10 @@ class ActionComm extends CommonObject
 	}
 
 	/**
-	 *		\brief      Renvoi le libelle d'un statut donne
-	 *    	\param      percent     Pourcentage avancement
-	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string		Libelle
+	 *		Return label of action status
+	 *    	@param      percent     Percent
+	 *    	@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	@return     string		Label
 	 */
 	function LibStatut($percent,$mode)
 	{
@@ -523,7 +523,7 @@ class ActionComm extends CommonObject
 
         if ($mode == 0)
         {
-        	if ($percent==0) return $langs->trans('StatusActionToDo');
+        	if ($percent==0) return $langs->trans('StatusActionToDo').' (0%)';
         	if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' ('.$percent.'%)';
         	if ($percent >= 100) return $langs->trans('StatusActionDone').' (100%)';
 		}
@@ -541,9 +541,9 @@ class ActionComm extends CommonObject
         }
         if ($mode == 3)
         {
-        	if ($percent==0) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionToDo'),'statut1');
+        	if ($percent==0) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionToDo').' (0%)','statut1');
         	if ($percent > 0 && $percent < 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionInProcess').' ('.$percent.'%)','statut3');
-        	if ($percent >= 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionDone'),'statut6');
+        	if ($percent >= 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionDone').' (100%)','statut6');
         }
         if ($mode == 4)
         {
@@ -560,20 +560,20 @@ class ActionComm extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 * 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *		\param		maxlength		Nombre de caracteres max dans libelle
-	 *		\param		class			Force style class on a link
-	 * 		\param		option			''=Link to action,'birthday'=Link to contact
-	 *		\return		string			Chaine avec URL
-	 *		\remarks	Utilise $this->id, $this->code et $this->libelle
+	 *    	Renvoie nom clicable (avec eventuellement le picto)
+	 * 		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *		@param		maxlength		Nombre de caracteres max dans libelle
+	 *		@param		class			Force style class on a link
+	 * 		@param		option			''=Link to action,'birthday'=Link to contact
+	 *		@return		string			Chaine avec URL
+	 *		@remarks	Utilise $this->id, $this->code et $this->libelle
 	 */
 	function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='')
 	{
 		global $langs;
 
 		$result='';
-		if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
+		if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">'.img_object('','contact').' ';
 		else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 

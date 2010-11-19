@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/comm/action/index.php
  *	\ingroup    agenda
- *	\brief      Page accueil des rapports des actions
+ *	\brief      Home page of calendar events
  *	\version    $Id$
  */
 
@@ -580,6 +580,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$action
 						print $action->getNomUrl(0,$nbofchartoshow,'cal_event','birthday');
 					}
 					print '</td>';
+                    // Status - Percent
 					print '<td align="right" nowrap="nowrap">';
 					if ($action->type_code != 'BIRTHDAY') print $action->getLibStatut(3);
 					else print '&nbsp;';

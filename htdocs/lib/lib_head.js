@@ -379,11 +379,18 @@ function formatDate(date,format)
  * getDateFromFormat(date_string, format_string) Purpose: This function takes a
  * date string and a format string. It parses the date string with format and it
  * returns the date as a javascript Date() object. If date does not match
- * format, it returns 0. The format string can use the following tags: Field |
- * Tags -------------+------------------------------- Year | yyyy (4 digits), yy
- * (2 digits) Month | MM (2 digits) Day of Month | dd (2 digits) Hour (1-12) |
- * hh (2 digits) Hour (0-23) | HH (2 digits) Minute | mm (2 digits) Second | ss
- * (2 digits) Author: Laurent Destailleur Licence: GPL
+ * format, it returns 0. The format string can use the following tags: 
+ * Field        | Tags
+ * -------------+-----------------------------------
+ * Year         | yyyy (4 digits), yy (2 digits) 
+ * Month        | MM (2 digits) 
+ * Day of Month | dd (2 digits) 
+ * Hour (1-12)  | hh (2 digits) 
+ * Hour (0-23)  | HH (2 digits) 
+ * Minute       | mm (2 digits) 
+ * Second       | ss (2 digits)
+ * Author: Laurent Destailleur 
+ * Licence: GPL
  * ==================================================================
  */
 function getDateFromFormat(val,format)
@@ -394,6 +401,8 @@ function getDateFromFormat(val,format)
 	val=val+"";
 	format=format+"";
 
+	if (val == '') return 0;
+	
 	var now=new Date();
 	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+1900); }
 	var month=now.getMonth()+1;

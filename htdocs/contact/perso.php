@@ -36,6 +36,7 @@ $contactid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid, 'socpeople');
 
+
 /*
  * Action
  */
@@ -102,8 +103,8 @@ if ($_GET["action"] == 'edit')
     print '</td></tr>';
 
 	// Name
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td>'.$contact->nom.'</td>';
-    print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->prenom.'</td>';
+    print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td width="30%">'.$contact->nom.'</td>';
+    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$contact->prenom.'</td>';
 
     // Company
 	if ($contact->socid > 0)
@@ -128,20 +129,13 @@ if ($_GET["action"] == 'edit')
 	// Date To Birth
     print '<tr><td>'.$langs->trans("DateToBirth").'</td><td>';
     $html=new Form($db);
-    if ($contact->birthday)
-    {
-        print $html->select_date($contact->birthday,'birthday',0,0,0,"perso");
-    }
-    else
-    {
-        print $html->select_date('','birthday',0,0,1,"perso");
-    }
+    print $html->select_date($contact->birthday,'birthday',0,0,1,"perso");
     print '</td>';
 
     print '<td colspan="2">'.$langs->trans("Alert").': ';
     if ($contact->birthday_alert)
     {
-        print '<input type="checkbox" name="birthday_alert" checked></td>';
+        print '<input type="checkbox" name="birthday_alert" checked="true"></td>';
     }
     else
     {
@@ -149,8 +143,13 @@ if ($_GET["action"] == 'edit')
     }
     print '</tr>';
 
-    print '<tr><td colspan="4" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'"></td></tr>';
-    print "</table>";
+    print "</table><br>";
+
+    print '<center>';
+    print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+    print ' &nbsp; ';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</center>';
 
     print "</form>";
 }
@@ -167,8 +166,8 @@ else
     print '</td></tr>';
 
 	// Name
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
-    print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td width="30%">'.$contact->name.'</td>';
+    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$contact->firstname.'</td></tr>';
 
     // Company
 	if ($contact->socid > 0)

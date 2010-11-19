@@ -77,9 +77,9 @@ class Contact extends CommonObject
 
 
 	/**
-	 *      \brief      Constructeur de l'objet contact
-	 *      \param      DB      Habler d'acces base
-	 *      \param      id      Id contact
+	 *      Constructor of class Contact
+	 *      @param      DB      Habler d'acces base
+	 *      @param      id      Id contact
 	 */
 	function Contact($DB, $id=0)
 	{
@@ -90,15 +90,18 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *      \brief      Add a contact into database
-	 *      \param      user        Object user that create
-	 *      \return     int         <0 if KO, >0 if OK
+	 *      Add a contact into database
+	 *      @param      user        Object user that create
+	 *      @return     int         <0 if KO, >0 if OK
 	 */
 	function create($user)
 	{
 		global $conf, $langs;
 
+		$error=0;
 		$now=dol_now();
+
+		$this->db->begin();
 
 		// Clean parameters
 		$this->name=trim($this->name);
@@ -122,36 +125,64 @@ class Contact extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."socpeople");
 
-			$result=$this->update($this->id, $user, 1);
-			if ($result < 0)
+			if (! $error)
 			{
-				$this->error=$this->db->error();
-				return -2;
+                $result=$this->update($this->id, $user, 1);
+                if ($result < 0)
+                {
+                    $error++;
+				    $this->error=$this->db->lasterror();
+                }
 			}
 
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTACT_CREATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            if (! $error)
+            {
+                $result=$this->update_perso($this->id, $user);
+                if ($result < 0)
+                {
+                    $error++;
+                    $this->error=$this->db->lasterror();
+                }
+            }
 
-			return $this->id;
+            if (! $error)
+            {
+    			// Appel des triggers
+    			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+    			$interface=new Interfaces($this->db);
+    			$result=$interface->run_triggers('CONTACT_CREATE',$this,$user,$langs,$conf);
+    			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+    			// Fin appel triggers
+            }
+
+            if (! $error)
+            {
+                $this->db->commit();
+                return $this->id;
+            }
+            else
+            {
+                $this->db->rollback();
+                dol_syslog("Contact::create ".$this->error, LOG_ERR);
+                return -2;
+            }
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
+
+			$this->db->rollback();
 			dol_syslog("Contact::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
 
 	/**
-	 *      \brief      Update informations into database
-	 *      \param      id          	Id du contact a mettre a jour
-	 *      \param      user        	Objet utilisateur qui effectue la mise a jour
-	 *      \param      notrigger	    0=non, 1=oui
-	 *      \return     int         	<0 if KO, >0 if OK
+	 *      Update informations into database
+	 *      @param      id          	Id du contact a mettre a jour
+	 *      @param      user        	Objet utilisateur qui effectue la mise a jour
+	 *      @param      notrigger	    0=non, 1=oui
+	 *      @return     int         	<0 if KO, >0 if OK
 	 */
 	function update($id, $user=0, $notrigger=0)
 	{
@@ -226,10 +257,9 @@ class Contact extends CommonObject
 		}
 		else
 		{
-			$this->db->rollback();
-
 			$this->error=$this->db->lasterror().' sql='.$sql;
 			dol_syslog("Contact::update Error ".$this->error,LOG_ERR);
+            $this->db->rollback();
 			return -1;
 		}
 	}
@@ -323,29 +353,20 @@ class Contact extends CommonObject
 	}
 
 
-	/*
-	 *    \brief      Mise a jour des alertes
-	 *    \param      id          id du contact
-	 *    \param      user        Utilisateur qui demande l'alerte
+	/**
+	 *    Update field alert birthday
+	 *    @param       id          Id of contact
+	 *    @param       user        User asking to change alert or birthday
+	 *    @return      int
 	 */
 	function update_perso($id, $user=0)
 	{
+	    $error=0;
+	    $result=false;
+
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET rowid=".$id;
-
-		if ($this->birthday)	// <0 si avant 1970, >0 si apres 1970
-		{
-			if (preg_match('/^[0-9]+\-/',$this->birthday))
-			{
-				// Si date = chaine (ne devrait pas arriver)
-				$sql .= ", birthday='".$this->birthday."'";
-			}
-			else
-			{
-				// Si date = timestamp
-				$sql .= ", birthday=".$this->db->idate($this->birthday);
-			}
-		}
+		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql .= " WHERE rowid=".$id;
 		//print "update_perso: ".$this->birthday.'-'.$this->db->idate($this->birthday);
@@ -353,7 +374,8 @@ class Contact extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
-			$this->error=$this->db->error();
+            $error++;
+		    $this->error=$this->db->lasterror();
 		}
 
 		// Mis a jour alerte birthday
@@ -370,7 +392,8 @@ class Contact extends CommonObject
 				$result = $this->db->query($sql);
 				if (!$result)
 				{
-					$this->error='Echec sql='.$sql;
+                    $error++;
+                    $this->error=$this->db->lasterror();
 				}
 			}
 			else
@@ -383,11 +406,13 @@ class Contact extends CommonObject
 			$sql = "DELETE from ".MAIN_DB_PREFIX."user_alert ";
 			$sql.= "where type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
 			$result = $this->db->query($sql);
-			if (!$result)
+			if (! $result)
 			{
-				$this->error='Echec sql='.$sql;
+                $error++;
+                $this->error=$this->db->lasterror();
 			}
 		}
+
 		return $result;
 	}
 
