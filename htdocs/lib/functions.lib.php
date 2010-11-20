@@ -47,7 +47,7 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 function GETPOST($paramname,$check='',$method=0)
 {
     if ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
-    else if ($method==2) isset($_POST[$paramname])?$_POST[$paramname]:'';
+    else if ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
     else $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 
     if (!empty($check))
@@ -55,7 +55,7 @@ function GETPOST($paramname,$check='',$method=0)
     	// Check if integer
         if ($check == 'int' && ! is_numeric(trim($out))) $out='';
     	// Check if alpha
-        if ($check == 'alpha' && ! preg_match('/^[#\(\)\-\._a-z0-9]+$/i',trim($out))) $out='';
+        if ($check == 'alpha' && ! preg_match('/^[#\/\\\(\)\-\._a-z0-9]+$/i',trim($out))) $out='';
     }
 
     return $out;
