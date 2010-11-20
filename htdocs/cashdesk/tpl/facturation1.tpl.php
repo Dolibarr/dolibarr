@@ -102,9 +102,11 @@ $Id$
 			<th><?php echo $langs->trans("Stock"); ?></th>
 			<th><?php echo $langs->trans("PriceUHT"); ?></th>
 			<th></th>
-			<th ><?php echo $langs->trans("VATRate"); ?></th>
 			<th><?php echo $langs->trans("Discount"); ?> (%)</th>
-			<th><?php echo $langs->trans("TotalHT"); ?></th></tr>
+			<th><?php echo $langs->trans("TotalHT"); ?></th>
+            <th>&nbsp;</th>
+            <th><?php echo $langs->trans("VATRate"); ?></th>
+            </tr>
 			<tr>
 				<td><input class="texte1" type="text" name="txtQte" value="1" onkeyup="javascript: modif();" onfocus="javascript: this.select();" /></td>
 				<!-- Affichage du stock pour l'article courant -->
@@ -114,31 +116,31 @@ $Id$
 				<!-- Affichage du prix unitaire -->
 				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num( $obj_facturation->prix(), 'MU'); ?>" disabled="disabled" /></td>
 				<td><?php echo $conf->monnaie; ?></td>
-				<!-- Choix du taux de TVA -->
-				<td class="select_tva">
-				<select name="selTva" onchange="javascript: modif();" >
-					<?php
+    			<!-- Choix de la remise -->
+    			<td><input class="texte1" type="text" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/></td>
+    			<!-- Affichage du total HT -->
+    			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled="disabled" /></td><td><?php echo $conf->monnaie; ?></td>
+                <!-- Choix du taux de TVA -->
+                <td class="select_tva">
+                <select name="selTva" onchange="javascript: modif();" >
+                    <?php
 
-						$tva_tx = $obj_facturation->tva();
-						$tab_tva_size=count($tab_tva);
-						for($i=0;$i < $tab_tva_size;$i++) {
+                        $tva_tx = $obj_facturation->tva();
+                        $tab_tva_size=count($tab_tva);
+                        for($i=0;$i < $tab_tva_size;$i++) {
 
-							if ( $tva_tx == $tab_tva[$i]['taux'] )
-								$selected = 'selected="selected"';
-							else
-								$selected = '';
+                            if ( $tva_tx == $tab_tva[$i]['taux'] )
+                                $selected = 'selected="selected"';
+                            else
+                                $selected = '';
 
-							echo ('<option '.$selected.' value="'.$tab_tva[$i]['rowid'].'">'.$tab_tva[$i]['taux'].'</option>'."\n				");
+                            echo ('<option '.$selected.' value="'.$tab_tva[$i]['rowid'].'">'.$tab_tva[$i]['taux'].'</option>'."\n               ");
 
-						}
+                        }
 
-					?>
-				</select>
-			</td>
-			<!-- Choix de la remise -->
-			<td><input class="texte1" type="text" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/></td>
-			<!-- Affichage du total HT -->
-			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled="disabled" /></td><td><?php echo $conf->monnaie; ?></td>
+                    ?>
+                </select>
+                </td>
 			</tr>
 		</table>
 
