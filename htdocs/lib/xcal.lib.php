@@ -122,24 +122,27 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					fwrite($calfileh,"DESCRIPTION:".$encoding.$description."\n");
 					//fwrite($calfileh,'STATUS:CONFIRMED'."\n");
 					/*
+					// Status values for a "VEVENT"
 					statvalue  = "TENTATIVE"           ;Indicates event is
 				                                        ;tentative.
 				                / "CONFIRMED"           ;Indicates event is
 				                                        ;definite.
 				                / "CANCELLED"           ;Indicates event was
 				                                        ;cancelled.
-				        ;Status values for a "VEVENT"
+				        ;
 
-				     statvalue  =/ "NEEDS-ACTION"       ;Indicates to-do needs action.
+                    // Status values for "VTODO".
+                    statvalue  =/ "NEEDS-ACTION"       ;Indicates to-do needs action.
 				                / "COMPLETED"           ;Indicates to-do completed.
 				                / "IN-PROCESS"          ;Indicates to-do in process of
 				                / "CANCELLED"           ;Indicates to-do was cancelled.
-				        ;Status values for "VTODO".
 
-				     statvalue  =/ "DRAFT"              ;Indicates journal is draft.
+
+                    // Status values for "VJOURNAL".
+				    statvalue  =/ "DRAFT"              ;Indicates journal is draft.
 				                / "FINAL"               ;Indicates journal is final.
 				                / "CANCELLED"           ;Indicates journal is removed.
-							;Status values for "VJOURNAL".
+
 					*/
 					if (! empty($location)) fwrite($calfileh,"LOCATION:".$encoding.$location."\n");
 					//fwrite($calfileh,"CLASS:PUBLIC\n");				// PUBLIC, PRIVATE, CONFIDENTIAL
