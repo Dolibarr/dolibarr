@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?PHP
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/**
+ * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
