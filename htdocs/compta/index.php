@@ -84,13 +84,14 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
  * View
  */
 
-$now=gmmktime();
+$now=dol_now();
 
 $facturestatic=new Facture($db);
 $facturesupplierstatic=new FactureFournisseur($db);
 
 $html = new Form($db);
 $formfile = new FormFile($db);
+$thirdpartystatic = new Societe($db);
 
 llxHeader("",$langs->trans("AccountancyTreasuryArea"));
 
@@ -358,7 +359,12 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				print '</td></tr></table>';
 
 				print '</td>';
-				print '<td align="left"><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dol_trunc($obj->nom,44).'</a></td>';
+				print '<td align="left">';
+				$thirdpartystatic->id=$obj->socid;
+				$thirdpartystatic->nom=$obj->nom;
+				$thirdpartystatic->client=1;
+				print $thirdpartystatic->getNomUrl(1,'customer',44);
+				print '</td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
@@ -434,7 +440,12 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 				$facstatic->id=$obj->rowid;
 				print $facstatic->getNomUrl(1,'');
 				print '</td>';
-				print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dol_trunc($obj->nom,44).'</a></td>';
+				print '<td>';
+				$thirdpartystatic->id=$obj->socid;
+				$thirdpartystatic->nom=$obj->nom;
+				$thirdpartystatic->fournisseur=1;
+				print $thirdpartystatic->getNomUrl(1,'supplier',44);
+				print '</td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
