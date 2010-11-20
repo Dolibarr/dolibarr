@@ -135,9 +135,9 @@ class Societe extends CommonObject
     var $logo_mini;
 
     /**
-     *    \brief  Constructeur de la classe
-     *    \param  DB     handler acces base de donnees
-     *    \param  id     id societe (0 par defaut)
+     *    Constructor for class
+     *    @param  DB     handler acces base de donnees
+     *    @param  id     id societe (0 par defaut)
      */
     function Societe($DB, $id=0)
     {
