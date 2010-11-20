@@ -149,15 +149,21 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 
 					// Date must be GMT dates
 					fwrite($calfileh,"DTSTAMP:".dol_print_date($now,'dayhourxcard',true)."\n");
+					$startdatef = dol_print_date($startdate,'dayhourxcard',true);
+					/* TODO Try to change value to have "fulldayevent stored"
 					if (! $fulldayevent) $startdatef = dol_print_date($startdate,'dayhourxcard',true);
-					else $startdatef = dol_print_date($startdate,'dayxcard',true);
+					else
+					{
+					    $startdatef = dol_print_date($startdate,'dayxcard',true);
+					}
+					*/
 					fwrite($calfileh,"DTSTART:".$startdatef."\n");
 					if (empty($enddate)) $enddate=$startdate+$duration;
-					if (! $fulldayevent)
-					{
+					//if (! $fulldayevent)
+					//{
 					    $enddatef = dol_print_date($enddate,'dayhourxcard',true);
-					   fwrite($calfileh,"DTEND:".$enddatef."\n");
-					}
+					    fwrite($calfileh,"DTEND:".$enddatef."\n");
+					//}
 					if (! empty($transparency)) fwrite($calfileh,"TRANSP:".$transparency."\n");
 					if (! empty($category)) fwrite($calfileh,"CATEGORIES:".$encoding.$category."\n");
 					fwrite($calfileh,"END:VEVENT\n");
