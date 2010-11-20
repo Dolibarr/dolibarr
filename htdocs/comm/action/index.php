@@ -179,6 +179,7 @@ $sql.= ' a.datea,';
 $sql.= ' a.datea2,';
 $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
+$sql.= ' a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
 $sql.= ' ca.code';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
@@ -251,6 +252,10 @@ if ($resql)
 		$action->author->id=$obj->fk_user_author;
 		$action->usertodo->id=$obj->fk_user_action;
 		$action->userdone->id=$obj->fk_user_done;
+
+        $action->priority=$obj->priority;
+        $action->fulldayevent=$obj->fulldayevent;
+        $action->location=$obj->location;
 
         $action->societe->id=$obj->fk_soc;
         $action->contact->id=$obj->fk_contact;
@@ -558,38 +563,43 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$action
 					print '<td nowrap="nowrap">';
 					if ($action->type_code != 'BIRTHDAY')
 					{
-						$tmpyearstart  = date('Y',$action->date_start_in_calendar);
-						$tmpmonthstart = date('m',$action->date_start_in_calendar);
-						$tmpdaystart   = date('d',$action->date_start_in_calendar);
-						$tmpyearend    = date('Y',$action->date_end_in_calendar);
-						$tmpmonthend   = date('m',$action->date_end_in_calendar);
-						$tmpdayend     = date('d',$action->date_end_in_calendar);
-						// Hour start
-						if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour)
-						{
-							print dol_print_date($action->date_start_in_calendar,'%H:%M');
-							if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
-							{
-								if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend)
-								print '-';
-								//else
-								//print '...';
-							}
-						}
-						if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
-						{
-							if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend)
-							{
-								print '...';
-							}
-						}
-						// Hour end
-						if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
-						{
-							if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
-							print dol_print_date($action->date_end_in_calendar,'%H:%M');
-						}
-						print '<br>';
+					    if (empty($action->fulldayevent))
+					    {
+    					    // Show hours (start ... end)
+    						$tmpyearstart  = date('Y',$action->date_start_in_calendar);
+    						$tmpmonthstart = date('m',$action->date_start_in_calendar);
+    						$tmpdaystart   = date('d',$action->date_start_in_calendar);
+    						$tmpyearend    = date('Y',$action->date_end_in_calendar);
+    						$tmpmonthend   = date('m',$action->date_end_in_calendar);
+    						$tmpdayend     = date('d',$action->date_end_in_calendar);
+    						// Hour start
+    						if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour)
+    						{
+    							print dol_print_date($action->date_start_in_calendar,'%H:%M');
+    							if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
+    							{
+    								if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend)
+    								print '-';
+    								//else
+    								//print '...';
+    							}
+    						}
+    						if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
+    						{
+    							if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend)
+    							{
+    								print '...';
+    							}
+    						}
+    						// Hour end
+    						if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
+    						{
+    							if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
+    							print dol_print_date($action->date_end_in_calendar,'%H:%M');
+    						}
+    						print '<br>';
+					    }
+
 						// If action related to company / contact
 						$linerelatedto='';$length=16;
 						if (! empty($action->societe->id) && ! empty($action->contact->id)) $length=8;

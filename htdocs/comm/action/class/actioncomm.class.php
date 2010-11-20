@@ -597,7 +597,7 @@ class ActionComm extends CommonObject
 
     /**
      *		Export events from database into a cal file.
-	 *		@param		format			'ical' or 'vcal'
+	 *		@param		format			'vcal', 'ical/ics', 'rss'
 	 *		@param		type			'event' or 'journal'
 	 *		@param		cachedelay		Do not rebuild file if date older than cachedelay seconds
 	 *		@param		filename		Force filename
@@ -782,8 +782,8 @@ class ActionComm extends CommonObject
 			}
 
 			// Write file
+            if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfiletmp);
 			if ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfiletmp);
-			if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfiletmp);
 			if ($format == 'rss')  $result=build_rssfile($format,$title,$desc,$eventarray,$outputfiletmp);
 
 			if ($result >= 0)

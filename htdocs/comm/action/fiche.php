@@ -491,9 +491,6 @@ if (GETPOST('action') == 'create')
 	// Title
 	print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
 
-	// Location
-	print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" size="60" value="'.GETPOST('location').'"></td></tr>';
-
     // Full day
     print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
 
@@ -510,7 +507,7 @@ if (GETPOST('action') == 'create')
 	else $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 	print '</td></tr>';
 
-	// Avancement
+	// Status
 	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent=0;
@@ -526,8 +523,13 @@ if (GETPOST('action') == 'create')
 	print $htmlactions->form_select_status_action('formaction',$percent,1);
 	print '</td></tr>';
 
+    // Location
+    print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$act->location.'"></td></tr>';
+
 	print '</table>';
+
 	print '<br>';
+
 	print '<table class="border" width="100%">';
 
 	// Affected by
@@ -594,12 +596,12 @@ if (GETPOST('action') == 'create')
 
 	add_row_for_calendar_link();
 
-	// Note
-	print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
-	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-	$doleditor=new DolEditor('note',($_POST["note"]?$_POST["note"]:$actioncomm->note),280,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_7,90);
-	$doleditor->Create();
-	print '</td></tr>';
+    // Description
+    print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+    $doleditor=new DolEditor('note',($_POST["note"]?$_POST["note"]:$actioncomm->note),280,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_7,90);
+    $doleditor->Create();
+    print '</td></tr>';
 
 	print '</table>';
 
@@ -723,9 +725,6 @@ if ($id)
 		// Title
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
 
-		// Location
-		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$act->location.'"></td></tr>';
-
         // Full day event
         print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($act->fulldayevent?' checked="true"':'').'></td></tr>';
 
@@ -747,6 +746,9 @@ if ($id)
 		$percent=GETPOST("percentage")?GETPOST("percentage"):$act->percentage;
 		print $htmlactions->form_select_status_action('formaction',$percent,1);
 		print '</td></tr>';
+
+        // Location
+        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$act->location.'"></td></tr>';
 
 		print '</table><br><table class="border" width="100%">';
 
@@ -807,13 +809,13 @@ if ($id)
 			print '<td colspan="3">'.$act->objet_url.'</td></tr>';
 		}
 
-		// Note
-		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-		// Editeur wysiwyg
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('note',$act->note,240,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_7,90);
-		$doleditor->Create();
-		print '</td></tr>';
+        // Description
+        print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+        // Editeur wysiwyg
+        require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+        $doleditor=new DolEditor('note',$act->note,240,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,90);
+        $doleditor->Create();
+        print '</td></tr>';
 
 		print '</table>';
 
@@ -839,21 +841,28 @@ if ($id)
 		// Title
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
 
-		// Location
-		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
-
         // Full day event
         print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($act->fulldayevent).'</td></tr>';
 
-		// Date debut
-		print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
+		// Date start
+		print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="2">';
 		if (! $act->fulldayevent) print dol_print_date($act->datep,'dayhour');
 		else print dol_print_date($act->datep,'day');
 		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
-		print '</td></tr>';
+		print '</td>';
+		print '<td rowspan="2" align="center" valign="middle" width="140">'."\n";
+        print '<form name="listactionsfilter" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="year" value="'.dol_print_date($act->datep,'%Y').'">';
+        print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
+        //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+        print '</form>'."\n";
+		print '</td>';
+		print '</tr>';
 
-		// Date fin
-		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
+		// Date end
+		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="2">';
         if (! $act->fulldayevent) print dol_print_date($act->datef,'dayhour');
 		else print dol_print_date($act->datef,'day');
 		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
@@ -863,6 +872,9 @@ if ($id)
 		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
 		print $act->getLibStatut(4);
 		print '</td></tr>';
+
+        // Location
+        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
 
 		print '</table><br><table class="border" width="100%">';
 
@@ -884,7 +896,7 @@ if ($id)
 
 		print '</table><br><table class="border" width="100%">';
 
-		// Societe - contact
+		// Third party - Contact
 		print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
 		if ($act->societe->id && $act->type_code == 'AC_TEL')
 		{
@@ -939,8 +951,8 @@ if ($id)
 			print '<td colspan="3">'.$act->objet_url.'</td></tr>';
 		}
 
-		// Note
-		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
+		// Description
+		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 		print dol_htmlentitiesbr($act->note);
 		print '</td></tr>';
 
