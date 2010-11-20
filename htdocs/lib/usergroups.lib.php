@@ -165,9 +165,9 @@ function group_prepare_head($object)
 
 
 /**
- * 		\brief		Show themes thumbs tabs
- * 		\param		fuser		User concerned or '' for global theme
- * 		\param		edit		1 to add edit form
+ * 		Show list of themes. Show all thumbs of themes
+ * 		@param		fuser		User concerned or '' for global theme
+ * 		@param		edit		1 to add edit form
  */
 function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
