@@ -50,12 +50,13 @@ if (!$user->rights->ecm->setup) accessforbidden();
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
 
-$page=$_GET["page"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
-
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 

@@ -159,14 +159,17 @@ jQuery(document).ready(function() {
 
 $now=dol_now();
 
-$page = $_GET["page"];
-$sortfield=$_GET["sortfield"];
-$sortorder=$_GET["sortorder"];
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortfield) $sortfield="f.date_lim_reglement";
 if (! $sortorder) $sortorder="ASC";
 
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
 
 $sql = "SELECT s.nom, s.rowid as socid";
 $sql.= ", f.facnumber,f.increment,f.total as total_ht,f.total_ttc";

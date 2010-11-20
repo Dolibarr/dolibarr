@@ -124,7 +124,6 @@ if($action == 'search' )
 		$sql.= " AND cp.fk_categorie ='".addslashes($catMere)."'";
 	}
 	$sql.= " ORDER BY p.ref ASC";
-	// $sql.= $db->plimit($limit + 1 ,$offset);
 
 	$resql = $db->query($sql) ;
 }

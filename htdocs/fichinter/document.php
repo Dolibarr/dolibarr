@@ -45,16 +45,15 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
 
 // Get parameters
-$page=$_GET["page"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
-
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
-if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $page ;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="name";
 
 
 $object = new Fichinter($db);

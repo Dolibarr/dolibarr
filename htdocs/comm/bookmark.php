@@ -26,20 +26,20 @@
 require("../main.inc.php");
 
 
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="bid";
+$limit = $conf->liste_limit;
+
 
 llxHeader();
 
-$page=$_GET["page"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="bid";
-
-if ($page == -1) { $page = 0 ; }
-$limit = 26;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 /*
  * Actions
@@ -94,7 +94,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b, ".MAIN_DB_PREFIX."societe as s, "
 $sql.= " WHERE b.fk_soc = s.rowid AND b.fk_user=u.rowid";
 if (! $user->admin) $sql.= " AND b.fk_user = ".$user->id;
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit( $limit, $offset);
+$sql.= $db->plimit($limit, $offset);
 
 $resql=$db->query($sql);
 if ($resql)

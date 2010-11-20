@@ -34,22 +34,19 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = $_GET["page"];
-if ($page < 0) $page = 0;
-
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
-
 if (! $sortfield) $sortfield="s.date_ech";
 if (! $sortorder) $sortorder="DESC";
 
 $year=$_GET["year"];
 $filtre=$_GET["filtre"];
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-//if (! $year) { $year=date("Y", time()); }
 
 if (empty($_REQUEST['typeid']))
 {

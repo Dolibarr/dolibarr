@@ -33,7 +33,7 @@ if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/class
 $langs->load("products");
 $langs->load("stocks");
 
-$canvas=GETPOST('canvas','',1);
+$canvas=GETPOST('canvas','alpha');
 
 $sref=GETPOST("sref");
 $sbarcode=GETPOST("sbarcode");
@@ -41,13 +41,17 @@ $snom=GETPOST("snom");
 $sall=GETPOST("sall");
 $type=GETPOST("type","int");
 
-$sortfield = GETPOST("sortfield");
-$sortorder = GETPOST("sortorder");
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
-$page = $_GET["page"];
+
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
 
 // Security check
 if ($type=='0') $result=restrictedArea($user,'produit',$id,'product','','',$fieldid);

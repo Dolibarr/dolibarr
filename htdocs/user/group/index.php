@@ -36,13 +36,13 @@ $langs->load("users");
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
-if ($page < 0) $page = 0;
-
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 if (! $sortfield) $sortfield="g.nom";
 if (! $sortorder) $sortorder="ASC";

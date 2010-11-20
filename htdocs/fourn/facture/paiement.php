@@ -39,12 +39,14 @@ $langs->load('banks');
 $facid=isset($_GET['facid'])?$_GET['facid']:$_POST['facid'];
 $action=isset($_GET['action'])?$_GET['action']:$_POST['action'];
 
-$sortfield = isset($_GET['sortfield'])?$_GET['sortfield']:$_POST['sortfield'];
-$sortorder = isset($_GET['sortorder'])?$_GET['sortorder']:$_POST['sortorder'];
-$page=isset($_GET['page'])?$_GET['page']:$_POST['page'];
-
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
 

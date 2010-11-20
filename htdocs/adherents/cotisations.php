@@ -32,18 +32,18 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
 $langs->load("members");
 
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
-$page=$_GET["page"];
 $filter=$_GET["filter"];
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 
-if (! $sortorder) {  $sortorder="DESC"; }
-if (! $sortfield) {  $sortfield="c.dateadh"; }
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
 if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if (! $sortorder) {  $sortorder="DESC"; }
+if (! $sortfield) {  $sortfield="c.dateadh"; }
 
 $msg='';
 $date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_select"];

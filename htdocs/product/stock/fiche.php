@@ -364,7 +364,6 @@ else
 				if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 			}
 			$sql.= $db->order($sortfield,$sortorder);
-			//$sql .= $db->plimit($limit + 1 ,$offset);
 
 			dol_syslog('List products sql='.$sql);
 			$resql = $db->query($sql) ;

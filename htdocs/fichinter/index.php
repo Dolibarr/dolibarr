@@ -33,8 +33,14 @@ require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 $langs->load("companies");
 $langs->load("interventions");
 
-$sortorder=$_GET["sortorder"]?$_GET["sortorder"]:$_POST["sortorder"];
-$sortfield=$_GET["sortfield"]?$_GET["sortfield"]:$_POST["sortfield"];
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 $socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
 $page=$_GET["page"]?$_GET["page"]:$_POST["page"];
 

@@ -59,39 +59,43 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 		$_POST    = array_map('stripslashes_deep', $_POST);
 //		$_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
+		@set_magic_quotes_runtime(0);
 	}
-	@set_magic_quotes_runtime(0);
 }
 
 
 // Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST)
-function test_sql_and_script_inject($val)
+function test_sql_and_script_inject($val,$get)
 {
 	$sql_inj = 0;
+	// For SQL Injection
 	$sql_inj += preg_match('/delete[\s]+from/i', $val);
 	$sql_inj += preg_match('/create[\s]+table/i', $val);
 	$sql_inj += preg_match('/update.+set.+=/i', $val);
 	$sql_inj += preg_match('/insert[\s]+into/i', $val);
 	$sql_inj += preg_match('/select.+from/i', $val);
 	$sql_inj += preg_match('/union.+select/i', $val);
+	// For XSS Injection done by adding javascript with script
 	$sql_inj += preg_match('/<script/i', $val);
+	// For XSS Injection done by adding javascript with onmousemove, etc... (closing a src or href tag with not cleaned param)
+	if ($get) $sql_inj += preg_match('/"/i', $val);	// We refused " in GET parameters value
 	return $sql_inj;
 }
-function analyse_sql_and_script(&$var)
+function analyse_sql_and_script(&$var,$get)
 {
 	if (is_array($var))
 	{
 		$result = array();
 		foreach ($var as $key => $value)
 		{
-			if (test_sql_and_script_inject($key) > 0)
+			if (test_sql_and_script_inject($key,$get) > 0)
 			{
 				print 'Access refused by SQL/Script injection protection in main.inc.php';
 				exit;
 			}
 			else
 			{
-				if (analyse_sql_and_script($value))
+				if (analyse_sql_and_script($value,$get))
 				{
 					$var[$key] = $value;
 				}
@@ -106,11 +110,11 @@ function analyse_sql_and_script(&$var)
 	}
 	else
 	{
-		return (test_sql_and_script_inject($var) <= 0);
+		return (test_sql_and_script_inject($var,$get) <= 0);
 	}
 }
-analyse_sql_and_script($_GET);
-analyse_sql_and_script($_POST);
+analyse_sql_and_script($_GET,1);
+analyse_sql_and_script($_POST,0);
 
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');

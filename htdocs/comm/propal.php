@@ -1631,9 +1631,14 @@ else
 
 	$now=dol_now();
 
-	$sortorder=$_GET['sortorder'];
-	$sortfield=$_GET['sortfield'];
-	$page=$_GET['page'];
+	$sortfield = GETPOST("sortfield",'alpha');
+	$sortorder = GETPOST("sortorder",'alpha');
+	$page = GETPOST("page",'int');
+	if ($page == -1) { $page = 0; }
+	$offset = $conf->liste_limit * $page;
+	$pageprev = $page - 1;
+	$pagenext = $page + 1;
+
 	$viewstatut=addslashes($_GET['viewstatut']);
 	$object_statut = addslashes($_GET['propal_statut']);
 	if($object_statut != '')
@@ -1642,9 +1647,6 @@ else
 	if (! $sortfield) $sortfield='p.datep';
 	if (! $sortorder) $sortorder='DESC';
 	$limit = $conf->liste_limit;
-	$offset = $limit * $page ;
-	$pageprev = $page - 1;
-	$pagenext = $page + 1;
 
 	$sql = 'SELECT s.nom, s.rowid, s.client, ';
 	$sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';

@@ -38,6 +38,8 @@ if ( $_SESSION['uid'] > 0 )
 	exit;
 }
 
+$usertxt=GETPOST('user','',1);
+
 
 /*
  * View
@@ -71,7 +73,7 @@ top_htmlhead('','',0,0,'',$arrayofcss);
 
 	<tr>
 		<td class="label1"><?php echo $langs->trans("Login"); ?></td>
-		<td><input name="txtUsername" class="texte_login" type="text"	value="<?php echo $_GET['user']; ?>" /></td>
+		<td><input name="txtUsername" class="texte_login" type="text" value="<?php echo $usertxt; ?>" /></td>
 	</tr>
 	<tr>
 		<td class="label1"><?php echo $langs->trans("Password"); ?></td>

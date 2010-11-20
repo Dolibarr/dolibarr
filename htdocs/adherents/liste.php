@@ -35,18 +35,19 @@ $langs->load("companies");
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
-$page=$_GET["page"];
-$filter=$_GET["filter"];
-$statut=isset($_GET["statut"])?$_GET["statut"]:'';
-
-if (! $sortorder) {  $sortorder="ASC"; }
-if (! $sortfield) {  $sortfield="d.nom"; }
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
 if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if (! $sortorder) {  $sortorder="ASC"; }
+if (! $sortfield) {  $sortfield="d.nom"; }
+
+$filter=$_GET["filter"];
+$statut=isset($_GET["statut"])?$_GET["statut"]:'';
+
 
 if ($_REQUEST["button_removefilter"])
 {

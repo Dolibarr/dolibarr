@@ -38,14 +38,14 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
-if ($page < 0) $page = 0;
-
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
-
 if (! $sortfield) $sortfield="u.login";
 if (! $sortorder) $sortorder="ASC";
 

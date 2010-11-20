@@ -36,14 +36,13 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 
-$page=$_GET["page"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
-
-if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $_GET["page"] ;
-$pageprev = $_GET["page"] - 1;
-$pagenext = $_GET["page"] + 1;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="m.date_creat";
 

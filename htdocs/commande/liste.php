@@ -50,12 +50,23 @@ $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande', $orderid,'');
 
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield='c.rowid';
+if (! $sortorder) $sortorder='DESC';
+$limit = $conf->liste_limit;
+
 
 /*
  * View
  */
 
-$now=gmmktime();
+$now=dol_now();
 
 $html = new Form($db);
 $formfile = new FormFile($db);
@@ -63,16 +74,8 @@ $companystatic = new Societe($db);
 
 llxHeader();
 
-$begin=$_GET['begin'];
-$sortorder=$_GET['sortorder'];
-$sortfield=$_GET['sortfield'];
 $viewstatut=$_GET['viewstatut'];
 
-if (! $sortfield) $sortfield='c.rowid';
-if (! $sortorder) $sortorder='DESC';
-
-$limit = $conf->liste_limit;
-$offset = $limit * $_GET['page'] ;
 
 $sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
 $sql.= ' c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';

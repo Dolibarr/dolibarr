@@ -64,7 +64,8 @@ if (! $user->rights->agenda->allactions->read || $filter =='mine')	// If no perm
 	$filterd=$user->id;
 }
 
-$action=GETPOST('action');
+$action=GETPOST('action','alpha');
+//$year=GETPOST("year");
 $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $day=GETPOST("day","int")?GETPOST("day","int"):0;

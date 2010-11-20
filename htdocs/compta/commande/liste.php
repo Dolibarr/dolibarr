@@ -34,26 +34,29 @@ require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 $langs->load('companies');
 
 // Security check
-$orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+$orderid = GETPOST("orderid",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande',$orderid,'');
 
 // Assign and check variable
-$year=GETPOST('year','int',1);
-$month=GETPOST('month','int',1);
-$status=GETPOST('status','int',1);
-$onbill=GETPOST('afacturer','int',1);
-$page=GETPOST('page','int',1);
+$year=GETPOST('year','int');
+$month=GETPOST('month','int');
+$status=GETPOST('status','int');
+$onbill=GETPOST('afacturer','int');
+$page=GETPOST('page','int');
 $sf_ref=GETPOST('sf_ref','',2);
 
-$begin=GETPOST('begin','',1);  // TODO used ?
-$sortorder=GETPOST('sortorder','',1);
-$sortfield=GETPOST('sortfield','',1);
+$sortorder=GETPOST('sortorder','alpha');
+$sortfield=GETPOST('sortfield','alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortfield) $sortfield="c.rowid";
 if (! $sortorder) $sortorder="DESC";
 
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
 
 $html = new Form($db);
 $formfile = new FormFile($db);

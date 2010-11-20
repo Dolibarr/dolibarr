@@ -33,16 +33,16 @@ $langs->load("propal");
 $langs->load("companies");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
-$socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
-$stcomm=isset($_GET["stcomm"])?$_GET["stcomm"]:$_POST["stcomm"];
+$socname=GETPOST("socname",'alpha');
+$stcomm=GETPOST("stcomm",'int');
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -50,10 +50,8 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
-// Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)
-// Load potentiels filters
-$search_level_from = isset($_GET["search_level_from"])?$_GET["search_level_from"]:(isSet($_POST["search_level_from"])?$_POST["search_level_from"]:'');
-$search_level_to = isset($_GET["search_level_to"])?$_GET["search_level_to"]:(isSet($_POST["search_level_to"])?$_POST["search_level_to"]:'');
+$search_level_from = GETPOST("search_level_from","alpha");
+$search_level_to = GETPOST("search_level_to","alpha");
 
 // If both parameters are set, search for everything BETWEEN them
 if ($search_level_from != '' && $search_level_to != '')

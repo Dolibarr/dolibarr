@@ -31,18 +31,18 @@ if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/projet/class/projec
 $langs->load("companies");
 $langs->load("donations");
 
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 $statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
-$page=$_GET["page"];
 
 if (! $sortorder) {  $sortorder="DESC"; }
 if (! $sortfield) {  $sortfield="d.datedon"; }
-if ($page == -1) { $page = 0 ; }
-
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 
 /*

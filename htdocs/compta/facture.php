@@ -3031,14 +3031,18 @@ else
 			***************************************************************************/
 		$now=dol_now();
 
-		$page     =$_GET['page'];
-		$sortorder=$_GET['sortorder'];
-		$sortfield=$_GET['sortfield'];
-		$month    =$_GET['month'];
-		$year     =$_GET['year'];
-		$limit = $conf->liste_limit;
-		$offset = $limit * $page ;
+		$sortfield = GETPOST("sortfield",'alpha');
+		$sortorder = GETPOST("sortorder",'alpha');
+		$page = GETPOST("page",'int');
+		if ($page == -1) { $page = 0; }
+		$offset = $conf->liste_limit * $page;
+		$pageprev = $page - 1;
+		$pagenext = $page + 1;
 
+		$month    =GETPOST('month','int');
+		$year     =GETPOST('year','int');
+
+		$limit = $conf->liste_limit;
 		if (! $sortorder) $sortorder='DESC';
 		if (! $sortfield) $sortfield='f.datef';
 

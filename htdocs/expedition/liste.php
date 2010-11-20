@@ -37,13 +37,17 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expedition',$expeditionid,'');
 
 
-$sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:"";
-$sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:"";
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+$limit = $conf->liste_limit;
 if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="DESC";
-
 $limit = $conf->liste_limit;
-$offset = $limit * $_GET["page"] ;
 
 
 /*

@@ -36,22 +36,20 @@ if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php
 $langs->load("companies");
 $langs->load("agenda");
 
-$action=isset($_REQUEST['action'])?$_REQUEST['action']:'';
-$year=isset($_REQUEST["year"])?$_REQUEST["year"]:'';
-$month=isset($_REQUEST["month"])?$_REQUEST["month"]:'';
-$day=isset($_REQUEST["day"])?$_REQUEST["day"]:0;
-$pid=isset($_REQUEST["projectid"])?$_REQUEST["projectid"]:0;
-$status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
+$action=GETPOST('action','alpha');
+$year=GETPOST("year",'int');
+$month=GETPOST("month",'int');
+$day=GETPOST("day",'int');
+$pid=GETPOST("projectid",'int');
+$status=GETPOST("status",'alpha');
 
-$filtera = isset($_REQUEST["userasked"])?$_REQUEST["userasked"]:(isset($_REQUEST["filtera"])?$_REQUEST["filtera"]:'');
-$filtert = isset($_REQUEST["usertodo"])?$_REQUEST["usertodo"]:(isset($_REQUEST["filtert"])?$_REQUEST["filtert"]:'');
-$filterd = isset($_REQUEST["userdone"])?$_REQUEST["userdone"]:(isset($_REQUEST["filterd"])?$_REQUEST["filterd"]:'');
+$filtera = GETPOST("userasked","int")?GETPOST("userasked","int"):GETPOST("filtera","int");
+$filtert = GETPOST("usertodo","int")?GETPOST("usertodo","int"):GETPOST("filtert","int");
+$filterd = GETPOST("userdone","int")?GETPOST("userdone","int"):GETPOST("filterd","int");
 
-$socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
-
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -69,7 +67,7 @@ if (! $sortfield)
 }
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 

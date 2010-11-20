@@ -22,7 +22,7 @@
 /**
  *	    \file       htdocs/comm/action/rapport/index.php
  *      \ingroup    commercial
- *		\brief      Page accueil des rapports des actions
+ *		\brief      Page with reports of actions
  *		\version    $Id$
  */
 
@@ -32,9 +32,9 @@ require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/action/rapport.pdf.php");
 
-$page = $_GET["page"];
-$sortfield=$_GET["sortfield"];
-$sortorder=$_GET["sortorder"];
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -42,7 +42,7 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="a.datep";
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 

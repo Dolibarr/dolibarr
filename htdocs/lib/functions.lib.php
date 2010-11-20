@@ -38,11 +38,11 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 
 
 /**
- *  Return value of a param into get or post variable
+ *  Return value of a param into GET or POST supervariable
  *  @param          paramname   Name of parameter to found
- *  @param			check		Type of check ('' or 'int')
+ *  @param			check		Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only)
  *  @param			method		Type of method (0 = get or post, 1 = only get, 2 = only post)
- *  @return         string      Value found
+ *  @return         string      Value found or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0)
 {
@@ -50,13 +50,12 @@ function GETPOST($paramname,$check='',$method=0)
     else if ($method==2) isset($_POST[$paramname])?$_POST[$paramname]:'';
     else $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 
-    // Clean value
-    $out = trim($out);
-
     if (!empty($check))
     {
     	// Check if integer
-        if ($check == 'int' && ! is_numeric($out)) $out='';
+        if ($check == 'int' && ! is_numeric(trim($out))) $out='';
+    	// Check if alpha
+        if ($check == 'alpha' && ! preg_match('/^[#\(\)\-\._a-z0-9]+$/i',trim($out))) $out='';
     }
 
     return $out;
@@ -1526,7 +1525,7 @@ function img_allow($allow,$alt='default')
 function img_mime($file,$alt='')
 {
 	require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
-	
+
     $mimetype=dol_mimetype($file,'',1);
     $mimeimg=dol_mimetype($file,'',2);
 

@@ -40,9 +40,14 @@ $langs->load('compta');
 $langs->load('orders');
 $langs->load('bills');
 
-$page=$_GET["page"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 $viewstatut=$_GET['viewstatut'];
 $propal_statut = $_GET['propal_statut'];
 if($propal_statut != '')
@@ -50,7 +55,6 @@ $viewstatut=$propal_statut;
 
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.datep";
-if ($page == -1) { $page = 0 ; }
 
 $module='propale';
 if (! empty($_GET["socid"]))

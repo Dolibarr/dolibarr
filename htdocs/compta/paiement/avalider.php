@@ -46,14 +46,16 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-$page=$_GET["page"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
-if ($page == -1) $page = 0 ;
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
 
 $sql = "SELECT p.rowid, p.datep as dp, p.amount, p.statut";
 $sql .=", c.libelle as paiement_type, p.num_paiement";

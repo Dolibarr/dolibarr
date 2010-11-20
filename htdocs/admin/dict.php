@@ -244,9 +244,14 @@ $tabcond[19]= $conf->societe->enabled;
 
 $msg='';
 
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
-$sortfield=$_GET["sortfield"];
-$sortorder=$_GET["sortorder"];
 
 /*
  * Actions ajout ou modification d'une entree dans un dictionnaire de donnee
