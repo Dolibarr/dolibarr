@@ -126,7 +126,7 @@ class Facturation {
 		$montant_remise_ht = ($resultarray[6] - $resultarray[0]);
 		$this->montant_remise ($montant_remise_ht);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."tmp_caisse (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."pos_tmp (";
 		$sql.= "fk_article";
 		$sql.= ", qte";
 		$sql.= ", fk_tva";
@@ -157,14 +157,14 @@ class Facturation {
 	}
 
    /**
-	*  Suppression du panier d'un article identifie par son id dans la table llx_tmp_caisse
+	*  Suppression du panier d'un article identifie par son id dans la table llx_pos_tmp
 	*  @param      aArticle
 	*/
 	public function supprArticle($aArticle)
 	{
 		global $db;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tmp_caisse";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."pos_tmp";
 		$sql.= " WHERE id = ".$aArticle;
 		$sql.= " LIMIT 1";
 
@@ -179,7 +179,7 @@ class Facturation {
 	{
 		global $db;
 
-		$res = $db->query ('SELECT remise, total_ht, total_ttc, taux FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
+		$res = $db->query ('SELECT remise, total_ht, total_ttc, taux FROM '.MAIN_DB_PREFIX.'pos_tmp as c
 				LEFT JOIN '.MAIN_DB_PREFIX.'c_tva as t ON c.fk_tva = t.rowid
 				ORDER BY id');
 

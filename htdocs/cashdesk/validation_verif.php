@@ -140,7 +140,7 @@ switch ( $_GET['action'] )
 		// Recuperation de la liste des articles du panier
 		$res=$db->query ('
 				SELECT fk_article, qte, fk_tva, remise_percent, remise, total_ht, total_ttc
-				FROM '.MAIN_DB_PREFIX.'tmp_caisse
+				FROM '.MAIN_DB_PREFIX.'pos_tmp
 				WHERE 1');
 		$ret=array(); $i=0;
 		while ( $tab = $db->fetch_array($res) )

@@ -53,9 +53,6 @@ ALTER TABLE llx_facturedet_rec ADD COLUMN rang integer DEFAULT 0 AFTER special_c
 ALTER TABLE llx_actioncomm ADD COLUMN fk_supplier_order   integer;
 ALTER TABLE llx_actioncomm ADD COLUMN fk_supplier_invoice integer;
 
-
-ALTER TABLE llx_tmp_caisse MODIFY fk_article integer NOT NULL;
-
 ALTER TABLE llx_propaldet ADD COLUMN fk_parent_line	integer NULL AFTER fk_propal;
 ALTER TABLE llx_commandedet ADD COLUMN fk_parent_line integer NULL AFTER fk_commande;
 ALTER TABLE llx_facturedet ADD COLUMN fk_parent_line integer NULL AFTER fk_facture;
@@ -106,3 +103,19 @@ UPDATE llx_societe SET canvas = 'individual' WHERE canvas = 'individual@thirdpar
 insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS','7','chaine','Tolérance de retard avant alerte (en jours) sur commandes fournisseurs non traitées',0);
 
 ALTER TABLE llx_actioncomm ADD COLUMN fulldayevent smallint NOT NULL default 0 after priority;
+
+-- Enhance POS module
+DROP TABLE llx_tmp_caisse;
+CREATE TABLE llx_pos_tmp (
+  id integer NOT NULL auto_increment,
+  fk_article integer NOT NULL,
+  qte real NOT NULL,
+  fk_tva integer NOT NULL,
+  remise_percent real NOT NULL,
+  remise real NOT NULL,
+  total_ht double(24,8) NOT NULL,
+  total_tva double(24,8) NOT NULL,
+  total_ttc double(24,8) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=innodb;
+

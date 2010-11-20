@@ -1,5 +1,5 @@
 
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-// Calcul et affichage en temps réel des informations sur le produit en cours
+// Calcul et affichage en temps reel des informations sur le produit en cours
 function modif () {
 
 	var prix_unit = parseFloat ( document.getElementById('frmQte').txtPrixUnit.value );
@@ -26,7 +26,7 @@ function modif () {
 	var remise = parseInt ( document.getElementById('frmQte').txtRemise.value );
 	var stock = document.getElementById('frmQte').txtStock.value;
 
-// 		// On s'assure que la quantitée tapée ne dépasse pas le stock
+// 		// On s'assure que la quantitee tapee ne depasse pas le stock
 // 		if ( qte > stock ) {
 //
 // 			qte = stock;
@@ -51,7 +51,7 @@ function modif () {
 	// Calcul du total HT, sans remise
 	var total_ht = Math.round ( (prix_unit * qte) * 100 ) / 100;
 
-	// Calcul du montant de la remise, après s'être assuré que cette dernière ne soit pas négative
+	// Calcul du montant de la remise, apres s'etre assure que cette derniere ne soit pas negative
 	if ( remise <= 0 ) {
 
 		document.getElementById('frmQte').txtRemise.value = 0;
@@ -66,12 +66,12 @@ function modif () {
 	// Recalcul du montant total, avec la remise
 	var total = Math.round ( (total_ht - montant_remise) *100 ) / 100;
 
-	// Affichage du résultat dans le formulaire
+	// Affichage du resultat dans le formulaire
 	document.getElementById('frmQte').txtTotal.value = total.toFixed(2);
 
 }
 
-// Affecte la source de la requete (liste déroulante ou champ texte 'ref') au champ caché
+// Affecte la source de la requete (liste deroulante ou champ texte 'ref') au champ cache
 function setSource (aSrc) {
 
 	document.getElementById('frmFacturation').hdnSource.value = aSrc;
@@ -79,7 +79,7 @@ function setSource (aSrc) {
 
 }
 
-// Vérification de la cohérence des informations saisies dans le formulaire de choix du nombre d'articles
+// Verification de la coherence des informations saisies dans le formulaire de choix du nombre d'articles
 function verifSaisie () {
 
 	if ( document.getElementById('frmQte').txtQte.value ) {
@@ -95,7 +95,7 @@ function verifSaisie () {
 
 }
 
-// Vérification de la cohérence des informations saisies dans le formulaire de calcul de la différence
+// Verification de la coherence des informations saisies dans le formulaire de calcul de la difference
 function verifDifference () {
 
 	var du = parseFloat ( document.getElementById('frmDifference').txtDu.value );
@@ -118,14 +118,14 @@ function verifDifference () {
 
 }
 
-// Affecte le moyen de paiement (ESP, CB ou CHQ) au champ caché en fonction du bouton cliqué
+// Affecte le moyen de paiement (ESP, CB ou CHQ) au champ cache en fonction du bouton clique
 function verifClic (aChoix) {
 
 	document.getElementById('frmDifference').hdnChoix.value = aChoix;
 
 }
 
-// Détermination du moyen de paiement, et validation du formulaire si les données sont cohérentes
+// Determination du moyen de paiement, et validation du formulaire si les donnees sont coherentes
 function verifReglement () {
 
 	var choix = document.getElementById('frmDifference').hdnChoix.value;

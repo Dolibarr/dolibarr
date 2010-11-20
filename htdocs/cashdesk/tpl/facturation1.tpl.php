@@ -98,9 +98,13 @@ $Id$
 	<form id="frmQte" class="formulaire1" method="post" action="facturation_verif.php?action=ajout_article" onsubmit ="javascript: return verifSaisie();">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 		<table>
-			<tr><th class="label1"><?php echo $langs->trans("Qty"); ?></th>
-			<th class="label1"><?php echo $langs->trans("Stock"); ?></th>
-			<th class="label1"><?php echo $langs->trans("PriceUHT"); ?></th><th></th><th class="label1"><?php echo $langs->trans("VATRate"); ?></th><th class="label1"><?php echo $langs->trans("Discount"); ?> (%)</th><th class="label1"><?php echo $langs->trans("TotalHT"); ?></th></tr>
+			<tr><th><?php echo $langs->trans("Qty"); ?></th>
+			<th><?php echo $langs->trans("Stock"); ?></th>
+			<th><?php echo $langs->trans("PriceUHT"); ?></th>
+			<th></th>
+			<th ><?php echo $langs->trans("VATRate"); ?></th>
+			<th><?php echo $langs->trans("Discount"); ?> (%)</th>
+			<th><?php echo $langs->trans("TotalHT"); ?></th></tr>
 			<tr>
 				<td><input class="texte1" type="text" name="txtQte" value="1" onkeyup="javascript: modif();" onfocus="javascript: this.select();" /></td>
 				<!-- Affichage du stock pour l'article courant -->

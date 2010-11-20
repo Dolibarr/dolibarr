@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 <?php
 	// Recuperation du contenu de la vente
-	$request='SELECT id, ref, label, qte, price, remise_percent, remise, total_ht, total_ttc FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
+	$request='SELECT id, ref, label, qte, price, remise_percent, remise, total_ht, total_ttc FROM '.MAIN_DB_PREFIX.'pos_tmp as c
 			LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON c.fk_article = p.rowid
 			ORDER BY id';
 	dol_syslog($request);
