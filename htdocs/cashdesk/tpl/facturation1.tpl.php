@@ -36,7 +36,7 @@ $Id$
 			<tr><th class="label1"><?php echo $langs->trans("Code"); ?></th><th class="label1"><?php echo $langs->trans("Designation"); ?></th></tr>
 			<tr>
 			<!-- Affichage de la reference et de la designation -->
-			<td><input class="texte_ref" type="text" id ="txtRef" name="txtRef" autocomplete="off" value="<?php echo $obj_facturation->ref() ?>"
+			<td><input class="texte_ref" type="text" id ="txtRef" name="txtRef" value="<?php echo $obj_facturation->ref() ?>"
 				onchange="javascript: setSource('REF');"
 				onfocus="javascript: this.select(); verifResultat('resultats_dhtml', this.value);"
 				onBlur="javascript: document.getElementById('resultats_dhtml').innerHTML = '';"
@@ -44,7 +44,7 @@ $Id$
 			</td>
 			<td class="select_design">
 				<select name="selProduit" onchange="javascript: setSource('LISTE');">
-					<option value="0" class="top_liste"><?php echo $top_liste_produits; ?></option>
+					<option value="0"><?php echo $top_liste_produits; ?></option>
 					<?php
 
 						$id = $obj_facturation->id();
