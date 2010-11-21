@@ -54,7 +54,7 @@ $langs->load("paybox");
 // currency (iso code)
 
 $suffix=GETPOST("suffix",'alpha');
-$amount=GETPOST("amount");
+$amount=price2num(GETPOST("amount"));
 if (! GETPOST("currency",'alpha')) $currency=$conf->global->MAIN_MONNAIE;
 else $currency=GETPOST("currency",'alpha');
 
@@ -65,12 +65,12 @@ if (! GETPOST("action"))
         dol_print_error('',$langs->trans('ErrorBadParameters')." - amount or source");
     	exit;
     }
-    if (is_numeric($amount) && empty($_REQUEST["tag"]) && empty($_REQUEST["source"]))
+    if (is_numeric($amount) && ! GETPOST("tag") && ! GETPOST("source"))
     {
         dol_print_error('',$langs->trans('ErrorBadParameters')." - tag or source");
     	exit;
     }
-    if (! empty($REQUEST["source"]) && empty($_REQUEST["ref"]))
+    if (GETPOST("source") && ! GETPOST("ref"))
     {
         dol_print_error('',$langs->trans('ErrorBadParameters')." - ref");
     	exit;
@@ -81,6 +81,7 @@ $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolib
 $urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php?';
 $urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php?';
 
+// Complete urls
 $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');  // fulltag is tag with more informations
 
@@ -94,12 +95,14 @@ if (!empty($FULLTAG))
     $urlok.='fulltag='.urlencode($FULLTAG).'&';
     $urlko.='fulltag='.urlencode($FULLTAG).'&';
 }
+$urlok=preg_replace('/&$/','',$urlok);  // Remove last &
+$urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 
 
 /*
  * Actions
  */
-if ($_REQUEST["action"] == 'dopayment')
+if (GETPOST("action") == 'dopayment')
 {
     $PRICE=price2num(GETPOST("newamount"),'MT');
     $EMAIL=GETPOST("EMAIL");
@@ -198,11 +201,11 @@ $var=false;
 
 
 // Free payment
-if (empty($_REQUEST["source"]))
+if (! GETPOST("source"))
 {
 	$found=true;
-	$tag=$_REQUEST["tag"];
-	$fulltag=$tag;
+    $tag=GETPOST("tag");
+    $fulltag=$tag;
 
 	// Creditor
 	$var=!$var;
@@ -216,7 +219,7 @@ if (empty($_REQUEST["source"]))
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
+	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount").'">';
 	else {
 		print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
@@ -239,12 +242,12 @@ if (empty($_REQUEST["source"]))
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$_REQUEST["EMAIL"].'"></td></tr>'."\n";
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.GETPOST("EMAIL").'"></td></tr>'."\n";
 }
 
 
 // Payment on customer order
-if ($_REQUEST["source"] == 'order')
+if (GETPOST("source") == 'order')
 {
 	$found=true;
 	$langs->load("orders");
@@ -264,7 +267,8 @@ if ($_REQUEST["source"] == 'order')
 	}
 
 	$amount=$order->total_ttc;
-	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
+    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+    $amount=price2num($amount);
 
 	$fulltag='IR='.$order->ref.'.TPID='.$order->client->id.'.TP='.strtr($order->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
@@ -287,7 +291,7 @@ if ($_REQUEST["source"] == 'order')
 	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$order->ref.'">';
 	print '</td></tr>'."\n";
 
@@ -296,7 +300,7 @@ if ($_REQUEST["source"] == 'order')
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
+	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount").'">';
 	else {
 		print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
@@ -326,7 +330,7 @@ if ($_REQUEST["source"] == 'order')
 
 
 // Payment on customer invoice
-if ($_REQUEST["source"] == 'invoice')
+if (GETPOST("source") == 'invoice')
 {
 	$found=true;
 	$langs->load("bills");
@@ -346,7 +350,8 @@ if ($_REQUEST["source"] == 'invoice')
 	}
 
 	$amount=$invoice->total_ttc - $invoice->getSommePaiement();
-	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
+    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+    $amount=price2num($amount);
 
 	$fulltag='IR='.$invoice->ref.'.TPID='.$invoice->client->id.'.TP='.strtr($invoice->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
@@ -369,7 +374,7 @@ if ($_REQUEST["source"] == 'invoice')
 	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$invoice->ref.'">';
 	print '</td></tr>'."\n";
 
@@ -378,7 +383,7 @@ if ($_REQUEST["source"] == 'invoice')
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
+	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount").'">';
 	else {
 		print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
@@ -407,7 +412,7 @@ if ($_REQUEST["source"] == 'invoice')
 }
 
 // Payment on contract line
-if ($_REQUEST["source"] == 'contractline')
+if (GETPOST("source") == 'contractline')
 {
 	$found=true;
 	$langs->load("contracts");
@@ -471,7 +476,8 @@ if ($_REQUEST["source"] == 'contractline')
 			exit;
 		}
 	}
-	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
+    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+    $amount=price2num($amount);
 
 	$fulltag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->client->id.'.TP='.strtr($contract->client->nom,"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
@@ -511,7 +517,7 @@ if ($_REQUEST["source"] == 'contractline')
 
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$contractline->ref.'">';
 	print '</td></tr>'."\n";
 
@@ -540,7 +546,7 @@ if ($_REQUEST["source"] == 'contractline')
 	}
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$label.'</td>';
 	print '<td class="CTableRow'.($var?'1':'2').'"><b>'.($duration?$duration:$qty).'</b>';
-	print '<input type="hidden" name="newqty" value="'.$qty.'">';
+	print '<input type="hidden" name="newqty" value="'.dol_escape_htmltag($qty).'">';
 	print '</b></td></tr>'."\n";
 
 	// Amount
@@ -578,7 +584,7 @@ if ($_REQUEST["source"] == 'contractline')
 }
 
 // Payment on member subscription
-if ($_REQUEST["source"] == 'membersubscription')
+if (GETPOST("source") == 'membersubscription')
 {
 	$found=true;
 	$langs->load("members");
@@ -587,7 +593,7 @@ if ($_REQUEST["source"] == 'membersubscription')
 	require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 
 	$member=new Adherent($db);
-	$result=$member->fetch('',$_REQUEST["ref"]);
+	$result=$member->fetch('',GETPOST("ref"));
 	if ($result < 0)
 	{
 		$mesg=$member->error;
@@ -599,7 +605,8 @@ if ($_REQUEST["source"] == 'membersubscription')
 	}
 
 	$amount=$subscription->total_ttc;
-	if ($_REQUEST["amount"]) $amount=$_REQUEST["amount"];
+    if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+    $amount=price2num($amount);
 
 	$fulltag='MID='.$member->id.'.M='.strtr($member->getFullName($langs),"-"," ");
 	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
@@ -622,7 +629,7 @@ if ($_REQUEST["source"] == 'membersubscription')
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.$_REQUEST["source"].'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$member->ref.'">';
 	print '</td></tr>'."\n";
 
