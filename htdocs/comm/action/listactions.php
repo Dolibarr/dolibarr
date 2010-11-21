@@ -218,7 +218,7 @@ if ($resql)
 		// Action (type)
 		print '<td>';
 		$actionstatic->id=$obj->id;
-		$actionstatic->code=$obj->acode;
+		$actionstatic->type_code=$obj->acode;
 		$actionstatic->libelle=$obj->label;
 		print $actionstatic->getNomUrl(1,12);
 		print '</td>';

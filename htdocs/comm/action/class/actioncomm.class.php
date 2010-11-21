@@ -561,12 +561,12 @@ class ActionComm extends CommonObject
 
 	/**
 	 *    	Renvoie nom clicable (avec eventuellement le picto)
+	 *      Utilise $this->id, $this->code et $this->libelle
 	 * 		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		@param		maxlength		Nombre de caracteres max dans libelle
 	 *		@param		class			Force style class on a link
 	 * 		@param		option			''=Link to action,'birthday'=Link to contact
 	 *		@return		string			Chaine avec URL
-	 *		@remarks	Utilise $this->id, $this->code et $this->libelle
 	 */
 	function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto='')
 	{
@@ -576,8 +576,8 @@ class ActionComm extends CommonObject
 		if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
 		else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
-
-        if ($langs->trans("Action".$this->type_code) != "Action".$this->type_code || ! $this->libelle)
+        //print $this->libelle;
+        if (empty($this->libelle))
         {
         	$libelle=$langs->trans("Action".$this->type_code);
         	$libelleshort=$langs->trans("Action".$this->type_code,'','','','',$maxlength);
@@ -588,7 +588,11 @@ class ActionComm extends CommonObject
         	$libelleshort=dol_trunc($this->libelle,$maxlength);
         }
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAction").': '.$libelle,($overwritepicto?$overwritepicto:'task')).$lienfin);
+		if ($withpicto)
+		{
+            $libelle.=(($this->type_code && $libelle!=$langs->trans("Action".$this->type_code) && $langs->trans("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->trans("Action".$this->type_code).')':'');
+		    $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle,($overwritepicto?$overwritepicto:'task')).$lienfin;
+		}
 		if ($withpicto==1) $result.=' ';
 		$result.=$lien.$libelleshort.$lienfin;
 		return $result;
