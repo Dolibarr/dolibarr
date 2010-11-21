@@ -260,26 +260,26 @@ print $html->selectarray("morphy",  $morphys);
 print "</td>\n";
 print '</tr>';
 
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> '.$langs->trans("Surname").'</td><td><input type="text" name="prenom" size="40" value="'.$prenom.'"></td></tr>'."\n";
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> '.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$nom.'"></td></tr>'."\n";
-print '<tr><td>'.$langs->trans("ThirdParty").'</td><td><input type="text" name="societe" size="40" value="'.$societe.'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> '.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.dol_escape_htmltag(GETPOST('nom')).'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> '.$langs->trans("Surname").'</td><td><input type="text" name="prenom" size="40" value="'.dol_escape_htmltag(GETPOST('prenom')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("ThirdParty").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
-print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$adresse.'</textarea></td></tr>'."\n";
-print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.$cp.'"> <input type="text" name="ville" size="40" value="'.$ville.'"></td></tr>'."\n";
+print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.dol_escape_htmltag(GETPOST('adresse')).'</textarea></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.dol_escape_htmltag(GETPOST('cp')).'"> <input type="text" name="ville" size="40" value="'.dol_escape_htmltag(GETPOST('ville')).'"></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$pays.'"></td></tr>'."\n";
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> Email</td><td><input type="text" name="email" size="40" value="'.$email.'"></td></tr>'."\n";
-print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$login.'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> Email</td><td><input type="text" name="email" size="40" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
 print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Password").'</td><td><input type="password" name="pass1" size="40"></td></tr>'."\n";
 print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("PasswordAgain").'</td><td><input type="password" name="pass2" size="40"></td></tr>'."\n";
-print '<tr><td>'.$langs->trans("Birthday").'<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$naiss.'"></td></tr>'."\n";
-print '<tr><td><FONT COLOR="blue">**</FONT> URL Photo</td><td><input type="text" name="photo" size="40" value="'.$photo.'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Birthday").'<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.dol_escape_htmltag(GETPOST('naiss')).'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="blue">**</FONT> URL Photo</td><td><input type="text" name="photo" size="40" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Public").' ?</td><td><input type="checkbox" name="public" value="1" checked></td></tr>'."\n";
 foreach($adho->attribute_label as $key=>$value){
 	print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>"."\n";
 }
 print '<tr>';
 print '<td valign="top">'.$langs->trans("Comments").' :</td>';
-print '<td valign="top"><textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_5.'">'.$comment.'</textarea></td>';
+print '<td valign="top"><textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_5.'">'.dol_escape_htmltag(GETPOST('comment')).'</textarea></td>';
 print '</tr>'."\n";
 
 print '<tr><td align="center" colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>'."\n";
