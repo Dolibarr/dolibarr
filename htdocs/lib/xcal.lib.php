@@ -201,7 +201,8 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile)
 					if ($fulldayevent)
 					{
                         $prefix=';VALUE=DATE';
-					    $enddatef = dol_print_date($enddate+1,'dayxcard',false);   // Local time
+					    $enddatef = dol_print_date($enddate+1,'dayxcard',false);
+					    //$enddatef .= dol_print_date($enddate+1,'dayhourxcard',false);   // Local time
 					}
                     fwrite($calfileh,"DTEND".$prefix.":".$enddatef."\n");
 					fwrite($calfileh,'STATUS:CONFIRMED'."\n");

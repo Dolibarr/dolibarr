@@ -95,7 +95,7 @@ if ($_POST["action"] == 'add_action')
 	$datep2=dol_mktime(
 	$fulldayevent?'23':$_POST["p2hour"],
 	$fulldayevent?'59':$_POST["p2min"],
-	0,
+	$fulldayevent?'59':'0',
 	$_POST["p2month"],
 	$_POST["p2day"],
 	$_POST["p2year"]);
@@ -315,7 +315,7 @@ if (GETPOST("action") == 'update')
 		$datep2=dol_mktime(
         $fulldayevent?'23':$_POST["p2hour"],
         $fulldayevent?'59':$_POST["p2min"],
-		0,
+		$fulldayevent?'59':'0',
 		$_POST["p2month"],
 		$_POST["p2day"],
 		$_POST["p2year"]);
