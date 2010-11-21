@@ -1,5 +1,5 @@
 /*!
- * jQuery Mobile
+ * jQuery Mobile v1.0a2
  * http://jquerymobile.com/
  *
  * Copyright 2010, jQuery Project
@@ -22,7 +22,7 @@
 .ui-bar-a .ui-link-inherit { color: #fff; }
 .ui-bar-a .ui-link { color: #7cc4e7; font-weight: bold; }
 
-.ui-body-a {  border: 1px solid #2A2A2A; background: #222222; color: #fff;  text-shadow: 0 1px 0 #000; font-weight: normal; background-image: -moz-linear-gradient(top, #666666, #222222); -webkit-gradient(linear,left top,left bottom,color-stop(0, #666666),color-stop(1, #222222)); -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#222222)')"; }
+.ui-body-a {  border: 1px solid #2A2A2A; background: #222222; color: #fff;  text-shadow: 0 1px 0 #000; font-weight: normal; background-image: -moz-linear-gradient(top, #666666, #222222); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #666666),color-stop(1, #222222)); -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#222222)')"; }
 .ui-body-a, .ui-body-a input, .ui-body-a select, .ui-body-a textarea, .ui-body-a button { font-family: Helvetica, Arial, sans-serif; }
 .ui-body-a .ui-link-inherit { color: #fff; }
 .ui-body-a .ui-link { color: #2489CE; font-weight: bold; }
@@ -51,7 +51,7 @@
 
 .ui-btn-up-b { border: 1px solid #145072; background: #2567ab; font-weight: bold; color: #fff; cursor: pointer;  text-shadow: 0 -1px 1px #145072; text-decoration: none; background-image: -moz-linear-gradient(top, #4e89c5, #2567ab); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #5f9cc5),color-stop(1, #396b9e));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4e89c5', EndColorStr='#2567ab')"; }
 .ui-btn-up-b a.ui-link-inherit { color: #fff; }
-.ui-btn-hover-b { border: 1px solid #397cbe; background: #5397d5; font-weight: bold; color: #fff;  text-shadow: 0 -1px 1px #014D68; background-image: -moz-linear-gradient(top, #71a2d0, #397cbe); text-decoration: none; background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #71a2d0),color-stop(1, #397cbe));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#71a2d0', EndColorStr='#397cbe')";  }
+.ui-btn-hover-b { border: 1px solid #00516e; background: #4b88b6; font-weight: bold; color: #fff;  text-shadow: 0 -1px 1px #014D68; background-image: -moz-linear-gradient(top, #72b0d4, #4b88b6); text-decoration: none; background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #72b0d4),color-stop(1, #4b88b6));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#72b0d4', EndColorStr='#4b88b6')";  }
 .ui-btn-hover-b a.ui-link-inherit { color: #fff; }
 .ui-btn-down-b { border: 1px solid #225377; background: #4e89c5; font-weight: bold; color: #fff; text-shadow: 0 -1px 1px #225377; background-image: -moz-linear-gradient(top, #396b9e, #4e89c5); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #396b9e),color-stop(1, #4e89c5));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#396b9e', EndColorStr='#4e89c5')"; }
 .ui-btn-down-b a.ui-link-inherit { color: #fff; }
@@ -63,7 +63,7 @@
 .ui-bar-c {  border: 1px solid #B3B3B3; background: #e9eaeb; color: #3E3E3E; font-weight: bold; text-shadow: 0 1px 1px #fff; background-image: -moz-linear-gradient(top, #f0f0f0, #e9eaeb); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #f0f0f0),color-stop(1, #e9eaeb));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#f0f0f0', EndColorStr='#e9eaeb')"; }
 .ui-bar-c, .ui-bar-c input, .ui-bar-c select, .ui-bar-c textarea, .ui-bar-c button { font-family: Helvetica, Arial, sans-serif; }
 
-.ui-body-c { border: 1px solid #B3B3B3; color: #333333; text-shadow: 0 1px 0 #fff; background: #f0f0f0; background-image: -moz-linear-gradient(top, #fff, #f0f0f0); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #fff),color-stop(1, #f0f0f0));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fff', EndColorStr='#f0f0f0')";  }
+.ui-body-c { border: 1px solid #B3B3B3; color: #333333; text-shadow: 0 1px 0 #fff; background: #f0f0f0; background-image: -moz-linear-gradient(top, #fff, #f0f0f0); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #fff),color-stop(1, #f0f0f0));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff', EndColorStr='#f0f0f0')";  }
 .ui-body-c, .ui-body-c input, .ui-body-c select, .ui-body-c textarea, .ui-body-c button { font-family: Helvetica, Arial, sans-serif; }
 .ui-body-c .ui-link-inherit { color: #333333; }
 .ui-body-c .ui-link { color: #2489CE; font-weight: bold; }
@@ -74,7 +74,7 @@
 .ui-btn-hover-c { border: 1px solid #aaa; background: #f5f5f5; font-weight: bold; color: #111111; text-decoration: none; text-shadow: 0 1px 1px #fff; background-image: -moz-linear-gradient(top, #ffffff, #f5f5f5); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #ffffff),color-stop(1, #f5f5f5));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff', EndColorStr='#f5f5f5')"; }
 .ui-btn-hover-c a.ui-link-inherit { color: #2F3E46; }
 
-.ui-btn-down-c { border: 1px solid #808080; background: #fdfdfd; font-weight: bold; color: #111111; text-shadow: text-shadow: 0 1px 1px #ffffff; background-image: -moz-linear-gradient(top, #eeeeee, #fdfdfd); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #eeeeee),color-stop(1, #fdfdfd));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#eeeeee', EndColorStr='#fdfdfd')"; }
+.ui-btn-down-c { border: 1px solid #808080; background: #fdfdfd; font-weight: bold; color: #111111; text-shadow: 0 1px 1px #ffffff; background-image: -moz-linear-gradient(top, #eeeeee, #fdfdfd); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #eeeeee),color-stop(1, #fdfdfd));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#eeeeee', EndColorStr='#fdfdfd')"; }
 .ui-btn-down-c a.ui-link-inherit { color: #2F3E46; }
 .ui-btn-up-c, .ui-btn-hover-c, .ui-btn-down-c { font-family: Helvetica, Arial, sans-serif; }
 
@@ -94,7 +94,7 @@
 .ui-btn-hover-d { border: 1px solid #aaa; background: #eeeeee; font-weight: bold; color: #222; cursor: pointer;  text-shadow: 0 1px 1px #fff; text-decoration: none; background-image: -moz-linear-gradient(top, #fdfdfd, #eeeeee); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #fdfdfd),color-stop(1, #eeeeee));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fdfdfd', EndColorStr='#eeeeee')"; }
 .ui-btn-hover-d a.ui-link-inherit { color: #222; }
 
-.ui-btn-down-d { border: 1px solid #aaaaaa; background: #ffffff; font-weight: bold; color: #111; text-shadow: text-shadow: 0 1px 1px #ffffff; background-image: -moz-linear-gradient(top, #eeeeee, #ffffff); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #eeeeee),color-stop(1, #ffffff));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#eeeeee', EndColorStr='#ffffff')"; }
+.ui-btn-down-d { border: 1px solid #aaaaaa; background: #ffffff; font-weight: bold; color: #111; text-shadow: 0 1px 1px #ffffff; background-image: -moz-linear-gradient(top, #eeeeee, #ffffff); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #eeeeee),color-stop(1, #ffffff));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#eeeeee', EndColorStr='#ffffff')"; }
 .ui-btn-down-d a.ui-link-inherit { border: 1px solid #808080; background: #ced0d2; font-weight: bold; color: #111; text-shadow: none; background-image: -moz-linear-gradient(top, #cccccc, #eeeeee); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #cccccc),color-stop(1, #eeeeee));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#cccccc', EndColorStr='#eeeeee')"; }
 .ui-btn-up-d, .ui-btn-hover-d, .ui-btn-down-d { font-family: Helvetica, Arial, sans-serif; }
 
@@ -104,7 +104,7 @@
 .ui-bar-e .ui-link-inherit { color: #333; }
 .ui-bar-e .ui-link { color: #2489CE; font-weight: bold; }
 
-.ui-body-e { border: 1px solid #F7C942; color: #333333; text-shadow: 0 1px 0 #fff; background: #faeb9e; background-image: -moz-linear-gradient(top, #fff, #faeb9e); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #fff),color-stop(1, #faeb9e));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fff', EndColorStr='#faeb9e')"; }
+.ui-body-e { border: 1px solid #F7C942; color: #333333; text-shadow: 0 1px 0 #fff; background: #faeb9e; background-image: -moz-linear-gradient(top, #fff, #faeb9e); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #fff),color-stop(1, #faeb9e));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff', EndColorStr='#faeb9e')"; }
 .ui-body-e, .ui-body-e input, .ui-body-e select, .ui-body-e textarea, .ui-body-e button { font-family: Helvetica, Arial, sans-serif; }
 .ui-body-e .ui-link-inherit { color: #333333; }
 .ui-body-e .ui-link { color: #2489CE; font-weight: bold; }
@@ -113,10 +113,10 @@
 .ui-btn-up-e { border: 1px solid #F7C942; background: #fadb4e; font-weight: bold; color: #333; cursor: pointer;  text-shadow: 0 1px 1px #fe3; text-decoration: none; text-shadow: 0 1px 0 #fff; background-image: -moz-linear-gradient(top, #fceda7, #fadb4e); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #fceda7),color-stop(1, #fadb4e));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fceda7', EndColorStr='#fadb4e')"; }
 .ui-btn-up-e a.ui-link-inherit { color: #333; }
 
-.ui-btn-hover-e { border: 1px solid #e79952; background: #fbe26f; font-weight: bold; color: #111; text-decoration: none; text-shadow: 0 1px 1px #fff; background-image: -moz-linear-gradient(top, ##fcf0b5, #fbe26f); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #fcf0b5),color-stop(1, #fbe26f));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fcf0b5', EndColorStr='#fbe26f')"; }
+.ui-btn-hover-e { border: 1px solid #e79952; background: #fbe26f; font-weight: bold; color: #111; text-decoration: none; text-shadow: 0 1px 1px #fff; background-image: -moz-linear-gradient(top, #fcf0b5, #fbe26f); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #fcf0b5),color-stop(1, #fbe26f));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fcf0b5', EndColorStr='#fbe26f')"; }
 
 .ui-btn-hover-e a.ui-link-inherit { color: #333; }
-.ui-btn-down-e { border: 1px solid #F7C942; background: #fceda7; font-weight: bold; color: #111; text-shadow: text-shadow: 0 1px 1px #ffffff; background-image: -moz-linear-gradient(top, #fadb4e, #fceda7); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #fadb4e),color-stop(1, #fceda7));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fadb4e', EndColorStr='#fceda7')"; }
+.ui-btn-down-e { border: 1px solid #F7C942; background: #fceda7; font-weight: bold; color: #111; text-shadow: 0 1px 1px #ffffff; background-image: -moz-linear-gradient(top, #fadb4e, #fceda7); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #fadb4e),color-stop(1, #fceda7));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fadb4e', EndColorStr='#fceda7')"; }
 .ui-btn-down-e a.ui-link-inherit { color: #333; }
 .ui-btn-up-e, .ui-btn-hover-e, .ui-btn-down-e { font-family: Helvetica, Arial, sans-serif; }
 
@@ -147,7 +147,7 @@ a.ui-link-inherit { text-decoration: none !important; }
 
 /* Interaction Cues
 ----------------------------------*/
-.ui-state-disabled { cursor: default !important; opacity: .3; }
+.ui-disabled { cursor: default !important; opacity: .3; }
 
 /* Icons
 ----------------------------------*/
@@ -161,7 +161,7 @@ a.ui-link-inherit { text-decoration: none !important; }
 .ui-icon-black-disc { background-color: #fff; background-color: rgba(255,255,255,.3);  -moz-border-radius: 9px; -webkit-border-radius: 9px; border-radius: 9px; }
 
 /* retina */
-@media  screen and (-webkit-min-device-pixel-ratio: 2), screen and (max--moz-device-pixel-ratio: 2) {
+@media screen and (-webkit-min-device-pixel-ratio: 2), screen and (max--moz-device-pixel-ratio: 2) {
 	.ui-icon { background-image: url(images/icons-36-white.png); background-size: 558px 18px; }
 	.ui-icon-black { background-image: url(images/icons-36-black.png); }
 }
@@ -194,17 +194,17 @@ a.ui-link-inherit { text-decoration: none !important; }
 .ui-icon-checkbox-off,
 .ui-icon-checkbox-on,
 .ui-icon-radio-off,
-.ui-icon-radio-on { background-color: transparent; -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0; }
+.ui-icon-radio-on { background-color: transparent; -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0; background-size: 20px 20px; }
 
-.ui-icon-checkbox-off { background-image: url(images/form-check-off.png); }
-.ui-icon-checkbox-on { background-image: url(images/form-check-on.png); }
-.ui-icon-radio-off { background-image: url(images/form-radio-off.png); }
-.ui-icon-radio-on { background-image: url(images/form-radio-on.png); }
+.ui-icon-checkbox-off { background-image: url(images/form-check-off.png);  }
+.ui-icon-checkbox-on { background-image: url(images/form-check-on.png);  }
+.ui-icon-radio-off { background-image: url(images/form-radio-off.png);}
+.ui-icon-radio-on { background-image: url(images/form-radio-on.png);  }
 
-.ui-icon-search { background-image: url(images/icon-search-black.png); }
+.ui-icon-search { background-image: url(images/icon-search-black.png); background-size: 16px 16px; }
 
 /* loading icon */
-.ui-icon-loading { background-image: url(images/ajax-loader.png); width: 40px; height: 40px;  -moz-border-radius: 20px; -webkit-border-radius: 20px; border-radius: 20px; }
+.ui-icon-loading { background-image: url(images/ajax-loader.png); width: 40px; height: 40px;  -moz-border-radius: 20px; -webkit-border-radius: 20px; border-radius: 20px; background-size: 35px 35px; }
 
 /* btn Corner radius */
 .ui-btn-corner-tl { -moz-border-radius-topleft: 1em; -webkit-border-top-left-radius: 1em; border-top-left-radius: 1em; }
@@ -243,7 +243,8 @@ a.ui-link-inherit { text-decoration: none !important; }
 
 /* unset box shadow in browsers that don't do it right */
 .ui-mobile-nosupport-boxshadow * { -moz-box-shadow: none !important; -webkit-box-shadow: none !important; box-shadow: none !important; }
-.ui-mobile-nosupport-boxshadow .ui-focus { outline-width: 2px; }/*
+.ui-mobile-nosupport-boxshadow .ui-focus { outline-width: 2px; }
+/*
 * jQuery Mobile Framework
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
@@ -255,36 +256,40 @@ a.ui-link-inherit { text-decoration: none !important; }
 .ui-mobile a img, .ui-mobile fieldset { border: 0; }
 
 /* responsive page widths */
-.ui-mobile body {  margin: 0; overflow-x: hidden; -webkit-backface-visibility:hidden; -webkit-text-size-adjust: none; min-height: 100%; }
+.ui-mobile-viewport {  margin: 0; overflow-x: hidden; -webkit-text-size-adjust: none; -ms-text-size-adjust:none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
 
 /*orientations from js are available */
 .portrait {  }
 .landscape {  }
 
 /* "page" containers - full-screen views, one should always be in view post-pageload */
-.ui-page { top: 0; left: 0; width: 100%; min-height: 100%; position: absolute; display: none; -webkit-backface-visibility:hidden; border: 0; } 
-.ui-page-active { display: block; overflow: visible; }
+.ui-page { top: 0; left: 0; width: 100%; min-height: 100%; position: absolute; display: none; border: 0; } 
+.ui-page-active { display: block; overflow: visible; min-height: 100%; }
 
 /* loading screen */
-.ui-loading, .ui-loading body { overflow: hidden !important; }
+.ui-loading .ui-mobile-viewport { overflow: hidden !important; }
 .ui-loading .ui-loader { display: block; }
 .ui-loading .ui-page { overflow: hidden;  }
 .ui-loader { display: none; position: absolute; opacity: .85; z-index: 10; top: 75px; left: 50%; width: 200px; margin-left: -130px; padding: 20px 30px; }
 .ui-loader h1 { font-size: 15px; text-align: center; }
 .ui-loader .ui-icon { position: static; display: block; opacity: .9; margin: 0 auto; width: 35px; height: 35px; background-color: transparent; }
 
+/*fouc*/
+.ui-mobile-rendering > * { visibility: hidden; }
+
 /*headers, content panels*/
 .ui-bar, .ui-body { position: relative; padding: .4em 15px;  overflow: hidden; display: block;  clear:both;  }
 .ui-bar { font-size: 16px; margin: 0; }
 .ui-bar h1, .ui-bar h2, .ui-bar h3, .ui-bar h4, .ui-bar h5, .ui-bar h6 { margin: 0; padding: 0; font-size: 16px; display: inline-block; }
 
+.ui-header, .ui-footer { display: block; }
 .ui-page .ui-header, .ui-page .ui-footer { position: relative; }
 .ui-header .ui-btn-left { position: absolute; left: 10px; top: .4em;  }
 .ui-header .ui-title, .ui-footer .ui-title { text-align: center; font-size: 16px; display: block; margin: .6em 90px .8em;  padding: 0;  text-overflow: ellipsis; overflow: hidden; white-space: nowrap; outline: 0 !important; }
 .ui-header .ui-btn-right { position: absolute; right: 10px; top: .4em; }
 
 /*content area*/
-.ui-content { border-width: 0; overflow: visible; padding: 15px; }
+.ui-content { border-width: 0; overflow: visible; overflow-x: hidden; padding: 15px; }
 .ui-page-fullscreen .ui-content { padding:0; }
 
 /* icons sizing */
@@ -302,9 +307,10 @@ a.ui-link-inherit { text-decoration: none !important; }
 * Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
 */
 .spin  {
--webkit-animation-name: spin;
--webkit-animation-duration: 1s;
--webkit-animation-iteration-count:  infinite;
+	-webkit-transform: rotate(360deg);
+	-webkit-animation-name: spin;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-iteration-count:  infinite;
 }
 @-webkit-keyframes spin {
 	from {-webkit-transform: rotate(0deg);}
@@ -320,22 +326,27 @@ Built by David Kaneda and maintained by Jonathan Stark.
 }
 
 .slide.in {
+	-webkit-transform: translateX(0);
 	-webkit-animation-name: slideinfromright;
 }
 
 .slide.out {
+	-webkit-transform: translateX(-100%);
 	-webkit-animation-name: slideouttoleft;
 }
 
 .slide.in.reverse {
+	-webkit-transform: translateX(0);
 	-webkit-animation-name: slideinfromleft;
 }
 
 .slide.out.reverse {
+	-webkit-transform: translateX(100%);
 	-webkit-animation-name: slideouttoright;
 }
 
 .slideup.in {
+	-webkit-transform: translateY(0);
 	-webkit-animation-name: slideinfrombottom;
 	z-index: 10;
 }
@@ -346,6 +357,7 @@ Built by David Kaneda and maintained by Jonathan Stark.
 }
 
 .slideup.out.reverse {
+	-webkit-transform: translateY(100%);
 	z-index: 10;
 	-webkit-animation-name: slideouttobottom;
 }
@@ -355,6 +367,7 @@ Built by David Kaneda and maintained by Jonathan Stark.
 	-webkit-animation-name: dontmove;
 }
 .slidedown.in {
+	-webkit-transform: translateY(0);
 	-webkit-animation-name: slideinfromtop;
 	z-index: 10;
 }
@@ -365,6 +378,7 @@ Built by David Kaneda and maintained by Jonathan Stark.
 }
 
 .slidedown.out.reverse {
+	-webkit-transform: translateY(-100%);
 	z-index: 10;
 	-webkit-animation-name: slideouttotop;
 }
@@ -425,6 +439,7 @@ Built by David Kaneda and maintained by Jonathan Stark.
 }
 
 .fade.in {
+	opacity: 1;
 	z-index: 10;
 	-webkit-animation-name: fadein;
 }
@@ -432,25 +447,49 @@ Built by David Kaneda and maintained by Jonathan Stark.
 	z-index: 0;
 }
 
+/* The properties in this body rule are only necessary for the 'flip' transition.
+ * We need specify the perspective to create a projection matrix. This will add
+ * some depth as the element flips. The depth number represents the distance of
+ * the viewer from the z-plane. According to the CSS3 spec, 1000 is a moderate
+ * value.
+ */
+.ui-mobile-viewport-transitioning {
+	-webkit-perspective: 1000;
+	position: absolute;
+}
+
+.ui-mobile-viewport-transitioning,
+.ui-mobile-viewport-transitioning .ui-page {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
 .flip {
 	-webkit-animation-duration: .65s;
+	-webkit-backface-visibility:hidden;
+	-webkit-transform:translateX(0); /* Needed to work around an iOS 3.1 bug that causes listview thumbs to disappear when -webkit-visibility:hidden is used. */
 }
 
 .flip.in {
+	-webkit-transform: rotateY(0) scale(1);
 	-webkit-animation-name: flipinfromleft;
 }
 
 .flip.out {
+	-webkit-transform: rotateY(-180deg) scale(.8);
 	-webkit-animation-name: flipouttoleft;
 }
 
 /* Shake it all about */
 
 .flip.in.reverse {
+	-webkit-transform: rotateY(0) scale(1);
 	-webkit-animation-name: flipinfromright;
 }
 
 .flip.out.reverse {
+	-webkit-transform: rotateY(180deg) scale(.8);
 	-webkit-animation-name: flipouttoright;
 }
 
@@ -487,11 +526,15 @@ Built by David Kaneda and maintained by Jonathan Stark.
 }
 
 .pop.in {
+	-webkit-transform: scale(1);
+    opacity: 1;
 	-webkit-animation-name: popin;
 	z-index: 10;
 }
 
 .pop.out.reverse {
+	-webkit-transform: scale(.2);
+	opacity: 0;
 	-webkit-animation-name: popout;
 	z-index: 10;
 }
@@ -526,22 +569,36 @@ Built by David Kaneda and maintained by Jonathan Stark.
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
 */
+
 /* content configurations. */
-.ui-grid-a, .ui-grid-b, .ui-grid-c { overflow: hidden; }
-.ui-block-a, .ui-block-b, .ui-block-c,  .ui-block-d { margin: 0; padding: 0; border: 0; float: left; }
+.ui-grid-a, .ui-grid-b, .ui-grid-c, .ui-grid-d { overflow: hidden; }
+.ui-block-a, .ui-block-b, .ui-block-c, .ui-block-d, .ui-block-e { margin: 0; padding: 0; border: 0; float: left; }
+
 /* grid a: 50/50 */
 .ui-grid-a .ui-block-a, .ui-grid-a .ui-block-b { width: 50%; }
 .ui-grid-a .ui-block-a { clear: left; }
+
 /* grid b: 33/33/33 */
 .ui-grid-b .ui-block-a, .ui-grid-b .ui-block-b, .ui-grid-b .ui-block-c { width: 33.333%; }
-.ui-grid-b .ui-block-a { clear: left; }/*
+.ui-grid-b .ui-block-a { clear: left; }
+
+/* grid c: 25/25/25/25 */
+.ui-grid-c .ui-block-a, .ui-grid-c .ui-block-b, .ui-grid-c .ui-block-c, .ui-grid-c .ui-block-d { width: 25%; }
+.ui-grid-c .ui-block-a { clear: left; }
+
+/* grid d: 20/20/20/20/20 */
+.ui-grid-d .ui-block-a, .ui-grid-d .ui-block-b, .ui-grid-d .ui-block-c, .ui-grid-d .ui-block-d, .ui-grid-d .ui-block-e { width: 20%; }
+.ui-grid-d .ui-block-a { clear: left; }/*
 * jQuery Mobile Framework
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
 */
 /* fixed page header & footer configuration */
 .ui-header, .ui-footer, .ui-page-fullscreen .ui-header, .ui-page-fullscreen .ui-footer  { position: absolute;  overflow: hidden; width: 100%; border-left-width: 0; border-right-width: 0; }
-.ui-header-fixed, .ui-footer-fixed { z-index: 1000; }
+.ui-header-fixed, .ui-footer-fixed {
+	z-index: 1000;
+	-webkit-transform: translateZ(0); /* Force header/footer rendering to go through the same rendering pipeline as native page scrolling. */
+}
 .ui-footer-duplicate, .ui-page-fullscreen .ui-fixed-inline { display: none; }
 .ui-page-fullscreen .ui-header, .ui-page-fullscreen .ui-footer { opacity: .9; }
 /*
@@ -579,9 +636,8 @@ Built by David Kaneda and maintained by Jonathan Stark.
 .ui-header .ui-btn, .ui-footer .ui-btn, .ui-bar .ui-btn { display: inline-block; font-size: 13px; margin: 0; }
 .ui-btn-inline { display: inline-block; }
 .ui-btn-inner { padding: .6em 25px; display: block; height: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; }
-.ui-btn-text {  }
 .ui-header .ui-btn-inner, .ui-footer .ui-btn-inner, .ui-bar .ui-btn-inner { padding: .4em 8px .5em; }
-.ui-btn-icon-notext { display: block; width: 20px; height: 20px; padding: 1px 0px 1px 2px; text-indent: -9999px; }
+.ui-btn-icon-notext { display: inline-block; width: 20px; height: 20px; padding: 1px 0px 1px 2px; text-indent: -9999px; }
 .ui-btn-icon-notext .ui-btn-inner { padding: 0; }
 .ui-btn-icon-notext .ui-btn-text { position: absolute; left: -999px; }
 .ui-btn-icon-left .ui-btn-inner { padding-left: 33px; }
@@ -590,10 +646,10 @@ Built by David Kaneda and maintained by Jonathan Stark.
 .ui-bar .ui-btn-icon-left .ui-btn-inner { padding-left: 27px; }
 .ui-btn-icon-right .ui-btn-inner { padding-right: 33px; }
 .ui-header .ui-btn-icon-right .ui-btn-inner,
-.ui-footer .ui-btn-icon-right .ui-btn-inner
+.ui-footer .ui-btn-icon-right .ui-btn-inner,
 .ui-bar .ui-btn-icon-right .ui-btn-inner { padding-right: 27px; }
 .ui-btn-icon-top .ui-btn-inner { padding-top: 33px; }
-.ui-header .ui-btn-icon-top .ui-btn-inner
+.ui-header .ui-btn-icon-top .ui-btn-inner,
 .ui-footer .ui-btn-icon-top .ui-btn-inner,
 .ui-bar .ui-btn-icon-top .ui-btn-inner { padding-top: 27px; }
 .ui-btn-icon-bottom .ui-btn-inner { padding-bottom: 33px; }
@@ -634,10 +690,13 @@ Built by David Kaneda and maintained by Jonathan Stark.
 .ui-collapsible-heading a .ui-btn-inner { padding-left: 40px; }
 .ui-collapsible-heading a span.ui-btn { position: absolute; left: 6px; top: 50%; margin: -12px 0 0 0; width: 20px; height: 20px; padding: 1px 0px 1px 2px; text-indent: -9999px; }
 .ui-collapsible-heading a span.ui-btn .ui-btn-inner { padding: 0; }
-.ui-collapsible-heading a span.ui-btn .ui-icon { left: 2px; }
+.ui-collapsible-heading a span.ui-btn .ui-icon { left: 0; margin-top: -10px; }
 .ui-collapsible-heading-status { position:absolute; left:-99999px; }
 .ui-collapsible-content {  display: block; padding: 10px 0 10px 8px; }
-.ui-collapsible-content-collapsed { display: none; }/*
+.ui-collapsible-content-collapsed { display: none; }
+
+.ui-collapsible-set { margin: .5em 0; }
+.ui-collapsible-set .ui-collapsible-contain { margin: -1px 0 0; }/*
 * jQuery Mobile Framework
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
@@ -648,13 +707,13 @@ Built by David Kaneda and maintained by Jonathan Stark.
 .ui-controlgroup-controls { display: block; width: 95%;}
 .ui-controlgroup li { list-style: none; }
 .ui-controlgroup-vertical .ui-btn,
-.ui-controlgroup-vertical div.ui-checkbox, .ui-controlgroup-vertical div.ui-radio { margin: 0; border-bottom-width: 0;  }
+.ui-controlgroup-vertical .ui-checkbox, .ui-controlgroup-vertical .ui-radio { margin: 0; border-bottom-width: 0;  }
 .ui-controlgroup-vertical .ui-controlgroup-last { border-bottom-width: 1px; }
 .ui-controlgroup-horizontal { padding: 0; }
 .ui-controlgroup-horizontal .ui-btn,
-.ui-controlgroup-horizontal div.ui-checkbox, .ui-controlgroup-horizontal div.ui-radio { margin: 0 -5px 0 0; display: inline-block;  }
-.ui-controlgroup-horizontal div.ui-checkbox .ui-btn, .ui-controlgroup-horizontal div.ui-radio .ui-btn,
-.ui-controlgroup-horizontal div.ui-checkbox:last-child, .ui-controlgroup-horizontal div.ui-radio:last-child { margin-right: 0; }
+.ui-controlgroup-horizontal .ui-checkbox, .ui-controlgroup-horizontal .ui-radio { margin: 0 -5px 0 0; display: inline-block;  }
+.ui-controlgroup-horizontal .ui-checkbox .ui-btn, .ui-controlgroup-horizontal .ui-radio .ui-btn,
+.ui-controlgroup-horizontal .ui-checkbox:last-child, .ui-controlgroup-horizontal .ui-radio:last-child { margin-right: 0; }
 .ui-controlgroup-horizontal .ui-controlgroup-last { margin-right: 0; }
 .ui-controlgroup .ui-checkbox label, .ui-controlgroup .ui-radio label { font-size: 16px;  }
 /* conflicts with listview..
@@ -662,10 +721,8 @@ Built by David Kaneda and maintained by Jonathan Stark.
 .ui-controlgroup .ui-btn-icon-notext .ui-btn-inner {  padding: 5px 6px 5px 5px; }
 */
 
-@media screen and (min-width: 480px){ 
-	.ui-controlgroup-label { vertical-align: top; display: inline-block;  width: 20%;  margin: 0 2% 0 0;  }
-	.ui-controlgroup-controls { width: 60%; display: inline-block; } 
-}/*
+.min-width-480px .ui-controlgroup-label { vertical-align: top; display: inline-block;  width: 20%;  margin: 0 2% 0 0;  }
+.min-width-480px .ui-controlgroup-controls { width: 60%; display: inline-block; } /*
 * jQuery Mobile Framework
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
@@ -677,7 +734,7 @@ Built by David Kaneda and maintained by Jonathan Stark.
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
 */
-div.ui-checkbox, div.ui-radio { position:relative;  margin: .2em 0 .5em;  }
+.ui-checkbox, .ui-radio { position:relative;  margin: .2em 0 .5em;  }
 .ui-checkbox .ui-btn, .ui-radio .ui-btn { margin: 0; text-align: left; }
 .ui-checkbox .ui-btn-icon-left .ui-btn-inner,.ui-radio .ui-btn-icon-left .ui-btn-inner { padding-left: 45px; }
 .ui-checkbox .ui-btn-icon-right .ui-btn-inner, .ui-radio .ui-btn-icon-right .ui-btn-inner { padding-right: 45px; }
@@ -718,10 +775,8 @@ label.ui-select { font-size: 16px; line-height: 1.4;  font-weight: normal; margi
 /*used in listbox - to be removed/replaced with page-style hiding*/
 .ui-helper-hidden,.ui-mobile .ui-content-hidden { display: none; }
 
-@media screen and (min-width: 480px){ 
-	label.ui-select { display: inline-block;  width: 20%;  margin: 0 2% 0 0; }
-	.ui-select { width: 60%; display: inline-block; } 
-}/*
+.min-width-480px label.ui-select { display: inline-block;  width: 20%;  margin: 0 2% 0 0; }
+.min-width-480px .ui-select { width: 60%; display: inline-block; } /*
 * jQuery Mobile Framework
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
@@ -735,18 +790,19 @@ textarea.ui-input-text { height: 50px; -webkit-transition: height 200ms linear; 
 .ui-input-search .ui-input-clear-hidden { display: none; }
 
 /* orientation adjustments - incomplete!*/
-@media screen and (min-width: 480px){ 
-	label.ui-input-text  { vertical-align: top;   }
-	label.ui-input-text, label.ui-select { display: inline-block;  width: 20%;  margin: 0 2% 0 0; }
-	input.ui-input-text, textarea.ui-input-text, .ui-input-search { width: 60%; display: inline-block; } 
-	.ui-input-search { width: 50%; }
-}/*
+.min-width-480px label.ui-input-text  { vertical-align: top;   }
+.min-width-480px label.ui-input-text { display: inline-block;  width: 20%;  margin: 0 2% 0 0; }
+.min-width-480px input.ui-input-text, 
+.min-width-480px textarea.ui-input-text, 
+.min-width-480px .ui-input-search { width: 60%; display: inline-block; } 
+.min-width-480px .ui-input-search { width: 50%; }/*
 * jQuery Mobile Framework
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
 */
-.ui-listview { margin: 0; counter-reset: listnumbering; margin: -15px; }
-.ui-listview-inset { margin: 1em 0;  }
+.ui-listview { margin: 0; counter-reset: listnumbering; }
+.ui-content .ui-listview { margin: -15px; }
+.ui-content .ui-listview-inset { margin: 1em 0;  }
 .ui-listview, .ui-li { list-style:none; padding:0; zoom: 1; }
 .ui-li { display: block; margin:0; position: relative; overflow: hidden; text-align: left; border-width: 0; border-top-width: 1px; }
 .ui-li .ui-btn-text { text-overflow: ellipsis; overflow: hidden; white-space: nowrap;  }
@@ -764,7 +820,8 @@ ol.ui-listview .ui-li-jsnumbering:before { content: "" !important; } /* to avoid
 .ui-li-icon { max-height: 40px; max-width: 40px; left: 10px; top: .9em; }
 .ui-li-thumb, .ui-li-icon, .ui-li-content { float: left; margin-right: 10px; }
 
-.ui-li-aside { float: right; width: 25%; text-align: right; margin: .3em 0; }
+.ui-li-aside { float: right; width: 50%; text-align: right; margin: .3em 0; }
+.min-width-480px .ui-li-aside { width: 45%; }
 .ui-li-has-alt .ui-btn-inner { padding-right: 95px; }
 .ui-li-count { position: absolute; font-size: 11px; font-weight: bold; padding: .2em .5em; top: 50%; margin-top: -.9em; right: 38px; }
 .ui-li-divider .ui-li-count { right: 10px; }
@@ -775,21 +832,24 @@ ol.ui-listview .ui-li-jsnumbering:before { content: "" !important; } /* to avoid
 .ui-li-link-alt .ui-btn .ui-icon { right: 50%; margin-right: -9px;  }
 
 .ui-listview-filter { border-width: 0; overflow: hidden; margin: -15px -15px 15px -15px }
-.ui-listview-filter .ui-input-search { margin: 5px; width: auto; display: block; }/*
+.ui-listview-filter .ui-input-search { margin: 5px; width: auto; display: block; }
+
+/* Odd iPad positioning issue. */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    .ui-li .ui-btn-text { overflow:  visible; }
+}/*
 * jQuery Mobile Framework
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
 */
 label.ui-slider { display: block; }
-input.ui-slider-input { display: inline-block; width: 40px; }
+input.ui-slider-input, .min-width-480px input.ui-slider-input { display: inline-block; width: 40px; }
 select.ui-slider-switch { display: none; }
-div.ui-slider { position: relative; display: inline-block; overflow: visible; height: 15px; padding: 0; margin: 0 2% 0 15px; top: 4px; width: 66%; }
+div.ui-slider { position: relative; display: inline-block; overflow: visible; height: 15px; padding: 0; margin: 0 2% 0 20px; top: 4px; width: 66%; }
 a.ui-slider-handle { position: absolute; z-index: 10;  top: 50%; width: 28px; height: 28px; margin-top: -15px; margin-left: -15px; }
 a.ui-slider-handle .ui-btn-inner { padding-left: 0; padding-right: 0; }
-@media screen and (min-width: 480px){ 
-	label.ui-slider { display: inline-block;  width: 20%;  margin: 0 2% 0 0; }
-	div.ui-slider { width: 45%; }
-}	
+.min-width-480px label.ui-slider { display: inline-block;  width: 20%;  margin: 0 2% 0 0; }
+.min-width-480px div.ui-slider { width: 45%; }
 
 div.ui-slider-switch { height: 32px;  overflow: hidden; margin-left: 0; }
 div.ui-slider-inneroffset { margin-left: 50%; position: absolute; top: 1px; height: 100%; width: 50%; }
