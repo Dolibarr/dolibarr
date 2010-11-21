@@ -434,17 +434,18 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
 }
 
 /**
- *	\brief      Output date in a string format according to outputlangs (or langs if not defined).
- * 				Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset.
- *	\param	    time        	GM Timestamps date (or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS')
- *	\param	    format      	Output date format
+ *	Output date in a string format according to outputlangs (or langs if not defined).
+ * 	Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset.
+ *	@param	    time        	GM Timestamps date (or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS')
+ *	@param	    format      	Output date format
  *								"%d %b %Y",
  *								"%d/%m/%Y %H:%M",
  *								"%d/%m/%Y %H:%M:%S",
  *								"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
- * 	\param		to_gmt			false=output string is for local server TZ usage, true=output string is for GMT usage
- *	\param		outputlangs		Object lang that contains language for text translation.
- * 	\return     string      	Formated date or '' if time is null
+ * 	@param		to_gmt			false=output string is for local server TZ usage, true=output string is for GMT usage
+ *	@param		outputlangs		Object lang that contains language for text translation.
+ * 	@return     string      	Formated date or '' if time is null
+ *  @see        dol_mktime, dol_stringtotime
  */
 function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodetooutput=false)
 {
@@ -489,7 +490,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 		$format=str_replace('%A','__A__',$format);
 	}
 
-	// Analyse de la date (deprecated)   Ex: 19700101, 19700101010000
+	// Analyze date (deprecated)   Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$time,$reg)
 	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i',$time,$reg))
 	{
@@ -549,17 +550,18 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 
 
 /**
- *	\brief  	Convert a GM string date into a GM Timestamps date
- *	\param		string			Date in a string
- *				YYYYMMDD
- *				YYYYMMDDHHMMSS
- *				DD/MM/YY or DD/MM/YYYY (this format should not be used anymore)
- *				DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
- *				19700101020000 -> 7200
- *  \return		date			Date
- * 	\see		dol_date, dol_mktime
+ *	Convert a string date into a GM Timestamps date
+ *	@param		string			Date in a string
+ *				                YYYYMMDD
+ *	                 			YYYYMMDDHHMMSS
+ *		                		DD/MM/YY or DD/MM/YYYY (this format should not be used anymore)
+ *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
+ *		                		19700101020000 -> 7200
+ *  @param      gm              1=Input date is GM date, 0=Input date is local date
+ *  @return		date			Date
+ *  @see        dol_print_date, dol_mktime
  */
-function dol_stringtotime($string)
+function dol_stringtotime($string, $gm=1)
 {
 	if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$string,$reg))
 	{
@@ -580,7 +582,7 @@ function dol_stringtotime($string)
 
 	$string=preg_replace('/([^0-9])/i','',$string);
 	$tmp=$string.'000000';
-	$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
+	$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),$gm);
 	return $date;
 }
 
@@ -651,7 +653,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  *	@param		gm				1=Input informations are GMT values, otherwise local to server TZ
  *	@param		check			0=No check on parameters (Can use day 32, etc...)
  *	@return		timestamp		Date as a timestamp, '' if error
- * 	@see 		dol_date, dol_stringtotime
+ * 	@see 		dol_print_date, dol_stringtotime
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 {
@@ -705,12 +707,12 @@ function dolibarr_date($fmt, $timestamp, $gm=false)
 }
 
 /**
- *	\brief  	Returns formated date
- *	\param		fmt				Format (Exemple: 'Y-m-d H:i:s')
- *	\param		timestamp		Date. Example: If timestamp=0 and gm=1, return 01/01/1970 00:00:00
- *	\param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
- *	\return		string			Formated date
- * 	\see		dol_mktime, dol_stringtotime
+ *	Returns formated date
+ *	@param		fmt				Format (Exemple: 'Y-m-d H:i:s')
+ *	@param		timestamp		Date. Example: If timestamp=0 and gm=1, return 01/01/1970 00:00:00
+ *	@param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
+ *	@return		string			Formated date
+ *  @deprecated Replaced by dol_print_date
  */
 function dol_date($fmt, $timestamp, $gm=false)
 {

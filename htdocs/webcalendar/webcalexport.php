@@ -95,7 +95,7 @@ $filters=array();
 if (! empty($_GET["year"])) $filters['year']=$_GET["year"];
 
 // Build file
-$result=$webcal->build_calfile($format,$type,0,$filename,$filters);
+$result=$webcal->wbuild_calfile($format,$type,0,$filename,$filters);
 if ($result >= 0)
 {
 	$attachment = false;

@@ -466,7 +466,7 @@ if (GETPOST('action') == 'create')
 	print '<input type="hidden" name="action" value="add_action">';
 	if (GETPOST("backtopage")) print '<input type="hidden" name="backtopage" value="'.(GETPOST("backtopage") != 1 ? GETPOST("backtopage") : $_SERVER["HTTP_REFERER"]).'">';
 
-	if ($_GET["actioncode"] == 'AC_RDV') print_fiche_titre ($langs->trans("AddActionRendezVous"));
+	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre ($langs->trans("AddActionRendezVous"));
 	else print_fiche_titre ($langs->trans("AddAnAction"));
 
 	if ($mesg) print $mesg.'<br>';
@@ -495,16 +495,20 @@ if (GETPOST('action') == 'create')
     print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
 
 	// Date start
+	$datep=$actioncomm->datep;
+	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
 	print '<tr><td width="30%" nowrap="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
-	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
-	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
-	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+	if (GETPOST("afaire") == 1) $html->select_date($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
+	else if (GETPOST("afaire") == 2) $html->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
+	else $html->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 	print '</td></tr>';
 	// Date end
+	$datef=$actioncomm->datef;
+    if (GETPOST('datef','int',1)) $datef=dol_stringtotime(GETPOST('datef','int',1),0);
 	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-	if (GETPOST("afaire") == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-	else if (GETPOST("afaire") == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-	else $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	if (GETPOST("afaire") == 1) $html->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	else if (GETPOST("afaire") == 2) $html->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	else $html->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 	print '</td></tr>';
 
 	// Status

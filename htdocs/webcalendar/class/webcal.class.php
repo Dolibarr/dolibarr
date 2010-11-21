@@ -183,13 +183,13 @@ class Webcal {
 			\param		filters			Array of filters
     		\return     int     		<0 if error, nb of events in new file if ok
     */
-	function build_calfile($format,$type,$cachedelay,$filename,$filters)
+	function wbuild_calfile($format,$type,$cachedelay,$filename,$filters)
 	{
 		global $conf,$langs;
 
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
 
-		dol_syslog("webcal::build_calfile Build cal file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
+		dol_syslog("webcal::wbuild_calfile Build cal file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
 
 		// Check parameters
 		if (empty($format)) return -1;
@@ -223,7 +223,7 @@ class Webcal {
 			$sql.= " FROM webcal_entry";
 			$sql.= " ORDER BY cal_date";
 
-			dol_syslog("Webcal::build_vcal select events sql=".$sql);
+			dol_syslog("Webcal::wbuild_vcal select events sql=".$sql);
 			$resql=$this->localdb->query($sql);
 			if ($resql)
 			{
@@ -273,7 +273,7 @@ class Webcal {
 			}
 			else
 			{
-				dol_syslog("webcal::build_calfile ".$this->localdb->lasterror());
+				dol_syslog("webcal::wbuild_calfile ".$this->localdb->lasterror());
 				return -1;
 			}
 

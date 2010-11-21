@@ -742,12 +742,14 @@ class ActionComm extends CommonObject
 					$event['priority']=$obj->priority;
                     $event['fulldayevent']=$obj->fulldayevent;
 					$event['location']=$langs->convToOutputCharset($obj->location);
-					$event['transparency']='TRANSPARENT';		// TRANSPARENT or OPAQUE
+					$event['transparency']='TRANSPARENT';		// OPAQUE (busy) or TRANSPARENT (not busy)
 					$event['category']=$langs->convToOutputCharset($obj->libelle);	// libelle type action
 					$url=$dolibarr_main_url_root;
 					if (! preg_match('/\/$/',$url)) $url.='/';
 					$url.='comm/action/fiche.php?id='.$obj->id;
 					$event['url']=$url;
+                    $event['created']=$this->db->jdate($obj->datec);
+                    $event['modified']=$this->db->jdate($obj->datem);
 
 					if ($qualified && $datestart)
 					{

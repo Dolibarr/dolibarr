@@ -96,14 +96,15 @@ $filename=$shortfilename;
 // Complete long filename
 foreach ($filters as $key => $value)
 {
-	if ($key == 'year')     $filename.='-year'.$value;
-    if ($key == 'id')       $filename.='-id'.$value;
-    if ($key == 'idfrom')   $filename.='-idfrom'.$value;
-    if ($key == 'idto')     $filename.='-idto'.$value;
-    if ($key == 'login')	$filename.='-login'.$value;
-	if ($key == 'logina')	$filename.='-logina'.$value;	// Author
-	if ($key == 'logind')	$filename.='-logind'.$value;	// Affected to
-	if ($key == 'logint')	$filename.='-logint'.$value;	// Done by
+    //if ($key == 'notolderthan')    $filename.='-notolderthan'.$value; This filter key is already added before and does not need to be in filename
+	if ($key == 'year')            $filename.='-year'.$value;
+    if ($key == 'id')              $filename.='-id'.$value;
+    if ($key == 'idfrom')          $filename.='-idfrom'.$value;
+    if ($key == 'idto')            $filename.='-idto'.$value;
+    if ($key == 'login')	       $filename.='-login'.$value;
+	if ($key == 'logina')	       $filename.='-logina'.$value;	// Author
+	if ($key == 'logind')	       $filename.='-logind'.$value;	// Affected to
+	if ($key == 'logint')	       $filename.='-logint'.$value;	// Done by
 }
 // Add extension
 if ($format == 'vcal') { $shortfilename.='.vcs'; $filename.='.vcs'; }

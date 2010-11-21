@@ -24,17 +24,16 @@
  */
 
 /**
- *	\brief		Build a file from an array of events
- *              All input params and data must be encoded in $conf->charset_output
- *	\param		format				'vcal' or 'ical'
- *	\param		title				Title of export
- *	\param		desc				Description of export
- *	\param		events_array		Array of events ('eid','startdate','duration','enddate','title','summary','category','email','url','desc','author')
- *	\param		outputfile			Output file
- *	\param		filter				Filter
- *	\return		int					<0 if ko, Nb of events in file if ok
+ *	Build a file from an array of events
+ *  All input params and data must be encoded in $conf->charset_output
+ *	@param		format				'vcal' or 'ical'
+ *	@param		title				Title of export
+ *	@param		desc				Description of export
+ *	@param		events_array		Array of events ('eid','startdate','duration','enddate','title','summary','category','email','url','desc','author')
+ *	@param		outputfile			Output file
+ *	@return		int					<0 if ko, Nb of events in file if ok
  */
-function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$filter='')
+function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile)
 {
 	global $conf,$langs;
 
@@ -65,20 +64,13 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 		foreach ($events_array as $date => $event)
 		{
 			$eventqualified=true;
-			if ($filter)
-			{
-				// \TODO Add a filter
-
-				$eventqualified=false;
-			}
-
 			if ($eventqualified)
 			{
 				// See http://fr.wikipedia.org/wiki/ICalendar for format
 				// See http://www.ietf.org/rfc/rfc2445.txt for RFC
 				$uid 		  = $event['uid'];
 				$type         = $event['type'];
-				$startdate	  = $event['startdate'];
+                $startdate    = $event['startdate'];
 				$duration	  = $event['duration'];
 				$enddate	  = $event['enddate'];
 				$summary  	  = $event['summary'];
@@ -88,9 +80,11 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				$location     = $event['location'];
 				$email 		  = $event['email'];
 				$url		  = $event['url'];
-				$transparency = $event['transparency'];		// OPAQUE or TRANSPARENT
+				$transparency = $event['transparency'];		// OPAQUE (busy) or TRANSPARENT (not busy)
 				$description=preg_replace('/<br[\s\/]?>/i',"\n",$event['desc']);
  				$description=dol_string_nohtmltag($description,0);	// Remove html tags
+                $created      = $event['created'];
+ 				$modified     = $event['modified'];
 
 				// Uncomment for tests
 				//$summary="Resume";
@@ -104,6 +98,39 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				$location=format_cal($format,$location);
 
 				// Output the vCard/iCal VEVENT object
+				/*
+				Example from Google ical export for a 1 hour event:
+                BEGIN:VEVENT
+                DTSTART:20101103T120000Z
+                DTEND:20101103T130000Z
+                DTSTAMP:20101121T144902Z
+                UID:4eilllcsq8r1p87ncg7vc8dbpk@google.com
+                CREATED:20101121T144657Z
+                DESCRIPTION:
+                LAST-MODIFIED:20101121T144707Z
+                LOCATION:
+                SEQUENCE:0
+                STATUS:CONFIRMED
+                SUMMARY:Tache 1 heure
+                TRANSP:OPAQUE
+                END:VEVENT
+
+                Example from Google ical export for a 1 day event:
+                BEGIN:VEVENT
+                DTSTART;VALUE=DATE:20101102
+                DTEND;VALUE=DATE:20101103
+                DTSTAMP:20101121T144902Z
+                UID:d09t43kcf1qgapu9efsmmo1m6k@google.com
+                CREATED:20101121T144607Z
+                DESCRIPTION:
+                LAST-MODIFIED:20101121T144607Z
+                LOCATION:
+                SEQUENCE:0
+                STATUS:CONFIRMED
+                SUMMARY:Tache 1 jour
+                TRANSP:TRANSPARENT
+                END:VEVENT
+                */
 				if ($type == 'event')
 				{
 					fwrite($calfileh,"BEGIN:VEVENT\n");
@@ -118,9 +145,10 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 						fwrite($calfileh,"URL:".$url."\n");
 					};
 
-					fwrite($calfileh,"SUMMARY:".$encoding.$summary."\n");
+                    if ($created)  fwrite($calfileh,"CREATED:".dol_print_date($created,'dayhourxcard',true)."\n");
+                    if ($modified) fwrite($calfileh,"LAST-MODIFIED:".dol_print_date($modified,'dayhourxcard',true)."\n");
+                    fwrite($calfileh,"SUMMARY:".$encoding.$summary."\n");
 					fwrite($calfileh,"DESCRIPTION:".$encoding.$description."\n");
-					//fwrite($calfileh,'STATUS:CONFIRMED'."\n");
 					/*
 					// Status values for a "VEVENT"
 					statvalue  = "TENTATIVE"           ;Indicates event is
@@ -148,22 +176,35 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					//fwrite($calfileh,"CLASS:PUBLIC\n");				// PUBLIC, PRIVATE, CONFIDENTIAL
 
 					// Date must be GMT dates
+					// Current date
 					fwrite($calfileh,"DTSTAMP:".dol_print_date($now,'dayhourxcard',true)."\n");
-					$startdatef = dol_print_date($startdate,'dayhourxcard',true);
-					/* TODO Try to change value to have "fulldayevent stored"
-					if (! $fulldayevent) $startdatef = dol_print_date($startdate,'dayhourxcard',true);
+					// Start date
+                    $prefix='';
+                    $startdatef = dol_print_date($startdate,'dayhourxcard',true);
+                    if ($fulldayevent)
+					{
+                        $prefix=';VALUE=DATE';
+					    $startdatef = dol_print_date($startdate,'dayxcard',false);     // Local time
+					}
+					fwrite($calfileh,"DTSTART".$prefix.":".$startdatef."\n");
+                    // End date
+					if ($fulldayevent)
+					{
+    					if (empty($enddate)) $enddate=dol_time_plus_duree($startdate,1,'d');
+					}
 					else
 					{
-					    $startdatef = dol_print_date($startdate,'dayxcard',true);
+                        if (empty($enddate)) $enddate=$startdate+$duration;
 					}
-					*/
-					fwrite($calfileh,"DTSTART:".$startdatef."\n");
-					if (empty($enddate)) $enddate=$startdate+$duration;
-					//if (! $fulldayevent)
-					//{
-					    $enddatef = dol_print_date($enddate,'dayhourxcard',true);
-					    fwrite($calfileh,"DTEND:".$enddatef."\n");
-					//}
+                    $prefix='';
+					$enddatef = dol_print_date($enddate,'dayhourxcard',true);
+					if ($fulldayevent)
+					{
+                        $prefix=';VALUE=DATE';
+					    $enddatef = dol_print_date($enddate+1,'dayxcard',false);   // Local time
+					}
+                    fwrite($calfileh,"DTEND".$prefix.":".$enddatef."\n");
+					fwrite($calfileh,'STATUS:CONFIRMED'."\n");
 					if (! empty($transparency)) fwrite($calfileh,"TRANSP:".$transparency."\n");
 					if (! empty($category)) fwrite($calfileh,"CATEGORIES:".$encoding.$category."\n");
 					fwrite($calfileh,"END:VEVENT\n");
@@ -188,6 +229,8 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 						fwrite($calfileh,"URL:".$url."\n");
 					};
 
+                    if ($created)  fwrite($calfileh,"CREATED:".dol_print_date($created,'dayhourxcard',true)."\n");
+                    if ($modified) fwrite($calfileh,"LAST-MODIFIED:".dol_print_date($modified,'dayhourxcard',true)."\n");
 					fwrite($calfileh,"SUMMARY:".$encoding.$summary."\n");
 					fwrite($calfileh,"DESCRIPTION:".$encoding.$description."\n");
 					fwrite($calfileh,'STATUS:CONFIRMED'."\n");

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,14 +20,14 @@
 
 /**
  *  \file		htdocs/lib/date.lib.php
- *  \brief		Ensemble de fonctions de base de dolibarr sous forme d'include
+ *  \brief		Set of function to manipulate dates
  *  \version	$Id$
  */
 
 
 /**
  *  Add a delay to a date
- *  @param      time                Date timestamp ou au format YYYY-MM-DD
+ *  @param      time                Date timestamp (or string with format YYYY-MM-DD)
  *  @param      duration_value      Value of delay to add
  *  @param      duration_unit       Unit of added delay (d, m, y)
  *  @return     int                 New timestamp
