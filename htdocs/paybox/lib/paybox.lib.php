@@ -61,8 +61,15 @@ function llxFooterPayBox()
 
 
 /**
- *		\brief  	Create a redirect form to paybox form
- *		\return 	int				1 if OK, -1 if ERROR
+ * Create a redirect form to paybox form
+ *
+ * @param   $PRICE
+ * @param   $CURRENCY
+ * @param   $EMAIL
+ * @param   $urlok
+ * @param   $urlko
+ * @param   $TAG
+ * @return  int              1 if OK, -1 if ERROR
  */
 function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 {

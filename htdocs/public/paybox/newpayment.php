@@ -53,10 +53,10 @@ $langs->load("paybox");
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-$suffix=GETPOST("suffix");
+$suffix=GETPOST("suffix",'alpha');
 $amount=GETPOST("amount");
-if (! GETPOST("currency")) $currency=$conf->global->MAIN_MONNAIE;
-else $currency=GETPOST("currency");
+if (! GETPOST("currency",'alpha')) $currency=$conf->global->MAIN_MONNAIE;
+else $currency=GETPOST("currency",'alpha');
 
 if (! GETPOST("action"))
 {
@@ -81,18 +81,18 @@ $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolib
 $urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php?';
 $urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php?';
 
-$TAG=GETPOST("tag");
-$FULLTAG=GETPOST("fulltag");  // fulltag is tag with more informations
+$TAG=GETPOST("tag",'alpha');
+$FULLTAG=GETPOST("fulltag",'alpha');  // fulltag is tag with more informations
 
 if (!empty($TAG))
 {
-    $urlok.='tag='.$TAG.'&';
-    $urlko.='tag='.$TAG.'&';
+    $urlok.='tag='.urlencode($TAG).'&';
+    $urlko.='tag='.urlencode($TAG).'&';
 }
 if (!empty($FULLTAG))
 {
-    $urlok.='fulltag='.$FULLTAG.'&';
-    $urlko.='fulltag='.$FULLTAG.'&';
+    $urlok.='fulltag='.urlencode($FULLTAG).'&';
+    $urlko.='fulltag='.urlencode($FULLTAG).'&';
 }
 
 
@@ -103,7 +103,6 @@ if ($_REQUEST["action"] == 'dopayment')
 {
     $PRICE=price2num(GETPOST("newamount"),'MT');
     $EMAIL=GETPOST("EMAIL");
-    $ID=GETPOST("id");
 
 	$mesg='';
 	if (empty($PRICE) || ! is_numeric($PRICE)) $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
@@ -115,7 +114,7 @@ if ($_REQUEST["action"] == 'dopayment')
 	{
 		dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG);
 
-		print_paybox_redirect($PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG, $ID);
+		print_paybox_redirect($PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG);
 
 		session_destroy();
 		exit;
@@ -142,9 +141,9 @@ print '<center>';
 print '<form id="dolpaymentform" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="dopayment">';
-print '<input type="hidden" name="amount" value="'.$_REQUEST["amount"].'">';
-print '<input type="hidden" name="tag" value="'.$_REQUEST["tag"].'">';
-print '<input type="hidden" name="suffix" value="'.$_REQUEST["suffix"].'">';
+print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">';
+print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">';
 print "\n";
 print '<!-- Form to send a Paybox payment -->'."\n";
 print '<!-- PAYBOX_CREDITOR = '.$conf->global->PAYPAL_CREDITOR.' -->'."\n";

@@ -59,10 +59,10 @@ $urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php?';
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-$suffix=GETPOST("suffix");
+$suffix=GETPOST("suffix",'alpha');
 $amount=GETPOST("amount");
-if (! GETPOST("currency")) $currency=$conf->global->MAIN_MONNAIE;
-else $currency=GETPOST("currency");
+if (! GETPOST("currency",'alpha')) $currency=$conf->global->MAIN_MONNAIE;
+else $currency=GETPOST("currency",'alpha');
 
 if (! GETPOST("action"))
 {
@@ -84,8 +84,8 @@ if (! GETPOST("action"))
 }
 
 // Complete urls
-$TAG=GETPOST("tag");
-$FULLTAG=GETPOST("fulltag");  // fulltag is tag with more informations
+$TAG=GETPOST("tag",'alpha');
+$FULLTAG=GETPOST("fulltag",'alpha');  // fulltag is tag with more informations
 if (!empty($TAG))
 {
     $urlok.='tag='.urlencode($TAG).'&';
@@ -136,7 +136,6 @@ if (GETPOST("action") == 'dopayment')
 {
 	$PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
 	$EMAIL=GETPOST("EMAIL");
-	$ID=GETPOST("id");
     $PAYPAL_PAYMENT_TYPE='Sale';
 
     $shipToName=GETPOST("shipToName");
@@ -194,7 +193,7 @@ if (GETPOST("action") == 'dopayment')
 	    $_SESSION["Payment_Amount"]=$PAYPAL_API_PRICE;
 
 	    // A redirect is added if API call successfull
-        RedirectToPaypal($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
+        print_paypal_redirect($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
 
 	    print '</body></html>'."\n";
 	    print "\n";
@@ -223,9 +222,9 @@ print '<center>'."\n";
 print '<form id="dolpaymentform" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
-print '<input type="hidden" name="amount" value="'.$_REQUEST["amount"].'">'."\n";
-print '<input type="hidden" name="tag" value="'.$_REQUEST["tag"].'">'."\n";
-print '<input type="hidden" name="suffix" value="'.$_REQUEST["suffix"].'">'."\n";
+print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">'."\n";
+print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
+print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
 print "\n";
 print '<!-- Form to send a Paypal payment -->'."\n";
 print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";

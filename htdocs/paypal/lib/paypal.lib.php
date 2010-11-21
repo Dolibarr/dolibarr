@@ -132,6 +132,7 @@ function html_print_paypal_footer($fromcompany,$langs)
 
 /**
  * Send redirect to paypal to browser
+ *
  * @param       $paymentAmount
  * @param       $currencyCodeType
  * @param       $paymentType
