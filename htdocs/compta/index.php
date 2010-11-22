@@ -711,7 +711,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$societestatic->fetch($obj->socid) ;
+
 				print "<tr $bc[$var]>";
 				print '<td nowrap="nowrap">';
 
@@ -734,8 +734,11 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 
 				print '</td>';
 
-				print '<td align="left">' ;
-				print $societestatic->getNomUrl(1) ;
+				print '<td align="left">';
+                $societestatic->id=$obj->socid;
+                $societestatic->nom=$obj->nom;
+                $societestatic->client=1;
+                print $societestatic->getNomUrl(1,'customer',44);
 				print '</a></td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
@@ -809,7 +812,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 			{
 				$obj = $db->fetch_object($resql);
 				$societestatic->fetch($obj->socid) ;
-				
+
 
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap="nowrap">';
@@ -913,7 +916,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 			{
 				$obj = $db->fetch_object($resql);
 				$societestatic->fetch($obj->socid) ;
-				
+
 				print '<tr '.$bc[$var].'><td>';
 				$facstatic->ref=$obj->facnumber;
 				$facstatic->id=$obj->rowid;
