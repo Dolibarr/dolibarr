@@ -1342,31 +1342,6 @@ class Ldap
 		return($retval);
 	}
 
-   /**
-	* \Parse GroupType value to text
-	*
-	*/
-	function parseGT($grouptype) {
-		$gtypes = array(    -2147483643    =>    "SECURITY_BUILTIN_LOCAL_GROUP",
-		-2147483644    =>    "SECURITY_DOMAIN_LOCAL_GROUP",
-		-2147483646    =>    "SECURITY_GLOBAL_GROUP",
-		2              =>    "DISTRIBUTION_GLOBAL_GROUP",
-		4              =>    "DISTRIBUTION_DOMAIN_LOCAL_GROUP",
-		8              =>    "DISTRIBUTION_UNIVERSAL_GROUP");
-
-		$retval = "";
-		while (list($gt, $val) = each($gtypes)) {
-			if ($grouptype == $gt) {
-				$retval = $val;
-				break;
-			}
-		}
-		if (empty($retval)) $retval = "UNKNOWN_TYPE_" . $grouptype;
-
-		return($retval);
-	}
-
-
 	/**
 	 *	\brief		Convertit le temps ActiveDirectory en Unix timestamp
 	 *	\param		string		AD time to convert
