@@ -707,9 +707,11 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 			print '<td align="center" width="16">&nbsp;</td>';
 			print '</tr>';
 			$tot_ht=$tot_ttc=$tot_tobill=0;
+			$societestatic = new Societe($db) ;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
+				$societestatic->fetch($obj->socid) ;
 				print "<tr $bc[$var]>";
 				print '<td nowrap="nowrap">';
 
@@ -732,8 +734,9 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 
 				print '</td>';
 
-				print '<td align="left"><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
-				print '<a href="fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,44).'</a></td>';
+				print '<td align="left">' ;
+				print $societestatic->getNomUrl(1) ;
+				print '</a></td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td>';
@@ -800,10 +803,13 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 		print '</tr>';
 		if ($num)
 		{
+			$societestatic = new Societe($db) ;
 			$total_ttc = $totalam = $total = 0;
 			while ($i < $num && $i < $conf->liste_limit)
 			{
 				$obj = $db->fetch_object($resql);
+				$societestatic->fetch($obj->socid) ;
+				
 
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap="nowrap">';
@@ -826,7 +832,9 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				print '</td></tr></table>';
 
 				print '</td>';
-				print '<td align="left"><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dol_trunc($obj->nom,44).'</a></td>';
+				print '<td align="left">' ;
+				print $societestatic->getNomUrl(1) ;
+				print '</a></td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
@@ -896,6 +904,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 		print '<td align="right">'.$langs->trans("Paid").'</td>';
 		print '<td width="16">&nbsp;</td>';
 		print "</tr>\n";
+		$societestatic = new Societe($db) ;
 		if ($num)
 		{
 			$i = 0;
@@ -903,12 +912,14 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
+				$societestatic->fetch($obj->socid) ;
+				
 				print '<tr '.$bc[$var].'><td>';
 				$facstatic->ref=$obj->facnumber;
 				$facstatic->id=$obj->rowid;
 				print $facstatic->getNomUrl(1,'');
 				print '</td>';
-				print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dol_trunc($obj->nom,44).'</a></td>';
+				print '<td>'.$societestatic->getNomUrl(1, 'supplier').'</td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
