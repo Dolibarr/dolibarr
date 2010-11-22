@@ -519,7 +519,6 @@ class Translate {
 	/**
 	 *  Return list of all available languages
 	 * 	@param		langdir		Directory to scan
-	 *  @param      maxlength   Max length for each value in combo box (will be truncated)
 	 *  @return     array     	List of languages
 	 */
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0)
