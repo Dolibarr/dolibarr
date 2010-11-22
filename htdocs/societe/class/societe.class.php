@@ -1125,11 +1125,12 @@ class Societe extends CommonObject
     }
 
     /**
-     *    	\brief      Add a discount for third party
-     *    	\param      remise      Montant de la remise
-     *    	\param      user        Utilisateur qui accorde la remise
-     *    	\param      desc		Motif de l'avoir
-     *		\return		int			<0 si ko, id de la ligne de remise si ok
+     *    	Add a discount for third party
+     *    	@param      remise      Montant de la remise
+     *    	@param      user        Utilisateur qui accorde la remise
+     *    	@param      desc		Motif de l'avoir
+     *      @param      tva_tx      VAT rate
+     *		@return		int			<0 if KO, id or record if OK
      */
     function set_remise_except($remise, $user, $desc, $tva_tx=0)
     {
@@ -1887,8 +1888,8 @@ class Societe extends CommonObject
     }
 
     /**
-     *       \brief     Return if third party is a company (Business) or an end user (Consumer)
-     *       \param     boolean     true=is a company, false=a and user
+     *       Return if third party is a company (Business) or an end user (Consumer)
+     *       @return    boolean     true=is a company, false=a and user
      */
     function isACompany()
     {
@@ -1905,8 +1906,8 @@ class Societe extends CommonObject
 
 
     /**
-     *       \brief     Return if a country is inside the EEC (European Economic Community)
-     *       \param     boolean		true = pays inside EEC, false= pays outside EEC
+     *       Return if a country is inside the EEC (European Economic Community)
+     *       @param     boolean		true = pays inside EEC, false= pays outside EEC
      */
     function isInEEC()
     {
@@ -1949,8 +1950,8 @@ class Societe extends CommonObject
     }
 
     /**
-     *  	\brief     Charge la liste des categories fournisseurs
-     *   \return    0 in success, <> 0 in error
+     *  Charge la liste des categories fournisseurs
+     *  @return    int      0 if success, <> 0 if error
      */
     function LoadSupplierCateg()
     {
@@ -1976,7 +1977,7 @@ class Societe extends CommonObject
 
     /**
      *  Charge la liste des categories fournisseurs
-     *  @return    0 in success, <> 0 in error
+     *  @return    int      0 if success, <> 0 if error
      */
     function AddFournisseurInCategory($categorie_id)
     {
@@ -2063,10 +2064,10 @@ class Societe extends CommonObject
     }
 
     /**
-     *      \brief      Cree en base un tiers depuis l'objet adherent
-     *      \param      member		Objet adherent source
-     * 		\param		socname		Name of third to force
-     *      \return     int			Si erreur <0, si ok renvoie id compte cree
+     *      Cree en base un tiers depuis l'objet adherent
+     *      @param      member		Objet adherent source
+     * 		@param		socname		Name of third to force
+     *      @return     int			Si erreur <0, si ok renvoie id compte cree
      */
     function create_from_member($member,$socname='')
     {

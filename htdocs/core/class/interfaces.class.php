@@ -19,8 +19,8 @@
  */
 
 /**
- *   \file		htdocs/core/class/interfaces.class.php
- *   \ingroup		workflow
+ *   \file		    htdocs/core/class/interfaces.class.php
+ *   \ingroup		core
  *   \brief			Fichier de la classe de gestion des triggers
  *   \version		$Id$
  */

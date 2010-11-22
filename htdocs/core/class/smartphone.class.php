@@ -18,6 +18,7 @@
 
 /**
  *  \file       htdocs/core/class/smartphone.class.php
+ *  \ingroup    core
  *  \brief      Fichier de la classe de gestion des smartphones
  *  \version    $Id$
  */
@@ -30,7 +31,7 @@
 class Smartphone {
 
     var $db;
-    
+
     var $phone;
     var $theme;
     var $title;
@@ -44,7 +45,7 @@ class Smartphone {
     {
       	$this->db = $DB;
     }
-    
+
     /**
      * 	Get template directory
      */
@@ -68,7 +69,7 @@ class Smartphone {
 			$this->template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
 		}
     }
-    
+
     /**
      *  Show HTML header
      *  @param      title   	Web page title
@@ -76,29 +77,29 @@ class Smartphone {
     function smartheader($type='default')
     {
     	global $conf;
-    	
+
     	if ($type == 'default') include_once($this->template_dir.'header.tpl.php');
     }
-    
+
 	/**
      *  Show HTML footer
      */
     function smartfooter()
-    {	
+    {
     	include_once($this->template_dir.'footer.tpl.php');
     }
-    
+
 	/**
      *  Show menu
      */
     function smartmenu()
-    {	
+    {
     	global $conf, $langs;
-    	
+
     	if (! $conf->smart_menu)  $conf->smart_menu ='iphone_backoffice.php';
     	$smart_menu=$conf->smart_menu;
     	if (GETPOST('top_menu')) $smart_menu=GETPOST('top_menu');
-    	
+
     	// Load the smartphone menu manager
     	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$smart_menu);
     	if (! $result)	// If failed to include, we try with standard
@@ -108,7 +109,7 @@ class Smartphone {
     	}
     	$menusmart = new MenuSmart($this->db);
     	$menusmart->atarget=$target;
-    	
+
     	include_once($this->template_dir.'menu.tpl.php');
     }
 

@@ -17,165 +17,166 @@
  */
 
 /**
-        \file       htdocs/core/class/html.formactions.class.php
-        \brief      Fichier de la classe des fonctions predefinie de composants html actions
-		\version	$Id$
-*/
+ *      \file       htdocs/core/class/html.formactions.class.php
+ *      \ingroup    core
+ *      \brief      Fichier de la classe des fonctions predefinie de composants html actions
+ *		\version	$Id$
+ */
 
 
 /**
-        \class      FormActions
-        \brief      Classe permettant la generation de composants html actions
-*/
+ *      \class      FormActions
+ *      \brief      Classe permettant la generation de composants html actions
+ */
 class FormActions
 {
-	var $db;
-	var $error;
+    var $db;
+    var $error;
 
 
-	/**
-	*		\brief     Constructeur
-	*		\param     DB      handler d'acc�s base de donn�e
-	*/
-	function FormActions($DB)
-	{
-		$this->db = $DB;
+    /**
+     *		\brief     Constructeur
+     *		\param     DB      handler d'acc�s base de donn�e
+     */
+    function FormActions($DB)
+    {
+        $this->db = $DB;
 
-		return 1;
-	}
-
-
-	/**
-	 *      \brief      Show list of action status
-	 * 		\param		formname	Name of form where select in included
-	 * 		\param		selected	Preselected value
-	 * 		\param		canedit		1=can edit, 0=read only
-	 */
-	function form_select_status_action($formname,$selected,$canedit=1)
-	{
-		global $langs,$conf;
-
-		$listofstatus=array('0'=>$langs->trans("ActionRunningNotStarted"),'50'=>$langs->trans("ActionRunningShort"),'100'=>$langs->trans("ActionDoneShort"));
-
-		if ($conf->use_javascript_ajax)
-		{
-			print "\n";
-			print '<script type="text/javascript">'."\n";
-			print 'function select_status(mypercentage) {'."\n";
-			print 'document.'.$formname.'.percentageshown.value=mypercentage;'."\n";
-			print 'document.'.$formname.'.percentage.value=mypercentage;'."\n";
-			print 'if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
-			print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
-			print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
-			print '}'."\n";
-			print '</script>'."\n";
-			print '<select '.($canedit?'':'disabled="true" ').'name="status" class="flat" onChange="select_status(document.'.$formname.'.status.value)">';
-			foreach($listofstatus as $key => $val)
-			{
-				print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>'.$val.'</option>';
-			}
-			print '</select>';
-			if ($selected == 0 || $selected == 100) $canedit=0;
-			print ' <input type="text" name="percentageshown" class="flat" value="'.$selected.'" size="2"'.($canedit?'':' disabled="true"').' onChange="select_status(document.'.$formname.'.percentageshown.value)">%';
-			print ' <input type="hidden" name="percentage" value="'.$selected.'">';
-		}
-		else
-		{
-			print ' <input type="text" name="percentage" class="flat" value="'.$selected.'" size="2"'.($canedit?'':' disabled="true"').'>%';
-		}
-	}
+        return 1;
+    }
 
 
-	/**
-	*    	Show list of actions for element
-	*    	@param      object			Object
-	*    	@param      typeelement		'invoice','propal','order'
-	*		@param		socid			socid of user
-	*		@return		int				<0 if KO, >=0 if OK
-	*/
-	function showactions($object,$typeelement,$socid=0)
-	{
-		global $langs,$conf,$user;
-		global $bc;
+    /**
+     *      \brief      Show list of action status
+     * 		\param		formname	Name of form where select in included
+     * 		\param		selected	Preselected value
+     * 		\param		canedit		1=can edit, 0=read only
+     */
+    function form_select_status_action($formname,$selected,$canedit=1)
+    {
+        global $langs,$conf;
 
-		$sql = 'SELECT a.id, a.datep as da, a.label, a.note,';
-		$sql.= ' u.login';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u';
-		$sql.= ' WHERE a.fk_user_author = u.rowid';
-		if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
-		if ($typeelement == 'invoice') $sql.= ' AND a.fk_facture = '.$object->id;
-		if ($typeelement == 'supplier_invoice') $sql.= ' AND a.fk_supplier_invoice = '.$object->id;
-		if ($typeelement == 'propal')  $sql.= ' AND a.propalrowid = '.$object->id;
-		if ($typeelement == 'order')   $sql.= ' AND a.fk_commande = '.$object->id;
-		if ($typeelement == 'supplier_order')   $sql.= ' AND a.fk_supplier_order = '.$object->id;
-		if ($typeelement == 'project') $sql.= ' AND a.fk_project = '.$object->id;
+        $listofstatus=array('0'=>$langs->trans("ActionRunningNotStarted"),'50'=>$langs->trans("ActionRunningShort"),'100'=>$langs->trans("ActionDoneShort"));
 
-		dol_syslog("FormActions::showactions sql=".$sql);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			if ($num)
-			{
-				if ($typeelement == 'invoice') $title=$langs->trans('ActionsOnBill');
-				if ($typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnSupplierBill');
-				if ($typeelement == 'propal')  $title=$langs->trans('ActionsOnPropal');
-				if ($typeelement == 'order')   $title=$langs->trans('ActionsOnOrder');
-				if ($typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnSupplierOrder');
-				if ($typeelement == 'project') $title=$langs->trans('ActionsOnProject');
-
-				print_titre($title);
-
-				$i = 0; $total = 0;	$var=true;
-				print '<table class="border" width="100%">';
-				print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
-				print "\n";
-
-				while ($i < $num)
-				{
-					$objp = $this->db->fetch_object($resql);
-					$var=!$var;
-					print '<tr '.$bc[$var].'>';
-					print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-					print '<td>'.dol_print_date($this->db->jdate($objp->da),'day').'</td>';
-					print '<td title="'.dol_escape_htmltag($objp->label).'">'.dol_trunc($objp->label,32).'</td>';
-					print '<td>'.$objp->login.'</td>';
-					print '</tr>';
-					$i++;
-				}
-				print '</table>';
-			}
-
-			return $num;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
+        if ($conf->use_javascript_ajax)
+        {
+            print "\n";
+            print '<script type="text/javascript">'."\n";
+            print 'function select_status(mypercentage) {'."\n";
+            print 'document.'.$formname.'.percentageshown.value=mypercentage;'."\n";
+            print 'document.'.$formname.'.percentage.value=mypercentage;'."\n";
+            print 'if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
+            print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
+            print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
+            print '}'."\n";
+            print '</script>'."\n";
+            print '<select '.($canedit?'':'disabled="true" ').'name="status" class="flat" onChange="select_status(document.'.$formname.'.status.value)">';
+            foreach($listofstatus as $key => $val)
+            {
+                print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>'.$val.'</option>';
+            }
+            print '</select>';
+            if ($selected == 0 || $selected == 100) $canedit=0;
+            print ' <input type="text" name="percentageshown" class="flat" value="'.$selected.'" size="2"'.($canedit?'':' disabled="true"').' onChange="select_status(document.'.$formname.'.percentageshown.value)">%';
+            print ' <input type="hidden" name="percentage" value="'.$selected.'">';
+        }
+        else
+        {
+            print ' <input type="text" name="percentage" class="flat" value="'.$selected.'" size="2"'.($canedit?'':' disabled="true"').'>%';
+        }
+    }
 
 
-	/**
-	 *    \brief      Retourne la liste des types de comptes financiers
-	 *    \param      selected        Type pre-selectionne
-	 *    \param      htmlname        Nom champ formulaire
-	 */
-	function select_type_actions($selected='',$htmlname='actioncode')
-	{
-		global $langs,$user;
+    /**
+     *    	Show list of actions for element
+     *    	@param      object			Object
+     *    	@param      typeelement		'invoice','propal','order'
+     *		@param		socid			socid of user
+     *		@return		int				<0 if KO, >=0 if OK
+     */
+    function showactions($object,$typeelement,$socid=0)
+    {
+        global $langs,$conf,$user;
+        global $bc;
 
-		require_once(DOL_DOCUMENT_ROOT."/comm/action/class/cactioncomm.class.php");
-		require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
-		$caction=new CActionComm($this->db);
-		$form=new Form($this->db);
+        $sql = 'SELECT a.id, a.datep as da, a.label, a.note,';
+        $sql.= ' u.login';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u';
+        $sql.= ' WHERE a.fk_user_author = u.rowid';
+        if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
+        if ($typeelement == 'invoice') $sql.= ' AND a.fk_facture = '.$object->id;
+        if ($typeelement == 'supplier_invoice') $sql.= ' AND a.fk_supplier_invoice = '.$object->id;
+        if ($typeelement == 'propal')  $sql.= ' AND a.propalrowid = '.$object->id;
+        if ($typeelement == 'order')   $sql.= ' AND a.fk_commande = '.$object->id;
+        if ($typeelement == 'supplier_order')   $sql.= ' AND a.fk_supplier_order = '.$object->id;
+        if ($typeelement == 'project') $sql.= ' AND a.fk_project = '.$object->id;
 
-		$arraylist=$caction->liste_array(1,'code');
-		$arraylist[0]='&nbsp;';
-		asort($arraylist);
+        dol_syslog("FormActions::showactions sql=".$sql);
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            if ($num)
+            {
+                if ($typeelement == 'invoice') $title=$langs->trans('ActionsOnBill');
+                if ($typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnSupplierBill');
+                if ($typeelement == 'propal')  $title=$langs->trans('ActionsOnPropal');
+                if ($typeelement == 'order')   $title=$langs->trans('ActionsOnOrder');
+                if ($typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnSupplierOrder');
+                if ($typeelement == 'project') $title=$langs->trans('ActionsOnProject');
 
-		print $form->selectarray($htmlname, $arraylist, $selected);
-		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-	}
+                print_titre($title);
+
+                $i = 0; $total = 0;	$var=true;
+                print '<table class="border" width="100%">';
+                print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
+                print "\n";
+
+                while ($i < $num)
+                {
+                    $objp = $this->db->fetch_object($resql);
+                    $var=!$var;
+                    print '<tr '.$bc[$var].'>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
+                    print '<td>'.dol_print_date($this->db->jdate($objp->da),'day').'</td>';
+                    print '<td title="'.dol_escape_htmltag($objp->label).'">'.dol_trunc($objp->label,32).'</td>';
+                    print '<td>'.$objp->login.'</td>';
+                    print '</tr>';
+                    $i++;
+                }
+                print '</table>';
+            }
+
+            return $num;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+
+
+    /**
+     *    \brief      Retourne la liste des types de comptes financiers
+     *    \param      selected        Type pre-selectionne
+     *    \param      htmlname        Nom champ formulaire
+     */
+    function select_type_actions($selected='',$htmlname='actioncode')
+    {
+        global $langs,$user;
+
+        require_once(DOL_DOCUMENT_ROOT."/comm/action/class/cactioncomm.class.php");
+        require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
+        $caction=new CActionComm($this->db);
+        $form=new Form($this->db);
+
+        $arraylist=$caction->liste_array(1,'code');
+        $arraylist[0]='&nbsp;';
+        asort($arraylist);
+
+        print $form->selectarray($htmlname, $arraylist, $selected);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+    }
 
 }

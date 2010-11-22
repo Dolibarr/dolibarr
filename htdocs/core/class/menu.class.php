@@ -19,6 +19,7 @@
 
 /**
  *  \file       htdocs/core/class/menu.class.php
+ *  \ingroup    core
  *  \brief      Fichier de la classe de gestion du menu gauche
  *  \version    $Id$
  */

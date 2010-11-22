@@ -19,6 +19,7 @@
 
 /**
  *      \file       htdocs/core/class/html.formadmin.class.php
+ *      \ingroup    core
  *      \brief      File of class for html functions for admin pages
  *		\version	$Id$
  */

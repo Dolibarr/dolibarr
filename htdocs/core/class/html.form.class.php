@@ -28,6 +28,7 @@
 
 /**
  *	\file       htdocs/core/class/html.form.class.php
+ *  \ingroup    core
  *	\brief      File of class with all html predefined components
  *	\version	$Id$
  */

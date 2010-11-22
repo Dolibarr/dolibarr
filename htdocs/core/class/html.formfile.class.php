@@ -19,6 +19,7 @@
 
 /**
  *	\file       htdocs/core/class/html.formfile.class.php
+ *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
  *	\version	$Id$
  */

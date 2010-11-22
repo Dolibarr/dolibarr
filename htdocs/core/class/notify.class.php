@@ -18,18 +18,18 @@
  */
 
 /**
-        \file       htdocs/core/class/notify.class.php
-        \brief      Fichier de la classe de gestion des notifications
-        \version    $Id$
-*/
+ *      \file       htdocs/core/class/notify.class.php
+ *      \ingroup    core
+ *      \brief      Fichier de la classe de gestion des notifications
+ *      \version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT ."/lib/CMailFile.class.php");
 
 
 /**
-        \class      Notify
-        \brief      Classe de gestion des notifications
-*/
-
+ *      \class      Notify
+ *      \brief      Classe de gestion des notifications
+ */
 class Notify
 {
     var $id;

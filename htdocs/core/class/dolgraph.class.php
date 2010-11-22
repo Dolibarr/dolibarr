@@ -19,6 +19,7 @@
 
 /**
  *	\file       htdocs/core/class/dolgraph.class.php
+ *  \ingroup    core
  *	\brief      Fichier de la classe mere de gestion des graph
  *	\version    $Id$
  *

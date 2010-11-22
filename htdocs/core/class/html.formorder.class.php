@@ -18,6 +18,7 @@
 
 /**
  *	\file       htdocs/core/class/html.formorder.class.php
+ *  \ingroup    core
  *	\brief      File of predefined functions for HTML forms for order module
  *	\version	$Id$
  */

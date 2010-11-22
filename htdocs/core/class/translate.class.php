@@ -20,6 +20,7 @@
 
 /**
  *   	\file       htdocs/core/class/translate.class.php
+ *      \ingroup    core
  *		\brief      File for Tanslate class
  *		\author	    Eric Seigne
  *		\author	    Laurent Destailleur
@@ -126,16 +127,16 @@ class Translate {
 
 
 	/**
-	 *  \brief      Load translation key-value for a particular file, into a memory array.
-	 *              If data for file already loaded, do nothing.
-	 * 				All data in translation array are stored in UTF-8 format.
-	 *  \param      domain      		File name to load (.lang file). Use file@module if file is in a module directory.
-	 *  \param      alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
-	 * 	\param		stopafterdirection	Stop when the DIRECTION tag is found (optimize)
-	 * 	\param		forcelangdir		To force a lang directory
-	 *	\return		int					<0 if KO, 0 if already loaded, >0 if OK
-	 *	\remarks	tab_loaded is completed with $domain key.
-	 *				Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
+	 *  Load translation key-value for a particular file, into a memory array.
+	 *  If data for file already loaded, do nothing.
+	 * 	All data in translation array are stored in UTF-8 format.
+     *  tab_loaded is completed with $domain key.
+     *              Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
+	 *  @param      domain      		File name to load (.lang file). Use file@module if file is in a module directory.
+	 *  @param      alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
+	 * 	@param		stopafterdirection	Stop when the DIRECTION tag is found (optimize)
+	 * 	@param		forcelangdir		To force a lang directory
+	 *	@return		int					<0 if KO, 0 if already loaded, >0 if OK
 	 */
 	function Load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='')
 	{
@@ -518,6 +519,7 @@ class Translate {
 	/**
 	 *  Return list of all available languages
 	 * 	@param		langdir		Directory to scan
+	 *  @param      maxlength   Max length for each value in combo box (will be truncated)
 	 *  @return     array     	List of languages
 	 */
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0)

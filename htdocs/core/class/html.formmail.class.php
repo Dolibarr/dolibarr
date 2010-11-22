@@ -19,10 +19,10 @@
 
 /**
  *       \file       htdocs/core/class/html.formmail.class.php
+ *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
  *       \version    $Id$
  */
-
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
 
