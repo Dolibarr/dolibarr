@@ -35,7 +35,7 @@
  */
 function pdf_getPDFFont($outputlangs)
 {
-    $font='Helvetica'; // By default, for FPDI
+    $font='Helvetica'; // By default, for FPDI or ISO language on TCPDF
     if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower)
     {
         if ($outputlangs->trans('FONTFORPDF')!='FONTFORPDF')
@@ -457,8 +457,12 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
         $pdf->MultiCell(200, 2, $ligne2, 0, 'C', 0);
     }
 
-    $pdf->SetXY(-20,-$posy);
-    $pdf->MultiCell(11, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
+    // Show page nb only on iso languages
+    if (pdf_getPDFFont($outputlangs) == 'Helvetica')
+    {
+        $pdf->SetXY(-20,-$posy);
+        $pdf->MultiCell(11, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
+    }
 }
 
 

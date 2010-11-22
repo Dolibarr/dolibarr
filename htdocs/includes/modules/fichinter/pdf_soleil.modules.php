@@ -159,7 +159,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pagenb++;
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('','', 9);
-				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 4
+				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 
 				// Pagehead
 
@@ -265,7 +265,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($fichinter->note_public), 0, 'J');
+					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($fichinter->note_public), 0, 'L');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -287,7 +287,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetFont('','', 9);
 
-				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 3
+				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetXY (10, $tab_top + 8 );
 				$desc=dol_htmlentitiesbr($fichinter->description,1);
 				//print $outputlangs->convToOutputCharset($desc); exit;
@@ -296,7 +296,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->line(10, $nexY, 200, $nexY);
 
-				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3. Then writeMultiCell must use 3 also.
+				$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
 
 				//dol_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
 				$nblignes = sizeof($fichinter->lines);

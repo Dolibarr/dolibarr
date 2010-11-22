@@ -184,7 +184,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pagenb++;
 				$this->_pagehead($pdf, $this->expe, $outputlangs);
 				$pdf->SetFont('','', 7);
-				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
 				//Initialisation des coordonnees
@@ -244,7 +244,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $this->expe, $outputlangs);
-						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('','', 7);
 					}

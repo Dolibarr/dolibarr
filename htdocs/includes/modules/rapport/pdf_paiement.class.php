@@ -199,7 +199,7 @@ class pdf_paiement
 		$pagenb++;
 		$this->_pagehead($pdf, $pages, 1, $outputlangs);
 		$pdf->SetFont('','', 9);
-		$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+		$pdf->MultiCell(0, 3, '');		// Set interline to 3
 		$pdf->SetTextColor(0,0,0);
 
 

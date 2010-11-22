@@ -206,7 +206,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', 9);
-				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
@@ -222,7 +222,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetFont('','', 9);
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
                     //$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J', false, 1, '', '', true, 0, false, false, 0, 'T', true);
-                    $pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J');    // FPDF
+                    $pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');    // FPDF
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -359,7 +359,7 @@ class pdf_crabe extends ModelePDFFactures
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('','', 9);
-						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
 						$nexY = $tab_top_newpage + 7;

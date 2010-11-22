@@ -170,7 +170,7 @@ class pdf_baleine extends ModelePDFProjects
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', 9);
-				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 50;
@@ -183,7 +183,7 @@ class pdf_baleine extends ModelePDFProjects
 				{
 					$pdf->SetFont('','', 9);
 					$pdf->SetXY ($this->posxref-1, $tab_top-2);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J');
+					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-($tab_top-2);
 
@@ -259,7 +259,7 @@ class pdf_baleine extends ModelePDFProjects
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('','', 9);
-						$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
+						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
 						$tab_top=$tab_top_newpage;
