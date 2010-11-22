@@ -52,6 +52,9 @@ class MyTestSuite
         require_once dirname(__FILE__).'/DateLibTest.php';
 		$suite->addTestSuite('DateLibTest');
 
+        require_once dirname(__FILE__).'/SecurityTest.php';
+        $suite->addTestSuite('SecurityTest');
+
         require_once dirname(__FILE__).'/BuildDocTest.php';
         $suite->addTestSuite('BuildDocTest');
 
