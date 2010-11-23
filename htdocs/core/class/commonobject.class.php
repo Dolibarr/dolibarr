@@ -404,8 +404,8 @@ class CommonObject
 
 		$sql = "SELECT ec.fk_socpeople";
 		$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec,";
-		if ($source == 'internal') $sql.= " ".MAIN_DB_PREFIX."user as c";
-		if ($source == 'external') $sql.= " ".MAIN_DB_PREFIX."socpeople as c";
+		if ($source == 'internal') $sql.= " ".MAIN_DB_PREFIX."user as c,";
+		if ($source == 'external') $sql.= " ".MAIN_DB_PREFIX."socpeople as c,";
 		$sql.= " ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE ec.element_id = ".$this->id;
 		$sql.= " AND ec.fk_socpeople = c.rowid";
