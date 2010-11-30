@@ -187,9 +187,9 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
     print '</td>';
 	print '<td>';
 	print '<select name="action">';
-    $sql = "SELECT ad.rowid, ad.code, ad.titre";
-    $sql.= " FROM action_def as ad";
-    $sql.= " WHERE ad.objet_type = 'withdraw'";
+    $sql = "SELECT rowid, code, titre";
+    $sql.= " FROM ".MAIN_DB_PREFIX."action_def";
+    $sql.= " WHERE objet_type = 'withdraw'";
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -200,6 +200,7 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
         {
             $obj = $db->fetch_object($resql);
             print '<option value="'.$obj->code.'">'.$obj->titre.'</option>';
+            $i++;
         }
     }
 	print '</select></td>';
