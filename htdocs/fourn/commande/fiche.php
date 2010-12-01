@@ -1257,8 +1257,12 @@ if ($id > 0 || ! empty($ref))
 					if ($user->rights->fournisseur->commande->approuver)
 					{
 						print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
-
 						print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+					}
+					else
+					{
+                        print '<a class="butActionRefused" href="#">'.$langs->trans("ApproveOrder").'</a>';
+                        print '<a class="butActionRefused" href="#">'.$langs->trans("RefuseOrder").'</a>';
 					}
 				}
 
@@ -1276,15 +1280,6 @@ if ($id > 0 || ! empty($ref))
 					}
 				}
 
-				// Cancel
-				if ($commande->statut == 2)
-				{
-					if ($user->rights->fournisseur->commande->commander)
-					{
-						print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
-					}
-				}
-
 				// Reopen
 				if ($commande->statut == 5 || $commande->statut == 6 || $commande->statut == 7 || $commande->statut == 9)
 				{
@@ -1295,7 +1290,7 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				// Create bill
-				if ($conf->fournisseur->enabled && $commande->statut > 0)
+				if ($conf->fournisseur->enabled && $commande->statut >= 2)  // 2 means accepted
 				{
 					if ($user->rights->fournisseur->facture->creer)
 					{
@@ -1307,6 +1302,15 @@ if ($id > 0 || ! empty($ref))
 					//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 					//}
 				}
+
+                // Cancel
+                if ($commande->statut == 2)
+                {
+                    if ($user->rights->fournisseur->commande->commander)
+                    {
+                        print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+                    }
+                }
 
 				// Delete
 				if ($user->rights->fournisseur->commande->supprimer)
