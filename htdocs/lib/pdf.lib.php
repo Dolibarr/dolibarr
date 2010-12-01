@@ -634,6 +634,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
     }
 
     // Note that we used here current custom and origin country code.
+    /* Fix, this must be done when saving line
     if (! empty($prodser->customcode) || ! empty($prodser->country_code))
     {
         //var_dump($prodser);exit;
@@ -643,7 +644,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
         if (! empty($prodser->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prodser->country_code,0,$db,$outputlangs,0);
         $tmptxt.=')';
         $libelleproduitservice.="<br>".$tmptxt;
-    }
+    }*/
 
     return $libelleproduitservice;
 }

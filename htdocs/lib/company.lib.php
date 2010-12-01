@@ -171,16 +171,19 @@ function societe_prepare_head2($objsoc)
 
 /**
  *    Return country translated from an id or a code
- *    @param      id          id or code of country
- *    @param      withcode    0=Return label, 1=Return code + label, 2=Return code from id
- *    @param      dbtouse     Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @return     string      String with country code or translated country name
+ *    @param      id            Id or code of country
+ *    @param      withcode      0=Return label, 1=Return code + label, 2=Return code from id
+ *    @param      dbtouse       Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @param      outputlangs   Lang object for output translation
+ *    @param      entconv       0=Return value without entities and not converted to output charset
+ *    @return     string        String with country code or translated country name
  */
-function getCountry($id,$withcode=0,$dbtouse=0)
+function getCountry($id,$withcode=0,$dbtouse=0,$outputlangs='',$entconv=1)
 {
     global $db,$langs;
 
     if (! is_object($dbtouse)) $dbtouse=$db;
+    if (! is_object($outputlangs)) $outputlangs=$langs;
 
     $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
     if (is_numeric($id)) $sql.= " WHERE rowid=".$id;
@@ -194,10 +197,11 @@ function getCountry($id,$withcode=0,$dbtouse=0)
         if ($obj)
         {
             $label=((! empty($obj->libelle) && $obj->libelle!='-')?$obj->libelle:'');
-            if (is_object($langs))
+            if (is_object($outputlangs))
             {
-                $langs->load("dict");
-                $label=($obj->code && ($langs->trans("Country".$obj->code)!="Country".$obj->code))?$langs->trans("Country".$obj->code):$label;
+                $outputlangs->load("dict");
+                if ($entconv) $label=($obj->code && ($outputlangs->trans("Country".$obj->code)!="Country".$obj->code))?$outputlangs->trans("Country".$obj->code):$label;
+                else $label=($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code))?$outputlangs->transnoentitiesnoconv("Country".$obj->code):$label;
             }
             if ($withcode == 1) return $label?"$obj->code - $label":"$obj->code";
             else if ($withcode == 2) return $obj->code;
@@ -576,9 +580,9 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
                     $var = !$var;
 
                     $obj = $db->fetch_object($result);
-                    
+
                     $datep=$db->jdate($obj->dp);
-                    
+
                     print "<tr ".$bc[$var].">";
 
                     print '<td width="120" align="left" nowrap="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
