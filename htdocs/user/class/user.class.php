@@ -95,8 +95,8 @@ class User extends CommonObject
 
 
 	/**
-	 *    \brief Constructeur de la classe
-	 *    \param  DB         Handler acces base de donnees
+	 *    Constructeur de la classe
+	 *    @param  DB         Handler acces base de donnees
 	 */
 	function User($DB)
 	{
@@ -113,12 +113,12 @@ class User extends CommonObject
 	}
 
 	/**
-	 *	\brief      Charge un objet user avec toutes ces caracteristiques depuis un id ou login
-	 *	\param      id		       		Si defini, id a utiliser pour recherche
-	 * 	\param      login       		Si defini, login a utiliser pour recherche
-	 *	\param      sid					Si defini, sid a utiliser pour recherche
-	 * 	\param		$loadpersonalconf	Also load personal conf of user (in $user->conf->xxx)
-	 * 	\return		int					<0 if KO, 0 not found, >0 if OK
+	 *	Charge un objet user avec toutes ces caracteristiques depuis un id ou login
+	 *	@param      id		       		Si defini, id a utiliser pour recherche
+	 * 	@param      login       		Si defini, login a utiliser pour recherche
+	 *	@param      sid					Si defini, sid a utiliser pour recherche
+	 * 	@param		$loadpersonalconf	Also load personal conf of user (in $user->conf->xxx)
+	 * 	@return		int					<0 if KO, 0 not found, >0 if OK
 	 */
 	function fetch($id='', $login='',$sid='',$loadpersonalconf=1)
 	{
@@ -137,15 +137,17 @@ class User extends CommonObject
 		$sql.= " u.tms as datem,";
 		$sql.= " u.datelastlogin as datel,";
 		$sql.= " u.datepreviouslogin as datep,";
-		$sql.= " u.photo as photo";
+		$sql.= " u.photo as photo,";
+		$sql.= " u.openid as openid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+
 		if ($sid)
 		{
-			// permet une recherche du user par son SID ActiveDirectory ou Samba
 			$sql.= " AND (u.ldap_sid = '".$sid."' || u.login = '".addslashes($login)."') LIMIT 1";
 		}
 		else if ($login)
+			// permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
 			$sql.= " AND u.login = '".addslashes($login)."'";
 		}
@@ -181,6 +183,7 @@ class User extends CommonObject
 				$this->note = $obj->note;
 				$this->statut = $obj->statut;
 				$this->photo = $obj->photo;
+				$this->openid = $obj->openid;
 				$this->lang = $obj->lang;
 				$this->entity = $obj->entity;
 
@@ -441,7 +444,7 @@ class User extends CommonObject
 
 
 	/**
-	 *    \brief      Clear all permissions array of user
+	 *    Clear all permissions array of user
 	 */
 	function clearrights()
 	{
@@ -453,8 +456,8 @@ class User extends CommonObject
 
 
 	/**
-	 *	\brief      Load permissions granted to user into object user
-	 *	\param      moduletag    Limit permission for a particular module ('' by default means load all permissions)
+	 *	Load permissions granted to user into object user
+	 *	@param      moduletag    Limit permission for a particular module ('' by default means load all permissions)
 	 */
 	function getrights($moduletag='')
 	{
@@ -993,6 +996,7 @@ class User extends CommonObject
 		$this->user_mobile  = trim($this->user_mobile);
 		$this->email        = trim($this->email);
 		$this->note         = trim($this->note);
+		$this->openid         = trim($this->openid);
 		$this->webcal_login = trim($this->webcal_login);
 		$this->phenix_login = trim($this->phenix_login);
 		if ($this->phenix_pass != $this->phenix_pass_crypted)
@@ -1026,6 +1030,7 @@ class User extends CommonObject
 		$sql.= ", phenix_pass = '".addslashes($this->phenix_pass)."'";
 		$sql.= ", note = '".addslashes($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".addslashes($this->photo)."'":"null");
+		$sql.= ", openid = ".($this->openid?"'".addslashes($this->openid)."'":"null");
 		//$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 

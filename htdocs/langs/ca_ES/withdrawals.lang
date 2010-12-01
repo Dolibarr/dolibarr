@@ -74,3 +74,4 @@ PleaseSelectCustomerBankBANToWithdraw=Introduïu la informació del compte banca
 WithBankUsingRIB=Per als comptes bancaris que utilitzen CCC
 WithBankUsingBANBIC=Per als comptes bancaris que utilitzen el codi BAN/BIC/SWIFT
 BankToReceiveWithdraw=Informació del seu compte bancari receptor de les domiciliacions
+CreditDate=Abonada el

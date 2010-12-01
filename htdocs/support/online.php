@@ -17,17 +17,20 @@
  */
 
 /**
- *       \file      htdocs/install/phpinfo.php
+ *       \file      htdocs/support/online.php
  *       \ingroup   install
  *       \brief     Provide an Online Help support
  *       \version   $Id$
  */
+
+error_reporting(0);
 
 include_once("./inc.php");
 $uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);	// URL racine relative
+
 
 $langs->load("other");
 $langs->load("help");

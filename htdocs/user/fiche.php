@@ -289,6 +289,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 			$edituser->office_fax    = $_POST["office_fax"];
 			$edituser->user_mobile   = $_POST["user_mobile"];
 			$edituser->email         = $_POST["email"];
+			$edituser->openid         = $_POST["openid"];
 			$edituser->webcal_login  = $_POST["webcal_login"];
 			$edituser->phenix_login  = $_POST["phenix_login"];
 			$edituser->phenix_pass   = $_POST["phenix_pass"];
@@ -923,7 +924,7 @@ else
 			}
 			// Photo
 			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-			print $html->showphoto('userphoto',$fuser);
+			print $html->showphoto('userphoto',$fuser,100,1);
 			print '</td>';
 			print '</tr>';
 
@@ -1009,7 +1010,7 @@ else
 			print '<td>'.dol_print_phone($fuser->office_fax,'',0,0,1).'</td>';
 
 			// EMail
-			print '<tr><td valign="top">'.$langs->trans("EMail").($conf->global->USER_MAIL_REQUIRED?'*':'').'</td>';
+			print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
 			print '<td>'.dol_print_email($fuser->email,0,0,1).'</td>';
 			print "</tr>\n";
 
@@ -1027,6 +1028,13 @@ else
 			print '<td>'.dol_print_date($fuser->datepreviouslogin,"dayhour").'</td>';
 			print "</tr>\n";
 
+			
+			if (preg_match('/myopenid/',$conf->authmode))
+			{
+				print '<tr><td valign="top">'.$langs->trans("url_openid").'</td>';
+				print '<td>'.$fuser->openid.'</td>';
+				print "</tr>\n";
+			}
 			// Autres caracteristiques issus des autres modules
 
 			// Module Webcalendar
@@ -1312,7 +1320,7 @@ else
 			print '</tr>';
 
 			// Nom
-			print "<tr>".'<td valign="top" class="fieldrequired">'.$langs->trans("Name").'</span></td>';
+			print "<tr>".'<td valign="top" class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
 			print '<td colspan="2">';
 			if ($caneditfield && !$fuser->ldap_sid)
 			{
@@ -1479,7 +1487,7 @@ else
 			print '</td></tr>';
 
 			// EMail
-			print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
+			print "<tr>".'<td valign="top"'.($conf->global->USER_MAIL_REQUIRED?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
 			print '<td>';
 			if ($caneditfield  && !$fuser->ldap_sid)
 			{
@@ -1491,6 +1499,23 @@ else
 				print $fuser->email;
 			}
 			print '</td></tr>';
+			
+			// openid
+			if (preg_match('/myopenid/',$conf->authmode))
+			{
+				print "<tr>".'<td valign="top">'.$langs->trans("url_openid").'</td>';
+				print '<td>';
+				if ($caneditfield  && !$fuser->ldap_sid)
+				{
+					print '<input size="40" type="text" name="openid" class="flat" value="'.$fuser->openid.'">';
+				}
+				else
+				{
+					print '<input type="hidden" name="openid" value="'.$fuser->openid.'">';
+					print $fuser->openid;
+				}
+				print '</td></tr>';
+			}			
 
 			// Statut
 			print '<tr><td valign="top">'.$langs->trans("Status").'</td>';

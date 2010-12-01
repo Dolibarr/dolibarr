@@ -225,6 +225,7 @@ if (! GETPOST("source"))
         print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
+
 	// Currency
 	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
@@ -632,6 +633,23 @@ if (GETPOST("source") == 'membersubscription')
 	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$member->ref.'">';
 	print '</td></tr>'."\n";
+
+	if ($member->last_subscription_date || $member->last_subscription_amount)
+	{
+		// Last subscription date
+		$var=!$var;
+		print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionDate");
+		print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->last_subscription_date,'day');
+		print '</td></tr>'."\n";
+
+		// Last subscription amount
+		$var=!$var;
+		print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionAmount");
+		print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
+		print '</td></tr>'."\n";
+
+		if (empty($amount) && ! GETPOST('newamount')) $_GET['newamount']=$member->last_subscription_amount;
+	}
 
 	// Amount
 	$var=!$var;

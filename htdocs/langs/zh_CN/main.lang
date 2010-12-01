@@ -8,8 +8,9 @@
 // START - Lines generated via autotranslator.php tool (2010-06-09 00:39:24).
 // Reference language: en_US
 CHARSET=UTF-8
-DIRECTION=升
-FONTFORPDF=?????
+DIRECTION=ltr
+FONTFORPDF=arialunicid0
+FONTSIZEFORPDF=9
 SeparatorDecimal=。
 SeparatorThousand=，
 FormatDateShort=%d/%m/%Y

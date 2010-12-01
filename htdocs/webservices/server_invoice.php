@@ -96,32 +96,58 @@ $server->wsdl->addComplexType(
 );
 
 $server->wsdl->addComplexType(
-        'invoice',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-	    array(
-	    	'id' => array('name'=>'id','type'=>'xsd:string'),
-	        'ref' => array('name'=>'ref','type'=>'xsd:string'),
-	        'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
-	        'fk_user_valid' => array('name'=>'fk_user_valid','type'=>'xsd:string'),
-	        'date' => array('name'=>'date','type'=>'xsd:int'),
-	        'date_creation' => array('name'=>'date_creation','type'=>'xsd:int'),
-	        'date_validation' => array('name'=>'date_validation','type'=>'xsd:int'),
-	        'date_modification' => array('name'=>'date_modification','type'=>'xsd:int'),
-	        'type' => array('name'=>'type','type'=>'xsd:int'),
-	        'total' => array('name'=>'type','type'=>'xsd:int'),
-	        'total_vat' => array('name'=>'type','type'=>'xsd:int'),
-	        'total_vat' => array('name'=>'type','type'=>'xsd:int'),
-	        'note' => array('name'=>'note','type'=>'xsd:int'),
-	        'note_public' => array('name'=>'note_public','type'=>'xsd:int'),
-	        'status' => array('name'=>'status','type'=>'xsd:int'),
-	        'close_code' => array('name'=>'close_code','type'=>'xsd:int'),
-	        'close_note' => array('name'=>'close_note','type'=>'xsd:int'),
-	    	'lines' => array('name'=>'lines','type'=>'tns:LinesArray')
-	    )
-    );
+    'invoice',
+    'element',		// If we put element here instead of complexType to have tag called invoice in getInvoicesForThirdParty we brek getInvoice
+    'struct',
+    'all',
+    '',
+    array(
+    	'id' => array('name'=>'id','type'=>'xsd:string'),
+        'ref' => array('name'=>'ref','type'=>'xsd:string'),
+        'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
+        'fk_user_valid' => array('name'=>'fk_user_valid','type'=>'xsd:string'),
+        'date' => array('name'=>'date','type'=>'xsd:int'),
+        'date_creation' => array('name'=>'date_creation','type'=>'xsd:int'),
+        'date_validation' => array('name'=>'date_validation','type'=>'xsd:int'),
+        'date_modification' => array('name'=>'date_modification','type'=>'xsd:int'),
+        'type' => array('name'=>'type','type'=>'xsd:int'),
+        'total' => array('name'=>'type','type'=>'xsd:int'),
+        'total_vat' => array('name'=>'type','type'=>'xsd:int'),
+        'total_vat' => array('name'=>'type','type'=>'xsd:int'),
+        'note' => array('name'=>'note','type'=>'xsd:int'),
+        'note_public' => array('name'=>'note_public','type'=>'xsd:int'),
+        'status' => array('name'=>'status','type'=>'xsd:int'),
+        'close_code' => array('name'=>'close_code','type'=>'xsd:int'),
+        'close_note' => array('name'=>'close_note','type'=>'xsd:int'),
+    	'lines' => array('name'=>'lines','type'=>'tns:LinesArray')
+    )
+);
+
+$server->wsdl->addComplexType(
+    'InvoicesArray',
+    'complexType',
+    'array',
+    '',
+    'SOAP-ENC:Array',
+    array(),
+    array(
+        array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:invoice[]')
+    ),
+    'tns:invoice'
+);
+
+$server->wsdl->addComplexType(
+    'invoices',
+    'complexType',
+    'array',
+    '',
+    'SOAP-ENC:Array',
+    array(),
+    array(
+        array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:invoice[]')
+    ),
+    'tns:invoice'
+);
 
 $server->wsdl->addComplexType(
         'result',
@@ -143,9 +169,16 @@ array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:stri
 array('result'=>'tns:result','invoice'=>'tns:invoice'),
 $ns
 );
+$server->register('getInvoicesForThirdParty',
+// Entry values
+array('authentication'=>'tns:authentication','idthirdparty'=>'xsd:string'),
+// Exit values
+array('result'=>'tns:result','invoices'=>'tns:invoices'),
+$ns
+);
 
 
-// Full methods code
+// Get invoice from id
 function getInvoice($authentication,$id,$ref)
 {
 	global $db,$conf,$langs;
@@ -248,6 +281,100 @@ function getInvoice($authentication,$id,$ref)
 	return $objectresp;
 }
 
+
+// Get list of invoices for third party
+function getInvoicesForThirdParty($authentication,$idthirdparty)
+{
+	global $db,$conf,$langs;
+
+	dol_syslog("Function: getInvoicesForThirdParty login=".$authentication['login']." id=".$idthirdparty);
+
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+
+	if (! $error && ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY))
+	{
+		$error++;
+		$errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
+	}
+
+	if (! $error && empty($idthirdparty))
+	{
+		$error++;
+		$errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id is not provided';
+	}
+
+	if (! $error)
+	{
+		$linesinvoice=array();
+
+		$sql.='SELECT rowid, facnumber as ref, type, total_ttc, total, tva';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
+		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
+		$sql.= ' WHERE fk_soc = '.$idthirdparty;
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num=$db->num_rows($resql);
+			$i=0;
+			while ($i < $num)
+			{
+				// En attendant remplissage par boucle
+
+				// Define lines of invoice
+				$linesresp=array();
+				$linesresp[]=array(
+					'id'=>100,
+					'type'=>1,
+					'total_ht'=>$line->total_ht,
+					'total_vat'=>$line->total_tva,
+					'total_ttc'=>$line->total_ttc,
+				);
+				$linesresp[]=array(
+					'id'=>101,
+					'type'=>1,
+					'total_ht'=>$line->total_ht,
+					'total_vat'=>$line->total_tva,
+					'total_ttc'=>$line->total_ttc,
+				);
+				// Now define invoice
+				$linesinvoice[]=array(
+					'id'=>'1',
+				    'ref'=>'aa',
+					'type'=>1,
+					'total_ht'=>10,
+					'total_vat'=>$line->total_tva,
+					'total_ttc'=>$line->total_ttc,
+		    		'lines' => $linesresp
+				);
+
+				$i++;
+			}
+
+			$objectresp=array(
+		    	'result'=>array('result_code'=>'', 'result_label'=>''),
+		        'invoices'=>$linesinvoice
+
+			);
+		}
+		else
+		{
+			$error++;
+			$errorcode=$db->lasterrno(); $errorlabel=$db->lasterror();
+		}
+	}
+
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
+
+	return $objectresp;
+}
 
 
 // Return the results.

@@ -538,12 +538,16 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Load a third party from database into memory
-     *    \param      socid			Id third party to load
-     *    \param      ref			Name of third party (Warning, this can return several records)
-     *    \return     int			>0 if OK, <0 if KO or if two records found for same ref.
+     *    Load a third party from database into memory
+     *    @param      socid			Id third party to load
+     *    @param      ref			Name of third party (Warning, this can return several records)
+     *    @param      idprof1		Prof id 1 of third party (Warning, this can return several records)
+     *    @param      idprof2		Prof id 2 of third party (Warning, this can return several records)
+     *    @param      idprof3		Prof id 3 of third party (Warning, this can return several records)
+     *    @param      idprof4		Prof id 4 of third party (Warning, this can return several records)
+     *    @return     int			>0 if OK, <0 if KO or if two records found for same ref or idprof.
      */
-    function fetch($socid, $ref='')
+    function fetch($socid, $ref='',$idprof1='',$idprof2='',$idprof3='',$idprof4='')
     {
         global $langs;
         global $conf;
@@ -578,6 +582,10 @@ class Societe extends CommonObject
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
         if ($socid) $sql .= ' WHERE s.rowid = '.$socid;
         if ($ref)   $sql .= " WHERE s.nom = '".addslashes($ref)."' AND s.entity = ".$conf->entity;
+        if ($idprof1) $sql .= " WHERE s.siren = '".addslashes($siren)."' AND s.entity = ".$conf->entity;
+        if ($idprof2) $sql .= " WHERE s.siret = '".addslashes($siret)."' AND s.entity = ".$conf->entity;
+        if ($idprof3) $sql .= " WHERE s.ape = '".addslashes($ape)."' AND s.entity = ".$conf->entity;
+        if ($idprof4) $sql .= " WHERE s.idprof4 = '".addslashes($idprof4)."' AND s.entity = ".$conf->entity;
 
         $resql=$this->db->query($sql);
         dol_syslog("Societe::fetch ".$sql);

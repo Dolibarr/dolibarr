@@ -23,6 +23,8 @@
  *       \version   $Id$
  */
 
+error_reporting(0);
+
 // Use its own include to not share the include of Dolibarr
 // This is a standalone feature with no information from Dolibarr to show
 // and no database access to do.

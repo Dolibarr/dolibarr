@@ -182,7 +182,7 @@ if (GETPOST("action") == 'dopayment')
         dol_syslog("shipToStreet2: $shipToStreet2", LOG_DEBUG);
         dol_syslog("phoneNum: $phoneNum", LOG_DEBUG);
 
-	    header("Content-type: text/html; charset=".$conf->file->character_set_client);
+	    /*header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 	    print '<html>'."\n";
 	    print '<head>'."\n";
@@ -190,14 +190,16 @@ if (GETPOST("action") == 'dopayment')
 	    print '</head>'."\n";
 	    print '<body>'."\n";
 	    print "\n";
+		*/
 
 	    $_SESSION["Payment_Amount"]=$PAYPAL_API_PRICE;
 
 	    // A redirect is added if API call successfull
         print_paypal_redirect($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
 
-	    print '</body></html>'."\n";
+	    /*print '</body></html>'."\n";
 	    print "\n";
+		*/
 
 		exit;
 	}
@@ -287,7 +289,7 @@ if (! GETPOST("source"))
 	$found=true;
 	$tag=GETPOST("tag");
 	$fulltag=$tag;
-	
+
 	// Creditor
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
@@ -795,6 +797,23 @@ if (GETPOST("source") == 'membersubscription')
 	print '<input type="hidden" name="ref" value="'.$member->ref.'">';
 	print '</td></tr>'."\n";
 
+	if ($member->last_subscription_date || $member->last_subscription_amount)
+	{
+		// Last subscription date
+		$var=!$var;
+		print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionDate");
+		print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->last_subscription_date,'day');
+		print '</td></tr>'."\n";
+
+		// Last subscription amount
+		$var=!$var;
+		print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionAmount");
+		print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
+		print '</td></tr>'."\n";
+
+		if (empty($amount) && ! GETPOST('newamount')) $_GET['newamount']=$member->last_subscription_amount;
+	}
+
 	// Amount
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
@@ -828,7 +847,7 @@ if (GETPOST("source") == 'membersubscription')
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
 
     // Shipping address
-    $shipToName=$member->getFullName();
+    $shipToName=$member->getFullName($langs);
     $shipToStreet=$member->adresse;
     $shipToCity=$member->ville;
     $shipToState=$member->departement_code;

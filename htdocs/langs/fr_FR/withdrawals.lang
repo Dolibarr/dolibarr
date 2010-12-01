@@ -74,3 +74,4 @@ PleaseSelectCustomerBankBANToWithdraw=Saisissez les informations du compte banca
 WithBankUsingRIB=Pour les comptes bancaires utilisant le RIB
 WithBankUsingBANBIC=Pour les comptes bancaires utilisant le code BAN/BIC/SWIFT
 BankToReceiveWithdraw=Informations de votre compte bancaire recevant les prélèvements
+CreditDate=Crédité le

@@ -10,6 +10,7 @@
 CHARSET=UTF-8
 DIRECTION=ltr
 FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=9
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
@@ -279,7 +280,7 @@ Total=Toplam
 SubTotal=Subtotal
 TotalHTShort=(Net) Toplam
 TotalTTCShort=Toplam (bahis vergi)
-TotalHT=(Toplam vergi net)
+TotalHT=Toplam (vergi net)
 TotalTTC=Toplam (bahis vergi)
 TotalTTCToYourCredit=Kredi için toplam (bahis vergi)
 TotalVAT=Toplam KDV

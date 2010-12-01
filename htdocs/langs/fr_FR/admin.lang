@@ -286,6 +286,7 @@ FollowingSubstitutionKeysCanBeUsed=En plaçant les tags suivant dans le modèle,
 FullListOnOnlineDocumentation=Liste complète des tags disponibles sur la documentation utilisateur du module Tiers sur le wiki http://wiki.dolibarr.org
 FirstnameNamePosition=Ordre affichage prénom/nom
 DescWeather=Les graphiques suivant seront affichées sur le tableau de bord si le nombre d'éléments en retard atteints ces valeurs:
+KeyForWebServicesAccess=Clé pour utiliser les Web Services (paramètre "dolibarrkey" dans les webservices)
 
 # Modules= undefined
 Module0Name= Utilisateurs & groupes
@@ -1206,7 +1207,7 @@ NbOfBoomarkToShow= Nombre maximum de marques-pages à afficher dans le menu
 ##### WebServices #####
 WebServicesSetup=Configuration du module Webservices
 WebServicesDesc=En activant ce module, Dolibarr devient aussi serveur de web services offrant des web services divers.
-WSDLCanBeDownloadedHere=Le descripteur WSDL des services fournis peut être récupéré ici
+WSDLCanBeDownloadedHere=Les descripteurs WSDL des services fournis peuvent être récupéré ici
 EndPointIs=Les clients SOAP doivent envoyer leur requêtes vers l'endpoint Dolibarr à l'URL
 ##### Bank #####
 BankSetupModule=Configuration du module Banque

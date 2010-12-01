@@ -284,6 +284,7 @@ NumberOfModelFilesFound=Number of ODT templates files found in those directories
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 FirstnameNamePosition=Position of firstname/name
 DescWeather=The following pictures will be shown on dashboard when number of late actions reach the following values:
+KeyForWebServicesAccess=Key to use Web Services (parameter "dolibarrkey" in webservices)
 
 # Modules
 Module0Name=Users & groups
@@ -892,7 +893,7 @@ FreeLegalTextOnOrders=Free text on orders
 WatermarkOnDraftOrders=Watermark on draft orders (any if empty)
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
-ClickToDialUrlDesc=Url called when a click on phone picto is done.  Dans l'url, vous pouvez utiliser les balises<br><b>__PHONETO__</b> qui sera remplacé par le téléphone de l'appelé<br><b>__PHONEFROM__</b> qui sera remplacé par le téléphone de l'appelant (le votre)<br><b>__LOGIN__</b> qui sera remplacé par votre login clicktodial (défini sur votre fiche utilisateur)<br><b>__PASS__</b> qui sera remplacé par votre mot de passe clicktodial (défini sur votre fiche utilisateur).
+ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with your clicktodial login (defined on your user card)<br><b>__PASS__</b> that will be replaced with your clicktodial password (defined on your user card).
 ##### Bookmark4u #####
 Bookmark4uSetup=Bookmark4u module setup
 ##### Interventions #####
@@ -1194,7 +1195,7 @@ NbOfBoomarkToShow=Maximum number of bookmarks to show in left menu
 ##### WebServices #####
 WebServicesSetup=Webservices module setup
 WebServicesDesc=By enabling this module, Dolibarr become a web service server to provide miscellaneous web services.
-WSDLCanBeDownloadedHere=WSDL descriptor file of provided serviceses can be download here
+WSDLCanBeDownloadedHere=WSDL descriptor files of provided services can be download here
 EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint available at Url
 ##### Bank #####
 BankSetupModule=Bank module setup

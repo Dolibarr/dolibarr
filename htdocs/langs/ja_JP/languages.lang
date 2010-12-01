@@ -1,0 +1,36 @@
+# Dolibarr language file - fr_FR - languages
+CHARSET=UTF-8
+
+Language_ar_AR=アラビア語
+Language_ca_ES=カタルにゃ語
+Language_da_DA=デンマーク語
+Language_de_DE=ドイツ語
+Language_de_AT=ドイツ語 (オーストリア)
+Language_en_AU=英語 (オーストラリア)
+Language_en_GB=英語 (イギリス)
+Language_en_IN=英語 (インド)
+Language_en_US=英語 (アメリカ)
+Language_es_ES=スペイン語
+Language_es_AR=スペイン語 (アルゼンチン)
+Language_fi_FI=フインランド語
+Language_fr_BE=フランス語 (ベルギー)
+Language_fr_CA=フランス語 (カナダ)
+Language_fr_CH=フランス語 (スイス)
+Language_fr_FR=フランス語
+Language_hu_HU=ハンガリー語
+Language_is_IS=アイスランド語
+Language_it_IT=イタリア語
+Language_ja_JP=日本語
+Language_nb_NO=ノルウエー語 (ブーケモール)
+Language_nl_BE=オランダ語 (ベルギー)
+Language_nl_NL=オランダ語 (オランダ)
+Language_pl_PL=ポーランド語
+Language_pt_BR=ポルトガル語 (ブラジル)
+Language_pt_PT=ポルトガル語
+Language_ro_RO=ルーマニア語
+Language_ru_RU=ロシア語
+Language_tr_TR=トルコ語
+Language_sl_SL=スロベニア語
+Language_sv_SV=スウエーデん語
+Language_zh_CN=中国語
+Language_is_IS=アイスランド語
