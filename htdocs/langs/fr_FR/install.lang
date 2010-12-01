@@ -147,6 +147,7 @@ NextStepMightLastALongTime=L'étape en cours peut durer quelques minutes. Merci 
 MigrationCustomerOrderShipping=Mise à jour stockage des expéditions des commandes clients 
 MigrationShippingDelivery=Mise à jour stockage des expéditions 
 MigrationShippingDelivery2=Mise à jour stockage des expéditions 2 
+MigrationFinished=Migration terminée
 
 #########
 # upgrade

@@ -146,6 +146,7 @@ NextStepMightLastALongTime=Current step may last several minutes. Please wait un
 MigrationCustomerOrderShipping=Migrate shipping for customer orders storage 
 MigrationShippingDelivery=Upgrade storage of shipping 
 MigrationShippingDelivery2=Upgrade storage of shipping 2 
+MigrationFinished=Migration finished
 
 #########
 # upgrade

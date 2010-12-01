@@ -299,13 +299,13 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $beforeversionarray=explode('.','3.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-            //print $langs->trans("AlreadyDone");
-
 			// Reload modules
             migrate_reload_modules($db,$langs,$conf);
 
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
+
+            print $langs->trans("MigrationFinished");
         }
 
 		// On commit dans tous les cas.
