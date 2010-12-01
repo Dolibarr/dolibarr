@@ -1,0 +1,227 @@
+<?php
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/**
+ *       \file       htdocs/webservices/server_thirdparty.php
+ *       \brief      File that is entry point to call Dolibarr WebServices
+ *       \version    $Id$
+ */
+
+// This is to make Dolibarr working with Plesk
+set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+
+require_once("../master.inc.php");
+require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
+require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+
+
+dol_syslog("Call Dolibarr webservices interfaces");
+
+// Enable and test if module web services is enabled
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
+{
+	$langs->load("admin");
+	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+	print $langs->trans("ToActivateModule");
+	exit;
+}
+
+// Create the soap Object
+$server = new soap_server();
+$server->soap_defencoding='UTF-8';
+$ns='http://www.dolibarr.org/ns';
+$server->configureWSDL('WebServicesDolibarrThirdParty',$ns);
+$server->wsdl->schemaTargetNamespace=$ns;
+
+
+// Define WSDL content
+$server->wsdl->addComplexType(
+        'authentication',
+ 	    'complexType',
+	    'struct',
+	    'all',
+	    '',
+	    array(
+	        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
+	    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+	    	'login' => array('name'=>'login','type'=>'xsd:string'),
+	        'password' => array('name'=>'password','type'=>'xsd:string'),
+	        'entity' => array('name'=>'entity','type'=>'xsd:string'),
+	    ));
+
+$server->wsdl->addComplexType(
+        'thirdparty',
+ 	    'complexType',
+	    'struct',
+	    'all',
+	    '',
+	    array(
+	    	'id' => array('name'=>'id','type'=>'xsd:string'),
+	        'name' => array('name'=>'name','type'=>'xsd:string'),
+	        'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
+	        'date' => array('name'=>'date','type'=>'xsd:int'),
+	        'date_creation' => array('name'=>'date_creation','type'=>'xsd:int'),
+	        'date_modification' => array('name'=>'date_modification','type'=>'xsd:int'),
+	        'note' => array('name'=>'note','type'=>'xsd:int'),
+	    	'address' => array('name'=>'address','type'=>'xsd:string'),
+	    	'zip' => array('name'=>'zip','type'=>'xsd:string'),
+	    	'town' => array('name'=>'town','type'=>'xsd:string'),
+	    	'province_id' => array('name'=>'province_id','type'=>'xsd:string'),
+	    	'phone' => array('name'=>'country_id','type'=>'xsd:string'),
+	    	'fax' => array('name'=>'country_id','type'=>'xsd:string'),
+	    	'email' => array('name'=>'country_id','type'=>'xsd:string'),
+	    	'url' => array('name'=>'country_id','type'=>'xsd:string'),
+	    	'profid1' => array('name'=>'profid1','type'=>'xsd:string'),
+	    	'profid2' => array('name'=>'profid2','type'=>'xsd:string'),
+	    	'profid3' => array('name'=>'profid3','type'=>'xsd:string'),
+	    	'profid4' => array('name'=>'profid4','type'=>'xsd:string'),
+	    	'prefix' => array('name'=>'prefix','type'=>'xsd:string'),
+	    	'vat_used' => array('name'=>'vat_used','type'=>'xsd:string'),
+	    	'vat_number' => array('name'=>'vat_number','type'=>'xsd:string')
+	    )
+    );
+
+$server->wsdl->addComplexType(
+        'result',
+ 	    'complexType',
+	    'struct',
+	    'all',
+	    '',
+	    array(
+	        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
+	        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+	    ));
+
+
+// Register WSDL
+$server->register('getThirdParty',
+// Entry values
+array('authentication'=>'tns:authentication','id'=>'xsd:string','name'=>'xsd:string'),
+// Exit values
+array('result'=>'tns:result','thirdparty'=>'tns:thirdparty'),
+$ns
+);
+
+
+// Full methods code
+function getThirdParty($authentication,$id,$name)
+{
+	global $db,$conf,$langs;
+
+	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." name=".$name);
+
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+
+	if (! $error && ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY))
+	{
+		$error++;
+		$errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
+	}
+
+	if (! $error && $id && $name)
+	{
+		$error++;
+		$errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id and ref can\'t be both provided. You must choose one or other but not both.';
+	}
+
+	if (! $error)
+	{
+		$fuser=new User($db);
+		$result=$fuser->fetch('',$authentication['login'],'',0);
+		if ($result <= 0) $error++;
+
+		// TODO Check password
+
+
+
+		if ($error)
+		{
+			$errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';
+		}
+	}
+
+	if (! $error)
+	{
+		$fuser->getrights();
+
+		if ($fuser->rights->facture->lire)
+		{
+			$thirdparty=new Societe($db);
+			$result=$thirdparty->fetch($id,$name);
+			if ($result > 0)
+			{
+			    // Create
+			    $objectresp = array(
+			    	'result'=>array('result_code'=>'', 'result_label'=>''),
+			        'thirdparty'=>array(
+				    	'id' => $thirdparty->id,
+			   			'name' => $thirdparty->name,
+			            'fk_user_author' => $thirdparty->fk_user_author,
+//			    		'date_creation' => $thirdparty->
+//			    		'date_modification' => $thirdparty->
+			            'address' => $thirdparty->address,
+				        'zip' => $thirdparty->cp,
+				        'town' => $thirdparty->ville,
+				        'province_id' => $thirdparty->departement_id,
+				        'country_id' => $thirdparty->pays_id,
+				        'phone' => $thirdparty->tel,
+				        'fax' => $thirdparty->fax,
+				        'email' => $thirdparty->email,
+				        'url' => $thirdparty->url,
+				        'profid1' => $thirdparty->siren,
+				        'profid2' => $thirdparty->siret,
+				        'profid3' => $thirdparty->ape,
+				        'profid4' => $thirdparty->idprof4,
+				        'prefix' => $thirdparty->prefix_comm,
+				        'vat_used' => $thirdparty->tva_assuj,
+				        'vat_number' => $thirdparty->tva_intra
+			    ));
+			}
+			else
+			{
+				$error++;
+				$errorcode='FAILEDTOREAD'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref;
+			}
+		}
+		else
+		{
+			$error++;
+			$errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
+		}
+	}
+
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
+
+	return $objectresp;
+}
+
+
+
+// Return the results.
+$server->service($HTTP_RAW_POST_DATA);
+
+?>
