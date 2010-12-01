@@ -145,7 +145,7 @@ if ($id > 0 || ! empty($ref))
 
 
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),3);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{

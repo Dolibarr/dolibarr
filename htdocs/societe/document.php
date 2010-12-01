@@ -130,7 +130,7 @@ if ($socid > 0)
 
 
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),3);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -143,7 +143,7 @@ if ($socid > 0)
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Name").'</td>';
 		print '<td colspan="3">';
-		print $form->showrefnav($societe,'socid','',1,'rowid','nom');
+		print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom');
 		print '</td></tr>';
 
 		// Prefix
