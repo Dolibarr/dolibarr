@@ -92,7 +92,9 @@ class mailing_kiwi extends MailingTargets
                     			'name' => $obj->name,
                     			'firstname' => $obj->firstname,
                     			'other' => ($obj->label?$langs->transnoentities("Category").'='.$obj->label:''),
-                    			'url' => $this->url($obj->id)
+                                'source_url' => $this->url($obj->id),
+                                'source_id' => $obj->id,
+                                'source_type' => 'thirdparty'
 					);
 					$old = $obj->email;
 					$j++;

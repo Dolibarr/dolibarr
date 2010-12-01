@@ -119,7 +119,7 @@ class mailing_pomme extends MailingTargets
 
 	/**
 	 *    \brief      Ajoute destinataires dans table des cibles
-	 *    \param      mailing_id    Id du mailing concern�
+	 *    \param      mailing_id    Id of emailing
 	 *    \param      filterarray   Requete sql de selection des destinataires
 	 *    \return     int           < 0 si erreur, nb ajout si ok
 	 */
@@ -164,7 +164,9 @@ class mailing_pomme extends MailingTargets
                     			'name' => $obj->name,
                     			'firstname' => $obj->firstname,
                     			'other' => $langs->transnoentities("Login").'='.$obj->login.';'.$langs->transnoentities("PhonePro").'='.$obj->office_phone,
-                    			'url' => $this->url($obj->id)
+                                'source_url' => $this->url($obj->id),
+                                'source_id' => $obj->id,
+                                'source_type' => 'user'
 					);
 					$old = $obj->email;
 					$j++;

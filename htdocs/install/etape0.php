@@ -227,7 +227,7 @@ if (! $error && $db->connected)
 if (! $error && $db->connected)
 {
 	?>
-<table border="0" cellpadding="1" cellspacing="0">
+<table border="0" cellpadding="1" cellspacing="0" width="100%">
 
 	<tr>
 		<td align="center" class="label" colspan="3">
@@ -255,15 +255,18 @@ if (! $error && $db->connected)
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetDatabase"); ?></td>
 		<td valign="top" class="label"><?php
+		$nbofchoice=0;
 		if (sizeof($listOfCharacterSet))
 		{
 			print '<select name="dolibarr_main_db_character_set" '.$disabled.'>';
 			$selected="";
 			foreach ($listOfCharacterSet as $characterSet)
 			{
-				// We keep only utf8 and iso
 				$linedisabled=false;
-				if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/(utf8|latin1)/i',$characterSet['charset'])) $linedisabled=true;
+
+				// We keep only utf8
+				//if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/(utf8|latin1)/i',$characterSet['charset'])) $linedisabled=true;
+				if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/utf8/i',$characterSet['charset'])) $linedisabled=true;
 
 				if ($defaultCharacterSet == $characterSet['charset'] )
 				{
@@ -273,10 +276,12 @@ if (! $error && $db->connected)
 				{
 					$selected="";
 				}
+				if (! $linedisabled) $nbofchoice++;
 				print '<option value="'.$characterSet['charset'].'" '.$selected.($linedisabled?' disabled="true"':'').'>'.$characterSet['charset'].' ('.$characterSet['description'].')</option>';
 			}
 			print '</select>';
-			if ($disabled=="disabled"){
+			if ($disabled=="disabled")
+			{
 				print '<input type="hidden" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
 			}
 		}
@@ -284,10 +289,12 @@ if (! $error && $db->connected)
 		{
 			print '<input type="text" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
 		}
+        if ($nbofchoice > 1) {
 		?></td>
 		<td class="label">
 		<div class="comment"><?php echo $langs->trans("CharacterSetDatabaseComment"); ?></div>
 		</td>
+		<?php } ?>
 	</tr>
 	<?php
 
@@ -298,15 +305,18 @@ if (! $error && $db->connected)
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("CollationConnection"); ?></td>
 		<td valign="top" class="label"><?php
+		$nbofchoice=0;
 		if (sizeof($listOfCollation))
 		{
 			print '<select name="dolibarr_main_db_collation" '.$disabled.'>';
 			$selected="";
 			foreach ($listOfCollation as $collation)
 			{
-				// We keep only utf8 and iso
 				$linedisabled=false;
-				if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/(utf8_general|latin1_swedish)/i',$collation['collation'])) $linedisabled=true;
+
+				// We keep only utf8 and iso
+                //if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/(utf8_general|latin1_swedish)/i',$collation['collation'])) $linedisabled=true;
+                if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/utf8/i',$collation['collation'])) $linedisabled=true;
 
 				if ($defaultCollationConnection == $collation['collation'])
 				{
@@ -316,21 +326,24 @@ if (! $error && $db->connected)
 				{
 					$selected="";
 				}
+                if (! $linedisabled) $nbofchoice++;
 				print '<option value="'.$collation['collation'].'" '.$selected.($linedisabled?' disabled="true"':'').'>'.$collation['collation'].'</option>';
 			}
 			print '</select>';
 			if ($disabled=="disabled"){
-				print '<input type="hidden" name="dolibarr_main_db_collation"  value="'.$defaultCollationConnection.'">';
+				print '<input type="hidden" name="dolibarr_main_db_collation" value="'.$defaultCollationConnection.'">';
 			}
 		}
 		else
 		{
-			print '<input type="text" name="dolibarr_main_db_collation"  value="'.$defaultCollationConnection.'">';
+			print '<input type="text" name="dolibarr_main_db_collation" value="'.$defaultCollationConnection.'">';
 		}
+        if ($nbofchoice > 1) {
 		?></td>
 		<td class="label">
-		<div class="comment"><?php echo $langs->trans("CollationConnectionComment"); ?></div>
+		<div class="comment"><?php if ($nbofchoice > 1) echo $langs->trans("CollationConnectionComment"); ?></div>
 		</td>
+        <?php } ?>
 	</tr>
 	<?php
 }

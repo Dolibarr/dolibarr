@@ -256,7 +256,7 @@ function print_eldy_menu($db,$atarget,$type_user)
         }
 
         $idsel='bank';
-        if ($user->rights->banque->lire)
+        if ($user->rights->banque->lire || $user->rights->prelevement->bons->lire)
         {
             print_start_menu_entry($idsel);
             print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/compta/bank/index.php?mainmenu=bank&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';

@@ -212,6 +212,9 @@ print $dolibarr_main_url_root;
 
 	</tr>
 
+<?php
+if (1 == 2) {   // Disabled during install process because HTTPS may not be yet configured in web server and need experienced skills
+?>
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("ForceHttps"); ?>
 		<td class="label" valign="top"><input type="checkbox"
@@ -221,6 +224,9 @@ print $dolibarr_main_url_root;
 		</td>
 
 	</tr>
+<?php
+}
+?>
 
 	<!-- Dolibarr database -->
 

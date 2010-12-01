@@ -131,7 +131,7 @@ class mailing_fraise extends MailingTargets
 
     /**
      *    \brief      Ajoute destinataires dans table des cibles
-     *    \param      mailing_id    Id du mailing concerne
+     *    \param      mailing_id    Id of emailing
      *    \param      filterarray   Param to filter sql request. Deprecated. Should use $_POST instead.
      *    \return     int           < 0 si erreur, nb ajout si ok
      */
@@ -184,7 +184,9 @@ class mailing_fraise extends MailingTargets
                     			'name' => $obj->name,
                     			'firstname' => $obj->firstname,
                     			'other' => $obj->datefin?($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')):'',
-                    			'url' => $this->url($obj->id)
+                                'source_url' => $this->url($obj->id),
+                                'source_id' => $obj->id,
+                                'source_type' => 'member'
                     			);
                     $old = $obj->email;
                     $j++;

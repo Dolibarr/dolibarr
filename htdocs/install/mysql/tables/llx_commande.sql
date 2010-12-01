@@ -26,9 +26,12 @@ create table llx_commande
   tms                   timestamp,
   fk_soc                integer NOT NULL,
   fk_projet             integer DEFAULT 0,             -- projet auquel est rattache la commande
-  ref                   varchar(30) NOT NULL,          -- order number
+
+  ref                   varchar(30)       NOT NULL,    -- order reference number
   entity                integer DEFAULT 1 NOT NULL,	   -- multi company id
-  ref_client            varchar(30),                   -- customer order number
+
+  ref_ext               varchar(30),                   -- reference into an external system (not used by dolibarr)
+  ref_client            varchar(30),                   -- reference for customer
 
   date_creation         datetime,                      -- date de creation 
   date_valid            datetime,                      -- date de validation

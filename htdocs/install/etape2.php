@@ -173,6 +173,7 @@ if ($_POST["action"] == "set")
 					$buf = fgets($fp, 4096);
 					if (substr($buf, 0, 2) <> '--')
 					{
+					    $buf=preg_replace('/--(.+)*/','',$buf);
 						$buffer .= $buf;
 					}
 				}

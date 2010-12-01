@@ -98,7 +98,7 @@ class mailing_peche extends MailingTargets
 
 	/**
 	 *    \brief      Ajoute destinataires dans table des cibles
-	 *    \param      mailing_id    Id du mailing concerne
+	 *    \param      mailing_id    Id of emailing
 	 *    \param      filterarray   Requete sql de selection des destinataires
 	 *    \return     int           < 0 si erreur, nb ajout si ok
 	 */
@@ -154,7 +154,9 @@ class mailing_peche extends MailingTargets
 					                    			'name' => $name,
 					                    			'firstname' => $firstname,
 													'other' => $other,
-					                    			'url' => $this->url($id)
+                                                    'source_url' => '',
+                                                    'source_id' => '',
+                                                    'source_type' => 'file'
 									);
 									$old = $email;
 									$j++;

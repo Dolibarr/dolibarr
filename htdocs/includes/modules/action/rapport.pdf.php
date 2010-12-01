@@ -83,7 +83,7 @@ class CommActionRapport
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
+		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");

@@ -113,7 +113,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		$sav_charset_output=$outputlangs->charset_output;
-		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
+		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -784,7 +784,8 @@ class pdf_propale_azur extends ModelePDFPropales
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','',8);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
-		$pdf->Text($this->page_largeur - $this->marge_droite - $pdf->GetStringWidth($titre), $tab_top-1, $titre);
+		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
+		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 		$pdf->SetDrawColor(128,128,128);
 

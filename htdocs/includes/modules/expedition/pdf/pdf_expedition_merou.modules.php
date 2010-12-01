@@ -77,9 +77,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	{
 		global $user,$conf,$langs,$mysoc;
 
+		$object->fetch_thirdparty();
+
+		if (empty($object->lines)) $object->lines=$object->lignes;
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
+		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -200,8 +204,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				//Generation du tableau
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
-				//Recuperation des produits de la commande.
-				$nblignes = sizeof($object->$origin->lines);
+				$nblignes = sizeof($object->lines);
 
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
@@ -213,7 +216,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					//Insertion de la reference du produit
 					$pdf->SetXY (30, $curY+1 );
 					$pdf->SetFont('','B', 7);
-					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($object->$origin->lines[$i]->ref), 0, 'L', 0);
+					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($object->lines[$i]->ref), 0, 'L', 0);
 					//Insertion du libelle
 					$pdf->SetFont('','', 7);
 					$pdf->SetXY (50, $curY+1 );
@@ -427,13 +430,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Definition Emplacement du bloc Societe
 		$Xoff = 110;
 		$blSocX=90;
-		$blSocY=24;
+		$blSocY=21;
 		$blSocW=50;
 		$blSocX2=$blSocW+$blSocXs;
 
 		// Sender name
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetXY($blSocX,$blSocY+3);
+		$pdf->SetXY($blSocX,$blSocY);
 		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 		$pdf->SetTextColor(0,0,0);
 
@@ -441,7 +444,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
 		$pdf->SetFont('','',7);
-		$pdf->SetXY($blSocX,$blSocY+6);
+		$pdf->SetXY($blSocX,$blSocY+3);
 		$pdf->MultiCell(80, 2, $carac_emetteur, 0, 'L');
 
 

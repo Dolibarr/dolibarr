@@ -98,7 +98,7 @@ class pdf_edison extends ModelePDFCommandes
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
+		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -491,7 +491,8 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','',10);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
-		$pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
+		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), 95);
+		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 	}
 
 

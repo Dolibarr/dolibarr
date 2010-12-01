@@ -25,8 +25,12 @@ create table llx_user
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   datec             datetime,
   tms               timestamp,
-  login             varchar(24) NOT NULL,
-  entity            integer DEFAULT 1 NOT NULL,	-- multi company id
+
+  login             varchar(30)       NOT NULL, -- user reference number
+  entity            integer DEFAULT 1 NOT NULL, -- multi company id
+
+  ref_ext           varchar(30),                -- reference into an external system (not used by dolibarr)
+  
   pass              varchar(32),
   pass_crypted      varchar(128),
   pass_temp         varchar(32),			-- temporary password when asked for forget password
@@ -50,6 +54,7 @@ create table llx_user
   datepreviouslogin datetime,
   egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
+  openid            varchar(255),
   statut            tinyint DEFAULT 1,
   photo             varchar(255),     -- filename or url of photo
   lang              varchar(6)

@@ -123,9 +123,10 @@ class mailing_dolibarr_services_expired extends MailingTargets
 					$cibles[$j] = array(
 					'email' => $obj->email,
 					'name' => $obj->name,
-					'id' => $obj->id,
 					'other' => dol_print_date($this->db->jdate($obj->date_ouverture),'day').';'.dol_print_date($this->db->jdate($obj->date_fin_validite),'day').';'.$obj->fk_contrat.';'.$obj->cdid,
-					'url' => $this->url($obj->rowid)
+					'source_url' => $this->url($obj->rowid),
+					'source_id' => $obj->cdid,
+					'source_type' => 'contract_line'
 					);
 					$old = $obj->email;
 					$j++;

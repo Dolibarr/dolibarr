@@ -166,8 +166,6 @@ if ($_POST["action"] == "set")
 			$dir[4] = "$main_data_dir/ficheinter";
 			$dir[5] = "$main_data_dir/produit";
 			$dir[6] = "$main_data_dir/rapport";
-			$dir[7] = "$main_data_dir/rss";
-			$dir[8] = "$main_data_dir/logo";
 
 			// Boucle sur chaque repertoire de dir[] pour les creer s'ils nexistent pas
 			for ($i = 0 ; $i < sizeof($dir) ; $i++)
@@ -208,7 +206,9 @@ if ($_POST["action"] == "set")
 	// Force https
 	$_POST["main_force_https"] = ((isset($_POST["main_force_https"]) && $_POST["main_force_https"] == "on")?'1':'0');
 
-	// Write conf file on disk
+	/**
+	 * Write conf file on disk
+	 */
 	if (! $error)
 	{
 		// Save old conf file on disk

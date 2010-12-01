@@ -42,12 +42,16 @@ create table llx_facture_rec
   fk_user_author     integer,             -- createur
   fk_projet          integer,             -- projet auquel est associe la facture
   fk_cond_reglement  integer DEFAULT 0,   -- condition de reglement
-  fk_mode_reglement   integer DEFAULT 0,  -- mode de reglement (Virement, Prelevement)
-  date_lim_reglement  date,               -- date limite de reglement
+  fk_mode_reglement  integer DEFAULT 0,  -- mode de reglement (Virement, Prelevement)
+  date_lim_reglement date,               -- date limite de reglement
 
   note               text,
-  note_public         text,
+  note_public        text,
 
-  frequency          char(2) DEFAULT NULL,
-  last_gen           varchar(7) DEFAULT NULL
+  frequency          integer,
+  unit_frequency     varchar(2) DEFAULT 'd',
+  date_when          datetime DEFAULT NULL,
+  date_last_gen      datetime DEFAULT NULL,
+  nb_gen_done        integer DEFAULT NULL,
+  nb_gen_max         integer DEFAULT NULL
 )type=innodb;

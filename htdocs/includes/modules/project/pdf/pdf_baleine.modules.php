@@ -96,7 +96,7 @@ class pdf_baleine extends ModelePDFProjects
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
+		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -307,12 +307,6 @@ class pdf_baleine extends ModelePDFProjects
 	{
 		global $conf,$mysoc;
 
-		// Montants exprimes en     (en tab_top - 1)
-		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','',8);
-		//$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
-		//$pdf->Text($this->page_largeur - $this->marge_droite - $pdf->GetStringWidth($titre), $tab_top-1, $titre);
-
 		$pdf->SetDrawColor(128,128,128);
 
 		// Rect prend une longueur en 3eme param
@@ -320,6 +314,7 @@ class pdf_baleine extends ModelePDFProjects
 		// line prend une position y en 3eme param
 		$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
 
+		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','',10);
 
 		$pdf->SetXY ($this->posxref-1, $tab_top+2);

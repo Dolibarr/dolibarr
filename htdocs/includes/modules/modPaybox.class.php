@@ -219,7 +219,7 @@ class modPayBox extends DolibarrModules
 	*/
 	function load_tables()
 	{
-		return $this->_load_tables('/paybox/sql/');
+		return $this->_load_tables('');
 	}
 }
 

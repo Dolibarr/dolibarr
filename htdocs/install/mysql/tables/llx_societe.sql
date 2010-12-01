@@ -29,8 +29,12 @@ create table llx_societe
   tms                      timestamp,
   datec	                   datetime,                            		-- creation date
   datea	                   datetime,                            		-- activation date
-  nom                      varchar(60),                         		-- company name
+
+  nom                      varchar(60),                         		-- company reference name
   entity                   integer DEFAULT 1 NOT NULL,	        		-- multi company id
+
+  ref_ext                  varchar(60),                                 -- reference into an external system (not used by dolibarr)
+
   code_client              varchar(15),                         		-- code client
   code_fournisseur         varchar(15),                         		-- code founisseur
   code_compta              varchar(15),                         		-- code compta client

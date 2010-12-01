@@ -89,7 +89,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		$sav_charset_output=$outputlangs->charset_output;
-		if (!class_exists('TCPDF', false)) $outputlangs->charset_output='ISO-8859-1';
+		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -453,6 +453,13 @@ class pdf_propale_jaune extends ModelePDFPropales
 		global $langs,$conf;
 		$langs->load("main");
 		$langs->load("bills");
+
+		// Montants exprimes en     (en tab_top - 1)
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('','',8);
+		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
+		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
+		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 		$pdf->SetFont('','',11);
 

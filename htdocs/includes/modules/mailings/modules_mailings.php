@@ -125,8 +125,8 @@ class MailingTargets
 
     /**
      *    \brief      Ajoute destinataires dans table des cibles
-     *    \param      mailing_id    Id du mailing concern�
-     *    \param      sql           Requete sql de selection des destinataires
+     *    \param      mailing_id    Id of emailing
+     *    \param      cibles        Array with targets
      *    \return     int           < 0 si erreur, nb ajout si ok
      */
     function add_to_target($mailing_id, $cibles)
@@ -141,14 +141,16 @@ class MailingTargets
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
             $sql .= " (fk_mailing,";
             $sql .= " fk_contact,";
-            $sql .= " nom, prenom, email, other, url)";
+            $sql .= " nom, prenom, email, other, source_url, source_id, source_type)";
             $sql .= " VALUES (".$mailing_id.",";
             $sql .= (empty($cibles[$i]['fk_contact']) ? '0' : "'".$cibles[$i]['fk_contact']."'") .",";
             $sql .= "'".$this->db->escape($cibles[$i]['name'])."',";
             $sql .= "'".$this->db->escape($cibles[$i]['firstname'])."',";
             $sql .= "'".$this->db->escape($cibles[$i]['email'])."',";
             $sql .= "'".$this->db->escape($cibles[$i]['other'])."',";
-            $sql .= "'".$this->db->escape($cibles[$i]['url'])."')";
+            $sql .= "'".$this->db->escape($cibles[$i]['source_url'])."',";
+            $sql .= "'".$this->db->escape($cibles[$i]['source_id'])."',";
+            $sql .= "'".$this->db->escape($cibles[$i]['source_type'])."')";
             $result=$this->db->query($sql);
             if ($result)
             {
@@ -177,7 +179,7 @@ class MailingTargets
 
     /**
      *    \brief      Supprime tous les destinataires de la table des cibles
-     *    \param      mailing_id        Id du mailing concern�
+     *    \param      mailing_id        Id of emailing
      */
     function clear_target($mailing_id)
     {

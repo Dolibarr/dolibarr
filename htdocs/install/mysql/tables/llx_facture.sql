@@ -1,8 +1,8 @@
 -- ===========================================================================
 -- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
--- Copyright (C) 2010 Juanjo Menent             <jmenent@2byte.es>
+-- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,10 +25,14 @@
 create table llx_facture
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
-  facnumber           varchar(30)        NOT NULL,
+
+  facnumber           varchar(30)        NOT NULL,  -- invoice reference number
   entity              integer  DEFAULT 1 NOT NULL,	-- multi company id
-  type                smallint DEFAULT 0 NOT NULL,
-  ref_client          varchar(30),
+
+  ref_ext             varchar(30),                  -- reference into an external system (not used by dolibarr)
+  ref_client          varchar(30),                  -- reference for customer
+
+  type                smallint DEFAULT 0 NOT NULL,  -- type of invoice
   increment           varchar(10),
   fk_soc              integer            NOT NULL,
   datec               datetime,                     -- date de creation de la facture
@@ -41,8 +45,8 @@ create table llx_facture
   remise_absolue      real     DEFAULT 0,           -- remise absolue
   remise              real     DEFAULT 0,           -- remise totale calculee
 
-  close_code          varchar(16),		              -- Code motif cloture sans paiement complet
-  close_note          varchar(128),		              -- Commentaire cloture sans paiement complet
+  close_code          varchar(16),		            -- Code motif cloture sans paiement complet
+  close_note          varchar(128),		            -- Commentaire cloture sans paiement complet
 
   tva                 double(24,8)     DEFAULT 0,           -- montant tva apres remise totale
   localtax1			  double(24,8)     DEFAULT 0,           -- amount localtax1
