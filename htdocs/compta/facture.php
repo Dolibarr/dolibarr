@@ -870,8 +870,17 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 			}
 
 			$desc = $prod->description;
-			$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
+			$desc.= ($prod->description && $_POST['np_desc']) ? "\n" : "";
 			$desc.= $_POST['np_desc'];
+            if (! empty($prod->customcode) || ! empty($prod->country_code))
+            {
+                $tmptxt='(';
+                if (! empty($prod->customcode)) $tmptxt.=$langs->transnoentitiesnoconv("CustomCode").': '.$prod->customcode;
+                if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
+                if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
+                $tmptxt.=')';
+                $desc.="\n".$tmptxt;
+            }
 			$type = $prod->type;
 		}
 		else
