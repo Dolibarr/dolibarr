@@ -870,29 +870,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
 
         /*
-         * Menu COMPTA-FINANCIAL
+         * Menu ACCOUNTANCY-FINANCIAL
          */
         if ($mainmenu == 'accountancy')
         {
             $langs->load("companies");
-
-            // Suppliers
-            if ($conf->societe->enabled && $conf->fournisseur->enabled)
-            {
-                if ($conf->facture->enabled)
-                {
-                    $langs->load("bills");
-                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),0,$user->rights->fournisseur->facture->lire);
-                    if ($user->societe_id == 0)
-                    {
-                        $newmenu->add(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),1,$user->rights->fournisseur->facture->creer);
-                    }
-                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/impayees.php", $langs->trans("Unpaid"),1,$user->rights->fournisseur->facture->lire);
-                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),1,$user->rights->fournisseur->facture->lire);
-
-                    $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=suppliers_bills&mode=supplier", $langs->trans("Statistics"),1,$user->rights->fournisseur->facture->lire);
-                }
-            }
 
             // Customers invoices
             if ($conf->facture->enabled)
@@ -916,6 +898,23 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $newmenu->add(DOL_URL_ROOT."/compta/paiement/rapport.php?leftmenu=customers_bills_payments",$langs->trans("Reportings"),2,$user->rights->facture->lire);
 
                 $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),1,$user->rights->facture->lire);
+            }
+            // Suppliers
+            if ($conf->societe->enabled && $conf->fournisseur->enabled)
+            {
+                if ($conf->facture->enabled)
+                {
+                    $langs->load("bills");
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),0,$user->rights->fournisseur->facture->lire);
+                    if ($user->societe_id == 0)
+                    {
+                        $newmenu->add(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),1,$user->rights->fournisseur->facture->creer);
+                    }
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/impayees.php", $langs->trans("Unpaid"),1,$user->rights->fournisseur->facture->lire);
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),1,$user->rights->fournisseur->facture->lire);
+
+                    $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=suppliers_bills&mode=supplier", $langs->trans("Statistics"),1,$user->rights->fournisseur->facture->lire);
+                }
             }
 
             // Orders
