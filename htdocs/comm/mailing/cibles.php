@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/comm/mailing/cibles.php
  *       \ingroup    mailing
- *       \brief      Page des cibles de mailing
+ *       \brief      Page to define emailing targets
  *       \version    $Id$
  */
 
@@ -354,7 +354,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="id" value="'.$mil->id.'">';
 
-	$sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.statut, mc.date_envoi, mc.url";
+	$sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$mil->id;
 	if ($search_nom)    $sql.= " AND mc.nom    like '%".addslashes($search_nom)."%'";
@@ -439,7 +439,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 				print '<td>'.$obj->nom.'</td>';
 				print '<td>'.$obj->prenom.'</td>';
 				print '<td>'.$obj->other.'</td>';
-				print '<td align="center">'.$obj->url.'</td>';
+				print '<td align="center">'.$obj->source_url.'</td>';
 
 				// Statut pour l'email destinataire (Attentioon != statut du mailing)
 				if ($obj->statut == 0)

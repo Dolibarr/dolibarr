@@ -52,6 +52,8 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update'))
     if ($_POST["TransactionsToConciliate"]) dolibarr_set_const($db, "MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE",$_POST["TransactionsToConciliate"],'chaine',0,'',$conf->entity);
     if ($_POST["ChequesToDeposit"]) dolibarr_set_const($db, "MAIN_DELAY_CHEQUES_TO_DEPOSIT",$_POST["ChequesToDeposit"],'chaine',0,'',$conf->entity);
     if ($_POST["Members"]) dolibarr_set_const($db, "MAIN_DELAY_MEMBERS",$_POST["Members"],'chaine',0,'',$conf->entity);
+
+    dolibarr_set_const($db, "MAIN_DISABLE_METEO",$_POST["MAIN_DISABLE_METEO"],'chaine',0,'',$conf->entity);
 }
 
 
@@ -178,6 +180,19 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
 
     print '</table>';
 
+    print '<br>';
+
+	// Show if meteo is enabled
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',$conf->global->MAIN_DISABLE_METEO,1) . '</td></tr>';
+
+	print '</table>';
+
+	print '<br>';
 
     print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
     print '<br>';
@@ -190,7 +205,7 @@ else
      * Affichage des parametres
      */
 
-    print '<table class="noborder" width="100%">';
+	print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td>'.$langs->trans("Value").'</td></tr>';
     $var=true;
 
@@ -289,12 +304,29 @@ else
 
     print '</table>';
 
+	print '<br>';
+
+	// Show if meteo is enabled
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
+
+	print '</table>';
+
+	print '<br>';
+
     // Boutons d'action
     print '<div class="tabsAction">';
     print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
 
 }
+
+print '<br>';
+
 
 // Show logo for weather
 print $langs->trans("DescWeather").'<br>';

@@ -107,7 +107,7 @@ if ($_GET['action'] == 'reopen' && $user->rights->fournisseur->commande->approuv
 }
 
 /*
- *	Ajout d'une	ligne produit dans la commande
+ *	Add a line into product
  */
 if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer)
 {
@@ -1294,11 +1294,26 @@ if ($id > 0 || ! empty($ref))
 					}
 				}
 
+				// Create bill
+				if ($conf->fournisseur->enabled && $commande->statut > 0)
+				{
+					if ($user->rights->fournisseur->facture->creer)
+					{
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&amp;origin='.$commande->element.'&amp;originid='.$commande->id.'&amp;socid='.$commande->socid.'">'.$langs->trans("CreateBill").'</a>';
+					}
+
+					//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
+					//{
+					//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+					//}
+				}
+
 				// Delete
 				if ($user->rights->fournisseur->commande->supprimer)
 				{
 					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}
+
 
 				print "</div>";
 			}

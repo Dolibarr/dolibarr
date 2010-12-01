@@ -67,10 +67,11 @@ class Cotisation extends CommonObject
 	 */
 	function create($userid)
 	{
+		global $langs;
 		// Check parameters
 		if ($this->datef <= $this->dateh)
 		{
-			$this->error="Error: Bad value for datef or dateh";
+			$this->error=$langs->trans("ErrorBadValueForDate");
 			return -1;
 		}
 

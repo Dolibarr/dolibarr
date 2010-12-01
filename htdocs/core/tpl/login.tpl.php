@@ -80,7 +80,7 @@ function donnefocus() {
 
 <td valign="bottom"> &nbsp; <b><?php echo $langs->trans('Login'); ?></b> &nbsp; </td>
 <td valign="bottom" nowrap="nowrap">
-<input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="<?php echo $login; ?>" tabindex="1" /></td>
+<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo $login; ?>" tabindex="1" /></td>
 
 <td rowspan="<?php echo $rowspan; ?>" align="center" valign="top">
 <img alt="Logo" title="" src="<?php echo $urllogo; ?>" />

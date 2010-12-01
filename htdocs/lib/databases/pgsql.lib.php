@@ -154,7 +154,7 @@ class DoliDb
 	 *  @param     type     Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * 	@return    string	SQL request line converted
 	 */
-	function convertSQLFromMysql($line,$type='ddl')
+	function convertSQLFromMysql($line,$type='auto')
 	{
 		# Removed empty line if this is a comment line for SVN tagging
 		if (preg_match('/^--\s\$Id/i',$line)) {
@@ -167,17 +167,29 @@ class DoliDb
 		}
 		if ($line != "")
 		{
+		    if ($type == 'auto')
+		    {
+              if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
+              else if (preg_match('/CREATE TABLE/i',$line)) $type='dml';
+              else if (preg_match('/DROP TABLE/i',$line)) $type='dml';
+		    }
+
 		    if ($type == 'dml')
 		    {
-    			# we are inside create table statement so lets process datatypes
+                $line=preg_replace('/\s/',' ',$line);   // Replace tabulation with space
+
+		        # we are inside create table statement so lets process datatypes
     			if (preg_match('/(ISAM|innodb)/i',$line)) { # end of create table sequence
     				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
     				$line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
     				$line=preg_replace('/,$/','',$line);
     			}
 
-    			if (preg_match('/[\s\t]*(\w*)\s*.*int.*auto_increment/i',$line,$reg)) {
-    				$line=preg_replace('/[\s\t]*([a-zA-Z_0-9]*)[\s\t]*.*int.*auto_increment[^,]*/i','\\1 SERIAL PRIMARY KEY',$line);
+    			// Process case: "CREATE TABLE llx_c_ziptown(rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,code..."
+    			if (preg_match('/[\s\t\(]*(\w*)[\s\t]+int.*auto_increment/i',$line,$reg)) {
+    				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i','\\1 \\2 SERIAL PRIMARY KEY',$line);
+                    //$line = "-- ".$line." replaced by --\n".$newline;
+                    $line=$newline;
     			}
 
     			# tinyint type conversion
@@ -484,7 +496,7 @@ class DoliDb
      * @param       type            Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return	    resource    	Resultset of answer
 	 */
-	function query($query,$usesavepoint=0,$type='ddl')
+	function query($query,$usesavepoint=0,$type='auto')
 	{
 		$query = trim($query);
 

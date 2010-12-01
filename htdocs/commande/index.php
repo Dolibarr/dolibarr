@@ -34,7 +34,7 @@ if (!$user->rights->commande->lire) accessforbidden();
 
 $langs->load("orders");
 
-// S�curit� acc�s client
+// Security check
 $socid='';
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if ($user->societe_id > 0)
@@ -121,10 +121,11 @@ if ($conf->commande->enabled)
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
-/*
- * Last closes orders
- */
 $max=5;
+
+/*
+ * Last modified orders
+ */
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid,";
 $sql.= " date_cloture as datec";
@@ -133,7 +134,7 @@ $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
 $sql.= " AND c.entity = ".$conf->entity;
-$sql.= " AND c.fk_statut > 2";
+//$sql.= " AND c.fk_statut > 2";
 if ($socid) $sql .= " AND c.fk_soc = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " ORDER BY c.tms DESC";
@@ -144,7 +145,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastClosedOrders",$max).'</td></tr>';
+	print '<td colspan="4">'.$langs->trans("LastModifiedOrders",$max).'</td></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -189,6 +190,7 @@ if ($resql)
 	}
 	print "</table><br>";
 }
+else dol_print_error($db);
 
 
 /*
@@ -259,6 +261,7 @@ if ($conf->commande->enabled)
 
 		print "</table><br>";
 	}
+	else dol_print_error($db);
 }
 
 /*
@@ -328,6 +331,7 @@ if ($conf->commande->enabled)
 		}
 		print "</table><br>";
 	}
+	else dol_print_error($db);
 }
 
 

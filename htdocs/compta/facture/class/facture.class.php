@@ -50,15 +50,14 @@ class Facture extends CommonObject
 	var $fk_element = 'fk_facture';
 	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $table;
-	var $tabledetail;
 	var $id;
 	//! Id client
 	var $socid;
 	//! Objet societe client (to load with fetch_client method)
 	var $client;
-	var $number;
 	var $author;
+	var $fk_user_author;
+	var $fk_user_valid;
 	//! Invoice date
 	var $date;				// Invoice date
 	var $date_creation;		// Creation date
@@ -80,15 +79,15 @@ class Facture extends CommonObject
 	//! 2=classified paid partially (close_code='discount_vat','badcustomer') or completely (close_code=null),
 	//! 3=classified abandoned and no payment done (close_code='badcustomer','abandon' ou 'replaced')
 	var $statut;
-	//! 1 if invoice paid COMPLETELY, 0 otherwise (ce champ ne devrait plus servir car insuffisant)
-	var $paye;
-	//! id of source invoice if replacement invoice or credit note
-	var $fk_facture_source;
 	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
 	//! Fermeture alors que aucun paiement: replaced (si remplace), abandon
 	var $close_code;
 	//! Commentaire si mis a paye sans paiement complet
 	var $close_note;
+	//! 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code
+	var $paye;
+	//! id of source invoice if replacement invoice or credit note
+	var $fk_facture_source;
 	var $origin;
 	var $origin_id;
 	var $fk_project;
@@ -605,10 +604,10 @@ class Facture extends CommonObject
 
 
 	/**
-	 *	\brief      Get object and lines from database
-	 *	\param      rowid       id of object to load
-	 * 	\param		ref			Ref of invoice
-	 *	\return     int         >0 if OK, <0 if KO
+	 *	Get object and lines from database
+	 *	@param      rowid       id of object to load
+	 * 	@param		ref			Ref of invoice
+	 *	@return     int         >0 if OK, <0 if KO
 	 */
 	function fetch($rowid,$ref='')
 	{
@@ -682,8 +681,6 @@ class Facture extends CommonObject
 
 				$this->commande_id            = $obj->fk_commande;
 
-				$this->lignes                 = array();
-
 				if ($this->commande_id)
 				{
 					$sql = "SELECT ref";
@@ -705,6 +702,10 @@ class Facture extends CommonObject
 				/*
 				 * Lines
 				 */
+
+				$this->lignes = array();	// deprecated
+				$this->lines  = array();
+
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
@@ -1640,7 +1641,7 @@ class Facture extends CommonObject
 	 * 		Add an invoice line into database (linked to product/service or not)
 	 * 		\param    	facid           	Id de la facture
 	 * 		\param    	desc            	Description de la ligne
-	 * 		\param    	pu_ht              	Prix unitaire HT
+	 * 		\param    	pu_ht              	Prix unitaire HT (> 0 even for credit note)
 	 * 		\param    	qty             	Quantite
 	 * 		\param    	txtva           	Taux de tva force, sinon -1
 	 * 		\param		txlocaltax1			Local tax 1 rate
@@ -1653,7 +1654,7 @@ class Facture extends CommonObject
 	 * 		\param    	info_bits			Bits de type de lignes
 	 *		\param    	fk_remise_except	Id remise
 	 *		\param		price_base_type		HT or TTC
-	 * 		\param    	pu_ttc             	Prix unitaire TTC
+	 * 		\param    	pu_ttc             	Prix unitaire TTC (> 0 even for credit note)
 	 * 		\param		type				Type of line (0=product, 1=service)
 	 *      \param      rang                Position of line
 	 *    	\return    	int             	>0 if OK, <0 if KO
@@ -1747,23 +1748,23 @@ class Facture extends CommonObject
 			$this->line->fk_product=$fk_product;
 			$this->line->product_type=$product_type;
 			$this->line->remise_percent=$remise_percent;
-			$this->line->subprice=$pu_ht;
+			$this->line->subprice=($this->type==2?-1:1)*$pu_ht;
 			$this->line->date_start=$date_start;
 			$this->line->date_end=$date_end;
 			$this->line->ventil=$ventil;
 			$this->line->rang=$rangtouse;
 			$this->line->info_bits=$info_bits;
 			$this->line->fk_remise_except=$fk_remise_except;
-			$this->line->total_ht=$total_ht;
-			$this->line->total_tva=$total_tva;
-			$this->line->total_localtax1=$total_localtax1;
-			$this->line->total_localtax2=$total_localtax2;
-			$this->line->total_ttc=$total_ttc;
+			$this->line->total_ht=($this->type==2?-1:1)*$total_ht;
+			$this->line->total_tva=($this->type==2?-1:1)*$total_tva;
+			$this->line->total_localtax1=($this->type==2?-1:1)*$total_localtax1;
+			$this->line->total_localtax2=($this->type==2?-1:1)*$total_localtax2;
+			$this->line->total_ttc=($this->type==2?-1:1)*$total_ttc;
 			$this->line->special_code=$special_code;
 
 			// \TODO Ne plus utiliser
-			$this->line->price=$price;
-			$this->line->remise=$remise;
+			$this->line->price=($this->type==2?-1:1)*$price;
+			$this->line->remise=($this->type==2?-1:1)*$remise;
 
 			$result=$this->line->insert();
 			if ($result > 0)
@@ -1797,7 +1798,7 @@ class Facture extends CommonObject
 	 *      Update a detail line
 	 *      @param     	rowid           Id of line to update
 	 *      @param     	desc            Description of line
-	 *      @param     	pu              Prix unitaire (HT ou TTC selon price_base_type)
+	 *      @param     	pu              Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
 	 *      @param     	qty             Quantity
 	 *      @param     	remise_percent  Pourcentage de remise de la ligne
 	 *      @param     	date_start      Date de debut de validite du service
@@ -1865,13 +1866,13 @@ class Facture extends CommonObject
 			$this->line->localtax1_tx		= $txlocaltax1;
 			$this->line->localtax2_tx		= $txlocaltax2;
 			$this->line->remise_percent		= $remise_percent;
-			$this->line->subprice			= $pu;
+			$this->line->subprice			= ($this->type==2?-1:1)*$pu;
 			$this->line->date_start			= $date_start;
 			$this->line->date_end			= $date_end;
-			$this->line->total_ht			= $total_ht;
-			$this->line->total_tva			= $total_tva;
-			$this->line->total_localtax1	= $total_localtax1;
-			$this->line->total_localtax2	= $total_localtax2;
+			$this->line->total_ht			= ($this->type==2?-1:1)*$total_ht;
+			$this->line->total_tva			= ($this->type==2?-1:1)*$total_tva;
+			$this->line->total_localtax1	= ($this->type==2?-1:1)*$total_localtax1;
+			$this->line->total_localtax2	= ($this->type==2?-1:1)*$total_localtax2;
 			$this->line->total_ttc			= $total_ttc;
 			$this->line->info_bits			= $info_bits;
 			$this->line->product_type		= $type;

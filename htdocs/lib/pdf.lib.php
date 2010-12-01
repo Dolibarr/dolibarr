@@ -46,6 +46,24 @@ function pdf_getPDFFont($outputlangs)
     return $font;
 }
 
+/**
+ *      Return font size to use for PDF generation
+ *      @param      outputlangs     Output langs object
+ *      @return     int             Size of font to use
+ */
+function pdf_getPDFFontSize($outputlangs)
+{
+    $size=10;                   // By default, for FPDI or ISO language on TCPDF
+    if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower)
+    {
+        if ($outputlangs->trans('FONTSIZEFORPDF')!='FONTSIZEFORPDF')
+        {
+            $size = (int) $outputlangs->trans('FONTSIZEFORPDF');
+        }
+    }
+    return $size;
+}
+
 
 /**
  *      Return a formated address (part address/zip/town/state) according to country rules

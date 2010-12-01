@@ -1947,12 +1947,12 @@ function dolibarr_print_error($db='',$error='')
 }
 
 /**
- *	\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remontee des bugs.
- *				On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
- *				Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
- *				renvoyer leur erreur par l'intermediaire de leur propriete "error".
- *	\param      db      Database handler
- *	\param      error	Chaine erreur ou tableau de chaines erreur complementaires a afficher
+ *	Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remontee des bugs.
+ *	On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
+ *	Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
+ *	renvoyer leur erreur par l'intermediaire de leur propriete "error".
+ *	@param      db      	Database handler
+ *	@param      error		String or array of errors strings to show
  */
 function dol_print_error($db='',$error='')
 {

@@ -131,7 +131,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 
 		// On choisit les mails non deja envoyes pour ce mailing (statut=0)
 		// ou envoyes en erreur (statut=-1)
-		$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other";
+		$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
 
@@ -174,7 +174,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 					$other4=$other[3];
 					$other5=$other[4];
 					$substitutionarray=array(
-						'__ID__' => $obj->rowid,
+						'__ID__' => $obj->source_id,
 						'__EMAIL__' => $obj->email,
 						'__LASTNAME__' => $obj->nom,
 						'__FIRSTNAME__' => $obj->prenom,
@@ -616,7 +616,7 @@ if ($_GET["action"] == 'create')
 	print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	$htmlother->select_color($_POST['bgcolor'],'bgcolor','new_mailing',0);
 	print '</td></tr>';
-	print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
+	print '<tr><td width="25%" class="fieldrequired" valign="top">'.$langs->trans("MailMessage").'<br>';
 	print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
 	foreach($substitutionarray as $key => $val)
 	{

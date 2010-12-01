@@ -156,16 +156,16 @@ if ($_GET["id"])
 			$muser = new User($db);
 			$muser->fetch($bon->user_trans);
 
-			print '<tr><td width="20%">Date Transmission / Par</td><td>';
+			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($bon->date_trans,'dayhour');
 			print ' / '.$muser->getFullName($langs).'</td></tr>';
-			print '<tr><td width="20%">Methode Transmission</td><td>';
+			print '<tr><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
 			print $bon->methodes_trans[$bon->method_trans];
 			print '</td></tr>';
 		}
 		if($bon->date_credit <> 0)
 		{
-			print '<tr><td width="20%">Credit on</td><td>';
+			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($bon->date_credit,'dayhour');
 			print '</td></tr>';
 		}
@@ -200,7 +200,7 @@ if ($_GET["id"])
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="infocredit">';
 			print '<table class="border" width="100%">';
-			print '<tr><td width="20%">Cr�dit� le</td><td>';
+			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
 			print $html->select_date('','','','','',"infocredit");
 			print '</td></tr>';
 			print '<tr><td colspan="2" align="center">';

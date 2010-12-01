@@ -76,8 +76,9 @@ if ($resql)
 		$from     = $obj->email_from;
 		$replyto  = $obj->email_replyto;
 		$errorsto = $obj->email_errorsto;
-
-		$msgishtml=-1;
+        // Le message est-il en html
+        $msgishtml=-1;  // Unknown by default
+        if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
 
 		$i++;
 	}
@@ -94,7 +95,7 @@ $nbok=0; $nbko=0;
 
 // On choisit les mails non deja envoyes pour ce mailing (statut=0)
 // ou envoyes en erreur (statut=-1)
-$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other";
+$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 $sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
 
@@ -134,7 +135,7 @@ if ($resql)
 			$other4=$other[3];
 			$other5=$other[4];
 			$substitutionarray=array(
-				'__ID__' => $obj->rowid,
+				'__ID__' => $obj->source_id,
 				'__EMAIL__' => $obj->email,
 				'__LASTNAME__' => $obj->nom,
 				'__FIRSTNAME__' => $obj->prenom,
@@ -178,7 +179,7 @@ if ($resql)
 				dol_syslog("ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 				$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-				$sql.=" SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
+				$sql.=" SET statut=1, date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$obj->rowid;
 				$resql2=$db->query($sql);
 				if (! $resql2)
 				{
@@ -193,7 +194,7 @@ if ($resql)
 				dol_syslog("error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 				$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-				$sql.=" SET statut=-1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
+				$sql.=" SET statut=-1, date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$obj->rowid;
 				$resql2=$db->query($sql);
 				if (! $resql2)
 				{

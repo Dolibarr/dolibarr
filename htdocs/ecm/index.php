@@ -298,6 +298,8 @@ $morejs=array(
 "/includes/jquery/plugins/layout/jquery.layout-latest.js"
 );
 */
+$maxheightwin=660;
+
 $morehead="<style type=\"text/css\">
 html, body {
         width:      100%;
@@ -308,7 +310,7 @@ html, body {
     }
     #containerlayout {
         background: #999;
-        height:     660px;
+        height:     ".$maxheightwin."px;
         margin:     0 auto;
         width:      100%;
         min-width:  700px;

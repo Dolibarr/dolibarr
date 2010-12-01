@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -836,7 +837,7 @@ if ($id)
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $html->showrefnav($act,'id','',1,'id','ref','');
+		print $html->showrefnav($act,'id','',($user->societe_id?0:1),'id','ref','');
 		print '</td></tr>';
 
 		// Type

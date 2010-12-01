@@ -51,7 +51,7 @@ var MOZ = (!IE && !OPE) ? true : false;
 // -----------------------------------------------------
 // Fonction d'initialisation de l'arbre
 function arbre() {
-    // Choix de la balise contenant le texte. <strong> par defaut.
+    // Choix de la balise contenant le texte. (strong par defaut).
     balise = "STRONG";
     // Presentation de l'arbre au depart : deployee ('yes') ou fermee ('no')
     extend = "no";

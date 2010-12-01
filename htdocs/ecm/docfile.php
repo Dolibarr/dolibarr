@@ -219,7 +219,7 @@ $userecm->fetch($ecmdir->fk_user_c);
 print $userecm->getNomUrl(1);
 print '</td></tr>';
 */
-print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';
+print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>aa';
 print dol_print_date(dol_filemtime($fullpath),'dayhour');
 print '</td></tr>';
 /*print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';

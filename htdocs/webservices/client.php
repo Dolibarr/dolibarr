@@ -32,7 +32,7 @@ $WS_DOL_URL = $dolibarr_main_url_root.'/webservices/server.php';
 $WS_METHOD  = 'getVersions';
 
 // Set the parameters to send to the WebService
-$parameters = array("param1"=>"value1");
+$parameters = array();
 
 // Set the WebService URL
 dol_syslog("Create soapclient_nusoap for URL=".$WS_DOL_URL);
@@ -45,6 +45,11 @@ if ($soapclient)
 // Call the WebService method and store its result in $result.
 dol_syslog("Call method ".$WS_METHOD);
 $result = $soapclient->call($WS_METHOD,$parameters);
+if (! $result)
+{
+	print $soapclient->error_str;
+	exit;
+}
 
 // Show page with result
 header("Content-type: text/html; charset=utf8");

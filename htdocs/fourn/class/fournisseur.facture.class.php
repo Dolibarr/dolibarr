@@ -764,7 +764,7 @@ class FactureFournisseur extends Facture
 		}
 		else
 		{
-			$this->error=$ligne->error;
+			$this->error=$this->db->lasterror();
 			$this->db->rollback();
 			return -2;
 		}

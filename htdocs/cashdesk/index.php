@@ -48,7 +48,7 @@ $usertxt=GETPOST('user','',1);
 $form=new Form($db);
 $formproduct=new FormProduct($db);
 
-$arrayofcss=array(DOL_URL_ROOT.'/cashdesk/css/style.css');
+$arrayofcss=array('/cashdesk/css/style.css');
 top_htmlhead('','',0,0,'',$arrayofcss);
 ?>
 

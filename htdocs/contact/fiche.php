@@ -151,7 +151,7 @@ else
 			if ($id <= 0)
 			{
                 $error++;
-			    $errors=array($object->error);
+			    $errors=($object->error?array($object->error):$object->errors);
 				$_GET["action"] = $_POST["action"] = 'create';
 			}
 		}

@@ -19,7 +19,7 @@
 -- ===========================================================================
 
 CREATE TABLE llx_pos_tmp (
-  id integer NOT NULL auto_increment,
+  id integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   fk_article integer NOT NULL,
   qte real NOT NULL,
   fk_tva integer NOT NULL,

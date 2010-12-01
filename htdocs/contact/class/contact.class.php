@@ -179,9 +179,9 @@ class Contact extends CommonObject
 
 	/**
 	 *      Update informations into database
-	 *      @param      id          	Id du contact a mettre a jour
-	 *      @param      user        	Objet utilisateur qui effectue la mise a jour
-	 *      @param      notrigger	    0=non, 1=oui
+	 *      @param      id          	Id of contact/address to update
+	 *      @param      user        	Objet user making change
+	 *      @param      notrigger	    0=no, 1=yesi
 	 *      @return     int         	<0 if KO, >0 if OK
 	 */
 	function update($id, $user=0, $notrigger=0)

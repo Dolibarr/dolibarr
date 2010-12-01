@@ -312,7 +312,7 @@ if ($_GET["id"])
 	if ($_GET["action"] == '')
 	{
 
-		if ($bon->credite == 1 && $lipre->statut == 2)
+		if ($bon->statut == 2 && $lipre->statut == 2)
 		{
 	  		print "<a class=\"butAction\" href=\"ligne.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("StandingOrderReject")."</a>";
 		}

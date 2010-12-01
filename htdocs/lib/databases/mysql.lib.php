@@ -362,7 +362,7 @@ class DoliDb
      * @param       type            Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return	    resource    	Resultset of answer
 	 */
-	function query($query,$usesavepoint=0,$type='ddl')
+	function query($query,$usesavepoint=0,$type='auto')
 	{
 		$query = trim($query);
 

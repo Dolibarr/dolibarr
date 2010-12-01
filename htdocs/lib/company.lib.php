@@ -577,15 +577,15 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 
                     $obj = $db->fetch_object($result);
                     
-                    $datep=$obj->dp;
+                    $datep=$db->jdate($obj->dp);
                     
                     print "<tr ".$bc[$var].">";
 
-                    print '<td width="100" align="left" nowrap="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
+                    print '<td width="120" align="left" nowrap="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
 
                     // Picto warning
                     print '<td width="16">';
-                    if ($datep && $datep < time()) print ' '.img_warning($langs->trans("Late"));
+                    if ($datep && $datep < (time()- ($conf->global->MAIN_DELAY_ACTIONS_TODO *60*60*24)) ) print ' '.img_warning($langs->trans("Late"));
                     else print '&nbsp;';
                     print '</td>';
 

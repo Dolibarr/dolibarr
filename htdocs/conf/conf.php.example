@@ -134,11 +134,14 @@ $dolibarr_main_db_collation='latin1_swedish_ci';
 # If value "ldap" is used, you must also set parameters dolibarr_main_auth_ldap_*
 # Default value: dolibarr
 # Possible values: Any values found in files in htdocs/includes/login directory after
-# the "function_" string and before the ".php" string.
+# the "function_" string and before the ".php" string. You can also separate several
+# values using a ",". In this case, Dolibarr will check login/pass for each value in 
+# order defined into value. However, note that this can't work with all values.
 # Examples:
 # $dolibarr_main_authentication='http';
 # $dolibarr_main_authentication='dolibarr';
 # $dolibarr_main_authentication='ldap';
+# $dolibarr_main_authentication='openid,dolibarr';
 #
 $dolibarr_main_authentication='dolibarr';
 

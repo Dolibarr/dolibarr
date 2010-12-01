@@ -33,17 +33,27 @@ if (!$user->admin)
   accessforbidden();
 
 
-if ($_POST["action"] == 'setvalue' && $user->admin)
-{
-	//$result=dolibarr_set_const($db, "PAYBOX_IBS_DEVISE",$_POST["PAYBOX_IBS_DEVISE"],'chaine',0,'',$conf->entity);
+$actionsave=$_POST["save"];
 
-	if ($result >= 0)
-  	{
-  		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
-  	}
-  	else
-  	{
-		dol_print_error($db);
+
+// Sauvegardes parametres
+if ($actionsave)
+{
+    $i=0;
+
+    $db->begin();
+
+    $i+=dolibarr_set_const($db,'WEBSERVICES_KEY',trim($_POST["WEBSERVICES_KEY"]),'chaine',0,'',$conf->entity);
+
+    if ($i >= 1)
+    {
+        $db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("SaveFailed")."</font>";
     }
 }
 
@@ -58,7 +68,32 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("WebServicesSetup"),$linkback,'setup');
 
 print $langs->trans("WebServicesDesc")."<br>\n";
+print "<br>\n";
 
+print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<table class=\"noborder\" width=\"100%\">";
+
+print "<tr class=\"liste_titre\">";
+print "<td>".$langs->trans("Parameter")."</td>";
+print "<td>".$langs->trans("Value")."</td>";
+//print "<td>".$langs->trans("Examples")."</td>";
+print "<td>&nbsp;</td>";
+print "</tr>";
+
+print "<tr class=\"impair\">";
+print '<td class="fieldrequired">'.$langs->trans("KeyForWebServicesAccess")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"WEBSERVICES_KEY\" value=\"". ($_POST["WEBSERVICES_KEY"]?$_POST["WEBSERVICES_KEY"]:$conf->global->WEBSERVICES_KEY) . "\" size=\"20\"></td>";
+print "<td>&nbsp;</td>";
+print "</tr>";
+
+print '</table>';
+
+print '<br><center>';
+print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
+print "</center>";
+
+print '</form>';
 
 if ($mesg) print '<br>'.$mesg;
 
@@ -67,15 +102,39 @@ print '<br><br>';
 // Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
 
+// WSDL
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
-$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server.php?wsdl';
+$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server_other.php?wsdl';
 print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+if ($conf->societe->enabled)
+{
+	$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server_thirdparty.php?wsdl';
+	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
+if ($conf->facture->enabled)
+{
+	$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server_invoice.php?wsdl';
+	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
 print '<br>';
 
+
+// Endpoint
 print '<u>'.$langs->trans("EndPointIs").':</u><br>';
-$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server.php';
+$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server_other.php';
 print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+if ($conf->societe->enabled)
+{
+	$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server_societe.php';
+	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
+if ($conf->facture->enabled)
+{
+	$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server_invoice.php';
+	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
 print '<br>';
+
 
 $db->close();
 

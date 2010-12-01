@@ -379,6 +379,19 @@ class BonPrelevement extends CommonObject
                         $message.= "Date credit : ".dol_print_date($date,'dayhour');
 
                         $this->Notify($user, "cr", $subject, $message);
+                   
+                        // Update prelevement line 
+                        // TODO: Translate to ligne-prelevement.class.php
+                		$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
+                		$sql.= " SET statut = 2";
+                		$sql.= " WHERE fk_prelevement_bons = ".$this->id;
+
+                		if (! $this->db->query($sql))
+                		{
+                    		dol_syslog("BonPrelevement::set_credite Erreur 1");
+                    		$error++;
+                		}
+            
                     }
                     else
                     {
@@ -466,6 +479,7 @@ class BonPrelevement extends CommonObject
              * Fin de la procedure
              *
              */
+        
             if ($error == 0)
             {
                 $this->db->commit();
@@ -504,7 +518,7 @@ class BonPrelevement extends CommonObject
         $sql.= " WHERE pn.action = '".$action."'";
         $sql.= " AND u.rowid = pn.fk_user";
         $sql.= " AND u.entity IN (0,".$conf->entity.")";
-
+        dol_syslog("BonPrelevement::Notify: ".$sql, LOG_CRIT);
         $resql = $this->db->query($sql);
         if ($resql)
         {
