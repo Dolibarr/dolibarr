@@ -280,8 +280,8 @@ if ($modulepart)
     // GENERIC Wrapping
 	// If modulepart=module_user_temp	Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp/iduser
 	// If modulepart=module_temp		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp
-	// If modulepart=module				Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/iduser
-	// If modulepart=module_user		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart
+	// If modulepart=module_user		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/iduser
+	// If modulepart=module				Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart
 	else
 	{
 		if (preg_match('/^([a-z]+)_user_temp$/i',$modulepart,$reg))
@@ -301,8 +301,18 @@ if ($modulepart)
     	}
     	else
 		{
-			if ($user->rights->$reg[1]->lire || $user->rights->$reg[1]->read) $accessallowed=1;
-			$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
+			$perm=GETPOST('perm');
+			$subperm=GETPOST('subperm');
+			if ($perm || $subperm)
+			{
+				if (($perm && $user->rights->$modulepart->$perm) || ($perm && $subperm && $user->rights->$modulepart->$perm->$subperm)) $accessallowed=1;
+				$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
+			}
+			else
+			{
+				if ($user->rights->$modulepart->lire || $user->rights->$modulepart->read) $accessallowed=1;
+				$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
+			}
 		}
 	}
 }

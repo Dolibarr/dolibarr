@@ -118,6 +118,8 @@ print "</table>\n";
  */
 $langs->load("commercial");
 $langs->load("bills");
+$langs->load("orders");
+
 if ($user->societe_id == 0)
 {
 	print '<br>';
@@ -260,7 +262,7 @@ print '</td><td width="65%" valign="top" class="notopnoleftnoright">';
 /*
  * Dolibarr Working Board with weather
  */
-$showweather=1;
+$showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
 $rowspan=0;
 $dashboardlines=array();
 
