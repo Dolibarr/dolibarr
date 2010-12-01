@@ -1,3 +1,140 @@
+5.9.023 (2010-11-25)
+	- A potential bug on SVG transcoder was fixed.
+
+5.9.022 (2010-11-21)
+	- Method ImageEPS includes support for EPS/AI Spot colors.
+	- Method ImageEPS includes a new parameter $fixoutvals to remove values outside the bounding box.
+
+5.9.021 (2010-11-20)
+	- Support for custom bullet points images was added (check the example n.6)
+	- Examples n. 6 and 61 were update (check the comments inside).
+
+5.9.020 (2010-11-19)
+	- A problem related to additional page when using multicolumn mode was fixed.
+
+5.9.019 (2010-11-19)
+	- An SVG bug was fixed.
+	- ImageSVG() and ImageEPS() methods now accepts image data streams (put the string on the $file parameter preceded by '@' character).
+	- Option 'E' was added to the $dest parameter of Output() method to return the document as base64 mime multi-part email attachment (RFC 2045).
+
+5.9.018 (2010-11-19)
+	- An SVG bug was fixed.
+
+5.9.017 (2010-11-16)
+	- Tagline color was set to transparent.
+	- The method fixHTMLCode() was added to automatically clean up HTML code (requires HTML Tidy).
+
+5.9.016 (2010-11-16)
+	- Bug item #3109705 "list item page break hanging bullet" was fixed.
+
+5.9.015 (2010-11-16)
+	- Bug item affecting QRCode was fixed.
+	- Some bugs affecting HTML lists were fixed.
+	- ImageSVG() and fitBlock() methods were improved to handle some SVG problems.
+	- Some problems with PHP4 compatibility were fixed.
+
+5.9.014 (2010-11-15)
+	- Bug item #3109464 "QRCode error" was fixed.
+
+5.9.013 (2010-11-15)
+	- Bug item #3109257 "Problem with interlaced GIFs and PNGs" was fixed.
+	- Image function now accepts image data streams (check example n. 9).
+
+5.9.012 (2010-11-12)
+	- Method getTCPDFVersion() was added.
+	- PDF_PRODUCER constant was removed.
+	- Method convertHTMLColorToDec() was improved.
+	- HTML colors now support spot color names defined on the new spotcolors.php file.
+	- The default method Header() was improved to support SVG and EPS/AI images.
+	- A bug on SVG importer was fixed.
+
+5.9.011 (2010-11-02)
+	- Bug item #3101486 "Bug Fix for image loading" was fixed.
+
+5.9.010 (2010-10-27)
+	- Support for CSS properties 'border-spacing' and 'padding' for tables were added.
+	- Several language files were added.
+
+5.9.009 (2010-10-21)
+	- HTML text alignment was improved to include the case of RTL text on LTR direction and LTR text on RTL direction.
+
+5.9.008 (2010-10-21)
+	- Bug item #3091502 "Bookmark oddity" was fixed.
+	- HTML internal links now accepts page number and Y position.
+	- The method write1DBarcode() was improved to accept separate horizontal and vertical padding (see example n. 27).
+
+5.9.007 (2010-10-20)
+	- Method adjustCellPadding() was fixed to handle bad input.
+
+5.9.006 (2010-10-19)
+	- Support for AES 256 bit encryption was added (see example n. 16).
+	- Method getNumLines() was fixed for the empty string case.
+
+5.9.005 (2010-10-18)
+	- Method addPageRegion() was changed to accept regions starting exactly from the top of the page.
+
+5.9.004 (2010-10-18)
+	- A bug related to annotations was fixed.
+	- The file unicode_data.php was canged to encapsulate all data in a class.
+	- The file htmlcolors.php was changed to remove the global variable.
+
+5.9.003 (2010-10-15)
+	- Support for no-write page regions was added. Check the example n. 64 and new methods setPageRegions(), addPageRegion(), getPageRegions(), removePageRegion().
+	- A bug on Right-To-Left alignment was fixed.
+
+5.9.002 (2010-10-08)
+	- Cell method was improved to preserve the font stretching and spacing values when using the $stretch parameter (see example n. 4).
+
+5.9.001 (2010-10-07)
+	- The problem of blank page for nobr table higher than a single page was fixed.
+
+5.9.000 (2010-10-06)
+	- Support for text stretching and spacing (kerning) was added, see example n. 63 and methods setFontStretching(), getFontStretching(), setFontSpacing(), getFontSpacing().
+	- Support for CSS properties 'font-stretch' and 'letter-spacing' was added (see example n. 63).
+	- The cMargin state was replaced by cell_padding array that can be set/get using setCellPadding() and getCellPadding() methods.
+	- Methods getCellPaddings() and setCellPaddings() were added to fine tune cell paddings (see example n. 5).
+	- Methods getCellMargins() and setCellMargins() were added to fine tune cell margins (see example n. 5).
+	- Method write1DBarcode() was improved to permit custom labels (see example n. 27).
+	- Method ImagePngAlpha() now includes support for ImageMagick to improve performances.
+	- XObject Template support was extended to support Multicell(), writeHTML() and writeHTMLCell() methods.
+	- The signature of getNumLines() and getStringHeight() methods is changed.
+	- Example n. 57 was updated.
+
+// -------------------------------------------------------------------
+
+5.8.034 (2010-09-27)
+	- A bug related to SetFont on XObject templates was fixed.
+
+5.8.033 (2010-09-25)
+	- A problem with Footer() and multiple columns was fixed.
+
+5.8.032 (2010-09-22)
+	- Bug #3073165 "Issues with changes to addHTMLVertSpace()" was fixed.
+
+5.8.031 (2010-09-20)
+	- Bug #3071961 "Spaces in HTML" was fixed.
+
+5.8.030 (2010-09-17)
+	- SVG support was improved and some bugs were fixed.
+
+5.8.029 (2010-09-16)
+	- A problem with HTML borders was fixed.
+
+5.8.028 (2010-09-13)
+	- Bug #3065224 "mcrypt_create_iv error on TCPDF 5.8.027 on PHP 5.3.2" was fixed.
+
+5.8.027 (2010-09-13)
+	- Bug #3065118 "mcrypt_decrypt error on TCPDF 5.8.026 on PHP 5.3.2" was fixed.
+
+5.8.026 (2010-09-13)
+	- A bug on addHTMLTOC() method was fixed. Note: be sure that the #TOC_PAGE_NUMBER# template has enough width to be printed correctly.
+
+5.8.025 (2010-09-09)
+	- Bug #3062692 "Textarea inside a table" was fixed.
+
+5.8.024 (2010-09-08)
+	- Bug #3062005 "Undefined variable: ann_obj_id" was fixed.
+
 5.8.023 (2010-08-31)
 	- Forms bug added on version 5.8.019 was fixed.
 
@@ -117,7 +254,7 @@
 	- CSS borders are now supported for HTML tables and other block tags (see example n. 61);
 	- Cell borders were improved (see example n. 57);
 	- Minor bugs were fixed.
-encry
+
 ------------------------------------------------------------
 
 5.6.000 (2010-07-31)

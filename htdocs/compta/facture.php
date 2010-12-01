@@ -48,8 +48,9 @@ $langs->load('companies');
 $langs->load('products');
 $langs->load('main');
 
+if (GETPOST('mesg','int',1) && isset($_SESSION['message'])) $mesg=$_SESSION['message'];
+
 $sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
-$mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
 $projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
 
 // Security check
@@ -573,7 +574,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 
 			//$result=$object->fetch($_POST['fac_avoir']);
 
-			$object->socid 		 = $_POST['socid'];
+			$object->socid 		    = $_POST['socid'];
 			$object->number         = $_POST['facnumber'];
 			$object->date           = $datefacture;
 			$object->note_public    = trim($_POST['note_public']);
@@ -607,7 +608,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		}
 	}
 
-	// Standard invoice or Deposit invoice created from a predefined invoice
+	// Standard invoice or Deposit invoice created from a Predefined invoice
 	if (($_POST['type'] == 0 || $_POST['type'] == 3) && $_POST['fac_rec'] > 0)
 	{
 		$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -683,6 +684,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 				$object->origin_id = $_POST['originid'];
 
 				$facid = $object->create($user);
+
 				if ($facid > 0)
 				{
 					require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
@@ -749,7 +751,6 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					$error++;
 				}
 			}
-
 			// If some invoice's lines already known
 			else
 			{
@@ -1246,7 +1247,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 						{
 							// Redirect here
 							// This avoid sending mail twice if going out and then back to page
-							Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&mesg='.urlencode($mesg));
+							$_SESSION['message'] = $mesg;
+							Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&mesg=1');
 							exit;
 						}
 					}
@@ -1356,11 +1358,11 @@ if ($_GET['action'] == 'create')
 	$soc = new Societe($db);
     if ($socid) $res=$soc->fetch($socid);
 
-	if ($_GET['origin'] && $_GET['originid'])
+	if (GETPOST('origin') && GETPOST('originid'))
 	{
 		// Parse element/subelement (ex: project_task)
-		$element = $subelement = $_GET['origin'];
-		if (preg_match('/^([^_]+)_([^_]+)/i',$_GET['origin'],$regs))
+		$element = $subelement = GETPOST('origin');
+		if (preg_match('/^([^_]+)_([^_]+)/i',GETPOST('origin'),$regs))
 		{
 			$element = $regs[1];
 			$subelement = $regs[2];
@@ -1368,7 +1370,7 @@ if ($_GET['action'] == 'create')
 
 		if ($element == 'project')
 		{
-            $projectid=$_GET['originid'];
+            $projectid=GETPOST('originid');
 		}
 		else if (in_array($element,array('order','commande','propal','contrat','contract')))
 		{
@@ -1380,7 +1382,7 @@ if ($_GET['action'] == 'create')
     		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
     		$classname = ucfirst($subelement);
     		$objectsrc = new $classname($db);
-    		$objectsrc->fetch($_GET['originid']);
+    		$objectsrc->fetch(GETPOST('originid'));
     		$objectsrc->fetch_thirdparty();
 
     		$projectid			= (!empty($objectsrc->fk_project)?$object->fk_project:'');
@@ -1409,6 +1411,8 @@ if ($_GET['action'] == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 	print '<input name="facnumber" type="hidden" value="provisoire">';
+    print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
+    print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 
 	print '<table class="border" width="100%">';
 
@@ -1752,8 +1756,9 @@ if ($_GET['action'] == 'create')
 	}
 
 	// Bouton "Create Draft"
-	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></td></tr>';
 	print "</table>\n";
+
+	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
 
 	print "</form>\n";
 
@@ -2867,9 +2872,13 @@ else
 					}
 
 					// Delete
-					if ($object->is_erasable() && $user->rights->facture->supprimer)
+					if ($user->rights->facture->supprimer)
 					{
-						if ($objectidnext)
+						if (! $object->is_erasable())
+						{
+							print '<a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecauseNotErasable").'">'.$langs->trans('Delete').'</a>';
+						}
+						else if ($objectidnext)
 						{
 							print '<a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Delete').'</a>';
 						}
@@ -2881,6 +2890,10 @@ else
 						{
 							print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 						}
+					}
+					else
+					{
+						print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 					}
 
 					print '</div>';
