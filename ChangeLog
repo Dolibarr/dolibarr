@@ -3,6 +3,8 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.0 compared to 2.9 *****
 
 For users:
+- New: Can create supplier invoice from supplier order.
+  New: Support login by openid
 - New: Support "full day" event in calendar module.
 - New: Add a weather on dashboard.
 - New: Add a Paypal module.
@@ -45,6 +47,7 @@ For users:
 - New: Add a fckeditor test area in fckeditor module setup.
 - New: Add property "Event on full day" on agenda
 - New: Enhancement and better compatibility (google, thunderbird) for agenda export.
+- New: Can use image editor on user photo.
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Better Postgresql compatibility.
