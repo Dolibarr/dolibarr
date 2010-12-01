@@ -207,7 +207,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (156, $curY );
-					//$pdf->MultiCell(18, 3, price($object->lignes[$i]->price), 0, 'R', 0);
+					//$pdf->MultiCell(20, 3, price($object->lignes[$i]->price), 0, 'R', 0);
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (174, $curY );

@@ -259,7 +259,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 					 // Prix unitaire HT avant remise
 					 $pdf->SetXY ($this->posxup, $curY);
-					 $pdf->MultiCell(18, 4, price($object->lignes[$i]->subprice), 0, 'R', 0);
+					 $pdf->MultiCell(20, 4, price($object->lignes[$i]->subprice), 0, 'R', 0);
 					 */
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
