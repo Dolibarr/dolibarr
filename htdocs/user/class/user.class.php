@@ -1195,8 +1195,8 @@ class User extends CommonObject
 		if (! $password)
 		{
 			// TODO Mettre appel au module de generation de mot de passe
-			$password=creer_pass_aleatoire_1('');
-			//$password=creer_pass_aleatoire_2('');
+			$password=create_random_psw_1('');
+			//$password=create_random_psw_2('');
 		}
 
 		// Crypte avec md5
@@ -1890,11 +1890,11 @@ class User extends CommonObject
  *	\param	    sel			Donnee aleatoire
  *	\return		string		Mot de passe
  */
-function creer_pass_aleatoire_1($sel = "")
+function create_random_psw_1($sel = "")
 {
-	$longueur = 8;
+	$length = 8;
 
-	return strtolower(substr(md5(uniqid(mt_rand())),0,$longueur));
+	return strtolower(substr(md5(uniqid(mt_rand())),0,$length));
 }
 
 
@@ -1905,14 +1905,14 @@ function creer_pass_aleatoire_1($sel = "")
  *	\param	    sel			Donnee aleatoire
  *	\return		string		Mot de passe
  */
-function creer_pass_aleatoire_2($sel = "")
+function create_random_psw_2($sel = "")
 {
-	$longueur=8;
+	$length=8;
 
 	$seed = (double) (microtime() + 1) * time();
 	srand($seed);
 
-	for ($i = 0; $i < $longueur; $i++)
+	for ($i = 0; $i < $length; $i++)
 	{
 		if (!$s)
 		{

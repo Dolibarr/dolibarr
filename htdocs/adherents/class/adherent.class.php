@@ -726,8 +726,8 @@ class Adherent extends CommonObject
         if (! $password)
         {
             // TODO Mettre appel au module de generation de mot de passe
-            $password=creer_pass_aleatoire_1('');
-            //$password=creer_pass_aleatoire_2('');
+            $password=create_random_psw_1('');
+            //$password=create_random_psw_2('');
         }
 
         // Cryptage mot de passe
@@ -1706,7 +1706,7 @@ class Adherent extends CommonObject
     /**
      *    	Renvoie nom clicable (avec eventuellement le picto)
      *		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param		maxlen			Longueur max libelle
+     *		@param		maxlen			length max libelle
      *		@param		option			Page lien
      *		@return		string			Chaine avec URL
      */

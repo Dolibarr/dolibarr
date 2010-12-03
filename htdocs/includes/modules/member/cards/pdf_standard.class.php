@@ -266,10 +266,10 @@ class pdf_standard {
 	function _Pointille(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$nbPointilles=15)
 	{
 		$pdf->SetLineWidth($epaisseur);
-		$longueur=abs($x1-$x2);
+		$length=abs($x1-$x2);
 		$hauteur=abs($y1-$y2);
-		if($longueur>$hauteur) {
-			$Pointilles=($longueur/$nbPointilles)/2; // taille des pointilles
+		if($length>$hauteur) {
+			$Pointilles=($length/$nbPointilles)/2; // taille des pointilles
 		}
 		else {
 			$Pointilles=($hauteur/$nbPointilles)/2;

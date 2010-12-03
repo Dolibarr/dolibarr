@@ -782,7 +782,7 @@ class pdf_oursin extends ModelePDFFactures
 			if (is_readable($logo))
 			{
 				$taille=getimagesize($logo);
-				$longueur=$taille[0]/2.835;
+				$length=$taille[0]/2.835;
 				$pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, 24);
 			}
 			else
@@ -998,8 +998,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','',10);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
-		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), 91);
-		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
+		$pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
 	}
 
 	/**

@@ -250,7 +250,7 @@ class AdherentType extends CommonObject
     /**
      *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
      *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		\param		maxlen			Longueur max libelle
+     *		\param		maxlen			length max libelle
      *		\param		option			Page lien
      *		\return		string			Chaine avec URL
      */
