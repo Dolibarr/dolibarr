@@ -61,8 +61,8 @@ $demoprofiles=array(
 	);
 
 $alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-$alwaysuncheckedmodules=array('paybox','filemanager');  // Module we never want
-$alwayshiddenmodules=array('barcode','bookmark','boutique','clicktodial','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','ldap','memcached','notification','syslog','user','webcalendar','webservices');
+$alwaysuncheckedmodules=array('paybox','paypal','filemanager');  // Module we never want
+$alwayshiddenmodules=array('accounting','barcode','bookmark','boutique','clicktodial','document','domain','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','label','ldap','mantis','memcached','notification','phenix','syslog','user','webcalendar','webservices');
 
 
 // Search modules
