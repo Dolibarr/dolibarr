@@ -210,10 +210,10 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 $sql = "SELECT u.name, u.firstname";
 $sql.= ", ad.rowid, ad.code, ad.titre";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql.= ", ".MAIN_DB_PREFIX."notify_def as nd";
+$sql.= ", ".MAIN_DB_PREFIX."prelevement_notifications as nd";
 $sql.= ", ".MAIN_DB_PREFIX."action_def as ad";
-$sql.= " WHERE u.rowid = nd.fk_user AND nd.fk_action = ad.rowid";
-$sql.= " ad.objet_type = 'withdraw'";
+$sql.= " WHERE u.rowid = nd.fk_user AND nd.action = ad.code";
+$sql.= " AND ad.objet_type = 'withdraw'";
 $sql.= " AND u.entity IN (0,".$conf->entity.")";
 $resql = $db->query($sql);
 if ($resql)
