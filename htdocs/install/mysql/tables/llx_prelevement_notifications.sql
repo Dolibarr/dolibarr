@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2010 Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -30,6 +31,6 @@ create table llx_prelevement_notifications
 (
   rowid     integer AUTO_INCREMENT PRIMARY KEY,
   fk_user   integer NOT NULL,
-  action    varchar(2) 
+  action    varchar(32) 
 
 )type=innodb;

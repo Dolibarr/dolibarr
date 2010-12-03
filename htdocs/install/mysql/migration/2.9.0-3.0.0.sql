@@ -143,3 +143,5 @@ ALTER TABLE llx_user ADD COLUMN   openid            varchar(255);
 -- Enhance Withdrawal module
 INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (7,'NOTIFY_TRN_WITHDRAW','Transmission prélèvement','Executed when a withdrawal is transmited','withdraw');
 INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (8,'NOTIFY_CRD_WITHDRAW','Créditer prélèvement','Executed when a withdrawal is credited','withdraw');
+
+ALTER TABLE llx_prelevement_notifications MODIFY action varchar(32);
