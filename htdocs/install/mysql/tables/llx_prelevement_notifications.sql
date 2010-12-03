@@ -23,9 +23,9 @@
 -- Utilisateur a notifier
 --
 -- actions :
---  'em' emission d'un bon
---  'tr' tranmission d'un bon
---  'cr' credit du bon par la banque
+--  'NOTIFY_EMT_WITHDRAW' emission d'un bon
+--  'NOTIFY_TRN_WITHDRAW' tranmission d'un bon
+--  'NOTIFY_CRD_WITHDRAW' credit du bon par la banque
 
 create table llx_prelevement_notifications
 (
