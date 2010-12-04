@@ -243,6 +243,7 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
 	}
@@ -382,6 +383,17 @@ if ($nboftargetok) {
 		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.tgz`;
 		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.zip`;
 		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.deb`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/doxygen/doxygen_warnings.log`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/html`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/dbmodel`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/fpdf`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/initdata`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/iso-normes`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/phpcheckstyle`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/phpunit`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/spec`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/uml`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/xdebug`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/flyer`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/font`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/tshirt`;
@@ -389,6 +401,7 @@ if ($nboftargetok) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.mysql`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.old`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.postgres`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf*sav*`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/test`;
 
  			print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
