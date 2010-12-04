@@ -256,7 +256,7 @@ function print_eldy_menu($db,$atarget,$type_user)
         }
 
         $idsel='bank';
-        if ($user->rights->banque->lire || $user->rights->prelevement->bons->lire)
+        if ($user->rights->banque->lire)
         {
             print_start_menu_entry($idsel);
             print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/compta/bank/index.php?mainmenu=bank&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
@@ -870,11 +870,29 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
 
         /*
-         * Menu ACCOUNTANCY-FINANCIAL
+         * Menu COMPTA-FINANCIAL
          */
         if ($mainmenu == 'accountancy')
         {
             $langs->load("companies");
+
+            // Suppliers
+            if ($conf->societe->enabled && $conf->fournisseur->enabled)
+            {
+                if ($conf->facture->enabled)
+                {
+                    $langs->load("bills");
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),0,$user->rights->fournisseur->facture->lire);
+                    if ($user->societe_id == 0)
+                    {
+                        $newmenu->add(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),1,$user->rights->fournisseur->facture->creer);
+                    }
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/impayees.php", $langs->trans("Unpaid"),1,$user->rights->fournisseur->facture->lire);
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),1,$user->rights->fournisseur->facture->lire);
+
+                    $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=suppliers_bills&mode=supplier", $langs->trans("Statistics"),1,$user->rights->fournisseur->facture->lire);
+                }
+            }
 
             // Customers invoices
             if ($conf->facture->enabled)
@@ -898,23 +916,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $newmenu->add(DOL_URL_ROOT."/compta/paiement/rapport.php?leftmenu=customers_bills_payments",$langs->trans("Reportings"),2,$user->rights->facture->lire);
 
                 $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),1,$user->rights->facture->lire);
-            }
-            // Suppliers
-            if ($conf->societe->enabled && $conf->fournisseur->enabled)
-            {
-                if ($conf->facture->enabled)
-                {
-                    $langs->load("bills");
-                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),0,$user->rights->fournisseur->facture->lire);
-                    if ($user->societe_id == 0)
-                    {
-                        $newmenu->add(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),1,$user->rights->fournisseur->facture->creer);
-                    }
-                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/impayees.php", $langs->trans("Unpaid"),1,$user->rights->fournisseur->facture->lire);
-                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),1,$user->rights->fournisseur->facture->lire);
-
-                    $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=suppliers_bills&mode=supplier", $langs->trans("Statistics"),1,$user->rights->fournisseur->facture->lire);
-                }
             }
 
             // Orders
@@ -1006,8 +1007,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                  */
                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
-            }
 
+                // Journaux
+ 				if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journaux"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+                //journaux
+                if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/journaux/journalvente.php?leftmenu=ca",$langs->trans("JournalVente"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+                if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/journaux/journalachat.php?leftmenu=ca",$langs->trans("JournalAchat"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+            }
         }
 
 
