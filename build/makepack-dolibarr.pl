@@ -441,6 +441,7 @@ if ($nboftargetok) {
 		    $ret=`chown -R root.root $BUILDROOT/$PROJECT`;
 		    $ret=`chown -R www-data.www-data $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents`;
 		    $ret=`chmod -R 555 $BUILDROOT/$PROJECT`;
+		    $ret=`chmod 755 $BUILDROOT/$PROJECT`;
 		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents`;
 		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/DEBIAN`;
 
