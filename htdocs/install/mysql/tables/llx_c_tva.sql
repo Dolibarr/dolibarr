@@ -28,7 +28,8 @@ create table llx_c_tva
   localtax2         double  NOT NULL DEFAULT 0,
   recuperableonly   integer NOT NULL DEFAULT 0,
   note              varchar(128),
-  active            tinyint DEFAULT 1 NOT NULL
+  active            tinyint DEFAULT 1 NOT NULL,
+  accountancy_code 	varchar(15)  DEFAULT NULL
 
 )type=innodb;
 

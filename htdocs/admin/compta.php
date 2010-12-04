@@ -55,7 +55,7 @@ $typeconst=array('yesno','texte','chaine');
 
 if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
 {
-	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
+	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $_POST['consttype'], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
 	{
 		print $db->error();
 	}
@@ -145,13 +145,17 @@ if ($result)
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+		print '<input type="hidden" name="consttype" value="'.$obj->type.'">';
 		print '<input type="hidden" name="constname" value="'.$obj->name.'">';
-
+		print '<input type="hidden" name="constnote" value="'.$obj->note.'">';
+		
 		print '<tr '.$bc[$var].' class="value">';
 
 		// Param
-		print '<td>'.stripslashes(nl2br($obj->note));
-		print $obj->name;
+		if ($langs->trans($obj->name) == $obj->name) $libelle = stripslashes(nl2br($obj->note));
+		else $libelle = $langs->trans($obj->name); 
+		print '<td>'.$libelle;
+		print ' ('.$obj->name.')';
 		print "</td>\n";
 
 		// Value
