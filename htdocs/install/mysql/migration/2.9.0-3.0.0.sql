@@ -124,6 +124,7 @@ ALTER TABLE llx_commande ADD COLUMN ref_ext varchar(30) after entity;
 ALTER TABLE llx_propal   ADD COLUMN ref_ext varchar(30) after entity;
 ALTER TABLE llx_user     ADD COLUMN ref_ext varchar(30) after entity;
 ALTER TABLE llx_societe  ADD COLUMN ref_ext varchar(60) after entity;
+ALTER TABLE llx_product  ADD COLUMN ref_ext varchar(32) after entity;
 
 
 ALTER TABLE llx_mailing_cibles CHANGE COLUMN url source_url integer;
@@ -141,9 +142,9 @@ ALTER TABLE llx_facture_rec ADD COLUMN nb_gen_max         integer DEFAULT NULL;
 ALTER TABLE llx_user ADD COLUMN openid varchar(255);
 
 -- Enhance Withdrawal module
-INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (7,'NOTIFY_TRN_WITHDRAW','Transmission prélèvement','Executed when a withdrawal is transmited','withdraw');
-INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (8,'NOTIFY_CRD_WITHDRAW','Créditer prélèvement','Executed when a withdrawal is credited','withdraw');
-INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (9,'NOTIFY_EMT_WITHDRAW','Emission prélèvement','Executed when a withdrawal is emited','withdraw');
+INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (7,'NOTIFY_TRN_WITHDRAW','Transmit withdraw','Executed when a withdrawal is transmited','withdraw');
+INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (8,'NOTIFY_CRD_WITHDRAW','Credite withdraw','Executed when a withdrawal is credited','withdraw');
+INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (9,'NOTIFY_EMT_WITHDRAW','Emit withdraw','Executed when a withdrawal is emited','withdraw');
 
 ALTER TABLE llx_prelevement_notifications MODIFY action varchar(32);
 

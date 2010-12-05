@@ -28,8 +28,12 @@ create table llx_product
   tms						timestamp,
   virtual					tinyint	  DEFAULT 0 NOT NULL,	-- Not used. Used by external modules. Value 0 for physical product, 1 for virtual product
   fk_parent					integer	  DEFAULT 0,			-- Not used. Used by external modules. Virtual product id
+
   ref						varchar(32)  NOT NULL,
   entity					integer	  DEFAULT 1 NOT NULL,	-- Multi company id
+
+  ref_ext                   varchar(32),                    -- reference into an external system (not used by dolibarr)
+
   label						varchar(255) NOT NULL,
   description				text,
   note						text,
