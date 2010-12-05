@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,7 +56,7 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 	// Entry for each bank account
 	if ($user->rights->banque->lire)
 	{
-		$sql = "SELECT rowid, label, courant";
+		$sql = "SELECT rowid, label, courant, rappro, courant";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND clos = 0";
@@ -73,6 +73,10 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 			{
 				$objp = $db->fetch_object($resql);
 				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/fiche.php?id=".$objp->rowid,$objp->label,1,$user->rights->banque->lire);
+                if ($objp->rappro && $objp->courant != 2)  // If not cash account and can be reconciliate
+                {
+				    $menu->add_submenu(DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
+                }
 /*
 				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=".$objp->rowid ,$langs->trans("IOMonthlyReporting"));
 				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/graph.php?account=".$objp->rowid ,$langs->trans("Graph"));
@@ -81,6 +85,7 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 				$i++;
 			}
 		}
+		else dol_print_error($db);
 		$db->free($resql);
 	}
 

@@ -719,11 +719,11 @@ if ($account || $_GET["ref"])
     {
         print '<div class="tabsAction">';
 
-        if ($acct->type != 2 && $acct->rappro)  // Si non compte cash et rapprochable
+        if ($acct->type != 2 && $acct->rappro)  // If not cash account and can be reconciliate
         {
             if ($user->rights->banque->consolidate)
             {
-                print '<a class="butAction" href="rappro.php?account='.$acct->id.'">'.$langs->trans("Conciliate").'</a>';
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$acct->id.'">'.$langs->trans("Conciliate").'</a>';
             }
             else
             {

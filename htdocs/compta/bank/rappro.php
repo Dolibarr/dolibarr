@@ -143,15 +143,14 @@ if ($resql)
     $var=True;
     $num = $db->num_rows($resql);
 
-    print_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$_GET["account"].'">'.$acct->label.'</a>');
+    print_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$_GET["account"].'">'.$acct->label.'</a>');
     print '<br>';
 
     if ($mesg) print $mesg."<br>";
 
-    // Affiche nom des derniers releves
+    // Show last bank receipts
     $nbmax=5;
     $liste="";
-
     $sql = "SELECT distinct num_releve FROM ".MAIN_DB_PREFIX."bank";
     $sql.= " WHERE fk_account=".$_GET["account"];
     $sql.= " ORDER BY num_releve DESC";
@@ -169,9 +168,9 @@ if ($resql)
             $i++;
             $liste='<a href="releve.php?account='.$_GET["account"].'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
         }
-        if ($num >= $nbmax) $liste="... &nbsp; ".$liste;
+        if ($numr >= $nbmax) $liste="... &nbsp; ".$liste;
         print $liste;
-        if ($num > 0) print '<br><br>';
+        if ($numr > 0) print '<br><br>';
         else print $langs->trans("None").'<br><br>';
     }
     else
