@@ -14,15 +14,15 @@
 UPDATE llx_bank_url SET type='payment' WHERE type='?' AND label='(payment)' AND url LIKE '%compta/paiement/fiche.php%';
 
 -- Add recuperableonly field
-ALTER TABLE llx_product       add COLUMN recuperableonly integer NOT NULL DEFAULT '0' after tva_tx;
-ALTER TABLE llx_product_price add COLUMN recuperableonly integer NOT NULL DEFAULT '0' after tva_tx;
+ALTER TABLE llx_product       add column recuperableonly integer NOT NULL DEFAULT '0' after tva_tx;
+ALTER TABLE llx_product_price add column recuperableonly integer NOT NULL DEFAULT '0' after tva_tx;
 
 -- Rename envente into tosell and add tobuy
-ALTER TABLE llx_product CHANGE COLUMN envente tosell tinyint DEFAULT 1;
-ALTER TABLE llx_product add COLUMN tobuy tinyint DEFAULT 1 after tosell;
-ALTER TABLE llx_product_price CHANGE COLUMN envente tosell tinyint DEFAULT 1;
+ALTER TABLE llx_product CHANGE column envente tosell tinyint DEFAULT 1;
+ALTER TABLE llx_product add column tobuy tinyint DEFAULT 1 after tosell;
+ALTER TABLE llx_product_price CHANGE column envente tosell tinyint DEFAULT 1;
  
-ALTER TABLE llx_bank MODIFY COLUMN fk_type varchar(6);
+ALTER TABLE llx_bank MODIFY column fk_type varchar(6);
 
 ALTER TABLE llx_boxes_def DROP INDEX uk_boxes_def;
 ALTER TABLE llx_boxes_def MODIFY file varchar(200) NOT NULL;
@@ -77,10 +77,10 @@ ALTER TABLE llx_ecm_directories ADD UNIQUE INDEX idx_ecm_directories (label, fk_
 ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents (fullpath_dol);
 
 --Add modules facture fournisseur
-INSERT INTO llx_const (name, value, type, note, visible) values ('INVOICE_SUPPLIER_ADDON_PDF', 'canelle','chaine','',0);
+insert into llx_const (name, value, type, note, visible) values ('INVOICE_SUPPLIER_ADDON_PDF', 'canelle','chaine','',0);
 ALTER TABLE llx_facture_fourn ADD COLUMN model_pdf varchar(50) after note_public;
 
-CREATE TABLE llx_c_ziptown
+create table llx_c_ziptown
 (
   rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   code				varchar(5) DEFAULT NULL,
@@ -94,20 +94,20 @@ ALTER TABLE llx_c_ziptown ADD INDEX idx_c_ziptown_fk_county (fk_county);
 ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_county		FOREIGN KEY (fk_county)   REFERENCES llx_c_departements (rowid);
 
 ALTER TABLE llx_socpeople ADD COLUMN canvas	varchar(32)	DEFAULT 'default' after default_lang;
-ALTER TABLE llx_socpeople MODIFY canvas varchar(32) DEFAULT 'default';
+ALTER TABLE llx_socpeople MODIFY canvas	varchar(32)	DEFAULT 'default';
 
 UPDATE llx_socpeople SET canvas = 'default' WHERE canvas = 'default@contact';
 UPDATE llx_societe SET canvas = 'default' WHERE canvas = 'default@thirdparty';
 UPDATE llx_societe SET canvas = 'individual' WHERE canvas = 'individual@thirdparty';
 
-INSERT INTO llx_const (name, value, type, note, visible) values ('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS','7','chaine','Tolérance de retard avant alerte (en jours) sur commandes fournisseurs non traitées',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS','7','chaine','Tolérance de retard avant alerte (en jours) sur commandes fournisseurs non traitées',0);
 
 ALTER TABLE llx_actioncomm ADD COLUMN fulldayevent smallint NOT NULL default 0 after priority;
 
 -- Enhance POS module
 DROP TABLE llx_tmp_caisse;
 CREATE TABLE llx_pos_tmp (
-  id integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id integer NOT NULL auto_increment,
   fk_article integer NOT NULL,
   qte real NOT NULL,
   fk_tva integer NOT NULL,
@@ -115,20 +115,10 @@ CREATE TABLE llx_pos_tmp (
   remise real NOT NULL,
   total_ht double(24,8) NOT NULL,
   total_tva double(24,8) NOT NULL,
-  total_ttc double(24,8) NOT NULL
+  total_ttc double(24,8) NOT NULL,
+  PRIMARY KEY (id)
 ) ENGINE=innodb;
 
--- Add external ref
-ALTER TABLE llx_facture  ADD COLUMN ref_ext varchar(30) after entity;
-ALTER TABLE llx_commande ADD COLUMN ref_ext varchar(30) after entity;
-ALTER TABLE llx_propal   ADD COLUMN ref_ext varchar(30) after entity;
-ALTER TABLE llx_user     ADD COLUMN ref_ext varchar(30) after entity;
-ALTER TABLE llx_societe  ADD COLUMN ref_ext varchar(60) after entity;
-
-
-ALTER TABLE llx_mailing_cibles CHANGE COLUMN url source_url integer;
-ALTER TABLE llx_mailing_cibles ADD COLUMN source_id integer after source_url;
-ALTER TABLE llx_mailing_cibles ADD COLUMN source_type varchar(16) after source_id;
 
 ALTER TABLE llx_facture_rec MODIFY frequency          integer;
 ALTER TABLE llx_facture_rec ADD COLUMN unit_frequency     varchar(2) DEFAULT 'd';
@@ -138,11 +128,10 @@ ALTER TABLE llx_facture_rec ADD COLUMN nb_gen_done        integer DEFAULT NULL;
 ALTER TABLE llx_facture_rec ADD COLUMN nb_gen_max         integer DEFAULT NULL;
 
 
-ALTER TABLE llx_user ADD COLUMN   openid            varchar(255);
+ALTER TABLE llx_user ADD COLUMN openid varchar(255);
 
 -- Enhance Withdrawal module
 INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (7,'NOTIFY_TRN_WITHDRAW','Transmission prélèvement','Executed when a withdrawal is transmited','withdraw');
 INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (8,'NOTIFY_CRD_WITHDRAW','Créditer prélèvement','Executed when a withdrawal is credited','withdraw');
-INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (9,'NOTIFY_EMT_WITHDRAW','Emission prélèvement','Executed when a withdrawal is emited','withdraw');
 
-ALTER TABLE llx_prelevement_notifications MODIFY action varchar(32);
+ALTER TABLE llx_c_tva ADD COLUMN accountancy_code varchar(15) DEFAULT NULL;
