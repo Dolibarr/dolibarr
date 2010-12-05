@@ -630,7 +630,7 @@ class Facture extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = '".$this->element."'";
 		$sql.= ' WHERE f.entity = '.$conf->entity;
-		if ($ref) $sql.= " AND f.facnumber='".$ref."'";
+		if ($ref) $sql.= " AND f.facnumber='".$this->db->escape($ref)."'";
 		else $sql.= " AND f.rowid=".$rowid;
 
 		dol_syslog("Facture::Fetch sql=".$sql, LOG_DEBUG);
@@ -717,7 +717,7 @@ class Facture extends CommonObject
 			}
 			else
 			{
-				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
+				$this->error='Bill with id '.$rowid.' or ref '.$ref.' not found sql='.$sql;
 				dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
@@ -3090,8 +3090,10 @@ class FactureLigne
 	var $remise;			// Montant calcule de la remise % sur PU HT (exemple 20)
 
 	// From llx_product
-	var $ref;				// Reference produit
-	var $libelle;      		// Label produit
+	var $ref;				// Product ref (deprecated)
+    var $product_ref;       // Product ref
+	var $libelle;      		// Product label (deprecated)
+    var $product_label;     // Product label
 	var $product_desc;  	// Description produit
 
 
@@ -3151,8 +3153,10 @@ class FactureLigne
 			$this->price          = $objp->price;
 			$this->remise         = $objp->remise;
 
-			$this->ref			  = $objp->product_ref;
-			$this->libelle		  = $objp->product_libelle;
+			$this->ref			  = $objp->product_ref;      // deprecated
+            $this->product_ref    = $objp->product_ref;
+			$this->libelle		  = $objp->product_libelle;  // deprecated
+            $this->product_label  = $objp->product_libelle;
 			$this->product_desc	  = $objp->product_desc;
 
 			$this->db->free($result);

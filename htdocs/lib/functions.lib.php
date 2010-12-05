@@ -2136,8 +2136,8 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
 }
 
 /**
- *	\brief  Affichage d'un titre
- *	\param	titre			Le titre a afficher
+ *	Show a title (deprecated. use print_fiche_titre instrad)
+ *	@param	titre			Title to show
  */
 function print_titre($titre)
 {
@@ -2145,12 +2145,12 @@ function print_titre($titre)
 }
 
 /**
- *	\brief  Show a title with picto
- *	\param	titre				Title to show
- *	\param	mesg				Added message to show on right
- *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
- *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
- * 	\param	id					To force an id on html objects
+ *	Show a title with picto
+ *	@param	titre				Title to show
+ *	@param	mesg				Added message to show on right
+ *	@param	picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	pictoisfullpath		1=Icon name is a full absolute url of image
+ * 	@param	id					To force an id on html objects
  */
 function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
@@ -2158,12 +2158,12 @@ function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpat
 }
 
 /**
- *	\brief  Load a title with picto
- *	\param	titre				Title to show
- *	\param	mesg				Added message to show on right
- *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
- *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
- * 	\param	id					To force an id on html objects
+ *	Load a title with picto
+ *	@param	titre				Title to show
+ *	@param	mesg				Added message to show on right
+ *	@param	picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	pictoisfullpath		1=Icon name is a full absolute url of image
+ * 	@param	id					To force an id on html objects
  */
 function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {

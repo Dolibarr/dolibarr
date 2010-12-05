@@ -17,8 +17,8 @@
  */
 
 /**
- *       \file       htdocs/webservices/demo_client_other.php
- *       \brief      Demo page to make a client call to Dolibarr WebServices "server_other"
+ *       \file       htdocs/webservices/client.php
+ *       \brief      Demo page to make a client call to Dolibarr WebServices "server_invoice"
  *       \version    $Id$
  */
 
@@ -28,16 +28,22 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 
-$WS_DOL_URL = $dolibarr_main_url_root.'/webservices/server_other.php';
-$WS_METHOD  = 'getVersions';
+$WS_DOL_URL = $dolibarr_main_url_root.'/webservices/server_invoice.php';
+$WS_METHOD1  = 'getInvoice';
+$WS_METHOD2  = 'getInvoicesForThirdParty';
 
 
 // Set the WebService URL
 dol_syslog("Create soapclient_nusoap for URL=".$WS_DOL_URL);
-$soapclient = new soapclient_nusoap($WS_DOL_URL);
-if ($soapclient)
+$soapclient1 = new soapclient_nusoap($WS_DOL_URL);
+if ($soapclient1)
 {
-	$soapclient->soap_defencoding='UTF-8';
+	$soapclient1->soap_defencoding='UTF-8';
+}
+$soapclient2 = new soapclient_nusoap($WS_DOL_URL);
+if ($soapclient2)
+{
+    $soapclient2->soap_defencoding='UTF-8';
 }
 
 // Call the WebService method and store its result in $result.
@@ -47,14 +53,25 @@ $authentication=array(
     'login'=>'admin',
     'password'=>'changeme',
     'entity'=>'');
-$parameters = array('authentication'=>$authentication);
-dol_syslog("Call method ".$WS_METHOD);
-$result = $soapclient->call($WS_METHOD,$parameters);
-if (! $result)
+
+$parameters = array('authentication'=>$authentication,'id'=>1,'ref'=>'');
+dol_syslog("Call method ".$WS_METHOD1);
+$result1 = $soapclient1->call($WS_METHOD1,$parameters);
+if (! $result1)
 {
-	print $soapclient->error_str;
+	print $soapclient1->error_str;
 	exit;
 }
+
+$parameters = array('authentication'=>$authentication,'idthirdparty'=>'1');
+dol_syslog("Call method ".$WS_METHOD2);
+$result2 = $soapclient2->call($WS_METHOD2,$parameters);
+if (! $result2)
+{
+    print $soapclient2->error_str;
+    exit;
+}
+
 
 /*
  * View
@@ -64,26 +81,40 @@ header("Content-type: text/html; charset=utf8");
 print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 echo '<html>'."\n";
 echo '<head>';
-echo '<title>WebService Test: '.$WS_METHOD.'</title>';
+echo '<title>WebService Test: '.$WS_METHOD1.'</title>';
 echo '</head>'."\n";
 
 echo '<body>'."\n";
 
 echo "<h2>Request:</h2>";
 echo '<h4>Function</h4>';
-echo $WS_METHOD;
+echo $WS_METHOD1;
 echo '<h4>SOAP Message</h4>';
-echo '<pre>' . htmlspecialchars($soapclient->request, ENT_QUOTES) . '</pre>';
-
+echo '<pre>' . htmlspecialchars($soapclient1->request, ENT_QUOTES) . '</pre>';
 echo '<hr>';
-
 echo "<h2>Response:</h2>";
 echo '<h4>Result</h4>';
 echo '<pre>';
-print_r($result);
+print_r($result1);
 echo '</pre>';
 echo '<h4>SOAP Message</h4>';
-echo '<pre>' . htmlspecialchars($soapclient->response, ENT_QUOTES) . '</pre>';
+echo '<pre>' . htmlspecialchars($soapclient1->response, ENT_QUOTES) . '</pre>';
+
+print '<hr>';
+
+echo "<h2>Request:</h2>";
+echo '<h4>Function</h4>';
+echo $WS_METHOD2;
+echo '<h4>SOAP Message</h4>';
+echo '<pre>' . htmlspecialchars($soapclient2->request, ENT_QUOTES) . '</pre>';
+echo '<hr>';
+echo "<h2>Response:</h2>";
+echo '<h4>Result</h4>';
+echo '<pre>';
+print_r($result2);
+echo '</pre>';
+echo '<h4>SOAP Message</h4>';
+echo '<pre>' . htmlspecialchars($soapclient2->response, ENT_QUOTES) . '</pre>';
 
 echo '</body>'."\n";;
 echo '</html>'."\n";;

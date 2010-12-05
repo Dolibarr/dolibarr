@@ -133,6 +133,11 @@ function getThirdParty($authentication,$id,$name)
 	$errorcode='';$errorlabel='';
 	$error=0;
 
+    if (! $error && empty($conf->global->WEBSERVICES_KEY))
+    {
+        $error++;
+        $errorcode='SETUP_NOT_COMPLETE'; $errorlabel='Value for dolibarr security key not yet defined into Webservice module setup';
+    }
 	if (! $error && ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY))
 	{
 		$error++;
@@ -201,7 +206,7 @@ function getThirdParty($authentication,$id,$name)
 			else
 			{
 				$error++;
-				$errorcode='FAILEDTOREAD'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref;
+				$errorcode='FAILED_TO_READ'; $errorlabel='Object not found for id='.$id.' nor name='.$name;
 			}
 		}
 		else

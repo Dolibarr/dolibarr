@@ -74,11 +74,19 @@ $server->wsdl->addComplexType(
     '',
     array(
         'id' => array('name'=>'id','type'=>'xsd:string'),
-        'type' => array('name'=>'type','type'=>'xsd:string'),
+        'type' => array('name'=>'type','type'=>'xsd:int'),
     	'fk_product' => array('name'=>'fk_product','type'=>'xsd:int'),
-    	'total_ht' => array('name'=>'total_ht','type'=>'xsd:int'),
-    	'total_vat' => array('name'=>'total_vat','type'=>'xsd:int'),
-    	'total_ttc' => array('name'=>'total_ttc','type'=>'xsd:int')
+        'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
+    	'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
+    	'total' => array('name'=>'total','type'=>'xsd:double'),
+        'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:double'),
+        'qty' => array('name'=>'qty','type'=>'xsd:double'),
+        'date_start' => array('name'=>'date_start','type'=>'xsd:date'),
+        'date_end' => array('name'=>'date_end','type'=>'xsd:date'),
+        // From product
+        'product_ref' => array('name'=>'product_ref','type'=>'xsd:string'),
+        'product_label' => array('name'=>'product_label','type'=>'xsd:string'),
+        'product_desc' => array('name'=>'product_desc','type'=>'xsd:string')
     )
 );
 
@@ -106,19 +114,19 @@ $server->wsdl->addComplexType(
         'ref' => array('name'=>'ref','type'=>'xsd:string'),
         'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
         'fk_user_valid' => array('name'=>'fk_user_valid','type'=>'xsd:string'),
-        'date' => array('name'=>'date','type'=>'xsd:int'),
-        'date_creation' => array('name'=>'date_creation','type'=>'xsd:int'),
-        'date_validation' => array('name'=>'date_validation','type'=>'xsd:int'),
-        'date_modification' => array('name'=>'date_modification','type'=>'xsd:int'),
+        'date' => array('name'=>'date','type'=>'xsd:date'),
+        'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
+        'date_validation' => array('name'=>'date_validation','type'=>'xsd:dateTime'),
+        'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
         'type' => array('name'=>'type','type'=>'xsd:int'),
-        'total' => array('name'=>'type','type'=>'xsd:int'),
-        'total_vat' => array('name'=>'type','type'=>'xsd:int'),
-        'total_vat' => array('name'=>'type','type'=>'xsd:int'),
-        'note' => array('name'=>'note','type'=>'xsd:int'),
-        'note_public' => array('name'=>'note_public','type'=>'xsd:int'),
+        'total_net' => array('name'=>'type','type'=>'xsd:double'),
+        'total_vat' => array('name'=>'type','type'=>'xsd:double'),
+        'total' => array('name'=>'type','type'=>'xsd:double'),
+        'note' => array('name'=>'note','type'=>'xsd:string'),
+        'note_public' => array('name'=>'note_public','type'=>'xsd:string'),
         'status' => array('name'=>'status','type'=>'xsd:int'),
-        'close_code' => array('name'=>'close_code','type'=>'xsd:int'),
-        'close_note' => array('name'=>'close_note','type'=>'xsd:int'),
+        'close_code' => array('name'=>'close_code','type'=>'xsd:string'),
+        'close_note' => array('name'=>'close_note','type'=>'xsd:string'),
     	'lines' => array('name'=>'lines','type'=>'tns:LinesArray')
     )
 );
@@ -178,7 +186,9 @@ $ns
 );
 
 
-// Get invoice from id
+/**
+ * Get invoice from id
+ */
 function getInvoice($authentication,$id,$ref)
 {
 	global $db,$conf,$langs;
@@ -191,6 +201,11 @@ function getInvoice($authentication,$id,$ref)
 	$errorcode='';$errorlabel='';
 	$error=0;
 
+    if (! $error && empty($conf->global->WEBSERVICES_KEY))
+    {
+        $error++;
+        $errorcode='SETUP_NOT_COMPLETE'; $errorlabel='Value for dolibarr security key not yet defined into Webservice module setup';
+    }
 	if (! $error && ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY))
 	{
 		$error++;
@@ -233,15 +248,15 @@ function getInvoice($authentication,$id,$ref)
 				$i=0;
 				foreach($invoice->lines as $line)
 				{
-					//var_dump($line);
+					//var_dump($line); exit;
 					$linesresp[]=array(
 						'id'=>$line->rowid,
-						'type'=>$line->type,
-						'total_ht'=>$line->total_ht,
+						'type'=>$line->product_type,
+						'total_net'=>$line->total_ht,
 						'total_vat'=>$line->total_tva,
-						'total_ttc'=>$line->total_ttc,
-
-
+						'total'=>$line->total_ttc,
+                        'vat_rate'=>$line->tva_tx,
+                        'qty'=>$line->qty
 					);
 					$i++;
 				}
@@ -252,6 +267,7 @@ function getInvoice($authentication,$id,$ref)
 			        'invoice'=>array(
 				    	'id' => $invoice->id,
 			   			'ref' => $invoice->ref,
+                        'status'=>$invoice->statut,
 			            'fk_user_author' => $invoice->fk_user_author,
 			            'fk_user_valid' => $invoice->fk_user_valid,
 			    		'lines' => $linesresp
@@ -263,7 +279,7 @@ function getInvoice($authentication,$id,$ref)
 			else
 			{
 				$error++;
-				$errorcode='FAILEDTOREAD'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref;
+				$errorcode='FAILED_TO_READ'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref;
 			}
 		}
 		else
@@ -282,12 +298,14 @@ function getInvoice($authentication,$id,$ref)
 }
 
 
-// Get list of invoices for third party
+/**
+ * Get list of invoices for third party
+ */
 function getInvoicesForThirdParty($authentication,$idthirdparty)
 {
 	global $db,$conf,$langs;
 
-	dol_syslog("Function: getInvoicesForThirdParty login=".$authentication['login']." id=".$idthirdparty);
+	dol_syslog("Function: getInvoicesForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
@@ -311,10 +329,14 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 	{
 		$linesinvoice=array();
 
-		$sql.='SELECT rowid, facnumber as ref, type, total_ttc, total, tva';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
+		$sql.='SELECT f.rowid as facid, facnumber as ref, type, fk_statut as status, total_ttc, total, tva';
+		$sql.=' FROM '.MAIN_DB_PREFIX.'facture as f';
+		//$sql.=', '.MAIN_DB_PREFIX.'societe as s';
 		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE fk_soc = '.$idthirdparty;
+		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
+		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
+		$sql.=" WHERE f.fk_soc = ".$db->escape($idthirdparty);
+		$sql.=" AND f.entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -323,32 +345,39 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 			$i=0;
 			while ($i < $num)
 			{
-				// En attendant remplissage par boucle
+                // En attendant remplissage par boucle
+			    $obj=$db->fetch_object($resql);
+
+			    $invoice=new Facture($db);
+			    $invoice->fetch($obj->facid);
 
 				// Define lines of invoice
 				$linesresp=array();
-				$linesresp[]=array(
-					'id'=>100,
-					'type'=>1,
-					'total_ht'=>$line->total_ht,
-					'total_vat'=>$line->total_tva,
-					'total_ttc'=>$line->total_ttc,
-				);
-				$linesresp[]=array(
-					'id'=>101,
-					'type'=>1,
-					'total_ht'=>$line->total_ht,
-					'total_vat'=>$line->total_tva,
-					'total_ttc'=>$line->total_ttc,
-				);
+				foreach($invoice->lines as $line)
+				{
+   				    $linesresp[]=array(
+    					'id'=>$line->rowid,
+    					'type'=>$line->product_type,
+    					'total_net'=>$line->total_ht,
+    					'total_vat'=>$line->total_tva,
+    					'total'=>$line->total_ttc,
+                        'vat_rate'=>$line->tva_tx,
+                        'qty'=>$line->qty,
+   				        'product_ref'=>$line->product_ref,
+                        'product_label'=>$line->product_label,
+                        'product_desc'=>$line->product_desc,
+   				    );
+				}
+
 				// Now define invoice
 				$linesinvoice[]=array(
-					'id'=>'1',
-				    'ref'=>'aa',
-					'type'=>1,
-					'total_ht'=>10,
-					'total_vat'=>$line->total_tva,
-					'total_ttc'=>$line->total_ttc,
+					'id'=>$invoice->id,
+				    'ref'=>$invoice->ref,
+					'type'=>$invoice->type,
+                    'status'=>$invoice->statut,
+				    'total_net'=>$invoice->total_ht,
+					'total_vat'=>$invoice->total_tva,
+					'total'=>$invoice->total_ttc,
 		    		'lines' => $linesresp
 				);
 

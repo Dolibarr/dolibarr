@@ -67,8 +67,8 @@ $server->wsdl->addComplexType(
 	    ));
 
 $server->wsdl->addComplexType(
-        'result',
-     'complexType',
+    'result',
+    'complexType',
     'struct',
     'all',
     '',
@@ -101,7 +101,12 @@ function getVersions($authentication)
 	$errorcode='';$errorlabel='';
 	$error=0;
 
-	if ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY)
+	if (! $error && empty($conf->global->WEBSERVICES_KEY))
+	{
+        $error++;
+        $errorcode='SETUP_NOT_COMPLETE'; $errorlabel='Value for dolibarr security key not yet defined into Webservice module setup';
+	}
+	if (! $error && $authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY)
 	{
 		$error++;
 		$errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
  */
 
 /**
- *       \file       htdocs/webservices/client.php
- *       \brief      Page demo client appel WebServices Dolibarr
+ *       \file       htdocs/webservices/demo_thirdparty_other.php
+ *       \brief      Demo page to make a client call to Dolibarr WebServices "server_other"
  *       \version    $Id$
  */
 
@@ -28,11 +28,9 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 
-$WS_DOL_URL = $dolibarr_main_url_root.'/webservices/server.php';
-$WS_METHOD  = 'getVersions';
+$WS_DOL_URL = $dolibarr_main_url_root.'/webservices/server_thirdparty.php';
+$WS_METHOD  = 'getThirdParty';
 
-// Set the parameters to send to the WebService
-$parameters = array();
 
 // Set the WebService URL
 dol_syslog("Create soapclient_nusoap for URL=".$WS_DOL_URL);
@@ -43,6 +41,13 @@ if ($soapclient)
 }
 
 // Call the WebService method and store its result in $result.
+$authentication=array(
+    'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
+    'sourceapplication'=>'DEMO',
+    'login'=>'admin',
+    'password'=>'changeme',
+    'entity'=>'');
+$parameters = array('authentication'=>$authentication,'id'=>0,'name'=>'aaa');
 dol_syslog("Call method ".$WS_METHOD);
 $result = $soapclient->call($WS_METHOD,$parameters);
 if (! $result)
@@ -51,7 +56,10 @@ if (! $result)
 	exit;
 }
 
-// Show page with result
+/*
+ * View
+ */
+
 header("Content-type: text/html; charset=utf8");
 print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 echo '<html>'."\n";
