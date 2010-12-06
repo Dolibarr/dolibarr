@@ -183,7 +183,7 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 	print '<td align="right">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";
 	print '<tr class="impair"><td align="left">';
-    print $html->select_users(0,'user',1);
+    print $html->select_users(0,'user',0);
     print '</td>';
 	print '<td>';
 	print '<select name="action">';
@@ -208,11 +208,11 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 }
 // List of current notifications for objet_type='withdraw'
 $sql = "SELECT u.name, u.firstname";
-$sql.= ", ad.rowid, ad.code, ad.titre";
+$sql.= ", nd.rowid, ad.code, ad.titre";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql.= ", ".MAIN_DB_PREFIX."prelevement_notifications as nd";
+$sql.= ", ".MAIN_DB_PREFIX."notify_def as nd";
 $sql.= ", ".MAIN_DB_PREFIX."action_def as ad";
-$sql.= " WHERE u.rowid = nd.fk_user AND nd.action = ad.code";
+$sql.= " WHERE u.rowid = nd.fk_soc AND nd.fk_action = ad.rowid";
 $sql.= " AND ad.objet_type = 'withdraw'";
 $sql.= " AND u.entity IN (0,".$conf->entity.")";
 $resql = $db->query($sql);
@@ -229,7 +229,7 @@ if ($resql)
 		print "<tr $bc[$var]>";
 		print '<td>'.$obj->firstname." ".$obj->name.'</td>';
 		print '<td>'.$obj->titre.'</td>';
-		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->code.'">'.img_delete().'</a></td>';
+		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
 		print '</tr>';
 		$i++;
 	}
