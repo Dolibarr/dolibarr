@@ -3095,12 +3095,12 @@ class Form
      *    	\param      $max_year         Valeur maximum de l'annee dans la liste (par defaut annee courante + 5)
      * 		TODO Move into html.formother
      */
-    function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year='', $max_year='')
+	function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5)
     {
-        if($max_year == '')
-        $max_year = date("Y") +5;
-        if($min_year == '')
-        $min_year = date("Y") - 10;
+        $currentyear = date("Y");
+    	$max_year = $currentyear+$max_year;
+        $min_year = $currentyear-$min_year;
+        if(empty($selected)) $selected = $currentyear;
 
         print '<select class="flat" name="' . $htmlname . '">';
         if($useempty)
