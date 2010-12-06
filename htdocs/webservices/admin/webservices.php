@@ -125,7 +125,7 @@ $url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server_other.php';
 print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 if ($conf->societe->enabled)
 {
-	$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server_societe.php';
+	$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server_thirdparty.php';
 	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 if ($conf->facture->enabled)
