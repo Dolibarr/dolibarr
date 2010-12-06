@@ -148,7 +148,7 @@ $r='';
 
 foreach ($tabfac as $key => $val)
 {
-	print "<tr $bc[$var] >";
+	print "<tr ".$bc[$var]." >";
 	//facture
 	//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
 	print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
@@ -161,7 +161,7 @@ foreach ($tabfac as $key => $val)
 	// produit
 	foreach ($tabht[$key] as $k => $mt)
 	{
-		print "<tr>";
+		print "<tr ".$bc[$var]." >";
 		//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
 		print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
 		print "<td>".$val["piece"]."</td>";
@@ -172,7 +172,7 @@ foreach ($tabfac as $key => $val)
 	{
 	    if ($mt)
 	    {
-    		print "<tr>";
+    		print "<tr ".$bc[$var]." >";
     		//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
     		print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
     		print "<td>".$val["piece"]."</td>";
@@ -180,7 +180,7 @@ foreach ($tabfac as $key => $val)
 	    }
 	}
 
-	$val = !$val;
+	$var = !$var;
 }
 
 print "</table>";
