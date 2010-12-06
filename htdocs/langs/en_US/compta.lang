@@ -117,3 +117,9 @@ Dispatch=Dispatching
 Dispatched=Dispatched
 ToDispatch=To dispatch
 ThirdPartyMustBeEditAsCustomer=Third party must be defined as a customer
+SellsJournal=Sales Journal
+PurchasesJournal=Purchases Journal
+DescSellsJournal=Sales Journal 
+DescPurchasesJournal=Purchases Journal
+CodeNotDef=Not defined
+
