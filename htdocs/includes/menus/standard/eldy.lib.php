@@ -987,32 +987,34 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             // Rapports
             if ($conf->compta->enabled || $conf->accounting->enabled)
             {
+                $langs->load("compta");
+
                 // Bilan, resultats
                 $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca&amp;mainmenu=accountancy",$langs->trans("Reportings"),0,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 
                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca",$langs->trans("ReportInOut"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
-                /* On verra ca avec module compabilit� expert
-                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/compteres.php?leftmenu=ca","Compte de r�sultat",2,$user->rights->compta->resultat->lire);
+                /* On verra ca avec module compabilite expert
+                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/compteres.php?leftmenu=ca","Compte de resultat",2,$user->rights->compta->resultat->lire);
                  if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/bilan.php?leftmenu=ca","Bilan",2,$user->rights->compta->resultat->lire);
                  */
                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca",$langs->trans("ReportTurnover"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 
                 /*
-                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/cumul.php?leftmenu=ca","Cumul�",2,$user->rights->compta->resultat->lire);
+                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/cumul.php?leftmenu=ca","Cumule",2,$user->rights->compta->resultat->lire);
                  if ($conf->propal->enabled) {
-                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/prev.php?leftmenu=ca","Pr�visionnel",2,$user->rights->compta->resultat->lire);
-                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/comp.php?leftmenu=ca","Transform�",2,$user->rights->compta->resultat->lire);
+                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/prev.php?leftmenu=ca","Previsionnel",2,$user->rights->compta->resultat->lire);
+                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/comp.php?leftmenu=ca","Transforme",2,$user->rights->compta->resultat->lire);
                  }
                  */
                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
                 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 
                 // Journaux
- 				if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journaux"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+ 				//if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journaux"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
                 //journaux
-                if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/journaux/journalvente.php?leftmenu=ca",$langs->trans("JournalVente"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
-                if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/journaux/journalachat.php?leftmenu=ca",$langs->trans("JournalAchat"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+                if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/journal/sellsjournal.php?leftmenu=ca",$langs->trans("SellsJournal"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+                if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/journal/purchasesjournal.php?leftmenu=ca",$langs->trans("PurchasesJournal"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
             }
         }
 

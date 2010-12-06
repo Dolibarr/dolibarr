@@ -66,10 +66,10 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$date_start=dol_get_first_day($year_current,$pastmonth,false); $date_end=dol_get_last_day($year_current,$pastmonth,false);
 }
 
-$nom=$langs->trans("JournalAchat");
+$nom=$langs->trans("PurchasesJournal");
 //$nomlink=;
 $builddate=time();
-$description=$langs->trans("DescJournalAchat");
+$description=$langs->trans("DescPurchasesJournal");
 $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
@@ -92,9 +92,9 @@ if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start
     {
         $num = $db->num_rows($result);
         // les variables
-   	    $cptfour = isset($conf->global->COMPTA_ACCOUNT_SUPPLIER)?$conf->global->COMPTA_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef");
-		$cpttva = isset($conf->global->COMPTA_VAT_ACCOUNT)?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef");
-       
+   	    $cptfour = (! empty($conf->global->COMPTA_ACCOUNT_SUPPLIER))?$conf->global->COMPTA_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef");
+		$cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT))?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef");
+
         $tabfac = array();
 		$tabht = array();
 		$tabtva = array();
@@ -105,14 +105,14 @@ if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start
         {
             $obj = $db->fetch_object($result);
 			// contrôles
-       	    $compta_soc = isset($obj->code_compta_fournisseur)?$obj->code_compta_fournisseur:$cptfour;
+       	    $compta_soc = (! empty($obj->code_compta_fournisseur))?$obj->code_compta_fournisseur:$cptfour;
 			$compta_prod = $obj->accountancy_code_buy;
-			if (!isset($compta_prod) || empty($compta_prod))
+			if (empty($compta_prod))
 			{
-				if($obj->product_type == 0) $compta_prod = isset($conf->global->COMPTA_PRODUCT_BUY_ACCOUNT)?$conf->global->COMPTA_PRODUCT_BUY_ACCOUNT:$langs->trans("CodeNotDef") ;
-				else $compta_prod = isset($conf->global->COMPTA_SERVICE_BUY_ACCOUNT)?$conf->global->COMPTA_SERVICE_BUY_ACCOUNT:$langs->trans("CodeNotDef") ;
+				if($obj->product_type == 0) $compta_prod = (! empty($conf->global->COMPTA_PRODUCT_BUY_ACCOUNT))?$conf->global->COMPTA_PRODUCT_BUY_ACCOUNT:$langs->trans("CodeNotDef") ;
+				else $compta_prod = (! empty($conf->global->COMPTA_SERVICE_BUY_ACCOUNT))?$conf->global->COMPTA_SERVICE_BUY_ACCOUNT:$langs->trans("CodeNotDef") ;
 			}
-			$compta_tva = isset($obj->accountancy_code)?$obj->accountancy_code:$cpttva;
+			$compta_tva = (! empty($obj->accountancy_code))?$obj->accountancy_code:$cpttva;
 
 			$tabfac[$obj->rowid]["date"] = $obj->datef;
 		   	$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
@@ -121,8 +121,8 @@ if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start
 		   	$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
 		   	$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
 		   	$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
-   		
-	   		$i++;			
+
+	   		$i++;
         }
     }
     else {
@@ -135,9 +135,12 @@ if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start
 $i = 0;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
-print "<td>".$langs->trans("JournalNum")."</td><td>".$langs->trans("Invoicedate")."</td><td>".$langs->trans("InvoiceRef")."</td>";
-print "<td>".$langs->trans("Piece")."</td><td>".$langs->trans("Account")."</td>";
-print "<t><td>".$langs->trans("InvoiceLib")."</td><td>".$langs->trans("AmountDbt")."</td><td>".$langs->trans("AmountCdt")."</td>";
+///print "<td>".$langs->trans("JournalNum")."</td>";
+print "<td>".$langs->trans("Date")."</td>";
+print "<td>".$langs->trans("InvoiceRef")."</td>";
+print "<td>".$langs->trans("Piece")."</td>";
+print "<td>".$langs->trans("Account")."</td>";
+print "<t><td>".$langs->trans("Label")."</td><td>".$langs->trans("Debit")."</td><td>".$langs->trans("Credit")."</td>";
 print "</tr>\n";
 
 $var=true;
@@ -147,7 +150,9 @@ foreach ($tabfac as $key => $val)
 {
 	print "<tr $bc[$var] >";
 	//facture
-	print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td><td>".$val["date"]."</td><td>".$val["ref"]."</td><td>".$val["piece"]."</td>";
+	//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
+	print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
+	print "<td>".$val["piece"]."</td>";
 	foreach ($tabttc[$key] as $k => $mt)
 	{
 		print "<td>".$k."</td><td>".$val["lib"]."</td><td>".$mt."</td><td></td>";
@@ -156,28 +161,34 @@ foreach ($tabfac as $key => $val)
 	// produit
 	foreach ($tabht[$key] as $k => $mt)
 	{
-		print "<tr><td>".$conf->global->COMPTA_JOURNAL_BUY."</td><td>".$val["date"]."</td><td>".$val["ref"]."</td><td>".$val["piece"]."</td>";
+		print "<tr>";
+		//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
+		print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
+		print "<td>".$val["piece"]."</td>";
 		print "<td>".$k."</td><td>".$val["lib"]."</td><td></td><td>".$mt."</td></tr>";
 	}
 	// tva
 	foreach ($tabtva[$key] as $k => $mt)
 	{
-		print "<tr><td>".$conf->global->COMPTA_JOURNAL_BUY."</td><td>".$val["date"]."</td><td>".$val["ref"]."</td><td>".$val["piece"]."</td>";
+		print "<tr>";
+		//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
+		print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
+		print "<td>".$val["piece"]."</td>";
 		print "<td>".$k."</td><td>".$val["lib"]."</td><td></td><td>".$mt."</td></tr>";
 	}
-	
+
 	$val = !$val;
 }
 
 print "</table>";
-    
+
 /***************************************************
 * LINKED OBJECT BLOCK
 *
 * Put here code to view linked object
 ****************************************************/
 /*
- 
+
 $myobject->load_object_linked($myobject->id,$myobject->element);
 
 foreach($myobject->linked_object as $linked_object => $linked_objectid)

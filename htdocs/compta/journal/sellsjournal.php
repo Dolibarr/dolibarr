@@ -65,20 +65,20 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$date_start=dol_get_first_day($year_current,$pastmonth,false); $date_end=dol_get_last_day($year_current,$pastmonth,false);
 }
 
-$nom=$langs->trans("JournalVente");
+$nom=$langs->trans("SellsJournal");
 //$nomlink=;
 $builddate=time();
-$description=$langs->trans("DescJournalvente");
+$description=$langs->trans("DescSellsJournal");
 $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_PAYS);
 $idpays = $p[0];
 
-$sql = "SELECT f.rowid, f.facnumber, f.datef, f.ref_client , fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx "; 
+$sql = "SELECT f.rowid, f.facnumber, f.datef, f.ref_client , fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx ";
 $sql .= " , fd.total_ttc,p.accountancy_code_sell, s.code_compta , ct.accountancy_code";
-$sql .= " FROM ".MAIN_DB_PREFIX."facturedet fd "; 
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product "; 
+$sql .= " FROM ".MAIN_DB_PREFIX."facturedet fd ";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product ";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture f ON f.rowid = fd.fk_facture ";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = f.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '".$idpays."'";
@@ -93,7 +93,7 @@ if ($result)
 	$tabht = array();
 	$tabtva = array();
 	$tabttc = array();
-	
+
 	$num = $db->num_rows($result);
    	$i=0;
    	$resligne=array();
@@ -101,17 +101,17 @@ if ($result)
    	{
    	    $obj = $db->fetch_object($result);
    	    // les variables
-   	    $cptcli = isset($conf->global->COMPTA_ACCOUNT_CUSTOMER)?$conf->global->COMPTA_ACCOUNT_CUSTOMER:$langs->trans("CodeNotDef");
-   	    $compta_soc = isset($obj->code_compta)?$obj->code_compta:$cptcli;
+   	    $cptcli = (! empty($conf->global->COMPTA_ACCOUNT_CUSTOMER))?$conf->global->COMPTA_ACCOUNT_CUSTOMER:$langs->trans("CodeNotDef");
+   	    $compta_soc = (! empty($obj->code_compta))?$obj->code_compta:$cptcli;
 		$compta_prod = $obj->accountancy_code_sell;
-		if (!isset($compta_prod))
+		if (empty($compta_prod))
 		{
-			if($obj->product_type == 0) $compta_prod = isset($conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT)?$conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT:$langs->trans("CodeNotDef") ;
-			else $compta_prod = isset($conf->global->COMPTA_SERVICE_SOLD_ACCOUNT)?$conf->global->COMPTA_SERVICE_SOLD_ACCOUNT:$langs->trans("CodeNotDef") ;
-		} 
-		$cpttva = isset($conf->global->COMPTA_VAT_ACCOUNT)?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef");
-		$compta_tva = isset($obj->accountancy_code)?$obj->accountancy_code:$cpttva;
-  	    
+			if($obj->product_type == 0) $compta_prod = (! empty($conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT))?$conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT:$langs->trans("CodeNotDef") ;
+			else $compta_prod = (! empty($conf->global->COMPTA_SERVICE_SOLD_ACCOUNT))?$conf->global->COMPTA_SERVICE_SOLD_ACCOUNT:$langs->trans("CodeNotDef") ;
+		}
+		$cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT))?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef");
+		$compta_tva = (! empty($obj->accountancy_code))?$obj->accountancy_code:$cpttva;
+
     	//la ligne facture
    		$tabfac[$obj->rowid]["date"] = $obj->datef;
    		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
@@ -120,7 +120,7 @@ if ($result)
    		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
    		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
    		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
-   		
+
    		$i++;
    	}
 }
@@ -128,18 +128,19 @@ else {
     dol_print_error($db);
 }
 
-    
+
 /*
  * Show result array
  */
-    
-   
+
+
 $i = 0;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
-print "<td>".$langs->trans("JournalNum")."</td><td>".$langs->trans("Invoicedate")."</td><td>".$langs->trans("InvoiceRef")."</td>";
+//print "<td>".$langs->trans("JournalNum")."</td>";
+print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("InvoiceRef")."</td>";
 print "<td>".$langs->trans("Piece")."</td><td>".$langs->trans("Account")."</td>";
-print "<t><td>".$langs->trans("InvoiceLib")."</td><td>".$langs->trans("AmountDbt")."</td><td>".$langs->trans("AmountCdt")."</td>";
+print "<t><td>".$langs->trans("Label")."</td><td>".$langs->trans("Debit")."</td><td>".$langs->trans("Credit")."</td>";
 print "</tr>\n";
 
 $var=true;
@@ -149,7 +150,9 @@ foreach ($tabfac as $key => $val)
 {
 	print "<tr $bc[$var] >";
 	//facture
-	print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td><td>".$val["date"]."</td><td>".$val["ref"]."</td><td>".$val["piece"]."</td>";
+	//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
+	print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
+	print "<td>".$val["piece"]."</td>";
 	foreach ($tabttc[$key] as $k => $mt)
 	{
 		print "<td>".$k."</td><td>".$val["lib"]."</td><td>".$mt."</td><td></td>";
@@ -158,16 +161,22 @@ foreach ($tabfac as $key => $val)
 	// produit
 	foreach ($tabht[$key] as $k => $mt)
 	{
-		print "<tr><td>".$conf->global->COMPTA_JOURNAL_SELL."</td><td>".$val["date"]."</td><td>".$val["ref"]."</td><td>".$val["piece"]."</td>";
+		print "<tr>";
+		//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
+		print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
+		print "<td>".$val["piece"]."</td>";
 		print "<td>".$k."</td><td>".$val["lib"]."</td><td></td><td>".$mt."</td></tr>";
 	}
 	// tva
 	foreach ($tabtva[$key] as $k => $mt)
 	{
-		print "<tr><td>".$conf->global->COMPTA_JOURNAL_SELL."</td><td>".$val["date"]."</td><td>".$val["ref"]."</td><td>".$val["piece"]."</td>";
+		print "<tr>";
+		//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
+		print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
+		print "<td>".$val["piece"]."</td>";
 		print "<td>".$k."</td><td>".$val["lib"]."</td><td></td><td>".$mt."</td></tr>";
 	}
-	
+
 	$val = !$val;
 }
 
@@ -179,7 +188,7 @@ print "</table>";
 * Put here code to view linked object
 ****************************************************/
 /*
- 
+
 $myobject->load_object_linked($myobject->id,$myobject->element);
 
 foreach($myobject->linked_object as $linked_object => $linked_objectid)

@@ -121,5 +121,6 @@ SellsJournal=Sales Journal
 PurchasesJournal=Purchases Journal
 DescSellsJournal=Sales Journal 
 DescPurchasesJournal=Purchases Journal
+InvoiceRef=Invoice ref.
 CodeNotDef=Not defined
 
