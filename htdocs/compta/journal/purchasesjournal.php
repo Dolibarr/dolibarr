@@ -170,11 +170,14 @@ foreach ($tabfac as $key => $val)
 	// tva
 	foreach ($tabtva[$key] as $k => $mt)
 	{
-		print "<tr>";
-		//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
-		print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
-		print "<td>".$val["piece"]."</td>";
-		print "<td>".$k."</td><td>".$val["lib"]."</td><td></td><td>".$mt."</td></tr>";
+	    if ($mt)
+	    {
+    		print "<tr>";
+    		//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
+    		print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
+    		print "<td>".$val["piece"]."</td>";
+    		print "<td>".$k."</td><td>".$val["lib"]."</td><td></td><td>".$mt."</td></tr>";
+	    }
 	}
 
 	$val = !$val;
