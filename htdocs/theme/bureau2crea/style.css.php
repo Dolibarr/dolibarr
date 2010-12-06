@@ -880,7 +880,7 @@ td.photo {
 
 div.tabs {
     top: 20px;
-    margin: 10px 0px 0px 0px;
+    margin: 20px 0px 0px 0px;
     text-align: left;
     width: 100%;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu.jpg' ?>);
