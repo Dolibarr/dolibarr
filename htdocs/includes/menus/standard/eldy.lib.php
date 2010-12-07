@@ -761,16 +761,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
         {
             $langs->load("companies");
 
-            // Suppliers
-            if ($conf->fournisseur->enabled)
-            {
-                $newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 0, $user->rights->societe->lire);
-
-                $newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f", $langs->trans("MenuNewSupplier"), 1, $user->rights->societe->creer);
-                $newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=customers", $langs->trans("List"), 1, $user->rights->societe->lire);
-                $newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f", $langs->trans("Contacts"), 1, $user->rights->societe->contact->lire);
-            }
-
             // Prospects
             $newmenu->add(DOL_URL_ROOT."/comm/prospect/index.php?leftmenu=prospects", $langs->trans("Prospects"), 0, $user->rights->societe->lire);
 
@@ -791,6 +781,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             $newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 1, $user->rights->societe->creer);
             $newmenu->add(DOL_URL_ROOT."/comm/clients.php?leftmenu=customers", $langs->trans("List"), 1, $user->rights->societe->lire);
             $newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"), 1, $user->rights->societe->contact->lire);
+
+            // Suppliers
+            if ($conf->fournisseur->enabled)
+            {
+                $newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 0, $user->rights->societe->lire);
+
+                $newmenu->add(DOL_URL_ROOT."/societe/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f", $langs->trans("MenuNewSupplier"), 1, $user->rights->societe->creer);
+                $newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=customers", $langs->trans("List"), 1, $user->rights->societe->lire);
+                $newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f", $langs->trans("Contacts"), 1, $user->rights->societe->contact->lire);
+            }
 
             // Contacts
             $newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("Contacts"), 0, $user->rights->societe->contact->lire);
@@ -876,24 +876,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
         {
             $langs->load("companies");
 
-            // Suppliers
-            if ($conf->societe->enabled && $conf->fournisseur->enabled)
-            {
-                if ($conf->facture->enabled)
-                {
-                    $langs->load("bills");
-                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),0,$user->rights->fournisseur->facture->lire);
-                    if ($user->societe_id == 0)
-                    {
-                        $newmenu->add(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),1,$user->rights->fournisseur->facture->creer);
-                    }
-                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/impayees.php", $langs->trans("Unpaid"),1,$user->rights->fournisseur->facture->lire);
-                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),1,$user->rights->fournisseur->facture->lire);
-
-                    $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=suppliers_bills&mode=supplier", $langs->trans("Statistics"),1,$user->rights->fournisseur->facture->lire);
-                }
-            }
-
             // Customers invoices
             if ($conf->facture->enabled)
             {
@@ -916,6 +898,24 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $newmenu->add(DOL_URL_ROOT."/compta/paiement/rapport.php?leftmenu=customers_bills_payments",$langs->trans("Reportings"),2,$user->rights->facture->lire);
 
                 $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),1,$user->rights->facture->lire);
+            }
+
+            // Suppliers
+            if ($conf->societe->enabled && $conf->fournisseur->enabled)
+            {
+                if ($conf->facture->enabled)
+                {
+                    $langs->load("bills");
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),0,$user->rights->fournisseur->facture->lire);
+                    if ($user->societe_id == 0)
+                    {
+                        $newmenu->add(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),1,$user->rights->fournisseur->facture->creer);
+                    }
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/impayees.php", $langs->trans("Unpaid"),1,$user->rights->fournisseur->facture->lire);
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),1,$user->rights->fournisseur->facture->lire);
+
+                    $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=suppliers_bills&mode=supplier", $langs->trans("Statistics"),1,$user->rights->fournisseur->facture->lire);
+                }
             }
 
             // Orders
