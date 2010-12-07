@@ -74,7 +74,8 @@ $server->wsdl->addComplexType(
 	    '',
 	    array(
 	    	'id' => array('name'=>'id','type'=>'xsd:string'),
-	        'name' => array('name'=>'name','type'=>'xsd:string'),
+	        'ref' => array('name'=>'name','type'=>'xsd:string'),
+	        'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
 	        'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
 	        'date' => array('name'=>'date','type'=>'xsd:date'),
 	        'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
@@ -84,7 +85,10 @@ $server->wsdl->addComplexType(
 	    	'zip' => array('name'=>'zip','type'=>'xsd:string'),
 	    	'town' => array('name'=>'town','type'=>'xsd:string'),
 	    	'province_id' => array('name'=>'province_id','type'=>'xsd:string'),
-	    	'phone' => array('name'=>'country_id','type'=>'xsd:string'),
+	    	'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
+	    	'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
+	    	'country' => array('name'=>'country','type'=>'xsd:string'),
+	        'phone' => array('name'=>'country_id','type'=>'xsd:string'),
 	    	'fax' => array('name'=>'country_id','type'=>'xsd:string'),
 	    	'email' => array('name'=>'country_id','type'=>'xsd:string'),
 	    	'url' => array('name'=>'country_id','type'=>'xsd:string'),
@@ -113,7 +117,7 @@ $server->wsdl->addComplexType(
 // Register WSDL
 $server->register('getThirdParty',
 // Entry values
-array('authentication'=>'tns:authentication','id'=>'xsd:string','name'=>'xsd:string'),
+array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
 // Exit values
 array('result'=>'tns:result','thirdparty'=>'tns:thirdparty'),
 $ns
@@ -121,11 +125,11 @@ $ns
 
 
 // Full methods code
-function getThirdParty($authentication,$id,$name)
+function getThirdParty($authentication,$id,$ref,$ref_ext)
 {
 	global $db,$conf,$langs;
 
-	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." name=".$name);
+	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
@@ -144,10 +148,10 @@ function getThirdParty($authentication,$id,$name)
 		$errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
 	}
 
-	if (! $error && $id && $name)
+	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
 		$error++;
-		$errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id and ref can\'t be both provided. You must choose one or other but not both.';
+		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (! $error)
@@ -170,10 +174,10 @@ function getThirdParty($authentication,$id,$name)
 	{
 		$fuser->getrights();
 
-		if ($fuser->rights->facture->lire)
+		if ($fuser->rights->societe->lire)
 		{
 			$thirdparty=new Societe($db);
-			$result=$thirdparty->fetch($id,$name);
+			$result=$thirdparty->fetch($id,$ref,$ref_ext);
 			if ($result > 0)
 			{
 			    // Create
@@ -181,8 +185,9 @@ function getThirdParty($authentication,$id,$name)
 			    	'result'=>array('result_code'=>'', 'result_label'=>''),
 			        'thirdparty'=>array(
 				    	'id' => $thirdparty->id,
-			   			'name' => $thirdparty->name,
-			            'fk_user_author' => $thirdparty->fk_user_author,
+			   			'ref' => $thirdparty->name,
+			   			'ref_ext' => $thirdparty->ref_ext,
+			    		'fk_user_author' => $thirdparty->fk_user_author,
 //			    		'date_creation' => $thirdparty->
 //			    		'date_modification' => $thirdparty->
 			            'address' => $thirdparty->address,
@@ -190,7 +195,9 @@ function getThirdParty($authentication,$id,$name)
 				        'town' => $thirdparty->ville,
 				        'province_id' => $thirdparty->departement_id,
 				        'country_id' => $thirdparty->pays_id,
-				        'phone' => $thirdparty->tel,
+				        'country_code' => $thirdparty->pays_code,
+				        'country' => $thirdparty->country,
+			            'phone' => $thirdparty->tel,
 				        'fax' => $thirdparty->fax,
 				        'email' => $thirdparty->email,
 				        'url' => $thirdparty->url,
@@ -206,7 +213,7 @@ function getThirdParty($authentication,$id,$name)
 			else
 			{
 				$error++;
-				$errorcode='FAILED_TO_READ'; $errorlabel='Object not found for id='.$id.' nor name='.$name;
+				$errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		}
 		else

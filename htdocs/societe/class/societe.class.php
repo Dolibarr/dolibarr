@@ -539,25 +539,26 @@ class Societe extends CommonObject
 
     /**
      *    Load a third party from database into memory
-     *    @param      socid			Id third party to load
-     *    @param      ref			Name of third party (Warning, this can return several records)
+     *    @param      rowid			Id of third party to load
+     *    @param      ref			Reference of third party, name (Warning, this can return several records)
+     *    @param      ref_ext       External reference of third party (Warning, this information is a free field not provided by Dolibarr)
      *    @param      idprof1		Prof id 1 of third party (Warning, this can return several records)
      *    @param      idprof2		Prof id 2 of third party (Warning, this can return several records)
      *    @param      idprof3		Prof id 3 of third party (Warning, this can return several records)
      *    @param      idprof4		Prof id 4 of third party (Warning, this can return several records)
      *    @return     int			>0 if OK, <0 if KO or if two records found for same ref or idprof.
      */
-    function fetch($socid, $ref='',$idprof1='',$idprof2='',$idprof3='',$idprof4='')
+    function fetch($rowid, $ref='', $ref_ext='', $idprof1='',$idprof2='',$idprof3='',$idprof4='')
     {
         global $langs;
         global $conf;
 
-        if (empty($socid) && empty($ref)) return -1;
+        if (empty($rowid) && empty($ref) && empty($ref_ext)) return -1;
 
-        $sql = 'SELECT s.rowid, s.nom, s.entity, s.address, s.datec as dc, s.prefix_comm';
+        $sql = 'SELECT s.rowid, s.nom, s.entity, s.ref_ext, s.address, s.datec as dc, s.prefix_comm';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
-        $sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, s.client, s.fournisseur';
+        $sql .= ', s.tel, s.fax, s.email, s.url, s.cp as zip, s.ville as town, s.note, s.client, s.fournisseur';
         $sql .= ', s.siren, s.siret, s.ape, s.idprof4';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
@@ -580,12 +581,13 @@ class Societe extends CommonObject
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as fj ON s.fk_forme_juridique = fj.code';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
-        if ($socid) $sql .= ' WHERE s.rowid = '.$socid;
-        if ($ref)   $sql .= " WHERE s.nom = '".addslashes($ref)."' AND s.entity = ".$conf->entity;
-        if ($idprof1) $sql .= " WHERE s.siren = '".addslashes($siren)."' AND s.entity = ".$conf->entity;
-        if ($idprof2) $sql .= " WHERE s.siret = '".addslashes($siret)."' AND s.entity = ".$conf->entity;
-        if ($idprof3) $sql .= " WHERE s.ape = '".addslashes($ape)."' AND s.entity = ".$conf->entity;
-        if ($idprof4) $sql .= " WHERE s.idprof4 = '".addslashes($idprof4)."' AND s.entity = ".$conf->entity;
+        if ($rowid) $sql .= ' WHERE s.rowid = '.$rowid;
+        if ($ref)   $sql .= " WHERE s.nom = '".$this->db->escape($ref)."' AND s.entity = ".$conf->entity;
+        if ($ref_ext) $sql .= " WHERE s.ref_ext = '".$this->db->escape($ref_ext)."' AND s.entity = ".$conf->entity;
+        if ($idprof1) $sql .= " WHERE s.siren = '".$this->db->escape($siren)."' AND s.entity = ".$conf->entity;
+        if ($idprof2) $sql .= " WHERE s.siret = '".$this->db->escape($siret)."' AND s.entity = ".$conf->entity;
+        if ($idprof3) $sql .= " WHERE s.ape = '".$this->db->escape($ape)."' AND s.entity = ".$conf->entity;
+        if ($idprof4) $sql .= " WHERE s.idprof4 = '".$this->db->escape($idprof4)."' AND s.entity = ".$conf->entity;
 
         $resql=$this->db->query($sql);
         dol_syslog("Societe::fetch ".$sql);
@@ -602,24 +604,28 @@ class Societe extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id = $obj->rowid;
-                $this->ref = $obj->rowid;
-                $this->entity = $obj->entity;
+                $this->id           = $obj->rowid;
+                $this->entity       = $obj->entity;
+
+                $this->ref          = $obj->rowid;
+                $this->nom 			= $obj->nom; // TODO obsolete
+                $this->name 		= $obj->nom;
+                $this->ref_ext      = $obj->ref_ext;
 
                 $this->datec = $this->db->jdate($obj->datec);
                 $this->date_update = $this->db->jdate($obj->date_update);
 
-                $this->nom 			= $obj->nom; // TODO obsolete
-                $this->name 		= $obj->nom;
-                $this->address 		= $obj->address;
                 $this->adresse 		= $obj->address; // TODO obsolete
-                $this->cp 			= $obj->cp;	// TODO obsolete
-                $this->zip 			= $obj->cp;
-                $this->ville 		= $obj->ville;// TODO obsolete
-                $this->town 		= $obj->ville;
+                $this->address 		= $obj->address;
+                $this->cp 			= $obj->zip;	// TODO obsolete
+                $this->zip 			= $obj->zip;
+                $this->ville 		= $obj->town;// TODO obsolete
+                $this->town 		= $obj->town;
 
-                $this->pays_id 		= $obj->fk_pays;
-                $this->pays_code 	= $obj->fk_pays?$obj->pays_code:'';
+                $this->pays_id 		= $obj->fk_pays;						// TODO obsolete
+                $this->country_id   = $obj->fk_pays;
+                $this->pays_code 	= $obj->fk_pays?$obj->pays_code:'';		// TODO obsolete
+                $this->country_code = $obj->fk_pays?$obj->pays_code:'';
                 $this->pays 		= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):''; // TODO obsolete
                 $this->country 		= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
 
@@ -700,7 +706,7 @@ class Societe extends CommonObject
             }
             else
             {
-                $this->error='Societe::Fetch no third party found for id='.$socid;
+                $this->error='Societe::Fetch no third party found for id='.$rowid;
                 dol_syslog($this->error, LOG_ERR);
                 $result = -2;
             }

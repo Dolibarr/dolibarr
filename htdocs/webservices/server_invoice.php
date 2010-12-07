@@ -112,6 +112,7 @@ $server->wsdl->addComplexType(
     array(
     	'id' => array('name'=>'id','type'=>'xsd:string'),
         'ref' => array('name'=>'ref','type'=>'xsd:string'),
+        'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
         'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
         'fk_user_valid' => array('name'=>'fk_user_valid','type'=>'xsd:string'),
         'date' => array('name'=>'date','type'=>'xsd:date'),
@@ -172,7 +173,7 @@ $server->wsdl->addComplexType(
 // Register WSDL
 $server->register('getInvoice',
 // Entry values
-array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string'),
+array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
 // Exit values
 array('result'=>'tns:result','invoice'=>'tns:invoice'),
 $ns
@@ -187,13 +188,13 @@ $ns
 
 
 /**
- * Get invoice from id
+ * Get invoice from id, ref or ref_ext
  */
-function getInvoice($authentication,$id,$ref)
+function getInvoice($authentication,$id,$ref,$ref_ext)
 {
 	global $db,$conf,$langs;
 
-	dol_syslog("Function: getInvoice login=".$authentication['login']." id=".$id." ref=".$ref);
+	dol_syslog("Function: getInvoice login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
@@ -212,10 +213,10 @@ function getInvoice($authentication,$id,$ref)
 		$errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
 	}
 
-	if (! $error && $id && $ref)
+	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
 		$error++;
-		$errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id and ref can\'t be both provided. You must choose one or other but not both.';
+		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (! $error)
@@ -241,7 +242,7 @@ function getInvoice($authentication,$id,$ref)
 		if ($fuser->rights->facture->lire)
 		{
 			$invoice=new Facture($db);
-			$result=$invoice->fetch($id,$ref);
+			$result=$invoice->fetch($id,$ref,$ref_ext);
 			if ($result > 0)
 			{
 				$linesresp=array();
@@ -267,7 +268,8 @@ function getInvoice($authentication,$id,$ref)
 			        'invoice'=>array(
 				    	'id' => $invoice->id,
 			   			'ref' => $invoice->ref,
-                        'status'=>$invoice->statut,
+			   			'ref_ext' => $invoice->ref_ext,
+			            'status'=>$invoice->statut,
 			            'fk_user_author' => $invoice->fk_user_author,
 			            'fk_user_valid' => $invoice->fk_user_valid,
 			    		'lines' => $linesresp
@@ -279,7 +281,7 @@ function getInvoice($authentication,$id,$ref)
 			else
 			{
 				$error++;
-				$errorcode='FAILED_TO_READ'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref;
+				$errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		}
 		else
@@ -329,7 +331,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 	{
 		$linesinvoice=array();
 
-		$sql.='SELECT f.rowid as facid, facnumber as ref, type, fk_statut as status, total_ttc, total, tva';
+		$sql.='SELECT f.rowid as facid, facnumber as ref, ref_ext, type, fk_statut as status, total_ttc, total, tva';
 		$sql.=' FROM '.MAIN_DB_PREFIX.'facture as f';
 		//$sql.=', '.MAIN_DB_PREFIX.'societe as s';
 		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
@@ -373,7 +375,8 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 				$linesinvoice[]=array(
 					'id'=>$invoice->id,
 				    'ref'=>$invoice->ref,
-					'type'=>$invoice->type,
+				    'ref_ext'=>$invoice->ref_ext,
+				    'type'=>$invoice->type,
                     'status'=>$invoice->statut,
 				    'total_net'=>$invoice->total_ht,
 					'total_vat'=>$invoice->total_tva,

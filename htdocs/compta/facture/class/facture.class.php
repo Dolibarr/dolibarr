@@ -605,15 +605,18 @@ class Facture extends CommonObject
 
 	/**
 	 *	Get object and lines from database
-	 *	@param      rowid       id of object to load
-	 * 	@param		ref			Ref of invoice
+	 *	@param      rowid       Id of object to load
+	 * 	@param		ref			Reference of invoice
+	 * 	@param		ref			External reference of invoice
 	 *	@return     int         >0 if OK, <0 if KO
 	 */
-	function fetch($rowid,$ref='')
+	function fetch($rowid, $ref='', $ref_ext='')
 	{
 		global $conf;
 
-		$sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva, f.localtax1, f.localtax2, f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
+        if (empty($rowid) && empty($ref) && empty($ref_ext)) return -1;
+		
+        $sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva, f.localtax1, f.localtax2, f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ', f.datef as df';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.datec as datec';
@@ -630,9 +633,10 @@ class Facture extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = '".$this->element."'";
 		$sql.= ' WHERE f.entity = '.$conf->entity;
-		if ($ref) $sql.= " AND f.facnumber='".$this->db->escape($ref)."'";
-		else $sql.= " AND f.rowid=".$rowid;
-
+		if ($rowid)   $sql.= " AND f.rowid=".$rowid;
+		if ($ref)     $sql.= " AND f.facnumber='".$this->db->escape($ref)."'";
+		if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
+		
 		dol_syslog("Facture::Fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
