@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +19,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
 
 $langs->load("companies");
 $langs->load("other");
@@ -39,6 +39,8 @@ if ($user->societe_id > 0)
 ********************************************************************/
 
 
+
+
 /***************************************************
 * PAGE
 *
@@ -48,11 +50,6 @@ if ($user->societe_id > 0)
 llxHeader('','','');
 
 $html=new Form($db);
-
-
-// Put here content of your page
-// ...
-
 
 $year_current = strftime("%Y",dol_now());
 $pastmonth = strftime("%m",dol_now()) - 1;
@@ -76,9 +73,9 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_PAYS);
 $idpays = $p[0];
 
-$sql = "SELECT f.rowid, f.facnumber, f.datef, f.libelle, f.total_ttc, ";
-$sql .= "fd.tva_tx, fd.total_ht, fd.tva, fd.product_type ";
-$sql .= " ,s.code_compta_fournisseur, p.accountancy_code_buy , ct.accountancy_code";
+$sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.libelle, f.total_ttc,";
+$sql .= " fd.tva_tx, fd.total_ht, fd.tva, fd.product_type,";
+$sql .= " s.code_compta_fournisseur, p.accountancy_code_buy , ct.accountancy_code";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det fd ";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '".$idpays."'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product ";
@@ -116,7 +113,7 @@ if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start
 
 			$tabfac[$obj->rowid]["date"] = $obj->datef;
 		   	$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
-		   	$tabfac[$obj->rowid]["piece"] = '';	// todo
+		   	$tabfac[$obj->rowid]["type"] = $obj->type;
 		   	$tabfac[$obj->rowid]["lib"] = $obj->libelle;
 		   	$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
 		   	$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
@@ -137,8 +134,7 @@ print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 ///print "<td>".$langs->trans("JournalNum")."</td>";
 print "<td>".$langs->trans("Date")."</td>";
-print "<td>".$langs->trans("InvoiceRef")."</td>";
-print "<td>".$langs->trans("Piece")."</td>";
+print "<td>".$langs->trans("Piece").' ('.$langs->trans("InvoiceRef").")</td>";
 print "<td>".$langs->trans("Account")."</td>";
 print "<t><td>".$langs->trans("Label")."</td><td>".$langs->trans("Debit")."</td><td>".$langs->trans("Credit")."</td>";
 print "</tr>\n";
@@ -146,36 +142,42 @@ print "</tr>\n";
 $var=true;
 $r='';
 
+$invoicestatic=new FactureFournisseur($db);
+
 foreach ($tabfac as $key => $val)
 {
+	$invoicestatic->id=$key;
+	$invoicestatic->ref=$val["ref"];
+	$invoicestatic->type=$val["type"];
+
 	print "<tr ".$bc[$var]." >";
-	//facture
+	// invoice
 	//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
-	print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
-	print "<td>".$val["piece"]."</td>";
+	print "<td>".$val["date"]."</td>";
+	print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 	foreach ($tabttc[$key] as $k => $mt)
 	{
 		print "<td>".$k."</td><td>".$val["lib"]."</td><td>".$mt."</td><td></td>";
 	}
 	print "</tr>";
-	// produit
+	// product
 	foreach ($tabht[$key] as $k => $mt)
 	{
 		print "<tr ".$bc[$var]." >";
 		//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
-		print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
-		print "<td>".$val["piece"]."</td>";
+		print "<td>".$val["date"]."</td>";
+		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 		print "<td>".$k."</td><td>".$val["lib"]."</td><td></td><td>".$mt."</td></tr>";
 	}
-	// tva
+	// vat
 	foreach ($tabtva[$key] as $k => $mt)
 	{
 	    if ($mt)
 	    {
     		print "<tr ".$bc[$var]." >";
     		//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
-    		print "<td>".$val["date"]."</td><td>".$val["ref"]."</td>";
-    		print "<td>".$val["piece"]."</td>";
+    		print "<td>".$val["date"]."</td>";
+    		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
     		print "<td>".$k."</td><td>".$val["lib"]."</td><td></td><td>".$mt."</td></tr>";
 	    }
 	}
