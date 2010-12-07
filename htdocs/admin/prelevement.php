@@ -56,7 +56,7 @@ if ($_GET["action"] == "set")
 if ($_GET["action"] == "addnotif")
 {
 	$bon = new BonPrelevement($db);
-	$bon->AddNotification($_POST["user"],$_POST["action"]);
+	$bon->AddNotification($db,$_POST["user"],$_POST["action"]);
 
 	Header("Location: prelevement.php");
 	exit;
@@ -173,21 +173,33 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 {
 	$langs->load("mails");
 	print_titre($langs->trans("Notifications"));
-
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("User").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
-	print '<td align="right">'.$langs->trans("Action").'</td>';
-	print "</tr>\n";
-	print '<tr class="impair"><td align="left">';
-    print $html->select_users(0,'user',0);
-    print '</td>';
-	print '<td>';
-	print '<select name="action">';
-    $sql = "SELECT rowid, code, titre";
+	
+	$sql = "SELECT rowid, name, firstname, fk_societe, email";
+	$sql.= " FROM ".MAIN_DB_PREFIX."user";
+	$sql.= " WHERE entity IN (0,".$conf->entity.")";
+	
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$var = true;
+		$i = 0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			$var=!$var;
+			if (!$obj->fk_societe)
+			{
+				$username= $obj->firstname.' '.$obj->name;
+				$internalusers[$obj->rowid] = $username;
+			}
+				
+			$i++;
+		}
+		$db->free($resql);
+	}
+	
+	$sql = "SELECT rowid, code, titre";
     $sql.= " FROM ".MAIN_DB_PREFIX."action_def";
     $sql.= " WHERE objet_type = 'withdraw'";
     $resql = $db->query($sql);
@@ -199,11 +211,31 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            print '<option value="'.$obj->code.'">'.$obj->titre.'</option>';
+            $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
+            $actions[$obj->rowid]=$label;
             $i++;
         }
+        $db->free($resql);
     }
-	print '</select></td>';
+	
+
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("User").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td align="right">'.$langs->trans("Action").'</td>';
+	print "</tr>\n";
+	
+	print '<tr class="impair"><td align="left">';
+    print $html->selectarray('user',$internalusers);//  select_users(0,'user',0);
+    print '</td>';
+    
+	print '<td>';
+	print $html->selectarray('action',$actions);//  select_users(0,'user',0);
+	print '</td>';
+	
 	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 }
 // List of current notifications for objet_type='withdraw'
@@ -212,7 +244,7 @@ $sql.= ", nd.rowid, ad.code, ad.titre";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= ", ".MAIN_DB_PREFIX."notify_def as nd";
 $sql.= ", ".MAIN_DB_PREFIX."action_def as ad";
-$sql.= " WHERE u.rowid = nd.fk_soc AND nd.fk_action = ad.rowid";
+$sql.= " WHERE u.rowid = nd.fk_user AND nd.fk_action = ad.rowid";
 $sql.= " AND ad.objet_type = 'withdraw'";
 $sql.= " AND u.entity IN (0,".$conf->entity.")";
 $resql = $db->query($sql);
@@ -228,7 +260,8 @@ if ($resql)
 
 		print "<tr $bc[$var]>";
 		print '<td>'.$obj->firstname." ".$obj->name.'</td>';
-		print '<td>'.$obj->titre.'</td>';
+		$label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
+		print '<td>'.$label.'</td>';
 		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
 		print '</tr>';
 		$i++;

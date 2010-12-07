@@ -1145,7 +1145,7 @@ class BonPrelevement extends CommonObject
         $result = 0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE fk_soc=".$user." AND AND fk_action=".$action;
+		$sql .= " WHERE fk_user=".$user." AND fk_action=".$action;
 
         if ($this->db->query($sql))
         {
@@ -1163,15 +1163,16 @@ class BonPrelevement extends CommonObject
 	*	@param	action	notification action
 	*	@return	int		0 if OK, <0 if KO
 	*/
-    function AddNotification($user, $action)
+    function AddNotification($db, $user, $action)
     {
         $result = 0;
 
         if ($this->DeleteNotification($user, $action) == 0)
         {
-        	$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
-			$sql .= " VALUES (".$db->idate(mktime()).",".$user.", '',".$action.")";
-
+        	$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_soc, fk_contact, fk_action)";
+			$sql .= " VALUES (".$db->idate(mktime()).",".$user.", 'NULL', 'NULL', ".$action.")";
+			
+            dol_syslog("adnotiff: ".$sql);
             if ($this->db->query($sql))
             {
                 $result = 0;

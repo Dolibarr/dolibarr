@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2010 	   Juanjo Menentn       <jmenent@2byte.es>
+-- Copyright (C) 2010 	   Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -41,3 +41,4 @@ insert into llx_action_def (rowid,code,titre,description,objet_type) values (5,'
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (6,'NOTIFY_VAL_PROPAL','Validation proposition client','Executed when a commercial proposal is validated','propal');
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (7,'NOTIFY_TRN_WITHDRAW','Transmission prélèvement','Executed when a withdrawal is transmited','withdraw');
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (8,'NOTIFY_CRD_WITHDRAW','Créditer prélèvement','Executed when a withdrawal is credited','withdraw');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (9,'NOTIFY_EMT_WITHDRAW','Emission prélèvement','Executed when a withdrawal is emited','withdraw');
