@@ -642,7 +642,7 @@ class ActionComm extends CommonObject
 
 		if ($cachedelay)
 		{
-			$nowgmt = dol_now();
+			$nowgmt = dol_now('gmt');
 			if (filemtime($outputfile) > ($nowgmt - $cachedelay))
 			{
 				dol_syslog("ActionComm::build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
