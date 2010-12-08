@@ -103,6 +103,7 @@ ClientHour=Hour client (user)
 OSTZ=Time Zone OS server
 PHPTZ=Time Zone PHP server
 PHPServerOffsetWithGreenwich=PHP server offset width Greenwich (seconds)
+ClientOffsetWithGreenwich=Client/Browser offset width Greenwich (seconds)
 CurrentHour=PHP server hour
 CompanyTZ= Time Zone company (main company)
 CompanyHour= Hour company (main company)

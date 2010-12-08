@@ -119,7 +119,8 @@ function dol_now($mode='tzserver')
 	else if ($mode == 'tzuser')				// Time for now where the user is located
 	{
 		// TODO Should use the timezone of the user instead of timezone of server
-		$ret=mktime();
+		$tz=isset($_SESSION['dol_tz'])?$_SESSION['dol_tz']:0;
+		$ret=gmmktime()+($tz*24*60*60);
 	}
 	return $ret;
 }

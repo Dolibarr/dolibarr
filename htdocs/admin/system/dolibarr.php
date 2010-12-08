@@ -176,15 +176,15 @@ if (function_exists('date_default_timezone_get'))
 	print "</td></tr>\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 }
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("PHPServerOffsetWithGreenwich")."</td><td>".(- dol_mktime(0,0,0,1,1,1970))."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("PHPServerOffsetWithGreenwich")."</td><td>".(-dol_mktime(0,0,0,1,1,1970)>0?'+':'').(-dol_mktime(0,0,0,1,1,1970))."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentHour")."</td><td>".dol_print_date(dol_now('tzserver'),'dayhour')."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var].'><td width="300">=> dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext")."</td>";
 $var=!$var;
-print "<tr ".$bc[$var].'><td width="300">=> dol_get_first_day(1970,1,false)</td><td>'.dol_get_first_day(1970,1,false)." &nbsp; &nbsp; (with dol_print_date() or idate() = ".dol_print_date(dol_get_first_day(1970,1,false),'dayhour').")</td>";
+print "<tr ".$bc[$var].'><td width="300">=> dol_get_first_day(1970,1,false)</td><td>'.dol_get_first_day(1970,1,false)." &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = ".dol_print_date(dol_get_first_day(1970,1,false),'dayhour').")</td>";
 $var=!$var;
-print "<tr ".$bc[$var].'><td width="300">=> dol_get_first_day(1970,1,true)</td><td>'.dol_get_first_day(1970,1,true)." &nbsp; &nbsp; (with dol_print_date() or idate() = ".dol_print_date(dol_get_first_day(1970,1,true),'dayhour').")</td>";
+print "<tr ".$bc[$var].'><td width="300">=> dol_get_first_day(1970,1,true)</td><td>'.dol_get_first_day(1970,1,true)." &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = ".dol_print_date(dol_get_first_day(1970,1,true),'dayhour').")</td>";
 # Parent company
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CompanyTZ")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
@@ -193,10 +193,12 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CompanyHour")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
 # Client
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ClientTZ")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ClientTZ")."</td><td>".($_SESSION['dol_tz']>=0?'+':'').$_SESSION['dol_tz']."</td></tr>\n";
 $var=!$var;
-#print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".dol_print_date(dol_now('tzuser'),'dayhour')."</td></tr>\n";
-print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientOffsetWithGreenwich")."</td><td>".($_SESSION['dol_tz']>=0?'+':'').($_SESSION['dol_tz']*60*60)."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".dol_print_date(dol_now('tzuser'),'dayhour')."</td></tr>\n";
+#print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
 
 $var=!$var;
 $filesystemencoding=ini_get("unicode.filesystem_encoding");	// Disponible avec PHP 6.0

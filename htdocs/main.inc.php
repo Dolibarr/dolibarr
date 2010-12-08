@@ -366,10 +366,14 @@ if (! defined('NOLOGIN'))
 						$passwordtotest=$_POST["password"];
 						$function='check_user_password_'.$mode;
 						$login=$function($usertotest,$passwordtotest);
-						if ($login)
+						if ($login)	// Login is successfull
 						{
 							$test=false;
-							$conf->authmode=$mode;	// This properties is defined only when logged
+							$dol_authmode=$mode;	// This properties is defined only when logged to say what mode was successfully used
+							$dol_tz=$_POST["tz"];
+							$dol_dst=$_POST["dst"];
+							$dol_screenwidth=$_POST["screenwidth"];
+							$dol_screenheight=$_POST["screenheight"];
 						}
 					}
 					else
@@ -451,11 +455,11 @@ if (! defined('NOLOGIN'))
 	}
 	else
 	{
-		// It is already in a session
+		// We are already into an authenticated session
 		$login=$_SESSION["dol_login"];
-		$resultFetchUser=$user->fetch('',$login);
 		dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
 
+		$resultFetchUser=$user->fetch('',$login);
 		if ($resultFetchUser <= 0)
 		{
 			// Account has been removed after login
@@ -490,7 +494,7 @@ if (! defined('NOLOGIN'))
 		}
 		else
 		{
-		    if (! empty($conf->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))
+		    if (! empty($conf->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default
 		    {
     			// Call triggers
     			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -502,14 +506,19 @@ if (! defined('NOLOGIN'))
 		}
 	}
 
-	// Is it a new session ?
+	// Is it a new session that has started ?
+	// If we are here this means authentication was successfull.
 	if (! isset($_SESSION["dol_login"]))
 	{
 		$error=0;
 
 		// New session for this login
 		$_SESSION["dol_login"]=$user->login;
-		$_SESSION["dol_authmode"]=$conf->authmode;
+		$_SESSION["dol_authmode"]=isset($dol_authmode)?$dol_authmode:'';
+		$_SESSION["dol_tz"]=isset($dol_tz)?$dol_tz:'';
+		$_SESSION["dol_dst"]=isset($dol_dst)?$dol_dst:'';
+		$_SESSION["dol_screenwidth"]=isset($dol_screenwidth)?$dol_screenwidth:'';
+		$_SESSION["dol_screenheight"]=isset($dol_screenheight)?$dol_screenheight:'';
 		$_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
 		if ($conf->multicompany->enabled) $_SESSION["dol_entity"]=$conf->entity;
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
@@ -596,8 +605,7 @@ if (! defined('NOLOGIN'))
 	}
 
 	/*
-	 * Overwrite configs global par configs perso
-	 * ------------------------------------------
+	 * Overwrite configs global by peronal configs
 	 */
 	// Set liste_limit
 	if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	// Can be 0

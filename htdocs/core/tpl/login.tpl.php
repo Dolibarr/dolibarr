@@ -31,9 +31,8 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <head>
 <meta name="robots" content="noindex,nofollow">
 <title><?php echo $langs->trans('Login'); ?></title>
-
+<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-1.4.3.min.js"></script>
 <link rel="stylesheet" type="text/css" href="<?php echo $conf_css; ?>">
-
 <style type="text/css">
 <!--
 #login {
@@ -50,26 +49,48 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 }
 -->
 </style>
-
-<script type="text/javascript">
-function donnefocus() {
-	document.getElementById('<?php echo $focus_element; ?>').focus();
-	}
-</script>
-
 <?php echo $conf->global->MAIN_HTML_HEADER ?>
-
 <!-- HTTP_USER_AGENT = <?php echo $_SERVER['HTTP_USER_AGENT']; ?> -->
 </head>
 
-<body class="body" onload="donnefocus();">
+<body class="body">
+
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	// Set focus on correct field
+	<?php if ($focus_element) { ?>jQuery('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
+	// Detect and save TZ and DST
+	var rightNow = new Date();
+	var jan1 = new Date(rightNow.getFullYear(), 0, 1, 0, 0, 0, 0);
+	var temp = jan1.toGMTString();
+	var jan2 = new Date(temp.substring(0, temp.lastIndexOf(" ")-1));
+	var std_time_offset = (jan1 - jan2) / (1000 * 60 * 60);
+	var june1 = new Date(rightNow.getFullYear(), 6, 1, 0, 0, 0, 0);
+	temp = june1.toGMTString();
+	var june2 = new Date(temp.substring(0, temp.lastIndexOf(" ")-1));
+	var daylight_time_offset = (june1 - june2) / (1000 * 60 * 60);
+	var dst;
+	if (std_time_offset == daylight_time_offset) {
+	    dst = "0"; // daylight savings time is NOT observed
+	} else {
+	    dst = "1"; // daylight savings time is observed
+	}	
+	jQuery('#tz').val(std_time_offset);   				  // returns TZ
+	jQuery('#dst').val(dst);   							  // returns DST
+	// Detect and save screen resolution
+	jQuery('#screenwidth').val(jQuery(window).width());   // returns width of browser viewport
+	jQuery('#screenheight').val(jQuery(window).height());   // returns width of browser viewport
+});
+</script>
+
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="loginfunction" value="loginfunction" />
 <!-- Add fields to send local user information -->
-<input type="hidden" name="tz" value="" />
-<input type="hidden" name="screenwidth" value="" />
-<input type="hidden" name="screenheight" value="" />
+<input type="hidden" name="tz" id="tz" value="" />
+<input type="hidden" name="dst" id="dst" value="" />
+<input type="hidden" name="screenwidth" id="screenwidth" value="" />
+<input type="hidden" name="screenheight" id="screenheight" value="" />
 
 <table class="login" summary="<?php echo $title; ?>" cellpadding="0" cellspacing="0" border="0" align="center">
 <tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
