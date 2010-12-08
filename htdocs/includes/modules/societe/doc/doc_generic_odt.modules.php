@@ -300,7 +300,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile=basename($srctemplatepath);
 				$newfiletmp=preg_replace('/\.odt/i','',$newfile);
-				$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S').'.odt';
+				$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;

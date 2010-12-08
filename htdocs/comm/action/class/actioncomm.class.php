@@ -110,7 +110,7 @@ class ActionComm extends CommonObject
     {
         global $langs,$conf;
 
-		$now=dol_now('tzserver');
+		$now=dol_now();
 
 		// Clean parameters
 		$this->label=dol_trunc(trim($this->label),128);
@@ -642,7 +642,7 @@ class ActionComm extends CommonObject
 
 		if ($cachedelay)
 		{
-			$nowgmt = dol_now('gmt');
+			$nowgmt = dol_now();
 			if (filemtime($outputfile) > ($nowgmt - $cachedelay))
 			{
 				dol_syslog("ActionComm::build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");

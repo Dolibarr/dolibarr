@@ -1291,7 +1291,7 @@ if ($step == 5 && $datatoimport)
         $nboferrors=0;
         $nbofwarnings=0;
 
-        $importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
+        $importid=dol_print_date(dol_now(),'%Y%m%d%H%M%S');
 
         //var_dump($array_match_file_to_database);
 
@@ -1379,7 +1379,7 @@ if ($step == 5 && $datatoimport)
         }
 
         // Show import id
-        $importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
+        $importid=dol_print_date(dol_now(),'%Y%m%d%H%M%S');
 
         print '<center>';
         print $langs->trans("NowClickToRunTheImport",$langs->transnoentitiesnoconv("RunImportFile")).'<br>';
@@ -1614,7 +1614,7 @@ if ($step == 6 && $datatoimport)
 	$nboferrors=0;
 	$nbofwarnings=0;
 
-	$importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
+	$importid=dol_print_date(dol_now(),'%Y%m%d%H%M%S');
 
 	//var_dump($array_match_file_to_database);
 

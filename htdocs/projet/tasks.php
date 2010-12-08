@@ -84,7 +84,7 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 			$task->label = $_POST["label"];
 			$task->description = $_POST['description'];
 			$task->fk_task_parent = $task_parent;
-			$task->date_c = dol_now('tzserver');
+			$task->date_c = dol_now();
 			$task->date_start = dol_mktime(12,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
 			$task->date_end = dol_mktime(12,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 			$task->progress = $_POST['progress'];

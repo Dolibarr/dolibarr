@@ -568,7 +568,7 @@ class Propal extends CommonObject
 		global $langs,$conf,$mysoc;
 		$error=0;
 
-		$now=dol_now('gmt');
+		$now=dol_now();
 
 		// Clean parameters
 		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
@@ -794,7 +794,7 @@ class Propal extends CommonObject
 
 		$error=0;
 
-		$now=dol_now('gmt');
+		$now=dol_now();
 
 		$object=new Propal($this->db);
 

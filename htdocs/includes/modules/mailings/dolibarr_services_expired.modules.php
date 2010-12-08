@@ -94,7 +94,7 @@ class mailing_dolibarr_services_expired extends MailingTargets
             $product=$this->arrayofproducts[$key];
         }
 
-        $now=dol_now('gmt');
+        $now=dol_now();
 
 		// La requete doit retourner: id, email, name
 		$sql = " select s.rowid, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture, cd.date_fin_validite, cd.fk_contrat";
@@ -173,7 +173,7 @@ class mailing_dolibarr_services_expired extends MailingTargets
 	*/
 	function getNbOfRecipients($filter=1,$option='')
 	{
-        $now=dol_now('gmt');
+        $now=dol_now();
 
         // Example: return parent::getNbOfRecipients("SELECT count(*) as nb from dolibarr_table");
 		// Example: return 500;

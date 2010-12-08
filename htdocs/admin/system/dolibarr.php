@@ -178,7 +178,7 @@ if (function_exists('date_default_timezone_get'))
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("PHPServerOffsetWithGreenwich")."</td><td>".(-dol_mktime(0,0,0,1,1,1970)>0?'+':'').(-dol_mktime(0,0,0,1,1,1970))."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentHour")."</td><td>".dol_print_date(dol_now('tzserver'),'dayhour')."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentHour")."</td><td>".dol_print_date(dol_now(),'dayhour','tzserver')."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var].'><td width="300">=> dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext")."</td>";
 $var=!$var;
@@ -197,7 +197,7 @@ print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ClientTZ")."</td><td
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientOffsetWithGreenwich")."</td><td>".($_SESSION['dol_tz']>=0?'+':'').($_SESSION['dol_tz']*60*60)."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".dol_print_date(dol_now('tzuser'),'dayhour')."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".dol_print_date(dol_now(),'dayhour','tzuser')."</td></tr>\n";
 #print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
 
 $var=!$var;

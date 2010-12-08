@@ -77,7 +77,7 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
         $project->socid           = $_POST["socid"];
         $project->description     = $_POST["description"];
         $project->public          = $_POST["public"];
-        $project->datec=dol_now('tzserver');
+        $project->datec=dol_now();
         $project->dateo=dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
         $project->datee=dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
 

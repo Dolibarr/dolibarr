@@ -472,7 +472,7 @@ if ($account || $_GET["ref"])
     $result = $db->query($sql);
     if ($result)
     {
-        $now=dol_now('tzserver');
+        $now=dol_now();
         $nows=dol_date('Ymd',$now);
 
         //$html->load_cache_types_paiements();

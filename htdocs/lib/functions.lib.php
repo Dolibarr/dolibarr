@@ -97,30 +97,32 @@ function dol_size($size,$type='')
 
 
 /**
- *	\brief          Return date for now
- * 	\param			mode		'gmt' => we return GMT timestamp,
- * 								'tzserver' => we use the PHP server timezone
- *  							'tzref' => we use the company timezone
- * 								'tzuser' => we use the user timezone
- *	\return         date		Timestamp
+ *	Return date for now. We should always use this function without parameters (that means GMT time).
+ * 	@param			mode		'gmt' => we return GMT timestamp,
+ * 								'tzserver' => we add the PHP server timezone
+ *  							'tzref' => we add the company timezone
+ * 								'tzuser' => we add the user timezone
+ *	@return         date		Timestamp
  */
-function dol_now($mode='tzserver')
+function dol_now($mode='gmt')
 {
+	// Note that gmmktime and mktime return same value (GMT) whithout parameters 
 	if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
-	else if ($mode == 'tzserver')			// Time for now where PHP server is located
+	else if ($mode == 'tzserver')			// Time for now with PHP server timezone added
 	{
-		$ret=mktime();
+		$tzsecond=-dol_mktime(0,0,0,1,1,1970);
+		$ret=gmmktime()+$tzsecond;
 	}
-	else if ($mode == 'tzref')				// Time for now where the parent company is located
+	else if ($mode == 'tzref')				// Time for now where parent company timezone is added
 	{
-		// TODO Should use the timezone of the company instead of timezone of server
-		$ret=mktime();
+		// TODO Should add the company timezone
+		$ret=gmmktime();
 	}
-	else if ($mode == 'tzuser')				// Time for now where the user is located
+	else if ($mode == 'tzuser')				// Time for now where user timezone is added
 	{
-		// TODO Should use the timezone of the user instead of timezone of server
-		$tz=isset($_SESSION['dol_tz'])?$_SESSION['dol_tz']:0;
-		$ret=gmmktime()+($tz*24*60*60);
+		//print 'eeee'.time().'-'.mktime().'-'.gmmktime();
+		$tzhour=isset($_SESSION['dol_tz'])?$_SESSION['dol_tz']:0;
+		$ret=gmmktime()+($tzhour*60*60);
 	}
 	return $ret;
 }
@@ -437,21 +439,49 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
 /**
  *	Output date in a string format according to outputlangs (or langs if not defined).
  * 	Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset.
- *	@param	    time        	GM Timestamps date (or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS')
+ *	@param	    time        	GM Timestamps date (or deprecated strings 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS')
  *	@param	    format      	Output date format
  *								"%d %b %Y",
  *								"%d/%m/%Y %H:%M",
  *								"%d/%m/%Y %H:%M:%S",
  *								"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
- * 	@param		to_gmt			false=output string is for local server TZ usage, true=output string is for GMT usage
+ * 	@param		tzoutput		true=output string is for Greenwich location
+ * 								false or 'tzserver'=output string is for local PHP server TZ usage
+ * 								'tzuser'=output string is for local browser TZ usage
  *	@param		outputlangs		Object lang that contains language for text translation.
  * 	@return     string      	Formated date or '' if time is null
  *  @see        dol_mktime, dol_stringtotime
  */
-function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodetooutput=false)
+function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$encodetooutput=false)
 {
 	global $conf,$langs;
 
+	$to_gmt=false;
+	$offset=0;
+	if ($tzoutput)
+	{
+		$to_gmt=true;	// For backward compatibility
+		$offset=0;			
+		if (is_string($tzoutput))
+		{
+			if ($tzoutput == 'tzserver')
+			{
+				$to_gmt=false;
+				$offset=0;
+			}
+			if ($tzoutput == 'tzuser')
+			{
+				$to_gmt=true;
+				$offset=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
+			}
+			if ($tzoutput == 'tzcompany')
+			{
+				$to_gmt=false;
+				$offset=0;	// TODO Define this and use it later
+			}
+		}	
+	}
+	
     if (! is_object($outputlangs)) $outputlangs=$langs;
 
 	// Si format non defini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
@@ -506,14 +536,14 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 		$ssec = $reg[6];
 
 		$time=dol_mktime($shour,$smin,$ssec,$smonth,$sday,$syear,true);
-		$ret=adodb_strftime($format,$time,$to_gmt);
+		$ret=adodb_strftime($format,$time+$offset,$to_gmt);
 	}
 	else
 	{
 		// Date is a timestamps
 		if ($time < 100000000000)	// Protection against bad date values
 		{
-			$ret=adodb_strftime($format,$time,$to_gmt);
+			$ret=adodb_strftime($format,$time+$offset,$to_gmt);
 		}
 		else $ret='Bad value '.$time.' for date';
 	}
@@ -521,7 +551,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 	if (preg_match('/__b__/i',$format))
 	{
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month=adodb_strftime('%m',$time);
+		$month=adodb_strftime('%m',$time+$offset);
 		if ($encodetooutput)
 		{
 			$monthtext=$outputlangs->transnoentities('Month'.$month);
@@ -540,7 +570,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 	}
 	if (preg_match('/__a__/i',$format))
 	{
-		$w=adodb_strftime('%w',$time);
+		$w=adodb_strftime('%w',$time+$offset);
 		$dayweek=$outputlangs->transnoentitiesnoconv('Day'.$w);
 		$ret=str_replace('__A__',$dayweek,$ret);
 		$ret=str_replace('__a__',dol_substr($dayweek,0,3),$ret);

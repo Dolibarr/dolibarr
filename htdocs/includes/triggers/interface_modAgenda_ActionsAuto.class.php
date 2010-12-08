@@ -544,7 +544,7 @@ class InterfaceActionsAuto
         // Add entry in event table
         if ($ok)
         {
-			$now=dol_now('tzserver');
+			$now=dol_now();
 
 			// Insertion action
 			require_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');

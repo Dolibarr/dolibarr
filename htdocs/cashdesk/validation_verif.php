@@ -42,7 +42,7 @@ switch ( $_GET['action'] )
 		$company->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
 
 		$invoice=new Facture($db);
-		$invoice->date=dol_now('tzserver');
+		$invoice->date=dol_now();
 		$invoice->type=0;
 		$num=$invoice->getNextNumRef($company);
 
@@ -82,7 +82,7 @@ switch ( $_GET['action'] )
 
 	case 'valide_facture':
 
-		$now=dol_now('tzserver');
+		$now=dol_now();
 
 		// Recuperation de la date et de l'heure
 		$date = dol_print_date($now,'day');
