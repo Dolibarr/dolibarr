@@ -12,6 +12,7 @@ BillsUnpaid=Impayées
 BillsLate=Retards de paiement
 BillsStatistics=Statistiques factures clients
 BillsStatisticsSuppliers=Statistiques factures fournisseurs
+DisabledBecauseNotErasable=Désactivé car non supprimable
 InvoiceStandard=Facture standard
 InvoiceStandardAsk=Facture standard
 InvoiceStandardDesc=Ce type de facture est la facture traditionnelle. On l'appelle aussi <b>facture de doit</b> (du verbe devoir).
