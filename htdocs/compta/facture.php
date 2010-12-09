@@ -47,7 +47,6 @@ $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
 $langs->load('main');
-$langs->load('bills');
 
 if (GETPOST('mesg','int',1) && isset($_SESSION['message'])) $mesg=$_SESSION['message'];
 
