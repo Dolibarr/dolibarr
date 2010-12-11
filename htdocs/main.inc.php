@@ -831,7 +831,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<!-- Includes for JQuery (Ajax library) -->'."\n";
             $jquerytheme = 'smoothness';
             if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-1.8.5.custom.css" type="text/css" />'."\n";
+            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" type="text/css" />'."\n";
             print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.css" type="text/css" />'."\n";
         }
 
@@ -872,8 +872,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 			// JQuery. Must be before other includes (prototype/scriptaculous/...)
 			print '<!-- Includes for JQuery -->'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-1.4.3.min'.$ext.'"></script>'."\n";
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-1.8.5.custom.min'.$ext.'"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.min'.$ext.'"></script>'."\n";
 
