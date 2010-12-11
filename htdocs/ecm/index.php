@@ -298,7 +298,9 @@ $morejs=array(
 "/includes/jquery/plugins/layout/jquery.layout-latest.js"
 );
 */
-$maxheightwin=660;
+
+//print "xx".$_SESSION["dol_screenheight"];
+$maxheightwin=$_SESSION["dol_screenheight"]-150;
 
 $morehead="<style type=\"text/css\">
 html, body {
