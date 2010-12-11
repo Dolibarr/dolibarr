@@ -22,6 +22,7 @@ GeoIP             x.x                                  Yes              GeoIP Ma
 JCrop			  0.9.8	   MIT Licence				   Yes				JS library to crop images
 JQuery            1.4.4    GPL and MIT Licence         Yes              JS library,Layout,TableDND
 JQuery UI         1.8.7    GPL and MIT Licence         Yes              JS library+Plugin UI
+JQuery Mobile	  1.0a2	   GPL and MIT Licence		   Yes			    JS library for smartphone
 MagPieRss         0.72     GPL 2.0                     Yes              Load RSS
 NuSoap            0.9.5    LGPL 2.1                    Yes              Interfaces with third tools
 OdtPHP            1.0.1    GPL 2.0                     Yes              Library to build/edit ODT files
