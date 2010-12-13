@@ -464,7 +464,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetFont('','',11);
 
 		$pdf->SetXY(10,$tab_top);
-		$pdf->MultiCell(20,10,$outputlangs->transnoentities("Ref"),0,'C',1);
+		$pdf->MultiCell(20,10,$outputlangs->transnoentities("Ref"),0,'L',1);
 
 		$pdf->SetXY(30,$tab_top);
 		$pdf->MultiCell(102,10,$outputlangs->transnoentities("Designation"),0,'L',1);
@@ -492,6 +492,13 @@ class pdf_propale_jaune extends ModelePDFPropales
 	}
 
 
+    /**
+     *      Show header of document
+     *      @param      pdf             Object PDF
+     *      @param      object          Object commercial proposal
+     *      @param      showaddress     0=no, 1=yes
+     *      @param      outputlangs     Object lang for output
+     */
 	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
 	{
 		global $conf,$langs;

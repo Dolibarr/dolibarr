@@ -830,12 +830,12 @@ class pdf_propale_azur extends ModelePDFPropales
 
 	}
 
-	/*
-	 *   	\brief      Affiche en-tete propale
-	 *   	\param      pdf     		Objet PDF
-	 *   	\param      object			Objet propale
-	 *      \param      showaddress     0=no, 1=yes
-	 *      \param      outputlang		Objet lang cible
+	/**
+	 *   	Show header of document
+	 *   	@param      pdf     		Object PDF
+	 *   	@param      object			Object commercial proposal
+	 *      @param      showaddress     0=no, 1=yes
+	 *      @param      outputlangs    	Object lang for output
 	 */
 	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
