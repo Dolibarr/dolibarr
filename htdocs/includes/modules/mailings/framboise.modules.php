@@ -161,6 +161,7 @@ class mailing_framboise extends MailingTargets
 		global $conf, $langs;
 
 		$langs->load("companies");
+        $langs->load("categories");
 
 		$s='';
 		$s.='<select name="filter" class="flat">';
@@ -179,8 +180,8 @@ class mailing_framboise extends MailingTargets
 		{
 			$num = $this->db->num_rows($resql);
 
-			if ($num) $s.='<option value="0">&nbsp;</option>';
-			else $s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
+			$s.='<option value="0">&nbsp;</option>';
+			if (! $num) $s.='<option value="0" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
 
 			$i = 0;
 			while ($i < $num)

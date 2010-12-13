@@ -166,13 +166,13 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 					// sendto en RFC2822
 					$sendto = str_replace(',',' ',$obj->prenom." ".$obj->nom)." <".$obj->email.">";
 
-					// Make subtsitutions on topic and body
+					// Make substitutions on topic and body. From (AA=YY;BB=CC;...) we keep YY, CC, ...
 					$other=explode(';',$obj->other);
-					$other1=$other[0];
-					$other2=$other[1];
-					$other3=$other[2];
-					$other4=$other[3];
-					$other5=$other[4];
+					$tmpfield=explode('=',$other[0],2); $other1=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+                    $tmpfield=explode('=',$other[1],2); $other2=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+                    $tmpfield=explode('=',$other[2],2); $other3=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+                    $tmpfield=explode('=',$other[3],2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+                    $tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 					$substitutionarray=array(
 						'__ID__' => $obj->source_id,
 						'__EMAIL__' => $obj->email,
@@ -490,7 +490,7 @@ if ($_POST["action"] == 'update' && empty($_POST["removedfile"]) && empty($_POST
 }
 
 // Action confirmation validation
-if ($_REQUEST["action"] == 'confirm_valide')
+if ($_REQUEST["action"] == 'confirm_valid')
 {
 
 	if ($_REQUEST["confirm"] == 'yes')
@@ -646,9 +646,9 @@ else
 		dol_fiche_head($head, 'card', $langs->trans("Mailing"), 0, 'email');
 
 		// Confirmation de la validation du mailing
-		if ($_GET["action"] == 'valide')
+		if ($_GET["action"] == 'valid')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valide",'','',2);
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valid",'','',1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -662,7 +662,7 @@ else
 		// Confirm delete
 		if ($_GET["action"] == 'delete')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',2);
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$mil->id,$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -674,20 +674,28 @@ else
 			 */
 			if ($_GET["action"] == 'sendall')
 			{
+                // Define message to recommand from command line
+
+			    // Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
+                // on affiche donc juste un message
+
 				if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 				{
 					// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 					// on affiche donc juste un message
-					$message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-					$message.='<br><textarea cols="50" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$_GET["id"].'</textarea>';
-					$message.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
+				    $mesg.='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
+					$mesg.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$_GET["id"].'</textarea>';
+					$mesg.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
 					$_GET["action"]='';
 				}
 				else
 				{
-					$text=$langs->trans('ConfirmSendingEmailing').'<br>';
+                    $text=$langs->trans("MailingNeedCommand");
+                    $text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$_GET["id"].'</textarea>';
+					$text.='<br><br>';
+				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';
 					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-					$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$_REQUEST['id'],$langs->trans('SendMailing'),$text,'sendallconfirmed','','',2);
+					$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$_REQUEST['id'],$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,260);
 					if ($ret == 'html') print '<br>';
 				}
 			}
@@ -756,21 +764,12 @@ else
 			if ($mesg) print $mesg;
 
 
-			if ($_GET["action"] == 'sendall')
-			{
-				// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
-				// on affiche donc juste un message
-				$message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-				$message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$_GET["id"].'</textarea>';
-			}
-
-			if ($message) print $message;
-
 			/*
 			 * Boutons d'action
 			 */
 
-			if ($_GET["action"] == '')
+			if (GETPOST("cancel") || GETPOST("confirm")=='no' || GETPOST("action") == ''
+			  || in_array(GETPOST('action'),array('valid','delete','sendall')))
 			{
 				print "\n\n<div class=\"tabsAction\">\n";
 
@@ -795,7 +794,7 @@ else
 					}
 					else
 					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=valide&amp;id='.$mil->id.'">'.$langs->trans("ValidMailing").'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=valid&amp;id='.$mil->id.'">'.$langs->trans("ValidMailing").'</a>';
 					}
 				}
 

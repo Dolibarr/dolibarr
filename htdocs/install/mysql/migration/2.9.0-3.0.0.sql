@@ -128,6 +128,7 @@ ALTER TABLE llx_product  ADD COLUMN ref_ext varchar(32) after entity;
 
 
 ALTER TABLE llx_mailing_cibles CHANGE COLUMN url source_url integer;
+ALTER TABLE llx_mailing_cibles MODIFY source_url varchar(160);
 ALTER TABLE llx_mailing_cibles ADD COLUMN source_id integer after source_url;
 ALTER TABLE llx_mailing_cibles ADD COLUMN source_type varchar(16) after source_id;
 

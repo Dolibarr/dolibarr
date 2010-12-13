@@ -139,6 +139,7 @@ class mailing_fraise extends MailingTargets
     {
     	global $langs,$_POST;
 		$langs->load("members");
+        $langs->load("companies");
 
     	$cibles = array();
         $now=dol_now();
@@ -149,7 +150,7 @@ class mailing_fraise extends MailingTargets
         // La requete doit retourner: id, email, fk_contact, name, firstname
         $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, ";
         $sql.= " a.nom as name, a.prenom as firstname,";
-        $sql.= " a.datefin";	// Other fields
+        $sql.= " a.datefin, a.civilite, a.login, a.societe";	// Other fields
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
         $sql.= " WHERE a.email IS NOT NULL";
         if (isset($_POST["filter"]) && $_POST["filter"] == '-1') $sql.= " AND a.statut=-1";
@@ -162,7 +163,7 @@ class mailing_fraise extends MailingTargets
         //print $sql;
 
         // Add targets into table
-        dol_syslog("fraise.modules.php sql=".$sql);
+        dol_syslog(get_class($this)."::add_to_target sql=".$sql);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -183,7 +184,10 @@ class mailing_fraise extends MailingTargets
                     			'fk_contact' => $obj->fk_contact,
                     			'name' => $obj->name,
                     			'firstname' => $obj->firstname,
-                    			'other' => $obj->datefin?($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')):'',
+                    			'other' => ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')).';'.
+                                            ($langs->transnoentities("Civility").'='.$obj->civilite).';'.
+                                            ($langs->transnoentities("Login").'='.$obj->login).';'.
+                                            ($langs->transnoentities("Company").'='.$obj->societe),
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,
                                 'source_type' => 'member'

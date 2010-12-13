@@ -213,7 +213,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 
 	$var=!$var;
 
-	// Affiche les listes de selection
+	// Show email selectors
 	if ($mil->statut == 0)
 	{
 		print_fiche_titre($langs->trans("ToAddRecipientsChooseHere"),($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''),'');
@@ -384,14 +384,14 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		print_liste_field_titre($langs->trans("OtherInformations"),$_SERVER["PHP_SELF"],"",$parm,"","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"],"",$parm,"",'align="center"',$sortfield,$sortorder);
 
-		// Date
+		// Date sendinf
 		if ($mil->statut < 2)
 		{
 			print '<td class="liste_titre">&nbsp;</td>';
 		}
 		else
 		{
-			print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"mc.date_envoi",$parm,'','align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("DateSending"),$_SERVER["PHP_SELF"],"mc.date_envoi",$parm,'','align="center"',$sortfield,$sortorder);
 		}
 
 		// Statut

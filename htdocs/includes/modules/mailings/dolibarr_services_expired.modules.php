@@ -112,7 +112,7 @@ class mailing_dolibarr_services_expired extends MailingTargets
 			$num = $this->db->num_rows($result);
 			$i = 0;
 
-			dolibarr_syslog("dolibarr_services_expired.modules.php:add_to_target ".$num." targets found");
+			dolibarr_syslog(get_class($this)."::add_to_target ".$num." targets found");
 
 			$old = '';
 			while ($i < $num)

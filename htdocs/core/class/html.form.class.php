@@ -1791,11 +1791,12 @@ class Form
      *	   @param  formquestion	   an array with forms complementary inputs
      * 	   @param  selectedchoice  "" or "no" or "yes"
      * 	   @param  useajax		   0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
+     *     @param  height          Force height of box
      *     @return string          'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
      */
-    function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0)
+    function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=0)
     {
-    	print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax);
+    	print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax, $height);
     }
 
     /**
@@ -1807,18 +1808,20 @@ class Form
      *	   @param  formquestion	   an array with forms complementary inputs
      * 	   @param  selectedchoice  "" or "no" or "yes"
      * 	   @param  useajax		   0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
+     *     @param  height          Force height of box
      *     @return string          'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
      */
-    function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0)
+    function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=0)
     {
         global $langs,$conf;
 
         $more='';
         $formconfirm='';
 
+        if (empty($height)) $height=170;
+
         if ($formquestion)
         {
-            $more.='<tr class="valid"><td class="valid" colspan="3">'."\n";
             $more.='<table class="nobordernopadding" width="100%">'."\n";
             $more.='<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>'."\n";
             foreach ($formquestion as $key => $input)
@@ -1867,7 +1870,6 @@ class Form
                 }
             }
             $more.='</table>'."\n";
-            $more.='</td></tr>'."\n";
         }
 
         $formconfirm.= "\n<!-- begin form_confirm -->\n";
@@ -1886,8 +1888,8 @@ class Form
 			    jQuery("#dialog-confirm").dialog({
 			        autoOpen: true,
 			        resizable: false,
-			        height:170,
-			        width:590,
+			        height:'.$height.',
+			        width:600,
 			        modal: true,
 			        closeOnEscape: false,
 			        close: function(event, ui) {
@@ -1921,7 +1923,12 @@ class Form
             $formconfirm.= '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>'."\n";
 
             // Ligne formulaire
-            $formconfirm.= $more;
+            if ($more)
+            {
+                $formconfirm.='<tr class="valid"><td class="valid" colspan="3">'."\n";
+                $formconfirm.=$more;
+                $formconfirm.='</td></tr>'."\n";
+            }
 
             // Ligne message
             $formconfirm.= '<tr class="valid">';
