@@ -35,12 +35,12 @@ $WS_METHOD2  = 'getInvoicesForThirdParty';
 
 // Set the WebService URL
 dol_syslog("Create soapclient_nusoap for URL=".$WS_DOL_URL);
-$soapclient1 = new soapclient_nusoap($WS_DOL_URL);
+$soapclient1 = new nusoap_client($WS_DOL_URL);
 if ($soapclient1)
 {
 	$soapclient1->soap_defencoding='UTF-8';
 }
-$soapclient2 = new soapclient_nusoap($WS_DOL_URL);
+$soapclient2 = new nusoap_client($WS_DOL_URL);
 if ($soapclient2)
 {
     $soapclient2->soap_defencoding='UTF-8';

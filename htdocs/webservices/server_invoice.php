@@ -44,7 +44,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 }
 
 // Create the soap Object
-$server = new soap_server();
+$server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $ns='http://www.dolibarr.org/ns';
 $server->configureWSDL('WebServicesDolibarrInvoice',$ns);
