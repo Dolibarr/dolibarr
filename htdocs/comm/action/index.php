@@ -439,7 +439,7 @@ if ($_GET["action"] != 'show_day')		// View by month
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength);
+				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
 				echo "  </td>\n";
 			}
 			/* Show days of the current month */
@@ -455,7 +455,7 @@ if ($_GET["action"] != 'show_day')		// View by month
 				$style='cal_current_month';
 
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday, $month, $year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength);
+				show_day_events($db, $tmpday, $month, $year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
 				echo "  </td>\n";
 			}
 			/* Show days after the current month (next month) */
@@ -463,7 +463,7 @@ if ($_GET["action"] != 'show_day')		// View by month
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength);
+				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
 				echo "</td>\n";
 			}
 			$tmpday++;
@@ -504,15 +504,16 @@ llxFooter('$Date$ - $Revision$');
  * @param 	$day			 Day
  * @param 	$month			 Month
  * @param 	$year			 Year
- * @param 	$monthshown      Month shown in calendar view
+ * @param 	$monthshown      Current month shown in calendar view
  * @param 	$style	         Style to use for this day
  * @param 	$actionarray     Array of actions
  * @param 	$maxPrint		 Nb of actions to show each day on month view (0 means non limit)
- * @param 	maxnbofchar	     Nb of characters to show for event line
- * @param   companystatic    Object thirdparty
- * @param   contactstatic    Object contact
+ * @param 	$maxnbofchar	 Nb of characters to show for event line
+ * @param   $newparam        Parameters on current URL
+ * @param   $companystatic   Object thirdparty
+ * @param   $contactstatic   Object contact
  */
-function show_day_events($db, $day, $month, $year, $monthshown, $style, &$actionarray, $maxPrint=0, $maxnbofchar=14)
+function show_day_events($db, $day, $month, $year, $monthshown, $style, &$actionarray, $maxPrint=0, $maxnbofchar=14, $newparam='')
 {
 	global $user, $conf, $langs;
 	global $filter, $filtera, $filtert, $filterd, $status;
@@ -531,7 +532,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$action
 	print '</td><td align="right" nowrap="nowrap">';
 	if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
 	{
-		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">';
+	    //$param='month='.$monthshown.'&year='.$year;
+		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';
 		print img_picto($langs->trans("NewAction"),'edit_add.png');
 		print '</a>';
 	}

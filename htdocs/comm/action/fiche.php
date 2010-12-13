@@ -65,20 +65,21 @@ $contact = new Contact($db);
  */
 if ($_POST["action"] == 'add_action')
 {
-	if ($_POST["contactid"])
+    $backtopage='';
+    if (! empty($_POST["backtopage"])) $backtopage=$_POST["backtopage"];
+    if (! $backtopage)
+    {
+        if ($socid > 0) $backtopage = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
+        else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
+    }
+
+    if ($_POST["contactid"])
 	{
 		$result=$contact->fetch($_POST["contactid"]);
 	}
 
 	if ($_POST['cancel'])
 	{
-		$backtopage='';
-		if (! empty($_POST["backtopage"])) $backtopage=$_POST["backtopage"];
-		if (! $backtopage)
-		{
-			if ($socid > 0) $backtopage = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
-			else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
-		}
 		header("Location: ".$backtopage);
 		exit;
 	}
@@ -226,10 +227,10 @@ if ($_POST["action"] == 'add_action')
 			if (! $actioncomm->error)
 			{
 				$db->commit();
-				if ($_POST["from"])
+				if (! empty($backtopage))
 				{
-					dol_syslog("Back to ".$_POST["from"]);
-					Header("Location: ".$_POST["from"]);
+					dol_syslog("Back to ".$backtopage);
+					Header("Location: ".$backtopage);
 				}
 				elseif($idaction)
 				{
@@ -396,11 +397,16 @@ if (GETPOST("action") == 'update')
 	}
 	else
 	{
-		if (! empty($_POST["from"]))
+		if (! empty($_POST["from"]))  // deprecated. Use backtopage instead
 		{
 			header("Location: ".$_POST["from"]);
 			exit;
 		}
+        if (! empty($_POST["backtopage"]))
+        {
+            header("Location: ".$_POST["backtopage"]);
+            exit;
+        }
 	}
 }
 
@@ -717,7 +723,7 @@ if ($id)
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
-		if (GETPOST("backtopage")) print '<input type="hidden" name="from" value="'.(GETPOST("from") ? GETPOST("from") : $_SERVER["HTTP_REFERER"]).'">';
+		if (GETPOST("backtopage")) print '<input type="hidden" name="backtopage" value="'.(GETPOST("backtopage") ? GETPOST("backtopage") : $_SERVER["HTTP_REFERER"]).'">';
 
 		print '<table class="border" width="100%">';
 
