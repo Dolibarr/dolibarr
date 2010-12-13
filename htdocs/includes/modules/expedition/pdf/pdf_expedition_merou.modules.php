@@ -63,7 +63,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // By default if not defined
 	}
 
 
@@ -78,7 +78,6 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		global $user,$conf,$langs,$mysoc;
 
 		$object->fetch_thirdparty();
-
 		if (empty($object->lines)) $object->lines=$object->lignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -98,7 +97,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$this->expe = $object;
 
 		//Verification de la configuration
-		if ($conf->expedition->dir_output."/sending")
+		if ($conf->expedition->dir_output)
 		{
 			$object->fetch_thirdparty();
 
@@ -108,11 +107,9 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			$this->expediteur = $mysoc;
 
 			//Creation du destinataire
-			$this->destinataire = new Contact($this->db);
-			//		$pdf->expe->commande->fetch($pdf->commande->id);
-			//print_r($pdf->expe);
 			$idcontact = $object->$origin->getIdContact('external','SHIPPING');
-			$this->destinataire->fetch($idcontact[0]);
+            $this->destinataire = new Contact($this->db);
+			if ($idcontact[0]) $this->destinataire->fetch($idcontact[0]);
 
 			//Creation du livreur
 			$idcontact = $object->$origin->getIdContact('internal','LIVREUR');

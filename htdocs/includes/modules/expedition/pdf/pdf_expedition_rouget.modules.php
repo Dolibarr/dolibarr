@@ -64,7 +64,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // By default if not defined
 	}
 
 	/**
@@ -234,7 +234,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$outputlangs->load("propal");
 		$outputlangs->load("deliveries");
 
-		if ($conf->expedition->dir_output."/sending")
+		if ($conf->expedition->dir_output)
 		{
 			// Definition de $dir et $file
 			if ($object->specimen)

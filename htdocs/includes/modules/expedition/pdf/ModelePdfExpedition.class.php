@@ -64,6 +64,7 @@ class ModelePdfExpedition
  * 	@param	    object			object expedition
  * 	@param	    modele			force le modele a utiliser ('' to not force)
  * 	@param		outputlangs		objet lang a utiliser pour traduction
+ *  @return     int             <=0 if KO, >0 if OK
  */
 function expedition_pdf_create($db, $object, $modele, $outputlangs)
 {
@@ -99,6 +100,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	// Charge le modele
     if ($modelisok)
 	{
+	    dol_syslog("expedition_pdf_create ".$modele);
 		$classname = "pdf_expedition_".$modele;
 		require_once($dir.$file);
 

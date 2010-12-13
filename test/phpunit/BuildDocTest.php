@@ -133,6 +133,13 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
   	public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
+
+        if (! $conf->facture->enabled) { print __METHOD__." invoice module not enabled\n"; die(); }
+        if (! $conf->commande->enabled) { print __METHOD__." order module not enabled\n"; die(); }
+        if (! $conf->propale->enabled) { print __METHOD__." propal module not enabled\n"; die(); }
+        if (! $conf->projet->enabled) { print __METHOD__." project module not enabled\n"; die(); }
+        if (! $conf->expedition->enabled) { print __METHOD__." shipment module not enabled\n"; die(); }
+
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
     	print __METHOD__."\n";
