@@ -1024,7 +1024,8 @@ class Propal extends CommonObject
 
 						$line->fk_product       = $objp->fk_product;
 
-						$line->libelle          = $objp->label;        // Label produit
+						$line->libelle          = $objp->label;        // TODO deprecated
+						$line->label          	= $objp->label;        // Label produit
 						$line->product_desc     = $objp->product_desc; // Description produit
 						$line->ref              = $objp->ref;
 

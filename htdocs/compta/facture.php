@@ -1390,7 +1390,7 @@ if ($_GET['action'] == 'create')
     		if ($element == 'order')    { $element = $subelement = 'commande'; }
     		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
     		if ($element == 'contract') { $element = $subelement = 'contrat'; }
-
+    		
     		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
     		$classname = ucfirst($subelement);
     		$objectsrc = new $classname($db);
@@ -1780,6 +1780,8 @@ if ($_GET['action'] == 'create')
 	// TODO deplacer dans la classe
 	if ($_GET['origin'] == 'propal')
 	{
+		//$objectsrc->printOriginLinesList();
+		
 		$title=$langs->trans('ProductsAndServices');
 
 		$sql = 'SELECT pt.rowid, pt.description, pt.fk_remise_except,';
