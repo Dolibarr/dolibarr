@@ -342,7 +342,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			propale_pdf_create($db, $object, $_REQUEST['model'], $outputlangs);
+			propale_pdf_create($db, $object, $object->modelpdf, $outputlangs);
 
 			Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 			exit;
