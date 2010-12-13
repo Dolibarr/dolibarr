@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +114,7 @@ if ( $soc->fetch($soc->id) )
 	print '<table class="border"width="100%">';
 
 	print '<tr><td width="20%">'.$langs->trans("Name").'</td><td colspan="3">';
-	print $form->showrefnav($soc,'socid','',1,'rowid','nom');
+	print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
 
 	print '<tr><td width="30%">'.$langs->trans("NbOfActiveNotifications").'</td>';

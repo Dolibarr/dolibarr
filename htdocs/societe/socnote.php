@@ -82,7 +82,7 @@ if ($socid > 0)
 
 	print '<tr><td width="20%">'.$langs->trans('Name').'</td>';
 	print '<td colspan="3">';
-	print $form->showrefnav($societe,'socid','',1,'rowid','nom');
+	print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
 
     print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
