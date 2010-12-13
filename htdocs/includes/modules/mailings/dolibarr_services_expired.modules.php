@@ -97,7 +97,7 @@ class mailing_dolibarr_services_expired extends MailingTargets
         $now=dol_now();
 
 		// La requete doit retourner: id, email, name
-		$sql = " select s.rowid, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture, cd.date_fin_validite, cd.fk_contrat";
+		$sql = " select s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture, cd.date_fin_validite, cd.fk_contrat";
 		$sql.= " from ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c,";
 		$sql.= " ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
 		$sql.= " where s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
@@ -128,9 +128,9 @@ class mailing_dolibarr_services_expired extends MailingTargets
 					('EndDate='.dol_print_date($this->db->jdate($obj->date_fin_validite),'day')).';'.
 					('Contract='.$obj->fk_contrat).';'.
 					('ContactLine='.$obj->cdid),
-					'source_url' => $this->url($obj->rowid),
-					'source_id' => $obj->cdid,
-					'source_type' => 'contract_line'
+					'source_url' => $this->url($obj->id),
+					'source_id' => $obj->id,
+					'source_type' => 'thirdparty'
 					);
 					$old = $obj->email;
 					$j++;
@@ -227,7 +227,7 @@ class mailing_dolibarr_services_expired extends MailingTargets
 		//$companystatic->id=$id;
 		//$companystatic->nom='';
 		//return $companystatic->getNomUrl(1);	// Url too long
-		return '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$id.'">'.img_object('',"company").'</a>';
+        return '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$id.'">'.img_object('',"company").'</a>';
 	}
 
 }

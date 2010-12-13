@@ -38,8 +38,7 @@ class mailing_kiwi extends MailingTargets
 	var $db;
 
 
-	// CHANGE THIS: Constructor name must be called mailing_xxx with xxx=name of your selector
-	function mailing_categories($DB)
+	function mailing_kiwi($DB)
 	{
 		$this->db=$DB;
 	}

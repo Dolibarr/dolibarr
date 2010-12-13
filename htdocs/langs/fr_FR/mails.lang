@@ -74,7 +74,7 @@ SentTo=Envoyés à <b>%s</b>
 MailingModuleDescContactCompanies=Contacts des tiers (prospects, clients, fournisseurs...)
 MailingModuleDescDolibarrUsers=Utilisateurs de Dolibarr avec e-mail
 MailingModuleDescFundationMembers=Adhérents avec e-mail
-MailingModuleDescEmailsFromFile=EMails issus d'un fichier texte (email;nom;prenom;divers)
+MailingModuleDescEmailsFromFile=EMails issus d'un fichier texte (email;nom;prenom;autre)
 MailingModuleDescContactsCategories=Tiers avec e-mail (par catégorie)
 MailingModuleDescDolibarrContractsLinesExpired=Tiers avec lignes de contrats de services expirées
 
