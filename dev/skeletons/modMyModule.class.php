@@ -103,8 +103,8 @@ class modMyModule extends DolibarrModules
 		// where entity can be
 		// 'thirdparty'       to add a tab in third party view
 		// 'intervention'     to add a tab in intervention view
-		// 'supplier_order'   to add a tab in supplier order view
-		// 'supplier_invoice' to add a tab in supplier invoice view
+		// 'order_supplier'   to add a tab in supplier order view
+		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'order'            to add a tab in customer order view
 		// 'product'          to add a tab in product view

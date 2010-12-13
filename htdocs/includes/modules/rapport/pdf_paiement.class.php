@@ -273,7 +273,8 @@ class pdf_paiement
 		$oldprowid = 0;
 		$pdf->SetFillColor(220,220,220);
 		$yp = 0;
-		for ($j = 0 ; $j < sizeof($lines) ; $j++)
+		$numlines=sizeof($lines);
+		for ($j = 0 ; $j < $numlines ; $j++)
 		{
 			$i = $j;
 			if ($oldprowid <> $lines[$j][7])

@@ -49,7 +49,7 @@ class ModelePDFSuppliersOrders
 	{
 		global $conf;
 
-		$type='supplier_order';
+		$type='order_supplier';
 		$liste=array();
 
 		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');

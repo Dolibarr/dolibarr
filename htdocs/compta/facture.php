@@ -664,7 +664,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$object->remise_absolue    = $_POST['remise_absolue'];
 			$object->remise_percent    = $_POST['remise_percent'];
 
-			// If creation from another object of another module
+			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if ($_POST['origin'] && $_POST['originid'])
 			{
 				// Parse element/subelement (ex: project_task)
@@ -691,12 +691,13 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					$classname = ucfirst($subelement);
 					$srcobject = new $classname($db);
 
-					$result=$srcobject->fetch($_POST['originid']);
+					dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
+					$result=$srcobject->fetch($object->origin_id);
 					if ($result > 0)
 					{
 						// TODO mutualiser
 						$lines = $srcobject->lignes;
-						if (sizeof($lines)) $lines = $srcobject->lines;
+						if (sizeof($srcobject->lines)) $lines = $srcobject->lines;
 						if (empty($lines) && method_exists($srcobject,'fetch_lignes')) $lines = $srcobject->fetch_lignes();
 						if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
@@ -743,11 +744,13 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					}
 					else
 					{
+					    $mesg=$srcobject->error;
 						$error++;
 					}
 				}
 				else
 				{
+				    $mesg=$object->error;
 					$error++;
 				}
 			}
@@ -2923,8 +2926,6 @@ else
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$object->id;
 				$genallowed=$user->rights->facture->creer;
 				$delallowed=$user->rights->facture->supprimer;
-
-				$var=true;
 
 				print '<br>';
 				$somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);

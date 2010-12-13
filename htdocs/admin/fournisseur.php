@@ -154,12 +154,12 @@ if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
 
-	if ($_GET["type"] == 'supplier_order' && dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+	if ($_GET["type"] == 'order_supplier' && dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
 	{
 		$conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $_GET["value"];
 	}
 
-	if ($_GET["type"] == 'supplier_invoice' && dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+	if ($_GET["type"] == 'invoice_supplier' && dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
 	{
 		$conf->global->INVOICE_SUPPLIER_ADDON_PDF = $_GET["value"];
 	}
@@ -317,7 +317,7 @@ $dir = DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/pdf/';
 print_titre($langs->trans("OrdersModelModule"));
 
 // Defini tableau def de modele
-$type='supplier_order';
+$type='order_supplier';
 $def = array();
 
 $sql = "SELECT nom";
@@ -438,7 +438,7 @@ $dir = DOL_DOCUMENT_ROOT.'/includes/modules/supplier_invoice/pdf/';
 print_titre($langs->trans("BillsPDFModules"));
 
 // Defini tableau def de modele
-$type='supplier_invoice';
+$type='invoice_supplier';
 $def = array();
 
 $sql = "SELECT nom";

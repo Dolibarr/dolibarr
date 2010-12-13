@@ -62,10 +62,10 @@ function facturefourn_prepare_head($fac)
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
-	if (is_array($conf->tabs_modules['supplier_invoice']))
+	if (is_array($conf->tabs_modules['invoice_supplier']))
 	{
 		$i=0;
-		foreach ($conf->tabs_modules['supplier_invoice'] as $value)
+		foreach ($conf->tabs_modules['invoice_supplier'] as $value)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
@@ -127,10 +127,10 @@ function ordersupplier_prepare_head($commande)
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
-	if (is_array($conf->tabs_modules['supplier_order']))
+	if (is_array($conf->tabs_modules['order_supplier']))
 	{
 		$i=0;
-		foreach ($conf->tabs_modules['supplier_order'] as $value)
+		foreach ($conf->tabs_modules['order_supplier'] as $value)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);

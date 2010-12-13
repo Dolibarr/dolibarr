@@ -344,23 +344,23 @@ class CommonObject
 	}
 
 	/**
-	 *      \brief      La liste des valeurs possibles de type de contacts
-	 *      \param      source      internal, external or all if not defined
-	 *      \param		order		Sort order by : code or rowid
-	 *      \return     array       La liste des natures
+	 *      Return array with list of possible values for type of contacts
+	 *      @param      source      internal, external or all if not defined
+	 *      @param		order		Sort order by : code or rowid
+	 *      @return     array       List of type of contacts
 	 */
 	function liste_type_contact($source='internal', $order='code')
 	{
 		global $langs;
 
 		$tab = array();
-
 		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE tc.element='".$this->element."'";
 		if (! empty($source)) $sql.= " AND tc.source='".$source."'";
 		$sql.= " ORDER by tc.".$order;
 
+        //print "sql=".$sql;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -379,8 +379,8 @@ class CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
-			//            dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
+			//dol_print_error($this->db);
 			return null;
 		}
 	}
@@ -398,7 +398,7 @@ class CommonObject
 	function getIdContact($source,$code,$status=0)
 	{
 		global $conf;
-		
+
 		$result=array();
 		$i=0;
 
@@ -987,7 +987,7 @@ class CommonObject
 		$fieldlocaltax1='total_localtax1';
 		$fieldlocaltax2='total_localtax2';
 
-		if ($this->element == 'facture_fourn')
+		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 		{
 			$fieldtva='tva';
 		}
@@ -1038,7 +1038,7 @@ class CommonObject
 				$fieldht='total';
 			}
 
-			if ($this->element == 'facture_fourn')
+			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 			{
 				$fieldtva='total_tva';
 			}
@@ -1079,7 +1079,8 @@ class CommonObject
 	}
 
 	/**
-	 * 	Add objects linked in llx_element_element.
+	 * 	   Add objects linked in llx_element_element.
+	 *     @return         int         <=0 if KO, >0 if OK
 	 */
 	function add_object_linked()
 	{
@@ -1097,6 +1098,7 @@ class CommonObject
 		$sql.= ", '".$this->element."'";
 		$sql.= ")";
 
+        dol_syslog("CommonObject::add_object_linked sql=".$sql);
 		if ($this->db->query($sql))
 	  	{
 	  		$this->db->commit();
@@ -1104,7 +1106,7 @@ class CommonObject
 	  	}
 	  	else
 	  	{
-	  		$this->error=$this->db->lasterror()." - sql=$sql";
+	  		$this->error=$this->db->lasterror();
 	  		$this->db->rollback();
 	  		return 0;
 	  	}
@@ -1345,25 +1347,29 @@ class CommonObject
 	 *	Show linked object block
      *  TODO This must be moved into a html.class file instead of a business class.
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
-	 *	@param	$object
+	 *	@param	$objecttype          Type of object (invoice, propal, order, invoice_supplier, order_supplier, ...)
 	 *	@param	$objectid
 	 *	@param	$somethingshown
 	 */
-	function showLinkedObjectBlock($object,$objectid,$somethingshown=0)
+	function showLinkedObjectBlock($objecttype,$objectid,$somethingshown=0)
 	{
 		global $langs,$bc;
 
 		$num = sizeof($objectid);
 		if ($num)
 		{
-			$classpath = $object.'/class';
-			$tplpath = $object;
-			if ($object == 'facture') $tplpath = 'compta/'.$object; $classpath = $tplpath.'/class';  // To work with non standard path
-			if ($object == 'propal') $tplpath = 'comm/'.$object; $classpath = $tplpath.'/class';     // To work with non standard path
+			$classpath = $objecttype.'/class';
+			$tplpath = $objecttype;
+			if ($objecttype == 'facture') $tplpath = 'compta/'.$objecttype; $classpath = $tplpath.'/class';  // To work with non standard path
+			if ($objecttype == 'propal') $tplpath = 'comm/'.$objecttype; $classpath = $tplpath.'/class';     // To work with non standard path
+            if ($objecttype == 'invoice_supplier') $tplpath = 'fourn/facture'; $classpath = 'fourn/class';     // To work with non standard path
+            if ($objecttype == 'order_supplier') $tplpath = 'fourn/commande'; $classpath = 'fourn/class';     // To work with non standard path
 
-			//print $classpath." - ".$tplpath;
-			$classname = ucfirst($object);
-			if(!class_exists($classname)) require(DOL_DOCUMENT_ROOT."/".$classpath."/".$object.".class.php");
+            $classfile = strtolower($objecttype); $classname = ucfirst($objecttype);
+			if ($objecttype == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
+            if ($objecttype == 'order_supplier')   { $classfile='fournisseur.commande'; $classname='CommandeFournisseur'; }
+            //print $classfile." - ".$classpath." - ".$tplpath;
+            if(!class_exists($classname)) require(DOL_DOCUMENT_ROOT."/".$classpath."/".$classfile.".class.php");
 			$linkedObjectBlock = new $classname($this->db);
 			include(DOL_DOCUMENT_ROOT.'/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
 			return $num;

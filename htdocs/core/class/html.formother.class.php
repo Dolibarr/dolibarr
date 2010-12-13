@@ -489,7 +489,8 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selecte
 
 	$lastprojectid=0;
 
-	for ($i = 0 ; $i < sizeof($lines) ; $i++)
+	$numlines=sizeof($lines);
+	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($lines[$i]->fk_parent == $parent)
 		{

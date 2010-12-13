@@ -41,7 +41,7 @@ class FactureFournisseur extends Facture
 	var $db;
 	var $error;
 
-	var $element='facture_fourn';
+	var $element='invoice_supplier';
 	var $table_element='facture_fourn';
 	var $table_element_line='facture_fourn_det';
 	var $fk_element='fk_facture_fourn';
@@ -77,6 +77,7 @@ class FactureFournisseur extends Facture
 	var $lines;
 	var $fournisseur;
 
+
 	/**
 	 *    \brief  Constructeur de la classe
 	 *    \param  DB          	Database access handler
@@ -86,8 +87,6 @@ class FactureFournisseur extends Facture
 	function FactureFournisseur($DB, $socid='', $facid='')
 	{
 		$this->db = $DB ;
-		$this->table = 'facture_fourn';
-		$this->tabledetail = 'facture_fourn_det';
 
 		$this->id = $facid;
 		$this->socid = $socid;
@@ -139,14 +138,14 @@ class FactureFournisseur extends Facture
 		$sql.= ", date_lim_reglement";
 		$sql.= ")";
 		$sql.= " VALUES (";
-		$sql.= "'".addslashes($number)."'";
+		$sql.= "'".$this->db->escape($number)."'";
 		$sql.= ", ".$conf->entity;
-		$sql.= ", '".addslashes($this->libelle)."'";
+		$sql.= ", '".$this->db->escape($this->libelle)."'";
 		$sql.= ", ".$this->socid;
 		$sql.= ", ".$this->db->idate(gmmktime());
 		$sql.= ", '".$this->db->idate($this->date)."'";
-		$sql.= ", '".addslashes($this->note)."'";
-		$sql.= ", '".addslashes($this->note_public)."'";
+		$sql.= ", '".$this->db->escape($this->note)."'";
+		$sql.= ", '".$this->db->escape($this->note_public)."'";
 		$sql.= ", ".$user->id.",";
 		$sql.= $this->date_echeance!=''?"'".$this->db->idate($this->date_echeance)."'":"null";
 		$sql.= ")";
@@ -156,6 +155,19 @@ class FactureFournisseur extends Facture
 		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn');
+
+
+            // Add object linked
+            if (! $error && $this->id && $this->origin && $this->origin_id)
+            {
+                $ret = $this->add_object_linked();
+                if (! $ret)
+                {
+                    dol_print_error($this->db);
+                    $error++;
+                }
+            }
+
 			foreach ($this->lines as $i => $val)
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';

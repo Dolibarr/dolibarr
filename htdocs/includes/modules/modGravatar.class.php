@@ -92,17 +92,6 @@ class modGravatar extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array();
-		// where entity can be
-		// 'thirdparty'       to add a tab in third party view
-		// 'intervention'     to add a tab in intervention view
-		// 'supplier_order'   to add a tab in supplier order view
-		// 'supplier_invoice' to add a tab in supplier invoice view
-		// 'invoice'          to add a tab in customer invoice view
-		// 'order'            to add a tab in customer order view
-		// 'product'          to add a tab in product view
-		// 'propal'           to add a tab in propal view
-		// 'member'           to add a tab in fundation member view
-
 
 		// Boxes
 		$this->boxes = array();			// List of boxes

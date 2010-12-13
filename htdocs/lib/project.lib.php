@@ -283,7 +283,8 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $
 
 	$var=true;
 
-	for ($i = 0 ; $i < sizeof($lines) ; $i++)
+	$numlines=sizeof($lines);
+	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($parent == 0) $level = 0;
 
@@ -395,7 +396,8 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 
 	$projectsArrayId=explode(',',$projectsListId);
 
-	for ($i = 0 ; $i < sizeof($lines) ; $i++)
+	$numlines=sizeof($lines);
+	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($parent == 0) $level = 0;
 
@@ -528,7 +530,8 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 {
 	//print 'Search in line with parent id = '.$parent.'<br>';
-	for ($i = 0 ; $i < sizeof($lines) ; $i++)
+	$numlines=sizeof($lines);
+    for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		// Process line $lines[$i]
 		if ($lines[$i]->fk_parent == $parent && $lines[$i]->id != $lines[$i]->fk_parent)

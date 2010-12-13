@@ -149,3 +149,12 @@ INSERT INTO llx_action_def (code,titre,description,objet_type) values ('NOTIFY_E
 ALTER TABLE llx_prelevement_notifications MODIFY action varchar(32);
 
 ALTER TABLE llx_c_tva ADD COLUMN accountancy_code varchar(15) DEFAULT NULL;
+
+
+UPDATE llx_c_actioncomm set module='invoice_supplier' WHERE module='supplier_invoice';
+UPDATE llx_c_actioncomm set module='order_supplier' WHERE module='supplier_order';
+UPDATE llx_documentmodel set type='invoice_supplier' WHERE type='supplier_invoice';
+UPDATE llx_documentmodel set type='order_supplier' WHERE type='supplier_order';
+UPDATE llx_c_type_contact set element='invoice_supplier' WHERE element='facture_fourn';
+UPDATE llx_c_type_contact set module='invoice_supplier' WHERE module='supplier_invoice';
+UPDATE llx_c_type_contact set module='order_supplier' WHERE module='supplier_order';

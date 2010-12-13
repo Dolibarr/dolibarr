@@ -46,10 +46,10 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (61, 'facture', 'external', 'SHIPPING',      'Contact client livraison', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (62, 'facture', 'external', 'SERVICE',       'Contact client prestation', 1);
 
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (70, 'facture_fourn', 'internal', 'SALESREPFOLL',  'Responsable suivi du paiement', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (71, 'facture_fourn', 'external', 'BILLING',       'Contact fournisseur facturation', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (72, 'facture_fourn', 'external', 'SHIPPING',      'Contact fournisseur livraison', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (73, 'facture_fourn', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (70, 'invoice_supplier', 'internal', 'SALESREPFOLL',  'Responsable suivi du paiement', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (71, 'invoice_supplier', 'external', 'BILLING',       'Contact fournisseur facturation', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (72, 'invoice_supplier', 'external', 'SHIPPING',      'Contact fournisseur livraison', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (73, 'invoice_supplier', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (91, 'commande','internal', 'SALESREPFOLL',  'Responsable suivi de la commande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (100,'commande','external', 'BILLING',       'Contact client facturation commande', 1);

@@ -44,7 +44,7 @@ class ModelePDFSuppliersInvoices
 	{
 		global $conf;
 
-		$type='supplier_invoice';
+		$type='invoice_supplier';
 		$liste=array();
 
 		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');

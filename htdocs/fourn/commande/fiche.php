@@ -1339,6 +1339,25 @@ if ($id > 0 || ! empty($ref))
 
 			$somethingshown=$formfile->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
+			$object=$commande;
+
+            /*
+             * Linked object block
+             */
+            $object->load_object_linked($object->id,$object->element);
+
+            foreach($object->linked_object as $linked_object => $linked_objectid)
+            {
+                $tmpmodule=$linked_object;
+                if ($linked_object == 'invoice_supplier') $tmpmodule='fournisseur';
+                if ($linked_object == 'order_supplier') $tmpmodule='fournisseur';
+                if($conf->$tmpmodule->enabled && $linked_object != $object->element)
+                {
+                    $somethingshown=$object->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
+                }
+            }
+
+
 			print '</td><td valign="top" width="50%">';
 
 			if ( $user->rights->fournisseur->commande->commander && $commande->statut == 2)
@@ -1400,10 +1419,12 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// List of actions on element
-	//		include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
-	//		$formactions=new FormActions($db);
-	//		$somethingshown=$formactions->showactions($commande,'supplier_order',$socid);
-
+			/* Hidden because" available into "Log" tab
+			print '<br>';
+			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+			$formactions=new FormActions($db);
+			$somethingshown=$formactions->showactions($commande,'order_supplier',$socid);
+            */
 
 			print '</td></tr></table>';
 		}

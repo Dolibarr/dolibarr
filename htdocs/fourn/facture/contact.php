@@ -202,7 +202,7 @@ if ($id > 0)
 
 		/*
 		 * Ajouter une ligne de contact
-		 * Non affich� en mode modification de ligne
+		 * Non affiche en mode modification de ligne
 		 */
 		if ($_GET["action"] != 'editline' && $user->rights->facture->creer)
 		{

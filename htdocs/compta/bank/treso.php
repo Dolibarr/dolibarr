@@ -161,7 +161,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " ORDER BY dlr ASC";
 
 	// Supplier invoices
-	$sql2= " SELECT 'supplier_invoice' as family, ff.rowid as objid, ff.facnumber as ref, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
+	$sql2= " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.facnumber as ref, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
 	$sql2.= " s.rowid as socid, s.nom, s.fournisseur";
 	$sql2.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
@@ -255,7 +255,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			//$obj = $db->fetch_object($result);
 			$obj = array_shift($tab_sqlobj);
 
-			if ($obj->family == 'supplier_invoice')
+			if ($obj->family == 'invoice_supplier')
 			{
 				// TODO This code is to avoid to count suppliers credit note (ff.type = 2)
 				// Ajouter gestion des avoirs fournisseurs, champ

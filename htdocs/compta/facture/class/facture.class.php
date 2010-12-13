@@ -233,10 +233,10 @@ class Facture extends CommonObject
 		$sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
 		$sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
 		$sql.= ", '".$this->db->idate($this->date)."'";
-		$sql.= ",".($this->note?"'".addslashes($this->note)."'":"null");
-		$sql.= ",".($this->note_public?"'".addslashes($this->note_public)."'":"null");
-		$sql.= ",".($this->ref_client?"'".addslashes($this->ref_client)."'":"null");
-		$sql.= ",".($this->fk_facture_source?"'".addslashes($this->fk_facture_source)."'":"null");
+		$sql.= ",".($this->note?"'".$this->db->escape($this->note)."'":"null");
+		$sql.= ",".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= ",".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
+		$sql.= ",".($this->fk_facture_source?"'".$this->db->escape($this->fk_facture_source)."'":"null");
 		$sql.= ",".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql.= ",".($this->fk_project?$this->fk_project:"null");
 		$sql.= ','.$this->cond_reglement_id;
@@ -249,6 +249,7 @@ class Facture extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture');
 
+			// Update ref with new one
 			$this->ref='(PROV'.$this->id.')';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET facnumber='".$this->ref."' WHERE rowid=".$this->id;
 
@@ -615,7 +616,7 @@ class Facture extends CommonObject
 		global $conf;
 
         if (empty($rowid) && empty($ref) && empty($ref_ext)) return -1;
-		
+
         $sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva, f.localtax1, f.localtax2, f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ', f.datef as df';
 		$sql.= ', f.date_lim_reglement as dlr';
@@ -636,7 +637,7 @@ class Facture extends CommonObject
 		if ($rowid)   $sql.= " AND f.rowid=".$rowid;
 		if ($ref)     $sql.= " AND f.facnumber='".$this->db->escape($ref)."'";
 		if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
-		
+
 		dol_syslog("Facture::Fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)

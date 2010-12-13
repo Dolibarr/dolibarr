@@ -90,7 +90,7 @@ class FormActions
     /**
      *    	Show list of actions for element
      *    	@param      object			Object
-     *    	@param      typeelement		'invoice','propal','order'
+     *    	@param      typeelement		'invoice','propal','order','invoice_supplier','order_supplier'
      *		@param		socid			socid of user
      *		@return		int				<0 if KO, >=0 if OK
      */
@@ -105,11 +105,16 @@ class FormActions
         $sql.= ' WHERE a.fk_user_author = u.rowid';
         if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
         if ($typeelement == 'invoice') $sql.= ' AND a.fk_facture = '.$object->id;
-        if ($typeelement == 'supplier_invoice') $sql.= ' AND a.fk_supplier_invoice = '.$object->id;
-        if ($typeelement == 'propal')  $sql.= ' AND a.propalrowid = '.$object->id;
-        if ($typeelement == 'order')   $sql.= ' AND a.fk_commande = '.$object->id;
-        if ($typeelement == 'supplier_order')   $sql.= ' AND a.fk_supplier_order = '.$object->id;
-        if ($typeelement == 'project') $sql.= ' AND a.fk_project = '.$object->id;
+        elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $sql.= ' AND a.fk_supplier_invoice = '.$object->id;
+        elseif ($typeelement == 'propal')  $sql.= ' AND a.propalrowid = '.$object->id;
+        elseif ($typeelement == 'order')   $sql.= ' AND a.fk_commande = '.$object->id;
+        elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $sql.= ' AND a.fk_supplier_order = '.$object->id;
+        elseif ($typeelement == 'project') $sql.= ' AND a.fk_project = '.$object->id;
+        else
+        {
+            dol_print_error('','Bad value for parameter typeelement');
+            return -1;
+        }
 
         dol_syslog("FormActions::showactions sql=".$sql);
         $resql = $this->db->query($sql);
@@ -119,10 +124,10 @@ class FormActions
             if ($num)
             {
                 if ($typeelement == 'invoice') $title=$langs->trans('ActionsOnBill');
-                if ($typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnSupplierBill');
+                if ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
                 if ($typeelement == 'propal')  $title=$langs->trans('ActionsOnPropal');
                 if ($typeelement == 'order')   $title=$langs->trans('ActionsOnOrder');
-                if ($typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnSupplierOrder');
+                if ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
                 if ($typeelement == 'project') $title=$langs->trans('ActionsOnProject');
 
                 print_titre($title);

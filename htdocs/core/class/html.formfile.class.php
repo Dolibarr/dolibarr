@@ -126,7 +126,7 @@ class FormFile
 
 	/**
 	 *      Show the box with list of available documents for object
-	 *      @param      modulepart          propal=propal, facture=facture, ...
+	 *      @param      modulepart          propal, facture, facture_fourn, ...
 	 *      @param      filename            Sub dir to scan (Example: '9/9', 'FA9999'). Use '' if filedir already complete)
 	 *      @param      filedir             Dir to scan
 	 *      @param      urlsource           Url of origin page (for return)

@@ -24,7 +24,7 @@ create table llx_extra_fields
   tms                   timestamp,
   entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
   
-  object 				varchar(64) NOT NULL,           -- type of link 'invoice', 'order', 'proposal', 'supplier_invoice', 'supplier_order'
+  object 				varchar(64) NOT NULL,           -- type of link 'invoice', 'order', 'proposal', 'invoice_supplier', 'order_supplier'
   name 					varchar(64) NOT NULL,           -- code name of field
   label					varchar(64) NOT NULL,
   format				varchar(8) 	NOT NULL,           -- date, string, integer, float
