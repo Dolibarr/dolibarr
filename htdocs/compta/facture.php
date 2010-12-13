@@ -55,9 +55,9 @@ $projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
 
 // Security check
 $socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
-$facid = isset($_GET["id"])?$_GET["id"]:$_POST["id"];
-if (empty($facid)) $facid=isset($_GET["ref"])?$_GET["ref"]:$_POST["ref"];
-if (empty($facid)) $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];    // For backward compatibility
+$facid=GETPOST("id");
+if (empty($facid)) $facid=GETPOST("facid");    // For backward compatibility
+$ref=GETPOST("ref");
 $fieldid = isset($_GET["ref"])?'facnumber':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $facid,'','','fk_soc',$fieldid);
@@ -1390,7 +1390,7 @@ if ($_GET['action'] == 'create')
     		if ($element == 'order')    { $element = $subelement = 'commande'; }
     		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
     		if ($element == 'contract') { $element = $subelement = 'contrat'; }
-    		
+
     		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
     		$classname = ucfirst($subelement);
     		$objectsrc = new $classname($db);
@@ -1781,7 +1781,7 @@ if ($_GET['action'] == 'create')
 	if ($_GET['origin'] == 'propal')
 	{
 		//$objectsrc->printOriginLinesList();
-		
+
 		$title=$langs->trans('ProductsAndServices');
 
 		$sql = 'SELECT pt.rowid, pt.description, pt.fk_remise_except,';
@@ -1937,7 +1937,7 @@ else
 	$now=dol_now();
 
 	$id = $facid;
-	$ref= $_REQUEST['ref'];
+	$ref= GETPOST('ref');
 
 	if ($id > 0 || ! empty($ref))
 	{
@@ -2567,35 +2567,6 @@ else
 			}
 			print '</td></tr>';
 
-			// Lit lignes de facture pour determiner montant
-			// On s'en sert pas mais ca sert pour debuggage
-			/*
-			$sql  = 'SELECT l.price as price, l.qty, l.rowid, l.tva_tx,';
-			$sql .= ' l.remise_percent, l.subprice';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l ';
-			$sql .= ' WHERE l.fk_facture = '.$object->id;
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-			$num_lignes = $db->num_rows($resql);
-			$i=0;
-			$total_lignes_ht=0;
-			$total_lignes_vat=0;
-			$total_lignes_ttc=0;
-			while ($i < $num_lignes)
-			{
-			$obj=$db->fetch_object($resql);
-			$ligne_ht=($obj->price*$obj->qty);
-			$ligne_vat=($ligne_ht*$obj->tva_tx/100);
-			$ligne_ttc=($ligne_ht+$ligne_vat);
-			$total_lignes_ht+=$ligne_ht;
-			$total_lignes_vat+=$ligne_vat;
-			$total_lignes_ttc+=$ligne_ttc;
-			$i++;
-			}
-			}
-			*/
-
 			// Montants
 			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 			print '<td align="right" colspan="2" nowrap>'.price($object->total_ht).'</td>';
@@ -2714,6 +2685,7 @@ else
 			/*
 			 * Boutons actions
 			 */
+
 			if ($_GET['action'] != 'prerelance' && $_GET['action'] != 'presend')
 			{
 				if ($user->societe_id == 0 && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
@@ -2888,7 +2860,7 @@ else
 					// Delete
 					if ($user->rights->facture->supprimer)
 					{
-						if (! $object->is_erasable())
+					    if (! $object->is_erasable())
 						{
 							print '<a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecauseNotErasable").'">'.$langs->trans('Delete').'</a>';
 						}

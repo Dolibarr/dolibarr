@@ -110,12 +110,13 @@ class mod_facture_terre extends ModeleNumRefFactures
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribuee
-	 *      \param      objsoc		Objet societe
-	 *      \param      facture		Objet facture
-	 *      \return     string      Valeur
+	/**     Return next value not used or last value used
+	 *      @param     objsoc		Object third party
+	 *      @param     facture		Object invoice
+     *      @param     mode         'next' for next value or 'last' for last value
+	 *      @return    string       Value
 	 */
-	function getNextValue($objsoc,$facture)
+	function getNextValue($objsoc,$facture,$mode='next')
 	{
 		global $db,$conf;
 
@@ -143,22 +144,48 @@ class mod_facture_terre extends ModeleNumRefFactures
 			return -1;
 		}
 
-		$date=$facture->date;	// This is invoice date (not creation date)
-		$yymm = strftime("%y%m",$date);
-		$num = sprintf("%04s",$max+1);
+		if ($mode == 'last')
+		{
+            $num = sprintf("%04s",$max);
 
-		dol_syslog("mod_facture_terre::getNextValue return ".$prefix.$yymm."-".$num);
-		return $prefix.$yymm."-".$num;
+            $ref='';
+            $sql = "SELECT facnumber as ref";
+            $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+            $sql.= " WHERE facnumber LIKE '".$prefix."____-".$num."'";
+            $sql.= " AND entity = ".$conf->entity;
+
+            dol_syslog("mod_facture_terre::getNextValue sql=".$sql);
+            $resql=$db->query($sql);
+            if ($resql)
+            {
+                $obj = $db->fetch_object($resql);
+                if ($obj) $ref = $obj->ref;
+            }
+            else dol_print_error($db);
+
+            return $ref;
+		}
+		else if ($mode == 'next')
+		{
+    		$date=$facture->date;	// This is invoice date (not creation date)
+    		$yymm = strftime("%y%m",$date);
+    		$num = sprintf("%04s",$max+1);
+
+    		dol_syslog("mod_facture_terre::getNextValue return ".$prefix.$yymm."-".$num);
+    		return $prefix.$yymm."-".$num;
+		}
+		else dol_print_error('','Bad parameter for getNextValue');
 	}
 
-	/**		\brief      Return next free value
-	 *     	\param      objsoc      Object third party
-	 * 		\param		objforref	Object for number to search
-	 *   	\return     string      Next free value
+	/**		Return next free value
+	 *     	@param      objsoc      Object third party
+	 * 		@param		objforref	Object for number to search
+     *      @param      mode        'next' for next value or 'last' for last value
+	 *   	@return     string      Next free value
 	 */
-	function getNumRef($objsoc,$objforref)
+	function getNumRef($objsoc,$objforref,$mode='next')
 	{
-		return $this->getNextValue($objsoc,$objforref);
+		return $this->getNextValue($objsoc,$objforref,$mode);
 	}
 
 }
