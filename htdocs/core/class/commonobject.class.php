@@ -1354,16 +1354,18 @@ class CommonObject
 	function showLinkedObjectBlock($objecttype,$objectid,$somethingshown=0)
 	{
 		global $langs,$bc;
+		
+		//print 'objecttype='.$objecttype.'<br>';
 
 		$num = sizeof($objectid);
 		if ($num)
 		{
 			$classpath = $objecttype.'/class';
 			$tplpath = $objecttype;
-			if ($objecttype == 'facture') $tplpath = 'compta/'.$objecttype; $classpath = $tplpath.'/class';  // To work with non standard path
-			if ($objecttype == 'propal') $tplpath = 'comm/'.$objecttype; $classpath = $tplpath.'/class';     // To work with non standard path
-            if ($objecttype == 'invoice_supplier') $tplpath = 'fourn/facture'; $classpath = 'fourn/class';     // To work with non standard path
-            if ($objecttype == 'order_supplier') $tplpath = 'fourn/commande'; $classpath = 'fourn/class';     // To work with non standard path
+			if ($objecttype == 'facture') { $tplpath = 'compta/'.$objecttype; $classpath = $tplpath.'/class'; }  // To work with non standard path
+			if ($objecttype == 'propal') { $tplpath = 'comm/'.$objecttype; $classpath = $tplpath.'/class'; }    // To work with non standard path
+            if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }    // To work with non standard path
+            if ($objecttype == 'order_supplier') { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }    // To work with non standard path
 
             $classfile = strtolower($objecttype); $classname = ucfirst($objecttype);
 			if ($objecttype == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
