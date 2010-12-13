@@ -219,15 +219,14 @@ class mailing_poire extends MailingTargets
 				$obj = $this->db->fetch_object($result);
 				if ($old <> $obj->email)
 				{
-					$other='';
-					if ($obj->companyname) { if ($other) $other.=';'; $other.=$langs->transnoentities("ThirdParty").'='.$obj->companyname; }
-					if ($obj->civilite)    { if ($other) $other.=';'; $other.=$langs->transnoentities("Civility".$obj->civilite); }
 					$cibles[$j] = array(
                     		'email' => $obj->email,
                     		'fk_contact' => $obj->fk_contact,
                     		'name' => $obj->name,
                     		'firstname' => $obj->firstname,
-                    		'other' => $other,
+                    		'other' =>
+                                ($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.
+                                ($langs->transnoentities("Civility").'='.$langs->transnoentities("Civility".$obj->civilite)),
                             'source_url' => $this->url($obj->id),
                             'source_id' => $obj->id,
                             'source_type' => 'contact'

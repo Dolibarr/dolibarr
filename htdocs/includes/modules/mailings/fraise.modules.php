@@ -184,10 +184,11 @@ class mailing_fraise extends MailingTargets
                     			'fk_contact' => $obj->fk_contact,
                     			'name' => $obj->name,
                     			'firstname' => $obj->firstname,
-                    			'other' => ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')).';'.
-                                            ($langs->transnoentities("Civility").'='.$obj->civilite).';'.
-                                            ($langs->transnoentities("Login").'='.$obj->login).';'.
-                                            ($langs->transnoentities("Company").'='.$obj->societe),
+                    			'other' =>
+                                ($langs->transnoentities("Login").'='.$obj->login).';'.
+                                ($langs->transnoentities("Civility").'='.$langs->transnoentities("Civility".$obj->civilite)).';'.
+                                ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')).';'.
+                                ($langs->transnoentities("Company").'='.$obj->societe),
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,
                                 'source_type' => 'member'

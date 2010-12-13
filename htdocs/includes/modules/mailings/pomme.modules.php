@@ -163,7 +163,10 @@ class mailing_pomme extends MailingTargets
                     			'fk_contact' => $obj->fk_contact,
                     			'name' => $obj->name,
                     			'firstname' => $obj->firstname,
-                    			'other' => $langs->transnoentities("Login").'='.$obj->login.';'.$langs->transnoentities("PhonePro").'='.$obj->office_phone,
+                    			'other' =>
+					            ($langs->transnoentities("Login").'='.$obj->login).';'.
+//                                ($langs->transnoentities("Civility").'='.$obj->civilite).';'.
+					            ($langs->transnoentities("PhonePro").'='.$obj->office_phone),
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,
                                 'source_type' => 'user'
