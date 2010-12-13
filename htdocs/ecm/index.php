@@ -300,7 +300,7 @@ $morejs=array(
 */
 
 //print "xx".$_SESSION["dol_screenheight"];
-$maxheightwin=$_SESSION["dol_screenheight"]-166;
+$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500)?($_SESSION["dol_screenheight"]-166):660;
 
 $morehead="<style type=\"text/css\">
 html, body {
