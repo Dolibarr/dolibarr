@@ -101,10 +101,10 @@ if (empty($dolibarr_main_data_root))
 }
 
 // Define some constants
-define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);		// Filesystem core php (htdocs)
-define('DOL_DATA_ROOT', $dolibarr_main_data_root);				// Filesystem data (documents)
-define('DOL_CLASS_PATH', 'class/');								// Filesystem path to class dir
-define('DOL_CUSTOM_PATH', 'custom/');							// Filesystem path to custom dir
+define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
+define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (documents)
+define('DOL_CLASS_PATH', 'class/');									// Filesystem path to class dir
+define('DOL_CUSTOM_PATH', $dolibarr_main_document_root.'/custom');	// Filesystem path to custom dir
 // If dolibarr_main_url_root = auto (Hidden feature for developers only), we try to forge it.
 if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
 {
@@ -188,7 +188,7 @@ $conf->file->character_set_client=strtoupper($force_charset_do_notuse);
 $conf->file->cookie_cryptkey = empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
 
 // Define array of document root directories
-$conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
+$conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT, DOL_CUSTOM_PATH);
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt contains several directories

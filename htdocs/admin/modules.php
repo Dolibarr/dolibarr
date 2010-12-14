@@ -88,7 +88,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	else $dir = $dirroot . "/includes/modules/";
 
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
-	print $dir."\n<br>";
+	//print $dir."\n<br>";
 	dol_syslog("Scan directory ".$dir." for modules");
 	$handle=@opendir($dir);
 	if ($handle)
