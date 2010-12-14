@@ -76,7 +76,7 @@ class ActionsCommonObject
 
 			if ($line->product_type == 9 && ! empty($line->special_code))
 			{
-				$object->hooks[$line->special_code]->printObjectLine($object,$line,$num,$i);
+				$object->hooks[$line->special_code]->printOriginObjectLine($line,$i);
 			}
 			else
 			{
