@@ -101,9 +101,10 @@ if (empty($dolibarr_main_data_root))
 }
 
 // Define some constants
-define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);		// Filesystem pages php (htdocs)
-define('DOL_DATA_ROOT', $dolibarr_main_data_root);				// Filesystem donnes (documents)
-define('DOL_CLASS_PATH', 'class/');								// Filsystem path to class dir
+define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);		// Filesystem core php (htdocs)
+define('DOL_DATA_ROOT', $dolibarr_main_data_root);				// Filesystem data (documents)
+define('DOL_CLASS_PATH', 'class/');								// Filesystem path to class dir
+define('DOL_CUSTOM_PATH', 'custom/');							// Filesystem path to custom dir
 // If dolibarr_main_url_root = auto (Hidden feature for developers only), we try to forge it.
 if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
 {
