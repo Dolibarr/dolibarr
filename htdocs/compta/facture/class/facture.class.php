@@ -1668,7 +1668,7 @@ class Facture extends CommonObject
      *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-    function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0)
+    function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0)
     {
         dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
         include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -1766,6 +1766,8 @@ class Facture extends CommonObject
             $this->line->total_localtax2=($this->type==2?-1:1)*$total_localtax2;
             $this->line->total_ttc=($this->type==2?-1:1)*$total_ttc;
             $this->line->special_code=$special_code;
+            $this->line->origin=$origin;
+            $this->line->origin_id=$origin_id;
 
             // \TODO Ne plus utiliser
             $this->line->price=($this->type==2?-1:1)*$price;
@@ -3061,6 +3063,9 @@ class FactureLigne
     // 1: frais de port
     // 2: ecotaxe
     // 3: ??
+    
+    var $origin;
+    var $origin_id;
 
     //! Total HT  de la ligne toute quantite et incluant la remise ligne
     var $total_ht;
