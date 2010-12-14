@@ -344,9 +344,9 @@ function llxHeaderVierge($title, $head = "")
     print "<title>".$title."</title>\n";
     print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php?lang='.$langs->defaultlang.'">'."\n";
     print '<!-- Includes for JQuery -->'."\n";
-    print '<script type="text/javascript" src="/includes/jquery/js/jquery-1.4.3.min.js"></script>'."\n";
-    print '<script type="text/javascript" src="/includes/jquery/js/jquery-ui-1.8.5.custom.min.js"></script>'."\n";
-    print '<script type="text/javascript" src="/includes/jquery/js/jquery.tablednd_0_5.js"></script>'."\n";
+    print '<script type="text/javascript" src="/includes/jquery/js/jquery-latest.min.js"></script>'."\n";
+    print '<script type="text/javascript" src="/includes/jquery/js/jquery-ui-latest.custom.min.js"></script>'."\n";
+    print '<script type="text/javascript" src="/includes/jquery/plugins/tablednd/jquery.tablednd_0_5.js"></script>'."\n";
     if ($head) print $head."\n";
     print '<style type="text/css">';
     print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
