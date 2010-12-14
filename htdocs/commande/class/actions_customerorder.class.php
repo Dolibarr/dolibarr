@@ -17,20 +17,20 @@
  */
 
 /**
- *	\file       htdocs/comm/propal/class/actions_proposal.class.php
- *	\ingroup    proposal
- *	\brief      Fichier de la classe des actions des propales
+ *	\file       htdocs/commande/class/actions_proposal.class.php
+ *	\ingroup    order
+ *	\brief      Fichier de la classe des actions des commandes clients
  *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/actions_commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
 
 /**
- *	\class      ActionsProposal
- *	\brief      Classe permettant la gestion des actions des propales
+ *	\class      ActionsCustomerorder
+ *	\brief      Classe permettant la gestion des actions des commandes clients
  */
-class ActionsProposal extends ActionsCommonObject
+class ActionsCustomerorder extends ActionsCommonObject
 {
 	var $db;
 	var $object;
@@ -39,20 +39,20 @@ class ActionsProposal extends ActionsCommonObject
 	 *    Constructeur de la classe
 	 *    @param	DB		Handler acces base de donnees
 	 */
-	function ActionsProposal($DB)
+	function ActionsCustomerorder($DB)
 	{
 		$this->db = $DB;
 	}
 	
 	/**
-	 *    	\brief      Load a proposal from database and its ligne array
-	 *		\param      rowid       id of object to load
-	 * 		\param		ref			Ref of proposal
-	 *		\return     int         >0 if OK, <0 if KO
+	 *	Get object and lines from database
+	 *	@param      id       	Id of object to load
+	 * 	@param		ref			Ref of object
+	 *	@return     int         >0 if OK, <0 if KO
 	 */
 	function fetch($rowid,$ref='')
 	{
-		$this->object = new Propal($this->db);
+		$this->object = new Commande($this->db);
 		return $this->object->fetch($rowid,$ref);
 	}
 

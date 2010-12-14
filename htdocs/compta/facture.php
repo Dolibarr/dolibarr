@@ -1387,24 +1387,24 @@ if ($_GET['action'] == 'create')
 		else if (in_array($element,array('order','commande','propal','contrat','contract')))
 		{
     		// For compatibility
-    		if ($element == 'order')    { $element = $subelement = 'commande'; }
-    		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
+    		if ($element == 'order')    { $element = 'commande'; $subelement = 'customerorder'; }
+    		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'proposal'; }
     		if ($element == 'contract') { $element = $subelement = 'contrat'; }
 
-    		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
-    		$classname = ucfirst($subelement);
+    		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/actions_'.$subelement.'.class.php');
+    		$classname = 'Actions'.ucfirst($subelement);
     		$objectsrc = new $classname($db);
     		$objectsrc->fetch(GETPOST('originid'));
-    		$objectsrc->fetch_thirdparty();
+    		$objectsrc->object->fetch_thirdparty();
 
-    		$projectid			= (!empty($objectsrc->fk_project)?$object->fk_project:'');
-    		$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
+    		$projectid			= (!empty($objectsrc->object->fk_project)?$object->fk_project:'');
+    		$ref_client			= (!empty($objectsrc->object->ref_client)?$object->ref_client:'');
 
-    		$soc = $objectsrc->client;
-    		$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
-    		$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-    		$remise_percent 	= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
-    		$remise_absolue 	= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
+    		$soc = $objectsrc->object->client;
+    		$cond_reglement_id 	= (!empty($objectsrc->object->cond_reglement_id)?$objectsrc->object->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+    		$mode_reglement_id 	= (!empty($objectsrc->object->mode_reglement_id)?$objectsrc->object->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+    		$remise_percent 	= (!empty($objectsrc->object->remise_percent)?$objectsrc->object->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
+    		$remise_absolue 	= (!empty($objectsrc->object->remise_absolue)?$objectsrc->object->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
     		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 		}
 	}
@@ -1656,7 +1656,7 @@ if ($_GET['action'] == 'create')
 	print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
 	if (is_object($objectsrc))    // Take value from source object
 	{
-		print $objectsrc->note_public;
+		print $objectsrc->object->note_public;
 	}
 	print '</textarea></td></tr>';
 
@@ -1669,7 +1669,7 @@ if ($_GET['action'] == 'create')
 		print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
 		if (is_object($objectsrc))    // Take value from source object
 		{
-			print $objectsrc->note;
+			print $objectsrc->object->note;
 		}
 		print '</textarea></td></tr>';
 	}
@@ -1680,35 +1680,35 @@ if ($_GET['action'] == 'create')
 		if ($_GET['origin'] == 'contrat')
 		{
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-			$objectsrc->remise_absolue=$remise_absolue;
-			$objectsrc->remise_percent=$remise_percent;
-			$objectsrc->update_price();
+			$objectsrc->object->remise_absolue=$remise_absolue;
+			$objectsrc->object->remise_percent=$remise_percent;
+			$objectsrc->object->update_price();
 		}
 
 		print "\n<!-- ".$classname." info -->";
 		print "\n";
-		print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$objectsrc->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$objectsrc->total_tva.'">'."\n";
-		print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
-		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+		print '<input type="hidden" name="amount"         value="'.$objectsrc->object->total_ht.'">'."\n";
+		print '<input type="hidden" name="total"          value="'.$objectsrc->object->total_ttc.'">'."\n";
+		print '<input type="hidden" name="tva"            value="'.$objectsrc->object->total_tva.'">'."\n";
+		print '<input type="hidden" name="origin"         value="'.$objectsrc->object->element.'">';
+		print '<input type="hidden" name="originid"       value="'.$objectsrc->object->id.'">';
 
-		print '<tr><td>'.$langs->trans($classname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
+		print '<tr><td>'.$langs->trans($classname).'</td><td colspan="2">'.$objectsrc->object->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->object->total_ht).'</td></tr>';
+		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->object->total_tva)."</td></tr>";
 		if ($mysoc->pays_code=='ES')
 		{
 			if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 			{
-				print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
+				print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->object->total_localtax1)."</td></tr>";
 			}
 
 			if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 			{
-				print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
+				print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->object->total_localtax2)."</td></tr>";
 			}
 		}
-		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
+		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->object->total_ttc)."</td></tr>";
 	}
 	else
 	{
@@ -1778,10 +1778,19 @@ if ($_GET['action'] == 'create')
 	$sql='';
 
 	// TODO deplacer dans la classe
-	if ($_GET['origin'] == 'propal')
+	if (is_object($objectsrc))
 	{
-		//$objectsrc->printOriginLinesList();
+		$title=$langs->trans('ProductsAndServices');
+		print '<br>';
+		print_titre($title);
 
+		print '<table class="noborder" width="100%">';
+		
+		$objectsrc->printOriginTitleList();
+		$objectsrc->printOriginLinesList($object);
+
+		print '</table>';
+		/*
 		$title=$langs->trans('ProductsAndServices');
 
 		$sql = 'SELECT pt.rowid, pt.description, pt.fk_remise_except,';
@@ -1789,7 +1798,7 @@ if ($_GET['action'] == 'create')
 		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE pt.fk_propal = '.$objectsrc->id;
+		$sql.= ' WHERE pt.fk_propal = '.$objectsrc->object->id;
 		$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
 	}
 	// TODO deplacer dans la classe
@@ -1803,7 +1812,7 @@ if ($_GET['action'] == 'create')
 		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE pt.fk_commande = '.$objectsrc->id;
+		$sql.= ' WHERE pt.fk_commande = '.$objectsrc->object->id;
 		$sql.= ' ORDER BY pt.rowid ASC';
 	}
 	// TODO deplacer dans la classe
@@ -1818,7 +1827,7 @@ if ($_GET['action'] == 'create')
 		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'contratdet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE pt.fk_contrat = '.$objectsrc->id;
+		$sql.= ' WHERE pt.fk_contrat = '.$objectsrc->object->id;
 		$sql.= ' ORDER BY pt.rowid ASC';
 	}
 
@@ -1924,7 +1933,7 @@ if ($_GET['action'] == 'create')
 			dol_print_error($db);
 		}
 
-		print '</table>';
+		print '</table>';*/
 	}
 
 }
