@@ -74,7 +74,6 @@ class CommandeFournisseur extends Commande
 	{
 		$this->db = $DB;
 		$this->products = array();
-		$this->lignes = array();	// TODO deprecated
 		$this->lines = array();
 
 		// List of language codes for status
@@ -187,7 +186,6 @@ class CommandeFournisseur extends Commande
 					$line->ref                 = $objp->ref;          // Reference
 					$line->ref_fourn           = $objp->ref_fourn;    // Reference supplier
 
-					$this->lignes[$i]     = $line;	// TODO deprecated
 					$this->lines[$i]      = $line;
 
 					$i++;
@@ -527,15 +525,15 @@ class CommandeFournisseur extends Commande
 				{
 					require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+					for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 					{
 						// Product with reference
-						if (!empty($this->lignes[$i]->fk_product))
+						if (!empty($this->lines[$i]->fk_product))
 						{
 							$mouvP = new MouvementStock($this->db);
 							// We decrement stock of product (and sub-products)
 							$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-							$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
+							$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
 							if ($result < 0) { $error++; }
 						}
 					}
@@ -1197,10 +1195,10 @@ class CommandeFournisseur extends Commande
 
 		$this->lines = array();
 
-		for ($i = 0 ; $i < sizeof($comclient->lignes) ; $i++)
+		for ($i = 0 ; $i < sizeof($comclient->lines) ; $i++)
 		{
-			$prod = new Product($this->db, $comclient->lignes[$i]->fk_product);
-			if ($prod->fetch($comclient->lignes[$i]->fk_product) > 0)
+			$prod = new Product($this->db, $comclient->lines[$i]->fk_product);
+			if ($prod->fetch($comclient->lines[$i]->fk_product) > 0)
 	  {
 	  	$libelle  = $prod->libelle;
 	  	$ref      = $prod->ref;
@@ -1208,10 +1206,10 @@ class CommandeFournisseur extends Commande
 
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
 	  $sql .= " (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
-	  $sql .= " VALUES (".$idc.", '" . addslashes($libelle) . "','" . addslashes($comclient->lignes[$i]->desc) . "'";
-	  $sql .= ",".$comclient->lignes[$i]->fk_product.",'".price2num($comclient->lignes[$i]->price)."'";
-	  $sql .= ", '".$comclient->lignes[$i]->qty."', ".$comclient->lignes[$i]->tva_tx.", ".$comclient->lignes[$i]->remise_percent;
-	  $sql .= ", '".price2num($comclient->lignes[$i]->subprice)."','0','".$ref."') ;";
+	  $sql .= " VALUES (".$idc.", '" . addslashes($libelle) . "','" . addslashes($comclient->lines[$i]->desc) . "'";
+	  $sql .= ",".$comclient->lines[$i]->fk_product.",'".price2num($comclient->lines[$i]->price)."'";
+	  $sql .= ", '".$comclient->lines[$i]->qty."', ".$comclient->lines[$i]->tva_tx.", ".$comclient->lines[$i]->remise_percent;
+	  $sql .= ", '".price2num($comclient->lines[$i]->subprice)."','0','".$ref."') ;";
 	  if ( $this->db->query( $sql) )
 	  {
 	  	$this->update_price();

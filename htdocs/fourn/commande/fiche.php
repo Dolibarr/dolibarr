@@ -973,7 +973,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		print '<table class="noborder" width="100%">';
 
-		$num = sizeof($commande->lignes);
+		$num = sizeof($commande->lines);
 		$i = 0;	$total = 0;
 
 		if ($num)
@@ -991,7 +991,7 @@ if ($id > 0 || ! empty($ref))
 		$var=true;
 		while ($i <	$num)
 		{
-			$commandline =	$commande->lignes[$i];
+			$commandline =	$commande->lines[$i];
 			$var=!$var;
 
 			// Show product and description

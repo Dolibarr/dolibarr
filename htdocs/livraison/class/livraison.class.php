@@ -65,7 +65,6 @@ class Livraison extends CommonObject
 	function Livraison($DB)
 	{
 		$this->db = $DB;
-		$this->lignes = array(); // TODO deprecated
 		$this->lines = array();
 		$this->products = array();
 
@@ -137,19 +136,19 @@ class Livraison extends CommonObject
 				{
 					$commande = new Commande($this->db);
 					$commande->id = $this->commande_id;
-					$this->lignes = $commande->fetch_lines();
+					$this->lines = $commande->fetch_lines();
 				}
 
 
 				/*
 				 *  Insertion des produits dans la base
 				 */
-				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					$origin_id=$this->lignes[$i]->origin_line_id;
-					if (! $origin_id) $origin_id=$this->lignes[$i]->commande_ligne_id;	// For backward compatibility
+					$origin_id=$this->lines[$i]->origin_line_id;
+					if (! $origin_id) $origin_id=$this->lines[$i]->commande_ligne_id;	// For backward compatibility
 
-					if (! $this->create_line(0, $origin_id, $this->lignes[$i]->qty, $this->lignes[$i]->fk_product, $this->lignes[$i]->description))
+					if (! $this->create_line(0, $origin_id, $this->lines[$i]->qty, $this->lines[$i]->fk_product, $this->lines[$i]->description))
 					{
 						$error++;
 					}
@@ -286,7 +285,7 @@ class Livraison extends CommonObject
 				/*
 				 * Lignes
 				 */
-				$result=$this->fetch_lignes();
+				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
 					return -3;
@@ -491,18 +490,19 @@ class Livraison extends CommonObject
 		$expedition = new Expedition($this->db);
 		$result=$expedition->fetch($sending_id);
 
-		$this->lignes = array();
+		$this->lines = array();
 
-		for ($i = 0 ; $i < sizeof($expedition->lignes) ; $i++)
+		for ($i = 0 ; $i < sizeof($expedition->lines) ; $i++)
 		{
-			$LivraisonLigne = new LivraisonLigne($this->db);
-			$LivraisonLigne->origin_line_id    = $expedition->lignes[$i]->origin_line_id;
-			$LivraisonLigne->libelle           = $expedition->lignes[$i]->libelle;
-			$LivraisonLigne->description       = $expedition->lignes[$i]->description;
-			$LivraisonLigne->qty               = $expedition->lignes[$i]->qty_shipped;
-			$LivraisonLigne->fk_product        = $expedition->lignes[$i]->fk_product;
-			$LivraisonLigne->ref               = $expedition->lignes[$i]->ref;
-			$this->lignes[$i] = $LivraisonLigne;
+			$line = new LivraisonLigne($this->db);
+			$line->origin_line_id    = $expedition->lines[$i]->origin_line_id;
+			$line->libelle           = $expedition->lines[$i]->libelle;
+			$line->description       = $expedition->lines[$i]->description;
+			$line->qty               = $expedition->lines[$i]->qty_shipped;
+			$line->fk_product        = $expedition->lines[$i]->fk_product;
+			$line->ref               = $expedition->lines[$i]->ref;
+			
+			$this->lines[$i] = $line;
 		}
 
 		$this->origin               = $expedition->element;
@@ -524,13 +524,13 @@ class Livraison extends CommonObject
 	 */
 	function addline( $id, $qty )
 	{
-		$num = sizeof($this->lignes);
-		$ligne = new LivraisonLigne($this->db);
+		$num = sizeof($this->lines);
+		$line = new LivraisonLigne($this->db);
 
-		$ligne->commande_ligne_id = $id;
-		$ligne->qty = $qty;
+		$line->commande_ligne_id = $id;
+		$line->qty = $qty;
 
-		$this->lignes[$num] = $ligne;
+		$this->lines[$num] = $line;
 	}
 
 	/**
@@ -657,9 +657,9 @@ class Livraison extends CommonObject
 	 *
 	 *
 	 */
-	function fetch_lignes()
+	function fetch_lines()
 	{
-		$this->lignes = array();
+		$this->lines = array();
 
 		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped,";
 		$sql.= " cd.qty as qty_asked,";
@@ -669,7 +669,7 @@ class Livraison extends CommonObject
 		$sql.= " WHERE ld.fk_origin_line = cd.rowid";
 		$sql.= " AND ld.fk_livraison = ".$this->id;
 
-		dol_syslog("Livraison::fetch_lignes sql=".$sql);
+		dol_syslog("Livraison::fetch_lines sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -695,7 +695,6 @@ class Livraison extends CommonObject
 				$line->price          = $obj->price;
 				$line->total_ht       = $obj->total_ht;
 
-				$this->lignes[$i] = $line;	// TODO deprecated
 				$this->lines[$i] = $line;
 
 				$i++;
@@ -703,7 +702,7 @@ class Livraison extends CommonObject
 			$this->db->free($resql);
 		}
 
-		return $this->lignes;
+		return $this->lines;
 	}
 
 
@@ -782,16 +781,17 @@ class Livraison extends CommonObject
 		$this->note_public='SPECIMEN';
 
 		$i=0;
-		$ligne=new LivraisonLigne($this->db);
-		$ligne->fk_product     = $prodids[0];
-		$ligne->qty_asked      = 10;
-		$ligne->qty_shipped    = 9;
-		$ligne->ref            = 'REFPROD';
-		$ligne->label          = 'Specimen';
-		$ligne->description    = 'Description';
-		$ligne->price          = 100;
-		$ligne->total_ht       = 100;
-		$this->lignes[$i] = $ligne;
+		$line=new LivraisonLigne($this->db);
+		$line->fk_product     = $prodids[0];
+		$line->qty_asked      = 10;
+		$line->qty_shipped    = 9;
+		$line->ref            = 'REFPROD';
+		$line->label          = 'Specimen';
+		$line->description    = 'Description';
+		$line->price          = 100;
+		$line->total_ht       = 100;
+		
+		$this->lines[$i] = $line;
 	}
 
 	/**

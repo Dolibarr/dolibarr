@@ -53,13 +53,13 @@ function viewCsvFileContent($file_to_include='',$max_rows=0)
 	$count = 0;
 	
 	print '<table border="1">';
-	for ($ligne = fgetcsv($fic, 1024); (!feof($fic) && (($max_rows > 0)?($count<=$max_rows):1==1)); $ligne = fgetcsv($fic, 1024))
+	for ($line = fgetcsv($fic, 1024); (!feof($fic) && (($max_rows > 0)?($count<=$max_rows):1==1)); $line = fgetcsv($fic, 1024))
 	{
 		print '<tr>';
-		$j = sizeof($ligne);
+		$j = sizeof($line);
 		for ($i = 0; $i < $j; $i++)
 		{
-			print '<td>'.$ligne[$i].'</td>';
+			print '<td>'.$line[$i].'</td>';
 		}
 		print '</tr>';
 		$count++;

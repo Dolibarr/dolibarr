@@ -695,10 +695,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					$result=$srcobject->fetch($object->origin_id);
 					if ($result > 0)
 					{
-						// TODO mutualiser
-						$lines = $srcobject->lignes;
-						if (sizeof($srcobject->lines)) $lines = $srcobject->lines;
-						if (empty($lines) && method_exists($srcobject,'fetch_lignes')) $lines = $srcobject->fetch_lignes();
+						$lines = $srcobject->lines;
 						if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
@@ -1393,7 +1390,7 @@ if ($_GET['action'] == 'create')
     		// For compatibility
     		if ($element == 'commande')    { $subelement = 'customerorder'; }
     		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'proposal'; }
-    		if ($element == 'contract') { $element = 'contrat'; $subelement = 'contract'; }
+    		if ($element == 'contrat') { $subelement = 'contract'; }
 
     		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/actions_'.$subelement.'.class.php');
     		$classname = 'Actions'.ucfirst($subelement);

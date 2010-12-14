@@ -66,7 +66,6 @@ class FactureRec extends Facture
 	var $rang;
 	var $special_code;
 	
-	var $lignes=array(); // TODO deprecated
 	var $lines=array();
 
 
@@ -142,7 +141,7 @@ class FactureRec extends Facture
 				/*
 				 * Lines
 				 */
-				for ($i = 0 ; $i < sizeof($facsrc->lignes) ; $i++)
+				for ($i = 0 ; $i < sizeof($facsrc->lines) ; $i++)
 				{
 					$result_insert = $this->addline($this->id,
 					$facsrc->lines[$i]->desc,
@@ -304,7 +303,7 @@ class FactureRec extends Facture
 
 
 	/**
-	 *	\brief      Recupere les lignes de factures predefinies dans this->lignes
+	 *	\brief      Recupere les lignes de factures predefinies dans this->lines
 	 *	\return     int         1 if OK, < 0 if KO
  	 */
 	function fetch_lines()
@@ -359,7 +358,6 @@ class FactureRec extends Facture
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
 
-				$this->lignes[$i] = $line; // TODO deprecated
 				$this->lines[$i] = $line;
 				
 				$i++;

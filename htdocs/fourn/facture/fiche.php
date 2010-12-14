@@ -238,7 +238,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
     		if ($element == 'contract') { $element = $subelement = 'contrat'; }
     		if ($element == 'order_supplier') { $element = 'fourn'; $subelement = 'fournisseur.commande'; }
 
-			$facfou->origin    = $_POST['origin'];
+			$facfou->origin 	= $_POST['origin'];
 			$facfou->origin_id = $_POST['originid'];
 
 			$facid = $facfou->create($user);
@@ -254,10 +254,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 				$result=$srcobject->fetch($_POST['originid']);
 				if ($result > 0)
 				{
-					// TODO mutualiser
-					$lines = $srcobject->lignes;
-					if (sizeof($srcobject->lines)) $lines = $srcobject->lines;
-					if (empty($lines) && method_exists($srcobject,'fetch_lignes')) $lines = $srcobject->fetch_lignes();
+					$lines = $srcobject->lines;
 					if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
 					for ($i = 0 ; $i < sizeof($lines) ; $i++)
@@ -844,6 +841,8 @@ if ($_GET['action'] == 'create')
 
 	if (GETPOST('origin') && GETPOST('originid'))
 	{
+		// TODO Not finished...
+
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = GETPOST('origin');
 		/*if (preg_match('/^([^_]+)_([^_]+)/i',$_GET['origin'],$regs))
@@ -1796,34 +1795,17 @@ else
                 $genallowed=$user->rights->fournisseur->facture->creer;
                 $delallowed=$user->rights->fournisseur->facture->supprimer;
 
-                print '<br>';
-                $somethingshown=$formfile->show_documents('facture_fournisseur',$facfournref,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
-
-                $object=$fac;
-
-                /*
-                 * Linked object block
-                 */
-                $object->load_object_linked($object->id,$object->element);
-
-                foreach($object->linked_object as $linked_object => $linked_objectid)
-                {
-                    $tmpmodule=$linked_object;
-                    if ($linked_object == 'invoice_supplier') $tmpmodule='fournisseur';
-                    if ($linked_object == 'order_supplier') $tmpmodule='fournisseur';
-                    if($conf->$tmpmodule->enabled && $linked_object != $object->element)
-                    {
-                        $somethingshown=$object->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
-                    }
-                }
+                $somethingshown=$formfile->show_documents('facture_fournisseur',$facfournref,$filedir,$urlsource,$genallowed,$delallowed,$facture->modelpdf);
 
                 print '</td><td valign="top" width="50%">';
                 print '<br>';
 
                 // List of actions on element
+                /*
                 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
                 $formactions=new FormActions($db);
-                $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid);
+                $somethingshown=$formactions->showactions($fac,'invoice_supplier',$socid);
+                */
 
                 print '</td></tr></table>';
             }

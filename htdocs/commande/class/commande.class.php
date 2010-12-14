@@ -1066,7 +1066,8 @@ class Commande extends CommonObject
 				$this->date_livraison         = $this->db->jdate($obj->date_livraison);
 				$this->fk_delivery_address    = $obj->fk_adresse_livraison;
 				$this->propale_id             = $obj->fk_source;
-				$this->lignes                 = array();
+				
+				$this->lines                 = array();
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
@@ -1196,7 +1197,6 @@ class Commande extends CommonObject
 	 */
 	function fetch_lines($only_product=0)
 	{
-		$this->lignes=array();	// deprecated
 		$this->lines=array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
@@ -1257,8 +1257,8 @@ class Commande extends CommonObject
 				$line->date_start       = $this->db->jdate($objp->date_start);
 				$line->date_end         = $this->db->jdate($objp->date_end);
 
-				$this->lignes[$i] = $line;		// For backward compatibility
 				$this->lines[$i] = $line;
+				
 				$i++;
 			}
 			$this->db->free($result);
@@ -1281,9 +1281,9 @@ class Commande extends CommonObject
 	function getNbOfProductsLines()
 	{
 		$nb=0;
-		foreach($this->lines as $ligne)
+		foreach($this->lines as $line)
 		{
-			if ($ligne->fk_product_type == 0) $nb++;
+			if ($line->fk_product_type == 0) $nb++;
 		}
 		return $nb;
 	}

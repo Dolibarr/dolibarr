@@ -70,7 +70,7 @@ class Contrat extends CommonObject
 
 	var $fk_projet;
 
-	var $lignes=array();
+	var $lines=array();
 
 
 	/**
@@ -192,10 +192,10 @@ class Contrat extends CommonObject
 		$this->db->begin();
 
 		// Load lines
-		$this->fetch_lignes();
+		$this->fetch_lines();
 
 		$ok=true;
-		foreach($this->lignes as $contratline)
+		foreach($this->lines as $contratline)
 		{
 			// Close line not already closed
 	        if ($contratline->statut != 5)
@@ -335,10 +335,10 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *      Load lignes array into this->lignes
+	 *      Load lignes array into this->lines
 	 *      @return    Array   Return array of contract lines
 	 */
-	function fetch_lignes()
+	function fetch_lines()
 	{
 		$this->nbofserviceswait=0;
 		$this->nbofservicesopened=0;
@@ -369,7 +369,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = p.rowid";
 		$sql.= " ORDER by d.rowid ASC";
 
-		dol_syslog("Contrat::fetch_lignes sql=".$sql);
+		dol_syslog("Contrat::fetch_lines sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -378,58 +378,60 @@ class Contrat extends CommonObject
 
 			while ($i < $num)
 			{
-				$objp                  = $this->db->fetch_object($result);
+				$objp					= $this->db->fetch_object($result);
 
-				$ligne                 = new ContratLigne($this->db);
-				$ligne->id             = $objp->rowid;
-				$ligne->ref            = $objp->rowid;
-				$ligne->fk_contrat     = $objp->fk_contrat;
-				$ligne->desc           = $objp->description;  // Description ligne
-				$ligne->qty            = $objp->qty;
-				$ligne->tva_tx         = $objp->tva_tx;
-				$ligne->localtax1_tx   = $objp->localtax1_tx;
-				$ligne->localtax2_tx   = $objp->localtax2_tx;
-				$ligne->subprice       = $objp->subprice;
-				$ligne->statut 		   = $objp->statut;
-				$ligne->remise_percent = $objp->remise_percent;
-				$ligne->price_ht       = $objp->price_ht;
-				$ligne->price          = $objp->price;	// For backward compatibility
-				$ligne->total_ht       = $objp->total_ht;
-				$ligne->total_tva      = $objp->total_tva;
-				$ligne->total_localtax1= $objp->total_localtax1;
-				$ligne->total_localtax2= $objp->total_localtax2;
-				$ligne->total_ttc      = $objp->total_ttc;
-				$ligne->fk_product     = $objp->fk_product;
-				$ligne->info_bits      = $objp->info_bits;
+				$line					= new ContratLigne($this->db);
+				$line->id				= $objp->rowid;
+				$line->ref				= $objp->rowid;
+				$line->fk_contrat		= $objp->fk_contrat;
+				$line->desc				= $objp->description;  // Description ligne
+				$line->qty				= $objp->qty;
+				$line->tva_tx			= $objp->tva_tx;
+				$line->localtax1_tx		= $objp->localtax1_tx;
+				$line->localtax2_tx		= $objp->localtax2_tx;
+				$line->subprice			= $objp->subprice;
+				$line->statut			= $objp->statut;
+				$line->remise_percent	= $objp->remise_percent;
+				$line->price_ht			= $objp->price_ht;
+				$line->price			= $objp->price;	// For backward compatibility
+				$line->total_ht			= $objp->total_ht;
+				$line->total_tva		= $objp->total_tva;
+				$line->total_localtax1	= $objp->total_localtax1;
+				$line->total_localtax2	= $objp->total_localtax2;
+				$line->total_ttc		= $objp->total_ttc;
+				$line->fk_product		= $objp->fk_product;
+				$line->info_bits		= $objp->info_bits;
 
-				$ligne->fk_user_author   = $objp->fk_user_author;
-				$ligne->fk_user_ouverture= $objp->fk_user_ouverture;
-				$ligne->fk_user_cloture  = $objp->fk_user_cloture;
+				$line->fk_user_author	= $objp->fk_user_author;
+				$line->fk_user_ouverture= $objp->fk_user_ouverture;
+				$line->fk_user_cloture  = $objp->fk_user_cloture;
 
-				$ligne->ref            = $objp->ref;
-				$ligne->libelle        = $objp->label;        // Label produit
-				$ligne->label          = $objp->label;        // For backward compatibility
-				$ligne->product_desc   = $objp->product_desc; // Description produit
+				$line->ref				= $objp->ref;
+				$line->libelle			= $objp->label;        // Label produit
+				$line->label			= $objp->label;        // For backward compatibility
+				$line->product_desc		= $objp->product_desc; // Description produit
 
-				$ligne->description    = $objp->description;
+				$line->description		= $objp->description;
 
-				$ligne->date_ouverture_prevue = $this->db->jdate($objp->date_ouverture_prevue);
-				$ligne->date_ouverture        = $this->db->jdate($objp->date_ouverture);
-				$ligne->date_fin_validite     = $this->db->jdate($objp->date_fin_validite);
-				$ligne->date_cloture          = $this->db->jdate($objp->date_cloture);
+				$line->date_ouverture_prevue = $this->db->jdate($objp->date_ouverture_prevue);
+				$line->date_ouverture        = $this->db->jdate($objp->date_ouverture);
+				$line->date_fin_validite     = $this->db->jdate($objp->date_fin_validite);
+				$line->date_cloture          = $this->db->jdate($objp->date_cloture);
 				// For backward compatibility
-				$ligne->date_debut_prevue = $this->db->jdate($objp->date_ouverture_prevue);
-				$ligne->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
-				$ligne->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
-				$ligne->date_fin_reel     = $this->db->jdate($objp->date_cloture);
-				$this->lignes[]        = $ligne;
-				//dol_syslog("1 ".$ligne->desc);
-				//dol_syslog("2 ".$ligne->product_desc);
+				$line->date_debut_prevue = $this->db->jdate($objp->date_ouverture_prevue);
+				$line->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
+				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
+				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
+				
+				$this->lines[]			= $line;
+				
+				//dol_syslog("1 ".$line->desc);
+				//dol_syslog("2 ".$line->product_desc);
 
-				if ($ligne->statut == 0) $this->nbofserviceswait++;
-				if ($ligne->statut == 4 && (empty($ligne->date_fin_prevue) || $ligne->date_fin_prevue >= $now)) $this->nbofservicesopened++;
-				if ($ligne->statut == 4 && $ligne->date_fin_prevue < $now) $this->nbofservicesexpired++;
-				if ($ligne->statut == 5) $this->nbofservicesclosed++;
+				if ($line->statut == 0) $this->nbofserviceswait++;
+				if ($line->statut == 4 && (empty($line->date_fin_prevue) || $line->date_fin_prevue >= $now)) $this->nbofservicesopened++;
+				if ($line->statut == 4 && $line->date_fin_prevue < $now) $this->nbofservicesexpired++;
+				if ($line->statut == 5) $this->nbofservicesclosed++;
 
 				$total_ttc+=$objp->total_ttc;   // TODO Not saved into database
                 $total_vat+=$objp->total_tva;
@@ -472,51 +474,51 @@ class Contrat extends CommonObject
 			{
 				$objp                  = $this->db->fetch_object($result);
 
-				$ligne                 = new ContratLigne($this->db);
-				$ligne->id 			   = $objp->rowid;
-				$ligne->fk_contrat     = $objp->fk_contrat;
-				$ligne->libelle        = $objp->description;
-				$ligne->desc           = $objp->description;
-				$ligne->qty            = $objp->qty;
-				$ligne->statut 		   = $objp->statut;
-				$ligne->ref            = $objp->ref;
-				$ligne->tva_tx         = $objp->tva_tx;
-				$ligne->localtax1_tx   = $objp->localtax1_tx;
-				$ligne->localtax2_tx   = $objp->localtax2_tx;
-				$ligne->subprice       = $objp->subprice;
-				$ligne->remise_percent = $objp->remise_percent;
-				$ligne->price_ht       = $objp->price_ht;
-				$ligne->price          = $objp->price;	// For backward compatibility
-				$ligne->total_ht       = $objp->total_ht;
-				$ligne->total_tva      = $objp->total_tva;
-				$ligne->total_localtax1= $objp->total_localtax1;
-				$ligne->total_localtax2= $objp->total_localtax2;
-				$ligne->total_ttc      = $objp->total_ttc;
-				$ligne->fk_product     = 0;
-				$ligne->info_bits      = $objp->info_bits;
+				$line                 = new ContratLigne($this->db);
+				$line->id 			   = $objp->rowid;
+				$line->fk_contrat     = $objp->fk_contrat;
+				$line->libelle        = $objp->description;
+				$line->desc           = $objp->description;
+				$line->qty            = $objp->qty;
+				$line->statut 		   = $objp->statut;
+				$line->ref            = $objp->ref;
+				$line->tva_tx         = $objp->tva_tx;
+				$line->localtax1_tx   = $objp->localtax1_tx;
+				$line->localtax2_tx   = $objp->localtax2_tx;
+				$line->subprice       = $objp->subprice;
+				$line->remise_percent = $objp->remise_percent;
+				$line->price_ht       = $objp->price_ht;
+				$line->price          = $objp->price;	// For backward compatibility
+				$line->total_ht       = $objp->total_ht;
+				$line->total_tva      = $objp->total_tva;
+				$line->total_localtax1= $objp->total_localtax1;
+				$line->total_localtax2= $objp->total_localtax2;
+				$line->total_ttc      = $objp->total_ttc;
+				$line->fk_product     = 0;
+				$line->info_bits      = $objp->info_bits;
 
-				$ligne->fk_user_author   = $objp->fk_user_author;
-				$ligne->fk_user_ouverture= $objp->fk_user_ouverture;
-				$ligne->fk_user_cloture  = $objp->fk_user_cloture;
+				$line->fk_user_author   = $objp->fk_user_author;
+				$line->fk_user_ouverture= $objp->fk_user_ouverture;
+				$line->fk_user_cloture  = $objp->fk_user_cloture;
 
-				$ligne->description    = $objp->description;
+				$line->description    = $objp->description;
 
-				$ligne->date_ouverture_prevue = $this->db->jdate($objp->date_ouverture_prevue);
-				$ligne->date_ouverture        = $this->db->jdate($objp->date_ouverture);
-				$ligne->date_fin_validite     = $this->db->jdate($objp->date_fin_validite);
-				$ligne->date_cloture          = $this->db->jdate($objp->date_cloture);
+				$line->date_ouverture_prevue = $this->db->jdate($objp->date_ouverture_prevue);
+				$line->date_ouverture        = $this->db->jdate($objp->date_ouverture);
+				$line->date_fin_validite     = $this->db->jdate($objp->date_fin_validite);
+				$line->date_cloture          = $this->db->jdate($objp->date_cloture);
 				// For backward compatibility
-				$ligne->date_debut_prevue = $this->db->jdate($objp->date_ouverture_prevue);
-				$ligne->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
-				$ligne->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
-				$ligne->date_fin_reel     = $this->db->jdate($objp->date_cloture);
+				$line->date_debut_prevue = $this->db->jdate($objp->date_ouverture_prevue);
+				$line->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
+				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
+				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
-				if ($ligne->statut == 0) $this->nbofserviceswait++;
-				if ($ligne->statut == 4 && (empty($ligne->date_fin_prevue) || $ligne->date_fin_prevue >= $now)) $this->nbofservicesopened++;
-				if ($ligne->statut == 4 && $ligne->date_fin_prevue < $now) $this->nbofservicesexpired++;
-				if ($ligne->statut == 5) $this->nbofservicesclosed++;
+				if ($line->statut == 0) $this->nbofserviceswait++;
+				if ($line->statut == 4 && (empty($line->date_fin_prevue) || $line->date_fin_prevue >= $now)) $this->nbofservicesopened++;
+				if ($line->statut == 4 && $line->date_fin_prevue < $now) $this->nbofservicesexpired++;
+				if ($line->statut == 5) $this->nbofservicesclosed++;
 
-				$this->lignes[]        = $ligne;
+				$this->lines[]        = $line;
 
 				$total_ttc+=$objp->total_ttc;
                 $total_vat+=$objp->total_tva;
@@ -534,12 +536,12 @@ class Contrat extends CommonObject
 			return -2;
 		}
 
-		$this->nbofservices=sizeof($this->lignes);
+		$this->nbofservices=sizeof($this->lines);
         $this->total_ttc = price2num($total_ttc);   // TODO For the moment value is false as value is not stored in database for line linked to products
         $this->total_vat = price2num($total_vat);   // TODO For the moment value is false as value is not stored in database for line linked to products
         $this->total_ht = price2num($total_ht);     // TODO For the moment value is false as value is not stored in database for line linked to products
 
-		return $this->lignes;
+		return $this->lines;
 	}
 
 	/**
@@ -1024,11 +1026,11 @@ class Contrat extends CommonObject
 		// If draft, we keep it (should not happen)
 		if ($this->statut == 0) return 1;
 
-		// Load $this->lignes array
-		//		$this->fetch_lignes();
+		// Load $this->lines array
+		//		$this->fetch_lines();
 
 		$newstatut=1;
-		foreach($this->lignes as $key => $contractline)
+		foreach($this->lines as $key => $contractline)
 		{
 			//			if ($contractline)         // Loop on each service
 		}
@@ -1418,19 +1420,19 @@ class Contrat extends CommonObject
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
-			$ligne=new ContratLigne($this->db);
-			$ligne->desc=$langs->trans("Description")." ".$xnbp;
-			$ligne->qty=1;
-			$ligne->subprice=100;
-			$ligne->price=100;
-			$ligne->tva_tx=19.6;
-			$ligne->remise_percent=10;
-			$ligne->total_ht=90;
-			$ligne->total_ttc=107.64;	// 90 * 1.196
-			$ligne->total_tva=17.64;
+			$line=new ContratLigne($this->db);
+			$line->desc=$langs->trans("Description")." ".$xnbp;
+			$line->qty=1;
+			$line->subprice=100;
+			$line->price=100;
+			$line->tva_tx=19.6;
+			$line->remise_percent=10;
+			$line->total_ht=90;
+			$line->total_ttc=107.64;	// 90 * 1.196
+			$line->total_tva=17.64;
 			$prodid = rand(1, $num_prods);
-			$ligne->fk_product=$prodids[$prodid];
-			$this->lignes[$xnbp]=$ligne;
+			$line->fk_product=$prodids[$prodid];
+			$this->lines[$xnbp]=$line;
 			$xnbp++;
 		}
 

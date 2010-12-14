@@ -98,7 +98,6 @@ class Facture extends CommonObject
     var $mode_reglement_code;		// Code in llx_c_paiement
     var $modelpdf;
     var $products=array();	// TODO deprecated
-    var $lignes=array();	// TODO deprecated
     var $lines=array();
     var $line;
     //! Pour board
@@ -708,7 +707,6 @@ class Facture extends CommonObject
                  * Lines
                  */
 
-                $this->lignes = array();	// deprecated
                 $this->lines  = array();
 
                 $result=$this->fetch_lines();
@@ -737,7 +735,7 @@ class Facture extends CommonObject
 
 
     /**
-     *	\brief      Recupere les lignes de factures dans this->lignes
+     *	\brief      Recupere les lignes de factures dans this->lines
      *	\return     int         1 if OK, < 0 if KO
      */
     function fetch_lines()
@@ -798,7 +796,6 @@ class Facture extends CommonObject
                 $line->price            = $objp->price;
                 $line->remise           = $objp->remise;
 
-                $this->lignes[$i] = $line;	// TODO deprecated
                 $this->lines[$i] = $line;
 
                 $i++;
@@ -1502,14 +1499,14 @@ class Facture extends CommonObject
                     require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
                     // Loop on each line
-                    for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+                    for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
                     {
-                        if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
+                        if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
                         {
                             $mouvP = new MouvementStock($this->db);
                             // We decrease stock for product
                             $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                            $result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
+                            $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
                             if ($result < 0) { $error++; }
                         }
                     }
@@ -1610,14 +1607,14 @@ class Facture extends CommonObject
             {
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-                for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+                for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
                 {
-                    if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
+                    if ($this->lines[$i]->fk_product && $this->lines[$i]->product_type == 0)
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We decrease stock for product
                         $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
                     }
                 }
             }
@@ -1794,7 +1791,7 @@ class Facture extends CommonObject
             }
             else
             {
-                $this->error=$ligne->error;
+                $this->error=$this->line->error;
                 $this->db->rollback();
                 return -2;
             }
@@ -2538,9 +2535,9 @@ class Facture extends CommonObject
     {
         // On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
         $ventilExportCompta = 0 ;
-        for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+        for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
         {
-            if ($this->lignes[$i]->export_compta <> 0 && $this->lignes[$i]->code_ventilation <> 0)
+            if ($this->lines[$i]->export_compta <> 0 && $this->lines[$i]->code_ventilation <> 0)
             {
                 $ventilExportCompta++;
             }
