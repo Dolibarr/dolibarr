@@ -78,6 +78,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		global $user,$conf,$langs,$mysoc;
 
 		$object->fetch_thirdparty();
+		if (empty($object->lines)) $object->lines=$object->lignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -352,7 +353,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$tab4_top = 60;
 		$tab4_hl = 6;
 		$tab4_sl = 4;
-		$line = 2;
+		$ligne = 2;
 
 		//*********************LOGO****************************
 		$pdf->SetXY(11,7);

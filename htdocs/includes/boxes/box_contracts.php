@@ -98,7 +98,7 @@ class box_contracts extends ModeleBoxes {
 
     				$contractstatic->statut=$objp->fk_statut;
     				$contractstatic->id=$objp->rowid;
-    				$result=$contractstatic->fetch_lines();
+    				$result=$contractstatic->fetch_lignes();
 
     				// fin_validite is no more on contract but on services
     				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }

@@ -38,7 +38,7 @@ $var=true;
 for ($i = 0 ; $i < $num ; $i++)
 {
 	$linkedObjectBlock->fetch($objectid[$i]);
-    $linkedObjectBlock->fetch_lines();
+    $linkedObjectBlock->fetch_lignes();
 	$var=!$var;
 ?>
 <tr <?php echo $bc[$var]; ?> ><td>

@@ -229,11 +229,11 @@ class Translate {
 					{
 						if ($usecachekey) $tabtranslatedomain=array();	// To save lang content in cache
 
-						while ($line = fgets($fp,4096))	// Ex: Need 225ms for all fgets on all lang file for Third party page. Same speed than file_get_contents
+						while ($ligne = fgets($fp,4096))	// Ex: Need 225ms for all fgets on all lang file for Third party page. Same speed than file_get_contents
 						{
-							if ($line[0] != "\n" && $line[0] != " " && $line[0] != "#")
+							if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
 							{
-								$tab=explode('=',$line,2);
+								$tab=explode('=',$ligne,2);
 								$key=trim($tab[0]);
 								//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
 								if (empty($this->tab_translate[$key]) && isset($tab[1]))

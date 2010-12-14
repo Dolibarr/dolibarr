@@ -98,7 +98,7 @@ if ($_POST["action"] == 'add')
 	$expedition->tracking_number		= $_POST["tracking_number"];
 
 	//var_dump($_POST);exit;
-	for ($i = 0 ; $i < sizeof($object->lines) ; $i++)
+	for ($i = 0 ; $i < sizeof($object->lignes) ; $i++)
 	{
 		$qty = "qtyl".$i;
 		if ($_POST[$qty] > 0)
@@ -447,8 +447,8 @@ if ($_GET["action"] == 'create')
 			 */
 			print '<br><table class="nobordernopadding" width="100%">';
 
-			//$lines = $object->fetch_lines(1);
-			$numAsked = sizeof($object->lines);
+			//$lignes = $object->fetch_lines(1);
+			$numAsked = sizeof($object->lignes);
 
 			/* Lecture des expeditions deja effectuees */
 			$object->loadExpeditions();
@@ -654,8 +654,8 @@ else
 			dol_print_error($db,$expedition->error);
 			exit -1;
 		}
-		$lines = $expedition->lines;
-		$num_prod = sizeof($lines);
+		$lignes = $expedition->lignes;
+		$num_prod = sizeof($lignes);
 
 		if ($expedition->id > 0)
 		{
@@ -723,30 +723,30 @@ else
 			{
 				$weightUnit=0;
 				$volumeUnit=0;
-				if (! empty($lines[$i]->weight_units)) $weightUnit = $lines[$i]->weight_units;
-				if (! empty($lines[$i]->volume_units)) $volumeUnit = $lines[$i]->volume_units;
+				if (! empty($lignes[$i]->weight_units)) $weightUnit = $lignes[$i]->weight_units;
+				if (! empty($lignes[$i]->volume_units)) $volumeUnit = $lignes[$i]->volume_units;
 				// TODO Use a function addvalueunits(val1,unit1,val2,unit2)=>(val,unit)
-				if ($lines[$i]->weight_units < 50)
+				if ($lignes[$i]->weight_units < 50)
 				{
 					$trueWeightUnit=pow(10,$weightUnit);
-					$totalWeight += $lines[$i]->weight*$lines[$i]->qty_shipped*$trueWeightUnit;
+					$totalWeight += $lignes[$i]->weight*$lignes[$i]->qty_shipped*$trueWeightUnit;
 				}
 				else
 				{
 					$trueWeightUnit=$weightUnit;
-					$totalWeight += $lines[$i]->weight*$lines[$i]->qty_shipped;
+					$totalWeight += $lignes[$i]->weight*$lignes[$i]->qty_shipped;
 				}
-				if ($lines[$i]->volume_units < 50)
+				if ($lignes[$i]->volume_units < 50)
 				{
-					//print $lines[$i]->volume."x".$lines[$i]->volume_units."x".($lines[$i]->volume_units < 50)."x".$volumeUnit;
+					//print $lignes[$i]->volume."x".$lignes[$i]->volume_units."x".($lignes[$i]->volume_units < 50)."x".$volumeUnit;
 					$trueVolumeUnit=pow(10,$volumeUnit);
-					//print $lines[$i]->volume;
-					$totalVolume += $lines[$i]->volume*$lines[$i]->qty_shipped*$trueVolumeUnit;
+					//print $lignes[$i]->volume;
+					$totalVolume += $lignes[$i]->volume*$lignes[$i]->qty_shipped*$trueVolumeUnit;
 				}
 				else
 				{
 					$trueVolumeUnit=$volumeUnit;
-					$totalVolume += $lines[$i]->volume*$lines[$i]->qty_shipped;
+					$totalVolume += $lignes[$i]->volume*$lignes[$i]->qty_shipped;
 				}
 			}
 			$totalVolume=$totalVolume;
@@ -966,64 +966,64 @@ else
 				print "<tr ".$bc[$var].">";
 
 				// Predefined product or service
-				if ($lines[$i]->fk_product > 0)
+				if ($lignes[$i]->fk_product > 0)
 				{
 					print '<td>';
 
 					// Affiche ligne produit
-					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$lines[$i]->fk_product.'">';
-					if ($lines[$i]->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
+					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$lignes[$i]->fk_product.'">';
+					if ($lignes[$i]->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
 					else $text.= img_object($langs->trans('ShowProduct'),'product');
-					$text.= ' '.$lines[$i]->ref.'</a>';
-					$text.= ' - '.$lines[$i]->label;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($lines[$i]->description));
+					$text.= ' '.$lignes[$i]->ref.'</a>';
+					$text.= ' - '.$lignes[$i]->label;
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($lignes[$i]->description));
 					//print $description;
 					print $html->textwithtooltip($text,$description,3,'','',$i);
-					print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
+					print_date_range($lignes[$i]->date_start,$lignes[$i]->date_end);
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
-						print ($lines[$i]->description && $lines[$i]->description!=$lines[$i]->product)?'<br>'.dol_htmlentitiesbr($lines[$i]->description):'';
+						print ($lignes[$i]->description && $lignes[$i]->description!=$lignes[$i]->product)?'<br>'.dol_htmlentitiesbr($lignes[$i]->description):'';
 					}
 				}
 				else
 				{
 					print "<td>";
-					if ($lines[$i]->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
+					if ($lignes[$i]->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
 					else $text = img_object($langs->trans('Product'),'product');
-					print $text.' '.nl2br($lines[$i]->description);
-					print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
+					print $text.' '.nl2br($lignes[$i]->description);
+					print_date_range($lignes[$i]->date_start,$lignes[$i]->date_end);
 					print "</td>\n";
 				}
 
 				// Qte commande
-				print '<td align="center">'.$lines[$i]->qty_asked.'</td>';
+				print '<td align="center">'.$lignes[$i]->qty_asked.'</td>';
 
 				// Qte a expedier ou expedier
-				print '<td align="center">'.$lines[$i]->qty_shipped.'</td>';
+				print '<td align="center">'.$lignes[$i]->qty_shipped.'</td>';
 
 				// Weight
 				print '<td align="center">';
-				if ($lines[$i]->fk_product_type == 0) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->weight_units,"weight");
+				if ($lignes[$i]->fk_product_type == 0) print $lignes[$i]->weight*$lignes[$i]->qty_shipped.' '.measuring_units_string($lignes[$i]->weight_units,"weight");
 				else print '&nbsp;';
 				print '</td>';
 
 				// Volume
 				print '<td align="center">';
-				if ($lines[$i]->fk_product_type == 0) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume");
+				if ($lignes[$i]->fk_product_type == 0) print $lignes[$i]->volume*$lignes[$i]->qty_shipped.' '.measuring_units_string($lignes[$i]->volume_units,"volume");
 				else print '&nbsp;';
 				print '</td>';
 
 				// Size
-				//print '<td align="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume").'</td>';
+				//print '<td align="center">'.$lignes[$i]->volume*$lignes[$i]->qty_shipped.' '.measuring_units_string($lignes[$i]->volume_units,"volume").'</td>';
 
 				// Entrepot source
 				if ($conf->stock->enabled)
 				{
 					print '<td align="left">';
-					if ($lines[$i]->entrepot_id > 0)
+					if ($lignes[$i]->entrepot_id > 0)
 					{
 						$entrepot = new Entrepot($db);
-						$entrepot->fetch($lines[$i]->entrepot_id);
+						$entrepot->fetch($lignes[$i]->entrepot_id);
 						print $entrepot->getNomUrl(1);
 					}
 					print '</td>';

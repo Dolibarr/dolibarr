@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/comm/propal/class/actions_proposal.class.php
+ *	\file       htdocs/comm/propal/actions_proposal.class.php
  *	\ingroup    proposal
  *	\brief      Fichier de la classe des actions des propales
  *	\version    $Id$
@@ -42,18 +42,6 @@ class ActionsProposal extends ActionsCommonObject
 	function ActionsProposal($DB)
 	{
 		$this->db = $DB;
-	}
-	
-	/**
-	 *    	\brief      Load a proposal from database and its ligne array
-	 *		\param      rowid       id of object to load
-	 * 		\param		ref			Ref of proposal
-	 *		\return     int         >0 if OK, <0 if KO
-	 */
-	function fetch($rowid,$ref='')
-	{
-		$this->object = new Propal($this->db);
-		return $this->object->fetch($rowid,$ref);
 	}
 
 }

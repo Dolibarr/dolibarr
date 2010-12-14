@@ -219,7 +219,7 @@ class pdf_edison extends ModelePDFCommandes
 
 					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs);
 					$pdf->SetXY (156, $curY);
-					$pdf->MultiCell(20, 3, $up_excl_tax, 0, 'R', 0);
+					$pdf->MultiCell(18, 3, $up_excl_tax, 0, 'R', 0);
 
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
 					$pdf->SetXY (174, $curY);

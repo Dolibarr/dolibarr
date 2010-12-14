@@ -34,7 +34,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <link rel="apple-touch-icon" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/'.$this->theme.'/thumbs/homescreen.png'; ?>" />
 <link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-latest.min.css'; ?>" />
 <link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/default.css.php'; ?>" />
-<script src="<?php echo DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min.js'; ?>"></script>
+<script src="<?php echo DOL_URL_ROOT.'/includes/jquery/js/jquery-1.4.3.min.js'; ?>"></script>
 <script src="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-latest.js'; ?>"></script>
 <!--
 <script src="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-latest.min.js'; ?>"></script>

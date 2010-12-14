@@ -121,7 +121,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		{
 			$object->fetch_thirdparty();
 
-			$nblines = sizeof($object->lines);
+			$nblignes = sizeof($object->lignes);
 
 			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->expedition->dir_output."/receipt";
@@ -190,7 +190,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				 // Positionne $this->atleastonediscount si on a au moins une remise
 				 for ($i = 0 ; $i < $nblignes ; $i++)
 				 {
-				 if ($object->lines[$i]->remise_percent)
+				 if ($object->lignes[$i]->remise_percent)
 				 {
 				 $this->atleastonediscount++;
 				 }
@@ -238,7 +238,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$nexY = $tab_top + 7;
 
 				// Boucle sur les lignes
-				for ($i = 0 ; $i < $nblines ; $i++)
+				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
 
@@ -255,41 +255,41 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					/*
 					 // TVA
 					 $pdf->SetXY ($this->posxtva, $curY);
-					 $pdf->MultiCell(10, 4, ($object->lines[$i]->tva_tx < 0 ? '*':'').abs($object->lines[$i]->tva_tx), 0, 'R');
+					 $pdf->MultiCell(10, 4, ($object->lignes[$i]->tva_tx < 0 ? '*':'').abs($object->lignes[$i]->tva_tx), 0, 'R');
 
 					 // Prix unitaire HT avant remise
 					 $pdf->SetXY ($this->posxup, $curY);
-					 $pdf->MultiCell(20, 4, price($object->lines[$i]->subprice), 0, 'R', 0);
+					 $pdf->MultiCell(20, 4, price($object->lignes[$i]->subprice), 0, 'R', 0);
 					 */
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped, 0, 'R');
+					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_shipped, 0, 'R');
 					/*
 					 // Remise sur ligne
 					 $pdf->SetXY ($this->posxdiscount, $curY);
-					 if ($object->lines[$i]->remise_percent)
+					 if ($object->lignes[$i]->remise_percent)
 					 {
-					 $pdf->MultiCell(14, 3, $object->lines[$i]->remise_percent."%", 0, 'R');
+					 $pdf->MultiCell(14, 3, $object->lignes[$i]->remise_percent."%", 0, 'R');
 					 }
 
 					 // Total HT ligne
 					 $pdf->SetXY ($this->postotalht, $curY);
-					 $total = price($object->lines[$i]->price * $object->lines[$i]->qty);
+					 $total = price($object->lignes[$i]->price * $object->lignes[$i]->qty);
 					 $pdf->MultiCell(23, 3, $total, 0, 'R', 0);
 
 					 // Collecte des totaux par valeur de tva
 					 // dans le tableau tva["taux"]=total_tva
-					 $tvaligne=$object->lines[$i]->price * $object->lines[$i]->qty;
+					 $tvaligne=$object->lignes[$i]->price * $object->lignes[$i]->qty;
 					 if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
-					 $this->tva[ (string)$object->lines[$i]->tva_tx ] += $tvaligne;
+					 $this->tva[ (string)$object->lignes[$i]->tva_tx ] += $tvaligne;
 					 */
 					$nexY+=2;    // Passe espace entre les lignes
 
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
-					if ($i < ($nblines - 1))	// If it's not last line
+					if ($i < ($nblignes - 1))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
-						$follow_descproduitservice = $object->lines[$i+1]->desc;
+						$follow_descproduitservice = $object->lignes[$i+1]->desc;
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4);
 					}

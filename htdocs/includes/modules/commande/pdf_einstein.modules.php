@@ -783,7 +783,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxup-1, $tab_top+2);
-		$pdf->MultiCell(20,2, $outputlangs->transnoentities("PriceUHT"),'','C');
+		$pdf->MultiCell(18,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxqty-1, $tab_top+2);

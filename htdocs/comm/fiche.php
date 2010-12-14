@@ -569,7 +569,7 @@ if ($socid > 0)
 				print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td width="20">&nbsp;</td>';
 				print '<td align="right" nowrap="nowrap">';
-				$contrat->fetch_lines();
+				$contrat->fetch_lignes();
 				print $contrat->getLibStatut(4);
 				print "</td>\n";
 				print '</tr>';

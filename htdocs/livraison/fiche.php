@@ -268,12 +268,12 @@ if ($_GET["action"] == 'create')
 		 */
 		print '<br><table class="noborder" width="100%">';
 
-		$lines = $commande->fetch_lines(1);
+		$lignes = $commande->fetch_lines(1);
 
 		// Lecture des livraisons deja effectuees
 		$commande->livraison_array();
 
-		$num = sizeof($commande->lines);
+		$num = sizeof($commande->lignes);
 		$i = 0;
 
 		if ($num)
@@ -294,34 +294,34 @@ if ($_GET["action"] == 'create')
 		{
 			$product = new Product($db);
 
-			$line = $commande->lines[$i];
+			$ligne = $commande->lignes[$i];
 			$var=!$var;
 			print "<tr $bc[$var]>\n";
-			if ($line->fk_product > 0)
+			if ($ligne->fk_product > 0)
 			{
-				$product->fetch($line->fk_product);
+				$product->fetch($ligne->fk_product);
 				$product->load_stock();
 
 				print '<td>';
-				print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-				if ($line->description) print nl2br($line->description);
+				print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
+				if ($ligne->description) print nl2br($ligne->description);
 				print '</td>';
 			}
 			else
 			{
-				print "<td>".nl2br($line->description)."</td>\n";
+				print "<td>".nl2br($ligne->description)."</td>\n";
 			}
 
-			print '<td align="center">'.$line->qty.'</td>';
+			print '<td align="center">'.$ligne->qty.'</td>';
 			/*
 			 *
 			 */
 			print '<td align="center">';
-			$quantite_livree = $commande->livraisons[$line->id];
+			$quantite_livree = $commande->livraisons[$ligne->id];
 			print $quantite_livree;;
 			print '</td>';
 
-			$quantite_commandee = $line->qty;
+			$quantite_commandee = $ligne->qty;
 			$quantite_a_livrer = $quantite_commandee - $quantite_livree;
 
 			if ($conf->stock->enabled)
@@ -331,7 +331,7 @@ if ($_GET["action"] == 'create')
 
 				// Quantite a livrer
 				print '<td align="center">';
-				print '<input name="idl'.$i.'" type="hidden" value="'.$line->id.'">';
+				print '<input name="idl'.$i.'" type="hidden" value="'.$ligne->id.'">';
 				print '<input name="qtyl'.$i.'" type="text" size="6" value="'.min($quantite_a_livrer, $stock).'">';
 				print '</td>';
 
@@ -349,7 +349,7 @@ if ($_GET["action"] == 'create')
 			{
 				// Quantite a livrer
 				print '<td align="center">';
-				print '<input name="idl'.$i.'" type="hidden" value="'.$line->id.'">';
+				print '<input name="idl'.$i.'" type="hidden" value="'.$ligne->id.'">';
 				print '<input name="qtyl'.$i.'" type="text" size="6" value="'.$quantite_a_livrer.'">';
 				print '</td>';
 			}
@@ -498,7 +498,7 @@ else
 			 * Lignes produits
 			 */
 
-			$num_prod = sizeof($delivery->lines);
+			$num_prod = sizeof($delivery->lignes);
 			$i = 0; $total = 0;
 
 			print '<table class="noborder" width="100%">';
@@ -519,40 +519,40 @@ else
 				$var=!$var;
 
 				print "<tr $bc[$var]>";
-				if ($delivery->lines[$i]->fk_product > 0)
+				if ($delivery->lignes[$i]->fk_product > 0)
 				{
 					$product = new Product($db);
-					$product->fetch($delivery->lines[$i]->fk_product);
+					$product->fetch($delivery->lignes[$i]->fk_product);
 
 					print '<td>';
 
 					// Affiche ligne produit
-					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$delivery->lines[$i]->fk_product.'">';
-					if ($delivery->lines[$i]->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
+					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$delivery->lignes[$i]->fk_product.'">';
+					if ($delivery->lignes[$i]->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
 					else $text.= img_object($langs->trans('ShowProduct'),'product');
-					$text.= ' '.$delivery->lines[$i]->ref.'</a>';
-					$text.= ' - '.$delivery->lines[$i]->label;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($delivery->lines[$i]->description));
+					$text.= ' '.$delivery->lignes[$i]->ref.'</a>';
+					$text.= ' - '.$delivery->lignes[$i]->label;
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($delivery->lignes[$i]->description));
 					//print $description;
 					print $html->textwithtooltip($text,$description,3,'','',$i);
-					print_date_range($delivery->lines[$i]->date_start,$delivery->lines[$i]->date_end);
+					print_date_range($delivery->lignes[$i]->date_start,$delivery->lignes[$i]->date_end);
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
-						print ($delivery->lines[$i]->description && $delivery->lines[$i]->description!=$delivery->lines[$i]->label)?'<br>'.dol_htmlentitiesbr($delivery->lines[$i]->description):'';
+						print ($delivery->lignes[$i]->description && $delivery->lignes[$i]->description!=$delivery->lignes[$i]->label)?'<br>'.dol_htmlentitiesbr($delivery->lignes[$i]->description):'';
 					}
 				}
 				else
 				{
 					print "<td>";
-					if ($delivery->lines[$i]->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
+					if ($delivery->lignes[$i]->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
 					else $text = img_object($langs->trans('Product'),'product');
-					print $text.' '.nl2br($delivery->lines[$i]->description);
+					print $text.' '.nl2br($delivery->lignes[$i]->description);
 					print_date_range($objp->date_start,$objp->date_end);
 					print "</td>\n";
 				}
 
-				print '<td align="center">'.$delivery->lines[$i]->qty_asked.'</td>';
-				print '<td align="center">'.$delivery->lines[$i]->qty_shipped.'</td>';
+				print '<td align="center">'.$delivery->lignes[$i]->qty_asked.'</td>';
+				print '<td align="center">'.$delivery->lignes[$i]->qty_shipped.'</td>';
 
 				print "</tr>";
 

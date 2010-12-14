@@ -57,7 +57,7 @@ class Fichinter extends CommonObject
 	var $fk_project;
 	var $modelpdf;
 
-	var $lines = array();
+	var $lignes = array();
 
 	/**
 	 *    \brief      Constructeur de la classe
@@ -674,14 +674,14 @@ class Fichinter extends CommonObject
 			$this->db->begin();
 
 			// Insertion ligne
-			$line=new FichinterLigne($this->db);
+			$ligne=new FichinterLigne($this->db);
 
-			$line->fk_fichinter = $fichinterid;
-			$line->desc         = $desc;
-			$line->datei        = $date_intervention;
-			$line->duration     = $duration;
+			$ligne->fk_fichinter = $fichinterid;
+			$ligne->desc         = $desc;
+			$ligne->datei        = $date_intervention;
+			$ligne->duration     = $duration;
 
-			$result=$line->insert();
+			$result=$ligne->insert();
 			if ($result > 0)
 			{
 				$this->db->commit();
@@ -780,15 +780,17 @@ class Fichinter extends CommonObject
 			{
 				$objp = $this->db->fetch_object($result);
 
-				$line = new FichinterLigne($this->db);
-				$line->id = $objp->rowid;
+				$fichinterligne = new FichinterLigne($this->db);
+				$fichinterligne->id = $objp->rowid;
 				//...
 
-				$this->lines[$i] = $line;
+				$this->lines[$i] = $fichinterligne;
 
 				$i++;
 			}
 			$this->db->free($result);
+
+			$this->lignes=$this->lines;  // For backward compatibility
 
 			return 1;
 		}

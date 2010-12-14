@@ -98,6 +98,7 @@ class Facture extends CommonObject
     var $mode_reglement_code;		// Code in llx_c_paiement
     var $modelpdf;
     var $products=array();	// TODO deprecated
+    var $lignes=array();	// TODO deprecated
     var $lines=array();
     var $line;
     //! Pour board
@@ -707,6 +708,7 @@ class Facture extends CommonObject
                  * Lines
                  */
 
+                $this->lignes = array();	// deprecated
                 $this->lines  = array();
 
                 $result=$this->fetch_lines();
@@ -735,7 +737,7 @@ class Facture extends CommonObject
 
 
     /**
-     *	\brief      Recupere les lignes de factures dans this->lines
+     *	\brief      Recupere les lignes de factures dans this->lignes
      *	\return     int         1 if OK, < 0 if KO
      */
     function fetch_lines()
@@ -796,6 +798,7 @@ class Facture extends CommonObject
                 $line->price            = $objp->price;
                 $line->remise           = $objp->remise;
 
+                $this->lignes[$i] = $line;	// TODO deprecated
                 $this->lines[$i] = $line;
 
                 $i++;
@@ -1499,14 +1502,14 @@ class Facture extends CommonObject
                     require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
                     // Loop on each line
-                    for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+                    for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
                     {
-                        if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
+                        if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
                         {
                             $mouvP = new MouvementStock($this->db);
                             // We decrease stock for product
                             $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                            $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                            $result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
                             if ($result < 0) { $error++; }
                         }
                     }
@@ -1607,14 +1610,14 @@ class Facture extends CommonObject
             {
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-                for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+                for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
                 {
-                    if ($this->lines[$i]->fk_product && $this->lines[$i]->product_type == 0)
+                    if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We decrease stock for product
                         $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                        $result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
                     }
                 }
             }
@@ -1665,7 +1668,7 @@ class Facture extends CommonObject
      *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-    function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0)
+    function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0)
     {
         dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
         include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -1763,8 +1766,6 @@ class Facture extends CommonObject
             $this->line->total_localtax2=($this->type==2?-1:1)*$total_localtax2;
             $this->line->total_ttc=($this->type==2?-1:1)*$total_ttc;
             $this->line->special_code=$special_code;
-            $this->line->origin=$origin;
-            $this->line->origin_id=$origin_id;
 
             // \TODO Ne plus utiliser
             $this->line->price=($this->type==2?-1:1)*$price;
@@ -1791,7 +1792,7 @@ class Facture extends CommonObject
             }
             else
             {
-                $this->error=$this->line->error;
+                $this->error=$ligne->error;
                 $this->db->rollback();
                 return -2;
             }
@@ -2535,9 +2536,9 @@ class Facture extends CommonObject
     {
         // On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
         $ventilExportCompta = 0 ;
-        for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+        for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
         {
-            if ($this->lines[$i]->export_compta <> 0 && $this->lines[$i]->code_ventilation <> 0)
+            if ($this->lignes[$i]->export_compta <> 0 && $this->lignes[$i]->code_ventilation <> 0)
             {
                 $ventilExportCompta++;
             }
@@ -3060,9 +3061,6 @@ class FactureLigne
     // 1: frais de port
     // 2: ecotaxe
     // 3: ??
-    
-    var $origin;
-    var $origin_id;
 
     //! Total HT  de la ligne toute quantite et incluant la remise ligne
     var $total_ht;

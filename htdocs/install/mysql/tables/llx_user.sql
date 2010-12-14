@@ -25,12 +25,8 @@ create table llx_user
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   datec             datetime,
   tms               timestamp,
-
-  login             varchar(30)       NOT NULL, -- user reference number
-  entity            integer DEFAULT 1 NOT NULL, -- multi company id
-
-  ref_ext           varchar(30),                -- reference into an external system (not used by dolibarr)
-  
+  login             varchar(24) NOT NULL,
+  entity            integer DEFAULT 1 NOT NULL,	-- multi company id
   pass              varchar(32),
   pass_crypted      varchar(128),
   pass_temp         varchar(32),			-- temporary password when asked for forget password

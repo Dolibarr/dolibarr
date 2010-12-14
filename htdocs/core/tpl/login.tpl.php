@@ -31,7 +31,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <head>
 <meta name="robots" content="noindex,nofollow">
 <title><?php echo $langs->trans('Login'); ?></title>
-<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-latest.min.js"></script>
+<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-1.4.3.min.js"></script>
 <link rel="stylesheet" type="text/css" href="<?php echo $conf_css; ?>">
 <style type="text/css">
 <!--

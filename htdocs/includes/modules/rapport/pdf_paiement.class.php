@@ -141,11 +141,11 @@ class pdf_paiement
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$lines = $this->db->num_rows($result);
+			$lignes = $this->db->num_rows($result);
 			$i = 0;
 			$var=True;
 
-			while ($i < $lines)
+			while ($i < $lignes)
 			{
 				$objp = $this->db->fetch_object($result);
 				$var=!$var;
@@ -167,9 +167,9 @@ class pdf_paiement
 			dol_print_error($this->db);
 		}
 
-		$pages = intval($lines / $this->line_per_page);
+		$pages = intval($lignes / $this->line_per_page);
 
-		if (($lines % $this->line_per_page)>0)
+		if (($lignes % $this->line_per_page)>0)
 		{
 			$pages++;
 		}

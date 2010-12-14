@@ -116,16 +116,16 @@ function analyse_sql_and_script(&$var,$get)
 analyse_sql_and_script($_GET,1);
 analyse_sql_and_script($_POST,0);
 
-// This is to make Dolibarr working with Plesk. Does not work with IIS.
-set_include_path((isset($_SERVER["DOCUMENT_ROOT"])?$_SERVER["DOCUMENT_ROOT"]:'.').'/htdocs');
+// This is to make Dolibarr working with Plesk
+set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 // Add real path in session name
 $realpath='';
 if ( preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs))	$realpath = isset($regs[1])?$regs[1]:'';
 
 // Init session. Name of session is specific to Dolibarr instance.
-$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].(isset($_SERVER["DOCUMENT_ROOT"])?$_SERVER["DOCUMENT_ROOT"]:'').$realpath);
-$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].(isset($_SERVER["DOCUMENT_ROOT"])?$_SERVER["DOCUMENT_ROOT"]:'').$realpath);
+$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
+$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_start();

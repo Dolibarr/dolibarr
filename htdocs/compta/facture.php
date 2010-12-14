@@ -695,7 +695,10 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					$result=$srcobject->fetch($object->origin_id);
 					if ($result > 0)
 					{
-						$lines = $srcobject->lines;
+						// TODO mutualiser
+						$lines = $srcobject->lignes;
+						if (sizeof($srcobject->lines)) $lines = $srcobject->lines;
+						if (empty($lines) && method_exists($srcobject,'fetch_lignes')) $lines = $srcobject->fetch_lignes();
 						if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
@@ -729,11 +732,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							$lines[$i]->fk_remise_except,
 							'HT',
 							0,
-							$product_type,
-							$lines[$i]->rang,
-							$lines[$i]->special_code,
-							$object->origin,
-							$lines[$i]->rowid
+							$product_type
 							);
 
 							if ($result < 0)
@@ -1385,28 +1384,27 @@ if ($_GET['action'] == 'create')
 		{
             $projectid=GETPOST('originid');
 		}
-		else
+		else if (in_array($element,array('order','commande','propal','contrat','contract')))
 		{
     		// For compatibility
-    		if ($element == 'commande')    { $subelement = 'customerorder'; }
-    		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'proposal'; }
-    		if ($element == 'contrat') { $subelement = 'contract'; }
+    		if ($element == 'order')    { $element = $subelement = 'commande'; }
+    		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
+    		if ($element == 'contract') { $element = $subelement = 'contrat'; }
 
-    		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/actions_'.$subelement.'.class.php');
-    		$classname = 'Actions'.ucfirst($subelement);
+    		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
+    		$classname = ucfirst($subelement);
     		$objectsrc = new $classname($db);
     		$objectsrc->fetch(GETPOST('originid'));
-    		if (empty($objectsrc->object->lines) && method_exists($objectsrc->object,'fetch_lines'))  $objectsrc->object->fetch_lines();
-    		$objectsrc->object->fetch_thirdparty();
-    		
-    		$projectid			= (!empty($objectsrc->object->fk_project)?$object->fk_project:'');
-    		$ref_client			= (!empty($objectsrc->object->ref_client)?$object->ref_client:'');
+    		$objectsrc->fetch_thirdparty();
 
-    		$soc = $objectsrc->object->client;
-    		$cond_reglement_id 	= (!empty($objectsrc->object->cond_reglement_id)?$objectsrc->object->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
-    		$mode_reglement_id 	= (!empty($objectsrc->object->mode_reglement_id)?$objectsrc->object->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-    		$remise_percent 	= (!empty($objectsrc->object->remise_percent)?$objectsrc->object->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
-    		$remise_absolue 	= (!empty($objectsrc->object->remise_absolue)?$objectsrc->object->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
+    		$projectid			= (!empty($objectsrc->fk_project)?$object->fk_project:'');
+    		$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
+
+    		$soc = $objectsrc->client;
+    		$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+    		$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+    		$remise_percent 	= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
+    		$remise_absolue 	= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
     		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 		}
 	}
@@ -1658,7 +1656,7 @@ if ($_GET['action'] == 'create')
 	print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
 	if (is_object($objectsrc))    // Take value from source object
 	{
-		print $objectsrc->object->note_public;
+		print $objectsrc->note_public;
 	}
 	print '</textarea></td></tr>';
 
@@ -1671,7 +1669,7 @@ if ($_GET['action'] == 'create')
 		print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
 		if (is_object($objectsrc))    // Take value from source object
 		{
-			print $objectsrc->object->note;
+			print $objectsrc->note;
 		}
 		print '</textarea></td></tr>';
 	}
@@ -1682,35 +1680,35 @@ if ($_GET['action'] == 'create')
 		if ($_GET['origin'] == 'contrat')
 		{
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-			$objectsrc->object->remise_absolue=$remise_absolue;
-			$objectsrc->object->remise_percent=$remise_percent;
-			$objectsrc->object->update_price();
+			$objectsrc->remise_absolue=$remise_absolue;
+			$objectsrc->remise_percent=$remise_percent;
+			$objectsrc->update_price();
 		}
 
 		print "\n<!-- ".$classname." info -->";
 		print "\n";
-		print '<input type="hidden" name="amount"         value="'.$objectsrc->object->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$objectsrc->object->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$objectsrc->object->total_tva.'">'."\n";
-		print '<input type="hidden" name="origin"         value="'.$objectsrc->object->element.'">';
-		print '<input type="hidden" name="originid"       value="'.$objectsrc->object->id.'">';
+		print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
+		print '<input type="hidden" name="total"          value="'.$objectsrc->total_ttc.'">'."\n";
+		print '<input type="hidden" name="tva"            value="'.$objectsrc->total_tva.'">'."\n";
+		print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
+		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
-		print '<tr><td>'.$langs->trans($classname).'</td><td colspan="2">'.$objectsrc->object->getNomUrl(1).'</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->object->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->object->total_tva)."</td></tr>";
+		print '<tr><td>'.$langs->trans($classname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
+		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
 		if ($mysoc->pays_code=='ES')
 		{
 			if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 			{
-				print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->object->total_localtax1)."</td></tr>";
+				print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
 			}
 
 			if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 			{
-				print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->object->total_localtax2)."</td></tr>";
+				print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
 			}
 		}
-		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->object->total_ttc)."</td></tr>";
+		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
 	}
 	else
 	{
@@ -1776,18 +1774,155 @@ if ($_GET['action'] == 'create')
 
 	print "</form>\n";
 
+	// Try to read line from origin
+	$sql='';
 
-	// View origin lines
-	if (is_object($objectsrc))
+	// TODO deplacer dans la classe
+	if ($_GET['origin'] == 'propal')
 	{
+		//$objectsrc->printOriginLinesList();
+
 		$title=$langs->trans('ProductsAndServices');
+
+		$sql = 'SELECT pt.rowid, pt.description, pt.fk_remise_except,';
+		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.product_type, pt.info_bits,';
+		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
+		$sql.= ' WHERE pt.fk_propal = '.$objectsrc->id;
+		$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
+	}
+	// TODO deplacer dans la classe
+	if ($_GET['origin'] == 'commande')
+	{
+		$title=$langs->trans('Products');
+
+		$sql = 'SELECT pt.rowid, pt.description, pt.fk_remise_except,';
+		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.product_type, pt.info_bits,';
+		$sql.= ' pt.date_start as date_debut_prevue, pt.date_end as date_fin_prevue,';
+		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
+		$sql.= ' WHERE pt.fk_commande = '.$objectsrc->id;
+		$sql.= ' ORDER BY pt.rowid ASC';
+	}
+	// TODO deplacer dans la classe
+	if ($_GET['origin'] == 'contrat')
+	{
+		$title=$langs->trans('Services');
+
+		$sql = 'SELECT pt.rowid, pt.description,';
+		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
+		$sql.= ' pt.date_ouverture_prevue as date_debut_prevue, pt.date_ouverture as date_debut_reel,';
+		$sql.= ' pt.date_fin_validite as date_fin_prevue, pt.date_cloture as date_fin_reel,';
+		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'contratdet as pt';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
+		$sql.= ' WHERE pt.fk_contrat = '.$objectsrc->id;
+		$sql.= ' ORDER BY pt.rowid ASC';
+	}
+
+	if ($sql)
+	{
 		print '<br>';
 		print_titre($title);
 
 		print '<table class="noborder" width="100%">';
-		
-		$objectsrc->printOriginTitleList();
-		$objectsrc->printOriginLinesList($object);
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans('Ref').'</td>';
+		print '<td>'.$langs->trans('Description').'</td>';
+		print '<td align="right">'.$langs->trans('VAT').'</td>';
+		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+		print '<td align="right">'.$langs->trans('Qty').'</td>';
+		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
+
+		// Lignes
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			$var=True;
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($resql);
+				$var=!$var;
+
+				$date_start=$objp->date_debut_prevue;
+				if ($objp->date_debut_reel) $date_start=$objp->date_debut_reel;
+				$date_end=$objp->date_fin_prevue;
+				if ($objp->date_fin_reel) $date_end=$objp->date_fin_reel;
+
+				print '<tr '.$bc[$var].'><td>';
+				if (($objp->info_bits & 2) == 2)
+				{
+					print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socid.'">';
+					print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
+					print '</a>';
+				}
+				else if ($objp->prodid)
+				{
+					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">';
+					print ($objp->fk_product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product'));
+					print ' '.$objp->ref.'</a>';
+					print $objp->product?' - '.$objp->product:'';
+					// Dates
+					if ($date_start || $date_end)
+					{
+						print_date_range($date_start,$date_end);
+					}
+				}
+				else
+				{
+					print ($objp->product_type == -1 ? '&nbsp;' : ($objp->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
+					// Dates
+					if ($date_start || $date_end)
+					{
+						print_date_range($date_start,$date_end);
+					}
+				}
+				print "</td>\n";
+				print '<td>';
+				if ($objp->description)
+				{
+					if ($objp->description == '(CREDIT_NOTE)')
+					{
+						$discount=new DiscountAbsolute($db);
+						$discount->fetch($objp->fk_remise_except);
+						print $langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+					}
+					elseif ($obj->description == '(DEPOSIT)')
+					{
+						$discount=new DiscountAbsolute($db);
+						$discount->fetch($objp->fk_remise_except);
+						print $langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+					}
+					else
+					{
+						print dol_trunc($objp->description,60);
+					}
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print '</td>';
+				print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
+				print '<td align="right">'.price($objp->subprice).'</td>';
+				print '<td align="right">';
+				print (($objp->info_bits & 2) != 2) ? $objp->qty : '&nbsp;';
+				print '</td>';
+				print '<td align="right">';
+				print (($objp->info_bits & 2) != 2) ? $objp->remise_percent.'%' : '&nbsp;';
+				print '</td>';
+				print '</tr>';
+				$i++;
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+		}
 
 		print '</table>';
 	}

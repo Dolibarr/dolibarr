@@ -411,7 +411,7 @@ else
 			print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
 			print '<td align="center">'.$langs->trans("Qty").'</td></tr>';
 
-			$num = sizeof($fac->lines);
+			$num = sizeof($fac->lignes);
 			$i = 0;
 			$var=True;
 			while ($i < $num)
@@ -421,7 +421,7 @@ else
 				$product_static=new Product($db);
 
 				// Show product and description
-				$type=$fac->lines[$i]->product_type?$fac->lines[$i]->product_type:$fac->lines[$i]->fk_product_type;
+				$type=$fac->lignes[$i]->product_type?$fac->lignes[$i]->product_type:$fac->lignes[$i]->fk_product_type;
 				// Try to enhance type detection using date_start and date_end for free lines when type
 				// was not saved.
 				if (! empty($objp->date_start)) $type=1;
@@ -429,26 +429,26 @@ else
 
 				// Show line
 				print "<tr $bc[$var]>";
-				if ($fac->lines[$i]->fk_product > 0)
+				if ($fac->lignes[$i]->fk_product > 0)
 				{
 					print '<td>';
-					print '<a name="'.$fac->lines[$i]->id.'"></a>'; // ancre pour retourner sur la ligne
+					print '<a name="'.$fac->lignes[$i]->id.'"></a>'; // ancre pour retourner sur la ligne
 
 					// Show product and description
-					$product_static->type=$fac->lines[$i]->fk_product_type;
-					$product_static->id=$fac->lines[$i]->fk_product;
-					$product_static->ref=$fac->lines[$i]->product_ref;
-					$product_static->libelle=$fac->lines[$i]->libelle;
+					$product_static->type=$fac->lignes[$i]->fk_product_type;
+					$product_static->id=$fac->lignes[$i]->fk_product;
+					$product_static->ref=$fac->lignes[$i]->product_ref;
+					$product_static->libelle=$fac->lignes[$i]->libelle;
 					$text=$product_static->getNomUrl(1);
-					$text.= ' - '.$fac->lines[$i]->libelle;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($fac->lines[$i]->desc));
+					$text.= ' - '.$fac->lignes[$i]->libelle;
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($fac->lignes[$i]->desc));
 					print $html->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
-					print_date_range($fac->lines[$i]->date_start,$fac->lines[$i]->date_end);
+					print_date_range($fac->lignes[$i]->date_start,$fac->lignes[$i]->date_end);
 
 					// Add description in form
-					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($fac->lines[$i]->desc && $fac->lines[$i]->desc!=$fac->lines[$i]->libelle)?'<br>'.dol_htmlentitiesbr($fac->lines[$i]->desc):'';
+					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($fac->lignes[$i]->desc && $fac->lignes[$i]->desc!=$fac->lignes[$i]->libelle)?'<br>'.dol_htmlentitiesbr($fac->lignes[$i]->desc):'';
 
 					print '</td>';
 				}
@@ -458,16 +458,16 @@ else
 
 					if ($type==1) $text = img_object($langs->trans('Service'),'service');
 					else $text = img_object($langs->trans('Product'),'product');
-					print $text.' '.nl2br($fac->lines[$i]->desc);
+					print $text.' '.nl2br($fac->lignes[$i]->desc);
 
 					// Show range
-					print_date_range($fac->lines[$i]->date_start,$fac->lines[$i]->date_end);
+					print_date_range($fac->lignes[$i]->date_start,$fac->lignes[$i]->date_end);
 
 					print '</td>';
 				}
-				print "<td align=\"right\">".price($fac->lines[$i]->price)."</td>";
-				print '<td align="center">'.$fac->lines[$i]->remise_percent.' %</td>';
-				print "<td align=\"center\">".$fac->lines[$i]->qty."</td></tr>\n";
+				print "<td align=\"right\">".price($fac->lignes[$i]->price)."</td>";
+				print '<td align="center">'.$fac->lignes[$i]->remise_percent.' %</td>';
+				print "<td align=\"center\">".$fac->lignes[$i]->qty."</td></tr>\n";
 				$i++;
 			}
 			print '</table>';
