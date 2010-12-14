@@ -1391,7 +1391,7 @@ if ($_GET['action'] == 'create')
 		else if (in_array($element,array('order','commande','propal','contrat','contract')))
 		{
     		// For compatibility
-    		if ($element == 'order')    { $element = 'commande'; $subelement = 'customerorder'; }
+    		if ($element == 'commande')    { $subelement = 'customerorder'; }
     		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'proposal'; }
     		if ($element == 'contract') { $element = 'contrat'; $subelement = 'contract'; }
 
