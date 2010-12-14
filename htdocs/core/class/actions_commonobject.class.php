@@ -69,8 +69,6 @@ class ActionsCommonObject
 		$num = count($this->object->lines);
 		$var = true;
 		$i	 = 0;
-		
-		var_dump($this->object);
 
 		foreach ($this->object->lines as $line)
 		{

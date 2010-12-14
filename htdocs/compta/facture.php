@@ -1396,6 +1396,7 @@ if ($_GET['action'] == 'create')
     		$classname = 'Actions'.ucfirst($subelement);
     		$objectsrc = new $classname($db);
     		$objectsrc->fetch(GETPOST('originid'));
+    		if (empty($objectsrc->object->lines) && method_exists($objectsrc->object,'fetch_lines'))  $objectsrc->object->fetch_lines();
     		$objectsrc->object->fetch_thirdparty();
 
     		$projectid			= (!empty($objectsrc->object->fk_project)?$object->fk_project:'');
