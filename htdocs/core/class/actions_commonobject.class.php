@@ -96,6 +96,8 @@ class ActionsCommonObject
 	{
 		global $langs,$bc;
 		
+		//var_dump($line);
+		
 		$var=!$var;
 
 		$date_start=$line->date_debut_prevue;
@@ -125,6 +127,7 @@ class ActionsCommonObject
 		else
 		{
 			print ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
+			print ($line->label ? '&nbsp;'.$line->label : '');
 			// Dates
 			if ($date_start || $date_end)
 			{
