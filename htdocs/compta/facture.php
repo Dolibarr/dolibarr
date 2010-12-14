@@ -1389,7 +1389,7 @@ if ($_GET['action'] == 'create')
     		// For compatibility
     		if ($element == 'order')    { $element = 'commande'; $subelement = 'customerorder'; }
     		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'proposal'; }
-    		if ($element == 'contract') { $element = $subelement = 'contrat'; }
+    		if ($element == 'contract') { $element = 'contrat'; $subelement = 'contract'; }
 
     		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/actions_'.$subelement.'.class.php');
     		$classname = 'Actions'.ucfirst($subelement);
