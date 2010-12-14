@@ -1185,7 +1185,7 @@ class CommonObject
 	}
 
 	/**
-	 * 	\brief	Fetch field list
+	 * 	Fetch field list
 	 */
 	function getFieldList()
 	{
@@ -1309,13 +1309,15 @@ class CommonObject
 
 
 
-    // All functions here must be moved into a hhtml class file
+
+    // TODO: All functions here must be moved into a lib file and included into page as they are not business code
+    // but only "view" code.
 
 
 
 	/**
 	 *	Show add predefined products/services form
-	 *  TODO This should be moved into a html.class file instead of a business class.
+     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
 	 *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
 	 */
@@ -1330,7 +1332,7 @@ class CommonObject
 
 	/**
 	 *	Show add free products/services form
-     *  TODO This should be moved into a html.class file instead of a business class. But for
+     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
      */
@@ -1345,7 +1347,7 @@ class CommonObject
 
 	/**
 	 *	Show linked object block
-     *  TODO This must be moved into a html.class file instead of a business class.
+     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
 	 *	@param	$objecttype          Type of object (invoice, propal, order, invoice_supplier, order_supplier, ...)
 	 *	@param	$objectid
@@ -1354,7 +1356,7 @@ class CommonObject
 	function showLinkedObjectBlock($objecttype,$objectid,$somethingshown=0)
 	{
 		global $langs,$bc;
-		
+
 		//print 'objecttype='.$objecttype.'<br>';
 
 		$num = sizeof($objectid);
@@ -1380,7 +1382,7 @@ class CommonObject
 
 	/**
 	 * 	Return HTML table with title list
-     *  TODO This must be moved into a html.class file instead of a business class.
+     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
 	 */
 	function print_title_list()
@@ -1407,7 +1409,7 @@ class CommonObject
 	 *  @param     $dateSelector       Show date input fields (if service)
 	 *  @param     $seller             Object of seller third party
 	 *  @param     uyer                Object of buyer third party
-     *  TODO This must be moved into a html.class file instead of a business class.
+     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
 	 */
 	function printLinesList($dateSelector=0,$seller,$buyer)
 	{
@@ -1441,8 +1443,8 @@ class CommonObject
      *  @param      $dateSelector      1=Show also date range input fields
      *  @param      $seller            Object of seller third party
      *  @param      $buyer             Object of buyer third party
-     *  TODO This must be moved into a html.class file instead of a business class.
-     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
+     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 */
 	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer)
 	{
@@ -1501,9 +1503,10 @@ class CommonObject
 			}
 		}
 	}
-	
+
 	/**
 	 * 	Return HTML with list of origin lines
+     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
 	 */
 	function printOriginLinesList()
 	{
@@ -1530,20 +1533,21 @@ class CommonObject
 
 	/**
 	 * 	Return HTML with origin line
+	 *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
 	 * 	@param		element		Element type
 	 * 	@param		id			Element id
 	 */
 	function printOriginLine($line,$var)
 	{
 		global $langs,$bc;
-		
+
 		$var=!$var;
 
 		$date_start=$line->date_debut_prevue;
 		if ($line->date_debut_reel) $date_start=$line->date_debut_reel;
 		$date_end=$line->date_fin_prevue;
 		if ($line->date_fin_reel) $date_end=$line->date_fin_reel;
-		
+
 		print '<tr '.$bc[$var].'><td>';
 		if (($line->info_bits & 2) == 2)
 		{
