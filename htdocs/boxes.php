@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,17 +217,26 @@ class InfoBox
 
 					if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
 					{
-						$module = $regs[1];
-						$sourcefile = "/".$regs[2]."/inc/boxes/".$module.".php";
+						$boxname = $regs[1];
+						$module = $regs[2];
+						
+						if (file_exists(DOL_DOCUMENT_ROOT."/".$module."/inc/boxes/".$boxname.".php"))
+						{
+							$sourcefile = DOL_DOCUMENT_ROOT."/".$module."/inc/boxes/".$boxname.".php";
+						}
+						else
+						{
+							$sourcefile = DOL_EXTMODULE_ROOT."/".$module."/inc/boxes/".$boxname.".php";
+						}
 					}
 					else
 					{
-						$module=preg_replace('/.php$/i','',$obj->file);
-						$sourcefile = "/includes/boxes/".$module.".php";
+						$boxname=preg_replace('/.php$/i','',$obj->file);
+						$sourcefile = DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php";
 					}
 
-					include_once(DOL_DOCUMENT_ROOT.$sourcefile);
-					$box=new $module($db,$obj->note);
+					include_once($sourcefile);
+					$box=new $boxname($db,$obj->note);
 
 					$box->rowid=$obj->rowid;
 					$box->box_id=$obj->box_id;
@@ -277,17 +286,26 @@ class InfoBox
 
 					if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
 					{
-						$module = $regs[1];
-						$sourcefile = "/".$regs[2]."/inc/boxes/".$module.".php";
+						$boxname = $regs[1];
+						$module = $regs[2];
+						
+						if (file_exists(DOL_DOCUMENT_ROOT."/".$module."/inc/boxes/".$boxname.".php"))
+						{
+							$sourcefile = DOL_DOCUMENT_ROOT."/".$module."/inc/boxes/".$boxname.".php";
+						}
+						else
+						{
+							$sourcefile = DOL_EXTMODULE_ROOT."/".$module."/inc/boxes/".$boxname.".php";
+						}
 					}
 					else
 					{
-						$module=preg_replace('/.php$/i','',$obj->file);
-						$sourcefile = "/includes/boxes/".$module.".php";
+						$boxname=preg_replace('/.php$/i','',$obj->file);
+						$sourcefile = DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php";
 					}
 
-					include_once(DOL_DOCUMENT_ROOT.$sourcefile);
-					$box=new $module($db,$obj->note);
+					include_once($sourcefile);
+					$box=new $boxname($db,$obj->note);
 
 					$box->rowid=$obj->rowid;
 					$box->box_id=$obj->box_id;
