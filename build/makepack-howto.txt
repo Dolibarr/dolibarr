@@ -1,6 +1,6 @@
 ----- Dolibarr Makepack How To -----
-This documentation describe steps to build a BETA or RELREASE versions
-of Dolibarr. There is a chapter for BETA version and a chapter vor 
+This documentation describe steps to build a BETA or RELEASE versions
+of Dolibarr. There is a chapter for BETA version and a chapter for 
 RELEASE version.
 
 ***** Actions to do a BETA *****
