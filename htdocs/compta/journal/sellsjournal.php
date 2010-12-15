@@ -117,7 +117,6 @@ if ($result)
    		$tabfac[$obj->rowid]["date"] = $obj->datef;
    		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
    		$tabfac[$obj->rowid]["type"] = $obj->type;
-   		$tabfac[$obj->rowid]["lib"] = $obj->ref_client;
    		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
    		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
    		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
@@ -141,7 +140,7 @@ print "<tr class=\"liste_titre\">";
 //print "<td>".$langs->trans("JournalNum")."</td>";
 print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("Piece").' ('.$langs->trans("InvoiceRef").")</td>";
 print "<td>".$langs->trans("Account")."</td>";
-print "<t><td>".$langs->trans("Label")."</td><td>".$langs->trans("Debit")."</td><td>".$langs->trans("Credit")."</td>";
+print "<t><td>".$langs->trans("Type")."</td><td>".$langs->trans("Debit")."</td><td>".$langs->trans("Credit")."</td>";
 print "</tr>\n";
 
 $var=true;
@@ -156,25 +155,29 @@ foreach ($tabfac as $key => $val)
 	$invoicestatic->type=$val["type"];
 	
 	print "<tr ".$bc[$var].">";
-	// invoice
+	// third party
 	//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
 	print "<td>".$val["date"]."</td>";
 	print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 	foreach ($tabttc[$key] as $k => $mt)
 	{
-		print "<td>".$k."</td><td>".$val["lib"]."</td><td>".$mt."</td><td></td>";
+		print "<td>".$k."</td><td>".$langs->trans("ThirdParty")."</td><td>".($mt>=0?$mt:'')."</td><td>".($mt<0?-$mt:'')."</td>";
 	}
 	print "</tr>";
 	// product
 	foreach ($tabht[$key] as $k => $mt)
 	{
-		print "<tr ".$bc[$var].">";
-		//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
-		print "<td>".$val["date"]."</td>";
-		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-		print "<td>".$k."</td><td>".$val["lib"]."</td><td></td><td>".$mt."</td></tr>";
+		if ($mt)
+		{
+			print "<tr ".$bc[$var].">";
+			//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
+			print "<td>".$val["date"]."</td>";
+			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+			print "<td>".$k."</td><td>".$langs->trans("Products")."</td><td>".($mt<0?-$mt:'')."</td><td>".($mt>=0?$mt:'')."</td></tr>";
+		}
 	}
 	// vat
+	//var_dump($tabtva);
 	foreach ($tabtva[$key] as $k => $mt)
 	{
 	    if ($mt)
@@ -183,7 +186,7 @@ foreach ($tabfac as $key => $val)
     		//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
     		print "<td>".$val["date"]."</td>";
     		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-    		print "<td>".$k."</td><td>".$val["lib"]."</td><td></td><td>".$mt."</td></tr>";
+    		print "<td>".$k."</td><td>".$langs->trans("VAT")." ".$key."</td><td>".($mt<0?-$mt:'')."</td><td>".($mt>=0?$mt:'')."</td></tr>";
 	    }
 	}
 
@@ -192,23 +195,6 @@ foreach ($tabfac as $key => $val)
 
 print "</table>";
 
-/***************************************************
-* LINKED OBJECT BLOCK
-*
-* Put here code to view linked object
-****************************************************/
-/*
-
-$myobject->load_object_linked($myobject->id,$myobject->element);
-
-foreach($myobject->linked_object as $linked_object => $linked_objectid)
-{
-	if ($conf->$linked_object->enabled)
-	{
-		$somethingshown=$myobject->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
-	}
-}
-*/
 
 // End of page
 $db->close();
