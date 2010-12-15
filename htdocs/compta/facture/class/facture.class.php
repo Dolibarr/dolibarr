@@ -1753,23 +1753,23 @@ class Facture extends CommonObject
             $this->line->fk_product=$fk_product;
             $this->line->product_type=$product_type;
             $this->line->remise_percent=$remise_percent;
-            $this->line->subprice=($this->type==2?-1:1)*$pu_ht;
+            $this->line->subprice=       ($this->type==2?-1:1)*abs($pu_ht);
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
             $this->line->ventil=$ventil;
             $this->line->rang=$rangtouse;
             $this->line->info_bits=$info_bits;
             $this->line->fk_remise_except=$fk_remise_except;
-            $this->line->total_ht=($this->type==2?-1:1)*$total_ht;
-            $this->line->total_tva=($this->type==2?-1:1)*$total_tva;
-            $this->line->total_localtax1=($this->type==2?-1:1)*$total_localtax1;
-            $this->line->total_localtax2=($this->type==2?-1:1)*$total_localtax2;
-            $this->line->total_ttc=($this->type==2?-1:1)*$total_ttc;
+            $this->line->total_ht=       ($this->type==2?-1:1)*abs($total_ht);
+            $this->line->total_tva=      ($this->type==2?-1:1)*abs($total_tva);
+            $this->line->total_localtax1=($this->type==2?-1:1)*abs($total_localtax1);
+            $this->line->total_localtax2=($this->type==2?-1:1)*abs($total_localtax2);
+            $this->line->total_ttc=      ($this->type==2?-1:1)*abs($total_ttc);
             $this->line->special_code=$special_code;
 
             // \TODO Ne plus utiliser
-            $this->line->price=($this->type==2?-1:1)*$price;
-            $this->line->remise=($this->type==2?-1:1)*$remise;
+            $this->line->price=($this->type==2?-1:1)*abs($price);
+            $this->line->remise=($this->type==2?-1:1)*abs($remise);
 
             $result=$this->line->insert();
             if ($result > 0)
@@ -1814,7 +1814,7 @@ class Facture extends CommonObject
      * 	   	@param     	price_base_type HT or TTC
      * 	   	@param     	info_bits       Miscellanous informations
      * 		@param		type			Type of line (0=product, 1=service)
-     *      @return    	int             < 0 si erreur, > 0 si ok
+     *      @return    	int             < 0 if KO, > 0 if OK
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0,$price_base_type='HT', $info_bits=0, $type=0)
     {
@@ -1871,14 +1871,14 @@ class Facture extends CommonObject
             $this->line->localtax1_tx		= $txlocaltax1;
             $this->line->localtax2_tx		= $txlocaltax2;
             $this->line->remise_percent		= $remise_percent;
-            $this->line->subprice			= ($this->type==2?-1:1)*$pu;
+            $this->line->subprice			= ($this->type==2?-1:1)*abs($pu);
             $this->line->date_start			= $date_start;
             $this->line->date_end			= $date_end;
-            $this->line->total_ht			= ($this->type==2?-1:1)*$total_ht;
-            $this->line->total_tva			= ($this->type==2?-1:1)*$total_tva;
-            $this->line->total_localtax1	= ($this->type==2?-1:1)*$total_localtax1;
-            $this->line->total_localtax2	= ($this->type==2?-1:1)*$total_localtax2;
-            $this->line->total_ttc			= $total_ttc;
+            $this->line->total_ht			= ($this->type==2?-1:1)*abs($total_ht);
+            $this->line->total_tva			= ($this->type==2?-1:1)*abs($total_tva);
+            $this->line->total_localtax1	= ($this->type==2?-1:1)*abs($total_localtax1);
+            $this->line->total_localtax2	= ($this->type==2?-1:1)*abs($total_localtax2);
+            $this->line->total_ttc			= ($this->type==2?-1:1)*abs($total_ttc);
             $this->line->info_bits			= $info_bits;
             $this->line->product_type		= $type;
 

@@ -1002,7 +1002,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$product->fetch($productid);
 		$type=$product->type;
 	}
-	if ($product->price_min && GETPOST('productid') && (price2num($up_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($product->price_min)))
+	if ($object->type!=2 && $product->price_min && GETPOST('productid') && (price2num($up_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($product->price_min)))
 	{
 	    //print "CantBeLessThanMinPrice ".$up_ht." - ".GETPOST('remise_percent')." - ".$product->price_min;
 		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($product->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>';
