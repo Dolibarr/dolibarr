@@ -74,7 +74,7 @@ For developers:
 - New: Add first Selenium GUI tests.
 - New: Enhance a lot of internal function to build external modules
        more easily.
-- New: Local user timezone is aved into session (not used yet).
+- New: Local user timezone is saved into session (not used yet).
 - Qual: Menu system code is simpler.
 - Qual: Mutualize some duplicate code.
 - Qual: Renamed some fields into database to be more internationnal.
