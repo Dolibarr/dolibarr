@@ -52,6 +52,8 @@ For users:
 - New: Page "supplier summary" is now available.
 - Perf: Avoid reading database to determine country code after each
         page call.
+- Fix: Special chars are now supported in ECM module for filename (not yet for
+       directories).
 - Fix: Better Postgresql compatibility.
 - Fix: Box order is saved when moved.
 - Fix: Database name can contains "-" characters.
