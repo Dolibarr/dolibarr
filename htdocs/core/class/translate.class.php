@@ -179,8 +179,11 @@ class Translate {
 
 		foreach($this->dir as $searchdir)
 		{
-			// If $domain is "file@module" instead of "file" then we look for module lang file htdocs/module/langs/code_CODE/file.lang
+			// If $domain is "file@module" instead of "file" then we look for module lang file
+			// in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
+			// and in htdocs/mymodule/langs/code_CODE/file.lang for backward compatibility
 			// instead of file htdocs/langs/code_CODE/filelang
+			if (preg_match('/custom$/i',$searchdir)) $searchdir = $searchdir . "/modules";
 			if (preg_match('/@/',$domain))	$searchdir = $searchdir."/".(!empty($modulename)?$modulename:$newdomain)."/langs";
 			else $searchdir=$searchdir."/langs";
 

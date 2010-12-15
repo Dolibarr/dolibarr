@@ -1137,7 +1137,14 @@ function img_object($alt, $object, $cssclass='')
 
 	if (preg_match('/^([^@]+)@([^@]+)$/i',$object,$regs))
 	{
-		return '<img src="'.DOL_URL_ROOT.'/'.$regs[2].'/img/object_'.$regs[1].'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" '.$cssclass.'>';
+		if (file_exists(DOL_URL_ROOT.'/'.$regs[2].'/img/object_'.$regs[1]))
+		{
+			return '<img src="'.DOL_URL_ROOT.'/'.$regs[2].'/img/object_'.$regs[1].'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" '.$cssclass.'>';
+		}
+		else
+		{
+			return '<img src="'.DOL_URL_ROOT.'/custom/modules/'.$regs[2].'/img/object_'.$regs[1].'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" '.$cssclass.'>';
+		}
 	}
 
 	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/object_'.$object.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" '.$cssclass.'>';
