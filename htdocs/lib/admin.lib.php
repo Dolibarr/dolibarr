@@ -589,7 +589,10 @@ function Activate($value,$withdeps=1)
         // Loop on each directory
         foreach ($conf->file->dol_document_root as $dol_document_root)
         {
-            $found=@include_once($dol_document_root."/includes/modules/".$file);
+            if (preg_match('/custom$/i',$dol_document_root)) $dir = $dol_document_root . "/modules/";
+            else $dir = $dol_document_root."/includes/modules/";
+            
+        	$found=@include_once($dir.$file);
             if ($found) break;
         }
 
@@ -675,7 +678,10 @@ function UnActivate($value,$requiredby=1)
         // Loop on each directory
         foreach ($conf->file->dol_document_root as $dol_document_root)
         {
-            $found=@include_once($dol_document_root."/includes/modules/".$file);
+            if (preg_match('/custom$/i',$dol_document_root)) $dir = $dol_document_root . "/modules/";
+            else $dir = $dol_document_root."/includes/modules/";
+        	
+        	$found=@include_once($dir.$file);
             if ($found) break;
         }
 
