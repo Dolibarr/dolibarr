@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,8 @@ $modules_files = array();
 // Load list of modules
 foreach($conf->file->dol_document_root as $searchdir)
 {
-	$dirtoscan=$searchdir.'/includes/modules/';
+	if (preg_match('/custom$/i',$searchdir)) $dirtoscan = $searchdir . "/modules/";
+	else $dirtoscan = $searchdir . "/includes/modules/";
 	$handle=opendir($dirtoscan);
 	while (($file = readdir($handle))!==false)
 	{
