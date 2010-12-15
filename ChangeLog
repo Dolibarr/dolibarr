@@ -49,6 +49,7 @@ For users:
 - New: Add property "Event on full day" on agenda
 - New: Enhancement and better compatibility (google, thunderbird) for agenda export.
 - New: Can use image editor on user photo.
+- New: Page "supplier summary" is now available.
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Better Postgresql compatibility.
