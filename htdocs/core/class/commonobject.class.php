@@ -1279,15 +1279,28 @@ class CommonObject
 		{
 			if ($conf->$module->enabled && in_array($type,$hooks))
 			{
+				$path 		= '/'.$module.'/class/';
+				$actionfile = 'actions_'.$module.'.class.php';
+				$daofile 	= 'dao_'.$module.'.class.php';
+				$pathroot	= '';
+				
 				// Include class and library of thirdparty module
-				if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/class/actions_'.$module.'.class.php') &&
-					file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/class/dao_'.$module.'.class.php'))
+				if (file_exists(DOL_DOCUMENT_ROOT.$path.$actionfile) &&	file_exists(DOL_DOCUMENT_ROOT.$path.$daofile))
+				{
+					$pathroot = DOL_DOCUMENT_ROOT;
+				}
+				else if (file_exists(DOL_DOCUMENT_EXTMODULE.$path.$actionfile) && file_exists(DOL_DOCUMENT_EXTMODULE.$path.$daofile))
+				{
+					$pathroot = DOL_DOCUMENT_EXTMODULE;
+				}
+				
+				if ($pathroot)
 				{
 					// Include actions class (controller)
-					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/class/actions_'.$module.'.class.php');
+					require_once($pathroot.$path.$actionfile);
 
 					// Include dataservice class (model)
-					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/class/dao_'.$module.'.class.php');
+					require_once($pathroot.$path.$daofile);
 
 					// Instantiate actions class (controller)
 					$controlclassname = 'Actions'.ucfirst($module);
@@ -1299,9 +1312,9 @@ class CommonObject
 					$this->hooks[$objModule->module_number]->object = new $modelclassname($this->db);
 				}
 
-				if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php'))
+				if (file_exists($pathroot.'/'.$module.'/lib/'.$module.'.lib.php'))
 				{
-					require_once(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'.$module.'.lib.php');
+					require_once($pathroot.'/'.$module.'/lib/'.$module.'.lib.php');
 				}
 			}
 		}
