@@ -1797,6 +1797,66 @@ class Societe extends CommonObject
             if (dol_strlen($chaine) != 14) return -1;
         }
 
+        //Verify CIF/NIF/NIE if pays ES
+        //Returns: 1 if NIF ok, 2 if CIF ok, 3 if NIE ok, -1 if NIF bad, -2 if CIF bad, -3 if NIE bad, 0 if unexpected bad
+        if ($idprof == 1 && $soc->pays_code == 'ES')
+        {
+            $string=trim($this->siren);
+            $string=preg_replace('/(\s)/','',$string);
+            $string = strtoupper($string);
+
+            for ($i = 0; $i < 9; $i ++)
+                $num[$i] = substr($string, $i, 1);
+
+            //Check format
+            if (!preg_match('/((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)/', $string))
+                return 0;
+
+            //Check NIF
+            if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $string))
+                if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 0, 8) % 23, 1))
+                    return 1;
+                else
+                    return -1;
+
+            //algorithm checking type code CIF
+            $sum = $num[2] + $num[4] + $num[6];
+            for ($i = 1; $i < 8; $i += 2)
+                $sum += substr((2 * $num[$i]),0,1) + substr((2 * $num[$i]),1,1);
+            $n = 10 - substr($sum, strlen($sum) - 1, 1);
+
+            //Chek special NIF
+            if (preg_match('/^[KLM]{1}/', $string))
+                if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 1, 8) % 23, 1))
+                    return 1;
+                else
+                    return -1;
+
+            //Check CIF
+            if (preg_match('/^[ABCDEFGHJNPQRSUVW]{1}/', $string))
+                if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1))
+                    return 2;
+                else
+                    return -2;
+
+            //Check NIE T
+            if (preg_match('/^[T]{1}/', $string))
+                if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $string))
+                    return 3;
+                else
+                    return -3;
+
+            //Check NIE XYZ
+            if (preg_match('/^[XYZ]{1}/', $string))
+                if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X','Y','Z'), array('0','1','2'), $string), 0, 8) % 23, 1))
+                    return 3;
+                else
+                    return -3;
+
+            //Can not be verified
+            return -4;
+        }
+
         return $ok;
     }
 
@@ -1814,6 +1874,7 @@ class Societe extends CommonObject
         $url='';
         if ($idprof == 1 && $soc->pays_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren;
         if ($idprof == 1 && $soc->pays_code == 'GB') $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
+        if ($idprof == 1 && $soc->pays_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$soc->siren;
 
         if ($url) return '<a target="_blank" href="'.$url.'">['.$langs->trans("Check").']</a>';
         return '';
@@ -2066,6 +2127,14 @@ class Societe extends CommonObject
             if ($idprof==3) $formlength=5;		// 4 chiffres et 1 lettre depuis janvier
             if ($idprof==4) $formlength=32;		// No maximum as we need to include a town name in this id
         }
+        if ($this->pays_code == 'ES')
+        {
+            if ($idprof==1) $formlength=9;  //CIF/NIF/NIE 9 digits
+            if ($idprof==2) $formlength=12; //NASS 12 digits without /
+            if ($idprof==3) $formlength=5;  //CNAE 5 digits
+            if ($idprof==4) $formlength=32; //depend of college
+        }
+
         $selected=$preselected;
         if (! $selected && $idprof==1) $selected=$this->siren;
         if (! $selected && $idprof==2) $selected=$this->siret;
