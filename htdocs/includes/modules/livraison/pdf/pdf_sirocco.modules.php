@@ -98,7 +98,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		{
 			$object->fetch_thirdparty();
 
-			$nblignes = sizeof($object->lignes);
+			$nblines = sizeof($object->lines);
 
 			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->expedition->dir_output."/receipt";
@@ -180,7 +180,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
 
@@ -196,22 +196,22 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 					$pdf->SetXY (10, $curY );
 
-					$pdf->MultiCell(20, 3, $outputlangs->convToOutputCharset($object->lignes[$i]->ref), 0, 'C');
+					$pdf->MultiCell(20, 3, $outputlangs->convToOutputCharset($object->lines[$i]->ref), 0, 'C');
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (133, $curY );
-					//$pdf->MultiCell(10, 5, $object->lignes[$i]->tva_tx, 0, 'C');
+					//$pdf->MultiCell(10, 5, $object->lines[$i]->tva_tx, 0, 'C');
 
 					$pdf->SetXY (145, $curY );
-					$pdf->MultiCell(10, 3, $object->lignes[$i]->qty_shipped, 0, 'C');
+					$pdf->MultiCell(10, 3, $object->lines[$i]->qty_shipped, 0, 'C');
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (156, $curY );
-					//$pdf->MultiCell(20, 3, price($object->lignes[$i]->price), 0, 'R', 0);
+					//$pdf->MultiCell(20, 3, price($object->lines[$i]->price), 0, 'R', 0);
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (174, $curY );
-					//$total = price($object->lignes[$i]->price * $object->lignes[$i]->qty_shipped);
+					//$total = price($object->lines[$i]->price * $object->lines[$i]->qty_shipped);
 					//$pdf->MultiCell(26, 3, $total, 0, 'R', 0);
 
 					$pdf->line(10, $curY-1, 200, $curY-1);
@@ -220,10 +220,10 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					$nexY+=2;    // Passe espace entre les lignes
 
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
-					if ($i < ($nblignes - 1))	// If it's not last line
+					if ($i < ($nblines - 1))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
-						$follow_descproduitservice = $object->lignes[$i+1]->desc;
+						$follow_descproduitservice = $object->lines[$i+1]->desc;
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4);
 					}

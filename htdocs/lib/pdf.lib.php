@@ -372,7 +372,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
     global $conf,$user;
 
     $outputlangs->load("dict");
-    $ligne='';
+    $line='';
 
     // Line of free text
     if (! empty($conf->global->$paramfreetext))
@@ -387,92 +387,92 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
         );
 
         $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray,$outputlangs,$object);
-        $ligne.=$outputlangs->convToOutputCharset($newfreetext);
+        $line.=$outputlangs->convToOutputCharset($newfreetext);
     }
 
     // First line of company infos
 
     // Juridical status
-    $ligne1="";
+    $line1="";
     if ($fromcompany->forme_juridique_code)
     {
-        $ligne1.=($ligne1?" - ":"").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
+        $line1.=($line1?" - ":"").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
     }
     // Capital
     if ($fromcompany->capital)
     {
-        $ligne1.=($ligne1?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
+        $line1.=($line1?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
     }
     // Prof Id 1
     if ($fromcompany->idprof1 && ($fromcompany->pays_code != 'FR' || ! $fromcompany->idprof2))
     {
         $field=$outputlangs->transcountrynoentities("ProfId1",$fromcompany->pays_code);
         if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-        $ligne1.=($ligne1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof1);
+        $line1.=($line1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof1);
     }
     // Prof Id 2
     if ($fromcompany->idprof2)
     {
         $field=$outputlangs->transcountrynoentities("ProfId2",$fromcompany->pays_code);
         if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-        $ligne1.=($ligne1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof2);
+        $line1.=($line1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof2);
     }
 
     // Second line of company infos
-    $ligne2="";
+    $line2="";
     // Prof Id 3
     if ($fromcompany->idprof3)
     {
         $field=$outputlangs->transcountrynoentities("ProfId3",$fromcompany->pays_code);
         if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-        $ligne2.=($ligne2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof3);
+        $line2.=($line2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof3);
     }
     // Prof Id 4
     if ($fromcompany->idprof4)
     {
         $field=$outputlangs->transcountrynoentities("ProfId4",$fromcompany->pays_code);
         if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-        $ligne2.=($ligne2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
+        $line2.=($line2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
     }
     // IntraCommunautary VAT
     if ($fromcompany->tva_intra != '')
     {
-        $ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$outputlangs->convToOutputCharset($fromcompany->tva_intra);
+        $line2.=($line2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$outputlangs->convToOutputCharset($fromcompany->tva_intra);
     }
 
     $pdf->SetFont('','',7);
     $pdf->SetDrawColor(224,224,224);
 
     // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-    $nbofligne=dol_nboflines_bis($ligne,0,$outputlangs->charset_output);
-    //print 'nbofligne='.$nbofligne; exit;
-    //print 'e'.$ligne.'t'.dol_nboflines($ligne);exit;
-    $posy=$marge_basse + ($nbofligne*3) + ($ligne1?3:0) + ($ligne2?3:0);
+    $nbofline=dol_nboflines_bis($line,0,$outputlangs->charset_output);
+    //print 'nbofline='.$nbofline; exit;
+    //print 'e'.$line.'t'.dol_nboflines($line);exit;
+    $posy=$marge_basse + ($nbofline*3) + ($line1?3:0) + ($line2?3:0);
 
-    if ($ligne)	// Free text
+    if ($line)	// Free text
     {
         $pdf->SetXY($marge_gauche,-$posy);
         $width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
         if ($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT) { $width=200; $align='C'; }
-        $pdf->MultiCell($width, 3, $ligne, 0, $align, 0);
-        $posy-=($nbofligne*3);	// 6 of ligne + 3 of MultiCell
+        $pdf->MultiCell($width, 3, $line, 0, $align, 0);
+        $posy-=($nbofline*3);	// 6 of ligne + 3 of MultiCell
     }
 
     $pdf->SetY(-$posy);
     $pdf->line($marge_gauche, $page_hauteur-$posy, 200, $page_hauteur-$posy);
     $posy--;
 
-    if ($ligne1)
+    if ($line1)
     {
         $pdf->SetXY($marge_gauche,-$posy);
-        $pdf->MultiCell(200, 2, $ligne1, 0, 'C', 0);
+        $pdf->MultiCell(200, 2, $line1, 0, 'C', 0);
     }
 
-    if ($ligne2)
+    if ($line2)
     {
         $posy-=3;
         $pdf->SetXY($marge_gauche,-$posy);
-        $pdf->MultiCell(200, 2, $ligne2, 0, 'C', 0);
+        $pdf->MultiCell(200, 2, $line2, 0, 'C', 0);
     }
 
     // Show page nb only on iso languages

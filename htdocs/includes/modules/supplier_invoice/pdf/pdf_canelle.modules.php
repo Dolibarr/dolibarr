@@ -239,7 +239,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 					// Unit price before discount
 					$pdf->SetXY ($this->posxup, $curY);
-					$pdf->MultiCell(18, 3, price($object->lines[$i]->pu_ht), 0, 'R', 0);
+					$pdf->MultiCell(20, 3, price($object->lines[$i]->pu_ht), 0, 'R', 0);
 
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
