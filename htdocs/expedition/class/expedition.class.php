@@ -50,7 +50,6 @@ class Expedition extends CommonObject
 	var $modelpdf;
 	var $origin;
 	var $origin_id;
-	var $lignes=array();	// TODO deprecated
 	var $lines=array();
 	var $expedition_method_id;
 	var $statut;
@@ -77,7 +76,7 @@ class Expedition extends CommonObject
 	function Expedition($DB)
 	{
 		$this->db = $DB;
-		$this->lignes = array();
+		$this->lines = array();
 		$this->products = array();
 
 		// List of long language codes for status
@@ -158,9 +157,9 @@ class Expedition extends CommonObject
 			if ($this->db->query($sql))
 			{
 				// Insertion des lignes
-				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					if (! $this->create_line($this->lignes[$i]->entrepot_id, $this->lignes[$i]->origin_line_id, $this->lignes[$i]->qty) > 0)
+					if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty) > 0)
 					{
 						$error++;
 					}
@@ -410,9 +409,9 @@ class Expedition extends CommonObject
 					dol_syslog("Expedition::valid movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
 
-					if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
+					if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
 					{
-						//var_dump($this->lignes[$i]);
+						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);
 						// We decrement stock of product (and sub-products)
 						// We use warehouse selected for each line
@@ -529,14 +528,14 @@ class Expedition extends CommonObject
 	 */
 	function addline( $entrepot_id, $id, $qty )
 	{
-		$num = sizeof($this->lignes);
+		$num = sizeof($this->lines);
 		$line = new ExpeditionLigne($this->db);
 
 		$line->entrepot_id = $entrepot_id;
 		$line->origin_line_id = $id;
 		$line->qty = $qty;
 
-		$this->lignes[$num] = $line;
+		$this->lines[$num] = $line;
 	}
 
 	/**
@@ -783,7 +782,6 @@ class Expedition extends CommonObject
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
 
-				$this->lignes[$i] = $line; // TODO deprecated
 				$this->lines[$i] = $line;
 
 				$i++;
@@ -920,15 +918,15 @@ class Expedition extends CommonObject
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
-			$ligne=new ExpeditionLigne($this->db);
-			$ligne->desc=$langs->trans("Description")." ".$xnbp;
-			$ligne->libelle=$langs->trans("Description")." ".$xnbp;
-			$ligne->qty=10;
-			$ligne->qty_asked=5;
-			$ligne->qty_shipped=4;
-			$ligne->fk_product=$this->commande->lignes[$xnbp]->fk_product;
+			$line=new ExpeditionLigne($this->db);
+			$line->desc=$langs->trans("Description")." ".$xnbp;
+			$line->libelle=$langs->trans("Description")." ".$xnbp;
+			$line->qty=10;
+			$line->qty_asked=5;
+			$line->qty_shipped=4;
+			$line->fk_product=$this->commande->lines[$xnbp]->fk_product;
 
-			$this->lignes[]=$ligne;
+			$this->lines[]=$line;
 			$xnbp++;
 		}
 

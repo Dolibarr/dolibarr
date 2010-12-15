@@ -645,7 +645,7 @@ else
         if ($result > 0)
         {
         	$id = $contrat->id; // if $_GET['ref']
-        	$result=$contrat->fetch_lignes();
+        	$result=$contrat->fetch_lines();
         }
         if ($result < 0)
         {
@@ -655,7 +655,7 @@ else
 
         if ($mesg) print $mesg;
 
-		$nbofservices=sizeof($contrat->lignes);
+		$nbofservices=sizeof($contrat->lines);
 
         $author = new User($db);
         $author->fetch($contrat->user_author_id);
@@ -805,7 +805,7 @@ else
 			$sql.= " p.ref, p.label";
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-			$sql.= " WHERE cd.rowid = ".$contrat->lignes[$cursorline-1]->id;
+			$sql.= " WHERE cd.rowid = ".$contrat->lines[$cursorline-1]->id;
 
 			$result = $db->query($sql);
 			if ($result)
@@ -982,7 +982,7 @@ else
 			/*
 			 * Confirmation to delete service line of contract
 			 */
-			if ($_REQUEST["action"] == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $contrat->lignes[$cursorline-1]->id == $_GET["rowid"])
+			if ($_REQUEST["action"] == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $contrat->lines[$cursorline-1]->id == $_GET["rowid"])
 			{
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&lineid=".$_GET["rowid"],$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
 				if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
@@ -991,7 +991,7 @@ else
 			/*
 			 * Confirmation to move service toward another contract
 			 */
-			if ($_REQUEST["action"] == 'move' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $contrat->lignes[$cursorline-1]->id == $_GET["rowid"])
+			if ($_REQUEST["action"] == 'move' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $contrat->lines[$cursorline-1]->id == $_GET["rowid"])
 			{
 				$arraycontractid=array();
 				foreach($arrayothercontracts as $contractcursor)
@@ -1011,7 +1011,7 @@ else
 			/*
 			 * Confirmation de la validation activation
 			 */
-			if ($_REQUEST["action"] == 'active' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $contrat->lignes[$cursorline-1]->id == $_GET["ligne"])
+			if ($_REQUEST["action"] == 'active' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $contrat->lines[$cursorline-1]->id == $_GET["ligne"])
 			{
 				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
@@ -1023,7 +1023,7 @@ else
 			/*
 			 * Confirmation de la validation fermeture
 			 */
-			if ($_REQUEST["action"] == 'closeline' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $contrat->lignes[$cursorline-1]->id == $_GET["ligne"])
+			if ($_REQUEST["action"] == 'closeline' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $contrat->lines[$cursorline-1]->id == $_GET["ligne"])
 			{
 				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
@@ -1039,7 +1039,7 @@ else
 				print '<table class="notopnoleft" width="100%">';
 
 				print '<tr '.$bc[false].'>';
-				print '<td>'.$langs->trans("ServiceStatus").': '.$contrat->lignes[$cursorline-1]->getLibStatut(4).'</td>';
+				print '<td>'.$langs->trans("ServiceStatus").': '.$contrat->lines[$cursorline-1]->getLibStatut(4).'</td>';
 				print '<td width="30" align="right">';
 				if ($user->societe_id == 0)
 				{
@@ -1047,7 +1047,7 @@ else
 					{
 						$action='activateline';
 						if ($objp->statut == 4) $action='unactivateline';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$contrat->id.'&amp;ligne='.$contrat->lignes[$cursorline-1]->id.'&amp;action='.$action.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$contrat->id.'&amp;ligne='.$contrat->lines[$cursorline-1]->id.'&amp;action='.$action.'">';
 						print img_edit();
 						print '</a>';
 					}
@@ -1086,7 +1086,7 @@ else
 				print '</table>';
 			}
 
-			if ($user->rights->contrat->activer && $_REQUEST["action"] == 'activateline' && $contrat->lignes[$cursorline-1]->id == $_GET["ligne"])
+			if ($user->rights->contrat->activer && $_REQUEST["action"] == 'activateline' && $contrat->lines[$cursorline-1]->id == $_GET["ligne"])
 			{
 				/**
 				 * Activer la ligne de contrat
@@ -1136,12 +1136,12 @@ else
 				print '</form>';
 			}
 
-			if ($user->rights->contrat->activer && $_REQUEST["action"] == 'unactivateline' && $contrat->lignes[$cursorline-1]->id == $_GET["ligne"])
+			if ($user->rights->contrat->activer && $_REQUEST["action"] == 'unactivateline' && $contrat->lines[$cursorline-1]->id == $_GET["ligne"])
 			{
 				/**
 				 * Desactiver la ligne de contrat
 				 */
-				print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$contrat->id.'&amp;ligne='.$contrat->lignes[$cursorline-1]->id.'&amp;action=closeline" method="post">';
+				print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$contrat->id.'&amp;ligne='.$contrat->lines[$cursorline-1]->id.'&amp;action=closeline" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 				print '<table class="noborder" width="100%">';

@@ -96,20 +96,20 @@ class BonPrelevement extends CommonObject
     function AddFacture($facture_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number)
     {
         $result = 0;
-        $ligne_id = 0;
+        $line_id = 0;
 
-        $result = $this->AddLigne($ligne_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number);
+        $result = $this->AddLigne($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number);
 
         if ($result == 0)
         {
-            if ($ligne_id > 0)
+            if ($line_id > 0)
             {
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture (";
                 $sql.= "fk_facture";
                 $sql.= ",fk_prelevement_lignes";
                 $sql.= ") VALUES (";
                 $sql.= $facture_id;
-                $sql.= ", ".$ligne_id;
+                $sql.= ", ".$line_id;
                 $sql.= ")";
 
                 if ($this->db->query($sql))
@@ -149,7 +149,7 @@ class BonPrelevement extends CommonObject
    	*	@param	number bank account number 
    	*	@return	int	>0 if OK, <0 if KO
    	*/
-    function AddLigne(&$ligne_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number)
+    function AddLigne(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number)
     {
         $result = -1;
         $concat = 0;
@@ -202,7 +202,7 @@ class BonPrelevement extends CommonObject
 
             if ($this->db->query($sql))
             {
-                $ligne_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_lignes");
+                $line_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_lignes");
                 $result = 0;
             }
             else
