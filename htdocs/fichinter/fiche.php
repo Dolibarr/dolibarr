@@ -244,7 +244,7 @@ if ($_POST['action'] == 'setdescription')
 }
 
 // Add line
-if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
+if ($_POST['action'] == "addline" && $user->rights->ficheinter->creer)
 {
 	if ($_POST['np_desc'] && ($_POST['durationhour'] || $_POST['durationmin']))
 	{
@@ -804,7 +804,7 @@ elseif ($fichinterid)
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'#add" name="addinter" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="fichinterid" value="'.$fichinter->id.'">';
-			print '<input type="hidden" name="action" value="addligne">';
+			print '<input type="hidden" name="action" value="addline">';
 
 			$var=false;
 
@@ -828,7 +828,7 @@ elseif ($fichinterid)
 			$html->select_duration('duration',3600);
 			print '</td>';
 
-			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
+			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
 			print '</tr>';
 
 			print '</form>';

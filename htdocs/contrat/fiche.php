@@ -179,7 +179,7 @@ if ($_POST["action"] == 'classin')
     $contrat->setProject($_POST["projectid"]);
 }
 
-if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
+if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
 {
     if ($_POST["pqty"] && (($_POST["pu"] != '' && $_POST["desc"]) || $_POST["p_idprod"]))
     {
@@ -1215,9 +1215,9 @@ else
 			$var=false;
 
 			// Service sur produit predefini
-			print '<form name="addligne" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
+			print '<form name="addline" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="addligne">';
+			print '<input type="hidden" name="action" value="addline">';
 			print '<input type="hidden" name="mode" value="predefined">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 
@@ -1240,9 +1240,9 @@ else
 			print "<tr $bc[$var]>";
 			print '<td colspan="8">';
 			print $langs->trans("DateStartPlanned").' ';
-			$form->select_date('',"date_start",$usehm,$usehm,1,"addligne");
+			$form->select_date('',"date_start",$usehm,$usehm,1,"addline");
 			print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-			$form->select_date('',"date_end",$usehm,$usehm,1,"addligne");
+			$form->select_date('',"date_end",$usehm,$usehm,1,"addline");
 			print '</td>';
 			print '</tr>';
 
@@ -1251,9 +1251,9 @@ else
 			$var=!$var;
 
 			// Service libre
-			print '<form name="addligne_sl" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
+			print '<form name="addline_sl" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="addligne">';
+			print '<input type="hidden" name="action" value="addline">';
 			print '<input type="hidden" name="mode" value="libre">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 
@@ -1273,9 +1273,9 @@ else
 			print "<tr $bc[$var]>";
 			print '<td colspan="8">';
 			print $langs->trans("DateStartPlanned").' ';
-			$form->select_date('',"date_start_sl",$usehm,$usehm,1,"addligne_sl");
+			$form->select_date('',"date_start_sl",$usehm,$usehm,1,"addline_sl");
 			print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-			$form->select_date('',"date_end_sl",$usehm,$usehm,1,"addligne_sl");
+			$form->select_date('',"date_end_sl",$usehm,$usehm,1,"addline_sl");
 			print '</td>';
 			print '</tr>';
 

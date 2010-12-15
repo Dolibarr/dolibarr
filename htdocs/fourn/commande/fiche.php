@@ -973,7 +973,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		print '<table class="noborder" width="100%">';
 
-		$num = sizeof($commande->lignes);
+		$num = sizeof($commande->lines);
 		$i = 0;	$total = 0;
 
 		if ($num)
@@ -991,78 +991,78 @@ if ($id > 0 || ! empty($ref))
 		$var=true;
 		while ($i <	$num)
 		{
-			$commandline =	$commande->lignes[$i];
+			$line =	$commande->lines[$i];
 			$var=!$var;
 
 			// Show product and description
-			$type=$commandline->product_type?$commandline->product_type:$commandline->fk_product_type;
+			$type=$line->product_type?$line->product_type:$line->fk_product_type;
 			// Try to enhance type detection using date_start and date_end for free lines where type
 			// was not saved.
-			if (! empty($commandline->date_start)) $type=1;
-			if (! empty($commandline->date_end)) $type=1;
+			if (! empty($line->date_start)) $type=1;
+			if (! empty($line->date_end)) $type=1;
 
 			// Ligne en mode visu
-			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $commandline->id)
+			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $line->id)
 			{
 				print '<tr '.$bc[$var].'>';
 
 				// Show product and description
 				print '<td>';
-				if ($commandline->fk_product > 0)
+				if ($line->fk_product > 0)
 				{
-					print '<a name="'.$commandline->id.'"></a>'; // ancre pour retourner sur la ligne
+					print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
 
 					$product_static=new ProductFournisseur($db);
-					$product_static->fetch($commandline->fk_product);
+					$product_static->fetch($line->fk_product);
 					$text=$product_static->getNomUrl(1,'supplier');
 					$text.= ' - '.$product_static->libelle;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($commandline->description));
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
 					print $html->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
-					print_date_range($commandline->date_start,$commandline->date_end);
+					print_date_range($line->date_start,$line->date_end);
 
 					// Add description in form
-					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($commandline->description && $commandline->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($commandline->description):'';
+					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($line->description && $line->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($line->description):'';
 				}
 
 				// Description - Editor wysiwyg
-				if (! $commandline->fk_product)
+				if (! $line->fk_product)
 				{
 					if ($type==1) $text = img_object($langs->trans('Service'),'service');
 					else $text = img_object($langs->trans('Product'),'product');
-					print $text.' '.nl2br($commandline->description);
+					print $text.' '.nl2br($line->description);
 
 					// Show range
-					print_date_range($commandline->date_start,$commandline->date_end);
+					print_date_range($line->date_start,$line->date_end);
 				}
 
 				print '</td>';
 
-				print '<td align="right" nowrap="nowrap">'.vatrate($commandline->tva_tx).'%</td>';
+				print '<td align="right" nowrap="nowrap">'.vatrate($line->tva_tx).'%</td>';
 
-				print '<td align="right" nowrap="nowrap">'.price($commandline->subprice)."</td>\n";
+				print '<td align="right" nowrap="nowrap">'.price($line->subprice)."</td>\n";
 
-				print '<td align="right" nowrap="nowrap">'.$commandline->qty.'</td>';
+				print '<td align="right" nowrap="nowrap">'.$line->qty.'</td>';
 
-				if ($commandline->remise_percent >	0)
+				if ($line->remise_percent >	0)
 				{
-					print '<td align="right" nowrap="nowrap">'.dol_print_reduction($commandline->remise_percent,$langs)."</td>\n";
+					print '<td align="right" nowrap="nowrap">'.dol_print_reduction($line->remise_percent,$langs)."</td>\n";
 				}
 				else
 				{
 					print '<td>&nbsp;</td>';
 				}
 
-				print '<td align="right" nowrap="nowrap">'.price($commandline->total_ht).'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($line->total_ht).'</td>';
 				if ($commande->statut == 0	&& $user->rights->fournisseur->commande->creer)
 				{
-					print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$commandline->id.'#'.$commandline->id.'">';
+					print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$line->id.'#'.$line->id.'">';
 					print img_edit();
 					print '</a></td>';
 
 					$actiondelete='delete_product_line';
-					print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action='.$actiondelete.'&amp;lineid='.$commandline->id.'">';
+					print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action='.$actiondelete.'&amp;lineid='.$line->id.'">';
 					print img_delete();
 					print '</a></td>';
 				}
@@ -1074,33 +1074,33 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Ligne en mode update
-			if ($_GET["action"]	== 'editline' && $user->rights->fournisseur->commande->creer && ($_GET["rowid"] == $commandline->id))
+			if ($_GET["action"]	== 'editline' && $user->rights->fournisseur->commande->creer && ($_GET["rowid"] == $line->id))
 			{
 				print "\n";
-				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;etat=1&amp;ligne_id='.$commandline->id.'" method="post">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;etat=1&amp;ligne_id='.$line->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateligne">';
 				print '<input type="hidden" name="id" value="'.$commande->id.'">';
 				print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
-				print '<a name="'.$commandline->id.'"></a>'; // ancre pour retourner sur la ligne
-				if (($conf->product->enabled || $conf->service->enabled) && $commandline->fk_product > 0)
+				print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
+				if (($conf->product->enabled || $conf->service->enabled) && $line->fk_product > 0)
 				{
 					$product_static=new ProductFournisseur($db);
-					$product_static->fetch($commandline->fk_product);
+					$product_static->fetch($line->fk_product);
 					$text=$product_static->getNomUrl(1,'supplier');
 					$text.= ' - '.$product_static->libelle;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($commandline->description));
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
 					print $html->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
-					print_date_range($commandline->date_start,$commandline->date_end);
+					print_date_range($line->date_start,$line->date_end);
                     print '<br>';
 				}
 				else
 				{
-					print $html->select_type_of_lines($commandline->product_type,'type',1);
+					print $html->select_type_of_lines($line->product_type,'type',1);
 					if ($conf->product->enabled && $conf->service->enabled) print '<br>';
 				}
 
@@ -1108,16 +1108,16 @@ if ($id > 0 || ! empty($ref))
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
                 $nbrows=ROWS_2;
                 if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-        		$doleditor=new DolEditor('eldesc',$commandline->description,200,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+        		$doleditor=new DolEditor('eldesc',$line->description,200,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
 		      	$doleditor->Create();
 
 		      	print '</td>';
 				print '<td>';
-				$html->select_tva('tva_tx',$commandline->tva_tx);
+				$html->select_tva('tva_tx',$line->tva_tx);
 				print '</td>';
-				print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($commandline->subprice).'"></td>';
-				print '<td align="right"><input size="2" type="text" name="qty" value="'.$commandline->qty.'"></td>';
-				print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="remise_percent" value="'.$commandline->remise_percent.'">%</td>';
+				print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
+				print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';
+				print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="remise_percent" value="'.$line->remise_percent.'">%</td>';
 				print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 				print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 				print '</tr>' .	"\n";

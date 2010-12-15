@@ -1671,7 +1671,7 @@ else
                     print '<td colspan="4">&nbsp;</td>';
                     print '</tr>';
 
-                    print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=addline" method="post">';
+                    print '<form name="addline_predef" action="fiche.php?facid='.$fac->id.'&amp;action=addline" method="post">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="socid" value="'. $fac->socid .'">';
                     print '<input type="hidden" name="facid" value="'.$fac->id.'">';

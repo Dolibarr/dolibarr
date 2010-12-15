@@ -98,7 +98,7 @@ class BonPrelevement extends CommonObject
         $result = 0;
         $line_id = 0;
 
-        $result = $this->AddLigne($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number);
+        $result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number);
 
         if ($result == 0)
         {
@@ -149,7 +149,7 @@ class BonPrelevement extends CommonObject
    	*	@param	number bank account number 
    	*	@return	int	>0 if OK, <0 if KO
    	*/
-    function AddLigne(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number)
+    function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number)
     {
         $result = -1;
         $concat = 0;
@@ -207,7 +207,7 @@ class BonPrelevement extends CommonObject
             }
             else
             {
-                dol_syslog("BonPrelevement::AddLigne Error -2");
+                dol_syslog("BonPrelevement::addline Error -2");
                 $result = -2;
             }
 
