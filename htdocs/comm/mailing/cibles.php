@@ -236,7 +236,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 			if (is_dir($dir))
 			{
 				$handle=opendir($dir);
-				if ($handle)
+				if (is_resource($handle))
 				{
 					while (($file = readdir($handle))!==false)
 					{

@@ -91,7 +91,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	//print $dir."\n<br>";
 	dol_syslog("Scan directory ".$dir." for modules");
 	$handle=@opendir($dir);
-	if ($handle)
+	if (is_resource($handle))
 	{
 		while (($file = readdir($handle))!==false)
 		{

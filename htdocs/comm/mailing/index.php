@@ -73,69 +73,71 @@ $dir=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
 $handle=opendir($dir);
 
 $var=True;
-while (($file = readdir($handle))!==false)
+if (is_resource($handle))
 {
-    if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+    while (($file = readdir($handle))!==false)
     {
-        if (preg_match("/(.*)\.(.*)\.(.*)/i",$file,$reg))
+        if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
         {
-            $modulename=$reg[1];
-   			if ($modulename == 'example') continue;
-
-            // Chargement de la classe
-            $file = $dir."/".$modulename.".modules.php";
-            $classname = "mailing_".$modulename;
-            require_once($file);
-            $mailmodule = new $classname($db);
-
-            $qualified=1;
-            foreach ($mailmodule->require_module as $key)
+            if (preg_match("/(.*)\.(.*)\.(.*)/i",$file,$reg))
             {
-                if (! $conf->$key->enabled || (! $user->admin && $mailmodule->require_admin))
+                $modulename=$reg[1];
+       			if ($modulename == 'example') continue;
+
+                // Chargement de la classe
+                $file = $dir."/".$modulename.".modules.php";
+                $classname = "mailing_".$modulename;
+                require_once($file);
+                $mailmodule = new $classname($db);
+
+                $qualified=1;
+                foreach ($mailmodule->require_module as $key)
                 {
-                    $qualified=0;
-                    //print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
-                    break;
+                    if (! $conf->$key->enabled || (! $user->admin && $mailmodule->require_admin))
+                    {
+                        $qualified=0;
+                        //print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
+                        break;
+                    }
                 }
-            }
 
-            // Si le module mailing est qualifi�
-            if ($qualified)
-            {
-                $var = !$var;
-
-                foreach ($mailmodule->getSqlArrayForStats() as $sql)
+                // Si le module mailing est qualifi�
+                if ($qualified)
                 {
-                    print '<tr '.$bc[$var].'>';
+                    $var = !$var;
 
-                    $result=$db->query($sql);
-                    if ($result)
+                    foreach ($mailmodule->getSqlArrayForStats() as $sql)
                     {
-                      $num = $db->num_rows($result);
+                        print '<tr '.$bc[$var].'>';
 
-                      $i = 0;
-
-                      while ($i < $num )
+                        $result=$db->query($sql);
+                        if ($result)
                         {
-                          $obj = $db->fetch_object($result);
-                          print '<td>'.img_object('',$mailmodule->picto).' '.$obj->label.'</td><td align="right">'.$obj->nb.'<td>';
-                          $i++;
-                        }
+                          $num = $db->num_rows($result);
 
-                      $db->free($result);
+                          $i = 0;
+
+                          while ($i < $num )
+                            {
+                              $obj = $db->fetch_object($result);
+                              print '<td>'.img_object('',$mailmodule->picto).' '.$obj->label.'</td><td align="right">'.$obj->nb.'<td>';
+                              $i++;
+                            }
+
+                          $db->free($result);
+                        }
+                        else
+                        {
+                          dol_print_error($db);
+                        }
+                        print '</tr>';
                     }
-                    else
-                    {
-                      dol_print_error($db);
-                    }
-                    print '</tr>';
                 }
             }
         }
     }
+    closedir($handle);
 }
-closedir($handle);
-
 
 
 print "</table><br>";

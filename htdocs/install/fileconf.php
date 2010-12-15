@@ -250,50 +250,53 @@ if (1 == 2) {   // Disabled during install process because HTTPS may not be yet 
 
 		$defaultype=! empty($dolibarr_main_db_type)?$dolibarr_main_db_type:($force_install_type?$force_install_type:'mysqli');
 
-		// Scan les drivers
+        $modules = array();
+        $nbok = $nbko = 0;
+        $option='';
+
+        // Scan les drivers
 		$dir=DOL_DOCUMENT_ROOT.'/lib/databases';
 		$handle=opendir($dir);
-		$modules = array();
-		$nbok = $nbko = 0;
-		$option='';
+        if (is_resource($handle))
+        {
+    		while (($file = readdir($handle))!==false)
+    		{
+    		    if (is_readable($dir."/".$file) && preg_match('/^(.*)\.lib\.php/i',$file,$reg))
+    		    {
+    		        $type=$reg[1];
 
-		while (($file = readdir($handle))!==false)
-		{
-		    if (is_readable($dir."/".$file) && preg_match('/^(.*)\.lib\.php/i',$file,$reg))
-		    {
-		        $type=$reg[1];
+    		        // Version min de la base
+    		        $versionbasemin=array();
+    		        if ($type=='mysql')  { $versionbasemin=array(3,1,0); $testfunction='mysql_connect'; }
+    		        if ($type=='mysqli') { $versionbasemin=array(4,1,0); $testfunction='mysqli_connect'; }
+    		        if ($type=='pgsql')  { $versionbasemin=array(8,1,0); $testfunction='pg_connect'; }
+    		        if ($type=='mssql')  { $versionbasemin=array(2000);  $testfunction='mssql_connect'; }
 
-		        // Version min de la base
-		        $versionbasemin=array();
-		        if ($type=='mysql')  { $versionbasemin=array(3,1,0); $testfunction='mysql_connect'; }
-		        if ($type=='mysqli') { $versionbasemin=array(4,1,0); $testfunction='mysqli_connect'; }
-		        if ($type=='pgsql')  { $versionbasemin=array(8,1,0); $testfunction='pg_connect'; }
-		        if ($type=='mssql')  { $versionbasemin=array(2000);  $testfunction='mssql_connect'; }
+    		        // Remarques
+    		        $note='';
+    		        if ($type=='mysql') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
+    		        if ($type=='mysqli') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
+    		        if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionbasemin).')';
+    		        if ($type=='mssql') 	$note='(SQL Server >= '.versiontostring($versionbasemin).')';
 
-		        // Remarques
-		        $note='';
-		        if ($type=='mysql') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
-		        if ($type=='mysqli') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
-		        if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionbasemin).')';
-		        if ($type=='mssql') 	$note='(SQL Server >= '.versiontostring($versionbasemin).')';
+    		        // Switch to mysql if mysqli is not present
+    		        if ($defaultype=='mysqli' && !function_exists('mysqli_connect')) $defaultype = 'mysql';
 
-		        // Switch to mysql if mysqli is not present
-		        if ($defaultype=='mysqli' && !function_exists('mysqli_connect')) $defaultype = 'mysql';
-
-		        // Affiche ligne dans liste
-		        $option.='<option value="'.$type.'"'.($defaultype == $type?' selected':'');
-		        if (! function_exists($testfunction)) $option.=' disabled="disabled"';
-		        $option.='>';
-		        $option.=$type.'&nbsp; &nbsp;';
-		        if ($note) $option.=' '.$note;
-		        // Experimental
-		        if ($type=='pgsql')     $option.=' '.$langs->trans("Experimental");
-		        elseif ($type=='mssql') $option.=' '.$langs->trans("Experimental");
-		        // No available
-		        elseif (! function_exists($testfunction)) $option.=' - '.$langs->trans("FunctionNotAvailableInThisPHP");
-		        $option.='</option>';
-		    }
-		}
+    		        // Affiche ligne dans liste
+    		        $option.='<option value="'.$type.'"'.($defaultype == $type?' selected':'');
+    		        if (! function_exists($testfunction)) $option.=' disabled="disabled"';
+    		        $option.='>';
+    		        $option.=$type.'&nbsp; &nbsp;';
+    		        if ($note) $option.=' '.$note;
+    		        // Experimental
+    		        if ($type=='pgsql')     $option.=' '.$langs->trans("Experimental");
+    		        elseif ($type=='mssql') $option.=' '.$langs->trans("Experimental");
+    		        // No available
+    		        elseif (! function_exists($testfunction)) $option.=' - '.$langs->trans("FunctionNotAvailableInThisPHP");
+    		        $option.='</option>';
+    		    }
+    		}
+        }
 
 		?> <select name='db_type'>
 		<?php echo $option ?>

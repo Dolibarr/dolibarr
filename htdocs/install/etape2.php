@@ -149,15 +149,18 @@ if ($_POST["action"] == "set")
 		dolibarr_install_syslog("Open tables directory ".$dir." handle=".$handle,LOG_DEBUG);
 		$tablefound = 0;
 		$tabledata=array();
-		while (($file = readdir($handle))!==false)
-		{
-			if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file) && ! preg_match('/\.key\.sql$/i',$file))
-			{
-				$tablefound++;
-				$tabledata[]=$file;
-			}
-		}
-		closedir($handle);
+        if (is_resource($handle))
+        {
+    		while (($file = readdir($handle))!==false)
+    		{
+    			if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file) && ! preg_match('/\.key\.sql$/i',$file))
+    			{
+    				$tablefound++;
+    				$tabledata[]=$file;
+    			}
+    		}
+    		closedir($handle);
+        }
 
 		// Sort list of sql files on alphabetical order (load order is important)
 		sort($tabledata);
@@ -255,15 +258,18 @@ if ($_POST["action"] == "set")
 		dolibarr_install_syslog("Open keys directory ".$dir." handle=".$handle,LOG_DEBUG);
 		$tablefound = 0;
 		$tabledata=array();
-		while (($file = readdir($handle))!==false)
-		{
-			if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file) && preg_match('/\.key\.sql$/i',$file))
-			{
-				$tablefound++;
-				$tabledata[]=$file;
-			}
-		}
-		closedir($handle);
+        if (is_resource($handle))
+        {
+    		while (($file = readdir($handle))!==false)
+    		{
+    			if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file) && preg_match('/\.key\.sql$/i',$file))
+    			{
+    				$tablefound++;
+    				$tabledata[]=$file;
+    			}
+    		}
+    		closedir($handle);
+        }
 
 		// Sort list of sql files on alphabetical order (load order is important)
 		sort($tabledata);
@@ -474,15 +480,18 @@ if ($_POST["action"] == "set")
 		dolibarr_install_syslog("Open directory data ".$dir." handle=".$handle,LOG_DEBUG);
 		$tablefound = 0;
 		$tabledata=array();
-		while (($file = readdir($handle))!==false)
-		{
-			if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))
-			{
-				$tablefound++;
-				$tabledata[]=$file;
-			}
-		}
-		closedir($handle);
+        if (is_resource($handle))
+        {
+    		while (($file = readdir($handle))!==false)
+    		{
+    			if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))
+    			{
+    				$tablefound++;
+    				$tabledata[]=$file;
+    			}
+    		}
+            closedir($handle);
+        }
 
 		// Sort list of data files on alphabetical order (load order is important)
 		sort($tabledata);

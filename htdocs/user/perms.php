@@ -128,26 +128,29 @@ foreach($listdir as $dirroot)
 	$dir=$dirroot."/includes/modules/";
 
 	$handle=opendir($dir);
-	while (($file = readdir($handle))!==false)
-	{
-	    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
-	    {
-	        $modName = substr($file, 0, dol_strlen($file) - 10);
+    if (is_resource($handle))
+    {
+    	while (($file = readdir($handle))!==false)
+    	{
+    	    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
+    	    {
+    	        $modName = substr($file, 0, dol_strlen($file) - 10);
 
-	        if ($modName)
-	        {
-	            include_once($dir.$file);
-	            $objMod = new $modName($db);
-	            if ($objMod->rights_class) {
+    	        if ($modName)
+    	        {
+    	            include_once($dir.$file);
+    	            $objMod = new $modName($db);
+    	            if ($objMod->rights_class) {
 
-	                $ret=$objMod->insert_permissions(0);
+    	                $ret=$objMod->insert_permissions(0);
 
-	                $modules[$objMod->rights_class]=$objMod;
-	                //print "modules[".$objMod->rights_class."]=$objMod;";
-	            }
-	        }
-	    }
-	}
+    	                $modules[$objMod->rights_class]=$objMod;
+    	                //print "modules[".$objMod->rights_class."]=$objMod;";
+    	            }
+    	        }
+    	    }
+    	}
+    }
 }
 
 $db->commit();

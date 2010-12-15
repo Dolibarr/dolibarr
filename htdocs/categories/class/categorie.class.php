@@ -1097,35 +1097,37 @@ class Categorie
 		if (file_exists($dir))
 		{
 			$handle=opendir($dir);
+            if (is_resource($handle))
+            {
+    			while (($file = readdir($handle)) != false)
+    			{
+    				if (is_file($dir.$file))
+    				{
+    					$nbphoto++;
+    					$photo = $file;
 
-			while (($file = readdir($handle)) != false)
-			{
-				if (is_file($dir.$file))
-				{
-					$nbphoto++;
-					$photo = $file;
+    					// On determine nom du fichier vignette
+    					$photo_vignette='';
+    					if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs))
+    					{
+    						$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo).'_small'.$regs[0];
+    					}
 
-					// On determine nom du fichier vignette
-					$photo_vignette='';
-					if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs))
-					{
-						$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo).'_small'.$regs[0];
-					}
+    					// Objet
+    					$obj=array();
+    					$obj['photo']=$photo;
+    					if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']=$photo_vignette;
+    					else $obj['photo_vignette']="";
 
-					// Objet
-					$obj=array();
-					$obj['photo']=$photo;
-					if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']=$photo_vignette;
-					else $obj['photo_vignette']="";
+    					$tabobj[$nbphoto-1]=$obj;
 
-					$tabobj[$nbphoto-1]=$obj;
+    					// On continue ou on arrete de boucler
+    					if ($nbmax && $nbphoto >= $nbmax) break;
+    				}
+    			}
 
-					// On continue ou on arrete de boucler
-					if ($nbmax && $nbphoto >= $nbmax) break;
-				}
-			}
-
-			closedir($handle);
+    			closedir($handle);
+            }
 		}
 
 		return $tabobj;

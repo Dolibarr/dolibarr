@@ -173,7 +173,7 @@ print "</tr>\n";
 clearstatcache();
 
 $handle = opendir($dir);
-if ($handle)
+if (is_resource($handle))
 {
 	$var=true;
 
@@ -294,73 +294,76 @@ clearstatcache();
 $handle=opendir($dir);
 
 $var=true;
-while (($file = readdir($handle))!==false)
+if (is_resource($handle))
 {
-	if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
-	{
-		$name = substr($file, 4, dol_strlen($file) -16);
-		$classname = substr($file, 0, dol_strlen($file) -12);
+    while (($file = readdir($handle))!==false)
+    {
+    	if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
+    	{
+    		$name = substr($file, 4, dol_strlen($file) -16);
+    		$classname = substr($file, 0, dol_strlen($file) -12);
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">\n  <td>$name";
-		print "</td>\n  <td>\n";
-		require_once($dir.$file);
-		$module = new $classname($db);
-		print $module->description;
-		print "</td>\n";
+    		$var=!$var;
+    		print "<tr ".$bc[$var].">\n  <td>$name";
+    		print "</td>\n  <td>\n";
+    		require_once($dir.$file);
+    		$module = new $classname($db);
+    		print $module->description;
+    		print "</td>\n";
 
-		// Active
-		if (in_array($name, $def))
-		{
-			print "<td align=\"center\">\n";
-			if ($conf->global->PROJECT_ADDON_PDF != "$name")
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-				print img_picto($langs->trans("Enabled"),'on');
-				print '</a>';
-			}
-			else
-			{
-				print img_picto($langs->trans("Enabled"),'on');
-			}
-			print "</td>";
-		}
-		else
-		{
-			print "<td align=\"center\">\n";
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-			print "</td>";
-		}
+    		// Active
+    		if (in_array($name, $def))
+    		{
+    			print "<td align=\"center\">\n";
+    			if ($conf->global->PROJECT_ADDON_PDF != "$name")
+    			{
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+    				print img_picto($langs->trans("Enabled"),'on');
+    				print '</a>';
+    			}
+    			else
+    			{
+    				print img_picto($langs->trans("Enabled"),'on');
+    			}
+    			print "</td>";
+    		}
+    		else
+    		{
+    			print "<td align=\"center\">\n";
+    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    			print "</td>";
+    		}
 
-		// Defaut
-		print "<td align=\"center\">";
-		if ($conf->global->PROJECT_ADDON_PDF == "$name")
-		{
-			print img_picto($langs->trans("Default"),'on');
-		}
-		else
-		{
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-		}
-		print '</td>';
+    		// Defaut
+    		print "<td align=\"center\">";
+    		if ($conf->global->PROJECT_ADDON_PDF == "$name")
+    		{
+    			print img_picto($langs->trans("Default"),'on');
+    		}
+    		else
+    		{
+    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    		}
+    		print '</td>';
 
-		// Info
-		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-		$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-		print '<td align="center">';
-		print $html->textwithpicto('',$htmltooltip,1,0);
-		print '</td>';
-		print '<td align="center">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
-		print '</td>';
+    		// Info
+    		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+    		$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+    		print '<td align="center">';
+    		print $html->textwithpicto('',$htmltooltip,1,0);
+    		print '</td>';
+    		print '<td align="center">';
+    		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
+    		print '</td>';
 
-		print "</tr>\n";
-	}
+    		print "</tr>\n";
+    	}
+    }
+    closedir($handle);
 }
-closedir($handle);
 
 print '</table><br/>';
 

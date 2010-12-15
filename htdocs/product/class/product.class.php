@@ -2462,10 +2462,13 @@ class Product extends CommonObject
 		if (file_exists($dir_osencoded))
 		{
 			$handle=opendir($dir_osencoded);
-			while (($file = readdir($handle)) != false)
+			if (is_resource($handle))
 			{
-				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in UTF8 in memory
-				if (dol_is_file($dir.$file)) return true;
+			    while (($file = readdir($handle)) != false)
+    			{
+    				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in UTF8 in memory
+    				if (dol_is_file($dir.$file)) return true;
+    			}
 			}
 		}
 		return false;
@@ -2502,100 +2505,103 @@ class Product extends CommonObject
 		if (file_exists($dir_osencoded))
 		{
 			$handle=opendir($dir_osencoded);
-			while (($file = readdir($handle)) != false)
-			{
-				$photo='';
+            if (is_resource($handle))
+            {
+    			while (($file = readdir($handle)) != false)
+    			{
+    				$photo='';
 
-				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
+    				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
 
-				if (dol_is_file($dir.$file) && preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$dir.$file))
-				{
-					$nbphoto++;
-					$photo = $file;
-					$viewfilename = $file;
+    				if (dol_is_file($dir.$file) && preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$dir.$file))
+    				{
+    					$nbphoto++;
+    					$photo = $file;
+    					$viewfilename = $file;
 
-					if ($size == 1) {   // Format vignette
-						// On determine nom du fichier vignette
-						$photo_vignette='';
-						if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs)) {
-							$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo)."_small".$regs[0];
-							if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
-						}
+    					if ($size == 1) {   // Format vignette
+    						// On determine nom du fichier vignette
+    						$photo_vignette='';
+    						if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs)) {
+    							$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo)."_small".$regs[0];
+    							if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
+    						}
 
-						// Get filesize of original file
-						$imgarray=dol_getImageSize($dir.$photo);
+    						// Get filesize of original file
+    						$imgarray=dol_getImageSize($dir.$photo);
 
-						if ($nbbyrow && $nbphoto == 1) $return.= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+    						if ($nbbyrow && $nbphoto == 1) $return.= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 
-						if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) $return.= '<tr align=center valign=middle border=1>';
-						if ($nbbyrow) $return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+    						if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) $return.= '<tr align=center valign=middle border=1>';
+    						if ($nbbyrow) $return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
 
-						$return.= "\n";
-						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" target="_blank">';
+    						$return.= "\n";
+    						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" target="_blank">';
 
-						// Show image (width height=$maxheight)
-						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
-						$alt=$langs->transnoentitiesnoconv('File').': '.$pdir.$photo;
-						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
-						if ($photo_vignette && $imgarray['height'] > $maxheight) {
-							$return.= '<!-- Show thumb -->';
-							$return.= '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
-						}
-						else {
-							$return.= '<!-- Show original file -->';
-							$return.= '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
-						}
+    						// Show image (width height=$maxheight)
+    						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
+    						$alt=$langs->transnoentitiesnoconv('File').': '.$pdir.$photo;
+    						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
+    						if ($photo_vignette && $imgarray['height'] > $maxheight) {
+    							$return.= '<!-- Show thumb -->';
+    							$return.= '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+    						}
+    						else {
+    							$return.= '<!-- Show original file -->';
+    							$return.= '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+    						}
 
-						$return.= '</a>';
+    						$return.= '</a>';
 
-						if ($showfilename) $return.= '<br>'.$viewfilename;
-						if ($showaction)
-						{
-							$return.= '<br>';
-							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-							if ($photo_vignette && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
-							{
-								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
-							}
-							if ($user->rights->produit->creer || $user->rights->service->creer)
-							{
-								// Link to resize
-			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+    						if ($showfilename) $return.= '<br>'.$viewfilename;
+    						if ($showaction)
+    						{
+    							$return.= '<br>';
+    							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
+    							if ($photo_vignette && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
+    							{
+    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
+    							}
+    							if ($user->rights->produit->creer || $user->rights->service->creer)
+    							{
+    								// Link to resize
+    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
-			               		// Link to delete
-								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
-								$return.= img_delete().'</a>';
-							}
-						}
-						$return.= "\n";
+    			               		// Link to delete
+    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+    								$return.= img_delete().'</a>';
+    							}
+    						}
+    						$return.= "\n";
 
-						if ($nbbyrow) $return.= '</td>';
-						if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) $return.= '</tr>';
+    						if ($nbbyrow) $return.= '</td>';
+    						if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) $return.= '</tr>';
 
-					}
+    					}
 
-					if ($size == 0) {     // Format origine
-						$return.= '<img class="photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+    					if ($size == 0) {     // Format origine
+    						$return.= '<img class="photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
 
-						if ($showfilename) $return.= '<br>'.$viewfilename;
-						if ($showaction)
-						{
-							if ($user->rights->produit->creer || $user->rights->service->creer)
-							{
-								// Link to resize
-			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+    						if ($showfilename) $return.= '<br>'.$viewfilename;
+    						if ($showaction)
+    						{
+    							if ($user->rights->produit->creer || $user->rights->service->creer)
+    							{
+    								// Link to resize
+    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
-			               		// Link to delete
-			               		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
-								$return.= img_delete().'</a>';
-							}
-						}
-					}
+    			               		// Link to delete
+    			               		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+    								$return.= img_delete().'</a>';
+    							}
+    						}
+    					}
 
-					// On continue ou on arrete de boucler ?
-					if ($nbmax && $nbphoto >= $nbmax) break;
-				}
-			}
+    					// On continue ou on arrete de boucler ?
+    					if ($nbmax && $nbphoto >= $nbmax) break;
+    				}
+    			}
+            }
 
 			if ($nbbyrow && $size==1)
 			{
@@ -2632,7 +2638,7 @@ class Product extends CommonObject
 
 		$dir_osencoded=dol_osencode($dir);
 		$handle=@opendir($dir_osencoded);
-		if ($handle)
+		if (is_resource($handle))
 		{
 			while (($file = readdir($handle)) != false)
 			{

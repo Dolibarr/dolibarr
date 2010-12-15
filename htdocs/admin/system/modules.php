@@ -55,24 +55,28 @@ foreach($conf->file->dol_document_root as $searchdir)
 	if (preg_match('/custom$/i',$searchdir)) $dirtoscan = $searchdir . "/modules/";
 	else $dirtoscan = $searchdir . "/includes/modules/";
 	$handle=opendir($dirtoscan);
-	while (($file = readdir($handle))!==false)
-	{
-		if (is_readable($dirtoscan.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
-		{
-			$modName = substr($file, 0, dol_strlen($file) - 10);
+    if (is_resource($handle))
+    {
+    	while (($file = readdir($handle))!==false)
+    	{
+    		if (is_readable($dirtoscan.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
+    		{
+    			$modName = substr($file, 0, dol_strlen($file) - 10);
 
-			if ($modName)
-			{
-				include_once($dirtoscan.$file);
-				$objMod = new $modName($db);
+    			if ($modName)
+    			{
+    				include_once($dirtoscan.$file);
+    				$objMod = new $modName($db);
 
-				$modules[$objMod->numero]=$objMod;
-				$modules_names[$objMod->numero]=$objMod->name;
-				$modules_files[$objMod->numero]=$file;
-				$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
-			}
-		}
-	}
+    				$modules[$objMod->numero]=$objMod;
+    				$modules_names[$objMod->numero]=$objMod->name;
+    				$modules_files[$objMod->numero]=$file;
+    				$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
+    			}
+    		}
+    	}
+    	close($handle);
+    }
 }
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

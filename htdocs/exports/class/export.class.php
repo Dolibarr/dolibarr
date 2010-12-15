@@ -78,7 +78,7 @@ class Export
 
 			// Search available exports
 			$handle=@opendir($dir);
-			if ($handle)
+			if (is_resource($handle))
 			{
 				$var=True;
 				$i=0;

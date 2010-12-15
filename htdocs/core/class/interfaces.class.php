@@ -76,86 +76,88 @@ class Interfaces
 			$handle=opendir($dir);
 			$modules = array();
 			$nbfile = $nbtotal = $nbok = $nbko = 0;
+            if (is_resource($handle))
+            {
+    			while (($file = readdir($handle))!==false)
+    			{
+    				if (is_readable($dir."/".$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php$/i',$file,$reg))
+    				{
+    					$nbfile++;
 
-			while (($file = readdir($handle))!==false)
-			{
-				if (is_readable($dir."/".$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php$/i',$file,$reg))
-				{
-					$nbfile++;
+    					$modName = "Interface".ucfirst($reg[2]);
+    					//print "file=$file"; print "modName=$modName"; exit;
+    					if (in_array($modName,$modules))
+    					{
+    						$langs->load("errors");
+    						dol_syslog("Interface::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
+    						continue;
+    					}
 
-					$modName = "Interface".ucfirst($reg[2]);
-					//print "file=$file"; print "modName=$modName"; exit;
-					if (in_array($modName,$modules))
-					{
-						$langs->load("errors");
-						dol_syslog("Interface::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
-						continue;
-					}
+    					// Check if trigger file is disabled by name
+    					if (preg_match('/NORUN$/i',$file))
+    					{
+    						continue;
+    					}
+    					// Check if trigger file is for a particular module
+    					$qualified=true;
+    					if (strtolower($reg[1]) != 'all')
+    					{
+    						$module=preg_replace('/^mod/i','',$reg[1]);
+    						$constparam='MAIN_MODULE_'.strtoupper($module);
+    						if (empty($conf->global->$constparam)) $qualified=false;
+    					}
 
-					// Check if trigger file is disabled by name
-					if (preg_match('/NORUN$/i',$file))
-					{
-						continue;
-					}
-					// Check if trigger file is for a particular module
-					$qualified=true;
-					if (strtolower($reg[1]) != 'all')
-					{
-						$module=preg_replace('/^mod/i','',$reg[1]);
-						$constparam='MAIN_MODULE_'.strtoupper($module);
-						if (empty($conf->global->$constparam)) $qualified=false;
-					}
+    					if (! $qualified)
+    					{
+    						dol_syslog("Interfaces::run_triggers action=".$action." Triggers for file '".$file."' need module to be enabled",LOG_INFO);
+    						continue;
+    					}
 
-					if (! $qualified)
-					{
-						dol_syslog("Interfaces::run_triggers action=".$action." Triggers for file '".$file."' need module to be enabled",LOG_INFO);
-						continue;
-					}
+    					include_once($dir."/".$file);
+    					$objMod = new $modName($this->db);
+    					$i=0;
+    					if ($objMod)
+    					{
+    						// Bypass if workflow module is enabled and if the trigger asked to be disable in such case
+    						if ($conf->workflow->enabled && ! empty($objMod->disabled_if_workflow))
+    						{
+    							dol_syslog("Interfaces::run_triggers action=".$action." Bypass triggers for file '".$file."'",LOG_INFO);
+    							continue;
+    						}
 
-					include_once($dir."/".$file);
-					$objMod = new $modName($this->db);
-					$i=0;
-					if ($objMod)
-					{
-						// Bypass if workflow module is enabled and if the trigger asked to be disable in such case
-						if ($conf->workflow->enabled && ! empty($objMod->disabled_if_workflow))
-						{
-							dol_syslog("Interfaces::run_triggers action=".$action." Bypass triggers for file '".$file."'",LOG_INFO);
-							continue;
-						}
+    						dol_syslog("Interfaces::run_triggers action=".$action." Launch triggers for file '".$file."'",LOG_INFO);
 
-						dol_syslog("Interfaces::run_triggers action=".$action." Launch triggers for file '".$file."'",LOG_INFO);
-
-						$modules[$i] = $modName;
-						//dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
-						$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
-						if ($result > 0)
-						{
-							// Action OK
-							$nbtotal++;
-							$nbok++;
-						}
-						if ($result == 0)
-						{
-							// Aucune action faite
-							$nbtotal++;
-						}
-						if ($result < 0)
-						{
-							// Action KO
-							$nbtotal++;
-							$nbko++;
-							$this->errors[]=$objMod->error;
-						}
-						$i++;
-					}
-					else
-					{
-						dol_syslog("Interfaces::run_triggers action=".$action." Failed to instantiate trigger for file '".$file."'",LOG_ERROR);
-					}
-				}
-			}
-			closedir($handle);
+    						$modules[$i] = $modName;
+    						//dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
+    						$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
+    						if ($result > 0)
+    						{
+    							// Action OK
+    							$nbtotal++;
+    							$nbok++;
+    						}
+    						if ($result == 0)
+    						{
+    							// Aucune action faite
+    							$nbtotal++;
+    						}
+    						if ($result < 0)
+    						{
+    							// Action KO
+    							$nbtotal++;
+    							$nbko++;
+    							$this->errors[]=$objMod->error;
+    						}
+    						$i++;
+    					}
+    					else
+    					{
+    						dol_syslog("Interfaces::run_triggers action=".$action." Failed to instantiate trigger for file '".$file."'",LOG_ERROR);
+    					}
+    				}
+    			}
+    			closedir($handle);
+            }
 		}
 
 		if ($nbko)
@@ -191,37 +193,39 @@ class Interfaces
 			if (!is_dir($dir)) continue;
 
 			$handle=opendir($dir);
+            if (is_resource($handle))
+            {
+    			while (($file = readdir($handle))!==false)
+    			{
+    				if (is_readable($dir.'/'.$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php/',$file,$reg))
+    				{
+    					$modName = 'Interface'.ucfirst($reg[2]);
+    					//print "file=$file"; print "modName=$modName"; exit;
+    					if (in_array($modName,$modules))
+    					{
+    						$langs->load("errors");
+    						print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/").'</div>';
+    						$objMod = new $modName($db);
 
-			while (($file = readdir($handle))!==false)
-			{
-				if (is_readable($dir.'/'.$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php/',$file,$reg))
-				{
-					$modName = 'Interface'.ucfirst($reg[2]);
-					//print "file=$file"; print "modName=$modName"; exit;
-					if (in_array($modName,$modules))
-					{
-						$langs->load("errors");
-						print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/").'</div>';
-						$objMod = new $modName($db);
+    						$modules[$i] = $modName;
+    						$files[$i] = $file;
+    						$orders[$i] = $objMod->family;   // Tri par famille
+    						$i++;
+    					}
+    					else
+    					{
+    						include_once($dir.'/'.$file);
+    						$objMod = new $modName($db);
 
-						$modules[$i] = $modName;
-						$files[$i] = $file;
-						$orders[$i] = $objMod->family;   // Tri par famille
-						$i++;
-					}
-					else
-					{
-						include_once($dir.'/'.$file);
-						$objMod = new $modName($db);
-
-						$modules[$i] = $modName;
-						$files[$i] = $file;
-						$orders[$i] = $objMod->family;   // Tri par famille
-						$i++;
-					}
-				}
-			}
-			closedir($handle);
+    						$modules[$i] = $modName;
+    						$files[$i] = $file;
+    						$orders[$i] = $objMod->family;   // Tri par famille
+    						$i++;
+    					}
+    				}
+    			}
+    			closedir($handle);
+            }
 		}
 
 		asort($orders);

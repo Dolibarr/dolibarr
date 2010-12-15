@@ -258,7 +258,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	if (is_dir($dir))
 	{
 		$handle = opendir($dir);
-		if ($handle)
+		if (is_resource($handle))
 		{
 			while (($file = readdir($handle))!==false)
 			{
@@ -414,7 +414,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		if (is_dir($dir))
 		{
 			$handle=opendir($dir);
-			if ($handle)
+			if (is_resource($handle))
 			{
 				while (($file = readdir($handle))!==false)
 				{

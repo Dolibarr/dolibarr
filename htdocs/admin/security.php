@@ -218,20 +218,23 @@ $dir = "../includes/modules/security/generate";
 clearstatcache();
 $handle=opendir($dir);
 $i=1;
-while (($file = readdir($handle))!==false)
+if (is_resource($handle))
 {
-    if (preg_match('/(modGeneratePass[a-z]+)\.class\.php/i',$file,$reg))
+    while (($file = readdir($handle))!==false)
     {
-        // Chargement de la classe de numerotation
-        $classname = $reg[1];
-        require_once($dir.'/'.$file);
+        if (preg_match('/(modGeneratePass[a-z]+)\.class\.php/i',$file,$reg))
+        {
+            // Chargement de la classe de numerotation
+            $classname = $reg[1];
+            require_once($dir.'/'.$file);
 
-        $obj = new $classname($db,$conf,$langs,$user);
-        $arrayhandler[$obj->id]=$obj;
-		$i++;
+            $obj = new $classname($db,$conf,$langs,$user);
+            $arrayhandler[$obj->id]=$obj;
+    		$i++;
+        }
     }
+    closedir($handle);
 }
-closedir($handle);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

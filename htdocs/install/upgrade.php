@@ -290,7 +290,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 		# Recupere list fichier
 		$filesindir=array();
 		$handle=opendir($dir);
-		if ($handle)
+		if (is_resource($handle))
 		{
 			while (($file = readdir($handle))!==false)
 			{

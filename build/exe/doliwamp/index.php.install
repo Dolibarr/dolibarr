@@ -337,10 +337,13 @@ $aliasarray=array();
 if (is_dir($aliasDir))
 {
     $handle=opendir($aliasDir);
-    while ($file = readdir($handle)) 
+    if (is_resource($handle))
     {
-		$listoffiles[]=$file;
-	}
+        while ($file = readdir($handle)) 
+        {
+    		$listoffiles[]=$file;
+    	}
+    }
 	sort($listoffiles);
 	
 	foreach($listoffiles as $file) 
@@ -369,11 +372,14 @@ if (!isset($aliasContents))
 // Read projects in www dir
 $listoffiles=array();
 $handle=opendir(".");
-while ($file = readdir($handle)) 
+if (is_resource($handle))
 {
-	$listoffiles[]=$file;
+    while ($file = readdir($handle)) 
+    {
+    	$listoffiles[]=$file;
+    }
+    closedir($handle);
 }
-closedir($handle);
 
 foreach($listoffiles as $file)
 {

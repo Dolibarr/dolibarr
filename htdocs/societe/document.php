@@ -212,7 +212,7 @@ if ($socid > 0)
 			error_reporting(0);
 			$handle=opendir($courrier_dir);
 			error_reporting($errorlevel);
-			if ($handle)
+			if (is_resource($handle))
 			{
 				$i=0;
 				while (($file = readdir($handle))!==false)

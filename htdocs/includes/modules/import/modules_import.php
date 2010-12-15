@@ -64,32 +64,35 @@ class ModeleImports
 		// Recherche des fichiers drivers imports disponibles
 		$var=True;
 		$i=0;
-		while (($file = readdir($handle))!==false)
-		{
-			if (preg_match("/^import_(.*)\.modules\.php/i",$file,$reg))
-			{
-				$moduleid=$reg[1];
+        if (is_resource($handle))
+        {
+    		while (($file = readdir($handle))!==false)
+    		{
+    			if (preg_match("/^import_(.*)\.modules\.php/i",$file,$reg))
+    			{
+    				$moduleid=$reg[1];
 
-				// Chargement de la classe
-				$file = $dir."/import_".$moduleid.".modules.php";
-				$classname = "Import".ucfirst($moduleid);
+    				// Chargement de la classe
+    				$file = $dir."/import_".$moduleid.".modules.php";
+    				$classname = "Import".ucfirst($moduleid);
 
-				require_once($file);
-				$module = new $classname($db);
+    				require_once($file);
+    				$module = new $classname($db);
 
-				// Picto
-				$this->picto[$module->id]=$module->picto;
-				// Driver properties
-				$this->driverlabel[$module->id]=$module->getDriverLabel();
-				$this->driverdesc[$module->id]=$module->getDriverDesc();
-				$this->driverversion[$module->id]=$module->getDriverVersion();
-				// If use an external lib
-				$this->liblabel[$module->id]=$module->getLibLabel();
-				$this->libversion[$module->id]=$module->getLibVersion();
+    				// Picto
+    				$this->picto[$module->id]=$module->picto;
+    				// Driver properties
+    				$this->driverlabel[$module->id]=$module->getDriverLabel();
+    				$this->driverdesc[$module->id]=$module->getDriverDesc();
+    				$this->driverversion[$module->id]=$module->getDriverVersion();
+    				// If use an external lib
+    				$this->liblabel[$module->id]=$module->getLibLabel();
+    				$this->libversion[$module->id]=$module->getLibVersion();
 
-				$i++;
-			}
-		}
+    				$i++;
+    			}
+    		}
+        }
 
 		return array_keys($this->driverlabel);
 	}

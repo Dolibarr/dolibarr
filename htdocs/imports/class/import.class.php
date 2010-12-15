@@ -70,7 +70,7 @@ class Import
 
 			// Search available exports
 			$handle=@opendir($dir);
-			if ($handle)
+			if (is_resource($handle))
 			{
 				// Recherche des exports disponibles
 				$var=True;

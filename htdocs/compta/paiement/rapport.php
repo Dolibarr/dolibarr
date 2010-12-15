@@ -37,9 +37,9 @@ $dir = $conf->facture->dir_output.'/payments';
 $socid=0;
 if ($user->societe_id > 0)
 {
-	$action = '';
-	$socid = $user->societe_id;
-	$dir = $conf->facture->dir_output.'/payments/private/'.$user->id;
+    $action = '';
+    $socid = $user->societe_id;
+    $dir = $conf->facture->dir_output.'/payments/private/'.$user->id;
 }
 
 $year = $_GET["year"];
@@ -52,30 +52,30 @@ if (! $year) { $year=date("Y"); }
 
 if ($_POST["action"] == 'builddoc')
 {
-	$rap = new pdf_paiement($db);
+    $rap = new pdf_paiement($db);
 
-	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-	}
+    $outputlangs = $langs;
+    if (! empty($_REQUEST['lang_id']))
+    {
+        $outputlangs = new Translate("",$conf);
+        $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+    }
 
-	// We save charset_output to restore it because write_file can change it if needed for
-	// output format that does not support UTF8.
-	$sav_charset_output=$outputlangs->charset_output;
-	if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0)
-	{
-		$outputlangs->charset_output=$sav_charset_output;
-	}
-	else
-	{
-		$outputlangs->charset_output=$sav_charset_output;
-		dol_syslog("Erreur dans commande_pdf_create");
-		dol_print_error($db,$obj->error);
-	}
+    // We save charset_output to restore it because write_file can change it if needed for
+    // output format that does not support UTF8.
+    $sav_charset_output=$outputlangs->charset_output;
+    if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0)
+    {
+        $outputlangs->charset_output=$sav_charset_output;
+    }
+    else
+    {
+        $outputlangs->charset_output=$sav_charset_output;
+        dol_syslog("Erreur dans commande_pdf_create");
+        dol_print_error($db,$obj->error);
+    }
 
-	$year = $_POST["reyear"];
+    $year = $_POST["reyear"];
 }
 
 
@@ -98,28 +98,28 @@ $syear = date("Y", time());
 print '<select name="remonth">';
 for ($month = 1 ; $month < 13 ; $month++)
 {
-	if ($month == $cmonth)
-	{
-		print "<option value=\"$month\" selected=\"true\">" . dol_print_date(mktime(0,0,0,$month),"%B");
-	}
-	else
-	{
-		print "<option value=\"$month\">" . dol_print_date(mktime(0,0,0,$month),"%B");
-	}
+    if ($month == $cmonth)
+    {
+        print "<option value=\"$month\" selected=\"true\">" . dol_print_date(mktime(0,0,0,$month),"%B");
+    }
+    else
+    {
+        print "<option value=\"$month\">" . dol_print_date(mktime(0,0,0,$month),"%B");
+    }
 }
 print "</select>";
 print '<select name="reyear">';
 
 for ($formyear = $syear - 2; $formyear < $syear +1 ; $formyear++)
 {
-	if ($formyear == $syear)
-	{
-		print "<option value=\"$formyear\" selected=\"true\">".$formyear."</option>";
-	}
-	else
-	{
-		print "<option value=\"$formyear\">".$formyear."</option>";
-	}
+    if ($formyear == $syear)
+    {
+        print "<option value=\"$formyear\" selected=\"true\">".$formyear."</option>";
+    }
+    else
+    {
+        print "<option value=\"$formyear\">".$formyear."</option>";
+    }
 }
 print "</select>\n";
 print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
@@ -133,51 +133,58 @@ $linkforyear=array();
 $found=0;
 if (is_dir($dir))
 {
-	$handle=opendir($dir);
-	while (($file = readdir($handle))!==false)
-	{
-		if (is_dir($dir.'/'.$file) && ! preg_match('/^\./',$file))
-		{
-			$found=1;
-			$linkforyear[]=$file;
-		}
-	}
+    $handle=opendir($dir);
+    if (is_resource($handle))
+    {
+        while (($file = readdir($handle))!==false)
+        {
+            if (is_dir($dir.'/'.$file) && ! preg_match('/^\./',$file))
+            {
+                $found=1;
+                $linkforyear[]=$file;
+            }
+        }
+    }
 }
 asort($linkforyear);
 foreach($linkforyear as $cursoryear)
 {
-	print '<a href="rapport.php?year='.$cursoryear.'">'.$cursoryear.'</a> &nbsp;';
+    print '<a href="rapport.php?year='.$cursoryear.'">'.$cursoryear.'</a> &nbsp;';
 }
 
 if ($year)
 {
-	if (is_dir($dir.'/'.$year))
-	{
-		$handle=opendir($dir.'/'.$year);
+    if (is_dir($dir.'/'.$year))
+    {
+        $handle=opendir($dir.'/'.$year);
 
-		if ($found) print '<br>';
-		print '<br>';
-		print '<table width="100%" class="noborder">';
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Reporting").'</td>';
-		print '<td align="right">'.$langs->trans("Size").'</td>';
-		print '<td align="right">'.$langs->trans("Date").'</td>';
-		print '</tr>';
-		$var=true;
-		while (($file = readdir($handle))!==false)
-		{
-	  if (preg_match('/^payment/i',$file))
-	  {
-	  	$var=!$var;
-	  	$tfile = $dir . '/'.$year.'/'.$file;
-	  	$relativepath = $year.'/'.$file;
-	  	print "<tr $bc[$var]>".'<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
-	  	print '<td align="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
-	  	print '<td align="right">'.dol_print_date(dol_filemtime($tfile),"dayhour").'</td></tr>';
-	  }
-		}
-		print '</table>';
-	}
+        if ($found) print '<br>';
+        print '<br>';
+        print '<table width="100%" class="noborder">';
+        print '<tr class="liste_titre">';
+        print '<td>'.$langs->trans("Reporting").'</td>';
+        print '<td align="right">'.$langs->trans("Size").'</td>';
+        print '<td align="right">'.$langs->trans("Date").'</td>';
+        print '</tr>';
+        $var=true;
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+                if (preg_match('/^payment/i',$file))
+                {
+                    $var=!$var;
+                    $tfile = $dir . '/'.$year.'/'.$file;
+                    $relativepath = $year.'/'.$file;
+                    print "<tr $bc[$var]>".'<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+                    print '<td align="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
+                    print '<td align="right">'.dol_print_date(dol_filemtime($tfile),"dayhour").'</td></tr>';
+                }
+            }
+            close($handle);
+        }
+        print '</table>';
+    }
 }
 $db->close();
 

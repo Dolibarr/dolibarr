@@ -84,7 +84,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
 	$handle=@opendir($dir);
-	if ($handle)
+	if (is_resource($handle))
 	{
 		while (($file = readdir($handle))!==false)
 		{

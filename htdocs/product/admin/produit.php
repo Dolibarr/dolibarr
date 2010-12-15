@@ -232,48 +232,49 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 		require_once(DOL_DOCUMENT_ROOT . "/product/class/product.class.php");
 
 		$handle=opendir($dir);
+        if (is_resource($handle))
+        {
+    		while (($file = readdir($handle))!==false)
+    		{
+    			if (file_exists($dir.$file.'/product.'.$file.'.class.php'))
+    			{
+    				$classfile = $dir.$file.'/product.'.$file.'.class.php';
+    				$classname = 'Product'.ucfirst($file);
 
-		while (($file = readdir($handle))!==false)
-		{
-			if (file_exists($dir.$file.'/product.'.$file.'.class.php'))
-			{
-				$classfile = $dir.$file.'/product.'.$file.'.class.php';
-				$classname = 'Product'.ucfirst($file);
+    				require_once($classfile);
+    				$object = new $classname();
 
-				require_once($classfile);
-				$object = new $classname();
+    				$module = $object->module;
 
-				$module = $object->module;
+    				if ($conf->$module->enabled)
+    				{
+    					$var=!$var;
+    					print "<tr $bc[$var]><td>";
 
-				if ($conf->$module->enabled)
-				{
-					$var=!$var;
-					print "<tr $bc[$var]><td>";
+    					print $object->description;
 
-					print $object->description;
+    					print '</td><td align="right">';
 
-					print '</td><td align="right">';
+    					$const = "PRODUCT_SPECIAL_".strtoupper($file);
 
-					$const = "PRODUCT_SPECIAL_".strtoupper($file);
+    					if ($conf->global->$const)
+    					{
+    						print img_tick();
+    						print '</td><td align="right">';
+    						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=0">'.$langs->trans("Disable").'</a>';
+    					}
+    					else
+    					{
+    						print '&nbsp;</td><td align="right">';
+    						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=1">'.$langs->trans("Activate").'</a>';
+    					}
 
-					if ($conf->global->$const)
-					{
-						print img_tick();
-						print '</td><td align="right">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=0">'.$langs->trans("Disable").'</a>';
-					}
-					else
-					{
-						print '&nbsp;</td><td align="right">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=1">'.$langs->trans("Activate").'</a>';
-					}
-
-					print '</td></tr>';
-				}
-			}
-		}
-
-		closedir($handle);
+    					print '</td></tr>';
+    				}
+    			}
+    		}
+		    closedir($handle);
+        }
 	}
 	else
 	{

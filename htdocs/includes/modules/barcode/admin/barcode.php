@@ -89,7 +89,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	$dir = $dirroot . "/includes/modules/barcode/";
 
 	$handle=@opendir($dir);
-	if ($handle)
+	if (is_resource($handle))
 	{
 		while (($file = readdir($handle))!==false)
 		{

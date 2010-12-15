@@ -177,84 +177,87 @@ clearstatcache();
 $handle=opendir($dir);
 
 $var=True;
-while (($file = readdir($handle))!==false)
+if (is_resource($handle))
 {
-    if (preg_match('/\.modules\.php$/i',$file))
+    while (($file = readdir($handle))!==false)
     {
-        $var = !$var;
-        $name = substr($file, 0, dol_strlen($file) -12);
-        $classname = substr($file, 0, dol_strlen($file) -12);
+        if (preg_match('/\.modules\.php$/i',$file))
+        {
+            $var = !$var;
+            $name = substr($file, 0, dol_strlen($file) -12);
+            $classname = substr($file, 0, dol_strlen($file) -12);
 
-		require_once($dir.'/'.$file);
-		$module=new $classname($db);
+    		require_once($dir.'/'.$file);
+    		$module=new $classname($db);
 
-		// Show modules according to features level
-	    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-	    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+    		// Show modules according to features level
+    	    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+    	    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-	    if ($module->isEnabled())
-	    {
-	        print '<tr '.$bc[$var].'><td width=\"100\">';
-	        echo $module->name;
-	        print '</td>';
-	        print '<td>';
-	        print $module->description;
-	        print '</td>';
+    	    if ($module->isEnabled())
+    	    {
+    	        print '<tr '.$bc[$var].'><td width=\"100\">';
+    	        echo $module->name;
+    	        print '</td>';
+    	        print '<td>';
+    	        print $module->description;
+    	        print '</td>';
 
-			// Active
-			if (in_array($name, $def))
-			{
-		        print "<td align=\"center\">\n";
-				if ($conf->global->DON_ADDON_MODEL == $name)
-		        {
-		            print img_picto($langs->trans("Enabled"),'on');
-		        }
-		        else
-		        {
-		            print '&nbsp;';
-		            print '</td><td align="center">';
-		            print '<a href="dons.php?action=setdoc&value='.$name.'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-		        }
-		        print '</td>';
-			}
-			else
-			{
-				print "<td align=\"center\">\n";
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-				print "</td>";
-			}
+    			// Active
+    			if (in_array($name, $def))
+    			{
+    		        print "<td align=\"center\">\n";
+    				if ($conf->global->DON_ADDON_MODEL == $name)
+    		        {
+    		            print img_picto($langs->trans("Enabled"),'on');
+    		        }
+    		        else
+    		        {
+    		            print '&nbsp;';
+    		            print '</td><td align="center">';
+    		            print '<a href="dons.php?action=setdoc&value='.$name.'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+    		        }
+    		        print '</td>';
+    			}
+    			else
+    			{
+    				print "<td align=\"center\">\n";
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    				print "</td>";
+    			}
 
-			// Defaut
-			print "<td align=\"center\">";
-			if ($conf->global->DON_ADDON_MODEL == "$name")
-			{
-				print img_picto($langs->trans("Default"),'on');
-			}
-			else
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-			}
-			print '</td>';
+    			// Defaut
+    			print "<td align=\"center\">";
+    			if ($conf->global->DON_ADDON_MODEL == "$name")
+    			{
+    				print img_picto($langs->trans("Default"),'on');
+    			}
+    			else
+    			{
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    			}
+    			print '</td>';
 
-			// Info
-	    	$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-	    	$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-	    	$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
-	    	$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-	    	$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-	    	$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-	    	print '<td align="center">';
-	    	print $html->textwithpicto('',$htmltooltip,1,0);
-	    	print '</td>';
-	    	print '<td align="center">';
-	    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
-	    	print '</td>';
+    			// Info
+    	    	$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+    	    	$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+    	    	$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+    	    	$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+    	    	$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+    	    	$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+    	    	print '<td align="center">';
+    	    	print $html->textwithpicto('',$htmltooltip,1,0);
+    	    	print '</td>';
+    	    	print '<td align="center">';
+    	    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
+    	    	print '</td>';
 
-	        print "</tr>\n";
-	    }
+    	        print "</tr>\n";
+    	    }
+        }
     }
+    closedir($handle);
 }
-closedir($handle);
 
 print '</table>';
 

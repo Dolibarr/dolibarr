@@ -1438,37 +1438,39 @@ function getLoginMethod()
 		if (!is_dir($dir)) continue;
 
 		$handle=opendir($dir);
+        if (is_resource($handle))
+        {
+    		while (($file = readdir($handle))!==false)
+    		{
+    			if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
+    			{
+    				$authfile = $dir.'/'.$file;
+    				$mode = $reg[1];
 
-		while (($file = readdir($handle))!==false)
-		{
-			if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
-			{
-				$authfile = $dir.'/'.$file;
-				$mode = $reg[1];
-
-				$result=include_once($authfile);
-				if ($result)
-				{
-					// Call function to check user/password
-					$usertotest=$_POST["username"];
-					$passwordtotest=$_POST["password"];
-					$function='check_user_password_'.$mode;
-					$login=$function($usertotest,$passwordtotest);
-					if ($login)
-					{
-						$conf->authmode=$mode;	// This properties is defined only when logged
-					}
-				}
-				else
-				{
-					dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
-					sleep(1);
-					$langs->load('main');
-					$langs->load('other');
-					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
-				}
-			}
-		}
+    				$result=include_once($authfile);
+    				if ($result)
+    				{
+    					// Call function to check user/password
+    					$usertotest=$_POST["username"];
+    					$passwordtotest=$_POST["password"];
+    					$function='check_user_password_'.$mode;
+    					$login=$function($usertotest,$passwordtotest);
+    					if ($login)
+    					{
+    						$conf->authmode=$mode;	// This properties is defined only when logged
+    					}
+    				}
+    				else
+    				{
+    					dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
+    					sleep(1);
+    					$langs->load('main');
+    					$langs->load('other');
+    					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
+    				}
+    			}
+    		}
+        }
 		closedir($handle);
 	}
 	return $login;

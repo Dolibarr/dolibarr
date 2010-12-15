@@ -135,25 +135,29 @@ class FormAdmin
 
 		$menuarray=array();
         $handle=opendir($dirmenu);
-        while (($file = readdir($handle))!==false)
+        if (is_resource($handle))
         {
-            if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+            while (($file = readdir($handle))!==false)
             {
-                if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
-            	$filelib=preg_replace('/\.php$/i','',$file);
-				$prefix='';
-				if (preg_match('/^eldy|^iphone/i',$file)) $prefix='0';	// 0=Recommanded, 1=Experimental, 2=Other
-				else $prefix='2';
+                if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+                {
+                    if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
+                	$filelib=preg_replace('/\.php$/i','',$file);
+    				$prefix='';
+    				if (preg_match('/^eldy|^iphone/i',$file)) $prefix='0';	// 0=Recommanded, 1=Experimental, 2=Other
+    				else $prefix='2';
 
-                if ($file == $selected)
-                {
-					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="selected">'.$filelib.'</option>';
-                }
-                else
-                {
-                    $menuarray[$prefix.'_'.$file]='<option value="'.$file.'">'.$filelib.'</option>';
+                    if ($file == $selected)
+                    {
+    					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="selected">'.$filelib.'</option>';
+                    }
+                    else
+                    {
+                        $menuarray[$prefix.'_'.$file]='<option value="'.$file.'">'.$filelib.'</option>';
+                    }
                 }
             }
+            close($handle);
         }
 		ksort($menuarray);
 
@@ -194,20 +198,23 @@ class FormAdmin
 		foreach($dirmenuarray as $dirmenu)
 		{
 			$handle=opendir($dirmenu);
-			while (($file = readdir($handle))!==false)
-			{
-				if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-				{
-					$filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
-					if (preg_match('/^default/i',$filelib)) continue;
-					if (preg_match('/^empty/i',$filelib)) continue;
-					if (preg_match('/\.lib/i',$filelib)) continue;
+            if (is_resource($handle))
+            {
+    			while (($file = readdir($handle))!==false)
+    			{
+    				if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+    				{
+    					$filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
+    					if (preg_match('/^default/i',$filelib)) continue;
+    					if (preg_match('/^empty/i',$filelib)) continue;
+    					if (preg_match('/\.lib/i',$filelib)) continue;
 
-					$menuarray[$filelib]=1;
-				}
-				$menuarray['all']=1;
-			}
-			closedir($handle);
+    					$menuarray[$filelib]=1;
+    				}
+    				$menuarray['all']=1;
+    			}
+    			closedir($handle);
+            }
 		}
 
 		ksort($menuarray);

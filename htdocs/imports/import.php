@@ -551,7 +551,7 @@ if ($step == 3 && $datatoimport)
 	$dir = $conf->import->dir_temp;
 	$newdir=utf8_check($dir)?utf8_decode($dir):$dir;	// opendir need ISO
 	$handle=@opendir($newdir);
-	if ($handle)
+	if (is_resource($handle))
 	{
 		//print '<tr><td colspan="4">';
 		//print '<table class="noborder" width="100%">';

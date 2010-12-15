@@ -212,7 +212,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	if (is_dir($dir))
 	{
 		$handle = opendir($dir);
-		if ($handle)
+		if (is_resource($handle))
 		{
 			while (($file = readdir($handle))!==false)
 			{
@@ -333,85 +333,88 @@ clearstatcache();
 $handle=opendir($dir);
 
 $var=true;
-while (($file = readdir($handle))!==false)
+if (is_resource($handle))
 {
-	if (substr($file, dol_strlen($file) -12) == '.modules.php' && substr($file,0,12) == 'pdf_propale_')
-	{
-		$name = substr($file, 12, dol_strlen($file) - 24);
-		$classname = substr($file, 0, dol_strlen($file) -12);
+    while (($file = readdir($handle))!==false)
+    {
+    	if (substr($file, dol_strlen($file) -12) == '.modules.php' && substr($file,0,12) == 'pdf_propale_')
+    	{
+    		$name = substr($file, 12, dol_strlen($file) - 24);
+    		$classname = substr($file, 0, dol_strlen($file) -12);
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">\n  <td>";
-		print $name;
-		print "</td>\n  <td>\n";
-		require_once($dir.$file);
-		$module = new $classname($db);
-		print $module->description;
-		print '</td>';
+    		$var=!$var;
+    		print "<tr ".$bc[$var].">\n  <td>";
+    		print $name;
+    		print "</td>\n  <td>\n";
+    		require_once($dir.$file);
+    		$module = new $classname($db);
+    		print $module->description;
+    		print '</td>';
 
-		// Activate
-		print "<td align=\"center\">\n";
-		if (in_array($name, $def))
-		{
-			if ($conf->global->PROPALE_ADDON_PDF != "$name")
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-				print img_picto($langs->trans("Activated"),'on');
-				print '</a>';
-			}
-			else
-			{
-				print img_picto($langs->trans("Activated"),'on');
-			}
-		}
-		else
-		{
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">';
-			print img_picto($langs->trans("Disabled"),'off');
-			print '</a>';
-		}
-		print "</td>";
+    		// Activate
+    		print "<td align=\"center\">\n";
+    		if (in_array($name, $def))
+    		{
+    			if ($conf->global->PROPALE_ADDON_PDF != "$name")
+    			{
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+    				print img_picto($langs->trans("Activated"),'on');
+    				print '</a>';
+    			}
+    			else
+    			{
+    				print img_picto($langs->trans("Activated"),'on');
+    			}
+    		}
+    		else
+    		{
+    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">';
+    			print img_picto($langs->trans("Disabled"),'off');
+    			print '</a>';
+    		}
+    		print "</td>";
 
-		// Default
-		print "<td align=\"center\">";
-		if ($conf->global->PROPALE_ADDON_PDF == "$name")
-		{
-			print img_picto($langs->trans("Yes"),'on');
-		}
-		else
-		{
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'">';
-			print img_picto($langs->trans("No"),'off');
-			print '</a>';
-		}
-		print '</td>';
+    		// Default
+    		print "<td align=\"center\">";
+    		if ($conf->global->PROPALE_ADDON_PDF == "$name")
+    		{
+    			print img_picto($langs->trans("Yes"),'on');
+    		}
+    		else
+    		{
+    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'">';
+    			print img_picto($langs->trans("No"),'off');
+    			print '</a>';
+    		}
+    		print '</td>';
 
-		// Info
-		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-		$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
-		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
-		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-		//$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
-		//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark,1,1);
+    		// Info
+    		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+    		$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+    		//$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
+    		//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark,1,1);
 
 
 
-		print '<td align="center">';
-		print $html->textwithpicto('',$htmltooltip,1,0);
-		print '</td>';
-		print '<td align="center">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'propal').'</a>';
-		print '</td>';
+    		print '<td align="center">';
+    		print $html->textwithpicto('',$htmltooltip,1,0);
+    		print '</td>';
+    		print '<td align="center">';
+    		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'propal').'</a>';
+    		print '</td>';
 
-		print "</tr>\n";
-	}
+    		print "</tr>\n";
+    	}
+    }
+    closedir($handle);
 }
-closedir($handle);
 
 print '</table>';
 print '<br>';

@@ -163,10 +163,13 @@ if ($ok)
 	# Recupere list fichier
 	$filesindir=array();
 	$handle=opendir($dir);
-	while (($file = readdir($handle))!==false)
-	{
-		if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
-	}
+    if (is_resource($handle))
+    {
+    	while (($file = readdir($handle))!==false)
+    	{
+    		if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
+    	}
+    }
 	sort($filesindir);
 
 	foreach($filesindir as $file)
