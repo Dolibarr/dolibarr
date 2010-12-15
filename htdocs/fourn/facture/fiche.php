@@ -238,7 +238,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
     		if ($element == 'contract') { $element = $subelement = 'contrat'; }
     		if ($element == 'order_supplier') { $element = 'fourn'; $subelement = 'fournisseur.commande'; }
 
-			$facfou->origin    = $_POST['origin'];
+			$facfou->origin 	= $_POST['origin'];
 			$facfou->origin_id = $_POST['originid'];
 
 			$facid = $facfou->create($user);
@@ -254,10 +254,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 				$result=$srcobject->fetch($_POST['originid']);
 				if ($result > 0)
 				{
-					// TODO mutualiser
-					$lines = $srcobject->lignes;
-					if (sizeof($srcobject->lines)) $lines = $srcobject->lines;
-					if (empty($lines) && method_exists($srcobject,'fetch_lignes')) $lines = $srcobject->fetch_lignes();
+					$lines = $srcobject->lines;
 					if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
 					for ($i = 0 ; $i < sizeof($lines) ; $i++)

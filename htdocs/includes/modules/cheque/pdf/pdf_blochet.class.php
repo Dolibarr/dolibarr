@@ -149,11 +149,11 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 		$pdf->SetAutoPageBreak(1,0);
 
-		$lignes=$this->line_per_page;	// There is no line in such PDF.
+		$lines=$this->line_per_page;	// There is no line in such PDF.
 
-		$pages = intval($lignes / $this->line_per_page);
+		$pages = intval($lines / $this->line_per_page);
 
-		if (($lignes % $this->line_per_page)>0)
+		if (($lines % $this->line_per_page)>0)
 		{
 			$pages++;
 		}
@@ -333,38 +333,38 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$page_hauteur=$this->page_hauteur;
 
 		// Line of free text
-		$ligne=(! empty($conf->global->$paramfreetext))?$outputlangs->convToOutputCharset($conf->global->$paramfreetext):"";
+		$line=(! empty($conf->global->$paramfreetext))?$outputlangs->convToOutputCharset($conf->global->$paramfreetext):"";
 
 		$pdf->SetFont('','',7);
 		$pdf->SetDrawColor(224,224,224);
 
 		// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-		$nbofligne=dol_nboflines_bis($ligne,0,$outputlangs->charset_output);
-		//print 'e'.$ligne.'t'.dol_nboflines($ligne);exit;
-		$posy=$marge_basse + ($nbofligne*3) + ($ligne1?3:0) + ($ligne2?3:0);
+		$nbofline=dol_nboflines_bis($line,0,$outputlangs->charset_output);
+		//print 'e'.$line.'t'.dol_nboflines($line);exit;
+		$posy=$marge_basse + ($nbofline*3) + ($line1?3:0) + ($line2?3:0);
 
-		if ($ligne)	// Free text
+		if ($line)	// Free text
 		{
 			$pdf->SetXY($marge_gauche,-$posy);
-			$pdf->MultiCell(20000, 3, $ligne, 0, 'L', 0);	// Use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
-			$posy-=($nbofligne*3);	// 6 of ligne + 3 of MultiCell
+			$pdf->MultiCell(20000, 3, $line, 0, 'L', 0);	// Use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
+			$posy-=($nbofline*3);	// 6 of ligne + 3 of MultiCell
 		}
 
 		$pdf->SetY(-$posy);
 		$pdf->line($marge_gauche, $page_hauteur-$posy, 200, $page_hauteur-$posy);
 		$posy--;
 
-		if ($ligne1)
+		if ($line1)
 		{
 			$pdf->SetXY($marge_gauche,-$posy);
-			$pdf->MultiCell(200, 2, $ligne1, 0, 'C', 0);
+			$pdf->MultiCell(200, 2, $line1, 0, 'C', 0);
 		}
 
-		if ($ligne2)
+		if ($line2)
 		{
 			$posy-=3;
 			$pdf->SetXY($marge_gauche,-$posy);
-			$pdf->MultiCell(200, 2, $ligne2, 0, 'C', 0);
+			$pdf->MultiCell(200, 2, $line2, 0, 'C', 0);
 		}
 
 		$pdf->SetXY(-20,-$posy);
