@@ -74,12 +74,12 @@ $orders = array();
 $categ = array();
 $dirmod = array();
 $i = 0; // is a sequencer of modules found
-$j = 0; // j is module number. Automatically affeted if module number not defined.
+$j = 0; // j is module number. Automatically affected if module number not defined.
 foreach ($dirlist as $dirroot)
 {
     $dir = $dirroot . "/includes/modules/";
 
-    // Charge tableaux modules, nom, numero, orders depuis r�pertoire dir
+    // Charge tableaux modules, nom, numero, orders depuis repertoire dir
     $handle=opendir($dir);
     while (($file = readdir($handle))!==false)
     {
