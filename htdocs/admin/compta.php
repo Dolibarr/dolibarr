@@ -20,8 +20,8 @@
 
 /**
  *	\file       htdocs/admin/compta.php
- *	\ingroup    tax
- *	\brief      Page de configuration du module tax
+ *	\ingroup    compta
+ *	\brief      Page to setup accountancy module
  *	\version    $Id$
  */
 
@@ -115,80 +115,74 @@ print "</table>\n";
 print "<br>\n";
 
 // Cas des autres parametres COMPTA_*
-$sql = "SELECT rowid, name, value, type, note";
+$list=array('COMPTA_PRODUCT_BUY_ACCOUNT','COMPTA_PRODUCT_SOLD_ACCOUNT','COMPTA_SERVICE_BUY_ACCOUNT','COMPTA_SERVICE_SOLD_ACCOUNT',
+'COMPTA_VAT_ACCOUNT','COMPTA_ACCOUNT_CUSTOMER','COMPTA_ACCOUNT_SUPPLIER'
+);
+
+/*$sql = "SELECT rowid, name, value, type, note";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE name LIKE 'COMPTA_%'";
 $sql.= " AND name NOT IN ('COMPTA_MODE')";
 $sql.= " AND entity = ".$conf->entity;
-
 $result = $db->query($sql);
 if ($result)
 {
 	$num = $db->num_rows($result);
 	$i = 0;
-	$var=true;
-
-	if ($num)
-	{
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
-		print "</tr>\n";
-	}
 
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
 		$var=!$var;
-
-		print '<form action="compta.php" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-		print '<input type="hidden" name="consttype" value="'.$obj->type.'">';
-		print '<input type="hidden" name="constname" value="'.$obj->name.'">';
-		print '<input type="hidden" name="constnote" value="'.$obj->note.'">';
-		
-		print '<tr '.$bc[$var].' class="value">';
-
-		// Param
-		if ($langs->trans($obj->name) == $obj->name) $libelle = stripslashes(nl2br($obj->note));
-		else $libelle = $langs->trans($obj->name); 
-		print '<td>'.$libelle;
-		print ' ('.$obj->name.')';
-		print "</td>\n";
-
-		// Value
-		print '<td>';
-		if ($obj->type == 'yesno')
-		{
-			print $form->selectyesno('constvalue',$obj->value,1);
-		}
-		elseif ($obj->type == 'texte')
-		{
-			print '<textarea name="constvalue" cols="35" rows="5" wrap="soft">';
-			print $obj->value;
-			print "</textarea>\n";
-		}
-		else
-		{
-			print '<input type="text" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
-		}
-		print '</td><td>';
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"> &nbsp; ';
-		print "</td></tr>\n";
-
-		print '</form>';
-
+		$list[$obj->name]=$obj->value;
 		$i++;
 	}
+}*/
 
-	if ($num)
-	{
-		print "</table>\n";
-	}
+$num=sizeof($list);
 
+if ($num)
+{
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
+	print "</tr>\n";
 }
+
+foreach ($list as $key)
+{
+	$var=!$var;
+
+	print '<form action="compta.php" method="POST">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="consttype" value="string">';
+	print '<input type="hidden" name="constname" value="'.$key.'">';
+	
+	print '<tr '.$bc[$var].' class="value">';
+
+	// Param
+	$libelle = $langs->trans($key); 
+	print '<td>'.$libelle;
+	//print ' ('.$key.')';
+	print "</td>\n";
+
+	// Value
+	print '<td>';
+	print '<input type="text" size="20" name="constvalue" value="'.$conf->global->$key.'">';
+	print '</td><td>';
+	print '<input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"> &nbsp; ';
+	print "</td></tr>\n";
+	print '</form>';
+	
+	$i++;
+}
+
+if ($num)
+{
+	print "</table>\n";
+}
+
 
 $db->close();
 
