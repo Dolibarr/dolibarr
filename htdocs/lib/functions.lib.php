@@ -1134,20 +1134,17 @@ function img_object($alt, $object, $cssclass='')
 	global $conf,$langs;
 
 	$cssclass = (!empty($cssclass)?'class="'.$cssclass.'"':'');
+	$path =  'theme/'.$conf->theme;
+	$url = DOL_URL_ROOT;
 
 	if (preg_match('/^([^@]+)@([^@]+)$/i',$object,$regs))
 	{
-		if (file_exists(DOL_URL_ROOT.'/'.$regs[2].'/img/object_'.$regs[1]))
-		{
-			return '<img src="'.DOL_URL_ROOT.'/'.$regs[2].'/img/object_'.$regs[1].'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" '.$cssclass.'>';
-		}
-		else
-		{
-			return '<img src="'.DOL_URL_ROOT.'/custom/modules/'.$regs[2].'/img/object_'.$regs[1].'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" '.$cssclass.'>';
-		}
+		$object = $regs[1];
+		$path = $regs[2];
+		if (! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/object_'.$object.'.png')) $url = DOL_URL_EXTMODULE;
 	}
 
-	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/object_'.$object.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" '.$cssclass.'>';
+	return '<img src="'.$url.'/'.$path.'/img/object_'.$object.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" '.$cssclass.'>';
 }
 
 /**
@@ -1166,16 +1163,18 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 	global $conf;
 
 	$path =  'theme/'.$conf->theme;
+	$url = DOL_URL_ROOT;
 
 	if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
 	{
 		$picto = $regs[1];
 		$path = $regs[2];
+		if (! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_EXTMODULE;
 	}
 
 	if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
 	if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
-	return '<img src="'.DOL_URL_ROOT.'/'.$path.'/img/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
+	return '<img src="'.$url.'/'.$path.'/img/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
 
 /**
