@@ -286,7 +286,7 @@ if ($resql)
 			}
 			else
 			{
-				$sourcefile = DOL_EXTMODULE_ROOT."/".$module."/inc/boxes/".$boxname.".php";
+				$sourcefile = DOL_DOCUMENT_EXTMODULE."/".$module."/inc/boxes/".$boxname.".php";
 			}
 		}
 		else
@@ -397,7 +397,7 @@ if ($resql)
 			}
 			else
 			{
-				$sourcefile = DOL_EXTMODULE_ROOT."/".$module."/inc/boxes/".$boxname.".php";
+				$sourcefile = DOL_DOCUMENT_EXTMODULE."/".$module."/inc/boxes/".$boxname.".php";
 			}
 		}
 		else
