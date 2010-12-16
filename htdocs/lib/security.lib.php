@@ -159,7 +159,14 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		$rowspan++;
 
-		$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php');
+		if(file_exists(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php'))
+		{
+			$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php');
+		}
+		else
+		{
+			$res=@include_once(DOL_DOCUMENT_EXTMODULE.'/multicompany/class/actions_multicompany.class.php');
+		}
 		if ($res)
 		{
 			$mc = new ActionsMulticompany($db);
