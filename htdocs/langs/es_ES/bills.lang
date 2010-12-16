@@ -12,6 +12,7 @@ BillsUnpaid=Pendientes de pago
 BillsLate=Retraso en el pago
 BillsStatistics=Estadísticas facturas a clientes
 BillsStatisticsSuppliers=Estadísticas facturas de proveedores
+DisabledBecauseNotErasable=Desactivado por no ser eliminable
 InvoiceStandard=Factura estándar
 InvoiceStandardAsk=Factura estándar
 InvoiceStandardDesc=Este tipo de factura es la factura tradicional. También se la conoce como <b>factura de débito</b> (del verbo deber).
