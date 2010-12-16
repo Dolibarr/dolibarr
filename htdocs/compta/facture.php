@@ -729,7 +729,11 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							$lines[$i]->fk_remise_except,
 							'HT',
 							0,
-							$product_type
+							$product_type,
+							$lines[$i]->rang,
+							$lines[$i]->special_code,
+							$object->origin,
+							$lines[$i]->rowid
 							);
 
 							if ($result < 0)
