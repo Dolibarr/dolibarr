@@ -1068,7 +1068,15 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	{
 		if ($user->admin && ! $user->entity)
 		{
-			$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php');
+			if(file_exists(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php'))
+			{
+				$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php');
+			}
+			else
+			{
+				$res=@include_once(DOL_DOCUMENT_EXTMODULE.'/multicompany/class/actions_multicompany.class.php');
+			}
+			
 			if ($res)
 			{
 				//$mc = new ActionsMulticompany($db);

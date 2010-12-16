@@ -214,13 +214,22 @@ if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $rowspan++;
 // Entity field
 if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)  && ! $disabled)
 {
-	require_once(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php');
-
 	global $db;
+	
+	if(file_exists(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php'))
+	{
+		$res=@include_once(DOL_DOCUMENT_ROOT.'/multicompany/class/actions_multicompany.class.php');
+	}
+	else
+	{
+		$res=@include_once(DOL_DOCUMENT_EXTMODULE.'/multicompany/class/actions_multicompany.class.php');
+	}
 
-	$mc = new ActionsMulticompany($db);
-
-	$select_entity = $mc->select_entities($mc->entities,$conf->entity,'tabindex="2"');
+	if ($res)
+	{
+		$mc = new ActionsMulticompany($db);
+		$select_entity = $mc->select_entities($mc->entities,$conf->entity,'tabindex="2"');
+	}
 }
 
 // Security graphical code
