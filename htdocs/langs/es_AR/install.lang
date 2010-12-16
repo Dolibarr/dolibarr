@@ -147,6 +147,7 @@ NextStepMightLastALongTime=El siguiente paso puede tardar varios minutos. Despu�
 MigrationCustomerOrderShipping=Actualización de los datos de expediciones de pedidos de clientes
 MigrationShippingDelivery=Actualización de los datos de expediciones
 MigrationShippingDelivery2=Actualización de los datos de expediciones 2
+MigrationFinished=Actualización terminada
 #########
 # upgrade
 MigrationFixData=Corrección de datos desnormalizados
@@ -158,54 +159,54 @@ MigrationContract=Migración de datos de los contratos
 MigrationSuccessfullUpdate=Actualización finalizada
 MigrationUpdateFailed=La actualización ha fallado
 MigrationRelationshipTables=Migración de las tablas de relación (%s)
-# Payments Update=undefined
+# Payments Update 
 MigrationPaymentsUpdate=Actualización de los pagos (vínculo n-n pagos-facturas)
 MigrationPaymentsNumberToUpdate=%s pago(s) a actualizar
 MigrationProcessPaymentUpdate=Actualización pago(s) %s
 MigrationPaymentsNothingToUpdate=No hay más pagos huérfanos que deban corregirse.
 MigrationPaymentsNothingUpdatable=Ningún  pago huérfano corregible.
-# Contracts Update=undefined
+# Contracts Update 
 MigrationContractsUpdate=Actualización de los contratos sin detalles (gestión del contrato + detalle de contrato)
 MigrationContractsNumberToUpdate=%s contrato(s) a actualizar
 MigrationContractsLineCreation=Creación linea contrato para contrato Ref. %s
 MigrationContractsNothingToUpdate=No hay más contratos (vinculados a un producto) sin líneas de detalles que deban corregirse.
 MigrationContractsFieldDontExist=Los campos fk_facture no existen ya. No hay operación pendiente.
-# Contracts Empty Dates Update=undefined
+# Contracts Empty Dates Update 
 MigrationContractsEmptyDatesUpdate=Actualización de las fechas de contratos no indicadas
 MigrationContractsEmptyDatesUpdateSuccess=Ok para fecha de contrato
 MigrationContractsEmptyDatesNothingToUpdate=No hay más  próximas fechas de contratos.
 MigrationContractsEmptyCreationDatesUpdateSuccess=Ok para la fecha de creación
 MigrationContractsEmptyCreationDatesNothingToUpdate=No hay más próximas fechas de creación.
-# Contracts Invalid Dates Update=undefined
+# Contracts Invalid Dates Update 
 MigrationContractsInvalidDatesUpdate=Actualización fechas contrato incorrectas (para contratos con detalle en servicio)
 MigrationContractsInvalidDateFix=Corregir contrato %s (fecha contrato=%s, Fecha puesta en servicio min=%s)
 MigrationContractsInvalidDatesNumber=%s contratos modificados
 MigrationContractsInvalidDatesNothingToUpdate=No hay más de contratos que deban corregirse.
-# Contracts Incoherent Dates Update=undefined
+# Contracts Incoherent Dates Update 
 MigrationContractsIncoherentCreationDateUpdate=Actualización de las fechas de creación de contrato que tienen un valor incoherente
 MigrationContractsIncoherentCreationDateUpdateSuccess=Ok
 MigrationContractsIncoherentCreationDateNothingToUpdate=No hay más fechas de contratos.
-# Reopening Contracts=undefined
+# Reopening Contracts 
 MigrationReopeningContracts=Reapertura de los contratos que tienen al menos un servicio activo no cerrado
 MigrationReopenThisContract=Reapertura contrato %s
 MigrationReopenedContractsNumber=%s contratos modificados
 MigrationReopeningContractsNothingToUpdate=No hay más contratos que deban reabrirse.
-# Migration transfert=undefined
+# Migration transfert 
 MigrationBankTransfertsUpdate=Actualización de los vínculos entre registros bancarios y una transferencia entre cuenta
 MigrationBankTransfertsNothingToUpdate=Ningún vínculo desfasado
-# Migration delivery=undefined
+# Migration delivery 
 MigrationShipmentOrderMatching=Actualizar notas de expedición
 MigrationDeliveryOrderMatching=Actualizar recepciones
 MigrationDeliveryDetail=Actualizar recepciones
-# Migration stock=undefined
+# Migration stock 
 MigrationStockDetail=Actualizar valor en stock de los productos
-# Migration menus=undefined
+# Migration menus 
 MigrationMenusDetail=Actualización de la tabla de menús dinámicos
-# Migration delivery address=undefined
+# Migration delivery address 
 MigrationDeliveryAddress=Actualización de las direcciones de envío en las notas de entrega
-# Migration project task actors=undefined
+# Migration project task actors 
 MigrationProjectTaskActors=Migración de la tabla llx_projet_task_actors
-# Migration project user resp=undefined
+# Migration project user resp 
 MigrationProjectUserResp=Migración del campo fk_user_resp de llx_projet a llx_element_contact
-# Migration project task time=undefined
+# Migration project task time 
 MigrationProjectTaskTime=Actualización de tiempo dedicado en segundos
