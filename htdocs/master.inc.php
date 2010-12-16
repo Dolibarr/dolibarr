@@ -104,8 +104,7 @@ if (empty($dolibarr_main_data_root))
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (documents)
 define('DOL_CLASS_PATH', 'class/');									// Filesystem path to class dir
-define('DOL_CUSTOM_PATH', DOL_DOCUMENT_ROOT . '/custom');			// Filesystem path to custom dir
-define('DOL_DOCUMENT_EXTMODULE', DOL_CUSTOM_PATH . '/modules');			// Filesystem path to external modules dir
+define('DOL_DOCUMENT_EXTMODULE', $dolibarr_main_document_root_alt);	// Filesystem path to external modules dir
 // If dolibarr_main_url_root = auto (Hidden feature for developers only), we try to forge it.
 if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
 {
@@ -117,7 +116,7 @@ $suburi = strstr ($uri, '/');		// $suburi contains url without domain
 if ($suburi == '/') $suburi = '';	// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);	// URL relative root ('', '/dolibarr', ...)
 if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', $dolibarr_main_url_root_static);	// Used to put static images on another domain
-define('DOL_URL_EXTMODULE', DOL_URL_ROOT . '/custom/modules');	// URL relative for external modules
+define('DOL_URL_EXTMODULE', $dolibarr_main_url_root_alt);	// URL relative for external modules
 
 /*
  * Include functions
@@ -189,7 +188,7 @@ $conf->file->character_set_client=strtoupper($force_charset_do_notuse);
 $conf->file->cookie_cryptkey = empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
 
 // Define array of document root directories
-$conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT, DOL_CUSTOM_PATH);
+$conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt contains several directories

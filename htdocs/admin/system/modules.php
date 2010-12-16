@@ -52,8 +52,7 @@ $modules_files = array();
 // Load list of modules
 foreach($conf->file->dol_document_root as $searchdir)
 {
-	if (preg_match('/custom$/i',$searchdir)) $dirtoscan = $searchdir . "/modules/";
-	else $dirtoscan = $searchdir . "/includes/modules/";
+	$dirtoscan = $searchdir . "/includes/modules/";
 	$handle=opendir($dirtoscan);
     if (is_resource($handle))
     {

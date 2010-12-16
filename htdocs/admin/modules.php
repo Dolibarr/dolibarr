@@ -84,8 +84,7 @@ $i = 0;	// is a sequencer of modules found
 $j = 0;	// j is module number. Automatically affected if module number not defined.
 foreach ($conf->file->dol_document_root as $dirroot)
 {
-	if (preg_match('/custom$/i',$dirroot)) $dir = $dirroot . "/modules/";
-	else $dir = $dirroot . "/includes/modules/";
+	$dir = $dirroot . "/includes/modules/";
 
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
