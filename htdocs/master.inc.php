@@ -116,7 +116,7 @@ $suburi = strstr ($uri, '/');		// $suburi contains url without domain
 if ($suburi == '/') $suburi = '';	// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);	// URL relative root ('', '/dolibarr', ...)
 if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', $dolibarr_main_url_root_static);	// Used to put static images on another domain
-define('DOL_URL_EXTMODULE', $dolibarr_main_url_root_alt);	// URL relative for external modules
+define('DOL_URL_EXTMODULE', DOL_URL_ROOT.$dolibarr_main_url_root_alt);	// URL relative for external modules
 
 /*
  * Include functions
