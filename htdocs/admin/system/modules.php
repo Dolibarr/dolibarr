@@ -74,7 +74,7 @@ foreach($conf->file->dol_document_root as $searchdir)
     			}
     		}
     	}
-    	close($handle);
+    	closedir($handle);
     }
 }
 print '<table class="noborder" width="100%">';
