@@ -33,6 +33,24 @@ $dolibarr_main_url_root='';
 $dolibarr_main_document_root='';
 
 
+# dolibarr_main_url_root_alt
+# This parameter defines the alternative URL of your Dolibarr.
+# It must link to the external modules directory.
+# Examples:
+# $dolibarr_main_url_root_alt='/custom';
+#
+$dolibarr_main_url_root_alt='';
+
+
+# dolibarr_main_document_root_alt
+# This parameter contains absolute alternative file system directory of Dolibarr
+# Examples:
+# $dolibarr_main_document_root_alt='/var/www/dolibarr/htdocs/custom';
+# $dolibarr_main_document_root_alt='C:/My web sites/dolibarr/htdocs/custom';
+#
+$dolibarr_main_document_root_alt='';
+
+
 # dolibarr_main_data_root
 # This parameter contains absolute file system directory of Dolibarr
 # directory used to store uploaded and generated physical files.

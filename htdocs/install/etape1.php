@@ -534,6 +534,12 @@ function write_conf_file($conffile)
 
 		fputs($fp, '$dolibarr_main_document_root=\''.addslashes($main_dir).'\';');
 		fputs($fp,"\n");
+		
+		fputs($fp, '$dolibarr_main_url_root_alt=\''.addslashes("/custom").'\';');
+		fputs($fp,"\n");
+		
+		fputs($fp, '$dolibarr_main_document_root_alt=\''.addslashes($main_dir."/custom").'\';');
+		fputs($fp,"\n");
 
 		fputs($fp, '$dolibarr_main_data_root=\''.addslashes($main_data_dir).'\';');
 		fputs($fp,"\n");

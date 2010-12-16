@@ -1386,9 +1386,27 @@ class CommonObject
 			if ($objecttype == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
             if ($objecttype == 'order_supplier')   { $classfile='fournisseur.commande'; $classname='CommandeFournisseur'; }
             //print $classfile." - ".$classpath." - ".$tplpath;
-            if(!class_exists($classname)) require(DOL_DOCUMENT_ROOT."/".$classpath."/".$classfile.".class.php");
+            if(!class_exists($classname))
+            {
+            	if (file_exists(DOL_DOCUMENT_ROOT."/".$classpath."/".$classfile.".class.php"))
+            	{
+            		require(DOL_DOCUMENT_ROOT."/".$classpath."/".$classfile.".class.php");
+            	}
+            	else
+            	{
+            		require(DOL_DOCUMENT_EXTMODULE."/".$classpath."/".$classfile.".class.php");
+            	}
+            }
 			$linkedObjectBlock = new $classname($this->db);
-			include(DOL_DOCUMENT_ROOT.'/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
+			if (file_exists(DOL_DOCUMENT_ROOT.'/'.$tplpath.'/tpl/linkedobjectblock.tpl.php'))
+			{
+				include(DOL_DOCUMENT_ROOT.'/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
+			}
+			else
+			{
+				include(DOL_DOCUMENT_EXTMODULE.'/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
+			}
+			
 			return $num;
 		}
 	}
