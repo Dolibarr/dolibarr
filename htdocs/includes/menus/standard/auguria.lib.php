@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,8 @@ function print_auguria_menu($db,$atarget,$type_user)
 				}
 				else
 				{
-					if (file_exists(DOL_DOCUMENT_ROOT.$tabMenu[$i]['url'])) $url=DOL_URL_ROOT.$tabMenu[$i]['url'];
+					preg_match('/^([^<]+\.php)/i',$tabMenu[$i]['url'],$regs);
+					if (file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $url=DOL_URL_ROOT.$tabMenu[$i]['url'];
 					else $url=DOL_URL_EXTMODULE.$tabMenu[$i]['url'];
 					if (! preg_match('/\?/',$url)) $url.='?';
 					else $url.='&';
@@ -275,7 +277,10 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
             }
 
             // Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
-            $url=$menu_array[$i]['url'];
+            preg_match('/^([^<]+\.php)/i',$menu_array[$i]['url'],$regs);
+			if (file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $url=DOL_URL_ROOT.$menu_array[$i]['url'];
+			else $url=DOL_URL_EXTMODULE.$menu_array[$i]['url'];
+			
             if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
             {
                 if (! preg_match('/\?/',$url)) $url.='?';

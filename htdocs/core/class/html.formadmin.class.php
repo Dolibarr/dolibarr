@@ -157,7 +157,7 @@ class FormAdmin
                     }
                 }
             }
-            close($handle);
+            closedir($handle);
         }
 		ksort($menuarray);
 
