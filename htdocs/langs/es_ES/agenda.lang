@@ -9,6 +9,7 @@ Calendars= Calendarios
 AffectedTo= Asignada a
 DoneBy= Realizado por
 Events= Eventos
+EventOnFullDay=Evento para todo el día
 ListOfActions= Listado de eventos
 Location= Localización
 SearchAnAction= Buscar una acción/tarea

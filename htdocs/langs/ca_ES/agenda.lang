@@ -10,6 +10,7 @@ AffectedTo= Assignada a
 DoneBy= Realitzat per
 Events= Esdeveniments
 ListOfActions= Llista d'esdeveniments
+EventOnFullDay=Esdeveniment per tot el dia
 Location= Localització
 SearchAnAction= Cercar una acció/tasca
 MenuToDoActions= Accions incompletes
