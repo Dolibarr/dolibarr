@@ -160,3 +160,8 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_AC
 insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_SENTBYMAIL','1','chaine','',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_ORDER_SUPPLIER_VALIDATE','1','chaine','',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_SUPPLIER_VALIDATE','1','chaine','',0);
+
+--
+-- Bank
+--
+insert into llx_const (name, value, type, note, visible) values ('BANK_SHOW_ORDER_OPTION','0','chaine','',0);

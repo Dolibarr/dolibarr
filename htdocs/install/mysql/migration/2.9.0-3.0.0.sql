@@ -159,3 +159,6 @@ UPDATE llx_documentmodel set type='order_supplier' WHERE type='supplier_order';
 UPDATE llx_c_type_contact set element='invoice_supplier' WHERE element='facture_fourn';
 UPDATE llx_c_type_contact set module='invoice_supplier' WHERE module='supplier_invoice';
 UPDATE llx_c_type_contact set module='order_supplier' WHERE module='supplier_order';
+
+-- Add display order of bank account
+insert into llx_const (name, value, type, note, visible) values ('BANK_SHOW_ORDER_OPTION','0','chaine','',0);

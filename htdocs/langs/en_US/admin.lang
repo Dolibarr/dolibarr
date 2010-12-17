@@ -1203,6 +1203,13 @@ EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint availa
 ##### Bank #####
 BankSetupModule=Bank module setup
 FreeLegalTextOnChequeReceipts=Free text on cheque receipts
+BankOrderShow=Display order of bank accounts
+BankOrderGlobal=General
+BankOrderGlobalDesc=General display order
+BankOrderES=Spanish
+BankOrderESDesc=Spanish display order
+BankOrderGlobalEx=BankCode DeskCode AccountNumber Key
+BankOrderESEx=BankCode DeskCode Key AccountNumber
 ##### Multicompany #####
 MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####

@@ -3,6 +3,7 @@
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -248,7 +249,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  */
 function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 {
-    global $mysoc;
+    global $mysoc, $conf;
 
     $pdf->SetXY ($curx, $cury);
     $pdf->SetFont('','B',8);
@@ -272,7 +273,8 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
         $pdf->line($curx+1, $cury+1, $curx+1, $cury+10 );
 
         $fieldstoshow=array('bank','desk','number','key');
-        if ($account->pays_code == 'ES') $fieldstoshow=array('bank','desk','key','number');
+        
+        if ($conf->global->BANK_SHOW_ORDER_OPTION==1) $fieldstoshow=array('bank','desk','key','number');
 
         foreach ($fieldstoshow as $val)
         {

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2009 Laurent Destailleur          <eldy@users.sourceforge.net>
- *
+ * Copyright (C) 2010 Juanjo Menent			       <jmenent@2byte.es>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -48,6 +49,19 @@ if ($_POST["action"] == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
     dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$_POST["BANK_CHEQUERECEIPT_FREE_TEXT"],'chaine',0,'',$conf->entity);
 }
 
+//Order display of bank account
+if ($_GET["action"] == 'setbankorder')
+{
+	if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION",$_GET["value"],'chaine',0,'',$conf->entity) > 0)
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
 
 /*
  * view
@@ -57,11 +71,9 @@ llxHeader("","");
 
 $html=new Form($db);
 
-
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("BankSetupModule"),$linkback,'setup');
 print '<br>';
-
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -81,7 +93,8 @@ print '<textarea name="BANK_CHEQUERECEIPT_FREE_TEXT" class="flat" cols="120">'.$
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-print '</form>';
+print '</table>';
+print "<br>";
 
 /*
 $var=!$var;
@@ -97,9 +110,57 @@ print "</td></tr>\n";
 print '</form>';
 */
 
-print '</table>';
 
+//Show bank account order
+print_titre($langs->trans("BankOrderShow"));
 
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="140">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
+print '<td align="center">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="60">&nbsp;</td>';
+print "</tr>\n";
+
+$bankorder[0][0]= $langs->trans("BankOrderGlobal");
+$bankorder[0][1]=$langs->trans("BankOrderGlobalDesc");
+$bankorder[0][2]=$langs->trans("BankOrderGlobalEx");
+$bankorder[1][0]=$langs->trans("BankOrderES");
+$bankorder[1][1]=$langs->trans("BankOrderESDesc");
+$bankorder[1][2]=$langs->trans("BankOrderESEx");
+
+$var = true;
+$i=0;
+
+while ($i<=1)
+{
+	$var = !$var;
+
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$bankorder[$i][0]."</td><td>\n";
+	print $bankorder[$i][1];
+	print '</td>';
+	print '<td nowrap="nowrap">'.$bankorder[$i][2]."</td>\n";
+
+	if ($conf->global->BANK_SHOW_ORDER_OPTION == $i)
+	{
+		print '<td align="center">';
+		print img_picto($langs->trans("Activated"),'on');
+		print '</td>';
+	}
+	else
+	{
+		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&amp;value='.$i.'">';
+		print img_picto($langs->trans("Disabled"),'off');
+		print '</a></td>';
+	}
+	print '<td>&nbsp;</td>';
+	print "</tr>\n";
+	$i++;
+}
+	
+print "</table>\n";
 
 $db->close();
 
