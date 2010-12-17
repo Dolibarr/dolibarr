@@ -3,7 +3,6 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.0 compared to 2.9 *****
 
 For users:
-- New: Task #10611: Add option to choose order of field in bak account info on PDF
 - New: Add Sales journal and Purchase journal report.
 - New: Can create supplier invoice from supplier order.
   New: Support login by openid
@@ -52,6 +51,7 @@ For users:
 - New: Can use image editor on user photo.
 - New: Task #10796: Add Spain ProfId1 Verification
 - New: Page "supplier summary" is now available.
+- New: Task #10611: Add option to choose order of field in bank account info on PDF
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Special chars are now supported in ECM module for filename (not yet for
