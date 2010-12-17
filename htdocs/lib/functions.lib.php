@@ -3292,7 +3292,6 @@ function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
 	return $chaine;
 }
 
-
 /**
  *    Format output for start and end date
  *    @param      	date_start    Start date
@@ -3301,22 +3300,37 @@ function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
  */
 function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 {
+	print  get_date_range($date_start,$date_end,$format,$outputlangs);
+}
+
+/**
+ *    Format output for start and end date
+ *    @param      	date_start    Start date
+ *    @param      	date_end      End date
+ *    @param      	format        Output format
+ */
+function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
+{
 	global $langs;
+	
+	$out='';
 
 	if (! is_object($outputlangs)) $outputlangs=$langs;
 
 	if ($date_start && $date_end)
 	{
-		print ' ('.$outputlangs->trans('DateFromTo',dol_print_date($date_start, $format, false, $outputlangs),dol_print_date($date_end, $format, false, $outputlangs)).')';
+		$out.= ' ('.$outputlangs->trans('DateFromTo',dol_print_date($date_start, $format, false, $outputlangs),dol_print_date($date_end, $format, false, $outputlangs)).')';
 	}
 	if ($date_start && ! $date_end)
 	{
-		print ' ('.$outputlangs->trans('DateFrom',dol_print_date($date_start, $format, false, $outputlangs)).')';
+		$out.= ' ('.$outputlangs->trans('DateFrom',dol_print_date($date_start, $format, false, $outputlangs)).')';
 	}
 	if (! $date_start && $date_end)
 	{
-		print ' ('.$outputlangs->trans('DateUntil',dol_print_date($date_end, $format, false, $outputlangs)).')';
+		$out.= ' ('.$outputlangs->trans('DateUntil',dol_print_date($date_end, $format, false, $outputlangs)).')';
 	}
+	
+	return $out;
 }
 
 

@@ -687,7 +687,12 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 
 				if ($facid > 0)
 				{
-					require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
+					if (file_exists(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php')) {
+						require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
+					} else {
+						require_once(DOL_DOCUMENT_EXTMODULE.'/'.$element.'/class/'.$subelement.'.class.php');
+					}
+
 					$classname = ucfirst($subelement);
 					$srcobject = new $classname($db);
 
@@ -1385,17 +1390,23 @@ if ($_GET['action'] == 'create')
 		{
             $projectid=GETPOST('originid');
 		}
-		else if (in_array($element,array('order','commande','propal','contrat','contract')))
+		else
 		{
     		// For compatibility
     		if ($element == 'order' || $element == 'commande')    { $element = $subelement = 'commande'; }
     		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
     		if ($element == 'contract') { $element = $subelement = 'contrat'; }
 
-    		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
+    		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php')) {
+    			require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
+    		} else {
+    			require_once(DOL_DOCUMENT_EXTMODULE.'/'.$element.'/class/'.$subelement.'.class.php');
+    		}
+
     		$classname = ucfirst($subelement);
     		$objectsrc = new $classname($db);
     		$objectsrc->fetch(GETPOST('originid'));
+    		if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
     		$objectsrc->fetch_thirdparty();
 
     		$projectid			= (!empty($objectsrc->fk_project)?$object->fk_project:'');
@@ -1775,155 +1786,16 @@ if ($_GET['action'] == 'create')
 
 	print "</form>\n";
 
-	// Try to read line from origin
-	$sql='';
-
-	// TODO deplacer dans la classe
-	if ($_GET['origin'] == 'propal')
+	// Show origin lines
+	if (is_object($objectsrc))
 	{
-		//$objectsrc->printOriginLinesList();
-
 		$title=$langs->trans('ProductsAndServices');
-
-		$sql = 'SELECT pt.rowid, pt.description, pt.fk_remise_except,';
-		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.product_type, pt.info_bits,';
-		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE pt.fk_propal = '.$objectsrc->id;
-		$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
-	}
-	// TODO deplacer dans la classe
-	if ($_GET['origin'] == 'commande')
-	{
-		$title=$langs->trans('Products');
-
-		$sql = 'SELECT pt.rowid, pt.description, pt.fk_remise_except,';
-		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.product_type, pt.info_bits,';
-		$sql.= ' pt.date_start as date_debut_prevue, pt.date_end as date_fin_prevue,';
-		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE pt.fk_commande = '.$objectsrc->id;
-		$sql.= ' ORDER BY pt.rowid ASC';
-	}
-	// TODO deplacer dans la classe
-	if ($_GET['origin'] == 'contrat')
-	{
-		$title=$langs->trans('Services');
-
-		$sql = 'SELECT pt.rowid, pt.description,';
-		$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
-		$sql.= ' pt.date_ouverture_prevue as date_debut_prevue, pt.date_ouverture as date_debut_reel,';
-		$sql.= ' pt.date_fin_validite as date_fin_prevue, pt.date_cloture as date_fin_reel,';
-		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'contratdet as pt';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE pt.fk_contrat = '.$objectsrc->id;
-		$sql.= ' ORDER BY pt.rowid ASC';
-	}
-
-	if ($sql)
-	{
-		print '<br>';
 		print_titre($title);
-
+		
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td>'.$langs->trans('Description').'</td>';
-		print '<td align="right">'.$langs->trans('VAT').'</td>';
-		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-		print '<td align="right">'.$langs->trans('Qty').'</td>';
-		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
-
-		// Lignes
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-			$var=True;
-			while ($i < $num)
-			{
-				$objp = $db->fetch_object($resql);
-				$var=!$var;
-
-				$date_start=$objp->date_debut_prevue;
-				if ($objp->date_debut_reel) $date_start=$objp->date_debut_reel;
-				$date_end=$objp->date_fin_prevue;
-				if ($objp->date_fin_reel) $date_end=$objp->date_fin_reel;
-
-				print '<tr '.$bc[$var].'><td>';
-				if (($objp->info_bits & 2) == 2)
-				{
-					print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socid.'">';
-					print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
-					print '</a>';
-				}
-				else if ($objp->prodid)
-				{
-					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">';
-					print ($objp->fk_product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product'));
-					print ' '.$objp->ref.'</a>';
-					print $objp->product?' - '.$objp->product:'';
-					// Dates
-					if ($date_start || $date_end)
-					{
-						print_date_range($date_start,$date_end);
-					}
-				}
-				else
-				{
-					print ($objp->product_type == -1 ? '&nbsp;' : ($objp->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
-					// Dates
-					if ($date_start || $date_end)
-					{
-						print_date_range($date_start,$date_end);
-					}
-				}
-				print "</td>\n";
-				print '<td>';
-				if ($objp->description)
-				{
-					if ($objp->description == '(CREDIT_NOTE)')
-					{
-						$discount=new DiscountAbsolute($db);
-						$discount->fetch($objp->fk_remise_except);
-						print $langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
-					}
-					elseif ($obj->description == '(DEPOSIT)')
-					{
-						$discount=new DiscountAbsolute($db);
-						$discount->fetch($objp->fk_remise_except);
-						print $langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
-					}
-					else
-					{
-						print dol_trunc($objp->description,60);
-					}
-				}
-				else
-				{
-					print '&nbsp;';
-				}
-				print '</td>';
-				print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
-				print '<td align="right">'.price($objp->subprice).'</td>';
-				print '<td align="right">';
-				print (($objp->info_bits & 2) != 2) ? $objp->qty : '&nbsp;';
-				print '</td>';
-				print '<td align="right">';
-				print (($objp->info_bits & 2) != 2) ? $objp->remise_percent.'%' : '&nbsp;';
-				print '</td>';
-				print '</tr>';
-				$i++;
-			}
-		}
-		else
-		{
-			dol_print_error($db);
-		}
+		
+		$objectsrc->printOriginTitleList();
+		$objectsrc->printOriginLinesList($object);
 
 		print '</table>';
 	}

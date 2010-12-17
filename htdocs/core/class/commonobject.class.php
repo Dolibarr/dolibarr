@@ -1535,6 +1535,126 @@ class CommonObject
 		}
 	}
 
+	/**
+	 * 	Return HTML table with origin title list
+	 */
+	function printOriginTitleList()
+	{
+		global $langs;
+
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans('Ref').'</td>';
+		print '<td>'.$langs->trans('Description').'</td>';
+		print '<td align="right">'.$langs->trans('VAT').'</td>';
+		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+		print '<td align="right">'.$langs->trans('Qty').'</td>';
+		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
+	}
+	
+	/**
+	 * 	Return HTML with list of origin lines
+	 */
+	function printOriginLinesList($object)
+	{
+		$num = count($this->lines);
+		$var = true;
+		$i	 = 0;
+
+		foreach ($this->lines as $line)
+		{
+			$var=!$var;
+
+			if ($line->product_type == 9 && ! empty($line->special_code))
+			{
+				$object->hooks[$line->special_code]->printOriginObjectLine($line,$i);
+			}
+			else
+			{
+				$this->printOriginLine($line,$var);
+			}
+
+			$i++;
+		}
+	}
+
+	/**
+	 * 	Return HTML with origin line
+	 * 	@param		element		Element type
+	 * 	@param		id			Element id
+	 */
+	function printOriginLine($line,$var)
+	{
+		global $langs,$bc;
+		
+		//var_dump($line);
+
+		$date_start=$line->date_debut_prevue;
+		if ($line->date_debut_reel) $date_start=$line->date_debut_reel;
+		$date_end=$line->date_fin_prevue;
+		if ($line->date_fin_reel) $date_end=$line->date_fin_reel;
+
+		if (($line->info_bits & 2) == 2)
+		{
+			$discount=new DiscountAbsolute($db);
+			$discount->fk_soc = $this->socid;
+			$this->tpl['label'] = $discount->getNomUrl(0,'discount');
+		}
+		else if ($line->fk_product)
+		{
+			$productstatic = new Product($this->db);
+			$productstatic->id = $line->fk_product;
+			$productstatic->ref = $line->ref;
+			$productstatic->type = $line->fk_product_type;
+			$this->tpl['label'] = $productstatic->getNomUrl(1);
+			$this->tpl['label'].= $line->label?' - '.$line->label:'';
+			// Dates
+			if ($date_start || $date_end)
+			{
+				$this->tpl['label'].= get_date_range($date_start,$date_end);
+			}
+		}
+		else
+		{
+			$this->tpl['label'] = ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
+			$this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
+			// Dates
+			if ($date_start || $date_end)
+			{
+				$this->tpl['label'].= get_date_range($date_start,$date_end);
+			}
+		}
+
+		if ($line->desc)
+		{
+			if ($line->desc == '(CREDIT_NOTE)')
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				$this->tpl['description'] = $langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+			}
+			elseif ($line->desc == '(DEPOSIT)')
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				$this->tpl['description'] = $langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+			}
+			else
+			{
+				$this->tpl['description'] = dol_trunc($line->desc,60);
+			}
+		}
+		else
+		{
+			$this->tpl['description'] = '&nbsp;';
+		}
+
+		$this->tpl['vat_rate'] = vatrate($line->tva_tx);
+		$this->tpl['price'] = price($line->subprice);
+		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
+		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? $line->remise_percent.'%' : '&nbsp;';
+		
+		include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
+	}
 }
 
 ?>
