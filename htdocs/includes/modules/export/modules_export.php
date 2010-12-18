@@ -92,7 +92,7 @@ class ModeleExports
     				$i++;
     			}
     		}
-    		close($handle);
+    		closedir($handle);
         }
 		return $this->driverlabel;
 	}

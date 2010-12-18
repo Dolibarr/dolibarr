@@ -181,7 +181,7 @@ if ($year)
                     print '<td align="right">'.dol_print_date(dol_filemtime($tfile),"dayhour").'</td></tr>';
                 }
             }
-            close($handle);
+            closedir($handle);
         }
         print '</table>';
     }

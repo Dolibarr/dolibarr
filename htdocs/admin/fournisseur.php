@@ -549,7 +549,7 @@ if (is_resource($handle))
     		print "</tr>\n";
     	}
     }
-    close($handle);
+    closedir($handle);
 }
 
 print '</table><br/>';
