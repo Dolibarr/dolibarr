@@ -93,6 +93,7 @@ PermissionInheritedFromAGroup=La permission est accordée car héritée d'un gro
 Inherited=Hérité
 IdPhoneCaller=Id appelant (téléphone)
 UserLogged=Connexion utilisateur %s
+UserLogoff=Déconnexion utilisateur %s
 NewUserCreated=Création utilisateur %s
 NewUserPassword=Changement mot de passe de %s
 EventUserModified=Modification utilisateur %s

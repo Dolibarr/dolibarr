@@ -42,6 +42,7 @@ $action=$_POST["action"];
 $eventstolog=array(
 	array('id'=>'USER_LOGIN',             'test'=>1),
 	array('id'=>'USER_LOGIN_FAILED',      'test'=>1),
+    array('id'=>'USER_LOGOUT',            'test'=>1),
 	array('id'=>'USER_CREATE',            'test'=>1),
 	array('id'=>'USER_MODIFY',            'test'=>1),
 	array('id'=>'USER_NEW_PASSWORD',      'test'=>1),

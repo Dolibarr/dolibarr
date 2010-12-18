@@ -40,8 +40,8 @@ class InterfaceLogevents
     var $desc;
 
     /**
-     *   \brief      Constructeur.
-     *   \param      DB      Handler d'acces base
+     *   Constructor.
+     *   @param      DB      Database handler access
      */
     function InterfaceLogevents($DB)
     {
@@ -107,14 +107,15 @@ class InterfaceLogevents
 
     	if (empty($conf->entity)) $conf->entity = $entity;  // forcing of the entity if it's not defined (ex: in login form)
 
+        $this->date=gmmktime();
+        $this->duree=0;
+
         // Actions
         if ($action == 'USER_LOGIN')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=gmmktime();
-            $this->duree=0;
             $this->texte="(UserLogged,".$object->login.")";
             $this->desc="(UserLogged,".$object->login.")";
         }
@@ -123,10 +124,16 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=gmmktime();
-            $this->duree=0;
             $this->texte=$object->trigger_mesg;	// Message direct
             $this->desc=$object->trigger_mesg;	// Message direct
+        }
+        if ($action == 'USER_LOGOUT')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->texte="(UserLogoff,".$object->login.")";
+            $this->desc="(UserLogoff,".$object->login.")";
         }
         if ($action == 'USER_CREATE')
         {
@@ -134,8 +141,6 @@ class InterfaceLogevents
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=gmmktime();
-            $this->duree=0;
             $this->texte=$langs->transnoentities("NewUserCreated",$object->login);
             $this->desc=$langs->transnoentities("NewUserCreated",$object->login);
 		}
@@ -145,8 +150,6 @@ class InterfaceLogevents
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=gmmktime();
-            $this->duree=0;
             $this->texte=$langs->transnoentities("EventUserModified",$object->login);
             $this->desc=$langs->transnoentities("EventUserModified",$object->login);
         }
@@ -156,8 +159,6 @@ class InterfaceLogevents
             $langs->load("users");
 
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=gmmktime();
-            $this->duree=0;
             $this->texte=$langs->transnoentities("NewUserPassword",$object->login);
             $this->desc=$langs->transnoentities("NewUserPassword",$object->login);
         }
@@ -166,8 +167,6 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=gmmktime();
-            $this->duree=0;
 			if ($object->statut == 0)
 			{
 				$this->texte=$langs->transnoentities("UserEnabled",$object->login);
@@ -184,8 +183,6 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=gmmktime();
-            $this->duree=0;
             $this->texte=$langs->transnoentities("UserDeleted",$object->login);
             $this->desc=$langs->transnoentities("Userdeleted",$object->login);
         }
@@ -196,8 +193,6 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=gmmktime();
-            $this->duree=0;
             $this->texte=$langs->transnoentities("NewGroupCreated",$object->nom);
             $this->desc=$langs->transnoentities("NewGroupCreated",$object->nom);
 		}
@@ -206,8 +201,6 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=gmmktime();
-            $this->duree=0;
             $this->texte=$langs->transnoentities("GroupModified",$object->nom);
             $this->desc=$langs->transnoentities("GroupModified",$object->nom);
 		}
@@ -216,8 +209,6 @@ class InterfaceLogevents
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
-            $this->date=gmmktime();
-            $this->duree=0;
             $this->texte=$langs->transnoentities("GroupDeleted",$object->nom);
             $this->desc=$langs->transnoentities("GroupDeleted",$object->nom);
 		}
