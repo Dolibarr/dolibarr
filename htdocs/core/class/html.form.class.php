@@ -838,7 +838,7 @@ class Form
      *  \param    selected        Preselected products
      *  \param    htmlname        Name of HTML seletc field (must be unique in page)
      *  \param    filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-     *  \param    limit           Limit sur le nombre de lignes retournees
+     *  \param    limit           Limit on number of returned lines
      *  \param    price_level     Level of price to show
      *  \param	  status		  -1=Return all products, 0=Products not on sell, 1=Products on sell
      *  \param	  finished     	  2=all, 1=finished, 0=raw material
@@ -850,7 +850,7 @@ class Form
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
             // mode=1 means customers products
-            print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished);
+            print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
             print $langs->trans("RefOrLabel").' : <input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
             print '<br>';
         }
@@ -1117,7 +1117,7 @@ class Form
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
             // mode=2 means suppliers products
-            print ajax_autocompleter('',$htmlname,DOL_URL_ROOT.'/product/ajaxproducts.php','outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished);
+            print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
             print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
             print '<br>';
         }

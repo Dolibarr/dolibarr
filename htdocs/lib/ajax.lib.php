@@ -26,9 +26,11 @@
 
 
 /**
- *	Get value of field, do Ajax process and return result
- *	@param	    htmlname            nom et id du champ
- *	@param	    url                 chemin du fichier de reponse : /chemin/fichier.php
+ *	Get value of an HTML field, do Ajax process and show result
+ *	@param	    htmlname            HTML name of input field
+ *	@param	    url                 Url for request: /chemin/fichier.php
+ *  @param		option				More parameters on URL request
+ *  @param		minLength			Minimum number of chars to trigger tha Ajax search
  *	@return    	string              script complet
  */
 function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2)
