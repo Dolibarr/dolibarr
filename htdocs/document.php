@@ -33,7 +33,7 @@
 define('NOTOKENRENEWAL',1); // Disables token renewal
 
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-$encoding = 'UTF-8';
+$encoding = '';
 $action = isset($_GET["action"])?$_GET["action"]:'';
 $original_file = isset($_GET["file"])?$_GET["file"]:'';
 $modulepart = isset($_GET["modulepart"])?$_GET["modulepart"]:'';
@@ -525,7 +525,7 @@ else						// Open and return file
 	// Les drois sont ok et fichier trouve, on l'envoie
 
 	if ($encoding)   header('Content-Encoding: '.$encoding);
-	if ($type)       header('Content-Type: '.$type);
+	if ($type)       header('Content-Type: '.$type.(preg_match('/text/',$type)?'; charset="'.$conf->file->character_set_client:''));
 	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 	else header('Content-Disposition: inline; filename="'.$filename.'"');
 
