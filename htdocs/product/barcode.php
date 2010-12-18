@@ -110,10 +110,15 @@ print '</td>';
 
 print '</tr>'."\n";
 
-// Statut
-print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
-print $product->getLibStatut(2);
-print '</td></tr>'."\n";
+// Status (to sell)
+print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
+print $product->getLibStatut(2,0);
+print '</td></tr>';
+
+// Status (to buy)
+print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
+print $product->getLibStatut(2,1);
+print '</td></tr>';
 
 // Barcode type
 print '<tr><td nowrap>';

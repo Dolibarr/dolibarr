@@ -267,9 +267,9 @@ else
 	print '</td></tr>';
 }
 
-// Statut
-print '<tr><td>'.$langs->trans("Status").'</td><td>';
-print $product->getLibStatut(2);
+// Status (to sell)
+print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
+print $product->getLibStatut(2,0);
 print '</td></tr>';
 
 print "</table>\n";

@@ -226,8 +226,8 @@ if ($_GET["id"] || $_GET["ref"])
 			// Libelle
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
 
-			// Statut
-			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+			// Status (to buy)
+			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
 			print $product->getLibStatut(2,1);
 			print '</td></tr>';
 

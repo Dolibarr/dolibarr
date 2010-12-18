@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/product/fiche.php
  *  \ingroup    product
- *  \brief      Page de la fiche produit
+ *  \brief      Page to show product
  *  \version    $Id$
  */
 

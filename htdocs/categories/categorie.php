@@ -307,20 +307,26 @@ else if ($_GET["id"] || $_GET["ref"])
 
 
 		print '<table class="border" width="100%">';
+
+		// Ref
 		print "<tr>";
-		// Reference
 		print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
 		print $html->showrefnav($product,'ref','',1,'ref');
 		print '</td>';
 		print '</tr>';
 
-		// Libelle
+		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 		print '</tr>';
 
-		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
-		print $product->getLibStatut(2);
+		// Status (to sell)
+		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
+		print $product->getLibStatut(2,0);
+		print '</td></tr>';
+
+		// Status (to buy)
+		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
+		print $product->getLibStatut(2,1);
 		print '</td></tr>';
 
 		print '</table>';

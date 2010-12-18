@@ -95,9 +95,14 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
 		print '</tr>';
 
-		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
-		print $product->getLibStatut(2);
+		// Status (to sell)
+		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
+		print $product->getLibStatut(2,0);
+		print '</td></tr>';
+
+		// Status (to buy)
+		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
+		print $product->getLibStatut(2,1);
 		print '</td></tr>';
 
 		show_stats_for_company($product,$socid);

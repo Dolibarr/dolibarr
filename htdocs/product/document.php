@@ -145,20 +145,25 @@ if ($product->id)
 
     print '<table class="border" width="100%">';
 
-    // Reference
+    // Ref
     print '<tr>';
     print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $html->showrefnav($product,'ref','',1,'ref');
     print '</td>';
     print '</tr>';
 
-    // Libelle
+    // Label
     print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td></tr>';
 
-    // Statut
-    print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
-	print $product->getLibStatut(2);
-    print '</td></tr>';
+	// Status (to sell)
+	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
+	print $product->getLibStatut(2,0);
+	print '</td></tr>';
+
+	// Status (to buy)
+	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
+	print $product->getLibStatut(2,1);
+	print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
