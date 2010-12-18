@@ -1846,11 +1846,14 @@ class Commande extends CommonObject
 		{
 			$this->db->begin();
 
-			// Nettoyage parametres
+			// Clean parameters
+			if (empty($qty)) $qty=0;
+			if (empty($info_bits)) $info_bits=0;
+			if (empty($txtva)) $txtva=0;
+			if (empty($txlocaltax1)) $txlocaltax1=0;
+			if (empty($txlocaltax2)) $txlocaltax2=0;
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
-			if (! $qty) $qty=0;
-			if (! $info_bits) $info_bits=0;
 			$pu = price2num($pu);
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txtlocaltax1);
@@ -2613,8 +2616,6 @@ class OrderLine
 		$sql.= ' (fk_commande, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
 		$sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
 		$sql.= ' special_code, rang, marge_tx, marque_tx,';
-		// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-		// Insert in the database the start and end dates
 		$sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end)';
 		$sql.= " VALUES (".$this->fk_commande.",";
 		$sql.= " '".addslashes($this->desc)."',";
