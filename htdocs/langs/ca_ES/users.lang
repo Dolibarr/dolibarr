@@ -93,6 +93,7 @@ PermissionInheritedFromAGroup=El permís es concedeix ja que ho hereta d'un grup
 Inherited=Heretat
 IdPhoneCaller=ID trucant (telèfon)
 UserLogged=Usuari %s conectat
+UserLogoff=Usuari %s desconectat
 NewUserCreated=usuari %s  creat
 NewUserPassword=Contrasenya canviada per a %s 
 EventUserModified=Usuari %s modificat
