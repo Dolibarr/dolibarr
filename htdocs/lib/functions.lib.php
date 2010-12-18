@@ -106,7 +106,7 @@ function dol_size($size,$type='')
  */
 function dol_now($mode='gmt')
 {
-	// Note that gmmktime and mktime return same value (GMT) whithout parameters 
+	// Note that gmmktime and mktime return same value (GMT) whithout parameters
 	if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
 	else if ($mode == 'tzserver')			// Time for now with PHP server timezone added
 	{
@@ -461,7 +461,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if ($tzoutput)
 	{
 		$to_gmt=true;	// For backward compatibility
-		$offset=0;			
+		$offset=0;
 		if (is_string($tzoutput))
 		{
 			if ($tzoutput == 'tzserver')
@@ -479,9 +479,9 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 				$to_gmt=false;
 				$offset=0;	// TODO Define this and use it later
 			}
-		}	
+		}
 	}
-	
+
     if (! is_object($outputlangs)) $outputlangs=$langs;
 
 	// Si format non defini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
@@ -1127,7 +1127,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
  *	@param      object      Objet pour lequel il faut afficher le logo (example: user, group, action, bill, contract, propal, product, ...)
  *							Pour les modules externe utiliser nomimage@mymodule pour rechercher dans le repertoire "img" du module
  *	@param		cssclass	Define a specific css class
- *	\return     string      Retourne tag img
+ *	@return     string      Return img tag
  */
 function img_object($alt, $object, $cssclass='')
 {
@@ -1141,6 +1141,7 @@ function img_object($alt, $object, $cssclass='')
 	{
 		$object = $regs[1];
 		$path = $regs[2];
+		// If img file not into standard path, we use alternate path
 		if (! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/object_'.$object.'.png')) $url = DOL_URL_EXTMODULE;
 	}
 
@@ -3312,7 +3313,7 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 {
 	global $langs;
-	
+
 	$out='';
 
 	if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -3329,7 +3330,7 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 	{
 		$out.= ' ('.$outputlangs->trans('DateUntil',dol_print_date($date_end, $format, false, $outputlangs)).')';
 	}
-	
+
 	return $out;
 }
 
