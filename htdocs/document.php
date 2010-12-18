@@ -33,6 +33,7 @@
 define('NOTOKENRENEWAL',1); // Disables token renewal
 
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+$encoding = 'UTF-8';
 $action = isset($_GET["action"])?$_GET["action"]:'';
 $original_file = isset($_GET["file"])?$_GET["file"]:'';
 $modulepart = isset($_GET["modulepart"])?$_GET["modulepart"]:'';
@@ -51,6 +52,11 @@ if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
+
+
+/*
+ * View
+ */
 
 require("./main.inc.php");	// Load $user and permissions
 require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
