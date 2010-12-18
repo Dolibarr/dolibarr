@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/projet/element.php
  *      \ingroup    projet facture
- *		\brief      Page des elements par projet
+ *		\brief      Page of project referrers
  *		\version    $Id$
  */
 
@@ -183,7 +183,8 @@ foreach ($listofreferent as $key => $value)
 		print '<td width="100">'.$langs->trans("Ref").'</td>';
 		print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
-		if (empty($value['disableamount'])) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
+		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountHT").'</td>';
+		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 		$elementarray = $project->get_element_list($key);
@@ -220,16 +221,21 @@ foreach ($listofreferent as $key => $value)
                 // Amount
 				if (empty($value['disableamount'])) print '<td align="right">'.(isset($element->total_ht)?price($element->total_ht):'&nbsp;').'</td>';
 
+                // Amount
+				if (empty($value['disableamount'])) print '<td align="right">'.(isset($element->total_ttc)?price($element->total_ttc):'&nbsp;').'</td>';
+				
 				// Status
 				print '<td align="right">'.$element->getLibStatut(5).'</td>';
 
 				print '</tr>';
 
-				$total = $total + $element->total_ht;
+				$total_ht = $total_ht + $element->total_ht;
+				$total_ttc = $total_ttc + $element->total_ttc;
 			}
 
 			print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Number").': '.$i.'</td>';
-			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
+			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
+			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
