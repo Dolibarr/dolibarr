@@ -44,7 +44,8 @@ BoxTitleTotalUnpaidSuppliersBills=Unpaid supplier's invoices
 BoxMyLastBookmarks=My last %s bookmarks
 FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Last successfull refresh date: %s
 LastRefreshDate=Last refresh date
-NoRecordedBookmarks=No bookmarks defined. Click <a href="%s">here</a> to add bookmarks.
+NoRecordedBookmarks=No bookmarks defined. 
+ClickToAdd=Click here to add.
 NoRecordedCustomers=No recorded customers
 BoxTitleLastActionsToDo=Last %s actions to do
 BoxTitleLastContracts=Last %s contracts

@@ -87,30 +87,41 @@ function dol_require_once($relpath)
 	// Forced to use file_exists otherwise there is a blank page
 	//$res=@require_once(DOL_DOCUMENT_ROOT.$relpath);
 	//if (! $res && defined('DOL_DOCUMENT_ROOT_ALT')) $res=@require_once(DOL_DOCUMENT_ROOT_ALT.$relpath);
-	$res=@require_once(dol_file_exists($relpath));
-	
+	$res=require_once(dol_file_exists($relpath));
+
 	return $res;
 }
 
 /**
- *	Make an file_exists using default root and alternate root if it fails.
+ *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails.
+ *  TODO Rename function into dol_buildpath
  * 	@param			path		Relative or absolute path to file (Ie: mydir/myfile, ../myfile, ...)
- *  @return         int			Result
+ *  @param			mode		0=Used for a Filesystem path, 1=Used for an URL path
+ *  @return         string		Full filsystem path (if mode=0), Relative url path (if mode=1)
  */
-function dol_file_exists($path,$absolute=0)
+function dol_file_exists($path,$mode=0)
 {
-	$res=false;
-	
-	if ($absolute)
+	if (empty($mode))	// For a filesystem path
 	{
-		preg_match('/^([^<]+\.php)/i',$path,$regs);
-		$res=DOL_URL_ROOT.$path;
-		if (defined('DOL_URL_ROOT_ALT') && ! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $res=DOL_URL_ROOT_ALT.$path;
+		$res = DOL_DOCUMENT_ROOT.$path;	// Standard value
+		if (defined('DOL_DOCUMENT_ROOT_ALT') && DOL_DOCUMENT_ROOT_ALT)	// We check only if alternate feature is used
+		{
+			if (! file_exists(DOL_DOCUMENT_ROOT.$path)) $res = DOL_DOCUMENT_ROOT_ALT.$path;
+		}
 	}
-	else
+	else				// For an url path
 	{
-		$res = DOL_DOCUMENT_ROOT.$path;
-		if (defined('DOL_DOCUMENT_ROOT_ALT') && ! file_exists(DOL_DOCUMENT_ROOT.$path)) $res = DOL_DOCUMENT_ROOT_ALT.$path;
+		$res = DOL_URL_ROOT.$path;		// Standard value
+		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT)			// We check only if alternate feature is used
+		{
+			// We try to get local path of file on filesystem from url
+			// FIXME Trying to know if a file on disk exist by forging path on disk from url
+			// works only for some web server and some setup. This is bugged when
+			// using proxy, rewriting, virtual path, etc...
+			preg_match('/^([^<]+\.php)$/i',$path,$regs);		// Why a "<" char ?
+			if (! empty($regs[1])) $path = $regs[1];
+			if (! file_exists(DOL_DOCUMENT_ROOT.$path)) $res = DOL_URL_ROOT_ALT.$path;
+		}
 	}
 	
 	return $res;

@@ -32,6 +32,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 require("../../main.inc.php");
 
 $langs->load("main");
+$langs->load("install");
 $langs->load("other");
 
 // Security check
@@ -228,16 +229,21 @@ foreach ($demoprofiles as $profilarray)
 	{
 		$url=$_SERVER["PHP_SELF"].'?action=gotodemo&amp;urlfrom='.urlencode($_SERVER["PHP_SELF"]);
 		$urlwithmod=$url.'&amp;demochoice='.$profilarray['key'];
+		// Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
+		//print "xx".$_SERVER["PHP_SELF"].' '.DOL_URL_ROOT.'<br>';
+		$urlfrom=preg_replace('/^'.preg_quote(DOL_URL_ROOT,'/').'/i','',$_SERVER["PHP_SELF"]);
+		//print $urlfrom;
+		
 		//if ($i % $NBOFCOLS == 0) print '<tr>';
 		print '<tr>';
 		print '<td>'."\n";
 
-		print '<form method="POST" name="form'.$profilarray['key'].'" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="action" value="gotodemo">';
-        print '<input type="hidden" name="urlfrom" value="'.urlencode($_SERVER["PHP_SELF"]).'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="username" value="demo">';
-        print '<table summary="Dolibarr online demonstration for profile '.$profilarray['label'].'" style="font-size:14px;" width="100%" class="CTableRow'.($i%2==0?'1':'2').'">'."\n";
+		print '<form method="POST" name="form'.$profilarray['key'].'" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+		print '<input type="hidden" name="action" value="gotodemo">'."\n";
+        print '<input type="hidden" name="urlfrom" value="'.urlencode($urlfrom).'">'."\n";
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+        print '<input type="hidden" name="username" value="demo">'."\n";
+        print '<table summary="Dolibarr online demonstration for profile '.$profilarray['label'].'" style="font-size:14px;" width="100%" class="CTableRow'.($i%2==0?'1':'1').'">'."\n";
 		print '<tr>';
 		print '<td width="50"><a href="'.$urlwithmod.'" id="a1'.$profilarray['key'].'" class="modulelineshow"><img src="'.$profilarray['icon'].'" width="48" border="0" alt="Demo '.$profilarray['label'].'"></a></td>';
 		//print '<td><input type="radio" name="demochoice"';
@@ -346,9 +352,9 @@ function llxHeaderVierge($title, $head = "")
     print "<title>".$title."</title>\n";
     print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php?lang='.$langs->defaultlang.'">'."\n";
     print '<!-- Includes for JQuery -->'."\n";
-    print '<script type="text/javascript" src="/includes/jquery/js/jquery-latest.min.js"></script>'."\n";
-    print '<script type="text/javascript" src="/includes/jquery/js/jquery-ui-latest.custom.min.js"></script>'."\n";
-    print '<script type="text/javascript" src="/includes/jquery/plugins/tablednd/jquery.tablednd_0_5.js"></script>'."\n";
+    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min.js"></script>'."\n";
+    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-latest.custom.min.js"></script>'."\n";
+    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5.js"></script>'."\n";
     if ($head) print $head."\n";
     print '<style type="text/css">';
     print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';

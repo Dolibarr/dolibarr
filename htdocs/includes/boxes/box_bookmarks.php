@@ -105,7 +105,12 @@ class box_bookmarks extends ModeleBoxes {
 					$i++;
 				}
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center" colspan="2"', 'url'=> DOL_URL_ROOT.'/bookmarks/liste.php', 'text'=>$langs->trans("NoRecordedBookmarks"));
+				if ($num==0)
+				{
+					$mytxt=$langs->trans("NoRecordedBookmarks");
+					if ($user->rights->bookmark->creer) $mytxt.=' '.$langs->trans("ClickHereToAdd");
+					$this->info_box_contents[$i][0] = array('td' => 'align="center" colspan="2"', 'url'=> DOL_URL_ROOT.'/bookmarks/liste.php', 'text'=>$mytxt);
+				}
 			}
 			else
 			{

@@ -63,7 +63,7 @@ function print_auguria_menu($db,$atarget,$type_user)
 				}
 				else
 				{
-					dol_file_exists($tabMenu[$i]['url'],1);
+					$url=dol_file_exists($tabMenu[$i]['url'],1);
 					if (! preg_match('/\?/',$url)) $url.='?';
 					else $url.='&';
 					if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
@@ -275,7 +275,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
             }
 
             // Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
-            dol_files_exists($menu_array[$i]['url'],1);
+            $url=dol_file_exists($menu_array[$i]['url'],1);
 			
             if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
             {
