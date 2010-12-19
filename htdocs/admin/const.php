@@ -196,7 +196,7 @@ $sql.= ", note";
 $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
-if ($user->entity || $conf->global->MAIN_FEATURES_LEVEL < 2) $sql.= " AND visible = 1";
+if ($user->entity || empty($conf->multicompany->enabled)) $sql.= " AND visible = 1";
 $sql.= " ORDER BY entity, name ASC";
 
 dol_syslog("Const::listConstant sql=".$sql);
