@@ -843,7 +843,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		{
 			foreach($conf->css_modules as $cssfile)
 			{	// cssfile is an absolute path
-				print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_file_exists($cssfile,1).'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1).'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 			}
 		}
 		// CSS forced by page in top_htmlhead call (relative url starting with /)

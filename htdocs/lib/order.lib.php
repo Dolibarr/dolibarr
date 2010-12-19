@@ -106,7 +106,7 @@ function commande_prepare_head($object)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = dol_file_exists(preg_replace('/__ID__/i',$object->id,$values[3]),1);
+			$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;

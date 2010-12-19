@@ -87,19 +87,18 @@ function dol_require_once($relpath)
 	// Forced to use file_exists otherwise there is a blank page
 	//$res=@require_once(DOL_DOCUMENT_ROOT.$relpath);
 	//if (! $res && defined('DOL_DOCUMENT_ROOT_ALT')) $res=@require_once(DOL_DOCUMENT_ROOT_ALT.$relpath);
-	$res=require_once(dol_file_exists($relpath));
+	$res=require_once(dol_buildpath($relpath));
 
 	return $res;
 }
 
 /**
  *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails.
- *  TODO Rename function into dol_buildpath
  * 	@param			path		Relative or absolute path to file (Ie: mydir/myfile, ../myfile, ...)
  *  @param			mode		0=Used for a Filesystem path, 1=Used for an URL path
  *  @return         string		Full filsystem path (if mode=0), Relative url path (if mode=1)
  */
-function dol_file_exists($path,$mode=0)
+function dol_buildpath($path,$mode=0)
 {
 	if (empty($mode))	// For a filesystem path
 	{
