@@ -57,7 +57,7 @@ class box_bookmarks extends ModeleBoxes {
 	{
 		global $user, $langs, $db;
 		$langs->load("boxes");
-
+				
 		$this->max=$max;
 
 		$this->info_box_head = array('text' => $langs->trans("BoxMyLastBookmarks",$max),
@@ -108,7 +108,7 @@ class box_bookmarks extends ModeleBoxes {
 				if ($num==0)
 				{
 					$mytxt=$langs->trans("NoRecordedBookmarks");
-					if ($user->rights->bookmark->creer) $mytxt.=' '.$langs->trans("ClickHereToAdd");
+					if ($user->rights->bookmark->creer) $mytxt.=' '.$langs->trans("ClickToAdd");
 					$this->info_box_contents[$i][0] = array('td' => 'align="center" colspan="2"', 'url'=> DOL_URL_ROOT.'/bookmarks/liste.php', 'text'=>$mytxt);
 				}
 			}
