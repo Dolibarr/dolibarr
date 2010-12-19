@@ -34,6 +34,7 @@
 
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '..');
+if (! defined('DOL_DOCUMENT_ROOT_ALT'))	 define('DOL_DOCUMENT_ROOT_ALT', '../custom');
 if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
 
