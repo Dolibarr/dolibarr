@@ -101,10 +101,10 @@ if (empty($dolibarr_main_data_root))
 }
 
 // Define some constants
-define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
-define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (documents)
 define('DOL_CLASS_PATH', 'class/');									// Filesystem path to class dir
-define('DOL_DOCUMENT_ROOT_ALT', $dolibarr_main_document_root_alt);	// Filesystem path to external modules dir
+define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (documents)
+define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
+define('DOL_DOCUMENT_ROOT_ALT', $dolibarr_main_document_root_alt);	// Filesystem paths to alternate core php (alternate htdocs)
 // If dolibarr_main_url_root = auto (Hidden feature for developers only), we try to forge it.
 if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
 {
@@ -112,11 +112,11 @@ if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! em
 }
 define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);			// URL relative root
 $uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));	// $uri contains url without http*
-$suburi = strstr ($uri, '/');		// $suburi contains url without domain
+$suburi = strstr($uri, '/');		// $suburi contains url without domain
 if ($suburi == '/') $suburi = '';	// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);	// URL relative root ('', '/dolibarr', ...)
 if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', $dolibarr_main_url_root_static);	// Used to put static images on another domain
-define('DOL_URL_EXTMODULE', DOL_URL_ROOT.$dolibarr_main_url_root_alt);	// URL relative for external modules
+define('DOL_URL_ROOT_ALT', DOL_URL_ROOT.$dolibarr_main_url_root_alt);	// URL relative for external modules
 
 /*
  * Include functions

@@ -65,7 +65,7 @@ function print_auguria_menu($db,$atarget,$type_user)
 				{
 					preg_match('/^([^<]+\.php)/i',$tabMenu[$i]['url'],$regs);
 					$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-					if (defined('DOL_URL_EXTMODULE') && DOL_URL_EXTMODULE && ! file_exists(DOL_DOCUMENT_ROOT.$tabMenu[$i]['url'])) $url=DOL_URL_EXTMODULE.$tabMenu[$i]['url'];
+					if (DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.$tabMenu[$i]['url'])) $url=DOL_URL_ROOT_ALT.$tabMenu[$i]['url'];
 					if (! preg_match('/\?/',$url)) $url.='?';
 					else $url.='&';
 					if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
@@ -279,7 +279,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
             // Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
             preg_match('/^([^<]+\.php)/i',$menu_array[$i]['url'],$regs);
 			$url=DOL_URL_ROOT.$menu_array[$i]['url'];
-			if (defined('DOL_URL_EXTMODULE') && DOL_URL_EXTMODULE && ! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $url=DOL_URL_EXTMODULE.$menu_array[$i]['url'];
+			if (DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $url=DOL_URL_ROOT_ALT.$menu_array[$i]['url'];
 			
             if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
             {

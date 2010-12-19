@@ -454,7 +454,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 				else
 				{
 					$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-					if (defined('DOL_URL_EXTMODULE') && DOL_URL_EXTMODULE && ! file_exists(DOL_DOCUMENT_ROOT.$tabMenu[$i]['url'])) $url=DOL_URL_EXTMODULE.$tabMenu[$i]['url'];
+					if (DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.$tabMenu[$i]['url'])) $url=DOL_URL_ROOT_ALT.$tabMenu[$i]['url'];
 					if (! preg_match('/\?/',$url)) $url.='?';
 					else $url.='&';
 					if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
@@ -1388,7 +1388,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             // For external modules
             preg_match('/^([^<]+\.php)/i',$menu_array[$i]['url'],$regs);
 			$url=DOL_URL_ROOT.$menu_array[$i]['url'];
-			if (defined('DOL_URL_EXTMODULE') && DOL_URL_EXTMODULE && ! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $url=DOL_URL_EXTMODULE.$menu_array[$i]['url'];
+			if (DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $url=DOL_URL_ROOT_ALT.$menu_array[$i]['url'];
 
             // Menu niveau 0
             if ($menu_array[$i]['level'] == 0)

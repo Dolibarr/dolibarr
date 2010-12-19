@@ -123,15 +123,13 @@ $conf->global->MAIN_LOGTOHTML=1;
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 
-define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
 define('DOL_CLASS_PATH', 'class/');                             // Filsystem path to class dir
-define('DOL_DOCUMENT_ROOT_ALT', (isset($dolibarr_main_document_root_alt)?$dolibarr_main_document_root_alt:''));	// Filesystem path to external root dir (external modules)
+define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
 define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root)?$dolibarr_main_url_root:''));           // URL relative root
 $uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));  // $uri contains url without http*
 $suburi = strstr ($uri, '/');       // $suburi contains url without domain
 if ($suburi == '/') $suburi = '';   // If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);    // URL relative root ('', '/dolibarr', ...)
-define('DOL_URL_EXTMODULE', DOL_URL_ROOT.(isset($dolibarr_main_url_root_alt)?$dolibarr_main_url_root_alt:''));	// URL relative for external modules
 
 
 if (empty($conf->file->character_set_client))      	$conf->file->character_set_client="UTF-8";
