@@ -121,7 +121,9 @@ function dol_buildpath($path,$mode=0)
 			preg_match('/^([^.]+\.php)/i',$path,$regs);
 			if (! empty($regs[1])) $path = $regs[1];
 			// An alternative for proxy but extremely slow
-			//if (! @file_get_contents('http://'.$_SERVER["SERVER_NAME"].DOL_URL_ROOT.$path)) $res = DOL_URL_ROOT_ALT.$path;
+			//$url = 'http://'.$_SERVER["SERVER_NAME"].DOL_URL_ROOT.$path;
+			//if (! @file_get_contents($url)) $res = DOL_URL_ROOT_ALT.$path;
+			//if (! @fopen($url, 'r')) $res = DOL_URL_ROOT_ALT.$path;
 			if (! file_exists(DOL_DOCUMENT_ROOT.$path)) $res = DOL_URL_ROOT_ALT.$path;
 		}
 	}
