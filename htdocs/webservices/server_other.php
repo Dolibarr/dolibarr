@@ -114,7 +114,7 @@ function getVersions($authentication)
 
 	if (! $error)
 	{
-		$objectresp['result']=array('result_code'=>'', 'result_label'=>'');
+		$objectresp['result']=array('result_code'=>'OK', 'result_label'=>'');
 		$objectresp['dolibarr']=version_dolibarr();
 		$objectresp['os']=version_os();
 		$objectresp['php']=version_php();

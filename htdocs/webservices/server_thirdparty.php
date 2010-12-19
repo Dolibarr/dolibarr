@@ -182,7 +182,7 @@ function getThirdParty($authentication,$id,$ref,$ref_ext)
 			{
 			    // Create
 			    $objectresp = array(
-			    	'result'=>array('result_code'=>'', 'result_label'=>''),
+			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'thirdparty'=>array(
 				    	'id' => $thirdparty->id,
 			   			'ref' => $thirdparty->name,

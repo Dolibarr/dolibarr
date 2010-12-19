@@ -264,7 +264,7 @@ function getInvoice($authentication,$id,$ref,$ref_ext)
 
 			    // Create invoice
 			    $objectresp = array(
-			    	'result'=>array('result_code'=>'', 'result_label'=>''),
+			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'invoice'=>array(
 				    	'id' => $invoice->id,
 			   			'ref' => $invoice->ref,
@@ -388,7 +388,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 			}
 
 			$objectresp=array(
-		    	'result'=>array('result_code'=>'', 'result_label'=>''),
+		    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 		        'invoices'=>$linesinvoice
 
 			);
