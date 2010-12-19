@@ -27,7 +27,7 @@
  * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
-function propal_prepare_head($propal)
+function propal_prepare_head($object)
 {
 	global $langs, $conf, $user;
 	$langs->load("propal");
@@ -36,7 +36,7 @@ function propal_prepare_head($propal)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?id='.$propal->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('ProposalCard');
 	$head[$h][2] = 'comm';
 	$h++;
@@ -46,7 +46,7 @@ function propal_prepare_head($propal)
 	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))))
 	{
 		$langs->load("sendings");
-		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$propal->id;
+		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
 		if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
 		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
 		$head[$h][1] = $text;
@@ -61,23 +61,23 @@ function propal_prepare_head($propal)
 */
 	if ($conf->use_preview_tabs)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?id='.$propal->id;
+		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Preview");
 		$head[$h][2] = 'preview';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$propal->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('ProposalContact');
 	$head[$h][2] = 'contact';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?id='.$propal->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Notes');
 	$head[$h][2] = 'note';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$propal->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id;
 	/*$filesdir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
 	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 	$listoffiles=dol_dir_list($filesdir,'files',1);
@@ -86,7 +86,7 @@ function propal_prepare_head($propal)
 	$head[$h][2] = 'document';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?id='.$propal->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
@@ -101,7 +101,7 @@ function propal_prepare_head($propal)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$propal->id,$values[3]);
+			$head[$h][0] = dol_file_exists(preg_replace('/__ID__/i',$object->id,$values[3]),1);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;

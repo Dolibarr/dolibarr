@@ -32,7 +32,7 @@
  *	@param	    prelevement         class BonPrelevement
  *	@return    	array               head
  */
-function prelevement_prepare_head($prelevement)
+function prelevement_prepare_head($object)
 {
 	global $langs, $conf, $user;
 	$langs->load("withdrawals");
@@ -40,35 +40,35 @@ function prelevement_prepare_head($prelevement)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$prelevement->id;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'prelevement';
 	$h++;
 
 	if ($conf->use_preview_tabs)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$prelevement->id;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Preview");
 		$head[$h][2] = 'preview';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$prelevement->id;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Lines");
 	$head[$h][2] = 'lines';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$prelevement->id;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Bills");
 	$head[$h][2] = 'invoices';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$prelevement->id;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Rejects");
 	$head[$h][2] = 'rejects';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$prelevement->id;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Statistics");
 	$head[$h][2] = 'statistics';
 	$h++;
@@ -83,7 +83,7 @@ function prelevement_prepare_head($prelevement)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$propal->id,$values[3]);
+			$head[$h][0] = dol_file_exists(preg_replace('/__ID__/i',$object->id,$values[3]),1);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;

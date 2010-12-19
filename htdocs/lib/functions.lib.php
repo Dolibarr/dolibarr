@@ -75,6 +75,43 @@ function dol_include_once($relpath)
 }
 
 /**
+ *	Make an require_once using default root and alternate root if it fails.
+ * 	@param			relpath		Relative path to file (Ie: mydir/myfile, ../myfile, ...)
+ *  @return         int			Result
+ */
+function dol_require_once($relpath)
+{
+	$res=@require_once(DOL_DOCUMENT_ROOT.$relpath);
+	if (! $res && defined('DOL_DOCUMENT_ROOT_ALT')) $res=@require_once(DOL_DOCUMENT_ROOT_ALT.$relpath);
+	return $res;
+}
+
+/**
+ *	Make an file_exists using default root and alternate root if it fails.
+ * 	@param			path		Relative or absolute path to file (Ie: mydir/myfile, ../myfile, ...)
+ *  @return         int			Result
+ */
+function dol_file_exists($path,$absolute=0)
+{
+	$res='';
+	
+	if ($absolute)
+	{
+		preg_match('/^([^<]+\.php)/i',$path,$regs);
+		$path = (! empty($regs[1]) ? $regs[1] : $path);
+		$res=DOL_URL_ROOT.$path;
+		if (defined('DOL_URL_ROOT_ALT') && ! file_exists(DOL_DOCUMENT_ROOT.$path)) $url=DOL_URL_ROOT_ALT.$path;
+	}
+	else
+	{
+		$res = DOL_DOCUMENT_ROOT.$path;
+		if (defined('DOL_DOCUMENT_ROOT_ALT') && ! file_exists(DOL_DOCUMENT_ROOT.$path)) $res = DOL_DOCUMENT_ROOT_ALT.$path;
+	}
+	
+	return $res;
+}
+
+/**
  *	Create a clone of instance of object (new instance with same properties)
  * 	This function works for both PHP4 and PHP5.
  * 	@param			object		Object to clone

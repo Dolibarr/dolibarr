@@ -25,14 +25,14 @@
  *		Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
-function member_prepare_head($member)
+function member_prepare_head($object)
 {
 	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$member->id;
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$object->id;
 	$head[$h][1] = $langs->trans("MemberCard");
 	$head[$h][2] = 'general';
 	$h++;
@@ -41,7 +41,7 @@ function member_prepare_head($member)
 	{
 		$langs->load("ldap");
 
-		$head[$h][0] = DOL_URL_ROOT.'/adherents/ldap.php?id='.$member->id;
+		$head[$h][0] = DOL_URL_ROOT.'/adherents/ldap.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("LDAPCard");
 		$head[$h][2] = 'ldap';
 		$h++;
@@ -49,7 +49,7 @@ function member_prepare_head($member)
 
     if ($user->rights->adherent->cotisation->lire)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$member->id;
+		$head[$h][0] = DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$object->id;
 		$head[$h][1] = $langs->trans("Subscriptions");
 		$head[$h][2] = 'subscription';
 		$h++;
@@ -58,23 +58,23 @@ function member_prepare_head($member)
 	// Show category tab
 	if ($conf->categorie->enabled && $user->rights->categorie->lire)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$member->id.'&type=3';
+		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=3';
 		$head[$h][1] = $langs->trans('Categories');
 		$head[$h][2] = 'category';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$member->id;
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
 	$h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$member->id;
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
     $head[$h][2] = 'document';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/adherents/info.php?id='.$member->id;
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
@@ -89,7 +89,7 @@ function member_prepare_head($member)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$member->id,$values[3]);
+			$head[$h][0] = dol_file_exists(preg_replace('/__ID__/i',$object->id,$values[3]),1);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;

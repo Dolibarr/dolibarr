@@ -28,7 +28,7 @@
  * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
-function product_prepare_head($product, $user)
+function product_prepare_head($object, $user)
 {
 	global $langs, $conf;
 	$langs->load("products");
@@ -36,25 +36,25 @@ function product_prepare_head($product, $user)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("CustomerPrices");
 	$head[$h][2] = 'price';
 	$h++;
 
 	if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("SuppliersPrices");
 		$head[$h][2] = 'suppliers';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Photos");
 	$head[$h][2] = 'photos';
 	$h++;
@@ -62,7 +62,7 @@ function product_prepare_head($product, $user)
 	// Show category tab
 	if ($conf->categorie->enabled && $user->rights->categorie->lire)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$product->id.'&type=0';
+		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=0';
 		$head[$h][1] = $langs->trans('Categories');
 		$head[$h][2] = 'category';
 		$h++;
@@ -71,7 +71,7 @@ function product_prepare_head($product, $user)
 	// Show barcode tab
 	if ($conf->global->MAIN_MODULE_BARCODE && $user->rights->barcode->lire)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
+		$head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("BarCode");
 		$head[$h][2] = 'barcode';
 		$h++;
@@ -80,7 +80,7 @@ function product_prepare_head($product, $user)
 	// Multilangs
 	if($conf->global->MAIN_MULTILANGS)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$product->id;
+		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Translation");
 		$head[$h][2] = 'translation';
 		$h++;
@@ -89,32 +89,32 @@ function product_prepare_head($product, $user)
 	// Sub products
 	if($conf->global->PRODUIT_SOUSPRODUITS)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/product/composition/fiche.php?id=".$product->id;
+		$head[$h][0] = DOL_URL_ROOT."/product/composition/fiche.php?id=".$object->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 		$head[$h][2] = 'subproduct';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$object->id;
 	$head[$h][1] = $langs->trans('Statistics');
 	$head[$h][2] = 'stats';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$object->id;
 	$head[$h][1] = $langs->trans('Referers');
 	$head[$h][2] = 'referers';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
+	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
 	$h++;
 
-	if($product->isproduct())	// Si produit stockable
+	if($object->isproduct())	// Si produit stockable
 	{
 		if ($conf->stock->enabled && $user->rights->stock->lire)
 		{
-			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("Stock");
 			$head[$h][2] = 'stock';
 			$h++;
@@ -131,7 +131,7 @@ function product_prepare_head($product, $user)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$product->id,$values[3]);
+			$head[$h][0] = dol_file_exists(preg_replace('/__ID__/i',$object->id,$values[3]),1);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;
@@ -139,9 +139,9 @@ function product_prepare_head($product, $user)
 	}
 
 	// More tabs from canvas
-	if (is_array($product->onglets))
+	if (is_array($object->onglets))
 	{
-		foreach ($product->onglets as $onglet)
+		foreach ($object->onglets as $onglet)
 		{
 			$head[$h] = $onglet;
 			$h++;

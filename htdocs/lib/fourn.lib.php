@@ -24,28 +24,28 @@
  *		\version    $Id$
  */
 
-function facturefourn_prepare_head($fac)
+function facturefourn_prepare_head($object)
 {
 	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$fac->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Card');
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/contact.php?facid='.$fac->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/contact.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('BillContacts');
 	$head[$h][2] = 'contact';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note.php?facid='.$fac->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Notes');
 	$head[$h][2] = 'note';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$fac->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$object->id;
 	/*$filesdir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($fac->id,2).$fac->id;
 	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 	$listoffiles=dol_dir_list($filesdir,'files',1);
@@ -54,7 +54,7 @@ function facturefourn_prepare_head($fac)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/info.php?facid='.$fac->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/info.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
@@ -69,7 +69,7 @@ function facturefourn_prepare_head($fac)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$fac->id,$values[3]);
+			$head[$h][0] = dol_file_exists(preg_replace('/__ID__/i',$object->id,$values[3]),1);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;
@@ -80,13 +80,13 @@ function facturefourn_prepare_head($fac)
 }
 
 
-function ordersupplier_prepare_head($commande)
+function ordersupplier_prepare_head($object)
 {
 	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("OrderCard");
 	$head[$h][2] = 'card';
 	$h++;
@@ -94,23 +94,23 @@ function ordersupplier_prepare_head($commande)
 	if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
 	{
 		$langs->load("stocks");
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$commande->id;
+		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("OrderDispatch");
 		$head[$h][2] = 'dispatch';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/contact.php?id='.$commande->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/contact.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('OrderContact');
 	$head[$h][2] = 'contact';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Notes");
 	$head[$h][2] = 'note';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/document.php?id='.$commande->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/document.php?id='.$object->id;
 	/*$filesdir = $conf->fournisseur->dir_output . "/commande/" . dol_sanitizeFileName($commande->ref);
 	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 	$listoffiles=dol_dir_list($filesdir,'files',1);
@@ -119,7 +119,7 @@ function ordersupplier_prepare_head($commande)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$commande->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("OrderFollow");
 	$head[$h][2] = 'info';
 	$h++;
@@ -134,7 +134,7 @@ function ordersupplier_prepare_head($commande)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$commande->id,$values[3]);
+			$head[$h][0] = dol_file_exists(preg_replace('/__ID__/i',$object->id,$values[3]),1);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;

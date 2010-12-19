@@ -27,7 +27,7 @@
  * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
-function fichinter_prepare_head($fichinter)
+function fichinter_prepare_head($object)
 {
 	global $langs, $conf, $user;
 	$langs->load("fichinter");
@@ -35,35 +35,35 @@ function fichinter_prepare_head($fichinter)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/fiche.php?id='.$fichinter->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$fichinter->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('InterventionContact');
 	$head[$h][2] = 'contact';
 	$h++;
 
 	if ($conf->use_preview_tabs)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/fichinter/apercu.php?id='.$fichinter->id;
+		$head[$h][0] = DOL_URL_ROOT.'/fichinter/apercu.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Preview');
 		$head[$h][2] = 'preview';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$fichinter->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Notes');
 	$head[$h][2] = 'note';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$fichinter->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/info.php?id='.$fichinter->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
@@ -78,7 +78,7 @@ function fichinter_prepare_head($fichinter)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$fichinter->id,$values[3]);
+			$head[$h][0] = dol_file_exists(preg_replace('/__ID__/i',$object->id,$values[3]),1);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;

@@ -24,33 +24,33 @@
 		\version    $Id$
 */
 
-function contract_prepare_head($contrat)
+function contract_prepare_head($object)
 {
 	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$contrat->id;
+	$head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("ContractCard");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$contrat->id;
+	$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("ContractContacts");
 	$head[$h][2] = 'contact';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/note.php?id='.$contrat->id;
+	$head[$h][0] = DOL_URL_ROOT.'/contrat/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/document.php?id='.$contrat->id;
+	$head[$h][0] = DOL_URL_ROOT.'/contrat/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$contrat->id;
+	$head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
@@ -65,7 +65,7 @@ function contract_prepare_head($contrat)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$contrat->id,$values[3]);
+			$head[$h][0] = dol_file_exists(preg_replace('/__ID__/i',$object->id,$values[3]),1);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;
