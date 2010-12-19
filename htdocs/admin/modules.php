@@ -376,7 +376,7 @@ if ($mode != 4)
                             {
                             	if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
                             	{
-                            		if (file_exists(DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1]))
+                            		if (! defined('DOL_URL_EXTMODULE') || ! DOL_URL_EXTMODULE || file_exists(DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1]))
                             		{
                             			print '<a href="'.DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
                             		}
@@ -395,7 +395,7 @@ if ($mode != 4)
                     }
                     else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
                     {
-                    	if (file_exists(DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1]))
+                    	if (! defined('DOL_URL_EXTMODULE') || ! DOL_URL_EXTMODULE || file_exists(DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1]))
                         {
                         	print '<td align="right" valign="top"><a href="'.DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
                         }

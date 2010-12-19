@@ -143,7 +143,7 @@ class Conf
 						{
 							$modulename = strtolower($reg[1]);
 							if ($value == 1) $this->triggers_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
-							else if ($value == 2) $this->triggers_modules[] = DOL_DOCUMENT_EXTMODULE.'/'.$modulename.'/inc/triggers/';
+							else if ($value == 2) $this->triggers_modules[] = DOL_DOCUMENT_ROOT_ALT.'/'.$modulename.'/inc/triggers/';
 						}
 						// If this is constant for login method activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_LOGIN_METHOD$/i',$key,$reg))

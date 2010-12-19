@@ -104,7 +104,7 @@ if (empty($dolibarr_main_data_root))
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (documents)
 define('DOL_CLASS_PATH', 'class/');									// Filesystem path to class dir
-define('DOL_DOCUMENT_EXTMODULE', $dolibarr_main_document_root_alt);	// Filesystem path to external modules dir
+define('DOL_DOCUMENT_ROOT_ALT', $dolibarr_main_document_root_alt);	// Filesystem path to external modules dir
 // If dolibarr_main_url_root = auto (Hidden feature for developers only), we try to forge it.
 if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
 {

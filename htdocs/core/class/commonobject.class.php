@@ -1284,38 +1284,22 @@ class CommonObject
 				$daofile 	= 'dao_'.$module.'.class.php';
 				$pathroot	= '';
 				
-				// Include class and library of thirdparty module
-				if (file_exists(DOL_DOCUMENT_ROOT.$path.$actionfile) &&	file_exists(DOL_DOCUMENT_ROOT.$path.$daofile))
-				{
-					$pathroot = DOL_DOCUMENT_ROOT;
-				}
-				else if (file_exists(DOL_DOCUMENT_EXTMODULE.$path.$actionfile) && file_exists(DOL_DOCUMENT_EXTMODULE.$path.$daofile))
-				{
-					$pathroot = DOL_DOCUMENT_EXTMODULE;
-				}
-				
-				if ($pathroot)
-				{
-					// Include actions class (controller)
-					require_once($pathroot.$path.$actionfile);
+				// Include actions class (controller)
+				dol_include_once($path.$actionfile);
 
-					// Include dataservice class (model)
-					require_once($pathroot.$path.$daofile);
+				// Include dataservice class (model)
+				dol_include_once($path.$daofile);
 
-					// Instantiate actions class (controller)
-					$controlclassname = 'Actions'.ucfirst($module);
-					$objModule = new $controlclassname($this->db);
-					$this->hooks[$objModule->module_number] = $objModule;
+				// Instantiate actions class (controller)
+				$controlclassname = 'Actions'.ucfirst($module);
+				$objModule = new $controlclassname($this->db);
+				$this->hooks[$objModule->module_number] = $objModule;
 
-					// Instantiate dataservice class (model)
-					$modelclassname = 'Dao'.ucfirst($module);
-					$this->hooks[$objModule->module_number]->object = new $modelclassname($this->db);
-				}
+				// Instantiate dataservice class (model)
+				$modelclassname = 'Dao'.ucfirst($module);
+				$this->hooks[$objModule->module_number]->object = new $modelclassname($this->db);
 
-				if (file_exists($pathroot.'/'.$module.'/lib/'.$module.'.lib.php'))
-				{
-					require_once($pathroot.'/'.$module.'/lib/'.$module.'.lib.php');
-				}
+				dol_include_once('/'.$module.'/lib/'.$module.'.lib.php');
 			}
 		}
 	}
@@ -1388,24 +1372,10 @@ class CommonObject
             //print $classfile." - ".$classpath." - ".$tplpath;
             if(!class_exists($classname))
             {
-            	if (file_exists(DOL_DOCUMENT_ROOT."/".$classpath."/".$classfile.".class.php"))
-            	{
-            		require(DOL_DOCUMENT_ROOT."/".$classpath."/".$classfile.".class.php");
-            	}
-            	else
-            	{
-            		require(DOL_DOCUMENT_EXTMODULE."/".$classpath."/".$classfile.".class.php");
-            	}
+            	dol_include_once("/".$classpath."/".$classfile.".class.php");
             }
 			$linkedObjectBlock = new $classname($this->db);
-			if (file_exists(DOL_DOCUMENT_ROOT.'/'.$tplpath.'/tpl/linkedobjectblock.tpl.php'))
-			{
-				include(DOL_DOCUMENT_ROOT.'/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
-			}
-			else
-			{
-				include(DOL_DOCUMENT_EXTMODULE.'/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
-			}
+			dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
 			
 			return $num;
 		}

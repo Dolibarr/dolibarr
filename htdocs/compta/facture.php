@@ -687,11 +687,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 
 				if ($facid > 0)
 				{
-					if (file_exists(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php')) {
-						require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
-					} else {
-						require_once(DOL_DOCUMENT_EXTMODULE.'/'.$element.'/class/'.$subelement.'.class.php');
-					}
+					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
 					$classname = ucfirst($subelement);
 					$srcobject = new $classname($db);
@@ -1397,11 +1393,7 @@ if ($_GET['action'] == 'create')
     		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
     		if ($element == 'contract') { $element = $subelement = 'contrat'; }
 
-    		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php')) {
-    			require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
-    		} else {
-    			require_once(DOL_DOCUMENT_EXTMODULE.'/'.$element.'/class/'.$subelement.'.class.php');
-    		}
+    		dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
     		$classname = ucfirst($subelement);
     		$objectsrc = new $classname($db);

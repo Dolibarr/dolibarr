@@ -63,6 +63,18 @@ function GETPOST($paramname,$check='',$method=0)
 }
 
 /**
+ *	Make an include_once using default root and alternate root if it fails.
+ * 	@param			relpath		Relative path to file (Ie: mydir/myfile, ../myfile, ...)
+ *  @return         int			Result
+ */
+function dol_include_once($relpath)
+{
+	$res=@include_once(DOL_DOCUMENT_ROOT.$relpath);
+	if (! $res && defined('DOL_DOCUMENT_ROOT_ALT')) $res=@include_once(DOL_DOCUMENT_ROOT_ALT.$relpath);
+	return $res;
+}
+
+/**
  *	Create a clone of instance of object (new instance with same properties)
  * 	This function works for both PHP4 and PHP5.
  * 	@param			object		Object to clone

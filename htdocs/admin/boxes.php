@@ -279,23 +279,15 @@ if ($resql)
 		{
 			$boxname = $regs[1];
 			$module = $regs[2];
-			
-			if (file_exists(DOL_DOCUMENT_ROOT."/".$module."/inc/boxes/".$boxname.".php"))
-			{
-				$sourcefile = DOL_DOCUMENT_ROOT."/".$module."/inc/boxes/".$boxname.".php";
-			}
-			else
-			{
-				$sourcefile = DOL_DOCUMENT_EXTMODULE."/".$module."/inc/boxes/".$boxname.".php";
-			}
+			$sourcefile = "/".$module."/inc/boxes/".$boxname.".php";
 		}
 		else
 		{
 			$boxname=preg_replace('/.php$/i','',$obj->file);
-			$sourcefile = DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php";
+			$sourcefile = "/includes/boxes/".$boxname.".php";
 		}
 
-		include_once($sourcefile);
+		dol_include_once($sourcefile);
 		$box=new $boxname($db,$obj->note);
 
 //		if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
@@ -390,23 +382,15 @@ if ($resql)
 		{
 			$boxname = $regs[1];
 			$module = $regs[2];
-			
-			if (file_exists(DOL_DOCUMENT_ROOT."/".$module."/inc/boxes/".$boxname.".php"))
-			{
-				$sourcefile = DOL_DOCUMENT_ROOT."/".$module."/inc/boxes/".$boxname.".php";
-			}
-			else
-			{
-				$sourcefile = DOL_DOCUMENT_EXTMODULE."/".$module."/inc/boxes/".$boxname.".php";
-			}
+			$sourcefile = "/".$module."/inc/boxes/".$boxname.".php";
 		}
 		else
 		{
 			$boxname=preg_replace('/.php$/i','',$obj->file);
-			$sourcefile = DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php";
+			$sourcefile = "/includes/boxes/".$boxname.".php";
 		}
 
-		include_once($sourcefile);
+		dol_include_once($sourcefile);
 		$box=new $boxname($db,$obj->note);
 
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
