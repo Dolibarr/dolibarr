@@ -664,6 +664,13 @@ td.photo {
 /* ============================================================================== */
 
 /*
+#containerlayout .layout-with-no-border {
+    border: 0 !important;
+    border-width: 0 !important;
+}
+*/
+
+/*
  *  PANES and CONTENT-DIVs
  */
 #containerlayout .ui-layout-pane { /* all 'panes' */

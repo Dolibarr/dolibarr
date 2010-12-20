@@ -519,6 +519,11 @@ td.photo {
 /* Panes for ECM or Filemanager                                                   */
 /* ============================================================================== */
 
+#containerlayout .layout-with-no-border {
+    border: 0 !important;
+    border-width: 0 !important;
+}
+
 /*
  *  PANES and CONTENT-DIVs
  */

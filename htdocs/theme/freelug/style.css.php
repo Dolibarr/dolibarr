@@ -525,6 +525,11 @@ td.photo {
 /* Panes for ECM or Filemanager                                                   */
 /* ============================================================================== */
 
+#containerlayout .layout-with-no-border {
+    border: 0 !important;
+    border-width: 0 !important;
+}
+
 /*
  *  PANES and CONTENT-DIVs
  */
@@ -736,7 +741,7 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-/* Nouvelle syntaxe � utiliser */
+/* Nouvelle syntaxe a utiliser */
 
 a.butAction:link    { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butAction:visited { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
