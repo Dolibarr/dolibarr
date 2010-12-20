@@ -49,6 +49,7 @@ print_titre($langs->trans("ConfigurationFile"));
 $configfileparameters=array(
 //							'separator',
 							'dolibarr_main_url_root',
+							'dolibarr_main_url_root_alt',
 							'dolibarr_main_document_root',
 							'dolibarr_main_document_root_alt',
 							'dolibarr_main_data_root',
@@ -76,6 +77,7 @@ $configfileparameters=array(
 $configfilelib=array(
 //					'separator',
 					$langs->trans("URLRoot"),
+					$langs->trans("URLRoot").' (alt)',
 					$langs->trans("DocumentRootServer"),
 					$langs->trans("DocumentRootServer").' (alt)',
 					$langs->trans("DataRootServer"),
@@ -109,6 +111,7 @@ print '</tr>'."\n";
 $i=0;
 foreach($configfileparameters as $key)
 {
+	if ($key == 'dolibarr_main_url_root_alt' && empty(${$key})) continue;
 	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) continue;
 
 	$var=!$var;
