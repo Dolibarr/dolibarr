@@ -150,8 +150,9 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("SendingSheet");
 		$pdf->MultiCell(100, 4, $title, '' , 'R');
+        $posy+=1;
 
-		$pdf->SetFont('','B',12);
+		$pdf->SetFont('','',12);
 
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
@@ -192,13 +193,15 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 						$result=$newobject->fetch($val[$i]);
 						if ($result >= 0)
 						{
-							$Yoff = $Yoff+8;
-							$pdf->SetXY($Xoff,$Yoff);
 							$pdf->SetFont('','',8);
 							$text=$newobject->ref;
 							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
-							$pdf->Text($posx, $Yoff, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text));
-							$pdf->Text($posx, $Yoff+4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"%d %b %Y",false,$outputlangs,true));
+                            $Yoff = $Yoff+8;
+							$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
+							$pdf->MultiCell(60, 4, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
+                            $Yoff = $Yoff+4;
+                            $pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
+                            $pdf->MultiCell(60, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"%d %b %Y",false,$outputlangs,true), 0, 'R');
 						}
 					}
 				}
@@ -231,6 +234,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$outputlangs->load("products");
 		$outputlangs->load("propal");
 		$outputlangs->load("deliveries");
+        $outputlangs->load("sendings");
 
 		if ($conf->expedition->dir_output)
 		{

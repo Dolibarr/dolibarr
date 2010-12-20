@@ -260,18 +260,9 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				$tab2_top = 254;
-				$tab2_lh = 7;
-				$tab2_height = $tab2_lh * 3;
+				$tab2_lh = 4;
 
 				$pdf->SetFont('','', 10);
-
-				$pdf->Rect(132, $tab2_top, 68, $tab2_height);
-
-				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*3), 200, $tab2_top + $tab2_height - ($tab2_lh*3) );
-				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*2), 200, $tab2_top + $tab2_height - ($tab2_lh*2) );
-				$pdf->line(132, $tab2_top + $tab2_height - $tab2_lh, 200, $tab2_top + $tab2_height - $tab2_lh );
-
-				$pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
 
 				$pdf->SetXY (132, $tab2_top + 0);
 				$pdf->MultiCell(42, $tab2_lh, $outputlangs->transnoentities("TotalHT"), 0, 'R', 0);

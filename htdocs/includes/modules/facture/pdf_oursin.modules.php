@@ -583,8 +583,7 @@ class pdf_oursin extends ModelePDFFactures
 		$langs->load("bills");
 
 		$tab2_top = $this->marges['h']+202;
-		$tab2_hl = 5;
-		$tab2_height = $tab2_hl * 4;
+		$tab2_hl = 4;
 		$pdf->SetFont('','', 9);
 
 		// Tableau total
@@ -646,7 +645,7 @@ class pdf_oursin extends ModelePDFFactures
 			$index++;
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->SetTextColor(22,137,210);
-			$pdf->SetFont('','B', 11);
+			$pdf->SetFont('','B', 10);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), 0, 'L', 0);
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), 0, 'R', 0);
@@ -725,26 +724,37 @@ class pdf_oursin extends ModelePDFFactures
 
 		$pdf->SetFont('','B',10);
 
-		$pdf->Text($this->marges['g']+1,$tab_top + 5, $outputlangs->transnoentities("Designation"));
+		$pdf->SetXY($this->marges['g'],$tab_top + 2);
+        $pdf->MultiCell(0, 4, $outputlangs->transnoentities("Designation"), 0, 'L');
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
-			if ($this->franchise!=1) $pdf->Text($this->marges['g']+120, $tab_top + 5, $outputlangs->transnoentities("VAT"));
+			if ($this->franchise!=1)
+			{
+                $pdf->SetXY($this->marges['g']+120,$tab_top + 2);
+                $pdf->MultiCell(0, 4, $outputlangs->transnoentities("VAT"), 0, 'L');
+			}
 		}
-		$pdf->Text($this->marges['g']+135, $tab_top + 5,$outputlangs->transnoentities("PriceUHT"));
-		$pdf->Text($this->marges['g']+153, $tab_top + 5, $outputlangs->transnoentities("Qty"));
+        $pdf->SetXY($this->marges['g']+135,$tab_top + 2);
+        $pdf->MultiCell(0, 4, $outputlangs->transnoentities("PriceUHT"), 0, 'L');
+        $pdf->SetXY($this->marges['g']+153,$tab_top + 2);
+        $pdf->MultiCell(0, 4, $outputlangs->transnoentities("Qty"), 0, 'L');
 
 		$nblignes = sizeof($object->lines);
 		$rem=0;
 		for ($i = 0 ; $i < $nblignes ; $i++)
-		if ($object->lines[$i]->remise_percent)
 		{
-			$rem=1;
+    		if ($object->lines[$i]->remise_percent)
+    		{
+    			$rem=1;
+    		}
 		}
 		if ($rem==1)
 		{
-			$pdf->Text($this->marges['g']+163, $tab_top + 5,$outputlangs->transnoentities("Note"));
+            $pdf->SetXY($this->marges['g']+165,$tab_top + 2);
+            $pdf->MultiCell(0, 4, $outputlangs->transnoentities("%"), 0, 'L');
 		}
-		$pdf->Text($this->marges['g']+175, $tab_top + 5, $outputlangs->transnoentities("TotalHTShort"));
+        $pdf->SetXY($this->marges['g']+170,$tab_top + 2);
+        $pdf->MultiCell(20, 4, $outputlangs->transnoentities("TotalHTShort"), 0, 'R');
 
 		return $pdf->GetY();
 	}

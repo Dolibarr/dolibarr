@@ -245,8 +245,9 @@ class pdf_soleil extends ModelePDFFicheinter
 
 
 				$pdf->SetTextColor(0,0,100);
-				$pdf->SetFont('','B',14);
-				$pdf->Text(11, 94, $outputlangs->transnoentities("InterventionCard")." : ".$outputlangs->convToOutputCharset($fichinter->ref));
+				$pdf->SetFont('','B',12);
+				$pdf->SetXY(10,86);
+				$pdf->MultiCell(120, 4, $outputlangs->transnoentities("InterventionCard")." : ".$outputlangs->convToOutputCharset($fichinter->ref), 0, 'L');
 
 				$pdf->SetFillColor(220,220,220);
 				$pdf->SetTextColor(0,0,0);

@@ -375,8 +375,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		$tab2_top = $posy;
-		$tab2_hl = 5;
-		$tab2_height = $tab2_hl * 4;
+		$tab2_hl = 4;
 		$pdf->SetFont('','', 9);
 
 		$pdf->SetXY ($this->marge_gauche, $tab2_top + 0);

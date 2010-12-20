@@ -574,8 +574,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		global $conf,$mysoc;
 
 		$tab2_top = $posy;
-		$tab2_hl = 5;
-		$tab2_height = $tab2_hl * 4;
+		$tab2_hl = 4;
 		$pdf->SetFont('','', 9);
 
 		// Tableau total

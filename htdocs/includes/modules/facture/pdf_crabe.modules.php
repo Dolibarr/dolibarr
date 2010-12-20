@@ -696,8 +696,7 @@ class pdf_crabe extends ModelePDFFactures
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$tab2_top = $posy;
-		$tab2_hl = 5;
-		$tab2_height = $tab2_hl * 4;
+		$tab2_hl = 4;
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		// Tableau total

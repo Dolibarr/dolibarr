@@ -566,8 +566,7 @@ class pdf_einstein extends ModelePDFCommandes
 		global $conf,$mysoc;
 
 		$tab2_top = $posy;
-		$tab2_hl = 5;
-		$tab2_height = $tab2_hl * 4;
+		$tab2_hl = 4;
 		$pdf->SetFont('','', 9);
 
 		// Tableau total
@@ -946,7 +945,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','',8);
 			$pdf->SetXY($posx+2,$posy-5);
-			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":",0,'L');
 			$pdf->rect($posx, $posy, 100, $hautcadre);
 
 			// Show recipient name
