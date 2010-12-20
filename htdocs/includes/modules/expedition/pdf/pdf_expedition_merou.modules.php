@@ -142,7 +142,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			if (file_exists($dir))
 			{
 				// Protection et encryption du pdf
-				if ($conf->global->PDF_SECURITY_ENCRYPTION)
+/*				if ($conf->global->PDF_SECURITY_ENCRYPTION)
 				{
 					$pdf=new FPDI_Protection('l','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
@@ -154,8 +154,10 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				{
 					$pdf=new FPDI('l','mm',$this->format);
 				}
+*/
+                $pdf=pdf_getInstance($this->format,'mm','l');
 
-                if (class_exists('TCPDF'))
+			    if (class_exists('TCPDF'))
                 {
                     $pdf->setPrintHeader(false);
                     $pdf->setPrintFooter(false);

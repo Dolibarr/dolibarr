@@ -30,6 +30,46 @@
 
 
 /**
+ *      Return a PDF instance object. We create a FPDI instance that instanciate TCPDF (or FPDF if MAIN_USE_FPDF is on)
+ *      @param      format          Array(width,height)
+ *      @param      metric          Unit of format ('mm')
+ *      @param      pagetype        'P' or 'l'
+ *      @return     PDF object
+ */
+function pdf_getInstance($format,$metric='mm',$pagetype='P')
+{
+    global $conf;
+
+    // Protection et encryption du pdf
+    if ($conf->global->PDF_SECURITY_ENCRYPTION)
+    {
+        /* Permission supported by TCPDF
+        - print : Print the document;
+        - modify : Modify the contents of the document by operations other than those controlled by 'fill-forms', 'extract' and 'assemble';
+        - copy : Copy or otherwise extract text and graphics from the document;
+        - annot-forms : Add or modify text annotations, fill in interactive form fields, and, if 'modify' is also set, create or modify interactive form fields (including signature fields);
+        - fill-forms : Fill in existing interactive form fields (including signature fields), even if 'annot-forms' is not specified;
+        - extract : Extract text and graphics (in support of accessibility to users with disabilities or for other purposes);
+        - assemble : Assemble the document (insert, rotate, or delete pages and create bookmarks or thumbnail images), even if 'modify' is not set;
+        - print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
+        - owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
+        */
+        if ($conf->global->MAIN_USE_FPDF) $pdf = new FPDI_Protection($pagetype,$metric,$format);
+        else $pdf = new FPDI($pagetype,$metric,$format);
+        $pdfrights = array('print'); // Ne permet que l'impression du document
+        if (empty($conf->global->MAIN_USE_FPDF)) $pdfrights[]='assemble';
+        $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+        $pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
+        $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+    }
+    else
+    {
+        $pdf=new FPDI($pagetype,$metric,$format);
+    }
+    return $pdf;
+}
+
+/**
  *      Return font name to use for PDF generation
  *      @param      outputlangs     Output langs object
  *      @return     string          Name of font to use
@@ -273,7 +313,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
         $pdf->line($curx+1, $cury+1, $curx+1, $cury+10 );
 
         $fieldstoshow=array('bank','desk','number','key');
-        
+
         if ($conf->global->BANK_SHOW_ORDER_OPTION==1) $fieldstoshow=array('bank','desk','key','number');
 
         foreach ($fieldstoshow as $val)

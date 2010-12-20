@@ -104,10 +104,11 @@ class pdf_paiement
 		$file = $dir . "/payments-".$year."-".$month.".pdf";
 
 		// Protection et encryption du pdf
-		if ($conf->global->PDF_SECURITY_ENCRYPTION)
+/*		if ($conf->global->PDF_SECURITY_ENCRYPTION)
 		{
-			$pdf = new FPDI_Protection('P','mm','A4');
-			$pdfrights = array('print'); // Ne permet que l'impression du document
+            if ($conf->global->MAIN_USE_FPDF) $pdf = new FPDI_Protection('P','mm',$this->format);
+            else $pdf = new FPDI('P','mm',$this->format);
+            $pdfrights = array('print'); // Ne permet que l'impression du document
 			$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
 			$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 			$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
@@ -116,6 +117,8 @@ class pdf_paiement
 		{
 			$pdf=new FPDI('P','mm',$this->format);
 		}
+*/
+        $pdf=pdf_getInstance($this->format);
 
         if (class_exists('TCPDF'))
         {
@@ -237,7 +240,7 @@ class pdf_paiement
 		$pdf->SetXY(10,10);
 		$pdf->MultiCell(200, 2, $title, 0, 'C');
 
-		$pdf->SetFont('','',12);
+		$pdf->SetFont('','',10);
 
         $pdf->SetXY (11, 16);
 		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(),"day",false,$outputlangs,true), 0, 'L');
@@ -247,24 +250,23 @@ class pdf_paiement
 
 		// Title line
 
-        $pdf->SetXY (11, $this->tab_top+1);
+        $pdf->SetXY (11, $this->tab_top+2);
 		$pdf->MultiCell(30, 2, 'Date');
 
 		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY (42, $this->tab_top+1);
+        $pdf->SetXY (42, $this->tab_top+2);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("PaymentMode"), 0, 'L');
 
 		$pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY (82, $this->tab_top+1);
+        $pdf->SetXY (82, $this->tab_top+2);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Invoice"), 0, 'L');
 
 		$pdf->line(120, $this->tab_top, 120, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY (122, $this->tab_top+1);
+        $pdf->SetXY (122, $this->tab_top+2);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("AmountInvoice"), 0, 'L');
 
 		$pdf->line(160, $this->tab_top, 160, $this->tab_top + $this->tab_height + 10);
-
-        $pdf->SetXY (162, $this->tab_top+1);
+        $pdf->SetXY (162, $this->tab_top+2);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("AmountPayment"), 0, 'L');
 
 		$pdf->line(10, $this->tab_top + 10, 200, $this->tab_top + 10 );

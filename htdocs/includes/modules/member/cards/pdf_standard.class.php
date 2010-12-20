@@ -399,7 +399,7 @@ class pdf_standard {
 
 
 		// Protection et encryption du pdf
-		if ($conf->global->PDF_SECURITY_ENCRYPTION)
+/*		if ($conf->global->PDF_SECURITY_ENCRYPTION)
 		{
 			$pdf=new FPDI_Protection('P',$this->Tformat['metric'],$this->format);
 			$pdfrights = array('print'); // Ne permet que l'impression du document
@@ -411,6 +411,8 @@ class pdf_standard {
 		{
 			$pdf=new FPDI('P',$this->Tformat['metric'],$this->format);
 		}
+*/
+        $pdf=pdf_getInstance($this->format,$this->Tformat['metric']);
 
         if (class_exists('TCPDF'))
         {

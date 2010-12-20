@@ -159,19 +159,22 @@ class pdf_crabe extends ModelePDFFactures
 				$nblignes = sizeof($object->lines);
 
 				// Protection et encryption du pdf
-				if ($conf->global->PDF_SECURITY_ENCRYPTION)
+/*				if ($conf->global->PDF_SECURITY_ENCRYPTION)
 				{
-					$pdf=new FPDI_Protection('P','mm',$this->format);
-					$pdfrights = array('print'); // Ne permet que l'impression du document
-					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
-					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+                    if ($conf->global->MAIN_USE_FPDF) $pdf = new FPDI_Protection('P','mm',$this->format);
+                    else $pdf = new FPDI('P','mm',$this->format);
+                    $pdfrights = array('print'); // Ne permet que l'impression du document
+                    if (empty($conf->global->MAIN_USE_FPDF)) $pdfrights[]='assemble';
+                    $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+                    $pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
+                    $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
 				{
 					$pdf=new FPDI('P','mm',$this->format);
-					//$pdf=new TCPDF('P','mm','A4');
 				}
+*/
+                $pdf=pdf_getInstance($this->format);
 
                 if (class_exists('TCPDF'))
                 {

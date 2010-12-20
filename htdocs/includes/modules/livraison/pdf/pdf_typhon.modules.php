@@ -140,7 +140,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if (file_exists($dir))
 			{
 				// Protection et encryption du pdf
-				if ($conf->global->PDF_SECURITY_ENCRYPTION)
+/*				if ($conf->global->PDF_SECURITY_ENCRYPTION)
 				{
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
@@ -152,6 +152,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				{
 					$pdf=new FPDI('P','mm',$this->format);
 				}
+*/
+                $pdf=pdf_getInstance($this->format);
 
                 if (class_exists('TCPDF'))
                 {
