@@ -333,6 +333,8 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	{
 		global $langs,$conf,$mysoc;
 
+		$outputlangs->load("companies");
+
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		$pdf->SetTextColor(0,0,60);
@@ -430,12 +432,12 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 						$result=$newobject->fetch($val[$i]);
 						if ($result >= 0)
 						{
-							$posy+=4;
-							$pdf->SetXY(102,$posy);
-							$pdf->SetFont('','',9);
-							$text=$newobject->ref;
-							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
-							$pdf->Text(11, 94, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+                            $posy=94;
+                            $pdf->SetXY(11,$posy);
+                            $pdf->SetFont('','',9);
+                            $text=$newobject->ref;
+                            if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+                            $pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
 						}
 					}
 				}
