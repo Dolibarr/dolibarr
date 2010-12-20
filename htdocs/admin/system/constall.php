@@ -111,28 +111,33 @@ print '</tr>'."\n";
 $i=0;
 foreach($configfileparameters as $key)
 {
-	if ($key == 'dolibarr_main_url_root_alt' && empty(${$key})) continue;
-	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) continue;
+	$ignore=0;
+	
+	if ($key == 'dolibarr_main_url_root_alt' && empty(${$key})) $ignore=1;
+	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) $ignore=1;
 
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
-	if ($key == 'separator')
+	if (empty($ignore))
 	{
-		print '<td colspan="3">&nbsp;</td>';
+		$var=!$var;
+		print "<tr ".$bc[$var].">";
+		if ($key == 'separator')
+		{
+			print '<td colspan="3">&nbsp;</td>';
+		}
+		else
+		{
+			// Label
+			print "<td>".$configfilelib[$i].'</td>';
+			// Key
+			print '<td>'.$key.'</td>';
+			// Value
+			print "<td>";
+			if ($key == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$key});
+			else print ${$key};
+			print "</td>";
+		}
+		print "</tr>\n";
 	}
-	else
-	{
-		// Label
-		print "<td>".$configfilelib[$i].'</td>';
-		// Key
-		print '<td>'.$key.'</td>';
-		// Value
-		print "<td>";
-		if ($key == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$key});
-		else print ${$key};
-		print "</td>";
-	}
-	print "</tr>\n";
 	$i++;
 }
 print '</table>';
