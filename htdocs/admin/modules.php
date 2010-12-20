@@ -376,14 +376,7 @@ if ($mode != 4)
                             {
                             	if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
                             	{
-                            		if (! DOL_URL_ROOT_ALT || file_exists(DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1]))
-                            		{
-                            			print '<a href="'.DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
-                            		}
-                            		else
-                            		{
-                            			print '<a href="'.DOL_URL_ROOT_ALT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
-                            		}
+                           			print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
                             	}
                             	else
                             	{
@@ -395,14 +388,7 @@ if ($mode != 4)
                     }
                     else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
                     {
-                    	if (! DOL_URL_ROOT_ALT || file_exists(DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1]))
-                        {
-                        	print '<td align="right" valign="top"><a href="'.DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
-                        }
-                        else
-                        {
-                        	print '<td align="right" valign="top"><a href="'.DOL_URL_ROOT_ALT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
-                        }
+                       	print '<td align="right" valign="top"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
                     }
                     else
                     {
