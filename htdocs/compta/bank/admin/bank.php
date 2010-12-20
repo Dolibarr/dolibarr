@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2009 Laurent Destailleur          <eldy@users.sourceforge.net>
  * Copyright (C) 2010 Juanjo Menent			       <jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -33,6 +33,7 @@ $langs->load("admin");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("other");
+$langs->load("banks");
 
 if (!$user->admin)
   accessforbidden();
@@ -123,7 +124,7 @@ print '<td align="center">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">&nbsp;</td>';
 print "</tr>\n";
 
-$bankorder[0][0]= $langs->trans("BankOrderGlobal");
+$bankorder[0][0]=$langs->trans("BankOrderGlobal");
 $bankorder[0][1]=$langs->trans("BankOrderGlobalDesc");
 $bankorder[0][2]=$langs->trans("BankOrderGlobalEx");
 $bankorder[1][0]=$langs->trans("BankOrderES");
@@ -141,7 +142,14 @@ while ($i<=1)
 	print '<td>'.$bankorder[$i][0]."</td><td>\n";
 	print $bankorder[$i][1];
 	print '</td>';
-	print '<td nowrap="nowrap">'.$bankorder[$i][2]."</td>\n";
+	print '<td nowrap="nowrap">';
+	$tmparray=explode(' ',$bankorder[$i][2]);
+	foreach($tmparray as $key => $val)
+	{
+	    if ($key > 0) print ', ';
+	    print $langs->trans($val);
+	}
+	print "</td>\n";
 
 	if ($conf->global->BANK_SHOW_ORDER_OPTION == $i)
 	{
@@ -159,7 +167,7 @@ while ($i<=1)
 	print "</tr>\n";
 	$i++;
 }
-	
+
 print "</table>\n";
 
 $db->close();
