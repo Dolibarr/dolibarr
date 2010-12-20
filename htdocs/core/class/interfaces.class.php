@@ -68,8 +68,11 @@ class Interfaces
    			dol_syslog('interface::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
 		}
 
-		foreach($conf->triggers_modules as $dir)
+		foreach($conf->triggers_modules as $reldir)
 		{
+			$dir=dol_buildpath($reldir,0);
+			//print "xx".$dir;exit;
+						
 			// Check if directory exists
 			if (!is_dir($dir)) continue;
 
@@ -173,8 +176,9 @@ class Interfaces
 	}
 
    /**
-	*   \brief      Return list of triggers.
-	* 	\param		workflow		0=Return all triggers, 1=Return only triggers not disabled if workflow module activated
+	*   Return list of triggers. Function used by admin page htdoc/admin/triggers
+	* 	@param		workflow		0=Return all triggers, 1=Return only triggers not disabled if workflow module activated
+	* 	@return		array			Array list of triggers
 	*/
 	function getTriggersList($workflow=0)
 	{
@@ -187,8 +191,11 @@ class Interfaces
 		$orders = array();
 		$i = 0;
 
-		foreach($conf->triggers_modules as $dir)
+		foreach($conf->triggers_modules as $reldir)
 		{
+			$dir=dol_buildpath($reldir,0);
+			//print "xx".$dir;exit;
+			
 			// Check if directory exists
 			if (!is_dir($dir)) continue;
 

@@ -82,16 +82,16 @@ class Conf
 
 
 	/**
-	 *      \brief      Load setup values into conf object (read llx_const)
-	 *      \param      $db			    Handler d'acces base
-	 *      \return     int         		< 0 if KO, >= 0 if OK
+	 *      Load setup values into conf object (read llx_const)
+	 *      @param      $db			    Handler d'acces base
+	 *      @return     int         	< 0 if KO, >= 0 if OK
 	 */
 	function setValues($db)
 	{
 		dol_syslog("Conf::setValues");
 
 		// Directory of core triggers
-		$this->triggers_modules[] = DOL_DOCUMENT_ROOT . "/includes/triggers";
+		$this->triggers_modules[] = "/includes/triggers";	// Relative path
 
 		// Avoid warning if not defined
 		if (empty($this->db->dolibarr_main_db_encryption)) $this->db->dolibarr_main_db_encryption=0;
@@ -142,8 +142,7 @@ class Conf
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
-							if ($value == 1) $this->triggers_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
-							else if ($value == 2) $this->triggers_modules[] = DOL_DOCUMENT_ROOT_ALT.'/'.$modulename.'/inc/triggers/';
+							$this->triggers_modules[] = '/'.$modulename.'/inc/triggers/';
 						}
 						// If this is constant for login method activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_LOGIN_METHOD$/i',$key,$reg))
