@@ -186,11 +186,13 @@ jQuery(document).ready(function () {
 		</td></tr></table></center><br>
 	<?php } ?>
 
-	<?php if ($main_google_ad_client) { ?>
+	<?php
+	if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
+	{
+	?>
 		<div align="center">
 			<script type="text/javascript"><!--
 				google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
-				/* <?php echo $conf->global->MAIN_GOOGLE_AD_NAME; ?> */
 				google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
 				google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
 				google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
