@@ -54,13 +54,14 @@ class FormFile
 	 *    	@param      addcancel		1=Add 'Cancel' button
 	 *		@param		sectionid		If upload must be done inside a particular ECM section
 	 * 		@param		perm			Value of permission to allow upload
+	 *      @param      size            Length of input file area
 	 * 		@return		int				<0 ij KO, >0 if OK
 	 */
-	function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1)
+	function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=60)
 	{
 		global $conf,$langs;
 
-		$maxlength=62;
+		$maxlength=$size;
 
 		print "\n\n<!-- Start form attach new file -->\n";
 

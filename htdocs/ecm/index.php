@@ -799,7 +799,7 @@ if ($conf->use_javascript_ajax)
 ?>
     </div>
 
-    <div id="ecm-layout-center" class="pane">
+    <div id="ecm-layout-center" class="pane layout-with-no-border">
 
         <div class="pane-in ecm-in-layout-center">
 <?php
@@ -829,7 +829,7 @@ if ($conf->use_javascript_ajax)
 {
 ?>
         </div>
-        <div class="pane-in ecm-in-layout-south">
+        <div class="pane-in ecm-in-layout-south layout-padding">
 <?php
 }
 else
@@ -845,7 +845,7 @@ else
 
 if (! empty($section))
 {
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php','none',0,$section,$user->rights->ecm->upload);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php', 'none', 0, $section,$user->rights->ecm->upload, 48);
 }
 else print '&nbsp;';
 
