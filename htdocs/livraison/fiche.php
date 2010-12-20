@@ -387,7 +387,7 @@ else
 		$delivery->fetch_thirdparty();
 
 		$expedition=new Expedition($db);
-		$result = $expedition->fetch($delivery->expedition_id);
+		$result = $expedition->fetch($delivery->origin_id);
 		$typeobject = $expedition->origin;
 
 		if ($delivery->origin_id)
