@@ -20,7 +20,7 @@
 
 /**
  *		\file 		htdocs/admin/system/constall.php
- *		\brief      Page d'info de toutes les constantes
+ *		\brief      Page to show all Dolibarr setup (config file and database constants)
  *		\version    $Id$
  */
 
@@ -50,6 +50,7 @@ $configfileparameters=array(
 //							'separator',
 							'dolibarr_main_url_root',
 							'dolibarr_main_document_root',
+							'dolibarr_main_document_root_alt',
 							'dolibarr_main_data_root',
 							'separator',
 							'dolibarr_main_db_host',
@@ -76,6 +77,7 @@ $configfilelib=array(
 //					'separator',
 					$langs->trans("URLRoot"),
 					$langs->trans("DocumentRootServer"),
+					$langs->trans("DocumentRootServer").' (alt)',
 					$langs->trans("DataRootServer"),
 					'separator',
 					$langs->trans("DatabaseServer"),
@@ -107,6 +109,8 @@ print '</tr>'."\n";
 $i=0;
 foreach($configfileparameters as $key)
 {
+	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) continue;
+
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
 	if ($key == 'separator')
@@ -115,16 +119,14 @@ foreach($configfileparameters as $key)
 	}
 	else
 	{
-		print "<td>".$configfilelib[$i].'</td><td>'.$key.'</td>';
+		// Label
+		print "<td>".$configfilelib[$i].'</td>';
+		// Key
+		print '<td>'.$key.'</td>';
+		// Value
 		print "<td>";
 		if ($key == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$key});
 		else print ${$key};
-		// TODO Afficher charset effectif de base $db
-		if ($key == 'dolibarr_main_db_charset')
-		{
-
-
-		}
 		print "</td>";
 	}
 	print "</tr>\n";
