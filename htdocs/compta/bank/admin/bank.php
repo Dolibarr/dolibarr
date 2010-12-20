@@ -126,10 +126,10 @@ print "</tr>\n";
 
 $bankorder[0][0]=$langs->trans("BankOrderGlobal");
 $bankorder[0][1]=$langs->trans("BankOrderGlobalDesc");
-$bankorder[0][2]=$langs->trans("BankOrderGlobalEx");
+$bankorder[0][2]='BankCode DeskCode AccountNumber BankAccountNumberKey';
 $bankorder[1][0]=$langs->trans("BankOrderES");
 $bankorder[1][1]=$langs->trans("BankOrderESDesc");
-$bankorder[1][2]=$langs->trans("BankOrderESEx");
+$bankorder[1][2]='BankCode DeskCode BankAccountNumberKey AccountNumber';
 
 $var = true;
 $i=0;

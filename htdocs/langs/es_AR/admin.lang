@@ -1211,13 +1211,11 @@ EndPointIs=Los clientes SOAP deberán enviar sus solicitudes al punto final en l
 ##### Bank #####
 BankSetupModule=Configuración del módulo Banco
 FreeLegalTextOnChequeReceipts=Mención complementaria en las remesas de cheques
-BankOrderShow=Orden de visualización de las cuentas bancarias
+BankOrderShow=Orden de visualización de la información bancaria al usar la "cuenta bancaria detallada"
 BankOrderGlobal=General
 BankOrderGlobalDesc=Orden de visualización general
 BankOrderES=Español
 BankOrderESDesc=Orden de visualización español
-BankOrderGlobalEx=CodigoBanco CodigoOficina Cuenta DC
-BankOrderESEx=CodigoBanco CodigoOficina DC Cuenta
 ##### Multicompany #####
 MultiCompanySetup=Configuración del módulo Multi-empresa
 ##### Suppliers #####

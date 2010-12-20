@@ -1211,13 +1211,11 @@ EndPointIs=Els clients SOAP hauran d'enviar les seves sol·licituds al punt fina
 ##### Bank #####
 BankSetupModule=Configuració del mòdul Banc
 FreeLegalTextOnChequeReceipts=Menció complementària a les remeses de xecs
-BankOrderShow=Ordre de visualització dels comptes bancaris
+BankOrderShow=Ordre de visualització dels comptes bancaris segons països en usar la "compte de banc detallada"
 BankOrderGlobal=General
 BankOrderGlobalDesc=Ordre de visualització general
 BankOrderES=Espanyol
 BankOrderESDesc=Ordre de visualització espanyol
-BankOrderGlobalEx=CodiBanc CodiOficina Compte DC
-BankOrderESEx=CodiBanc CodiOficina DC Compte
 ##### Multicompany #####
 MultiCompanySetup=Configuració del mòdul Multi-empresa
 ##### Suppliers #####

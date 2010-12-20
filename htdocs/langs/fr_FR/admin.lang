@@ -1218,8 +1218,6 @@ BankOrderGlobal=Général
 BankOrderGlobalDesc=Ordre d'affichage général
 BankOrderES=Espagnole
 BankOrderESDesc=Ordre d'affichage Espagnole
-BankOrderGlobalEx=CodeBanque CodeGuichet NúmeroCompte CléRIB
-BankOrderESEx=CodeBanque CodeGuichet CléRIB NúmeroCompte 
 ##### Multicompany #####
 MultiCompanySetup=Configuration du module Multi-société
 ##### Suppliers #####
