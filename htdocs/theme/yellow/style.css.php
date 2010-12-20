@@ -524,6 +524,10 @@ td.photo {
     border-width: 0 !important;
 }
 
+#containerlayout .layout-padding {
+    padding: 2px !important;
+}
+
 /*
  *  PANES and CONTENT-DIVs
  */

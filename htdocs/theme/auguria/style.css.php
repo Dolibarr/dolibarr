@@ -670,6 +670,10 @@ td.photo {
 }
 */
 
+#containerlayout .layout-padding {
+    padding: 2px !important;
+}
+
 /*
  *  PANES and CONTENT-DIVs
  */
