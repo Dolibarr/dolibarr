@@ -925,7 +925,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
+		$pdf->SetXY ($this->posxdesc-1, $tab_top+1);
 		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
@@ -936,17 +936,17 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxup-1, $tab_top+2);
+		$pdf->SetXY ($this->posxup-1, $tab_top+1);
 		$pdf->MultiCell(20,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxqty-1, $tab_top+2);
+		$pdf->SetXY ($this->posxqty-1, $tab_top+1);
 		$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
 		if ($this->atleastonediscount)
 		{
-			$pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
+			$pdf->SetXY ($this->posxdiscount-1, $tab_top+1);
 			$pdf->MultiCell(14,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 		}
 
@@ -954,7 +954,7 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
-		$pdf->SetXY ($this->postotalht-1, $tab_top+2);
+		$pdf->SetXY ($this->postotalht-1, $tab_top+1);
 		$pdf->MultiCell(28,2, $outputlangs->transnoentities("TotalHT"),'','C');
 
 	}

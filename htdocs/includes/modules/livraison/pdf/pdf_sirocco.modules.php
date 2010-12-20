@@ -309,23 +309,15 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
-		$pdf->SetFont('','',11);
+		$pdf->SetFont('','',10);
 
-		$pdf->Text(30,$tab_top + 5,$outputlangs->transnoentities("Designation"));
-
-		//		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-		//		$pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
+		$pdf->SetXY(30, $tab_top+1);
+		$pdf->MultiCell(60, 2, $outputlangs->transnoentities("Designation"), 0, 'L');
 
 		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-		$pdf->Text(147,$tab_top + 5,$outputlangs->transnoentities("QtyShipped"));
+        $pdf->SetXY(147, $tab_top+1);
+		$pdf->MultiCell(30, 2, $outputlangs->transnoentities("QtyShipped"), 0, 'L');
 
-		//		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-		//		$pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
-
-		//		$pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-		//		$pdf->Text(187,$tab_top + 5,$langs->transnoentities("Total"));
-
-		//      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 	}
 
@@ -403,16 +395,18 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 
 		$pdf->SetTextColor(200,0,0);
-		$pdf->SetFont('','B',12);
-		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dol_print_date(($object->date_delivery?$object->date_delivery:$date->valid),"day",false,$outputlangs,true));
-		$pdf->Text(11, 94, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref));
+		$pdf->SetFont('','B',11);
+        $pdf->SetXY($this->page_largeur - $this->marge_droite - 100, 86);
+		$pdf->MultiCell(100, 2, $outputlangs->transnoentities("Date")." : " . dol_print_date(($object->date_delivery?$object->date_delivery:$date->valid),"day",false,$outputlangs,true), 0, 'R');
+        $pdf->SetXY($this->page_largeur - $this->marge_droite - 100, 92);
+		$pdf->MultiCell(100, 2, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref), 0, 'R');
 
 		if ($object->client->code_client)
 		{
 			$posy+=7;
-			$pdf->SetXY(102,$posy);
+			$pdf->SetXY($this->page_largeur - $this->marge_droite - 100, $posy);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell(96, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
 
 		$pdf->SetFont('','B',9);

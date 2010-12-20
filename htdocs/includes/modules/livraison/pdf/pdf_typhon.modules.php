@@ -448,17 +448,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','',10);
 
-		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
+		$pdf->SetXY ($this->posxdesc-1, $tab_top+1);
 		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Designation"),'','L');
 
 		// Modif SEB pour avoir une col en plus pour les commentaires clients
 		$pdf->line($this->posxcomm, $tab_top, $this->posxcomm, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxcomm, $tab_top+2);
+		$pdf->SetXY ($this->posxcomm, $tab_top+1);
 		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Comments"),'','L');
 
 		// Qty
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxqty-1, $tab_top+2);
+		$pdf->SetXY ($this->posxqty-1, $tab_top+1);
 		$pdf->MultiCell(30, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
 
 		// Modif Seb cadres signatures
@@ -606,7 +606,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','',8);
 			$pdf->SetXY(102,$posy-5);
-			$pdf->MultiCell(80,5, $outputlangs->transnoentities("DeliveryAddress").":");
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("DeliveryAddress").":", 0, 'L');
 
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);

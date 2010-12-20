@@ -770,28 +770,28 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$pdf->SetFont('','',9);
 
-		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
+		$pdf->SetXY ($this->posxdesc-1, $tab_top+1);
 		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-			$pdf->SetXY ($this->posxtva-1, $tab_top+2);
+			$pdf->SetXY ($this->posxtva-1, $tab_top+1);
 			$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
 		}
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxup-1, $tab_top+2);
+		$pdf->SetXY ($this->posxup-1, $tab_top+1);
 		$pdf->MultiCell(18,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxqty-1, $tab_top+2);
+		$pdf->SetXY ($this->posxqty-1, $tab_top+1);
 		$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
 		if ($this->atleastonediscount)
 		{
-			$pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
+			$pdf->SetXY ($this->posxdiscount-1, $tab_top+1);
 			$pdf->MultiCell(14,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 		}
 
@@ -799,7 +799,7 @@ class pdf_einstein extends ModelePDFCommandes
 		{
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
-		$pdf->SetXY ($this->postotalht-1, $tab_top+2);
+		$pdf->SetXY ($this->postotalht-1, $tab_top+1);
 		$pdf->MultiCell(28,2, $outputlangs->transnoentities("TotalHT"),'','C');
 
 	}

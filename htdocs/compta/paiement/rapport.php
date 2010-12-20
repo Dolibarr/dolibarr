@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,8 +92,8 @@ print_fiche_titre($titre);
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="builddoc">';
-$cmonth = date("n", time());
-$syear = date("Y", time());
+$cmonth = GETPOST("remonth")?GETPOST("remonth"):date("n", time());
+$syear = GETPOST("reyear")?GETPOST("reyear"):date("Y", time());
 
 print '<select name="remonth">';
 for ($month = 1 ; $month < 13 ; $month++)

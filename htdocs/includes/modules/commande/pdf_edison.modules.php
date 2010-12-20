@@ -458,7 +458,7 @@ class pdf_edison extends ModelePDFCommandes
 		$langs->load("main");
 		$langs->load("bills");
 
-		$pdf->SetFont('','',11);
+		$pdf->SetFont('','',10);
 
         $pdf->SetXY(30,$tab_top + 2);
         $pdf->MultiCell(0,4,$outputlangs->transnoentities("Designation"),0,'L');

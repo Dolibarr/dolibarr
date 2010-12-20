@@ -724,19 +724,19 @@ class pdf_oursin extends ModelePDFFactures
 
 		$pdf->SetFont('','B',10);
 
-		$pdf->SetXY($this->marges['g'],$tab_top + 2);
+		$pdf->SetXY($this->marges['g'],$tab_top + 1);
         $pdf->MultiCell(0, 4, $outputlangs->transnoentities("Designation"), 0, 'L');
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			if ($this->franchise!=1)
 			{
-                $pdf->SetXY($this->marges['g']+120,$tab_top + 2);
+                $pdf->SetXY($this->marges['g']+120,$tab_top + 1);
                 $pdf->MultiCell(0, 4, $outputlangs->transnoentities("VAT"), 0, 'L');
 			}
 		}
-        $pdf->SetXY($this->marges['g']+135,$tab_top + 2);
+        $pdf->SetXY($this->marges['g']+135,$tab_top + 1);
         $pdf->MultiCell(0, 4, $outputlangs->transnoentities("PriceUHT"), 0, 'L');
-        $pdf->SetXY($this->marges['g']+153,$tab_top + 2);
+        $pdf->SetXY($this->marges['g']+153,$tab_top + 1);
         $pdf->MultiCell(0, 4, $outputlangs->transnoentities("Qty"), 0, 'L');
 
 		$nblignes = sizeof($object->lines);
@@ -750,10 +750,10 @@ class pdf_oursin extends ModelePDFFactures
 		}
 		if ($rem==1)
 		{
-            $pdf->SetXY($this->marges['g']+165,$tab_top + 2);
+            $pdf->SetXY($this->marges['g']+165,$tab_top + 1);
             $pdf->MultiCell(0, 4, $outputlangs->transnoentities("%"), 0, 'L');
 		}
-        $pdf->SetXY($this->marges['g']+170,$tab_top + 2);
+        $pdf->SetXY($this->marges['g']+170,$tab_top + 1);
         $pdf->MultiCell(20, 4, $outputlangs->transnoentities("TotalHTShort"), 0, 'R');
 
 		return $pdf->GetY();

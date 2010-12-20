@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/includes/modules/rapport/pdf_paiement.class.php
  *	\ingroup    banque
- *	\brief      Fichier de la classe permettant de generer les rapports de paiement
+ *	\brief      File to build payment reports
  *	\version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -124,14 +124,17 @@ class pdf_paiement
         }
         $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
+        $num=0;
+        $lines=array();
+
 		$sql = "SELECT p.datep as dp, f.facnumber";
 		//$sql .= ", c.libelle as paiement_type, p.num_paiement";
 		$sql .= ", c.code as paiement_code, p.num_paiement";
 		$sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount ";
 		$sql .= ", pf.amount as pf_amount ";
 		$sql .= ", p.rowid as prowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f, ";
-		$sql .= MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
+		$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
+		$sql .= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
 		$sql .= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
 		$sql .= " AND p.fk_paiement = c.id ";
 		$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
@@ -141,18 +144,17 @@ class pdf_paiement
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$lines = $this->db->num_rows($result);
+			$num = $this->db->num_rows($result);
 			$i = 0;
 			$var=True;
 
-			while ($i < $lines)
+			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($result);
 				$var=!$var;
 
 				$lines[$i][0] = $objp->facnumber;
 				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp),"%d %B %Y",false,$outputlangs,true);
-				//$lines[$i][2] = $objp->paiement_type ;
 				$lines[$i][2] = $langs->transnoentities("PaymentTypeShort".$objp->paiement_code);
 				$lines[$i][3] = $objp->num_paiement;
 				$lines[$i][4] = price($objp->paiement_amount);
@@ -167,7 +169,7 @@ class pdf_paiement
 			dol_print_error($this->db);
 		}
 
-		$pages = intval($lines / $this->line_per_page);
+		$pages = intval($num / $this->line_per_page);
 
 		if (($lines % $this->line_per_page)>0)
 		{
@@ -232,31 +234,37 @@ class pdf_paiement
 		$title=$outputlangs->transnoentities("ListOfCustomerPayments");
 		$title.=' - '.dol_print_date(dol_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs,true);
 		$pdf->SetFont('','B',12);
-		$pdf->Text(70, 10, $title);
+		$pdf->SetXY(10,10);
+		$pdf->MultiCell(200, 2, $title, 0, 'C');
 
-		$pdf->SetFont('','',12);
-		$pdf->Text(11, 16, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(),"day",false,$outputlangs,true));
+		$pdf->SetFont('','',10);
 
-		$pdf->SetFont('','',12);
-		$pdf->Text(11, 22, $outputlangs->transnoentities("Page")." : ".$page);
+        $pdf->SetXY (11, 16);
+		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(),"day",false,$outputlangs,true), 0, 'L');
 
-		$pdf->SetFont('','',12);
+        $pdf->SetXY (11, 22);
+		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("Page")." : ".$page, 0, 'L');
 
-		$pdf->Text(11,$this->tab_top + 6,'Date');
+		// Title line
+
+        $pdf->SetXY (11, $this->tab_top+2);
+		$pdf->MultiCell(30, 2, 'Date');
 
 		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(42, $this->tab_top + 6, $outputlangs->transnoentities("PaymentMode"));
+        $pdf->SetXY (42, $this->tab_top+2);
+		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("PaymentMode"), 0, 'L');
 
 		$pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(82, $this->tab_top + 6, $outputlangs->transnoentities("Invoice"));
+        $pdf->SetXY (82, $this->tab_top+2);
+		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Invoice"), 0, 'L');
 
 		$pdf->line(120, $this->tab_top, 120, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(122, $this->tab_top + 6, $outputlangs->transnoentities("AmountInvoice"));
+        $pdf->SetXY (122, $this->tab_top+2);
+		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("AmountInvoice"), 0, 'L');
 
 		$pdf->line(160, $this->tab_top, 160, $this->tab_top + $this->tab_height + 10);
-
-		$pdf->SetXY (160, $this->tab_top);
-		$pdf->MultiCell(40, 10, $outputlangs->transnoentities("AmountPayment"), 0, 'R');
+        $pdf->SetXY (162, $this->tab_top+2);
+		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("AmountPayment"), 0, 'L');
 
 		$pdf->line(10, $this->tab_top + 10, 200, $this->tab_top + 10 );
 
@@ -289,24 +297,25 @@ class pdf_paiement
 				}
 
 				$pdf->SetXY (10, $this->tab_top + 10 + $yp);
-				$pdf->MultiCell(30, $this->line_height, $lines[$j][1], 0, 'J', 1);
+				$pdf->MultiCell(30, $this->line_height, $lines[$j][1], 0, 'L', 1);
 
 				$pdf->SetXY (40, $this->tab_top + 10 + $yp);
-				$pdf->MultiCell(80, $this->line_height, $lines[$j][2].' '.$lines[$j][3], 0, 'J', 1);
+				$pdf->MultiCell(80, $this->line_height, $lines[$j][2].' '.$lines[$j][3], 0, 'L', 1);
 
 				$pdf->SetXY (120, $this->tab_top + 10 + $yp);
-				$pdf->MultiCell(40, $this->line_height, '', 0, 'J', 1);
+				$pdf->MultiCell(40, $this->line_height, '', 0, 'R', 1);
 
 				$pdf->SetXY (160, $this->tab_top + 10 + $yp);
 				$pdf->MultiCell(40, $this->line_height, $lines[$j][4], 0, 'R', 1);
 				$yp = $yp + 5;
 			}
 
+			// Invoice number
 			$pdf->SetXY (80, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(40, $this->line_height, $lines[$j][0], 0, 'J', 0);
+			$pdf->MultiCell(40, $this->line_height, $lines[$j][0], 0, 'L', 0);
 
 			$pdf->SetXY (120, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(40, $this->line_height, $lines[$j][5], 0, 'J', 0);
+			$pdf->MultiCell(40, $this->line_height, $lines[$j][5], 0, 'R', 0);
 
 			$pdf->SetXY (160, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(40, $this->line_height, $lines[$j][6], 0, 'R', 0);
