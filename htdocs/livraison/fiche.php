@@ -410,7 +410,7 @@ else
 			if ($_GET["action"] == 'delete')
 			{
 				$expedition_id = $_GET["expid"];
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&amp;expid='.$expedition_id,$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm"),'confirm_delete','','',1);
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&amp;expid='.$expedition_id,$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$delivery->ref),'confirm_delete','','',1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -420,7 +420,7 @@ else
 			 */
 			if ($_GET["action"] == 'valid')
 			{
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$delivery->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm"),'confirm_valid','','',1);
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$delivery->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$delivery->ref),'confirm_valid','','',1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -472,7 +472,7 @@ else
 			print '</tr>';
 
 			// Date delivery real / Received
-			// TODO Can edit this date, even if validated.
+			// TODO Can edit this date, even if delivery validated.
 			print '<tr><td>'.$langs->trans("DateReceived").'</td>';
 			print '<td colspan="3">'.dol_print_date($delivery->date_delivery,'daytext')."</td>\n";
 			print '</tr>';

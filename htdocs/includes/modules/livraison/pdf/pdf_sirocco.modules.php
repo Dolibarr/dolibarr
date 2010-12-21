@@ -398,7 +398,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$pdf->rect(100, 40, 100, 40);
 
 
-		$pdf->SetTextColor(200,0,0);
+		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B',11);
         $pdf->SetXY($this->page_largeur - $this->marge_droite - 100, 86);
 		$pdf->MultiCell(100, 2, $outputlangs->transnoentities("Date")." : " . dol_print_date(($object->date_delivery?$object->date_delivery:$date->valid),"day",false,$outputlangs,true), 0, 'R');
@@ -424,21 +424,27 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
-				if ($key == 'commande')
+				if ($key == 'shipping')     // Link to shipment
 				{
 					for ($i = 0; $i<sizeof($val);$i++)
 					{
-						$newobject=new Commande($this->db);
-						$result=$newobject->fetch($val[$i]);
-						if ($result >= 0)
-						{
-                            $posy=94;
-                            $pdf->SetXY(11,$posy);
-                            $pdf->SetFont('','',9);
-                            $text=$newobject->ref;
-                            if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
-                            $pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
-						}
+					    $newtmp=new Expedition($this->db);
+                        $result=$newtmp->fetch($val[$i]);
+
+                        if (($newtmp->origin=='commande' || $newtmp->origin=='order') && $newtmp->origin_id)
+                        {
+    						$newobject=new Commande($this->db);
+    						$result=$newobject->fetch($newtmp->origin_id);
+    						if ($result >= 0)
+    						{
+                                $posy+=7;
+                                $pdf->SetXY($this->page_largeur - $this->marge_droite - 100,$posy);
+                                $pdf->SetFont('','',9);
+                                $text=$newobject->ref;
+                                if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+                                $pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+    						}
+                        }
 					}
 				}
 			}

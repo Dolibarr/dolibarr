@@ -12,6 +12,8 @@ QtyDelivered=Qty delivered
 SetDeliveryDate=Set shipping date
 ValidateDeliveryReceipt=Validate delivery receipt
 ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt ?
+DeleteDeliveryReceipt=Delete delivery receipt
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b> ?
 DeliveryMethod=Delivery method
 TrackingNumber=Tracking number
 

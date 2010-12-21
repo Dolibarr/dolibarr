@@ -553,7 +553,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
-				if ($key == 'commande')
+				if ($key == 'commande' || $key == 'order')
 				{
 					for ($i = 0; $i<sizeof($val);$i++)
 					{
