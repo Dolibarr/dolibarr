@@ -53,7 +53,6 @@ IOMonthlyReporting=Ежемесячная отчетность
 BankAccountDomiciliation=Счет адрес
 BankAccountOwner=Имя владельца счета
 BankAccountOwnerAddress=Адрес владельца счета
-RIBControlError=Inetgrity проверки значений сбой. Это значит, для этого номера счета не являются полными или неправильно (проверка страны, цифры и IBAN).
 CreateAccount=Создать аккаунт
 StandingOrderToProcess=Для обработки
 StandingOrderProcessed=Обработано

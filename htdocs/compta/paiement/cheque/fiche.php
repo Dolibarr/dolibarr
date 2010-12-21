@@ -421,9 +421,10 @@ else
 		dol_print_error($db);
 	}
 
+    dol_fiche_end();
 }
 
-if ($_GET['action'] == 'new') dol_fiche_end();
+
 
 
 /*

@@ -53,7 +53,6 @@ BankAccountDomiciliation=Reikningur heimilisfang
 BankAccountCountry=Reikningur landi
 BankAccountOwner=Eigandi reiknings Nafn
 BankAccountOwnerAddress=Eigandi reiknings Heimilisfang
-RIBControlError=Inetgrity athugunum á gildi mistakast. Þetta þýðir að upplýsingar um þennan reikning númer eru ekki lokið eða rangt (athugaðu landi, tölur og IBAN).
 CreateAccount=Búa til reikning
 NewAccount=Nýr reikningur
 NewBankAccount=Nýr bankareikningur

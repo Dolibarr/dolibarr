@@ -52,7 +52,6 @@ IOMonthlyReporting=每月报告
 BankAccountDomiciliation=帐户地址
 BankAccountOwner=帐户持有人姓名
 BankAccountOwnerAddress=帐户持有人地址
-RIBControlError=价值Inetgrity检查失败。这意味着该帐号信息不完整或错误（检查国家，数字和银行IBAN）。
 CreateAccount=创建帐户
 NewAccount=新帐户
 NewBankAccount=新的银行帐户

@@ -55,7 +55,6 @@ IOMonthlyReporting=Miesiąc sprawozdawczy
 BankAccountDomiciliation=Konto adres
 BankAccountOwner=Nazwa właściciela konta
 BankAccountOwnerAddress=Adres właściciela konta
-RIBControlError=Inetgrity kontroli wartości kończy się niepowodzeniem. Oznacza to, że informacje na ten numer konta nie są kompletne lub błędne (sprawdź kraju, liczby i IBAN).
 CreateAccount=Załóż konto
 StandingOrderToProcess=Do procesu
 StandingOrderProcessed=Przetworzone

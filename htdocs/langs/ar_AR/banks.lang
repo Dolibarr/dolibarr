@@ -53,7 +53,6 @@ IOMonthlyReporting=تقارير شهرية
 BankAccountDomiciliation=معالجة حساب
 BankAccountOwner=اسم صاحب الحساب
 BankAccountOwnerAddress=معالجة حساب المالك
-RIBControlError=Inetgrity من القيم والضوابط لا. وهذا يعني لهذه المعلومات رقم الحساب ليست كاملة أو خاطئة (ارجع الى البلد ، والأرقام وإيبان).
 CreateAccount=إنشاء حساب
 StandingOrderToProcess=لعملية
 StandingOrderProcessed=تجهيز

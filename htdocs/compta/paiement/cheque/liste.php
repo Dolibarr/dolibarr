@@ -78,7 +78,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print_barre_liste($langs->trans("ChequesReceipts"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
 
 	print '<form method="get" action="liste.php">';
 	print '<table class="liste" width="100%">';

@@ -286,15 +286,20 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *      @param      curx            X
  *      @param      cury            Y
  *      @param      account         Bank account object
+ *      @param      onlynumber      Output only number
  */
-function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
+function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
 {
     global $mysoc, $conf;
 
     $pdf->SetXY ($curx, $cury);
-    $pdf->SetFont('','B',8);
-    $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
-    $cury+=4;
+
+    if (empty($onlynumber))
+    {
+        $pdf->SetFont('','B',8);
+        $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
+        $cury+=4;
+    }
 
     $outputlangs->load("banks");
 
@@ -305,15 +310,17 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
     {
         $savcurx=$curx;
 
-        $pdf->SetFont('','',6);
-        $pdf->SetXY ($curx, $cury);
-        $pdf->MultiCell(90, 3, $outputlangs->transnoentities("Bank").': ' . $outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
-        $cury+=3;
+        if (empty($onlynumber))
+        {
+            $pdf->SetFont('','',6);
+            $pdf->SetXY ($curx, $cury);
+            $pdf->MultiCell(90, 3, $outputlangs->transnoentities("Bank").': ' . $outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
+            $cury+=3;
+        }
 
-        $pdf->line($curx+1, $cury+1, $curx+1, $cury+10 );
+        if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+8 );
 
         $fieldstoshow=array('bank','desk','number','key');
-
         if ($conf->global->BANK_SHOW_ORDER_OPTION==1) $fieldstoshow=array('bank','desk','key','number');
 
         foreach ($fieldstoshow as $val)
@@ -322,45 +329,45 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
             {
                 // Bank code
                 $tmplength=18;
-                $pdf->SetXY ($curx, $cury+6);
+                $pdf->SetXY ($curx, $cury+5);
                 $pdf->SetFont('','',8);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
                 $pdf->SetXY ($curx, $cury+1);
                 $curx+=$tmplength;
                 $pdf->SetFont('','B',6);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
-                $pdf->line($curx, $cury+1, $curx, $cury+10 );
+                if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+8 );
             }
             if ($val == 'desk')
             {
                 // Desk
                 $tmplength=18;
-                $pdf->SetXY ($curx, $cury+6);
+                $pdf->SetXY ($curx, $cury+5);
                 $pdf->SetFont('','',8);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->code_guichet), 0, 'C', 0);
                 $pdf->SetXY ($curx, $cury+1);
                 $curx+=$tmplength;
                 $pdf->SetFont('','B',6);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("DeskCode"), 0, 'C', 0);
-                $pdf->line($curx, $cury+1, $curx, $cury+10 );
+                if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+8 );
             }
             if ($val == 'number')
             {
                 // Number
                 $tmplength=24;
-                $pdf->SetXY ($curx, $cury+6);
+                $pdf->SetXY ($curx, $cury+5);
                 $pdf->SetFont('','',8);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->number), 0, 'C', 0);
                 $pdf->SetXY ($curx, $cury+1);
                 $curx+=$tmplength;
                 $pdf->SetFont('','B',6);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankAccountNumber"), 0, 'C', 0);
-                $pdf->line($curx, $cury+1, $curx, $cury+10 );
+                if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+8 );
             }
             if ($val == 'key')
             {
                 // Key
                 $tmplength=13;
-                $pdf->SetXY ($curx, $cury+6);
+                $pdf->SetXY ($curx, $cury+5);
                 $pdf->SetFont('','',8);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->cle_rib), 0, 'C', 0);
                 $pdf->SetXY ($curx, $cury+1);
                 $curx+=$tmplength;
                 $pdf->SetFont('','B',6);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
-                $pdf->line($curx, $cury+1, $curx, $cury+10 );
+                if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+8 );
             }
         }
 
@@ -387,11 +394,17 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
     if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
     $pdf->SetFont('','',6);
-    $pdf->SetXY ($curx, $cury+12);
-    $pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
-    $pdf->SetXY ($curx, $cury+22);
+
+    if (empty($onlynumber))
+    {
+        $cury+=10;
+        $pdf->SetXY ($curx, $cury);
+        $pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
+    }
+
+    $pdf->SetXY ($curx, $cury+9);
     $pdf->MultiCell(90, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
-    $pdf->SetXY ($curx, $cury+25);
+    $pdf->SetXY ($curx, $cury+12);
     $pdf->MultiCell(90, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 
     return $pdf->getY();

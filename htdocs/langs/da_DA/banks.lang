@@ -55,7 +55,6 @@ IOMonthlyReporting=Månedlig rapportering
 BankAccountDomiciliation=Account adresse
 BankAccountOwner=Account ejerens navn
 BankAccountOwnerAddress=Konto ejer adresse
-RIBControlError=Inetgrity kontrol af værdier mislykkes. Dette betyder for denne konto nummer ikke er komplette eller forkert (check land, numre og IBAN).
 CreateAccount=Opret konto
 StandingOrderToProcess=Til at behandle
 StandingOrderProcessed=Forarbejdede

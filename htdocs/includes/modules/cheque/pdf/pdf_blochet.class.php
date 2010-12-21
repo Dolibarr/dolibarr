@@ -201,38 +201,38 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$title = $outputlangs->transnoentities("CheckReceipt");
 		$pdf->SetFont('','B',10);
-		$pdf->Text(10, 10, $title);
+        $pdf->SetXY(10,8);
+        $pdf->MultiCell(0,2,$title,0,'L');
 
 		$pdf->SetFont('','',10);
-		$pdf->Text(10, 19, $outputlangs->transnoentities("Numero"));
+        $pdf->SetXY(10,14);
+		$pdf->MultiCell(22,2,$outputlangs->transnoentities("Ref"),0,'L');
+        $pdf->SetXY(32,14);
+		$pdf->SetFont('','',10);
+        $pdf->MultiCell(60, 2, $outputlangs->convToOutputCharset($this->number), 0, 'L');
 
 		$pdf->SetFont('','',10);
-		$pdf->Text(10, 27, $outputlangs->transnoentities("Date") );
+        $pdf->SetXY(10,20);
+        $pdf->MultiCell(22,2,$outputlangs->transnoentities("Date"),0,'L');
+        $pdf->SetXY(32,20);
+        $pdf->SetFont('','',10);
+        $pdf->MultiCell(60, 2, dol_print_date($this->date,"day",false,$outputlangs));
 
 		$pdf->SetFont('','',10);
-		$pdf->Text(10, 35, $outputlangs->transnoentities("Owner"));
-
-		$pdf->SetFont('','B',10);
-		$pdf->Text(32, 35, $outputlangs->convToOutputCharset($this->account->proprio));
-
-		$pdf->SetFont('','B',10);
-		$pdf->Text(32, 19, $outputlangs->convToOutputCharset($this->number));
-
-		$pdf->SetFont('','B',10);
-		$pdf->Text(32, 27, dol_print_date($this->date,"day",false,$outputlangs));
-
+        $pdf->SetXY(10,26);
+        $pdf->MultiCell(22,2,$outputlangs->transnoentities("Owner"),0,'L');
+		$pdf->SetFont('','',10);
+        $pdf->SetXY(32,26);
+        $pdf->MultiCell(60,2,$outputlangs->convToOutputCharset($this->account->proprio),0,'L');
 
 		$pdf->SetFont('','',10);
-		$pdf->Text(10, 43, $outputlangs->transnoentities("Account"));
-
-		$pdf->SetFont('','B',10);
-		$pdf->Text(32,  43, $outputlangs->convToOutputCharset($this->account->code_banque));
-		$pdf->Text(51,  43, $outputlangs->convToOutputCharset($this->account->code_guichet));
-		$pdf->Text(68,  43, $outputlangs->convToOutputCharset($this->account->number));
-		$pdf->Text(104, 43, $outputlangs->convToOutputCharset($this->account->cle_rib));
+        $pdf->SetXY(10,32);
+        $pdf->MultiCell(0,2,$outputlangs->transnoentities("Account"),0,'L');
+        pdf_bank($pdf,$outputlangs,32,30,$this->account,1);
 
 		$pdf->SetFont('','',10);
-		$pdf->Text(114, 19, $outputlangs->transnoentities("Signature"));
+        $pdf->SetXY(114,16);
+		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Signature"), 0, 'L');
 
 		$pdf->Rect(9, 47, 192, 7);
 		$pdf->line(55, 47, 55, 54);
@@ -240,46 +240,51 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->line(170, 47, 170, 54);
 
 		$pdf->SetFont('','',10);
-		$pdf->Text(10, 52, $outputlangs->transnoentities("NumberOfCheques"));
+		$pdf->SetXY(10,49);
+		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("NumberOfCheques"), 0, 'L');
 
 		$pdf->SetFont('','B',10);
-		$pdf->Text(57, 52, $this->nbcheque);
+        $pdf->SetXY(57,49);
+        $pdf->MultiCell(40, 2, $this->nbcheque, 0, 'L');
 
 		$pdf->SetFont('','',10);
-		$pdf->Text(148, 52, "Total");
+        $pdf->SetXY(148,49);
+		$pdf->MultiCell(40, 2, $langs->trans("Total"));
 
 		$pdf->SetFont('','B',10);
-		$pdf->SetXY (170, 47);
-		$pdf->MultiCell(31, 7, price($this->amount), 0, 'C', 0);
+		$pdf->SetXY (170, 49);
+		$pdf->MultiCell(31, 2, price($this->amount), 0, 'C', 0);
 
 		// Tableau
 		$pdf->SetFont('','',8);
-		$pdf->Text(11,$this->tab_top + 6,$outputlangs->transnoentities("Num"));
+		$pdf->SetXY (11, $this->tab_top+2);
+		$pdf->MultiCell(40,2,$outputlangs->transnoentities("Num"), 0, 'L');
 		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
 
-		$pdf->Text(41,$this->tab_top + 6,$outputlangs->transnoentities("Bank"));
+		$pdf->SetXY (41, $this->tab_top+2);
+        $pdf->MultiCell(40,2,$outputlangs->transnoentities("Bank"), 0, 'L');
 		$pdf->line(100, $this->tab_top, 100, $this->tab_top + $this->tab_height + 10);
 
-		$pdf->Text(101, $this->tab_top + 6, $outputlangs->transnoentities("CheckTransmitter"));
+        $pdf->SetXY (101, $this->tab_top+2);
+        $pdf->MultiCell(40,2,$outputlangs->transnoentities("CheckTransmitter"), 0, 'L');
 		$pdf->line(180, $this->tab_top, 180, $this->tab_top + $this->tab_height + 10);
 
-		$pdf->SetXY (180, $this->tab_top);
-		$pdf->MultiCell(20, 10, $outputlangs->transnoentities("Amount"), 0, 'R');
+		$pdf->SetXY (180, $this->tab_top+2);
+		$pdf->MultiCell(20,2,$outputlangs->transnoentities("Amount"), 0, 'R');
 		$pdf->line(9, $this->tab_top + 10, 201, $this->tab_top + 10 );
 
 		$pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
 
 		$pdf->Rect(9, 14, 192, 31);
-		$pdf->line(9, 22, 112, 22);
-		$pdf->line(9, 30, 112, 30);
-		$pdf->line(9, 38, 112, 38);
+		$pdf->line(9, 19, 112, 19);
+		$pdf->line(9, 25, 112, 25);
+		$pdf->line(9, 31, 112, 31);
 
 		$pdf->line(30, 14, 30, 45);
-		$pdf->line(48, 38, 48, 45);
-		$pdf->line(66, 38, 66, 45);
-		$pdf->line(102, 38, 102, 45);
+		//$pdf->line(48, 38, 48, 45);
+		//$pdf->line(66, 38, 66, 45);
+		//$pdf->line(102, 38, 102, 45);
 		$pdf->line(112, 14, 112, 45);
-
 	}
 
 

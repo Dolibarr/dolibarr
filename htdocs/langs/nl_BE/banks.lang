@@ -44,7 +44,6 @@ IOMonthlyReporting=Maandelijkse rapportage
 BankAccountDomiciliation=Bank adres
 BankAccountOwner=Rekeninghouder naam
 BankAccountOwnerAddress=Rekeninghouder adres
-RIBControlError=Inetgrity controles van waarden is mislukt. Dit betekent dat de informatie voor dit rekeningnummer niet volledig of onjuist is(check land, nummers en IBAN).
 CreateAccount=Maak rekening
 StandingOrderToProcess=Te verwerken
 StandingOrderProcessed=Verwerkt

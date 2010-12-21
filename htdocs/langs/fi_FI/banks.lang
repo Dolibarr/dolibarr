@@ -53,7 +53,6 @@ IOMonthlyReporting=Kuukausittainen raportointi
 BankAccountDomiciliation=Huomioon osoite
 BankAccountOwner=Tilin omistajan nimi
 BankAccountOwnerAddress=Tilin omistajan osoite
-RIBControlError=Inetgrity tarkastusten arvot epäonnistuu. Tämä tarkoittaa tietoa tämän tilin numero eivät ole täydellisiä tai väärin (tarkista maassa, numerot ja IBAN).
 CreateAccount=Luo tili
 StandingOrderToProcess=Käsitellä
 StandingOrderProcessed=Jalostettu

@@ -52,7 +52,6 @@ IOMonthlyReporting=Aylık raporlama
 BankAccountDomiciliation=Hesap adresi
 BankAccountOwner=Hesap sahibi adı
 BankAccountOwnerAddress=Hesap sahibi adresi
-RIBControlError=Değerler Inetgrity denetler başarısız olur. Bu, bu hesap numarası bilgi anlamına gelir tam olmayan veya yanlış (onay ülke, sayılar ve IBAN).
 CreateAccount=Hesap oluşturun
 StandingOrderToProcess=Işlemek için
 StandingOrderProcessed=İşlenmiş

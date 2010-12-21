@@ -53,7 +53,6 @@ IOMonthlyReporting=Lunar de raportare
 BankAccountDomiciliation=Contul adresa
 BankAccountOwner=Contul numele proprietarului
 BankAccountOwnerAddress=Contul adresa proprietarului
-RIBControlError=Inetgrity controale de valori nu reuşeşte. Aceasta înseamnă că pentru acest număr de cont nu sunt complete sau greşit (verifica tara, numere şi IBAN).
 CreateAccount=Crearea contului
 StandingOrderToProcess=Pentru a procesa
 StandingOrderProcessed=Prelucrate
