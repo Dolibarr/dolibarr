@@ -118,7 +118,7 @@ function dol_buildpath($path,$mode=0)
 			// FIXME Trying to know if a file on disk exist by forging path on disk from url
 			// works only for some web server and some setup. This is bugged when
 			// using proxy, rewriting, virtual path, etc...
-			preg_match('/^([^.]+\.php)/i',$path,$regs);
+			preg_match('/^([^.]+(\.css)?\.php)/i',$path,$regs);
 			if (! empty($regs[1])) $filepath = $regs[1];
 			// An alternative for proxy but extremely slow
 			//$url = 'http://'.$_SERVER["SERVER_NAME"].DOL_URL_ROOT.$path;
