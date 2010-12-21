@@ -119,12 +119,12 @@ function dol_buildpath($path,$mode=0)
 			// works only for some web server and some setup. This is bugged when
 			// using proxy, rewriting, virtual path, etc...
 			preg_match('/^([^.]+\.php)/i',$path,$regs);
-			if (! empty($regs[1])) $path = $regs[1];
+			if (! empty($regs[1])) $filepath = $regs[1];
 			// An alternative for proxy but extremely slow
 			//$url = 'http://'.$_SERVER["SERVER_NAME"].DOL_URL_ROOT.$path;
 			//if (! @file_get_contents($url)) $res = DOL_URL_ROOT_ALT.$path;
 			//if (! @fopen($url, 'r')) $res = DOL_URL_ROOT_ALT.$path;
-			if (! file_exists(DOL_DOCUMENT_ROOT.$path)) $res = DOL_URL_ROOT_ALT.$path;
+			if (! file_exists(DOL_DOCUMENT_ROOT.$filepath)) $res = DOL_URL_ROOT_ALT.$path;
 		}
 	}
 
