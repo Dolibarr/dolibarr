@@ -143,7 +143,7 @@ class Paiement
 		$this->total = price2num($this->total);
 
 		// Check parameters
-		if ($this->total == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement
+		if ($this->total == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
 
 
 		$this->db->begin();
@@ -194,17 +194,12 @@ class Paiement
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			dol_syslog(get_class($this).'::Create insert paiement error='.$this->error, LOG_ERR);
 			$error++;
 		}
 
-        // If option to add link to bank account is on
-
-
-
-
-		if (! $error) // On accepte les montants negatifs
+		if (! $error)
 		{
 			$this->db->commit();
 			return $this->id;
@@ -324,6 +319,8 @@ class Paiement
         if ($conf->banque->enabled)
         {
             require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+
+            dol_syslog("$user->id,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque");
 
             $acc = new Account($this->db);
             $acc->fetch($accountid);

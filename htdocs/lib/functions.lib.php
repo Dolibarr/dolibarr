@@ -84,7 +84,7 @@ function dol_include_once($relpath)
 function dol_require_once($relpath)
 {
 	$res=false;
-	
+
 	// Forced to use file_exists otherwise there is a blank page
 	//$res=@require_once(DOL_DOCUMENT_ROOT.$relpath);
 	//if (! $res && defined('DOL_DOCUMENT_ROOT_ALT')) $res=@require_once(DOL_DOCUMENT_ROOT_ALT.$relpath);
@@ -127,7 +127,7 @@ function dol_buildpath($path,$mode=0)
 			if (! file_exists(DOL_DOCUMENT_ROOT.$path)) $res = DOL_URL_ROOT_ALT.$path;
 		}
 	}
-	
+
 	return $res;
 }
 
@@ -2060,6 +2060,7 @@ function dolibarr_print_error($db='',$error='')
  *	renvoyer leur erreur par l'intermediaire de leur propriete "error".
  *	@param      db      	Database handler
  *	@param      error		String or array of errors strings to show
+ *  @see        dol_htmloutput_errors
  */
 function dol_print_error($db='',$error='')
 {
@@ -3453,6 +3454,7 @@ function monthArrayOrSelected($selected=0)
  *	@param		mesgstring		Error message
  *	@param		mesgarray		Error messages array
  *	@return		html			Return html output
+ *  @see        dol_print_error
  */
 function dol_htmloutput_errors($mesgstring='',$mesgarray='')
 {
@@ -3475,7 +3477,7 @@ function dol_htmloutput_errors($mesgstring='',$mesgarray='')
 	{
 		$ret++;
 		print '<div class="error">';
-		print $mesgstring;
+		print $langs->trans($mesgstring);
 		print '</div>';
 	}
 

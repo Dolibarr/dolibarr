@@ -172,7 +172,7 @@ if ($_GET['action'] == 'new')
 	$hselected = $h;
 	$h++;
 
-	dol_fiche_head($head, $hselected, $langs->trans("Cheques"));
+	print_fiche_titre($langs->trans("Cheques"));
 }
 else
 {
@@ -423,7 +423,7 @@ else
 
 }
 
-print '</div>';
+if ($_GET['action'] == 'new') dol_fiche_end();
 
 
 /*
