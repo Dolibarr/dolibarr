@@ -54,10 +54,18 @@ function pdf_getInstance($format,$metric='mm',$pagetype='P')
         - print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
         - owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
         */
-        if ($conf->global->MAIN_USE_FPDF) $pdf = new FPDI_Protection($pagetype,$metric,$format);
-        else $pdf = new FPDI($pagetype,$metric,$format);
-        $pdfrights = array('print'); // Ne permet que l'impression du document
-        if (empty($conf->global->MAIN_USE_FPDF)) $pdfrights[]='assemble';
+        if ($conf->global->MAIN_USE_FPDF)
+        {
+            $pdf = new FPDI_Protection($pagetype,$metric,$format);
+            // For FPDF, we specify permission we want to open
+            $pdfrights = array('print');
+        }
+        else
+        {
+            $pdf = new FPDI($pagetype,$metric,$format);
+            // For TCPDF, we specify permission we want to block
+            $pdfrights = array('modify','copy');
+        }
         $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
         $pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
         $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
