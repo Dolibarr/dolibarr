@@ -9,6 +9,7 @@
 // Reference language: en_US
 CHARSET=UTF-8
 FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=8
 SeparatorDecimal=,
 SeparatorThousand= 
 FormatDateShort=%d.%m.%Y

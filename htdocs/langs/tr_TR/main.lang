@@ -10,7 +10,7 @@
 CHARSET=UTF-8
 DIRECTION=ltr
 FONTFORPDF=DejaVuSans
-FONTSIZEFORPDF=9
+FONTSIZEFORPDF=8
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
