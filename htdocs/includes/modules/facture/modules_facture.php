@@ -147,6 +147,12 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs)
 	global $conf,$langs;
 	$langs->load("bills");
 
+	// Increase limit for PDF build
+    $err=error_reporting();
+    error_reporting(0);
+    @set_time_limit(120);
+    error_reporting($err);
+
 	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
 
 	// Positionne modele sur le nom du modele a utiliser
