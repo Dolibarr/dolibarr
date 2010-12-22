@@ -934,7 +934,7 @@ class pdf_crabe extends ModelePDFFactures
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-			$pdf->SetXY ($this->posxtva-1, $tab_top+2);
+			$pdf->SetXY ($this->posxtva-1, $tab_top+1);
 			$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
 		}
 
