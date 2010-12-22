@@ -610,7 +610,7 @@ class ActionComm extends CommonObject
      */
 	function build_exportfile($format,$type,$cachedelay,$filename,$filters)
 	{
-		global $conf,$langs,$dolibarr_main_url_root;
+		global $conf,$langs,$dolibarr_main_url_root,$mysoc;
 
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
 		require_once (DOL_DOCUMENT_ROOT ."/lib/date.lib.php");
@@ -642,7 +642,7 @@ class ActionComm extends CommonObject
 
 		if ($cachedelay)
 		{
-			$nowgmt = dol_now('gmt');
+			$nowgmt = dol_now();
 			if (filemtime($outputfile) > ($nowgmt - $cachedelay))
 			{
 				dol_syslog("ActionComm::build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
@@ -778,13 +778,15 @@ class ActionComm extends CommonObject
 			if ($logind) $more=$langs->transnoentities("ActionsDoneBy").' '.$langs->convToOutputCharset($logind);
 			if ($more)
 			{
-				$title=$langs->convToOutputCharset('Dolibarr actions - ').$more;
-				$desc=$more.$langs->convToOutputCharset(' - built by Dolibarr');
+				$title=$langs->convToOutputCharset('Dolibarr actions '.$mysoc->name).' - '.$more;
+				$desc=$more;
+				$desc.=$langs->convToOutputCharset(' ('.$mysoc->name.' - built by Dolibarr)');
 			}
 			else
 			{
-				$title=$langs->convToOutputCharset('Dolibarr actions');
-				$desc=$langs->transnoentities('ListOfActions').$langs->convToOutputCharset(' - built by Dolibarr');
+				$title=$langs->convToOutputCharset('Dolibarr actions '.$mysoc->name);
+				$desc=$langs->transnoentities('ListOfActions');
+				$desc.=$langs->convToOutputCharset(' ('.$mysoc->name.' - built by Dolibarr)');
 			}
 
 			// Write file
