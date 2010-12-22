@@ -55,6 +55,7 @@
 */htdocs/includes/modules/modPostnuke.class.php
 */htdocs/includes/triggers/interface_user.class.php
 */htdocs/includes/triggers/interface_contractfrombill.class.php-NORUN
+*/htdocs/includes/tcpdf/fonts/utils/*
 */htdocs/oscommerce_ws/ws_client_demo/*
 */htdocs/theme/rodolphe/*
 */scripts/addons/*
