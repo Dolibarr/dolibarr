@@ -162,7 +162,7 @@ For users:
 - Fix: Some fixes in barcode management.
 - Fix: Access to phpMyAdmin is now ok on new DoliWamp installation.
 
-For tranlators:
+For translators:
 - Fix: Major update of italian translation (it_IT).
 - Fix: A lot of translation fixes in all languages.
 - New: Added translations (sl_SL, is_IS).
@@ -171,6 +171,7 @@ For tranlators:
 For developers:
 - More comments in code.
 - Uniformize some code. 
+- All arrays "lignes" were renamed into "lines".
 - Delete all useless pre.inc.php files (this also increase speed).
 - Fix W3C errors in page forging.
 - Qual: Mutualize code of menu managers.
