@@ -16,7 +16,7 @@ DeleteDeliveryReceipt=Supprimer le bon de livraison
 DeleteDeliveryReceiptConfirm=Êtes-vous sûr de vouloir supprimer ce bon de livraison <b>%s</b> ?
 DeliveryMethod=Méthode de livraison
 TrackingNumber=Numéro de suivi
-
+DeliveryNotValidated=Bon de réception non validée
 # merou PDF model						   
 NameAndSignature=Nom et Signature : 
 ToAndDate=A___________________________________ le ____/_____/__________

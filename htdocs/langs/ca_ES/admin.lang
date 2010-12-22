@@ -1101,15 +1101,15 @@ MailingEMailError=E-mail de resposta (Errors-to) per a les respostes sobre envia
 NotificationSetup=Configuració del mòdul notificacions
 NotificationEMailFrom=E-Mail emissor (From) dels correus enviats a través de notificacions
 ##### Sendings #####
-SendingsSetup=Configuració del mòduls enviaments
-SendingsReceiptModel=Model de la fitxa d'expedició
-SendingsAbility=Ports pagats pel client
-NoNeedForDeliveryReceipts=En la majoria dels casos, els albarans s'utilitzen com a full de lliurament al client (llista de productes a enviar), es reben i signen pel client. Per tant, el full de lliurament de productes és una característica duplicada i poques vegades és activada.
-FreeLegalTextOnDeliveryReceipts=Text lliure en les notes de lliurament.
+SendingsSetup=Configuració del mòdul Expedicions
+SendingsReceiptModel=Model de notes de lliurament
+SendingsAbility=Ús de notes de lliurament per als enviaments a clients
+NoNeedForDeliveryReceipts=En la majoria dels casos, les notes de lliurament (llista de productes enviats) també actuen com a notes de recepció i són signades pel client. La gestió de les notes de recepció és per tant redundant i poques vegades s'activarà.
+FreeLegalTextOnDeliveryReceipts=Text lliure a les notes de recepció
 ##### Deliveries #####
-DeliveryOrderNumberingModules=Mòdul de numeració dels trameses a clients
-DeliveryOrderModel=Model d'ordre d'enviament
-DeliveriesOrderAbility=Ports pagats pel client
+DeliveryOrderNumberingModules=Mòdul de numeració de les notes de recepció
+DeliveryOrderModel=Model de notes de recepció
+DeliveriesOrderAbility=Ús de notes de recepció
 ##### FCKeditor #####
 ActivateFCKeditor=Activar FCKeditor per a :
 FCKeditorForUsers=Creació/edició WYSIWIG de la descripció i notes dels usuaris

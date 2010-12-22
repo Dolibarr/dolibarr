@@ -1101,15 +1101,15 @@ MailingEMailError=E-Mail de respuesta (Errors-to) para las respuestas acerca de 
 NotificationSetup=Configuración del módulo notificaciones
 NotificationEMailFrom=E-Mail emisor (From) de los correos enviados a través de notificaciones
 ##### Sendings #####
-SendingsSetup=Configuración del módulos envíos
-SendingsReceiptModel=Modelo de la ficha de expedición
-SendingsAbility=Portes pagados por el cliente
-NoNeedForDeliveryReceipts=En la mayoría de los casos, los albaranes se utilizan como nota de entrega al cliente (lista de productos a enviar), se reciben y firman por el cliente. Por lo tanto, la hoja de entrega de productos es una característica duplicada y rara vez es activada.
-FreeLegalTextOnDeliveryReceipts=Texto libre en las notas de entrega.
+SendingsSetup=Configuración del módulo Expediciones
+SendingsReceiptModel=Modelo de notas de entrega
+SendingsAbility=Uso de notas de entrega para los envíos a clientes
+NoNeedForDeliveryReceipts=En la mayoría de los casos, las notas de entrega (lista de productos enviados ) también actúan como notas de recepción y son firmadas por el cliente. La gestión de las notas de recepción es por lo tanto redundante y rara vez se activará.
+FreeLegalTextOnDeliveryReceipts=Texto libre en las notas de recepción
 ##### Deliveries #####
-DeliveryOrderNumberingModules=Módulo de numeración de los envíos a clientes
-DeliveryOrderModel=Modelo de orden de envío
-DeliveriesOrderAbility=Portes pagados por el cliente
+DeliveryOrderNumberingModules=Módulo de numeración de las notas de recepción
+DeliveryOrderModel=Modelo de notas de recepción
+DeliveriesOrderAbility=Uso de notas de recepción
 ##### FCKeditor #####
 ActivateFCKeditor=Activar FCKeditor para :
 FCKeditorForUsers=Creación/edición WYSIWIG de la descripción y notas de los usuarios

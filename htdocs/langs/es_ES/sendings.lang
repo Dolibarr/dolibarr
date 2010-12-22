@@ -45,7 +45,7 @@ ConfirmCancelSending=¿Está seguro de querer anular esta expedición?
 GenericTransport=Transporte genérico
 Enlevement=Pick-up por el cliente
 DocumentModelSimple=Modelo simple
-DocumentModelMerou=Modèle Merou A5
+DocumentModelMerou=Modelo Merou A5
 WarningNoQtyLeftToSend=Alerta, ningún producto en espera de envío.
 StatsOnShipmentsOnlyValidated=Estadísticas realizadas únicamente sobre las expediciones validadas
 DateDeliveryPlanned=Fecha prevista de entrega
@@ -55,5 +55,5 @@ SendingMethodCATCH=Recogido por el cliente
 SendingMethodTRANS=Transportista
 SendingMethodCOLSUI=Colissimo
 # ModelDocument
-DocumentModelSirocco=Modelo simple de nota de entrega
-DocumentModelTyphon=Modelo completo de nota de entrega (logo...)
+DocumentModelSirocco=Modelo simple de nota de entrega / recepción
+DocumentModelTyphon=Modelo completo de nota de entrega / recepción (logo...)
