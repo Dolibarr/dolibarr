@@ -199,7 +199,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 7
 -- UNITED STATES (id 11)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (111,11,     '0','0','No VAT or Sales Tax',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (112,11,     '0','0','Sales Tax 4%',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (113,11,     '0','0','Sales tax 6%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (113,11,     '0','0','Sales Tax 6%',1);
 
 
 -- Pour les DOM-TOM, il faut utiliser le pays FRANCE (Sinon pb avec regles de TVA et autres regles propres aux pays et europe)
