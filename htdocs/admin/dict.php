@@ -549,6 +549,7 @@ if ($_GET["id"])
 			$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
 			if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
 			if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
+            if ($fieldlist[$field]=='taux')            { $valuetoshow=$langs->trans("Rate"); }
 			if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
 			if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
 			if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
@@ -628,6 +629,7 @@ if ($_GET["id"])
 				$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
 				if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
 				if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
+                if ($fieldlist[$field]=='taux')            { $valuetoshow=$langs->trans("Rate"); }
 				if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
 				if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
 				if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
