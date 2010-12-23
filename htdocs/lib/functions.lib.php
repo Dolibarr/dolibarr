@@ -70,10 +70,7 @@ function GETPOST($paramname,$check='',$method=0)
  */
 function dol_include_once($relpath)
 {
-	$res=false;
-	$res=@include_once(DOL_DOCUMENT_ROOT.$relpath);
-	if (! $res && defined('DOL_DOCUMENT_ROOT_ALT')) $res=@include_once(DOL_DOCUMENT_ROOT_ALT.$relpath);
-	return $res;
+	return include_once(dol_buildpath($relpath));
 }
 
 /**
@@ -83,14 +80,7 @@ function dol_include_once($relpath)
  */
 function dol_require_once($relpath)
 {
-	$res=false;
-
-	// Forced to use file_exists otherwise there is a blank page
-	//$res=@require_once(DOL_DOCUMENT_ROOT.$relpath);
-	//if (! $res && defined('DOL_DOCUMENT_ROOT_ALT')) $res=@require_once(DOL_DOCUMENT_ROOT_ALT.$relpath);
-	$res=require_once(dol_buildpath($relpath));
-
-	return $res;
+	return require_once(dol_buildpath($relpath));
 }
 
 /**
