@@ -112,6 +112,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
 		if ($conf->fournisseur->dir_output.'/facture')
 		{
 			$deja_regle = $object->getSommePaiement();
@@ -184,7 +186,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->AddPage();
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetFont('','', 9);
+				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
@@ -198,7 +200,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
 					$nexY = $pdf->GetY();
@@ -225,14 +227,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				{
 					$curY = $nexY;
 
-                    $pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
+                    $pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
                     // Description de la ligne produit
 					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs,0,0,1);
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,108,3,$this->posxdesc-1,$curY,0,0,1);
 					//$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
-					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
+					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
 					// TVA
@@ -296,7 +298,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
-						$pdf->SetFont('','', 9);
+						$pdf->SetFont('','', $default_font_size - 1);
 						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
@@ -332,7 +334,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				{
 					$pdf->SetXY ($this->marge_gauche, 228);
 					$pdf->SetTextColor(200,0,0);
-					$pdf->SetFont('','B',8);
+					$pdf->SetFont('','B', $default_font_size - 2);
 					$pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
 					$pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorCreateBankAccount"),0,'L',0);
 					$pdf->SetTextColor(0,0,0);
@@ -378,7 +380,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	{
 		$tab2_top = $posy;
 		$tab2_hl = 4;
-		$pdf->SetFont('','', 9);
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		$pdf->SetFont('','', $default_font_size - 1);
 
 		$pdf->SetXY ($this->marge_gauche, $tab2_top + 0);
 
@@ -468,7 +472,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
-		$pdf->SetFont('','', 9);
+		$pdf->SetFont('','', $default_font_size - 1);
 		$pdf->SetTextColor(0,0,0);
 
 		if ($deja_regle > 0)
@@ -483,13 +487,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 			$index++;
 			$pdf->SetTextColor(0,0,60);
-			//$pdf->SetFont('','B', 9);
+			//$pdf->SetFont('','B', $default_font_size - 1);
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
 
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle), $useborder, 'R', 1);
-			$pdf->SetFont('','', 9);
+			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetTextColor(0,0,0);
 		}
 
@@ -505,9 +509,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	{
 		global $conf;
 
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
 		// Montants exprimes en     (en tab_top - 1
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','',8);
+		$pdf->SetFont('','',$default_font_size - 2);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top -3);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
@@ -519,7 +525,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		// line prend une position y en 3eme param
 		$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
 
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
 
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
 		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
@@ -567,13 +573,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$tab3_width = 80;
 		$tab3_height = 4;
 
-		$pdf->SetFont('','',8);
+		$pdf->SetFont('','', $default_font_size - 2);
 		$pdf->SetXY ($tab3_posx, $tab3_top - 5);
 		$pdf->MultiCell(60, 5, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
 
 		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
 
-		$pdf->SetFont('','',6);
+		$pdf->SetFont('','', $default_font_size - 4);
 		$pdf->SetXY ($tab3_posx, $tab3_top );
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
 		$pdf->SetXY ($tab3_posx+21, $tab3_top );
@@ -585,7 +591,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$y=0;
 
-		$pdf->SetFont('','',6);
+		$pdf->SetFont('','', $default_font_size - 4);
 
 		// Loop on each payment
 		$sql = "SELECT p.datep as date, p.fk_paiement as type, p.num_paiement as num, pf.amount as amount,";
@@ -644,11 +650,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$outputlangs->load("orders");
 		$outputlangs->load("companies");
 
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
 		// Do not add the BACKGROUND as this is for suppliers
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('','B',13);
+		$pdf->SetFont('','B', $default_font_size + 3);
 
 		$posy=$this->marge_haute;
 
@@ -666,7 +674,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			else
 			{
 				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('','B',8);
+				$pdf->SetFont('','B', $default_font_size - 2);
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
@@ -677,11 +685,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		//}
 
-		$pdf->SetFont('','B',13);
+		$pdf->SetFont('','B', $default_font_size + 3);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("SupplierInvoice")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
-		$pdf->SetFont('','',12);
+		$pdf->SetFont('','', $default_font_size + 2);
 
 		$posy+=6;
 		$pdf->SetXY(100,$posy);
@@ -702,7 +710,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$posy=42;
 			$hautcadre=40;
 			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('','',8);
+			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche,$posy-5);
 			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillTo").":",0,"L");
 
@@ -716,21 +724,21 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			// Nom emetteur
 			$carac_emetteur_name=$outputlangs->convToOutputCharset($mysoc->nom);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('','B',10);
+			$pdf->SetFont('','B', $default_font_size);
 			$pdf->SetXY($this->marge_gauche+2,$posy+3);
 			$pdf->MultiCell(80, 4, $carac_emetteur_name, 0, 'L');
 
 			// Sender properties
 			$carac_emetteur = pdf_build_address($outputlangs,$mysoc);
 
-			$pdf->SetFont('','',9);
+			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY($this->marge_gauche+2,$posy+8);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 			// Client destinataire
 			$posy=42;
 			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('','',8);
+			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY(100,$posy-5);
 			$pdf->MultiCell(96, 4, $outputlangs->transnoentities("Supplier").":");
 			//
@@ -759,10 +767,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 			// Show customer/recipient
 			$pdf->SetXY(102,$posy+3);
-			$pdf->SetFont('','B',10);
+			$pdf->SetFont('','B', $default_font_size);
 			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
 
-			$pdf->SetFont('','',9);
+			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY(102,$posy+8);
 			$pdf->MultiCell(96,4, $carac_client, 0, 'L');
 		}
