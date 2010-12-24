@@ -34,6 +34,9 @@
 class CommonObject
 {
 	var $db;
+	
+	var $linkedObjectBlock;
+	var $objectid;
 
 	// Instantiate hook classe of thirdparty module
 	var $hooks=array();
@@ -1355,8 +1358,10 @@ class CommonObject
 		global $langs,$bc;
 
 		//print 'objecttype='.$objecttype.'<br>';
+		
+		$this->objectid = $objectid;
 
-		$num = sizeof($objectid);
+		$num = sizeof($this->objectid);
 		if ($num)
 		{
 			$classpath = $objecttype.'/class';
@@ -1374,7 +1379,7 @@ class CommonObject
             {
             	dol_include_once("/".$classpath."/".$classfile.".class.php");
             }
-			$linkedObjectBlock = new $classname($this->db);
+			$this->linkedObjectBlock = new $classname($this->db);
 			dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
 			
 			return $num;
