@@ -82,6 +82,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	function write_file($object,$outputlangs)
 	{
 		global $user,$conf,$langs;
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -169,7 +170,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pdf->AddPage();
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetFont('','', 9);
+				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
@@ -186,14 +187,14 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				{
 					$curY = $nexY;
 
-                    $pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
                     // Description de la ligne produit
 					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1);
 					//$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
-					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 					$nexY = $pdf->GetY();
 
 					$pdf->SetXY (10, $curY );
@@ -263,7 +264,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
-						$pdf->SetFont('','', 9);
+						$pdf->SetFont('','', $default_font_size - 1);
 						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
@@ -311,7 +312,8 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
-		$pdf->SetFont('','',10);
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		$pdf->SetFont('','', $default_font_size);
 
 		$pdf->SetXY(30, $tab_top+1);
 		$pdf->MultiCell(60, 2, $outputlangs->transnoentities("Designation"), 0, 'L');
@@ -332,13 +334,14 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$outputlangs->load("companies");
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('','B',13);
+		$pdf->SetFont('','B', $default_font_size + 3);
 
 		$posy=$this->marge_haute;
 
@@ -347,14 +350,14 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		if ($conf->global->MAIN_INFO_SOCIETE_NOM)
 		{
 			$pdf->SetTextColor(0,0,200);
-			$pdf->SetFont('','B',12);
+			$pdf->SetFont('','B', $default_font_size + 2);
 			$pdf->MultiCell(76, 4, $outputlangs->convToOutputCharset(MAIN_INFO_SOCIETE_NOM), 0, 'L');
 		}
 
 		// Sender properties
 		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
-		$pdf->SetFont('','',9);
+		$pdf->SetFont('','', $default_font_size - 1);
 		$pdf->SetXY($this->marge_gauche,$posy+4);
 		$pdf->MultiCell(80, 3, $carac_emetteur, 0, 'L');
 
@@ -388,18 +391,18 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','B',11);
+		$pdf->SetFont('','B', $default_font_size + 1);
 
 		$pdf->SetXY(102,42);
 		$pdf->MultiCell(96,5, $carac_client_name, 0, 'L');
-		$pdf->SetFont('','B',10);
+		$pdf->SetFont('','B', $default_font_size);
 		$pdf->SetXY(102,47);
 		$pdf->MultiCell(96,5, $carac_client, 0, 'L');
 		$pdf->rect(100, 40, 100, 40);
 
 
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('','B',11);
+		$pdf->SetFont('','B', $default_font_size + 1);
         $pdf->SetXY($this->page_largeur - $this->marge_droite - 100, 86);
 		$pdf->MultiCell(100, 2, $outputlangs->transnoentities("Date")." : " . dol_print_date(($object->date_delivery?$object->date_delivery:$date->valid),"day",false,$outputlangs,true), 0, 'R');
         $pdf->SetXY($this->page_largeur - $this->marge_droite - 100, 92);
@@ -413,7 +416,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
 
-		$pdf->SetFont('','B',9);
+		$pdf->SetFont('','B', $default_font_size - 1);
 
 		// Add list of linked orders
 		// TODO mutualiser
@@ -439,7 +442,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
     						{
                                 $posy+=7;
                                 $pdf->SetXY($this->page_largeur - $this->marge_droite - 100,$posy);
-                                $pdf->SetFont('','',9);
+								$pdf->SetFont('','', $default_font_size - 1);
                                 $text=$newobject->ref;
                                 if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
                                 $pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');

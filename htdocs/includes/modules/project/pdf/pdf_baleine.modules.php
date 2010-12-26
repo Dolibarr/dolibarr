@@ -262,7 +262,7 @@ class pdf_baleine extends ModelePDFProjects
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
-						$pdf->SetFont('','', 9);
+						$pdf->SetFont('','', $default_font_size - 1);
 						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 

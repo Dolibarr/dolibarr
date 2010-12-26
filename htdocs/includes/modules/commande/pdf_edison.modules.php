@@ -107,6 +107,8 @@ class pdf_edison extends ModelePDFCommandes
 		$outputlangs->load("products");
         $outputlangs->load("orders");
 
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
 		if ($conf->commande->dir_output)
 		{
 			// Definition of $dir and $file
@@ -174,7 +176,7 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->AddPage();
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetFont('','', 9);
+				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
@@ -185,7 +187,7 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->SetFillColor(220,220,220);
 
 				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('','', 9);
+				$pdf->SetFont('','', $default_font_size - 1);
 
 				$pdf->SetXY (10, $tab_top + 10 );
 
@@ -198,13 +200,13 @@ class pdf_edison extends ModelePDFCommandes
 				{
 					$curY = $nexY;
 
-					$pdf->SetFont('','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
 					// Description de la ligne produit
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1);
 					//$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
-					$pdf->SetFont('','', 9);   // On repositionne la police par defaut
+					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
 					$ref = pdf_getlineref($object, $i, $outputlangs);
@@ -250,7 +252,7 @@ class pdf_edison extends ModelePDFCommandes
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
-						$pdf->SetFont('','', 9);
+						$pdf->SetFont('','', $default_font_size - 1);
 						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 
@@ -269,7 +271,7 @@ class pdf_edison extends ModelePDFCommandes
 				$tab2_top = 241;
 				$tab2_lh = 4;
 
-				$pdf->SetFont('','', 11);
+				$pdf->SetFont('','', $default_font_size + 1);
 
 				$pdf->SetXY (132, $tab2_top + 0);
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalHT"), 0, 'R', 0);
@@ -323,13 +325,14 @@ class pdf_edison extends ModelePDFCommandes
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
 		global $conf;
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$pdf->SetFont('','', 9);
+		$pdf->SetFont('','', $default_font_size - 1);
 
         // If France, show VAT mention if not applicable
 		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
 		{
-			$pdf->SetFont('','B',8);
+			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 
@@ -339,12 +342,12 @@ class pdf_edison extends ModelePDFCommandes
         // Show payments conditions
 		if ($object->cond_reglement_code || $object->cond_reglement)
 		{
-			$pdf->SetFont('','B',8);
+			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 
-			$pdf->SetFont('','',8);
+			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY(52, $posy);
 			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
 			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
@@ -361,7 +364,7 @@ class pdf_edison extends ModelePDFCommandes
 		{
             $pdf->SetXY($this->marge_gauche, $posy);
             $pdf->SetTextColor(200,0,0);
-            $pdf->SetFont('','B',8);
+            $pdf->SetFont('','B', $default_font_size - 2);
             $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
             $pdf->SetTextColor(0,0,0);
 
@@ -373,12 +376,12 @@ class pdf_edison extends ModelePDFCommandes
         	 && $object->mode_reglement_code != 'CHQ'
            	 && $object->mode_reglement_code != 'VIR')
            	 {
-	            $pdf->SetFont('','B',8);
+	            $pdf->SetFont('','B', $default_font_size - 2);
 	            $pdf->SetXY($this->marge_gauche, $posy);
 	            $titre = $outputlangs->transnoentities("PaymentMode").':';
 	            $pdf->MultiCell(80, 5, $titre, 0, 'L');
 
-	            $pdf->SetFont('','',8);
+				$pdf->SetFont('','', $default_font_size - 2);
 	            $pdf->SetXY(50, $posy);
 	            //print "xxx".$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code);exit;
 	            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
@@ -399,24 +402,24 @@ class pdf_edison extends ModelePDFCommandes
 	                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
 
 	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','B',8);
+					$pdf->SetFont('','B', $default_font_size - 2);
 	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
 		            $posy=$pdf->GetY()+1;
 
 	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','',8);
+	                $pdf->SetFont('','', $default_font_size - 2);
 	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
 		            $posy=$pdf->GetY()+2;
 	            }
 	            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
 	            {
 	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','B',8);
+	                $pdf->SetFont('','B', $default_font_size - 2);
 	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->nom).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
 		            $posy=$pdf->GetY()+1;
 
 		            $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','',8);
+	                $pdf->SetFont('','', $default_font_size - 2);
 	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
 		            $posy=$pdf->GetY()+2;
 	            }
@@ -459,8 +462,9 @@ class pdf_edison extends ModelePDFCommandes
 		global $langs,$conf;
 		$langs->load("main");
 		$langs->load("bills");
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
 
         $pdf->SetXY(30,$tab_top + 2);
         $pdf->MultiCell(0,4,$outputlangs->transnoentities("Designation"),0,'L');
@@ -487,7 +491,7 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->line(10, $tab_top + 8, 200, $tab_top + 8);
 
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), 95);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
@@ -498,6 +502,7 @@ class pdf_edison extends ModelePDFCommandes
 	{
 		global $conf,$langs,$mysoc;
 		$langs->load("orders");
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
@@ -522,7 +527,7 @@ class pdf_edison extends ModelePDFCommandes
 			else
 			{
 				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('','B',8);
+				$pdf->SetFont('','B', $default_font_size - 2);
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
@@ -539,13 +544,13 @@ class pdf_edison extends ModelePDFCommandes
 
 		// Sender name
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('','B',10);
+		$pdf->SetFont('','B', $default_font_size);
 		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 		// Sender properties
 		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
-		$pdf->SetFont('','',9);
+		$pdf->SetFont('','', $default_font_size - 1);
 		$pdf->SetXY($this->marge_gauche,$posy+7);
 		$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
@@ -580,17 +585,17 @@ class pdf_edison extends ModelePDFCommandes
 
 		// Show customer/recipient
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','B',10);
+		$pdf->SetFont('','B', $default_font_size);
 		$pdf->SetXY(102,42);
 		$pdf->MultiCell(96, 4, $carac_client_name, 0, 'L');
-		$pdf->SetFont('','',9);
+		$pdf->SetFont('','', $default_font_size - 1);
 		$pdf->SetXY(102,$pdf->GetY());
 		$pdf->MultiCell(96, 4, $carac_client, 0, 'L');
 
 		$pdf->rect(100, 40, 100, 40);
 
 		$pdf->SetTextColor(200,0,0);
-		$pdf->SetFont('','B',12);
+		$pdf->SetFont('','B', $default_font_size + 2);
 		$pdf->SetXY(11, 88);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs), 0, 'L');
         $pdf->SetXY(11, 94);

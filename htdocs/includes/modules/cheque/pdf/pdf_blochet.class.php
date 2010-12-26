@@ -195,42 +195,43 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	function Header(&$pdf, $page, $pages, $outputlangs)
 	{
 		global $langs;
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$outputlangs->load("compta");
 		$outputlangs->load("banks");
 
 		$title = $outputlangs->transnoentities("CheckReceipt");
-		$pdf->SetFont('','B',10);
+		$pdf->SetFont('','B', $default_font_size);
         $pdf->SetXY(10,8);
         $pdf->MultiCell(0,2,$title,0,'L');
 
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
         $pdf->SetXY(10,14);
 		$pdf->MultiCell(22,2,$outputlangs->transnoentities("Ref"),0,'L');
         $pdf->SetXY(32,14);
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
         $pdf->MultiCell(60, 2, $outputlangs->convToOutputCharset($this->number), 0, 'L');
 
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
         $pdf->SetXY(10,20);
         $pdf->MultiCell(22,2,$outputlangs->transnoentities("Date"),0,'L');
         $pdf->SetXY(32,20);
-        $pdf->SetFont('','',10);
+        $pdf->SetFont('','', $default_font_size);
         $pdf->MultiCell(60, 2, dol_print_date($this->date,"day",false,$outputlangs));
 
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
         $pdf->SetXY(10,26);
         $pdf->MultiCell(22,2,$outputlangs->transnoentities("Owner"),0,'L');
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
         $pdf->SetXY(32,26);
         $pdf->MultiCell(60,2,$outputlangs->convToOutputCharset($this->account->proprio),0,'L');
 
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
         $pdf->SetXY(10,32);
         $pdf->MultiCell(0,2,$outputlangs->transnoentities("Account"),0,'L');
         pdf_bank($pdf,$outputlangs,32,30,$this->account,1);
 
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
         $pdf->SetXY(114,16);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Signature"), 0, 'L');
 
@@ -239,24 +240,24 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->line(140, 47, 140, 54);
 		$pdf->line(170, 47, 170, 54);
 
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
 		$pdf->SetXY(10,49);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("NumberOfCheques"), 0, 'L');
 
-		$pdf->SetFont('','B',10);
+		$pdf->SetFont('','B', $default_font_size);
         $pdf->SetXY(57,49);
         $pdf->MultiCell(40, 2, $this->nbcheque, 0, 'L');
 
-		$pdf->SetFont('','',10);
+		$pdf->SetFont('','', $default_font_size);
         $pdf->SetXY(148,49);
 		$pdf->MultiCell(40, 2, $langs->trans("Total"));
 
-		$pdf->SetFont('','B',10);
+		$pdf->SetFont('','B', $default_font_size);
 		$pdf->SetXY (170, 49);
 		$pdf->MultiCell(31, 2, price($this->amount), 0, 'C', 0);
 
 		// Tableau
-		$pdf->SetFont('','',8);
+		$pdf->SetFont('','', $default_font_size - 2);
 		$pdf->SetXY (11, $this->tab_top+2);
 		$pdf->MultiCell(40,2,$outputlangs->transnoentities("Num"), 0, 'L');
 		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
@@ -296,7 +297,8 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		// x=10 - Num
 		// x=30 - Banque
 		// x=100 - Emetteur
-		$pdf->SetFont('','', 9);
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		$pdf->SetFont('','', $default_font_size - 1);
 		$oldprowid = 0;
 		$pdf->SetFillColor(220,220,220);
 		$yp = 0;
@@ -332,6 +334,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{
 		global $conf;
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		//return pdf_pagefoot($pdf,$outputlangs,'BANK_CHEQUERECEIPT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
 		$paramfreetext='BANK_CHEQUERECEIPT_FREE_TEXT';
@@ -342,7 +345,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		// Line of free text
 		$line=(! empty($conf->global->$paramfreetext))?$outputlangs->convToOutputCharset($conf->global->$paramfreetext):"";
 
-		$pdf->SetFont('','',7);
+		$pdf->SetFont('','', $default_font_size - 3);
 		$pdf->SetDrawColor(224,224,224);
 
 		// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
