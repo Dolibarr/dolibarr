@@ -44,7 +44,7 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
 // Appel des triggers
 include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 $interface=new Interfaces($db);
-$result=$interface->run_triggers('USER_LOGOUT',$user,$user,$langs,$conf,$_POST["entity"]);
+$result=$interface->run_triggers('USER_LOGOUT',$user,$user,$langs,$conf,$conf->entity);
 if ($result < 0) { $error++; }
 // Fin appel triggers
 
@@ -62,13 +62,9 @@ if ($conf->phenix->enabled && $conf->phenix->cookie)
 unset($_SESSION['dol_login']);
 unset($_SESSION['dol_entity']);
 
-// Add real path in session
-$realpath='';
-if ( preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs))	$realpath = isset($regs[1])?$regs[1]:'';
-
 // Destroy session
-$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
-$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
+$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_destroy();
