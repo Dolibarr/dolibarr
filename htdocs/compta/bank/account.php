@@ -23,7 +23,7 @@
 /**
  *	    \file       htdocs/compta/bank/account.php
  *		\ingroup    banque
- *		\brief      List of detail of bank transaction for an account
+ *		\brief      List of details of bank transactions for an account
  *		\version    $Id$
  */
 
@@ -646,12 +646,12 @@ if ($account || $_GET["ref"])
                     print '<td align="right">-</td>';
                 }
 
-                // Receipt conciliate or edit link
+                // Transaction reconciliated or edit link
                 if ($objp->rappro && $acct->type != 2)  // Si non compte cash
                 {
                     print "<td align=\"center\" nowrap>";
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
-                    print img_view();
+                    print img_edit();
                     print '</a>';
                     print "&nbsp; ";
                     print "<a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a>";

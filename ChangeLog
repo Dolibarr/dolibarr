@@ -53,6 +53,7 @@ For users:
 - New: Task #10796: Add Spain ProfId1 Verification
 - New: Page "supplier summary" is now available.
 - New: Task #10611: Add option to choose order of field in bank account info on PDF
+- New: If a transaction was reconciliated and should not, there was no way to reverse error.
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Special chars are now supported in ECM module for filename (not yet for
