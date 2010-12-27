@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/compta/paiement/cheque/fiche.php
  *	\ingroup    facture
- *	\brief      Onglet paiement cheque
+ *	\brief      Tab cheque deposit
  *	\version    $Id$
  */
 
@@ -60,6 +60,27 @@ $dir=$conf->banque->dir_output.'/bordereau/';
 /*
  * Actions
  */
+
+if ($_POST['action'] == 'setdate' && $user->rights->banque->cheque)
+{
+    $remisecheque = new RemiseCheque($db);
+    $result = $remisecheque->fetch(GETPOST('id'));
+    if ($result > 0)
+    {
+        //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+        $date=dol_mktime(0, 0, 0, $_POST['datecreate_month'], $_POST['datecreate_day'], $_POST['datecreate_year']);
+
+        $result=$remisecheque->set_date($user,$date);
+        if ($result < 0)
+        {
+            $mesg='<div class="error">'.$remisecheque->error.'</div>';
+        }
+    }
+    else
+    {
+        $mesg='<div class="error">'.$remisecheque->error.'</div>';
+    }
+}
 
 if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banque->cheque)
 {
@@ -309,6 +330,8 @@ if ($_GET['action'] == 'new')
 }
 else
 {
+    $object=$remisecheque;
+
 	$paymentstatic=new Paiement($db);
 	$accountlinestatic=new AccountLine($db);
 	$accountstatic=new Account($db);
@@ -324,7 +347,30 @@ else
 	print "</td>";
 	print "</tr>\n";
 
-	print '<tr><td>'.$langs->trans('DateCreation').'</td><td colspan="2">'.dol_print_date($remisecheque->date_bordereau,'day').'</td></tr>';
+	print '<tr><td>';
+
+    print '<table class="nobordernopadding" width="100%"><tr><td>';
+    print $langs->trans('Date');
+    print '</td>';
+    if ($_GET['action'] != 'editdate') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+    print '</tr></table>';
+    print '</td><td colspan="2">';
+    if ($_GET['action'] == 'editdate')
+    {
+        print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="setdate">';
+        $html->select_date($object->date_bordereau,'datecreate_','','','',"setdate");
+        print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+        print '</form>';
+    }
+    else
+    {
+        print $object->date_bordereau ? dol_print_date($object->date_bordereau,'day') : '&nbsp;';
+    }
+
+	print '</td>';
+	print '</tr>';
 
 	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
 	print $accountstatic->getNomUrl(1);

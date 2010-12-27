@@ -60,7 +60,7 @@ class RemiseCheque extends CommonObject
 	 *	\brief 		Load record
 	 *	\param 		id 			Id record
 	 *	\param 		ref		 	Ref record
-	 * 	\return		int			<0 if KO, >= 0 if OK
+	 * 	\return		int			<0 if KO, > 0 if OK
 	 */
 	function fetch($id,$ref='')
 	{
@@ -103,10 +103,11 @@ class RemiseCheque extends CommonObject
 			}
 			$this->db->free($resql);
 
-			return 0;
+			return 1;
 		}
 		else
 		{
+		    $this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -654,6 +655,41 @@ class RemiseCheque extends CommonObject
 
 		return $this->errno;
 	}
+
+
+    /**
+     *      Set the creation date
+     *      @param      user                Object user
+     *      @param      date                Date creation
+     *      @return     int                 <0 if KO, >0 if OK
+     */
+    function set_date($user, $date)
+    {
+        if ($user->rights->banque->cheque)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
+            $sql.= " SET date_bordereau = ".($date ? $this->db->idate($date) : 'null');
+            $sql.= " WHERE rowid = ".$this->id;
+
+            dol_syslog("RemiseCheque::set_date sql=$sql",LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                $this->date_bordereau = $date;
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dol_syslog("RemiseCheque::set_date ".$this->error,LOG_ERR);
+                return -1;
+            }
+        }
+        else
+        {
+            return -2;
+        }
+    }
 
 
 	/**

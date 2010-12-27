@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.0 compared to 2.9 *****
 
 For users:
+- New: Can edit date of cheque receipts.
 - New: Add Sales journal and Purchase journal report.
 - New: Can create supplier invoice from supplier order.
   New: Support login by openid

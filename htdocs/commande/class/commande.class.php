@@ -1066,7 +1066,7 @@ class Commande extends CommonObject
 				$this->date_livraison         = $this->db->jdate($obj->date_livraison);
 				$this->fk_delivery_address    = $obj->fk_adresse_livraison;
 				$this->propale_id             = $obj->fk_source;
-				
+
 				$this->lines                 = array();
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -1258,7 +1258,7 @@ class Commande extends CommonObject
 				$line->date_end         = $this->db->jdate($objp->date_end);
 
 				$this->lines[$i] = $line;
-				
+
 				$i++;
 			}
 			$this->db->free($result);
@@ -1551,10 +1551,10 @@ class Commande extends CommonObject
 
 
 	/**
-	 *      \brief      Set the order date
-	 *      \param      user        		Objet utilisateur qui modifie
-	 *      \param      date_livraison      Date de livraison
-	 *      \return     int         		<0 si ko, >0 si ok
+	 *      Set the order date
+	 *      @param      user        		Object user
+	 *      @param      date_livraison      Date delivery
+	 *      @return     int         		<0 if KO, >0 if OK
 	 */
 	function set_date($user, $date)
 	{

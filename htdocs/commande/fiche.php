@@ -50,8 +50,8 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
 
-$comid = isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:'');
-if (empty($comid)) $comid=isset($_GET["orderid"])?$_GET["orderid"]:(isset($_POST["orderid"])?$_POST["orderid"]:'');
+$comid = GETPOST("id");
+if (empty($comid)) $comid=GETPOST("orderid");
 
 // Security check
 $socid=0;
