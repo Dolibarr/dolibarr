@@ -79,13 +79,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$conf->css = "/theme/".$conf->theme."/style.css.php?lang=".$langs->defaultlang;
 	$conf_css = DOL_URL_ROOT.$conf->css;
 
-    // Add real path in session name (we must do that to avoid conflict between two dolibarr instances)
-    $realpath='';
-    if ( preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs)) $realpath = isset($regs[1])?$regs[1]:'';
-    if (defined('DOL_DOCUMENT_ROOT_ALT') && DOL_DOCUMENT_ROOT_ALT) $realpath=''; // warning, using alt feature is a security hole because path is not in session name
-
 	// Set cookie for timeout management
-	$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
+    $prefix=dol_getprefix();
+	$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 	if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', 0);
 
 	if (GETPOST("urlfrom")) $_SESSION["urlfrom"]=GETPOST("urlfrom");

@@ -120,8 +120,9 @@ analyse_sql_and_script($_POST,0);
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 // Init session. Name of session is specific to Dolibarr instance.
-$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+$prefix=dol_getprefix();
+$sessionname='DOLSESSID_'.$prefix;
+$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_start();
@@ -548,7 +549,9 @@ if (! defined('NOLOGIN'))
 			include_once(DOL_DOCUMENT_ROOT."/core/class/cookie.class.php");
 
 			$entity = $_SESSION["dol_login"].'|'.$_POST["entity"];
-			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+
+			$prefix=dol_getprefix();
+			$entityCookieName = 'DOLENTITYID_'.$prefix;
 			// TTL : is defined in the config page multicompany
 			$ttl = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_TTL) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );
 			// Cryptkey : will be created randomly in the config page multicompany
@@ -1065,7 +1068,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		if ($user->admin && ! $user->entity)
 		{
 			$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
-		
+
 			if ($res)
 			{
 				//$mc = new ActionsMulticompany($db);

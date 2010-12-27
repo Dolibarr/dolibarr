@@ -63,8 +63,9 @@ unset($_SESSION['dol_login']);
 unset($_SESSION['dol_entity']);
 
 // Destroy session
-$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+$prefix=dol_getprefix();
+$sessionname='DOLSESSID_'.$prefix;
+$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_destroy();

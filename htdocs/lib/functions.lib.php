@@ -63,6 +63,20 @@ function GETPOST($paramname,$check='',$method=0)
     return $out;
 }
 
+
+/**
+ *  Return a prefix to use for this Dolibarr instance for session or cookie names
+ *  @return         string      A calculated prefix
+ */
+function dol_getprefix()
+{
+    // Add real path in session name
+    $realpath='';
+    if (preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs)) $realpath = isset($regs[1])?$regs[1]:'';
+    if (defined('DOL_DOCUMENT_ROOT_ALT') && DOL_DOCUMENT_ROOT_ALT) $realpath=''; // warning, using alt feature is a security hole because path is not in session name, so being authenticated into an instance allow access on another
+    return $realpath;
+}
+
 /**
  *	Make an include_once using default root and alternate root if it fails.
  * 	@param			relpath		Relative path to file (Ie: mydir/myfile, ../myfile, ...)

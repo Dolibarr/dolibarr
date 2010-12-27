@@ -293,7 +293,8 @@ if (! defined('NOREQUIREDB'))
 	}
 	else
 	{
-		$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+		$prefix=dol_getprefix();
+	    $entityCookieName = 'DOLENTITYID_'.$prefix;
 		if (! empty($_COOKIE[$entityCookieName]) && ! empty($conf->file->cookie_cryptkey)) 						// Just for view specific login page
 		{
 			include_once(DOL_DOCUMENT_ROOT."/core/class/cookie.class.php");
