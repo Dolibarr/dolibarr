@@ -222,32 +222,33 @@ print '<table class="border" width="100%">';
 
 // Ref
 print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
-print '<td colspan="2">';
+print '<td>';
 print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
 print '</td>';
-print '</tr>';
+print '</tr>'."\n";
 
 // Nom
 print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-print '<td colspan="2">'.$fuser->nom.'</td>';
-print "</tr>\n";
+print '<td>'.$fuser->nom.'</td>';
+print '</tr>'."\n";
 
 // Prenom
 print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-print '<td colspan="2">'.$fuser->prenom.'</td>';
-print "</tr>\n";
+print '<td>'.$fuser->prenom.'</td>';
+print '</tr>'."\n";
 
 print '</table><br>';
 
 if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 
+print "\n";
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
-if ($caneditperms) print '<td width="24">&nbsp</td>';
+if ($caneditperms) print '<td>&nbsp</td>';
 print '<td align="center" width="24">&nbsp;</td>';
 print '<td>'.$langs->trans("Permissions").'</td>';
-print '</tr>';
+print '</tr>'."\n";
 
 $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
@@ -288,21 +289,23 @@ if ($result)
                 print '<tr '. $bc[$var].'>';
                 print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName();
                 print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
-                print '<td align="center" nowrap>';
-                print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
+                print '<td align="center" nowrap="nowrap">';
+                print '<a title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
                 print '/';
-                print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
+                print '<a title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
                 print '</td>';
                 print '<td colspan="2">&nbsp;</td>';
-                print '</tr>';
+                print '</tr>'."\n";
             }
         }
 
         print '<tr '. $bc[$var].'>';
 
+        // Picto and label of permission
         print '<td>'.img_object('',$picto).' '.$objMod->getName();
         print '</td>';
 
+        // Permission and tick
         if ($fuser->admin && $objMod->rights_admin_allowed)
         {
             // Permission own because admin
@@ -310,7 +313,7 @@ if ($result)
             {
                 print '<td align="center">'.img_picto($langs->trans("Administrator"),'star').'</td>';
             }
-            print '<td align="center" nowrap>';
+            print '<td align="center" nowrap="nowrap">';
             print img_tick();
             print '</td>';
         }
@@ -321,7 +324,7 @@ if ($result)
             {
                 print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
             }
-            print '<td align="center">';
+            print '<td align="center" nowrap="nowrap">';
             print img_tick();
             print '</td>';
         }
@@ -334,7 +337,7 @@ if ($result)
 				//print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id.'" title="'.$langs->trans("PermissionInheritedFromAGroup").'">';
 				print '</td>';
             }
-            print '<td align="center" nowrap>';
+            print '<td align="center" nowrap="nowrap">';
             print img_tick();
             print '</td>';
         }
@@ -351,7 +354,7 @@ if ($result)
         $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
         print '<td>'.$perm_libelle. '</td>';
 
-        print '</tr>';
+        print '</tr>'."\n";
 
         $i++;
     }
