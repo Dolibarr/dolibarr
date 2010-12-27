@@ -402,8 +402,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            if ($objp->rappro) print dol_print_date($db->jdate($objp->do),"day");
-            else $html->select_date($db->jdate($objp->do),'dateo','','','','update');
+            print $html->select_date($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
             print '</td><td align="center" rowspan="4" width="20%"><input type="submit" class="button" value="'.$langs->trans("Update").'"'.($objp->rappro?' disabled="true"':'').'></td>';
         }
         else
@@ -418,10 +417,9 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            if ($objp->rappro) print dol_print_date($db->jdate($objp->dv),"day");
-            else
+            print $html->select_date($db->jdate($objp->dv),'datev','','','','update',1,0,1,$objp->rappro);
+            if (! $objp->rappro)
             {
-                $html->select_date($db->jdate($objp->dv),'datev','','','','update');
                 print ' &nbsp; ';
                 print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
                 print img_edit_remove() . "</a> ";
@@ -442,32 +440,17 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            if ($objp->rappro)
+            print '<input name="label" class="flat" '.($objp->rappro?' disabled="true"':'').' value="';
+            if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
             {
-                if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
-                {
-                    // Label generique car entre parentheses. On l'affiche en le traduisant
-                    print $langs->trans($reg[1]);
-                }
-                else
-                {
-                    print $objp->label;
-                }
+                // Label generique car entre parentheses. On l'affiche en le traduisant
+                print $langs->trans($reg[1]);
             }
             else
             {
-                print '<input name="label" class="flat" value="';
-                if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
-                {
-                    // Label generique car entre parentheses. On l'affiche en le traduisant
-                    print $langs->trans($reg[1]);
-                }
-                else
-                {
-                    print $objp->label;
-                }
-                print '" size="50">';
+                print $objp->label;
             }
+            print '" size="50">';
         }
         else
         {
@@ -489,8 +472,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            if ($objp->rappro) print price($objp->amount);
-            else print '<input name="amount" class="flat" size="10" value="'.price($objp->amount).'"> '.$langs->trans("Currency".$conf->monnaie);
+            print '<input name="amount" class="flat" size="10" '.($objp->rappro?' disabled="true"':'').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$conf->monnaie);
             print '</td>';
         }
         else
@@ -519,7 +501,15 @@ if ($result)
             if ($user->rights->banque->consolidate)
             {
                 print '<td colspan="3">';
-                print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'">';
+                if ($objp->rappro)
+                {
+                    print $langs->trans("AccountStatement").' <input name="num_rel_bis" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro?' disabled="true"':'').'>';
+                    print '<input name="num_rel" type="hidden" value="'.$objp->num_releve.'">';
+                }
+                else
+                {
+                    print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro?' disabled="true"':'').'>';
+                }
                 print '</td><td align="center" rowspan="2" width="20%"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
             }
             else
