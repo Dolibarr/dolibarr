@@ -206,9 +206,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
         $pdf->MultiCell(0,2,$title,0,'L');
 
 		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(10,14);
+        $pdf->SetXY(10,15);
 		$pdf->MultiCell(22,2,$outputlangs->transnoentities("Ref"),0,'L');
-        $pdf->SetXY(32,14);
+        $pdf->SetXY(32,15);
 		$pdf->SetFont('','', $default_font_size);
         $pdf->MultiCell(60, 2, $outputlangs->convToOutputCharset($this->number), 0, 'L');
 
@@ -308,13 +308,13 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$pdf->MultiCell(8, $this->line_height, $j+1, 0, 'R', 0);
 
 			$pdf->SetXY (10, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(30, $this->line_height, $this->lines[$j]->num_chq?$this->lines[$j]->num_chq:'', 0, 'J', 0);
+			$pdf->MultiCell(30, $this->line_height, $this->lines[$j]->num_chq?$this->lines[$j]->num_chq:'', 0, 'L', 0);
 
 			$pdf->SetXY (40, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(70, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->bank_chq),44), 0, 'J', 0);
+			$pdf->MultiCell(70, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->bank_chq),44), 0, 'L', 0);
 
 			$pdf->SetXY (100, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(80, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq),50), 0, 'J', 0);
+			$pdf->MultiCell(80, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq),50), 0, 'L', 0);
 
 			$pdf->SetXY (180, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', 0);
