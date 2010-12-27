@@ -570,8 +570,11 @@ function write_conf_file($conffile)
 
 		/* Authentication */
 		fputs($fp, '$dolibarr_main_authentication=\'dolibarr\';');
-		fputs($fp,"\n");
-
+		fputs($fp,"\n\n");
+		
+		fputs($fp, '# Specific settings');
+        fputs($fp,"\n");
+		
         fputs($fp, '$dolibarr_main_prod=\'0\';');
         fputs($fp,"\n");
 
@@ -583,6 +586,9 @@ function write_conf_file($conffile)
 
 		fputs($fp, '$dolibarr_main_cookie_cryptkey=\''.$key.'\';');
 		fputs($fp,"\n");
+		
+		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
+        fputs($fp,"\n");
 
 		fputs($fp, '?>');
 		fclose($fp);
