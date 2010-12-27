@@ -176,6 +176,8 @@ if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 $conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;
 $conf->file->main_limit_users = $dolibarr_main_limit_users;
+if (empty($dolibarr_mailing_limit_sendbyweb)) $dolibarr_mailing_limit_sendbyweb=0;
+$conf->file->mailing_limit_sendbyweb = $dolibarr_mailing_limit_sendbyweb;
 if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');	// For test purpose
 // Identifiant autres
 $conf->file->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
@@ -310,6 +312,12 @@ if (! defined('NOREQUIREDB'))
 
 	// Here we read database (llx_const table) and define $conf->global->XXX var.
 	$conf->setValues($db);
+}
+
+// Overwrite database value
+if (! empty($conf->file->mailing_limit_sendbyweb))
+{
+	$conf->global->MAILING_LIMIT_SENDBYWEB = $conf->file->mailing_limit_sendbyweb;
 }
 
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.

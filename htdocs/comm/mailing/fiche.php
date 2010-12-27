@@ -690,9 +690,13 @@ else
 				}
 				else
 				{
-                    $text=$langs->trans("MailingNeedCommand");
-                    $text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$_GET["id"].'</textarea>';
-					$text.='<br><br>';
+					$text='';
+                    if (empty($conf->file->mailing_limit_sendbyweb))
+                    {
+                    	$text.=$langs->trans("MailingNeedCommand");
+                    	$text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$_GET["id"].'</textarea>';
+                    	$text.='<br><br>';
+                    }
 				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';
 					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
 					$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$_REQUEST['id'],$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,260);

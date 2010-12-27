@@ -237,6 +237,12 @@ $dolibarr_main_prod='0';
 # Examples:
 # $dolibarr_main_limit_users='0';
 
+# dolibarr_mailing_limit_sendbyweb
+# Can set a limit for mailing send by web, can be used for a restricted mode.
+# Default value: 0 (use database value if exist)
+# Examples:
+# $dolibarr_mailing_limit_sendbyweb='0';
+
 # This is an development feature to allow external components to overwrite
 # some Dolibarr kernel files to be overwritten by versions provided by
 # third parties modules.
