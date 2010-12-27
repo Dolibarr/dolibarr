@@ -894,17 +894,17 @@ else
 			print '<td colspan="2">';
 			print $html->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
 			print '</td>';
-			print '</tr>';
+			print '</tr>'."\n";
 
-			// Nom
+			// Lastname
 			print '<tr><td valign="top">'.$langs->trans("Lastname").'</td>';
 			print '<td colspan="2">'.$fuser->nom.'</td>';
-			print "</tr>\n";
+            print '</tr>'."\n";
 
-			// Prenom
+			// Firstname
 			print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
 			print '<td colspan="2">'.$fuser->prenom.'</td>';
-			print "</tr>\n";
+            print '</tr>'."\n";
 
 			$rowspan=11;
 			if ($conf->societe->enabled) $rowspan++;
@@ -916,17 +916,17 @@ else
 			print '<tr><td valign="top">'.$langs->trans("Login").'</td>';
 			if ($fuser->ldap_sid && $fuser->statut==0)
 			{
-				print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
+				print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
 			}
 			else
 			{
-				print '<td width="50%">'.$fuser->login.'</td>';
+				print '<td>'.$fuser->login.'</td>';
 			}
 			// Photo
 			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
 			print $html->showphoto('userphoto',$fuser,100,1);
 			print '</td>';
-			print '</tr>';
+			print '</tr>'."\n";
 
 			// Password
 			print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
@@ -960,7 +960,7 @@ else
 				}
 				print "</td>";
 			}
-			print "</tr>\n";
+            print '</tr>'."\n";
 
 			// Administrator
 			print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
@@ -974,7 +974,7 @@ else
 				print ' '.img_picto($langs->trans("Administrator"),"star");
 			}
 			print '</td>';
-			print "</tr>\n";
+            print '</tr>'."\n";
 
 			// Type
 			print '<tr><td valign="top">'.$langs->trans("Type").'</td>';
@@ -995,19 +995,23 @@ else
 			{
 				print $html->textwithpicto($langs->trans("SuperAdministrator"),$langs->trans("SuperAdministratorDesc"));
 			}
-			print '</td></tr>';
+			print '</td>';
+            print '</tr>'."\n";
 
 			// Tel pro
 			print '<tr><td valign="top">'.$langs->trans("PhonePro").'</td>';
 			print '<td>'.dol_print_phone($fuser->office_phone,'',0,0,1).'</td>';
+            print '</tr>'."\n";
 
 			// Tel mobile
 			print '<tr><td valign="top">'.$langs->trans("PhoneMobile").'</td>';
 			print '<td>'.dol_print_phone($fuser->user_mobile,'',0,0,1).'</td>';
+            print '</tr>'."\n";
 
 			// Fax
 			print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
 			print '<td>'.dol_print_phone($fuser->office_fax,'',0,0,1).'</td>';
+            print '</tr>'."\n";
 
 			// EMail
 			print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
@@ -1018,7 +1022,8 @@ else
 			print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
 			print '<td>';
 			print $fuser->getLibStatut(4);
-			print '</td></tr>';
+			print '</td>';
+            print '</tr>'."\n";
 
 			print '<tr><td valign="top">'.$langs->trans("LastConnexion").'</td>';
 			print '<td>'.dol_print_date($fuser->datelastlogin,"dayhour").'</td>';
@@ -1028,7 +1033,7 @@ else
 			print '<td>'.dol_print_date($fuser->datepreviouslogin,"dayhour").'</td>';
 			print "</tr>\n";
 
-			
+
 			if (preg_match('/myopenid/',$conf->authmode))
 			{
 				print '<tr><td valign="top">'.$langs->trans("url_openid").'</td>';
@@ -1043,7 +1048,7 @@ else
 				$langs->load("other");
 				print '<tr><td valign="top">'.$langs->trans("LoginWebcal").'</td>';
 				print '<td>'.$fuser->webcal_login.'&nbsp;</td>';
-				print "</tr>\n";
+                print '</tr>'."\n";
 			}
 
 			// Module Phenix
@@ -1055,7 +1060,7 @@ else
 				print "</tr>\n";
 				print '<tr><td valign="top">'.$langs->trans("PassPhenix").'</td>';
 				print '<td>'.preg_replace('/./i','*',$fuser->phenix_pass_crypted).'&nbsp;</td>';
-				print "</tr>\n";
+                print '</tr>'."\n";
 			}
 
 			// Company / Contact
@@ -1082,7 +1087,7 @@ else
 					print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dol_trunc($contact->getFullName($langs),32).'</a>';
 				}
 				print '</td>';
-				print "</tr>\n";
+                print '</tr>'."\n";
 			}
 
 			// Module Adherent
@@ -1103,7 +1108,7 @@ else
 					print $langs->trans("UserNotLinkedToMember");
 				}
 				print '</td>';
-				print "</tr>\n";
+                print '</tr>'."\n";
 			}
 
 			print "</table>\n";
@@ -1499,7 +1504,7 @@ else
 				print $fuser->email;
 			}
 			print '</td></tr>';
-			
+
 			// openid
 			if (preg_match('/myopenid/',$conf->authmode))
 			{
@@ -1515,7 +1520,7 @@ else
 					print $fuser->openid;
 				}
 				print '</td></tr>';
-			}			
+			}
 
 			// Statut
 			print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
