@@ -125,8 +125,8 @@ $realpath='';
 if (preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs)) $realpath = isset($regs[1])?$regs[1]:'';
 if (defined('DOL_DOCUMENT_ROOT_ALT') && DOL_DOCUMENT_ROOT_ALT) $realpath=''; // warning, using alt feature is a security hole because path is not in session name, so being authenticated into an instance allow access on another
 $prefix=$realpath;
-$sessionname='DOLSESSID_'.$prefix;
-$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
+$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
+$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_start();

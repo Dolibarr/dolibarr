@@ -67,6 +67,7 @@ function GETPOST($paramname,$check='',$method=0)
 /**
  *  Return a prefix to use for this Dolibarr instance for session or cookie names.
  *  This prefix is unique for instance and avoid conflict between multi-instances Dolibarrs.
+ *  TODO This function is not called by main.inc.php because function is not included yet
  *  @return         string      A calculated prefix
  */
 function dol_getprefix()
@@ -80,7 +81,7 @@ function dol_getprefix()
         // Warning, using alt feature is a security hole because path is not in session name, so being authenticated into an instance allow access on another
         // FIXME The fix is to use only "root url" like the one defined into $dolibarr_main_url_root
     }
-    return $realpath;
+    return md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
 }
 
 /**
