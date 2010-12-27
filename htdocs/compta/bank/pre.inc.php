@@ -67,20 +67,20 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 			$numr = $db->num_rows($resql);
 			$i = 0;
 
-			if ($numr > 0) 	$menu->add(dol_buildpath('/compta/bank/index.php',1),$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
+			if ($numr > 0) 	$menu->add('/compta/bank/index.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
 
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
-				$menu->add_submenu(dol_buildpath('/compta/bank/fiche.php?id='.$objp->rowid,1),$objp->label,1,$user->rights->banque->lire);
+				$menu->add_submenu('/compta/bank/fiche.php?id='.$objp->rowid,$objp->label,1,$user->rights->banque->lire);
                 if ($objp->rappro && $objp->courant != 2)  // If not cash account and can be reconciliate
                 {
-				    $menu->add_submenu(dol_buildpath('/compta/bank/rappro.php?account='.$objp->rowid,1),$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
+				    $menu->add_submenu('/compta/bank/rappro.php?account='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
                 }
 /*
-				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=".$objp->rowid ,$langs->trans("IOMonthlyReporting"));
-				$menu->add_submenu(DOL_URL_ROOT."/compta/bank/graph.php?account=".$objp->rowid ,$langs->trans("Graph"));
-				if ($objp->courant != 2) $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=".$objp->rowid ,$langs->trans("AccountStatements"));
+				$menu->add_submenu("/compta/bank/annuel.php?account=".$objp->rowid ,$langs->trans("IOMonthlyReporting"));
+				$menu->add_submenu("/compta/bank/graph.php?account=".$objp->rowid ,$langs->trans("Graph"));
+				if ($objp->courant != 2) $menu->add_submenu("/compta/bank/releve.php?account=".$objp->rowid ,$langs->trans("AccountStatements"));
 */
 				$i++;
 			}

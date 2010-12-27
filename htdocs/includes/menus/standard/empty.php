@@ -150,18 +150,18 @@ class MenuLeft {
         // ***** START *****
 
         $langs->load("admin");  // Load translation file admin.lang
-        $newmenu->add(DOL_URL_ROOT."/admin/index.php?leftmenu=setup", $langs->trans("Setup"),0);
-        $newmenu->add(DOL_URL_ROOT."/admin/company.php", $langs->trans("MenuCompanySetup"),1);
-        $newmenu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"),1);
-        $newmenu->add(DOL_URL_ROOT."/admin/menus.php", $langs->trans("Menus"),1);
-        $newmenu->add(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"),1);
-        $newmenu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"),1);
-        $newmenu->add(DOL_URL_ROOT."/admin/delais.php",$langs->trans("Alerts"),1);
-        $newmenu->add(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"),1);
-        $newmenu->add(DOL_URL_ROOT."/admin/mails.php", $langs->trans("EMails"),1);
-        $newmenu->add(DOL_URL_ROOT."/admin/limits.php", $langs->trans("Limits"),1);
-        $newmenu->add(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"),1);
-        $newmenu->add(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"),1);
+        $newmenu->add("/admin/index.php?leftmenu=setup", $langs->trans("Setup"),0);
+        $newmenu->add("/admin/company.php", $langs->trans("MenuCompanySetup"),1);
+        $newmenu->add("/admin/modules.php", $langs->trans("Modules"),1);
+        $newmenu->add("/admin/menus.php", $langs->trans("Menus"),1);
+        $newmenu->add("/admin/ihm.php", $langs->trans("GUISetup"),1);
+        $newmenu->add("/admin/boxes.php", $langs->trans("Boxes"),1);
+        $newmenu->add("/admin/delais.php",$langs->trans("Alerts"),1);
+        $newmenu->add("/admin/perms.php", $langs->trans("Security"),1);
+        $newmenu->add("/admin/mails.php", $langs->trans("EMails"),1);
+        $newmenu->add("/admin/limits.php", $langs->trans("Limits"),1);
+        $newmenu->add("/admin/dict.php", $langs->trans("DictionnarySetup"),1);
+        $newmenu->add("/admin/const.php", $langs->trans("OtherSetup"),1);
 
         // ***** END *****
 
