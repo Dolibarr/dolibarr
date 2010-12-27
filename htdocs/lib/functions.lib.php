@@ -78,7 +78,7 @@ function dol_getprefix()
     {
         $realpath='';
         // Warning, using alt feature is a security hole because path is not in session name, so being authenticated into an instance allow access on another
-        // FIXME The fix is to use only "root url" as realpath like the one defined into $dolibarr_main_document_root
+        // FIXME The fix is to use only "root url" like the one defined into $dolibarr_main_url_root
     }
     return $realpath;
 }

@@ -120,7 +120,11 @@ analyse_sql_and_script($_POST,0);
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 // Init session. Name of session is specific to Dolibarr instance.
-$prefix=dol_getprefix();
+//$prefix=dol_getprefix();      // We can't use this function because include of functions not done yet
+$realpath='';
+if (preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs)) $realpath = isset($regs[1])?$regs[1]:'';
+if (defined('DOL_DOCUMENT_ROOT_ALT') && DOL_DOCUMENT_ROOT_ALT) $realpath=''; // warning, using alt feature is a security hole because path is not in session name, so being authenticated into an instance allow access on another
+$prefix=$realpath;
 $sessionname='DOLSESSID_'.$prefix;
 $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
