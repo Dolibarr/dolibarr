@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,36 +20,37 @@
 
 class Auth {
 
-	protected $db;
+	var $db;
 
-	protected $login;
-	protected $passwd;
+	var $login;
+	var $passwd;
 
-	protected $reponse;
+	var $reponse;
 
-	protected $sqlQuery;
+	var $sqlQuery;
 
-	public function __construct ($DB) {
+
+	function Auth ($DB) {
 
 		$this->db = $DB;
 		$this->reponse (null);
 
 	}
 
-	public function login ($aLogin) {
+	function login ($aLogin) {
 
 		$this->login = $aLogin;
 
 	}
 
-	public function passwd ($aPasswd) {
+	function passwd ($aPasswd) {
 
 		$this->passwd = $aPasswd;
 
 
 	}
 
-	public function reponse ($aReponse) {
+	function reponse ($aReponse) {
 
 		$this->reponse = $aReponse;
 
@@ -59,7 +60,7 @@ class Auth {
 	 * Authentification d'un demandeur
 	 * @return (int) 0 = Ok; -1 = login incorrect; -2 = login ok, mais compte desactive; -10 = aucune entree trouvee dans la base
 	 */
-	protected function verif_utilisateurs () {
+	function verif_utilisateurs () {
 
 		global $conf;
 
@@ -112,7 +113,7 @@ class Auth {
 
 	}
 
-	public function verif ($aLogin, $aPasswd) {
+	function verif ($aLogin, $aPasswd) {
 		global $conf;
 
 		$this->login ($aLogin);
