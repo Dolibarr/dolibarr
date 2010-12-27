@@ -308,7 +308,7 @@ if ($chid > 0)
 		// Type
 		print "<tr><td>".$langs->trans("Type")."</td><td>".$cha->type_libelle."</td><td>".$langs->trans("Payments")."</td></tr>";
 
-		// Period en date
+		// Period end date
 		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
 		print "<td>";
 		if ($_GET['action'] == 'edit')
@@ -399,9 +399,10 @@ if ($chid > 0)
 		// Amount
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($cha->amount).'</td></tr>';
 
+		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$cha->getLibStatut(4).'</td></tr>';
 
-		print '<tr><td coslpan="2">&nbsp;</td></tr>';
+		print '<tr><td colspan="2">&nbsp;</td></tr>';
 
 		if ($_GET['action'] == 'edit')
 		{

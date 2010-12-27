@@ -42,12 +42,12 @@ if ($user->societe_id > 0)
 
 
 /*
- * Actions ajoute paiement
+ * Actions add payment
  */
-if ($_POST["action"] == 'add_paiement')
+if ($_POST["action"] == 'add_payment')
 {
 	$error=0;
-	
+
 	if ($_POST["cancel"])
 	{
 		$loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
@@ -78,7 +78,6 @@ if ($_POST["action"] == 'add_paiement')
 		$paymentid = 0;
 
 		// Read possible payments
-		// FIXME add error message if no payment is defined
 		foreach ($_POST as $key => $value)
 		{
 			if (substr($key,0,7) == 'amount_')
@@ -88,47 +87,56 @@ if ($_POST["action"] == 'add_paiement')
 			}
 		}
 
-		$db->begin();
-
-		// Create a line of payments
-		$paiement = new PaymentSocialContribution($db);
-		$paiement->chid         = $chid;
-		$paiement->datepaye     = $datepaye;
-		$paiement->amounts      = $amounts;   // Tableau de montant
-		$paiement->paiementtype = $_POST["paiementtype"];
-		$paiement->num_paiement = $_POST["num_paiement"];
-		$paiement->note         = $_POST["note"];
-
-		if (! $error)
-		{
-		    $paymentid = $paiement->create($user);
-            if ($paymentid < 0)
-            {
-                $errmsg=$paiement->error;
-                $error++;
-            }
-		}
+        if (sizeof($amounts) <= 0)
+        {
+            $error++;
+            $errmsg='ErrorNoPaymentDefined';
+        }
 
         if (! $error)
         {
-            $result=$paiement->addPaymentToBank($user,'payment_sc','(SocialContributionPayment)',$_POST['accountid'],'','');
-            if (! $result > 0)
-            {
-                $errmsg=$paiement->error;
-                $error++;
-            }
-        }
+    		$db->begin();
 
-	    if (! $error)
-        {
-            $db->commit();
-            $loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
-            Header('Location: '.$loc);
-            exit;
-        }
-        else
-        {
-            $db->rollback();
+    		// Create a line of payments
+    		$paiement = new PaymentSocialContribution($db);
+    		$paiement->chid         = $chid;
+    		$paiement->datepaye     = $datepaye;
+    		$paiement->amounts      = $amounts;   // Tableau de montant
+    		$paiement->paiementtype = $_POST["paiementtype"];
+    		$paiement->num_paiement = $_POST["num_paiement"];
+    		$paiement->note         = $_POST["note"];
+
+    		if (! $error)
+    		{
+    		    $paymentid = $paiement->create($user);
+                if ($paymentid < 0)
+                {
+                    $errmsg=$paiement->error;
+                    $error++;
+                }
+    		}
+
+            if (! $error)
+            {
+                $result=$paiement->addPaymentToBank($user,'payment_sc','(SocialContributionPayment)',$_POST['accountid'],'','');
+                if (! $result > 0)
+                {
+                    $errmsg=$paiement->error;
+                    $error++;
+                }
+            }
+
+    	    if (! $error)
+            {
+                $db->commit();
+                $loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
+                Header('Location: '.$loc);
+                exit;
+            }
+            else
+            {
+                $db->rollback();
+            }
         }
 	}
 
@@ -164,10 +172,10 @@ if ($_GET["action"] == 'create')
 		print "<div class=\"error\">$mesg</div>";
 	}
 
-	print '<form name="add_paiement" action="paiement_charge.php" method="post">';
+	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"id\" value=\"$charge->id\">";
-	print '<input type="hidden" name="action" value="add_paiement">';
+	print '<input type="hidden" name="id" value="'.$charge->id.'">';
+	print '<input type="hidden" name="action" value="add_payment">';
 
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 
@@ -202,7 +210,7 @@ if ($_GET["action"] == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
-	$html->select_date($datepayment,'','','','',"add_paiement",1,1);
+	$html->select_date($datepayment,'','','','',"add_payment",1,1);
 	print "</td>";
 	print '<td>'.$langs->trans("Comments").'</td></tr>';
 
@@ -213,7 +221,7 @@ if ($_GET["action"] == 'create')
 	print '<td rowspan="3" valign="top"><textarea name="comment" wrap="soft" cols="40" rows="'.ROWS_3.'"></textarea></td></tr>';
 
 	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
+	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
 	$html->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, "courant=1",1);  // Affiche liste des comptes courant
 	print '</td></tr>';

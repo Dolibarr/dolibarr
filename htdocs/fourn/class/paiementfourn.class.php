@@ -20,19 +20,18 @@
  */
 
 /**
-		\file       htdocs/fourn/class/paiementfourn.class.php
-		\ingroup    fournisseur, facture
-		\brief      Classe paiement fournisseur
-        \remarks	Cette classe est presque identique a paiement.class.php
-		\version    $Id$
-*/
+ *		\file       htdocs/fourn/class/paiementfourn.class.php
+ *		\ingroup    fournisseur, facture
+ *		\brief      File of class to manage payments of suppliers invoices
+ *		\version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
 
 /**
-	\class      PaiementFourn
-	\brief      Classe permettant la gestion des paiements des factures fournisseurs
-*/
+ *	\class      PaiementFourn
+ *	\brief      Classe permettant la gestion des paiements des factures fournisseurs
+ */
 class PaiementFourn extends Paiement
 {
     var $db;
@@ -44,8 +43,9 @@ class PaiementFourn extends Paiement
 	var $ref;
 	var $facid;
 	var $datepaye;
-	var $amount;
 	var $total;
+    var $amount;            // Total amount of payment
+    var $amounts=array();   // Array of amounts
 	var $author;
 	var $paiementid;	// Type de paiement. Stocke dans fk_paiement
 						// de llx_paiement qui est lie aux types de

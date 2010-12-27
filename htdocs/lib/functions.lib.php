@@ -1192,7 +1192,7 @@ function img_object($alt, $object, $cssclass='')
 {
 	global $conf,$langs;
 
-	$cssclass = (!empty($cssclass)?'class="'.$cssclass.'"':'');
+	$cssclass = (!empty($cssclass)?' class="'.$cssclass.'"':'');
 	$path =  'theme/'.$conf->theme;
 	$url = DOL_URL_ROOT;
 
@@ -1204,7 +1204,7 @@ function img_object($alt, $object, $cssclass='')
 		if (DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/object_'.$object.'.png')) $url = DOL_URL_ROOT_ALT;
 	}
 
-	return '<img src="'.$url.'/'.$path.'/img/object_'.$object.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" '.$cssclass.'>';
+	return '<img src="'.$url.'/'.$path.'/img/object_'.$object.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.$cssclass.'>';
 }
 
 /**

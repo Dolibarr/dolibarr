@@ -18,9 +18,9 @@
  */
 
 /**
- *      \file       htdocs/compta/sociales/class/chargesociales.class.php
+ *      \file       htdocs/compta/sociales/class/paymentsocialcontribution.class.php
  *		\ingroup    facture
- *		\brief      Fichier de la classe des charges sociales
+ *		\brief      File of class to manage payment of social contributions
  *		\version    $Id$
  */
 
@@ -45,7 +45,8 @@ class PaymentSocialContribution extends CommonObject
 	var $datec='';
 	var $tms='';
 	var $datep='';
-	var $amount;
+    var $amount;            // Total amount of payment
+    var $amounts=array();   // Array of amounts
 	var $fk_typepaiement;
 	var $num_paiement;
 	var $note;
@@ -64,24 +65,25 @@ class PaymentSocialContribution extends CommonObject
 	}
 
 	/**
-	 *      \brief      Creation d'un paiement de charge sociale dans la base
-	 *      \param      user    Utilisateur qui cree le paiement
-	 *      \return     int     <0 si KO, id du paiement cree si OK
+	 *      Create payment of social contribution into database.
+     *      Use this->amounts to have list of lines for the payment
+	 *      @param      user    User making payment
+	 *      @return     int     <0 if KO, id of payment if OK
 	 */
 	function create($user)
 	{
 		global $conf, $langs;
-		
+
 		$error=0;
 
-		// Validation parametres
+        $now=dol_now();
+
+        // Validate parametres
 		if (! $this->datepaye)
 		{
 			$this->error='ErrorBadValueForParameters';
 			return -1;
 		}
-
-		$now=dol_now();
 
 		// Clean parameters
 		if (isset($this->fk_charge)) $this->fk_charge=trim($this->fk_charge);
@@ -93,24 +95,30 @@ class PaymentSocialContribution extends CommonObject
 		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
 		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
 
+        $totalamount = 0;
+        foreach ($this->amounts as $key => $value)  // How payment is dispatch
+        {
+            $newvalue = price2num($value,'MT');
+            $this->amounts[$key] = $newvalue;
+            $totalamount += $newvalue;
+        }
+        $totalamount = price2num($totalamount);
+
+        // Check parameters
+        if ($totalamount == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+
+
 		$this->db->begin();
 
-		$total=0;
-		foreach ($this->amounts as $key => $value)
-		{
-			$amount = price2num(trim($value), 'MT');
-			$total += $amount;
-		}
-
-		if ($total != 0)
+		if ($totalamount != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount,";
 			$sql.= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
-			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."', ";
-			$sql.= " '".$this->db->idate($this->datepaye)."', ";
-			$sql.= price2num($total);
-			$sql.= ", ".$this->paiementtype.", '".addslashes($this->num_paiement)."', '".addslashes($this->note)."', ".$user->id.",";
-			$sql.= "0)";
+			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."',";
+			$sql.= " '".$this->db->idate($this->datepaye)."',";
+			$sql.= " ".$totalamount.",";
+			$sql.= " ".$this->paiementtype.", '".addslashes($this->num_paiement)."', '".addslashes($this->note)."', ".$user->id.",";
+			$sql.= " 0)";
 
 			dol_syslog(get_class($this)."::create sql=".$sql);
 			$resql=$this->db->query($sql);
@@ -125,9 +133,11 @@ class PaymentSocialContribution extends CommonObject
 
 		}
 
-		if ($total != 0 && ! $error)
+		if ($totalamount != 0 && ! $error)
 		{
-			$this->db->commit();
+		    $this->amount=$totalamount;
+            $this->total=$totalamount;    // deprecated
+		    $this->db->commit();
 			return $this->id;
 		}
 		else
@@ -442,7 +452,7 @@ class PaymentSocialContribution extends CommonObject
 
 
     /**
-     *      A record into bank for payment with links between this bank record and invoices of payment.
+     *      Add record into bank for payment with links between this bank record and invoices of payment.
      *      All payment properties must have been set first like after a call to create().
      *      @param      user                Object of user making payment
      *      @param      mode                'payment_sc'
@@ -569,19 +579,19 @@ class PaymentSocialContribution extends CommonObject
 		global $langs;
 
 		$result='';
-		
+
 		if (empty($this->ref)) $this->ref=$this->lib;
 
 		if (!empty($this->id))
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$this->id.'">';
 			$lienfin='</a>';
-			
+
 			if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment").': '.$this->ref,'payment').$lienfin.' ');
 			if ($withpicto && $withpicto != 2) $result.=' ';
 			if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
 		}
-		
+
 		return $result;
 	}
 }

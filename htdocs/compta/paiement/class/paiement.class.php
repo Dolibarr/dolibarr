@@ -21,8 +21,7 @@
 /**
  *	\file       htdocs/compta/paiement/class/paiement.class.php
  *	\ingroup    facture
- *	\brief      Fichier de la classe des paiement de factures clients
- *	\remarks	Cette classe est presque identique a paiementfourn.class.php
+ *	\brief      File of class to manage payments of customers invoices
  *	\version    $Id$
  */
 
@@ -41,8 +40,9 @@ class Paiement
 	var $ref;
 	var $facid;
 	var $datepaye;
-	var $amount;
-	var $total;
+    var $total;             // deprecated
+	var $amount;            // Total amount of payment
+	var $amounts=array();   // Array of amounts
 	var $author;
 	var $paiementid;	// Type de paiement. Stocke dans fk_paiement
 	// de llx_paiement qui est lie aux types de
@@ -93,7 +93,8 @@ class Paiement
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
 				$this->numero         = $obj->num_paiement;
-				$this->montant        = $obj->amount;
+				$this->montant        = $obj->amount;   // deprecated
+				$this->amount         = $obj->amount;
 				$this->note           = $obj->note;
 				$this->type_libelle   = $obj->type_libelle;
 				$this->type_code      = $obj->type_code;
@@ -130,26 +131,26 @@ class Paiement
 
 		$error = 0;
 
-		// Clean parameters
-		$now=dol_now();
+        $now=dol_now();
 
-		$this->total = 0;
+        // Clean parameters
+        $totalamount = 0;
 		foreach ($this->amounts as $key => $value)	// How payment is dispatch
 		{
-			$value = price2num($value,'MT');
-			$this->amounts[$key] = $value;
-			$this->total += $value;
+			$newvalue = price2num($value,'MT');
+			$this->amounts[$key] = $newvalue;
+			$totalamount += $newvalue;
 		}
-		$this->total = price2num($this->total);
+		$totalamount = price2num($totalamount);
 
 		// Check parameters
-		if ($this->total == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+        if ($totalamount == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
 
 
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
-		$sql.= " VALUES ('".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$this->total."', ".$this->paiementid.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.")";
+		$sql.= " VALUES ('".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$totalamount."', ".$this->paiementid.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -201,6 +202,8 @@ class Paiement
 
 		if (! $error)
 		{
+		    $this->amount=$totalamount;
+		    $this->total=$totalamount;    // deprecated
 			$this->db->commit();
 			return $this->id;
 		}
@@ -325,15 +328,16 @@ class Paiement
             $acc = new Account($this->db);
             $acc->fetch($accountid);
 
-            $total=$this->total;
-            if ($mode == 'payment') $total=$this->total;
-            if ($mode == 'payment_supplier') $total=-$total;
+            $totalamount=$this->amount;
+            if (empty($totalamount)) $totalamount=$this->total; // For backward compatibility
+            if ($mode == 'payment') $totalamount=$totalamount;
+            if ($mode == 'payment_supplier') $totalamount=-$totalamount;
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline($this->datepaye,
             $this->paiementid,  // Payment mode id or code ("CHQ or VIR for example")
             $label,
-            $total,
+            $totalamount,
             $this->num_paiement,
             '',
             $user,
