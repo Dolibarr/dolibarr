@@ -57,6 +57,7 @@
 */htdocs/includes/triggers/interface_contractfrombill.class.php-NORUN
 */htdocs/includes/tcpdf/fonts/utils/*
 */htdocs/oscommerce_ws/ws_client_demo/*
+*/htdocs/theme/bureau2crea/*
 */htdocs/theme/rodolphe/*
 */scripts/addons/*
 */scripts/courrier/*
