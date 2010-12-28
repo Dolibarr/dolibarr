@@ -888,7 +888,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="32" value="'.$product->ref.'"></td></tr>';
 
 			// Label
-			print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
 			// Status
 			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td colspan="2">';
@@ -933,7 +933,7 @@ if ($_GET["id"] || $_GET["ref"])
 			// Nature
 			if($product->type!=1)
 			{
-				print '<tr><td>'.$langs->trans("Nature").'</td><td>';
+				print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
 				$statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
 				print $html->selectarray('finished',$statutarray,$product->finished);
 				print '</td></tr>';
@@ -970,32 +970,32 @@ if ($_GET["id"] || $_GET["ref"])
 			else
 			{
 				// Weight
-				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+				print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="2">';
 				print '<input name="weight" size="5" value="'.$product->weight.'"> ';
 				print $formproduct->select_measuring_units("weight_units", "weight", $product->weight_units);
 				print '</td></tr>';
 				// Length
-				print '<tr><td>'.$langs->trans("Length").'</td><td>';
+				print '<tr><td>'.$langs->trans("Length").'</td><td colspan="2">';
 				print '<input name="size" size="5" value="'.$product->length.'"> ';
 				print $formproduct->select_measuring_units("size_units", "size", $product->length_units);
 				print '</td></tr>';
 				// Surface
-				print '<tr><td>'.$langs->trans("Surface").'</td><td>';
+				print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
 				print '<input name="surface" size="5" value="'.$product->surface.'"> ';
 				print $formproduct->select_measuring_units("surface_units", "surface", $product->surface_units);
 				print '</td></tr>';
 				// Volume
-				print '<tr><td>'.$langs->trans("Volume").'</td><td>';
+				print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
 				print '<input name="volume" size="5" value="'.$product->volume.'"> ';
 				print $formproduct->select_measuring_units("volume_units", "volume", $product->volume_units);
 				print '</td></tr>';
 			}
 
             // Custom code
-            print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.$product->customcode.'"></td></tr>';
+            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2"><input name="customcode" size="10" value="'.$product->customcode.'"></td></tr>';
 
             // Origin country
-            print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
+            print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">';
             $html->select_pays($product->country_id,'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
@@ -1068,7 +1068,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print '</tr>';
 
 			// Label
-			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
 
 			$nblignes=5;
 			if ($product->is_photo_available($conf->product->dir_output))
@@ -1082,22 +1082,22 @@ if ($_GET["id"] || $_GET["ref"])
 			print '</tr>';
 
 			// Accountancy buy code
-			print '<tr><td>'.$html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer).'</td><td>';
+			print '<tr><td>'.$html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer).'</td><td colspan="2">';
 			print $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer);
 			print '</td></tr>';
 
 			// Accountancy sell code
-			print '<tr><td>'.$html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer).'</td><td>';
+			print '<tr><td>'.$html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer).'</td><td colspan="2">';
 			print $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer);
 			print '</td></tr>';
 
 			// Status (to sell)
-			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td>';
+			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td colspan="2">';
 			print $product->getLibStatut(2,0);
 			print '</td></tr>';
 
 			// Status (to buy)
-			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
+			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td colspan="2">';
 			print $product->getLibStatut(2,1);
 			print '</td></tr>';
 
@@ -1179,7 +1179,7 @@ if ($_GET["id"] || $_GET["ref"])
             // Custom code
             print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$product->customcode.'</td>';
             // Origin country code
-            print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>'.getCountry($product->country_id,0,$db).'</td>';
+            print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($product->country_id,0,$db).'</td>';
 
 			// Hidden
 			/*
