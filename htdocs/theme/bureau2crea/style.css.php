@@ -934,6 +934,21 @@ div.tabs a.tab:hover {
 	color: #333333;
 }
 
+a.tabTitle {
+    background: #D8610F;
+    color: white;
+	font-family: <?php print $fontlist ?>;
+    font-weight: normal;
+    padding: 0px 6px 0px 2px;
+    margin: 0px 0px 0px 6px;
+	float: left;
+    text-decoration: none;
+    white-space: nowrap;
+    border-<?php print $right; ?>: 1px solid #555555;
+    border-<?php print $left; ?>: 1px solid #D8D8D8;
+    border-top: 1px solid #D8D8D8;
+}
+
 /*div.tabs {
     top: 20px;
     margin: 1px 0px 0px 0px;
