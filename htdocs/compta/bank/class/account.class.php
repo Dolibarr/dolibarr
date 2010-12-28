@@ -804,7 +804,7 @@ class Account extends CommonObject
 
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
 
-		$now=gmmktime();
+		$now=dol_now();
 
 		$this->nbtodo=$this->nbtodolate=0;
 

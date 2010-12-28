@@ -507,9 +507,10 @@ if ($account || $_GET["ref"])
 
                 print "<tr $bc[$var]>";
 
-                print "<td nowrap>".dol_print_date($db->jdate($objp->do),"day")."</td>\n";
+                print '<td nowrap="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
 
-                print "<td nowrap>".dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
+                print '<td nowrap="nowrap">'.dol_print_date($db->jdate($objp->dv),"day");
+                print "</td>\n";
 
                 // Payment type
                 print "<td nowrap>";
@@ -671,6 +672,13 @@ if ($account || $_GET["ref"])
                         print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
                         print img_view();
                         print '</a>';
+                    }
+                    if ($acct->rappro && empty($objp->rappro))
+                    {
+                        if ($db->jdate($objp->dv) < ($now - $conf->bank->rappro->warning_delay))
+                        {
+                            print ' '.img_warning($langs->trans("Late"));
+                        }
                     }
                     print '&nbsp;';
                     if ($user->rights->banque->modifier)
