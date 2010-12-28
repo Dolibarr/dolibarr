@@ -28,6 +28,7 @@
 */htdocs/conf/conf.php.postgres
 */htdocs/avoir/*
 */htdocs/custom/*
+*/htdocs/custom2/*
 */htdocs/document/*
 */htdocs/documents/*
 */htdocs/lolix/*
