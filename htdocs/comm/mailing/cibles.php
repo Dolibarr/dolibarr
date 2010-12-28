@@ -417,7 +417,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		print '<td class="liste_titre">';
 		print '&nbsp';
 		print '</td>';
-		// Url
+		// Source
 		print '<td class="liste_titre" align="right" colspan="3">';
 		print '<input type="image" value="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
 		print '&nbsp; <input type="image" value="button_removefilter" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
@@ -439,7 +439,40 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 				print '<td>'.$obj->nom.'</td>';
 				print '<td>'.$obj->prenom.'</td>';
 				print '<td>'.$obj->other.'</td>';
-				print '<td align="center">'.$obj->source_url.'</td>';
+				print '<td align="center">';
+                if (empty($obj->source_id) || empty($obj->source_type))
+                {
+                    print $obj->source_url; // For backward compatibility
+                }
+                else
+                {
+                    if ($obj->source_type == 'member')
+                    {
+                        include_once(DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php');
+                        $m=new Adherent($db);
+                        $m->id=$obj->source_id;
+                        print $m->getNomUrl(2);
+                    }
+                    else if ($obj->source_type == 'user')
+                    {
+                        include_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
+                        $m=new User($db);
+                        $m->id=$obj->source_id;
+                        print $m->getNomUrl(2);
+                    }
+                    else if ($obj->source_type == 'thirdparty')
+                    {
+                        include_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
+                        $m=new Societe($db);
+                        $m->id=$obj->source_id;
+                        print $m->getNomUrl(2);
+                    }
+                    else
+                    {
+                        print $obj->source_url;
+                    }
+                }
+				print '</td>';
 
 				// Statut pour l'email destinataire (Attentioon != statut du mailing)
 				if ($obj->statut == 0)

@@ -1482,7 +1482,7 @@ class User extends CommonObject
 
 	/**
 	 *    	\brief      Return a link to the user card (with optionnaly the picto)
-	 *		\param		withpicto		Include picto in link
+	 *		\param		withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
 	 *		\param		option			On what the link point to
 	 *		\return		string			String with URL
 	 * 		\remarks	Use this->id,this->nom, this->prenom
@@ -1502,7 +1502,8 @@ class User extends CommonObject
 			$lienfin='</a>';
 		}
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin.' ');
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin);
+        if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$lien.$this->getFullName($langs).$lienfin;
 		return $result;
 	}

@@ -1294,7 +1294,7 @@ class Societe extends CommonObject
 
     /**
      *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-     *		\param		withpicto		Inclut le picto dans le lien
+     *		\param		withpicto		Inclut le picto dans le lien (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
      *		\param		option			Sur quoi pointe le lien ('', 'customer', 'supplier', 'compta')
      *		\param		maxlen			Longueur max libelle
      *		\return		string			Chaine avec URL
@@ -1330,7 +1330,8 @@ class Societe extends CommonObject
         $lien.=(!empty($this->canvas)?'&amp;canvas='.$this->canvas:'').'">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->nom,'company').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->nom,'company').$lienfin);
+        if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($this->nom,$maxlen):$this->nom).$lienfin;
 
         return $result;
