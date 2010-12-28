@@ -80,7 +80,7 @@ class mailing_fraise extends MailingTargets
     {
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        $sql .= " WHERE a.email IS NOT NULL";
+        $sql .= " WHERE (a.email IS NOT NULL AND a.email != '')";
 
         // La requete doit retourner un champ "nb" pour etre comprise
         // par parent::getNbOfRecipients
