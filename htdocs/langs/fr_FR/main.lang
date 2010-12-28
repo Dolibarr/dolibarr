@@ -568,6 +568,8 @@ Hidden=Caché
 Resources=Ressources
 Source=Origine
 Prefix=Préfixe
+Before=Avant
+After=Après
 # Week day
 Day1=Lundi
 Day2=Mardi
