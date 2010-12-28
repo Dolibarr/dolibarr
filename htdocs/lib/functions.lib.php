@@ -445,12 +445,12 @@ function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
 }
 
 /**
- *	\brief      Show tab header of a card
- *	\param	    links		Array of tabs
- *	\param	    active      Active tab name
- *	\param      title       Title
- *	\param      notab		0=Add tab header, 1=no tab header
- * 	\param		picto		Add a picto on tab titel
+ *	Show tab header of a card
+ *	@param	    links		Array of tabs
+ *	@param	    active      Active tab name
+ *	@param      title       Title
+ *	@param      notab		0=Add tab header, 1=no tab header
+ * 	@param		picto		Add a picto on tab titel
  */
 function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 {

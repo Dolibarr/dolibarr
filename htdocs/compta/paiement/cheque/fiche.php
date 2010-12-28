@@ -214,7 +214,7 @@ else
 	//  $head[$h][1] = $langs->trans("Info");
 	//  $h++;
 
-	dol_fiche_head($head, $hselected, $langs->trans("Cheques"));
+	dol_fiche_head($head, $hselected, $langs->trans("Cheques"),0,'payment');
 
 	/*
 	 * Confirmation de la suppression du bordereau
