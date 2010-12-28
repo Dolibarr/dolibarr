@@ -120,6 +120,12 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut in (1,2)";
+    $sql.= " AND (";
+    $sql.= " f.type = 0";          // Standard
+    $sql.= " OR f.type = 1";       // Replacement
+    $sql.= " OR f.type = 2";       // Credit note
+    //$sql.= " OR f.type = 3";       // We do not include deposit
+    $sql.= ")";
 	$sql.= " AND f.fk_soc = s.rowid";
 	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
@@ -211,7 +217,7 @@ if (sizeof($amount))
 {
 	$arrayforsort=$name;
 
-	// On d�finit tableau arrayforsort
+	// On definit tableau arrayforsort
 	if ($sortfield == 'nom' && $sortorder == 'asc') {
 		asort($name);
 		$arrayforsort=$name;

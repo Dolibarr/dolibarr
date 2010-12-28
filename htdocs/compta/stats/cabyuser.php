@@ -117,6 +117,12 @@ if ($modecompta == 'CREANCES-DETTES')
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid";
     $sql.= " WHERE f.fk_statut in (1,2) ";
+    $sql.= " AND (";
+    $sql.= " f.type = 0";          // Standard
+    $sql.= " OR f.type = 1";       // Replacement
+    $sql.= " OR f.type = 2";       // Credit note
+    //$sql.= " OR f.type = 3";       // We do not include deposit
+    $sql.= ")";
 	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
 else

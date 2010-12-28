@@ -83,6 +83,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql  = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut in (1,2)";
+	$sql.= " AND (";
+	$sql.= " f.type = 0";          // Standard
+	$sql.= " OR f.type = 1";       // Replacement
+	$sql.= " OR f.type = 2";       // Credit note
+	//$sql.= " OR f.type = 3";       // We do not include deposit
+	$sql.= ")";
 } else {
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
