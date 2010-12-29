@@ -120,21 +120,22 @@ analyse_sql_and_script($_POST,0);
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
+
+// Include the conf.php and functions.lib.php
+require_once("filefunc.inc.php");
+
 // Init session. Name of session is specific to Dolibarr instance.
-//$prefix=dol_getprefix();      // We can't use this function because include of functions not done yet
-$realpath='';
-if (preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs)) $realpath = isset($regs[1])?$regs[1]:'';
-if (defined('DOL_DOCUMENT_ROOT_ALT') && DOL_DOCUMENT_ROOT_ALT) $realpath=''; // warning, using alt feature is a security hole because path is not in session name, so being authenticated into an instance allow access on another
-$prefix=$realpath;
-$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
-$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
+$prefix=dol_getprefix();
+$sessionname='DOLSESSID_'.$prefix;
+$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_start();
 
-// Set and init common variables
-// This include will set: config file variable $dolibarr_xxx, $conf, $langs and $mysoc objects
+// Init the 5 global objects
+// This include will set: $conf, $db, $langs, $user, $mysoc objects
 require_once("master.inc.php");
+
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
 if (! empty($conf->file->main_force_https))
@@ -1237,7 +1238,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
     // Load the left menu manager
 	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$left_menu);
-	if (! $result)
+	if (! $result)	// If menu manager removed or not found
 	{
 		$left_menu='eldy_backoffice.php';
 		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$left_menu);

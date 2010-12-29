@@ -32,119 +32,9 @@
  *  \version    $Id$
  */
 
-define('DOL_VERSION','3.0.0-alpha');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
-define('EURO',chr(128));
 
-// Definition des constantes syslog
-if (function_exists("define_syslog_variables"))
-{
-	if (version_compare(PHP_VERSION, '5.3.0', '<'))
-	{
-		define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
-	}
-}
-else
-{
-	// Pour PHP sans syslog (comme sous Windows)
-	define('LOG_EMERG',0);
-	define('LOG_ALERT',1);
-	define('LOG_CRIT',2);
-	define('LOG_ERR',3);
-	define('LOG_WARNING',4);
-	define('LOG_NOTICE',5);
-	define('LOG_INFO',6);
-	define('LOG_DEBUG',7);
-}
+require_once("filefunc.inc.php");	// May have been already require by main.inc.php. But may not by scripts.
 
-
-// Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
-error_reporting(E_ALL ^ E_NOTICE);
-//error_reporting(E_ALL);
-
-
-// Include configuration
-$result=@include_once("conf/conf.php");
-if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
-{
-    header("Location: install/index.php");
-    exit;
-}
-
-// Security: CSRF protection
-// This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
-// when we post forms (we allow GET to allow direct link to access a particular page).
-if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER']))
-{
-    //print 'HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
-    print "Access refused by CSRF protection in main.inc.php.\n";
-    print "If you access your server behind a proxy using url rewriting, you might add the line \$dolibarr_nocsrfcheck=1 into your conf.php file.\n";
-    die;
-}
-if (empty($dolibarr_main_db_host))
-{
-	print 'Dolibarr setup was run but was not completed.<br>'."\n";
-	print 'Please, click <a href="install/index.php">here to finish Dolibarr install process</a> ...'."\n";
-	die;
-}
-if (empty($dolibarr_main_url_root))
-{
-	print 'Value for parameter \'dolibarr_main_url_root\' is not defined in your \'htdocs\conf\conf.php\' file.<br>'."\n";
-	print 'You must add this parameter with your full Dolibarr root Url (Example: http://myvirtualdomain/ or http://mydomain/mydolibarrurl/)'."\n";
-	die;
-}
-if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
-if (empty($dolibarr_main_data_root))
-{
-	// Si repertoire documents non defini, on utilise celui par defaut
-	$dolibarr_main_data_root=str_replace("/htdocs","",$dolibarr_main_document_root);
-	$dolibarr_main_data_root.="/documents";
-}
-
-// Define some constants
-define('DOL_CLASS_PATH', 'class/');									// Filesystem path to class dir
-define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (documents)
-define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
-define('DOL_DOCUMENT_ROOT_ALT', $dolibarr_main_document_root_alt);	// Filesystem paths to alternate core php (alternate htdocs)
-// If dolibarr_main_url_root = auto (Hidden feature for developers only), we try to forge it.
-if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
-{
-	$dolibarr_main_url_root=str_replace($_SERVER["SCRIPT_URL"],'',$_SERVER["SCRIPT_URI"]);
-}
-define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);			// URL relative root
-$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));	// $uri contains url without http*
-$suburi = strstr($uri, '/');		// $suburi contains url without domain
-if ($suburi == '/') $suburi = '';	// If $suburi is /, it is now ''
-define('DOL_URL_ROOT', $suburi);	// URL relative root ('', '/dolibarr', ...)
-if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', $dolibarr_main_url_root_static);	// Used to put static images on another domain
-define('DOL_URL_ROOT_ALT', DOL_URL_ROOT.$dolibarr_main_url_root_alt);	// URL relative for external modules
-
-/*
- * Include functions
- */
-
-if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
-{
-	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
-	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
-	exit;
-}
-
-require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");	// Need 970ko memory (1.1 in 2.2)
-
-
-// If password is encoded, we decode it
-if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
-{
-	require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");
-	if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
-	{
-		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
-	}
-	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
-}
-//print memory_get_usage();
 
 
 /*
@@ -157,26 +47,17 @@ $conf = new Conf();
 
 // Identifiant propres au serveur base de donnee
 $conf->db->host   = $dolibarr_main_db_host;
-if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 $conf->db->port   = $dolibarr_main_db_port;
 $conf->db->name   = $dolibarr_main_db_name;
 $conf->db->user   = $dolibarr_main_db_user;
 $conf->db->pass   = $dolibarr_main_db_pass;
-if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 $conf->db->type   = $dolibarr_main_db_type;
-if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_';
 $conf->db->prefix = $dolibarr_main_db_prefix;
-if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set='latin1';		// Old installation
 $conf->db->character_set=$dolibarr_main_db_character_set;
-if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';	// Old installation
 $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
-if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 $conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
-if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 $conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
-if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;
 $conf->file->main_limit_users = $dolibarr_main_limit_users;
-if (empty($dolibarr_mailing_limit_sendbyweb)) $dolibarr_mailing_limit_sendbyweb=0;
 $conf->file->mailing_limit_sendbyweb = $dolibarr_mailing_limit_sendbyweb;
 if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');	// For test purpose
 // Identifiant autres
@@ -184,7 +65,6 @@ $conf->file->main_authentication = empty($dolibarr_main_authentication)?'':$doli
 // Force https
 $conf->file->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
 // Define charset for HTML Output (can set hidden value force_charset in conf.php file)
-if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
 $conf->file->character_set_client=strtoupper($force_charset_do_notuse);
 // Cookie cryptkey
 $conf->file->cookie_cryptkey = empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
@@ -201,11 +81,8 @@ if (! empty($dolibarr_main_document_root_alt))
 	}
 }
 
-// Define prefix
-if (isset($_SERVER["LLX_DBNAME"])) $dolibarr_main_db_prefix=$_SERVER["LLX_DBNAME"];
-define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
-
 // Detection browser
+// TODO Move this into main.inc.php and rename conf->browser into user->browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
 	// If phone/smartphone, we set phone os name.

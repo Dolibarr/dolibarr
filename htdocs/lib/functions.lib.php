@@ -81,6 +81,8 @@ function dol_getprefix()
         // Warning, using alt feature is a security hole because path is not in session name, so being authenticated into an instance allow access on another
         // FIXME The fix is to use only "root url" like the one defined into $dolibarr_main_url_root
     }
+    //print "x".$realpath."-".$_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]."-".md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+    //return md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
     return md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
 }
 
