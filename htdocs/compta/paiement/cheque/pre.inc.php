@@ -18,11 +18,11 @@
  */
 
 /**
-		\file   	htdocs/compta/paiement/cheque/pre.inc.php
-		\ingroup    compta
-		\brief  	Fichier gestionnaire du menu cheques
-		\version	$Id$
-*/
+ *		\file   	htdocs/compta/paiement/cheque/pre.inc.php
+ *		\ingroup    compta
+ *		\brief  	Fichier gestionnaire du menu cheques
+ *		\version	$Id$
+ */
 
 require("../../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php');
