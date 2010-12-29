@@ -30,44 +30,44 @@
 /**
  * Return array of tabs to used on pages for third parties cards.
  *
- * @param 	$objsoc		Object company shown
+ * @param 	$object		Object company shown
  * @return 	array		Array of tabs
  */
-function societe_prepare_head($objsoc)
+function societe_prepare_head($object)
 {
     global $langs, $conf, $user;
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$objsoc->id;
+    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;
 
-    if ($objsoc->client==1 || $objsoc->client==3 || $objsoc->object->client==1 || $objsoc->object->client==3)
+    if ($object->client==1 || $object->client==3 || $object->object->client==1 || $object->object->client==3)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
+        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Customer");
         $head[$h][2] = 'customer';
         $h++;
     }
-    if ($objsoc->client==2 || $objsoc->client==3 || $objsoc->object->client==2 || $objsoc->object->client==3)
+    if ($object->client==2 || $object->client==3 || $object->object->client==2 || $object->object->client==3)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objsoc->id;
+        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Prospect");
         $head[$h][2] = 'prospect';
         $h++;
     }
-    if ($objsoc->fournisseur || $objsoc->object->fournisseur)
+    if ($object->fournisseur || $object->object->fournisseur)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
+        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
         $head[$h][2] = 'supplier';
         $h++;
     }
     if ($conf->agenda->enabled)
     {
-    	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$objsoc->id;
+    	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
     	$head[$h][1] = $langs->trans("Agenda");
     	$head[$h][2] = 'agenda';
     	$h++;
@@ -76,36 +76,36 @@ function societe_prepare_head($objsoc)
     if ($conf->categorie->enabled)
     {
         $type = 2;
-        if ($objsoc->fournisseur) $type = 1;
-        $head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$objsoc->id."&type=".$type;
+        if ($object->fournisseur) $type = 1;
+        $head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$object->id."&type=".$type;
         $head[$h][1] = $langs->trans('Categories');
         $head[$h][2] = 'category';
         $h++;
     }
     if ($user->societe_id == 0)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/societe/socnote.php?socid='.$objsoc->id;
+        $head[$h][0] = DOL_URL_ROOT.'/societe/socnote.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Note");
         $head[$h][2] = 'note';
         $h++;
     }
     if ($user->societe_id == 0)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$objsoc->id;
+        $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
         $head[$h][2] = 'document';
         $h++;
     }
     if ($conf->notification->enabled && $user->societe_id == 0)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
+        $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Notifications");
         $head[$h][2] = 'notify';
         $h++;
     }
     if ($user->societe_id == 0)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$objsoc->id;
+        $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Info");
         $head[$h][2] = 'info';
         $h++;
@@ -136,31 +136,31 @@ function societe_prepare_head($objsoc)
 /**
  * Return array of tabs to used on page
  *
- * @param 	$objsoc
+ * @param 	$object
  * @return
  */
-function societe_prepare_head2($objsoc)
+function societe_prepare_head2($object)
 {
     global $langs, $conf, $user;
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$objsoc->id;
+    $head[$h][0] = DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'company';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$objsoc->id;
+    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("BankAccount")." $account->number";
     $head[$h][2] = 'rib';
     $h++;
 
-    $head[$h][0] = 'lien.php?socid='.$objsoc->id;
+    $head[$h][0] = 'lien.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("ParentCompany");
     $head[$h][2] = 'links';
     $h++;
 
-    $head[$h][0] = 'commerciaux.php?socid='.$objsoc->id;
+    $head[$h][0] = 'commerciaux.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("SalesRepresentative");
     $head[$h][2] = 'salesrepresentative';
     $h++;
@@ -334,7 +334,7 @@ function getFormeJuridiqueLabel($code)
  * 		\param		db			Database handler
  * 		\param		objsoc		Third party object
  */
-function show_projects($conf,$langs,$db,$objsoc)
+function show_projects($conf,$langs,$db,$object)
 {
     global $user;
 
@@ -350,7 +350,7 @@ function show_projects($conf,$langs,$db,$objsoc)
 
         $sql  = "SELECT p.rowid,p.title,p.ref,p.public, p.dateo as do, p.datee as de";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-        $sql .= " WHERE p.fk_soc = ".$objsoc->id;
+        $sql .= " WHERE p.fk_soc = ".$object->id;
         $sql .= " ORDER BY p.dateo DESC";
 
         $result=$db->query($sql);
@@ -423,7 +423,7 @@ function show_projects($conf,$langs,$db,$objsoc)
  * 		\param		db			Database handler
  * 		\param		objsoc		Third party object
  */
-function show_contacts($conf,$langs,$db,$objsoc)
+function show_contacts($conf,$langs,$db,$object)
 {
     global $user;
     global $bc;
@@ -453,7 +453,7 @@ function show_contacts($conf,$langs,$db,$objsoc)
 
     $sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note ";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-    $sql .= " WHERE p.fk_soc = ".$objsoc->id;
+    $sql .= " WHERE p.fk_soc = ".$object->id;
     $sql .= " ORDER by p.datec";
 
     $result = $db->query($sql);
@@ -482,13 +482,13 @@ function show_contacts($conf,$langs,$db,$objsoc)
 
             // Lien click to dial
             print '<td>';
-            print dol_print_phone($obj->phone,$obj->pays_code,$obj->rowid,$objsoc->id,'AC_TEL');
+            print dol_print_phone($obj->phone,$obj->pays_code,$obj->rowid,$object->id,'AC_TEL');
             print '</td>';
             print '<td>';
-            print dol_print_phone($obj->fax,$obj->pays_code,$obj->rowid,$objsoc->id,'AC_FAX');
+            print dol_print_phone($obj->fax,$obj->pays_code,$obj->rowid,$object->id,'AC_FAX');
             print '</td>';
             print '<td>';
-            print dol_print_email($obj->email,$obj->rowid,$objsoc->id,'AC_EMAIL');
+            print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
             print '</td>';
 
             print '<td align="center">';
@@ -498,7 +498,7 @@ function show_contacts($conf,$langs,$db,$objsoc)
 
             if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
             {
-                print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+                print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'">';
                 print img_object($langs->trans("Rendez-Vous"),"action");
                 print '</a></td>';
             }
@@ -529,7 +529,7 @@ function show_contacts($conf,$langs,$db,$objsoc)
  * 		\param		objsoc		Object third party
  * 		\param		objcon		Object contact
  */
-function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
+function show_actions_todo($conf,$langs,$db,$object,$objcon='')
 {
     global $bc;
 
@@ -546,7 +546,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 
         print '<table width="100%" class="noborder">';
         print '<tr class="liste_titre">';
-        print '<td colspan="7"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$objsoc->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
+        print '<td colspan="7"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
         print '</tr>';
 
         $sql = "SELECT a.id, a.label,";
@@ -560,7 +560,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         $sql.= " WHERE u.rowid = a.fk_user_author";
-        if ($objsoc->id) $sql.= " AND a.fk_soc = ".$objsoc->id;
+        if ($object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
         $sql.= " AND c.id=a.fk_action AND a.percent < 100";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
@@ -662,7 +662,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
  * 		\param		objsoc		Object third party
  * 		\param		objcon		Object contact
  */
-function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
+function show_actions_done($conf,$langs,$db,$object,$objcon='')
 {
     global $bc;
 
@@ -684,7 +684,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         $sql.= " WHERE u.rowid = a.fk_user_author";
-        if ($objsoc->id) $sql.= " AND a.fk_soc = ".$objsoc->id;
+        if ($object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
         $sql.= " AND c.id=a.fk_action";
         $sql.= " AND a.percent = 100";
@@ -771,7 +771,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
         print "\n";
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td colspan="8"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$objsoc->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
+        print '<td colspan="8"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
         print '</tr>';
 
         foreach ($histo as $key=>$value)

@@ -552,8 +552,8 @@ else
 		$soc->code_client=$_POST["code_client"];
 		$soc->fournisseur=$_POST["fournisseur"]?$_POST["fournisseur"]:$soc->fournisseur;
 		$soc->code_fournisseur=$_POST["code_fournisseur"];
-		$soc->adresse=$_POST["adresse"];
-		$soc->address=$_POST["adresse"]; // TODO obsolete
+		$soc->adresse=$_POST["adresse"]; // TODO obsolete
+		$soc->address=$_POST["adresse"];
 		$soc->cp=$_POST["zipcode"];
 		$soc->ville=$_POST["town"];
 		$soc->departement_id=$_POST["departement_id"];
