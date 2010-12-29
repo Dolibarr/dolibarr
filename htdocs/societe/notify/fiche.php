@@ -21,7 +21,7 @@
 /**
  *	    \file       htdocs/societe/notify/fiche.php
  *      \ingroup    societe, notification
- *		\brief      Onglet notifications pour une societe
+ *		\brief      Tab for notifications of third party
  *		\version    $Id$
  */
 
@@ -156,7 +156,7 @@ if ( $soc->fetch($soc->id) )
 	print '<form action="fiche.php?socid='.$socid.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	// Ligne de titres
+	// Line with titles
 	print '<table width="100%" class="noborder">';
 	print '<tr class="liste_titre">';
 	$param="&socid=".$socid;
@@ -209,7 +209,7 @@ if ( $soc->fetch($soc->id) )
 	}
 	else
 	{
-		print '<tr '.$bc[$var].'><td colspan="3">';
+		print '<tr '.$bc[$var].'><td colspan="4">';
 		print $langs->trans("YouMustCreateContactFirst");
 		print '</td></tr>';
 	}
@@ -224,7 +224,7 @@ if ( $soc->fetch($soc->id) )
 	print_fiche_titre($langs->trans("ListOfActiveNotifications"),'','');
 	$var=true;
 
-	// Ligne de titres
+	// Line with titles
 	print '<table width="100%" class="noborder">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',$param,'"width="45%"',$sortfield,$sortorder);
@@ -299,7 +299,7 @@ if ( $soc->fetch($soc->id) )
 	print_fiche_titre($langs->trans("ListOfNotificationsDone"),'','');
 	$var=true;
 
-	// Ligne de titres
+	// Line with titles
 	print '<table width="100%" class="noborder">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'',$sortfield,$sortorder);
