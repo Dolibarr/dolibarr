@@ -67,7 +67,6 @@ function GETPOST($paramname,$check='',$method=0)
 /**
  *  Return a prefix to use for this Dolibarr instance for session or cookie names.
  *  This prefix is unique for instance and avoid conflict between multi-instances Dolibarrs.
- *  TODO This function is not called by main.inc.php because function is not included yet
  *  @return         string      A calculated prefix
  */
 function dol_getprefix()
