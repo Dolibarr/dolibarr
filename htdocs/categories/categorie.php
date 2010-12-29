@@ -423,9 +423,11 @@ function formCategory($db,$object,$typeid)
 	print '<input type="hidden" name="type" value="'.$typeid.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>';
-	print $langs->trans("ClassifyInCategory").' ';
-	print $html->select_all_categories($typeid).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
+	print '<tr class="liste_titre"><td width="40%">';
+	print $langs->trans("ClassifyInCategory");	
+	print $html->select_all_categories($typeid);
+	print '</td><td>';
+	print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
 	if ($user->rights->categorie->creer)
 	{
 		print '<td align="right">';

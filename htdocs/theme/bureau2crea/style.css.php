@@ -1237,7 +1237,7 @@ tr.liste_titre {
     bakground-position: top right;
     color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
-    line-height: 18px;
+    line-height: 8px;
     padding-left: 10px;
     white-space: nowrap;
 }
