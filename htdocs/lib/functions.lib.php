@@ -86,6 +86,10 @@ function dol_getprefix()
 
 /**
  *	Make an include_once using default root and alternate root if it fails.
+ *	WARNING: In most cases, you should not use this function:
+ *  To link to a core file, use include(DOL_DOCUMENT_ROOT.'/pathtofile')
+ *  To link to a module file from a module file, use include('./mymodulefile');
+ *  To link to a module file from a core file, then this function can be used.
  * 	@param			relpath		Relative path to file (Ie: mydir/myfile, ../myfile, ...)
  *  @return         int			Result
  */
@@ -95,16 +99,6 @@ function dol_include_once($relpath)
     return include_once(dol_buildpath($relpath));
 }
 
-/**
- *	Make an require_once using default root and alternate root if it fails.
- * 	@param			relpath		Relative path to file (Ie: mydir/myfile, ../myfile, ...)
- *  @return         int			Result
- */
-function dol_require_once($relpath)
-{
-    global $conf,$langs,$user,$mysoc;   // Other global var must be retreived with $GLOBALS['var']
-    return require_once(dol_buildpath($relpath));
-}
 
 /**
  *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails.
