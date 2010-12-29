@@ -88,7 +88,7 @@ if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banq
 	$result = $remisecheque->create($user, $_GET["accountid"]);
 	if ($result > 0)
 	{
-		Header("Location: fiche.php?id=".$remisecheque->id);
+		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$remisecheque->id);
 		exit;
 	}
 	else
@@ -104,7 +104,7 @@ if ($_GET['action'] == 'remove' && $_GET["id"] > 0 && $_GET["lineid"] > 0 && $us
 	$result = $remisecheque->removeCheck($_GET["lineid"]);
 	if ($result === 0)
 	{
-		Header("Location: fiche.php?id=".$remisecheque->id);
+		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$remisecheque->id);
 		exit;
 	}
 	else
@@ -136,7 +136,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 	$result = $remisecheque->validate($user);
 	if ($result >= 0)
 	{
-		Header("Location: fiche.php?id=".$remisecheque->id);
+		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$remisecheque->id);
 		exit;
 	}
 	else
@@ -188,7 +188,7 @@ $formfile = new FormFile($db);
 if ($_GET['action'] == 'new')
 {
 	$h=0;
-	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?action=new';
+	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new';
 	$head[$h][1] = $langs->trans("MenuChequeDeposits");
 	$hselected = $h;
 	$h++;
@@ -206,7 +206,7 @@ else
 	}
 
 	$h=0;
-	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$remisecheque->id;
+	$head[$h][0] = $_SERVER["PHP_SELF"].'?id='.$remisecheque->id;
 	$head[$h][1] = $langs->trans("CheckReceipt");
 	$hselected = $h;
 	$h++;
@@ -221,7 +221,7 @@ else
 	 */
 	if ($_GET['action'] == 'delete')
 	{
-		$ret=$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -231,7 +231,7 @@ else
 	if ($_GET['action'] == 'valide')
 	{
 		$facid = $_GET['facid'];
-		$ret=$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
 		if ($ret == 'html') print '<br>';
 	}
 }
@@ -318,7 +318,7 @@ if ($_GET['action'] == 'new')
 		print '<div class="tabsAction">';
 		if ($user->rights->banque->cheque)
 		{
-			print '<a class="butAction" href="fiche.php?action=create&amp;accountid='.$bid.'">'.$langs->trans('NewCheckDepositOn',$account_label).'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create&amp;accountid='.$bid.'">'.$langs->trans('NewCheckDepositOn',$account_label).'</a>';
 		}
 		else
 		{
@@ -331,7 +331,7 @@ if ($_GET['action'] == 'new')
 else
 {
     $object=$remisecheque;
-	$linkback="<a href=\"fiche.php?leftmenu=customers_bills_checks&action=new\">".$langs->trans("BackToList")."</a>";
+	$linkback='<a href="'.$_SERVER["PHP_SELF"].'?leftmenu=customers_bills_checks&action=new">'.$langs->trans("BackToList").'</a>';
 	$paymentstatic=new Paiement($db);
 	$accountlinestatic=new AccountLine($db);
 	$accountstatic=new Account($db);
@@ -450,7 +450,7 @@ else
 			print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'day').'</td>';
 			if($remisecheque->statut == 0)
 			{
-				print '<td align="right"><a href="fiche.php?id='.$remisecheque->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
+				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$remisecheque->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
 			}
 			else
 			{
@@ -481,17 +481,17 @@ print '<div class="tabsAction">';
 
 if ($user->societe_id == 0 && sizeof($accounts) == 1 && $_GET['action'] == 'new' && $user->rights->banque->cheque)
 {
-	print '<a class="butAction" href="fiche.php?action=create&amp;accountid='.$account_id.'">'.$langs->trans('NewCheckReceipt').'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create&amp;accountid='.$account_id.'">'.$langs->trans('NewCheckReceipt').'</a>';
 }
 
 if ($user->societe_id == 0 && $remisecheque->statut == 0 && $remisecheque->id && $user->rights->banque->cheque)
 {
-	print '<a class="butAction" href="fiche.php?id='.$remisecheque->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$remisecheque->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 }
 
 if ($user->societe_id == 0 && $remisecheque->id && $user->rights->banque->cheque)
 {
-	print '<a class="butActionDelete" href="fiche.php?id='.$remisecheque->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$remisecheque->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 
 }
 print '</div>';
