@@ -488,8 +488,9 @@ li.tmenu a.tmenudisabled {
 
 div.login {
   position: absolute;
-  <?php print $right; ?>: 30px;
-  padding: 12px 8px;
+  <?php print $right; ?>: 40px;
+  top: 5px;
+  padding: 0px 8px;
   margin: 0px 0px 1px 0px;
   font-weight: bold;
 }
@@ -503,7 +504,8 @@ div.login a:hover {
 
 img.login, img.printer {
   position: absolute;
-  <?php print $right; ?>: 20px;
+  <?php print $right; ?>: 25px;
+  top: -3px;
   padding: 10px 0px 0px 0px;
   text-decoration: none;
   color: white;
