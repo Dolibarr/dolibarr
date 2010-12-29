@@ -331,7 +331,7 @@ if ($_GET['action'] == 'new')
 else
 {
     $object=$remisecheque;
-
+	$linkback="<a href=\"fiche.php?leftmenu=customers_bills_checks&action=new\">".$langs->trans("BackToList")."</a>";
 	$paymentstatic=new Paiement($db);
 	$accountlinestatic=new AccountLine($db);
 	$accountstatic=new Account($db);
@@ -342,7 +342,7 @@ else
 	print '<table class="border" width="100%">';
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="2" >';
 
-	print $html->showrefnav($remisecheque,'ref','', 1, 'number');
+	print $html->showrefnav($remisecheque,'ref',$linkback, 1, 'number');
 
 	print "</td>";
 	print "</tr>\n";
