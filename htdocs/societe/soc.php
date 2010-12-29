@@ -375,7 +375,7 @@ else
  */
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('','',$help_url);
+llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
