@@ -66,13 +66,13 @@ function GETPOST($paramname,$check='',$method=0)
 
 /**
  *  Return a prefix to use for this Dolibarr instance for session or cookie names.
- *  This prefix is unique for instance and avoid conflict between multi-instances Dolibarrs.
+ *  This prefix is unique for instance and avoid conflict between multi-instances Dolibarrs,
+ *  even when having two instances with one root dir or two instances in virtual servers.
  *  @return         string      A calculated prefix
  */
 function dol_getprefix()
 {
-    //print  "prefix=".$_SERVER["SERVER_NAME"]."-".$_SERVER["DOCUMENT_ROOT"]."-".DOL_DOCUMENT_ROOT;
-    return md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT);
+    return md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 }
 
 /**
