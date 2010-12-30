@@ -132,10 +132,12 @@ if ($_GET["action"] == 'specimenfacture')   // For invoices
 if ($_GET["action"] == 'set')
 {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$_GET["type"]."',".$conf->entity.")";
-	if ($db->query($sql))
+	$res=$db->query($sql);
+	if ($res)
 	{
 
 	}
+	else dol_print_error($db);
 }
 
 if ($_GET["action"] == 'del')
@@ -144,10 +146,12 @@ if ($_GET["action"] == 'del')
 	$sql.= " WHERE nom = '".$_GET["value"]."'";
 	$sql.= " AND type = '".$_GET["type"]."'";
 	$sql.= " AND entity = ".$conf->entity;
-	if ($db->query($sql))
+	$db->query($sql);
+	if ($res)
 	{
 
 	}
+    else dol_print_error($db);
 }
 
 if ($_GET["action"] == 'setdoc')
@@ -348,7 +352,7 @@ print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
 print '<td>'.$langs->trans("Description").'</td>'."\n";
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>'."\n";
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>'."\n";
-print '<td align="center" width="32" colspan="2">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="40" colspan="2">'.$langs->trans("Info").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
@@ -366,8 +370,9 @@ if (is_resource($handle))
     		$classname = substr($file, 0, dol_strlen($file) -12);
 
     		$var=!$var;
-    		print "<tr ".$bc[$var].">\n  <td>$name";
-    		print "</td>\n  <td>\n";
+    		print "<tr ".$bc[$var].">\n";
+    		print "<td>".$name."</td>\n";
+    		print "<td>\n";
     		require_once($dir.$file);
     		$module = new $classname($db,$specimenthirdparty);
     		print $module->description;
@@ -379,7 +384,7 @@ if (is_resource($handle))
     			print '<td align="center">'."\n";
     			if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name")
     			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;type=supplier_order">';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;type=order_supplier">';
     				print img_picto($langs->trans("Enabled"),'on');
     				print '</a>';
     			}
@@ -392,7 +397,7 @@ if (is_resource($handle))
     		else
     		{
     			print '<td align="center">'."\n";
-    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;type=supplier_order">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;type=order_supplier">'.img_picto($langs->trans("Disabled"),'off').'</a>';
     			print "</td>";
     		}
 
@@ -404,7 +409,7 @@ if (is_resource($handle))
     		}
     		else
     		{
-    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;type=supplier_order"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
+    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;type=order_supplier"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
     		}
     		print '</td>';
 
@@ -472,7 +477,7 @@ print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
 print '<td>'.$langs->trans("Description").'</td>'."\n";
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>'."\n";
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>'."\n";
-print '<td align="center" width="32" colspan="2">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="40" colspan="2">'.$langs->trans("Info").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
@@ -489,8 +494,9 @@ if (is_resource($handle))
     		$classname = substr($file, 0, dol_strlen($file) -12);
 
     		$var=!$var;
-    		print "<tr ".$bc[$var].">\n  <td>$name";
-    		print "</td>\n  <td>\n";
+    		print "<tr ".$bc[$var].">\n";
+    		print "<td>".$name."</td>\n";
+    		print "<td>";
     		require_once($dir.$file);
     		$module = new $classname($db,$specimenthirdparty);
     		print $module->description;
@@ -502,7 +508,7 @@ if (is_resource($handle))
     			print "<td align=\"center\">\n";
     			if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF != "$name")
     			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;type=supplier_invoice">';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;type=invoice_supplier">';
     				print img_picto($langs->trans("Enabled"),'on');
     				print '</a>';
     			}
@@ -515,7 +521,7 @@ if (is_resource($handle))
     		else
     		{
     			print "<td align=\"center\">\n";
-    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;type=supplier_invoice">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;type=invoice_supplier">'.img_picto($langs->trans("Disabled"),'off').'</a>';
     			print "</td>";
     		}
 
@@ -527,7 +533,7 @@ if (is_resource($handle))
     		}
     		else
     		{
-    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;type=supplier_invoice" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
+    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;type=invoice_supplier" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
     		}
     		print '</td>';
 

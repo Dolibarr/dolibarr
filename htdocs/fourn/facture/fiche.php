@@ -1859,7 +1859,7 @@ else
             $formmail->substit['__FACREF__']=$fac->ref;
             // Tableau des parametres complementaires
             $formmail->param['action']='send';
-            $formmail->param['models']='supplier_facture_send';
+            $formmail->param['models']='invoice_supplier_send';
             $formmail->param['facid']=$fac->id;
             $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?facid='.$fac->id;
 

@@ -1466,7 +1466,7 @@ if ($id > 0 || ! empty($ref))
 			$formmail->substit['__ORDERREF__']=$commande->ref;
 			// Tableau des parametres complementaires
 			$formmail->param['action']='send';
-			$formmail->param['models']='supplier_order_send';
+			$formmail->param['models']='order_supplier_send';
 			$formmail->param['orderid']=$commande->id;
 			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$commande->id;
 

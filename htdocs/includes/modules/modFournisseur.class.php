@@ -89,7 +89,7 @@ class modFournisseur extends DolibarrModules
 		                    $this->const[$r][1] = "chaine";
 		                    $this->const[$r][2] = "mod_commande_fournisseur_muguet";
 							$r++;
-							
+
 							$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
 		                    $this->const[$r][1] = "chaine";
 		                    $this->const[$r][2] = "canelle";
@@ -207,7 +207,7 @@ class modFournisseur extends DolibarrModules
 		                    $this->rights[$r][3] = 0;
 		                    $this->rights[$r][4] = 'facture';
 		                    $this->rights[$r][5] = 'supprimer';
-		                    
+
 		                    $this->rights[$r][0] = 1235;
 							$this->rights[$r][1] = 'Envoyer les factures par mail';
 							$this->rights[$r][2] = 'a';
@@ -273,7 +273,7 @@ class modFournisseur extends DolibarrModules
 
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','supplier_order',".$conf->entity.")",
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','order_supplier',".$conf->entity.")",
 		);
 
 		$this->load_datas();
