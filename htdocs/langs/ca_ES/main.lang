@@ -568,6 +568,8 @@ Hidden=Memòria cau
 Resources=Recursos
 Source=Orige
 Prefix=Prefixe
+Before=Abans
+After=Després
 # Week day
 Day1=Dillus
 Day2=Dimarts
