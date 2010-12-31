@@ -458,7 +458,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
-		$pdf->SetFont('','', $default_font_size + 1);
+		$pdf->SetFont('','', $default_font_size - 1);
 
 		$pdf->SetXY(10,$tab_top);
 		$pdf->MultiCell(20,10,$outputlangs->transnoentities("Ref"),0,'L',1);

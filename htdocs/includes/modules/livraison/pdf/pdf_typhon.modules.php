@@ -450,7 +450,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
 
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','', $default_font_size);
+		$pdf->SetFont('','', $default_font_size - 1);
 
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+1);
 		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Designation"),'','L');

@@ -313,7 +313,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		$pdf->SetFont('','', $default_font_size);
+		$pdf->SetFont('','', $default_font_size - 1);
 
 		$pdf->SetXY(30, $tab_top+1);
 		$pdf->MultiCell(60, 2, $outputlangs->transnoentities("Designation"), 0, 'L');

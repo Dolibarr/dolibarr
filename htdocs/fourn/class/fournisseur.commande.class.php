@@ -1480,7 +1480,14 @@ class CommandeFournisseur extends Commande
 			$line->desc=$langs->trans("Description")." ".$xnbp;
 			$line->qty=1;
 			$line->subprice=100;
-			$line->tva_tx=19.6;
+            $line->price=100;
+            $line->tva_tx=19.6;
+            $line->localtax1_tx=0;
+            $line->localtax2_tx=0;
+            $line->remise_percent=10;
+            $line->total_ht=90;
+            $line->total_ttc=107.64;    // 90 * 1.196
+            $line->total_tva=17.64;
 			$line->ref_fourn='SUPPLIER_REF_'.$xnbp;
 			$prodid = rand(1, $num_prods);
 			$line->fk_product=$prodids[$prodid];

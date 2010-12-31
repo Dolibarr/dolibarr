@@ -506,7 +506,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		// line prend une position y en 3eme param
 		$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
 
-		$pdf->SetFont('','', $default_font_size);
+		$pdf->SetFont('','', $default_font_size - 1);
 
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
 		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
@@ -514,8 +514,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
         {
     		$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-    		$pdf->SetXY ($this->posxtva-1, $tab_top+2);
-    		$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
+    		$pdf->SetXY ($this->posxtva-3, $tab_top+2);
+    		$pdf->MultiCell($this->posxup-$this->posxtva+3,2, $outputlangs->transnoentities("VAT"),'','C');
         }
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
