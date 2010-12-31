@@ -2040,14 +2040,14 @@ class Facture extends CommonObject
 
 
     /**
-     * 	\brief     	Return amount of payments already done
-     *	\return		int		Amount of payment already done, <0 if KO
+     * 	Return amount of payments already done
+     *	@return		int		Amount of payment already done, <0 if KO
      */
     function getSommePaiement()
     {
         $table='paiement_facture';
         $field='fk_facture';
-        if ($this->element == 'facture_fourn')
+        if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
         {
             $table='paiementfourn_facturefourn';
             $field='fk_facturefourn';
@@ -2067,6 +2067,7 @@ class Facture extends CommonObject
         }
         else
         {
+            $this->error=$this->lasterror();
             return -1;
         }
     }
@@ -3060,7 +3061,7 @@ class FactureLigne
     // 1: frais de port
     // 2: ecotaxe
     // 3: ??
-    
+
     var $origin;
     var $origin_id;
 

@@ -80,13 +80,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
         // Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=121;
-		$this->posxup=132;
-		$this->posxqty=151;
+		$this->posxtva=113;
+		$this->posxup=126;
+		$this->posxqty=145;
 		$this->posxdiscount=162;
-		$this->postotalht=177;
+		$this->postotalht=174;
 
 		$this->tva=array();
+        $this->localtax1=array();
+        $this->localtax2=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}
@@ -116,7 +118,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		if ($conf->fournisseur->dir_output.'/facture')
 		{
+			$object->fetch_thirdparty();
+
 			$deja_regle = $object->getSommePaiement();
+            //$amount_credit_notes_included = $object->getSumCreditNotesUsed();
+            //$amount_deposits_included = $object->getSumDepositsUsed();
 
 			// Definition de $dir et $file
 			if ($object->specimen)
@@ -237,29 +243,33 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
-					// TVA
-					$pdf->SetXY ($this->posxtva, $curY);
-					$pdf->MultiCell(10, 3, ($object->lines[$i]->tva_tx < 0 ? '*':'').abs($object->lines[$i]->tva_tx), 0, 'R');
+					// VAT rate
+                    if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+                    {
+    					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
+                        $pdf->SetXY ($this->posxtva, $curY);
+	       				$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
+                    }
 
 					// Unit price before discount
 					$pdf->SetXY ($this->posxup, $curY);
-					$pdf->MultiCell(20, 3, price($object->lines[$i]->pu_ht), 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($object->lines[$i]->pu_ht), 0, 'R', 0);
 
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell(10, 3, $object->lines[$i]->qty, 0, 'R');
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $object->lines[$i]->qty, 0, 'R');
 
 					// Discount on line
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($object->lines[$i]->remise_percent)
 					{
-						$pdf->MultiCell(14, 3, $object->lines[$i]->remise_percent."%", 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $object->lines[$i]->remise_percent."%", 0, 'R');
 					}
 
 					// Total HT line
-					$pdf->SetXY ($this->postotalht, $curY);
-					$total = price($object->lines[$i]->total_ht);
-					$pdf->MultiCell(23, 3, $total, 0, 'R', 0);
+                    $total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
+                    $pdf->SetXY ($this->postotalht, $curY);
+                    $pdf->MultiCell(26, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;
@@ -319,30 +329,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
 				}
 
+				// Affiche zone totaux
 				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
-				if ($deja_regle)
+				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
-					$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
+					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 
-				/*
-				 * Payment mode
-				 */
-				/* Hidden for supplier invoices
-				if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER))
-				{
-					$pdf->SetXY ($this->marge_gauche, 228);
-					$pdf->SetTextColor(200,0,0);
-					$pdf->SetFont('','B', $default_font_size - 2);
-					$pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
-					$pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorCreateBankAccount"),0,'L',0);
-					$pdf->SetTextColor(0,0,0);
-				}*/
-
-				/*
-				 * Pied de page
-				 */
+				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				$pdf->AliasNbPages();
 
@@ -378,14 +373,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
-		$tab2_top = $posy;
-		$tab2_hl = 4;
+        $default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
+        $tab2_top = $posy;
+		$tab2_hl = 4;
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		$pdf->SetXY ($this->marge_gauche, $tab2_top + 0);
-
 		// If France, show VAT mention if not applicable
 		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
 		{
@@ -393,37 +387,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 
 		// Tableau total
-		$lltot = 200; $col1x = 120; $col2x = 182; $largcol2 = $lltot - $col2x;
+		$lltot = 200; $col1x = 120; $col2x = 170; $largcol2 = $lltot - $col2x;
 
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY ($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
-
 		$pdf->SetXY ($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
-
-		// Remise globale
-		if ($object->remise > 0)
-		{
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("GlobalDiscount"), 0, 'L', 1);
-
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
-			$pdf->MultiCell($largcol2, $tab2_hl, "-".$object->remise_percent."%", 0, 'R', 1);
-
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT apres remise", 0, 'L', 1);
-
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht), 0, 'R', 0);
-
-			$index = 2;
-		}
-		else
-		{
-			$index = 0;
-		}
 
 		// Affichage des totaux de TVA par taux (conformement a reglementation)
 		$pdf->SetFillColor(248,248,248);
@@ -502,8 +473,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	}
 
 	/**
-	 *   \brief      Show the lines of invoice
-	 *   \param      pdf     object PDF
+	 *   Show the lines of invoice
+	 *   @param      pdf     object PDF
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
@@ -511,7 +482,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		// Montants exprimes en     (en tab_top - 1
+        // Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','',$default_font_size - 2);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
@@ -530,23 +501,26 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
 		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 
-		$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxtva-1, $tab_top+2);
-		$pdf->MultiCell(12,2, $outputlangs->transnoentities("VAT"),'','C');
+        if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+        {
+    		$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
+    		$pdf->SetXY ($this->posxtva-1, $tab_top+2);
+    		$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
+        }
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxup-1, $tab_top+2);
-		$pdf->MultiCell(18,2, $outputlangs->transnoentities("PriceUHT"),'','C');
+		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxqty-1, $tab_top+2);
-		$pdf->MultiCell(11,2, $outputlangs->transnoentities("Qty"),'','C');
+		$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
 		if ($this->atleastonediscount)
 		{
 			$pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
-			$pdf->MultiCell(16,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+			$pdf->MultiCell($this->postotalht-$this->posxdiscount,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 		}
 
 		if ($this->atleastonediscount)
@@ -554,17 +528,17 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
 		$pdf->SetXY ($this->postotalht-1, $tab_top+2);
-		$pdf->MultiCell(23,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
+		$pdf->MultiCell(26,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
 
 	}
 
 	/**
-	 *  \brief      Show payments table
-	 *  \param      pdf     		Object PDF
-	 *  \param      fac     		Object facture
-	 *	\param		posy			Position y in PDF
-	 *	\param		outputlangs		Object langs for output
-	 *	\return 	int				<0 if KO, >0 if OK
+	 *  Show payments table
+	 *  @param      pdf     		Object PDF
+	 *  @param      object     		Object invoice
+	 *	@param		posy			Position y in PDF
+	 *	@param		outputlangs		Object langs for output
+	 *	@return 	int				<0 if KO, >0 if OK
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -572,6 +546,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$tab3_top = $posy + 8;
 		$tab3_width = 80;
 		$tab3_height = 4;
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('','', $default_font_size - 2);
 		$pdf->SetXY ($tab3_posx, $tab3_top - 5);
@@ -603,10 +579,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$num = $this->db->num_rows($resql);
+		    $num = $this->db->num_rows($resql);
 			$i=0;
 			while ($i < $num) {
-				$y+=3;
+			    $y+=3;
 				$row = $this->db->fetch_object($resql);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );

@@ -266,7 +266,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
-					// TVA
+					// VAT Rate
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
@@ -425,12 +425,12 @@ class pdf_crabe extends ModelePDFFactures
 
 
 	/**
-	 *  \brief      Affiche tableau des versement
-	 *  \param      pdf     		Objet PDF
-	 *  \param      fac     		Objet facture
-	 *	\param		posy			Position y in PDF
-	 *	\param		outputlangs		Object langs for output
-	 *	\return 	int				<0 if KO, >0 if OK
+	 *  Show payments table
+     *  @param      pdf             Object PDF
+     *  @param      object          Object invoice
+     *  @param      posy            Position y in PDF
+     *  @param      outputlangs     Object langs for output
+     *  @return     int             <0 if KO, >0 if OK
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -940,7 +940,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxup-1, $tab_top+1);
-		$pdf->MultiCell(20,2, $outputlangs->transnoentities("PriceUHT"),'','C');
+		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxqty-1, $tab_top+1);
@@ -950,7 +950,7 @@ class pdf_crabe extends ModelePDFFactures
 		if ($this->atleastonediscount)
 		{
 			$pdf->SetXY ($this->posxdiscount-1, $tab_top+1);
-			$pdf->MultiCell(14,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+			$pdf->MultiCell($this->postotalht-$this->posxdiscount,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 		}
 
 		if ($this->atleastonediscount)
@@ -958,7 +958,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
 		$pdf->SetXY ($this->postotalht-1, $tab_top+1);
-		$pdf->MultiCell(28,2, $outputlangs->transnoentities("TotalHT"),'','C');
+		$pdf->MultiCell(26,2, $outputlangs->transnoentities("TotalHT"),'','C');
 
 	}
 

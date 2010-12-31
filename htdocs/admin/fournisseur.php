@@ -137,7 +137,7 @@ if ($_GET["action"] == 'set')
 	{
 
 	}
-	else dol_print_error($db);
+//	else dol_print_error($db);
 }
 
 if ($_GET["action"] == 'del')
@@ -151,7 +151,7 @@ if ($_GET["action"] == 'del')
 	{
 
 	}
-    else dol_print_error($db);
+//    else dol_print_error($db);
 }
 
 if ($_GET["action"] == 'setdoc')
