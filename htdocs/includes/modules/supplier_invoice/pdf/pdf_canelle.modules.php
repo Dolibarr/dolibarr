@@ -235,10 +235,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
                     $pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
-                    // Description de la ligne produit
-					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs,0,0,1);
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,108,3,$this->posxdesc-1,$curY,0,0,1);
-					//$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+                    // Description of product line
+                    $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+                    $curX = $this->posxdesc-1;
+                    pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,0,0,1);
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();

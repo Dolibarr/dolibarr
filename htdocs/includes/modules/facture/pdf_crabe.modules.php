@@ -256,9 +256,8 @@ class pdf_crabe extends ModelePDFFactures
 					$curY = $nexY;
 
 					// Description of product line
-					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$curX = $this->posxdesc-1;
-					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY);
 
 					//$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
