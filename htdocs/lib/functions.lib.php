@@ -2278,7 +2278,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 	$return='';
 
 	if ($picto == 'setup') $picto='title.png';
-	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
+	if (!empty($conf->browser->ie) && $picto=='title.png') $picto='title.gif';
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
@@ -2314,7 +2314,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	global $conf,$langs;
 
 	if ($picto == 'setup') $picto='title.png';
-	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
+	if (!empty($conf->browser->ie) && $picto=='title.png') $picto='title.gif';
 
 	if ($num > $conf->liste_limit or $num == -1)
 	{
