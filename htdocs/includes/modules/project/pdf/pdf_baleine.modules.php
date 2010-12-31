@@ -311,14 +311,14 @@ class pdf_baleine extends ModelePDFProjects
 	{
 		global $conf,$mysoc;
 
+        $default_font_size = pdf_getPDFFontSize($outputlangs);
+
 		$pdf->SetDrawColor(128,128,128);
 
 		// Rect prend une longueur en 3eme param
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
 		// line prend une position y en 3eme param
 		$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
-
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size);

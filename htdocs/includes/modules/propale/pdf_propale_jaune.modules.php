@@ -449,6 +449,8 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$langs->load("main");
 		$langs->load("bills");
 
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
 		// Montants exprimes en     (en tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size - 2);
