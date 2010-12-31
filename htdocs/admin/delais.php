@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -81,7 +81,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
     $var=true;
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
     //
     if ($conf->agenda->enabled)
@@ -184,7 +184,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
 
 	// Show if meteo is enabled
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
@@ -206,7 +206,7 @@ else
      */
 
 	print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
     $var=true;
 
     $var=!$var;
@@ -288,6 +288,7 @@ else
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','account').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceTransactionsToConciliate").'</td><td>' . ($conf->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE+0) . ' ' . $langs->trans("days") . '</td></tr>';
+
         $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','account').'</td>';
@@ -308,7 +309,7 @@ else
 
 	// Show if meteo is enabled
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
@@ -339,7 +340,7 @@ $level0=$offset;           if (! empty($conf->global->MAIN_METEO_LEVEL0)) $level
 $level1=$offset+1*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL1)) $level1=$conf->global->MAIN_METEO_LEVEL1;
 $level2=$offset+2*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL2)) $level2=$conf->global->MAIN_METEO_LEVEL2;
 $level3=$offset+3*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL3)) $level3=$conf->global->MAIN_METEO_LEVEL3;
-$text=''; $options='height="64px"';
+$text=''; $options='height="60px"';
 print '<table>';
 print '<tr><td>';
 print img_picto_common($text,'weather/weather-clear.png',$options);
