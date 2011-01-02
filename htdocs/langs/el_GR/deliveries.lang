@@ -1,0 +1,24 @@
+# Dolibarr language file - el_GR - deliveries
+CHARSET=UTF-8
+Delivery=Διανομή
+Deliveries=Διανομές
+DeliveryCard=Καρτέλα διανομής
+DeliveryOrder=Παράδοση παραγγελίας
+DeliveryOrders=Παράδοση παραγγελιών
+DeliveryDate=Ημερ. παράδοσης
+DeliveryDateShort=Ημερ. παράδ.
+CreateDeliveryOrder=Δημιουργία παράδοσης παραγγελίας
+QtyDelivered=Ποσότητα που παραδόθηκε
+SetDeliveryDate=Ορισμός ημερ. αποστολής
+ValidateDeliveryReceipt=Επικύρωση παράδοσης παραλαβής
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt ?
+DeliveryMethod=Μέθοδος διανομής
+TrackingNumber=Αριθμός παρακολούθησης
+=
+# merou PDF model						   
+NameAndSignature=Όνομα και υπογραφή : 
+ToAndDate=Σε ___________________________________ στις ____/_____/__________
+GoodStatusDeclaration=Παραδόθηκαν τα παραπάνω σε καλή κατάσταση
+Deliverer=Διανομέας : 
+Sender=Αποστολέας
+Recipient=Παραλήπτης

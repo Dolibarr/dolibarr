@@ -1,0 +1,25 @@
+# Dolibarr language file - el_GR - donations
+CHARSET=UTF-8
+Donation=Δωρεά
+Donations=Δωρεές
+Donor=Δωρεά
+Donors=Δωρεές
+AddDonation=Προσθήκη δωρεάς
+NewDonation=Νέα δωρεά
+DonationPromise=Υπόσχεση δώρου
+PromisesNotValid=Μη επικυρωμένες υποσχέσεις
+PromisesValid=Επικυρωμένες υποσχέσεις
+DonationsPaid=Πληρωμένες δωρεές
+DonationsReceived=Ληφθήσες δωρεές
+PublicDonation=Δημόσια δωρεά
+DonationsNumber=Αριθμός δωρεάς
+DonationsArea=Περιοχή δωρεών
+DonationStatusPromiseNotValidated=Προσχέδιο
+DonationStatusPromiseValidated=Επικυρωμένη
+DonationStatusPaid=Η δωρεά παραλήφθηκε
+DonationStatusPromiseNotValidatedShort=Προσχέδιο
+DonationStatusPromiseValidatedShort=Επικυρωμένη
+DonationStatusPaidShort=Ληφθήσα
+ValidPromess=Επικύρωση υπόσχεσης
+BuildDonationReceipt=Δημιουργία απόδειξης
+DonationsModels=Documents models for donation receipts

@@ -1,0 +1,14 @@
+# Dolibarr language file - en_US - paypal
+CHARSET=UTF-8
+PaypalSetup=PayPal module setup
+PaypalDesc=This module offer pages to allow payment on <a href="http://www.paypal.com" target="_blank">PayPal</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PaypalOrCBDoPayment=Pay with credit card or Paypal
+PaypalDoPayment=Pay with Paypal
+PaypalCBDoPayment=Pay with credit card
+PAYPAL_API_SANDBOX=Mode test/sandbox
+PAYPAL_API_USER=API username
+PAYPAL_API_PASSWORD=API password
+PAYPAL_API_SIGNATURE=API signature
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer payment "integral" (Credit card+Paypal) or "Paypal" only
+PAYPAL_CSS_URL=Optionnal Url of CSS style sheet on payment page
+ThisIsTransactionId=This is id of transaction: <b>%s</b>

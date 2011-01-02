@@ -1,0 +1,20 @@
+# Dolibarr language file - el_GR - ταξίδια
+CHARSET=UTF-8
+Trip=Ταξίδι
+Trips=Ταξίδια
+TripsAndExpenses=Ταξίδια και έξοδα
+TripsAndExpensesStatistics=Στατιστικά ταξιδιών και εξόδων
+TripCard=Καρτέλα ταξιδιού
+AddTrip=Προσθήκη ταξιδιού
+ListOfTrips=Λίστα ταξιδιών
+ListOfFees=Λίστα φόρων
+NewTrip=Νέο ταξίδι
+CompanyVisited=Έγινε επίσκεψη σε εταιρία/οργανισμό
+Kilometers=Χιλιόμετρα
+FeesKilometersOrAmout=Σύνολο χλμ
+DeleteTrip=Διαγραφή ταξιδιού
+ConfirmDeleteTrip=Είστε σίγουροι ότι θέλετε να διαγράψετε το ταξίδι;
+TF_OTHER=Άλλο
+TF_LUNCH=Γεύμα
+TF_TRIP=Ταξίδι
+ListTripsAndExpenses=Λίστα ταξιδιών και εξόδων

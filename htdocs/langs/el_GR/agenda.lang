@@ -1,0 +1,55 @@
+# Dolibarr language file - el_GR - agenda 
+CHARSET=UTF-8
+Actions= Ενέργειες
+ActionsArea= Περιοχή Ενεργειών (γεγονότα και εργασίες)
+Agenda= Ημερολόγιο
+Agendas= Ημερολόγια
+Calendar= Ημερολόγιο
+Calendars= Ημερολόγια
+AffectedTo= Ανάθεση σε
+DoneBy= Έγινε από
+Events= Γεγονότα
+ListOfActions=Λίστα γεγονότων
+Location=Τοποθεσία
+EventOnFullDay=Ολοήμερο Γεγονός
+SearchAnAction= Αναζήτηση ενέργειας/εργασίας
+MenuToDoActions= Όλες οι ημιτελής ενέργειες
+MenuDoneActions= Όλες οι ολοκληρ. ενέργειες
+MenuToDoMyActions=Ημιτελής ενέργειες
+MenuDoneMyActions=Ολοκληρωμένες ενέργειες
+ListOfEvents= Λίστα γεγονότων του Dolibarr
+ActionsAskedBy= Ενέργειες που καταχωρήθηκαν από
+ActionsToDoBy= Ενέργειες που ανατέθηκαν σε
+ActionsDoneBy= Ενέργειες που ολοκληρώθηκαν από
+AllMyActions= Όλες οι ενέργειες/εργασίες
+AllActions= Όλες οι ενέργειες/εργασίες
+ViewList= Εμφάνιση Λίστας
+ViewCal= Εμφάνιση Ημερολογίου
+ViewWithPredefinedFilters= Εμφάνιση με προκαθορισμένα φίλτρα
+AutoActions= Αυτόματη συμπλήρωση ημερολογίου
+AgendaAutoActionDesc=Εδώ ορίζετε γεγονότα για το οποία θέλετε το  Dolibarrνα δημιουργεί αυτόματα μια ενέργεια στην ατζέντα.Αν τίποτα δεν είναι τσεκαρισμένο (προεπιλογή), τότε, μόνο χειροκίνητες ενέργειες θα συμπεριληφθούν στην ατζέντα.
+AgendaSetupOtherDesc=Αυτή η σελίδα, σας επιτρέπει να ρυθμίσετε άλλες παραμέτρους του αρθρώματος της ατζέντας (ημερολόγιο)
+ActionsEvents= Γεγονότα για τα οποία θα δημιουργηθεί εγγραφή στο ημερολόγιο, αυτόματα
+PropalValidatedInDolibarr= Η πρόταση %s επικυρώθηκε
+InvoiceValidatedInDolibarr= Το τιμολόγιο %s επικυρώθηκε
+OrderValidatedInDolibarr= Η παραγγελία %s επικυρώθηκε
+InterventionValidatedInDolibarr=Η παρέμβαση %s επικυρώθηκε
+ProposalSentByEMail=Η εμπορική πρόταση %s στάλθηκε με e-mail
+OrderSentByEMail=Η παραγγελία του πελάτη %s εστάλει με EMail
+InvoiceSentByEMail=Το τιμολόγιο του πελάτη %s εστάλει με EMail
+SupplierOrderSentByEMail=Η παραγγελία προμηθευτή %s στάλθηκε με e-mail
+SupplierInvoiceSentByEMail=Το τιμολόγιο προμηθευτή %s στάλθηκε με e-mail
+NewCompanyToDolibarr= Το στοιχείο δημιουργήθηκε
+DateActionPlannedStart= Προγρ/σμένη ημερομηνία έναρξης
+DateActionPlannedEnd= Προγρ/σμένη ημερομηνία λήξης
+DateActionDoneStart= Πραγματική ημερομηνία έναρξης
+DateActionDoneEnd= Πραγματική ημερομηνία λήξης
+DateActionStart= Ημερομηνία έναρξης
+DateActionEnd= Ημερομηνία λήξης
+AgendaUrlOptions1=Μπορείτε ακόμη να προσθέσετε τις ακόλουθες παραμέτρους για να φιλτράρετε το αποτέλεσμα:
+AgendaUrlOptions2=<b>login=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που δημιουργήθηκαν από. αφορούν τον ή έγιναν από τον χρήστη <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που δημιουργήθηκαν από τον χρήστη<b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που αφορούν τον χρήστη<b>%s</b>.
+AgendaUrlOptions5=<b>logind=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που έγιναν από τον χρήστη <b>%s</b>.
+AgendaShowBirthdayEvents=Εμφάνιση γενεθλίων των προσώπων επικοινωνίας
+AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των προσώπων επικοινωνίας
