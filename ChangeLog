@@ -72,6 +72,7 @@ For translators:
 - New: Update and complete slovenian language sl_SL.
 - New: Add full manually translated files for de_AT en de_DE (thanks to eCleaner.at).
 - New: Create the language ja_JP.
+- New: Add el_GR language.
 
 For developers:
 - New: Add jquery by default.
