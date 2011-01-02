@@ -1,9 +1,7 @@
 # Dolibarr language file - el_GR - main
 CHARSET=UTF-8
 DIRECTION=ltr
-#FONTFORPDF=Freemono
-FONTFORPDF=DejaVuSans
-FONTSIZEFORPDF=9
+FONTFORPDF=Freemono
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
