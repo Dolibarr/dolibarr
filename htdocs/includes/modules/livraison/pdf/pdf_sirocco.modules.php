@@ -208,11 +208,11 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					$pdf->SetXY (145, $curY );
 					$pdf->MultiCell(10, 3, $object->lines[$i]->qty_shipped, 0, 'C');
 
-					// \TODO Field not yet saved in database
+					// TODO Field not yet saved in database
 					//$pdf->SetXY (156, $curY );
 					//$pdf->MultiCell(20, 3, price($object->lines[$i]->price), 0, 'R', 0);
 
-					// \TODO Field not yet saved in database
+					// TODO Field not yet saved in database
 					//$pdf->SetXY (174, $curY );
 					//$total = price($object->lines[$i]->price * $object->lines[$i]->qty_shipped);
 					//$pdf->MultiCell(26, 3, $total, 0, 'R', 0);

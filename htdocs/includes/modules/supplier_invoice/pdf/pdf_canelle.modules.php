@@ -530,7 +530,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		if ($this->atleastonediscount)
 		{
 			$pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
-			$pdf->MultiCell($this->postotalht-$this->posxdiscount,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+			$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 		}
 
 		if ($this->atleastonediscount)
@@ -538,7 +538,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
 		$pdf->SetXY ($this->postotalht-1, $tab_top+2);
-		$pdf->MultiCell(26,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
+		$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
 
 	}
 

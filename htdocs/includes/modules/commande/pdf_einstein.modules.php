@@ -788,7 +788,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxup-1, $tab_top+1);
-		$pdf->MultiCell(18,2, $outputlangs->transnoentities("PriceUHT"),'','C');
+		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxqty-1, $tab_top+1);
@@ -798,7 +798,7 @@ class pdf_einstein extends ModelePDFCommandes
 		if ($this->atleastonediscount)
 		{
 			$pdf->SetXY ($this->posxdiscount-1, $tab_top+1);
-			$pdf->MultiCell(14,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+			$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 		}
 
 		if ($this->atleastonediscount)
@@ -806,7 +806,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
 		$pdf->SetXY ($this->postotalht-1, $tab_top+1);
-		$pdf->MultiCell(28,2, $outputlangs->transnoentities("TotalHT"),'','C');
+		$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHT"),'','C');
 
 	}
 

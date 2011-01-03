@@ -949,7 +949,7 @@ class pdf_crabe extends ModelePDFFactures
 		if ($this->atleastonediscount)
 		{
 			$pdf->SetXY ($this->posxdiscount-1, $tab_top+1);
-			$pdf->MultiCell($this->postotalht-$this->posxdiscount,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+			$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 		}
 
 		if ($this->atleastonediscount)
@@ -957,7 +957,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
 		$pdf->SetXY ($this->postotalht-1, $tab_top+1);
-		$pdf->MultiCell(26,2, $outputlangs->transnoentities("TotalHT"),'','C');
+		$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHT"),'','C');
 
 	}
 

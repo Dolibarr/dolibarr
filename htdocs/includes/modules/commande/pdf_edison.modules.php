@@ -271,7 +271,7 @@ class pdf_edison extends ModelePDFCommandes
 				$tab2_top = 241;
 				$tab2_lh = 4;
 
-				$pdf->SetFont('','', $default_font_size + 1);
+				$pdf->SetFont('','', $default_font_size);
 
 				$pdf->SetXY (132, $tab2_top + 0);
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalHT"), 0, 'R', 0);
@@ -467,23 +467,26 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->SetFont('','', $default_font_size - 1);
 
         $pdf->SetXY(30,$tab_top + 2);
-        $pdf->MultiCell(0,4,$outputlangs->transnoentities("Designation"),0,'L');
+        $pdf->MultiCell(20,4,$outputlangs->transnoentities("Designation"),0,'L');
 
-		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-        $pdf->SetXY(134,$tab_top + 2);
-        $pdf->MultiCell(0,4,$outputlangs->transnoentities("VAT"));
+        if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+        {
+            $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
+            $pdf->SetXY(133,$tab_top + 2);
+            $pdf->MultiCell(12,4,$outputlangs->transnoentities("VAT"),'','C');
+        }
 
 		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-        $pdf->SetXY(147,$tab_top + 2);
-        $pdf->MultiCell(0,4,$outputlangs->transnoentities("Qty"));
+        $pdf->SetXY(145,$tab_top + 2);
+        $pdf->MultiCell(12,4,$outputlangs->transnoentities("Qty"),'','C');
 
 		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-        $pdf->SetXY(160,$tab_top + 2);
-        $pdf->MultiCell(0,4,$outputlangs->transnoentities("PriceU"));
+        $pdf->SetXY(157,$tab_top + 2);
+        $pdf->MultiCell(16,4,$outputlangs->transnoentities("PriceUHT"),'','C');
 
 		$pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-        $pdf->SetXY(187,$tab_top + 2);
-        $pdf->MultiCell(0,4,$outputlangs->transnoentities("Total"));
+        $pdf->SetXY(175,$tab_top + 2);
+        $pdf->MultiCell(30,4,$outputlangs->transnoentities("TotalHT"),'','C');
 
 		//      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
