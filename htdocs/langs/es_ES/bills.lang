@@ -208,6 +208,7 @@ NonPercuRecuperable=No percibido recuperable
 SetConditions=Definir condiciones de pago
 SetMode=Definir modo de pago
 SetDate=Definir fecha
+SelectDate=Seleccione una fecha
 Billed=Facturado
 RepeatableInvoice=Factura recurrente
 RepeatableInvoices=Facturas recurrentes
