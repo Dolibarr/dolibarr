@@ -3,7 +3,7 @@
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe)
 # \version      $Revision$
-# \author       (c)2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \author       (c)2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
 use Cwd;
