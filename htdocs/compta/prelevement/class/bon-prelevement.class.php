@@ -50,6 +50,7 @@ class BonPrelevement extends CommonObject
     var $_fetched;
 
     var $statut;    // 0-Wait, 1-Trans, 2-Done
+    var $labelstatut=array();
 
   /**
    *	Class constructor
@@ -58,6 +59,8 @@ class BonPrelevement extends CommonObject
    */
     function BonPrelevement($DB, $filename='')
     {
+    	global $conf,$langs;
+    	
         $error = 0;
         $this->db = $DB;
 
@@ -81,6 +84,12 @@ class BonPrelevement extends CommonObject
         $this->methodes_trans[0] = "Internet";
 
         $this->_fetched = 0;
+        
+        
+		$langs->load("withdrawals");
+		$this->labelstatut[0]=$langs->trans("StatusWaiting");
+		$this->labelstatut[1]=$langs->trans("StatusTrans");
+		$this->labelstatut[2]=$langs->trans("StatusCredited");
 
         return 1;
     }
@@ -1204,6 +1213,7 @@ class BonPrelevement extends CommonObject
     *	File is generated with name this->filename
     *	@return	int	0 if OK, <0 if KO
     */
+    //TODO: Optimize code to read lines in a single function
     function Generate()
     {
     	global $conf,$langs,$mysoc;
@@ -1598,6 +1608,53 @@ class BonPrelevement extends CommonObject
 
         fputs ($this->file, "\n");
     }
+    
+/**
+	 *    Return status label of object
+	 *    @param      mode        0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
+	 * 	  @return     string      Label
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 *    Return status label for a status
+	 *    @param      statut      id statut
+	 *    @param      mode        0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
+	 * 	  @return     string      Label
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+
+		if ($mode == 0)
+		{
+			return $langs->trans($this->labelstatut[$statut]);
+		}
+		
+		if ($mode == 1)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut0').' '.$langs->trans($this->labelstatut[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1').' '.$langs->trans($this->labelstatut[$statut]);
+			if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut4').' '.$langs->trans($this->labelstatut[$statut]);
+		}
+		if ($mode == 2)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut0');
+			if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
+			if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut4');
+		}
+		
+		if ($mode == 3)
+		{
+			if ($statut==0) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut0');
+			if ($statut==1) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
+			if ($statut==2) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut4');
+		}
+	}
+    
 }
 
 ?>

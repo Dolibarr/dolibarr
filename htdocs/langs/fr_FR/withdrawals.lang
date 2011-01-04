@@ -51,6 +51,7 @@ InvoiceRefused=Facturer le rejet au client
 Status=État
 StatusUnknown=Inconnu
 StatusWaiting=En attente
+StatusTrans=Transmise
 StatusCredited=Crédité
 StatusRefused=Rejeté
 StatusMotif0=Non renseigne

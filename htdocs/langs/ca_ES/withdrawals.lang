@@ -51,6 +51,7 @@ InvoiceRefused=Facturar la devolució al client
 Status=Estat
 StatusUnknown=Desconegut
 StatusWaiting=En espera
+StatusTrans=Enviada
 StatusCredited=Abonada
 StatusRefused=Tornada
 StatusMotif0=No especificat

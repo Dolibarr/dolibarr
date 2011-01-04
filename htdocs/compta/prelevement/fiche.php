@@ -147,10 +147,10 @@ if ($_GET["id"])
 		print '</td></tr>';
 
 		// Status
-		print '<tr><td width="20%">'.$langs->trans('Status').'</td><td>';
-		print '<img src="./img/statut'.$bon->statut.'.png"> ';
-		print $langs->trans($lipre->statuts[$lipre->statut]).'</td></tr>';
-
+		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
+		print '<td>'.$bon->getLibStatut(1).'</td>';
+		print '</tr>';
+		
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
