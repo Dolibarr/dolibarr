@@ -232,6 +232,9 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
         if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
         	&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common|phones/i',$subdir))
         {
+			// Disable not stable themes
+        	if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/bureau2crea/i',$subdir)) continue;
+        	
             if ($i % $thumbsbyrow == 0)
             {
                 print '<tr '.$bc[$var].'>';
