@@ -93,9 +93,9 @@ if ($_GET["id"])
 {
 	$lipre = new LignePrelevement($db, $user);
 
-	$lipre->statuts[0] = $langs->trans("StatusWaiting");
-    $lipre->statuts[2] = $langs->trans("StatusCredited");
-    $lipre->statuts[3] = $langs->trans("StatusRefused");
+	//$lipre->statuts[0] = $langs->trans("StatusWaiting");
+    //$lipre->statuts[2] = $langs->trans("StatusCredited");
+    //$lipre->statuts[3] = $langs->trans("StatusRefused");
 
 	if ($lipre->fetch($_GET["id"]) == 0)
 	{

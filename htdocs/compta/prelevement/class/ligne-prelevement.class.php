@@ -48,13 +48,17 @@ class LignePrelevement
 	 */
 	function LignePrelevement($DB, $user)
 	{
+		global $conf,$langs;
+		
 		$this->db = $DB ;
 		$this->user = $user;
 
 		// List of language codes for status
-		/*$this->statuts[0] = "Waiting";
-		$this->statuts[2] = "Credited";
-		$this->statuts[3] = "Refused";*/
+		
+		$langs->load("withdrawals");
+		$this->statuts[0]=$langs->trans("StatusWaiting");
+		$this->statuts[2]=$langs->trans("StatusCredited");
+		$this->statuts[3]=$langs->trans("StatusRefused");
 	}
 
 	/**
@@ -105,6 +109,52 @@ class LignePrelevement
 		}
 
 		return $result;
+	}
+	
+/**
+	 *    Return status label of object
+	 *    @param      mode        0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
+	 * 	  @return     string      Label
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 *    Return status label for a status
+	 *    @param      statut      id statut
+	 *    @param      mode        0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
+	 * 	  @return     string      Label
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+
+		if ($mode == 0)
+		{
+			return $langs->trans($this->statuts[$statut]);
+		}
+		
+		if ($mode == 1)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut7').' '.$langs->trans($this->statuts[$statut]);
+		}
+		if ($mode == 2)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut7');
+		}
+		
+		if ($mode == 3)
+		{
+			if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut7');
+		}
 	}
 }
 

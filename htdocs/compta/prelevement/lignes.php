@@ -128,8 +128,13 @@ if ($result)
 		$obj = $db->fetch_object($result);
 
 		print "<tr $bc[$var]><td>";
+		
+		if ($obj->statut==0) print img_picto($langs->trans("StatusWaiting"),'statut0');
+		if ($obj->statut==2) print img_picto($langs->trans("StatusCredited"),'statut4');
+		if ($obj->statut==3) print img_picto($langs->trans("StatusRefused"),'statut7');
 
-		print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
+		print "&nbsp;";
+		
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 		print substr('000000'.$obj->rowid, -6);
 		print '</a></td>';
@@ -142,7 +147,7 @@ if ($result)
 
 		if ($obj->statut == 3)
 		{
-	  		print '<b>Rejet�</b>';
+	  		print '<b>'.$langs->trans("StatusRefused").'</b>';
 		}
 		else
 		{

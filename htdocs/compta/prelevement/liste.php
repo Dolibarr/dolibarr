@@ -131,12 +131,22 @@ if ($result)
 
         print "<tr $bc[$var]><td>";
 
-        print '<img border="0" src="./img/statut'.$obj->statut_ligne.'.png"></a>&nbsp;';
+        if ($obj->statut_ligne==0) print img_picto($langs->trans("StatusWaiting"),'statut0');
+		if ($obj->statut_ligne==2) print img_picto($langs->trans("StatusCredited"),'statut4');
+		if ($obj->statut_ligne==3) print img_picto($langs->trans("StatusRefused"),'statut7');
+        print "&nbsp;";
+        
         print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid_ligne.'">';
         print substr('000000'.$obj->rowid_ligne, -6);
         print '</a></td>';
 
-        print '<td><img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
+        print '<td>';
+        
+        if ($obj->statut==0) print img_picto($langs->trans("StatusWaiting"),'statut0');
+		if ($obj->statut==1) print img_picto($langs->trans("StatusTrans"),'statut1');
+		if ($obj->statut==2) print img_picto($langs->trans("StatusCredited"),'statut4');
+        print "&nbsp;";
+        
         print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
         print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
