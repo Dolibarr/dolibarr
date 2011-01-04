@@ -2012,14 +2012,14 @@ class Societe extends CommonObject
 			'LV',	// Latvia
 			'MC',	// Monaco 		Seems to use same IntraVAT than France (http://www.gouv.mc/devwww/wwwnew.nsf/c3241c4782f528bdc1256d52004f970b/9e370807042516a5c1256f81003f5bb3!OpenDocument)
 			'MT',	// Malta
-        //'NO',	// Norway
+        	//'NO',	// Norway
 			'PL',	// Poland
 			'PT',	// Portugal
 			'RO',	// Romania
 			'SE',	// Sweden
 			'SK',	// Slovakia
 			'SI',	// Slovenia
-        //'CH',	// Switzerland - No. Swizerland in not in EEC
+        	//'CH',	// Switzerland - No. Swizerland in not in EEC
         );
         //print "dd".$this->pays_code;
         return in_array($this->pays_code,$country_code_in_EEC);
