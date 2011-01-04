@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-	    \file       htdocs/compta/dons/index.php
-		\ingroup    don
-		\brief      Page accueil espace don
-		\version    $Id$
-*/
+ *	    \file       htdocs/compta/dons/index.php
+ *		\ingroup    don
+ *		\brief      Page accueil espace don
+ *		\version    $Id$
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
@@ -86,8 +86,8 @@ for ($i = 0 ; $i < 3 ; $i++)
   print "<tr $bc[$var]>";
   print '<td><a href="liste.php?statut='.$i.'">'.$donstatic->LibStatut($i,4).'</a></td>';
   print '<td align="right">'.$nb[$i].'</td>';
-  print '<td align="right">'.($nb[$i]?price($somme[$i]):'&nbsp;').'</td>';
-  print '<td align="right">'.($nb[$i]?(price($somme[$i])/$nb[$i]):'&nbsp;').'</td>';
+  print '<td align="right">'.($nb[$i]?price($somme[$i],'MT'):'&nbsp;').'</td>';
+  print '<td align="right">'.($nb[$i]?price($somme[$i]/$nb[$i],'MT'):'&nbsp;').'</td>';
   $totalnb += $nb[$i];
   $total += $somme[$i];
   print "</tr>";
@@ -96,8 +96,8 @@ for ($i = 0 ; $i < 3 ; $i++)
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
 print '<td align="right">'.$totalnb.'</td>';
-print '<td align="right">'.price($total).'</td>';
-print '<td align="right">'.($totalnb?(price($total)/$totalnb):'&nbsp;').'</td>';
+print '<td align="right">'.price($total,'MT').'</td>';
+print '<td align="right">'.($totalnb?price($total/$totalnb,'MT'):'&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
 
