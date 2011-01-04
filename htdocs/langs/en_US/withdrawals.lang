@@ -75,3 +75,4 @@ WithBankUsingRIB=For bank accounts using RIB
 WithBankUsingBANBIC=For bank accounts using IBAN/BIC/SWIFT
 BankToReceiveWithdraw=Information about you bank account to receive withdraws
 CreditDate=Credit on
+WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country

@@ -28,6 +28,7 @@
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+if ($conf->esaeb->enabled) require_once(DOL_DOCUMENT_ROOT.'/esaeb/class/esaeb19.class.php');
 
 
 /**
@@ -43,7 +44,8 @@ class BonPrelevement extends CommonObject
     var $reference_remise;
     var $emetteur_code_guichet;
     var $emetteur_numero_compte;
-    var $emetteur_code_etablissement;
+    var $emetteur_code_banque;
+    var $emetteur_number_key;
     var $total;
     var $_fetched;
 
@@ -67,7 +69,8 @@ class BonPrelevement extends CommonObject
 
         $this->emetteur_code_guichet = "";
         $this->emetteur_numero_compte = "";
-        $this->emetteur_code_etablissement = "";
+        $this->emetteur_code_banque = "";
+        $this->emetteur_number_key = "";
 
         $this->factures = array();
 
@@ -91,14 +94,15 @@ class BonPrelevement extends CommonObject
    *    @param	code_banque code of bank withdrawal
    *    @param	code_guichet code of bank's office
    *    @param	number bank account number 
+   *    @param  number_key number key of account number
    *	@return	int	>0 if OK, <0 if KO
    */
-    function AddFacture($facture_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number)
+    function AddFacture($facture_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key)
     {
         $result = 0;
         $line_id = 0;
 
-        $result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number);
+        $result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key);
 
         if ($result == 0)
         {
@@ -147,9 +151,10 @@ class BonPrelevement extends CommonObject
    	*	@param	code_banque code of bank withdrawal
    	*	@param	code_guichet code of bank's office
    	*	@param	number bank account number 
+   	*	@param  number_key number key of account number
    	*	@return	int	>0 if OK, <0 if KO
    	*/
-    function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number)
+    function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key)
     {
         $result = -1;
         $concat = 0;
@@ -190,6 +195,7 @@ class BonPrelevement extends CommonObject
             $sql.= ", code_banque";
             $sql.= ", code_guichet";
             $sql.= ", number";
+            $sql.= ", cle_rib";
             $sql.= ") VALUES (";
             $sql.= $this->id;
             $sql.= ", ".$client_id;
@@ -198,6 +204,7 @@ class BonPrelevement extends CommonObject
             $sql.= ", '".$code_banque."'";
             $sql.= ", '".$code_guichet."'";
             $sql.= ", '".$number."'";
+            $sql.= ", '".$number_key."'";
             $sql.= ")";
 
             if ($this->db->query($sql))
@@ -1030,11 +1037,11 @@ class BonPrelevement extends CommonObject
                     $bonprev->numero_national_emetteur    = $conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR;
                     $bonprev->raison_sociale              = $conf->global->PRELEVEMENT_RAISON_SOCIALE;
 
-                    $bonprev->emetteur_code_etablissement = $conf->global->PRELEVEMENT_CODE_BANQUE;
+                    $bonprev->emetteur_code_banque 		  = $conf->global->PRELEVEMENT_CODE_BANQUE;
                     $bonprev->emetteur_code_guichet       = $conf->global->PRELEVEMENT_CODE_GUICHET;
                     $bonprev->emetteur_numero_compte      = $conf->global->PRELEVEMENT_NUMERO_COMPTE;
-
-
+                    $bonprev->emetteur_number_key		  = $conf->global->PRELEVEMENT_NUMBER_KEY;
+		
                     $bonprev->factures = $factures_prev_id;
 
                     // Build file
@@ -1189,81 +1196,214 @@ class BonPrelevement extends CommonObject
 
 
     /**
-    *	Generate a withdrawal file (format CFONB ?)
+    *	Generate a withdrawal file
+    *   Generation Formats:
+    *   	France: CFONB
+    *       Spain:  AEB19 (if external module EsAEB is enabled)
+    *       Others: Warning message
     *	File is generated with name this->filename
     *	@return	int	0 if OK, <0 if KO
     */
     function Generate()
     {
-    	global $conf;
+    	global $conf,$langs,$mysoc;
 
-        $result = -1;
+        $result = 0;
 
         dol_syslog("BonPrelevement::Generate build file ".$this->filename);
 
         $this->file = fopen ($this->filename,"w");
 
-        /*
-         * En-tete Emetteur
-         */
-        $this->EnregEmetteur();
-
-        /*
-         * Lines
-         */
-        $this->total = 0;
-
-        $sql = "SELECT pl.rowid, pl.client_nom, pl.code_banque, pl.code_guichet, pl.number, pl.amount,";
-        $sql.= " f.facnumber, pf.fk_facture";
-        $sql.= " FROM";
-        $sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
-        $sql.= " ".MAIN_DB_PREFIX."facture as f,";
-        $sql.= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
-        $sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
-        $sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
-        $sql.= " AND pf.fk_facture = f.rowid";
-
-        $i = 0;
-
-        $resql=$this->db->query($sql);
-        if ($resql)
+        //Build file for Spain
+        if ($mysoc->pays_code=='ES')
         {
-            $num = $this->db->num_rows($resql);
-
-            while ($i < $num)
-            {
-                $row = $this->db->fetch_row($resql);
-
-                $this->EnregDestinataire($row[0],
-                $row[1],
-                $row[2],
-                $row[3],
-                $row[4],
-                $row[5],
-                $row[6],
-                $row[7]);
-
-                $this->total = $this->total + $row[5];
-
-                $i++;
-            }
+        	if ($conf->esaeb->enabled) 
+        	{
+	        	//Head
+	        	$esaeb19 = new AEB19DocWritter;
+	        	$esaeb19->configuraPresentador($this->numero_national_emetteur,"000",$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet);
+	        	$idOrdenante = $esaeb19->agregaOrdenante($this->numero_national_emetteur,"000",$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet, $this->emetteur_number_key, $this->emetteur_numero_compte);
+	        	$this->total = 0;
+	        	$sql = "SELECT pl.rowid, pl.client_nom, pl.code_banque, pl.code_guichet, pl.cle_rib, pl.number, pl.amount,";
+	        	$sql.= " f.facnumber, pf.fk_facture";
+	        	$sql.= " FROM";
+	        	$sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
+	        	$sql.= " ".MAIN_DB_PREFIX."facture as f,";
+	        	$sql.= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
+	        	$sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
+	        	$sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
+	        	$sql.= " AND pf.fk_facture = f.rowid";
+	
+	        	//Lines
+	        	$i = 0;
+	        	$resql=$this->db->query($sql);
+	        	if ($resql)
+	        	{
+	            	$num = $this->db->num_rows($resql);
+	
+	            	while ($i < $num)
+	            	{
+	                	$obj = $this->db->fetch_object($resql);
+	
+	                	$esaeb19->agregaRecibo($idOrdenante,
+	                	"idcliente".$i+1,
+	                	$obj->client_nom,
+	                	$obj->code_banque,
+	                	$obj->code_guichet,
+	                	$obj->cle_rib,
+	                	$obj->number,
+	                	$obj->amount,
+	                	"Fra.".$obj->facnumber." ".$obj->amount);
+	
+	                	$this->total = $this->total + $obj->amount;
+	
+	                	$i++;
+	            	}
+	        	}
+        		
+        		else
+        		{
+            		$result = -2;
+        		}
+        	
+        		fputs ($this->file, $esaeb19->generaRemesa());
+        	}
+    		else 
+        	{
+        		$this->total = 0;
+	        	$sql = "SELECT pl.amount";
+	        	$sql.= " FROM";
+	        	$sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
+	        	$sql.= " ".MAIN_DB_PREFIX."facture as f,";
+	        	$sql.= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
+	        	$sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
+	        	$sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
+	        	$sql.= " AND pf.fk_facture = f.rowid";
+	
+	        	//Lines
+	        	$i = 0;
+	        	$resql=$this->db->query($sql);
+	        	if ($resql)
+	        	{
+	            	$num = $this->db->num_rows($resql);
+	
+	            	while ($i < $num)
+	            	{
+	                	$obj = $this->db->fetch_object($resql);
+	                	$this->total = $this->total + $obj->amount;
+	                	$i++;
+	            	}
+	        	}
+        		else
+        		{
+            		$result = -2;
+        		}
+        		$langs->load('withdrawals');
+        		fputs ($this->file, $langs->trans('WithdrawalFileNotCapable'));
+        	}
+        	
         }
-        else
+        
+        //Build file for France
+        elseif ($mysoc->pays_code=='FR')
         {
-            $result = -2;
+        	/*
+         	* En-tete Emetteur
+         	*/
+        	$this->EnregEmetteur();
+
+        	/*
+         	* Lines
+         	*/
+        	$this->total = 0;
+
+        	$sql = "SELECT pl.rowid, pl.client_nom, pl.code_banque, pl.code_guichet, pl.number, pl.amount,";
+        	$sql.= " f.facnumber, pf.fk_facture";
+        	$sql.= " FROM";
+        	$sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
+        	$sql.= " ".MAIN_DB_PREFIX."facture as f,";
+        	$sql.= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
+        	$sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
+        	$sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
+        	$sql.= " AND pf.fk_facture = f.rowid";
+
+        	$i = 0;
+
+        	$resql=$this->db->query($sql);
+        	if ($resql)
+        	{
+            	$num = $this->db->num_rows($resql);
+
+            	while ($i < $num)
+            	{
+                	$row = $this->db->fetch_row($resql);
+
+                	$this->EnregDestinataire($row[0],
+                	$row[1],
+                	$row[2],
+                	$row[3],
+                	$row[4],
+                	$row[5],
+                	$row[6],
+                	$row[7]);
+
+                	$this->total = $this->total + $row[5];
+
+                	$i++;
+            	}
+        	}
+        	else
+        	{
+            	$result = -2;
+        	}
+
+        	/*
+        	* Pied de page total
+        	*/
+
+        	$this->EnregTotal($this->total);
         }
-
-        /*
-        * Pied de page total
-        */
-
-        $this->EnregTotal($this->total);
+        
+        //Build file for Other Countries with unknow format  
+    	else 
+        {
+        	$this->total = 0;
+	        $sql = "SELECT pl.amount";
+	        $sql.= " FROM";
+	        $sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
+	        $sql.= " ".MAIN_DB_PREFIX."facture as f,";
+	        $sql.= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
+	        $sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
+	        $sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
+	        $sql.= " AND pf.fk_facture = f.rowid";
+	
+	        	//Lines
+	        $i = 0;
+	        $resql=$this->db->query($sql);
+	        if ($resql)
+	        {
+	            $num = $this->db->num_rows($resql);
+	
+	            while ($i < $num)
+	            {
+	                $obj = $this->db->fetch_object($resql);
+	                $this->total = $this->total + $obj->amount;
+	                $i++;
+	            }
+	        }
+        	else
+        	{
+            	$result = -2;
+        	}
+    		$langs->load('withdrawals');
+        	fputs ($this->file, $langs->trans('WithdrawalFileNotCapable'));
+        }
 
         fclose($this->file);
 		if (! empty($conf->global->MAIN_UMASK))
-			@chmod($this->file, octdec($conf->global->MAIN_UMASK));
-
-        return $result;
+		@chmod($this->file, octdec($conf->global->MAIN_UMASK));
+		return $result;
+    	
     }
 
 
@@ -1390,7 +1530,7 @@ class BonPrelevement extends CommonObject
 
         // Code etablissement
 
-        fputs ($this->file, $this->emetteur_code_etablissement);
+        fputs ($this->file, $this->emetteur_code_banque);
 
         // Zone Reservee G
 
