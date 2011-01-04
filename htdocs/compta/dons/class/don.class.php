@@ -351,9 +351,9 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *    \brief      Mise a jour du don
-	 *    \param      user        Objet utilisateur qui met a jour le don
-	 *    \return     int         >0 si ok, <0 si ko
+	 *    Update a donation record
+	 *    @param      user        Objet utilisateur qui met a jour le don
+	 *    @return     int         >0 si ok, <0 si ko
 	 */
 	function update($user)
 	{
@@ -361,7 +361,7 @@ class Don extends CommonObject
 		$this->date = $this->db->idate($this->date);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
-		$sql .= "amount = " . $this->amount;
+		$sql .= "amount = " . price2num($this->amount);
 		$sql .= ",fk_paiement = ".$this->modepaiementid;
 		$sql .= ",prenom = '".addslashes($this->prenom)."'";
 		$sql .= ",nom='".addslashes($this->nom)."'";

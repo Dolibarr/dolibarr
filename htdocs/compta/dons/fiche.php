@@ -78,7 +78,7 @@ if ($_POST["action"] == 'update')
 		$don->nom         = $_POST["nom"];
 		$don->societe     = $_POST["societe"];
 		$don->adresse     = $_POST["adresse"];
-		$don->amount      = $_POST["amount"];
+		$don->amount      = price2num($_POST["amount"]);
 		$don->cp          = $_POST["cp"];
 		$don->ville       = $_POST["ville"];
 		$don->email       = $_POST["email"];
@@ -128,7 +128,7 @@ if ($_POST["action"] == 'add')
 		$don->nom         = $_POST["nom"];
 		$don->societe     = $_POST["societe"];
 		$don->adresse     = $_POST["adresse"];
-		$don->amount      = $_POST["amount"];
+		$don->amount      = price2num($_POST["amount"]);
 		$don->cp          = $_POST["cp"];
 		$don->ville       = $_POST["ville"];
 		$don->email       = $_POST["email"];
