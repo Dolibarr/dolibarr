@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligne-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
@@ -56,7 +57,42 @@ if ($_GET["id"])
 
 		print '<table class="border" width="100%">';
 
+		//print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'dayhour').'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
+
+		$relativepath = 'receipts/'.$bon->ref;
+
+		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+
+		print '</td></tr>';
+
+		// Status
+		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
+		print '<td>'.$bon->getLibStatut(1).'</td>';
+		print '</tr>';
+		
+		if($bon->date_trans <> 0)
+		{
+			$muser = new User($db);
+			$muser->fetch($bon->user_trans);
+
+			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
+			print dol_print_date($bon->date_trans,'dayhour');
+			print ' / '.$muser->getFullName($langs).'</td></tr>';
+			print '<tr><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
+			print $bon->methodes_trans[$bon->method_trans];
+			print '</td></tr>';
+		}
+		if($bon->date_credit <> 0)
+		{
+			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
+			print dol_print_date($bon->date_credit,'dayhour');
+			print '</td></tr>';
+		}
+		
 
 		print '</table>';
 
@@ -64,13 +100,15 @@ if ($_GET["id"])
 	}
 	else
 	{
-		print "Erreur";
+		dol_print_error($db);
 	}
 }
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
+
+$ligne=new LignePrelevement($db,$user);
 
 if ($page == -1) { $page = 0 ; }
 
@@ -129,10 +167,7 @@ if ($result)
 
 		print "<tr $bc[$var]><td>";
 		
-		if ($obj->statut==0) print img_picto($langs->trans("StatusWaiting"),'statut0');
-		if ($obj->statut==2) print img_picto($langs->trans("StatusCredited"),'statut4');
-		if ($obj->statut==3) print img_picto($langs->trans("StatusRefused"),'statut7');
-
+		print $ligne->LibStatut($obj->statut,2);
 		print "&nbsp;";
 		
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';

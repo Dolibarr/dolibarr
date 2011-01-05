@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,40 @@ if ($_GET["id"])
 
       	print '<table class="border" width="100%">';
       	print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'dayhour').'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
+
+		$relativepath = 'receipts/'.$bon->ref;
+
+		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+
+		print '</td></tr>';
+
+		// Status
+		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
+		print '<td>'.$bon->getLibStatut(1).'</td>';
+		print '</tr>';
+		
+		if($bon->date_trans <> 0)
+		{
+			$muser = new User($db);
+			$muser->fetch($bon->user_trans);
+
+			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
+			print dol_print_date($bon->date_trans,'dayhour');
+			print ' / '.$muser->getFullName($langs).'</td></tr>';
+			print '<tr><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
+			print $bon->methodes_trans[$bon->method_trans];
+			print '</td></tr>';
+		}
+		if($bon->date_credit <> 0)
+		{
+			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
+			print dol_print_date($bon->date_credit,'dayhour');
+			print '</td></tr>';
+		}
+      	
       	print '</table>';
 
       	print '</div>';

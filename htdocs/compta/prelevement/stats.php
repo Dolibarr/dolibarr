@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  */
 
 require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligne-prelevement.class.php");
 
 $langs->load("withdrawals");
 $langs->load("companies");
@@ -69,6 +70,8 @@ if ($resql)
 /*
  * Stats
  */
+$ligne=new LignePrelevement($db,$user);
+
 $sql = "SELECT sum(pl.amount), count(pl.amount), pl.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -90,18 +93,14 @@ if ($resql)
 
 	$var=True;
 
-	$st[0]  = $langs->trans("StatusWaiting");
-	$st[1]  = $langs->trans("StatusWaiting");
-	$st[2] = $langs->trans("StatusCredited");
-	$st[3] = $langs->trans("StatusRefused");
-
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
 
 		print "<tr $bc[$var]><td>";
 
-		print $st[$row[2]];
+		print $ligne->LibStatut($row[2],1);
+		//print $st[$row[2]];
 		print '</td><td align="center">';
 		print $row[1];
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,8 @@
  *      \version    $Id$
  */
 require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligne-prelevement.class.php");
 
 $langs->load("withdrawals");
 $langs->load("companies");
@@ -34,6 +37,9 @@ $langs->load("categories");
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
+
+$bon=new BonPrelevement($db,"");
+$ligne=new LignePrelevement($db,$user);
 
 $page = $_GET["page"];
 $sortorder = (empty($_GET["sortorder"])) ? "DESC" : $_GET["sortorder"];
@@ -131,9 +137,7 @@ if ($result)
 
         print "<tr $bc[$var]><td>";
 
-        if ($obj->statut_ligne==0) print img_picto($langs->trans("StatusWaiting"),'statut0');
-		if ($obj->statut_ligne==2) print img_picto($langs->trans("StatusCredited"),'statut4');
-		if ($obj->statut_ligne==3) print img_picto($langs->trans("StatusRefused"),'statut7');
+        print $ligne->LibStatut($obj->statut_ligne,2);
         print "&nbsp;";
         
         print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid_ligne.'">';
@@ -142,9 +146,7 @@ if ($result)
 
         print '<td>';
         
-        if ($obj->statut==0) print img_picto($langs->trans("StatusWaiting"),'statut0');
-		if ($obj->statut==1) print img_picto($langs->trans("StatusTrans"),'statut1');
-		if ($obj->statut==2) print img_picto($langs->trans("StatusCredited"),'statut4');
+        print $bon->LibStatut($obj->statut,2);
         print "&nbsp;";
         
         print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";

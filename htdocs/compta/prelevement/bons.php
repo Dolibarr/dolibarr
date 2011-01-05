@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
 */
 
 require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
 
 $langs->load("widthdrawals");
 $langs->load("categories");
@@ -42,6 +44,7 @@ $sortfield = $_GET["sortfield"];
 
 llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
+$bon=new BonPrelevement($db,"");
 
 if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
@@ -49,6 +52,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.datec";
+
 
 
 /*
@@ -97,8 +101,10 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
-      print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
-
+      
+      print $bon->LibStatut($obj->statut,2);
+      print "&nbsp;";
+      
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
       print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
