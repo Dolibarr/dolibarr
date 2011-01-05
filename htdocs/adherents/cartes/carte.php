@@ -65,7 +65,7 @@ if ((empty($foruserid) && empty($foruserlogin) && empty($mode)) || $mesg)
 
     if ($mesg) print '<div class="error">'.$mesg.'</div><br>';
 
-    print $langs->trans("DocForAllMembersCards",$conf->global->ADHERENT_CARD_TYPE).' ';
+    print $langs->trans("DocForAllMembersCards",($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="foruserid" value="all">';
     print '<input type="hidden" name="mode" value="card">';
@@ -73,7 +73,7 @@ if ((empty($foruserid) && empty($foruserlogin) && empty($mode)) || $mesg)
     print '</form>';
     print '<br>';
 
-    print $langs->trans("DocForOneMemberCards",$conf->global->ADHERENT_CARD_TYPE).' ';
+    print $langs->trans("DocForOneMemberCards",($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="mode" value="cardlogin">';
     print $langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="">';
