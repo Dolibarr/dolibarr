@@ -77,3 +77,4 @@ WithBankUsingBANBIC=Pour les comptes bancaires utilisant le code BAN/BIC/SWIFT
 BankToReceiveWithdraw=Informations de votre compte bancaire recevant les prélèvements
 CreditDate=Crédité le
 WithdrawalFileNotCapable=Impossible de generer fichier de bon de prelevements pour votre pays
+ShowWithdraw=Voir prélèvement
