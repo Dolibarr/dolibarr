@@ -1099,8 +1099,8 @@ function getListOfModels($db,$type)
 }
 
 /**
- * \brief	This function evaluates a string that should be a valid IPv4
- * \return	It returns 0 if $ip is not a valid IPv4
+ * This function evaluates a string that should be a valid IPv4
+ * @return	It returns 0 if $ip is not a valid IPv4
  * 			It returns 1 if $ip is a valid IPv4 and is a public IP
  * 			It returns 2 if $ip is a valid IPv4 and is a private lan IP
  */
@@ -1115,3 +1115,16 @@ function is_ip($ip)
     return 1;
 }
 
+
+/**
+ *  Build a login from lastname, firstname
+ *  @param      lastname		Lastname
+ *  @param      firstname		Firstname
+ *	@return		string
+ */
+function dol_buildlogin($lastname,$firstname)
+{
+	$login=strtolower(dol_string_unaccent($firstname)) .'.'. strtolower(dol_string_unaccent($lastname));
+	$login=dol_string_nospecial($login,''); // For special names
+	return $login;
+}

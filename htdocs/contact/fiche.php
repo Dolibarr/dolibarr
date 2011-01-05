@@ -23,7 +23,7 @@
 /**
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
- *       \brief      Onglet general d'un contact
+ *       \brief      Card of a contact
  *       \version    $Id$
  */
 
@@ -757,11 +757,10 @@ else
 
 		if ($_GET["action"] == 'create_user')
 		{
-			// Full firstname and name separated with a dot : firstname.name 
-			// TODO add function
-			$login=strtolower(dol_string_unaccent($object->prenom)) .'.'. strtolower(dol_string_unaccent($object->nom));
-			$login=dol_string_nospecial($login,''); // For special names
-
+			// Full firstname and name separated with a dot : firstname.name
+			include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+			$login=dol_buildlogin($object->nom,$object->prenom);
+			
 			// Create a form array
 			$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
 

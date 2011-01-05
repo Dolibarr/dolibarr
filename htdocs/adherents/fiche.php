@@ -1020,6 +1020,12 @@ if ($rowid && $action != 'edit')
 	if ($_GET["action"] == 'create_user')
 	{
 		$login=$adh->login;
+		if (empty($login)) 
+		{
+			// Full firstname and name separated with a dot : firstname.name
+			include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+			$login=dol_buildlogin($adh->nom,$adh->prenom);
+		}
 		if (empty($login)) $login=strtolower(substr($adh->prenom, 0, 4)) . strtolower(substr($adh->nom, 0, 4));
 
 		// Create a form array
