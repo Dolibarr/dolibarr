@@ -1254,6 +1254,8 @@ class User extends CommonObject
 							$error++;
 						}
 					}
+					
+					dol_syslog("User::setPassword notrigger=".$notrigger." error=".$error,LOG_DEBUG);
 
 					if (! $error && ! $notrigger)
 					{
