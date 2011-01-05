@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010-2011 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,8 +186,7 @@ class ActionsContactCardCommon
         		// Full firstname and name separated with a dot : firstname.name
         		// TODO add function
         		$login=strtolower(dol_string_unaccent($this->object->prenom)) .'.'. strtolower(dol_string_unaccent($this->object->nom));
-        		$login=str_replace(' ','.',$login); // For particle names
-        		$login=str_replace('\'','',$login); // For simple quote
+        		$login=dol_string_nospecial($login,''); // For special names
         		
         		// Create a form array
         		$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
