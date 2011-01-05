@@ -45,7 +45,8 @@ if (! $sortorder) $sortorder="asc";
 if (! $sortfield) $sortfield="name";
 
 // Date range
-$year=$_REQUEST["year"];
+$year=GETPOST("year");
+$month=GETPOST("month");
 if (empty($year))
 {
 	$year_current = strftime("%Y",dol_now());
@@ -65,16 +66,20 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	if ($q==0)
 	{
 		// We define date_start and date_end
-		$year_end=$year_start;
 		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-		if ($month_start > $month_current)
+		$year_end=$year_start;
+		$month_end=$month_start;
+		if (! GETPOST("month"))	// If month not forced
 		{
-			$year_start--;
-			$year_end--;				
+			if ($month_start > $month_current)
+			{
+				$year_start--;
+				$year_end--;				
+			}
+			$month_end=$month_start-1;
+			if ($month_end < 1) $month_end=12;
+			else $year_end++;
 		}
-		$month_end=$month_start-1;
-		if ($month_end < 1) $month_end=12;
-		else $year_end++;
 		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
 	}
 	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
