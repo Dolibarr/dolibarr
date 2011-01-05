@@ -183,8 +183,11 @@ class ActionsContactCardCommon
         {
         	if ($_GET["action"] == 'create_user')
         	{
-        		$login=strtolower(substr(dol_string_unaccent($this->object->prenom), 0, 4)) . strtolower(substr(dol_string_unaccent($this->object->nom), 0, 4));
-        		//$login=dol_string_unaccent($login);
+        		// Full firstname and name separated with a dot : firstname.name
+        		// TODO add function
+        		$login=strtolower(dol_string_unaccent($this->object->prenom)) .'.'. strtolower(dol_string_unaccent($this->object->nom));
+        		$login=str_replace(' ','.',$login); // For particle names
+        		$login=str_replace('\'','',$login); // For simple quote
         		
         		// Create a form array
         		$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));

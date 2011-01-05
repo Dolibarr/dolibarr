@@ -757,7 +757,13 @@ else
 
 		if ($_GET["action"] == 'create_user')
 		{
-			$login=strtolower(substr(dol_string_unaccent($object->prenom), 0, 4)) . strtolower(substr(dol_string_unaccent($object->nom), 0, 4));
+			//$login=strtolower(substr(dol_string_unaccent($object->prenom), 0, 4)) . strtolower(substr(dol_string_unaccent($object->nom), 0, 4));
+			
+			// Full firstname and name separated with a dot : firstname.name 
+			// TODO add function
+			$login=strtolower(dol_string_unaccent($object->prenom)) .'.'. strtolower(dol_string_unaccent($object->nom));
+			$login=str_replace(' ','.',$login); // For particle names
+        	$login=str_replace('\'','',$login); // For simple quote
 
 			// Create a form array
 			$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
