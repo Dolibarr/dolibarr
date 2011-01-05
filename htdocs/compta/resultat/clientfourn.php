@@ -20,7 +20,7 @@
 
 /**
  *  \file        htdocs/compta/resultat/clientfourn.php
- *	\brief       Page reporting resultat
+ *	\brief       Page reporting
  *  \version     $Id$
  */
 
@@ -41,13 +41,15 @@ if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->compta
 accessforbidden();
 
 // Date range
-$year=$_REQUEST["year"];
+$year=GETPOST("year");
 if (empty($year))
 {
 	$year_current = strftime("%Y",dol_now());
+	$month_current = strftime("%m",dol_now());
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
+	$month_current = strftime("%m",dol_now());
 	$year_start = $year;
 }
 $date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);	// Date for local PHP server
@@ -55,11 +57,21 @@ $date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:0;
+	$q=GETPOST("q")?GETPOST("q"):0;
 	if ($q==0)
 	{
-		if (isset($_REQUEST["month"])) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"],false); $date_end=dol_get_last_day($year_start,$_REQUEST["month"],false); }
-		else { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,12,false); }
+		// We define date_start and date_end
+		$year_end=$year_start;
+		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+		if ($month_start > $month_current)
+		{
+			$year_start--;
+			$year_end--;				
+		}
+		$month_end=$month_start-1;
+		if ($month_end < 1) $month_end=12;
+		else $year_end++;
+		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
 	}
 	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
 	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }

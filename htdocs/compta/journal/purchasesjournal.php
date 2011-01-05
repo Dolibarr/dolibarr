@@ -54,14 +54,19 @@ $html=new Form($db);
 
 $year_current = strftime("%Y",dol_now());
 $pastmonth = strftime("%m",dol_now()) - 1;
-if ($pastmonth == 0) $pastmonth = 12;
+$pastmonthyear = $year_current; 
+if ($pastmonth == 0) 
+{
+	$pastmonth = 12;
+	$pastmonthyear--;
+}
 
 $date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
 $date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
 
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$date_start=dol_get_first_day($year_current,$pastmonth,false); $date_end=dol_get_last_day($year_current,$pastmonth,false);
+	$date_start=dol_get_first_day($pastmonthyear,$pastmonth,false); $date_end=dol_get_last_day($pastmonthyear,$pastmonth,false);
 }
 
 $nom=$langs->trans("PurchasesJournal");

@@ -440,20 +440,26 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 print '</tr>';
 
 $var=True;
+
 // Loop on each month
-for ($mois = 1 ; $mois <= 12 ; $mois++)
+$nb_mois_decalage = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START-1):0;
+for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 {
+	$mois_modulo = $mois;
+	if($mois>12) {$mois_modulo = $mois-12;}
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
-	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois,1,$annee),"%B")."</td>";
+	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,$annee),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
-		$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
+		$annee_decalage=$annee;
+		if($mois>12) {$annee_decalage=$annee+1;}
+		$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois_modulo,1,$annee_decalage));
 
 		print '<td align="right">&nbsp;';
 		if ($decaiss_ttc[$case] != 0)
 		{
-			print '<a href="clientfourn.php?year='.$annee.'&month='.$mois.'">'.price($decaiss_ttc[$case]).'</a>';
+			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price($decaiss_ttc[$case]).'</a>';
 			$totsorties[$annee]+=$decaiss_ttc[$case];
 		}
 		print "</td>";
@@ -461,7 +467,7 @@ for ($mois = 1 ; $mois <= 12 ; $mois++)
 		print '<td align="right">&nbsp;';
 		if ($encaiss_ttc[$case] != 0)
 		{
-			print '<a href="clientfourn.php?year='.$annee.'&month='.$mois.'">'.price($encaiss_ttc[$case]).'</a>';
+			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price($encaiss_ttc[$case]).'</a>';
 			$totentrees[$annee]+=$encaiss_ttc[$case];
 		}
 		print "</td>";
@@ -482,7 +488,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print "</tr>\n";
 
-// Ligne vierge
+// Empty line
 print '<tr><td>&nbsp;</td>';
 print '<td colspan="'.$nbcols.'">&nbsp;</td>';
 print "</tr>\n";
