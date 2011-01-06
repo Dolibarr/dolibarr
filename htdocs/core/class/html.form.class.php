@@ -140,7 +140,7 @@ class Form
      *	@return	string				Code html du tooltip (texte+picto)
      * 	@see	Use function textwithpicto if you can.
      */
-    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='')
+    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='')
     {
         global $conf;
 
@@ -157,7 +157,8 @@ class Form
         $htmltext=str_replace("\n","",$htmltext);
 
        	$htmltext=str_replace('"',"&quot;",$htmltext);
-       	$paramfortooltip.=' class="classfortooltip" title="'.$htmltext.'"'; // Attribut to put on td tag to store tooltip
+       	$extracss = (!empty($extracss) ? ' '.$extracss : '');
+       	$paramfortooltip.=' class="classfortooltip'.$extracss.'" title="'.$htmltext.'"'; // Attribut to put on td tag to store tooltip
 
        	$s="";
         $s.='<table class="nobordernopadding" summary=""><tr>';
@@ -194,7 +195,7 @@ class Form
      * 	@param		type				Type of picto (info, help, warning, superadmin...)
      * 	@return		string				HTML code of text, picto, tooltip
      */
-    function textwithpicto($text,$htmltext,$direction=1,$type='help')
+    function textwithpicto($text,$htmltext,$direction=1,$type='help',$extracss='')
     {
         global $conf;
 
@@ -219,7 +220,7 @@ class Form
         // Warnings
         if ($type == 'warning') 			$img=img_warning($alt);
 
-        return $this->textwithtooltip($text,$htmltext,2,$direction,$img);
+        return $this->textwithtooltip($text,$htmltext,2,$direction,$img,$extracss);
     }
 
     /**
