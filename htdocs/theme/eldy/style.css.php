@@ -451,8 +451,8 @@ foreach($mainmenuusedarray as $key => $val)
 
 div.login {
   position: absolute;
-  <?php print $right; ?>: 30px;
-  top: 3px;
+  <?php print $right; ?>: 60px;
+  top: 10px;
   padding: 0px 8px;
   margin: 0px 0px 1px 0px;
   font-weight: bold;
@@ -465,16 +465,20 @@ div.login a:hover {
 	text-decoration:underline;
 }
 
-img.login, img.printer {
+img.login, img.printer, img.entity {
   position: absolute;
-  <?php print $right; ?>: 20px;
-  top: 3px;
+  <?php print $right; ?>: 25px;
+  top: -1px;
+  padding: 10px 0px 0px 0px;
   text-decoration: none;
   color: white;
   font-weight: bold;
 }
 img.printer {
   <?php print $right; ?>: 4px;
+}
+img.entity {
+  <?php print $right; ?>: 48px;
 }
 
 
