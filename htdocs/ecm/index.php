@@ -293,11 +293,6 @@ if (GETPOST("action") == 'refreshmanual')
 /*******************************************************************
  * View
  ********************************************************************/
-/*
-$morejs=array(
-"/includes/jquery/plugins/layout/jquery.layout-latest.js"
-);
-*/
 
 //print "xx".$_SESSION["dol_screenheight"];
 $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500)?($_SESSION["dol_screenheight"]-166):660;

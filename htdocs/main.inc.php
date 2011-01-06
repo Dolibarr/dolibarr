@@ -894,7 +894,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			foreach($arrayofjs as $jsfile)
 			{
 				if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.$jsfile.'"></script>'."\n";
+				print '<script type="text/javascript" src="'.$jsfile.'"></script>'."\n";
 			}
 		}
 
