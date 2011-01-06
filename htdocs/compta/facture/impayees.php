@@ -363,7 +363,7 @@ if ($result)
 			print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 			print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->datelimite),'day')."</td>\n";
 
-			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,28).'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,28).'</a></td>';
 
 			print "<td align=\"right\">".price($objp->total_ht)."</td>";
 			print "<td align=\"right\">".price($objp->total_ttc)."</td>";
