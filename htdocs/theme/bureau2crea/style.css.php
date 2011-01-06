@@ -488,7 +488,7 @@ li.tmenu a.tmenudisabled {
 
 div.login {
   position: absolute;
-  <?php print $right; ?>: 40px;
+  <?php print $right; ?>: 60px;
   top: 5px;
   padding: 0px 8px;
   margin: 0px 0px 1px 0px;
@@ -502,7 +502,7 @@ div.login a:hover {
 	text-decoration:underline;
 }
 
-img.login, img.printer {
+img.login, img.printer, img.entity {
   position: absolute;
   <?php print $right; ?>: 25px;
   top: -3px;
@@ -514,6 +514,10 @@ img.login, img.printer {
 img.printer {
   <?php print $right; ?>: 4px;
 }
+img.entity {
+  <?php print $right; ?>: 45px;
+}
+
 
 
 /* ============================================================================== */
