@@ -855,7 +855,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		{
 			foreach($arrayofcss as $cssfile)
 			{
-				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1).'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 			}
 		}
 
@@ -894,7 +894,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			foreach($arrayofjs as $jsfile)
 			{
 				if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
-				print '<script type="text/javascript" src="'.$jsfile.'"></script>'."\n";
+				print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
 			}
 		}
 
