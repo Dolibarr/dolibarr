@@ -1231,8 +1231,8 @@ class BonPrelevement extends CommonObject
         	{
 	        	//Head
 	        	$esaeb19 = new AEB19DocWritter;
-	        	$esaeb19->configuraPresentador($this->numero_national_emetteur,"000",$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet);
-	        	$idOrdenante = $esaeb19->agregaOrdenante($this->numero_national_emetteur,"000",$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet, $this->emetteur_number_key, $this->emetteur_numero_compte);
+	        	$esaeb19->configuraPresentador($this->numero_national_emetteur,$conf->global->ESAEB_SUFIX_PRESENTADOR,$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet);
+	        	$idOrdenante = $esaeb19->agregaOrdenante($this->numero_national_emetteur,$conf->global->ESAEB_SUFIX_ORDENANTE,$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet, $this->emetteur_number_key, $this->emetteur_numero_compte);
 	        	$this->total = 0;
 	        	$sql = "SELECT pl.rowid, pl.client_nom, pl.code_banque, pl.code_guichet, pl.cle_rib, pl.number, pl.amount,";
 	        	$sql.= " f.facnumber, pf.fk_facture";
