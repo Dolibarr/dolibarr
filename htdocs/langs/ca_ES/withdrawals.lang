@@ -78,3 +78,12 @@ BankToReceiveWithdraw=Informació del seu compte bancari receptor de les domicil
 CreditDate=Abonada el
 WithdrawalFileNotCapable=No es possible generar fitxer bancari de domiciliacio per al seu pais
 ShowWithdraw=Veure domiciliació
+
+### Notifications 
+InfoCreditSubject=Abonament de domiciliació %s pel banc
+InfoCreditMessage=L'ordre de domiciliació %s ha estat abonada pel banc <br> Data d'abonament: %s
+InfoTransSubject=Enviament de domiciliació %s al banc
+InfoTransMessage=L'ordre de domiciliació %s ha estat enviada al banc per %s %s.<br><br>
+InfoTransData=Import: %s<br>Mètode: %s<br>Data: %s
+InfoFoot=Aquest és un missatge automàtic enviat per Dolibarr
+ModeWarning=No s'ha establert l'opció de treball en real, ens aturarem després d'aquesta simulació

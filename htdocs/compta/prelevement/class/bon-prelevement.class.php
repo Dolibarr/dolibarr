@@ -391,7 +391,7 @@ class BonPrelevement extends CommonObject
 	*/
     function set_infocredit($user, $date)
     {
-    	global $conf;
+    	global $conf,$langs;
 
         $error == 0;
 
@@ -411,11 +411,14 @@ class BonPrelevement extends CommonObject
 
                     if ($this->db->query($sql))
                     {
-                        $subject = "Credit prelevement ".$this->ref." a la banque";
-                        $message = "Le bon de prelevement ".$this->ref;
+                    	//$subject = "Credit prelevement ".$this->ref." a la banque";
+                        /*$message = "Le bon de prelevement ".$this->ref;
                         $message.= " a ete credite par la banque.\n";
-                        $message.= "Date credit : ".dol_print_date($date,'dayhour');
-
+                        $message.= "Date credit : ".dol_print_date($date,'dayhour');*/
+                        $langs->load('withdrawals');
+                        $subject = $langs->trans("InfoCreditSubject", $this->ref); 
+                        $message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date,'dayhour'));
+                        
                         $this->Notify($user, "cr", $subject, $message);
                    
                         // Update prelevement line 
@@ -480,7 +483,7 @@ class BonPrelevement extends CommonObject
 	*/
     function set_infotrans($user, $date, $method)
     {
-    	global $conf;
+    	global $conf,$langs;
 
         $error == 0;
         dol_syslog("bon-prelevement::set_infotrans Start",LOG_INFO);
@@ -498,14 +501,18 @@ class BonPrelevement extends CommonObject
             if ($this->db->query($sql))
             {
                 $this->method_trans = $method;
-
-                $subject = "Transmission du prelevement ".$this->ref." a la banque";
+                
+                /*$subject = "Transmission du prelevement ".$this->ref." a la banque";
                 $message = "Le bon de prelevement ".$this->ref;
                 $message .= " a ete transmis a la banque par ".$user->prenom. " ".$user->nom;
                 $message .= "\n\n";
                 $message .= "\nMontant : ".price($this->amount);
                 $message .= "\nMethode : ".$this->methodes_trans[$this->method_trans];
-                $message .= "\nDate  : ".dol_print_date($date,'day');
+                $message .= "\nDate  : ".dol_print_date($date,'day');*/
+                 $langs->load('withdrawals');
+                 $subject = $langs->trans("InfoTransSubject", $this->ref); 
+                 $message = $langs->trans("InfoTransMessage", $this->ref, $user->prenom, $user->nom);
+                 $message .=$langs->trans("InfoTransData", price($this->amount), $this->methodes_trans[$this->method_trans], dol_print_date($date,'day'));
 
                 $this->Notify($user,"tr", $subject, $message, 1);
             }
@@ -553,10 +560,10 @@ class BonPrelevement extends CommonObject
 	*/
     function Notify($user, $action, $subject, $message, $joinfile=0)
     {
-    	global $conf;
+    	global $conf,$langs;
 
         $message .= "\n\n--\n";
-        $message .= "Ceci est un message automatique envoye par Dolibarr";
+        $message .= $langs->trans("InfoFoot"); //"Ceci est un message automatique envoye par Dolibarr";
 
         $sql = "SELECT u.name, u.firstname, u.email";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -871,7 +878,7 @@ class BonPrelevement extends CommonObject
 			}
 			else
 			{
-				print "Option for real mode was not set, we stop after this simulation\n";
+				print $langs->trans("ModeWarning"); //"Option for real mode was not set, we stop after this simulation\n";
 			}
 		}
 

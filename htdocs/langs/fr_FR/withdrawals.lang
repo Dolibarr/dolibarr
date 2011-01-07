@@ -78,3 +78,12 @@ BankToReceiveWithdraw=Informations de votre compte bancaire recevant les prélè
 CreditDate=Crédité le
 WithdrawalFileNotCapable=Impossible de generer fichier de bon de prelevements pour votre pays
 ShowWithdraw=Voir prélèvement
+
+### Notifications 
+InfoCreditSubject=Credit prélèvement %s a la banque
+InfoCreditMessage=Le bon de prélèvement %s a eté credité par la banque.<br>Date credit : %s 
+InfoTransSubject=Transmission du prélèvement %s a la banque
+InfoTransMessage=Le bon de prélèvement %s a eté transmis a la banque par %s %s.<br><br>
+InfoTransData=Montant: %s<br>Methode: %s<br>Date: %s
+InfoFoot=Ceci est un message automatique envoye par Dolibarr
+ModeWarning=Option mode réel non établi, nous allons arrêter après cette simulation

@@ -78,3 +78,12 @@ BankToReceiveWithdraw=Information about you bank account to receive withdraws
 CreditDate=Credit on
 WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country
 ShowWithdraw=Show Withdraw
+
+### Notifications 
+InfoCreditSubject=Payment of standing order %s by the bank
+InfoCreditMessage=The standing order %s has been paid by the bank<br>Data of payment: %s
+InfoTransSubject=Transmission of standing order %s to bank
+InfoTransMessage=The standing order %s has been transmited to bank by %s %s.<br><br>
+InfoTransData=Amount: %s<br>Metode: %s<br>Date: %s
+InfoFoot=This is an automated message sent by Dolibarr
+ModeWarning=Option for real mode was not set, we stop after this simulation
