@@ -813,7 +813,8 @@ ShowProfIdInAddress=Mostrar el identificador profesional en las direcciones de l
 TranslationUncomplete=Traducción parcial
 SomeTranslationAreUncomplete=Algunos idiomas están traducidos en parte o pueden contener errores. Si lo encuentra, puede corregir los archivos de texto <b>.lang</b> del directorio <b>htdocs/langs</b> y enviarlos al foro <a href="http://www.dolibarr.fr/forum" target="_blank">http://www.dolibarr.fr</a>. 
 MenuUseLayout=Hacer el menú izquierdo ocultable (la opción javascript no debería deshabilitarse)
-##### Module password generation= undefined=
+MAIN_DISABLE_METEO=Deshabilitar la vista meteo
+##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
