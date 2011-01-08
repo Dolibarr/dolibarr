@@ -342,23 +342,33 @@ $level2=$offset+2*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL2)) $level
 $level3=$offset+3*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL3)) $level3=$conf->global->MAIN_METEO_LEVEL3;
 $text=''; $options='height="60px"';
 print '<table>';
-print '<tr><td>';
+print '<tr>';
+print '<td>';
 print img_picto_common($text,'weather/weather-clear.png',$options);
-print '</td><td><= '.$level0.'</td></tr>';
-print '<tr><td>';
+print '</td><td><= '.$level0.'</td>';
+print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
+print '<td>';
 print img_picto_common($text,'weather/weather-few-clouds.png',$options);
-print '</td><td><= '.$level1.'</td></tr>';
-print '<tr><td>';
+print '</td><td><= '.$level1.'</td>';
+print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
+print '<td>';
 print img_picto_common($text,'weather/weather-clouds.png',$options);
-print '</td><td><= '.$level2.'</td></tr>';
+print '</td><td><= '.$level2.'</td>';
+print '</tr>';
+
 print '<tr><td>';
 print img_picto_common($text,'weather/weather-many-clouds.png',$options);
-print '</td><td><= '.$level3.'</td></tr>';
-print '<tr><td>';
+print '</td><td><= '.$level3.'</td>';
+print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
+print '<td>';
 print img_picto_common($text,'weather/weather-storm.png',$options);
-print '</td><td>> '.$level3.'</td></tr>';
+print '</td><td> '.$level3.'</td>';
+print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
+print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
+print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
+print '</tr>';
 
-
+print '</table>';
 
 $db->close();
 
