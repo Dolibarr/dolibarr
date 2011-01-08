@@ -56,7 +56,7 @@ if ($prev_id)
 		print '<table class="border" width="100%">';
 
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'dayhour').'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 
@@ -77,8 +77,8 @@ if ($prev_id)
 			$muser->fetch($bon->user_trans);
 
 			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
-			print dol_print_date($bon->date_trans,'dayhour');
-			print ' / '.$muser->getFullName($langs).'</td></tr>';
+			print dol_print_date($bon->date_trans,'day');
+			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
 			print $bon->methodes_trans[$bon->method_trans];
 			print '</td></tr>';
@@ -86,11 +86,10 @@ if ($prev_id)
 		if($bon->date_credit <> 0)
 		{
 			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
-			print dol_print_date($bon->date_credit,'dayhour');
+			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
 		
-
 		print '</table>';
 
 		print '</div>';

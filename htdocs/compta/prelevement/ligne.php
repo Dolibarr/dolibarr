@@ -110,8 +110,11 @@ if ($_GET["id"])
 		print '<a href="fiche.php?id='.$lipre->bon_rowid.'">'.$lipre->bon_ref.'</a></td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>';
-		print '<img src="./img/statut'.$lipre->statut.'.png"> ';
-		print $langs->trans($lipre->statuts[$lipre->statut]).'</td></tr>';
+		
+		print $lipre->LibStatut($lipre->statut,1).'</td></tr>';
+		
+		/*print '<img src="./img/statut'.$lipre->statut.'.png"> ';
+		print $langs->trans($lipre->statuts[$lipre->statut]).'</td></tr>';*/
 
 		if ($lipre->statut == 3)
 		{
@@ -191,7 +194,7 @@ if ($_GET["id"])
 
 		foreach($rej->motifs as $key => $value)
 		{
-	  print '<option value="'.$key.'">'.$value.'</option>';
+	  		print '<option value="'.$key.'">'.$value.'</option>';
 		}
 		print '</select>';
 		print '</td>';
