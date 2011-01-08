@@ -94,7 +94,7 @@ if ($_GET["id"])
     }
   	else
     {
-      	print "Erreur";
+      	dol_print_error($db);
     }
 }
 

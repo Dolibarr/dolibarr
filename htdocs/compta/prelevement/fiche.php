@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,8 +125,6 @@ if ($_GET["id"])
 			print '<div class="error">'.$bon->ReadError($_GET["error"]).'</div>';
 		}
 
-
-
 		if ($_GET["action"] == 'credite')
 		{
 			$ret=$html->form_confirm("fiche.php?id=".$bon->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite",'',1,1);
@@ -165,12 +163,12 @@ if ($_GET["id"])
 		}
 		if($bon->date_credit <> 0)
 		{
-			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
+			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td>>';
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
 
-		print '</table><br>';
+		print '</table>';
 
 		if($bon->date_trans == 0)
 		{
@@ -188,10 +186,10 @@ if ($_GET["id"])
 			print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 			print '<input class="flat" type="file" name="userfile" size="80"><br>';
 			print '</td></tr>';
-			print '<tr><td colspan="2" align="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Send").'">';
-			print '</td></tr>';
-			print '</table></form>';
+			print '</table>';
+			dol_fiche_end();
+			print '<center><input type="submit" class="button" value="'.$langs->trans("Send").'">';
+			print '</form>';
 		}
 
 		if($bon->date_trans <> 0 && $bon->date_credit == 0)
@@ -203,12 +201,11 @@ if ($_GET["id"])
 			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
 			print $html->select_date('','','','','',"infocredit");
 			print '</td></tr>';
-			print '<tr><td colspan="2" align="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Send").'">';
-			print '</td></tr>';
-			print '</table></form>';
+			print '</table>';
+			dol_fiche_end();
+			print '<center><input type="submit" class="button" value="'.$langs->trans("Send").'">';
+			print '</form>';
 		}
-
 	}
 	else
 	{
@@ -216,23 +213,21 @@ if ($_GET["id"])
 	}
 }
 
-
 /* ************************************************************************** */
 /*                                                                            */
 /* Barre d'action                                                             */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 print "\n</div>\n<div class=\"tabsAction\">\n";
 
-/*if ($bon->statut == 0)
+if ($bon->statut == 0)
 {
 	print "<a class=\"butAction\" href=\"fiche.php?action=credite&amp;id=$bon->id\">".$langs->trans("ClassCredited")."</a>";
-}*/
-
+}
+*/
 print "</div>";
-
-
 
 $db->close();
 

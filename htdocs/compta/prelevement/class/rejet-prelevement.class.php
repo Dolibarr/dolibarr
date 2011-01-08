@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,29 +39,39 @@ class RejetPrelevement
 
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB          Handler acces base de donnees
-	 *    \param  user        Utilisateur
+	 *    Class constructor
+	 *    @param  DB          Database Handler access
+	 *    @param  user        User
 	 */
 	function RejetPrelevement($DB, $user)
 	{
+		global $langs;
+		
 		$this->db = $DB ;
 		$this->user = $user;
 
 		$this->motifs = array();
-		/* $this->motifs[0] = "Non renseigne";
-		 $this->motifs[1] = "Provision insuffisante";
-		 $this->motifs[2] = "Tirage conteste";
-		 $this->motifs[3] = "Pas de bon � payer";
-		 $this->motifs[4] = "Opposition sur compte";
-		 $this->motifs[5] = "RIB inexploitable";
-		 $this->motifs[6] = "Compte solde";
-		 $this->motifs[7] = "Decision judiciaire";
-		 $this->motifs[8] = "Autre motif";*/
+		$this->facturer = array();
+		
+		$this->motifs[0] = $langs->trans("StatusMotif0");
+    	$this->motifs[1] = $langs->trans("StatusMotif1");
+    	$this->motifs[2] = $langs->trans("StatusMotif2");
+    	$this->motifs[3] = $langs->trans("StatusMotif3");
+    	$this->motifs[4] = $langs->trans("StatusMotif4");
+    	$this->motifs[5] = $langs->trans("StatusMotif5");
+    	$this->motifs[6] = $langs->trans("StatusMotif6");
+    	$this->motifs[7] = $langs->trans("StatusMotif7");
+    	$this->motifs[8] = $langs->trans("StatusMotif8");
+    	
+    	$this->facturer[0]=$langs->trans("NoInvoiceRefused");
+		$this->facturer[1]=$langs->trans("InvoiceRefused");
+    	
 	}
 
 	function create($user, $id, $motif, $date_rejet, $bonid, $facturation=0)
 	{
+		global $langs;
+		
 		$error = 0;
 		$this->id = $id;
 		$this->bon_id = $bonid;
@@ -72,9 +82,7 @@ class RejetPrelevement
 
 		$this->db->begin();
 
-
-		/* Insert la ligne de rejet dans la base */
-
+		// Insert refused line into database
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_rejet (";
 		$sql.= "fk_prelevement_lignes";
 		$sql.= ", date_rejet";
@@ -100,8 +108,7 @@ class RejetPrelevement
 			$error++;
 		}
 
-		/* Tag la ligne de prev comme rejetee */
-
+		// Tag the line to refused
 		$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes ";
 		$sql.= " SET statut = 3";
 		$sql.= " WHERE rowid = ".$id;
@@ -118,39 +125,39 @@ class RejetPrelevement
 			$fac = new Facture($this->db);
 			$fac->fetch($facs[$i]);
 
-			/* Emet un paiement negatif */
-
+			// Make a negative payment
 			$pai = new Paiement($this->db);
 
 			$pai->amounts = array();
-			// On remplace la virgule eventuelle par un point sinon
-			// certaines install de PHP renvoie uniquement la partie
-			// entiere negative
-
+			
+			/* 
+			 * We replace the comma with a point otherwise some
+			 * PHP installs sends only the part integer negative
+			*/
+			
 			$pai->amounts[$facs[$i]] = price2num($fac->total_ttc * -1);
-			$pai->datepaye = $this->db->idate($date_rejet);
-			$pai->paiementid = 3; // prelevement
-			$pai->num_paiement = "Rejet";
+			$pai->datepaye = $date_rejet;
+			$pai->paiementid = 3; // type of payment: withdrawal
+			$pai->num_paiement = $langs->trans("StatusRefused");
 
-			if ($pai->create($this->user, 1) == -1)  // on appelle en no_commit
+			if ($pai->create($this->user, 1) == -1)  // we call with no_commit
 	  {
 	  	$error++;
 	  	dol_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
 	  }
 
-	  /* Valide le paiement */
-
+	  // Payment validation
 	  if ($pai->valide() < 0)
 	  {
 	  	$error++;
 	  	dol_syslog("RejetPrelevement::Create Erreur validation du paiement");
 	  }
 
-	  /* Tag la facture comme impayee */
+	  // Tag invoice as unpaid
 	  dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
 	  $fac->set_unpaid($fac->id, $user);
 
-	  /* Envoi un email � l'emetteur de la demande de prev */
+	  // Send email to sender of the standing order request
 	  $this->_send_email($fac);
 		}
 
@@ -168,8 +175,8 @@ class RejetPrelevement
 	}
 
 	/**
-	 *      \brief      Envoi mail
-	 * 		\param		fac			Invoice object
+	 *      Envoi mail
+	 * 		@param		fac			Invoice object
 	 */
 	function _send_email($fac)
 	{
@@ -240,20 +247,16 @@ class RejetPrelevement
 		}
 	}
 
-
 	/**
-	 *    \brief      Recupere la liste des factures concernees
+	 *    Retrieve the list of invoices
 	 */
 	function _get_list_factures()
 	{
 		global $conf;
 
 		$arr = array();
-		/*
-		 * Renvoie toutes les factures associ�e � un pr�l�vement
-		 *
-		 */
-
+		
+		 //Returns all invoices of a withdrawal
 		$sql = "SELECT f.rowid as facid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
 		$sql.= ", ".MAIN_DB_PREFIX."facture as f";
@@ -287,16 +290,14 @@ class RejetPrelevement
 
 	}
 
-
-
 	/**
-	 *    \brief      Recupere l'objet prelevement
-	 *    \param      rowid       id de la facture a recuperer
+	 *    Retrieve withdrawal object
+	 *    @param      rowid       id of invoice to retrieve
 	 */
 	function fetch($rowid)
 	{
 
-		$sql = "SELECT pr.date_rejet as dr, motif";
+		$sql = "SELECT pr.date_rejet as dr, motif, afacturer";
 		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_rejet as pr";
 		$sql.= " WHERE pr.fk_prelevement_lignes =".$rowid;
 
@@ -310,6 +311,7 @@ class RejetPrelevement
 				$this->id             = $rowid;
 				$this->date_rejet     = $this->db->jdate($obj->dr);
 				$this->motif          = $this->motifs[$obj->motif];
+				$this->invoicing	  =	$this->facturer[$obj->afacturer];
 
 				$this->db->free($resql);
 
