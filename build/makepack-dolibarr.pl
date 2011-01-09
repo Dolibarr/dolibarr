@@ -408,6 +408,9 @@ if ($nboftargetok) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.postgres`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf*sav*`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/test`;
+            # To remove once stable
+            $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/incluces/modules/facture/doc/doc_generic_invoice_odt.modules.php`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
 
  			print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
             open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
