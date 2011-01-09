@@ -435,7 +435,8 @@ if ($resql)
 print '</table><br>';
 
 
-# Affiche ligne d'ajout
+# Other parameters
+print_titre($langs->trans("Other"));
 print '<table class="noborder" width="100%">';
 
 $var=false;
