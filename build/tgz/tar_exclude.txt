@@ -54,6 +54,8 @@ htdocs/includes/triggers/interface_user.class.php
 htdocs/includes/triggers/interface_contractfrombill.class.php-NORUN
 htdocs/includes/triggers/interface_modEditeur_Editeur.class.php-NORUN
 htdocs/includes/tcpdf/fonts/utils
+htdocs/includes/tcpdf/fonts/free*.ctg.z
+htdocs/includes/tcpdf/fonts/free*.z
 htdocs/lolix
 htdocs/oscommerce_ws/ws_client_demo
 htdocs/postnuke
