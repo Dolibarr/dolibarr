@@ -534,11 +534,11 @@ function write_conf_file($conffile)
 
 		fputs($fp, '$dolibarr_main_document_root=\''.addslashes($main_dir).'\';');
 		fputs($fp,"\n");
-		
-		fputs($fp, '$dolibarr_main_url_root_alt=\''.addslashes("/custom").'\';');
+
+		fputs($fp, '#$dolibarr_main_url_root_alt=\''.addslashes("/custom").'\';');
 		fputs($fp,"\n");
-		
-		fputs($fp, '$dolibarr_main_document_root_alt=\''.addslashes($main_dir."/custom").'\';');
+
+		fputs($fp, '#$dolibarr_main_document_root_alt=\''.addslashes($main_dir."/custom").'\';');
 		fputs($fp,"\n");
 
 		fputs($fp, '$dolibarr_main_data_root=\''.addslashes($main_data_dir).'\';');
@@ -571,10 +571,10 @@ function write_conf_file($conffile)
 		/* Authentication */
 		fputs($fp, '$dolibarr_main_authentication=\'dolibarr\';');
 		fputs($fp,"\n\n");
-		
+
 		fputs($fp, '# Specific settings');
         fputs($fp,"\n");
-		
+
         fputs($fp, '$dolibarr_main_prod=\'0\';');
         fputs($fp,"\n");
 
@@ -586,7 +586,7 @@ function write_conf_file($conffile)
 
 		fputs($fp, '$dolibarr_main_cookie_cryptkey=\''.$key.'\';');
 		fputs($fp,"\n");
-		
+
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
         fputs($fp,"\n");
 
