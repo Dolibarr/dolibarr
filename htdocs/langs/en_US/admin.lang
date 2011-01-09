@@ -169,7 +169,7 @@ FeatureDisabledInDemo=Feature disabled in demo
 Rights=Permissions
 BoxesDesc=Boxes are screen area that show a piece of information on some pages. You can choose between showing the box or not by selecting target page and clicking 'Activate', or by clicking the dustbin to disable it.
 OnlyActiveElementsAreShown=Only elements from <a href="modules.php">enabled modules</a> are shown.
-ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module.
+ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module. Click on button on/off in column "Status" to enable a module/feature.
 ModulesInterfaceDesc=The Dolibarr modules interface allows you to add features depending on external software, systems or services.
 ModulesSpecialDesc=Special modules are very specific or seldom used modules.
 ModulesJobDesc=Business modules provide simple predefined setup of Dolibarr for a particular business.

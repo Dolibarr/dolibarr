@@ -169,7 +169,7 @@ FeatureDisabledInDemo= Fonction désactivée dans la démo
 Rights= Permissions
 BoxesDesc= Les boîtes sont des zones d'information réduites qui s'affichent sur certaines pages. Vous pouvez choisir ou non d'activer une boîte en sélectionnant la page cible et en cliquant sur 'Activer', ou en cliquant sur la poubelle pour la désactiver.
 OnlyActiveElementsAreShown= Seuls les éléments en rapport avec un <a href="modules.php">module actif</a> sont présentés.
-ModulesDesc= Les modules Dolibarr définissent les fonctionnalités disponibles dans l'application. Certains modules nécessitent des droits qu'il vous faudra affecter aux utilisateurs pour qu'ils puissent accéder à leurs fonctionnalités.
+ModulesDesc= Les modules Dolibarr définissent les fonctionnalités disponibles dans l'application. Certains modules nécessitent des droits qu'il vous faudra affecter aux utilisateurs pour qu'ils puissent accéder à leurs fonctionnalités. Cliquez sur le bouton on/off de la colonne "Etat" pour activer un module/fonctionnalité.
 ModulesInterfaceDesc= Les modules d'interfaces sont des modules qui permettent de lier Dolibarr à des systèmes, applications ou services externes.
 ModulesSpecialDesc= Les modules complémentaires sont des modules à usage très spécifique ou moins courant que les modules standards.
 ModulesJobDesc= Les modules métiers très spécifiques permettent une préconfiguration simplifiée de Dolibarr pour un métier spécifique.
