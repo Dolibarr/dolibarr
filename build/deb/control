@@ -22,18 +22,21 @@ Description: Dolibarr ERP/CRM
  * Bank accounts management
  * Customers, Suppliers or Prospects directory
  * Contacts directory
- * Commercial actions management
  * Orders management
- * Commercial proposals management with PDF export
- * Contracts management
- * Invoices management with PDF export
+ * Commercial proposals management
+ * Invoices management
+ * Point of Sale
  * Payments management
+ * Commercial actions management
+ * Contracts management
  * Standing orders management
  * Shipping management
  * Foundations members management
  * Donations management
  * Bookmarks management
- * Emailings
+ * Mass Emailings
  * Reports
  * Data export and import tools
  * LDAP connectivity
+ * PDF exports
+ * And a lot of other modules
