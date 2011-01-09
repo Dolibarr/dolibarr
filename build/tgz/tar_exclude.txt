@@ -61,7 +61,6 @@ htdocs/oscommerce_ws/ws_client_demo
 htdocs/postnuke
 htdocs/public/bplc
 htdocs/rapport
-htdocs/theme/bureau2crea
 htdocs/theme/rodolphe
 htdocs/theme/eldy/img/menus/tango*
 htdocs/telephonie
@@ -106,3 +105,5 @@ huitre
 pdf_huitre.modules.php
 doxygen_warnings.log
 dolibarr_install.log
+doc_generic_invoice_odt.modules.php
+htdocs/theme/bureau2crea
