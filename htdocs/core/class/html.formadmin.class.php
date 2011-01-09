@@ -184,14 +184,16 @@ class FormAdmin
     }
 
     /**
-     *    Retourne la liste deroulante des menus disponibles
-     *    @param      selected        Menu pre-selectionnee
-     *    @param      htmlname        Nom de la zone select
-     *    @param      dirmenuarray    Repertoires a scanner
+     *    Return combo list of available menu families
+     *    @param      selected        Menu pre-selected
+     *    @param      htmlname        Name of html select
+     *    @param      dirmenuarray    Directories to scan
      */
     function select_menu_families($selected='',$htmlname,$dirmenuarray)
     {
 		global $langs,$conf;
+
+        $expdevmenu=array('iphone_backoffice.php','iphone_frontoffice.php');  // Menu to disable if $conf->global->MAIN_FEATURES_LEVEL is not set
 
 		$menuarray=array();
 
@@ -208,6 +210,7 @@ class FormAdmin
     					if (preg_match('/^default/i',$filelib)) continue;
     					if (preg_match('/^empty/i',$filelib)) continue;
     					if (preg_match('/\.lib/i',$filelib)) continue;
+    					if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file,$expdevmenu)) continue;
 
     					$menuarray[$filelib]=1;
     				}
