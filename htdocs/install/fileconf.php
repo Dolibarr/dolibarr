@@ -86,42 +86,42 @@ if (! empty($force_install_message))
 		</td>
 	</tr>
 
+    <!-- Documents root $dolibarr_main_document_root -->
 	<tr>
-	<?php
-	print '<td valign="top" class="label"><b>';
-	print $langs->trans("WebPagesDirectory");
-	print "</b></td>";
+    	<?php
+    	print '<td valign="top" class="label"><b>';
+    	print $langs->trans("WebPagesDirectory");
+    	print "</b></td>";
 
-	if(! isset($dolibarr_main_url_root) || dol_strlen($dolibarr_main_url_root) == 0)
-	{
-	    //print "x".$_SERVER["SCRIPT_FILENAME"]." y".$_SERVER["DOCUMENT_ROOT"];
+    	if(! isset($dolibarr_main_url_root) || dol_strlen($dolibarr_main_url_root) == 0)
+    	{
+    	    //print "x".$_SERVER["SCRIPT_FILENAME"]." y".$_SERVER["DOCUMENT_ROOT"];
 
-	    // Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
-	    // ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
-	    if (preg_match('/^php$/i',$_SERVER["SCRIPT_FILENAME"]) || preg_match('/[\\/]php$/i',$_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i',$_SERVER["SCRIPT_FILENAME"]))
-	    {
-	        $dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
+    	    // Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
+    	    // ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
+    	    if (preg_match('/^php$/i',$_SERVER["SCRIPT_FILENAME"]) || preg_match('/[\\/]php$/i',$_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i',$_SERVER["SCRIPT_FILENAME"]))
+    	    {
+    	        $dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
 
-	        if (! preg_match('/[\\/]dolibarr[\\/]htdocs$/i',$dolibarr_main_document_root))
-	        {
-	            $dolibarr_main_document_root.="/dolibarr/htdocs";
-	        }
-	    }
-	    else
-	    {
-	        $dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,dol_strlen($_SERVER["SCRIPT_FILENAME"]) - 21);
-	        // Nettoyage du path propose
-	        // Gere les chemins windows avec double "\"
-	        $dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);
+    	        if (! preg_match('/[\\/]dolibarr[\\/]htdocs$/i',$dolibarr_main_document_root))
+    	        {
+    	            $dolibarr_main_document_root.="/dolibarr/htdocs";
+    	        }
+    	    }
+    	    else
+    	    {
+    	        $dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,dol_strlen($_SERVER["SCRIPT_FILENAME"]) - 21);
+    	        // Nettoyage du path propose
+    	        // Gere les chemins windows avec double "\"
+    	        $dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);
 
-	        // Supprime les slash ou antislash de fins
-	        $dolibarr_main_document_root = preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
-	    }
-	}
-	//echo $PMA_MYSQL_INT_VERSION;
-	?>
-		<td class="label" valign="top"><input type="text" size="60"
-			value="<?php print $dolibarr_main_document_root; ?>" name="main_dir">
+    	        // Supprime les slash ou antislash de fins
+    	        $dolibarr_main_document_root = preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
+    	    }
+    	}
+    	?>
+		<td class="label" valign="top">
+		<input type="text" size="60" value="<?php print $dolibarr_main_document_root; ?>"<?php print (empty($todoforce_install_main_data_root)?'':' disabled="true"'); ?> name="main_dir">
 		</td>
 		<td class="comment"><?php
 		print $langs->trans("WithNoSlashAtTheEnd")."<br>";
@@ -134,9 +134,10 @@ if (! empty($force_install_message))
 		</td>
 	</tr>
 
+    <!-- Documents URL $dolibarr_main_data_root -->
 	<tr>
-		<td valign="top" class="label"><b> <?php print $langs->trans("DocumentsDirectory"); ?>
-		</b></td>
+		<td valign="top" class="label"><b> <?php print $langs->trans("DocumentsDirectory"); ?></b>
+		</td>
 		<?php
 		if (empty($dolibarr_main_data_root))
 		{
@@ -152,8 +153,8 @@ if (! empty($force_install_message))
 		    }
 		}
 		?>
-		<td class="label" valign="top"><input type="text" size="60"
-			value="<?php print $dolibarr_main_data_root; ?>" name="main_data_dir">
+		<td class="label" valign="top">
+		<input type="text" size="60" value="<?php print $dolibarr_main_data_root; ?>"<?php print (empty($todoforce_install_main_data_root)?'':' disabled="true"'); ?>  name="main_data_dir">
 		</td>
 		<td class="comment"><?php
 		print $langs->trans("WithNoSlashAtTheEnd")."<br>";
@@ -167,44 +168,41 @@ if (! empty($force_install_message))
 		</td>
 	</tr>
 
-	<tr>
-		<td valign="top" class="label"><b> <?php echo $langs->trans("URLRoot"); ?>
-		</b></td>
-		<td valign="top" class="label"><input type="text" size="60"
-			name="main_url"
-			value="
+    <!-- Root URL $dolibarr_main_url_root -->
 <?php
 if (! empty($main_url)) $dolibarr_main_url_root=$main_url;
 if (empty($dolibarr_main_url_root))
 {
-	# If defined (Ie: Apache with Linux)
-	if (isset($_SERVER["SCRIPT_URI"])) {
-		$dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
-	}
-	# If defined (Ie: Apache with Caudium)
-	elseif (isset($_SERVER["SERVER_URL"]) && isset($_SERVER["DOCUMENT_URI"])) {
-		$dolibarr_main_url_root=$_SERVER["SERVER_URL"].$_SERVER["DOCUMENT_URI"];
-	}
-	# If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
-	else
-	{
-		$proto='http';
-		if (! empty($_SERVER["HTTP_HOST"])) $serverport=$_SERVER["HTTP_HOST"];
-		else $serverport=$_SERVER["SERVER_NAME"];
-		$dolibarr_main_url_root=$proto."://".$serverport.$_SERVER["SCRIPT_NAME"];
-	}
-	# Clean proposed URL
-	$dolibarr_main_url_root = preg_replace('/\/fileconf\.php$/','',$dolibarr_main_url_root);	# Supprime le /fileconf.php
-	$dolibarr_main_url_root = preg_replace('/\/$/','',$dolibarr_main_url_root);				# Supprime le /
-	$dolibarr_main_url_root = preg_replace('/\/index\.php$/','',$dolibarr_main_url_root);		# Supprime le /index.php
-	$dolibarr_main_url_root = preg_replace('/\/install$/','',$dolibarr_main_url_root);		# Supprime le /install
+    # If defined (Ie: Apache with Linux)
+    if (isset($_SERVER["SCRIPT_URI"])) {
+        $dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
+    }
+    # If defined (Ie: Apache with Caudium)
+    elseif (isset($_SERVER["SERVER_URL"]) && isset($_SERVER["DOCUMENT_URI"])) {
+        $dolibarr_main_url_root=$_SERVER["SERVER_URL"].$_SERVER["DOCUMENT_URI"];
+    }
+    # If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
+    else
+    {
+        $proto='http';
+        if (! empty($_SERVER["HTTP_HOST"])) $serverport=$_SERVER["HTTP_HOST"];
+        else $serverport=$_SERVER["SERVER_NAME"];
+        $dolibarr_main_url_root=$proto."://".$serverport.$_SERVER["SCRIPT_NAME"];
+    }
+    # Clean proposed URL
+    $dolibarr_main_url_root = preg_replace('/\/fileconf\.php$/','',$dolibarr_main_url_root);    # Supprime le /fileconf.php
+    $dolibarr_main_url_root = preg_replace('/\/$/','',$dolibarr_main_url_root);             # Supprime le /
+    $dolibarr_main_url_root = preg_replace('/\/index\.php$/','',$dolibarr_main_url_root);       # Supprime le /index.php
+    $dolibarr_main_url_root = preg_replace('/\/install$/','',$dolibarr_main_url_root);      # Supprime le /install
 }
-
-print $dolibarr_main_url_root;
-?>"></td>
-		<td class="comment"><?php
-		print $langs->trans("Examples").":<br>";
-		?>
+?>
+	<tr>
+		<td valign="top" class="label"><b> <?php echo $langs->trans("URLRoot"); ?></b>
+		</td>
+		<td valign="top" class="label">
+		<input type="text" size="60" name="main_url"<?php print (empty($todoforce_install_main_data_root)?'':' disabled="true"'); ?> value="<?php print $dolibarr_main_url_root; ?>">
+		</td>
+		<td class="comment"><?php print $langs->trans("Examples").":<br>"; ?>
 		<ul>
 			<li>http://localhost/</li>
 			<li>http://www.myserver.com:8180/dolibarr</li>
@@ -242,7 +240,7 @@ if (1 == 2) {   // Disabled during install process because HTTPS may not be yet 
 	}
 	?>
 	<tr>
-		<!-- moi-->
+		<!-- Driver type -->
 		<td valign="top" class="label"><b> <?php echo $langs->trans("DriverType"); ?>
 		</b></td>
 
