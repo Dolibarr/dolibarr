@@ -451,7 +451,7 @@ foreach($mainmenuusedarray as $key => $val)
 
 div.login {
   position: absolute;
-  <?php print $right; ?>: 60px;
+  <?php print $right; ?>: 46px;
   top: 10px;
   padding: 0px 8px;
   margin: 0px 0px 1px 0px;
