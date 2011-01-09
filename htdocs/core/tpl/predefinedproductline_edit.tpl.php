@@ -43,7 +43,8 @@
 	<?php
 	if ($line->product_type==1) echo img_object($langs->trans('ShowService'),'service');
 	else print img_object($langs->trans('ShowProduct'),'product');
-	echo ' '.$line->ref.'</a>';
+	echo ' '.$line->ref;
+    ?></a><?php
 	echo ' - '.nl2br($line->product_label);
 	echo '<br>';
 
@@ -76,7 +77,7 @@
 	<?php } ?>
 	</td>
 
-	<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
+	<td align="center" colspan="5" valign="middle"><input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
 	<br><input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></td>
 </tr>
 

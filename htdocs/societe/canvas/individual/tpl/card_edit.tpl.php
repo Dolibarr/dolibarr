@@ -49,8 +49,8 @@
 	<?php } else { ?>
 	<input type="text" size="5" maxlength="5" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
 	<?php } ?>
-	<td>
-</td>
+	</td>
+</tr>
 
 <tr>
 	<td width="25%"><span class="fieldrequired"><?php echo $langs->trans('ProspectCustomer'); ?></span></td>
@@ -112,7 +112,7 @@ if ($this->control->tpl['fournisseur']) {
 
 <tr>
 	<td valign="top"><?php echo $langs->trans('Address'); ?></td>
-	<td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft"><?php echo $this->control->tpl['address']; ?></textarea></td>
+	<td colspan="3"><textarea name="adresse" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
 </tr>
 
 <tr>

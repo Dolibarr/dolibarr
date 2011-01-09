@@ -68,7 +68,7 @@
 	<?php } ?>
 	</td>
 
-	<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
+	<td align="center" colspan="5" valign="middle"><input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
 	<br><input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></td>
 </tr>
 

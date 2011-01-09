@@ -60,7 +60,7 @@
 <?php } ?>
 
 <tr><td valign="top"><?php echo $langs->trans("Description"); ?></td><td>
-<?php if (! $this->object->tpl['textarea_description']) { 
+<?php if (! $this->object->tpl['textarea_description']) {
 $this->object->tpl['doleditor_description']->Create();
 }else{
 echo $this->object->tpl['textarea_description'];
@@ -95,7 +95,7 @@ echo $this->object->tpl['textarea_description'];
 <td><?php echo $this->object->tpl['hidden']; ?></td></tr>
 
 <tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
-<?php if (! $this->object->tpl['textarea_note']) { 
+<?php if (! $this->object->tpl['textarea_note']) {
 $this->object->tpl['doleditor_note']->Create();
 }else{
 echo $this->object->tpl['textarea_note'];

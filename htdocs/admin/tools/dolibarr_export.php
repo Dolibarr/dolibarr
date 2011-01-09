@@ -148,7 +148,7 @@ if ($_GET["msg"])
 			</div>
 
 			<div class="formelementrow"><input type="checkbox" name="disable_fk"
-				value="yes" id="checkbox_disable_fk" checked="true" /> <label
+				value="yes" id="checkbox_disable_fk" checked="checked" /> <label
 				for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?></label>
 			</div>
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>

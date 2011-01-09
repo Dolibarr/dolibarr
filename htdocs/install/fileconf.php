@@ -216,7 +216,7 @@ print $dolibarr_main_url_root;
 if (1 == 2) {   // Disabled during install process because HTTPS may not be yet configured in web server and need experienced skills
 ?>
 	<tr>
-		<td valign="top" class="label"><?php echo $langs->trans("ForceHttps"); ?>
+		<td valign="top" class="label"><?php echo $langs->trans("ForceHttps"); ?></td>
 		<td class="label" valign="top"><input type="checkbox"
 			name="main_force_https"
 			<?php if (! empty($force_install_mainforcehttps)) print ' checked="on"'; ?>></td>

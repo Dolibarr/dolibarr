@@ -199,9 +199,9 @@ else
 
 	<br>
 
-	<table class="nobordernopadding" width="100%">
-
 	<?php
+
+	print '<table class="nobordernopadding" width="100%">'."\n";
 
 	$sql ="select name, value, note from ".MAIN_DB_PREFIX."const";
 	$sql.=" WHERE name like 'FTP_SERVER_%'";
