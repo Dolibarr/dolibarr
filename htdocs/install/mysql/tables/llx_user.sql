@@ -37,9 +37,9 @@ create table llx_user
   user_mobile       varchar(20),
   email             varchar(255),
   admin             smallint DEFAULT 0,
-  webcal_login      varchar(25),
-  phenix_login      varchar(25),
-  phenix_pass       varchar(128),
+  webcal_login      varchar(25),			-- TODO move to an extra table (ex: llx_extra_fields)
+  phenix_login      varchar(25),			-- TODO move to an extra table (ex: llx_extra_fields)
+  phenix_pass       varchar(128),			-- TODO move to an extra table (ex: llx_extra_fields)
   module_comm       smallint DEFAULT 1,
   module_compta     smallint DEFAULT 1,
   fk_societe        integer,
