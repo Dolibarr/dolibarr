@@ -132,7 +132,7 @@ ALTER TABLE llx_mailing_cibles MODIFY source_url varchar(160);
 ALTER TABLE llx_mailing_cibles ADD COLUMN source_id integer after source_url;
 ALTER TABLE llx_mailing_cibles ADD COLUMN source_type varchar(16) after source_id;
 
-ALTER TABLE llx_facture_rec MODIFY frequency          integer;
+ALTER TABLE llx_facture_rec MODIFY frequency integer;
 ALTER TABLE llx_facture_rec ADD COLUMN unit_frequency     varchar(2) DEFAULT 'd';
 ALTER TABLE llx_facture_rec ADD COLUMN date_when          datetime DEFAULT NULL;
 ALTER TABLE llx_facture_rec ADD COLUMN date_last_gen      datetime DEFAULT NULL;
@@ -143,9 +143,9 @@ ALTER TABLE llx_facture_rec ADD COLUMN nb_gen_max         integer DEFAULT NULL;
 ALTER TABLE llx_user ADD COLUMN openid varchar(255);
 
 -- Enhance Withdrawal module
-INSERT INTO llx_action_def (code,titre,description,objet_type) values ('NOTIFY_TRN_WITHDRAW','Transmit withdraw','Executed when a withdrawal is transmited','withdraw');
-INSERT INTO llx_action_def (code,titre,description,objet_type) values ('NOTIFY_CRD_WITHDRAW','Credite withdraw','Executed when a withdrawal is credited','withdraw');
-INSERT INTO llx_action_def (code,titre,description,objet_type) values ('NOTIFY_EMT_WITHDRAW','Emit withdraw','Executed when a withdrawal is emited','withdraw');
+INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (7,'NOTIFY_TRN_WITHDRAW','Transmit withdraw','Executed when a withdrawal is transmited','withdraw');
+INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (8,'NOTIFY_CRD_WITHDRAW','Credite withdraw','Executed when a withdrawal is credited','withdraw');
+INSERT INTO llx_action_def (rowid,code,titre,description,objet_type) values (9,'NOTIFY_EMT_WITHDRAW','Emit withdraw','Executed when a withdrawal is emited','withdraw');
 
 ALTER TABLE llx_prelevement_notifications MODIFY action varchar(32);
 

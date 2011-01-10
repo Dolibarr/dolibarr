@@ -267,7 +267,7 @@ if (1 == 2) {   // Disabled during install process because HTTPS may not be yet 
     		        $versionbasemin=array();
     		        if ($type=='mysql')  { $versionbasemin=array(3,1,0); $testfunction='mysql_connect'; }
     		        if ($type=='mysqli') { $versionbasemin=array(4,1,0); $testfunction='mysqli_connect'; }
-    		        if ($type=='pgsql')  { $versionbasemin=array(8,1,0); $testfunction='pg_connect'; }
+    		        if ($type=='pgsql')  { $versionbasemin=array(8,4,0); $testfunction='pg_connect'; }
     		        if ($type=='mssql')  { $versionbasemin=array(2000);  $testfunction='mssql_connect'; }
 
     		        // Remarques
