@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Matteli
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1066,25 +1066,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     $menutop = new MenuTop($db);
 	$menutop->atarget=$target;
 	$menutop->showmenu();
-
-	// Select entity
-	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
-	{
-		if ($user->admin && ! $user->entity)
-		{
-			$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
-
-			if ($res)
-			{
-				//$mc = new ActionsMulticompany($db);
-				$entitytext = img_object('', 'globe','entity');
-				$entityhtmltext = 'EntityName';
-				print $html->textwithtooltip('',$entityhtmltext,2,1,$entitytext);
-				//$select_entity = '<div class="loginSelectEntity">'.$mc->select_entities($conf->entity).'</div>';
-				//if ($mc->numEntity >= 1) print $select_entity;
-			}
-		}
-	}
+	
+	print "\n</div>\n";
 
 	// Link to login card
 	$loginhtmltext=''; $logintext='';
@@ -1140,8 +1123,29 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
 		$logouttext.='>';
 	}
+	
+	print '<div class="login_block">'."\n";
 
 	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext);
+	
+	// Select entity
+	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+	{
+		if ($user->admin && ! $user->entity)
+		{
+			$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
+
+			if ($res)
+			{
+				//$mc = new ActionsMulticompany($db);
+				$entitytext = img_object('', 'globe','entity');
+				$entityhtmltext = 'EntityName';
+				print $html->textwithtooltip('',$entityhtmltext,2,1,$entitytext);
+				//$select_entity = '<div class="loginSelectEntity">'.$mc->select_entities($conf->entity).'</div>';
+				//if ($mc->numEntity >= 1) print $select_entity;
+			}
+		}
+	}
 
 	print $html->textwithtooltip('',$logouthtmltext,2,1,$logouttext);
 
