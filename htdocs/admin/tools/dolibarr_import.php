@@ -134,6 +134,7 @@ if ($db->label == 'MySQL')
 	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
 	?>
 	</div>
+    </fieldset>
 <?php
 }
 else if ($db->label == 'PostgreSQL')
@@ -169,11 +170,11 @@ else if ($db->label == 'PostgreSQL')
     //else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
     ?>
     </div>
+    </fieldset>
 <?php
 }
 ?>
 
-	</fieldset>
 </div>
 
 
