@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2007-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -449,13 +449,23 @@ foreach($mainmenuusedarray as $key => $val)
 
 /* Login */
 
+div.login_block {
+	position: absolute;
+	white-space: nowrap;
+	<?php print $right; ?>: 5px;
+	top: 10px;
+	font-weight: bold;
+}
+
+div.login_block table {
+	display: inline;
+}
+
 div.login {
-  position: absolute;
-  <?php print $right; ?>: 46px;
-  top: 10px;
-  padding: 0px 8px;
-  margin: 0px 0px 1px 0px;
-  font-weight: bold;
+	display: inline;
+	padding: 0px 5px;
+	margin: 0px 0px 1px 0px;
+	font-weight: bold;
 }
 div.login a {
 	color: #234046;
@@ -466,19 +476,11 @@ div.login a:hover {
 }
 
 img.login, img.printer, img.entity {
-  position: absolute;
-  <?php print $right; ?>: 25px;
-  top: -1px;
-  padding: 10px 0px 0px 0px;
-  text-decoration: none;
-  color: white;
-  font-weight: bold;
-}
-img.printer {
-  <?php print $right; ?>: 4px;
-}
-img.entity {
-  <?php print $right; ?>: 48px;
+	padding: 8px 0px 0px 0px;
+	margin: 0px 0px 0px 8px;
+	text-decoration: none;
+	color: white;
+	font-weight: bold;
 }
 
 
