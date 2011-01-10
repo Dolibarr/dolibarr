@@ -80,20 +80,21 @@ $htmlother=new FormOther($db);
 
 $title=$langs->trans("ProductsAndServices");
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, p.tms as datem,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
+$sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte,';
 $sql.= ' SUM(s.reel) as stock_physique';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock as s,';
-$sql.= ' '.MAIN_DB_PREFIX.'product as p';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-if ($_GET["fourn_id"] > 0)
+// We disable this because this create duplicate lines
+/*if ($_GET["fourn_id"] > 0)
 {
 	$fourn_id = $_GET["fourn_id"];
 	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
-}
-$sql.= " WHERE p.rowid = s.fk_product";
-$sql.= " AND p.entity = ".$conf->entity;
+}*/
+$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_product';
+$sql.= " WHERE p.entity = ".$conf->entity;
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if (!$user->rights->produit->hidden && !$user->rights->service->hidden)
 {
@@ -108,22 +109,18 @@ if ($sall)
 {
 	$sql.= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
 }
-if ($type==1)
+# if the type is not 1, we show all products (type = 0,2,3)
+if (dol_strlen($type))
 {
-	$sql.= " AND p.fk_product_type = '1'";
+    if ($type==1) {
+        $sql.= " AND p.fk_product_type = '1'";
+    } else {
+        $sql.= " AND p.fk_product_type <> '1'";
+    }
 }
-else
-{
-	$sql.= " AND p.fk_product_type <> '1'";
-}
-if ($sref)
-{
-	$sql.= " AND p.ref like '%".$sref."%'";
-}
-if ($snom)
-{
-	$sql.= " AND p.label like '%".addslashes($snom)."%'";
-}
+if ($sref)     $sql.= " AND p.ref like '%".$sref."%'";
+if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
+if ($snom)     $sql.= " AND p.label like '%".addslashes($snom)."%'";
 if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 {
 	$sql.= " AND p.tosell = ".$_GET["tosell"];
@@ -131,6 +128,10 @@ if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 if (isset($_GET["tobuy"]) && dol_strlen($_GET["tobuy"]) > 0)
 {
     $sql.= " AND p.tobuy = ".$_GET["tobuy"];
+}
+if (dol_strlen($canvas) > 0)
+{
+    $sql.= " AND p.canvas = '".addslashes($canvas)."'";
 }
 if($catid)
 {
@@ -145,8 +146,10 @@ if ($search_categ)
 {
 	$sql .= " AND cp.fk_categorie = ".addslashes($search_categ);
 }
-$sql.= " GROUP BY p.rowid, p.ref, p.label, p.price, p.fk_product_type, p.tms,";
+$sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
+$sql.= " p.fk_product_type, p.tms,";
 $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
+if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1 ,$offset);
 $resql = $db->query($sql) ;
@@ -224,6 +227,7 @@ if ($resql)
 		$moreforfilter.=$htmlother->select_categories(0,$search_categ,'search_categ');
 	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
 	}
+	$moreforfilter.=' &nbsp; &nbsp; '.$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.(GETPOST('toolowstock')?' checked="checked"':'').'>';
  	if ($moreforfilter)
 	{
 		print '<tr class="liste_titre">';
@@ -263,7 +267,7 @@ if ($resql)
 		print '</td>';
 	}
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
@@ -317,8 +321,9 @@ if ($resql)
 		}
 		//print '<td align="right">'.$objp->stock_theorique.'</td>';
 		print '<td align="right">'.$objp->seuil_stock_alerte.'</td>';
-		print '<td align="right">'.$objp->stock_physique;
-        if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockTooLow"));
+		print '<td align="right">';
+        if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
+		print $objp->stock_physique;
 		print '</td>';
 		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product_static->id.'">'.$langs->trans("Movements").'</a></td>';
 		print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5,0).'</td>';

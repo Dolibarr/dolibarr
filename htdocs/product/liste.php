@@ -125,15 +125,22 @@ $sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-if ($_GET["fourn_id"] > 0)
+if ($_GET["fourn_id"] > 0)  // The DISTINCT is used to avoid duplicate from this link
 {
 	$fourn_id = $_GET["fourn_id"];
 	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
-if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+if (!$user->rights->produit->hidden && !$user->rights->service->hidden)
+{
+    $sql.=' AND p.hidden=0';
+}
+else
+{
+    if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+    if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+}
 if ($sall)
 {
 	$sql.= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
@@ -154,6 +161,10 @@ if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 {
 	$sql.= " AND p.tosell = ".addslashes($_GET["tosell"]);
 }
+if (isset($_GET["tobuy"]) && dol_strlen($_GET["tobuy"]) > 0)
+{
+    $sql.= " AND p.tobuy = ".$_GET["tobuy"];
+}
 if (dol_strlen($canvas) > 0)
 {
 	$sql.= " AND p.canvas = '".addslashes($canvas)."'";
@@ -171,6 +182,10 @@ if ($search_categ)
 {
 	$sql .= " AND cp.fk_categorie = ".addslashes($search_categ);
 }
+$sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
+$sql.= " p.fk_product_type, p.tms,";
+$sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
+if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1 ,$offset);
 $resql = $db->query($sql) ;
@@ -247,33 +262,7 @@ if ($resql)
 			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/';
 		}
 
-		/*if ($object->smarty)
-		{
-			$template = 'list.tpl';
-			$smarty->template_dir = $template_dir;
-
-			$smarty->assign('fieldlist', $fieldlist);
-			$smarty->assign('datas', $datas);
-			$smarty->assign('url_root', $dolibarr_main_url_root);
-			$smarty->assign('theme', $conf->theme);
-			$smarty->assign('langs', $langs);
-			$smarty->assign('title_picto', $title_picto);
-			$smarty->assign('title_text', $title_text);
-
-			// Enable caching
-			//$smarty->caching = true;
-
-			//$smarty->debugging = true;
-
-			$smarty->display($template, $_GET["canvas"]);
-
-			// Suppression de la version compilee
-			$smarty->clear_compiled_tpl($template);
-		}
-		else
-		{*/
 	   include($template_dir.'list.tpl.php');	// Include native PHP templates
-		/*}*/
 	}
 	else
 	{
@@ -429,14 +418,10 @@ if ($resql)
 				{
 					$product_static->id = $objp->rowid;
 					$product_static->load_stock();
-					if ($product_static->stock_reel < $objp->seuil_stock_alerte)
-					{
-						print '<td align="right">'.$product_static->stock_reel.' '.img_warning($langs->trans("StockTooLow")).'</td>';
-					}
-					else
-					{
-						print '<td align="right">'.$product_static->stock_reel.'</td>';
-					}
+					print '<td align="right">';
+                    if ($product_static->stock_reel < $objp->seuil_stock_alerte) print img_warning($langs->trans("StockTooLow")).' ';
+    				print $product_static->stock_reel;
+					print '</td>';
 				}
 				else
 				{
