@@ -102,7 +102,7 @@ else
 {
 	$title=$langs->trans("ProductsAndServices");
 
-	if ($type)
+	if (isset($_GET["type"]))
 	{
 		if ($type==1)
 		{
@@ -310,7 +310,7 @@ if ($resql)
 		print_liste_field_titre($langs->trans("DateModification"),"liste.php", "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
 		if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"liste.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price",$param,"",'align="right"',$sortfield,$sortorder);
-		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("Stock").'</td>';
+		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
 		print_liste_field_titre($langs->trans("Sell"),"liste.php", "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans("Buy"),"liste.php", "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
@@ -422,7 +422,7 @@ if ($resql)
 			else print price($objp->price).' '.$langs->trans("HT");
 			print '</td>';
 
-			// Affichage du stock
+			// Show stock
 			if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
 			{
 				if ($objp->fk_product_type != 1)

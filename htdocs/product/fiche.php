@@ -210,6 +210,7 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		}
 	}
 }
+
 // Update a product or service
 if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
 {

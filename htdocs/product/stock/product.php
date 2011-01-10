@@ -54,6 +54,22 @@ $mesg = '';
  *	Actions
  */
 
+// Set stock limit
+if ($_POST['action'] == 'setstocklimit')
+{
+    $product = new Product($db);
+    $result=$product->fetch($_POST['id']);
+    $product->seuil_stock_alerte=$_POST["stocklimit"];
+    $result=$product->update($product->id,$user,1,0,1);
+    if ($result < 0)
+    {
+        $mesg=join(',',$product->errors);
+    }
+    $POST["action"]="";
+    $id=$_POST["id"];
+    $_GET["id"]=$_POST["id"];
+}
+
 // Correct stock
 if ($_POST["action"] == "correct_stock" && ! $_POST["cancel"])
 {
@@ -182,7 +198,9 @@ if ($_GET["id"] || $_GET["ref"])
 
 		// Stock physique
 		print '<tr><td>'.$langs->trans("PhysicalStock").'</td>';
-		print '<td>'.$product->stock_reel.'</td>';
+		print '<td>'.$product->stock_reel;
+		if ($product->seuil_stock_alerte && ($product->stock_reel < $product->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockTooLow"));
+		print '</td>';
 		print '</tr>';
 
 		// Calculating a theorical value of stock if stock increment is done on real sending
@@ -247,10 +265,10 @@ if ($_GET["id"] || $_GET["ref"])
 			print '</td></tr>';
 		}
 
-		// Stock
-		print '<tr><td>'.$langs->trans("StockLimit").'</td>';
-		print '<td>'.$product->seuil_stock_alerte.'</td>';
-		print '</tr>';
+        // Stock
+        print '<tr><td>'.$html->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,'id',$product->id,$user->rights->produit->creer).'</td><td colspan="2">';
+        print $html->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,'id',$product->id,$user->rights->produit->creer);
+        print '</td></tr>';
 
 		// Last movement
 		$sql = "SELECT max(m.datem) as datem";
@@ -387,8 +405,8 @@ else
 
 print "<div class=\"tabsAction\">\n";
 
-if ($_GET["action"] == '' )
-{
+//if (empty($_GET["action"]))
+//{
     if ($user->rights->stock->creer)
     {
         print '<a class="butAction" href="product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
@@ -398,7 +416,7 @@ if ($_GET["action"] == '' )
 	{
 		print '<a class="butAction" href="product.php?id='.$product->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
 	}
-}
+//}
 print '</div>';
 
 
