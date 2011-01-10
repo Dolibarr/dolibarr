@@ -1206,18 +1206,25 @@ class DoliDb
 	/**
 	 *	\brief		Return full path of dump program
 	 *	\return		string		Full path of dump program
-	 *  TODO L'utilisateur de la base doit etre un superadmin pour lancer cette commande
 	 */
 	function getPathOfDump()
 	{
 		$fullpathofdump='/pathtopgdump/pg_dump';
 
-		$resql=$this->query('SHOW data_directory');
-		if ($resql)
+		if (file_exists('/usr/bin/pg_dump'))
 		{
-			$liste=$this->fetch_array($resql);
-			$basedir=$liste['data_directory'];
-			$fullpathofdump=preg_replace('/data$/','bin',$basedir).'/pg_dump';
+		    $fullpathofdump='/usr/bin/pg_dump';
+		}
+		else
+		{
+            // TODO L'utilisateur de la base doit etre un superadmin pour lancer cette commande
+		    $resql=$this->query('SHOW data_directory');
+    		if ($resql)
+    		{
+    			$liste=$this->fetch_array($resql);
+    			$basedir=$liste['data_directory'];
+    			$fullpathofdump=preg_replace('/data$/','bin',$basedir).'/pg_dump';
+    		}
 		}
 
 		return $fullpathofdump;
