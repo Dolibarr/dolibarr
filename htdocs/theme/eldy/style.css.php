@@ -452,7 +452,7 @@ foreach($mainmenuusedarray as $key => $val)
 div.login_block {
 	position: absolute;
 	<?php print $right; ?>: 5px;
-	top: 10px;
+	top: 3px;
 	font-weight: bold;
 }
 
