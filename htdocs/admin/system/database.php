@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -21,7 +21,7 @@
 
 /**
  *   \file       htdocs/admin/system/database.php
- *   \brief      Page des infos systeme de la base de donnee
+ *   \brief      Page with system information of database
  *   \version    $Id$
  */
 
@@ -48,7 +48,7 @@ print_fiche_titre($langs->trans("DatabaseConfiguration"),'','setup');
 // Database
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
-print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" . $db->getLabel()." ".$db->getVersion() . "</td></tr>\n";
+print "<tr $bc[0]><td width=\"300\">".$langs->trans("Version")."</td><td>" . $db->getLabel()." ".$db->getVersion() . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("DatabaseServer")."</td><td>" . $conf->db->host . "</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("DatabasePort")."</td><td>" . (empty($conf->db->port)?$langs->trans("Default"):$conf->db->port) . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
@@ -90,7 +90,7 @@ else
 		print '<br>';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Parameter").'</td>';
+		print '<td width="300">'.$langs->trans("Parameter").'</td>';
 		print '<td>'.$langs->trans("Value").'</td>';
 		print "</tr>\n";
 
