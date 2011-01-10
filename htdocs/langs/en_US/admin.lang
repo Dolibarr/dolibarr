@@ -153,6 +153,7 @@ ExportCompatibility=Compatibility of generated export file
 MySqlExportParameters=MySQL export parameters
 UseTransactionnalMode=Use transactional mode
 FullPathToMysqldumpCommand=Full path to mysqldump command
+FullPathToPostgreSQLdumpCommand=Full path to pg_dump command
 ExportOptions=Export Options
 AddDropDatabase=Add DROP DATABASE command
 AddDropTable=Add DROP TABLE command
