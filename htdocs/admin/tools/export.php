@@ -265,7 +265,7 @@ if ($what == 'postgresql')
 
 
 	// Now show to ask to run command
-	print $langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user);
+	print $langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user);
 
 	print '<br>';
 	print '<br>';
