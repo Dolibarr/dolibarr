@@ -65,7 +65,7 @@ if ($modecompta=="CREANCES-DETTES")
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCADue");
 	$builddate=time();
-	$exportlink=$langs->trans("NotYetAvailable");
+	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else {
 	$nom=$langs->trans("SalesTurnover");
@@ -74,7 +74,7 @@ else {
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCAIn");
 	$builddate=time();
-	$exportlink=$langs->trans("NotYetAvailable");
+	//$exportlink=$langs->trans("NotYetAvailable");
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
@@ -343,7 +343,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	}
 
 	// Pourcentage total
-	if ($annee > $minyear && $annee <= max($nowyear,$maxyear)) 
+	if ($annee > $minyear && $annee <= max($nowyear,$maxyear))
 	{
 		if ($total[$annee-1] && $total[$annee]) {
 			$percent=(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100);

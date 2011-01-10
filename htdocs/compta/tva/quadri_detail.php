@@ -131,7 +131,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
     $builddate=time();
-    $exportlink=$langs->trans("NotYetAvailable");
+    //$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("ProductOrService");
@@ -160,7 +160,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	$builddate=time();
-    $exportlink=$langs->trans("NotYetAvailable");
+    //$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("ProductOrService");

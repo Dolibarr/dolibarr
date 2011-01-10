@@ -68,7 +68,7 @@ if ($modecompta=="CREANCES-DETTES")
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesResultDue");
 	$builddate=time();
-	$exportlink=$langs->trans("NotYetAvailable");
+	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else {
 	$nom=$langs->trans("AnnualSummaryInputOutputMode");
@@ -77,7 +77,7 @@ else {
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesResultInOut");
 	$builddate=time();
-	$exportlink=$langs->trans("NotYetAvailable");
+	//$exportlink=$langs->trans("NotYetAvailable");
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 

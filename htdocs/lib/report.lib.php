@@ -25,16 +25,16 @@
 
 
 /**
-*    \brief      Show header of a VAT report
-*    \param      nom             Name of report
-*    \param      variante        Link for alternate report
-*    \param      period          Period of report
-*    \param      periodlink      Link to switch period
-*    \param      description     Description
-*    \param      builddate       Date generation
-*    \param      exportlink      Link for export
+*    Show header of a VAT report
+*    @param      nom             Name of report
+*    @param      variante        Link for alternate report
+*    @param      period          Period of report
+*    @param      periodlink      Link to switch period
+*    @param      description     Description
+*    @param      builddate       Date generation
+*    @param      exportlink      Link for export or ''
 */
-function report_header($nom,$variante='',$period,$periodlink,$description,$builddate,$exportlink)
+function report_header($nom,$variante='',$period,$periodlink,$description,$builddate,$exportlink='')
 {
 	global $langs;
 
@@ -84,7 +84,7 @@ function report_header($nom,$variante='',$period,$periodlink,$description,$build
 	print '</td></tr>';
 
 	print '<tr>';
-	print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Chercher").'"></td>';
+	print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></td>';
 	print '</tr>';
 
 	print '</table>';

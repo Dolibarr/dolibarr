@@ -113,7 +113,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 	$description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	$builddate=time();
-    $exportlink=$langs->trans("NotYetAvailable");
+    //$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("Description");
@@ -135,7 +135,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	$builddate=time();
-    $exportlink=$langs->trans("NotYetAvailable");
+    //$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("Description");

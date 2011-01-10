@@ -77,7 +77,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			if ($month_start > $month_current)
 			{
 				$year_start--;
-				$year_end--;				
+				$year_end--;
 			}
 			$month_end=$month_start-1;
 			if ($month_end < 1) $month_end=12;
@@ -115,7 +115,7 @@ if ($modecompta=="CREANCES-DETTES")
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesCADue");
 	$builddate=time();
-	$exportlink=$langs->trans("NotYetAvailable");
+	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else {
 	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
@@ -124,7 +124,7 @@ else {
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesCAIn");
 	$builddate=time();
-	$exportlink=$langs->trans("NotYetAvailable");
+	//$exportlink=$langs->trans("NotYetAvailable");
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
