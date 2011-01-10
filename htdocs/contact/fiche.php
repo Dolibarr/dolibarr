@@ -36,6 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 
 $langs->load("companies");
 $langs->load("users");
+$langs->load("other");
 
 $errors = array();
 $socid = GETPOST("socid");
@@ -760,7 +761,7 @@ else
 			// Full firstname and name separated with a dot : firstname.name
 			include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
 			$login=dol_buildlogin($object->nom,$object->prenom);
-			
+
 			// Create a form array
 			$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
 
