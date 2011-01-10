@@ -437,7 +437,6 @@ li.tmenu a {
 	position: relative;
 	display: block;
     width: 100%;
-    height: 22px;
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnG.jpg' ?>);
     background-position: left;
 	background-repeat: no-repeat;
