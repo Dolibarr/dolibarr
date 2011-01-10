@@ -70,12 +70,30 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
 <div id="div_container_exportoptions">
 <fieldset id="exportoptions">
 	<legend><?php echo $langs->trans("ImportMethod"); ?></legend>
+    <?php
+    if ($db->label == 'MySQL')
+    {
+    ?>
     <div class="formelementrow">
-        <input type="radio" name="what" value="mysql" id="radio_dump_mysql"
-        	<?php echo ($_GET["radio_dump"]=='mysql_options'?' checked':''); ?>
-            />
-            <label for="radio_dump_mysql">MySQL</label>
+        <input type="radio" name="what" value="mysql" id="radio_dump_mysql"	<?php echo ($_GET["radio_dump"]=='mysql_options'?' checked':''); ?> />
+        <label for="radio_dump_mysql">MySQL (mysql)</label>
     </div>
+    <?php
+    }
+    else if ($db->label == 'PostgreSQL')
+    {
+    ?>
+    <div class="formelementrow">
+        <input type="radio" name="what" value="mysql" id="radio_dump_postgresql" <?php echo ($_GET["radio_dump"]=='postgresql_options'?' checked':''); ?> />
+        <label for="radio_dump_postgresql">PostgreSQL Restore (pg_restore)</label>
+    </div>
+    <?php
+    }
+    else
+    {
+        print 'No method available with database '.$db->label;
+    }
+    ?>
 </fieldset>
 </div>
 <?php } ?>
@@ -116,6 +134,41 @@ if ($db->label == 'MySQL')
 	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
 	?>
 	</div>
+<?php
+}
+else if ($db->label == 'PostgreSQL')
+{
+?>
+    <fieldset id="postgresql_options">
+    <legend>Restore PostgreSQL</legend>
+    <div class="formelementrow">
+    <?php
+    // Parameteres execution
+    $command=$db->getPathOfRestore();
+    if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);    // Use quotes on command
+
+    $param=" -d ".$dolibarr_main_db_name;
+    $param.=" -h ".$dolibarr_main_db_host;
+    if (! empty($dolibarr_main_db_port)) $param.=" -p ".$dolibarr_main_db_port;
+    $param.=" -U ".$dolibarr_main_db_user;
+    $paramcrypted=$param;
+    $paramclear=$param;
+    /*if (! empty($dolibarr_main_db_pass))
+    {
+        $paramcrypted.=" -p".preg_replace('/./i','*',$dolibarr_main_db_pass);
+        $paramclear.=" -p".$dolibarr_main_db_pass;
+    }*/
+    $paramcrypted.=" -W";
+    $paramclear.=" -W";
+
+    echo $langs->trans("ImportPostgreSqlDesc");
+    print '<br>';
+    print '<textarea rows="1" cols="120">'.$langs->trans("ImportPostgreSqlCommand",$command,$_GET["showpass"]?$paramclear:$paramcrypted).'</textarea><br>';
+
+    if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=postgresql_options">'.$langs->trans("UnHidePassword").'</a>';
+    //else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
+    ?>
+    </div>
 <?php
 }
 ?>

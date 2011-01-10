@@ -94,18 +94,18 @@ if ($_GET["msg"])
 		if ($db->label == 'MySQL')
 		{
 			?>
-			<div class="formelementrow"><input type="radio" name="what"
-				value="mysql" id="radio_dump_mysql" /> <label for="radio_dump_mysql">MySQL
-			Dump (mysqldump)</label></div>
+			<div class="formelementrow"><input type="radio" name="what" value="mysql" id="radio_dump_mysql" />
+			<label for="radio_dump_mysql">MySQL	Dump (mysqldump)</label>
+			</div>
 			<?php
 		}
 		else if ($db->label == 'PostgreSQL')
 		{
-				?>
-			<div class="formelementrow"><input type="radio" name="what"
-				value="postgresql" id="radio_dump_postgresql" /> <label
-				for="radio_dump_postgresql">PostgreSQL Dump (pg_dump)</label></div>
-				<?php
+			?>
+			<div class="formelementrow"><input type="radio" name="what"	value="postgresql" id="radio_dump_postgresql" />
+			<label for="radio_dump_postgresql">PostgreSQL Dump (pg_dump)</label>
+			</div>
+			<?php
 		}
 		else
 		{

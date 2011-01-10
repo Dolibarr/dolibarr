@@ -1236,16 +1236,25 @@ class DoliDb
 	 */
 	function getPathOfRestore()
 	{
-		$fullpathofmysqldump='/pathtomysql/mysql';
+		$fullpathofdump='/pathtopgrestore/pg_restore';
 
-		$resql=$this->query('SHOW VARIABLES LIKE \'basedir\'');
-		if ($resql)
-		{
-			$liste=$this->fetch_array($resql);
-			$basedir=$liste['Value'];
-			$fullpathofmysqldump=$basedir.'bin/mysql';
-		}
-		return $fullpathofmysqldump;
+        if (file_exists('/usr/bin/pg_restore'))
+        {
+            $fullpathofdump='/usr/bin/pg_restore';
+        }
+        else
+        {
+            // TODO L'utilisateur de la base doit etre un superadmin pour lancer cette commande
+            $resql=$this->query('SHOW data_directory');
+            if ($resql)
+            {
+                $liste=$this->fetch_array($resql);
+                $basedir=$liste['data_directory'];
+                $fullpathofdump=preg_replace('/data$/','bin',$basedir).'/pg_restore';
+            }
+        }
+
+		return $fullpathofdump;
 	}
 
 	/**

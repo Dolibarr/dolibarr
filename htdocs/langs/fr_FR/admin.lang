@@ -146,7 +146,9 @@ ExportMethod= Méthode d'export
 ImportMethod= Méthode d'import
 ToBuildBackupFileClickHere= Pour générer un fichier de sauvegarde, cliquez <a href="%s">ici</a>.
 ImportMySqlDesc= Pour importer une sauvegarde, il faut utiliser la commande mysql en ligne suivante:
+ImportPostgreSqlDesc=Pour importer une sauvegarde, il faut utiliser la commande pg_restore en ligne suivante:
 ImportMySqlCommand= %s %s < monfichierbackup.sql
+ImportPostgreSqlCommand=%s %s monfichierbackup.sql
 FileNameToGenerate= Nom du fichier à générer
 CommandsToDisableForeignKeysForImport= Commande pour désactiver les clés étrangères à l'import
 ExportCompatibility= Compatibilité du fichier export généré
