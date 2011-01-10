@@ -487,7 +487,7 @@ else
 			print '</td></tr>';
 
 			print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
-			print '<select name="statut">';
+			print '<select name="statut" class="flat">';
 			print '<option value="0" '.($entrepot->statut == 0?'selected="selected"':'').'>'.$langs->trans("WarehouseClosed").'</option>';
 			print '<option value="1" '.($entrepot->statut == 0?'':'selected="selected"').'>'.$langs->trans("WarehouseOpened").'</option>';
 			print '</select>';
