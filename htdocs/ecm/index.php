@@ -365,7 +365,7 @@ if ($conf->fournisseur->enabled) { $rowspan++; $sectionauto[]=array('level'=>1, 
 //***********************
 // List
 //***********************
-print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("FileManager"));
+print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
 
 print $langs->trans("ECMAreaDesc")."<br>";
 print $langs->trans("ECMAreaDesc2")."<br>";

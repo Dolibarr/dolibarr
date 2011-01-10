@@ -37,6 +37,7 @@ if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
 $langs->load("main");
 $langs->load("members");
 $langs->load("companies");
+$langs->load("other");
 
 
 function llxHeaderVierge($title, $head = "")
@@ -104,7 +105,7 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=prenom\">".$langs->trans("Surname")."</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=nom\">".$langs->trans("Name")."</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=societe\">".$langs->trans("Company")."</a></td>\n";
-	print_liste_field_titre($langs->trans("Birthdate"),"public_list.php","naiss","",$param,$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateToBirth"),"public_list.php","naiss","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("EMail"),"public_list.php","email","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Zip"),"public_list.php","cp","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),"public_list.php","ville","",$param,$sortfield,$sortorder);
