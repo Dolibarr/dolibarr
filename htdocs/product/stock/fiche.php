@@ -195,7 +195,7 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
-	print '<select name="statut">';
+	print '<select name="statut" class="flat">';
 	print '<option value="0">'.$langs->trans("WarehouseClosed").'</option>';
 	print '<option value="1" selected="selected">'.$langs->trans("WarehouseOpened").'</option>';
 	print '</select>';
