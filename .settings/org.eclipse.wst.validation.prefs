@@ -1,4 +1,4 @@
-#Mon Jan 10 19:56:15 CET 2011
+#Tue Jan 11 03:11:48 CET 2011
 DELEGATES_PREFERENCE=delegateValidatorList
 USER_BUILD_PREFERENCE=enabledBuildValidatorListorg.eclipse.wst.wsi.ui.internal.WSIMessageValidator;
 USER_MANUAL_PREFERENCE=enabledManualValidatorListorg.eclipse.wst.wsi.ui.internal.WSIMessageValidator;
@@ -7,5 +7,6 @@ eclipse.preferences.version=1
 override=true
 suspend=false
 vals/org.eclipse.php.core.org.eclipse.php.core.PHPTaskValidator/global=TF01
-vals/org.eclipse.php.ui.HTMLValidatorForPHP/groups=0107include01111contentType130org.eclipse.php.core.phpsourceT0107exclude0104file111menu.js.phpF01
+vals/org.eclipse.php.ui.HTMLValidatorForPHP/groups=0107include01111contentType130org.eclipse.php.core.phpsourceT0107exclude0204file111menu.js.phpF0104file114htdocs/custom2F02
+vals/org.eclipse.wst.html.ui.HTMLValidator/groups=0107include06111contentType136org.eclipse.wst.html.core.htmlsourceT07fileext04htmlF07fileext05xhtmlF07fileext03htmF07fileext04htplF07fileext03wmlF0107exclude0104file114htdocs/custom2F02
 vf.version=3
