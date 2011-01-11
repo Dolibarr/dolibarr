@@ -86,4 +86,6 @@ InfoTransSubject=Transmission du prélèvement %s a la banque
 InfoTransMessage=Le bon de prélèvement %s a eté transmis a la banque par %s %s.<br><br>
 InfoTransData=Montant: %s<br>Methode: %s<br>Date: %s
 InfoFoot=Ceci est un message automatique envoye par Dolibarr
+InfoRejectSubject=Prélèvement rejeté
+InfoRejectMessage=Bonjour,<br><br>Le prelevement de la facture %s pour le compte de la societé %s, d'un montant de %s a été rejeté par la banque.<br><br>--<br>%$
 ModeWarning=Option mode réel non établi, nous allons arrêter après cette simulation

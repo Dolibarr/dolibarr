@@ -214,7 +214,7 @@ class RejetPrelevement
 
 			require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
-			$subject = "Prelevement rejete";
+			$subject = $langs->trans("InfoRejectSubject");
 			$sendto = $emuser->getFullName($langs)." <".$emuser->email.">";
 			$from = $this->user->getFullName($langs)." <".$this->user->email.">";
 			$msgishtml=0;
@@ -222,11 +222,13 @@ class RejetPrelevement
 			$arr_file = array();
 			$arr_mime = array();
 			$arr_name = array();
-
-			$message = "Bonjour,\n";
-			$message .= "\nLe prelevement de la facture ".$fac->ref." pour le compte de la societe ".$soc->nom." d'un montant de ".price($fac->total_ttc)." a ete rejete par la banque.";
-			$message .= "\n\n--\n".$this->user->getFullName($langs);
-
+			$facref = $fac->ref;
+			$socname = $soc->nom;
+			$amount = price($fac->total_ttc);
+			$userinfo = $this->user->getFullName($langs);
+			
+			$message = $langs->trans("InfoRejectMessage",$facref,$socname, $amount, $userinfo);
+			
 			$mailfile = new CMailFile($subject,$sendto,$from,$message,
 			$arr_file,$arr_mime,$arr_name,
                                       '', '', 0, $msgishtml,$this->user->email);

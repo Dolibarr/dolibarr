@@ -86,4 +86,6 @@ InfoTransSubject=Transmission of standing order %s to bank
 InfoTransMessage=The standing order %s has been transmited to bank by %s %s.<br><br>
 InfoTransData=Amount: %s<br>Metode: %s<br>Date: %s
 InfoFoot=This is an automated message sent by Dolibarr
+InfoRejectSubject=Standing order refused
+InfoRejectMessage=Hello,<br><br>the standig order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%$
 ModeWarning=Option for real mode was not set, we stop after this simulation
