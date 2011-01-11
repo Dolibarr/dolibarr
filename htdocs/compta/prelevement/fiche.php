@@ -169,6 +169,7 @@ if ($_GET["id"])
 		}
 
 		print '</table>';
+		dol_fiche_end();
 
 		if($bon->date_trans == 0)
 		{
@@ -176,6 +177,8 @@ if ($_GET["id"])
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="infotrans">';
 			print '<table class="border" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
 			print $html->select_date('','','','','',"userfile");
 			print '</td></tr>';
@@ -186,8 +189,7 @@ if ($_GET["id"])
 			print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 			print '<input class="flat" type="file" name="userfile" size="80"><br>';
 			print '</td></tr>';
-			print '</table>';
-			dol_fiche_end();
+			print '</table><br>';
 			print '<center><input type="submit" class="button" value="'.$langs->trans("Send").'">';
 			print '</form>';
 		}
@@ -198,12 +200,13 @@ if ($_GET["id"])
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="infocredit">';
 			print '<table class="border" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
 			print $html->select_date('','','','','',"infocredit");
 			print '</td></tr>';
-			print '</table>';
-			dol_fiche_end();
-			print '<center><input type="submit" class="button" value="'.$langs->trans("Send").'">';
+			print '</table><br>';
+			print '<center><input type="submit" class="button" value="'.$langs->trans("ClassCredited").'">';
 			print '</form>';
 		}
 	}
