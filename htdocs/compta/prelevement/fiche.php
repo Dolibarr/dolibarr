@@ -163,7 +163,7 @@ if ($_GET["id"])
 		}
 		if($bon->date_credit <> 0)
 		{
-			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td>>';
+			print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
