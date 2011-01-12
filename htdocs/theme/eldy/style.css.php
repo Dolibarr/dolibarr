@@ -462,6 +462,7 @@ div.login_block table {
 
 div.login {
 	display: inline;
+	white-space:nowrap;
 	padding: 0px 5px;
 	margin: 0px 0px 1px 0px;
 	font-weight: bold;
