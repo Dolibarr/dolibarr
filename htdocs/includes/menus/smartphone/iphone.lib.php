@@ -58,7 +58,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 				// Define url
 				if (preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$i]['url']))
 				{
-					$url = $tabMenu[$i]['url'];
+					$url = dol_buildpath($tabMenu[$i]['url'],1);
 				}
 				else
 				{
@@ -76,12 +76,12 @@ function print_iphone_menu($db,$atarget,$type_user)
 					{
 						$num = count($menus);
 						//var_dump($menus);
-						
+
 						for($j=0; $j<$num; $j++)
 						{
 							if ($menus[$j]['level'] == 0)
 							{
-								$url=$menus[$j]['url'];
+								$url=dol_buildpath($menus[$j]['url'],1);
 								print_start_menu_entry();
 								if (empty($menus[$j+1]['level'])) print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
 								print_text_menu_entry($menus[$j]['titre']);
@@ -92,7 +92,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 							{
 								if ($menus[$j-1]['level'] == 0) print_start_submenu_array();
 								
-								$url=$menus[$j]['url'];
+								$url=dol_buildpath($menus[$j]['url'],1);
 								print_start_menu_entry();
 								print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
 								print_text_menu_entry($menus[$j]['titre']);
