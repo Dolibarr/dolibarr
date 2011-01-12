@@ -268,20 +268,23 @@ if (! empty($canvas))
 
 	if (GETPOST("action") == 'create')
 	{
-		// Set action type
+		// Set action type to objcanvas->action
 		$objcanvas->setAction(GETPOST("action"));
 
-		// Card header
+		// Assign _POST data to objcanvas->object->xxx
+		$objcanvas->assign_post();
+
+		// Assign template values into objcanvas->control->tpl
+		$objcanvas->assign_values();
+
+		// Card header TODO This should be done into canvas_display
 		$title = $objcanvas->getTitle();
 		print_fiche_titre($title);
 
-		// Assign _POST data
-		$objcanvas->assign_post();
-
-		// Assign template values
-		$objcanvas->assign_values();
-
-		// Show errors
+		// Show errors TODO This should be done into assign_values()
+		// that should get string of dol_htmloutput_errors and
+		// assigne it into objcanvas->control->tpl like other strings to show
+		// by templates, then output of string should be done into display_canvas
 		dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
 
 		// Display canvas
@@ -330,13 +333,19 @@ if (! empty($canvas))
 		$result=$objcanvas->fetch($id);
 		if ($result > 0)
 		{
-			// Card header
-			$objcanvas->showHead();
-
 			// Assign values
 			$objcanvas->assign_values();
 
-			//Show errors
+			// FIXME div of tab is shown by showHead but /div is closed by
+			// display_canvas. All output should be processed by template so
+			// showHead and dol_htmloutput_errors should be moved into
+			// display_canvas.
+			
+			// Card header
+			$objcanvas->showHead();
+
+			// Show errors TODO This output string should be set by
+			// assign_values and output by template into display_canvas
 			dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
 
 			// Display canvas

@@ -259,9 +259,7 @@ class ActionsContactCardCommon
         $this->object->note					=	$_POST["note"];
         $this->object->canvas				=	$_POST["canvas"];
 
-
         // We set pays_id, and pays_code label of the chosen country
-        // TODO move in business class
         if ($this->object->fk_pays)
         {
             $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_pays WHERE rowid = ".$this->object->fk_pays;
