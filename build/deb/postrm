@@ -155,8 +155,8 @@ case "$1" in
 			then
 				if [ -s $conffile ] ;
 				then
+                    echo postrm remove dolibarr include from /etc/dolibarr/apache.conf
 					# We disable set -e to avoid premature end of script if error
-					echo postrm remove dolibarr include from /etc/dolibarr/apache.conf
 					set +e
 				    GREP="Include[[:space:]]\+$includefile\b"
 				    if grep -e "$GREP" $conffile > /dev/null 2>&1; then
@@ -165,6 +165,7 @@ case "$1" in
 					grep -v -e "$GREP" < $conffile > $conffile.purg
 					mv $conffile.purg $conffile
 					fi
+					# We restore blocking errors
 					set -e
 				fi
 			fi
@@ -183,17 +184,29 @@ case "$1" in
 		else
 			# Another way to restart
 			for server in $servers ; do
+                # We disable blocking errors
+                set +e
+                echo "Restart server $server if exists"
         		if [ -x /usr/sbin/invoke-rc.d ]; then
         		     invoke-rc.d $server reload || true
         		else
         		     /etc/init.d/$server reload || true
         		fi
+        		# We restore blocking errors
+        		set -e
 			done
 		fi
 		
 		# Remove file and conf file
 		for dir in /usr/share/dolibarr ; do
-			if [ -d ${dir} ] ; then rm -rf ${dir} ; fi
+			if [ -d $dir ] ; then 
+                # We disable blocking errors
+                set +e
+			    echo "Remove directory $dir"
+			    rm -rf $dir ; 
+                # We restore blocking errors
+                set -e
+			fi
 		done
 		
 		db_reset "dolibarr/postrm"
