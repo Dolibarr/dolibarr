@@ -43,12 +43,9 @@ function print_iphone_menu($db,$atarget,$type_user)
 	$menutop = new Menubase($db,'iphone','top');
 	$menuleft = new Menubase($db,'iphone','left');
 	$tabMenu = $menutop->menuTopCharger($type_user, '', 'iphone');
-	//var_dump($tabMenu);
-	
 	$numTabMenu = count($tabMenu);
-	
-	print_start_menu_array();
 
+	print_start_menu_array();
 	for($i=0; $i<$numTabMenu; $i++)
 	{
 		if ($tabMenu[$i]['enabled'] == true)
@@ -59,11 +56,14 @@ function print_iphone_menu($db,$atarget,$type_user)
 				if (preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$i]['url']))
 				{
 					$url = dol_buildpath($tabMenu[$i]['url'],1);
+					$url=preg_replace('/&amp.*/i','',$url);
 				}
 				else
 				{
 					print_start_menu_entry();
-					print_text_menu_entry($tabMenu[$i]['titre']);
+					$title=$tabMenu[$i]['titre'];
+					// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($tabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
+					print_text_menu_entry($title);
 					
 					$newmenu = new Menu();
 					$leftmenu = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'iphone');
@@ -71,7 +71,6 @@ function print_iphone_menu($db,$atarget,$type_user)
 					//var_dump($menus);
 					
 					print '<ul>';
-					
 					if (is_array($menus) && !empty($menus))
 					{
 						$num = count($menus);
@@ -82,9 +81,12 @@ function print_iphone_menu($db,$atarget,$type_user)
 							if ($menus[$j]['level'] == 0)
 							{
 								$url=dol_buildpath($menus[$j]['url'],1);
+								$url=preg_replace('/&amp.*/i','',$url);
 								print_start_menu_entry();
 								if (empty($menus[$j+1]['level'])) print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
-								print_text_menu_entry($menus[$j]['titre']);
+								$title=$menus[$j]['titre'];
+								// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($menus[$j]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
+								print_text_menu_entry($title);
 								if (empty($menus[$j+1]['level'])) print '</a>';
 							}
 							
@@ -93,9 +95,12 @@ function print_iphone_menu($db,$atarget,$type_user)
 								if ($menus[$j-1]['level'] == 0) print_start_submenu_array();
 								
 								$url=dol_buildpath($menus[$j]['url'],1);
+								$url=preg_replace('/&amp.*/i','',$url);
 								print_start_menu_entry();
 								print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
-								print_text_menu_entry($menus[$j]['titre']);
+								$title=$menus[$j]['titre'];
+								// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($menus[$j]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
+								print_text_menu_entry($title);
 								print '</a>';
 								print_end_menu_entry();
 								
