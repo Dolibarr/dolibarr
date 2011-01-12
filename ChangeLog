@@ -54,6 +54,7 @@ For users:
 - New: Page "supplier summary" is now available.
 - New: Task #10611: Add option to choose order of field in bank account info on PDF
 - New: If a transaction was reconciliated and should not, there was no way to reverse error.
+- New: Ubuntu package now works also on debian.
 - Perf: Avoid reading database to determine country code after each
         page call.
 - Fix: Special chars are now supported in ECM module for filename (not yet for
@@ -235,7 +236,7 @@ For users:
 - New: task #9916 : Add FREE text for interventions card.
 - New: Can define the new product ref when cloning.
 - New: Project module support status of project and end date.
-- New: Provide a debian/ubuntu package.
+- New: Provide a ubuntu package.
 - New: Add link to check a SIREN for french users.
 - New: Add link "now" to fill date when creating invoices.
 - Fix: Import module works even if prefix is empty in source file.

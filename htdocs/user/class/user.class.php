@@ -996,7 +996,7 @@ class User extends CommonObject
 		$this->user_mobile  = trim($this->user_mobile);
 		$this->email        = trim($this->email);
 		$this->note         = trim($this->note);
-		$this->openid         = trim($this->openid);
+		$this->openid       = trim(empty($this->openid)?'':$this->openid);    // Avoid warning
 		$this->webcal_login = trim($this->webcal_login);
 		$this->phenix_login = trim($this->phenix_login);
 		if ($this->phenix_pass != $this->phenix_pass_crypted)
@@ -1254,7 +1254,7 @@ class User extends CommonObject
 							$error++;
 						}
 					}
-					
+
 					dol_syslog("User::setPassword notrigger=".$notrigger." error=".$error,LOG_DEBUG);
 
 					if (! $error && ! $notrigger)
