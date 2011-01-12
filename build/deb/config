@@ -19,7 +19,7 @@ set -e
 db_version 2.0
 
 
-echo Run the config script
+echo Run the dolibarr config script
 
 # Rotate old configuration
 if [ "$1" = "reconfigure" ] ; then

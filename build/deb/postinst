@@ -21,7 +21,7 @@ set -e
 db_version 2.0
 
 
-echo Run the postinst script
+echo Run the dolibarr postinst script
 
 case "$1" in
 	configure)

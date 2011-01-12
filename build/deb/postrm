@@ -21,7 +21,7 @@ set -e
 
 db_version 2.0
 
-echo Run the postrm script
+echo Run the dolibarr postrm script
 
 #echo "postrm db_get dolibarr/webserver"
 # We disable set -e to avoid premature end of script if error
