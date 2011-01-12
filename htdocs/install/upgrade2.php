@@ -294,7 +294,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             migrate_reload_menu($db,$langs,$conf,$versionto);
 		}
 
-        // Script for VX (X<2.9) -> V2.9
+        // Script for VX (X<3.0) -> V3.0
         $afterversionarray=explode('.','2.9.9');
         $beforeversionarray=explode('.','3.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
