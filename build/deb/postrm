@@ -209,7 +209,11 @@ case "$1" in
 			fi
 		done
 		
+		# We clean variable (we ignore errors because db_reset can fails if var was never set)
+        set +e
 		db_reset "dolibarr/postrm"
+        set -e
+        
 		db_purge
 	;;
 
