@@ -1474,7 +1474,7 @@ if ($id > 0 || ! empty($ref))
 			if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
 			{
 				$formmail->clear_attached_files();
-				$formmail->add_attached_files($file,$ref.'.pdf','application/pdf');
+				$formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
 			}
 
 			// Show form

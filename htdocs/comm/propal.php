@@ -511,7 +511,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 					$result=$mailfile->sendfile();
 					if ($result)
 					{
-						$mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+						$mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);
 
 						$error=0;
 
@@ -969,7 +969,11 @@ if ($id > 0 || ! empty($ref))
 	 * Show object in view mode
 	 */
 
-	if ($mesg) print $mesg."<br>";
+	if ($mesg) 
+	{
+		if (! preg_match('/div class=/',$mesg)) print '<div class="ok">'.$mesg.'</div><br>';
+		else print $mesg."<br>";
+	}
 
 	$object->fetch($id,$ref);
 
@@ -1612,7 +1616,7 @@ if ($id > 0 || ! empty($ref))
 		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
 		{
 			$formmail->clear_attached_files();
-			$formmail->add_attached_files($file,$object->ref.'.pdf','application/pdf');
+			$formmail->add_attached_files($file,dol_sanitizeFilename($object->ref).'.pdf','application/pdf');
 		}
 
 		$formmail->show_form();
