@@ -61,12 +61,13 @@ if ($_GET["action"] == 'specimen')
 	$propal->initAsSpecimen();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/propale/";
+	$dir = "/includes/modules/propale/";
 	$file = "pdf_propale_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+	$file = dol_buildpath($dir.$file);
+	if (file_exists($file))
 	{
 		$classname = "pdf_propale_".$modele;
-		require_once($dir.$file);
+		require_once($file);
 
 		$module = new $classname($db);
 
@@ -183,6 +184,7 @@ llxHeader('',$langs->trans("PropalSetup"));
 
 $html=new Form($db);
 
+if ($mesg) print $mesg;
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');

@@ -143,19 +143,25 @@ function propale_pdf_create($db, $object, $modele, $outputlangs)
 	global $langs;
 	$langs->load("propale");
 
-	$dir = DOL_DOCUMENT_ROOT."/includes/modules/propale/";
+	$dir = "/includes/modules/propale/";
 	$modelisok=0;
 
 	// Positionne modele sur le nom du modele de propale a utiliser
 	$file = "pdf_propale_".$modele.".modules.php";
-	if ($modele && file_exists($dir.$file)) $modelisok=1;
+	
+	// On verifie l'emplacement du modele
+	$file = dol_buildpath($dir.$file);
+	
+	if ($modele && file_exists($file)) $modelisok=1;
 
 	// Si model pas encore bon
 	if (! $modelisok)
 	{
 		if ($conf->global->PROPALE_ADDON_PDF) $modele = $conf->global->PROPALE_ADDON_PDF;
 		$file = "pdf_propale_".$modele.".modules.php";
-		if (file_exists($dir.$file)) $modelisok=1;
+		// On verifie l'emplacement du modele
+		$file = dol_buildpath($dir.$file);
+		if (file_exists($file)) $modelisok=1;
 	}
 
 	// Si model pas encore bon
@@ -166,7 +172,8 @@ function propale_pdf_create($db, $object, $modele, $outputlangs)
 		$liste=$model->liste_modeles($db);
 		$modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
 		$file = "pdf_propale_".$modele.".modules.php";
-		if (file_exists($dir.$file)) $modelisok=1;
+		$file = dol_buildpath($dir.$file);
+		if (file_exists($file)) $modelisok=1;
 	}
 
 
@@ -174,7 +181,7 @@ function propale_pdf_create($db, $object, $modele, $outputlangs)
 	if ($modelisok)
 	{
 		$classname = "pdf_propale_".$modele;
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db);
 
@@ -204,7 +211,7 @@ function propale_pdf_create($db, $object, $modele, $outputlangs)
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
 		}
 		return 0;
 	}
