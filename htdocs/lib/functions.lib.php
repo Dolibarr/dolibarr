@@ -93,9 +93,9 @@ function dol_include_once($relpath)
 
 /**
  *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails.
- * 	@param			path		Relative or absolute path to file (Ie: mydir/myfile, ../myfile, ...)
+ * 	@param			path		Relative path to file (if mode=0, ie: mydir/myfile, ../myfile, ...) or relative url (if mode=1).
  *  @param			mode		0=Used for a Filesystem path, 1=Used for an URL path
- *  @return         string		Full filsystem path (if mode=0), Relative url path (if mode=1)
+ *  @return         string		Full filsystem path (if mode=0), Full url path (if mode=1)
  */
 function dol_buildpath($path,$mode=0)
 {
