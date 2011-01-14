@@ -35,9 +35,11 @@ $dolibarr_main_document_root='';
 
 # dolibarr_main_url_root_alt
 # This parameter defines the alternative URL of your Dolibarr.
-# It must link to the external modules directory.
+# It must link to a secondary directory htdocs.
 # Examples:
-# $dolibarr_main_url_root_alt='/custom';
+# $dolibarr_main_url_root_alt='http://localhost/custom';
+# $dolibarr_main_url_root_alt='http://mydolibarrvirtualhost/custom';
+# $dolibarr_main_url_root_alt='http://myserver/dolibarr/htdocs/custom';
 #
 $dolibarr_main_url_root_alt='';
 

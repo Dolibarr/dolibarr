@@ -111,22 +111,32 @@ if (empty($dolibarr_main_data_root))
 }
 
 // Define some constants
-define('DOL_CLASS_PATH', 'class/');									// Filesystem path to class dir
+define('DOL_CLASS_PATH', 'class/');									// Filesystem path to class dir (defined only for some code that want to be compatible with old versions without this parameter)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (documents)
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
-define('DOL_DOCUMENT_ROOT_ALT', $dolibarr_main_document_root_alt);	// Filesystem paths to alternate core php (alternate htdocs)
+if (! empty($dolibarr_main_document_root_alt))
+{
+    define('DOL_DOCUMENT_ROOT_ALT', $dolibarr_main_document_root_alt);	// Filesystem paths to alternate core php (alternate htdocs)
+}
 // If dolibarr_main_url_root = auto (Hidden feature for developers only), we try to forge it.
 if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
 {
 	$dolibarr_main_url_root=str_replace($_SERVER["SCRIPT_URL"],'',$_SERVER["SCRIPT_URI"]);
 }
-define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);			// URL relative root
+define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);			// URL absolute root
 $uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));	// $uri contains url without http*
 $suburi = strstr($uri, '/');		// $suburi contains url without domain
 if ($suburi == '/') $suburi = '';	// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);	// URL relative root ('', '/dolibarr', ...)
-if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', $dolibarr_main_url_root_static);	// Used to put static images on another domain
-define('DOL_URL_ROOT_ALT', DOL_URL_ROOT.$dolibarr_main_url_root_alt);	// URL relative for external modules
+if (! empty($dolibarr_main_url_root_alt))
+{
+    define('DOL_MAIN_URL_ROOT_ALT', $dolibarr_main_url_root_alt);           // URL absolute root
+    $uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT_ALT'));    // $uri contains url without http*
+    $suburi = strstr($uri, '/');        // $suburi contains url without domain
+    if ($suburi == '/') $suburi = '';   // If $suburi is /, it is now ''
+    define('DOL_URL_ROOT_ALT', $suburi);    // URL relative root ('', '/dolibarr', ...)
+}
+if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', $dolibarr_main_url_root_static);    // Used to put static images on another domain
 // Define prefix
 if (isset($_SERVER["LLX_DBNAME"])) $dolibarr_main_db_prefix=$_SERVER["LLX_DBNAME"];
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
