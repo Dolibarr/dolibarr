@@ -511,7 +511,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 					$result=$mailfile->sendfile();
 					if ($result)
 					{
-						$mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);
+						$mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);	// Must not contain "
 
 						$error=0;
 
