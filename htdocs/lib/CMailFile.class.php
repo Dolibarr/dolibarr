@@ -330,7 +330,7 @@ class CMailFile
 				$dest=$this->getValidAddress($this->addr_to,2);
 				if (! $dest)
 				{
-					$this->error="Failed to send mail to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
+					$this->error="Failed to send mail with php mail to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERROR);
 				}
 				else
@@ -355,7 +355,7 @@ class CMailFile
 
 					if (! $res)
 					{
-						$this->error="Failed to send mail to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
+						$this->error="Failed to send mail with php mail to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERROR);
 					}
 					else
@@ -395,14 +395,23 @@ class CMailFile
 				if (! empty($conf->global->MAIN_MAIL_SMTPS_PW)) $this->smtps->setPW($conf->global->MAIN_MAIL_SMTPS_PW);
 				//$smtps->_msgReplyTo  = 'reply@web.com';
 
-				$dest=$this->smtps->getFrom('org');
-				if (! $dest)
+				$res=true;
+				$from=$this->smtps->getFrom('org');
+				if (! $from)
 				{
-					$this->error="Failed to send mail to HOST=".$server.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Recipient address '$dest' invalid";
+					$this->error="Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Sender address '$from' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
 				}
-				else
+				$dest=$this->smtps->getTo();
+				if (! $dest)
+				{
+					$this->error="Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Recipient address '$dest' invalid";
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					$res=false;
+				}
+				
+				if ($res)
 				{
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->smtps->setDebug(true);
 					$result=$this->smtps->sendMsg();
