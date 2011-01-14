@@ -247,7 +247,7 @@ if ($mode != 4)
     'technic'=>$langs->trans("ModuleFamilyTechnic"),
     'other'=>$langs->trans("ModuleFamilyOther")
     );
-    
+
     foreach ($orders as $key => $value)
     {
         $tab=explode('_',$value);
@@ -256,14 +256,14 @@ if ($mode != 4)
         $modName = $filename[$key];
     	$objMod  = $modules[$key];
     	//var_dump($objMod);
-    	
+
     	if ($objMod->special != $mode) continue;    // Discard if not for tab
         if (! $objMod->getName())
         {
         	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
-      		continue;  	
+      		continue;
         }
-    	
+
         $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
 
         // Load all lang files of module
@@ -314,8 +314,8 @@ if ($mode != 4)
             //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
             if (! empty($objMod->picto))
             {
-            	if (preg_match('/^\//i',$objMod->picto)) print img_picto($alttext,$objMod->picto,'',1);
-            	else print img_object($alttext,$objMod->picto);
+            	if (preg_match('/^\//i',$objMod->picto)) print img_picto($alttext,$objMod->picto,' width="14px"',1);
+            	else print img_object($alttext,$objMod->picto,' width="14px"');
             }
             else
             {

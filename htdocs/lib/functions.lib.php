@@ -1193,14 +1193,13 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
  *	@param      alt         Text of alt on image
  *	@param      object      Objet pour lequel il faut afficher le logo (example: user, group, action, bill, contract, propal, product, ...)
  *							Pour les modules externe utiliser nomimage@mymodule pour rechercher dans le repertoire "img" du module
- *	@param		cssclass	Define a specific css class
+ *  @param      options     Add more attribute on img tag
  *	@return     string      Return img tag
  */
-function img_object($alt, $object, $cssclass='')
+function img_object($alt, $object, $options='')
 {
 	global $conf,$langs;
 
-	$cssclass = (!empty($cssclass)?' class="'.$cssclass.'"':'');
 	$path =  'theme/'.$conf->theme;
 	$url = DOL_URL_ROOT;
 
@@ -1212,7 +1211,7 @@ function img_object($alt, $object, $cssclass='')
 		if (DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/object_'.$object.'.png')) $url = DOL_URL_ROOT_ALT;
 	}
 
-	return '<img src="'.$url.'/'.$path.'/img/object_'.$object.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.$cssclass.'>';
+	return '<img src="'.$url.'/'.$path.'/img/object_'.$object.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
 
 /**
@@ -1237,6 +1236,7 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 	{
 		$picto = $regs[1];
 		$path = $regs[2];
+        // If img file not into standard path, we use alternate path
 		if (DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
 	}
 
