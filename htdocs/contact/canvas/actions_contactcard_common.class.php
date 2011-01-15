@@ -99,18 +99,18 @@ class ActionsContactCardCommon
         	if ($objsoc->typent_code == 'TE_PRIVATE')
         	{
         		if (dol_strlen(trim($this->object->address)) == 0) $this->tpl['address'] = $objsoc->address;
-        		if (dol_strlen(trim($this->object->zip)) == 0) $this->object->zip = $objsoc->cp;
-        		if (dol_strlen(trim($this->object->town)) == 0) $this->object->town = $objsoc->ville;
-        		if (dol_strlen(trim($this->object->phone_pro)) == 0) $this->object->phone_pro = $objsoc->tel;
+        		if (dol_strlen(trim($this->object->zip)) == 0) $this->object->zip = $objsoc->zip;
+        		if (dol_strlen(trim($this->object->town)) == 0) $this->object->town = $objsoc->town;
+        		if (dol_strlen(trim($this->object->phone_pro)) == 0) $this->object->phone_pro = $objsoc->phone;
         		if (dol_strlen(trim($this->object->fax)) == 0) $this->object->fax = $objsoc->fax;
         		if (dol_strlen(trim($this->object->email)) == 0) $this->object->email = $objsoc->email;
         	}
         	
             // Zip
-            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->cp,'zipcode',array('town','selectpays_id','departement_id'),6);
+            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectpays_id','departement_id'),6);
 
             // Town
-            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->ville,'town',array('zipcode','selectpays_id','departement_id'));
+            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectpays_id','departement_id'));
             
             if (dol_strlen(trim($this->object->fk_pays)) == 0) $this->object->fk_pays = $objsoc->pays_id;
 
@@ -212,7 +212,7 @@ class ActionsContactCardCommon
 
             $this->tpl['address'] = dol_nl2br($this->object->address);
             
-            $this->tpl['zip'] = ($this->object->cp?$this->object->cp.'&nbsp;':'');
+            $this->tpl['zip'] = ($this->object->zip?$this->object->zip.'&nbsp;':'');
 
             $img=picto_from_langcode($this->object->pays_code);
             $this->tpl['country'] = ($img?$img.' ':'').$this->object->pays;
