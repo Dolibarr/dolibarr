@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -420,17 +420,18 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
 
 
 /**
- *   	\brief      Show footer of page for PDF generation
- *   	\param      pdf     		The PDF factory
- *      \param      outputlang		Object lang for output
- * 		\param		paramfreetext	Constant name of free text
- * 		\param		fromcompany		Object company
- * 		\param		marge_basse		Margin bottom
- * 		\param		marge_gauche	Margin left
- * 		\param		page_hauteur	Page height
- * 		\param		object			Object shown in PDF
+ *   	Show footer of page for PDF generation
+ *   	@param      pdf     		The PDF factory
+ *      @param      outputlang		Object lang for output
+ * 		@param		paramfreetext	Constant name of free text
+ * 		@param		fromcompany		Object company
+ * 		@param		marge_basse		Margin bottom
+ * 		@param		marge_gauche	Margin left
+ * 		@param		page_hauteur	Page height
+ * 		@param		object			Object shown in PDF
+ * 		@param		showdetails		Show company details
  */
-function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_basse,$marge_gauche,$page_hauteur,$object)
+function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_basse,$marge_gauche,$page_hauteur,$object,$showdetails=0)
 {
     global $conf,$user;
 
@@ -452,55 +453,104 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
         $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray,$outputlangs,$object);
         $line.=$outputlangs->convToOutputCharset($newfreetext);
     }
-
+    
     // First line of company infos
+    
+    if ($showdetails)
+    {
+    	$line1="";
+    	// Company name
+    	if ($fromcompany->name)
+    	{
+    		$line1.=($line1?" - ":"").$outputlangs->transnoentities("RegisteredOffice").": ".$fromcompany->name;
+    	}
+    	// Address
+    	if ($fromcompany->address)
+    	{
+    		$line1.=($line1?" - ":"").$fromcompany->address;
+    	}
+    	// Zip code
+    	if ($fromcompany->zip)
+    	{
+    		$line1.=($line1?" - ":"").$fromcompany->zip;
+    	}
+    	// Town
+    	if ($fromcompany->town)
+    	{
+    		$line1.=($line1?" ":"").$fromcompany->town;
+    	}
+    	// Phone
+    	if ($fromcompany->phone)
+    	{
+    		$line1.=($line1?" - ":"").$outputlangs->transnoentities("Phone").": ".$fromcompany->phone;
+    	}
+    	// Fax
+    	if ($fromcompany->fax)
+    	{
+    		$line1.=($line1?" - ":"").$outputlangs->transnoentities("Fax").": ".$fromcompany->fax;
+    	}
+    	
+    	$line2="";
+    	// URL
+    	if ($fromcompany->url)
+    	{
+    		$line2.=($line2?" - ":"").$fromcompany->url;
+    	}
+    	// Email
+    	if ($fromcompany->email)
+    	{
+    		$line2.=($line2?" - ":"").$fromcompany->email;
+    	}
+    }
+
+    // Second line of company infos
 
     // Juridical status
-    $line1="";
+    $line3="";
     if ($fromcompany->forme_juridique_code)
     {
-        $line1.=($line1?" - ":"").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
+        $line3.=($line3?" - ":"").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
     }
     // Capital
     if ($fromcompany->capital)
     {
-        $line1.=($line1?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
+        $line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
     }
     // Prof Id 1
     if ($fromcompany->idprof1 && ($fromcompany->pays_code != 'FR' || ! $fromcompany->idprof2))
     {
         $field=$outputlangs->transcountrynoentities("ProfId1",$fromcompany->pays_code);
         if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-        $line1.=($line1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof1);
+        $line3.=($line3?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof1);
     }
     // Prof Id 2
     if ($fromcompany->idprof2)
     {
         $field=$outputlangs->transcountrynoentities("ProfId2",$fromcompany->pays_code);
         if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-        $line1.=($line1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof2);
+        $line3.=($line3?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof2);
     }
 
-    // Second line of company infos
-    $line2="";
+    // Third line of company infos
+    $line4="";
     // Prof Id 3
     if ($fromcompany->idprof3)
     {
         $field=$outputlangs->transcountrynoentities("ProfId3",$fromcompany->pays_code);
         if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-        $line2.=($line2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof3);
+        $line4.=($line4?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof3);
     }
     // Prof Id 4
     if ($fromcompany->idprof4)
     {
         $field=$outputlangs->transcountrynoentities("ProfId4",$fromcompany->pays_code);
         if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-        $line2.=($line2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
+        $line4.=($line4?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
     }
     // IntraCommunautary VAT
     if ($fromcompany->tva_intra != '')
     {
-        $line2.=($line2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$outputlangs->convToOutputCharset($fromcompany->tva_intra);
+        $line4.=($line4?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$outputlangs->convToOutputCharset($fromcompany->tva_intra);
     }
 
     $pdf->SetFont('','',7);
@@ -510,7 +560,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
     $nbofline=dol_nboflines_bis($line,0,$outputlangs->charset_output);
     //print 'nbofline='.$nbofline; exit;
     //print 'e'.$line.'t'.dol_nboflines($line);exit;
-    $posy=$marge_basse + ($nbofline*3) + ($line1?3:0) + ($line2?3:0);
+    $posy=$marge_basse + ($nbofline*3) + ($line1?3:0) + ($line2?3:0) + ($line3?3:0) + ($line4?3:0);
 
     if ($line)	// Free text
     {
@@ -524,18 +574,36 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
     $pdf->SetY(-$posy);
     $pdf->line($marge_gauche, $page_hauteur-$posy, 200, $page_hauteur-$posy);
     $posy--;
-
-    if ($line1)
+    
+	if ($line1)
     {
-        $pdf->SetXY($marge_gauche,-$posy);
+    	$pdf->SetFont('','B',7);
+    	$pdf->SetXY($marge_gauche,-$posy);
         $pdf->MultiCell(200, 2, $line1, 0, 'C', 0);
+        $posy-=3;
+        $pdf->SetFont('','',7);
+    }
+    
+	if ($line2)
+    {
+    	$pdf->SetFont('','B',7);
+    	$pdf->SetXY($marge_gauche,-$posy);
+        $pdf->MultiCell(200, 2, $line2, 0, 'C', 0);
+        $posy-=3;
+        $pdf->SetFont('','',7);
     }
 
-    if ($line2)
+    if ($line3)
+    {
+        $pdf->SetXY($marge_gauche,-$posy);
+        $pdf->MultiCell(200, 2, $line3, 0, 'C', 0);
+    }
+
+    if ($line4)
     {
         $posy-=3;
         $pdf->SetXY($marge_gauche,-$posy);
-        $pdf->MultiCell(200, 2, $line2, 0, 'C', 0);
+        $pdf->MultiCell(200, 2, $line4, 0, 'C', 0);
     }
 
     // Show page nb only on iso languages
