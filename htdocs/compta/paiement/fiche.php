@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  *
@@ -22,8 +22,8 @@
 /**
  *	    \file       htdocs/compta/paiement/fiche.php
  *		\ingroup    facture
- *		\brief      Onglet paiement d'un paiement client
- *		\remarks	Fichier presque identique a fournisseur/paiement/fiche.php
+ *		\brief      Page of a customer payment
+ *		\remarks	Nearly same file than fournisseur/paiement/fiche.php
  *		\version    $Id$
  */
 
@@ -113,6 +113,8 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
  */
 
 llxHeader();
+
+$thirdpartystatic=new Societe($db);
 
 $paiement = new Paiement($db);
 $result=$paiement->fetch($_GET['id']);
@@ -254,7 +256,11 @@ if ($resql)
 			print "</td>\n";
 
 			// Third party
-			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+			print '<td>';
+			$thirdpartystatic->id=$objp->socid;
+			$thirdpartystatic->nom=$objp->nom;
+			print $thirdpartystatic->getNomUrl(1);
+			print '</td>';
 
 			// Expected to pay
 			print '<td align="right">'.price($objp->total_ttc).'</td>';

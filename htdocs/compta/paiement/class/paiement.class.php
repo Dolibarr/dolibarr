@@ -376,32 +376,32 @@ class Paiement
                 if (! $error)
                 {
                     $linkaddedforthirdparty=array();
-                    foreach ($this->amounts as $key => $value)
+                    foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.
                     {
                         if ($mode == 'payment')
                         {
                             $fac = new Facture($this->db);
                             $fac->fetch($key);
-                            $fac->fetch_thirdparty();   // This should be always same third party but we loop in case of.
-                            if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                            $fac->fetch_thirdparty();
+                            if (! in_array($fac->thirdparty->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
                             {
-                                $result=$acc->add_url_line($bank_line_id, $fac->client->id,
-                                DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom, 'company');
+                                $result=$acc->add_url_line($bank_line_id, $fac->thirdparty->id,
+                                DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->thirdparty->nom, 'company');
                                 if ($result <= 0) dol_print_error($this->db);
-                                $linkaddedforthirdparty[$fac->client->id]=$fac->client->id;  // Mark as done for this thirdparty
+                                $linkaddedforthirdparty[$fac->thirdparty->id]=$fac->thirdparty->id;  // Mark as done for this thirdparty
                             }
                         }
                         if ($mode == 'payment_supplier')
                         {
                             $fac = new FactureFournisseur($this->db);
                             $fac->fetch($key);
-                            $fac->fetch_fournisseur();   // This should be always same third party but we loop in case of.
-                            if (! in_array($fac->client->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                            $fac->fetch_thirdparty();
+                            if (! in_array($fac->thirdparty->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
                             {
-                                $result=$acc->add_url_line($bank_line_id, $fac->fournisseur->id,
-                                DOL_URL_ROOT.'/fourn/fiche.php?socid=', $fac->fournisseur->nom, 'company');
+                                $result=$acc->add_url_line($bank_line_id, $fac->thirdparty->id,
+                                DOL_URL_ROOT.'/fourn/fiche.php?socid=', $fac->thirdparty->nom, 'company');
                                 if ($result <= 0) dol_print_error($this->db);
-                                $linkaddedforthirdparty[$fac->fournisseur->id]=$fac->fournisseur->id;  // Mark as done for this thirdparty
+                                $linkaddedforthirdparty[$fac->thirdparty->id]=$fac->thirdparty->id;  // Mark as done for this thirdparty
                             }
                         }
                     }

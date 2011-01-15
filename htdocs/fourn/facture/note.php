@@ -92,7 +92,7 @@ llxHeader();
 
 if ($_GET["facid"])
 {
-    $fac->fetch_fournisseur();
+    $fac->fetch_thirdparty();
 
 	$head = facturefourn_prepare_head($fac);
 	$titre=$langs->trans('SupplierInvoice');
@@ -112,7 +112,7 @@ if ($_GET["facid"])
 	print "</tr>\n";
 
     // Company
-    print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$fac->fournisseur->getNomUrl(1).'</td></tr>';
+    print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$fac->thirdparty->getNomUrl(1).'</td></tr>';
 
 	// Note publique
     print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';

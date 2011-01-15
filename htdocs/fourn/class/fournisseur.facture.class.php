@@ -381,19 +381,9 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 * \brief     Load supplier
-	 */
-	function fetch_fournisseur()
-	{
-		$fournisseur = new Fournisseur($this->db);
-		$fournisseur->fetch($this->socid);
-		$this->fournisseur = $fournisseur;
-	}
-
-	/**
-	 * \brief     	Delete invoice in database
-	 * \param     	rowid      	Id of invoice to delete
-	 * \return		int			<0 if KO, >0 if OK
+	 *     Delete invoice from database
+	 *     @param     	rowid      	Id of invoice to delete
+	 *     @return		int			<0 if KO, >0 if OK
 	 */
 	function delete($rowid)
 	{

@@ -128,7 +128,7 @@ if ($facid > 0)
 	$facture = new FactureFournisseur($db);
 	if ($facture->fetch($facid))
 	{
-		$facture->fetch_fournisseur();
+		$facture->fetch_thirdparty();
 
 		$upload_dir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($facture->id,2).$facture->id;
 
@@ -158,7 +158,7 @@ if ($facid > 0)
 		print "</tr>\n";
 
 		// Societe
-		print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$facture->fournisseur->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$facture->thirdparty->getNomUrl(1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans('NbOfAttachedFiles').'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 
