@@ -158,9 +158,11 @@ function pdf_format_address($outputlangs,$object)
  *   	@param      targetcompany	Target company object
  *      @param      targetcontact	Target contact object
  * 		@param		usecontact		Use contact instead of company
+ * 		@param		mode			Address type
+ * 		@param		deliverycompany	Delivery company object
  * 		@return		string			String with full address
  */
-function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$targetcontact='',$usecontact=0,$mode='source')
+function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$targetcontact='',$usecontact=0,$mode='source',$deliverycompany='')
 {
     global $conf;
 
@@ -168,6 +170,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
     if ($mode == 'source' && ! is_object($sourcecompany)) return -1;
     if ($mode == 'target' && ! is_object($targetcompany)) return -1;
+    if ($mode == 'delivery' && ! is_object($deliverycompany)) return -1;
 
     if ($sourcecompany->departement_id && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->departement_id);
     if ($targetcompany->departement_id && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->departement_id);
@@ -230,6 +233,16 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
             if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
             $stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
         }
+    }
+    
+	if ($mode == 'delivery')
+    {
+        $stringaddress .= ($stringaddress ? "\n" : '' ).pdf_format_address($outputlangs,$deliverycompany)."\n";
+
+        // Tel
+        if ($deliverycompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($deliverycompany->phone);
+        // Fax
+        if ($deliverycompany->fax) $stringaddress .= ($stringaddress ? ($deliverycompany->phone ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($deliverycompany->fax);
     }
 
     return $stringaddress;
