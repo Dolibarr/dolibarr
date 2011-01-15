@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -417,6 +417,8 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 
 $html = new Form($db);
 
+$now=dol_now();
+
 llxHeader('',$langs->trans("Subscriptions"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 if ($rowid)
@@ -466,15 +468,8 @@ if ($rowid)
     print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
     if ($adh->datefin)
     {
-        if ($adh->datefin < time())
-        {
-            print dol_print_date($adh->datefin,'day');
-            if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
-        }
-        else
-        {
-            print dol_print_date($adh->datefin,'day');
-        }
+        print dol_print_date($adh->datefin,'day');
+        if ($adh->datefin < ($now -  $conf->adherent->cotisation->warning_delay) && $adh->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
     }
     else
     {

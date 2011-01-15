@@ -291,18 +291,12 @@ if ($resql)
 		print $adh->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
 		print "</td>";
 
-		// Date fin cotisation
+		// End of subscription date
 		if ($datefin)
 		{
 			print '<td align="center" nowrap="nowrap">';
-			if ($datefin < time() && $objp->statut > 0)
-			{
-				print dol_print_date($datefin,'day')." ".img_warning($langs->trans("SubscriptionLate"));
-			}
-			else
-			{
-				print dol_print_date($datefin,'day');
-			}
+			print dol_print_date($datefin,'day');
+			if ($datefin < ($now -  $conf->adherent->cotisation->warning_delay) && $objp->statut > 0) print " ".img_warning($langs->trans("SubscriptionLate"));
 			print '</td>';
 		}
 		else

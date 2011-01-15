@@ -1870,7 +1870,7 @@ class Adherent extends CommonObject
     {
         global $conf;
 
-        $now=gmmktime();
+        $now=dol_now();
 
         if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
 
@@ -1880,6 +1880,7 @@ class Adherent extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
         $sql.= " WHERE a.statut = 1";
         $sql.= " AND a.entity = ".$conf->entity;
+        $sql.= " AND (a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."')";
 
         $resql=$this->db->query($sql);
         if ($resql)
