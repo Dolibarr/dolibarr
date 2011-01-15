@@ -55,7 +55,7 @@ if (GETPOST("action") == 'confirm_credite' && GETPOST("confirm") == 'yes')
 	exit;
 }
 
-if (GETPOST("action") == 'infotrans')
+if (GETPOST("action") == 'infotrans' && $user->rights->prelevement->bons->send)
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
@@ -83,7 +83,7 @@ if (GETPOST("action") == 'infotrans')
 	}
 }
 
-if (GETPOST("action") == 'infocredit')
+if (GETPOST("action") == 'infocredit' && $user->rights->prelevement->bons->credit)
 {
 	$bon = new BonPrelevement($db,"");
 	$bon->fetch($_GET["id"]);
@@ -171,7 +171,7 @@ if ($_GET["id"])
 		print '</table>';
 		dol_fiche_end();
 
-		if($bon->date_trans == 0)
+		if($bon->date_trans == 0  && $user->rights->prelevement->bons->send)
 		{
 			print '<form method="post" name="userfile" action="fiche.php?id='.$bon->id.'" enctype="multipart/form-data">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -194,7 +194,7 @@ if ($_GET["id"])
 			print '</form>';
 		}
 
-		if($bon->date_trans <> 0 && $bon->date_credit == 0)
+		if($bon->date_trans <> 0 && $bon->date_credit == 0 && $user->rights->prelevement->bons->credit)
 		{
 			print '<form name="infocredit" method="post" action="fiche.php?id='.$bon->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

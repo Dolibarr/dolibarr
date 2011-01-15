@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,21 +84,39 @@ class modPrelevement extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'prelevement';
+		$r=0;
+		$r++;
+		$this->rights[$r][0] = 151;
+		$this->rights[$r][1] = 'Read withdrawals';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'bons';
+		$this->rights[$r][5] = 'lire';
 
-		$this->rights[1][0] = 151;
-		$this->rights[1][1] = 'Read withdrawals';
-		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
-		$this->rights[1][4] = 'bons';
-		$this->rights[1][5] = 'lire';
+		$r++;
+		$this->rights[$r][0] = 152;
+		$this->rights[$r][1] = 'Create/modify a withdrawals';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'bons';
+		$this->rights[$r][5] = 'creer';
 
-		$this->rights[4][0] = 152;
-		$this->rights[4][1] = 'Create/modify a withdrawals';
-		$this->rights[4][2] = 'w';
-		$this->rights[4][3] = 0;
-		$this->rights[4][4] = 'bons';
-		$this->rights[4][5] = 'creer';
-
+		$r++;
+		$this->rights[$r][0] = 153;
+		$this->rights[$r][1] = 'Send withdrawals to bank';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'bons';
+		$this->rights[$r][5] = 'send';
+		
+		$r++;
+		$this->rights[$r][0] = 154;
+		$this->rights[$r][1] = 'credit/refuse withdrawals';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'bons';
+		$this->rights[$r][5] = 'credit';
+		
 /*        $this->rights[2][0] = 154;
         $this->rights[2][1] = 'Setup withdraw account';
         $this->rights[2][2] = 'w';

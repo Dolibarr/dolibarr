@@ -143,7 +143,7 @@ if ($_GET["id"])
 		dol_print_error($db);
 	}
 
-	if ($_GET["action"] == 'rejet' && $user->rights->prelevement->bons->creer)
+	if ($_GET["action"] == 'rejet' && $user->rights->prelevement->bons->credit)
 	{
 		$html = new Form($db);
 
