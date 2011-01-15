@@ -143,7 +143,7 @@ if ($_GET["id"])
 		dol_print_error($db);
 	}
 
-	if ($_GET["action"] == 'rejet')
+	if ($_GET["action"] == 'rejet' && $user->rights->prelevement->bons->creer)
 	{
 		$html = new Form($db);
 
@@ -200,9 +200,13 @@ if ($_GET["id"])
 
 	if ($_GET["action"] == '')
 	{
-		if ($bon->statut == 2 && $lipre->statut == 2)
+		if ($bon->statut == 2 && $lipre->statut == 2 && $user->rights->prelevement->bons->credit)
 		{
 	  		print "<a class=\"butAction\" href=\"ligne.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("StandingOrderReject")."</a>";
+		}
+		else 
+		{
+			print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("StandingOrderReject")."</a>";
 		}
 	}
 
