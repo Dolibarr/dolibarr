@@ -35,6 +35,6 @@ ChooseDefaultBrowser=Esculli el seu navegador per defecte. Si no està segur, sim
 
 LaunchNow=Llançar ara Dolibarr
 
-ProgramHasBeenRemoved=Els arxius del programa Dolibarr han estat eliminats. No obstant això tots els seus arxius de dades es troben encara al directori $1. Haurà eliminar aquest directori manualment per a una desinstal completa.
+ProgramHasBeenRemoved=Els arxius del programa Dolibarr han estat eliminats. No obstant això tots els seus arxius de dades es troben encara al directori %1. Haurà eliminar aquest directori manualment per a una desinstal completa.
 
 DoliWampWillStartApacheMysql=L'instal·lador DoliWamp intentarà iniciar o reiniciar Apache i MySQL, això pot durar des de diversos segons a un minut després de la confirmació. Iniciar la instal·lació o actualització dels servidors web i bases de dades requerides per Dolibarr?
