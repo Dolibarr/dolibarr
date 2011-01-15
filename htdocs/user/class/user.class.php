@@ -163,12 +163,14 @@ class User extends CommonObject
 			$obj = $this->db->fetch_object($result);
 			if ($obj)
 			{
-				$this->id = $obj->rowid;
-				$this->ref = $obj->rowid;
+				$this->id 			= $obj->rowid;
+				$this->ref 			= $obj->rowid;
 
-				$this->ldap_sid = $obj->ldap_sid;
-				$this->nom = $obj->name;
-				$this->prenom = $obj->firstname;
+				$this->ldap_sid 	= $obj->ldap_sid;
+				$this->nom 			= $obj->name;		// TODO deprecated
+				$this->lastname		= $obj->name;
+				$this->prenom 		= $obj->firstname;	// TODO deprecated
+				$this->firstname 	= $obj->firstname;
 
 				$this->login = $obj->login;
 				$this->pass_indatabase = $obj->pass;

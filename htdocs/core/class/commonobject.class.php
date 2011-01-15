@@ -412,7 +412,7 @@ class CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE ec.element_id = ".$this->id;
 		$sql.= " AND ec.fk_socpeople = c.rowid";
-		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (0,".$conf->entity.")";
 		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$this->element."'";
 		$sql.= " AND tc.source = '".$source."'";
@@ -507,17 +507,17 @@ class CommonObject
 	}
 
 	/**
-	 *		\brief      Charge l'adresse de livraison d'id $this->fk_delivery_address dans this->deliveryaddress
-	 *		\param      userid 		Id du contact
-	 *		\return		int			<0 if KO, >0 if OK
+	 *		Charge l'adresse d'id $this->fk_address dans this->address
+	 *		@param      fk_address 		Id de l'adresse
+	 *		@return		int				<0 if KO, >0 if OK
 	 */
-	function fetch_adresse_livraison($deliveryaddressid)
+	function fetch_address($fk_address)
 	{
-		$address = new Societe($this->db);
-		$result=$address->fetch_adresse_livraison($deliveryaddressid);
-		$this->deliveryaddress = $address;
-		$this->adresse = $address; // TODO obsolete
-		$this->address = $address;
+		$object = new Societe($this->db);
+		$result=$object->fetch_address($fk_address);
+		$this->deliveryaddress = $object;	// TODO obsolete
+		$this->adresse = $object; 			// TODO obsolete
+		$this->address = $object;
 		return $result;
 	}
 

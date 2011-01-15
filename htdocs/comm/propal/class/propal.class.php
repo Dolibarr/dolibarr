@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)   <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
@@ -91,7 +91,9 @@ class Propal extends CommonObject
 	var $remise_absolue;
 	var $note;
 	var $note_public;
-	var $fk_delivery_address;
+	var $fk_delivery_address;		// deprecated (for compatibility)
+	var $fk_address;
+	var $address_type;
 	var $adresse;
 
 	var $products=array();
@@ -952,7 +954,8 @@ class Propal extends CommonObject
 				$this->datep                = $this->db->jdate($obj->dp);
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
 				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
-				$this->fk_delivery_address  = $obj->fk_adresse_livraison;
+				$this->fk_delivery_address  = $obj->fk_adresse_livraison;	// TODO obsolete
+				$this->fk_address  			= $obj->fk_adresse_livraison;
 
 				$this->mode_reglement_id       = $obj->fk_mode_reglement;
 				$this->mode_reglement_code     = $obj->mode_reglement_code;
@@ -1201,16 +1204,16 @@ class Propal extends CommonObject
 	 *      \param      adresse_livraison      Adresse de livraison
 	 *      \return     int         		<0 si ko, >0 si ok
 	 */
-	function set_adresse_livraison($user, $address_id)
+	function set_adresse_livraison($user, $fk_address)
 	{
 		if ($user->rights->propale->creer)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison = '".$address_id."'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison = '".$fk_address."'";
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			if ($this->db->query($sql) )
 			{
-				$this->fk_delivery_address = $address_id;
+				$this->fk_delivery_address = $fk_address;
 				return 1;
 			}
 			else
