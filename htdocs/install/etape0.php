@@ -266,7 +266,7 @@ if (! $error && $db->connected)
 
 				// We keep only utf8
 				//if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/(utf8|latin1)/i',$characterSet['charset'])) $linedisabled=true;
-				if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/utf8/i',$characterSet['charset'])) $linedisabled=true;
+				if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/utf8$/i',$characterSet['charset'])) $linedisabled=true;
 
 				if ($defaultCharacterSet == $characterSet['charset'] )
 				{
