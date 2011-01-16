@@ -40,14 +40,12 @@ function versiontostring($versionarray)
 }
 
 /**
- *	Compare 2 versions
+ *	Compare 2 versions (stored into 2 arrays)
  *	@param      versionarray1       Array of version (vermajor,verminor,patch)
  *	@param      versionarray2       Array of version (vermajor,verminor,patch)
  *	@return     int                 -4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
- * 									0 if =
+ * 									0 if same
  * 									1,2,3,4 if versionarray1>versionarray2 (value depends on level of difference)
- *
- * TODO
  */
 function versioncompare($versionarray1,$versionarray2)
 {
@@ -72,8 +70,8 @@ function versioncompare($versionarray1,$versionarray2)
 
 
 /**
- *	\brief      Return version PHP
- *	\return     array               Tableau de version (vermajeur,vermineur,autre)
+ *	Return version PHP
+ *	@return     array               Tableau de version (vermajeur,vermineur,autre)
  */
 function versionphparray()
 {
@@ -590,7 +588,7 @@ function Activate($value,$withdeps=1)
         foreach ($conf->file->dol_document_root as $dol_document_root)
         {
             $dir = $dol_document_root."/includes/modules/";
-            
+
         	$found=@include_once($dir.$file);
             if ($found) break;
         }
@@ -678,7 +676,7 @@ function UnActivate($value,$requiredby=1)
         foreach ($conf->file->dol_document_root as $dol_document_root)
         {
             $dir = $dol_document_root."/includes/modules/";
-        	
+
         	$found=@include_once($dir.$file);
             if ($found) break;
         }
