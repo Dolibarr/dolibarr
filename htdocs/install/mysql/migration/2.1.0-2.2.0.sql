@@ -149,7 +149,7 @@ create table `llx_categorie_societe` (
   `fk_societe` int(11) not null,
   UNIQUE KEY `fk_categorie` (`fk_categorie`,`fk_societe`),
   KEY `fk_societe` (`fk_societe`)
-) type=innodb;
+) ENGINE=innodb;
 
 alter table `llx_categorie_societe` drop foreign key fk_societe;
 alter table `llx_categorie_societe` add constraint `fk_categorie_societe_categorie_rowid` foreign key(`fk_categorie`) REFERENCES `llx_categorie` (`rowid`);
@@ -161,7 +161,7 @@ create table `llx_categorie_product` (
   PRIMARY KEY  (`fk_categorie`,`fk_product`),
   KEY `idx_categorie_product_fk_categorie` (`fk_categorie`),
   KEY `idx_categorie_product_fk_product` (`fk_product`)
-) type=innodb;
+) ENGINE=innodb;
 
 alter table `llx_categorie_product`
   add constraint `fk_categorie_product_categorie_rowid` foreign key(`fk_categorie`) REFERENCES `llx_categorie` (`rowid`),
@@ -179,7 +179,7 @@ create table `llx_droitpret_rapport` (
   `fichier` varchar(255) NOT NULL,
   `nbfact` int(11) NOT NULL,
   PRIMARY KEY  (`rowid`)
-) type=innodb;
+) ENGINE=innodb;
 
 
 -- Gestion des menu
@@ -199,13 +199,13 @@ CREATE TABLE `llx_menu` (
   `right` varchar(255),
   `user` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`rowid`)
-) type=innodb;
+) ENGINE=innodb;
 
 create table `llx_menu_constraint` (
   `rowid` int(11) NOT NULL,
   `action` varchar(255) NOT NULL,
   PRIMARY KEY  (`rowid`)
-) type=innodb;
+) ENGINE=innodb;
 
 create table `llx_menu_const` (
   `rowid` int(11) NOT NULL auto_increment,
@@ -213,7 +213,7 @@ create table `llx_menu_const` (
   `fk_constraint` int(11) NOT NULL,
   `user` tinyint(4) NOT NULL default '2',
   PRIMARY KEY  (`rowid`)
-) type=innodb;
+) ENGINE=innodb;
 
 ALTER TABLE `llx_menu_const` ADD INDEX `idx_menu_const_fk_menu` (`fk_menu`);
 ALTER TABLE `llx_menu_const` ADD INDEX `idx_menu_const_fk_constraint` (`fk_constraint`);
@@ -878,7 +878,7 @@ create table llx_c_ecotaxe
   organization varchar(255),
   fk_pays      integer NOT NULL,
   active       tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (1, 'ER-A-A', 'Mat�riels �lectriques < 0,2kg', 0.01000000, 'ERP', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (2, 'ER-A-B', 'Mat�riels �lectriques >= 0,2 kg et < 0,5 kg', 0.03000000, 'ERP', 1, 1);
@@ -946,7 +946,7 @@ create table llx_fichinterdet
   description       text,
   duree             integer,
   rang              integer DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;
 
 ALTER TABLE llx_fichinter ADD COLUMN model_pdf varchar(50) after note_public;
 
@@ -1010,7 +1010,7 @@ create table llx_c_barcode_type
   libelle  varchar(50)        NOT NULL,
   coder    integer            NOT NULL DEFAULT 0,
   example  varchar(16)        NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 
 INSERT INTO llx_c_barcode_type (rowid, code, libelle, coder, example) VALUES (1, 'EAN8', 'EAN8', 0, '1234567');
 INSERT INTO llx_c_barcode_type (rowid, code, libelle, coder, example) VALUES (2, 'EAN13', 'EAN13', 0, '123456789012');
@@ -1031,7 +1031,7 @@ create table llx_c_paper_format
   height   float(6,2)                       DEFAULT 0,
   unit     enum('mm','cm','point','inch')   NOT NULL,
   active   tinyint DEFAULT 1                NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (1, '4A0', 'Format 4A0', '1682', '2378', 'mm', 1);
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (2, '2A0', 'Format 2A0', '1189', '1682', 'mm', 1);
@@ -1062,7 +1062,7 @@ create table llx_societe_log
   fk_user     integer,
   author      varchar(30),
   label       varchar(128)
-)type=innodb;
+)ENGINE=innodb;
 
 
 -- Pour la Tunisie (Formes les plus utilisees)

@@ -24,7 +24,7 @@ create table llx_import_model
   	label         varchar(50) NOT NULL,
   	type		  varchar(20) NOT NULL,
   	field         text NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 
 update llx_bank_url set type='banktransfert' where type='?' and label='(banktransfert)';
 

@@ -68,7 +68,7 @@ create table llx_extra_fields
   maxlength 			integer,
   options 				varchar(45),
   rank 					integer
-)type=innodb;
+)ENGINE=innodb;
 
 ALTER TABLE llx_extra_fields ADD UNIQUE INDEX idx_extra_fields_name (name, entity);
 
@@ -80,7 +80,7 @@ create table llx_extra_fields_options
   fk_extra_fields 		integer NOT NULL,
   value 				varchar(255) NOT NULL,
   rank 					integer
-)type=innodb;
+)ENGINE=innodb;
 
 ALTER TABLE llx_extra_fields_options ADD INDEX idx_extra_fields_options_fk_extra_fields (fk_extra_fields);
 ALTER TABLE llx_extra_fields_options ADD CONSTRAINT fk_extra_fields_options_fk_extra_fields FOREIGN KEY (fk_extra_fields) REFERENCES llx_extra_fields (rowid);
@@ -98,7 +98,7 @@ create table llx_extra_fields_values
   value					varchar(255),
   fk_user_create 		integer,
   fk_user_modif 		integer
-)type=innodb;
+)ENGINE=innodb;
 
 ALTER TABLE llx_extra_fields_values ADD INDEX idx_extra_fields_values_fk_extra_fields (fk_extra_fields, entity);
 ALTER TABLE llx_extra_fields_values ADD CONSTRAINT fk_extra_fields_values_fk_extra_fields FOREIGN KEY (fk_extra_fields) REFERENCES llx_extra_fields (rowid);
@@ -185,7 +185,7 @@ create table llx_entity
   fk_user_creat		integer,
   visible			tinyint DEFAULT 1 NOT NULL,
   active			tinyint DEFAULT 1 NOT NULL
-) type=innodb;
+) ENGINE=innodb;
 
 INSERT INTO llx_entity (rowid, label, description, datec, fk_user_creat, visible, active) VALUES (1, 'Default Entity', 'This is the default entity', NOW(), 1, 1, 1);
 

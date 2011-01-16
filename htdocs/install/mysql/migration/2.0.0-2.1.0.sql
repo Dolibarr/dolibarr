@@ -131,7 +131,7 @@ create table llx_product_det
   label          varchar(255) NOT NULL,
   description    text,
   note           text
-)type=innodb;
+)ENGINE=innodb;
 
 ALTER TABLE `llx_propal` ADD `date_livraison` DATE;
 ALTER TABLE `llx_commande` ADD `date_livraison` DATE;
@@ -247,7 +247,7 @@ create table llx_societe_adresse_livraison
   note               text,
   fk_user_creat      integer,
   fk_user_modif      integer
-)type=innodb;
+)ENGINE=innodb;
 
 alter table llx_societe_adresse_livraison add column label varchar(30) after tms;
 
@@ -595,7 +595,7 @@ create table llx_livraison
 
   UNIQUE INDEX (ref),
   key(fk_commande)
-)type=innodb;
+)ENGINE=innodb;
 
 alter table llx_livraison drop foreign key fk_livraison_societe;
 alter table llx_livraison drop column fk_soc;
@@ -609,7 +609,7 @@ create table llx_livraisondet
   qty               real,
   key(fk_livraison),
   key(fk_commande_ligne)
-)type=innodb;
+)ENGINE=innodb;
 
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (90, 'commande',  'internal', 'SALESREPSIGN',  'Commercial signataire de la commande', 1);
@@ -673,7 +673,7 @@ create table llx_societe_remise_except
   fk_user         integer NOT NULL,
   fk_facture      integer,
   description     varchar(255) NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 
 alter table llx_societe_remise_except ADD COLUMN amount_tva real DEFAULT 0 NOT NULL after amount_ht;
 alter table llx_societe_remise_except ADD COLUMN amount_ttc real DEFAULT 0 NOT NULL after amount_tva;
@@ -786,7 +786,7 @@ create table llx_accountingdebcred
  fk_account      integer		NOT NULL,
 	amount          real		NOT NULL,
 	direction       varchar(1)	NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 
 alter table llx_facturedet_rec add column total_ht real;
 alter table llx_facturedet_rec add column total_tva real;
@@ -821,7 +821,7 @@ create table llx_categorie_fournisseur
   fk_categorie  integer NOT NULL,
   fk_societe    integer NOT NULL,
   UNIQUE (fk_categorie, fk_societe)
-)type=innodb;
+)ENGINE=innodb;
 
 
 create table llx_fournisseur_ca
@@ -831,7 +831,7 @@ create table llx_fournisseur_ca
   year          smallint UNSIGNED,
   ca_genere     float,
   UNIQUE (fk_societe, year)
-)type=innodb;
+)ENGINE=innodb;
 
 alter table llx_fournisseur_ca add ca_achat float(11,2) DEFAULT 0;
 
@@ -842,7 +842,7 @@ create table llx_product_ca
   year          smallint UNSIGNED,
   ca_genere     float,
   UNIQUE (fk_product, year)
-)type=innodb;
+)ENGINE=innodb;
 
 create table llx_commande_fournisseur_dispatch
 (
@@ -853,7 +853,7 @@ create table llx_commande_fournisseur_dispatch
   fk_entrepot    integer,
   fk_user        integer,
   datec          datetime
-)type=innodb;
+)ENGINE=innodb;
 
 ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX (fk_commande);
 
@@ -872,7 +872,7 @@ create table llx_stock_valorisation
   fk_stock_mouvement integer,               -- id du mouvement de stock
 
   key(fk_product)
-)type=innodb;
+)ENGINE=innodb;
 
 
 create table llx_entrepot_valorisation
@@ -883,7 +883,7 @@ create table llx_entrepot_valorisation
   fk_entrepot     integer UNSIGNED NOT NULL ,
   valo_pmp        float(12,4),    -- valoristaion du stock en PMP
   key(fk_entrepot)
-)type=innodb;
+)ENGINE=innodb;
 
 ALTER TABLE llx_entrepot ADD COLUMN valo_pmp float(12,4) DEFAULT 0;
 
@@ -894,7 +894,7 @@ create table llx_user_entrepot
   fk_user      integer UNSIGNED, -- pointe sur llx_user
   consult      tinyint(1) UNSIGNED,
   send         tinyint(1) UNSIGNED
-)type=innodb;
+)ENGINE=innodb;
 
 create table llx_product_subproduct
 (
@@ -902,7 +902,7 @@ create table llx_product_subproduct
   fk_product            integer NOT NULL, -- id du produit maitre
   fk_product_subproduct integer NOT NULL, -- id du sous-produit
   UNIQUE(fk_product, fk_product_subproduct)
-)type=innodb;
+)ENGINE=innodb;
 
 create table llx_bordereau_cheque
 (
@@ -916,7 +916,7 @@ create table llx_bordereau_cheque
   fk_user_author    integer,
   note              text,
   statut            tinyint(1) UNSIGNED DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;
 
 alter table llx_product_price add price_level tinyint(4) NULL DEFAULT 1;
 alter table llx_product_price add column price_ttc float(12,4) DEFAULT 0 after price;
@@ -934,7 +934,7 @@ create table llx_export_model
   	label         varchar(50) NOT NULL,
   	type          varchar(20) NOT NULL,
   	field         text
-)type=innodb;
+)ENGINE=innodb;
 
 ALTER table llx_export_model add fk_user		  integer DEFAULT 0 NOT NULL after rowid;
 

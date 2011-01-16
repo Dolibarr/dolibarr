@@ -18,7 +18,7 @@ create table llx_product_association
   fk_product_pere       integer NOT NULL DEFAULT 0,
   fk_product_fils       integer NOT NULL DEFAULT 0,
   qty                   double NULL
-)type=innodb;
+)ENGINE=innodb;
 
 
 ALTER TABLE llx_product_association ADD UNIQUE INDEX uk_product_association (fk_product_pere, fk_product_fils);
@@ -192,7 +192,7 @@ create table llx_c_field_list
   search		tinyint 		DEFAULT 0  	NOT NULL,
   enabled       varchar(255)	DEFAULT 1,
   rang      	integer 		DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;
 
 INSERT INTO llx_c_field_list (rowid, element, entity, name, alias, title, align, sort, search, enabled, rang) VALUES
 (1, 'product_default', 1, 'p.ref', 'ref', 'Ref', 'left', 1, 1, '1', 1),
@@ -222,7 +222,7 @@ create table llx_categorie_member
 (
   fk_categorie  integer NOT NULL,
   fk_member     integer NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 
 ALTER TABLE llx_categorie_member ADD PRIMARY KEY (fk_categorie, fk_member);
 ALTER TABLE llx_categorie_member ADD INDEX idx_categorie_member_fk_categorie (fk_categorie);

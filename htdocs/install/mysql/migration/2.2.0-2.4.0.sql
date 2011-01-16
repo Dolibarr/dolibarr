@@ -69,7 +69,7 @@ create table llx_co_exp
 
   key(fk_commande),
   key(fk_expedition)
-)type=innodb;
+)ENGINE=innodb;
 
 -- V4 ALTER TABLE llx_expedition DROP INDEX fk_expedition_methode;
 -- V4 ALTER TABLE llx_expedition DROP INDEX fk_commande;
@@ -119,7 +119,7 @@ create table llx_co_liv
 
   key(fk_commande),
   key(fk_livraison)
-)type=innodb;
+)ENGINE=innodb;
 
 -- V4 ALTER TABLE llx_livraison DROP INDEX fk_commande;
 -- V4 ALTER TABLE llx_livraison DROP INDEX ref;
@@ -162,7 +162,7 @@ create table llx_pr_exp
 
   key(fk_propal),
   key(fk_expedition)
-)type=innodb;
+)ENGINE=innodb;
 
 create table llx_pr_liv
 (
@@ -172,7 +172,7 @@ create table llx_pr_liv
 
   key(fk_propal),
   key(fk_livraison)
-)type=innodb;
+)ENGINE=innodb;
 
 ALTER TABLE llx_paiement modify fk_bank integer NOT NULL DEFAULT 0;
 
@@ -184,7 +184,7 @@ create table llx_element_element
   sourcetype		varchar(12) NOT NULL,
   targetid			integer NOT NULL,
   targettype		varchar(12) NOT NULL
-) type=innodb;
+) ENGINE=innodb;
 
 
 ALTER TABLE llx_element_element 
@@ -207,7 +207,7 @@ create table llx_events
   description    varchar(250) NOT NULL,        
   ip			 varchar(32) NOT NULL,
   fk_object      integer               
-) type=innodb;
+) ENGINE=innodb;
 
 
 ALTER TABLE llx_events ADD INDEX idx_events_dateevent (dateevent);
@@ -230,7 +230,7 @@ create table llx_c_prospectlevel
   label           varchar(30),
   sortorder       smallint,
   active          smallint    DEFAULT 1 NOT NULL
-) type=innodb;
+) ENGINE=innodb;
 
 insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_UNKOWN',    'Unknown',  1);
 insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_LOW',       'Low',      2);
@@ -277,7 +277,7 @@ create table llx_ecm_directories
   date_m		  timestamp,
   fk_user_c		  integer,
   fk_user_m		  integer
-) type=innodb;
+) ENGINE=innodb;
 
 create table llx_ecm_documents
 (
@@ -297,7 +297,7 @@ create table llx_ecm_documents
   fk_directory    integer,
   fk_status		  smallint DEFAULT 0,
   private         smallint DEFAULT 0
-) type=innodb;
+) ENGINE=innodb;
 
 ALTER TABLE llx_bank modify num_chq varchar(50);
 
@@ -326,7 +326,7 @@ create table llx_c_type_fees
   code      varchar(12)  UNIQUE NOT NULL,
   libelle   varchar(30),
   active    tinyint DEFAULT 1   NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 
 
 alter table llx_deplacement modify type varchar(12) NOT NULL;
@@ -343,7 +343,7 @@ alter table llx_element_element modify targettype		varchar(16) NOT NULL;
 
 update llx_societe set fk_typent = 0 where fk_typent is null;
 
-ALTER TABLE llx_surveys_answers_summary TYPE=INNODB;
+ALTER TABLE llx_surveys_answers_summary ENGINE=innodb;
 
 
 -- Not used. Just to be compatible with upgrade process of higher versions
