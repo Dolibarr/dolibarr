@@ -170,7 +170,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
     if ($mode == 'source' && ! is_object($sourcecompany)) return -1;
     if ($mode == 'target' && ! is_object($targetcompany)) return -1;
-    if ($mode == 'delivery' && ! is_object($deliverycompany)) return -1;	// TODO Because delivery is a "target" address, it must in parameter targetcompany and mode must be 'target'
+    if ($mode == 'delivery' && ! is_object($deliverycompany)) return -1;
 
     if ($sourcecompany->departement_id && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->departement_id);
     if ($targetcompany->departement_id && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->departement_id);
@@ -235,11 +235,10 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
         }
     }
 
-	if ($mode == 'delivery')	// deprecated
+	if ($mode == 'delivery')	// for a delivery address (address + phone/fax)
     {
         $stringaddress .= ($stringaddress ? "\n" : '' ).pdf_format_address($outputlangs,$deliverycompany)."\n";
 
-        // TODO Tel and fax are not zip fields. Must be output outside of this function.
         // Tel
         if ($deliverycompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($deliverycompany->phone);
         // Fax
