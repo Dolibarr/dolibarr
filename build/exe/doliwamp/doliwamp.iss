@@ -1,6 +1,6 @@
 ; ----- DoliWamp.iss ---------------------------------------------------------------------
 ; Script to build an auto installer for Dolibarr.
-; Works with InnoSetup 5.3.4 (a)
+; Works with InnoSetup 5.4.0 (a)
 ; Idea from WampServer 2 (http://www.wampserver.com)
 ;----------------------------------------------------------------------------------------
 ; You must edit some path in this file to build an exe (like SourceDir).
@@ -308,8 +308,10 @@ function NextButtonClick(CurPageID: Integer): Boolean;
 var myResult: Integer;
 var res: Boolean;
 var paramok: Boolean;
-var ibdata1dirold: String;
-var ibdata1dirnew: String;
+var datadirold: String;
+var datadirnew: String;
+var exedirold: String;
+var exedirnew: String;
 var themessage: String;
 begin
 
@@ -322,20 +324,21 @@ begin
 
     // This must be in if curpage.id = page.id, otherwise it is executed after each Next button
 
-    //----------------------------------------------
-    // Copie old database <= 2.9 from /bin/mysql/mysql5.0.45/data into /bin/mysql/data
-    //----------------------------------------------
     path := ExpandConstant('{app}');
     winPath := ExpandConstant('{win}');
     pathWithSlashes := path;
     StringChange (pathWithSlashes, '\','/');
-    ibdata1dirold := pathWithSlashes+'/bin/mysql/mysql5.0.45/data';
-    ibdata1dirnew := pathWithSlashes+'/bin/mysql/data';
-//    if DirExists (ibdata1dirold+'/dolibarr/') and not DirExists (ibdata1dirnew+'/dolibarr/') then
-//    begin
-//      FileCopy(ibdata1dirold+'/ibdata1',ibdata1dirnew+'/ibdata1', true);
-//      FileCopy(ibdata1dirold+'/ib_logfile0',ibdata1dirnew+'/ib_logfile0', false);
-//      FileCopy(ibdata1dirold+'/ib_logfile1',ibdata1dirnew+'/ib_logfile1', false);
+    datadirold := pathWithSlashes+'/bin/mysql/mysql5.0.45/data';
+    datadirnew := pathWithSlashes+'/bin/mysql/data';
+    exedirold := pathWithSlashes+'/bin/mysql/mysql5.0.45';
+    exedirnew := pathWithSlashes+'/bin/mysql/mysql5.0.45';
+
+    // If we have a new database version, we should only copy old my.ini file into new directory
+    // and change only all basedir= strings to use new version. Like this, data dir is still correct.
+    // Install of service and stop/start scripts are already rebuild by installer.
+//      FileCopy(exedirold+'/my.ini',exedirnew+'/my.ini', true);
+
+//    We should not need this, also databases may not be called dolibarr
 //      res := RenameFile(ibdata1dirold+'/dolibarr',ibdata1dirnew+'/dolibarr');
 //      if res then
 //      begin
@@ -348,7 +351,6 @@ begin
 //          themessage := CustomMessage('OldVersionFoundButFailedToMoveInNew');
 //          MsgBox(themessage,mbInformation,MB_OK);
 //      end;
-//    end
 
 
     //----------------------------------------------
