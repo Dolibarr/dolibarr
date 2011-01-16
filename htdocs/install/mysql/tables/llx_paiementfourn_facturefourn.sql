@@ -26,4 +26,4 @@ create table llx_paiementfourn_facturefourn
   fk_paiementfourn INTEGER DEFAULT NULL,
   fk_facturefourn  INTEGER DEFAULT NULL,
   amount DOUBLE DEFAULT '0'
-) TYPE=innodb;
+)type=innodb;
