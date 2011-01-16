@@ -20,7 +20,6 @@ DoYouWantToStart=Voulez-vous démarrer le processus d'installation/mise à jour ?
 TechnicalParameters=Paramètres techniques
 IfFirstInstall=S'il s'agit de la première installation, merci de spécifier ces quelques paramètres techniques. Si vous ne les comprennez pas, êtes non surs, ou procédez à une mise à jour, laissez les champs avec les valeurs proposées par défaut.
 
-; WARNING !!! STRINGS HERE MUST BE LOWER THAN 60 CHARACTERS
 SMTPServer=Serveur SMTP (le votre ou celui de votre FAI, première install uniquement) :
 ApachePort=Port Apache (première install uniquement, le choix standard est 80) :
 MySqlPort=Port Mysql (première install uniquement, le choix standard est 3306) :
@@ -39,4 +38,6 @@ ProgramHasBeenRemoved=Les fichiers du programe Dolibarr ont été supprimés. Toute
 
 DoliWampWillStartApacheMysql=L'installeur DoliWamp va maintenant démarrer ou redémarrer Apache et Mysql, ceci peut durer de quelques secondes à une minute après cette confirmation. Démarrer l'installation ou mise à jour du serveur web et base de données requis par Dolibarr ?
 
+OldVersionFoundAndMoveInNew=Une ancienne version de base a été trouvée et déplacée pour fonctionner avec la nouvelle version de Dolibarr.
+OldVersionFoundButFailedToMoveInNew=Une ancienne version de base a été trouvée mais ne peut etre déplacé pour être utilisé avec la nouvelle version de Dolibar.
 

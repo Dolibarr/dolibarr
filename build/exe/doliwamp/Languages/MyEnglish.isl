@@ -20,7 +20,6 @@ DoYouWantToStart=Do you want to start installation/upgrade process ?
 TechnicalParameters=Technical parameters
 IfFirstInstall=If first install, please specify some technical parameters. If you don't understand, are not sure, or are doing an upgrade, just leave the default values.
 
-; WARNING !!! STRINGS HERE MUST BE LOWER THAN 60 CHARACTERS
 SMTPServer=SMTP server (your own or ISP SMTP server, first install only) :
 ApachePort=Apache port (first install only, common choice is 80) :
 MySqlPort=MySql port (first install only, common choice is 3306) :
@@ -38,3 +37,7 @@ LaunchNow=Launch Dolibarr now
 ProgramHasBeenRemoved=Dolibarr program files have been removed. However, all your data files are still in directory %1. You must remove this directory manually for a complete uninstall.
 
 DoliWampWillStartApacheMysql=DoliWamp installer will now start or restart Apache and Mysql, this may last from several seconds to one minute after this confirmation. Start to install or upgrade the web and database server required by Dolibarr ?
+
+OldVersionFoundAndMoveInNew=An old database version has been found and moved to be used by new Dolibarr version
+OldVersionFoundButFailedToMoveInNew=An old database version has been but could not be moved to be used with new Dolibarr version
+

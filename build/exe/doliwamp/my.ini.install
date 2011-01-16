@@ -75,7 +75,7 @@ basedir=WAMPROOT/bin/mysql/mysql5.0.45
 log-error=WAMPROOT/logs/mysql.log
 
 #Path to the database root
-datadir=WAMPROOT/bin/mysql/mysql5.0.45/data
+datadir=WAMPROOT/bin/mysql/data
 
 # The default character set that will be used when a new schema or table is
 # created and no character set is defined
@@ -232,7 +232,7 @@ basedir=WAMPROOT/bin/mysql/mysql5.0.45
 log-error=WAMPROOT/logs/mysql.log
 
 #Path to the database root
-datadir=WAMPROOT/bin/mysql/mysql5.0.45/data
+datadir=WAMPROOT/bin/mysql/data
 
 # The default character set that will be used when a new schema or table is
 # created and no character set is defined

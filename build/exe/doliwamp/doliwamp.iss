@@ -18,12 +18,12 @@
 ; ----- Change this -----
 AppName=DoliWamp
 ; DoliWamp-x.x.x or DoliWamp-x.x.x-dev or DoliWamp-x.x.x-beta
-AppVerName=DoliWamp-2.9.0
+AppVerName=DoliWamp-3.0.0-beta
 ; DoliWamp-x.x x or DoliWamp-x.x.x-dev or DoliWamp-x.x.x-beta
-OutputBaseFilename=DoliWamp-2.9.0
+OutputBaseFilename=DoliWamp-3.0.0-beta
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
-SourceDir=D:\Mes developpements\dolibarr
+SourceDir=C:\Work\Data\Workspace\dolibarr
 ; ----- End of change
 ;OutputManifestFile=build\doliwampbuild.log
 AppId=doliwamp
@@ -32,7 +32,7 @@ AppPublisherURL=http://www.nltechno.com
 AppSupportURL=http://www.dolibarr.org
 AppUpdatesURL=http://www.dolibarr.org
 AppComments=DoliWamp includes Dolibarr, Apache, PHP and Mysql softwares.
-AppCopyright=Copyright (C) 2008-2010 Laurent Destailleur, NLTechno
+AppCopyright=Copyright (C) 2008-2011 Laurent Destailleur, NLTechno
 DefaultDirName=c:\dolibarr
 DefaultGroupName=Dolibarr
 LicenseFile=COPYING
@@ -100,12 +100,13 @@ Source: "build\exe\doliwamp\builddemosslfiles.bat.install"; DestDir: "{app}\"; F
 Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversion;
 ; PhpMyAdmin, Apache, Php, Mysql
 ; Put here path of Wampserver applications
-Source: "C:\Program Files (x86)\Wamp\apps\phpmyadmin3.2.0.1\*.*"; DestDir: "{app}\apps\phpmyadmin3.2.0.1"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log"
-Source: "C:\Program Files (x86)\Wamp\bin\apache\apache2.2.6\*.*"; DestDir: "{app}\bin\apache\apache2.2.6"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
-Source: "C:\Program Files (x86)\Wamp\bin\php\php5.2.5\*.*"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
-Source: "C:\Program Files (x86)\Wamp\bin\mysql\mysql5.0.45\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
+; Value OK: apache 2.2.6, php 5.2.5 (5.2.11 fails if php_exif is on), mysql 5.0.45 or 5.1.36
+Source: "C:\Work\Applis\Wamp\apps\phpmyadmin3.2.0.1\*.*"; DestDir: "{app}\apps\phpmyadmin3.2.0.1"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log"
+Source: "C:\Work\Applis\Wamp\bin\apache\apache2.2.6\*.*"; DestDir: "{app}\bin\apache\apache2.2.6"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
+Source: "C:\Work\Applis\Wamp\bin\php\php5.2.5\*.*"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
+Source: "C:\Work\Applis\Wamp\bin\mysql\mysql5.0.45\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
 ; Mysql data files (does not overwrite if exists)
-Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45\data\mysql"; Flags: onlyifdoesntexist ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
+Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mysql\data\mysql"; Flags: onlyifdoesntexist ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
 ; Dolibarr
 Source: "htdocs\*.*"; DestDir: "{app}\www\dolibarr\htdocs"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db,custom\*,custom2\*,telephonie\*,*\conf.php,*\conf.php.mysql,*\conf.php.old,*\conf.php.postgres,*\install.forced.php,*\modBookmark4u.class.php,*\modDocument.class.php,*\modDroitPret.class.php,*\modEditeur.class.php,*\modPostnuke.class.php,*\modTelephonie.class.php,*\interface_modEditeur_Editeur.class.php*,*\bureau2crea,*\rodolphe"
 Source: "dev\*.*"; DestDir: "{app}\www\dolibarr\dev"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db,fpdf\*,initdemo\*,iso-normes\*,samples\*,test\*,uml\*,xdebug\*"
@@ -307,6 +308,8 @@ function NextButtonClick(CurPageID: Integer): Boolean;
 var myResult: Integer;
 var res: Boolean;
 var paramok: Boolean;
+var ibdata1dirold: String;
+var ibdata1dirnew: String;
 var themessage: String;
 begin
 
@@ -320,9 +323,39 @@ begin
     // This must be in if curpage.id = page.id, otherwise it is executed after each Next button
 
     //----------------------------------------------
-    // copie des dll de php vers apache
+    // Copie old database <= 2.9 from /bin/mysql/mysql5.0.45/data into /bin/mysql/data
     //----------------------------------------------
+    path := ExpandConstant('{app}');
+    winPath := ExpandConstant('{win}');
+    pathWithSlashes := path;
+    StringChange (pathWithSlashes, '\','/');
+    ibdata1dirold := pathWithSlashes+'/bin/mysql/mysql5.0.45/data';
+    ibdata1dirnew := pathWithSlashes+'/bin/mysql/data';
+//    if DirExists (ibdata1dirold+'/dolibarr/') and not DirExists (ibdata1dirnew+'/dolibarr/') then
+//    begin
+//      FileCopy(ibdata1dirold+'/ibdata1',ibdata1dirnew+'/ibdata1', true);
+//      FileCopy(ibdata1dirold+'/ib_logfile0',ibdata1dirnew+'/ib_logfile0', false);
+//      FileCopy(ibdata1dirold+'/ib_logfile1',ibdata1dirnew+'/ib_logfile1', false);
+//      res := RenameFile(ibdata1dirold+'/dolibarr',ibdata1dirnew+'/dolibarr');
+//      if res then
+//      begin
+//          themessage := CustomMessage('OldVersionFoundAndMoveInNew');
+//          MsgBox(themessage,mbInformation,MB_OK);
+//          TODO Replace also mysql.ini and resintall service
+//      end
+//      else
+//      begin
+//          themessage := CustomMessage('OldVersionFoundButFailedToMoveInNew');
+//          MsgBox(themessage,mbInformation,MB_OK);
+//      end;
+//    end
 
+
+    //----------------------------------------------
+    // Copie des dll de php vers apache
+    //----------------------------------------------
+	// TODO Update this list when changing PHP/Apache versions
+	
     phpDllCopy := 'fdftk.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
     phpDllCopy := 'fribidi.dll';
@@ -334,6 +367,8 @@ begin
     phpDllCopy := 'libmhash.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
     phpDllCopy := 'libmysql.dll';
+    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+    phpDllCopy := 'libpq.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
     phpDllCopy := 'msql.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
@@ -356,9 +391,6 @@ begin
     phpDllCopy := 'ssleay32.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
     phpDllCopy := 'yaz.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    // With Wampserver 2.0i and PHP 5.3
-    phpDllCopy := 'libpq.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
 
 
@@ -974,4 +1006,6 @@ Type: filesandordirs; Name: "{app}\www\dolibarr"
 
 [UninstallRun]
 Filename: "{app}\uninstall_services.bat"; Flags: runhidden
+
+
 
