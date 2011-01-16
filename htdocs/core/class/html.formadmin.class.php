@@ -61,7 +61,7 @@ class FormAdmin
 	}
 
 	/**
-	 *    	Return html select list with available languages
+	 *    	Return html select list with available languages (key='en_US', value='United States' for example)
 	 *    	@param      selected        Langue pre-selectionnee
 	 *    	@param      htmlname        Nom de la zone select
 	 *    	@param      showauto        Affiche choix auto
