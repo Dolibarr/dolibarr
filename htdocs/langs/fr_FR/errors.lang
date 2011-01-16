@@ -75,3 +75,4 @@ WarningNoDocumentModelActivated=Aucun modèle, pour la génération de document,
 ErrorDatabaseParameterWrong=Le paramètre de configuration de la base de donnée '<b>%s</b>' a une valeur non compatible pour une utilisation de Dolibarr (doit avoir la valeur '<b>%s</b>').
 ErrorNumRefModel=Une référence existe en base (%s) et est incompatible avec cette numérotation. Supprimez la ligne ou renommez la référence pour activer ce module.
 ErrorQtyTooLowForThisSupplier=Quantité insuffisante pour ce fournisseur ou aucun tarif défini sur ce produit pour ce fournisseur
+ErrorModuleSetupNotComplete=La configuration du module semble incomplète. Aller dans l'espace Configuration - Modules pour corriger.
