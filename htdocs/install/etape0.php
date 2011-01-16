@@ -292,7 +292,7 @@ if (! $error && $db->connected)
         if ($nbofchoice > 1) {
 		?></td>
 		<td class="label">
-		<div class="comment"><?php echo $langs->trans("CharacterSetDatabaseComment"); ?></div>
+		<div class="comment"><?php if ($nbofchoice > 1) echo $langs->trans("CharacterSetDatabaseComment"); ?></div>
 		</td>
 		<?php } ?>
 	</tr>
@@ -316,7 +316,7 @@ if (! $error && $db->connected)
 
 				// We keep only utf8 and iso
                 //if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/(utf8_general|latin1_swedish)/i',$collation['collation'])) $linedisabled=true;
-                if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/utf8/i',$collation['collation'])) $linedisabled=true;
+                if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/utf8_general/i',$collation['collation'])) $linedisabled=true;
 
 				if ($defaultCollationConnection == $collation['collation'])
 				{
