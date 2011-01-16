@@ -409,6 +409,7 @@ else
 				}
 				else {
 					// We can not recommand a choice.
+					// A version of install may be known, but we need last upgrade.
 				}
 			}
 			print '</td>';

@@ -20,10 +20,12 @@ DoYouWantToStart=Voulez-vous démarrer le processus d'installation/mise à jour ?
 TechnicalParameters=Paramètres techniques
 IfFirstInstall=S'il s'agit de la première installation, merci de spécifier ces quelques paramètres techniques. Si vous ne les comprennez pas, êtes non sûr, ou procédez à une mise à jour, laissez les champs avec les valeurs proposées par défaut.
 
+
+; WARNING !!! STRINGS FOR THIS 4 STRINGS MUST BE LOWER THAN 60 CHARACTERS
 SMTPServer=Serveur SMTP (le votre ou celui de votre FAI, première installation uniquement) :
 ApachePort=Port Apache (première installation uniquement, le choix standard est 80) :
 MySqlPort=Port Mysql (première installation uniquement, le choix standard est 3306) :
-MySqlPassword=Mot de passe du serveur et base MySql pour root (première installation uniquement):
+MySqlPassword=Mot de passe serveur+base MySql de root (première installation uniquement):
 
 FailedToDeleteLock=Echec de la suppression du fichier %1/www/dolibarr/install.lock. Vous pouvez ignorer l'avertissement mais il est possible que vous deviez le supprimer manuellement plus tard. Dans ce cas, cela vous sera signalé. Cliquez sur OK pour continuer...
 

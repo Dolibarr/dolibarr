@@ -20,6 +20,7 @@ DoYouWantToStart=Do you want to start installation/upgrade process ?
 TechnicalParameters=Technical parameters
 IfFirstInstall=If first install, please specify some technical parameters. If you don't understand, are not sure, or are doing an upgrade, just leave the default values.
 
+; WARNING !!! STRINGS HERE MUST BE LOWER THAN 60 CHARACTERS
 SMTPServer=SMTP server (your own or ISP SMTP server, first install only) :
 ApachePort=Apache port (first install only, common choice is 80) :
 MySqlPort=MySql port (first install only, common choice is 3306) :
