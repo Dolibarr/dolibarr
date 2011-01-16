@@ -39,5 +39,5 @@ ProgramHasBeenRemoved=Dolibarr program files have been removed. However, all you
 DoliWampWillStartApacheMysql=DoliWamp installer will now start or restart Apache and Mysql, this may last from several seconds to one minute after this confirmation. Start to install or upgrade the web and database server required by Dolibarr ?
 
 OldVersionFoundAndMoveInNew=An old database version has been found and moved to be used by new Dolibarr version
-OldVersionFoundButFailedToMoveInNew=An old database version has been but could not be moved to be used with new Dolibarr version
+OldVersionFoundButFailedToMoveInNew=An old database version has been found but could not be moved to be used with new Dolibarr version
 
