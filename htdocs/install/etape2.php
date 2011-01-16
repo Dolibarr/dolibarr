@@ -143,6 +143,7 @@ if ($_POST["action"] == "set")
 	{
 		// We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
 		$dir = "mysql/tables/";
+		$versionmysql550=explode('.','5.5.0');
 
 		$ok = 0;
 		$handle=opendir($dir);
@@ -183,6 +184,11 @@ if ($_POST["action"] == "set")
 				fclose($fp);
 
 				$buffer=trim($buffer);
+				// For Mysql 5.5+, we must removed type=innodb
+				if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
+				{
+					if (sizeof($versionarray) && versioncompare($versionarray,$versionmysql550) >= 0) $buffer=preg_replace('/type=innodb/i','',$buffer);
+				}
 
 				//print "<tr><td>Creation de la table $name/td>";
 				$requestnb++;
