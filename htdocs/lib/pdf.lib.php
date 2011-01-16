@@ -170,7 +170,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
     if ($mode == 'source' && ! is_object($sourcecompany)) return -1;
     if ($mode == 'target' && ! is_object($targetcompany)) return -1;
-    if ($mode == 'delivery' && ! is_object($deliverycompany)) return -1;
+    if ($mode == 'delivery' && ! is_object($deliverycompany)) return -1;	// FIXME Because delivery is a "target" address, it must in parameter targetcompany and mode must be 'target'
 
     if ($sourcecompany->departement_id && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->departement_id);
     if ($targetcompany->departement_id && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->departement_id);
@@ -234,11 +234,12 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
             $stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
         }
     }
-    
-	if ($mode == 'delivery')
+
+	if ($mode == 'delivery')	// deprecated
     {
         $stringaddress .= ($stringaddress ? "\n" : '' ).pdf_format_address($outputlangs,$deliverycompany)."\n";
 
+        // TODO Tel and fax are not zip fields. Must be output outside of this function.
         // Tel
         if ($deliverycompany->phone) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($deliverycompany->phone);
         // Fax
@@ -466,9 +467,9 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
         $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray,$outputlangs,$object);
         $line.=$outputlangs->convToOutputCharset($newfreetext);
     }
-    
+
     // First line of company infos
-    
+
     if ($showdetails)
     {
     	$line1="";
@@ -502,7 +503,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
     	{
     		$line1.=($line1?" - ":"").$outputlangs->transnoentities("Fax").": ".$fromcompany->fax;
     	}
-    	
+
     	$line2="";
     	// URL
     	if ($fromcompany->url)
@@ -516,10 +517,9 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
     	}
     }
 
-    // Second line of company infos
-
-    // Juridical status
+    // Line 3 of company infos
     $line3="";
+    // Juridical status
     if ($fromcompany->forme_juridique_code)
     {
         $line3.=($line3?" - ":"").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
@@ -544,7 +544,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
         $line3.=($line3?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof2);
     }
 
-    // Third line of company infos
+    // Line 4 of company infos
     $line4="";
     // Prof Id 3
     if ($fromcompany->idprof3)
@@ -587,7 +587,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
     $pdf->SetY(-$posy);
     $pdf->line($marge_gauche, $page_hauteur-$posy, 200, $page_hauteur-$posy);
     $posy--;
-    
+
 	if ($line1)
     {
     	$pdf->SetFont('','B',7);
@@ -596,7 +596,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
         $posy-=3;
         $pdf->SetFont('','',7);
     }
-    
+
 	if ($line2)
     {
     	$pdf->SetFont('','B',7);
@@ -619,7 +619,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
         $pdf->MultiCell(200, 2, $line4, 0, 'C', 0);
     }
 
-    // Show page nb only on iso languages
+    // Show page nb only on iso languages (so default Helvetica font)
     if (pdf_getPDFFont($outputlangs) == 'Helvetica')
     {
         $pdf->SetXY(-20,-$posy);
