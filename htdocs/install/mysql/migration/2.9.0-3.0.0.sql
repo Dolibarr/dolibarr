@@ -88,7 +88,7 @@ CREATE TABLE llx_c_ziptown
   zip	 			varchar(10) NOT NULL,
   town				varchar(255) NOT NULL,
   active 			tinyint NOT NULL DEFAULT 1
-)type=innodb;
+) ENGINE=innodb;
 
 ALTER TABLE llx_c_ziptown ADD INDEX idx_c_ziptown_fk_county (fk_county);
 ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_county		FOREIGN KEY (fk_county)   REFERENCES llx_c_departements (rowid);
