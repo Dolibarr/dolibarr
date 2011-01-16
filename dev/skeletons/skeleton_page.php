@@ -38,7 +38,13 @@
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');		// If this page is public (can be called outside logged session)
 
 // Change this following line to use the correct relative path (../, ../../, etc)
-require("../main.inc.php");
+$res=0;
+if (! $res && file_exists("../main.inc.php")) $res=@include("../main.inc.php");
+if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
+if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include("../../../dolibarr/htdocs/main.inc.php");     // Used on dev env only
+if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include("../../../../dolibarr/htdocs/main.inc.php");   // Used on dev env only
+if (! $res && file_exists("../../../../../dolibarr/htdocs/main.inc.php")) $res=@include("../../../../../dolibarr/htdocs/main.inc.php");   // Used on dev env only
+if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs (do not remove DOL_DOCUMENT_ROOT)
 require_once(DOL_DOCUMENT_ROOT."/skeleton/skeleton_class.class.php");
 
