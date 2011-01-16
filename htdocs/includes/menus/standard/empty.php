@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ class MenuTop {
         $classname='class="tmenu"';
 
 		print_start_menu_entry_empty($idsel);
-		print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
+		print '<a class="tmenuimage" href="'.dol_buildpath('/index.php',1).'?mainmenu=home&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
 		print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
 		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
@@ -200,7 +200,7 @@ class MenuLeft {
             if ($this->menu_array[$i]['level'] == 0) {
                 if ($this->menu_array[$i]['enabled'])
                 {
-                    print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>'."\n";
+                    print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($this->menu_array[$i]['url'],1).'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>'."\n";
                 }
                 else
                 {
@@ -213,7 +213,7 @@ class MenuLeft {
                 print '<div class="menu_contenu">';
 
                 if ($this->menu_array[$i]['enabled'])
-                    print $tabstring.'<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
+                    print $tabstring.'<a class="vsmenu" href="'.dol_buildpath($this->menu_array[$i]['url'],1).'">'.$this->menu_array[$i]['titre'].'</a><br>';
                 else
                     print $tabstring.'<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
 
