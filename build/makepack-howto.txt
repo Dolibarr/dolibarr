@@ -11,7 +11,7 @@ beta version of Dolibarr, step by step.
 - Update version/info in / directory (README*.txt, ChangeLog...)
 - Update version number in build/makepack-dolibarr.pl
 - Update version number in build/exe/doliwamp/doliwamp.iss
-- Update version number in htdocs/master.inc.php
+- Update version number in htdocs/filefunc.inc.php
 - Update version number in htdocs/install/inc.php
 - Commit all changes.
 - Add a CVS Tag (DOLIBARR_x_y_BETA)
@@ -39,7 +39,7 @@ complete release of Dolibarr, step by step.
 - Update version number in build/doxygen/dolibarr-doxygen.doxyfile
 - Update version number in build/exe/doliwamp/doliwamp.iss
 - Update version number in build/perl/virtualmin/dolibarr.pl
-- Update version number in htdocs/master.inc.php
+- Update version number in htdocs/filefunc.inc.php
 - Update version number in htdocs/install/inc.php
 - Update PAD and DOAP files.
 - Commit all changes.

@@ -4,10 +4,10 @@
 	<CompanyName />
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
-		<Program_Version>2.9.0</Program_Version>
-		<Program_Release_Month>08</Program_Release_Month>
-		<Program_Release_Day>01</Program_Release_Day>
-		<Program_Release_Year>2010</Program_Release_Year>
+		<Program_Version>3.0.0</Program_Version>
+		<Program_Release_Month>01</Program_Release_Month>
+		<Program_Release_Day>16</Program_Release_Day>
+		<Program_Release_Year>2011</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
 		<Program_Cost_Other />
@@ -15,7 +15,7 @@
 		<Program_Release_Status>Major Update</Program_Release_Status>
 		<Program_Install_Support>No Install Support</Program_Install_Support>
 		<Program_OS_Support>Linux,Mac OS X,Mac Other,Unix,Win2000,Win7 x32,Win7 x64,Win98,WinOther,WinServer,WinVista,WinVista x64,WinXP,Other</Program_OS_Support>
-		<Program_Language>English,Arabic,Catalan,Chinese,Danish,Dutch,Finnish,French,German,Icelandic,Italian,Norwegian,Polish,Portuguese,Romanian,Russian,Slovenian,Spanish,Turkish</Program_Language>
+		<Program_Language>English,Arabic,Catalan,Chinese,Danish,Dutch,Finnish,French,German,Greek,Icelandic,Italian,Norwegian,Polish,Portuguese,Romanian,Russian,Slovenian,Spanish,Swedish,Turkish</Program_Language>
 		<Program_Change_Info>http://www.dolibarr.org</Program_Change_Info>
 		<Program_Specific_Category>Business</Program_Specific_Category>
 		<Program_Category_Class>Business::Accounting &amp; Finance</Program_Category_Class>
@@ -44,27 +44,22 @@
 			<Char_Desc_450>Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations. We can say Dolibarr is an ERP or CRM. Dolibarr is also available with an auto-installer for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. See DoliWamp software for this.</Char_Desc_450>
 			<Char_Desc_2000>Dolibarr ERP/CRM is a software built by modules addition (you enable only features you need), to manage small or mid-sized businesses, freelancers or foundations. We can say Dolibarr is an ERP or CRM (or both depending on activated modules).
 
+
+
 It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems). Dolibarr differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, OpenERP, Neogia, Compiere, etc) because everything was made to be more simple:
 
+
+
     * Simple to install
+
     * Simple to use
+
     * Simple to develop 
+
+
 
 Note that Dolibarr is also available with an auto-installer for Windows or Ubuntu users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. This version is called DoliWamp (for Windows) or DoliBuntu (for Ubuntu/Debian).</Char_Desc_2000>
 		</English>
-		<French>
-			<Keywords>dolibarr, erp, crm, factures, devis, commandes, trésorerie, stock, produits, agenda, banques, affaires, sociétés, association, gestion</Keywords>
-			<Char_Desc_45>Dolibarr ERP/CRM</Char_Desc_45>
-			<Char_Desc_80>Dolibarr ERP/CRM, le logiciel simple pour gérer votre activité professionnelle</Char_Desc_80>
-			<Char_Desc_250>Dolibarr ERP/CRM est un logiciel modulaire de gestions de TPE/PME, d'indépendants, d'entrepreneurs ou d'associations. En terme plus courtsc'est un ERP et CRM OpenSource simple à installer et utiliser.</Char_Desc_250>
-			<Char_Desc_450>Dolibarr ERP/CRM est un logiciel modulaire (on n'active que les fonctions que l'on désire) de gestions de TPE/PME, d'indépendants, d'entrepreneurs ou d'associations. En terme plus techniques, c'est un ERP et CRM. C'est un projet OpenSource qui s'execute au sein d'un serveur Web et peut donc être accessible depuis n'importe quel lieu disposant d'une connexion Internet (Projet basé sur un serveur WAMP, MAMP ou LAMP: Apache, MySQL, PHP).</Char_Desc_450>
-			<Char_Desc_2000>Dolibarr ERP/CRM est un logiciel modulaire (on n'active que les fonctions que l'on désire) de gestions de TPE/PME, d'indépendants, d'entrepreneurs ou d'associations. En terme plus techniques, c'est un ERP et CRM. C'est un projet OpenSource qui s'execute au sein d'un serveur Web et peut donc être accessible depuis n'importe quel lieu disposant d'une connexion Internet (Projet basé sur un serveur WAMP, MAMP ou LAMP: Apache, MySQL, PHP).
-
-Dolibarr vient compléter les offres déjà nombreuses de logiciels de cette catégorie (comme OpenBravo, OpenERP, SugarCRM, Neogia, Compiere, etc.) mais se démarque par le fait qu'ici tout est fait pour offrir de la simplicité (règle des 3 S):
- * Simple pour l'installation (avec au choix des installeurs clé en main pour ceux qui ignorent comment installer un serveur Web, ou une installation manuelle)
- * Simple pour l'utilisation (fonctions modulaires pour ne pas surcharger les menus, informations claires à la saisie)
- * Simple pour le développement (pas de frameworks lourds). Dolibarr intègre en effet sa propre architecture (design patterns) permettant à tout développeur d'être tout de suite opérationnel sans connaissances particulières autre que le PHP.</Char_Desc_2000>
-		</French>
 	</Program_Descriptions>
 	<Web_Info>
 		<Application_URLs>
