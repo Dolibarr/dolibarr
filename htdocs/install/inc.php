@@ -25,7 +25,7 @@
  *		\version    $Id$
  */
 
-define('DOL_VERSION','3.0.0-alpha');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
+define('DOL_VERSION','3.0.0-beta');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
 
 require_once('../core/class/translate.class.php');
 require_once('../lib/functions.lib.php');
