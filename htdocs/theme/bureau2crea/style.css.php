@@ -83,7 +83,7 @@ body {
     width: 100%;
     margin: 0px;
     }
-    
+
 #mainbody .connexion_box {
 	position: absolute;
     top: 2px;
@@ -91,7 +91,7 @@ body {
     height: 12px;
     text-align: left;
     }
-    
+
 #mainbody .connexion_box .login, #mainbody .connexion_box .printer {
 	margin-left: 10px;
     font-size: 10px;
@@ -99,7 +99,7 @@ body {
     padding: 0px !important;
     padding-right: 10px !important;
     }
-    
+
 #mainbody .connexion_box .login a {
 	color: #333;
     text-decoration: none;
@@ -224,6 +224,10 @@ div.leftContent {
     width: 220px !important;
 }
 
+td.vmenu {
+    width: 220px;
+}
+
 div.vmenu {
 	position: relative;
     float: left;
@@ -232,8 +236,10 @@ div.vmenu {
 }
 
 div.fiche {
-	margin: 0px 20px 20px 40px;
-    padding: 0px;
+    margin-<?php print $left; ?>: 12px;
+    margin-<?php print $right; ?>: 10px;
+	margin-bottom: 10px;
+    padding: 0px;²
     position: relative;
     height: auto;
 }
@@ -273,7 +279,7 @@ div.tmenu {
     white-space: nowrap;
     border-left: 0px;
     padding: 0px;
-    margin: 10px 20px 10px 20px;
+    margin: 10px 0px 10px 0px;
     font-size: 13px;
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu.jpg' ?>) ;
     height: 22px;
@@ -427,12 +433,12 @@ li.tmenu, li.tmenusel {
 li.tmenu span, li.tmenusel span {
 	margin: 0px 10px 0px 10px;
     }
-    
+
 li.tmenu {
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnD.jpg' ?>);
     background-position: right;
     }
-    
+
 li.tmenu a {
 	position: relative;
 	display: block;
@@ -446,16 +452,16 @@ li.tmenu a {
     color: #FFF;
     font-weight: normal;
     }
-    
+
 li.tmenu a:hover {
 	color: #842F00;
     }
-    
+
 li.tmenusel {
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenusel_btnD.jpg' ?>);
     background-position: right;
     }
-    
+
 li.tmenusel a {
 	position: relative;
 	display: block;
@@ -470,11 +476,11 @@ li.tmenusel a {
     color: #474747;
     font-weight: normal;
     }
-    
+
 li.tmenusel a:hover {
 	color: #474747;
     }
-    
+
 li.tmenu a.tmenudisabled {
 	color: #CCC;
     }
