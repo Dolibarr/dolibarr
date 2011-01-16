@@ -77,7 +77,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @xcovers modNotification
  * @xcovers modPaybox
  * @xcovers modPaypal
- * @xcovers modPhenix
  * @xcovers modPrelevement
  * @xcovers modProduct
  * @xcovers modProjet
@@ -88,7 +87,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @xcovers modSyslog
  * @xcovers modTax
  * @xcovers modUser
- * @xcovers modWebcalendar
  * @xcovers modWebServices
  *
  * @backupGlobals disabled
@@ -171,8 +169,8 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 		'CashDesk','Categorie','ClickToDial','Commande','Comptabilite','Contrat','Deplacement','Document','Domain','Don',
 		'ECM','Expedition','Export','ExternalRss','ExternalSite','FTP','Facture',
 		'Fckeditor','Ficheinter','Fournisseur','GeoIPMaxmind','Gravatar','Import','Label','Ldap','Mailing',
-		'Mantis','Notification','Paybox','Paypal','Phenix','Prelevement','Product','Projet','Propale',
-		'Service','Societe','Stock','Syslog','Tax','User','WebServices','Webcalendar');
+		'Mantis','Notification','Paybox','Paypal','Prelevement','Product','Projet','Propale',
+		'Service','Societe','Stock','Syslog','Tax','User','WebServices');
 		foreach($modulelist as $modlabel)
 		{
     		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/mod'.$modlabel.'.class.php');
