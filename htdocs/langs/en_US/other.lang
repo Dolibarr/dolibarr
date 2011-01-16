@@ -75,6 +75,10 @@ FeaturesSupported=Features supported
 Width=Width
 Height=Height
 Depth=Depth
+Top=Top
+Bottom=Bottom
+Left=Left
+Right=Right
 CalculatedWeight=Calculated weight
 CalculatedVolume=Calculated volume
 Weight=Weight
@@ -150,6 +154,7 @@ YouReceiveMailBecauseOfNotification2=This event is the following:
 ThisIsListOfModules=This is a list of modules preselected by this demo profile (only most common modules are visible in this demo). Edit this to have a more personalized demo and click on "Start".
 ClickHere=Click here
 UseAdvancedPerms=Use the advanced rights permissions in modules
+FileFormat=File format
 
 ##### Bookmark #####
 Bookmark=Bookmark
