@@ -83,7 +83,7 @@ class modSociete extends DolibarrModules
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "0";
 		$this->const[$r][3] = "Mettre le numero du mois du debut d\'annee fiscale, ex: 9 pour septembre";
-		$this->const[$r][4] = 1;
+		$this->const[$r][4] = 0;
 		$r++;
 
 		$this->const[$r][0] = "MAIN_SEARCHFORM_SOCIETE";
