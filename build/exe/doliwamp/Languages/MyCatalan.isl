@@ -38,3 +38,7 @@ LaunchNow=Llançar ara Dolibarr
 ProgramHasBeenRemoved=Els arxius del programa Dolibarr han estat eliminats. No obstant això tots els seus arxius de dades es troben encara al directori %1. Haurà eliminar aquest directori manualment per a una desinstal completa.
 
 DoliWampWillStartApacheMysql=L'instal·lador DoliWamp intentarà iniciar o reiniciar Apache i MySQL, això pot durar des de diversos segons a un minut després de la confirmació. Iniciar la instal·lació o actualització dels servidors web i bases de dades requerides per Dolibarr?
+
+OldVersionFoundAndMoveInNew=S'ha trobat una versió antiga de base de dades i ha estat moguda per a ser utilitzada per la nova versió de Dolibarr
+OldVersionFoundButFailedToMoveInNew=S'ha trobat una versió antiga de base de dades, però no es pot moure per a ser utilitzada per la nova versió de Dolibarr
+
