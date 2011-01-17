@@ -6,7 +6,7 @@ For users:
 - New: Can edit date of cheque receipts.
 - New: Add Sales journal and Purchase journal report.
 - New: Can create supplier invoice from supplier order.
-  New: Support login by openid
+- New: Support login by openid
 - New: Support "full day" event in calendar module.
 - New: Add a weather on dashboard.
 - New: Add a Paypal module.
