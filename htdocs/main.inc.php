@@ -1138,7 +1138,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			if ($res)
 			{
 				//$mc = new ActionsMulticompany($db);
-				$entitytext = img_object('', 'globe','entity');
+				$entitytext = img_object('', 'globe',"class='entity'");
 				$entityhtmltext = 'EntityName';
 				print $html->textwithtooltip('',$entityhtmltext,2,1,$entitytext);
 				//$select_entity = '<div class="loginSelectEntity">'.$mc->select_entities($conf->entity).'</div>';
