@@ -153,6 +153,11 @@ function getThirdParty($authentication,$id,$ref,$ref_ext)
 		$error++;
 		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
+    if (! $error && ! empty($authentication['entity']) && ! is_numeric($authentication['entity']))
+    {
+        $error++;
+        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter entity must be empty (or a numeric with id of instance if multicompany module is used).";
+    }
 
 	if (! $error)
 	{
