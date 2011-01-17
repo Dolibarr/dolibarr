@@ -231,7 +231,7 @@ td.vmenu {
 div.vmenu {
 	position: relative;
     float: left;
-    margin: 0px;
+    margin: 0px 0px 0px -12px;
     width: 220px;
 }
 
@@ -250,7 +250,7 @@ div.fiche {
 /* ============================================================================== */
 
 .ui-layout-resizer-west-open {
-	left: 240px !important;
+	left: 228px !important;
 }
 
 /* ============================================================================== */
