@@ -219,10 +219,7 @@ td.showDragHandle {
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-div.leftContent {
-	margin-left: 20px !important;
-    width: 220px !important;
-}
+
 
 td.vmenu {
     width: 220px;
@@ -231,7 +228,7 @@ td.vmenu {
 div.vmenu {
 	position: relative;
     float: left;
-    margin: 0px 0px 0px -12px;
+    margin: 0px;
     width: 220px;
 }
 
@@ -242,15 +239,6 @@ div.fiche {
     padding: 0px;²
     position: relative;
     height: auto;
-}
-
-
-/* ============================================================================== */
-/* Barre de redmiensionnement menu                                                */
-/* ============================================================================== */
-
-.ui-layout-resizer-west-open {
-	left: 228px !important;
 }
 
 /* ============================================================================== */
