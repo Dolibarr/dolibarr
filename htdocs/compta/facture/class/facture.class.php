@@ -92,8 +92,8 @@ class Facture extends CommonObject
     var $origin_id;
     var $fk_project;
     var $date_lim_reglement;
-    var $cond_reglement_id;			// Id in llx_cond_reglement
-    var $cond_reglement_code;		// Code in llx_cond_reglement
+    var $cond_reglement_id;			// Id in llx_c_paiement
+    var $cond_reglement_code;		// Code in llx_c_paiement
     var $mode_reglement_id;			// Id in llx_c_paiement
     var $mode_reglement_code;		// Code in llx_c_paiement
     var $modelpdf;
