@@ -579,7 +579,5 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
-closedir($handle);
-
 llxFooter('$Date$ - $Revision$');
 ?>

@@ -208,6 +208,7 @@ class modFournisseur extends DolibarrModules
 		                    $this->rights[$r][4] = 'facture';
 		                    $this->rights[$r][5] = 'supprimer';
 
+		                    $r++;
 		                    $this->rights[$r][0] = 1235;
 							$this->rights[$r][1] = 'Envoyer les factures par mail';
 							$this->rights[$r][2] = 'a';
