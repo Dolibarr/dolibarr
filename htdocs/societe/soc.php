@@ -610,9 +610,14 @@ else
 		{
 			print "\n".'<script type="text/javascript" language="javascript">';
 			print 'jQuery(document).ready(function () {
-                         id_te_private=8;
-                         id_ef15=1;
-                         jQuery(".individualline").hide();
+						id_te_private=8;
+                        id_ef15=1;
+                        is_private='.(GETPOST("private")?GETPOST("private"):0).';
+						if (is_private) {
+							jQuery(".individualline").show();
+						} else {
+							jQuery(".individualline").hide();
+						}
                          jQuery("#radiocompany").click(function() {
                                jQuery(".individualline").hide();
                                jQuery("#typent_id").val(0);
@@ -634,10 +639,10 @@ else
 
 			print "<br>\n";
 			print $langs->trans("ThirdPartyType").': &nbsp; ';
-			print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.(! $_REQUEST["private"]?' checked="true"':'');
+			print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.(! GETPOST("private")?' checked="true"':'');
 			print '> '.$langs->trans("Company/Fundation");
 			print ' &nbsp; &nbsp; ';
-			print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.(! $_REQUEST["private"]?'':' checked="true"');
+			print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.(! GETPOST("private")?'':' checked="true"');
 			print '> '.$langs->trans("Individual");
 			print ' ('.$langs->trans("ToCreateContactWithSameName").')';
 			print "<br>\n";
