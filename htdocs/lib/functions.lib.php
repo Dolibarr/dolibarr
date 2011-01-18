@@ -1208,7 +1208,7 @@ function img_object($alt, $object, $options='')
 		$object = $regs[1];
 		$path = $regs[2];
 		// If img file not into standard path, we use alternate path
-		if (DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/object_'.$object.'.png')) $url = DOL_URL_ROOT_ALT;
+		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/object_'.$object.'.png')) $url = DOL_URL_ROOT_ALT;
 	}
 
 	return '<img src="'.$url.'/'.$path.'/img/object_'.$object.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
@@ -1237,7 +1237,7 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 		$picto = $regs[1];
 		$path = $regs[2];
         // If img file not into standard path, we use alternate path
-		if (DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
+		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
 	}
 
 	if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
