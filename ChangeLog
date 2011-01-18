@@ -84,6 +84,9 @@ For developers:
 - New: Add first Selenium GUI tests.
 - New: Enhance a lot of internal function to build external modules
        more easily.
+- New: Add a user field ref_ext in object tables to allow external
+       systems to store their id and make self-developed synchronizing
+       functions easier to build.        
 - New: Local user timezone is saved into session (not used yet).
 - New: Works with Mysql 5.5.
 - Qual: Menu system code is simpler.
