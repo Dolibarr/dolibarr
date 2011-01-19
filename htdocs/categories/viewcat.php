@@ -60,7 +60,7 @@ $type=$c->type;
 
 if ($user->rights->categorie->supprimer && $_POST["action"] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 {
-	if ($c->remove() >= 0)
+	if ($c->delete($user) >= 0)
 	{
 		header("Location: ".DOL_URL_ROOT.'/categories/index.php?type='.$type);
 		exit;
