@@ -1335,7 +1335,18 @@ class User extends CommonObject
 			$outputlangs=$langs;
 		}
 
-		// \TODO Use outputlangs to translate messages
+		// Define urlwithouturlroot
+		if (1 == 1 && ! empty($_SERVER["HTTP_HOST"])) // Autodetect main url root
+		{
+			$urlwithouturlroot='http://'.preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$_SERVER["HTTP_HOST"]);
+		}
+		else
+		{
+			$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
+		}
+		if (! empty($dolibarr_main_force_https)) $urlwithouturlroot=preg_replace('/http:/i','https:',$urlwithouturlroot);
+		
+		// TODO Use outputlangs to translate messages
 		if (! $changelater)
 		{
 			$mesg.= "A request to change your Dolibarr password has been received.\n";
@@ -1343,7 +1354,7 @@ class User extends CommonObject
 			$mesg.= $langs->trans("Login")." : $this->login\n";
 			$mesg.= $langs->trans("Password")." : $password\n\n";
 			$mesg.= "\n";
-			$url = "http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT;
+			$url = $urlwithouturlroot.DOL_URL_ROOT;
 			$mesg.= 'Click here to go to Dolibarr: '.$url."\n\n";
 			$mesg.= "--\n";
 			$mesg.= $user->getFullName($langs);	// Username that make then sending
@@ -1356,7 +1367,7 @@ class User extends CommonObject
 			$mesg.= $langs->trans("Password")." : $password\n\n";
 			$mesg.= "\n";
 			$mesg.= "You must click on the folowing link to validate its change.\n";
-			$url = "http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".md5($password);
+			$url = $urlwithouturlroot.DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".md5($password);
 			$mesg.= $url."\n\n";
 			$mesg.= "If you didn't ask anything, just forget this email\n\n";
 			dol_syslog("User::send_password url=".$url);
