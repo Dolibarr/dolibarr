@@ -44,18 +44,18 @@ function societe_prepare_head($object)
     $head[$h][2] = 'card';
     $h++;
 
-    if ($object->client==1 || $object->client==3 || $object->object->client==1 || $object->object->client==3)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$object->id;
-        $head[$h][1] = $langs->trans("Customer");
-        $head[$h][2] = 'customer';
-        $h++;
-    }
     if ($object->client==2 || $object->client==3 || $object->object->client==2 || $object->object->client==3)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Prospect");
         $head[$h][2] = 'prospect';
+        $h++;
+    }
+    if ($object->client==1 || $object->client==3 || $object->object->client==1 || $object->object->client==3)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$object->id;
+        $head[$h][1] = $langs->trans("Customer");
+        $head[$h][2] = 'customer';
         $h++;
     }
     if ($object->fournisseur || $object->object->fournisseur)
