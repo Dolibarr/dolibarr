@@ -753,22 +753,23 @@ $heightforframes=48;
 
 
 /**
- *		\brief   	Show HTML header HTML + BODY + Top menu + left menu + DIV
- * 		\param   	head			Add optionnal head lines
- * 		\param   	title
- * 		\param      help_url
- * 		\param   	target
- * 		\param   	disablejs
- * 		\param   	disablehead
- * 		\param   	arrayofjs
- * 		\param   	arrayofcss
+ *	Show HTML header HTML + BODY + Top menu + left menu + DIV
+ * 	@param   	head			Add optionnal head lines
+ *  @param      title   		Title of web page
+ * 	@param      help_url		Url links to help page
+ *  @param      target  		Target to use in menu links
+ *	@param		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	@param		disablehead		Do not output head section
+ *	@param		arrayofjs		Array of js files to add in header
+ *	@param		arrayofcss		Array of css files to add in header
+ *  @param		morequerystring Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  */
 if (! function_exists("llxHeader"))
 {
-	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
+	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 	{
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
-		top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+		top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring);
 		left_menu('', $help_url, '', '', 1);
 		main_area();
 	}
@@ -932,16 +933,17 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 
 /**
- *  \brief      Show an HTML header + a BODY + The top menu bar
- *  \param      head    	Lines in the HEAD
- *  \param      title   	Title of web page
- *  \param      target  	Target to use in menu links
- *	\param		disablejs	Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
- *	\param		disablehead	Do not output head section
- *	\param		arrayofjs	Array of js files to add in header
- *	\param		arrayofcss	Array of css files to add in header
+ *  Show an HTML header + a BODY + The top menu bar
+ *  @param      head    		Lines in the HEAD
+ *  @param      title   		Title of web page
+ *  @param      target  		Target to use in menu links
+ *	@param		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	@param		disablehead		Do not output head section
+ *	@param		arrayofjs		Array of js files to add in header
+ *	@param		arrayofcss		Array of css files to add in header
+ *  @param		morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  */
-function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
+function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 {
 	global $user, $conf, $langs, $db, $dolibarr_main_authentication;
 
@@ -1152,7 +1154,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	// Link to print main content area
 	if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
 	{
-		$text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'&optioncss=print" target="_blank">';
+		$qs=$_SERVER["QUERY_STRING"].($_SERVER["QUERY_STRING"]?'&':'').$morequerystring;
+		$text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 		$text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
 		$text.=' title="" alt="">';
 		$text.='</a>';

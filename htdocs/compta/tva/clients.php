@@ -89,11 +89,16 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  */
 
 $html=new Form($db);
-
-llxHeader();
-
 $company_static=new Societe($db);
 
+$morequerystring='';
+$listofparams=array('date_startmonth','date_startyear','date_startday','date_endmonth','date_endyear','date_endday');
+foreach($listofparams as $param)
+{
+	if (GETPOST($param)!='') $morequerystring.=($morequerystring?'&':'').$param.'='.GETPOST($param);
+}
+
+llxHeader('','','','',0,0,'','',$morequerystring);
 
 $fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
