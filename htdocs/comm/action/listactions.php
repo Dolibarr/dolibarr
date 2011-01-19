@@ -22,7 +22,7 @@
 /**
  *	    \file       htdocs/comm/action/listactions.php
  *      \ingroup    agenda
- *		\brief      Page liste des actions commerciales
+ *		\brief      Page to list actions
  *		\version    $Id$
  */
 
@@ -56,7 +56,7 @@ $offset = $limit * $page ;
 if (! $sortorder)
 {
 	$sortorder="ASC";
-	if ($status == 'todo') $sortorder="DESC";
+	if ($status == 'todo') $sortorder="ASC";
 	if ($status == 'done') $sortorder="DESC";
 }
 if (! $sortfield)
