@@ -265,54 +265,112 @@ class Categorie
 	}
 
 	/**
-	 * 	Delete category
-	 * 	Les produits et sous-categories deviennent orphelins
-	 * 	si $all = false, et sont (seront :) supprimes sinon
+	 * 	Delete a category from database
+	 * 	@param		user		Object user that ask to delete
 	 */
-	function remove ($all = false)
+	function delete($user)
 	{
+		global $conf,$langs;
 
-		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
-		$sql .= " WHERE fk_categorie = ".$this->id;
+		$error=0;
+		
+		dol_syslog("Categorie::remove");
+		
+		$this->db->begin();
 
-		if (!$this->db->query($sql))
+		if (! $error)
 		{
-			dol_print_error($this->db);
-			return -1;
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_societe";
+			$sql .= " WHERE fk_categorie = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
+		if (! $error)
+		{
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_fournisseur";
+			$sql .= " WHERE fk_categorie = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
+		if (! $error)
+		{
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
+			$sql .= " WHERE fk_categorie = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
+		if (! $error)
+		{
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member";
+			$sql .= " WHERE fk_categorie = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
+		
+		// Link childs to parent
+		if (! $error)
+		{
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
+			$sql .= " WHERE fk_categorie_mere  = ".$this->id;
+			$sql .= " OR fk_categorie_fille = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
 		}
 
-		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
-		$sql .= " WHERE fk_categorie_mere  = ".$this->id;
-		$sql .= " OR fk_categorie_fille = ".$this->id;
-
-		if (!$this->db->query($sql))
+		// Delete category
+		if (! $error)
 		{
-			dol_print_error($this->db);
-			return -1;
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie";
+			$sql .= " WHERE rowid = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
+			else
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('CATEGORY_DELETE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=join(',',$this->errors); }
+				// Fin appel triggers
+			}
 		}
-
-		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE rowid = ".$this->id;
-
-		if (!$this->db->query($sql))
+				
+		if (! $error)
 		{
-			dol_print_error($this->db);
-			return -1;
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CATEGORY_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
-
-			return 1;
+			$this->db->rollback();
+			return -1;
 		}
-
 	}
-
+	
 
 	/**
 	 * 	Ajout d'une sous-categorie
