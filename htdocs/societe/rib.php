@@ -96,6 +96,7 @@ dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
 
 $account = new CompanyBankAccount($db);
 $account->fetch(0,$soc->id);
+if (empty($account->socid)) $account->socid=$soc->id;
 
 
 
