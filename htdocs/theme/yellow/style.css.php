@@ -329,6 +329,12 @@ li.tmenu a:link
 
 /* Login */
 
+div.login_block {
+	<?php if (GETPOST("optioncss") == 'print') { ?>
+	display: none;
+	<?php } ?>
+}
+
 div.login {
   position: absolute;
   <?php print $right; ?>: 30px;

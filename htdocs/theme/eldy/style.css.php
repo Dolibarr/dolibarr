@@ -67,7 +67,7 @@ $fontlist='arial,tahoma,verdana,helvetica';
 /* ============================================================================== */
 
 body {
-<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+<?php if (GETPOST("optioncss") == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
 	background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg2.jpg' ?>) 0 0 no-repeat;
@@ -204,7 +204,7 @@ else
 ?>
 
 div.tmenu {
-<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+<?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
     position: relative;
@@ -454,6 +454,9 @@ div.login_block {
 	<?php print $right; ?>: 5px;
 	top: 3px;
 	font-weight: bold;
+	<?php if (GETPOST("optioncss") == 'print') { ?>
+	display: none;
+	<?php } ?>
 }
 
 div.login_block table {
@@ -488,7 +491,7 @@ img.login, img.printer, img.entity {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-<?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')
+<?php if ((GETPOST("optioncss") == 'print')
 || (! empty($conf->browser->phone) && class_exists('Smartphone') && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
 .vmenu {
     display: none;
