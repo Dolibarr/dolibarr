@@ -454,6 +454,9 @@ div.login_block {
 	<?php print $right; ?>: 5px;
 	top: 3px;
 	font-weight: bold;
+	<?php if (GETPOST("optioncss") == 'print') { ?>
+	display: none;
+	<?php } ?>
 }
 
 div.login_block table {
