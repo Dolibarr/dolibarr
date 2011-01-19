@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 /**
  *	    \file       htdocs/comm/action/listactions.php
  *      \ingroup    agenda
- *		\brief      Page liste des actions commerciales
+ *		\brief      Page to list actions
  *		\version    $Id$
  */
 
@@ -56,7 +56,7 @@ $offset = $limit * $page ;
 if (! $sortorder)
 {
 	$sortorder="ASC";
-	if ($status == 'todo') $sortorder="DESC";
+	if ($status == 'todo') $sortorder="ASC";
 	if ($status == 'done') $sortorder="DESC";
 }
 if (! $sortfield)
@@ -235,7 +235,7 @@ if ($resql)
 		if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
 		if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && $db->jdate($obj->dp2) < ($now - $delay_warning)) $late=1;
 		if ($obj->percent > 0 && $obj->percent < 100 && ! $obj->dp2 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
-		if ($late) print img_warning($langs->trans("Late"));
+		if ($late) print img_warning($langs->trans("Late")).' ';
 		print '</td>';
 
 		print '<td align="center" nowrap="nowrap">';
