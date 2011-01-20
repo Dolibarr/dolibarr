@@ -1,0 +1,32 @@
+﻿# Dolibarr language file - sl_SI - ldap
+CHARSET=UTF-8
+DomainPassword=Geslo za domeno
+YouMustChangePassNextLogon=Geslo za uporabnika <b>%s</b> na domeni <b>%s</b> je potrebno spremeniti.
+UserMustChangePassNextLogon=Uporabnik mora spremeniti geslo na domeni %s
+LdapUacf_NORMAL_ACCOUNT=Uporabniški račun
+LdapUacf_DONT_EXPIRE_PASSWORD=Geslo nikoli ne preteče
+LdapUacf_ACCOUNTDISABLE=Račun na domeni %s je ukinjen
+LDAPInformationsForThisContact=Informacija v LDAP bazi podatkov za ta kontakt
+LDAPInformationsForThisUser=Informacija v LDAP bazi podatkov za tega uporabnika
+LDAPInformationsForThisGroup=Informacija v LDAP bazi podatkov za to skupino
+LDAPInformationsForThisMember=Informacija v LDAP bazi podatkov za tega člana
+LDAPAttribute=LDAP atribut
+LDAPAttributes=LDAP atributi
+LDAPCard=LDAP kartica
+LDAPRecordNotFound=Zapisa ni mogoče najti v LDAP bazi podatkov
+LDAPUsers=Uporabniki v LDAP bazi podatkov
+LDAPGroups=Skupine v LDAP bazi podatkov
+LDAPFieldStatus=Status
+LDAPFieldFirstSubscriptionDate=Datum prve naročnine
+LDAPFieldFirstSubscriptionAmount=Znesek prve naročnine
+LDAPFieldLastSubscriptionDate=Datum zadnje naročnine 
+LDAPFieldLastSubscriptionAmount=Znesek zadnje naročnine 
+SynchronizeDolibarr2Ldap=Sinhroniziraj uporabnika (Dolibarr -> LDAP)
+UserSynchronized=Uporabnik sinhroniziran
+GroupSynchronized=Skupina sinhronizirana
+MemberSynchronized=Član sinhroniziran
+ContactSynchronized=Kontakt sinhroniziran
+ForceSynchronize=Vsili sinhronizacijo Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Branje LDAP baze podatkov ni uspelo. Preverite nastavitev LDAP modula in dostopnost baze podatkov.
+
+

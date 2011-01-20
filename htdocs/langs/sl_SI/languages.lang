@@ -1,0 +1,37 @@
+﻿# Dolibarr language file - sl_SI - languages 
+CHARSET=UTF-8
+Language_ar_AR=Arabščina
+Language_ca_ES=Katalonščina
+Language_da_DA=Danščina
+Language_de_DE=Nemščina
+Language_de_AT=Nemščina (Avstrija)
+Language_el_GR=Grščina
+Language_en_AU=Angleščina (Avstralija)
+Language_en_GB=Angleščina (Združeno kraljestvo)
+Language_en_IN=Angleščina (Indija)
+Language_en_US=Angleščina (ZDA)
+Language_es_ES=Španščina
+Language_es_AR=Španščina (Argentina)
+Language_fi_FI=Finščina
+Language_fr_BE=Francoščina (Belgija)
+Language_fr_CA=Francoščina (Kanada)
+Language_fr_CH=Francoščina (Švica)
+Language_fr_FR=Francoščina
+Language_hu_HU=Madžarščina
+Language_is_IS=Islandščina
+Language_it_IT=Italijanščina
+Language_ja_JP=Japonščina
+Language_nb_NO=Norveščina (Bokmål)
+Language_nl_BE=Nizozemščina (Belgija)
+Language_nl_NL=Nizozemščina (Nizozemska)
+Language_pl_PL=Poljščina
+Language_pt_BR=Portugalščina (Brazilija)
+Language_pt_PT=Portugalščina
+Language_ro_RO=Romunščina
+Language_ru_RU=Ruščina
+Language_tr_TR=Turščina
+Language_sl_SI=Slovenščina
+Language_sv_SV=Švedščina
+Language_zh_CN=Kitajščina
+Language_is_IS=Islandščina
+

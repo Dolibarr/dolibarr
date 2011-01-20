@@ -1,0 +1,65 @@
+﻿# Dolibarr language file - sl_SI - sendings
+CHARSET=UTF-8
+RefSending=Referenca pošiljke
+Sending=Odprema
+Sendings=Pošiljke
+Shipments=Odpreme
+Receivings=Dobave
+SendingsArea=Področje pošiljk
+ListOfSendings=Seznam pošiljk
+SendingMethod=Način pošiljanja
+SendingReceipt=Potrdilo pošiljke
+LastSendings=Zadnjih %s pošiljk
+SearchASending=Iskanje pošiljke
+StatisticsOfSendings=Statistika pošiljk
+NbOfSendings=Število pošiljk
+SendingCard=Kartica pošiljke
+NewSending=Nova pošiljka
+CreateASending=Kreiraj pošiljko
+CreateSending=Kreiranje pošiljke
+QtyOrdered=Naročena količina
+QtyShipped=Poslana količina
+QtyToShip=Količina za pošiljanje
+QtyReceived=Prejeta količina
+KeepToShip=Zadrži pošiljanje
+OtherSendingsForSameOrder=Ostale pošiljke za to naročilo
+DateSending=Datum pošiljanja naročila
+DateSendingShort=Datum pošiljanja
+SendingsForSameOrder=Pošiljke za to naročilo
+SendingsAndReceivingForSameOrder=Pošiljke in prejemi za to naročilo
+SendingsToValidate=Pošiljke za potrditev
+StatusSendingCanceled=Preklicano
+StatusSendingDraft=Osnutek
+StatusSendingValidated=Potrjeno (proizvodi za pošiljanje ali že poslani)
+StatusSendingCanceledShort=Preklicano
+StatusSendingDraftShort=Osnutek
+StatusSendingValidatedShort=Potrjena
+SendingSheet=Transportni list
+Carriers=Prevozniki
+Carrier=Prevoznik
+CarriersArea=Področje prevoznikov
+NewCarrier=Nov prevoznik
+ConfirmDeleteSending=Ali zares želite izbrisati to pošiljko ?
+ConfirmValidateSending=Ali zares želite potrditi to pošiljko?
+ConfirmCancelSending= Ali zares želite preklicati to pošiljko?
+GenericTransport=Splošni transport
+Enlevement=Prevzeto s strani kupca
+DocumentModelSimple=Enostaven vzorec dokumenta
+DocumentModelMerou=Vzorec dokumenta Merou A5
+WarningNoQtyLeftToSend=Pozor, Noben proizvod ne čaka na pošiljanje.
+StatsOnShipmentsOnlyValidated=Statistika potrjenih pošiljk
+DateDeliveryPlanned=Planiran datum dobave
+DateReceived=Datum prejema dobave
+
+# Sending methods
+SendingMethodCATCH=Lasten prevzem kupca
+SendingMethodTRANS=Direkten prevoz
+SendingMethodCOLSUI=Zbirnik
+
+# ModelDocument
+DocumentModelSirocco=Enostaven vzorec dobavnice
+DocumentModelTyphon=Popolnejši vzorec dobavnice (logo...)
+
+
+
+

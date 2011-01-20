@@ -1,0 +1,27 @@
+﻿# Dolibarr language file - sl_SI - deliveries
+CHARSET=UTF-8
+Delivery=Dobava
+Deliveries=Dobave
+DeliveryCard=Kartica dobav
+DeliveryOrder=Dobavnica
+DeliveryOrders=Dobavnice
+DeliveryDate=Datum dobave
+DeliveryDateShort=Datum dobave
+CreateDeliveryOrder=Kreiranje dobavnice
+QtyDelivered=Količina za dobavo
+SetDeliveryDate=Nastavitev datuma dobave
+ValidateDeliveryReceipt=Potrditev prejemnice
+ValidateDeliveryReceiptConfirm=Ali zares želite potrditi prejemnico?
+DeleteDeliveryReceipt=Zbriši prejemnico
+DeleteDeliveryReceiptConfirm=Ali zares želite zbrisati prejemnico <b>%s</b> ?
+DeliveryMethod=Način dobave
+TrackingNumber=Številka za sledenje
+DeliveryNotValidated=Dobava ni potrjena
+# merou PDF model						   
+NameAndSignature=Ime in podpis : 
+ToAndDate=Za___________________________________ dne ____/_____/__________
+GoodStatusDeclaration=Potrjujem prejem zgornjega blaga v dobrem stanju,
+Deliverer=Dostavil : 
+Sender=Pošiljatelj
+Recipient=Prejemnik
+
