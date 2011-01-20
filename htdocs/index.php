@@ -202,7 +202,7 @@ if ($user->societe_id == 0)
 	// Dashboard Link lines
 	$links=array(DOL_URL_ROOT.'/comm/clients.php',
 	DOL_URL_ROOT.'/comm/prospect/prospects.php',
-	DOL_URL_ROOT.'/fourn/index.php',
+	DOL_URL_ROOT.'/fourn/liste.php',
 	DOL_URL_ROOT.'/adherents/liste.php?statut=1&amp;mainmenu=members',
 	DOL_URL_ROOT.'/product/liste.php?type=0&amp;mainmenu=products',
 	DOL_URL_ROOT.'/product/liste.php?type=1&amp;mainmenu=products',
