@@ -479,6 +479,12 @@ li.tmenu a.tmenudisabled {
 
 /* Login */
 
+div.login_block {
+    <?php if (GETPOST("optioncss") == 'print') { ?>
+    display: none;
+    <?php } ?>
+}
+
 div.login {
   position: absolute;
   <?php print $right; ?>: 60px;
