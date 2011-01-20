@@ -1,0 +1,23 @@
+﻿# Language file - sl_SI - cashdesk
+CHARSET=UTF-8
+CashDeskMenu=Prodajno mesto
+CashDesk=Prodajno mesto
+CashDesks=Prodajna mesta
+CashDeskBank=Bančni račun
+CashDeskBankCash=Bančni račun (gotovina)
+CashDeskBankCB=Bančni račun (kartica)
+CashDeskBankCheque=Bančni račun (ček)
+CashDeskWarehouse=Skladišče
+CashDeskThirdParty=Partner
+ShoppingCart=Nakupovalni voziček
+NewSell=Nova prodaja
+BackOffice=Administracija
+AddThisArticle=Dodaj ta proizvod
+RestartSelling=Vrni se na prodajo
+SellFinished=Zaključek prodaje
+PrintTicket=Natisni račun
+NoResults=Ni rezultatov
+NoProductFound=Proizvod ne obstaja
+ProductFound=Najden proizvod
+ProductsFound=Najdeni proizvodi
+NoArticle=Ni proizvoda

@@ -1,0 +1,27 @@
+﻿# Dolibarr language file - sl_SI - donations
+CHARSET=UTF-8
+Donation=Donacija
+Donations=Donacije
+Donor=Donator
+Donors=Donatorji
+AddDonation=Dodaj donacijo
+NewDonation=Nova donacija
+DonationPromise=Obljuba darila
+PromisesNotValid=Nepotrjene obljube
+PromisesValid=Potrjene obljube
+DonationsPaid=Plačane donacije
+DonationsReceived=Prejete donacije
+PublicDonation=Javna donacija
+DonationsNumber=Številka donacije
+DonationsArea=Področje donacij
+DonationStatusPromiseNotValidated=Osnutek obljube
+DonationStatusPromiseValidated=Potrjena obljuba
+DonationStatusPaid=Prejeta donacija
+DonationStatusPromiseNotValidatedShort=Osnutek
+DonationStatusPromiseValidatedShort=Potrjena
+DonationStatusPaidShort=Prejeta
+ValidPromess=Potrjena obljuba
+BuildDonationReceipt=Izdelava potrdila
+DonationsModels=Modeli dokumentov za potrdila o donacijah
+
+

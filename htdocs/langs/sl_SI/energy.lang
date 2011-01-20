@@ -1,0 +1,13 @@
+﻿# Dolibarr language file - sl_SI - energy
+CHARSET=UTF-8
+Energy=Energija
+Compteur=Števec
+Compteurs=Števci
+NewCounter=Nov števec
+NewGroup=Nova skupina
+Group=Skupina
+Electricity=Elektrika
+Water=Voda
+NaturalGaz=Naravni plin
+Releves=Računi
+

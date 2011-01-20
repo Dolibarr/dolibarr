@@ -33,25 +33,9 @@ Language_pt_PT=Portúgalska
 Language_ro_RO=Rúmenska
 Language_ru_RU=Rússneska
 Language_tr_TR=Tyrkneska
-Language_sl_SL=Slovenian
+Language_sl_SI=Slovenian
 Language_zh_CN=Kínverska
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
-// Reference language: en_US
 Language_es_AR=Spænska (Austria)
-// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:17:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:29:16).
-// Reference language: en_US
 Language_is_IS=Íslenska
 Language_is_IS=Íslenska
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:29:26).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> is_IS
 Language_sv_SV=Sænska
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:15).

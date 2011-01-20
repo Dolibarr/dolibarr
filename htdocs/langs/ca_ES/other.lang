@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - other
+# Dolibarr language file - ca_ES - other 
 CHARSET=UTF-8
 ErrorPasswordDiffers=Les contrasenyes no són identiques, torni a introduir-les
 ErrorForbidden=Accés no autoritzat.<br>Intenta accedir a una pàgina, zona o funció sense estar en una sessió autentificada o que no s'autoritza per al seu compte d'usuari.
@@ -75,6 +75,10 @@ FeaturesSupported=Funcionalitats suportades
 Width=llarg
 Height=alt
 Depth=fons
+Top=Superior
+Bottom=Inferior
+Left=Esquerra
+Right=Dreta
 CalculatedWeight=Pes calculat
 CalculatedVolume=Volume calculat
 Weight=Pes
@@ -150,6 +154,7 @@ YouReceiveMailBecauseOfNotification2=L'esdeveniment en qüestió és el següent
 ThisIsListOfModules=Li mostrem un llistat de mòduls preseleccionats per a aquest perfil de demostració (en aquesta demo només els més comuns són accessibles). Ajusteu les preferències i feu clic a "Iniciar".
 ClickHere=Cliqueu aquí
 UseAdvancedPerms=Usar els drets avançats en els permisos dels mòduls
+FileFormat=Format d'arxiu
 ##### Bookmark #####
 Bookmark=Marcador
 Bookmarks=Marcadors

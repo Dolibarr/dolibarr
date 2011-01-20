@@ -1,5 +1,5 @@
-# Dolibarr language file - es_ES - other
-CHARSET= UTF-8
+# Dolibarr language file - es_ES - other 
+CHARSET=UTF-8
 ErrorPasswordDiffers=Las contraseñas no son idénticas, vuelva a introducirlas
 ErrorForbidden=Acceso no autorizado.<br>Intenta acceder a una página, zona o función sin estar en una sesión autentificada o que no se autoriza para su cuenta de usuario.
 ErrorForbidden2=Los permisos para este usuario pueden ser asignados por el administrador Dolibarr mediante el menú %s-> %s.
@@ -75,6 +75,10 @@ FeaturesSupported=Funcionalidades soportadas
 Width=Largo
 Height=Alto
 Depth=fondo
+Top=Superior
+Bottom=Inferior
+Left=Izquierda
+Right=Derecha
 CalculatedWeight=Peso calculado
 CalculatedVolume=Volumen calculado
 Weight=Peso
@@ -150,6 +154,7 @@ YouReceiveMailBecauseOfNotification2=El evento en cuestión es el siguiente:
 ThisIsListOfModules=Le mostramos un listado de módulos preseleccionados para este perfil de demostración (en esta demo sólo los más comunes son accesibles). Ajuste sus preferencias y haga clic en "Iniciar".
 ClickHere=Haga clic aquí
 UseAdvancedPerms=Usar los derechos avanzados en los permisos de los módulos
+FileFormat=Formato de archivo
 ##### Bookmark #####
 Bookmark=Marcador
 Bookmarks=Marcadores

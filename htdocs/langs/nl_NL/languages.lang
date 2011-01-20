@@ -24,16 +24,11 @@ Language_pt_BR=Portugees (Brazilië)
 Language_pt_PT=Portugees
 Language_ro_RO=Roemeens
 Language_ru_RU=Russisch
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> nl_NL
 Language_en_IN=Engels (India)
 Language_es_AR=Spaans (Argentinië)
 Language_is_IS=IJslands
 Language_tr_TR=Turks
-Language_sl_SL=Sloveens
+Language_sl_SI=Sloveens
 Language_sv_SV=Zweeds
 Language_zh_CN=Chinees
 Language_is_IS=IJslands
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:16).
