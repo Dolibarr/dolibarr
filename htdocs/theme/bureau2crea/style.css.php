@@ -953,15 +953,15 @@ a.tabTitle {
     margin: 1px 0px 0px 0px;
     padding: 0px 6px 0px 0px;
     text-align: <?php print $left; ?>;
-}
+}*/
 
 div.tabBar {
-    color: #234046;
+/*    color: #234046;*/
     margin: 0px 0px 10px 0px;
-    background: #dee7ec url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/tab_background.png' ?>) repeat-x;
+/*    background: #dee7ec url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/tab_background.png' ?>) repeat-x; */
 }
 
-div.tabsAction {
+/*div.tabsAction {
     margin: 20px 0em 1px 0em;
     padding: 0em 0em;
     text-align: right;
