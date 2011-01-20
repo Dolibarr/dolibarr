@@ -1056,6 +1056,7 @@ border-right-style: solid;
 border-left-width: 1px;
 border-left-color: #BBBBBB;
 border-left-style: solid;
+height: 16px;
 }
 
 table.noborder td {
@@ -1173,7 +1174,7 @@ border: 0px;
 
 .pair	{
 /* background: #e6ebed; */
-background: #f4f4f4;
+background: #ffffff;
 font-family: <?php print $fontlist ?>;
 border: 0px;
 }
