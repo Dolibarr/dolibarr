@@ -101,6 +101,11 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 		$message.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
 		$_GET["action"]='';
 	}
+	else if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+	{
+		$message='<div class="warning">'.$langs->trans("NotEnoughPermissions").'</div>';
+		$_GET["action"]='';
+	}
 	else
 	{
 		$mil=new Mailing($db);
@@ -296,15 +301,19 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 {
 	$mil = new Mailing($db);
 	$result=$mil->fetch($_POST["mailid"]);
+	
+	$error=0;
 
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
 
-	$mil->sendto       = $_POST["sendto"];
+	$mil->sendto = $_POST["sendto"];
 	if (! $mil->sendto)
 	{
 		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTo")).'</div>';
+		$error++;
 	}
-	if ($mil->sendto)
+	
+	if (! $error)
 	{
 		// Ajout CSS
 		if (!empty($mil->bgcolor)) $arr_css['bgcolor'] = $mil->bgcolor;
@@ -602,7 +611,7 @@ if ($_GET["action"] == 'create')
 
 	print_fiche_titre($langs->trans("NewMailing"));
 
-	if ($message) print "$message<br>";
+	if ($message) print $message."<br>";
 
 	print '<table class="border" width="100%">';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
@@ -644,6 +653,8 @@ else
 		$head = emailing_prepare_head($mil);
 
 		dol_fiche_head($head, 'card', $langs->trans("Mailing"), 0, 'email');
+		
+		if ($message) print $message."<br>";
 
 		// Confirmation de la validation du mailing
 		if ($_GET["action"] == 'valid')
@@ -691,7 +702,7 @@ else
 				else
 				{
 					$text='';
-                    if (empty($conf->file->mailing_limit_sendbyweb))
+                    if ($conf->file->mailing_limit_sendbyweb == 0)
                     {
                     	$text.=$langs->trans("MailingNeedCommand");
                     	$text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$_GET["id"].'</textarea>';
@@ -736,8 +747,17 @@ else
 			$nbemail = ($mil->nbemail?$mil->nbemail:'<font class="error">'.$langs->trans("NoTargetYet").'</font>');
 			if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is_numeric($nbemail) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{
-				$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-				print $html->textwithpicto($nbemail,$text,1,'warning');
+				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
+				{
+					$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+					print $html->textwithpicto($nbemail,$text,1,'warning');
+				}
+				else
+				{
+					$text=$langs->trans('NotEnoughPermissions');
+					print $html->textwithpicto($nbemail,$text,1,'warning');
+				}
+				
 			}
 			else
 			{
@@ -804,7 +824,14 @@ else
 
 				if (($mil->statut == 1 || $mil->statut == 2) && $mil->nbemail > 0 && $user->rights->mailing->valider)
 				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=sendall&amp;id='.$mil->id.'">'.$langs->trans("SendMailing").'</a>';
+					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
+					}
+					else
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=sendall&amp;id='.$mil->id.'">'.$langs->trans("SendMailing").'</a>';
+					}
 				}
 
 				if ($user->rights->mailing->creer)
