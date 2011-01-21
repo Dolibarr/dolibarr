@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
  */
 
 /**
-	    \file       htdocs/compta/deplacement/index.php
-		\brief      Page liste des deplacements
-		\version	$Id$
-*/
+ * 	    \file       htdocs/compta/deplacement/index.php
+ * 		\brief      Page liste des deplacements
+ * 		\version	$Id$
+ */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");
 
 $langs->load("companies");
 $langs->load("users");
@@ -56,9 +56,9 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-$sql = "SELECT s.nom, s.rowid as socid,";								// Ou
-$sql.= " d.rowid, d.type, ".$db->pdate("d.dated")." as dd, d.km, ";		// Comment
-$sql.= " u.name, u.firstname";											// Qui
+$sql = "SELECT s.nom, s.rowid as socid,";				// Ou
+$sql.= " d.rowid, d.type, d.dated as dd, d.km, ";		// Comment
+$sql.= " u.name, u.firstname";							// Qui
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= ", ".MAIN_DB_PREFIX."deplacement as d";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on d.fk_soc = s.rowid";
@@ -100,7 +100,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';
       print '<td>'.$langs->trans($objp->type).'</td>';
-      print '<td>'.dol_print_date($objp->dd,'day').'</td>';
+      print '<td>'.dol_print_date($db->jdate($objp->dd),'day').'</td>';
       if ($objp->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
       else print '<td>&nbsp;</td>';
       print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';

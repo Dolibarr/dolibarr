@@ -471,7 +471,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
                 $crowid=$adh->cotisation($datecotisation, $cotisation);
 
                 // insertion dans la gestion banquaire si configure pour
-                if ($global->conf->ADHERENT_BANK_USE)
+                if ($conf->global->ADHERENT_BANK_USE)
                 {
                     $dateop=time();
                     $amount=$cotisation;
