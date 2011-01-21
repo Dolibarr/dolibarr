@@ -52,13 +52,13 @@ if (! $sortfield) $sortfield="d.dated";
 $limit = $conf->liste_limit;
 
 
-$sql = "SELECT s.nom, s.rowid as socid,";								// Ou
+$sql = "SELECT s.nom, s.rowid as socid,";				// Ou
 $sql.= " d.rowid, d.type, d.dated as dd, d.km, ";		// Comment
-$sql.= " u.name, u.firstname";											// Qui
+$sql.= " u.name, u.firstname";							// Qui
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= ", ".MAIN_DB_PREFIX."deplacement as d";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on d.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= " WHERE d.fk_user = u.rowid";
 $sql.= " AND d.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
