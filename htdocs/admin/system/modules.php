@@ -97,12 +97,12 @@ foreach($sortorder as $numero=>$name)
 	$alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {
-       	if (preg_match('/^\//',$picto[$numero])) print img_picto($alt,$picto[$numero],'width="16px"',1);
-       	else print img_object($alt,$picto[$numero],'width="16px"');
+       	if (preg_match('/^\//',$picto[$numero])) print img_picto($alt,$picto[$numero],'width="14px"',1);
+       	else print img_object($alt,$picto[$numero],'width="14px"');
     }
     else
     {
-      	print img_object($alt,$picto[$numero],'width="16px"');
+      	print img_object($alt,$picto[$numero],'width="14px"');
     }
 	print ' '.$modules[$numero]->getName();
 	print "</td>";
