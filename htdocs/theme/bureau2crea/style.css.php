@@ -967,13 +967,13 @@ div.tabBar {
 /*    background: #dee7ec url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/tab_background.png' ?>) repeat-x; */
 }
 
-/*div.tabsAction {
-    margin: 20px 0em 1px 0em;
+div.tabsAction {
+    margin: 12px 0em 1px 0em;
     padding: 0em 0em;
     text-align: right;
 }
 
-
+/*
 a.tabTitle {
     background: #5088A9;
     color: white;
