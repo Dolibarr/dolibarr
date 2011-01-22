@@ -19,8 +19,8 @@
  */
 
 /**
- *  \file       htdocs/admin/system/dolibarr.php
- *  \brief      Fichier page info systemes Dolibarr
+ *  \file       htdocs/admin/system/modules.php
+ *  \brief      Page to list all modules
  *  \version    $Id$
  */
 
@@ -97,12 +97,12 @@ foreach($sortorder as $numero=>$name)
 	$alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {
-       	if (preg_match('/^\//',$picto[$numero])) print img_picto($alt,$picto[$numero],'',1);
-       	else print img_object($alt,$picto[$numero]);
+       	if (preg_match('/^\//',$picto[$numero])) print img_picto($alt,$picto[$numero],'width="16px"',1);
+       	else print img_object($alt,$picto[$numero],'width="16px"');
     }
     else
     {
-      	print img_object($alt,$picto[$numero]);
+      	print img_object($alt,$picto[$numero],'width="16px"');
     }
 	print ' '.$modules[$numero]->getName();
 	print "</td>";
