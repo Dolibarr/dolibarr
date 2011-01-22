@@ -1408,7 +1408,8 @@ div.error {
   background-color: #AD1800;
   height: 20px;
   line-height: 20px;
-  margin-bottom: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 /* Info admin */
