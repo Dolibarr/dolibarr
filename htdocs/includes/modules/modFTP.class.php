@@ -97,14 +97,14 @@ class modFTP extends DolibarrModules
 		$this->rights = array();		// Permission array used by this module
 
 		$r++;
-		$this->rights[$r][0] = 2800;
+		$this->rights[$r][0] = 2801;
 		$this->rights[$r][1] = 'Use FTP client in read mode (browse and download only)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'read';
 
 		$r++;
-		$this->rights[$r][0] = 2801;
+		$this->rights[$r][0] = 2802;
 		$this->rights[$r][1] = 'Use FTP client in write mode (delete or upload files)';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;

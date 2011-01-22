@@ -85,14 +85,14 @@ class modDocument extends DolibarrModules
 
 		$r=0;
 
-		$this->rights[$r][0] = 510;
+		$this->rights[$r][0] = 511;
 		$this->rights[$r][1] = 'Lire les documents';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 511;
+		$this->rights[$r][0] = 512;
 		$this->rights[$r][1] = 'Supprimer les documents clients';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
