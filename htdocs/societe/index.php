@@ -83,14 +83,14 @@ $sql.= " WHERE s.entity = ".$conf->entity;
 $result = $db->query($sql);
 if ($result)
 {
-	while ($objp = $db->fetch_object($result))
-	{
-		if ($objp->client == 1 || $objp->client == 3) $third['customer']++;
-		if ($objp->client == 2 || $objp->client == 3) $third['prospect']++;
-		if ($objp->fournisseur) $third['supplier']++;
+    while ($objp = $db->fetch_object($result))
+    {
+        if ($objp->client == 1 || $objp->client == 3) $third['customer']++;
+        if ($objp->client == 2 || $objp->client == 3) $third['prospect']++;
+        if ($objp->fournisseur) $third['supplier']++;
 
-		$total++;
-	}
+        $total++;
+    }
 }
 else dol_print_error($db);
 
@@ -98,18 +98,21 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
 if ($conf->societe->enabled)
 {
-	$statProducts = "<tr $bc[0]>";
-	$statProducts.= '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
-	$statProducts.= "</tr>";
-	$statProducts.= "<tr $bc[1]>";
-	$statProducts.= '<td><a href="'.DOL_URL_ROOT.'/comm/clients.php">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
-	$statProducts.= "</tr>";
+    if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+    {
+        $statProducts = "<tr $bc[0]>";
+        $statProducts.= '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
+        $statProducts.= "</tr>";
+    }
+    $statProducts.= "<tr $bc[1]>";
+    $statProducts.= '<td><a href="'.DOL_URL_ROOT.'/comm/clients.php">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
+    $statProducts.= "</tr>";
 }
 if ($conf->fournisseur->enabled)
 {
-	$statServices = "<tr $bc[0]>";
-	$statServices.= '<td><a href="'.DOL_URL_ROOT.'/fourn/liste.php">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
-	$statServices.= "</tr>";
+    $statServices = "<tr $bc[0]>";
+    $statServices.= '<td><a href="'.DOL_URL_ROOT.'/fourn/liste.php">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
+    $statServices.= "</tr>";
 }
 print $statProducts;
 print $statServices;
@@ -139,71 +142,71 @@ $sql.= $db->plimit($max,0);
 $result = $db->query($sql) ;
 if ($result)
 {
-	$num = $db->num_rows($result);
+    $num = $db->num_rows($result);
 
-	$i = 0;
+    $i = 0;
 
-	if ($num > 0)
-	{
-		$transRecordedType = $langs->trans("LastModifiedThirdParties",$max);
+    if ($num > 0)
+    {
+        $transRecordedType = $langs->trans("LastModifiedThirdParties",$max);
 
-		print '<table class="noborder" width="100%">';
+        print '<table class="noborder" width="100%">';
 
-		print '<tr class="liste_titre"><td colspan="3">'.$transRecordedType.'</td></tr>';
+        print '<tr class="liste_titre"><td colspan="3">'.$transRecordedType.'</td></tr>';
 
-		$var=True;
+        $var=True;
 
-		while ($i < $num)
-		{
-			$objp = $db->fetch_object($result);
+        while ($i < $num)
+        {
+            $objp = $db->fetch_object($result);
 
-			$var=!$var;
-			print "<tr $bc[$var]>";
-			// Name
-			print '<td nowrap="nowrap">';
-			$thirdparty_static->id=$objp->rowid;
-			$thirdparty_static->nom=$objp->nom;
-			$thirdparty_static->client=$objp->client;
-			$thirdparty_static->fournisseur=$objp->fournisseur;
-			$thirdparty_static->datem=$db->jdate($objp->datem);
-			print $thirdparty_static->getNomUrl(1,'',16);
-			print "</td>\n";
-			// Type
-			print '<td align="center">';
-			if ($thirdparty_static->client==1 || $thirdparty_static->client==3)
-			{
-		  		print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$thirdparty_static->id."\">".$langs->trans("Customer")."</a>\n";
-			}
-			if ($thirdparty_static->client == 3) print " / ";
-			if ($thirdparty_static->client==2 || $thirdparty_static->client==3)
-			{
-		  		print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$thirdparty_static->id."\">".$langs->trans("Prospect")."</a>\n";
-			}
-			if ($thirdparty_static->fournisseur)
-			{
-				if ($thirdparty_static->client) print " / ";
-				print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$thirdparty_static->id.'">'.$langs->trans("Supplier").'</a>';
-			}
-			print '</td>';
-			// Last modified date
-			print '<td align="right">';
-			print dol_print_date($thirdparty_static->datem,'day');
-			print "</td>";
-//          print '<td align="right" nowrap="nowrap">';
-//            print $product_static->LibStatut($objp->tobuy,5,1);
-//            print "</td>";
-			print "</tr>\n";
-			$i++;
-		}
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            // Name
+            print '<td nowrap="nowrap">';
+            $thirdparty_static->id=$objp->rowid;
+            $thirdparty_static->nom=$objp->nom;
+            $thirdparty_static->client=$objp->client;
+            $thirdparty_static->fournisseur=$objp->fournisseur;
+            $thirdparty_static->datem=$db->jdate($objp->datem);
+            print $thirdparty_static->getNomUrl(1,'',16);
+            print "</td>\n";
+            // Type
+            print '<td align="center">';
+            if ($thirdparty_static->client==1 || $thirdparty_static->client==3)
+            {
+                print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$thirdparty_static->id."\">".$langs->trans("Customer")."</a>\n";
+            }
+            if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
+            if (($thirdparty_static->client==2 || $thirdparty_static->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+            {
+                print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$thirdparty_static->id."\">".$langs->trans("Prospect")."</a>\n";
+            }
+            if ($conf->fournisseur->enabled && $thirdparty_static->fournisseur)
+            {
+                if ($thirdparty_static->client) print " / ";
+                print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$thirdparty_static->id.'">'.$langs->trans("Supplier").'</a>';
+            }
+            print '</td>';
+            // Last modified date
+            print '<td align="right">';
+            print dol_print_date($thirdparty_static->datem,'day');
+            print "</td>";
+            //          print '<td align="right" nowrap="nowrap">';
+            //            print $product_static->LibStatut($objp->tobuy,5,1);
+            //            print "</td>";
+            print "</tr>\n";
+            $i++;
+        }
 
-		$db->free();
+        $db->free();
 
-		print "</table>";
-	}
+        print "</table>";
+    }
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 print '</td></tr></table>';

@@ -325,12 +325,12 @@ if ($resql)
 		{
 	  		print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Customer")."</a>\n";
 		}
-		if ($obj->client == 3) print " / ";
-		if ($obj->client==2 || $obj->client==3)
+		if ($obj->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
+		if (($obj->client==2 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
 	  		print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Prospect")."</a>\n";
 		}
-		if ($obj->fournisseur)
+		if ($conf->fournisseur->enabled && $obj->fournisseur)
 		{
 			if ($obj->client) print " / ";
 			print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
