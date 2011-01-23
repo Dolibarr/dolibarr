@@ -134,7 +134,7 @@ if ($user->societe_id == 0)
 	// Condition to be checked for each display line dashboard
 	$conditions=array(
 	! empty($conf->societe->enabled) && $user->rights->societe->lire,
-	! empty($conf->societe->enabled) && $user->rights->societe->lire,
+	! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS),
 	! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire,
 	! empty($conf->adherent->enabled) && $user->rights->adherent->lire,
 	! empty($conf->product->enabled) && $user->rights->produit->lire,
