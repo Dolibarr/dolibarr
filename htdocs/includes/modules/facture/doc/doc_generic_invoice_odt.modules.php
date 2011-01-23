@@ -89,46 +89,6 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
-	 * @param $mysoc
-	 */
-	function get_substitutionarray_mysoc($mysoc)
-	{
-		global $conf;
-
-		if (empty($mysoc->forme_juridique) && ! empty($mysoc->forme_juridique_code))
-		{
-			$mysoc->forme_juridique=getFormeJuridiqueLabel($mysoc->forme_juridique_code);
-		}
-
-		$logotouse=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
-
-		return array(
-			'mycompany_logo'=>$logotouse,
-			'mycompany_name'=>$mysoc->name,
-			'mycompany_email'=>$mysoc->email,
-			'mycompany_phone'=>$mysoc->phone,
-			'mycompany_fax'=>$mysoc->fax,
-			'mycompany_address'=>$mysoc->address,
-			'mycompany_zip'=>$mysoc->zip,
-			'mycompany_town'=>$mysoc->town,
-			'mycompany_country'=>$mysoc->country,
-			'mycompany_web'=>$mysoc->url,
-			'mycompany_juridicalstatus'=>$mysoc->forme_juridique,
-			'mycompany_capital'=>$mysoc->capital,
-			'mycompany_barcode'=>$mysoc->gencod,
-			'mycompany_idprof1'=>$mysoc->idprof1,
-			'mycompany_idprof2'=>$mysoc->idprof2,
-			'mycompany_idprof3'=>$mysoc->idprof3,
-			'mycompany_idprof4'=>$mysoc->idprof4,
-			'mycompany_vatnumber'=>$mysoc->tva_intra,
-			'mycompany_note'=>$mysoc->note
-		);
-	}
-
-
-	/**
-	 * Define array with couple subtitution key => subtitution value
-	 *
 	 * @param $object
 	 */
 	function get_substitutionarray_object($object)
@@ -200,6 +160,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texthelp=$langs->trans("ListOfDirectoriesForModelGenODT");
 		// Add list of substitution keys
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
+        $dummy=new User($db);
+        $tmparray=$this->get_substitutionarray_user($dummy);
+        $nb=0;
+        foreach($tmparray as $key => $val)
+        {
+            $texthelp.='{'.$key.'}<br>';
+            $nb++;
+            if ($nb >= 5) { $texthelp.='...<br>'; break; }
+        }
 		$dummy=new Societe($db);
 		$tmparray=$this->get_substitutionarray_mysoc($dummy);
 		$nb=0;
@@ -328,7 +297,27 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				);
 
 				// Make substitutions
-				$tmparray=$this->get_substitutionarray_mysoc($mysoc);
+			    $tmparray=$this->get_substitutionarray_user($user);
+                //var_dump($tmparray); exit;
+                foreach($tmparray as $key=>$value)
+                {
+                    try {
+                        if (preg_match('/logo$/',$key)) // Image
+                        {
+                            //var_dump($value);exit;
+                            if (file_exists($value)) $odfHandler->setImage($key, $value);
+                            else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+                        }
+                        else    // Text
+                        {
+                            $odfHandler->setVars($key, $value, true, 'UTF-8');
+                        }
+                    }
+                    catch(OdfException $e)
+                    {
+                    }
+                }
+                $tmparray=$this->get_substitutionarray_mysoc($mysoc);
 				//var_dump($tmparray); exit;
 				foreach($tmparray as $key=>$value)
 				{

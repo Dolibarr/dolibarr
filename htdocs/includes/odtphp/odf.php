@@ -110,8 +110,14 @@ class Odf
 		 */
 		public function setVars($key, $value, $encode = true, $charset = 'ISO-8859')
 		{
-			if (strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']) === false) {
-				throw new OdfException("var $key not found in the document");
+		    // TODO Warning string may be:
+		    // <text:span text:style-name="T13">{</text:span><text:span text:style-name="T12">aaa</text:span><text:span text:style-name="T13">}</text:span>
+		    // instead of {aaa}.
+            //print $key.'-'.$value.'-'.strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']).'<br>';
+            if (strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']) === false) {
+                //if (strpos($this->contentXml, '">'. $key . '</text;span>') === false) {
+                    throw new OdfException("var $key not found in the document");
+                //}
 			}
 			$value = $encode ? htmlspecialchars($value) : $value;
 			$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;

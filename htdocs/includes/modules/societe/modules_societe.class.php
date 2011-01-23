@@ -26,13 +26,14 @@
  *		\brief      Fichier contenant la classe mere de module de generation societes
  *		\version    $Id$
  */
+require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
 
 /**
  *	\class      ModeleThirdPartyDoc
  *	\brief      Parent class for third parties models of doc generators
  */
-class ModeleThirdPartyDoc
+class ModeleThirdPartyDoc extends CommonDocGenerator
 {
 	var $error='';
 
