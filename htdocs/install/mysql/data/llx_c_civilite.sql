@@ -37,3 +37,4 @@ insert into llx_c_civilite (rowid, code, civilite, active) values (1 , 'MME',  '
 insert into llx_c_civilite (rowid, code, civilite, active) values (3 , 'MR',   'Monsieur', 1);
 insert into llx_c_civilite (rowid, code, civilite, active) values (5 , 'MLE',  'Mademoiselle', 1);
 insert into llx_c_civilite (rowid, code, civilite, active) values (7 , 'MTRE', 'Maître', 1);
+insert into llx_c_civilite (rowid, code, civilite, active) values (8 , 'DR',   'Docteur', 1);
