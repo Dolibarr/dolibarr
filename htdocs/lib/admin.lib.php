@@ -710,4 +710,113 @@ function UnActivate($value,$requiredby=1)
     return $ret;
 }
 
+
+/**
+ *  Add external modules to list of dictionnaries
+ */
+function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,$tabcond)
+{
+    global $db, $modules, $conf, $langs;
+
+    // Search modules
+    $filename = array();
+    $modules = array();
+    $orders = array();
+    $categ = array();
+    $dirmod = array();
+    $i = 0; // is a sequencer of modules found
+    $j = 0; // j is module number. Automatically affected if module number not defined.
+    foreach ($conf->file->dol_document_root as $dirroot)
+    {
+        $dir = $dirroot . "/includes/modules/";
+
+        // Load modules attributes in arrays (name, numero, orders) from dir directory
+        //print $dir."\n<br>";
+        dol_syslog("Scan directory ".$dir." for modules");
+        $handle=@opendir($dir);
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+                //print "$i ".$file."\n<br>";
+                if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
+                {
+                    $modName = substr($file, 0, dol_strlen($file) - 10);
+
+                    if ($modName)
+                    {
+                        include_once($dir.$file);
+                        $objMod = new $modName($db);
+
+                        if ($objMod->numero > 0)
+                        {
+                            $j = $objMod->numero;
+                        }
+                        else
+                        {
+                            $j = 1000 + $i;
+                        }
+
+                        $modulequalified=1;
+
+                        // We discard modules that does not respect constraint on menu handlers
+                        if (! empty($objMod->needtopmenu)  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
+
+                        // We discard modules according to features level (PS: if module is activated we always show it)
+                        $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+                        if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
+                        if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+
+                        if ($modulequalified)
+                        {
+                            $modules[$i] = $objMod;
+                            $filename[$i]= $modName;
+                            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
+                            //print "x".$modName." ".$orders[$i]."\n<br>";
+                            if (isset($categ[$objMod->special])) $categ[$objMod->special]++;                    // Array of all different modules categories
+                            else $categ[$objMod->special]=1;
+                            $dirmod[$i] = $dirroot;
+
+                            // Complete arrays
+                            //&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond
+                            //$objMod
+                            if (! empty($objMod->dictionnaries))
+                            {
+                                var_dump($tabname);
+                                var_dump($objMod->dictionnaries['tabname']);
+                                $taborder[] = 0;
+                                foreach($objMod->dictionnaries['tabname'] as $val) $taborder[] = sizeof($tabname)+1;
+                                foreach($objMod->dictionnaries['tabname'] as $val) $tabname[] = $val;
+                                foreach($objMod->dictionnaries['tablib'] as $val) $tablib[] = $val;
+                                foreach($objMod->dictionnaries['tabsql'] as $val) $tabsql[] = $val;
+                                foreach($objMod->dictionnaries['tabsqlsort'] as $val) $tabsqlsort[] = $val;
+                                foreach($objMod->dictionnaries['tabfield'] as $val) $tabfield[] = $val;
+                                foreach($objMod->dictionnaries['tabfieldvalue'] as $val) $tabfieldvalue[] = $val;
+                                foreach($objMod->dictionnaries['tabfieldinsert'] as $val) $tabfieldinsert[] = $val;
+                                foreach($objMod->dictionnaries['tabrowid'] as $val) $tabrowid[] = $val;
+                                foreach($objMod->dictionnaries['tabcond'] as $val) $tabcond[] = $val;
+                                //                                foreach($objMod->dictionnaries['tabsqlsort'] as $val) $tablib[] = $val;
+                                //$tabname = array_merge ($tabname, $objMod->dictionnaries['tabname']);
+                                var_dump($tabname);
+                                //exit;
+                            }
+
+                            $j++;
+                            $i++;
+                        }
+                        else dol_syslog("Module ".get_class($objMod)." not qualified");
+                    }
+                }
+            }
+            closedir($handle);
+        }
+        else
+        {
+            dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
+        }
+    }
+
+    return $ret;
+}
+
 ?>

@@ -30,6 +30,7 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("other");
 $langs->load("admin");
@@ -241,6 +242,10 @@ $tabcond[16]= $conf->societe->enabled;
 $tabcond[17]= $conf->deplacement->enabled;
 $tabcond[18]= $conf->expedition->enabled;
 $tabcond[19]= $conf->societe->enabled;
+
+
+complete_dictionnary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond);
+
 
 $msg='';
 
