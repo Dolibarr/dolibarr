@@ -104,13 +104,6 @@ function societe_prepare_head($object)
         $head[$h][2] = 'notify';
         $h++;
     }
-    if ($user->societe_id == 0)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
-        $head[$h][1] = $langs->trans("Info");
-        $head[$h][2] = 'info';
-        $h++;
-    }
 
 
     // Show more tabs from modules
@@ -128,6 +121,15 @@ function societe_prepare_head($object)
             $head[$h][2] = 'tab'.$values[1];
             $h++;
         }
+    }
+
+    // Log
+    if ($user->societe_id == 0)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
+        $head[$h][1] = $langs->trans("Info");
+        $head[$h][2] = 'info';
+        $h++;
     }
 
     return $head;

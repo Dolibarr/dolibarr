@@ -320,8 +320,8 @@ class Translate {
 
 
 	/**
-	 *  \brief      Mark domain as not loaded to be able to load it again.
-	 *  \param      domain      File name to load (.lang file). Use @ before value if domain is in a module directory.
+	 *  Mark domain as not loaded to be able to load it again.
+	 *  @param      domain      File name to load (.lang file). Use @ before value if domain is in a module directory.
 	 */
 	function UnLoad($domain)
 	{
@@ -330,8 +330,8 @@ class Translate {
 	}
 
 	/**
-	 *	\brief      Retourn list of files already loaded into memory
-	 *  \return     string      List of files loaded into memory "main=1,errors=1,..."
+	 *	Return list of files already loaded into memory
+	 *  @return     string      List of files loaded into memory "main=1,errors=1,..."
 	 */
 	function list_domainloaded()
 	{
@@ -346,7 +346,9 @@ class Translate {
 
 	/**
 	 * Return translated value of key. Search in lang file, then into database.
-	 * If not found, return key
+	 * If not found, return key.
+	 * WARNING: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey), getLabelFromKey must
+	 * not be called with same value than input.
 	 *
 	 * @param  key
 	 * @return string
@@ -371,7 +373,11 @@ class Translate {
         {
             $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle');
         }
-		return $newstr;
+        else if (preg_match('/Civility([0-9A-Z]+)$/i',$key,$reg))
+        {
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_civilite','code','civilite');
+        }
+        return $newstr;
 	}
 
 

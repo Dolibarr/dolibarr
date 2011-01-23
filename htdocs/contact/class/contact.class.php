@@ -801,8 +801,8 @@ class Contact extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libelle de civilite du contact
-	 *    \return     string      Nom traduit de la civilite
+	 *    Return label of a civility contact
+	 *    @return     string      Translated name of civility
 	 */
 	function getCivilityLabel()
 	{
@@ -810,7 +810,14 @@ class Contact extends CommonObject
 		$langs->load("dict");
 
 		$code=$this->civilite_id;
-		return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : $code;
+        return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : '';
+		if (empty($ret))
+		{
+		    $ret=$code;
+		    $langs->getLabelFromKey($db,$reg[1],'c_civilite','code','civilite');
+		     //$ret=dol_getIdFromCode($this->db,$code,'c_civilite',
+		}
+		return $ret;
 	}
 
 
