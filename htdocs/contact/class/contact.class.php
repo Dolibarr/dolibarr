@@ -107,7 +107,6 @@ class Contact extends CommonObject
 		$this->name=trim($this->name);
 		if (! $this->socid) $this->socid = 0;
 		if (! $this->priv) $this->priv = 0;
-		if (! $this->canvas) $this->canvas = 'default';
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_creat, priv, canvas)";
 		$sql.= " VALUES ('".$this->db->idate($now)."',";
@@ -116,7 +115,7 @@ class Contact extends CommonObject
 		$sql.= "'".addslashes($this->name)."',";
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
-		$sql.= "'".$this->canvas."'";
+        $sql.= " ".($this->canvas?"'".$this->canvas."'":"null");
 		$sql.= ")";
 
 		dol_syslog("Contact::create sql=".$sql);
