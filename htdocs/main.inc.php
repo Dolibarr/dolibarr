@@ -951,7 +951,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 
-
 	// For backward compatibility with old modules
 	if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
@@ -1051,11 +1050,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (GETPOST('menu')) $top_menu=GETPOST('menu'); // menu=eldy_backoffice.php
 
 	// Load the top menu manager
-	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$top_menu);
+	$result=dol_include_once("/includes/menus/standard/".$top_menu);
 	if (! $result)	// If failed to include, we try with standard
 	{
 		$top_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$top_menu);
+		include_once(DOL_DOCUMENT_ROOT."/includes/menus/standard/".$top_menu);
 	}
 
     print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
@@ -1068,7 +1067,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     $menutop = new MenuTop($db);
 	$menutop->atarget=$target;
 	$menutop->showmenu();
-	
+
 	print "\n</div>\n";
 
 	// Link to login card
@@ -1125,11 +1124,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
 		$logouttext.='>';
 	}
-	
+
 	print '<div class="login_block">'."\n";
 
 	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext);
-	
+
 	// Select entity
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
@@ -1243,7 +1242,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     if (GETPOST('menu')) $left_menu=GETPOST('menu');     // menu=eldy_backoffice.php
 
     // Load the left menu manager
-	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/standard/".$left_menu);
+	$result=dol_include_once("/includes/menus/standard/".$left_menu);
 	if (! $result)	// If menu manager removed or not found
 	{
 		$left_menu='eldy_backoffice.php';

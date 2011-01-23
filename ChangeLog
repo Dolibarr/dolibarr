@@ -1,5 +1,11 @@
 English Dolibarr ChangeLog
 
+***** ChangeLog for 3.1 compared to 3.0 *****
+
+For developers:
+- New: External modules can add their menu manager
+
+
 ***** ChangeLog for 3.0 compared to 2.9 *****
 
 For users:

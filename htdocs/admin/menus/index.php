@@ -35,9 +35,9 @@ $langs->load("admin");
 if (! $user->admin)
   accessforbidden();
 
-$dirtop = "../../includes/menus/standard";
-$dirleft = "../../includes/menus/standard";
-$dirsmartphone = "../../includes/menus/smartphone";
+$dirtop = "/includes/menus/standard";
+$dirleft = "/includes/menus/standard";
+$dirsmartphone = "/includes/menus/smartphone";
 
 $dirmenu = array($dirleft,$dirsmartphone);
 

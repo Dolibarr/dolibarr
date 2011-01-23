@@ -40,9 +40,9 @@ $langs->load("other");
 // Security check
 if (!$user->admin) accessforbidden();
 
-$dirtop = "../includes/menus/standard";
-$dirleft = "../includes/menus/standard";
-$dirsmartphone = "../includes/menus/smartphone";
+$dirtop = "/includes/menus/standard";
+$dirleft = "/includes/menus/standard";
+$dirsmartphone = "/includes/menus/smartphone";
 
 
 // Cette page peut etre longue. On augmente le delai autorise.
@@ -78,13 +78,14 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	// Initialize menu handlers
 	foreach ($listofmenuhandler as $key => $val)
 	{
-		$dir = DOL_DOCUMENT_ROOT."/includes/menus/";
-
 		// Load sql init_menu_handler.sql file
-		$file='init_menu_'.$key.'.sql';
-		if (file_exists($dir.$file))
+        $dir = "/includes/menus/";
+	    $file='init_menu_'.$key.'.sql';
+	    $fullpath=dol_buildpath($dir.$file);
+
+		if (file_exists($fullpath))
 		{
-			$result=run_sql($dir.$file,1,'',1,$key);
+			$result=run_sql($fullpath,1,'',1,$key);
 		}
 	}
 

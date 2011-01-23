@@ -35,9 +35,9 @@ $langs->load("admin");
 if (! $user->admin)
   accessforbidden();
 
-$dirtop = "../../includes/menus/standard";
-$dirleft = "../../includes/menus/standard";
-$dirsmartphone = "../../includes/menus/smartphone";
+$dirtop = "/includes/menus/standard";
+$dirleft = "/includes/menus/standard";
+$dirsmartphone = "/includes/menus/smartphone";
 
 $dirmenu = array($dirleft,$dirsmartphone);
 
@@ -349,7 +349,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	$menu = new Menubase($db);
 	$result=$menu->fetch($_GET['menuId']);
 	//var_dump($menu);
-	
+
 	// MenuId Parent
 	print '<tr><td>'.$langs->trans('MenuIdParent').'</td>';
 	//$menu_handler

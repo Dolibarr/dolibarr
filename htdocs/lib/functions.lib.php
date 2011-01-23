@@ -87,7 +87,7 @@ function dol_getprefix()
 function dol_include_once($relpath)
 {
     global $conf,$langs,$user,$mysoc;   // Other global var must be retreived with $GLOBALS['var']
-    return include_once(dol_buildpath($relpath));
+    return @include_once(dol_buildpath($relpath));
 }
 
 
