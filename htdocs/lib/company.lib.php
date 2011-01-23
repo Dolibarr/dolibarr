@@ -44,7 +44,8 @@ function societe_prepare_head($object)
     $head[$h][2] = 'card';
     $h++;
 
-    if ($object->client==2 || $object->client==3 || $object->object->client==2 || $object->object->client==3)
+    // TODO Remove tests on object->object. Functions must be called with a company object directly
+    if (($object->client==2 || $object->client==3 || $object->object->client==2 || $object->object->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Prospect");
@@ -58,7 +59,7 @@ function societe_prepare_head($object)
         $head[$h][2] = 'customer';
         $h++;
     }
-    if ($object->fournisseur || $object->object->fournisseur)
+    if ($conf->fournisseur->enabled && ($object->fournisseur || $object->object->fournisseur))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
