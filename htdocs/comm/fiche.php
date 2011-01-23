@@ -198,6 +198,8 @@ if ($socid > 0)
 
 	if ($objsoc->client)
 	{
+        $langs->load("compta");
+
 		print '<tr><td nowrap>';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
 		print $objsoc->code_client;
