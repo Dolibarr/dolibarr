@@ -58,7 +58,7 @@ function societe_prepare_head($object)
         $head[$h][2] = 'customer';
         $h++;
     }
-    if ($object->fournisseur || $object->object->fournisseur)
+    if ($conf->fournisseur->enabled && ($object->fournisseur || $object->object->fournisseur))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
