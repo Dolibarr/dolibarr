@@ -340,7 +340,7 @@ if (! empty($canvas))
 			// display_canvas. All output should be processed by template so
 			// showHead and dol_htmloutput_errors should be moved into
 			// display_canvas.
-			
+
 			// Card header
 			$objcanvas->showHead();
 
@@ -399,7 +399,7 @@ else
 		 */
 		$head = contact_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("Contact"), 0, 'contact');
+		dol_fiche_head($head, 'card', $langs->trans("ContactsAddresses"), 0, 'contact');
 	}
 
 	if ($user->rights->societe->contact->creer)
