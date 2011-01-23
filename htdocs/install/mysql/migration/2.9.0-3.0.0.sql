@@ -43,6 +43,7 @@ ALTER TABLE llx_expedition MODIFY date_expedition datetime;
 ALTER TABLE llx_expedition MODIFY date_delivery datetime NULL;
 
 ALTER TABLE llx_societe ADD COLUMN canvas varchar(32) DEFAULT NULL AFTER default_lang;
+ALTER TABLE llx_societe MODIFY canvas varchar(32) DEFAULT NULL;
 
 ALTER TABLE llx_cond_reglement RENAME TO llx_c_payment_term;
 ALTER TABLE llx_expedition_methode RENAME TO llx_c_shipment_mode;
@@ -93,8 +94,8 @@ CREATE TABLE llx_c_ziptown
 ALTER TABLE llx_c_ziptown ADD INDEX idx_c_ziptown_fk_county (fk_county);
 ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_county		FOREIGN KEY (fk_county)   REFERENCES llx_c_departements (rowid);
 
-ALTER TABLE llx_socpeople ADD COLUMN canvas	varchar(32)	DEFAULT 'default' after default_lang;
-ALTER TABLE llx_socpeople MODIFY canvas varchar(32) DEFAULT 'default';
+ALTER TABLE llx_socpeople ADD COLUMN canvas varchar(32) DEFAULT NULL after default_lang;
+ALTER TABLE llx_socpeople MODIFY canvas varchar(32) DEFAULT NULL;
 
 UPDATE llx_socpeople SET canvas = 'default' WHERE canvas = 'default@contact';
 UPDATE llx_societe SET canvas = 'default' WHERE canvas = 'default@thirdparty';
