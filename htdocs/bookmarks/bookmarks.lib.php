@@ -42,7 +42,7 @@ function printBookmarksList ($aDb, $aLangs)
 
 	$bookm = new Bookmark($db);
 
-	$langs->load("@bookmarks");
+	$langs->load("bookmarks@bookmarks");
 
 	$url= $_SERVER["PHP_SELF"].(! empty($_SERVER["QUERY_STRING"])?'?'.$_SERVER["QUERY_STRING"]:'');
 
