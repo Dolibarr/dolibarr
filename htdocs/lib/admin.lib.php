@@ -714,7 +714,7 @@ function UnActivate($value,$requiredby=1)
 /**
  *  Add external modules to list of dictionnaries
  */
-function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,$tabcond)
+function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond)
 {
     global $db, $modules, $conf, $langs;
 
@@ -782,11 +782,13 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
                             //$objMod
                             if (! empty($objMod->dictionnaries))
                             {
-                                var_dump($tabname);
-                                var_dump($objMod->dictionnaries['tabname']);
+                                //var_dump($objMod->dictionnaries['tabname']);
                                 $taborder[] = 0;
-                                foreach($objMod->dictionnaries['tabname'] as $val) $taborder[] = sizeof($tabname)+1;
-                                foreach($objMod->dictionnaries['tabname'] as $val) $tabname[] = $val;
+                                foreach($objMod->dictionnaries['tabname'] as $val)
+                                {
+                                    $taborder[] = sizeof($tabname)+1;
+                                    $tabname[] = $val;
+                                }
                                 foreach($objMod->dictionnaries['tablib'] as $val) $tablib[] = $val;
                                 foreach($objMod->dictionnaries['tabsql'] as $val) $tabsql[] = $val;
                                 foreach($objMod->dictionnaries['tabsqlsort'] as $val) $tabsqlsort[] = $val;
@@ -797,7 +799,7 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
                                 foreach($objMod->dictionnaries['tabcond'] as $val) $tabcond[] = $val;
                                 //                                foreach($objMod->dictionnaries['tabsqlsort'] as $val) $tablib[] = $val;
                                 //$tabname = array_merge ($tabname, $objMod->dictionnaries['tabname']);
-                                var_dump($tabname);
+                                //var_dump($tabcond);
                                 //exit;
                             }
 
