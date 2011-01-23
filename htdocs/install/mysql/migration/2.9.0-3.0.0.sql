@@ -43,6 +43,7 @@ ALTER TABLE llx_expedition MODIFY date_expedition datetime;
 ALTER TABLE llx_expedition MODIFY date_delivery datetime NULL;
 
 ALTER TABLE llx_societe ADD COLUMN canvas varchar(32) DEFAULT NULL AFTER default_lang;
+ALTER TABLE llx_societe MODIFY canvas varchar(32) DEFAULT NULL;
 
 ALTER TABLE llx_cond_reglement RENAME TO llx_c_payment_term;
 ALTER TABLE llx_expedition_methode RENAME TO llx_c_shipment_mode;
