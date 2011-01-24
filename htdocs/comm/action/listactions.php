@@ -35,6 +35,7 @@ if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php
 
 $langs->load("companies");
 $langs->load("agenda");
+$langs->load("commercial");
 
 $action=GETPOST('action','alpha');
 $year=GETPOST("year",'int');
