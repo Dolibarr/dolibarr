@@ -36,7 +36,7 @@ function prelevement_prepare_head($object)
 {
 	global $langs, $conf, $user;
 	$langs->load("withdrawals");
-	
+
 	$h = 0;
 	$head = array();
 
@@ -73,23 +73,12 @@ function prelevement_prepare_head($object)
 	$head[$h][2] = 'statistics';
 	$h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
-	if (is_array($conf->tabs_modules['prelevement']))
-	{
-		$i=0;
-		foreach ($conf->tabs_modules['prelevement'] as $value)
-		{
-			$values=explode(':',$value);
-			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
-			$head[$h][1] = $langs->trans($values[1]);
-			$head[$h][2] = 'tab'.$values[1];
-			$h++;
-		}
-	}
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'prelevement');
 
-	return $head;
+    return $head;
 }
 ?>

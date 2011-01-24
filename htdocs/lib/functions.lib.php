@@ -3760,4 +3760,52 @@ function picto_from_langcode($codelang)
     return $ret;
 }
 
+/**
+ *  Complete a head array with value added by external modules
+ *  @param      conf            Object conf
+ *  @param      langs           Object langs
+ *  @param      object          Object object
+ *  @param      head            Object head
+ *  @param      h               New position to fill
+ *  @param      type            Value for object where objectvalue can be
+ *                              'thirdparty'       to add a tab in third party view
+ *                              'intervention'     to add a tab in intervention view
+ *                              'supplier_order'   to add a tab in supplier order view
+ *                              'supplier_invoice' to add a tab in supplier invoice view
+ *                              'invoice'          to add a tab in customer invoice view
+ *                              'order'            to add a tab in customer order view
+ *                              'product'          to add a tab in product view
+ *                              'propal'           to add a tab in propal view
+ *                              'member'           to add a tab in fundation member view
+ */
+function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type)
+{
+    if (is_array($conf->tabs_modules['thirdparty']))
+    {
+        $i=0;
+        foreach ($conf->tabs_modules['thirdparty'] as $value)
+        {
+            $values=explode(':',$value);
+            if (sizeof($values) == 5)       // new declaration
+            {
+                if ($values[0] != $type) continue;
+                if ($values[3]) $langs->load($values[3]);
+                $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[4]),1);
+                $head[$h][1] = $langs->trans($values[2]);
+                $head[$h][2] = str_replace('+','',$values[1]);
+                $h++;
+            }
+            else if (sizeof($values) == 4)   // old declaration, for backward compatibility
+            {
+                if ($values[0] != $type) continue;
+                if ($values[2]) $langs->load($values[2]);
+                $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
+                $head[$h][1] = $langs->trans($values[1]);
+                $head[$h][2] = 'tab'.$values[1];
+                $h++;
+            }
+        }
+    }
+}
+
 ?>

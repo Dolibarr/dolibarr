@@ -64,27 +64,18 @@ function contact_prepare_head($object)
 	$head[$h][2] = 'exportimport';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'contact');
+
+    $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
-	
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
-	if (is_array($conf->tabs_modules['contact']))
-	{
-		$i=0;
-		foreach ($conf->tabs_modules['contact'] as $value)
-		{
-			$values=explode(':',$value);
-			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
-			$head[$h][1] = $langs->trans($values[1]);
-			$head[$h][2] = 'tab'.$values[1];
-			$h++;
-		}
-	}
+
+
 
 	return $head;
 }

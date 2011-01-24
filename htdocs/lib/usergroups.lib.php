@@ -74,6 +74,12 @@ function user_prepare_head($object)
         $h++;
     }
 
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
+
     if (! $user->societe_id)
     {
     	$head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
@@ -86,23 +92,6 @@ function user_prepare_head($object)
     	$head[$h][2] = 'info';
     	$h++;
     }
-
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
-	if (is_array($conf->tabs_modules['user']))
-	{
-		$i=0;
-		foreach ($conf->tabs_modules['user'] as $value)
-		{
-			$values=explode(':',$value);
-			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
-			$head[$h][1] = $langs->trans($values[1]);
-			$head[$h][2] = 'tab'.$values[1];
-			$h++;
-		}
-	}
 
 	return $head;
 }
@@ -143,24 +132,13 @@ function group_prepare_head($object)
 		$h++;
 	}
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
-	if (is_array($conf->tabs_modules['group']))
-	{
-		$i=0;
-		foreach ($conf->tabs_modules['group'] as $value)
-		{
-			$values=explode(':',$value);
-			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
-			$head[$h][1] = $langs->trans($values[1]);
-			$head[$h][2] = 'tab'.$values[1];
-			$h++;
-		}
-	}
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'group');
 
-	return $head;
+    return $head;
 }
 
 
@@ -234,7 +212,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
         {
 			// Disable not stable themes
         	if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/bureau2crea/i',$subdir)) continue;
-        	
+
             if ($i % $thumbsbyrow == 0)
             {
                 print '<tr '.$bc[$var].'>';
