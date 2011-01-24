@@ -49,6 +49,7 @@ if ($_POST["action"] == 'update')
     $db->begin();
 
     $i+=dolibarr_set_const($db,'EXTERNALSITE_URL',trim($_POST["EXTERNALSITE_URL"]),'chaine',0,'',$conf->entity);
+    //$i+=dolibarr_set_const($db,'EXTERNALSITE_LABEL',trim($_POST["EXTERNALSITE_LABEL"]),'chaine',0,'',$conf->entity);
 
     if ($i >= 1)
     {
@@ -84,6 +85,14 @@ print "<td width=\"30%\">".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Value")."</td>";
 print "<td>".$langs->trans("Examples")."</td>";
 print "</tr>";
+
+/*print "<tr class=\"impair\">";
+print "<td>".$langs->trans("Label")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"". ($_POST["EXTERNALSITE_LABEL"]?$_POST["EXTERNALSITE_LABEL"]:$conf->global->EXTERNALSITE_LABEL) . "\" size=\"40\"></td>";
+print "<td>My menu";
+print "</td>";
+print "</tr>";
+*/
 
 print "<tr class=\"impair\">";
 print "<td>".$langs->trans("ExternalSiteURL")."</td>";
