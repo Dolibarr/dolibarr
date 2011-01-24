@@ -46,6 +46,7 @@ $socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 
+$langs->load("commercial");
 
 
 /*
