@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      �ric Seigne          <erics@rycks.com>
+ * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
  */
 
 /**
-	    \file       htdocs/includes/boxes/box_external_rss.php
-        \ingroup    external_rss
-		\brief      Fichier de gestion d'une box pour le module external_rss
-		\version    $Id$
-*/
+ * 	    \file       htdocs/includes/boxes/box_external_rss.php
+ *      \ingroup    external_rss
+ *      \brief      Fichier de gestion d'une box pour le module external_rss
+ *      \version    $Id$
+ */
 
 include_once(MAGPIERSS_PATH."rss_fetch.inc");
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -44,7 +44,7 @@ class box_external_rss extends ModeleBoxes {
     var $info_box_contents = array();
 
     /**
-     *      \brief      Constructeur de la classe
+     *  Constructeur de la classe
      */
     function box_external_rss($DB,$param)
     {
@@ -58,8 +58,8 @@ class box_external_rss extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-     *      \param      $max        Nombre maximum d'enregistrements � charger
+     *  Charge les donnees en memoire pour affichage ulterieur
+     *  @param      $max        Nombre maximum d'enregistrements a charger
      */
     function loadBox($max=5)
     {
@@ -105,7 +105,7 @@ class box_external_rss extends ModeleBoxes {
         		'sublink' => $link, 'subtext'=>$langs->trans("LastRefreshDate").': '.(isset($rss->date)?dol_print_date($rss->date,"dayhourtext"):$langs->trans("Unknown")), 'subpicto'=>'object_bookmark');
 		}
 
-		// INFO sur le �lements
+		// INFO sur le elements
         for($i = 0; $i < $max && $i < sizeof($rss->items); $i++)
         {
             $item = $rss->items[$i];

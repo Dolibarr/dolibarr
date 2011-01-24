@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +41,8 @@ $def = array();
 $lastexternalrss=0;
 
 // positionne la variable pour le nombre de rss externes
-$sql ="select MAX(name) as name from ".MAIN_DB_PREFIX."const";
-$sql.=" WHERE name like 'EXTERNAL_RSS_URLRSS_%'";
+$sql ="SELECT MAX(".$db->decrypt('name').") as name FROM ".MAIN_DB_PREFIX."const";
+$sql.=" WHERE ".$db->decrypt('name')." LIKE 'EXTERNAL_RSS_URLRSS_%'";
 $result=$db->query($sql);
 if ($result)
 {
@@ -119,7 +120,7 @@ if ($_POST["delete"])
 
 		// Supprime boite box_external_rss de definition des boites
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
-        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
+        $sql.= " WHERE file = 'box_external_rss.php' AND note LIKE '".$_POST["norss"]." %'";
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -201,29 +202,25 @@ print '<td width="100">'.$langs->trans("Title").'</td>';
 print '<td><input type="text" name="external_rss_title_'.($lastexternalrss+1).'" value="'.@constant("EXTERNAL_RSS_TITLE_" . ($lastexternalrss+1)).'" size="64"></td>';
 print '<td>April,<br>LinuxFR,<br>Lolix</td>';
 print '</tr>';
-?>
-<tr class="pair">
-  <td>URL du RSS</td>
-  <td><input type="text" name="external_rss_urlrss_<?php echo ($lastexternalrss+1) ?>" value="<?php echo @constant("EXTERNAL_RSS_URLRSS_" . ($lastexternalrss+1)) ?>" size="64"></td>
-  <td>http://wiki.april.org/RecentChanges?format=rss<br>http://linuxfr.org/backend/news/rss20.rss<br>http://back.fr.lolix.org/jobs.rss.php3</td>
-</tr>
-<tr><td colspan="3" align="center">
-<input type="submit" class="button" value="<?php echo $langs->trans("Add") ?>">
-<input type="hidden" name="action" value="add">
-<input type="hidden" name="norss" value="<?php echo ($lastexternalrss+1) ?>">
-</td>
-</tr>
-<?php
+
+print '<tr class="pair">';
+print '<td>URL du RSS</td>';
+print '<td><input type="text" name="external_rss_urlrss_'.($lastexternalrss+1).'" value="'.@constant("EXTERNAL_RSS_URLRSS_" . ($lastexternalrss+1)).'" size="64"></td>';
+print '<td>http://wiki.april.org/RecentChanges?format=rss<br>http://linuxfr.org/backend/news/rss20.rss<br>http://back.fr.lolix.org/jobs.rss.php3</td>';
+print '</tr>';
+print '<tr><td colspan="3" align="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+print '<input type="hidden" name="action" value="add">';
+print '<input type="hidden" name="norss" value="'.($lastexternalrss+1).'">';
+print '</td></tr>';
 print '</table>';
 print '</form>';
 
-
 print '<br>';
-
 
 print '<table class="nobordernopadding" width="100%">';
 
-$sql ="select rowid, file, note from ".MAIN_DB_PREFIX."boxes_def";
+$sql ="SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
 $sql.=" WHERE file = 'box_external_rss.php'";
 $sql.=" ORDER BY note";
 
