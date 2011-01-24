@@ -123,6 +123,8 @@ function societe_prepare_head($object)
         $h++;
     }
 
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'thirdparty','remove');
+
     return $head;
 }
 

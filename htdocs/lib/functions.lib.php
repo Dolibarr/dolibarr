@@ -467,7 +467,7 @@ function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 				print '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 			}
 		}
-		else
+		else if (! empty($links[$i][1]))
 		{
 			//print "x $i $active ".$links[$i][2]." z";
 			if ((is_numeric($active) && $i == $active)
@@ -3761,7 +3761,7 @@ function picto_from_langcode($codelang)
 }
 
 /**
- *  Complete a head array with value added by external modules
+ *  Complete or removed entries into a head array (used to build tabs) with value added by external modules
  *  @param      conf            Object conf
  *  @param      langs           Object langs
  *  @param      object          Object object
@@ -3777,32 +3777,50 @@ function picto_from_langcode($codelang)
  *                              'product'          to add a tab in product view
  *                              'propal'           to add a tab in propal view
  *                              'member'           to add a tab in fundation member view
+ *  @param      mode            'add' to complete head, 'remove' to remove entries
  */
-function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type)
+function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode='add')
 {
-    if (is_array($conf->tabs_modules['thirdparty']))
+    if (is_array($conf->tabs_modules[$type]))
     {
         $i=0;
-        foreach ($conf->tabs_modules['thirdparty'] as $value)
+        foreach ($conf->tabs_modules[$type] as $value)
         {
             $values=explode(':',$value);
-            if (sizeof($values) == 5)       // new declaration
+            if ($mode == 'add')
             {
-                if ($values[0] != $type) continue;
-                if ($values[3]) $langs->load($values[3]);
-                $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[4]),1);
-                $head[$h][1] = $langs->trans($values[2]);
-                $head[$h][2] = str_replace('+','',$values[1]);
-                $h++;
+                if (sizeof($values) == 5)       // new declaration
+                {
+                    if ($values[0] != $type) continue;
+                    if ($values[3]) $langs->load($values[3]);
+                    $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[4]),1);
+                    $head[$h][1] = $langs->trans($values[2]);
+                    $head[$h][2] = str_replace('+','',$values[1]);
+                    $h++;
+                }
+                else if (sizeof($values) == 4)   // old declaration, for backward compatibility
+                {
+                    if ($values[0] != $type) continue;
+                    if ($values[2]) $langs->load($values[2]);
+                    $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
+                    $head[$h][1] = $langs->trans($values[1]);
+                    $head[$h][2] = 'tab'.$values[1];
+                    $h++;
+                }
             }
-            else if (sizeof($values) == 4)   // old declaration, for backward compatibility
+            else if ($mode == 'remove')
             {
                 if ($values[0] != $type) continue;
-                if ($values[2]) $langs->load($values[2]);
-                $head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
-                $head[$h][1] = $langs->trans($values[1]);
-                $head[$h][2] = 'tab'.$values[1];
-                $h++;
+                $tabname=str_replace('-','',$values[1]);
+                foreach($head as $key => $val)
+                {
+                    if ($head[$key][2]==$tabname)
+                    {
+                        //print 'on vire '.$tabname.' key='.$key;
+                        unset($head[$key]);
+                        break;
+                    }
+                }
             }
         }
     }
