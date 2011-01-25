@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010 	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,26 +29,38 @@
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
 $langs->load("admin");
 $langs->load("withdrawals");
 $langs->load("bills");
+$langs->load("other");
 
 // Security check
 if (!$user->admin)
 accessforbidden();
 
-/*if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');*/
-
-
 if ($_GET["action"] == "set")
 {
-	for ($i = 0 ; $i < 9 ; $i++)
+	for ($i = 0 ; $i < 3 ; $i++)
 	{
 		dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"],'chaine',0,'',$conf->entity);
 	}
-
+	
+	$id=$_POST["PRELEVEMENT_ID_BANKACCOUNT"];
+	$account = new Account($db, $id);
+	
+	if($account->fetch($id)>0)
+	{
+		dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id,'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "PRELEVEMENT_CODE_GUICHET", $account->code_guichet,'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "PRELEVEMENT_NUMERO_COMPTE", $account->number,'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "PRELEVEMENT_NUMBER_KEY", $account->cle_rib,'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "PRELEVEMENT_IBAN", $account->iban,'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "PRELEVEMENT_BIC", $account->bic,'chaine',0,'',$conf->entity);
+	}
+	
 	Header("Location: prelevement.php");
 	exit;
 }
@@ -92,6 +104,8 @@ print '<td width="30%">'.$langs->trans("Parameter").'</td>';
 print '<td width="40%">'.$langs->trans("Value").'</td>';
 //print '<td width="30%">'.$langs->trans("CurrentValue").'</td>';
 print "</tr>\n";
+
+//User
 print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom0" value="PRELEVEMENT_USER">';
@@ -99,65 +113,31 @@ print $html->select_users($conf->global->PRELEVEMENT_USER,'value0',1);
 print '</td>';
 print '</tr>';
 
-print '<tr class="pair"><td>'.$langs->trans("NumeroNationalEmetter").'</td>';
+//Profid1 of Transmitter
+print '<tr class="pair"><td>'.$langs->trans("NumeroNationalEmetter")." (".$langs->transcountry('ProfId1',$mysoc->pays_code).")";'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom1" value="PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR">';
 print '<input type="text"   name="value1" value="'.$conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'" size="9" ></td>';
 print '</tr>';
 
-/*print_fiche_titre($langs->trans("PleaseSelectCustomerBankBANToWithdraw"),'','');
-
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="action" value="modify">';
-print '<table class="border" width="100%">';
+/*
+* Bank info
 */
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BankToReceiveWithdraw").'</td></tr>';
-
-print '<tr class="impair"><td>'.$langs->trans("Name").'</td>';
+print '<tr class="impair"><td>'.$langs->trans("BankAccountOwner").'</td>';
 print '<td align="left">';
+
+//bank account holder
 print '<input type="hidden" name="nom2" value="PRELEVEMENT_RAISON_SOCIALE">';
 print '<input type="text"   name="value2" value="'.$conf->global->PRELEVEMENT_RAISON_SOCIALE.'" size="14" ></td>';
 print '</tr>';
-// RIB
-//print '<tr><td colspan="2">'.$langs->trans("ForCustomerWithBankUsingRIB").'</td></tr>';
-print '<tr class="pair"><td>'.$langs->trans("BankCode").'</td>';
-print '<td align="left">';
-print '<input type="hidden" name="nom3" value="PRELEVEMENT_CODE_BANQUE">';
-print '<input type="text"   name="value3" value="'.$conf->global->PRELEVEMENT_CODE_BANQUE.'" size="6" ></td>';
-print '</tr>';
-print '<tr class="impair"><td>'.$langs->trans("DeskCode").'</td>';
-print '<td align="left">';
-print '<input type="hidden" name="nom4" value="PRELEVEMENT_CODE_GUICHET">';
-print '<input type="text"   name="value4" value="'.$conf->global->PRELEVEMENT_CODE_GUICHET.'" size="6" ></td>';
-print '</tr>';
-print '<tr class="pair"><td>'.$langs->trans("AccountNumber").'</td>';
-print '<td align="left">';
-print '<input type="hidden" name="nom5" value="PRELEVEMENT_NUMERO_COMPTE">';
-print '<input type="text"   name="value5" value="'.$conf->global->PRELEVEMENT_NUMERO_COMPTE.'" size="11" ></td>';
-print '</tr>';
-print '<tr class="impair"><td>'.$langs->trans("BankAccountNumberKey").'</td>';
-print '<td align="left">';
-print '<input type="hidden" name="nom6" value="PRELEVEMENT_NUMBER_KEY">';
-print '<input type="text"   name="value6" value="'.$conf->global->PRELEVEMENT_NUMBER_KEY.'" size="11" ></td>';
-print '</tr>';
-// BAN/BIC/SWIFT
-//print '<tr><td colspan="2">'.$langs->trans("ForCustomerWithBankUsingBANBIC").'</td></tr>';
-print '<tr class="pair"><td>'.$langs->trans("IBAN").'</td>';
-print '<td align="left">';
-print '<input type="hidden" name="nom7" value="PRELEVEMENT_IBAN">';
-print '<input type="text"   name="value7" value="'.$conf->global->PRELEVEMENT_IBAN.'" size="11" ></td>';
-print '</tr>';
-print '<tr class="impair"><td>'.$langs->trans("BIC").'</td>';
-print '<td align="left">';
-print '<input type="hidden" name="nom8" value="PRELEVEMENT_BIC">';
-print '<input type="text"   name="value8" value="'.$conf->global->PRELEVEMENT_BIC.'" size="11" ></td>';
-print '</tr>';
 
-/*print '<tr class="pair"><td colspan="2" align="center">';
-print '<input type="submit" class="button" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-print '</td>';
-print '</tr>';
-*/
+// Bank account (from Banks module)
+print '<tr '.$bc[$var].'><td>'.$langs->trans("Bank").'</td>';
+print '<td colspan="2">';
+print $html->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
+print '</td></tr>';
+
 print '<tr><td align="center" colspan="3"><br><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
 print '</table>';

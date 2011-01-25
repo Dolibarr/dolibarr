@@ -69,7 +69,7 @@ class modPrelevement extends DolibarrModules
 		$this->dirs = array("/prelevement/temp","/prelevement/receipts");
 
 		// Dependancies
-		$this->depends = array("modFacture");
+		$this->depends = array("modFacture","modBanque");
 		$this->requiredby = array();
 
 		// Config pages
