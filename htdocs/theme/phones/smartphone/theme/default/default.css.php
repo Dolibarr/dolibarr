@@ -30,6 +30,8 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1'); // We need to use translation files to know direction
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
 
+session_cache_limiter( FALSE );
+
 require_once("../../../../../master.inc.php");
 
 // Define css type
