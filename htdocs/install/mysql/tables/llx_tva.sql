@@ -30,8 +30,8 @@ create table llx_tva
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   note            text,
   fk_bank         integer,  
-  fk_user_creat   integer,                    -- utilisateur qui a créé l'info
-  fk_user_modif   integer                     -- utilisateur qui a modifié l'info
+  fk_user_creat   integer,                    -- utilisateur qui a cree l'info
+  fk_user_modif   integer                     -- utilisateur qui a modifiï¿½ l'info
 )type=innodb;
 
 -- 
