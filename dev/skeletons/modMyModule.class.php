@@ -99,8 +99,10 @@ class modMyModule extends DolibarrModules
 		$this->const = array();			// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
 
 		// Array to add new pages in new tabs
-		$this->tabs = array('entity:Title:@mymodule:/mymodule/mynewtab.php?id=__ID__');
-		// where entity can be
+		// Example: $this->tabs = array('objecttype:+tabname1:Title1:@mymodule:/mymodule/mynewtab1.php?id=__ID__',  // To add a new tab
+        //                              'objecttype:+tabname2:Title2:@mymodule:/mymodule/mynewtab2.php?id=__ID__',  // To add another new tab
+        //                              'objecttype:-tabname');                                                     // To remove an existing tab
+		// where objecttype can be
 		// 'thirdparty'       to add a tab in third party view
 		// 'intervention'     to add a tab in intervention view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -115,7 +117,7 @@ class modMyModule extends DolibarrModules
 		// 'user'             to add a tab in user view
 		// 'group'            to add a tab in group view
 		// 'contact'          to add a tab in contact view
-
+        $this->tabs = array();
 
 		// Boxes
 		$this->boxes = array();			// List of boxes

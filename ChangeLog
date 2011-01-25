@@ -6,6 +6,7 @@ For users:
 
 For developers:
 - New: External modules can add their menu manager
+- New: External modules can remove tabs
 
 
 ***** ChangeLog for 3.0 compared to 2.9 *****
