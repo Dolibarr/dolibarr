@@ -755,7 +755,8 @@ SSLCertificateKeyFile "WAMPROOT/myserver.key"
 #ExpiresByType text/css A2592000
 #ExpiresByType text/javascript A2592000
 #ExpiresByType application/x-javascript A2592000
-
+#ExpiresByType application/javascript A2592000
+    
 
 # Declare alias for Dolibarr, PHPMyAdmin and other softwares
 Include "WAMPROOT/alias/*.conf"
