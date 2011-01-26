@@ -117,7 +117,7 @@ analyse_sql_and_script($_GET,1);
 analyse_sql_and_script($_POST,0);
 
 // This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 
 // Include the conf.php and functions.lib.php
