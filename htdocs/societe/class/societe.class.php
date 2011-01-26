@@ -791,30 +791,38 @@ class Societe extends CommonObject
         dol_syslog("Societe::Delete", LOG_DEBUG);
         $sqr = 0;
 
-        // Check if third party can be deleted
-        $nbpropal=0;
-        $sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX."propal";
-        $sql.= " WHERE fk_soc = " . $id;
-        $resql=$this->db->query($sql);
-        if ($resql)
+        // Test if child exists
+        $listtable=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");
+        $haschild=0;
+        foreach($listtable as $table)
         {
-            $obj=$this->db->fetch_object($resql);
-            $nbpropal=$obj->nb;
-            if ($nbpropal > 0)
-            {
-                $this->error="ErrorRecordHasChildren";
-                return -1;
-            }
-        }
-        else
+	        // Check if third party can be deleted
+	        $nb=0;
+	        $sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX.$table;
+	        $sql.= " WHERE fk_soc = " . $id;
+	        $resql=$this->db->query($sql);
+	        if ($resql)
+	        {
+	            $obj=$this->db->fetch_object($resql);
+	            if ($obj->nb > 0)
+	            {
+	            	$haschild+=$obj->nb;
+	            }
+	        }
+	        else
+	        {
+	            $this->error .= $this->db->lasterror();
+	            dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
+	            return -1;
+	        }
+        }		
+        if ($haschild > 0)
         {
-            $this->error .= $this->db->lasterror();
-            dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
+            $this->error="ErrorRecordHasChildren";
             return -1;
         }
 
-
-
+        
         if ($this->db->begin())
         {
             // Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-third-party-deleting.html)
