@@ -252,6 +252,8 @@ class Translate {
 										if ($alt < 2)	// We do not load direction for alternate files 2
 										{
                                             $this->tab_translate[$key]=$value;
+											if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
+
 											if ($stopafterdirection) break;
 										}
 									}
@@ -262,7 +264,6 @@ class Translate {
 
 										//print 'XX'.$key;
 										$this->tab_translate[$key]=$value;
-
 										if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 									}
 								}
