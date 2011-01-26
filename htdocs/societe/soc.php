@@ -1133,22 +1133,22 @@ else
     			print '</td></tr></table>';
 
     			print '</td></tr>';
-			}
 
-			// Category
-			if ($soc->fournisseur)
-			{
-				$load = $soc->LoadSupplierCateg();
-				if ( $load == 0)
-				{
-					if (sizeof($soc->SupplierCategories) > 0)
-					{
-						print '<tr>';
-						print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-						print $form->selectarray("fournisseur_categorie",$soc->SupplierCategories,'',1);
-						print '</td></tr>';
-					}
-				}
+    			// Category
+    			if ($conf->categorie->enabled && $soc->fournisseur)
+    			{
+    				$load = $soc->LoadSupplierCateg();
+    				if ( $load == 0)
+    				{
+    					if (sizeof($soc->SupplierCategories) > 0)
+    					{
+    						print '<tr>';
+    						print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
+    						print $form->selectarray("fournisseur_categorie",$soc->SupplierCategories,'',1);
+    						print '</td></tr>';
+    					}
+    				}
+    			}
 			}
 
 			if ($conf->global->MAIN_MODULE_BARCODE)
