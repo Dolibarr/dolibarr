@@ -249,7 +249,7 @@ class Translate {
 									}
 									elseif ($key == 'DIRECTION')	// This is to declare direction of language
 									{
-										if ($alt < 2)	// We do not load direction for alternate files 2
+										if ($alt < 2 || empty($this->tab_translate[$key]))	// We load direction only for primary files or if not yer load
 										{
                                             $this->tab_translate[$key]=$value;
                                             
