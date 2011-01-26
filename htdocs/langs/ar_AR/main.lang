@@ -9,6 +9,9 @@
 // Reference language: en_US
 CHARSET=UTF-8
 DIRECTION=rtl
+#FONTFORPDF=Freemono
+FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=9
 SeparatorDecimal=.
 SeparatorThousand=None
 FormatDateShort=%d/%m/%Y
