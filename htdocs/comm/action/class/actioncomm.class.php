@@ -422,18 +422,18 @@ class ActionComm extends CommonObject
     {
         global $conf, $user;
 
-        $now=gmmktime();		// gmmktime(0,0,0,1,1,1970) -> 0,  mktime(0,0,0,1,1,1970) -> -3600;
+        $now=dol_now();
 
         $this->nbtodo=$this->nbtodolate=0;
         $sql = "SELECT a.id, a.datep as dp";
-        $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-        $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= ")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid AND s.entity in (0, ".$conf->entity.")";
         $sql.= " WHERE a.percent < 100";
-        $sql.= " AND a.fk_soc = s.rowid";
-        $sql.= " AND s.entity = ".$conf->entity;
-        if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND a.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
+        //print $sql;
 
         $resql=$this->db->query($sql);
         if ($resql)
