@@ -42,7 +42,7 @@ accessforbidden();
 
 if ($_GET["action"] == "set")
 {
-	for ($i = 0 ; $i < 3 ; $i++)
+	for ($i = 0 ; $i < 2 ; $i++)
 	{
 		dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"],'chaine',0,'',$conf->entity);
 	}
@@ -59,6 +59,7 @@ if ($_GET["action"] == "set")
 		dolibarr_set_const($db, "PRELEVEMENT_NUMBER_KEY", $account->cle_rib,'chaine',0,'',$conf->entity);
 		dolibarr_set_const($db, "PRELEVEMENT_IBAN", $account->iban,'chaine',0,'',$conf->entity);
 		dolibarr_set_const($db, "PRELEVEMENT_BIC", $account->bic,'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
 	}
 	
 	Header("Location: prelevement.php");
@@ -98,12 +99,11 @@ print_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'setup');
 print '<form method="post" action="prelevement.php?action=set">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-print '<table class="nobordernopadding" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("Parameter").'</td>';
 print '<td width="40%">'.$langs->trans("Value").'</td>';
-//print '<td width="30%">'.$langs->trans("CurrentValue").'</td>';
-print "</tr>\n";
+print "</tr>";
 
 //User
 print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
@@ -114,36 +114,25 @@ print '</td>';
 print '</tr>';
 
 //Profid1 of Transmitter
-print '<tr class="pair"><td>'.$langs->trans("NumeroNationalEmetter")." (".$langs->transcountry('ProfId1',$mysoc->pays_code).")";'</td>';
+print '<tr class="pair"><td>'.$langs->trans("NumeroNationalEmetter").' - '.$langs->transcountry('ProfId1',$mysoc->pays_code).'</td>';
 print '<td align="left">';
 print '<input type="hidden" name="nom1" value="PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR">';
 print '<input type="text"   name="value1" value="'.$conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'" size="9" ></td>';
 print '</tr>';
 
-/*
-* Bank info
-*/
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BankToReceiveWithdraw").'</td></tr>';
-print '<tr class="impair"><td>'.$langs->trans("BankAccountOwner").'</td>';
-print '<td align="left">';
-
-//bank account holder
-print '<input type="hidden" name="nom2" value="PRELEVEMENT_RAISON_SOCIALE">';
-print '<input type="text"   name="value2" value="'.$conf->global->PRELEVEMENT_RAISON_SOCIALE.'" size="14" ></td>';
-print '</tr>';
-
 // Bank account (from Banks module)
-print '<tr '.$bc[$var].'><td>'.$langs->trans("Bank").'</td>';
-print '<td colspan="2">';
+print '<tr class="impair"><td>'.$langs->trans("BankToReceiveWithdraw").'</td>';
+print '<td align="left">';
 print $html->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
 print '</td></tr>';
+print '</table>';
 
+print '<table class="nobordernopadding" width="100%">';
 print '<tr><td align="center" colspan="3"><br><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-
 print '</table>';
 print '</form>';
-print '<br>';
 
+print '<br>';
 
 /*
  * Notifications
