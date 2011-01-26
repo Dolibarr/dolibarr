@@ -1103,34 +1103,37 @@ else
 			print '</td></tr>';
 
 			// Supplier
-			print '<tr>';
-			print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
-			print $form->selectyesno("fournisseur",$soc->fournisseur,1);
-			print '</td>';
-			print '<td>'.$langs->trans('SupplierCode').'</td><td>';
+			if ($conf->fournisseur->enabled)
+			{
+    			print '<tr>';
+    			print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
+    			print $form->selectyesno("fournisseur",$soc->fournisseur,1);
+    			print '</td>';
+    			print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 
-			print '<table class="nobordernopadding"><tr><td>';
-			if ((!$soc->code_fournisseur || $soc->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
-			{
-				$tmpcode=$soc->code_fournisseur;
-				if (empty($tmpcode) && $modCodeFournisseur->code_auto) $tmpcode=$modCodeFournisseur->getNextValue($soc,1);
-				print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
-			}
-			else if ($soc->codefournisseur_modifiable())
-			{
-				print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
-			}
-			else
-			{
-				print $soc->code_fournisseur;
-				print '<input type="hidden" name="code_fournisseur" value="'.$soc->code_fournisseur.'">';
-			}
-			print '</td><td>';
-			$s=$modCodeFournisseur->getToolTip($langs,$soc,1);
-			print $form->textwithpicto('',$s,1);
-			print '</td></tr></table>';
+    			print '<table class="nobordernopadding"><tr><td>';
+    			if ((!$soc->code_fournisseur || $soc->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
+    			{
+    				$tmpcode=$soc->code_fournisseur;
+    				if (empty($tmpcode) && $modCodeFournisseur->code_auto) $tmpcode=$modCodeFournisseur->getNextValue($soc,1);
+    				print '<input type="text" name="code_fournisseur" size="16" value="'.$tmpcode.'" maxlength="15">';
+    			}
+    			else if ($soc->codefournisseur_modifiable())
+    			{
+    				print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
+    			}
+    			else
+    			{
+    				print $soc->code_fournisseur;
+    				print '<input type="hidden" name="code_fournisseur" value="'.$soc->code_fournisseur.'">';
+    			}
+    			print '</td><td>';
+    			$s=$modCodeFournisseur->getToolTip($langs,$soc,1);
+    			print $form->textwithpicto('',$s,1);
+    			print '</td></tr></table>';
 
-			print '</td></tr>';
+    			print '</td></tr>';
+			}
 
 			// Category
 			if ($soc->fournisseur)
