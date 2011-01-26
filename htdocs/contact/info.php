@@ -42,7 +42,7 @@ $result = restrictedArea($user, 'contact',$contactid,'socpeople');
 * 	View
 */
 
-llxHeader('',$langs->trans("Contacts"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 
 $contact = new Contact($db);
@@ -51,7 +51,7 @@ $contact->fetch($_GET["id"], $user);
 
 $head = contact_prepare_head($contact);
 
-dol_fiche_head($head, 'info', $langs->trans("Contact"), 0, 'contact');
+dol_fiche_head($head, 'info', $langs->trans("ContactsAddresses"), 0, 'contact');
 
 
 print '<table width="100%"><tr><td>';
