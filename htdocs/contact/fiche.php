@@ -247,7 +247,7 @@ else
  *	View
  */
 
-llxHeader('',$langs->trans("Contacts"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

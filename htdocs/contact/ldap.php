@@ -79,13 +79,13 @@ if ($_GET["action"] == 'dolibarr2ldap')
  *	View
  */
 
-llxHeader('',$langs->trans("Contacts"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form = new Form($db);
 
 $head = contact_prepare_head($contact);
 
-dol_fiche_head($head, 'ldap', $langs->trans("Contact"), 0, 'contact');
+dol_fiche_head($head, 'ldap', $langs->trans("ContactsAddresses"), 0, 'contact');
 
 
 print '<table class="border" width="100%">';
