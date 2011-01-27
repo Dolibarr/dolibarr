@@ -37,6 +37,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 $langs->load("companies");
 $langs->load("users");
 $langs->load("other");
+$langs->load("commercial");
 
 $errors = array();
 $socid = GETPOST("socid");
