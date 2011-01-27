@@ -126,10 +126,10 @@ print '<td align="left">';
 print $html->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
 print '</td></tr>';
 print '</table>';
+print '<br>';
 
-print '<table class="nobordernopadding" width="100%">';
-print '<tr><td align="center" colspan="3"><br><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-print '</table>';
+print '<center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+
 print '</form>';
 
 print '<br>';
