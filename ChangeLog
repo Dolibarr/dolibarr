@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.1 compared to 3.0 *****
 For users:
 - New: Can add information on current user on odt generation
+- New: Standing orders module use bank account from banks module
 
 For developers:
 - New: External modules can add their menu manager
