@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  *
@@ -851,12 +851,14 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 			{
 				$pu_ht = $prod->multiprices[$object->client->price_level];
 				$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
+				$price_min = $prod->multiprices_min[$object->client->price_level];
 				$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
 			}
 			else
 			{
 				$pu_ht = $prod->price;
 				$pu_ttc = $prod->price_ttc;
+				$price_min = $prod->price_min;
 				$price_base_type = $prod->price_base_type;
 			}
 
@@ -905,7 +907,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 
 		if ($result >= 0)
 		{
-			if($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
+			if($price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
 			{
 				$object->error = $langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)) ;
 				$result = -1 ;
