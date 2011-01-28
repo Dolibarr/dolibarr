@@ -60,7 +60,7 @@ $colspan = 'colspan="3"';
 	<?php
 	// multiprix
 	if($conf->global->PRODUIT_MULTIPRICES)
-	$html->select_produits('','idprod','',$conf->product->limit_size,$soc->price_level);
+	$html->select_produits('','idprod','',$conf->product->limit_size,$buyer->price_level);
 	else
 	$html->select_produits('','idprod','',$conf->product->limit_size);
 
@@ -75,7 +75,7 @@ $colspan = 'colspan="3"';
 	?>
 	</td>
 	<td align="right"><input type="text" size="2" name="qty" value="1"></td>
-	<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="<?php echo $soc->remise_client; ?>">%</td>
+	<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="<?php echo $buyer->remise_client; ?>">%</td>
 
 	<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>" name="addline"></td>
 </tr>
