@@ -1124,7 +1124,9 @@ function is_ip($ip)
  */
 function dol_buildlogin($lastname,$firstname)
 {
-	$login=strtolower(dol_string_unaccent($firstname)) .'.'. strtolower(dol_string_unaccent($lastname));
+    $login=strtolower(dol_string_unaccent($firstname));
+    $login.=($login?'.':'');
+    $login.=strtolower(dol_string_unaccent($lastname));
 	$login=dol_string_nospecial($login,''); // For special names
 	return $login;
 }
