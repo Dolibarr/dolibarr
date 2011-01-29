@@ -1763,12 +1763,16 @@ class Societe extends CommonObject
      *    Verifie la validite d'un identifiant professionnel en fonction du pays de la societe (siren, siret, ...)
      *    @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *    @param      soc             Objet societe
-     *    @return     int             <0 si ko, >0 si ok
+     *    @return     int             <=0 if KO, >0 if OK
      *    TODO not in business class
      */
     function id_prof_check($idprof,$soc)
     {
+        global $conf;
+
         $ok=1;
+
+        if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return 1;
 
         // Verifie SIREN si pays FR
         if ($idprof == 1 && $soc->pays_code == 'FR')
@@ -1880,9 +1884,12 @@ class Societe extends CommonObject
      */
     function id_prof_url($idprof,$soc)
     {
-        global $langs;
+        global $conf,$langs;
+
+        if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return '';
 
         $url='';
+
         if ($idprof == 1 && $soc->pays_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren;
         if ($idprof == 1 && $soc->pays_code == 'GB') $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
         if ($idprof == 1 && $soc->pays_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$soc->siren;
