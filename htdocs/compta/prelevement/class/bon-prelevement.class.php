@@ -418,93 +418,93 @@ class BonPrelevement extends CommonObject
                         
                         $this->Notify($user, "cr", $subject, $message);
                         
-                        //Add payment of withdrawal into bank
-                        $bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
-                 	    $facs = array();
-                 	    $amounts = array();
+						//Add payment of withdrawal into bank
+						$bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+						$facs = array();
+						$amounts = array();
                  	    
-                		$facs = $this->_get_list_factures();
+						$facs = $this->_get_list_factures();
 
-                		for ($i = 0 ; $i < sizeof($facs) ; $i++)
-                		{
-                			$fac = new Facture($this->db);
-                    		$fac->fetch($facs[$i]);
-                			$amounts[$fac->id] = $fac->total_ttc;
-                			//$result = $fac->set_paid($user);
-							
-                		}
-                		$paiement = new Paiement($this->db);
-						$paiement->datepaye     = $date ;//$this->date_credit;
+						for ($i = 0 ; $i < sizeof($facs) ; $i++)
+						{
+							$fac = new Facture($this->db);
+							$fac->fetch($facs[$i]);
+							$amounts[$fac->id] = $fac->total_ttc;
+							//TODO: Uncomment next line if invoice must have payed status
+							//$result = $fac->set_paid($user);
+						}
+						$paiement = new Paiement($this->db);
+						$paiement->datepaye     = $date ;
 						$paiement->amounts      = $amounts;
 						$paiement->paiementid   = 3; //
 						$paiement->num_paiement = $this->ref ;
-
-    					$paiement_id = $paiement->create($user);
-    					if ($paiement_id < 0)
-    					{
-    						dol_syslog("BonPrelevement::set_credite Erreur 1");
-    		    			$error++;
-    					}
+    					
+						$paiement_id = $paiement->create($user);
+						if ($paiement_id < 0)
+						{
+							dol_syslog("BonPrelevement::set_credite Erreur 1");
+							$error++;
+						}
                 		
-		    			$result=$paiement->addPaymentToBank($user,'payment','(WithdrawalPayment)',$bankaccount);
-            			if ($result < 0)
-            			{
-            				dol_syslog("BonPrelevement::set_credite Erreur 1");
-                			$error++;
-            			}
+						$result=$paiement->addPaymentToBank($user,'payment','(WithdrawalPayment)',$bankaccount);
+						if ($result < 0)
+						{
+							dol_syslog("BonPrelevement::set_credite Erreur 1");
+							$error++;
+						}
 						
-                        // Update prelevement line 
-                        // TODO: Translate to ligne-prelevement.class.php
-                		$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
-                		$sql.= " SET statut = 2";
-                		$sql.= " WHERE fk_prelevement_bons = ".$this->id;
+						// Update prelevement line 
+						// TODO: Translate to ligne-prelevement.class.php
+						$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
+						$sql.= " SET statut = 2";
+						$sql.= " WHERE fk_prelevement_bons = ".$this->id;
 
-                		if (! $this->db->query($sql))
-                		{
-                    		dol_syslog("BonPrelevement::set_credite Erreur 1");
-                    		$error++;
-                		}
+						if (! $this->db->query($sql))
+						{
+							dol_syslog("BonPrelevement::set_credite Erreur 1");
+							$error++;
+						}
             
-                    }
-                    else
-                    {
-                        dol_syslog("BonPrelevement::set_infocredit Erreur 1");
-                        $error++;
-                    }
+					}
+					else
+					{
+						dol_syslog("BonPrelevement::set_infocredit Erreur 1");
+						$error++;
+					}
 
-                    /*
-                     * Fin de la procedure
-                     *
+					/*
+					 * End of procedure
+					 *
                      */
-                    if ($error == 0)
-                    {
-                        $this->db->commit();
-                        return 0;
-                    }
-                    else
-                    {
-                        $this->db->rollback();
-                        dol_syslog("bon-prelevment::set_infocredit ROLLBACK ");
-                        return -1;
-                    }
-                }
-                else
-                {
-                    dol_syslog("bon-prelevement::set_infocredit Ouverture transaction SQL impossible ");
-                    return -1025;
-                }
-            }
-            else
-            {
-                dol_syslog("bon-prelevment::set_infocredit 1027 Date de credit < Date de trans ");
-                return -1027;
-            }
-        }
-        else
-        {
-            return -1026;
-        }
-    }
+					if ($error == 0)
+					{
+						$this->db->commit();
+						return 0;
+					}
+					else
+					{
+						$this->db->rollback();
+						dol_syslog("bon-prelevment::set_infocredit ROLLBACK ");
+						return -1;
+					}
+				}
+				else
+				{
+					dol_syslog("bon-prelevement::set_infocredit Ouverture transaction SQL impossible ");
+					return -1025;
+				}
+			}
+			else
+			{
+				dol_syslog("bon-prelevment::set_infocredit 1027 Date de credit < Date de trans ");
+				return -1027;
+			}
+		}
+		else
+		{
+			return -1026;
+		}
+	}
 
     /**
 	*	Set withdrawal to transmited status
@@ -533,18 +533,10 @@ class BonPrelevement extends CommonObject
             if ($this->db->query($sql))
             {
                 $this->method_trans = $method;
-                
-                /*$subject = "Transmission du prelevement ".$this->ref." a la banque";
-                $message = "Le bon de prelevement ".$this->ref;
-                $message .= " a ete transmis a la banque par ".$user->prenom. " ".$user->nom;
-                $message .= "\n\n";
-                $message .= "\nMontant : ".price($this->amount);
-                $message .= "\nMethode : ".$this->methodes_trans[$this->method_trans];
-                $message .= "\nDate  : ".dol_print_date($date,'day');*/
-                 $langs->load('withdrawals');
-                 $subject = $langs->trans("InfoTransSubject", $this->ref); 
-                 $message = $langs->trans("InfoTransMessage", $this->ref, $user->prenom, $user->nom);
-                 $message .=$langs->trans("InfoTransData", price($this->amount), $this->methodes_trans[$this->method_trans], dol_print_date($date,'day'));
+                $langs->load('withdrawals');
+                $subject = $langs->trans("InfoTransSubject", $this->ref); 
+                $message = $langs->trans("InfoTransMessage", $this->ref, $user->prenom, $user->nom);
+                $message .=$langs->trans("InfoTransData", price($this->amount), $this->methodes_trans[$this->method_trans], dol_print_date($date,'day'));
 
                 $this->Notify($user,"tr", $subject, $message, 1);
             }
@@ -556,7 +548,7 @@ class BonPrelevement extends CommonObject
             }
 
             /*
-             * Fin de la procedure
+             * End of procedure
              *
              */
         
@@ -690,8 +682,8 @@ class BonPrelevement extends CommonObject
     }
 
     /**
-     *
-     *
+     *	Returns amount of withdrawal
+     *	@return double	 total amount
      */
     function SommeAPrelever()
     {
@@ -982,7 +974,7 @@ class BonPrelevement extends CommonObject
             }
 
             /*
-             *
+             * Creation process
              *
              */
 			if (!$error)
@@ -994,6 +986,18 @@ class BonPrelevement extends CommonObject
 						// Fetch invoice
 						$fact = new Facture($this->db);
 						$fact->fetch($fac[0]);
+						/* 	 
+						 * Add standing order  	 
+						 * 	 
+						 * 	 
+						 * $fac[3] : banque 	 
+						 * $fac[4] : guichet 	 
+						 * $fac[5] : number 	 
+						 * $fac[6] : cle rib 	 
+						 * $fac[7] : amount 	 
+						 * $fac[8] : client nom 	 
+						 * $fac[2] : client id 	 
+						 */
 						$ri = $bonprev->AddFacture($fac[0], $fac[2], $fac[8], $fac[7],
 						$fac[3], $fac[4], $fac[5], $fac[6]);
 						if ($ri <> 0)
