@@ -104,6 +104,7 @@ DateConciliating=Reconcile date
 BankLineConciliated=Transaction reconciled
 CustomerInvoicePayment=Customer payment
 SupplierInvoicePayment=Supplier payment
+WithdrawalPayment=Withdrawal payment
 SocialContributionPayment=Social contribution payment
 FinancialAccountJournal=Financial account journal
 BankTransfer=Bank transfer

@@ -104,6 +104,7 @@ DateConciliating=Date rapprochement
 BankLineConciliated=Écriture rapprochée
 CustomerInvoicePayment=Règlement client
 SupplierInvoicePayment=Règlement fournisseur
+WithdrawalPayment=Règlement bon de prélèvement
 SocialContributionPayment=Règlement charge sociale
 FinancialAccountJournal=Journal de trésorerie du compte
 BankTransfer=Virement bancaire

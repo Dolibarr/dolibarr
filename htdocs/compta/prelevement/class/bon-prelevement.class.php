@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
 if ($conf->esaeb->enabled) require_once(DOL_DOCUMENT_ROOT.'/esaeb/class/esaeb19.class.php');
 
 
@@ -48,7 +49,6 @@ class BonPrelevement extends CommonObject
     var $emetteur_number_key;
     var $total;
     var $_fetched;
-
     var $statut;    // 0-Wait, 1-Trans, 2-Done
     var $labelstatut=array();
 
@@ -411,16 +411,48 @@ class BonPrelevement extends CommonObject
 
                     if ($this->db->query($sql))
                     {
-                    	//$subject = "Credit prelevement ".$this->ref." a la banque";
-                        /*$message = "Le bon de prelevement ".$this->ref;
-                        $message.= " a ete credite par la banque.\n";
-                        $message.= "Date credit : ".dol_print_date($date,'dayhour');*/
+                    	
                         $langs->load('withdrawals');
                         $subject = $langs->trans("InfoCreditSubject", $this->ref); 
                         $message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date,'dayhour'));
                         
                         $this->Notify($user, "cr", $subject, $message);
-                   
+                        
+                        //Add payment of withdrawal into bank
+                        $bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+                 	    $facs = array();
+                 	    $amounts = array();
+                 	    
+                		$facs = $this->_get_list_factures();
+
+                		for ($i = 0 ; $i < sizeof($facs) ; $i++)
+                		{
+                			$fac = new Facture($this->db);
+                    		$fac->fetch($facs[$i]);
+                			$amounts[$fac->id] = $fac->total_ttc;
+                			//$result = $fac->set_paid($user);
+							
+                		}
+                		$paiement = new Paiement($this->db);
+						$paiement->datepaye     = $date ;//$this->date_credit;
+						$paiement->amounts      = $amounts;
+						$paiement->paiementid   = 3; //
+						$paiement->num_paiement = $this->ref ;
+
+    					$paiement_id = $paiement->create($user);
+    					if ($paiement_id < 0)
+    					{
+    						dol_syslog("BonPrelevement::set_credite Erreur 1");
+    		    			$error++;
+    					}
+                		
+		    			$result=$paiement->addPaymentToBank($user,'payment','(WithdrawalPayment)',$bankaccount);
+            			if ($result < 0)
+            			{
+            				dol_syslog("BonPrelevement::set_credite Erreur 1");
+                			$error++;
+            			}
+						
                         // Update prelevement line 
                         // TODO: Translate to ligne-prelevement.class.php
                 		$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
@@ -749,11 +781,9 @@ class BonPrelevement extends CommonObject
 
         dol_syslog("BonPrelevement::Create banque=$banque guichet=$guichet");
 
-        //require_once (DOL_DOCUMENT_ROOT."/compta/prelevement/bon-prelevement.class.php");
         require_once (DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
         require_once (DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-        require_once (DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
-
+        
         $error = 0;
 
         $datetimeprev = time();
@@ -763,8 +793,8 @@ class BonPrelevement extends CommonObject
 
         $puser = new User($this->db, $conf->global->PRELEVEMENT_USER);
 
-        /**
-         * Lectures des factures
+        /*
+         * Read invoices
          */
         $factures = array();
         $factures_prev = array();
@@ -887,7 +917,7 @@ class BonPrelevement extends CommonObject
         {
 			/*
 			 * We are in real mode.
-			 * We create withdraw receipt, payments and build withdraw into disk
+			 * We create withdraw receipt and build withdraw into disk
 			 */
             $this->db->begin();
 
@@ -955,157 +985,119 @@ class BonPrelevement extends CommonObject
              *
              *
              */
-            if (!$error)
-            {
-                dol_syslog("Start generation payments for the ".sizeof($factures_prev)." invoices");
+			if (!$error)
+			{
+				if (sizeof($factures_prev) > 0)
+				{
+					foreach ($factures_prev as $fac)
+					{
+						// Fetch invoice
+						$fact = new Facture($this->db);
+						$fact->fetch($fac[0]);
+						$ri = $bonprev->AddFacture($fac[0], $fac[2], $fac[8], $fac[7],
+						$fac[3], $fac[4], $fac[5], $fac[6]);
+						if ($ri <> 0)
+						{
+							$error++;
+						}
 
-                if (sizeof($factures_prev) > 0)
-                {
-                    foreach ($factures_prev as $fac)
-                    {
-                    	// Fetch invoice
-                        $fact = new Facture($this->db);
-                        $fact->fetch($fac[0]);
+						/*
+						 * Update orders
+						 *
+						 */
+						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
+						$sql.= " SET traite = 1";
+						$sql.= ", date_traite = ".$this->db->idate(mktime());
+						$sql.= ", fk_prelevement_bons = ".$prev_id;
+						$sql.= " WHERE rowid = ".$fac[1];
 
-                        // Create payment
-                        $pai = new Paiement($this->db);
+						dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
+						if ($this->db->query($sql))
+						{
 
-                        $pai->amounts = array();
-                        $pai->amounts[$fac[0]] = $fact->total_ttc;
-                        $pai->datepaye = $datetimeprev;
-                        $pai->paiementid = 3; // prelevement
-                        $pai->num_paiement = $ref;
+						}
+						else
+						{
+							$error++;
+							dol_syslog("Erreur mise a jour des demandes");
+							dol_syslog($this->db->error());
+						}
 
-                        if ($pai->create($puser, 1) < 0)  // on appelle en no_commit
-                        {
-                            $error++;
-                            dol_syslog("Erreur creation paiement facture ".$fac[0]);
-                        }
-                        else
-                        {
-                            /*
-                            * Validation du paiement
-                            */
-                            $pai->valide();
+					}
+                   
+				}
 
-                            /*
-                            * Ajout d'une ligne de prelevement
-                            *
-                            *
-                            * $fac[3] : banque
-                            * $fac[4] : guichet
-                            * $fac[5] : number
-                            * $fac[6] : cle rib
-                            * $fac[7] : amount
-                            * $fac[8] : client nom
-                            * $fac[2] : client id
-                            */
+			}
 
-                            $ri = $bonprev->AddFacture($fac[0], $fac[2], $fac[8], $fac[7],
-                            $fac[3], $fac[4], $fac[5], $fac[6]);
-                            if ($ri <> 0)
-                            {
-                                $error++;
-                            }
+			if (!$error)
+			{
+				/*
+				 * Withdraw receipt
+				 */
 
-                            /*
-                             * Mise a jour des demandes
-                             *
-                             */
-                            $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
-                            $sql.= " SET traite = 1";
-                            $sql.= ", date_traite = ".$this->db->idate(mktime());
-                            $sql.= ", fk_prelevement_bons = ".$prev_id;
-                            $sql.= " WHERE rowid = ".$fac[1];
+				dol_syslog("Debut prelevement - Nombre de factures ".sizeof($factures_prev));
 
-            				dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
-                            if ($this->db->query($sql))
-                            {
+				if (sizeof($factures_prev) > 0)
+				{
+					$bonprev->date_echeance = $datetimeprev;
+					$bonprev->reference_remise = $ref;
 
-                            }
-                            else
-                            {
-                                $error++;
-                                dol_syslog("Erreur mise a jour des demandes");
-                                dol_syslog($this->db->error());
-                            }
+					$bonprev->numero_national_emetteur    = $conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR;
+					$bonprev->raison_sociale              = $conf->global->PRELEVEMENT_RAISON_SOCIALE;
 
-                        }
-                    }
-                }
-
-                dol_syslog("Fin des paiements");
-            }
-
-            if (!$error)
-            {
-                /*
-                 * Withdraw receipt
-                 */
-
-                dol_syslog("Debut prelevement - Nombre de factures ".sizeof($factures_prev));
-
-                if (sizeof($factures_prev) > 0)
-                {
-                    $bonprev->date_echeance = $datetimeprev;
-                    $bonprev->reference_remise = $ref;
-
-                    $bonprev->numero_national_emetteur    = $conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR;
-                    $bonprev->raison_sociale              = $conf->global->PRELEVEMENT_RAISON_SOCIALE;
-
-                    $bonprev->emetteur_code_banque 		  = $conf->global->PRELEVEMENT_CODE_BANQUE;
-                    $bonprev->emetteur_code_guichet       = $conf->global->PRELEVEMENT_CODE_GUICHET;
-                    $bonprev->emetteur_numero_compte      = $conf->global->PRELEVEMENT_NUMERO_COMPTE;
-                    $bonprev->emetteur_number_key		  = $conf->global->PRELEVEMENT_NUMBER_KEY;
+					$bonprev->emetteur_code_banque 		  = $conf->global->PRELEVEMENT_CODE_BANQUE;
+					$bonprev->emetteur_code_guichet       = $conf->global->PRELEVEMENT_CODE_GUICHET;
+					$bonprev->emetteur_numero_compte      = $conf->global->PRELEVEMENT_NUMERO_COMPTE;
+					$bonprev->emetteur_number_key		  = $conf->global->PRELEVEMENT_NUMBER_KEY;
 		
-                    $bonprev->factures = $factures_prev_id;
+					$bonprev->factures = $factures_prev_id;
 
-                    // Build file
-                    $bonprev->generate();
-                }
-                dol_syslog( $filebonprev ) ;
-                dol_syslog("Fin prelevement");
-            }
+					//Build file
+					$bonprev->generate();
+				}
+				dol_syslog( $filebonprev ) ;
+				dol_syslog("Fin prelevement");
+			}
 
-            /*
-             * Mise a jour du total
-             *
-             */
+			/*
+			 * Update total
+			 *
+			 */
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
-            $sql.= " SET amount = ".price2num($bonprev->total);
-            $sql.= " WHERE rowid = ".$prev_id;
-            $sql.= " AND entity = ".$conf->entity;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
+			$sql.= " SET amount = ".price2num($bonprev->total);
+			$sql.= " WHERE rowid = ".$prev_id;
+			$sql.= " AND entity = ".$conf->entity;
 
-            dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if (! $resql)
-            {
-                $error++;
-                dol_syslog("Erreur mise a jour du total - $sql");
-            }
+			dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$error++;
+				dol_syslog("Erreur mise a jour du total - $sql");
+			}
 
-            /*
-             * Rollback ou Commit
-             *
-             */
-            if (!$error)
-            {
-                $this->db->commit();
-            }
-            else
-            {
-                $this->db->rollback();
-                dol_syslog("Error",LOG_ERROR);
-            }
+			/*
+			 * Rollback or Commit
+			 *
+			 */
+			if (!$error)
+			{
+				$this->db->commit();
+			}
+			else
+			{
+				$this->db->rollback();
+				dol_syslog("Error",LOG_ERROR);
+			}
 
-            return sizeof($factures_prev);
-        }
-        else
-        {
-            return 0;
-        }
-    }
+			return sizeof($factures_prev);
+		}
+		else
+		{
+			return 0;
+		}
+	}
 
 
 	/**
