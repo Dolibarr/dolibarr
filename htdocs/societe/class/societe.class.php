@@ -815,7 +815,7 @@ class Societe extends CommonObject
 	            dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
 	            return -1;
 	        }
-        }		
+        }
         if ($haschild > 0)
         {
             $this->error="ErrorRecordHasChildren";
@@ -2128,17 +2128,17 @@ class Societe extends CommonObject
      */
     function get_input_id_prof($idprof,$htmlname,$preselected)
     {
-        global $langs;
+        global $conf,$langs;
 
         $formlength=24;
-        if ($this->pays_code == 'FR')
+        if ($this->pays_code == 'FR' && empty($conf->global->MAIN_DISABLEPROFIDRULES))
         {
             if ($idprof==1) $formlength=9;
             if ($idprof==2) $formlength=14;
             if ($idprof==3) $formlength=5;		// 4 chiffres et 1 lettre depuis janvier
             if ($idprof==4) $formlength=32;		// No maximum as we need to include a town name in this id
         }
-        if ($this->pays_code == 'ES')
+        if ($this->pays_code == 'ES' && empty($conf->global->MAIN_DISABLEPROFIDRULES))
         {
             if ($idprof==1) $formlength=9;  //CIF/NIF/NIE 9 digits
             if ($idprof==2) $formlength=12; //NASS 12 digits without /
