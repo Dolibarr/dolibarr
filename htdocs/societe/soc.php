@@ -666,12 +666,22 @@ else
 		if ($soc->particulier)
 		{
 			print '<tr><td><span class="fieldrequired">'.$langs->trans('LastName').'</span></td><td><input type="text" size="30" maxlength="60" name="nom" value="'.$soc->nom.'"></td>';
-			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
+            if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+            {
+                print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td>';
+            }
+            else print '<td>&nbsp;</td>';
+			print '</tr>';
 		}
 		else
 		{
 			print '<tr><td><span class="fieldrequired">'.$langs->trans('Name').'</span></td><td><input type="text" size="30" maxlength="60" name="nom" value="'.$soc->nom.'"></td>';
-			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
+            if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+            {
+                print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td>';
+            }
+            else print '<td>&nbsp;</td>';
+			print '</tr>';
 		}
 		// If javascript on, we show option individual
 		if ($conf->use_javascript_ajax)
@@ -1057,18 +1067,21 @@ else
 			print '<tr><td><span class="fieldrequired">'.$langs->trans('Name').'</span></td><td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="'.$soc->nom.'"></td></tr>';
 
 			// Prefix
-			print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-			// It does not change the prefix mode using the auto numbering prefix
-			if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $soc->prefix_comm)
-			{
-				print '<input type="hidden" name="prefix_comm" value="'.$soc->prefix_comm.'">';
-				print $soc->prefix_comm;
-			}
-			else
-			{
-				print '<input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'">';
-			}
-			print '</td>';
+            if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+            {
+                print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
+    			// It does not change the prefix mode using the auto numbering prefix
+	       		if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $soc->prefix_comm)
+			    {
+				    print '<input type="hidden" name="prefix_comm" value="'.$soc->prefix_comm.'">';
+				    print $soc->prefix_comm;
+			    }
+			    else
+			    {
+				    print '<input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'">';
+			    }
+			    print '</td>';
+            }
 
 			// Prospect/Customer
 			print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%"><select class="flat" name="client">';
@@ -1367,7 +1380,10 @@ else
 		print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
 		print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
+        if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+        {
+            print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
+        }
 
 		if ($soc->client)
 		{

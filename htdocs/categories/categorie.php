@@ -206,7 +206,10 @@ if ($_GET["socid"])
 	print $html->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
+    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+	{
+	   print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
+	}
 
 	if ($soc->client)
 	{
@@ -424,7 +427,7 @@ function formCategory($db,$object,$typeid)
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="40%">';
-	print $langs->trans("ClassifyInCategory");	
+	print $langs->trans("ClassifyInCategory");
 	print $html->select_all_categories($typeid);
 	print '</td><td>';
 	print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';

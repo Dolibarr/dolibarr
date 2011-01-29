@@ -69,9 +69,12 @@ if ($socid > 0)
     print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
 
 	// Prefix
-    print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-    print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
-    print '</td></tr>';
+    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+    {
+        print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
+        print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
+        print '</td></tr>';
+    }
 
     print "</table>";
 

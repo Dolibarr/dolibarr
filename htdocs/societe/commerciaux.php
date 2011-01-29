@@ -109,7 +109,15 @@ if ($_GET["socid"])
 	print $langs->trans('CustomerCode').'</td><td width="20%">';
 	print $soc->code_client;
 	if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
-	print '</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
+    print '</td>';
+
+	// Prefix
+    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+    {
+        print '<td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td>';
+    }
+    else print '<td>&nbsp;</td>';
+    print '</tr>';
 
 	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
 

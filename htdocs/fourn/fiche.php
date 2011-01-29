@@ -95,7 +95,10 @@ if ( $societe->fetch($socid) )
 	print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+    {
+        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+    }
 
 	if ($societe->fournisseur)
 	{

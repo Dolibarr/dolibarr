@@ -192,9 +192,12 @@ if ($socid > 0)
 	print '</td></tr>';
 
 	// Prefix
-	print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-	print ($objsoc->prefix_comm?$objsoc->prefix_comm:'&nbsp;');
-	print '</td></tr>';
+    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+    {
+        print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
+	   print ($objsoc->prefix_comm?$objsoc->prefix_comm:'&nbsp;');
+	   print '</td></tr>';
+    }
 
 	if ($objsoc->client)
 	{
