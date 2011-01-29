@@ -1378,7 +1378,8 @@ else
 			print '</td></tr>';
 		}
 
-		if ($soc->fournisseur) {
+		if ($conf->fournisseur->enabled && $soc->fournisseur)
+		{
 			print '<tr><td>';
 			print $langs->trans('SupplierCode').'</td><td colspan="3">';
 			print $soc->code_fournisseur;
