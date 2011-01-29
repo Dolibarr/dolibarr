@@ -672,12 +672,14 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 			{
 				$pu_ht  = $prod->multiprices[$object->client->price_level];
 				$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
+				$price_min = $prod->multiprices_min[$object->client->price_level];
 				$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
 			}
 			else
 			{
 				$pu_ht = $prod->price;
 				$pu_ttc = $prod->price_ttc;
+				$price_min = $prod->price_min;
 				$price_base_type = $prod->price_base_type;
 			}
 
@@ -714,9 +716,9 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		if ($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
+		if ($price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
 		{
-			$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
+			$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
 		}
 		else
 		{
@@ -794,10 +796,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	{
 		$product = new Product($db) ;
 		$res=$product->fetch($productid) ;
+		$price_min = $product->price_min;
+		if ($conf->global->PRODUIT_MULTIPRICES && $object->client->price_level)	$price_min = $product->multiprices_min[$object->client->price_level];
 	}
-	if ($productid && $product->price_min && (price2num($up_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($product->price_min)))
+	if ($productid && $price_min && (price2num($up_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
 	{
-		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($product->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
+		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
 	}
 	else
 	{
