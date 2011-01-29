@@ -42,7 +42,7 @@ $langs->load("bills");
 $langs->load("products");
 
 // Security check
-$socid=0;
+$socid=GETPOST("socid");
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'contrat',$contratid,'contrat');
@@ -181,7 +181,7 @@ if ($_POST["action"] == 'classin')
 
 if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
 {
-    if ($_POST["pqty"] && (($_POST["pu"] != '' && $_POST["desc"]) || $_POST["p_idprod"]))
+    if ($_POST["pqty"] && (($_POST["pu"] != '' && $_POST["desc"]) || $_POST["idprod"]))
     {
         $contrat = new Contrat($db);
         $ret=$contrat->fetch($_GET["id"]);
@@ -223,10 +223,10 @@ if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
 		// Ecrase $desc par celui du produit
 		// Ecrase $txtva par celui du produit
 		// Ecrase $base_price_type par celui du produit
-        if ($_POST['p_idprod'])
+        if ($_POST['idprod'])
         {
-            $prod = new Product($db, $_POST['p_idprod']);
-            $prod->fetch($_POST['p_idprod']);
+            $prod = new Product($db, $_POST['idprod']);
+            $prod->fetch($_POST['idprod']);
 
             $tva_tx = get_default_tva($mysoc,$contrat->client,$prod->id);
             $tva_npr = get_default_npr($mysoc,$contrat->client,$prod->id);
@@ -236,12 +236,14 @@ if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
             {
             	$pu_ht = $prod->multiprices[$contrat->client->price_level];
             	$pu_ttc = $prod->multiprices_ttc[$contrat->client->price_level];
+            	$price_min = $prod->multiprices_min[$contrat->client->price_level];
             	$price_base_type = $prod->multiprices_base_type[$contrat->client->price_level];
             }
             else
             {
             	$pu_ht = $prod->price;
 	            $pu_ttc = $prod->price_ttc;
+	            $price_min = $prod->price_min;
 				$price_base_type = $prod->price_base_type;
             }
 
@@ -277,23 +279,31 @@ if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
-
-		// Insert line
-		$result = $contrat->addline(
-                $desc,
-                $pu_ht,
-                $_POST["pqty"],
-                $tva_tx,
-                $localtax1_tx,
-                $localtax2_tx,
-                $_POST["p_idprod"],
-                $_POST["premise"],
-                $date_start,
-                $date_end,
-				$price_base_type,
-				$pu_ttc,
-				$info_bits
-                );
+		
+    	if($price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
+		{
+			$contrat->error = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)) ;
+			$result = -1 ;
+		}
+		else
+		{
+			// Insert line
+			$result = $contrat->addline(
+	                $desc,
+	                $pu_ht,
+	                $_POST["pqty"],
+	                $tva_tx,
+	                $localtax1_tx,
+	                $localtax2_tx,
+	                $_POST["idprod"],
+	                $_POST["premise"],
+	                $date_start,
+	                $date_end,
+					$price_base_type,
+					$pu_ttc,
+					$info_bits
+	                );
+		}
 
 		if ($result > 0)
 		{
@@ -344,6 +354,8 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
 		$contratline->date_fin_validite=$date_end_update;
         $contratline->date_cloture=$date_end_real_update;
 		$contratline->fk_user_cloture=$user->id;
+		
+		// TODO verifier price_min si fk_product et multiprix
 
 		$result=$contratline->update($user);
         if ($result > 0)
@@ -463,96 +475,80 @@ if ($_GET["action"] == 'create')
     dol_fiche_head($head, $a, $langs->trans("AddContract"), 0, 'contract');
 
     if ($mesg) print $mesg;
-
-    $new_contrat = new Contrat($db);
-
-    $sql = "SELECT s.nom, s.prefix_comm, s.rowid";
-    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-    $sql.= " WHERE s.rowid = ".$_GET["socid"];
-
-    $resql=$db->query($sql);
-    if ($resql)
+    
+    $soc = new Societe($db);
+    $soc->fetch($socid);
+    
+    print '<form name="contrat" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    
+    print '<input type="hidden" name="action" value="add">';
+    print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
+    print '<input type="hidden" name="remise_percent" value="0">';
+    
+    print '<table class="border" width="100%">';
+    
+    // Ref
+    print '<tr><td>'.$langs->trans("Ref").'</td>';
+    print '<td><input type="text" maxlength="30" name="ref" size="20" value="'.GETPOST("ref").'"></td></tr>';
+    
+    // Customer
+    print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
+    
+    // Ligne info remises tiers
+    print '<tr><td>'.$langs->trans('Discount').'</td><td>';
+    if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+    else print $langs->trans("CompanyHasNoRelativeDiscount");
+    $absolute_discount=$soc->getAvailableDiscounts();
+    print '. ';
+    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
+    else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+    print '.';
+    print '</td></tr>';
+    
+    // Commercial suivi
+    print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
+    print $form->select_users(GETPOST("commercial_suivi_id"),'commercial_suivi_id',1,'');
+    print '</td></tr>';
+    
+    // Commercial signature
+    print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
+    print $form->select_users(GETPOST("commercial_signature_id"),'commercial_signature_id',1,'');
+    print '</td></tr>';
+    
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
+    $form->select_date($datecontrat,'',0,0,'',"contrat");
+    print "</td></tr>";
+    
+    if ($conf->projet->enabled)
     {
-        $num = $db->num_rows($resql);
-        if ($num)
-        {
-            $obj = $db->fetch_object($resql);
+    	print '<tr><td>'.$langs->trans("Project").'</td><td>';
+    	select_projects($soc->id,GETPOST("projectid"),"projectid");
+    	print "</td></tr>";
+    }
+    
+    print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
+    print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+    print GETPOST("note_public");
+    print '</textarea></td></tr>';
+    
+    if (! $user->societe_id)
+    {
+    	print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
+    	print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+    	print GETPOST("note");
+    	print '</textarea></td></tr>';
+    }
+    
+    print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
+    
+    print "</table>\n";
+    print "</form>\n";
 
-            $soc = new Societe($db);
-            $soc->fetch($obj->rowid);
-
-            print '<form name="contrat" action="fiche.php" method="post">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
-            print '<input type="hidden" name="action" value="add">';
-            print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
-            print '<input type="hidden" name="remise_percent" value="0">';
-
-            print '<table class="border" width="100%">';
-
-			// Ref
-			print '<tr><td>'.$langs->trans("Ref").'</td>';
-			print '<td><input type="text" maxlength="30" name="ref" size="20" value="'.$_REQUEST["ref"].'"></td></tr>';
-
-            // Customer
-            print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
-
-			// Ligne info remises tiers
-            print '<tr><td>'.$langs->trans('Discount').'</td><td>';
-			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
-			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$absolute_discount=$soc->getAvailableDiscounts();
-			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-			print '.';
-			print '</td></tr>';
-
-            // Commercial suivi
-            print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
-			print $form->select_users($_REQUEST["commercial_suivi_id"],'commercial_suivi_id',1,'');
-            print '</td></tr>';
-
-            // Commercial signature
-            print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
-			print $form->select_users($_REQUEST["commercial_signature_id"],'commercial_signature_id',1,'');
-            print '</td></tr>';
-
-            print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
-            $form->select_date($datecontrat,'',0,0,'',"contrat");
-            print "</td></tr>";
-
-            if ($conf->projet->enabled)
-            {
-                print '<tr><td>'.$langs->trans("Project").'</td><td>';
-                select_projects($soc->id,$_REQUEST["projectid"],"projectid");
-                print "</td></tr>";
-            }
-
-            print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
-            print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-            print $_REQUEST["note_public"];
-            print '</textarea></td></tr>';
-
-			if (! $user->societe_id)
-			{
-	            print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
-	            print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-	            print $_REQUEST["note"];
-	            print '</textarea></td></tr>';
-			}
-
-            print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-
-            print "</table>\n";
-
-            print "</form>\n";
-
+// TODO A quoi ca sert ?
+/*
             if ($propalid)
             {
-                /*
-                 * Produits
-                 */
                 print '<br>';
                 print_titre($langs->trans("Products"));
 
@@ -618,12 +614,7 @@ if ($_GET["action"] == 'create')
 
                 print '</table>';
             }
-        }
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+*/
 
     print '</div>';
 }
@@ -634,7 +625,7 @@ else
 /*                                                                             */
 /* *************************************************************************** */
 {
-	$now=gmmktime();
+	$now=dol_now();
 
     $id = $_GET["id"];
 	$ref= $_GET['ref'];
@@ -1225,9 +1216,9 @@ else
 			print '<td colspan="3">';
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES)
-				$form->select_produits('','p_idprod',1,$conf->product->limit_size,$contrat->societe->price_level);
+				$form->select_produits('','idprod',1,$conf->product->limit_size,$contrat->societe->price_level);
 			else
-				$form->select_produits('','p_idprod',1,$conf->product->limit_size);
+				$form->select_produits('','idprod',1,$conf->product->limit_size);
 			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 			print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea>';
 			print '</td>';
