@@ -106,7 +106,7 @@ $offset = $conf->liste_limit * $page ;
  */
 $sql = "SELECT pf.rowid";
 $sql.= ",f.rowid as facid, f.facnumber as ref, f.total_ttc";
-$sql.= ", s.rowid as socid, s.nom";
+$sql.= ", s.rowid as socid, s.nom, pl.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture as pf";
@@ -137,7 +137,7 @@ if ($result)
   	print '<table class="liste" width="100%">';
   	print '<tr class="liste_titre">';
   	print_liste_field_titre($langs->trans("Bill"),"factures.php","p.ref",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("Company"),"factures.php","s.nom",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
+  	print_liste_field_titre($langs->trans("ThirdParty"),"factures.php","s.nom",'',$urladd,'class="liste_titre"',$sortfield,$sortorder);
   	print_liste_field_titre($langs->trans("Amount"),"factures.php","f.total_ttc","",$urladd,'class="liste_titre" align="center"',$sortfield,$sortorder);
   	print '<td class="liste_titre" colspan="2">&nbsp;</td></tr>';
 
@@ -157,7 +157,7 @@ if ($result)
 
       	print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
-      	print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">';
+      	print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
       	print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
 
       	print '<td align="center">'.price($obj->total_ttc)."</td>\n";
@@ -168,13 +168,13 @@ if ($result)
 		{
 	  		print '-';
 		}
-      	elseif ($obj->statut == 1)
-		{
-	  		print 'Credite';
-		}
       	elseif ($obj->statut == 2)
 		{
-	  		print '<b>Rejete</b>';
+	  		print $langs->trans("StatusCredited");
+		}
+      	elseif ($obj->statut == 3)
+		{
+	  		print '<b>'.$langs->trans("StatusRefused").'</b>';
 		}
 
       	print "</td></tr>\n";
@@ -188,7 +188,7 @@ if ($result)
     {
       	print "<tr $bc[$var]><td>";
 
-     	print '<td>Total</td>';
+     	print '<td>'.$langs->trans("Total").'</td>';
 
       	print '<td align="center">'.price($total)."</td>\n";
 

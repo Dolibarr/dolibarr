@@ -260,7 +260,7 @@ if ($_GET["id"])
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("Company").'</td><td align="right">'.$langs->trans("Amount").'</td>';
+		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("ThirdParty").'</td><td align="right">'.$langs->trans("Amount").'</td>';
 		print '</tr>';
 
 		$var=True;
