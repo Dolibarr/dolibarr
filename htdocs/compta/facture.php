@@ -54,7 +54,7 @@ $sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
 $projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
 
 // Security check
-$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
+$socid=GETPOST("socid");
 $facid=GETPOST("id");
 if (empty($facid)) $facid=GETPOST("facid");    // For backward compatibility
 $ref=GETPOST("ref");
