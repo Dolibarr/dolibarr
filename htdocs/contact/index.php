@@ -22,7 +22,7 @@
 /**
  *	    \file       htdocs/contact/index.php
  *      \ingroup    societe
- *		\brief      Page liste des contacts
+ *		\brief      Page to list all contacts
  *		\version    $Id$
  */
 
@@ -296,7 +296,7 @@ if ($result)
 		$contactstatic->firstname='';
 		$contactstatic->id=$obj->cidp;
 		print $contactstatic->getNomUrl(1,'',20);
-        print '</td>';
+		print '</td>';
 
 		// Firstname
         print '<td>'.dol_trunc($obj->firstname,20).'</td>';
@@ -337,8 +337,11 @@ if ($result)
 		// Private/Public
 		print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
 
-		// Link export vcard
+		// Links Add action and Export vcard
         print '<td align="right">';
+        $link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+        print $link;
+        print ' &nbsp; ';
         print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
         print img_picto($langs->trans("VCard"),'vcard.png').' ';
         print '</a></td>';
