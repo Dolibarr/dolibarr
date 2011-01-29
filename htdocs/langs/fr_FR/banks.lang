@@ -127,6 +127,7 @@ ThisWillAlsoDeleteBankRecord=Ceci supprimera aussi les écritures bancaires gén
 BankMovements=Mouvements
 CashBudget=Budget de trésorerie
 PlannedTransactions=Écritures prévues
+Graph=Graphics
 ExportDataset_banque_1=Écritures bancaires et relevés
 TransactionOnTheOtherAccount=Écriture sur l'autre compte
 TransactionWithOtherAccount=Transfert de compte

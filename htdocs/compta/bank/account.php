@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copytight (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copytight (C) 2010-2011 Juanjo Menent        <jmenent@@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -514,8 +515,9 @@ if ($account || $_GET["ref"])
 
                 // Payment type
                 print "<td nowrap>";
-                //$label=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
-                $label=$langs->getTradFromKey("PaymentTypeShort".$objp->fk_type);
+                $label=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
+               // $label=$langs->getTradFromKey("PaymentTypeShort".$objp->fk_type);
+                
                 if ($objp->fk_type == 'SOLD') $label='&nbsp;';
                 print $label;
                 print "</td>\n";

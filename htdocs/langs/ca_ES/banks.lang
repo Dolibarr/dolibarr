@@ -127,6 +127,7 @@ ThisWillAlsoDeleteBankRecord=Això eliminarà també els registres bancaris gene
 BankMovements=Moviments
 CashBudget=Pressupost de tresoreria
 PlannedTransactions=Transaccions previstes
+Graph=Gràfics
 ExportDataset_banque_1=Transacció bancària i extracte
 TransactionOnTheOtherAccount=Transacció sobre l'altra compte
 TransactionWithOtherAccount=Transferència de compte

@@ -127,6 +127,7 @@ ThisWillAlsoDeleteBankRecord=Esto eliminará también los registros bancarios ge
 BankMovements=Movimientos
 CashBudget=Presupuesto de tesorería
 PlannedTransactions=Transacciones previstas
+Graph=Gráficos
 ExportDataset_banque_1=Transacción bancaria y extracto
 TransactionOnTheOtherAccount=Transacción sobre la otra cuenta
 TransactionWithOtherAccount=Transferencia de cuenta
