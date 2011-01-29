@@ -1806,7 +1806,7 @@ class Form
      *     @param  title       	   title
      *     @param  question    	   question
      *     @param  action      	   action
-     *	   @param  formquestion	   an array with forms complementary inputs
+     *	   @param  formquestion	   an array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
      * 	   @param  selectedchoice  "" or "no" or "yes"
      * 	   @param  useajax		   0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
      *     @param  height          Force height of box
@@ -1830,6 +1830,10 @@ class Form
                 if ($input['type'] == 'text')
                 {
                     $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>'."\n";
+                }
+                if ($input['type'] == 'password')
+                {
+                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>'."\n";
                 }
                 if ($input['type'] == 'select')
                 {

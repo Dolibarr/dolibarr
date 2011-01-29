@@ -94,13 +94,29 @@ else
 
 		if ($result > 0)
 		{
+		    $db->begin();
+
 			// Creation user
 			$nuser = new User($db);
 			$result=$nuser->create_from_contact($object,$_POST["login"]);
 
-			if ($result < 0)
+			if ($result > 0)
+			{
+			    $result2=$nuser->setPassword($user,$_POST["password"],0,1,1);
+                if ($result2)
+                {
+			         $db->commit();
+                }
+                else
+                {
+                    $db->rollback();
+                }
+			}
+			else
 			{
 				$msg=$nuser->error;
+
+                $db->rollback();
 			}
 		}
 		else
@@ -772,10 +788,27 @@ else
 			include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
 			$login=dol_buildlogin($object->nom,$object->prenom);
 
-			// Create a form array
-			$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
+            $generated_password='';
+            if (!$ldap_sid)
+            {
+                if ($conf->global->USER_PASSWORD_GENERATED)
+                {
+                    $nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
+                    $nomfichier=$nomclass.".class.php";
+                    //print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
+                    require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
+                    $genhandler=new $nomclass($db,$conf,$langs,$user);
+                    $generated_password=$genhandler->getNewGeneratedPassword();
+                }
+            }
+            $password=$generated_password;
 
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
+			// Create a form array
+			$formquestion=array(
+			     array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
+			     array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
+
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion,'no');
 			if ($ret == 'html') print '<br>';
 		}
 

@@ -808,12 +808,13 @@ class User extends CommonObject
 
 
 	/**
-	 *      \brief      Cree en base un utilisateur depuis l'objet contact
-	 *      \param      contact     Objet du contact source
-	 * 		\param		login		Login to force
-	 *      \return     int         si erreur <0, si ok renvoie id compte cree
+	 *      Cree en base un utilisateur depuis l'objet contact
+	 *      @param    contact     Objet du contact source
+	 * 		@param    login       Login to force
+	 *      @param    password    Password to force
+	 *      @return   int         <0 if error, if OK returns id of created user
 	 */
-	function create_from_contact($contact,$login='')
+	function create_from_contact($contact,$login='',$password='')
 	{
 		global $conf,$user,$langs;
 
@@ -1177,13 +1178,13 @@ class User extends CommonObject
 
 
 	/**
-	 *  \brief     	Change le mot de passe d'un utilisateur
-	 *  \param     	user             		Object user de l'utilisateur qui fait la modification
-	 *  \param     	password         		Nouveau mot de passe en clair (a generer si non communique)
-	 *	\param		changelater				1=Change password only after clicking on confirm email
-	 *	\param		notrigger				1=Ne declenche pas les triggers
-	 *	\param		nosyncmember	        Do not synchronize linked member
-	 *  \return    	string           		If OK return clear password, 0 if no change, < 0 if error
+	 *  Change password of a user
+	 *  @param     	user             		Object user of user making change
+	 *  @param     	password         		New password in clear text (to generate if not provided)
+	 *	@param		changelater				1=Change password only after clicking on confirm email
+	 *	@param		notrigger				1=Does not launch triggers
+	 *	@param		nosyncmember	        Do not synchronize linked member
+	 *  @return    	string           		If OK return clear password, 0 if no change, < 0 if error
 	 */
 	function setPassword($user, $password='', $changelater=0, $notrigger=0, $nosyncmember=0)
 	{
@@ -1345,7 +1346,7 @@ class User extends CommonObject
 			$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
 		}
 		if (! empty($dolibarr_main_force_https)) $urlwithouturlroot=preg_replace('/http:/i','https:',$urlwithouturlroot);
-		
+
 		// TODO Use outputlangs to translate messages
 		if (! $changelater)
 		{
