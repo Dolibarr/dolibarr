@@ -184,14 +184,30 @@ class ActionsContactCardCommon
         	if ($_GET["action"] == 'create_user')
         	{
         		// Full firstname and name separated with a dot : firstname.name
-        		// TODO add function
-        		$login=strtolower(dol_string_unaccent($this->object->prenom)) .'.'. strtolower(dol_string_unaccent($this->object->nom));
-        		$login=dol_string_nospecial($login,''); // For special names
+        		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+        		$login=dol_buildlogin($this->object->nom, $this->object->prenom);
+        		
+        		$generated_password='';
+        		if (! $ldap_sid)
+        		{
+        			if ($conf->global->USER_PASSWORD_GENERATED)
+        			{
+        				$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
+        				$nomfichier=$nomclass.".class.php";
+        				//print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
+        				require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
+        				$genhandler=new $nomclass($this->db,$conf,$langs,$user);
+        				$generated_password=$genhandler->getNewGeneratedPassword();
+        			}
+        		}
+        		$password=$generated_password;
         		
         		// Create a form array
-        		$formquestion=array(array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
+        		$formquestion=array(
+			     array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
+			     array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
         		
-        		$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion);
+        		$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion,'no');
         	}
         	
         	$this->tpl['showrefnav'] = $form->showrefnav($this->object,'id');
@@ -292,13 +308,29 @@ class ActionsContactCardCommon
     		
     		if ($result > 0)
     		{
+    			$this->db->begin();
+    			
     			// Creation user
     			$nuser = new User($this->db);
     			$result=$nuser->create_from_contact($this->object,$_POST["login"]);
     			
-    			if ($result < 0)
+    			if ($result > 0)
     			{
-    				$this->errors=$nuser->errors;
+    				$result2=$nuser->setPassword($user,$_POST["password"],0,1,1);
+    				if ($result2)
+    				{
+    					$this->db->commit();
+    				}
+    				else
+    				{
+    					$this->db->rollback();
+    				}
+    			}
+    			else
+    			{
+    				$this->errors=$nuser->error;
+    				
+    				$this->db->rollback();
     			}
     		}
     		else

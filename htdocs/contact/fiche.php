@@ -789,7 +789,7 @@ else
 			$login=dol_buildlogin($object->nom,$object->prenom);
 
             $generated_password='';
-            if (!$ldap_sid)
+            if (! $ldap_sid) // TODO ldap_sid ?
             {
                 if ($conf->global->USER_PASSWORD_GENERATED)
                 {
