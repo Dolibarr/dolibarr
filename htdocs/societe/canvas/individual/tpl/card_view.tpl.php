@@ -33,10 +33,12 @@
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
 
+<?php if (! empty($conf->global->SOCIETE_USEPREFIX)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Prefix'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
 </tr>
+<?php } ?>
 
 <?php if ($this->control->tpl['client']) { ?>
 <tr>

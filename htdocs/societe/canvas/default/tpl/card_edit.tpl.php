@@ -39,10 +39,11 @@
 	<td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
 </tr>
 
+<?php if (! empty($conf->global->SOCIETE_USEPREFIX)) { ?>
 <tr>
 	<td><?php echo $langs->trans("Prefix"); ?></td>
 	<td colspan="3">
-	<?php if (($this->tpl['prefix_customercode'] || $this->tpl['prefix_suppliercode']) && $this->control->tpl['prefix_comm']) { ?>
+	<?php if (($this->control->tpl['prefix_customercode'] || $this->control->tpl['prefix_suppliercode']) && $this->control->tpl['prefix_comm']) { ?>
 	<input type="hidden" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
 	<?php echo $this->control->tpl['prefix_comm']; ?>
 	<?php } else { ?>
@@ -50,6 +51,7 @@
 	<?php } ?>
 	</td>
 </tr>
+<?php } ?>
 
 <tr>
 	<td width="25%"><span class="fieldrequired"><?php echo $langs->trans('ProspectCustomer'); ?></span></td>
