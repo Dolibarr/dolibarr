@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ $langs->load("suppliers");
 $langs->load("banks");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
@@ -175,7 +176,6 @@ if($_GET["socid"])
 	{
 		if ($user->rights->societe->creer)
 		{
-
 			$page=$_GET["page"];
 
 			if ($page == -1) { $page = 0 ; }
@@ -193,13 +193,13 @@ if($_GET["socid"])
 
 			$sql = "SELECT s.rowid as socid, s.nom, s.ville, s.prefix_comm, s.client, s.fournisseur,";
 			$sql.= " te.code, te.libelle";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
-			$sql.= " ".MAIN_DB_PREFIX."c_typent as te";
+			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql.= ", ".MAIN_DB_PREFIX."c_typent as te";
+			if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.fk_typent = te.id";
-			if (dol_strlen(trim($_GET["search_nom"])))
-			{
-				$sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
-			}
+			$sql.= " AND s.entity = ".$conf->entity;
+			if (! $user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if (dol_strlen(trim($_GET["search_nom"]))) $sql.= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
 			$sql.= $db->order("s.nom","ASC");
 			$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
