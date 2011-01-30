@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005 		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2010 		Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2011 	Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,8 +186,9 @@ if ($_GET["socid"])
 		$title=$langs->trans("ListOfUsers");
 
 		$sql = "SELECT u.rowid, u.name, u.firstname, u.login";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " ORDER BY u.name ASC ";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+		$sql.= " ORDER BY u.name ASC ";
 
 		$resql = $db->query($sql);
 		if ($resql)
