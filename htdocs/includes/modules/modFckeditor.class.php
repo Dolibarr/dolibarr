@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,22 +19,23 @@
  */
 
 /**
- \defgroup   fckeditor     Module fckeditor
- \brief      Module pour mettre en page les zones de saisie de texte
- \version	$Id$
+ *  \defgroup   fckeditor     Module fckeditor
+ *  \brief      Module pour mettre en page les zones de saisie de texte
+ *  \version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modFckeditor.class.php
- \ingroup    fckeditor
- \brief      Fichier de description et activation du module Fckeditor
+ *  \file       htdocs/includes/modules/modFckeditor.class.php
+ *  \ingroup    fckeditor
+ *  \brief      Fichier de description et activation du module Fckeditor
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** \class modFckeditor
- \brief      Classe de description et activation du module Fckeditor
+/** 
+ * 	\class modFckeditor
+ *  \brief      Classe de description et activation du module Fckeditor
  */
 
 class modFckeditor extends DolibarrModules
@@ -71,6 +72,11 @@ class modFckeditor extends DolibarrModules
 
 		// Constantes
 		$this->const = array();
+		$this->const[0]  = array("FCKEDITOR_ENABLE_USER","yesno","1","Activation fckeditor sur notes utilisateurs");
+        $this->const[1]  = array("FCKEDITOR_ENABLE_SOCIETE","yesno","1","Activation fckeditor sur notes societe");
+        $this->const[2]  = array("FCKEDITOR_ENABLE_PRODUCTDESC","yesno","1","Activation fckeditor sur notes produits");
+        $this->const[3]  = array("FCKEDITOR_ENABLE_MEMBER","yesno","1","Activation fckeditor sur notes adherent");
+        $this->const[4]  = array("FCKEDITOR_ENABLE_MAILING","yesno","1","Activation fckeditor sur emailing");
 
 		// Boites
 		$this->boxes = array();

@@ -89,17 +89,15 @@ class modSociete extends DolibarrModules
 		$this->const[$r][0] = "MAIN_SEARCHFORM_SOCIETE";
 		$this->const[$r][1] = "yesno";
 		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "Affichage formulaire de recherche des Societes dans la barre de gauche";
+		$this->const[$r][3] = "Show form for quick company search";
 		$this->const[$r][4] = 0;
-		$this->const[$r][5] = 'allentities';
 		$r++;
 
 		$this->const[$r][0] = "MAIN_SEARCHFORM_CONTACT";
 		$this->const[$r][1] = "yesno";
 		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "Affichage formulaire de recherche des Contacts dans la barre de gauche";
+		$this->const[$r][3] = "Show form for quick contact search";
 		$this->const[$r][4] = 0;
-		$this->const[$r][5] = 'allentities';
 		$r++;
 
 		$this->const[$r][0] = "COMPANY_ADDON_PDF_ODT_PATH";

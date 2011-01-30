@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   fournisseur     Module suppliers
+/**     
+ * 		\defgroup   fournisseur     Module suppliers
  *		\brief      Module pour gerer des societes et contacts de type fournisseurs
  *		\version	$Id$
  */
@@ -31,7 +32,8 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     \class      modFournisseur
+/**     
+ * 		\class      modFournisseur
  *		\brief      Classe de description et activation du module Fournisseur
  */
 class modFournisseur extends DolibarrModules

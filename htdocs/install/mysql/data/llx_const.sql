@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -46,12 +46,6 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MAIL_SMTP_PORT','','chaine','Port for SMTP server',0,0);
 
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_UPLOAD_DOC','2048','chaine','Max size for file upload (0 means no upload allowed)',0,0);
-
--- TODO deja initialise dans le module ?
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Show form for quick company search',0,0);
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Show form for quick contact search',0,0);
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_PRODUITSERVICE' ,'1','yesno','Show form for quick product search',0,0);
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_ADHERENT','1','yesno','Show form for quick member search',0,0);
 
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_CONFIRM_AJAX','1','chaine','Use Ajax popup to make confirmations',0,0);
 
@@ -104,59 +98,3 @@ insert into llx_const (name, value, type, note, visible) values('SOCIETE_CODECOM
 --
 insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','dolibarr@domain.com','chaine','EMail emmetteur pour les envois d emailings',0);
 
-
---
--- FCKEditor
---
-insert into llx_const (name, value, type, note, visible) values ('FCKEDITOR_ENABLE_USER',       1,'yesno','Activation fckeditor sur notes utilisateurs',0);
-insert into llx_const (name, value, type, note, visible) values ('FCKEDITOR_ENABLE_SOCIETE',    1,'yesno','Activation fckeditor sur notes societe',0);
-insert into llx_const (name, value, type, note, visible) values ('FCKEDITOR_ENABLE_PRODUCTDESC',1,'yesno','Activation fckeditor sur notes produits',0);
-insert into llx_const (name, value, type, note, visible) values ('FCKEDITOR_ENABLE_MEMBER',     1,'yesno','Activation fckeditor sur notes adherent',0);
-insert into llx_const (name, value, type, note, visible) values ('FCKEDITOR_ENABLE_MAILING',    1,'yesno','Activation fckeditor sur emailing',0);
-
---
--- OsCommerce 1
---
-insert into llx_const (name, value, type, note, visible) values ('OSC_DB_HOST','localhost','chaine', 'Host for OSC database for OSCommerce module 1', 0);
-
-
---
--- Modeles de numerotation et generation document
---
-insert into llx_const (name, value, type, note, visible) values ('DON_ADDON_MODEL',     'html_cerfafr','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('PROPALE_ADDON',       'mod_propale_marbre','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('PROPALE_ADDON_PDF',   'azur','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('COMMANDE_ADDON',      'mod_commande_marbre','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('COMMANDE_ADDON_PDF',  'einstein','chaine', '',0);
-insert into llx_const (name, value, type, note, visible) values ('COMMANDE_SUPPLIER_ADDON',      'mod_commande_fournisseur_muguet','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('COMMANDE_SUPPLIER_ADDON_PDF',  'muscadet','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('INVOICE_SUPPLIER_ADDON_PDF',  'canelle','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('EXPEDITION_ADDON',    'enlevement','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('EXPEDITION_ADDON_PDF','rouget','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('FICHEINTER_ADDON',    'pacific','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('FICHEINTER_ADDON_PDF','soleil','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('FACTURE_ADDON',       'terre','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('FACTURE_ADDON_PDF',   'crabe','chaine','',0);
-
-
---
--- Duree de validite des propales
---
-insert into llx_const (name, value, type, note, visible) VALUES ('PROPALE_VALIDITY_DURATION',      '15', 'chaine', 'Durée de validitée des propales',0);
-
-
---
--- Action sur agenda
---
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_COMPANY_CREATE','1','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_CONTRACT_VALIDATE','1','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_PROPAL_VALIDATE','1','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_PROPAL_SENTBYMAIL','1','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_ORDER_VALIDATE','1','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_ORDER_SENTBYMAIL','1','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_VALIDATE','1','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_PAYED','1','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_CANCEL','1','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_SENTBYMAIL','1','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_ORDER_SUPPLIER_VALIDATE','1','chaine','',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_BILL_SUPPLIER_VALIDATE','1','chaine','',0);

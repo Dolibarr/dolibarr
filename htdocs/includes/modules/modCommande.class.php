@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   commande     Module orders
+/**
+ *		\defgroup   commande     Module orders
  *		\brief      Module pour gerer le suivi des commandes
  *		\version	$Id$
  */
@@ -35,8 +36,9 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     \class      modCommande
- \brief      Classe de description et activation du module Commande
+/**
+ *		\class      modCommande
+ *		\brief      Classe de description et activation du module Commande
  */
 class modCommande extends DolibarrModules
 {

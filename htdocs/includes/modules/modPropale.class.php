@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   propale     Module commercial proposals
- *		\brief      Module pour gerer la tenue de propositions commerciales
+/**
+ *	\defgroup   propale     Module commercial proposals
+ *	\brief      Module pour gerer la tenue de propositions commerciales
  */
 
 /**
@@ -75,18 +76,28 @@ class modPropale extends DolibarrModules
 
 		// Constants
 		$this->const = array();
+		$r=0;
 
-		$this->const[0][0] = "PROPALE_ADDON_PDF";
-		$this->const[0][1] = "chaine";
-		$this->const[0][2] = "azur";
-		$this->const[0][3] = 'Nom du gestionnaire de generation des propales en PDF';
-		$this->const[0][4] = 0;
+		$this->const[$r][0] = "PROPALE_ADDON_PDF";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "azur";
+		$this->const[$r][3] = 'Nom du gestionnaire de generation des propales en PDF';
+		$this->const[$r][4] = 0;
+		$r++;
 
-		$this->const[1][0] = "PROPALE_ADDON";
-		$this->const[1][1] = "chaine";
-		$this->const[1][2] = "mod_propale_marbre";
-		$this->const[1][3] = 'Nom du gestionnaire de numerotation des propales';
-		$this->const[1][4] = 0;
+		$this->const[$r][0] = "PROPALE_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_propale_marbre";
+		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des propales';
+		$this->const[$r][4] = 0;
+		$r++;
+		
+		$this->const[$r][0] = "PROPALE_VALIDITY_DURATION";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "15";
+		$this->const[$r][3] = 'Duration of validity of business proposals';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		// Boxes
 		$this->boxes = array();

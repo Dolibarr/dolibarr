@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,6 +76,18 @@ class modAgenda extends DolibarrModules
 		// Constantes
 		//-----------
 		$this->const = array();
+		$this->const[0]  = array("MAIN_AGENDA_ACTIONAUTO_COMPANY_CREATE","chaine","1");
+        $this->const[1]  = array("MAIN_AGENDA_ACTIONAUTO_CONTRACT_VALIDATE","chaine","1");
+        $this->const[2]  = array("MAIN_AGENDA_ACTIONAUTO_PROPAL_VALIDATE","chaine","1");
+        $this->const[3]  = array("MAIN_AGENDA_ACTIONAUTO_PROPAL_SENTBYMAIL","chaine","1");
+        $this->const[4]  = array("MAIN_AGENDA_ACTIONAUTO_ORDER_VALIDATE","chaine","1");
+        $this->const[5]  = array("MAIN_AGENDA_ACTIONAUTO_ORDER_SENTBYMAIL","chaine","1");
+        $this->const[6]  = array("MAIN_AGENDA_ACTIONAUTO_BILL_VALIDATE","chaine","1");
+        $this->const[7]  = array("MAIN_AGENDA_ACTIONAUTO_BILL_PAYED","chaine","1");
+        $this->const[8]  = array("MAIN_AGENDA_ACTIONAUTO_BILL_CANCEL","chaine","1");
+        $this->const[9]  = array("MAIN_AGENDA_ACTIONAUTO_BILL_SENTBYMAIL","chaine","1");
+        $this->const[10] = array("MAIN_AGENDA_ACTIONAUTO_ORDER_SUPPLIER_VALIDATE","chaine","1");
+        $this->const[11] = array("MAIN_AGENDA_ACTIONAUTO_BILL_SUPPLIER_VALIDATE","chaine","1");
 
 		// New pages on tabs
 		// -----------------

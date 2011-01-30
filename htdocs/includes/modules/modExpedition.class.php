@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,8 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** \class modExpedition
+/** 
+ * 	\class modExpedition
  *	\brief      Classe de description et activation du module Expedition
  */
 class modExpedition extends DolibarrModules
@@ -85,13 +86,12 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		/*$this->const[$r][0] = "EXPEDITION_ADDON";
+		$this->const[$r][0] = "EXPEDITION_ADDON";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "xxx";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons expeditions en PDF';
+		$this->const[$r][2] = "elevement";
+		$this->const[$r][3] = 'Nom du gestionnaire du type d\'expedition';
 		$this->const[$r][4] = 0;
 		$r++;
-		*/
 
 		$this->const[$r][0] = "LIVRAISON_ADDON_PDF";
 		$this->const[$r][1] = "chaine";

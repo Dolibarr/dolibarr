@@ -82,9 +82,8 @@ class modProduct extends DolibarrModules
 		$this->const[$r][0] = "MAIN_SEARCHFORM_PRODUITSERVICE";
 		$this->const[$r][1] = "yesno";
 		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "Affichage formulaire de recherche des Produits et Services dans la barre de gauche";
+		$this->const[$r][3] = "Show form for quick product search";
 		$this->const[$r][4] = 0;
-		$this->const[$r][5] = 'allentities';
 		$r++;
 
 		// Boxes

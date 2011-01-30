@@ -19,16 +19,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   oscommerce     Module oscommerce
-        \brief      Module pour gerer une boutique et interface avec OSCommerce
-		\version	$Id$
-*/
+/**    
+ * 	\defgroup   oscommerce     Module oscommerce
+ *	\brief      Module pour gerer une boutique et interface avec OSCommerce
+ *	\version	$Id$
+ */
 
 /**
-        \file       htdocs/includes/modules/modBoutique.class.php
-        \ingroup    oscommerce
-        \brief      Fichier de description et activation du module OSCommerce
-*/
+ * \file       htdocs/includes/modules/modBoutique.class.php
+ * \ingroup    oscommerce
+ * \brief      Fichier de description et activation du module OSCommerce
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
@@ -73,6 +74,14 @@ class modBoutique extends DolibarrModules
 
 		// Constants
 		$this->const = array();
+		$r=0;
+		
+		$this->const[$r][0] = "OSC_DB_HOST";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "localhost";
+		$this->const[$r][3] = "Host for OSC database for OSCommerce module 1";
+		$this->const[$r][4] = 0;
+		$r++;
 
 	    // Boites
 	    $this->boxes = array();
