@@ -38,11 +38,13 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid);
 
+
+
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'add')
+if ($action == 'add')
 {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".addslashes($_POST["note"])."' WHERE rowid=".$_POST["socid"];
   $result = $db->query($sql);
@@ -55,6 +57,8 @@ if ($_POST["action"] == 'add')
 /*
  *	View
  */
+
+if ($conf->global->MAIN_DIRECTEDITMODE && $user->rights->societe->creer) $action='edit';
 
 $form = new Form($db);
 
@@ -117,7 +121,7 @@ if ($socid > 0)
 
 	    // Editeur wysiwyg
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('note',$societe->note,280,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
+		$doleditor=new DolEditor('note',$societe->note,360,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,20,70);
 		$doleditor->Create();
 	}
 	else
@@ -140,9 +144,10 @@ print '</div>';
 
 
 /*
- * Boutons actions
+ * Buttons
  */
-if ($_GET["action"] == '')
+
+if ($action != 'edit')
 {
     print '<div class="tabsAction">';
 
