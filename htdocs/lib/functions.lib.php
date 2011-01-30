@@ -3448,13 +3448,14 @@ function monthArrayOrSelected($selected=0)
 
 
 /**
- *	Returns formated errors messages
- *	@param		mesgstring		Error message
- *	@param		mesgarray		Error messages array
+ *	Returns formated messages (Used to show messages on html output)
+ *	@param		mesgstring		Message
+ *	@param		mesgarray		Messages array
+ *  @param      style           Style of message output
  *	@return		html			Return html output
  *  @see        dol_print_error
  */
-function dol_htmloutput_errors($mesgstring='',$mesgarray='')
+function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
 {
 	global $langs;
 
@@ -3463,7 +3464,7 @@ function dol_htmloutput_errors($mesgstring='',$mesgarray='')
 
 	if (is_array($mesgarray) && sizeof($mesgarray))
 	{
-		print '<div class="error">';
+		print '<div class="'.$style.'">';
 		foreach($mesgarray as $message)
 		{
 			$ret++;
@@ -3474,7 +3475,7 @@ function dol_htmloutput_errors($mesgstring='',$mesgarray='')
 	if ($mesgstring)
 	{
 		$ret++;
-		print '<div class="error">';
+		print '<div class="'.$style.'">';
 		print $langs->trans($mesgstring);
 		print '</div>';
 	}
@@ -3482,9 +3483,20 @@ function dol_htmloutput_errors($mesgstring='',$mesgarray='')
 	return $ret;
 }
 
+/**
+ *  Returns formated errors messages (Used to show errors on html output)
+ *  @param      mesgstring      Error message
+ *  @param      mesgarray       Error messages array
+ *  @return     html            Return html output
+ *  @see        dol_print_error
+ */
+function dol_htmloutput_errors($mesgstring='',$mesgarray='')
+{
+    return dol_htmloutput_mesg($mesgstring, $mesgarray, 'error');
+}
 
 /**
- *	\brief		This function output memory used by PHP and exit everything. Used for debugging purpose.
+ *	This function output memory used by PHP and exit everything. Used for debugging purpose.
  */
 function stopwithmem()
 {
