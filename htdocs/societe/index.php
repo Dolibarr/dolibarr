@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,10 @@ $total=0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.entity = ".$conf->entity;
+if (! $user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+
 $result = $db->query($sql);
 if ($result)
 {
@@ -130,10 +133,12 @@ $max=15;
 $sql = "SELECT s.rowid, s.nom, s.client, s.fournisseur,";
 $sql.= " s.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.entity = ".$conf->entity;
+if (! $user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND (";
-if (! empty($conf->societe->enabled)) $sql.=" s.client in (1,2,3)";
-if (! empty($conf->fournisseur->enabled)) $sql.=" OR s.fournisseur in (1)";
+if (! empty($conf->societe->enabled)) $sql.=" s.client IN (1,2,3)";
+if (! empty($conf->fournisseur->enabled)) $sql.=" OR s.fournisseur IN (1)";
 $sql.= ")";
 $sql.= $db->order("s.tms","DESC");
 $sql.= $db->plimit($max,0);
