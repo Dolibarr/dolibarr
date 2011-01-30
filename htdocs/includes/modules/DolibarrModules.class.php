@@ -55,8 +55,8 @@ class DolibarrModules
 
 
 	/**
-	 *      \brief      Constructeur
-	 *      \param      DB      handler d'acces base
+	 *      Constructor
+	 *      @param      DB      Database access handler
 	 */
 	function DolibarrModules($DB)
 	{
@@ -66,10 +66,10 @@ class DolibarrModules
 
 
 	/**
-	 *      \brief      Fonction d'activation. Insere en base les constantes et boites du module
-	 *      \param      array_sql       Tableau de requete sql a executer a l'activation
-	 *      \param		options			Options when enabling module ('', 'noboxes')
-	 * 		\return     int             1 if OK, 0 if KO
+	 *      Fonction d'activation. Insere en base les constantes et boites du module
+	 *      @param      array_sql       Tableau de requete sql a executer a l'activation
+	 *      @param		options			Options when enabling module ('', 'noboxes')
+	 * 		@return     int             1 if OK, 0 if KO
 	 */
 	function _init($array_sql, $options='')
 	{
@@ -96,7 +96,7 @@ class DolibarrModules
 		// Insert activation login method
 		if (! $err) $err+=$this->insert_login_method();
 
-		// Insere les constantes associees au module dans llx_const
+		// Insert constant defined by modules, into llx_const
 		if (! $err) $err+=$this->insert_const();
 
 		// Insere les boites dans llx_boxes_def
@@ -164,10 +164,10 @@ class DolibarrModules
 	}
 
 	/**
-	 *  \brief      Fonction de desactivation. Supprime de la base les constantes et boites du module
-	 *  \param      array_sql       tableau de requete sql a executer a la desactivation
-	 *  \param		options			Options when disabling module ('', 'noboxes')
-	 *  \return     int             1 if OK, 0 if KO
+	 *  Fonction de desactivation. Supprime de la base les constantes et boites du module
+	 *  @param      array_sql       tableau de requete sql a executer a la desactivation
+	 *  @param		options			Options when disabling module ('', 'noboxes')
+	 *  @return     int             1 if OK, 0 if KO
 	 */
 	function _remove($array_sql, $options='')
 	{
@@ -193,6 +193,9 @@ class DolibarrModules
 
 		// Remove activation of module's authentification method (MAIN_MODULE_MYMODULE_LOGIN_METHOD in llx_const)
 		if (! $err) $err+=$this->delete_login_method();
+
+        // Remove constants defined by modules
+        if (! $err) $err+=$this->delete_const();
 
 		// Remove list of module's available boxes (entry in llx_boxes)
 		if (! $err && $options != 'noboxes') $err+=$this->delete_boxes();
@@ -418,8 +421,8 @@ class DolibarrModules
 
 
 	/**
-	 *	\brief      Insert constant to activate module
-	 *	\return     int     Nb of errors (0 if OK)
+	 *	    Insert constant to activate module
+	 *	    @return     int     Nb of errors (0 if OK)
 	 */
 	function _active()
 	{
@@ -453,8 +456,8 @@ class DolibarrModules
 
 
 	/**
-	 *	\brief      Remove activation line
-	 *	\return     int     Nb of errors (0 if OK)
+	 *	    Remove activation line
+	 *	    @return     int     Nb of errors (0 if OK)
 	 **/
 	function _unactive()
 	{
@@ -807,8 +810,8 @@ class DolibarrModules
 	}
 
 	/**
-	 *	\brief      Insert constants defined into $this->const array into table llx_const
-	 *	\return     int     Number of errors (0 if OK)
+	 *	Insert constants defined into $this->const array into table llx_const
+	 *	@return     int     Number of errors (0 if OK)
 	 */
 	function insert_const()
 	{
@@ -823,7 +826,7 @@ class DolibarrModules
 			$val       = $this->const[$key][2];
 			$note      = isset($this->const[$key][3])?$this->const[$key][3]:'';
 			$visible   = isset($this->const[$key][4])?$this->const[$key][4]:0;
-			$entity    = ! empty($this->const[$key][5])?0:$conf->entity;
+			$entity    = (! empty($this->const[$key][5]) && $this->const[$key][5]!='current')?0:$conf->entity;
 
 			// Clean
 			if (empty($visible)) $visible='0';
@@ -872,6 +875,39 @@ class DolibarrModules
 
 		return $err;
 	}
+
+    /**
+     * Remove constants with tags deleteonunactive
+     * @return     int     <0 if KO, 0 if OK
+     */
+    function delete_const()
+    {
+        global $conf;
+
+        $err=0;
+
+        foreach ($this->const as $key => $value)
+        {
+            $name      = $this->const[$key][0];
+            $deleteonunactive = (! empty($this->const[$key][6]))?1:0;
+
+            if ($deleteonunactive)
+            {
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+                $sql.= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
+                $sql.= " AND entity in (0, ".$conf->entity.")";
+                dol_syslog("DolibarrModules::delete_const sql=".$sql);
+                if (! $this->db->query($sql))
+                {
+                    $this->error=$this->db->lasterror();
+                    dol_syslog("DolibarrModules::delete_const ".$this->error, LOG_ERR);
+                    $err++;
+                }
+            }
+        }
+
+        return $err;
+    }
 
 	/**
 	 *	\brief      Insert permissions definitions related to the module into llx_rights_def
@@ -975,8 +1011,8 @@ class DolibarrModules
 
 
 	/**
-	 \brief      Supprime les permissions
-	 \return     int     Nombre d'erreurs (0 si ok)
+	 * \brief      Supprime les permissions
+	 * \return     int     Nombre d'erreurs (0 si ok)
 	 */
 	function delete_permissions()
 	{
@@ -991,7 +1027,7 @@ class DolibarrModules
 		if (! $this->db->query($sql))
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("DolibarrModules::delete_dirs ".$this->error, LOG_ERR);
+			dol_syslog("DolibarrModules::delete_permissions ".$this->error, LOG_ERR);
 			$err++;
 		}
 
@@ -1000,8 +1036,8 @@ class DolibarrModules
 
 
 	/**
-	 *	\brief      Insere les menus dans llx_menu*
-	 *	\return     int     Nombre d'erreurs (0 si ok)
+	 *	\brief      Insert menus entries into llx_menu*
+	 *	\return     int     Nb of errors (0 if OK)
 	 */
 	function insert_menus()
 	{
@@ -1299,8 +1335,8 @@ class DolibarrModules
 	}
 
 	/**
-	 *	\brief      Insert activation login method from modules in llx_const
-	 *	\return     int             Number of errors (0 if ok)
+	 *	Insert activation login method from modules in llx_const
+	 *	@return     int             Number of errors (0 if ok)
 	 */
 	function insert_login_method()
 	{
@@ -1339,8 +1375,8 @@ class DolibarrModules
 	}
 
 	/**
-	 *	\brief      Remove activation login method from modules in llx_const
-	 *	\return     int     Nombre d'erreurs (0 si ok)
+	 *	Remove activation login method from modules in llx_const
+	 *	@return     int     Nombre d'erreurs (0 si ok)
 	 */
 	function delete_login_method()
 	{
