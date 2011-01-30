@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,30 +138,33 @@ class FormAdmin
         foreach ($conf->file->dol_document_root as $dirroot)
         {
             $dir=$dirroot.$dirmenu;
-            $handle=opendir($dir);
-            if (is_resource($handle))
+            if (is_dir($dir))
             {
-                while (($file = readdir($handle))!==false)
-                {
-                    if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-                    {
-                        if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
-                    	$filelib=preg_replace('/\.php$/i','',$file);
-        				$prefix='';
-        				if (preg_match('/^eldy|^iphone/i',$file)) $prefix='0';	// 0=Recommanded, 1=Experimental, 2=Other
-        				else $prefix='2';
-
-                        if ($file == $selected)
-                        {
-        					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="selected">'.$filelib.'</option>';
-                        }
-                        else
-                        {
-                            $menuarray[$prefix.'_'.$file]='<option value="'.$file.'">'.$filelib.'</option>';
-                        }
-                    }
-                }
-                closedir($handle);
+	            $handle=opendir($dir);
+	            if (is_resource($handle))
+	            {
+	                while (($file = readdir($handle))!==false)
+	                {
+	                    if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+	                    {
+	                        if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
+	                    	$filelib=preg_replace('/\.php$/i','',$file);
+	        				$prefix='';
+	        				if (preg_match('/^eldy|^iphone/i',$file)) $prefix='0';	// 0=Recommanded, 1=Experimental, 2=Other
+	        				else $prefix='2';
+	
+	                        if ($file == $selected)
+	                        {
+	        					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="selected">'.$filelib.'</option>';
+	                        }
+	                        else
+	                        {
+	                            $menuarray[$prefix.'_'.$file]='<option value="'.$file.'">'.$filelib.'</option>';
+	                        }
+	                    }
+	                }
+	                closedir($handle);
+	            }
             }
         }
 		ksort($menuarray);
@@ -206,24 +210,27 @@ class FormAdmin
             foreach ($conf->file->dol_document_root as $dirroot)
             {
                 $dir=$dirroot.$dirmenu;
-    		    $handle=opendir($dir);
-                if (is_resource($handle))
+                if (is_dir($dir))
                 {
-        			while (($file = readdir($handle))!==false)
-        			{
-        				if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-        				{
-        					$filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
-        					if (preg_match('/^default/i',$filelib)) continue;
-        					if (preg_match('/^empty/i',$filelib)) continue;
-        					if (preg_match('/\.lib/i',$filelib)) continue;
-        					if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file,$expdevmenu)) continue;
-
-        					$menuarray[$filelib]=1;
-        				}
-        				$menuarray['all']=1;
-        			}
-        			closedir($handle);
+	                $handle=opendir($dir);
+	                if (is_resource($handle))
+	                {
+	        			while (($file = readdir($handle))!==false)
+	        			{
+	        				if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+	        				{
+	        					$filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
+	        					if (preg_match('/^default/i',$filelib)) continue;
+	        					if (preg_match('/^empty/i',$filelib)) continue;
+	        					if (preg_match('/\.lib/i',$filelib)) continue;
+	        					if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file,$expdevmenu)) continue;
+	
+	        					$menuarray[$filelib]=1;
+	        				}
+	        				$menuarray['all']=1;
+	        			}
+	        			closedir($handle);
+	                }
                 }
             }
 		}

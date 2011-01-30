@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,9 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 $langs->load("members");
 
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
+
+// Security check
+if (! $user->rights->adherent->lire) accessforbidden();
 
 if ($_REQUEST["button_removefilter"])
 {
