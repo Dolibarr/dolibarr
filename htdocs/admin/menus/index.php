@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,9 @@ $langs->load("admin");
 if (! $user->admin)
   accessforbidden();
 
-$dirtop = "../../includes/menus/standard";
-$dirleft = "../../includes/menus/standard";
-$dirsmartphone = "../../includes/menus/smartphone";
+$dirtop = "/includes/menus/standard";
+$dirleft = "/includes/menus/standard";
+$dirsmartphone = "/includes/menus/smartphone";
 
 $dirmenu = array($dirleft,$dirsmartphone);
 
