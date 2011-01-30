@@ -851,7 +851,7 @@ else
 		print '</td></tr>';
 
 		// Type
-		print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
+		print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'."\n";
 		print $form->selectarray("typent_id",$formcompany->typent_array(0), $soc->typent_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td>';
@@ -887,12 +887,17 @@ else
             print "}\n";
             print '</script>';
             print "\n";
-		    $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-			print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+            if (empty($conf->global->MAIN_DISABLEVATCHECK))
+            {
+                $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+			    print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+            }
+            else print $s;
 		}
 		else
 		{
-			print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+			if (empty($conf->global->MAIN_DISABLEVATCHECK)) $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+			print $s;
 		}
 		print '</td>';
 
@@ -1309,7 +1314,7 @@ else
 			$formcompany->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans("Type").'</td><td>';
+			print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
 			print $form->selectarray("typent_id",$formcompany->typent_array(0), $soc->typent_id);
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 			print '</td>';
@@ -1583,7 +1588,7 @@ else
 		// Type + Staff
 		$arr = $formcompany->typent_array(1);
 		$soc->typent= $arr[$soc->typent_code];
-		print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
+		print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
 
 		// Default language
 		if ($conf->global->MAIN_MULTILANGS)
