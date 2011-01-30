@@ -49,30 +49,42 @@ class Translate {
 
 
 	/**
-	 *  \brief      Constructeur de la classe
-	 *  \param      dir             Force directory that contains /langs subdirectory
-	 *  \param      conf			Objet qui contient la config Dolibarr
+	 *  Constructor
+	 *  @param      dir             Force directory that contains /langs subdirectory (value is sometine '..' like into install/* pages
+	 *                              or support/* pages).
+	 *  @param      conf			Object with Dolibarr configuration
 	 */
 	function Translate($dir = "",$conf)
 	{
-		// If charset output is forced
-		if (! empty($conf->file->character_set_client))
-		{
-			$this->charset_output=$conf->file->character_set_client;
-		}
+		if (! empty($conf->file->character_set_client)) $this->charset_output=$conf->file->character_set_client;	// If charset output is forced
 		if ($dir) $this->dir=array($dir);
 		else $this->dir=$conf->file->dol_document_root;
 	}
 
 
+
 	/**
-	 *  \brief      Set accessor for this->defaultlang
-	 *  \param      srclang     	Language to use
+	 *  Set accessor for this->defaultlang
+	 *  @param      srclang     	Language to use
 	 */
 	function setDefaultLang($srclang='fr_FR')
 	{
+		global $conf;
+		
 		//dol_syslog("Translate::setDefaultLang srclang=".$srclang,LOG_DEBUG);
 
+		// If a module ask to force a priority on langs directories (to use its own lang files)
+		if (! empty($conf->global->MAIN_FORCELANGDIR)) 
+		{
+			$more=array();
+			foreach($conf->file->dol_document_root as $dir)
+			{
+				$newdir=$dir.$conf->global->MAIN_FORCELANGDIR;
+				if (! in_array($newdir,$this->dir)) $more[]=$newdir;
+			}
+			$this->dir=array_merge($more,$this->dir);			
+		}
+		
 		$this->origlang=$srclang;
 
 		if (empty($srclang) || $srclang == 'auto')

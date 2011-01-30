@@ -9,8 +9,10 @@ For users:
 - New: Ask password when creating a user from a contact
 
 For developers:
-- New: External modules can add their menu manager
+- New: External modules can add their own menu manager
 - New: External modules can remove tabs
+- New: A module can overwrite all default language files by forcing
+       priority on langs directories on its own lang directory.
 
 
 ***** ChangeLog for 3.0 compared to 2.9 *****
