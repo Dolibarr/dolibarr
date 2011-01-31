@@ -48,7 +48,7 @@ $langs->load('orders');
 $langs->load('products');
 
 $sall=GETPOST("sall");
-$mesg=GETPOST("mesg");
+$mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
 $month=GETPOST("month");
 $socid=GETPOST('socid');
