@@ -29,6 +29,8 @@
  *	\version		$Id$
  */
 
+if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
+
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
@@ -45,12 +47,11 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
 
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
-if (isset($_GET["msg"])) { $mesg=$_GET["mesg"]; }
-$year=isset($_GET["year"])?$_GET["year"]:"";
-$month=isset($_GET["month"])?$_GET["month"]:"";
-$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
-$mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
+$sall=GETPOST("sall");
+$mesg=GETPOST("mesg");
+$year=GETPOST("year");
+$month=GETPOST("month");
+$socid=GETPOST('socid');
 
 // Security check
 $module='propale';
@@ -370,11 +371,11 @@ if ($_GET["action"] == 'classifybilled')
 /*
  *  Cloture de la propale
  */
-if ($_REQUEST['action'] == 'setstatut' && $user->rights->propale->cloturer)
+if (GETPOST('action') == 'setstatut' && $user->rights->propale->cloturer)
 {
 	if (! $_POST['cancel'])
 	{
-		if (empty($_REQUEST['statut']))
+		if (! GETPOST('statut'))
 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("CloseAs")).'</div>';
 			$_REQUEST['action']='statut';
@@ -964,8 +965,8 @@ $companystatic=new Societe($db);
 
 $now=dol_now();
 
-$id = $_REQUEST['id']?$_REQUEST['id']:$_REQUEST['id'];
-$ref= $_REQUEST['ref'];
+$id = GETPOST('id');
+$ref= GETPOST('ref');
 
 if ($id > 0 || ! empty($ref))
 {

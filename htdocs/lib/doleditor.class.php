@@ -21,7 +21,7 @@
  *       \file       htdocs/lib/doleditor.class.php
  *       \brief      Class to manage a WYSIWYG editor
  *       \version    $Id$
-*/
+ */
 
 /**
  * 		\class      DolEditor
@@ -68,11 +68,10 @@ class DolEditor
         $this->tool='fckeditor';    // By default
 
         // Check fckeditor is ok
-        if ($this->tool == 'fckeditor' && (empty($conf->fckeditor->enabled) || ! $okforextandededitor))
+        if ($this->tool == 'fckeditor' && (empty($conf->fckeditor->enabled) || ! $okforextandededitor || $conf->global->MAIN_USE_CKEDITOR))
         {
             $this->tool = 'textarea';
         }
-
 
     	if ($this->tool == 'fckeditor')
     	{
@@ -120,17 +119,21 @@ class DolEditor
      */
     function Create()
     {
+    	global $conf;
+    	
         $found=0;
 
         if ($this->tool == 'fckeditor')
         {
             $found=1;
-    	   $this->editor->Create();
+            $this->editor->Create();
         }
         if ($this->tool == 'textarea')
         {
             $found=1;
-            print '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="flat">';
+            $cssclass='flat';
+            if ($conf->global->MAIN_USE_CKEDITOR) $cssclass='ckeditor';
+            print '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="'.$cssclass.'">';
             print $this->content;
             print '</textarea>';
         }
