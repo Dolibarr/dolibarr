@@ -797,23 +797,27 @@ else
         $s='';
         $s.=$conf->global->MAIN_INFO_TVAINTRA;
         $s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$conf->global->MAIN_INFO_TVAINTRA.'">';
-        $s.=' &nbsp; ';
-        if ($conf->use_javascript_ajax)
+        if (empty($conf->global->MAIN_DISABLEVATCHECK))
         {
-            print "\n";
-            print '<script language="JavaScript" type="text/javascript">';
-            print "function CheckVAT(a) {\n";
-            print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
-            print "}\n";
-            print '</script>';
-            print "\n";
-            $s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-            print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+            $s.=' &nbsp; ';
+            if ($conf->use_javascript_ajax)
+            {
+                print "\n";
+                print '<script language="JavaScript" type="text/javascript">';
+                print "function CheckVAT(a) {\n";
+                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
+                print "}\n";
+                print '</script>';
+                print "\n";
+                $s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+                $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+            }
+            else
+            {
+                $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+            }
         }
-        else
-        {
-            print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
-        }
+        print $s;
     }
     else
     {
