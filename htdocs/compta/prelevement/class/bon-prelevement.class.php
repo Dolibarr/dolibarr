@@ -430,8 +430,7 @@ class BonPrelevement extends CommonObject
 							$fac = new Facture($this->db);
 							$fac->fetch($facs[$i]);
 							$amounts[$fac->id] = $fac->total_ttc;
-							//TODO: Uncomment next line if invoice must have payed status
-							//$result = $fac->set_paid($user);
+							$result = $fac->set_paid($user);
 						}
 						$paiement = new Paiement($this->db);
 						$paiement->datepaye     = $date ;

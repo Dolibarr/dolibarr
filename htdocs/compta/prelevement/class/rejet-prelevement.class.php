@@ -146,6 +146,11 @@ class RejetPrelevement
 				dol_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
 			}
 			$result=$pai->addPaymentToBank($user,'payment','(WithdrawalRefused)',$bankaccount);
+			if ($result < 0)
+			{
+				dol_syslog("RejetPrelevement::Create bank Transaction Error");
+				$error++;
+			}
 			
 			// Payment validation
 			if ($pai->valide() < 0)
