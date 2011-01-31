@@ -26,6 +26,8 @@
  *  \version    $Revision$
  */
 
+if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
+
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -154,9 +156,11 @@ foreach($modules as $const => $desc)
 	print '</tr>';
 }
 
-print '</table>';
+print '</table>'."\n";
 
-print '<br>';
+
+print '<br>'."\n";
+print '<!-- Editor name = '.$conf->global->FCKEDITOR_EDITORNAME.' -->';
 print_fiche_titre($langs->trans("TestSubmitForm"),'','');
 print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 $editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test',200,'dolibarr_notes','In', true);

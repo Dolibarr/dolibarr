@@ -66,10 +66,11 @@ class DolEditor
 
     	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." tool=".$tool);
 
-        $this->tool='fckeditor';    // By default
+        // Name of extended editor to use
+    	$this->tool=empty($conf->global->FCKEDITOR_EDITORNAME)?'fckeditor':$conf->global->FCKEDITOR_EDITORNAME;
 
-        // Check fckeditor is ok
-        if ($this->tool == 'fckeditor' && (empty($conf->fckeditor->enabled) || ! $okforextandededitor || $conf->global->MAIN_USE_CKEDITOR))
+        // Check if extended editor is ok. If not we force textarea
+        if (empty($conf->fckeditor->enabled) || ! $okforextandededitor)
         {
             $this->tool = 'textarea';
         }
@@ -105,7 +106,8 @@ class DolEditor
         		$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
     		}
     	}
-        if ($this->tool == 'textarea')
+
+        if (in_array($this->tool,array('textarea','ckeditor')))
         {
     	    $this->content	= $content;
     	    $this->htmlname = $htmlname;
@@ -114,6 +116,7 @@ class DolEditor
             $this->height	= $height;
             $this->width	= 600;
     	}
+
     }
 
 
@@ -123,7 +126,7 @@ class DolEditor
     function Create()
     {
     	global $conf;
-    	
+
         $found=0;
 
         if ($this->tool == 'fckeditor')
@@ -131,16 +134,15 @@ class DolEditor
             $found=1;
             $this->editor->Create();
         }
-        if ($this->tool == 'textarea')
+        if (in_array($this->tool,array('textarea','ckeditor')))
         {
             $found=1;
             $cssclass='flat';
-            //if ($conf->global->MAIN_USE_CKEDITOR) $cssclass='ckeditor';
             print '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="'.$cssclass.'">';
             print $this->content;
             print '</textarea>';
-            
-            if ($conf->global->MAIN_USE_CKEDITOR)
+
+            if ($this->tool == 'ckeditor')
             {
             	print '<script type="text/javascript">';
             	print 'CKEDITOR.replace(\''.$this->htmlname.'\', { toolbar: \'Basic\', width: '.$this->width.', height: '.$this->height.', toolbarStartupExpanded: false });';
@@ -150,7 +152,7 @@ class DolEditor
 
         if (empty($found))
         {
-            print 'Error, unknown value for tool in DolEditor constructor.';
+            print 'Error, unknown value for tool '.$this->tool.' in DolEditor Create function.';
         }
     }
 

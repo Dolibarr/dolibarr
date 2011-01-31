@@ -29,8 +29,6 @@
  *	\version		$Id$
  */
 
-if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
-
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
@@ -974,7 +972,7 @@ if ($id > 0 || ! empty($ref))
 	 * Show object in view mode
 	 */
 
-	if ($mesg) 
+	if ($mesg)
 	{
 		if (! preg_match('/div class=/',$mesg)) print '<div class="ok">'.$mesg.'</div><br>';
 		else print $mesg."<br>";
