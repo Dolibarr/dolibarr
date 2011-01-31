@@ -1,7 +1,7 @@
 [//lasso
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -32,8 +32,8 @@
     Convert query string parameters to variables and initialize output.
     */
 	var(
-		'Type'			=	action_param('Type'),
-		'CurrentFolder'	=	action_param('CurrentFolder'),
+		'Type'			=	(Encode_HTML: action_param('Type')),
+		'CurrentFolder'	=	"/",
 		'ServerPath'	=	action_param('ServerPath'),
 		'NewFile'		=	null,
 		'NewFileName'	=	string,
@@ -53,8 +53,10 @@
 
 	var('currentFolderURL' = $ServerPath
 		+ $config->find('Subdirectories')->find(action_param('Type'))
-		+ action_param('CurrentFolder')
+		+ $CurrentFolder
 	);
+
+	$currentFolderURL = string_replace($currentFolderURL, -find='//', -replace='/');
 
 	/*.....................................................................
 	Custom tag sets the HTML response.
@@ -84,14 +86,14 @@
 
 		$__html_reply__ = $__html_reply__ + '\
 	window.parent.OnUploadCompleted(' + #errorNumber + ',"'
-		+ string_replace(#fileUrl, -find='"', -replace='\\"') + '","'
-		+ string_replace(#fileName, -find='"', -replace='\\"') + '","'
-		+ string_replace(#customMsg, -find='"', -replace='\\"') + '");
+		+ string_replace((Encode_HTML: #fileUrl), -find='"', -replace='\\"') + '","'
+		+ string_replace((Encode_HTML: #fileUrl->split('/')->last), -find='"', -replace='\\"') + '","'
+		+ string_replace((Encode_HTML: #customMsg), -find='"', -replace='\\"') + '");
 </script>
 		';
 	/define_tag;
 
-	if($CurrentFolder->(Find: '..') || $CurrentFolder->(Find: '\\'));
+	if($CurrentFolder->(Find: '..') || (String_FindRegExp: $CurrentFolder, -Find='(/\\.)|(//)|[\\\\:\\*\\?\\""\\<\\>\\|]|\\000|[\u007F]|[\u0001-\u001F]'));
 		$errorNumber = 102;
 	/if;
 
@@ -114,6 +116,8 @@
 				files. (Test.txt, Test(1).txt, Test(2).txt, etc.)
 				*/
 				$NewFileName = $NewFile->find('OrigName');
+				$NewFileName = (String_ReplaceRegExp: $NewFileName, -find='\\\\|\\/|\\||\\:|\\?|\\*|"|<|>|\\000|[\u007F]|[\u0001-\u001F]', -replace='_');
+				$NewFileName = (String_ReplaceRegExp: $NewFileName, -find='\\.(?![^.]*$)', -replace='_');
 				$OrigFilePath = $currentFolderURL + $NewFileName;
 				$NewFilePath = $OrigFilePath;
 				local('fileExtension') = '.' + $NewFile->find('OrigExtension');
@@ -124,7 +128,11 @@
 				Make sure the file extension is allowed.
 				*/
 
-				if($config->find('DeniedExtensions')->find($Type) >> $NewFile->find('OrigExtension'));
+				local('allowedExt') = $config->find('AllowedExtensions')->find($Type);
+				local('deniedExt') = $config->find('DeniedExtensions')->find($Type);
+				if($allowedExt->Size > 0 && $allowedExt !>> $NewFile->find('OrigExtension'));
+					$errorNumber = 202;
+				else($deniedExt->Size > 0 && $deniedExt >> $NewFile->find('OrigExtension'));
 					$errorNumber = 202;
 				else;
 					/*.....................................................
@@ -153,6 +161,9 @@
 					/select;
 				/if;
 			/if;
+			if ($errorNumber != 0 && $errorNumber != 201);
+				$NewFilePath = "";
+			/if;
 		/inline;
 	else;
 		$errorNumber = 1;
@@ -162,7 +173,6 @@
 	fck_sendresults(
 		-errorNumber=$errorNumber,
 		-fileUrl=$NewFilePath,
-		-fileName=$NewFileName,
 		-customMsg=$customMsg
 	);
 ]

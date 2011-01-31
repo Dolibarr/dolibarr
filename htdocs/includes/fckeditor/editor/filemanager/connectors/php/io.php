@@ -1,7 +1,7 @@
 <?php
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -98,7 +98,7 @@ function CreateServerFolder( $folderPath, $lastFolder = null )
 	}
 
 	// Check if the parent exists, or create it.
-	if ( !file_exists( $sParent ) )
+	if ( !empty($sParent) && !file_exists( $sParent ) )
 	{
 		//prevents agains infinite loop when we can't create root folder
 		if ( !is_null( $lastFolder ) && $lastFolder === $sParent) {
@@ -245,6 +245,9 @@ function GetCurrentFolder()
 	if ( strpos( $sCurrentFolder, '..' ) || strpos( $sCurrentFolder, "\\" ))
 		SendError( 102, '' ) ;
 
+	if ( preg_match(",(/\.)|[[:cntrl:]]|(//)|(\\\\)|([\:\*\?\"\<\>\|]),", $sCurrentFolder))
+		SendError( 102, '' ) ;
+
 	return $sCurrentFolder ;
 }
 
@@ -285,6 +288,11 @@ function SendUploadResults( $errorNumber, $fileUrl = '', $fileName = '', $custom
 <script type="text/javascript">
 (function(){var d=document.domain;while (true){try{var A=window.parent.document.domain;break;}catch(e) {};d=d.replace(/.*?(?:\.|$)/,'');if (d.length==0) break;try{document.domain=d;}catch (e){break;}}})();
 EOF;
+
+	if ($errorNumber && $errorNumber != 201) {
+		$fileUrl = "";
+		$fileName = "";
+	}
 
 	$rpl = array( '\\' => '\\\\', '"' => '\\"' ) ;
 	echo 'window.parent.OnUploadCompleted(' . $errorNumber . ',"' . strtr( $fileUrl, $rpl ) . '","' . strtr( $fileName, $rpl ) . '", "' . strtr( $customMsg, $rpl ) . '") ;' ;

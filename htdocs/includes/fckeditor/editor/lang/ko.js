@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -307,7 +307,7 @@ DlgTableHeight		: "높이",
 DlgTableCellSpace	: "셀 간격",
 DlgTableCellPad		: "셀 여백",
 DlgTableCaption		: "캡션",
-DlgTableSummary		: "Summary",	//MISSING
+DlgTableSummary		: "요약",
 DlgTableHeaders		: "Headers",	//MISSING
 DlgTableHeadersNone		: "None",	//MISSING
 DlgTableHeadersColumn	: "First column",	//MISSING
@@ -530,5 +530,10 @@ DlgAboutInfo		: "더 많은 정보를 보시려면 다음 사이트로 가십시
 DlgDivGeneralTab	: "General",	//MISSING
 DlgDivAdvancedTab	: "Advanced",	//MISSING
 DlgDivStyle		: "Style",	//MISSING
-DlgDivInlineStyle	: "Inline Style"	//MISSING
+DlgDivInlineStyle	: "Inline Style",	//MISSING
+
+ScaytTitle			: "SCAYT",	//MISSING
+ScaytTitleOptions	: "Options",	//MISSING
+ScaytTitleLangs		: "Languages",	//MISSING
+ScaytTitleAbout		: "About"	//MISSING
 };

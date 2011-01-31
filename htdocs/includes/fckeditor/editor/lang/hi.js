@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -530,5 +530,10 @@ DlgAboutInfo		: "अधिक जानकारी के लिये यह�
 DlgDivGeneralTab	: "सामान्य",
 DlgDivAdvancedTab	: "एड्वान्स्ड",
 DlgDivStyle		: "स्टाइल",
-DlgDivInlineStyle	: "इनलाइन स्टाइल"
+DlgDivInlineStyle	: "इनलाइन स्टाइल",
+
+ScaytTitle			: "SCAYT",	//MISSING
+ScaytTitleOptions	: "Options",	//MISSING
+ScaytTitleLangs		: "Languages",	//MISSING
+ScaytTitleAbout		: "About"	//MISSING
 };

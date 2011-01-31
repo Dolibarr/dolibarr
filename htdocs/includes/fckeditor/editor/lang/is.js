@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -530,5 +530,10 @@ DlgAboutInfo		: "Nánari upplýsinar, sjá:",
 DlgDivGeneralTab	: "Almennt",
 DlgDivAdvancedTab	: "Sérhæft",
 DlgDivStyle		: "Stíll",
-DlgDivInlineStyle	: "Línulægur stíll"
+DlgDivInlineStyle	: "Línulægur stíll",
+
+ScaytTitle			: "SCAYT",	//MISSING
+ScaytTitleOptions	: "Options",	//MISSING
+ScaytTitleLangs		: "Languages",	//MISSING
+ScaytTitleAbout		: "About"	//MISSING
 };

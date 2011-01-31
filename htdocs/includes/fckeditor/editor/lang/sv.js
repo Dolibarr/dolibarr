@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -44,7 +44,7 @@ RemoveFormat		: "Radera formatering",
 InsertLinkLbl		: "Länk",
 InsertLink			: "Infoga/Redigera länk",
 RemoveLink			: "Radera länk",
-VisitLink			: "Open Link",	//MISSING
+VisitLink			: "Öppna länk",
 Anchor				: "Infoga/Redigera ankarlänk",
 AnchorDelete		: "Radera ankarlänk",
 InsertImageLbl		: "Bild",
@@ -73,9 +73,9 @@ BlockJustify		: "Justera till marginaler",
 DecreaseIndent		: "Minska indrag",
 IncreaseIndent		: "Öka indrag",
 Blockquote			: "Blockquote",	//MISSING
-CreateDiv			: "Create Div Container",	//MISSING
-EditDiv				: "Edit Div Container",	//MISSING
-DeleteDiv			: "Remove Div Container",	//MISSING
+CreateDiv			: "Skapa Div behållare",
+EditDiv				: "Redigera Div behållare",
+DeleteDiv			: "Radera Div behållare",
 Undo				: "Ångra",
 Redo				: "Gör om",
 NumberedListLbl		: "Numrerad lista",
@@ -109,7 +109,7 @@ SelectionField	: "Flervalslista",
 ImageButton		: "Bildknapp",
 
 FitWindow		: "Anpassa till fönstrets storlek",
-ShowBlocks		: "Show Blocks",	//MISSING
+ShowBlocks		: "Visa block",
 
 // Context Menu
 EditLink			: "Redigera länk",
@@ -161,7 +161,7 @@ UnknownToolbarSet	: "Verktygsfält \"%1\" finns ej",
 NoActiveX			: "Din webläsares säkerhetsinställningar kan begränsa funktionaliteten. Du bör aktivera \"Kör ActiveX kontroller och plug-ins\". Fel och avsaknad av funktioner kan annars uppstå.",
 BrowseServerBlocked : "Kunde Ej öppna resursfönstret. Var god och avaktivera alla popup-blockerare.",
 DialogBlocked		: "Kunde Ej öppna dialogfönstret. Var god och avaktivera alla popup-blockerare.",
-VisitLinkBlocked	: "It was not possible to open a new window. Make sure all popup blockers are disabled.",	//MISSING
+VisitLinkBlocked	: "Kunde Ej öppna nytt fönster. Var god och avaktivera alla popup-blockerare.",
 
 // Dialogs
 DlgBtnOK			: "OK",
@@ -188,7 +188,7 @@ DlgGenClass			: "Stylesheet class",
 DlgGenTitle			: "Titel",
 DlgGenContType		: "Innehållstyp",
 DlgGenLinkCharset	: "Teckenuppställning",
-DlgGenStyle			: "Style",
+DlgGenStyle			: "Stil",
 
 // Image Dialog
 DlgImgTitle			: "Bildegenskaper",
@@ -306,13 +306,13 @@ DlgTableWidthPc		: "procent",
 DlgTableHeight		: "Höjd",
 DlgTableCellSpace	: "Cellavstånd",
 DlgTableCellPad		: "Cellutfyllnad",
-DlgTableCaption		: "Rubrik",
+DlgTableCaption		: "Titel",
 DlgTableSummary		: "Sammanfattning",
-DlgTableHeaders		: "Headers",	//MISSING
-DlgTableHeadersNone		: "None",	//MISSING
-DlgTableHeadersColumn	: "First column",	//MISSING
-DlgTableHeadersRow		: "First Row",	//MISSING
-DlgTableHeadersBoth		: "Both",	//MISSING
+DlgTableHeaders		: "Rubrikrad",
+DlgTableHeadersNone		: "Ingen",
+DlgTableHeadersColumn	: "Första kolumnen",
+DlgTableHeadersRow		: "Första raden",
+DlgTableHeadersBoth		: "Båda",
 
 // Table Cell Dialog
 DlgCellTitle		: "Cellegenskaper",
@@ -335,9 +335,9 @@ DlgCellVerAlignTop	: "Topp",
 DlgCellVerAlignMiddle	: "Mitten",
 DlgCellVerAlignBottom	: "Nederkant",
 DlgCellVerAlignBaseline	: "Underst",
-DlgCellType		: "Cell Type",	//MISSING
-DlgCellTypeData		: "Data",	//MISSING
-DlgCellTypeHeader	: "Header",	//MISSING
+DlgCellType		: "Cell Typ",
+DlgCellTypeData		: "Data",
+DlgCellTypeHeader	: "Titel",
 DlgCellRowSpan		: "Radomfång",
 DlgCellCollSpan		: "Kolumnomfång",
 DlgCellBackColor	: "Bakgrundsfärg",
@@ -523,12 +523,17 @@ DlgTemplatesReplace	: "Ersätt aktuellt innehåll",
 DlgAboutAboutTab	: "Om",
 DlgAboutBrowserInfoTab	: "Webläsare",
 DlgAboutLicenseTab	: "Licens",
-DlgAboutVersion		: "version",
+DlgAboutVersion		: "Version",
 DlgAboutInfo		: "För mer information se",
 
 // Div Dialog
-DlgDivGeneralTab	: "General",	//MISSING
-DlgDivAdvancedTab	: "Advanced",	//MISSING
-DlgDivStyle		: "Style",	//MISSING
-DlgDivInlineStyle	: "Inline Style"	//MISSING
+DlgDivGeneralTab	: "Allmänt",
+DlgDivAdvancedTab	: "Avancerat",
+DlgDivStyle		: "Stil",
+DlgDivInlineStyle	: "Inbäddad stil",
+
+ScaytTitle			: "SCAYT",
+ScaytTitleOptions	: "Alternativ",
+ScaytTitleLangs		: "Språk",
+ScaytTitleAbout		: "Om"
 };

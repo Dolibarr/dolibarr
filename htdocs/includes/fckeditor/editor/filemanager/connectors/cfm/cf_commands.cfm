@@ -1,7 +1,7 @@
 <cfsetting enablecfoutputonly="Yes">
 <!---
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -23,7 +23,7 @@
  * in the ColdFusion Connector (MX 6.0 and above).
 --->
 
-<cffunction name="FileUpload" returntype="void" output="true">
+<cffunction name="FCKeditorFileUpload" returntype="void" output="true">
 	<cfargument name="resourceType" type="string" required="yes" default="">
 	<cfargument name="currentFolder" type="string" required="yes" default="">
 	<cfargument name="sCommand" type="string" required="yes" default="">
@@ -35,7 +35,7 @@
 	<cfset var sTempDir = "">
 	<cfset var sTempFilePath = "">
 	<cfset var errorNumber = 0>
-	<cfset var customMsg = 0>
+	<cfset var customMsg = "">
 	<cfset var counter = 0>
 	<cfset var destination = "">
 
@@ -108,7 +108,17 @@
 			<cffile action="move" source="#sTempFilePath#" destination="#destination#" mode="755">
 			<!--- omit CF 6.1 error during moving uploaded file, just copy that file instead of moving --->
 			<cfcatch type="any">
-				<cffile action="copy" source="#sTempFilePath#" destination="#destination#" mode="755">
+				<cftry>
+					<cffile action="copy" source="#sTempFilePath#" destination="#destination#" mode="755">
+					<cfcatch type="any">
+						<cfset errorNumber = 102>
+					</cfcatch>
+				</cftry>
+				<cftry>
+					<cffile action="delete" file="#sTempFilePath#">
+					<cfcatch type="any">
+					</cfcatch>
+				</cftry>
 			</cfcatch>
 		</cftry>
 		</cflock>
@@ -226,5 +236,5 @@
 		</cftry>
 	</cfif>
 
-	<cfoutput><Error number="#errorNumber#" originalDescription="#HTMLEditFormat(sErrorMsg)#" /></cfoutput>
+	<cfoutput><Error number="#errorNumber#" /></cfoutput>
 </cffunction>

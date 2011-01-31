@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -374,11 +374,11 @@ function SelectColor( wich )
 {
 	switch ( wich )
 	{
-		case 'Back'			: oEditor.FCKDialog.OpenDialog( 'FCKDialog_Color', FCKLang.DlgColorTitle, 'dialog/fck_colorselector.html', 410, 320, SelectBackColor, window ) ; return ;
-		case 'ColorText'	: oEditor.FCKDialog.OpenDialog( 'FCKDialog_Color', FCKLang.DlgColorTitle, 'dialog/fck_colorselector.html', 410, 320, SelectColorText, window ) ; return ;
-		case 'ColorLink'	: oEditor.FCKDialog.OpenDialog( 'FCKDialog_Color', FCKLang.DlgColorTitle, 'dialog/fck_colorselector.html', 410, 320, SelectColorLink, window ) ; return ;
-		case 'ColorVisited'	: oEditor.FCKDialog.OpenDialog( 'FCKDialog_Color', FCKLang.DlgColorTitle, 'dialog/fck_colorselector.html', 410, 320, SelectColorVisited, window ) ; return ;
-		case 'ColorActive'	: oEditor.FCKDialog.OpenDialog( 'FCKDialog_Color', FCKLang.DlgColorTitle, 'dialog/fck_colorselector.html', 410, 320, SelectColorActive, window ) ; return ;
+		case 'Back'			: oEditor.FCKDialog.OpenDialog( 'FCKDialog_Color', FCKLang.DlgColorTitle, 'dialog/fck_colorselector.html', 410, 320, SelectBackColor ) ; return ;
+		case 'ColorText'	: oEditor.FCKDialog.OpenDialog( 'FCKDialog_Color', FCKLang.DlgColorTitle, 'dialog/fck_colorselector.html', 410, 320, SelectColorText ) ; return ;
+		case 'ColorLink'	: oEditor.FCKDialog.OpenDialog( 'FCKDialog_Color', FCKLang.DlgColorTitle, 'dialog/fck_colorselector.html', 410, 320, SelectColorLink ) ; return ;
+		case 'ColorVisited'	: oEditor.FCKDialog.OpenDialog( 'FCKDialog_Color', FCKLang.DlgColorTitle, 'dialog/fck_colorselector.html', 410, 320, SelectColorVisited ) ; return ;
+		case 'ColorActive'	: oEditor.FCKDialog.OpenDialog( 'FCKDialog_Color', FCKLang.DlgColorTitle, 'dialog/fck_colorselector.html', 410, 320, SelectColorActive ) ; return ;
 	}
 }
 
@@ -395,7 +395,6 @@ function SetUrl( url )
 
 	</script>
 </head>
-
 <body style="overflow: hidden">
 	<table cellspacing="0" cellpadding="0" width="100%" border="0" style="height: 100%">
 		<tr>
@@ -459,21 +458,21 @@ function SetUrl( url )
 								<span fcklang="DlgDocDocType">Document Type Heading</span><br />
 								<select id="selDocType" onchange="CheckOther( this, 'txtDocType' );">
 									<option value="" selected="selected"></option>
-									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;'>HTML 
+									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;'>HTML
 										4.01 Transitional</option>
-									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;'> 
+									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;'>
 										HTML 4.01 Strict</option>
-									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd"&gt;'> 
+									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd"&gt;'>
 										HTML 4.01 Frameset</option>
-									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;'> 
+									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;'>
 										XHTML 1.0 Transitional</option>
-									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;'> 
+									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;'>
 										XHTML 1.0 Strict</option>
-									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"&gt;'> 
+									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"&gt;'>
 										XHTML 1.0 Frameset</option>
-									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;'> 
+									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;'>
 										XHTML 1.1</option>
-									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"&gt;'>HTML 3.2</option> 
+									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"&gt;'>HTML 3.2</option>
 									<option value='&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;'>HTML 2.0</option>
 									<option value="..." fcklang="DlgOpOther">&lt;Other&gt;</option>
 								</select>

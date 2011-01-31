@@ -1,7 +1,7 @@
 <cfsetting enablecfoutputonly="Yes">
 <!---
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -27,7 +27,6 @@
 
 	// SECURITY: You must explicitly enable this "connector". (Set enabled to "true")
 	Config.Enabled = false ;
-
 
 	// Path to uploaded files relative to the document root.
 	Config.UserFilesPath = "/userfiles/" ;
@@ -62,7 +61,22 @@
 	//instead of using the GetTempDirectory function
 	//(used by MX 6.0 and above)
 	Config.TempDirectory = GetTempDirectory();
+</cfscript>
 
+<cftry>
+<!--- code to maintain backwards compatibility with previous version of cfm connector --->
+	<cfif isDefined("application.userFilesPath")>
+		<cflock scope="application" type="readonly" timeout="20">
+			<cfset config.userFilesPath = application.userFilesPath>
+		</cflock>
+	</cfif>
+
+	<!--- catch potential "The requested scope application has not been enabled" exception --->
+	<cfcatch type="any">
+	</cfcatch>
+</cftry>
+
+<cfscript>
 //	Configuration settings for each Resource Type
 //
 //	- AllowedExtensions: the possible extensions that can be allowed.
@@ -134,56 +148,3 @@
 	Config.QuickUploadPath["Media"] 		= Config.FileTypesPath["Media"] ;
 	Config.QuickUploadAbsolutePath["Media"] = Config.FileTypesAbsolutePath["Media"] ;
 </cfscript>
-
-<cftry>
-<!--- code to maintain backwards compatibility with previous version of cfm connector --->
-<cfif isDefined("application.userFilesPath")>
-
-	<cflock scope="application" type="readonly" timeout="5">
-		<cfset config.userFilesPath = application.userFilesPath>
-	</cflock>
-
-<cfelseif isDefined("server.userFilesPath")>
-
-	<cflock scope="server" type="readonly" timeout="5">
-		<cfset config.userFilesPath = server.userFilesPath>
-	</cflock>
-
-</cfif>
-
-<!--- look for config struct in application and server scopes --->
-<cfif isDefined("application.FCKeditor") and isStruct(application.FCKeditor)>
-
-	<cflock scope="application" type="readonly" timeout="5">
-	<cfset variables.FCKeditor = duplicate(application.FCKeditor)>
-	</cflock>
-
-<cfelseif isDefined("server.FCKeditor") and isStruct(server.FCKeditor)>
-
-	<cflock scope="server" type="readonly" timeout="5">
-	<cfset variables.FCKeditor = duplicate(server.FCKeditor)>
-	</cflock>
-
-</cfif>
-	<!--- catch potential "The requested scope application has not been enabled" exception --->
-	<cfcatch type="any">
-	</cfcatch>
-</cftry>
-
-<cfif isDefined("FCKeditor")>
-
-	<!--- copy key values from external to local config (i.e. override default config as required) --->
-	<cfscript>
-		function structCopyKeys(stFrom, stTo) {
-			for ( key in stFrom ) {
-				if ( isStruct(stFrom[key]) ) {
-					structCopyKeys(stFrom[key],stTo[key]);
-				} else {
-					stTo[key] = stFrom[key];
-				}
-			}
-		}
-		structCopyKeys(FCKeditor, config);
-	</cfscript>
-
-</cfif>

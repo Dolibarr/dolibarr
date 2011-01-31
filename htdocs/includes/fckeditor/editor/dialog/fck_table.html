@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -155,28 +155,6 @@ function Ok()
 	SetAttribute( table, 'cellSpacing'	, GetE('txtCellSpacing').value ) ;
 	SetAttribute( table, 'summary'		, GetE('txtSummary').value ) ;
 
-	var eCaption = oEditor.FCKDomTools.GetFirstChild( table, 'CAPTION' ) ;
-
-	if ( document.getElementById('txtCaption').value != '')
-	{
-		if ( !eCaption )
-		{
-			eCaption = oDoc.createElement( 'CAPTION' ) ;
-			table.insertBefore( eCaption, table.firstChild ) ;
-		}
-
-		eCaption.innerHTML = document.getElementById('txtCaption').value ;
-	}
-	else if ( bExists && eCaption )
-	{
-		// TODO: It causes an IE internal error if using removeChild or
-		// table.deleteCaption() (see #505).
-		if ( oEditor.FCKBrowserInfo.IsIE )
-			eCaption.innerHTML = '' ;
-		else
-			eCaption.parentNode.removeChild( eCaption ) ;
-	}
-
 	var headers = GetE('selHeaders').value ;
 	if ( bExists )
 	{
@@ -305,6 +283,29 @@ function Ok()
 		}
 
 		oEditor.FCK.InsertElement( table ) ;
+	}
+
+	var eCaption = oEditor.FCKDomTools.GetFirstChild( table, 'CAPTION' ) ;
+
+	if ( eCaption && !oEditor.FCKBrowserInfo.IsIE )
+		eCaption.parentNode.removeChild( eCaption ) ;
+
+	if ( document.getElementById('txtCaption').value != '' )
+	{
+		if ( !eCaption || !oEditor.FCKBrowserInfo.IsIE )
+		{
+			eCaption = oDoc.createElement( 'CAPTION' ) ;
+			table.insertBefore( eCaption, table.firstChild ) ;
+		}
+
+		eCaption.innerHTML = document.getElementById('txtCaption').value ;
+	}
+	else if ( bExists && eCaption )
+	{
+		// TODO: It causes an IE internal error if using removeChild or
+		// table.deleteCaption() (see #505).
+		if ( oEditor.FCKBrowserInfo.IsIE )
+			eCaption.innerHTML = '' ;
 	}
 
 	return true ;

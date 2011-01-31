@@ -1,7 +1,7 @@
 <cfsetting enablecfoutputonly="Yes">
 <!---
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -35,11 +35,26 @@
  *
 --->
 
+<!--- disable connector for ColdFusion > CF5 --->
+<cfif Left(SERVER.COLDFUSION.PRODUCTVERSION,Find(",",SERVER.COLDFUSION.PRODUCTVERSION)-1) gt 5>
+	<cfabort>
+</cfif>
+
 <cfparam name="url.command" default="QuickUpload">
 <cfparam name="url.type" default="File">
 <cfparam name="url.currentFolder" default="/">
 
-<cfif not isDefined("config_included")>
+<cfif find( "/", getBaseTemplatePath() ) >
+	<cfset REQUEST.Fs = "/">
+<cfelse>
+	<cfset REQUEST.Fs = "\">
+</cfif>
+
+<cfif url.command eq "QuickUpload">
+	<cfset url.currentFolder = "/">
+</cfif>
+
+<cfif not isDefined("REQUEST.config_included") or isDefined("URL.config_included")>
 	<cfinclude template="config.cfm">
 </cfif>
 
@@ -71,9 +86,15 @@
 </cfif>
 
 <cfif find( "..", url.currentFolder) or find( "\", url.currentFolder)>
-	<cfset SendUploadResults(102)>
+	<cfset SendUploadResults(102, "", "", "")>
 	<cfabort>
 </cfif>
+
+<cfif REFind('(/\.)|(//)|[[:cntrl:]]|([\\:\*\?\"<>])', url.currentFolder)>
+	<cfset SendUploadResults(102, "", "", "")>
+	<cfabort>
+</cfif>
+
 
 <cfscript>
 	userFilesPath = config.userFilesPath;
@@ -138,7 +159,7 @@
 		</cfcatch>
 		</cftry>
 	</cfif>
-<cfelse>
+<cfelseif url.command eq "FileUpload">
 	<cfset resourceTypeUrl = rereplace( replace( Config.FileTypesPath[url.type], fs, "/", "all"), "/$", "") >
 	<cfif isDefined( "Config.FileTypesAbsolutePath" )
 			and structkeyexists( Config.FileTypesAbsolutePath, url.type )
@@ -188,7 +209,7 @@
 	<cfcatch type="any">
 
 		<!--- this should only occur as a result of a permissions problem --->
-		<cfset SendUploadResults(103)>
+		<cfset SendUploadResults(103, "", "", "")>
 		<cfabort>
 
 	</cfcatch>
@@ -206,29 +227,34 @@
 <cfset customMsg = "">
 
 <cftry>
+	<cfif isDefined( "REQUEST.Config.TempDirectory" )>
+		<cfset sTempDir = REQUEST.Config.TempDirectory>
+	<cfelse>
+		<cfset sTempDir = GetTempDirectory()>
+	</cfif>
+
 	<!--- first upload the file with an unique filename --->
 	<cffile action="upload"
 		fileField="NewFile"
-		destination="#currentFolderPath#"
+		destination="#sTempDir#"
 		nameConflict="makeunique"
 		mode="644"
 		attributes="normal">
 
 	<cfif cffile.fileSize EQ 0>
+		<cffile action="delete" file="#cffile.ServerDirectory##fs##cffile.ServerFile#">
 		<cfthrow>
 	</cfif>
 
+	<cfset sTempFilePath = CFFILE.ServerDirectory & REQUEST.fs & CFFILE.ServerFile>
 	<cfset lAllowedExtensions = config.allowedExtensions[#resourceType#]>
 	<cfset lDeniedExtensions = config.deniedExtensions[#resourceType#]>
 
 	<cfif ( len(lAllowedExtensions) and not listFindNoCase(lAllowedExtensions,cffile.ServerFileExt) )
 		or ( len(lDeniedExtensions) and listFindNoCase(lDeniedExtensions,cffile.ServerFileExt) )>
-
 		<cfset errorNumber = "202">
 		<cffile action="delete" file="#cffile.ServerDirectory##fs##cffile.ServerFile#">
-
 	<cfelse>
-
 		<cfscript>
 		errorNumber = 0;
 		fileName = cffile.ClientFileName ;
@@ -248,32 +274,31 @@
 			fileName = replace( fileName, '.', "_", "all" ) ;
 
 		// When the original filename already exists, add numbers (0), (1), (2), ... at the end of the filename.
-		if( compare( cffile.ServerFileName, fileName ) ) {
-			counter = 0;
-			tmpFileName = fileName;
-			while( fileExists("#currentFolderPath##fileName#.#fileExt#") ) {
-				fileExisted = true ;
-				counter = counter + 1 ;
-				fileName = tmpFileName & '(#counter#)' ;
-			}
+		counter = 0;
+		tmpFileName = fileName;
+		while( fileExists("#currentFolderPath##fileName#.#fileExt#") ) {
+			fileExisted = true ;
+			counter = counter + 1 ;
+			fileName = tmpFileName & '(#counter#)' ;
 		}
 		</cfscript>
 
-		<!--- Rename the uploaded file, if neccessary --->
-		<cfif compare(cffile.ServerFileName,fileName)>
-
-			<cfif fileExisted>
-				<cfset errorNumber = "201">
-			</cfif>
-			<cffile
-				action="rename"
-				source="#currentFolderPath##cffile.ServerFileName#.#cffile.ServerFileExt#"
-				destination="#currentFolderPath##fileName#.#fileExt#"
-				mode="644"
-				attributes="normal">
-
+		<cfset destination = currentFolderPath & fileName & "." & fileExt>
+		<cfif fileExisted>
+			<cfset errorNumber = "201">
 		</cfif>
 
+		<cftry>
+			<cffile action="copy" source="#sTempFilePath#" destination="#destination#" mode="755">
+			<cfcatch type="any">
+				<cfset errorNumber = 102>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cffile action="delete" file="#sTempFilePath#">
+			<cfcatch type="any">
+			</cfcatch>
+		</cftry>
 	</cfif>
 
 	<cfcatch type="any">
@@ -286,7 +311,7 @@
 
 <cfif errorNumber EQ 0>
 	<!--- file was uploaded succesfully --->
-	<cfset SendUploadResults(errorNumber, '#resourceTypeUrl##url.currentFolder##fileName#.#fileExt#', "", "")>
+	<cfset SendUploadResults(errorNumber, '#resourceTypeUrl##url.currentFolder##fileName#.#fileExt#', replace( fileName & "." & fileExt, "'", "\'", "ALL"), "")>
 	<cfabort>
 <cfelseif errorNumber EQ 201>
 	<!--- file was changed (201), submit the new filename --->

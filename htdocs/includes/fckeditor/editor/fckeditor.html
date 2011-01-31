@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -265,16 +265,16 @@ function WaitForActive( editorInstance, newStatus )
 	}
 }
 
-// Gecko browsers doesn't calculate well the IFRAME size so we must
+// Gecko and Webkit browsers don't calculate well the IFRAME size so we must
 // recalculate it every time the window size changes.
-if ( FCKBrowserInfo.IsGecko && !FCKBrowserInfo.IsOpera )
+if ( FCKBrowserInfo.IsGecko || ( FCKBrowserInfo.IsSafari && !FCKBrowserInfo.IsSafari3 ) )
 {
 	window.onresize = function( e )
 	{
-		// Running in Chrome makes the window receive the event including subframes.
+		// Running in Firefox's chrome makes the window receive the event including subframes.
 		// we care only about this window. Ticket #1642.
 		// #2002: The originalTarget from the event can be the current document, the window, or the editing area.
-		if ( e && e.originalTarget !== document && e.originalTarget !== window && (!e.originalTarget.ownerDocument || e.originalTarget.ownerDocument != document ))
+		if ( e && e.originalTarget && e.originalTarget !== document && e.originalTarget !== window && (!e.originalTarget.ownerDocument || e.originalTarget.ownerDocument != document ))
 			return ;
 
 		var oCell = document.getElementById( 'xEditingArea' ) ;

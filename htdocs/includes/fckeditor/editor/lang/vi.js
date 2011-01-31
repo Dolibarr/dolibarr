@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -530,5 +530,10 @@ DlgAboutInfo		: "Để biết thêm thông tin, hãy truy cập",
 DlgDivGeneralTab	: "Chung",
 DlgDivAdvancedTab	: "Nâng cao",
 DlgDivStyle		: "Kiểu Style",
-DlgDivInlineStyle	: "Kiểu Style Trực tiếp"
+DlgDivInlineStyle	: "Kiểu Style Trực tiếp",
+
+ScaytTitle			: "SCAYT",	//MISSING
+ScaytTitleOptions	: "Options",	//MISSING
+ScaytTitleLangs		: "Languages",	//MISSING
+ScaytTitleAbout		: "About"	//MISSING
 };

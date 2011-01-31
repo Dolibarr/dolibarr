@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -56,7 +56,7 @@ window.onload = function ()
 			'javascript:void( (function(){' +
 				'document.open() ;' +
 				'document.domain=\'' + document.domain + '\' ;' +
-				'document.write(\'<html><head><script>window.onerror = function() { return true ; };<\/script><\/head><body><\/body><\/html>\') ;' +
+				'document.write(\'<html><head><scr' + 'ipt>window.onerror = function() { return true ; };<\/script><\/head><body><\/body><\/html>\') ;' +
 				'document.close() ;' +
 				'document.body.contentEditable = true ;' +
 				'window.focus() ;' +
@@ -73,7 +73,7 @@ window.onload = function ()
 			// Avoid errors if the pasted content has any script that fails: #389
 			var oDoc = oFrame.contentWindow.document ;
 			oDoc.open() ;
-			oDoc.write('<html><head><script>window.onerror = function() { return true ; };<\/script><\/head><body><\/body><\/html>') ;
+			oDoc.write('<html><head><scr' + 'ipt>window.onerror = function() { return true ; };<\/script><\/head><body><\/body><\/html>') ;
 			oDoc.close() ;
 
 			if ( FCKBrowserInfo.IsIE )
@@ -194,11 +194,11 @@ function CleanWord( oNode, bIgnoreFont, bRemoveStyles )
 	html = html.replace( /\s*mso-[^:]+:[^;"]+;?/gi, '' ) ;
 
 	// Remove margin styles.
-	html = html.replace( /\s*MARGIN: 0cm 0cm 0pt\s*;/gi, '' ) ;
-	html = html.replace( /\s*MARGIN: 0cm 0cm 0pt\s*"/gi, "\"" ) ;
+	html = html.replace( /\s*MARGIN: 0(?:cm|in) 0(?:cm|in) 0pt\s*;/gi, '' ) ;
+	html = html.replace( /\s*MARGIN: 0(?:cm|in) 0(?:cm|in) 0pt\s*"/gi, "\"" ) ;
 
-	html = html.replace( /\s*TEXT-INDENT: 0cm\s*;/gi, '' ) ;
-	html = html.replace( /\s*TEXT-INDENT: 0cm\s*"/gi, "\"" ) ;
+	html = html.replace( /\s*TEXT-INDENT: 0(?:cm|in)\s*;/gi, '' ) ;
+	html = html.replace( /\s*TEXT-INDENT: 0(?:cm|in)\s*"/gi, "\"" ) ;
 
 	html = html.replace( /\s*TEXT-ALIGN: [^\s;]+;?"/gi, "\"" ) ;
 

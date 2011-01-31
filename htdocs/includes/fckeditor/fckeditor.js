@@ -1,6 +1,6 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -59,8 +59,8 @@ FCKeditor.MinHeight = 200 ;
  */
 FCKeditor.MinWidth = 750 ;
 
-FCKeditor.prototype.Version			= '2.6.4' ;
-FCKeditor.prototype.VersionBuild	= '21629' ;
+FCKeditor.prototype.Version			= '2.6.6' ;
+FCKeditor.prototype.VersionBuild	= '25427' ;
 
 FCKeditor.prototype.Create = function()
 {

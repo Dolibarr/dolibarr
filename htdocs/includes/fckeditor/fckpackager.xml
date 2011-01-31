@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -27,7 +27,7 @@
 <Package>
 	<Header><![CDATA[/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -146,6 +146,7 @@
 		<File path="editor/_source/classes/fcktoolbarfontscombo.js" />
 		<File path="editor/_source/classes/fcktoolbarfontsizecombo.js" />
 		<File path="editor/_source/classes/fcktoolbarpanelbutton.js" />
+		<File path="editor/_source/internals/fckscayt.js" />
 		<File path="editor/_source/internals/fcktoolbaritems.js" />
 		<File path="editor/_source/classes/fcktoolbar.js" />
 		<File path="editor/_source/classes/fcktoolbarbreak_ie.js" />
@@ -242,6 +243,7 @@
 		<File path="editor/_source/classes/fcktoolbarfontscombo.js" />
 		<File path="editor/_source/classes/fcktoolbarfontsizecombo.js" />
 		<File path="editor/_source/classes/fcktoolbarpanelbutton.js" />
+		<File path="editor/_source/internals/fckscayt.js" />
 		<File path="editor/_source/internals/fcktoolbaritems.js" />
 		<File path="editor/_source/classes/fcktoolbar.js" />
 		<File path="editor/_source/classes/fcktoolbarbreak_gecko.js" />

@@ -151,7 +151,7 @@ function print_checker_results() {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="<?php echo $spellercss ?>" />
 <script language="javascript" src="<?php echo $word_win_src ?>"></script>
-<script type="text/javascript">
+<script language="javascript">
 var suggs = new Array();
 var words = new Array();
 var textinputs = new Array();

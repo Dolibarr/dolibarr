@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -530,5 +530,10 @@ DlgAboutInfo		: "Para mayor información por favor dirigirse a",
 DlgDivGeneralTab	: "General",
 DlgDivAdvancedTab	: "Avanzado",
 DlgDivStyle		: "Estilo",
-DlgDivInlineStyle	: "Estilos CSS"
+DlgDivInlineStyle	: "Estilos CSS",
+
+ScaytTitle			: "SCAYT",	//MISSING
+ScaytTitleOptions	: "Options",	//MISSING
+ScaytTitleLangs		: "Languages",	//MISSING
+ScaytTitleAbout		: "About"	//MISSING
 };

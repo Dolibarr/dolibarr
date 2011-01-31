@@ -20,7 +20,11 @@ html
 {
 	/* #3658: [IE6] Editor document has horizontal scrollbar on long lines
 	To prevent this misbehavior, we show the scrollbar always */
-	_overflow-y: scroll
+	_overflow-y: scroll;
+	/* #6341: The text cursor must be set on the editor area. */
+	cursor: text;
+	/* #6632: Avoid having "text" shape of cursor in IE7 scrollbars.*/
+	*cursor:auto;
 }
 
 img:-moz-broken

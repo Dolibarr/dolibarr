@@ -13,9 +13,9 @@ Composant         Version  License                     Compatible GPL   Usage
 In alphabetical order of includes directory:
 AdoDb-Date        0.21     Modified BSD License        Yes              Date convertion
 ArtiChow          1.07     Public Domain               Yes              Graphics
-CKEditor		  3.4.1	   GPL or LGPL 2.1 or MPL 1.1  Yes				Editor WYSIWYG
+CKEditor		  3.5	   GPL or LGPL 2.1 or MPL 1.1  Yes				Editor WYSIWYG
 EFC/XFSS		  1.0.1	   LGPL 3.0					   Yes				Enhanced File Crypt/Extended File Stealth System
-FCKEditor         2.6.4    LGPL 2.1 or Mozilla PL 1.0  Yes              Editor WYSIWYG
+FCKEditor         2.6.6    LGPL 2.1 or Mozilla PL 1.0  Yes              Editor WYSIWYG
 FPDF              1.6      Public domain               Yes              PDF generation (original code is modified)
 FPDF_TPL          1.1.5    Apache Software License 2.0 No GPL3 only     PDF templates management
 FPDI              1.3.4    Apache Software License 2.0 No GPL3 only     PDF templates management
