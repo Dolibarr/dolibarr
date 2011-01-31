@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -877,33 +877,36 @@ else
 		print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
 		print '<td nowrap="nowrap">';
 		$s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
-		$s.=' ';
-		if ($conf->use_javascript_ajax)
+		
+		if (empty($conf->global->MAIN_DISABLEVATCHECK))
 		{
-            print "\n";
-            print '<script language="JavaScript" type="text/javascript">';
-            print "function CheckVAT(a) {\n";
-            print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
-            print "}\n";
-            print '</script>';
-            print "\n";
-            if (empty($conf->global->MAIN_DISABLEVATCHECK))
-            {
-                $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-			    print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
-            }
-            else print $s;
+			$s.=' ';
+			
+			if ($conf->use_javascript_ajax)
+			{
+	            print "\n";
+	            print '<script language="JavaScript" type="text/javascript">';
+	            print "function CheckVAT(a) {\n";
+	            print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
+	            print "}\n";
+	            print '</script>';
+	            print "\n";
+	            $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+	            print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+			}
+			else
+			{
+				$s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+			}
 		}
-		else
-		{
-			if (empty($conf->global->MAIN_DISABLEVATCHECK)) $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
-			print $s;
-		}
+		
+		print $s;
 		print '</td>';
 
 		print '</tr>';
 
 		// Local Taxes
+		// TODO add specific function by country
 		if($mysoc->pays_code=='ES')
 		{
 			if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
@@ -1256,32 +1259,36 @@ else
 			print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
 			print '<td nowrap="nowrap">';
 			$s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
-			$s.=' &nbsp; ';
-			if ($conf->use_javascript_ajax)
+			
+			if (empty($conf->global->MAIN_DISABLEVATCHECK))
 			{
-                print "\n";
-                print '<script language="JavaScript" type="text/javascript">';
-                print "function CheckVAT(a) {\n";
-                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
-                print "}\n";
-                print '</script>';
-                print "\n";
-			    if (empty($conf->global->MAIN_DISABLEVATCHECK))
-			    {
-			        $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-				    print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
-			    }
-			    else print $s;
+				$s.=' &nbsp; ';
+				
+				if ($conf->use_javascript_ajax)
+				{
+	                print "\n";
+	                print '<script language="JavaScript" type="text/javascript">';
+	                print "function CheckVAT(a) {\n";
+	                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
+	                print "}\n";
+	                print '</script>';
+	                print "\n";
+				    $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+					print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+				}
+				else
+				{
+				    $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+				}
 			}
-			else
-			{
-			    if (empty($conf->global->MAIN_DISABLEVATCHECK)) $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
-				print $s;
-			}
+			
+			print $s;
+			
 			print '</td>';
 			print '</tr>';
 
 			// Local Taxes
+			// TODO add specific function by country
 			if($mysoc->pays_code=='ES')
 			{
 				if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
@@ -1519,28 +1526,29 @@ else
 			$s='';
 			$s.=$soc->tva_intra;
 			$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
-			$s.=' &nbsp; ';
-			if ($conf->use_javascript_ajax)
+			
+			if (empty($conf->global->MAIN_DISABLEVATCHECK))
 			{
-                print "\n";
-                print '<script language="JavaScript" type="text/javascript">';
-                print "function CheckVAT(a) {\n";
-                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
-                print "}\n";
-                print '</script>';
-                print "\n";
-			    if (empty($conf->global->MAIN_DISABLEVATCHECK))
-			    {
-                    $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+				$s.=' &nbsp; ';
+				
+				if ($conf->use_javascript_ajax)
+				{
+	                print "\n";
+	                print '<script language="JavaScript" type="text/javascript">';
+	                print "function CheckVAT(a) {\n";
+	                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
+	                print "}\n";
+	                print '</script>';
+	                print "\n";
+				    $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 				    print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
-			    }
-			    else print $s;
+				}
+				else
+				{
+	                $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+				}
 			}
-			else
-			{
-                if (empty($conf->global->MAIN_DISABLEVATCHECK)) $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
-			    print $s;
-			}
+			print $s;
 		}
 		else
 		{
@@ -1551,6 +1559,7 @@ else
 		print '</tr>';
 
 		// Local Taxes
+		// TODO add specific function by country
 		if($mysoc->pays_code=='ES')
 		{
 			if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")

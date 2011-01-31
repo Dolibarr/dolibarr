@@ -22,6 +22,7 @@
 <!-- BEGIN PHP TEMPLATE -->
 
 <?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
+<?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
 
 <form name="formsoc" method="POST">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
@@ -129,15 +130,6 @@ for ($i=1; $i<=4; $i++) {
 <tr>
 	<td><?php echo $langs->trans('VATIsUsed'); ?></td>
 	<td><?php echo $this->control->tpl['tva_assuj']; ?></td>
-
-<?php if ($conf->use_javascript_ajax) { ?>
-<script language="JavaScript" type="text/javascript">
-function CheckVAT(a) {
-	newpopup('<?php echo DOL_URL_ROOT; ?>/societe/checkvat/checkVatPopup.php?vatNumber='+a,'<?php echo dol_escape_js($langs->trans("VATIntraCheckableOnEUSite")); ?>',500,260);
-}
-</script>
-<?php } ?>
-
 	<td nowrap="nowrap"><?php echo $langs->trans('VATIntra'); ?></td>
 	<td><?php echo $this->control->tpl['tva_intra']; ?></td>
 </tr>
@@ -160,7 +152,7 @@ function CheckVAT(a) {
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("Type"); ?></td>
+	<td><?php echo $langs->trans("ThirdPartyType"); ?></td>
 	<td><?php echo $this->control->tpl['typent']; ?></td>
 	<td><?php echo $langs->trans("Staff"); ?></td>
 	<td><?php echo $this->control->tpl['effectif']; ?></td>

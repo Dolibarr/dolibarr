@@ -105,6 +105,17 @@ class ActionsCardDefault extends ActionsCardCommon
 		$this->tpl['profid2'] 	= $this->object->siret;
 		$this->tpl['profid3'] 	= $this->object->ape;
 		$this->tpl['profid4'] 	= $this->object->idprof4;
+		
+		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK)) {
+			$js = "\n";
+	        $js.= '<script language="JavaScript" type="text/javascript">';
+	        $js.= "function CheckVAT(a) {\n";
+	        $js.= "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
+	        $js.= "}\n";
+	        $js.= '</script>';
+	        $js.= "\n";
+			$this->tpl['js_checkVatPopup'] = $js;
+		}
 
 		if ($action == 'create' || $action == 'edit')
 		{
@@ -124,18 +135,25 @@ class ActionsCardDefault extends ActionsCardCommon
 			$this->tpl['select_workforce'] = $form->selectarray("effectif_id",$formcompany->effectif_array(0), $this->object->effectif_id);
 
 			// VAT intra
-			$s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
-			$s.=' ';
-			if ($conf->use_javascript_ajax)
+			$s='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
+			if (empty($conf->global->MAIN_DISABLEVATCHECK))
 			{
-				$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-				$this->tpl['tva_intra'] =  $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+				$s.=' ';
+				
+				if ($conf->use_javascript_ajax)
+				{
+					$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+					$this->tpl['tva_intra'] =  $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+				}
+				else
+				{
+					$this->tpl['tva_intra'] =  $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->object->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+				}
 			}
 			else
 			{
-				$this->tpl['tva_intra'] =  $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->object->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+				$this->tpl['tva_intra'] = $s;
 			}
-
 		}
 
 		if ($action == 'view')
@@ -154,21 +172,29 @@ class ActionsCardDefault extends ActionsCardCommon
 			}
 
 			// TVA intra
-			if ($this->tva_intra)
+			if ($this->object->tva_intra)
 			{
-				$s='';
-				$s.=$this->object->tva_intra;
+				$s=$this->object->tva_intra;
 				$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
-				$s.=' &nbsp; ';
-				if ($conf->use_javascript_ajax)
+				if (empty($conf->global->MAIN_DISABLEVATCHECK))
 				{
-					$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-					$this->tpl['tva_intra'] = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+					$s.=' &nbsp; ';
+					
+					if ($conf->use_javascript_ajax)
+					{
+						$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+						$this->tpl['tva_intra'] = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+					}
+					else
+					{
+						$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->object->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+					}
 				}
 				else
 				{
-					$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->object->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+					$this->tpl['tva_intra'] = $s;
 				}
+				
 			}
 			else
 			{

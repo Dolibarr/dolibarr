@@ -22,6 +22,7 @@
 <!-- BEGIN PHP TEMPLATE -->
 
 <?php echo $this->control->tpl['ajax_selectcountry']; ?>
+<?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id']; ?>" method="POST" name="formsoc">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
@@ -174,7 +175,7 @@ for ($i=1; $i<=4; $i++) {
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("Type"); ?></td>
+	<td><?php echo $langs->trans("ThirdPartyType"); ?></td>
 	<td><?php echo $this->control->tpl['select_companytype']; echo $this->control->tpl['info_admin']; ?></td>
 	<td><?php echo $langs->trans("Staff"); ?></td>
 	<td><?php echo $this->control->tpl['select_workforce']; echo $this->control->tpl['info_admin']; ?></td>
@@ -185,14 +186,6 @@ for ($i=1; $i<=4; $i++) {
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_lang']; ?></td>
 </tr>
-<?php } ?>
-
-<?php if ($conf->use_javascript_ajax) { ?>
-<script language="JavaScript" type="text/javascript">
-function CheckVAT(a) {
-	newpopup('<?php echo DOL_URL_ROOT; ?>/societe/checkvat/checkVatPopup.php?vatNumber='+a,'<?php echo dol_escape_js($langs->trans("VATIntraCheckableOnEUSite")); ?>',500,260);
-}
-</script>
 <?php } ?>
 
 <tr>
