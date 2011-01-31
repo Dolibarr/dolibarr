@@ -42,6 +42,7 @@ class DolEditor
 	var $htmlname;
 	var $rows;
 	var $cols;
+	var $height;
 
 
     /**
@@ -106,10 +107,12 @@ class DolEditor
     	}
         if ($this->tool == 'textarea')
         {
-    	    $this->content = $content;
+    	    $this->content	= $content;
     	    $this->htmlname = $htmlname;
-            $this->rows=max(ROWS_3,$rows);
-            $this->cols=max(40,$cols);
+            $this->rows		= max(ROWS_3,$rows);
+            $this->cols		= max(40,$cols);
+            $this->height	= $height;
+            $this->width	= 600;
     	}
     }
 
@@ -132,10 +135,17 @@ class DolEditor
         {
             $found=1;
             $cssclass='flat';
-            if ($conf->global->MAIN_USE_CKEDITOR) $cssclass='ckeditor';
+            //if ($conf->global->MAIN_USE_CKEDITOR) $cssclass='ckeditor';
             print '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="'.$cssclass.'">';
             print $this->content;
             print '</textarea>';
+            
+            if ($conf->global->MAIN_USE_CKEDITOR)
+            {
+            	print '<script type="text/javascript">';
+            	print 'CKEDITOR.replace(\''.$this->htmlname.'\', { toolbar: \'Basic\', width: '.$this->width.', height: '.$this->height.', toolbarStartupExpanded: false });';
+            	print '</script>';
+            }
         }
 
         if (empty($found))
