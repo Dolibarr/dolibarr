@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur       <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin             <regis@dolibarr.fr>
+/* Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,6 @@
  *  \brief      Page d'activation du module FCKeditor dans les autres modules
  *  \version    $Revision$
  */
-
-if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");

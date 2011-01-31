@@ -43,6 +43,7 @@ class DolEditor
 	var $rows;
 	var $cols;
 	var $height;
+	var $width;
 
 
     /**
@@ -60,17 +61,17 @@ class DolEditor
      *      @param  rows                    Size of rows for textarea tool
 	 *      @param  cols                    Size of cols for textarea tool
 	 */
-    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextandededitor=true,$rows=0,$cols=0)
+    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0)
     {
     	global $conf,$langs;
 
     	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." tool=".$tool);
 
         // Name of extended editor to use
-    	$this->tool=empty($conf->global->FCKEDITOR_EDITORNAME)?'fckeditor':$conf->global->FCKEDITOR_EDITORNAME;
+    	$this->tool=empty($conf->global->MAIN_EXTENDED_EDITOR_NAME)?'fckeditor':$conf->global->MAIN_EXTENDED_EDITOR_NAME;
 
         // Check if extended editor is ok. If not we force textarea
-        if (empty($conf->fckeditor->enabled) || ! $okforextandededitor)
+        if (empty($conf->fckeditor->enabled) || ! $okforextendededitor)
         {
             $this->tool = 'textarea';
         }
@@ -119,7 +120,6 @@ class DolEditor
 
     }
 
-
     /**
      *		Output edit area inside the HTML stream
      */
@@ -137,15 +137,18 @@ class DolEditor
         if (in_array($this->tool,array('textarea','ckeditor')))
         {
             $found=1;
-            $cssclass='flat';
-            print '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="'.$cssclass.'">';
+            print '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="flat">';
             print $this->content;
             print '</textarea>';
 
             if ($this->tool == 'ckeditor')
             {
+            	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
+            	
             	print '<script type="text/javascript">';
+            	print 'jQuery(document).ready(function () {';
             	print 'CKEDITOR.replace(\''.$this->htmlname.'\', { toolbar: \'Basic\', width: '.$this->width.', height: '.$this->height.', toolbarStartupExpanded: false });';
+            	print '});';
             	print '</script>';
             }
         }
@@ -157,6 +160,5 @@ class DolEditor
     }
 
 }
-
 
 ?>

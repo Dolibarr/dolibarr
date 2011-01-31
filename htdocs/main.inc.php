@@ -886,12 +886,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			{
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
 			}
-			
-			// CKEditor
-			if ($conf->global->MAIN_USE_CKEDITOR && defined('REQUIRE_CKEDITOR'))
-			{
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor.js"></script>'."\n";
-			}
 		}
 
 		// Output module javascript
@@ -1572,6 +1566,12 @@ if (! function_exists("llxFooter"))
 
 		print "\n";
 		if ($foot) print '<!-- '.$foot.' -->'."\n";
+		
+		// CKEditor
+		if (defined('REQUIRE_CKEDITOR'))
+		{
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor.js"></script>'."\n";
+		}
 
 		if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
 
