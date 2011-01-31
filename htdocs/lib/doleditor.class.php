@@ -40,6 +40,7 @@ class DolEditor
 	// If not using fckeditor
 	var $content;
 	var $htmlname;
+	var $toolbarname;
 	var $rows;
 	var $cols;
 	var $height;
@@ -110,12 +111,13 @@ class DolEditor
 
         if (in_array($this->tool,array('textarea','ckeditor')))
         {
-    	    $this->content	= $content;
-    	    $this->htmlname = $htmlname;
-            $this->rows		= max(ROWS_3,$rows);
-            $this->cols		= max(40,$cols);
-            $this->height	= $height;
-            $this->width	= 600;
+    	    $this->content		= $content;
+    	    $this->htmlname 	= $htmlname;
+    	    $this->toolbarname	= $toolbarname;
+            $this->rows			= max(ROWS_3,$rows);
+            $this->cols			= max(40,$cols);
+            $this->height		= $height;
+            $this->width		= 600;
     	}
 
     }
@@ -145,11 +147,19 @@ class DolEditor
             {
             	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
             	
-            	print '<script type="text/javascript">';
-            	print 'jQuery(document).ready(function () {';
-            	print 'CKEDITOR.replace(\''.$this->htmlname.'\', { toolbar: \'Basic\', width: '.$this->width.', height: '.$this->height.', toolbarStartupExpanded: false });';
-            	print '});';
-            	print '</script>';
+            	print '<script type="text/javascript">
+            			jQuery(document).ready(function () {
+            				CKEDITOR.replace(\''.$this->htmlname.'\',
+            					{ 
+            						customConfig : \''.DOL_URL_ROOT.'/theme/'.$conf->theme.'/ckeditor/config.js\',
+            						toolbar: \''.$this->toolbarname.'\',
+            						//width: '.$this->width.',
+            						height: '.$this->height.',
+            						toolbarStartupExpanded: false
+            					});
+            				
+            			});
+            			</script>';
             }
         }
 
