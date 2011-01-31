@@ -41,6 +41,7 @@ class DolEditor
 	var $content;
 	var $htmlname;
 	var $toolbarname;
+	var $toolbarstartexpanded;
 	var $rows;
 	var $cols;
 	var $height;
@@ -111,13 +112,14 @@ class DolEditor
 
         if (in_array($this->tool,array('textarea','ckeditor')))
         {
-    	    $this->content		= $content;
-    	    $this->htmlname 	= $htmlname;
-    	    $this->toolbarname	= $toolbarname;
-            $this->rows			= max(ROWS_3,$rows);
-            $this->cols			= max(40,$cols);
-            $this->height		= $height;
-            $this->width		= 600;
+    	    $this->content				= $content;
+    	    $this->htmlname 			= $htmlname;
+    	    $this->toolbarname			= $toolbarname;
+    	    $this->toolbarstartexpanded = $toolbarstartexpanded;
+            $this->rows					= max(ROWS_3,$rows);
+            $this->cols					= max(40,$cols);
+            $this->height				= $height;
+            $this->width				= 600;
     	}
 
     }
@@ -153,9 +155,9 @@ class DolEditor
             					{ 
             						customConfig : \''.DOL_URL_ROOT.'/theme/'.$conf->theme.'/ckeditor/config.js\',
             						toolbar: \''.$this->toolbarname.'\',
+            						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						//width: '.$this->width.',
-            						height: '.$this->height.',
-            						toolbarStartupExpanded: false
+            						height: '.$this->height.'
             					});
             				
             			});
