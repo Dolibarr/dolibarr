@@ -291,6 +291,7 @@ FullListOnOnlineDocumentation=Full list of all available tags can be found on us
 FirstnameNamePosition=Position of Name/Lastname
 DescWeather=The following pictures will be shown on dashboard when number of late actions reach the following values:
 KeyForWebServicesAccess=Key to use Web Services (parameter "dolibarrkey" in webservices)
+TestSubmitForm=Input test form
 
 # Modules
 Module0Name=Users & groups

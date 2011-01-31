@@ -291,6 +291,7 @@ FullListOnOnlineDocumentation=Liste complète des tags disponibles sur la docume
 FirstnameNamePosition=Ordre affichage prénom/nom
 DescWeather=Les graphiques suivant seront affichées sur le tableau de bord si le nombre d'éléments en retard atteints ces valeurs:
 KeyForWebServicesAccess=Clé pour utiliser les Web Services (paramètre "dolibarrkey" dans les webservices)
+TestSubmitForm=Formulaire de test de saisie
 
 # Modules= undefined
 Module0Name= Utilisateurs & groupes
