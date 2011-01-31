@@ -108,7 +108,7 @@ if ($_POST["save"])
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("FCKEditor"),$linkback,'setup');
+print_fiche_titre($langs->trans("AdvancedEditor"),$linkback,'setup');
 print '<br>';
 /*
  * Activation/desactivation de FCKeditor

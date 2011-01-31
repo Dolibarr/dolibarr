@@ -1119,7 +1119,8 @@ DeliveryOrderNumberingModules= Modèle de numérotation des bons de réception c
 DeliveryOrderModel= Modèle de bon de réception client
 DeliveriesOrderAbility= Prise en charge des bons de réception client
 ##### FCKeditor #####
-ActivateFCKeditor= Activer FCKeditor pour :
+AdvancedEditor=Editeur avancé
+ActivateFCKeditor= Activer éditeur avancé pour :
 FCKeditorForUsers= Création/édition WYSIWIG de la description et note des utilisateurs
 FCKeditorForCompany= Création/édition WYSIWIG de la description et note des tiers
 FCKeditorForProduct= Création/édition WYSIWIG de la description et note des produits/services

@@ -1110,7 +1110,8 @@ DeliveryOrderNumberingModules=Products deliveries receipt numbering module
 DeliveryOrderModel=Products deliveries receipt model
 DeliveriesOrderAbility=Support products deliveries receipts
 ##### FCKeditor #####
-ActivateFCKeditor=Activate FCKeditor for:
+AdvancedEditor=Advanced editor
+ActivateFCKeditor=Activate advanced editor for:
 FCKeditorForUsers=WYSIWIG creation/edition of user's description and note
 FCKeditorForCompany=WYSIWIG creation/edition of companie's description and note
 FCKeditorForProduct=WYSIWIG creation/edition of products/service's description and note
