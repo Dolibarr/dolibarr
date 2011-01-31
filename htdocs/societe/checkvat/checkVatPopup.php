@@ -29,7 +29,10 @@ require_once(DOL_DOCUMENT_ROOT."/includes/nusoap/lib/nusoap.php");
 
 $langs->load("companies");
 
+//http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl
 $WS_DOL_URL='http://ec.europa.eu/taxation_customs/vies/services/checkVatService';
+//$WS_DOL_URL_WSDL=$WS_DOL_URL.'?wsdl';
+$WS_DOL_URL_WSDL='http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl';
 $WS_METHOD ='checkVat';
 
 
@@ -59,8 +62,8 @@ else
 						"vatNumber" => $vatNumber);
 
 	// Set the WebService URL
-	dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL);
-	$soapclient = new nusoap_client($WS_DOL_URL.'?wsdl',true);
+	dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL." WSDL=".$WS_DOL_URL_WSDL);
+	$soapclient = new nusoap_client($WS_DOL_URL_WSDL,true);
 
 	// Check for an error
 	$err = $soapclient->getError();
