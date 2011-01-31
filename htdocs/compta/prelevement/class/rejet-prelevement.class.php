@@ -77,7 +77,7 @@ class RejetPrelevement
 		$this->bon_id = $bonid;
 
 		dol_syslog("RejetPrelevement::Create id $id");
-
+		$bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
 		$facs = $this->_get_list_factures();
 
 		$this->db->begin();
@@ -140,25 +140,26 @@ class RejetPrelevement
 			$pai->paiementid = 3; // type of payment: withdrawal
 			$pai->num_paiement = $langs->trans("StatusRefused");
 
-			if ($pai->create($this->user, 1) == -1)  // we call with no_commit
-	  {
-	  	$error++;
-	  	dol_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
-	  }
+			if ($pai->create($this->user) == -1)  // we call with no_commit
+			{
+				$error++;
+				dol_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
+			}
+			$result=$pai->addPaymentToBank($user,'payment','(WithdrawalRefused)',$bankaccount);
+			
+			// Payment validation
+			if ($pai->valide() < 0)
+			{
+				$error++;
+				dol_syslog("RejetPrelevement::Create Erreur validation du paiement");
+			}
 
-	  // Payment validation
-	  if ($pai->valide() < 0)
-	  {
-	  	$error++;
-	  	dol_syslog("RejetPrelevement::Create Erreur validation du paiement");
-	  }
+			//Tag invoice as unpaid
+			dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
+			$fac->set_unpaid($fac->id, $user);
 
-	  // Tag invoice as unpaid
-	  dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
-	  $fac->set_unpaid($fac->id, $user);
-
-	  // Send email to sender of the standing order request
-	  $this->_send_email($fac);
+			// Send email to sender of the standing order request
+			$this->_send_email($fac);
 		}
 
 		if ($error == 0)
