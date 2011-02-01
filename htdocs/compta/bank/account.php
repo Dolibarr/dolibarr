@@ -302,7 +302,7 @@ if ($account || $_GET["ref"])
     {
         $navig.='<a href="account.php?'.$param.'&amp;page='.($page+1).'">'.img_previous().'</a>';
     }
-    $navig.= ' Page ';
+    $navig.= $langs->trans("Page")." "; // ' Page ';
     $navig.='<input type="text" name="negpage" size="1" class="flat" value="'.($nbpage-$page).'">';
     $navig.='<input type="hidden" name="req_nb"     value="'.$_REQUEST["req_nb"].'">';
     $navig.='<input type="hidden" name="req_desc"   value="'.$_REQUEST["req_desc"].'">';
