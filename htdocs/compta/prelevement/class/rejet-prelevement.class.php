@@ -138,27 +138,30 @@ class RejetPrelevement
 			$pai->amounts[$facs[$i]] = price2num($fac->total_ttc * -1);
 			$pai->datepaye = $date_rejet;
 			$pai->paiementid = 3; // type of payment: withdrawal
-			$pai->num_paiement = $langs->trans("StatusRefused");
+			$pai->num_paiement = $fac->ref;
 
-			if ($pai->create($this->user) == -1)  // we call with no_commit
+			if ($pai->create($this->user) < 0)  // we call with no_commit
 			{
 				$error++;
-				dol_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
+				dol_syslog("RejetPrelevement::Create Error creation payment invoice ".$facs[$i]);
 			}
-			$result=$pai->addPaymentToBank($user,'payment','(WithdrawalRefused)',$bankaccount);
-			if ($result < 0)
+			else
 			{
-				dol_syslog("RejetPrelevement::Create bank Transaction Error");
-				$error++;
-			}
+				$result=$pai->addPaymentToBank($user,'payment','(InvoiceRefused)',$bankaccount);
+				if ($result < 0)
+				{
+					dol_syslog("RejetPrelevement::Create AddPaymentToBan Error");
+					$error++;
+				}
 			
-			// Payment validation
-			if ($pai->valide() < 0)
-			{
-				$error++;
-				dol_syslog("RejetPrelevement::Create Erreur validation du paiement");
+				// Payment validation
+				if ($pai->valide() < 0)
+				{
+					$error++;
+					dol_syslog("RejetPrelevement::Create Error payment validation");
+				}
+			
 			}
-
 			//Tag invoice as unpaid
 			dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
 			$fac->set_unpaid($fac->id, $user);

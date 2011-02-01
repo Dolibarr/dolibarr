@@ -441,17 +441,18 @@ class BonPrelevement extends CommonObject
 						$paiement_id = $paiement->create($user);
 						if ($paiement_id < 0)
 						{
-							dol_syslog("BonPrelevement::set_credite Erreur 1");
+							dol_syslog("BonPrelevement::set_credite AddPayment Error");
 							$error++;
 						}
-                		
-						$result=$paiement->addPaymentToBank($user,'payment','(WithdrawalPayment)',$bankaccount);
-						if ($result < 0)
-						{
-							dol_syslog("BonPrelevement::set_credite Erreur 1");
-							$error++;
-						}
-						
+                		else 
+                		{
+							$result=$paiement->addPaymentToBank($user,'payment','(WithdrawalPayment)',$bankaccount);
+							if ($result < 0)
+							{
+								dol_syslog("BonPrelevement::set_credite AddPaymentToBank Error");
+								$error++;
+							}
+                		}
 						// Update prelevement line 
 						// TODO: Translate to ligne-prelevement.class.php
 						$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
@@ -460,14 +461,14 @@ class BonPrelevement extends CommonObject
 
 						if (! $this->db->query($sql))
 						{
-							dol_syslog("BonPrelevement::set_credite Erreur 1");
+							dol_syslog("BonPrelevement::set_credite Update lines Error");
 							$error++;
 						}
             
 					}
 					else
 					{
-						dol_syslog("BonPrelevement::set_infocredit Erreur 1");
+						dol_syslog("BonPrelevement::set_infocredit Update Bons Error");
 						$error++;
 					}
 
@@ -489,7 +490,7 @@ class BonPrelevement extends CommonObject
 				}
 				else
 				{
-					dol_syslog("bon-prelevement::set_infocredit Ouverture transaction SQL impossible ");
+					dol_syslog("bon-prelevement::set_infocredit 1025 Open SQL transaction impossible ");
 					return -1025;
 				}
 			}
