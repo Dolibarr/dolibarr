@@ -88,11 +88,12 @@ if ($result)
 {
     while ($objp = $db->fetch_object($result))
     {
-        if ($objp->client == 1 || $objp->client == 3) $third['customer']++;
-        if ($objp->client == 2 || $objp->client == 3) $third['prospect']++;
-        if ($objp->fournisseur) $third['supplier']++;
+        $found=0;
+        if ($objp->client == 1 || $objp->client == 3) { $found=1; $third['customer']++; }
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($objp->client == 2 || $objp->client == 3)) { $found=1; $third['prospect']++; }
+        if ($conf->fournisseur->enabled && $objp->fournisseur) { $found=1; $third['supplier']++; }
 
-        $total++;
+        if ($found) $total++;
     }
 }
 else dol_print_error($db);
@@ -103,22 +104,22 @@ if ($conf->societe->enabled)
 {
     if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
     {
-        $statProducts = "<tr $bc[0]>";
-        $statProducts.= '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
-        $statProducts.= "</tr>";
+        $statstring = "<tr $bc[0]>";
+        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
+        $statstring.= "</tr>";
     }
-    $statProducts.= "<tr $bc[1]>";
-    $statProducts.= '<td><a href="'.DOL_URL_ROOT.'/comm/clients.php">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
-    $statProducts.= "</tr>";
+    $statstring.= "<tr $bc[1]>";
+    $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/clients.php">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
+    $statstring.= "</tr>";
 }
 if ($conf->fournisseur->enabled)
 {
-    $statServices = "<tr $bc[0]>";
-    $statServices.= '<td><a href="'.DOL_URL_ROOT.'/fourn/liste.php">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
-    $statServices.= "</tr>";
+    $statstring2 = "<tr $bc[0]>";
+    $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/fourn/liste.php">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
+    $statstring2.= "</tr>";
 }
-print $statProducts;
-print $statServices;
+print $statstring;
+print $statstring2;
 print '<tr class="liste_total"><td>'.$langs->trans("UniqueThirdParties").'</td><td align="right">';
 print $total;
 print '</td></tr>';
