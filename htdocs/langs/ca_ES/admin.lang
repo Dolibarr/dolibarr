@@ -288,6 +288,7 @@ FullListOnOnlineDocumentation=Llista completa de tags disponibles a la documenta
 FirstnameNamePosition=Ordre visualització nom/cognoms
 DescWeather=Els següents gràfics es mostraran en el panell si el nombre d'elements arriben a aquests valors:
 KeyForWebServicesAccess=clau per usar els Web Services (paràmetre "dolibarrkey" a webservices)
+TestSubmitForm=Formulari de proves
 # Modules
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
@@ -1113,7 +1114,8 @@ DeliveryOrderNumberingModules=Mòdul de numeració de les notes de recepció
 DeliveryOrderModel=Model de notes de recepció
 DeliveriesOrderAbility=Ús de notes de recepció
 ##### FCKeditor #####
-ActivateFCKeditor=Activar FCKeditor per a :
+AdvancedEditor=Editor avançat
+ActivateFCKeditor=Activar editor avançat per a :
 FCKeditorForUsers=Creació/edició WYSIWIG de la descripció i notes dels usuaris
 FCKeditorForCompany=Creació/edició WYSIWIG de la descripció i notes dels tercers
 FCKeditorForProduct=Creació/edició WYSIWIG de la descripció i notes dels productes/serveis

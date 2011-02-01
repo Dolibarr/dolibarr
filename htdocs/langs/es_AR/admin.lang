@@ -288,6 +288,7 @@ FullListOnOnlineDocumentation=Listado completo de tags disponibles en la documen
 FirstnameNamePosition=Orden visualización nombre/apellidos
 DescWeather=Los siguientes gráficos se mostrarán en el panel si el número de elementos llegan a estos valores:
 KeyForWebServicesAccess=clave para usar los Web Services (parámetro "dolibarrkey" en webservices)
+TestSubmitForm=Formulario de pruebas
 # Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
@@ -1113,7 +1114,8 @@ DeliveryOrderNumberingModules=Módulo de numeración de las notas de recepción
 DeliveryOrderModel=Modelo de notas de recepción
 DeliveriesOrderAbility=Uso de notas de recepción
 ##### FCKeditor #####
-ActivateFCKeditor=Activar FCKeditor para :
+AdvancedEditor=Editor avanzado
+ActivateFCKeditor=Activar editor avanzado para :
 FCKeditorForUsers=Creación/edición WYSIWIG de la descripción y notas de los usuarios
 FCKeditorForCompany=Creación/edición WYSIWIG de la descripción y notas de los terceros
 FCKeditorForProduct=Creación/edición WYSIWIG de la descripción y notas de los productos/servicios
