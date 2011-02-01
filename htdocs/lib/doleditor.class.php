@@ -70,7 +70,8 @@ class DolEditor
     	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." tool=".$tool);
 
         // Name of extended editor to use
-    	$this->tool=empty($conf->global->MAIN_EXTENDED_EDITOR_NAME)?'fckeditor':$conf->global->MAIN_EXTENDED_EDITOR_NAME;
+    	//$this->tool=empty($conf->global->MAIN_EXTENDED_EDITOR_NAME)?'fckeditor':$conf->global->MAIN_EXTENDED_EDITOR_NAME;    // Name of constants must be NAMEOFMODULE_XXX
+        $this->tool=empty($conf->global->FCKEDITOR_EDITORNAME)?'fckeditor':$conf->global->FCKEDITOR_EDITORNAME;
 
         // Check if extended editor is ok. If not we force textarea
         if (empty($conf->fckeditor->enabled) || ! $okforextendededitor)
@@ -148,18 +149,18 @@ class DolEditor
             if ($this->tool == 'ckeditor')
             {
             	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
-            	
+
             	print '<script type="text/javascript">
             			jQuery(document).ready(function () {
             				CKEDITOR.replace(\''.$this->htmlname.'\',
-            					{ 
+            					{
             						customConfig : \''.DOL_URL_ROOT.'/theme/'.$conf->theme.'/ckeditor/config.js\',
             						toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						//width: '.$this->width.',
             						height: '.$this->height.'
             					});
-            				
+
             			});
             			</script>';
             }
