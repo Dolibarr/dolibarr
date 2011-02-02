@@ -1,7 +1,7 @@
 # Dolibarr language file - fr_FR - agenda
 CHARSET=UTF-8
-Actions=Actions
-ActionsArea=Espace actions (événements et tâches)
+Actions=Evénements
+ActionsArea=Espace événements (actions et tâches)
 Agenda=Agenda
 Agendas=Agendas
 Calendar=Calendrier
