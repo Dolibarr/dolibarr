@@ -484,7 +484,7 @@ else	// View by day
 	echo " </tr>\n";
 	echo " <tr>\n";
 	echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-	show_day_events ($db, $day, $month, $year, $month, $style, $actionarray, 0, 0, $maxlength);
+	show_day_events ($db, $day, $month, $year, $month, $style, $actionarray, 0, 40, $newparam);
 	echo "</td>\n";
 	echo " </tr>\n";
 	echo '</table>';
