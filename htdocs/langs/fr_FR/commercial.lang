@@ -77,6 +77,7 @@ ActionAC_EMAILING=Envoi mailing masse
 ActionAC_COM=Envoi commande client par mail
 ActionAC_SUP_ORD=Envoi commande fournisseur par mail
 ActionAC_SUP_INV=Envoi facture fournisseur par mail
+ActionAC_OTH=Autre
 Stats=Statistiques de vente
 CAOrder=Chiffre d'affaire (Commandes validées)
 FromTo=du %s au %s

@@ -77,3 +77,4 @@ ActionAC_EMAILING=Send mass email
 ActionAC_COM=Send customer order by mail
 ActionAC_SUP_ORD=Send supplier order by mail
 ActionAC_SUP_INV=Send supplier invoice by mail
+ActionAC_OTH=Other
