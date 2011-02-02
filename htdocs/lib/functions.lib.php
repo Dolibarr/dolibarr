@@ -517,7 +517,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
  * 								'tzuser'=output string is for local browser TZ usage
  *	@param		outputlangs		Object lang that contains language for text translation.
  * 	@return     string      	Formated date or '' if time is null
- *  @see        dol_mktime, dol_stringtotime
+ *  @see        dol_mktime, dol_stringtotime, dol_getdate
  */
 function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$encodetooutput=false)
 {
@@ -657,7 +657,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *		                		19700101020000 -> 7200
  *  @param      gm              1=Input date is GM date, 0=Input date is local date
  *  @return		date			Date
- *  @see        dol_print_date, dol_mktime
+ *  @see        dol_print_date, dol_mktime, dol_getdate
  */
 function dol_stringtotime($string, $gm=1)
 {
@@ -686,10 +686,11 @@ function dol_stringtotime($string, $gm=1)
 
 
 /**
- *	\brief  	Return an array with date info
- *	\param		timestamp		Timestamp
- *	\param		fast			Fast mode
- *	\return		array			Array of informations
+ *	Return an array with date info
+ *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows.
+ *	@param		timestamp		Timestamp
+ *	@param		fast			Fast mode
+ *	@return		array			Array of informations
  *				If no fast mode:
  *				'seconds' => $secs,
  *				'minutes' => $min,
@@ -701,7 +702,6 @@ function dol_stringtotime($string, $gm=1)
  *				'yday' => floor($secsInYear/$_day_power),
  *				'weekday' => gmdate('l',$_day_power*(3+$dow)),
  *				'month' => gmdate('F',mktime(0,0,0,$month,2,1971)),
- *				0 => $origd
  *				If fast mode:
  *				'seconds' => $secs,
  *				'minutes' => $min,
@@ -712,7 +712,6 @@ function dol_stringtotime($string, $gm=1)
  *				'yday' => floor($secsInYear/$_day_power),
  *				'leap' => $leaf,
  *				'ndays' => $ndays
- *	\remarks	PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  */
 function dol_getdate($timestamp,$fast=false)
 {
@@ -832,11 +831,11 @@ function dol_date($fmt, $timestamp, $gm=false)
 
 
 /**
- * \brief		Return string with formated size
- * \param		size		Size to print
- * \param		shortvalue	Tell if we want long value to use another unit (Ex: 1.5Kb instead of 1500b)
- * \param		shortunit	Use short value of size unit
- * \return		string		Link
+ * Return string with formated size
+ * @param		size		Size to print
+ * @param		shortvalue	Tell if we want long value to use another unit (Ex: 1.5Kb instead of 1500b)
+ * @param		shortunit	Use short value of size unit
+ * @return		string		Link
  */
 function dol_print_size($size,$shortvalue=0,$shortunit=0)
 {

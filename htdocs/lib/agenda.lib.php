@@ -34,14 +34,13 @@
  * @param 		$month
  * @param 		$day
  * @param 		$showborthday
- * @param 		$action
  * @param 		$filtera
  * @param 		$filtert
  * @param 		$filterd
  * @param 		$pid
  * @param 		$socid
  */
-function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$action,$filtera,$filtert,$filterd,$pid,$socid)
+function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$filtera,$filtert,$filterd,$pid,$socid)
 {
 	global $conf,$langs;
 
@@ -55,7 +54,6 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbort
 		print '<input type="hidden" name="month" value="'.$month.'">';
 		print '<input type="hidden" name="day" value="'.$day.'">';
 		print '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
-		print '<input type="hidden" name="action" value="'.$action.'">';
 		print '<table class="border" width="100%">';
 		if ($canedit || $conf->projet->enabled)
 		{

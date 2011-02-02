@@ -186,7 +186,7 @@ if ($resql)
 
 	//print '<br>';
 
-	print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$action,$filtera,$filtert,$filterd,$pid,$socid);
+	print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$filtera,$filtert,$filterd,$pid,$socid);
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";

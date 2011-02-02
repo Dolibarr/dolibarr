@@ -104,6 +104,34 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 }
 
 
+/** Return previous day
+ *  @param      day     Day
+ *  @param      month   Month
+ *  @param      year    Year
+ *  @return     array   Previous year,month,day
+ */
+function dol_get_prev_day($day, $month, $year)
+{
+    $time=dol_mktime(12,0,0,$month,$day,$year,1,0);
+    $time-=24*60*60;
+    $tmparray=dol_getdate($time,true);
+    return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
+}
+
+/** Return next day
+ *  @param      day     Day
+ *  @param      month   Month
+ *  @param      year    Year
+ *  @return     array   Next year,month,day
+ */
+function dol_get_next_day($day, $month, $year)
+{
+    $time=dol_mktime(12,0,0,$month,$day,$year,1,0);
+    $time+=24*60*60;
+    $tmparray=dol_getdate($time,true);
+    return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
+}
+
 /**	Return previous month
  *	@param		month	Month
  *	@param		year	Year
