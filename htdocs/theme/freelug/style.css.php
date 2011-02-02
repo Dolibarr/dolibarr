@@ -98,6 +98,9 @@ input.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
+input:disabled {
+background:#ddd;
+}
 textarea  {
 	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
     font-family: helvetica, verdana, arial, sans-serif;
@@ -114,6 +117,9 @@ textarea.flat
     border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
+}
+textarea:disabled {
+background:#ddd;
 }
 select.flat
 {

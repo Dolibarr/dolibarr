@@ -133,6 +133,9 @@ input.flat {
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
+input:disabled {
+background:#ddd;
+}
 textarea  {
 	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
@@ -148,6 +151,9 @@ textarea.flat {
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
+}
+textarea:disabled {
+background:#ddd;
 }
 select.flat {
 	background: #FDFDFD;

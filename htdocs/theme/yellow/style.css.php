@@ -94,6 +94,9 @@ input.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
+input:disabled {
+background:#ddd;
+}
 textarea  {
 	font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
@@ -108,6 +111,9 @@ textarea.flat
     border: 1px solid #cccccc;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
+}
+textarea:disabled {
+background:#ddd;
 }
 select.flat
 {
