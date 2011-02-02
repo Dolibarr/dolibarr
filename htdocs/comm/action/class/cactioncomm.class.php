@@ -132,6 +132,8 @@ class CActionComm {
 						if ($obj->module == 'invoice' && ! $conf->facture->enabled)	 $qualified=0;
 						if ($obj->module == 'order'   && ! $conf->commande->enabled) $qualified=0;
 						if ($obj->module == 'propal'  && ! $conf->propal->enabled)	 $qualified=0;
+                        if ($obj->module == 'invoice_supplier' && ! $conf->fournisseur->enabled)   $qualified=0;
+                        if ($obj->module == 'order_supplier'   && ! $conf->fournisseur->enabled)   $qualified=0;
 					}
 					if ($qualified)
 					{
