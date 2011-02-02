@@ -122,9 +122,10 @@ jQuery(document).ready(function() {
 		jQuery("#delconst").show();
 	});
 	jQuery(".inputforupdate").keypress(function() {
+		var field_id = jQuery(this).attr("id");
+		var row_num = field_id.split("_");
 		jQuery("#updateconst").show();
-		tmp=jQuery(this).attr("id");
-		jQuery("#check_"+tmp).attr("checked",true);
+		jQuery("#check_" + row_num[1]).attr("checked",true);
 	});
 });
 </script>
@@ -245,7 +246,7 @@ if ($result)
 		print '<td align="center">';
 		if ($conf->use_javascript_ajax)
 		{
-			print '<input type="checkbox" class="flat checkboxfordelete" id="check_input'.$i.'" name="const['.$i.'][check]" value="1">';
+			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
 			print ' &nbsp; ';
 		}
 		else
