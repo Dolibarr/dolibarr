@@ -63,6 +63,9 @@ class Import
 
 		dol_syslog("Import::load_arrays user=".$user->id." filter=".$filter);
 
+        $var=true;
+        $i=0;
+
 		//$dir=DOL_DOCUMENT_ROOT."/includes/modules";
 		foreach($conf->file->dol_document_root as $dirroot)
 		{
@@ -72,10 +75,8 @@ class Import
 			$handle=@opendir($dir);
 			if (is_resource($handle))
 			{
-				// Recherche des exports disponibles
-				$var=True;
-				$i=0;
-				while (($file = readdir($handle))!==false)
+                // Search module files
+			    while (($file = readdir($handle))!==false)
 				{
 					if (preg_match("/^(mod.*)\.class\.php/i",$file,$reg))
 					{
