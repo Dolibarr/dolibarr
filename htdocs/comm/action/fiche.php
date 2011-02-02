@@ -23,7 +23,7 @@
 /**
  *       \file       htdocs/comm/action/fiche.php
  *       \ingroup    agenda
- *       \brief      Page for action card
+ *       \brief      Page for event card
  *       \version    $Id$
  */
 

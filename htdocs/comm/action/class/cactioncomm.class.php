@@ -95,11 +95,11 @@ class CActionComm {
         }
     }
 
-	/*
-	*    \brief      Renvoi la liste des types d'actions existant
-	*    \param      active      1 ou 0 pour un filtre sur l'etat actif ou non ('' par defaut = pas de filtre)
-	*    \return     array       Tableau des types d'actions actifs si ok, <0 si erreur
-	*/
+	/**
+	 *    Return list of event types
+	 *    @param      active      1 or 0 to filter on event state active or not ('' bu default = no filter)
+	 *    @return     array       Array of all event types if OK, <0 if KO
+	 */
 	function liste_array($active='',$idorcode='id')
 	{
 		global $langs,$conf;
@@ -114,6 +114,7 @@ class CActionComm {
 		{
 			$sql.=" WHERE active=".$active;
 		}
+		$sql.= " ORDER BY module, position";
 
 		dol_syslog("CActionComm::liste_array sql=".$sql);
 		$resql=$this->db->query($sql);
@@ -132,12 +133,14 @@ class CActionComm {
 						if ($obj->module == 'invoice' && ! $conf->facture->enabled)	 $qualified=0;
 						if ($obj->module == 'order'   && ! $conf->commande->enabled) $qualified=0;
 						if ($obj->module == 'propal'  && ! $conf->propal->enabled)	 $qualified=0;
+                        if ($obj->module == 'invoice_supplier' && ! $conf->fournisseur->enabled)   $qualified=0;
+                        if ($obj->module == 'order_supplier'   && ! $conf->fournisseur->enabled)   $qualified=0;
 					}
 					if ($qualified)
 					{
 						$transcode=$langs->trans("Action".$obj->code);
-						$repid[$obj->id] = ($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-						$repcode[$obj->code] = ($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+						$repid[$obj->id] = ($transcode!="Action".$obj->code?$transcode:$langs->trans($obj->libelle));
+						$repcode[$obj->code] = ($transcode!="Action".$obj->code?$transcode:$langs->trans($obj->libelle));
 					}
 					$i++;
 				}

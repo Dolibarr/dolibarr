@@ -102,7 +102,7 @@ $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libe
 $tabsql[3] = "SELECT r.rowid as rowid, code_region as code, nom as libelle, r.fk_pays as pays_id, p.code as pays_code, p.libelle as pays, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
 $tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.active FROM ".MAIN_DB_PREFIX."c_civilite AS c";
-$tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
+$tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.deductible, p.code as pays_code, p.libelle as pays, a.fk_pays as pays_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_pays as p WHERE a.fk_pays=p.rowid and p.active=1";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
 $tabsql[9] = "SELECT code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
@@ -123,7 +123,7 @@ $tabsqlsort[2] ="pays ASC, code ASC";
 $tabsqlsort[3] ="pays ASC, code ASC";
 $tabsqlsort[4] ="code ASC";
 $tabsqlsort[5] ="libelle ASC";
-$tabsqlsort[6] ="a.type ASC, a.code ASC";
+$tabsqlsort[6] ="a.type ASC, a.module, a.position, a.code ASC";
 $tabsqlsort[7] ="pays ASC, code ASC, a.libelle ASC";
 $tabsqlsort[8] ="libelle ASC";
 $tabsqlsort[9] ="code ASC";
@@ -144,7 +144,7 @@ $tabfield[2] = "code,libelle,region_id,region,pays";   // "code,libelle,region,p
 $tabfield[3] = "code,libelle,pays_id,pays";
 $tabfield[4] = "code,libelle";
 $tabfield[5] = "code,libelle";
-$tabfield[6] = "code,libelle,type";
+$tabfield[6] = "code,libelle,type,position";
 $tabfield[7] = "code,libelle,pays_id,pays,deductible";
 $tabfield[8] = "code,libelle";
 $tabfield[9] = "code,code_iso,libelle";
@@ -165,7 +165,7 @@ $tabfieldvalue[2] = "code,libelle,region";   // "code,libelle,region"
 $tabfieldvalue[3] = "code,libelle,pays";
 $tabfieldvalue[4] = "code,libelle";
 $tabfieldvalue[5] = "code,libelle";
-$tabfieldvalue[6] = "code,libelle,type";
+$tabfieldvalue[6] = "code,libelle,type,position";
 $tabfieldvalue[7] = "code,libelle,pays,deductible";
 $tabfieldvalue[8] = "code,libelle";
 $tabfieldvalue[9] = "code,code_iso,libelle";
@@ -186,7 +186,7 @@ $tabfieldinsert[2] = "code_departement,nom,fk_region";
 $tabfieldinsert[3] = "code_region,nom,fk_pays";
 $tabfieldinsert[4] = "code,libelle";
 $tabfieldinsert[5] = "code,civilite";
-$tabfieldinsert[6] = "code,libelle,type";
+$tabfieldinsert[6] = "code,libelle,type,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,deductible";
 $tabfieldinsert[8] = "code,libelle";
 $tabfieldinsert[9] = "code,code_iso,label";
@@ -202,6 +202,8 @@ $tabfieldinsert[18]= "code,libelle";
 $tabfieldinsert[19]= "code,libelle";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
+// Example: "" if id field is "rowid" and has autoincrement on
+//          "nameoffield" if id field is not "rowid" or has not autoincrement on
 $tabrowid[1] = "";
 $tabrowid[2] = "";
 $tabrowid[3] = "";
@@ -277,18 +279,24 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
             if (in_array('region_id',$listfield)) { continue; }		// For region page, we do not require the country input
         }
         if ((! isset($_POST[$value]) || $_POST[$value]=='')
-        && $listfield[$f] != 'decalage')   // Fields that are not mandatory
+        && $listfield[$f] != 'decalage'  // Fields that are not mandatory
+        && $listfield[$f] != 'module')   // Fields that are not mandatory
         {
             $ok=0;
             $fieldnamekey=$listfield[$f];
             // We take translate key of field
-            if ($fieldnamekey == 'libelle') $fieldnamekey='Label';
-            if ($fieldnamekey == 'nbjour') $fieldnamekey='NbOfDays';
+            if ($fieldnamekey == 'libelle')  $fieldnamekey='Label';
+            if ($fieldnamekey == 'nbjour')   $fieldnamekey='NbOfDays';
             if ($fieldnamekey == 'decalage') $fieldnamekey='Offset';
+            if ($fieldnamekey == 'module')   $fieldnamekey='Module';
             $msg.=$langs->trans("ErrorFieldRequired",$langs->transnoentities($fieldnamekey)).'<br>';
         }
     }
     // Autres verif
+    if ($tabname[$_POST["id"]] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && $_POST["type"]=='system') {
+        $ok=0;
+        $msg.="Value 'system' for type is reserved. You can use 'user' as value to add your own record.<br>";
+    }
     if (isset($_POST["code"]) && $_POST["code"]=='0') {
         $ok=0;
         $msg.="Code can't contains value 0<br>";

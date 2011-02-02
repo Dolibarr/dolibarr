@@ -26,6 +26,7 @@ create table llx_c_actioncomm
   type       varchar(10) DEFAULT 'system' NOT NULL,
   libelle    varchar(48) NOT NULL,
   module	 varchar(16) DEFAULT NULL,
-  active     tinyint DEFAULT 1  NOT NULL,
-  todo       tinyint
+  active     tinyint DEFAULT 1 NOT NULL,
+  todo       tinyint,
+  position   integer NOT NULL DEFAULT 0
 )type=innodb;

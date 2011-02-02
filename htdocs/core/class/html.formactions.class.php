@@ -163,9 +163,9 @@ class FormActions
 
 
     /**
-     *    \brief      Retourne la liste des types de comptes financiers
-     *    \param      selected        Type pre-selectionne
-     *    \param      htmlname        Nom champ formulaire
+     *    Output list of type of event
+     *    @param      selected        Type pre-selectionne
+     *    @param      htmlname        Nom champ formulaire
      */
     function select_type_actions($selected='',$htmlname='actioncode')
     {
@@ -177,8 +177,8 @@ class FormActions
         $form=new Form($this->db);
 
         $arraylist=$caction->liste_array(1,'code');
-        $arraylist[0]='&nbsp;';
-        asort($arraylist);
+        array_unshift($arraylist,'&nbsp;');     // Add empty line at start
+        //asort($arraylist);
 
         print $form->selectarray($htmlname, $arraylist, $selected);
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
