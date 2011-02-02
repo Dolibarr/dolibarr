@@ -1,55 +1,57 @@
 # Dolibarr language file - es_ES - agenda
-CHARSET= UTF-8
-Actions= Acciones
-ActionsArea= Área de acciones (Eventos y tareas)
-Agenda= Agenda
-Agendas= Agendas
-Calendar= Calendario
-Calendars= Calendarios
-AffectedTo= Asignada a
-DoneBy= Realizado por
-Events= Eventos
+CHARSET=UTF-8
+Actions=Eventos
+ActionsArea=Área de eventos (acciones y tareas)
+Agenda=Agenda
+Agendas=Agendas
+Calendar=Calendario
+Calendars=Calendarios
+AffectedTo=Asignada a
+DoneBy=Realizado por
+Events=Eventos
 EventOnFullDay=Evento para todo el día
-ListOfActions= Listado de eventos
-Location= Localización
-SearchAnAction= Buscar una acción/tarea
-MenuToDoActions= Acciones incompletas
-MenuDoneActions= Acciones terminadas
-MenuToDoMyActions= Mis acciones incompletas
-MenuDoneMyActions= Mis acciones terminadas
-ListOfEvents= Listado de eventos Dolibarr
-ActionsAskedBy= Acciones registradas por
-ActionsToDoBy= Acciones asignadas a
-ActionsDoneBy= Acciones realizadas por
-AllMyActions= Todas mis acciones/tareas
-AllActions= Todas las acciones/tareas
-ViewList= Ver listado
-ViewCal= Ver calendario
-ViewWithPredefinedFilters= Ver con los filtros predefinidos
-AutoActions= Inclusión automática en la agenda
-AgendaAutoActionDesc= Definir los eventos aquí para los que desea que Dolibarr cree automáticamente una acción en el orden del día. Si no está marcada (por defecto),  se podrán crear manualmente.
-AgendaSetupOtherDesc= Esta página le permite configurar otros parámetros del módulo agenda.
-ActionsEvents= Eventos para que Dolibarr cree una acción de forma automática
-PropalValidatedInDolibarr= Presupuesto %s validado
-InvoiceValidatedInDolibarr= Factura %s validada
-OrderValidatedInDolibarr= Pedido %s validado
-InterventionValidatedInDolibarr= Intervención %s validada
+ListOfActions=Listado de eventos
+Location=Localización
+SearchAnAction=Buscar un evento/tarea
+MenuToDoActions=Eventos incompletos
+MenuDoneActions=Eventos terminados
+MenuToDoMyActions=Mis eventos incompletos
+MenuDoneMyActions=Mis eventos terminados
+ListOfEvents=Listado de eventos Dolibarr
+ActionsAskedBy=Eventos registrados por
+ActionsToDoBy=Eventos asignados a
+ActionsDoneBy=Eventos realizados por
+AllMyActions=Todos mis eventos/tareas
+AllActions=Todos los eventos/tareas
+ViewList=Vista listado
+ViewCal=Vista mensual
+ViewDay=Vista diaria
+ViewWeek=Vista semanal
+ViewWithPredefinedFilters=Ver con los filtros predefinidos
+AutoActions=Inclusión automática en la agenda
+AgendaAutoActionDesc=Definir los eventos aquí para los que desea que Dolibarr cree automáticamente una acción en el orden del día. Si no está marcada (por defecto),  se podrán crear manualmente.
+AgendaSetupOtherDesc=Esta página le permite configurar otros parámetros del módulo agenda.
+ActionsEvents=Eventos para que Dolibarr cree una acción de forma automática
+PropalValidatedInDolibarr=Presupuesto %s validado
+InvoiceValidatedInDolibarr=Factura %s validada
+OrderValidatedInDolibarr=Pedido %s validado
+InterventionValidatedInDolibarr=Intervención %s validada
 ProposalSentByEMail=Presupuesto %s enviado por e-mail
 OrderSentByEMail=Pedido de cliente %s enviado por e-mail
 InvoiceSentByEMail=Factura a cliente %s enviada por e-mail
 SupplierOrderSentByEMail=Pedido a proveedor %s enviada por e-mail
 SupplierInvoiceSentByEMail=Factura de proveedor %s enviada por e-mail
-NewCompanyToDolibarr= Tercero creado
-DateActionPlannedStart= Fecha de inicio prevista
-DateActionPlannedEnd= Fecha de fin prevista
-DateActionDoneStart= Fecha real de inicio
-DateActionDoneEnd= Fecha real de finalización
-DateActionStart= Fecha de inicio
-DateActionEnd= Fecha finalización
-AgendaUrlOptions1= Puede también añadir estos parámetros al filtro de salida:
-AgendaUrlOptions2= <b>login=%s</b> para restringir inserciones a acciones creadas , que afecten o realizadas por el usuario <b>%s</b>.
-AgendaUrlOptions3= <b>logina=%s</b> para restringir inserciones a acciones creadas por el usuario <b>%s</b>.
-AgendaUrlOptions4= <b>logint=%s</b> para restringir inserciones a acciones que afecten al usuario <b>%s</b>.
-AgendaUrlOptions5= <b>logind=%s</b> para restringir inserciones a acciones realizadas por el usuario <b>%s</b>.
-AgendaShowBirthdayEvents= Mostrar cumpleaños de los contactos
-AgendaHideBirthdayEvents= Ocultar cumpleaños de los contactos
+NewCompanyToDolibarr=Tercero creado
+DateActionPlannedStart=Fecha de inicio prevista
+DateActionPlannedEnd=Fecha de fin prevista
+DateActionDoneStart=Fecha real de inicio
+DateActionDoneEnd=Fecha real de finalización
+DateActionStart=Fecha de inicio
+DateActionEnd=Fecha finalización
+AgendaUrlOptions1=Puede también añadir estos parámetros al filtro de salida:
+AgendaUrlOptions2=<b>login=%s</b> para restringir inserciones a acciones creadas , que afecten o realizadas por el usuario <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> para restringir inserciones a acciones creadas por el usuario <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> para restringir inserciones a acciones que afecten al usuario <b>%s</b>.
+AgendaUrlOptions5=<b>logind=%s</b> para restringir inserciones a acciones realizadas por el usuario <b>%s</b>.
+AgendaShowBirthdayEvents=Mostrar cumpleaños de los contactos
+AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
