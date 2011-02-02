@@ -488,7 +488,7 @@ class FormMail
 			{
 				// Editeur wysiwyg
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('message',$defaultmessage,280,'dolibarr_notes','In',true,false,$this->withfckeditor,8,72);
+				$doleditor=new DolEditor('message',$defaultmessage,'',280,'dolibarr_notes','In',true,false,$this->withfckeditor,8,72);
 				$doleditor->Create();
 			}
 			print "</td></tr>\n";

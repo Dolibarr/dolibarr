@@ -161,7 +161,7 @@ print '<br>'."\n";
 print '<!-- Editor name = '.$conf->global->FCKEDITOR_EDITORNAME.' -->';
 print_fiche_titre($langs->trans("TestSubmitForm"),'','');
 print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-$editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test',200,'dolibarr_notes','In', true);
+$editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test','',200,'dolibarr_notes','In', true);
 $editor->Create();
 print '<center><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></center>'."\n";
 print '</form>'."\n";

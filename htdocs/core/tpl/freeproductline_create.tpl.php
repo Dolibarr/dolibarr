@@ -56,7 +56,7 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
     $nbrows=ROWS_2;
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-	$doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+	$doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],'',100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
 	$doleditor->Create();
 	?>
 	</td>

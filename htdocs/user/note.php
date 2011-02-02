@@ -127,7 +127,7 @@ if ($id)
 	    {
 		    // Editeur wysiwyg
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note',$fuser->note,280,'dolibarr_notes','In',true);
+			$doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true);
 			$doleditor->Create();
 	    }
 	    else

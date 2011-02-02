@@ -121,7 +121,7 @@ if ($socid > 0)
 
 	    // Editeur wysiwyg
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('note',$societe->note,360,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,20,70);
+		$doleditor=new DolEditor('note',$societe->note,'',360,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,20,70);
 		$doleditor->Create();
 	}
 	else

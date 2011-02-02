@@ -167,14 +167,14 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor=new DolEditor('PAYPAL_MESSAGE_OK',$conf->global->PAYPAL_MESSAGE_OK,60,'Basic','In',false,true,true,ROWS_2,60);
+$doleditor=new DolEditor('PAYPAL_MESSAGE_OK',$conf->global->PAYPAL_MESSAGE_OK,'',60,'Basic','In',false,true,true,ROWS_2,60);
 $doleditor->Create();
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor=new DolEditor('PAYPAL_MESSAGE_KO',$conf->global->PAYPAL_MESSAGE_KO,60,'Basic','In',false,true,true,ROWS_2,60);
+$doleditor=new DolEditor('PAYPAL_MESSAGE_KO',$conf->global->PAYPAL_MESSAGE_KO,'',60,'Basic','In',false,true,true,ROWS_2,60);
 $doleditor->Create();
 print '</td></tr>';
 

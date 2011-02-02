@@ -738,7 +738,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('note','',180,'dolibarr_notes','',false);
+		$doleditor=new DolEditor('note','','',180,'dolibarr_notes','',false);
 		$doleditor->Create();
 	}
 	else

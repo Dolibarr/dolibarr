@@ -1500,7 +1500,7 @@ else
                     require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
                     $nbrows=ROWS_2;
                     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-                    $doleditor=new DolEditor('label',$fac->lines[$i]->description,200,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+                    $doleditor=new DolEditor('label',$fac->lines[$i]->description,'',200,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
                     $doleditor->Create();
                     print '</td>';
 
@@ -1630,7 +1630,7 @@ else
                 require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
                 $nbrows=ROWS_2;
                 if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-                $doleditor=new DolEditor('label',GETPOST("label"),100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+                $doleditor=new DolEditor('label',GETPOST("label"),'',100,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
                 $doleditor->Create();
 
                 print '</td>';

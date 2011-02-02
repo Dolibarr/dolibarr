@@ -53,7 +53,8 @@ class DolEditor
      *      
      *      @param 	htmlname		        Nom formulaire html WYSIWIG
      *      @param 	content			        Contenu edition WYSIWIG
-     *      @param 	height			        Hauteur en pixel de la zone edition
+     *      @param	width					Largeur en pixel de la zone edition (auto by default)
+     *      @param 	height			        Hauteur en pixel de la zone edition (200px by default)
      *      @param 	toolbarname		        Nom barre de menu editeur
      *      @param  toolbarlocation       	Emplacement de la barre de menu :
      *                                    	'In' chaque fenetre d'edition a la propre barre d'outils
@@ -64,7 +65,7 @@ class DolEditor
      *      @param  rows                    Size of rows for textarea tool
 	 *      @param  cols                    Size of cols for textarea tool
 	 */
-    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0)
+    function DolEditor($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0)
     {
     	global $conf,$langs;
 
@@ -89,6 +90,7 @@ class DolEditor
         	$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/' ;
         	$this->editor->Value	= $content;
         	$this->editor->Height   = $height;
+        	if (! empty($width)) $this->editor->Width = $width;
         	$this->editor->ToolbarSet = $toolbarname;
         	$this->editor->Config['AutoDetectLanguage'] = 'true';
         	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
@@ -120,7 +122,7 @@ class DolEditor
             $this->rows					= max(ROWS_3,$rows);
             $this->cols					= max(40,$cols);
             $this->height				= $height;
-            $this->width				= 600;
+            $this->width				= $width;
     	}
 
     }
@@ -157,7 +159,7 @@ class DolEditor
             						customConfig : \''.DOL_URL_ROOT.'/theme/'.$conf->theme.'/ckeditor/config.js\',
             						toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
-            						//width: '.$this->width.',
+            						width: '.($this->width ? $this->width : '\'\'').',
             						height: '.$this->height.'
             					});
 
