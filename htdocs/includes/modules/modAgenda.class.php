@@ -210,7 +210,7 @@ class modAgenda extends DolibarrModules
 													'titre'=>'NewAction',
 													'mainmenu'=>'agenda',
 													'url'=>'/comm/action/fiche.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
-													'langs'=>'agenda',
+													'langs'=>'commercial',
 													'position'=>101,
 													'perms'=>'($user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create)',
 													'enabled'=>'$conf->agenda->enabled',
