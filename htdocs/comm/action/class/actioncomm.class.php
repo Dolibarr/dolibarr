@@ -61,6 +61,7 @@ class ActionComm extends CommonObject
 	var $priority;
 	var $fulldayevent = 0;  // 1=Event on full day
 	var $punctual = 1;
+    var $location;
 
     var $usertodo;		// Object user that must do action
     var $userdone;	 	// Object user that did action
@@ -577,7 +578,12 @@ class ActionComm extends CommonObject
 		else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
         //print $this->libelle;
-        if (empty($this->libelle))
+        if ($withpicto == 2)
+        {
+            $libelle=$langs->trans("Action".$this->type_code);
+            $libelleshort='';
+        }
+        else if (empty($this->libelle))
         {
         	$libelle=$langs->trans("Action".$this->type_code);
         	$libelleshort=$langs->trans("Action".$this->type_code,'','','','',$maxlength);

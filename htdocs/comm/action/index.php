@@ -484,7 +484,7 @@ else	// View by day
 	echo " </tr>\n";
 	echo " <tr>\n";
 	echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-	show_day_events ($db, $day, $month, $year, $month, $style, $actionarray, 0, 80, $newparam);
+	show_day_events ($db, $day, $month, $year, $month, $style, $actionarray, 0, 80, $newparam, 1);
 	echo "</td>\n";
 	echo " </tr>\n";
 	echo '</table>';
@@ -510,10 +510,9 @@ llxFooter('$Date$ - $Revision$');
  * @param 	$maxPrint		 Nb of actions to show each day on month view (0 means non limit)
  * @param 	$maxnbofchar	 Nb of characters to show for event line
  * @param   $newparam        Parameters on current URL
- * @param   $companystatic   Object thirdparty
- * @param   $contactstatic   Object contact
+ * @param   $showinfo        Add extended information (used by day view)
  */
-function show_day_events($db, $day, $month, $year, $monthshown, $style, &$actionarray, $maxPrint=0, $maxnbofchar=14, $newparam='')
+function show_day_events($db, $day, $month, $year, $monthshown, $style, &$actionarray, $maxPrint=0, $maxnbofchar=14, $newparam='', $showinfo=0)
 {
 	global $user, $conf, $langs;
 	global $filter, $filtera, $filtert, $filterd, $status;
@@ -565,6 +564,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$action
 					print '<td nowrap="nowrap">';
 					if ($action->type_code != 'BIRTHDAY')
 					{
+                        if ($showinfo)
+                        {
+                            print $action->getNomUrl(2).' ';
+                        }
+
 					    if (empty($action->fulldayevent))
 					    {
     					    // Show hours (start ... end)
@@ -599,7 +603,14 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$action
     							if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
     							print dol_print_date($action->date_end_in_calendar,'%H:%M');
     						}
-    						print '<br>';
+    						print '<br>'."\n";
+					    }
+					    else
+					    {
+					       if ($showinfo)
+					       {
+                                print $langs->trans("EventOnFullDay").'<br>'."\n";
+					       }
 					    }
 
 						// If action related to company / contact
@@ -634,6 +645,15 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$action
 					else	// It's a birthday
 					{
 						print $action->getNomUrl(1,$maxnbofchar,'cal_event','birthday','contact');
+					}
+					// Show location
+					if ($showinfo)
+					{
+					    if ($action->location)
+					    {
+					        print '<br>';
+                            print $langs->trans("Location").': '.$action->location;
+					    }
 					}
 					print '</td>';
                     // Status - Percent
