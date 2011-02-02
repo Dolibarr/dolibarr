@@ -49,7 +49,8 @@ class DolEditor
 
 
     /**
-     *      DolEditor                       Create an object to build an HTML area to edit a large string content
+     *      Create an object to build an HTML area to edit a large string content
+     *      
      *      @param 	htmlname		        Nom formulaire html WYSIWIG
      *      @param 	content			        Contenu edition WYSIWIG
      *      @param 	height			        Hauteur en pixel de la zone edition
@@ -70,7 +71,6 @@ class DolEditor
     	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." tool=".$tool);
 
         // Name of extended editor to use
-    	//$this->tool=empty($conf->global->MAIN_EXTENDED_EDITOR_NAME)?'fckeditor':$conf->global->MAIN_EXTENDED_EDITOR_NAME;    // Name of constants must be NAMEOFMODULE_XXX
         $this->tool=empty($conf->global->FCKEDITOR_EDITORNAME)?'fckeditor':$conf->global->FCKEDITOR_EDITORNAME;
 
         // Check if extended editor is ok. If not we force textarea
