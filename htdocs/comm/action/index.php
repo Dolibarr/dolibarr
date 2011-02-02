@@ -510,8 +510,6 @@ llxFooter('$Date$ - $Revision$');
  * @param 	$maxPrint		 Nb of actions to show each day on month view (0 means non limit)
  * @param 	$maxnbofchar	 Nb of characters to show for event line
  * @param   $newparam        Parameters on current URL
- * @param   $companystatic   Object thirdparty
- * @param   $contactstatic   Object contact
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$actionarray, $maxPrint=0, $maxnbofchar=14, $newparam='')
 {
