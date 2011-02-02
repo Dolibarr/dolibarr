@@ -78,6 +78,7 @@ CVS
 .#*
 .cache
 .cvsignore
+.externalToolBuilders
 .htaccess
 .settings
 .project
