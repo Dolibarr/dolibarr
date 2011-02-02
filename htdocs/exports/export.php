@@ -91,7 +91,7 @@ if ($action=='selectfield')
 {
     if ($_GET["field"]=='all')
     {
-		$fieldsarray=$objexport->array_export_alias[0];
+		$fieldsarray=$objexport->array_export_fields[0];
 		foreach($fieldsarray as $key=>$val)
 		{
 			if (! empty($array_selected[$key])) continue;		// If already selected, select next

@@ -115,7 +115,6 @@ class modDeplacement extends DolibarrModules
 		$this->export_permission[$r]=array(array("deplacement","export"));
         $this->export_fields_array[$r]=array('d.rowid'=>"TripId",'d.type'=>"Type",'d.km'=>"FeesKilometersOrAmout",'d.note'=>'NotePrivate','d.note_public'=>'NotePublic','s.nom'=>'ThirdParty','u.name'=>'Lastname','u.firstname'=>'Firstname','d.dated'=>"Date");
         $this->export_entities_array[$r]=array('d.rowid'=>"Trip",'d.type'=>"Trip",'d.km'=>"Trip",'d.note'=>'Trip','d.note_public'=>'Trip','s.nom'=>'company','u.name'=>'user','u.firstname'=>'user','d.dated'=>"Date");
-        $this->export_alias_array[$r]=array('d.rowid'=>"idtrip",'d.type'=>"type",'d.km'=>"km",'d.note'=>'note','d.note_public'=>'note_public','s.nom'=>'companyname','u.name'=>'name','u.firstname'=>'firstname','d.dated'=>'date');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';

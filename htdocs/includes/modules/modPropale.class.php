@@ -91,7 +91,7 @@ class modPropale extends DolibarrModules
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des propales';
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		$this->const[$r][0] = "PROPALE_VALIDITY_DURATION";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "15";
@@ -167,7 +167,6 @@ class modPropale extends DolibarrModules
 		$this->export_permission[$r]=array(array("propale","export"));
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.cp'=>'Zip','s.ville'=>'Town','s.fk_pays'=>'Country','s.tel'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','c.rowid'=>"Id",'c.ref'=>"Ref",'c.ref_client'=>"RefClient",'c.fk_soc'=>"IdCompany",'c.datec'=>"DateCreation",'c.datep'=>"DatePropal",'c.fin_validite'=>"DateEndPropal",'c.remise_percent'=>"GlobalDiscount",'c.total_ht'=>"TotalHT",'c.total'=>"TotalTTC",'c.fk_statut'=>'Status','c.note'=>"Note",'c.date_livraison'=>'DeliveryDate','cd.rowid'=>'LineId','cd.description'=>"LineDescription",'cd.product_type'=>'TypeOfLineServiceOrProduct','cd.tva_tx'=>"LineVATRate",'cd.qty'=>"LineQty",'cd.total_ht'=>"LineTotalHT",'cd.total_tva'=>"LineTotalVAT",'cd.total_ttc'=>"LineTotalTTC",'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'Label');
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.cp'=>'company','s.ville'=>'company','s.fk_pays'=>'company','s.tel'=>'company','s.siren'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.siret'=>'company','c.rowid'=>"propal",'c.ref'=>"propal",'c.ref_client'=>"propal",'c.fk_soc'=>"propal",'c.datec'=>"propal",'c.datep'=>"propal",'c.fin_validite'=>"propal",'c.remise_percent'=>"propal",'c.total_ht'=>"propal",'c.total'=>"propal",'c.fk_statut'=>"propal",'c.note'=>"propal",'c.date_livraison'=>"propal",'cd.rowid'=>'propal_line','cd.description'=>"propal_line",'cd.product_type'=>'propal_line','cd.tva_tx'=>"propal_line",'cd.qty'=>"propal_line",'cd.total_ht'=>"propal_line",'cd.total_tva'=>"propal_line",'cd.total_ttc'=>"propal_line",'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product');
-		$this->export_alias_array[$r]=array('s.rowid'=>"socid",'s.nom'=>'soc_name','s.address'=>'soc_adres','s.cp'=>'soc_zip','s.ville'=>'soc_ville','s.fk_pays'=>'soc_pays','s.tel'=>'soc_tel','s.siren'=>'soc_siren','s.siret'=>'soc_siret','s.ape'=>'soc_ape','s.idprof4'=>'soc_idprof4','c.rowid'=>"orderid",'c.ref'=>"ref",'c.ref_client'=>"refclient",'c.fk_soc'=>"fk_soc",'c.datec'=>"datecreation",'c.datep'=>"datepropal",'c.fin_validite'=>"dateendpropal",'c.remise_percent'=>"globaldiscount",'c.total_ht'=>"totalht",'c.total'=>"totalttc",'c.fk_statut'=>'status','c.note'=>"note",'c.date_livraison'=>'datedelivery','cd.rowid'=>'lineid','cd.description'=>"linedescription",'cd.product_type'=>'linetype','cd.tva_tx'=>"linevatrate",'cd.qty'=>"lineqty",'cd.total_ht'=>"lientotalht",'cd.total_tva'=>"linetotalvat",'cd.total_ttc'=>"linetotalttc",'p.rowid'=>'idproduct','p.ref'=>'refproduct','p.label'=>'label');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as c, '.MAIN_DB_PREFIX.'propaldet as cd)';

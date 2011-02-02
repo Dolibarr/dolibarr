@@ -92,50 +92,50 @@ class modBanque extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 111; // id de la permission
 		$this->rights[$r][1] = 'Lire les comptes bancaires'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 112; // id de la permission
 		$this->rights[$r][1] = 'Creer/modifier montant/supprimer ecriture bancaire'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'modifier';
 
 		$r++;
 		$this->rights[$r][0] = 113; // id de la permission
 		$this->rights[$r][1] = 'Configurer les comptes bancaires (creer, gerer categories)'; // libelle de la permission
-		$this->rights[$r][2] = 'a'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'configurer';
 
 		$r++;
 		$this->rights[$r][0] = 114; // id de la permission
 		$this->rights[$r][1] = 'Rapprocher les ecritures bancaires'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'consolidate';
 
 		$r++;
 		$this->rights[$r][0] = 115; // id de la permission
 		$this->rights[$r][1] = 'Exporter transactions et releves'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
 
 		$r++;
 		$this->rights[$r][0] = 116; // id de la permission
 		$this->rights[$r][1] = 'Virements entre comptes'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'transfer';
 
 		$r++;
 		$this->rights[$r][0] = 117; // id de la permission
 		$this->rights[$r][1] = 'Gerer les envois de cheques'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cheque';
 
 
@@ -150,7 +150,6 @@ class modBanque extends DolibarrModules
 		$this->export_permission[$r]=array(array("banque","export"));
 		$this->export_fields_array[$r]=array('b.rowid'=>'IdTransaction','ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.dateo'=>'DateOperation','b.label'=>'Label','b.num_chq'=>'ChequeOrTransferNumber','-b.amount'=>'Debit','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","s.code_compta_fournisseur"=>"SupplierAccountancyCode");
 		$this->export_entities_array[$r]=array('b.rowid'=>'account','ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.dateo'=>'account','b.label'=>'account','b.num_chq'=>'account','-b.amount'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account","bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company");
-		$this->export_alias_array[$r]=array('b.rowid'=>'tran_id','ba.ref'=>'account_ref','ba.label'=>'account_label','b.datev'=>'datev','b.dateo'=>'dateo','b.label'=>'label','b.num_chq'=>'num','-b.amount'=>'debit','b.amount'=>'credit','b.num_releve'=>'numrel','b.datec'=>"datec","bu.url_id"=>"soc_id","s.nom"=>"thirdparty","s.code_compta"=>"customeracccode","s.code_compta_fournisseur"=>"supplieracccode");
 		$this->export_special_array[$r]=array('-b.amount'=>'NULLIFNEG','b.amount'=>'NULLIFNEG');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';

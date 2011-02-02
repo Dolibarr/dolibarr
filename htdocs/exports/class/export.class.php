@@ -37,8 +37,8 @@ class Export
 	var $array_export_module=array();           // Tableau de "nom de modules"
 	var $array_export_label=array();            // Tableau de "libelle de lots"
 	var $array_export_sql=array();              // Tableau des "requetes sql"
-	var $array_export_fields=array();           // Tableau des listes de champ+libell� � exporter
-	var $array_export_alias=array();            // Tableau des listes de champ+alias � exporter
+	var $array_export_fields=array();           // Tableau des listes de champ+libelle a exporter
+	//var $array_export_alias=array();            // Tableau des listes de champ+alias a exporter
 	var $array_export_special=array();          // Tableau des operations speciales sur champ
 
 	// To store export modules
@@ -150,8 +150,6 @@ class Export
 									$this->array_export_fields[$i]=$module->export_fields_array[$r];
 									// Tableau des entites a exporter (cle=champ, valeur=entite)
 									$this->array_export_entities[$i]=$module->export_entities_array[$r];
-									// Tableau des alias a exporter (cle=champ, valeur=alias)
-									$this->array_export_alias[$i]=$module->export_alias_array[$r];
 									// Tableau des operations speciales sur champ
 									$this->array_export_special[$i]=$module->export_special_array[$r];
 
@@ -187,13 +185,13 @@ class Export
 		$sql=$this->array_export_sql_start[$indice];
 		$i=0;
 		//print_r($array_selected);
-		foreach ($this->array_export_alias[$indice] as $key => $value)
+		foreach ($this->array_export_fields[$indice] as $key => $value)
 		{
 			if (! array_key_exists($key, $array_selected)) continue;		// Field not selected
 
 			if ($i > 0) $sql.=', ';
 			else $i++;
-			$newfield=$key.' as '.$value;
+			$newfield=$key.' as '.str_replace(array('.', '-'),'_',$key);;
 
 			$sql.=$newfield;
 		}
@@ -267,20 +265,22 @@ class Export
 							// Operation NULLIFNEG
 							if ($this->array_export_special[$indice][$key]=='NULLIFNEG')
 							{
-								$alias=$this->array_export_alias[$indice][$key];
+								//$alias=$this->array_export_alias[$indice][$key];
+								$alias=str_replace(array('.', '-'),'_',$key);
 								if ($objp->$alias < 0) $objp->$alias='';
 							}
 							// Operation ZEROIFNEG
 							if ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
 							{
-								$alias=$this->array_export_alias[$indice][$key];
+								//$alias=$this->array_export_alias[$indice][$key];
+								$alias=str_replace(array('.', '-'),'_',$key);
 								if ($objp->$alias < 0) $objp->$alias='0';
 							}
 						}
 					}
 					// end of special operation processing
 
-					$objmodel->write_record($this->array_export_alias[$indice],$array_selected,$objp,$outputlangs);
+					$objmodel->write_record($this->array_export_fields[$indice],$array_selected,$objp,$outputlangs);
 				}
 
 				// Genere en-tete

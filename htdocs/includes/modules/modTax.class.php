@@ -131,7 +131,6 @@ class modTax extends DolibarrModules
 		$this->export_permission[$r]=array(array("tax","charges","export"));
 		$this->export_fields_array[$r]=array('cc.libelle'=>"Type",'c.rowid'=>"IdSocialContribution",'c.libelle'=>"Label",'c.date_ech'=>'DateDue','c.periode'=>'Period','c.amount'=>"AmountExpected","c.paye"=>"Status",'p.rowid'=>'PaymentId','p.datep'=>'DatePayment','p.amount'=>'AmountPayment','p.num_paiement'=>'Numero');
 		$this->export_entities_array[$r]=array('cc.libelle'=>"tax_type",'c.rowid'=>"tax",'c.libelle'=>'tax','c.date_ech'=>'tax','c.periode'=>'tax','c.amount'=>"tax","c.paye"=>"tax",'p.rowid'=>'payment','p.datep'=>'payment','p.amount'=>'payment','p.num_paiement'=>'payment');
-		$this->export_alias_array[$r]=array('cc.libelle'=>"type",'c.rowid'=>"idsocialcontrib",'c.libelle'=>'label','c.date_ech'=>'datedue','c.periode'=>'period','c.amount'=>"amount_clamed","c.paye"=>"status",'p.rowid'=>'paymentid','p.datep'=>'date_payment','p.amount'=>'amount_payment','p.num_paiement'=>'num_payment');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'c_chargesociales as cc, '.MAIN_DB_PREFIX.'chargesociales as c';

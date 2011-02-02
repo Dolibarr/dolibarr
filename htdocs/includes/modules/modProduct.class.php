@@ -145,9 +145,6 @@ class modProduct extends DolibarrModules
 		$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.label'=>"product",'p.description'=>"product",'p.accountancy_code_sell'=>'product','p.accountancy_code_sell'=>'product','p.note'=>"product",'p.length'=>"product",'p.surface'=>"product",'p.volume'=>"product",'p.weight'=>"product",'p.customcode'=>'product','p.price_base_type'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>"product",'p.tosell'=>"product",'p.tobuy'=>"product",'p.datec'=>"product",'p.tms'=>"product");
 		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge ($this->export_entities_array[$r],array('p.stock'=>'product','p.pmp'=>'product'));
 		if (! empty($conf->barcode->enabled)) $this->export_entities_array[$r]=array_merge ($this->export_entities_array[$r],array('p.barcode'=>'product'));
-		$this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.label'=>"label",'p.description'=>"description",'p.accountancy_code_sell'=>'accountancy_code_sell','p.accountancy_code_buy'=>'accountancy_code_buy','p.note'=>"note",'p.length'=>"length",'p.surface'=>"area",'p.volume'=>"volume",'p.weight'=>"weight",'p.customcode'=>'customcode','p.price_base_type'=>'pricebase','p.price'=>"priceht",'p.price_ttc'=>"pricettc",'p.tva_tx'=>'vat','p.tosell'=>"onsell",'p.tobuy'=>"onbuy",'p.datec'=>'datecreation','p.tms'=>'datemodification');
-		if (! empty($conf->stock->enabled)) $this->export_alias_array[$r]=array_merge ($this->export_alias_array[$r],array('p.stock'=>'stock','p.pmp'=>'pmp'));
-		if (! empty($conf->barcode->enabled)) $this->export_alias_array[$r]=array_merge ($this->export_alias_array[$r],array('p.barcode'=>'barcode'));
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';

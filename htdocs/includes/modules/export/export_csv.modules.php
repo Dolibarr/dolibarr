@@ -194,8 +194,8 @@ class ExportCsv extends ModeleExports
 		$this->col=0;
 		foreach($array_selected_sorted as $code => $value)
 		{
-			$alias=$array_alias[$code];
-			if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+			$alias=str_replace(array('.','-'),'_',$code);
+			if (empty($alias)) dol_print_error('','Bad value for field with key='.$code.'. Try to redefine export.');
 			$newvalue=$outputlangs->convToOutputCharset($objp->$alias);
 
 			// Translation newvalue
