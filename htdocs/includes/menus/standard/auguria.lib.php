@@ -295,7 +295,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
                 {
                     print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>';
                 }
-                print "\n".'<div id="section_content">'."\n";
+                print "\n".'<div id="section_content_'.$i.'">'."\n";
                 print '<div class="menu_top"></div>'."\n";
             }
             // Menu niveau > 0

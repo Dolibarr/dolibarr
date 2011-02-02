@@ -154,11 +154,11 @@ $form = new Form($db);
 // Line to add new record
 $var=false;
 print "\n";
-print '<form action="const.php" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add">';
 
-print '<tr '.$bc[$var].' class=value><td><input type="text" class="flat" size="24" name="constname" value=""></td>'."\n";
+print '<tr '.$bc[$var].'><td><input type="text" class="flat" size="24" name="constname" value=""></td>'."\n";
 print '<td>';
 print '<input type="text" class="flat" size="30" name="constvalue" value="">';
 print '</td><td>';
@@ -217,16 +217,16 @@ if ($result)
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
 
-		print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
+		print '<tr '.$bc[$var].'><td>'.$obj->name.'</td>'."\n";
 
 		// Value
 		print '<td>';
-		print '<input type="text" id="input'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'"';
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'"';
 		print '>';
 		print '</td><td>';
 
 		// Note
-		print '<input type="text" id="input'.$i.'"class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'"';
+		print '<input type="text" id="note_'.$i.'"class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'"';
 		print '>';
 		print '</td>';
 
