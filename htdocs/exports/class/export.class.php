@@ -70,19 +70,20 @@ class Export
 
 		dol_syslog("Export::load_arrays user=".$user->id." filter=".$filter);
 
+        $var=true;
+        $i=0;
+
 		//$dir=DOL_DOCUMENT_ROOT."/includes/modules";
 		foreach($conf->file->dol_document_root as $dirroot)
 		{
 			$dir = $dirroot.'/includes/modules';
-			$handle=opendir($dir);
 
 			// Search available exports
 			$handle=@opendir($dir);
 			if (is_resource($handle))
 			{
-				$var=True;
-				$i=0;
-				while (($file = readdir($handle))!==false)
+                // Search module files
+			    while (($file = readdir($handle))!==false)
 				{
 					if (preg_match("/^(mod.*)\.class\.php$/i",$file,$reg))
 					{
@@ -103,9 +104,10 @@ class Export
 
 							if (is_array($module->export_code))
 							{
-								foreach($module->export_code as $r => $value)
+							    foreach($module->export_code as $r => $value)
 								{
-									if ($filter && ($filter != $module->export_code[$r])) continue;
+                                    //print $i.'-'.$filter.'-'.$modulename.'-'.join(',',$module->export_code).'<br>';
+								    if ($filter && ($filter != $module->export_code[$r])) continue;
 
 									// Test si permissions ok \todo tester sur toutes permissions
 									$perm=$module->export_permission[$r][0];
