@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/includes/modules/export/export_excel.modules.php
  *	\ingroup    export
- *	\brief      Fichier de la classe permettant de g�n�rer les export au format Excel
+ *	\brief      File of class to generate export file with Excel format
  *	\author	    Laurent Destailleur
  *	\version    $Id$
  */

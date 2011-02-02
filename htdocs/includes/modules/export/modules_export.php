@@ -146,54 +146,6 @@ class ModeleExports
 		return $this->libversion[$key];
 	}
 
-
-
-	/**
-	 *      \brief      Lance la generation du fichier
-	 *      \remarks    Les tableaux array_export_xxx sont deja chargees pour le bon datatoexport
-	 *                  aussi le parametre datatoexport est inutilise
-	 */
-	/*function build_file($model, $datatoexport, $array_selected)
-	{
-		global $langs;
-
-		dol_syslog("Export::build_file $model, $datatoexport, $array_selected");
-
-		// Creation de la classe d'export du model ExportXXX
-		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/export/";
-		$file = "export_".$model.".modules.php";
-		$classname = "Export".$model;
-		require_once($dir.$file);
-		$obj = new $classname($db);
-
-		// Execute requete export
-		$sql=$this->array_export_sql[0];
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			// Genere en-tete
-			$obj->write_header();
-
-			// Genere ligne de titre
-			$obj->write_title();
-
-			while ($objp = $this->db->fetch_object($resql))
-			{
-				$var=!$var;
-				$obj->write_record($array_selected,$objp);
-			}
-
-			// Genere en-tete
-			$obj->write_footer();
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			dol_syslog("Error: sql=$sql ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}*/
-
 }
 
 

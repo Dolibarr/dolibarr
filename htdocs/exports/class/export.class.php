@@ -280,7 +280,7 @@ class Export
 					}
 					// end of special operation processing
 
-					$objmodel->write_record($this->array_export_fields[$indice],$array_selected,$objp,$outputlangs);
+					$objmodel->write_record($array_selected,$objp,$outputlangs);
 				}
 
 				// Genere en-tete

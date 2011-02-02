@@ -147,8 +147,10 @@ class ExportCsv extends ModeleExports
 
 
 	/**
-	 * 	\brief		Output title line into file
-	 * 	\param		langs		Output language
+	 * 	   Output title line into file
+     *     @param      array_export_fields_label   Array with list of label of fields
+     *     @param      array_selected_sorted       Array with list of field to export
+     *     @param      outputlangs                 Object lang to translate values
 	 */
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
 	{
@@ -176,9 +178,12 @@ class ExportCsv extends ModeleExports
 
 
 	/**
-	 * 	\brief		Output record line into file
+     *     Output record line into file
+     *     @param      array_selected_sorted       Array with list of field to export
+     *     @param      objp                        A record from a fetch with all fields from select
+     *     @param      outputlangs                 Object lang to translate values
 	 */
-	function write_record($array_alias,$array_selected_sorted,$objp,$outputlangs)
+	function write_record($array_selected_sorted,$objp,$outputlangs)
 	{
 		global $conf;
 
