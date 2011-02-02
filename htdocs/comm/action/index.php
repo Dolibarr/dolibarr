@@ -474,7 +474,7 @@ if (empty($action) || $action == 'show_month')		// View by month
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
+				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $param);
 				echo "  </td>\n";
 			}
 			/* Show days of the current month */
@@ -490,7 +490,7 @@ if (empty($action) || $action == 'show_month')		// View by month
 				$style='cal_current_month';
 
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
+				show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $param);
 				echo "  </td>\n";
 			}
 			/* Show days after the current month (next month) */
@@ -498,7 +498,7 @@ if (empty($action) || $action == 'show_month')		// View by month
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
+				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $param);
 				echo "</td>\n";
 			}
 			$tmpday++;
@@ -519,7 +519,7 @@ else	// View by day
 	echo " </tr>\n";
 	echo " <tr>\n";
 	echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-	show_day_events ($db, $day, $month, $year, $month, $style, $eventarray, 0, 80, $newparam, 1, 300);
+	show_day_events ($db, $day, $month, $year, $month, $style, $eventarray, 0, 80, $param, 1, 300);
 	echo "</td>\n";
 	echo " </tr>\n";
 	echo '</table>';
@@ -561,7 +561,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 	print '<table class="nobordernopadding" width="100%">';
 	print '<tr style="background: #EEEEEE"><td align="left" nowrap="nowrap">';
-	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.$month.'&year='.$year.'">';
+	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?';
+	print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT);
+	print $newparam;
+	//.'&month='.$month.'&year='.$year;
+	print '">';
 	if ($showinfo) print dol_print_date($curtime,'daytext');
 	else print dol_print_date($curtime,'%d');
 	print '</a>';
