@@ -104,6 +104,10 @@ my $batch=0;
 for (0..@ARGV-1) {
 	if ($ARGV[$_] =~ /^-*target=(\w+)/i)   { $target=$1; $batch=1; }
 	if ($ARGV[$_] =~ /^-*desti=(.+)/i)     { $DESTI=$1; }
+    if ($ARGV[$_] =~ /^-*prefix=(.+)/i)    {
+    	$PREFIX=$1; 
+    	$FILENAMESNAPSHOT.="-".$PREFIX; 
+    }
 }
 
 print "Makepack version $VERSION\n";
