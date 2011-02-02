@@ -71,8 +71,11 @@ $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $day=GETPOST("day","int")?GETPOST("day","int"):0;
 $pid=GETPOST("projectid","int")?GETPOST("projectid","int"):0;
 $status=GETPOST("status");
+$maxprint=GETPOST("maxprint");
 
-if (GETPOST('viewcal')) $day='';    // View by month
+if (GETPOST('viewcal'))  { $action='show_month'; $day=''; }         // View by month
+if (GETPOST('viewweek')) { $action='show_week'; $week='TODO'; }     // View by week
+if (GETPOST('viewday'))  { $action='show_day'; $day=date("d"); }    // View by day
 
 $langs->load("other");
 $langs->load("commercial");
@@ -83,7 +86,7 @@ if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MA
 /*
  * Actions
  */
-if (! empty($_POST["viewlist"]))
+if (GETPOST("viewlist"))
 {
 	$param='';
 	foreach($_POST as $key => $val)
@@ -174,6 +177,7 @@ if ($showbirthday) $param.="&showbirthday=1";
 if ($pid)     $param.="&projectid=".$pid;
 if (GETPOST("type"))   $param.="&type=".GETPOST("type");
 if ($action == 'show_day') $param.='&action='.$action;
+if ($maxprint) $param.="&maxprint=on";
 
 // Show navigation bar
 if (empty($action) || $action=='show_month')
@@ -445,7 +449,7 @@ else $link.=$langs->trans("AgendaHideBirthdayEvents");
 $link.='</a>';
 print_fiche_titre('',$link);
 
-if ($_GET["action"] != 'show_day')		// View by month
+if (empty($action) || $action == 'show_month')		// View by month
 {
 	echo '<table width="100%" class="nocellnopadd">';
 	echo ' <tr class="liste_titre">';
@@ -515,7 +519,7 @@ else	// View by day
 	echo " </tr>\n";
 	echo " <tr>\n";
 	echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-	show_day_events ($db, $day, $month, $year, $month, $style, $eventarray, 0, 80, $newparam, 1);
+	show_day_events ($db, $day, $month, $year, $month, $style, $eventarray, 0, 80, $newparam, 1, 300);
 	echo "</td>\n";
 	echo " </tr>\n";
 	echo '</table>';
@@ -542,18 +546,17 @@ llxFooter('$Date$ - $Revision$');
  * @param 	$maxnbofchar	 Nb of characters to show for event line
  * @param   $newparam        Parameters on current URL
  * @param   $showinfo        Add extended information (used by day view)
+ * @param   $minheight       Minimum height for each event. 60px by default.
  */
-function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxPrint=0, $maxnbofchar=14, $newparam='', $showinfo=0)
+function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxPrint=0, $maxnbofchar=14, $newparam='', $showinfo=0, $minheight=60)
 {
 	global $user, $conf, $langs;
 	global $filter, $filtera, $filtert, $filterd, $status;
 	global $theme_datacolor;
 	global $cachethirdparty, $cachecontact;
 
-	if ($_GET["action"] == 'maxPrint')
-	{
-		$maxPrint=0;
-	}
+	if ($_GET["maxprint"] == 'on') $maxPrint=0;   // Force to remove limits
+
 	$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
 
 	print '<table class="nobordernopadding" width="100%">';
@@ -571,7 +574,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		print '</a>';
 	}
 	print '</td></tr>';
-	print '<tr height="60"><td valign="top" colspan="2" nowrap="nowrap">';	// Minimum 60px height
+	print '<tr height="'.$minheight.'"><td valign="top" colspan="2" nowrap="nowrap">';
 
 	//$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
 	$i=0;
@@ -699,7 +702,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 				}
 				else
 				{
-					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=maxPrint&month='.$monthshown.'&year='.$year;
+					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?maxprint=on&month='.$monthshown.'&year='.$year;
 					print ($status?'&status='.$status:'').($filter?'&filter='.$filter:'');
                     print ($filtera?'&filtera='.$filtera:'').($filtert?'&filtert='.$filtert:'').($filterd?'&filterd='.$filterd:'');
 					print '">'.img_picto("all","1downarrow_selected.png").' ...';

@@ -87,7 +87,7 @@ if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')	// If 
 /*
  *	Actions
  */
-if (! empty($_POST["viewcal"]))
+if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday"))
 {
 	$param='';
 	foreach($_POST as $key => $val)
