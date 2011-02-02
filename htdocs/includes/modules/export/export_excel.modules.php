@@ -149,7 +149,10 @@ class ExportExcel extends ModeleExports
 
 
 	/**
-	 *
+     *     Output title line into file
+     *     @param      array_export_fields_label   Array with list of label of fields
+     *     @param      array_selected_sorted       Array with list of field to export
+     *     @param      outputlangs                 Object lang to translate values
 	 */
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
 	{
@@ -168,7 +171,7 @@ class ExportExcel extends ModeleExports
 		$this->col=0;
 		foreach($array_selected_sorted as $code => $value)
 		{
-			$alias=$array_export_fields_label[$code];
+            $alias=$array_export_fields_label[$code];
 			//print "dd".$alias;
 			if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
 			$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
@@ -179,9 +182,12 @@ class ExportExcel extends ModeleExports
 	}
 
 	/**
-	 *
+     *     Output record line into file
+     *     @param      array_selected_sorted       Array with list of field to export
+     *     @param      objp                        A record from a fetch with all fields from select
+     *     @param      outputlangs                 Object lang to translate values
 	 */
-	function write_record($array_alias,$array_selected_sorted,$objp,$outputlangs)
+	function write_record($array_selected_sorted,$objp,$outputlangs)
 	{
 		$outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
 
@@ -197,8 +203,9 @@ class ExportExcel extends ModeleExports
 		$this->col=0;
 		foreach($array_selected_sorted as $code => $value)
 		{
-			$alias=$array_alias[$code];
-			$newvalue=$objp->$alias;
+			$alias=str_replace(array('.','-'),'_',$code);
+            if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+            $newvalue=$objp->$alias;
 
 			$newvalue=$this->excel_clean($newvalue);
 

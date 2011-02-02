@@ -150,10 +150,10 @@ class ModeleExports
 
 	/**
 	 *      \brief      Lance la generation du fichier
-	 *      \remarks    Les tableaux array_export_xxx sont d�j� charg�es pour le bon datatoexport
-	 *                  aussi le parametre datatoexport est inutilis�
+	 *      \remarks    Les tableaux array_export_xxx sont deja chargees pour le bon datatoexport
+	 *                  aussi le parametre datatoexport est inutilise
 	 */
-	function build_file($model, $datatoexport, $array_selected)
+	/*function build_file($model, $datatoexport, $array_selected)
 	{
 		global $langs;
 
@@ -180,7 +180,7 @@ class ModeleExports
 			while ($objp = $this->db->fetch_object($resql))
 			{
 				$var=!$var;
-				$obj->write_record($objp,$array_selected);
+				$obj->write_record($array_selected,$objp);
 			}
 
 			// Genere en-tete
@@ -192,7 +192,7 @@ class ModeleExports
 			dol_syslog("Error: sql=$sql ".$this->error, LOG_ERR);
 			return -1;
 		}
-	}
+	}*/
 
 }
 
