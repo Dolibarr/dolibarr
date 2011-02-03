@@ -796,7 +796,7 @@ class Account extends CommonObject
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *      @param      user        		Objet user
 	 *		@param		filteraccountid		To get info for a particular account id
-	 *      @return     int         		<0 if KO, >0 if OK
+	 *      @return     int         		<0 if KO, 0=Nothing to show, >0 if OK
 	 */
 	function load_board($user,$filteraccountid=0)
 	{
@@ -809,8 +809,8 @@ class Account extends CommonObject
 		$this->nbtodo=$this->nbtodolate=0;
 
 		$sql = "SELECT b.rowid, b.datev as datefin";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
+		$sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.rappro=0";
 		$sql.= " AND b.fk_account = ba.rowid";
 		$sql.= " AND ba.entity = ".$conf->entity;
@@ -821,12 +821,14 @@ class Account extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+            $num=$this->db->num_rows($resql);
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nbtodo++;
 				if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) $this->nbtodolate++;
+				if ($obj->rappro) $foundaccounttoconciliate++;
 			}
-			return 1;
+			return $num;
 		}
 		else
 		{

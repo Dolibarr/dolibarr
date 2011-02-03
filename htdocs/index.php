@@ -425,13 +425,16 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
 
 	include_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 	$board=new Account($db);
-	$board->load_board($user);
-    $board->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
-    $board->label=$langs->trans("TransactionsToConciliate");
-    $board->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&mainmenu=bank';
-    $board->img=img_object($langs->trans("TransactionsToConciliate"),"payment");
-    $rowspan++;
-    $dashboardlines[]=$board;
+	$found=$board->load_board($user);
+    if ($found > 0)
+    {
+    	$board->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
+        $board->label=$langs->trans("TransactionsToConciliate");
+        $board->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&mainmenu=bank';
+        $board->img=img_object($langs->trans("TransactionsToConciliate"),"payment");
+        $rowspan++;
+        $dashboardlines[]=$board;
+    }
 }
 
 // Number of cheque to send
