@@ -137,10 +137,12 @@ class Form
      *	@param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
      *	@param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
      *	@param	img					Code img du picto (use img_xxx() function to get it)
+     *  @param  extracss            Add a CSS style to td tags
+     *  @param  notable             Do not include table and tr tags
      *	@return	string				Code html du tooltip (texte+picto)
      * 	@see	Use function textwithpicto if you can.
      */
-    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='')
+    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='',$notabs=0)
     {
         global $conf;
 
@@ -161,7 +163,7 @@ class Form
        	$paramfortooltip.=' class="classfortooltip'.$extracss.'" title="'.$htmltext.'"'; // Attribut to put on td tag to store tooltip
 
        	$s="";
-        $s.='<table class="nobordernopadding" summary=""><tr>';
+        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
         if ($direction > 0)
         {
         	if ($text != '')
@@ -182,7 +184,7 @@ class Form
 				$s.=$text.'</td>';
 			}
 		}
-		$s.='</tr></table>';
+		if (empty($notabs)) $s.='</tr></table>';
 
         return $s;
     }
@@ -1806,7 +1808,7 @@ class Form
      *     @param  title       	   title
      *     @param  question    	   question
      *     @param  action      	   action
-     *	   @param  formquestion	   an array with forms complementary inputs
+     *	   @param  formquestion	   an array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
      * 	   @param  selectedchoice  "" or "no" or "yes"
      * 	   @param  useajax		   0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
      *     @param  height          Force height of box
