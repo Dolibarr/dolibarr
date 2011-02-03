@@ -1131,8 +1131,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	}
 
 	print '<div class="login_block">'."\n";
+    print '<table class="nobordernopadding" summary=""><tr>';
 
-	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext);
+	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext,'',1);
 
 	// Select entity
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
@@ -1146,14 +1147,14 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 				//$mc = new ActionsMulticompany($db);
 				$entitytext = img_object('', 'globe',"class='entity'");
 				$entityhtmltext = 'EntityName';
-				print $html->textwithtooltip('',$entityhtmltext,2,1,$entitytext);
+				print $html->textwithtooltip('',$entityhtmltext,2,1,$entitytext,'',1);
 				//$select_entity = '<div class="loginSelectEntity">'.$mc->select_entities($conf->entity).'</div>';
 				//if ($mc->numEntity >= 1) print $select_entity;
 			}
 		}
 	}
 
-	print $html->textwithtooltip('',$logouthtmltext,2,1,$logouttext);
+	print $html->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
 
 	// Link to print main content area
 	if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
@@ -1163,10 +1164,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
 		$text.=' title="" alt="">';
 		$text.='</a>';
-		print $html->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text);
+		print $html->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'',1);
 	}
 
-	print "\n</div>\n";
+	print '</tr></table>'."\n";
+	print "</div>\n";
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "</div><!-- End top layout -->\n";
 
