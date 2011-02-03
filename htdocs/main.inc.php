@@ -753,15 +753,16 @@ $heightforframes=48;
 
 
 /**
- *		\brief   	Show HTML header HTML + BODY + Top menu + left menu + DIV
- * 		\param   	head			Add optionnal head lines
- * 		\param   	title
- * 		\param      help_url
- * 		\param   	target
- * 		\param   	disablejs
- * 		\param   	disablehead
- * 		\param   	arrayofjs
- * 		\param   	arrayofcss
+ *	Show HTML header HTML + BODY + Top menu + left menu + DIV
+ * 	@param   	head			Add optionnal head lines
+ *  @param      title   		Title of web page
+ * 	@param      help_url		Url links to help page
+ *  @param      target  		Target to use in menu links
+ *	@param		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	@param		disablehead		Do not output head section
+ *	@param		arrayofjs		Array of js files to add in header
+ *	@param		arrayofcss		Array of css files to add in header
+ *  @param		morequerystring Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  */
 if (! function_exists("llxHeader"))
 {
@@ -932,14 +933,15 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 
 /**
- *  \brief      Show an HTML header + a BODY + The top menu bar
- *  \param      head    	Lines in the HEAD
- *  \param      title   	Title of web page
- *  \param      target  	Target to use in menu links
- *	\param		disablejs	Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
- *	\param		disablehead	Do not output head section
- *	\param		arrayofjs	Array of js files to add in header
- *	\param		arrayofcss	Array of css files to add in header
+ *  Show an HTML header + a BODY + The top menu bar
+ *  @param      head    		Lines in the HEAD
+ *  @param      title   		Title of web page
+ *  @param      target  		Target to use in menu links
+ *	@param		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	@param		disablehead		Do not output head section
+ *	@param		arrayofjs		Array of js files to add in header
+ *	@param		arrayofcss		Array of css files to add in header
+ *  @param		morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  */
 function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
@@ -1125,8 +1127,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	}
 	
 	print '<div class="login_block">'."\n";
-
-	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext);
+    print '<table class="nobordernopadding" summary=""><tr>';
+	
+	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext,'',1);
 	
 	// Select entity
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
@@ -1140,14 +1143,14 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 				//$mc = new ActionsMulticompany($db);
 				$entitytext = img_object('', 'globe',"class='entity'");
 				$entityhtmltext = 'EntityName';
-				print $html->textwithtooltip('',$entityhtmltext,2,1,$entitytext);
+				print $html->textwithtooltip('',$entityhtmltext,2,1,$entitytext,'',1);
 				//$select_entity = '<div class="loginSelectEntity">'.$mc->select_entities($conf->entity).'</div>';
 				//if ($mc->numEntity >= 1) print $select_entity;
 			}
 		}
 	}
 
-	print $html->textwithtooltip('',$logouthtmltext,2,1,$logouttext);
+	print $html->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
 
 	// Link to print main content area
 	if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
@@ -1156,10 +1159,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
 		$text.=' title="" alt="">';
 		$text.='</a>';
-		print $html->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text);
+		print $html->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'',1);
 	}
 
-	print "\n</div>\n";
+	print '</tr></table>'."\n";
+	print "</div>\n";
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "</div><!-- End top layout -->\n";
 
