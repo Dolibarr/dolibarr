@@ -452,10 +452,9 @@ div.login_block table {
 }
 
 div.login {
-	display: inline;
 	white-space:nowrap;
-	padding: 0px 5px;
-	margin: 0px 0px 1px 0px;
+	padding: 8px 0px 0px 0px;
+	margin: 0px 0px 0px 8px;
 	font-weight: bold;
 }
 div.login a {

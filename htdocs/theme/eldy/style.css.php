@@ -123,9 +123,6 @@ textarea.flat {
 textarea:disabled {
 background:#ddd;
 }
-input:disabled {
-background:#ddd;
-}
 select.flat {
 	background: #FDFDFD;
     font-size: <?php print $fontsize ?>px;
@@ -475,10 +472,9 @@ div.login_block table {
 }
 
 div.login {
-	display: inline;
 	white-space:nowrap;
-	padding: 0px 5px;
-	margin: 0px 0px 1px 0px;
+    padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
+    margin: 0px 0px 0px 8px;
 	font-weight: bold;
 }
 div.login a {
