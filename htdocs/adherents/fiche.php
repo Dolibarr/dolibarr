@@ -1040,9 +1040,7 @@ if ($rowid && $action != 'edit')
 	// Confirm create third party
 	if ($_GET["action"] == 'create_thirdparty')
 	{
-		$name =$adh->nom;
-		if ($adh->nom && $adh->prenom) $name.=' ';
-		$name.=$adh->prenom;
+		$name = $adh->getFullName($langs);
 		if (! empty($name))
 		{
 			if ($adh->societe) $name.=' ('.$adh->societe.')';
