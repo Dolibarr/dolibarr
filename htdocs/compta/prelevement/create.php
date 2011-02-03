@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2010      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +78,15 @@ $invoicestatic=new Facture($db);
 $bprev = new BonPrelevement($db);
 
 llxHeader('', $langs->trans("NewStandingOrder"));
+
+require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
+if (prelevement_check_config() < 0)
+{
+	$langs->load("errors");
+	print '<div class="error">';
+	print $langs->trans("ErrorModuleSetupNotComplete");
+	print '</div>';
+}
 
 $h=0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php';

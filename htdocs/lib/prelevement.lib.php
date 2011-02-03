@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2010 Juanjo Menent             <jmenent@2byte.es>
+/* Copyright (C) 2010-2011 	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2011      	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,5 +82,22 @@ function prelevement_prepare_head($object)
     complete_head_from_modules($conf,$langs,$object,$head,$h,'prelevement');
 
     return $head;
+}
+
+/**
+ *	Check need data to create standigns orders receipt file
+ *	@return    	int		-1 if ko 0 if ok             
+ */
+function prelevement_check_config()
+{
+	
+	if(empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1; 
+	if(empty($conf->global->PRELEVEMENT_CODE_BANQUE)) return -1;
+	if(empty($conf->global->PRELEVEMENT_CODE_GUICHET)) return -1;
+	if(empty($conf->global->PRELEVEMENT_NUMERO_COMPTE)) return -1;
+	if(empty($conf->global->PRELEVEMENT_NUMBER_KEY)) return -1;
+	if(empty($conf->global->PRELEVEMENT_RAISON_SOCIALE)) return -1;
+	if(empty($conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR)) return -1;
+	return 0;	
 }
 ?>
