@@ -68,7 +68,7 @@ $fontlist='arial,tahoma,verdana,helvetica';
 /* ============================================================================== */
 
 body {
-<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+<?php if (GETPOST("optioncss") == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
 	background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg2.jpg' ?>) 0 0 no-repeat;
@@ -101,6 +101,9 @@ input.flat {
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
+input:disabled {
+background:#ddd;
+}
 textarea  {
 	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
@@ -116,6 +119,9 @@ textarea.flat {
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
+}
+textarea:disabled {
+background:#ddd;
 }
 select.flat {
 	background: #FDFDFD;
@@ -205,7 +211,7 @@ else
 ?>
 
 div.tmenu {
-<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+<?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
     position: relative;
@@ -465,10 +471,9 @@ div.login_block table {
 }
 
 div.login {
-	display: inline;
 	white-space:nowrap;
-	padding: 0px 5px;
-	margin: 0px 0px 1px 0px;
+    padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
+    margin: 0px 0px 0px 8px;
 	font-weight: bold;
 }
 div.login a {
@@ -492,7 +497,7 @@ img.login, img.printer, img.entity {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-<?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')
+<?php if ((GETPOST("optioncss") == 'print')
 || (! empty($conf->browser->phone) && class_exists('Smartphone') && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
 .vmenu {
     display: none;
@@ -1057,6 +1062,7 @@ border-right-style: solid;
 border-left-width: 1px;
 border-left-color: #BBBBBB;
 border-left-style: solid;
+height: 16px;
 }
 
 table.noborder td {
