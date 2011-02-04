@@ -3459,11 +3459,11 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
 	global $langs;
 
 	$ret = 0;
-	$langs->load("errors");
 
 	if (is_array($mesgarray) && sizeof($mesgarray))
 	{
-		print '<div class="'.$style.'">';
+        $langs->load("errors");
+	    print '<div class="'.$style.'">';
 		foreach($mesgarray as $message)
 		{
 			$ret++;
@@ -3473,7 +3473,8 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
 	}
 	if ($mesgstring)
 	{
-		$ret++;
+        $langs->load("errors");
+	    $ret++;
 		print '<div class="'.$style.'">';
 		print $langs->trans($mesgstring);
 		print '</div>';
