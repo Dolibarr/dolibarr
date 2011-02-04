@@ -148,11 +148,6 @@ if ($this->control->tpl['fournisseur']) {
 	<td><input type="text" name="url" size="32" value="<?php echo $this->control->tpl['url']; ?>"></td>
 </tr>
 
-<tr>
-	<td><?php echo $langs->trans('Capital'); ?></td>
-	<td colspan="3"><input type="text" name="capital" size="10" value="<?php echo $this->control->tpl['capital']; ?>"> <?php echo $langs->trans("Currency".$conf->monnaie); ?></td>
-</tr>
-
 <?php
 for ($i=1; $i<=4; $i++) {
 	if ($this->control->tpl['langprofid'.$i]!='-') {
@@ -168,6 +163,18 @@ for ($i=1; $i<=4; $i++) {
 	}
 }
 ?>
+
+<tr>
+	<td><?php echo $langs->trans('VATIsUsed'); ?></td>
+	<td><?php echo $this->control->tpl['yn_assujtva']; ?></td>
+	<td nowrap="nowrap"><?php echo $langs->trans('VATIntra'); ?></td>
+	<td nowrap="nowrap"><?php echo $this->control->tpl['tva_intra']; ?></td>
+</tr>
+
+<tr>
+	<td><?php echo $langs->trans('Capital'); ?></td>
+	<td colspan="3"><input type="text" name="capital" size="10" value="<?php echo $this->control->tpl['capital']; ?>"> <?php echo $langs->trans("Currency".$conf->monnaie); ?></td>
+</tr>
 
 <tr>
 	<td><?php echo $langs->trans('JuridicalStatus'); ?></td>
@@ -187,13 +194,6 @@ for ($i=1; $i<=4; $i++) {
 	<td colspan="3"><?php echo $this->control->tpl['select_lang']; ?></td>
 </tr>
 <?php } ?>
-
-<tr>
-	<td><?php echo $langs->trans('VATIsUsed'); ?></td>
-	<td><?php echo $this->control->tpl['yn_assujtva']; ?></td>
-	<td nowrap="nowrap"><?php echo $langs->trans('VATIntra'); ?></td>
-	<td nowrap="nowrap"><?php echo $this->control->tpl['tva_intra']; ?></td>
-</tr>
 
 <?php if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
 
