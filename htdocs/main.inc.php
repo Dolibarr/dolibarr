@@ -888,6 +888,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
+                print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor'.$ext.'"></script>'."\n";
             }
             // Global js function
