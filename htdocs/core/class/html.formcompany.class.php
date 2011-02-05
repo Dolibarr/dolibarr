@@ -534,7 +534,8 @@ class FormCompany
 
 				// We call a page after a small delay when a new input has been selected
 				$javaScript = "window.location=\'./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=\' + document.getElementById(\'".$htmlname."\').value;";
-				$htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\')"';
+                $htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\');"';                              // When we select with mouse
+				$htmloption.= 'onKeyUp="if (event.keyCode== 13) { ac_delay(\''.$javaScript.'\',\'500\'); }"';   // When we select with keyboard
 
 				print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
 				print '<table class="nobordernopadding"><tr class="nobordernopadding">';
