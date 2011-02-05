@@ -867,8 +867,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		// Output standard javascript links
 		if (! $disablejs && $conf->use_javascript_ajax)
 		{
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
-
 			// Other external js
 			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
 
@@ -876,7 +874,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) { $mini='_mini'; $ext='.jgz'; }	// mini='_mini', ext='.gz'
 
 			// JQuery. Must be before other includes (prototype/scriptaculous/...)
-			print '<!-- Includes for JQuery -->'."\n";
+			print '<!-- Includes JS for JQuery -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
@@ -889,14 +887,18 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // CKEditor
             if (! empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
             {
+                print '<!-- Includes JS for CKEditor -->'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor'.$ext.'"></script>'."\n";
             }
+            // Global js function
+            print '<!-- Includes JS of Dolibarr -->'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
 		}
 
 		// Output module javascript
 		if (is_array($arrayofjs))
 		{
-			print '<!-- Includes specific to page -->'."\n";
+			print '<!-- Includes JS specific to page -->'."\n";
 			foreach($arrayofjs as $jsfile)
 			{
 				if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
