@@ -109,7 +109,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r]='category_'.$r;
 		$this->export_label[$r]='CatSupList';
 		$this->export_icon[$r]='category';
-		$this->export_permission[$r]=array(array("categorie","lire"));
+		$this->export_permission[$r]=array(array("categorie","lire"),array("fournisseur","lire"));
 		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'s.rowid'=>'IdThirdParty','s.nom'=>'Name','s.prefix_comm'=>"Prefix",'s.client'=>"Customer",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.idprof4'=>"IdProf4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note");
 		$this->export_entities_array[$r]=array('s.rowid'=>'company','s.nom'=>'company','s.prefix_comm'=>"company",'s.client'=>"company",'s.datec'=>"company",'s.tms'=>"company",'s.code_client'=>"company",'s.address'=>"company",'s.cp'=>"company",'s.ville'=>"company",'p.libelle'=>"company",'p.code'=>"company",'s.tel'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note'=>"company");	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -121,7 +121,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r]='category_'.$r;
 		$this->export_label[$r]='CatCusList';
 		$this->export_icon[$r]='category';
-		$this->export_permission[$r]=array(array("categorie","lire"));
+		$this->export_permission[$r]=array(array("categorie","lire"),array("societe","lire"));
 		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'s.rowid'=>'IdThirdParty','s.nom'=>'Name','s.prefix_comm'=>"Prefix",'s.client'=>"Customer",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.idprof4'=>"IdProf4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note",'s.fk_prospectlevel'=>'ProspectLevel','s.fk_stcomm'=>'ProspectStatus');
 		$this->export_entities_array[$r]=array('s.rowid'=>'company','s.nom'=>'company','s.prefix_comm'=>"company",'s.client'=>"company",'s.datec'=>"company",'s.tms'=>"company",'s.code_client'=>"company",'s.address'=>"company",'s.cp'=>"company",'s.ville'=>"company",'p.libelle'=>"company",'p.code'=>"company",'s.tel'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note'=>"company",'s.fk_prospectlevel'=>'company','s.fk_stcomm'=>'company');	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -133,7 +133,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r]='category_'.$r;
 		$this->export_label[$r]='CatProdList';
 		$this->export_icon[$r]='category';
-		$this->export_permission[$r]=array(array("categorie","lire"));
+		$this->export_permission[$r]=array(array("categorie","lire"),array("produit","lire"));
 		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'ProductId','p.ref'=>'Ref');
 		$this->export_entities_array[$r]=array('p.rowid'=>'product','p.ref'=>'product');	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -145,7 +145,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r]='category_'.$r;
 		$this->export_label[$r]='CatMemberList';
 		$this->export_icon[$r]='category';
-		$this->export_permission[$r]=array(array("categorie","lire"));
+		$this->export_permission[$r]=array(array("categorie","lire"),array("adherent","lire"));
 		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'MemberId','p.nom'=>'Name','p.prenom'=>'Firstname');
 		$this->export_entities_array[$r]=array('p.rowid'=>'member','p.nom'=>'member','p.prenom'=>'member');	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';

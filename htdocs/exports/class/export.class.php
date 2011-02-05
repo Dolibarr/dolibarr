@@ -109,18 +109,23 @@ class Export
                                     //print $i.'-'.$filter.'-'.$modulename.'-'.join(',',$module->export_code).'<br>';
 								    if ($filter && ($filter != $module->export_code[$r])) continue;
 
-									// Test si permissions ok \todo tester sur toutes permissions
-									$perm=$module->export_permission[$r][0];
-									//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
-									if ($perm[2])
+									// Test si permissions ok
+									$bool=true;
+									foreach($module->export_permission[$r] as $val)
 									{
-										$bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
+    									$perm=$val;
+    									//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
+    									if ($perm[2])
+    									{
+    										$bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
+    									}
+    									else
+    									{
+    										$bool=$user->rights->$perm[0]->$perm[1];
+    									}
+    									if ($perm[0]=='user' && $user->admin) $bool=true;
+    									if (! $bool) break;
 									}
-									else
-									{
-										$bool=$user->rights->$perm[0]->$perm[1];
-									}
-									if ($perm[0]=='user' && $user->admin) $bool=true;
 									//print $bool." $perm[0]"."<br>";
 
 									// Permissions ok
