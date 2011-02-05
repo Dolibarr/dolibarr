@@ -630,7 +630,7 @@ function hideMessage(fieldId,message) {
 
 
 /* This is to allow to transform all select box into ajax autocomplete box
- * with just one line: jQuery(function() { jQuery( "#listmotifcons" ).combobox(); }
+ * with just one line: jQuery(function() { jQuery( "#listmotifcons" ).combobox(); });
  */
 (function( jQuery ) {
 	jQuery.widget( "ui.combobox", {

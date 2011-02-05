@@ -2327,11 +2327,11 @@ class Form
 
     /**
      *      \brief      Output an HTML select vat rate
-     *      \param      name                Nom champ html
+     *      \param      htmlname            Nom champ html
      *      \param      selectedrate        Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
      *      \param      societe_vendeuse    Objet societe vendeuse
      *      \param      societe_acheteuse   Objet societe acheteuse
-     *      \param      idprod             Id product
+     *      \param      idprod              Id product
      *      \param      info_bits           Miscellanous information on line
      *      \param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
      *      \remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
@@ -2340,15 +2340,17 @@ class Form
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Sinon la TVA proposee par defaut=0. Fin de regle.
      */
-    function select_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
+    function select_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
     {
-        print $this->load_tva($name, $selectedrate, $societe_vendeuse, $societe_acheteuse, $idprod, $info_bits, $type);
+        // TODO size of field is too large
+    	//print '<script>jQuery(function() { jQuery( "#'.$htmlname.'" ).combobox(); });</script>';
+    	print $this->load_tva($htmlname, $selectedrate, $societe_vendeuse, $societe_acheteuse, $idprod, $info_bits, $type);
     }
 
 
     /**
      *      \brief      Output an HTML select vat rate
-     *      \param      name               Nom champ html
+     *      \param      htmlname           Nom champ html
      *      \param      selectedrate       Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
      *      \param      societe_vendeuse   Objet societe vendeuse
      *      \param      societe_acheteuse  Objet societe acheteuse
@@ -2361,7 +2363,7 @@ class Form
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Sinon la TVA proposee par defaut=0. Fin de regle.
      */
-    function load_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
+    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
     {
         global $langs,$conf,$mysoc;
 
@@ -2478,7 +2480,7 @@ class Form
         $nbdetaux = sizeof($txtva);
         if ($nbdetaux > 0)
         {
-            $return.= '<select class="flat" name="'.$name.'">';
+            $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 
             for ($i = 0 ; $i < $nbdetaux ; $i++)
             {
