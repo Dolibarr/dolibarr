@@ -837,14 +837,15 @@ class Form
 
 
     /**
-     *  \brief    Return list of products for customer in Ajax if Ajax activated or go to select_produits_do
-     *  \param    selected        Preselected products
-     *  \param    htmlname        Name of HTML seletc field (must be unique in page)
-     *  \param    filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-     *  \param    limit           Limit on number of returned lines
-     *  \param    price_level     Level of price to show
-     *  \param	  status		  -1=Return all products, 0=Products not on sell, 1=Products on sell
-     *  \param	  finished     	  2=all, 1=finished, 0=raw material
+     *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_do
+     *  
+     *  @param    selected        Preselected products
+     *  @param    htmlname        Name of HTML seletc field (must be unique in page)
+     *  @param    filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
+     *  @param    limit           Limit on number of returned lines
+     *  @param    price_level     Level of price to show
+     *  @param	  status		  -1=Return all products, 0=Products not on sell, 1=Products on sell
+     *  @param	  finished     	  2=all, 1=finished, 0=raw material
      */
     function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2)
     {
@@ -864,17 +865,18 @@ class Form
     }
 
     /**
-     *	\brief      Return list of products for a customer
-     *	\param      selected        Preselected product
-     *	\param      htmlname        Name of select html
-     *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-     *	\param      limit           Limite sur le nombre de lignes retournees
-     *	\param      price_level     Level of price to show
-     * 	\param      filterkey       Filter on product
-     *	\param		status          -1=Return all products, 0=Products not on sell, 1=Products on sell
-     *  \param      finished        Filter on finished field: 2=No filter
-     *  \param      disableout      Disable print output
-     *  \return     array           Array of keys for json
+     *	Return list of products for a customer
+     *
+     *	@param      selected        Preselected product
+     *	@param      htmlname        Name of select html
+     *  @param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
+     *	@param      limit           Limite sur le nombre de lignes retournees
+     *	@param      price_level     Level of price to show
+     * 	@param      filterkey       Filter on product
+     *	@param		status          -1=Return all products, 0=Products not on sell, 1=Products on sell
+     *  @param      finished        Filter on finished field: 2=No filter
+     *  @param      disableout      Disable print output
+     *  @return     array           Array of keys for json
      */
     function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$disableout=0)
     {
@@ -947,26 +949,9 @@ class Form
         {
             $num = $this->db->num_rows($result);
 
-            $outselect.='<select class="flat" name="'.$htmlname.'"';
-			//if ($conf->use_javascript_ajax && $num && $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) $outselect.=' onchange="publish_selvalue(this);"';
-            $outselect.='>';
-
-            if ($conf->use_javascript_ajax)
-            {
-                if (! $num)
-                {
-                    $outselect.='<option value="0">-- '.$langs->trans("NoProductMatching").' --</option>';
-                }
-                else
-                {
-                    $outselect.='<option value="0" selected="selected">-- '.$langs->trans("MatchingProducts").' --</option>';
-                }
-            }
-            else
-            {
-                $outselect.='<option value="0" selected="selected">&nbsp;</option>';
-            }
-
+            $outselect.='<select class="flat" name="'.$htmlname.'">';
+			$outselect.='<option value="0" selected="selected">&nbsp;</option>';
+			
             $i = 0;
             while ($num && $i < $num)
             {
@@ -1107,12 +1092,13 @@ class Form
     }
 
     /**
-     *	\brief     	Return list of products for customer in Ajax if Ajax activated or go to select_produits_fournisseurs_do
-     *	\param		socid			Id third party
-     *	\param     	selected        Preselected product
-     *	\param     	htmlname        Name of HTML Select
-     *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-     *	\param     	filtre          For a SQL filter
+     *	Return list of products for customer in Ajax if Ajax activated or go to select_produits_fournisseurs_do
+     *
+     *	@param		socid			Id third party
+     *	@param     	selected        Preselected product
+     *	@param     	htmlname        Name of HTML Select
+     *  @param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
+     *	@param     	filtre          For a SQL filter
      */
     function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtertype='',$filtre)
     {
@@ -1131,16 +1117,17 @@ class Form
     }
 
     /**
-     *	\brief      Retourne la liste des produits de fournisseurs
-     *	\param		socid   		Id societe fournisseur (0 pour aucun filtre)
-     *	\param      selected        Produit pre-selectionne
-     *	\param      htmlname        Nom de la zone select
-     *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-     *	\param      filtre          Pour filtre sql
-     *	\param      filterkey       Filtre des produits
-     *  \param      status          -1=Return all products, 0=Products not on sell, 1=Products on sell
-     *  \param      disableout      Disable print output
-     *  \return     array           Array of keys for json
+     *	Retourne la liste des produits de fournisseurs
+     *
+     *	@param		socid   		Id societe fournisseur (0 pour aucun filtre)
+     *	@param      selected        Produit pre-selectionne
+     *	@param      htmlname        Nom de la zone select
+     *  @param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
+     *	@param      filtre          Pour filtre sql
+     *	@param      filterkey       Filtre des produits
+     *  @param      status          -1=Return all products, 0=Products not on sell, 1=Products on sell
+     *  @param      disableout      Disable print output
+     *  @return     array           Array of keys for json
      */
     function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$disableout=0)
     {
@@ -1183,26 +1170,9 @@ class Form
 
             $num = $this->db->num_rows($result);
 
-            $outselect.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'"';
-            //if ($conf->use_javascript_ajax && $num) $outselect.=' onchange="publish_selvalue(this);"';
-            $outselect.='>';
-
-            if ($conf->use_javascript_ajax)
-            {
-                if (! $num)
-                {
-                    $outselect.='<option value="0">-- '.$langs->trans("NoProductMatching").' --</option>';
-                }
-                else
-                {
-                    $outselect.='<option value="0" selected="selected">-- '.$langs->trans("MatchingProducts").' --</option>';
-                }
-            }
-            else
-            {
-                if (! $selected) $outselect.='<option value="0" selected="selected">&nbsp;</option>';
-                else $outselect.='<option value="0">&nbsp;</option>';
-            }
+            $outselect.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';
+            if (! $selected) $outselect.='<option value="0" selected="selected">&nbsp;</option>';
+            else $outselect.='<option value="0">&nbsp;</option>';
 
             $i = 0;
             while ($i < $num)
