@@ -16,6 +16,7 @@ For developers:
 - New: External modules can remove tabs.
 - New: A module can overwrite all default language files by forcing
        priority on langs directories on its own lang directory.
+- New: A module can show export list with an enabled condition.
 
 
 ***** ChangeLog for 3.0 compared to 2.9 *****

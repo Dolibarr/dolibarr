@@ -66,7 +66,7 @@ class Export
 	 */
 	function load_arrays($user,$filter='')
 	{
-		global $langs,$conf;
+		global $langs,$conf,$mysoc;
 
 		dol_syslog("Export::load_arrays user=".$user->id." filter=".$filter);
 
@@ -109,7 +109,10 @@ class Export
                                     //print $i.'-'.$filter.'-'.$modulename.'-'.join(',',$module->export_code).'<br>';
 								    if ($filter && ($filter != $module->export_code[$r])) continue;
 
-									// Test si permissions ok
+                                    // Test if condition to show are ok
+                                    if (! empty($module->export_enabled[$r]) && ! verifCond($module->export_enabled[$r])) continue;
+
+                                    // Test if permissions are ok
 									$bool=true;
 									foreach($module->export_permission[$r] as $val)
 									{
