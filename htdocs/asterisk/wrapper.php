@@ -47,6 +47,9 @@ function llxHeader() {
 	print '<title>Asterisk redirection from Dolibarr...</title>'."\n";
 	print '</head>'."\n";
 }
+function llxFooter() {
+	print "\n".'</html>'."\n";
+}
 
 require_once("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
@@ -148,4 +151,4 @@ else {
     print 'Bad parameters in URL. Must be '.$_SERVER['PHP_SELF'].'?caller=99999&called=99999&login=xxxxx&password=xxxxx';
 }
 
-print '</html>'."\n";
+llxFooter();
