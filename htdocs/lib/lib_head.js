@@ -557,30 +557,6 @@ function newpopup(url,title) {
 function publish_selvalue(obj) { $(obj.name).value = obj.options[obj.selectedIndex].value; }
 
 
-
-/*
- * ================================================================= 
- * Purpose:
- * Set value of a field after return of Ajax call. Used for autocompletion.
- * Input: HTML field name, val 
- * Author: Regis Houssin 
- * Licence: GPL
- * ==================================================================
- */
-function ac_return(field, val){
-/* alert('field.name='+field.name+'-'+val.innerHTML); */
-        /* on met en place l'expression reguliere */
-        var regex = new RegExp('[0123456789]*-idcache', 'i');
-        /* on l'applique au contenu */
-        var idCache = regex.exec(val.innerHTML);
-        /* on recupere id */
-        id = idCache[0].replace('-idcache', '');
-/* alert('field.name='+field.name+'-'+idCache[0]+'-'+id); */ 
-        /* et on l'affecte au champ cache */
-/* alert('field.name='+field.name+'-'+val.innerHTML+'-id='+id); */
-        $(field.name+'_id').value = id;
-}
-
 /*
  * ================================================================= 
  * Purpose:
