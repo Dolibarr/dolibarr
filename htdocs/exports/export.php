@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/exports/export.php
  *       \ingroup    export
- *       \brief      Page d'edition d'un export
+ *       \brief      Pages of export Wizard
  *       \version    $Id$
  */
 
@@ -292,9 +292,11 @@ if ($step == 1 || ! $datatoexport)
 	        //print img_object($objexport->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
             print $objexport->array_export_module[$key]->getName();
             print '</td><td>';
-			//print $value;
-            print img_object($objexport->array_export_module[$key]->getName(),$objexport->array_export_icon[$key]).' ';
-            print $objexport->array_export_label[$key];
+			$icon=$objexport->array_export_icon[$key];
+			$label=$objexport->array_export_label[$key];
+            //print $value.'-'.$icon.'-'.$label."<br>";
+			print img_object($objexport->array_export_module[$key]->getName(),$icon).' ';
+            print $label;
             print '</td><td align="right">';
             if ($objexport->array_export_perms[$key])
             {
@@ -354,8 +356,11 @@ if ($step == 2 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
-    print $objexport->array_export_label[0];
+    $icon=$objexport->array_export_icon[0];
+    $label=$objexport->array_export_label[0];
+    //print $value.'-'.$icon.'-'.$label."<br>";
+    print img_object($objexport->array_export_module[0]->getName(),$icon).' ';
+    print $label;
     print '</td></tr>';
 
     print '</table>';
@@ -414,7 +419,16 @@ if ($step == 2 && $datatoexport)
         $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
         $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
-        print '<td nowrap="nowrap">'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
+        print '<td nowrap="nowrap">';
+        // If value of entityicon=entitylang='icon:Label'
+        $tmparray=explode(':',$entityicon);
+        if (sizeof($tmparray) >=2)
+        {
+            $entityicon=$tmparray[0];
+            $entitylang=$tmparray[1];
+        }
+        print img_object('',$entityicon).' '.$langs->trans($entitylang);
+        print '</td>';
         $text=$langs->trans($label);
         $tablename=getablenamefromfield($code,$sqlmaxforexport);
         $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
@@ -425,6 +439,7 @@ if ($step == 2 && $datatoexport)
             print '<td>&nbsp;</td>';
             print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
             print '<td>';
+            //print $text.'-'.$htmltext."<br>";
             print $html->textwithpicto($text,$htmltext);
 			//print ' ('.$code.')';
             print '</td>';
@@ -434,6 +449,7 @@ if ($step == 2 && $datatoexport)
         {
         	// Fields not selected
             print '<td>';
+			//print $text.'-'.$htmltext."<br>";
 			print $html->textwithpicto($text,$htmltext);
 			//print ' ('.$code.')';
             print '</td>';
@@ -550,7 +566,16 @@ if ($step == 3 && $datatoexport)
         $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
         $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
-        print '<td>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
+        print '<td nowrap="nowrap">';
+        // If value of entityicon=entitylang='icon:Label'
+        $tmparray=explode(':',$entityicon);
+        if (sizeof($tmparray) >=2)
+        {
+            $entityicon=$tmparray[0];
+            $entitylang=$tmparray[1];
+        }
+        print img_object('',$entityicon).' '.$langs->trans($entitylang);
+        print '</td>';
 
         print '<td>';
         $text=$langs->trans($objexport->array_export_fields[0][$code]);
