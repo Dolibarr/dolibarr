@@ -223,7 +223,7 @@ if ($action == 'create' || $action == 'add_paiement')
             if ($conf->banque->enabled)
             {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
-                $html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',1);
+                $html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);
                 print '</td></tr>';
             }
             else
@@ -423,7 +423,7 @@ if (! $_GET['action'] && ! $_POST['action'])
         $html->select_types_paiements($_REQUEST["search_paymenttype"],'search_paymenttype','',2,1,1);
         print '</td>';
         print '<td>';
-        $html->select_comptes($_REQUEST["search_account"],'search_account',0,'',2);
+        $html->select_comptes($_REQUEST["search_account"],'search_account',0,'',1);
         print '</td>';
         print '<td align="right">';
         print '<input class="fat" type="text" size="4" name="search_amount" value="'.$_REQUEST["search_amount"].'">';
