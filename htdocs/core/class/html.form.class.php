@@ -948,7 +948,7 @@ class Form
             $num = $this->db->num_rows($result);
 
             $outselect.='<select class="flat" name="'.$htmlname.'"';
-			if ($conf->use_javascript_ajax && $num && $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) $outselect.=' onchange="publish_selvalue(this);"';
+			//if ($conf->use_javascript_ajax && $num && $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) $outselect.=' onchange="publish_selvalue(this);"';
             $outselect.='>';
 
             if ($conf->use_javascript_ajax)
@@ -1184,7 +1184,7 @@ class Form
             $num = $this->db->num_rows($result);
 
             $outselect.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'"';
-            if ($conf->use_javascript_ajax && $num) $outselect.=' onchange="publish_selvalue(this);"';
+            //if ($conf->use_javascript_ajax && $num) $outselect.=' onchange="publish_selvalue(this);"';
             $outselect.='>';
 
             if ($conf->use_javascript_ajax)
