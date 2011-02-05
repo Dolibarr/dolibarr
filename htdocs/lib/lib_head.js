@@ -554,32 +554,9 @@ function newpopup(url,title) {
  * Licence: GPL
  * ==================================================================
  */
-function publish_selvalue(obj) { $(obj.name).value = obj.options[obj.selectedIndex].value; }
+/* function publish_selvalue(obj) { $(obj.name).value = obj.options[obj.selectedIndex].value; } */
 
 
-
-/*
- * ================================================================= 
- * Purpose:
- * Set value of a field after return of Ajax call. Used for autocompletion.
- * Input: HTML field name, val 
- * Author: Regis Houssin 
- * Licence: GPL
- * ==================================================================
- */
-function ac_return(field, val){
-/* alert('field.name='+field.name+'-'+val.innerHTML); */
-        /* on met en place l'expression reguliere */
-        var regex = new RegExp('[0123456789]*-idcache', 'i');
-        /* on l'applique au contenu */
-        var idCache = regex.exec(val.innerHTML);
-        /* on recupere id */
-        id = idCache[0].replace('-idcache', '');
-/* alert('field.name='+field.name+'-'+idCache[0]+'-'+id); */ 
-        /* et on l'affecte au champ cache */
-/* alert('field.name='+field.name+'-'+val.innerHTML+'-id='+id); */
-        $(field.name+'_id').value = id;
-}
 
 /*
  * ================================================================= 
@@ -648,3 +625,108 @@ function hideMessage(fieldId,message) {
 	textbox.style.color = 'black';
 	if (textbox.value == message) textbox.value = '';
 }
+
+
+
+
+/* This is to allow to transform all select box into ajax autocomplete box
+ * with just one line: jQuery(function() { jQuery( "#listmotifcons" ).combobox(); }
+ */
+(function( jQuery ) {
+	jQuery.widget( "ui.combobox", {
+        _create: function() {
+            var self = this,
+                select = this.element.hide(),
+                selected = select.children( ":selected" ),
+                value = selected.val() ? selected.text() : "";
+            var input = this.input = jQuery( "<input>" )
+                .insertAfter( select )
+                .val( value )
+                .autocomplete({
+                    delay: 0,
+                    minLength: 0,
+                    source: function( request, response ) {
+                        var matcher = new RegExp( jQuery.ui.autocomplete.escapeRegex(request.term), "i" );
+                        response( select.children( "option" ).map(function() {
+                            var text = jQuery( this ).text();
+                            if ( this.value && ( !request.term || matcher.test(text) ) )
+                                return {
+                                    label: text.replace(
+                                        new RegExp(
+                                            "(?![^&;]+;)(?!<[^<>]*)(" +
+                                            jQuery.ui.autocomplete.escapeRegex(request.term) +
+                                            ")(?![^<>]*>)(?![^&;]+;)", "gi"
+                                        ), "<strong>$1</strong>" ),
+                                    value: text,
+                                    option: this
+                                };
+                        }) );
+                    },
+                    select: function( event, ui ) {
+                        ui.item.option.selected = true;
+                        self._trigger( "selected", event, {
+                            item: ui.item.option
+                        });
+                    },
+                    change: function( event, ui ) {
+                        if ( !ui.item ) {
+                            var matcher = new RegExp( "^" + jQuery.ui.autocomplete.escapeRegex( jQuery(this).val() ) + "$", "i" ),
+                                valid = false;
+                            select.children( "option" ).each(function() {
+                                if ( jQuery( this ).text().match( matcher ) ) {
+                                    this.selected = valid = true;
+                                    return false;
+                                }
+                            });
+                            if ( !valid ) {
+                                // remove invalid value, as it didnt match anything
+                            	jQuery( this ).val( "" );
+                                select.val( "" );
+                                input.data( "autocomplete" ).term = "";
+                                return false;
+                            }
+                        }
+                    }
+                })
+                .addClass( "ui-widget ui-widget-content ui-corner-left" );
+
+            input.data( "autocomplete" )._renderItem = function( ul, item ) {
+                return jQuery( "<li></li>" )
+                    .data( "item.autocomplete", item )
+                    .append( "<a>" + item.label + "</a>" )
+                    .appendTo( ul );
+            };
+
+            this.button = jQuery( "<button type=\'button\'>&nbsp;</button>" )
+                .attr( "tabIndex", -1 )
+                .attr( "title", "Show All Items" )
+                .insertAfter( input )
+                .button({
+                    icons: {
+                        primary: "ui-icon-triangle-1-s"
+                    },
+                    text: false
+                })
+                .removeClass( "ui-corner-all" )
+                .addClass( "ui-corner-right ui-button-icon" )
+                .click(function() {
+                    // close if already visible
+                    if ( input.autocomplete( "widget" ).is( ":visible" ) ) {
+                        input.autocomplete( "close" );
+                        return;
+                    }
+
+                    // pass empty string as value to search for, displaying all results
+                    input.autocomplete( "search", "" );
+                    input.focus();
+                });
+        },
+
+        destroy: function() {
+            this.input.remove();
+            this.button.remove();
+            this.element.show();
+            jQuery.Widget.prototype.destroy.call( this );
+        }
+    });
+})( jQuery );
