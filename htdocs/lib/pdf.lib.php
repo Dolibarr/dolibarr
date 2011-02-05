@@ -404,7 +404,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
         $pdf->SetFont('','B',6);
         $pdf->SetXY ($curx, $cury);
         $pdf->MultiCell(90, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
-        $cury-=9;
+        $cury-=7;
     }
     $pdf->SetXY ($curx, $cury+1);
 
