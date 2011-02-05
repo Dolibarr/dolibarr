@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/imports/import.php
  *      \ingroup    import
- *      \brief      Edit import page
+ *      \brief      Pages of import Wizard
  *      \version    $Id$
  */
 
