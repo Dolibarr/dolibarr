@@ -266,7 +266,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 			if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
 			if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
 			print '<td>';
-			$html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',1);
+			$html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);
 			print '</td>';
 		}
 		else

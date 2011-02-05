@@ -838,7 +838,7 @@ class Form
 
     /**
      *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_do
-     *  
+     *
      *  @param    selected        Preselected products
      *  @param    htmlname        Name of HTML seletc field (must be unique in page)
      *  @param    filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
@@ -951,7 +951,7 @@ class Form
 
             $outselect.='<select class="flat" name="'.$htmlname.'">';
 			$outselect.='<option value="0" selected="selected">&nbsp;</option>';
-			
+
             $i = 0;
             while ($num && $i < $num)
             {
@@ -1655,7 +1655,7 @@ class Form
      *    @param      htmlname          Name of select zone
      *    @param      statut            Status of searched accounts (0=open, 1=closed)
      *    @param      filtre            To filter list
-     *    @param      useempty          Add an empty value in list
+     *    @param      useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      */
     function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0)
     {
@@ -1679,7 +1679,7 @@ class Form
             if ($num)
             {
                 print '<select id="select'.$htmlname.'" class="flat selectbankaccount" name="'.$htmlname.'">';
-                if ($useempty)
+                if ($useempty == 1 || ($useempty == 2 && $num > 1))
                 {
                     print '<option value="'.$obj->rowid.'">&nbsp;</option>';
                 }
