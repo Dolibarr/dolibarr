@@ -1098,6 +1098,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	$loginhtmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
 	$type=($user->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
 	$loginhtmltext.='<br><b>'.$langs->trans("Type").'</b>: '.$type;
+    $loginhtmltext.='<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
 	$loginhtmltext.='<br>';
 	$loginhtmltext.='<br><u>'.$langs->trans("Connection").'</u>';
 	if ($conf->global->MAIN_MODULE_MULTICOMPANY) $loginhtmltext.='<br><b>'.$langs->trans("ConnectedOnMultiCompany").'</b>: '.$conf->entity.' (user entity '.$user->entity.')';

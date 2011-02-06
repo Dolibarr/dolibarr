@@ -571,6 +571,7 @@ Source=Source
 Prefix=Prefix
 Before=Before
 After=After
+IPAddress=IP address
 # Week day
 Day1=Monday
 Day2=Tuesday
