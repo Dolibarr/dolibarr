@@ -1675,7 +1675,7 @@ else
 	    else if ($nbofsalesrepresentative > 0)
 	    {
 	        $userstatic=new User($db);
-	        $i=1;
+	        $i=0;
             foreach($listsalesrepresentatives as $val)
             {
                 $userstatic->id=$val['id'];
@@ -1683,7 +1683,7 @@ else
                 $userstatic->prenom=$val['firstname'];
                 print $userstatic->getNomUrl(1);
                 $i++;
-                if ($i < 3) print ', ';
+                if ($i < $nbofsalesrepresentative) print ', ';
             }
 	    }
 		else print $langs->trans("NoSalesRepresentativeAffected");
