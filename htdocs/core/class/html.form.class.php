@@ -3098,7 +3098,7 @@ class Form
 
     /**
      *    	\brief      Return HTML combo list of years
-     *    	\param      selected          Preselected value
+     *    	\param      selected          Preselected value (''=current year, -1=none, year otherwise)
      *    	\param      htmlname          Name of HTML select object
      *    	\param      useempty          Affiche valeur vide dans liste
      *    	\param      $min_year         Valeur minimum de l'annee dans la liste (par defaut annee courante -10)
@@ -3115,19 +3115,14 @@ class Form
         print '<select class="flat" name="' . $htmlname . '">';
         if($useempty)
         {
-            if($selected == '')
-            $selected_html = 'selected="selected"';
-            print '<option value="" ' . $selected_html . ' >&nbsp;</option>';
+            if ($selected == '') $selected_html = ' selected="selected"';
+            print '<option value=""' . $selected_html . '>&nbsp;</option>';
         }
         for ($y = $max_year; $y >= $min_year; $y--)
         {
             $selected_html='';
-            if ($y == $selected)
-            {
-                $selected_html = 'selected="selected"';
-            }
-            print "<option value=\"$y\" $selected_html >$y";
-            print "</option>";
+            if ($selected > 0 && $y == $selected) $selected_html = ' selected="selected"';
+            print '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
         }
         print "</select>\n";
     }
