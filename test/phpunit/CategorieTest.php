@@ -235,7 +235,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Categorie($this->savdb);
     	$result=$localobject->fetch($id);
-		$result=$localobject->remove($id);
+		$result=$localobject->delete($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
