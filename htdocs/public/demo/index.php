@@ -62,9 +62,12 @@ $demoprofiles=array(
 	);
 
 $alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-$alwaysuncheckedmodules=array('paybox','paypal','filemanager');  // Module we never want
-$alwayshiddenmodules=array('accounting','barcode','bookmark','boutique','clicktodial','document','domain','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','label','ldap','mantis','memcached','notification','phenix','syslog','user','webcalendar','webservices');
-
+$alwaysuncheckedmodules=array('paybox','paypal','filemanager','google','scanner');  // Module we never want
+$alwayshiddenmodules=array('accounting','barcode','bookmark','boutique','clicktodial','document','domain','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','label','ldap','mantis','memcached','notification',
+                            'syslog','user','webservices',
+                            // Extended modules
+                            'awstats','bittorrent','cabinetmed','filemanager','monitoring','nltechno','ovh','phenix','phpsysinfo','submiteverywhere',
+                            'thomsonphonebook','webcalendar','webmail');
 
 // Search modules
 $dirlist=$conf->file->dol_document_root;
@@ -93,6 +96,9 @@ foreach ($dirlist as $dirroot)
 
                 if ($modName)
                 {
+                    //$modnameshort=strtolower(preg_replace('/^mod/','',$modName));
+                    //if (! in_array($modnameshort,$conf->modules)) continue;
+
                     include_once($dir.$file);
                     $objMod = new $modName($db);
 
@@ -233,7 +239,7 @@ foreach ($demoprofiles as $profilarray)
 		//print "xx".$_SERVER["PHP_SELF"].' '.DOL_URL_ROOT.'<br>';
 		$urlfrom=preg_replace('/^'.preg_quote(DOL_URL_ROOT,'/').'/i','',$_SERVER["PHP_SELF"]);
 		//print $urlfrom;
-		
+
 		//if ($i % $NBOFCOLS == 0) print '<tr>';
 		print '<tr>';
 		print '<td>'."\n";
