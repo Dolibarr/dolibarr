@@ -49,6 +49,8 @@ class User extends CommonObject
 	var $search_sid;
 	var $nom;
 	var $prenom;
+    var $lastname;
+    var $firstname;
 	var $note;
 	var $email;
 	var $office_phone;
