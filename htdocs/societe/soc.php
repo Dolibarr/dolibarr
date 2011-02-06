@@ -877,11 +877,11 @@ else
 		print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
 		print '<td nowrap="nowrap">';
 		$s = '<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
-		
+
 		if (empty($conf->global->MAIN_DISABLEVATCHECK))
 		{
 			$s.=' ';
-			
+
 			if ($conf->use_javascript_ajax)
 			{
 	            print "\n";
@@ -899,7 +899,7 @@ else
 				$s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
 			}
 		}
-		
+
 		print $s;
 		print '</td>';
 
@@ -1259,11 +1259,11 @@ else
 			print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
 			print '<td nowrap="nowrap">';
 			$s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
-			
+
 			if (empty($conf->global->MAIN_DISABLEVATCHECK))
 			{
 				$s.=' &nbsp; ';
-				
+
 				if ($conf->use_javascript_ajax)
 				{
 	                print "\n";
@@ -1281,9 +1281,9 @@ else
 				    $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
 				}
 			}
-			
+
 			print $s;
-			
+
 			print '</td>';
 			print '</tr>';
 
@@ -1526,11 +1526,11 @@ else
 			$s='';
 			$s.=$soc->tva_intra;
 			$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
-			
+
 			if (empty($conf->global->MAIN_DISABLEVATCHECK))
 			{
 				$s.=' &nbsp; ';
-				
+
 				if ($conf->use_javascript_ajax)
 				{
 	                print "\n";
@@ -1664,26 +1664,29 @@ else
 		print '</td>';
 		print '<td colspan="3">';
 
-		$sql = "SELECT count(sc.rowid) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE sc.fk_soc =".$soc->id;
-
-		$resql = $db->query($sql);
-		if ($resql)
+		$listsalesrepresentatives=$soc->getSalesRepresentatives($user);
+		$nbofsalesrepresentative=sizeof($listsalesrepresentatives);
+        if ($nbofsalesrepresentative > 3)   // We print only number
 		{
-			$num = $db->num_rows($resql);
-			$obj = $db->fetch_object($resql);
-			if ($obj->nb)
-			{
-			     print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">';
-			     print $obj->nb;
-			     print '</a>';
-			}
-			else print $langs->trans("NoSalesRepresentativeAffected");
+            print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">';
+            print $nbofsalesrepresentative;
+            print '</a>';
 		}
-		else {
-			dol_print_error($db);
-		}
+	    else if ($nbofsalesrepresentative > 0)
+	    {
+	        $userstatic=new User($db);
+	        $i=1;
+            foreach($listsalesrepresentatives as $val)
+            {
+                $userstatic->id=$val['id'];
+                $userstatic->nom=$val['name'];
+                $userstatic->prenom=$val['firstname'];
+                print $userstatic->getNomUrl(1);
+                $i++;
+                if ($i < 3) print ', ';
+            }
+	    }
+		else print $langs->trans("NoSalesRepresentativeAffected");
 		print '</td></tr>';
 
 		// Module Adherent

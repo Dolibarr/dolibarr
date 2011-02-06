@@ -1225,6 +1225,41 @@ class Societe extends CommonObject
         }
     }
 
+    /**
+     *      Return array of sales representatives
+     *      @return     array       Array of sales representatives of third party
+     */
+    function getSalesRepresentatives($user='')
+    {
+        global $conf;
+
+        $reparray=array();
+
+        $sql = "SELECT u.rowid, u.name, u.firstname";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
+        $sql.= " WHERE u.rowid = sc.fk_user AND sc.fk_soc =".$this->id;
+        $sql.= " AND entity in (0, ".$conf->entity.")";
+
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i=0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+                $reparray[$i]['id']=$obj->rowid;
+                $reparray[$i]['name']=$obj->name;
+                $reparray[$i]['firstname']=$obj->firstname;
+                $i++;
+            }
+            return $reparray;
+        }
+        else {
+            dol_print_error($this->db);
+            return -1;
+        }
+}
 
     /**
      * Set the price level
