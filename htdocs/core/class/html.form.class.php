@@ -763,7 +763,7 @@ class Form
 
     /**
      *	\brief      Return select list of users
-     *  \param      selected        Id user preselected
+     *  \param      selected        User id or user object of user preselected. If -1, we use id of current user.
      *  \param      htmlname        Field name in form
      *  \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
      *  \param      exclude         Array list of users id to exclude
@@ -773,7 +773,10 @@ class Form
      */
     function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
     {
-        global $conf;
+        global $conf,$user;
+
+        // If no preselected user defined, we take current user
+        if (empty($selected) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
 
         // Permettre l'exclusion d'utilisateurs
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
