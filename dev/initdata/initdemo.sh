@@ -37,7 +37,7 @@ $DIALOG --title "Init Dolibarr with demo values" --clear \
 valret=$?
 case $valret in
   0)
-base=`cat $fichtemp`;;
+dumpfile=`cat $fichtemp`;;
   1)
 exit;;
   255)
