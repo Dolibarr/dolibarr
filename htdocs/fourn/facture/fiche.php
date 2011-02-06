@@ -141,6 +141,17 @@ if (($_POST['action'] == 'setref_supplier' || $_POST['action'] == 'set_ref_suppl
     $_GET['facid']=$facid;
 }
 
+// Set supplier ref
+if (($_POST['action'] == 'setlabel') && $user->rights->fournisseur->facture->creer)
+{
+    $facturefourn = new FactureFournisseur($db);
+    $facturefourn->fetch($facid);
+    $facturefourn->label=$_POST['label'];
+    $result=$facturefourn->update($user);
+    if ($result < 0) dol_print_error($db);
+    $_GET['facid']=$facid;
+}
+
 if($_GET['action'] == 'deletepaiement')
 {
     $facfou = new FactureFournisseur($db);
@@ -843,11 +854,6 @@ if ($_GET['action'] == 'create')
 	{
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = GETPOST('origin');
-		/*if (preg_match('/^([^_]+)_([^_]+)/i',$_GET['origin'],$regs))
-		{
-			$element = $regs[1];
-			$subelement = $regs[2];
-		}*/
 
 		if ($element == 'project')
 		{
@@ -1282,8 +1288,8 @@ else
 
 
             // Label
-            print '<tr><td>'.$langs->trans('Label').'</td><td colspan="3">';
-            print $fac->libelle;
+            print '<tr><td>'.$html->editfieldkey("Label",'label',$fac->label,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="3">';
+            print $html->editfieldval("Label",'label',$fac->label,'facid',$fac->id,($fac->statut<2 && $user->rights->fournisseur->facture->creer));
             print '</td>';
 
             /*

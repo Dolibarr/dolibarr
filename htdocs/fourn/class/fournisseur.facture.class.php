@@ -237,19 +237,143 @@ class FactureFournisseur extends Facture
 		}
 	}
 
-	/**
+    /**
+     *    \brief      Load object in memory from database
+     *    \param      id          id object
+     *    \return     int         <0 if KO, >0 if OK
+     */
+    function fetch($id)
+    {
+        global $langs;
+        $sql = "SELECT";
+        $sql.= " t.rowid,";
+        $sql.= " t.facnumber,";
+        $sql.= " t.entity,";
+        $sql.= " t.type,";
+        $sql.= " t.fk_soc,";
+        $sql.= " t.datec,";
+        $sql.= " t.datef,";
+        $sql.= " t.tms,";
+        $sql.= " t.libelle,";
+        $sql.= " t.paye,";
+        $sql.= " t.amount,";
+        $sql.= " t.remise,";
+        $sql.= " t.close_code,";
+        $sql.= " t.close_note,";
+        $sql.= " t.tva,";
+        $sql.= " t.localtax1,";
+        $sql.= " t.localtax2,";
+        $sql.= " t.total,";
+        $sql.= " t.total_ht,";
+        $sql.= " t.total_tva,";
+        $sql.= " t.total_ttc,";
+        $sql.= " t.fk_statut,";
+        $sql.= " t.fk_user_author,";
+        $sql.= " t.fk_user_valid,";
+        $sql.= " t.fk_facture_source,";
+        $sql.= " t.fk_projet,";
+        $sql.= " t.fk_cond_reglement,";
+        $sql.= " t.date_lim_reglement,";
+        $sql.= " t.note,";
+        $sql.= " t.note_public,";
+        $sql.= " t.model_pdf,";
+        $sql.= " t.import_key,";
+        $sql.= ' s.nom as socnom, s.rowid as socid';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t,'.MAIN_DB_PREFIX.'societe as s';
+        $sql.= ' WHERE t.rowid='.$id.' AND t.fk_soc = s.rowid';
+
+        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
+
+                $this->id    = $obj->rowid;
+                $this->ref   = $obj->rowid;
+
+                $this->ref_supplier = $obj->facnumber;
+                $this->facnumber = $obj->facnumber;
+                $this->entity = $obj->entity;
+                $this->type = empty($obj->type)?0:$obj->type;
+                $this->fk_soc = $obj->fk_soc;
+                $this->datec = $this->db->jdate($obj->datec);
+                $this->date  = $this->db->jdate($obj->datef);
+                $this->datep = $this->db->jdate($obj->datef);
+                $this->tms = $this->db->jdate($obj->tms);
+                $this->libelle = $obj->libelle;
+                $this->label = $obj->libelle;
+                $this->paye = $obj->paye;
+                $this->amount = $obj->amount;
+                $this->remise = $obj->remise;
+                $this->close_code = $obj->close_code;
+                $this->close_note = $obj->close_note;
+                $this->tva = $obj->tva;
+                $this->localtax1 = $obj->localtax1;
+                $this->localtax2 = $obj->localtax2;
+                $this->total = $obj->total;
+                $this->total_ht = $obj->total_ht;
+                $this->total_tva = $obj->total_tva;
+                $this->total_ttc = $obj->total_ttc;
+                $this->fk_statut = $obj->fk_statut;
+                $this->statut = $obj->fk_statut;
+                $this->fk_user_author = $obj->fk_user_author;
+                $this->author = $obj->fk_user_author;
+                $this->fk_user_valid = $obj->fk_user_valid;
+                $this->fk_facture_source = $obj->fk_facture_source;
+                $this->fk_project = $obj->fk_projet;
+                $this->fk_cond_reglement = $obj->fk_cond_reglement;
+                $this->date_echeance = $this->db->jdate($obj->date_lim_reglement);
+                $this->note = $obj->note;
+                $this->note_public = $obj->note_public;
+                $this->model_pdf = $obj->model_pdf;
+                $this->import_key = $obj->import_key;
+
+                $this->socid  = $obj->socid;
+                $this->socnom = $obj->socnom;
+
+                $result=$this->fetch_lines();
+                if ($result < 0)
+                {
+                    $this->error=$this->db->error();
+                    dol_syslog(get_class($this).'::Fetch Error '.$this->error, LOG_ERR);
+                    return -3;
+                }
+
+            }
+            else
+            {
+                $this->error='Bill with id '.$rowid.' not found sql='.$sql;
+                dol_syslog(get_class($this).'::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
+                dol_print_error('',$sql);
+                return -2;
+            }
+
+            $this->db->free($resql);
+            return 1;
+        }
+        else
+        {
+            $this->error="Error ".$this->db->lasterror();
+            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+            return -1;
+        }
+    }
+
+    /**
 	 *    	\brief      Load object from database
 	 *    	\param      rowid       id of object to get
 	 *		\return     int         >0 if ok, <0 if ko
 	 */
-	function fetch($rowid)
+	function faaetch($rowid)
 	{
 		global $conf;
 
-		$sql = 'SELECT libelle, facnumber, amount, remise, datef as df,';
+		$sql = 'SELECT libelle as label, facnumber, amount, remise, datef as df,';
 		$sql.= ' total_ht, total_tva, total_ttc, fk_user_author,';
 		$sql.= ' fk_statut, fk_projet as fk_project, paye, f.note, f.note_public,';
-		$sql.= ' date_lim_reglement as de,';
+		$sql.= ' date_lim_reglement as de, model_pdf, import_key';
 		$sql.= ' s.nom as socnom, s.rowid as socid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 		$sql.= ' WHERE f.rowid='.$rowid.' AND f.fk_soc = s.rowid';
@@ -272,10 +396,11 @@ class FactureFournisseur extends Facture
 				$this->datep         = $this->db->jdate($obj->df);
 				$this->date          = $this->db->jdate($obj->df);
 				$this->date_echeance = $this->db->jdate($obj->de);
-				$this->libelle       = $obj->libelle;
+				$this->libelle       = $obj->label;   // deprecated
+                $this->label         = $obj->label;
 
 				$this->remise        = $obj->remise;
-				$this->socid        = $obj->socid;
+				$this->socid         = $obj->socid;
 
 				$this->total_ht  = $obj->total_ht;
 				$this->total_tva = $obj->total_tva;
@@ -288,9 +413,12 @@ class FactureFournisseur extends Facture
 
 				$this->fk_project = $obj->fk_project;
 
+                $this->socid         = $obj->socid;
 				$this->socnom = $obj->socnom;
 				$this->note = $obj->note;
 				$this->note_public = $obj->note_public;
+                $this->model_pdf = $obj->model_pdf;
+                $this->import_key = $obj->import_key;
 
 				$this->db->free($resql);
 
@@ -378,6 +506,123 @@ class FactureFournisseur extends Facture
 			return -3;
 		}
 	}
+
+
+   /**
+     *      \brief      Update database
+     *      \param      user            User that modify
+     *      \param      notrigger       0=launch triggers after, 1=disable triggers
+     *      \return     int             <0 if KO, >0 if OK
+     */
+    function update($user=0, $notrigger=0)
+    {
+        global $conf, $langs;
+        $error=0;
+
+        // Clean parameters
+        if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
+        if (isset($this->entity)) $this->entity=trim($this->entity);
+        if (isset($this->type)) $this->type=trim($this->type);
+        if (isset($this->fk_soc)) $this->fk_soc=trim($this->fk_soc);
+        if (isset($this->libelle)) $this->libelle=trim($this->libelle);
+        if (isset($this->paye)) $this->paye=trim($this->paye);
+        if (isset($this->amount)) $this->amount=trim($this->amount);
+        if (isset($this->remise)) $this->remise=trim($this->remise);
+        if (isset($this->close_code)) $this->close_code=trim($this->close_code);
+        if (isset($this->close_note)) $this->close_note=trim($this->close_note);
+        if (isset($this->tva)) $this->tva=trim($this->tva);
+        if (isset($this->localtax1)) $this->localtax1=trim($this->localtax1);
+        if (isset($this->localtax2)) $this->localtax2=trim($this->localtax2);
+        if (isset($this->total)) $this->total=trim($this->total);
+        if (isset($this->total_ht)) $this->total_ht=trim($this->total_ht);
+        if (isset($this->total_tva)) $this->total_tva=trim($this->total_tva);
+        if (isset($this->total_ttc)) $this->total_ttc=trim($this->total_ttc);
+        if (isset($this->statut)) $this->statut=trim($this->statut);
+        if (isset($this->author)) $this->author=trim($this->author);
+        if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
+        if (isset($this->fk_facture_source)) $this->fk_facture_source=trim($this->fk_facture_source);
+        if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
+        if (isset($this->fk_cond_reglement)) $this->fk_cond_reglement=trim($this->fk_cond_reglement);
+        if (isset($this->note)) $this->note=trim($this->note);
+        if (isset($this->note_public)) $this->note_public=trim($this->note_public);
+        if (isset($this->model_pdf)) $this->model_pdf=trim($this->model_pdf);
+        if (isset($this->import_key)) $this->import_key=trim($this->import_key);
+
+
+        // Check parameters
+        // Put here code to add control on parameters values
+
+        // Update request
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
+        $sql.= " facnumber=".(isset($this->facnumber)?"'".addslashes($this->facnumber)."'":"null").",";
+        $sql.= " entity=".(isset($this->entity)?$this->entity:"null").",";
+        $sql.= " type=".(isset($this->type)?$this->type:"null").",";
+        $sql.= " fk_soc=".(isset($this->fk_soc)?$this->fk_soc:"null").",";
+        $sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
+        $sql.= " datef=".(dol_strlen($this->date)!=0 ? "'".$this->db->idate($this->date)."'" : 'null').",";
+        $sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+        $sql.= " libelle=".(isset($this->label)?"'".addslashes($this->label)."'":"null").",";
+        $sql.= " paye=".(isset($this->paye)?$this->paye:"null").",";
+        $sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";
+        $sql.= " remise=".(isset($this->remise)?$this->remise:"null").",";
+        $sql.= " close_code=".(isset($this->close_code)?"'".addslashes($this->close_code)."'":"null").",";
+        $sql.= " close_note=".(isset($this->close_note)?"'".addslashes($this->close_note)."'":"null").",";
+        $sql.= " tva=".(isset($this->tva)?$this->tva:"null").",";
+        $sql.= " localtax1=".(isset($this->localtax1)?$this->localtax1:"null").",";
+        $sql.= " localtax2=".(isset($this->localtax2)?$this->localtax2:"null").",";
+        $sql.= " total=".(isset($this->total)?$this->total:"null").",";
+        $sql.= " total_ht=".(isset($this->total_ht)?$this->total_ht:"null").",";
+        $sql.= " total_tva=".(isset($this->total_tva)?$this->total_tva:"null").",";
+        $sql.= " total_ttc=".(isset($this->total_ttc)?$this->total_ttc:"null").",";
+        $sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
+        $sql.= " fk_user_author=".(isset($this->author)?$this->author:"null").",";
+        $sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
+        $sql.= " fk_facture_source=".(isset($this->fk_facture_source)?$this->fk_facture_source:"null").",";
+        $sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
+        $sql.= " fk_cond_reglement=".(isset($this->fk_cond_reglement)?$this->fk_cond_reglement:"null").",";
+        $sql.= " date_lim_reglement=".(dol_strlen($this->date_echeance)!=0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
+        $sql.= " note=".(isset($this->note)?"'".addslashes($this->note)."'":"null").",";
+        $sql.= " note_public=".(isset($this->note_public)?"'".addslashes($this->note_public)."'":"null").",";
+        $sql.= " model_pdf=".(isset($this->model_pdf)?"'".addslashes($this->model_pdf)."'":"null").",";
+        $sql.= " import_key=".(isset($this->import_key)?"'".addslashes($this->import_key)."'":"null")."";
+        $sql.= " WHERE rowid=".$this->id;
+
+        $this->db->begin();
+
+        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+        if (! $error)
+        {
+            if (! $notrigger)
+            {
+                // Call triggers
+                //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                //$interface=new Interfaces($this->db);
+                //$result=$interface->run_triggers('BILL_SUPPLIER_MODIFY',$this,$user,$langs,$conf);
+                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // End call triggers
+            }
+        }
+
+        // Commit or rollback
+        if ($error)
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->db->commit();
+            return 1;
+        }
+    }
 
 
 	/**
