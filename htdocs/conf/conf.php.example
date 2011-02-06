@@ -183,8 +183,7 @@ $dolibarr_main_authentication='dolibarr';
 
 # dolibarr_main_demo
 # Login and pass to use in a demo mode
-# Default value: 0
-# Possible values: 0 or 1
+# Default value: ''
 # Examples:
 # $dolibarr_main_demo='autologin,autopass'
 
