@@ -198,7 +198,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 	// Financial
 	if ($conf->compta->enabled || $conf->accounting->enabled
-	|| $conf->facture->enabled || $conf->deplacement->enabled)
+	|| $conf->facture->enabled || $conf->deplacement->enabled || $conf->don->enabled)
 	{
 		$langs->load("compta");
 
