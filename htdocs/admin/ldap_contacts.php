@@ -80,6 +80,8 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
 llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 
+print_fiche_titre($langs->trans("LDAPSetup"),'','setup');
+
 $head = ldap_prepare_head();
 
 // Test si fonction LDAP actives
