@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
@@ -718,7 +718,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '</td></tr>';
 
 	// EMail
-	print '<tr><td valign="top">'.$langs->trans("EMail").($conf->global->USER_MAIL_REQUIRED?'*':'').'</td>';
+	print '<tr><td valign="top"'.($conf->global->USER_MAIL_REQUIRED?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
 	print '<td>';
 	if ($ldap_mail)
 	{
