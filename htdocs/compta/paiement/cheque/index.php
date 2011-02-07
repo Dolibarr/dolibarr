@@ -19,11 +19,11 @@
  */
 
 /**
-		\file       htdocs/compta/paiement/cheque/index.php
-		\ingroup    compta
-		\brief      Page liste des bordereau de remise de cheque
-		\version    $Id$
-*/
+ *		\file       htdocs/compta/paiement/cheque/index.php
+ *		\ingroup    compta
+ *		\brief      Home page for cheque receipts
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php');
@@ -41,7 +41,7 @@ $accountstatic=new Account($db);
 
 
 /*
- * Affichage
+ * View
  */
 
 llxHeader('',$langs->trans("ChequesArea"));

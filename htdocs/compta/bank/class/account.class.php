@@ -191,13 +191,13 @@ class Account extends CommonObject
 	 *  @param		$date			Date operation
 	 *  @param		$oper			1,2,3,4... (deprecated) or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
 	 *  @param		$label			Descripton
-	 *  @param		$amount			Montant
+	 *  @param		$amount			Amount
 	 *  @param		$num_chq		Numero cheque ou virement
 	 *  @param		$categorie		Categorie optionnelle
 	 *  @param		$user			User that create
-	 *  @param		$emetteur		Nom emetteur
-	 *  @param		$banque			Banque emettrice
-	 *  @return		int				Rowid of added entry, <0 si erreur
+	 *  @param		$emetteur		Name of cheque writer
+	 *  @param		$banque			Bank of cheque writer
+	 *  @return		int				Rowid of added entry, <0 if KO
 	 */
 	function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user, $emetteur='',$banque='')
 	{
