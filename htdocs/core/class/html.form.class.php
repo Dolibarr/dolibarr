@@ -1659,8 +1659,9 @@ class Form
      *    @param      statut            Status of searched accounts (0=open, 1=closed)
      *    @param      filtre            To filter list
      *    @param      useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *    @param      moreattrib        To add more attribute on select
      */
-    function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0)
+    function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0,$moreattrib='')
     {
         global $langs, $conf;
 
@@ -1681,7 +1682,7 @@ class Form
             $i = 0;
             if ($num)
             {
-                print '<select id="select'.$htmlname.'" class="flat selectbankaccount" name="'.$htmlname.'">';
+                print '<select id="select'.$htmlname.'" class="flat selectbankaccount" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
                 if ($useempty == 1 || ($useempty == 2 && $num > 1))
                 {
                     print '<option value="'.$obj->rowid.'">&nbsp;</option>';
