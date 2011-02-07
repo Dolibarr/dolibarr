@@ -82,11 +82,6 @@ if ($rowid)
     $caneditfieldmember=$user->rights->adherent->creer;
 }
 
-// Define size of logo small and mini (might be set into other pages)
-$maxwidthsmall=270;$maxheightsmall=150;
-$maxwidthmini=128;$maxheightmini=72;
-$quality = 80;
-
 
 
 /*

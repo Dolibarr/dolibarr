@@ -164,7 +164,7 @@ function dol_compare_file($a, $b)
  *	Return mime type of a file
  *	@param      file		Filename we looking for MIME type
  *  @param      default     Default mime type if extension not found in known list
- * 	@param		mode    	0=Return short mime, 1=otherwise full mime string, 2=image for mime, 3=source language
+ * 	@param		mode    	0=Return full mime, 1=otherwise short mime string, 2=image for mime type, 3=source language
  *	@return     string     	Return a mime type family
  *                          (text/xxx, application/xxx, image/xxx, audio, video, archive)
  */

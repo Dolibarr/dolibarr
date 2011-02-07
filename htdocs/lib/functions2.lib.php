@@ -742,37 +742,6 @@ function hexbin($hexa)
 
 
 /**
- *	\brief      Return if a filename is file name of a supported image format
- *	\param      file		Filename
- *	\return		int			-1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported
- */
-function image_format_supported($file)
-{
-    // Case filename is not a format image
-    if (! preg_match('/(\.gif|\.jpg|\.jpeg|\.png|\.bmp)$/i',$file,$reg)) return -1;
-
-    // Case filename is a format image but not supported by this PHP
-    $imgfonction='';
-    if (strtolower($reg[1]) == '.gif')  $imgfonction = 'imagecreatefromgif';
-    if (strtolower($reg[1]) == '.png')  $imgfonction = 'imagecreatefrompng';
-    if (strtolower($reg[1]) == '.jpg')  $imgfonction = 'imagecreatefromjpeg';
-    if (strtolower($reg[1]) == '.jpeg') $imgfonction = 'imagecreatefromjpeg';
-    if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
-    if ($imgfonction)
-    {
-        if (! function_exists($imgfonction))
-        {
-            // Fonctions de conversion non presente dans ce PHP
-            return 0;
-        }
-    }
-
-    // Filename is a format image and supported by this PHP
-    return 1;
-}
-
-
-/**
  *	\brief   Retourne le numero de la semaine par rapport a une date
  *	\param   time   	Date au format 'timestamp'
  *	\return  int		Numero de semaine

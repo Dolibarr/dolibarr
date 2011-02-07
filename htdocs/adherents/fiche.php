@@ -80,11 +80,6 @@ if ($rowid)
 	$caneditfieldmember=$user->rights->adherent->creer;
 }
 
-// Define size of logo small and mini (might be set into other pages)
-$maxwidthsmall=270;$maxheightsmall=150;
-$maxwidthmini=128;$maxheightmini=72;
-$quality = 80;
-
 
 
 /*
@@ -1021,7 +1016,7 @@ if ($rowid && $action != 'edit')
 	if ($_GET["action"] == 'create_user')
 	{
 		$login=$adh->login;
-		if (empty($login)) 
+		if (empty($login))
 		{
 			// Full firstname and name separated with a dot : firstname.name
 			include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');

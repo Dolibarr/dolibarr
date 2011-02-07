@@ -20,20 +20,55 @@
 
 /**
  *  \file		htdocs/lib/images.lib.php
- *  \brief		Ensemble de fonctions de base de traitement d'images
+ *  \brief		Set of function for manipulating images
  * 	\version	$Id$
  */
 
+// Define size of logo small and mini
+$maxwidthsmall=270;$maxheightsmall=150;
+$maxwidthmini=128;$maxheightmini=72;
+$quality = 80;
+
+
 
 /**
- *    	\brief     	Return size of image file on disk (Supported extensions are gif, jpg, png and bmp)
- * 		\param		$file		Full path name of file
- * 		\return		Array		array('width'=>width, 'height'=>height)
+ *      Return if a filename is file name of a supported image format
+ *      @param      file        Filename
+ *      @return     int         -1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported
+ */
+function image_format_supported($file)
+{
+    // Case filename is not a format image
+    if (! preg_match('/(\.gif|\.jpg|\.jpeg|\.png|\.bmp)$/i',$file,$reg)) return -1;
+
+    // Case filename is a format image but not supported by this PHP
+    $imgfonction='';
+    if (strtolower($reg[1]) == '.gif')  $imgfonction = 'imagecreatefromgif';
+    if (strtolower($reg[1]) == '.png')  $imgfonction = 'imagecreatefrompng';
+    if (strtolower($reg[1]) == '.jpg')  $imgfonction = 'imagecreatefromjpeg';
+    if (strtolower($reg[1]) == '.jpeg') $imgfonction = 'imagecreatefromjpeg';
+    if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
+    if ($imgfonction)
+    {
+        if (! function_exists($imgfonction))
+        {
+            // Fonctions de conversion non presente dans ce PHP
+            return 0;
+        }
+    }
+
+    // Filename is a format image and supported by this PHP
+    return 1;
+}
+
+
+/**
+ *    	Return size of image file on disk (Supported extensions are gif, jpg, png and bmp)
+ * 		@param		$file		Full path name of file
+ * 		@return		Array		array('width'=>width, 'height'=>height)
  */
 function dol_getImageSize($file)
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-
 	$ret=array();
 
 	if (image_format_supported($file) < 0) return $ret;
@@ -50,14 +85,14 @@ function dol_getImageSize($file)
 
 
 /**
- *    	\brief     	Resize or crop an image file (Supported extensions are gif, jpg, png and bmp)
- *    	\param     	file           	Path of file to resize/crop
- * 		\param		mode			0=Resize, 1=Crop
- *    	\param     	newWidth       	Largeur maximum que dois faire l'image destination (0=keep ratio)
- *    	\param     	newHeight      	Hauteur maximum que dois faire l'image destination (0=keep ratio)
- * 		\param		src_x			Position of croping image in source image (not use if mode=0)
- * 		\param		src_y			Position of croping image in source image (not use if mode=0)
- *		\return		int				File name if OK, error message if KO
+ *    	Resize or crop an image file (Supported extensions are gif, jpg, png and bmp)
+ *    	@param     	file           	Path of file to resize/crop
+ * 		@param		mode			0=Resize, 1=Crop
+ *    	@param     	newWidth       	Largeur maximum que dois faire l'image destination (0=keep ratio)
+ *    	@param     	newHeight      	Hauteur maximum que dois faire l'image destination (0=keep ratio)
+ * 		@param		src_x			Position of croping image in source image (not use if mode=0)
+ * 		@param		src_y			Position of croping image in source image (not use if mode=0)
+ *		@return		int				File name if OK, error message if KO
  */
 function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $src_y=0)
 {
@@ -250,15 +285,16 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 
 
 /**
- *    	\brief     Create 2 thumbnails from an image file: one small and one mini (Supported extensions are gif, jpg, png and bmp)
- *    	\param     file           	Chemin du fichier image a redimensionner
- *    	\param     maxWidth       	Largeur maximum que dois faire la miniature (-1=unchanged, 160 par defaut)
- *    	\param     maxHeight      	Hauteur maximum que dois faire l'image (-1=unchanged, 120 par defaut)
- *    	\param     extName        	Extension pour differencier le nom de la vignette
- *    	\param     quality        	Quality of compression (0=worst, 100=best)
- *      \param     targetformat     New format of target (1,2,3,4 or 0 to keep old format)
- *    	\return    string			Full path of thumb
- *		\remarks					With file=myfile.jpg -> myfile_small.jpg
+ *    	Create a thumbnail from an image file (Supported extensions are gif, jpg, png and bmp).
+ *      If file is myfile.jpg, new file may be myfile_small.jpg
+ *    	@param     file           	PAth of file to resize
+ *    	@param     maxWidth       	Largeur maximum que dois faire la miniature (-1=unchanged, 160 by default)
+ *    	@param     maxHeight      	Hauteur maximum que dois faire l'image (-1=unchanged, 120 by default)
+ *    	@param     extName        	Extension to differenciate thumb file name
+ *    	@param     quality        	Quality of compression (0=worst, 100=best)
+ *      @param     outdir           Directory where to store thumb
+ *      @param     targetformat     New format of target (1,2,3,4 or 0 to keep old format)
+ *    	@return    string			Full path of thumb
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50, $outdir='thumbs', $targetformat=0)
 {
