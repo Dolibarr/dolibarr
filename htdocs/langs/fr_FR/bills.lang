@@ -8,6 +8,7 @@ BillsSuppliers=Factures fournisseurs
 BillsCustomersUnpaid=Factures clients impayées
 BillsCustomersUnpaidForCompany=Factures clients impayées pour %s
 BillsSuppliersUnpaid=Factures fournisseurs impayées
+BillsSuppliersUnpaidForCompany=Factures fournisseurs impayées pour %s
 BillsUnpaid=Impayées
 BillsLate=Retards de paiement
 BillsStatistics=Statistiques factures clients

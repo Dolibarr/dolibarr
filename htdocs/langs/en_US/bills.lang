@@ -8,6 +8,7 @@ BillsSuppliers=Supplier's invoices
 BillsCustomersUnpaid=Unpaid customer's invoices
 BillsCustomersUnpaidForCompany=Unpaid customer's invoices for %s
 BillsSuppliersUnpaid=Unpaid supplier's invoices
+BillsSuppliersUnpaidForCompany=Unpaid supplier's invoices for %s
 BillsUnpaid=Unpaid
 BillsLate=Late payments
 BillsStatistics=Customer's invoices statistics
