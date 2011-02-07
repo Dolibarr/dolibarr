@@ -60,6 +60,7 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND clos = 0";
+        $sql.= " ORDER BY label";
 
 		$resql = $db->query($sql);
 		if ($resql)
