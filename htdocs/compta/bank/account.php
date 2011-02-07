@@ -517,7 +517,7 @@ if ($account || $_GET["ref"])
                 print "<td nowrap>";
                 $label=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
                // $label=$langs->getTradFromKey("PaymentTypeShort".$objp->fk_type);
-                
+
                 if ($objp->fk_type == 'SOLD') $label='&nbsp;';
                 print $label;
                 print "</td>\n";
@@ -572,8 +572,8 @@ if ($account || $_GET["ref"])
                     }
                     else if ($links[$key]['type']=='sc') {
                     }
-                    else {
-                        //print ' - ';
+                    else {  // Show link with label $links[$key]['label']
+                        if (! empty($objp->label) && ! empty($links[$key]['label'])) print ' - ';
                         print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
                         if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
                         {
