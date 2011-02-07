@@ -65,6 +65,9 @@ class Account extends CommonObject
 	var $proprio;
 	var $adresse_proprio;
 
+	//! 1=Compte courant/check/carte, 2=Compte liquide, 0=Compte épargne
+	var $courant;
+
 	var $fk_departement;
 	var $departement_code;
 	var $departement;
@@ -86,12 +89,11 @@ class Account extends CommonObject
 	/**
 	 *  Constructeur
 	 */
-	function Account($DB, $rowid=0)
+	function Account($DB)
 	{
 		global $langs;
 
 		$this->db = $DB;
-		$this->rowid = $rowid;
 
 		$this->clos = 0;
 		$this->solde = 0;
