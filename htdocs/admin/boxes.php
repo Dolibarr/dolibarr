@@ -254,7 +254,7 @@ print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("SourceFile").'</td>';
-print '<td align="center" width="160">'.$langs->trans("ActivateOn").'</td>';
+print '<td width="160">'.$langs->trans("ActivateOn").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT rowid, file, note, tms";
@@ -317,7 +317,7 @@ if ($resql)
 
 			// Pour chaque position possible, on affiche un lien
 			// d'activation si boite non deja active pour cette position
-			print '<td align="center">';
+			print '<td>';
 			print $html->selectarray("pos",$pos_name);
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
@@ -349,7 +349,7 @@ print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td align="center" width="160">'.$langs->trans("ActiveOn").'</td>';
 print '<td align="center" width="60" colspan="2">'.$langs->trans("PositionByDefault").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Disable").'</td>';
-print "</tr>\n";
+print '</tr>'."\n";
 
 $sql = "SELECT b.rowid, b.box_id, b.position,";
 $sql.= " bd.file, bd.note, bd.tms";
@@ -419,7 +419,7 @@ if ($resql)
 		print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
 		print '</td>';
 
-		print "</tr>\n";
+		print '</tr>'."\n";
 		$i++;
 
 		$box_order++;
@@ -443,13 +443,13 @@ $var=false;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addconst">';
-print "<tr $bc[$var] class=value><td>";
+print '<tr '.$bc[$var].' class=value><td>';
 print $langs->trans("MaxNbOfLinesForBoxes")."</td>\n";
 print '<td>';
 print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.$conf->global->MAIN_BOXES_MAXLINES.'">';
 print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"><br>';
-print "</td>\n";
+print '<input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button">';
+print '</td>'."\n";
 print '</tr>';
 print '</form>';
 
