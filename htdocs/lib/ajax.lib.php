@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2007-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +30,17 @@
  *	@param	    htmlname            HTML name of input field
  *	@param	    url                 Url for request: /chemin/fichier.php
  *  @param		option				More parameters on URL request
- *  @param		minLength			Minimum number of chars to trigger tha Ajax search
+ *  @param		minLength			Minimum number of chars to trigger that Ajax search
+ *  @param		autoselect			Automatic selection if just one value
  *	@return    	string              script complet
  */
-function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2)
+function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2,$autoselect=0)
 {
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
 
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
+					var autoselect = '.$autoselect.';
 					jQuery("input#search_'.$htmlname.'").blur(function() {
     					//console.log(this.value.length);
 					    if (this.value.length == 0)
@@ -51,7 +53,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2)
     					source: function( request, response ) {
     						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$htmlname.': request.term }, function(data){
 								response( jQuery.map( data, function( item ) {
-									if (data.length == 1) {
+									if (autoselect == 1 && data.length == 1) {
 										jQuery("#search_'.$htmlname.'").val(item.value);
 										jQuery("#'.$htmlname.'").val(item.key);
 									}
@@ -82,9 +84,12 @@ function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2)
  *	@param	    htmlname            nom et id du champ
  *	@param		fields				other fields to autocomplete
  *	@param	    url                 chemin du fichier de reponse : /chemin/fichier.php
+ *	@param		option				More parameters on URL request
+ *	@param		minLength			Minimum number of chars to trigger that Ajax search
+ *	@param		autoselect			Automatic selection if just one value
  *	@return    	string              script complet
  */
-function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
+function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,$autoselect=0)
 {
 	$script='';
 
@@ -95,15 +100,16 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='')
 	$script.= 'jQuery(document).ready(function() {
 					var fields = '.$fields.';
 					var length = fields.length;
+					var autoselect = '.$autoselect.';
 					//alert(fields + " " + length);
 
     				jQuery("input#'.$htmlname.'").autocomplete({
     					dataType: "json",
-    					minLength: 2,
+    					minLength: '.$minLength.',
     					source: function( request, response ) {
     						jQuery.getJSON( "'.$url.($option?'?'.$option:'').'", { '.$htmlname.': request.term }, function(data){
 								response( jQuery.map( data, function( item ) {
-									if (data.length == 1) {
+									if (autoselect == 1 && data.length == 1) {
 										jQuery("#'.$htmlname.'").val(item.value);
 										// TODO move this to specific request
 										if (item.states) {
