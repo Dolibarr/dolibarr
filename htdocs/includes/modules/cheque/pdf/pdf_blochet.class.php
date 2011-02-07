@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/includes/modules/cheque/pdf/pdf_blochet.class.php
  *	\ingroup    banque
- *	\brief      Fichier de la classe permettant de generer les bordereau de remise de cheque
+ *	\brief      File to build cheque deposit receipts
  *	\version    $Id$
  */
 
@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/cheque/pdf/modules_chequerecei
 
 /**
  *	\class      BordereauChequeBlochet
- *	\brief      Classe permettant de generer les bordereau de remise de cheque
+ *	\brief      Class of file to build cheque deposit receipts
  */
 class BordereauChequeBlochet extends ModeleChequeReceipts
 {
@@ -232,28 +232,39 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
         pdf_bank($pdf,$outputlangs,32,30,$this->account,1);
 
 		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(114,16);
+        $pdf->SetXY(114,15);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("Signature"), 0, 'L');
 
-		$pdf->Rect(9, 47, 192, 7);
-		$pdf->line(55, 47, 55, 54);
-		$pdf->line(140, 47, 140, 54);
-		$pdf->line(170, 47, 170, 54);
+        $pdf->Rect(9, 14, 192, 33);
+        $pdf->line(9, 19, 112, 19);
+        $pdf->line(9, 25, 112, 25);
+        //$pdf->line(9, 31, 201, 31);
+        $pdf->line(9, 31, 112, 31);
+
+        $pdf->line(30, 14, 30, 47);
+        $pdf->line(112, 14, 112, 47);
+
+		// Number of cheques
+		$posy=49;
+		$pdf->Rect(9, $posy, 192, 7);
+		$pdf->line(55, $posy, 55, $posy+7);
+		$pdf->line(140, $posy, 140, $posy+7);
+		$pdf->line(170, $posy, 170, $posy+7);
 
 		$pdf->SetFont('','', $default_font_size);
-		$pdf->SetXY(10,49);
+		$pdf->SetXY(10,$posy+2);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("NumberOfCheques"), 0, 'L');
 
 		$pdf->SetFont('','B', $default_font_size);
-        $pdf->SetXY(57,49);
+        $pdf->SetXY(57,$posy+2);
         $pdf->MultiCell(40, 2, $this->nbcheque, 0, 'L');
 
 		$pdf->SetFont('','', $default_font_size);
-        $pdf->SetXY(148,49);
+        $pdf->SetXY(148,$posy+2);
 		$pdf->MultiCell(40, 2, $langs->trans("Total"));
 
 		$pdf->SetFont('','B', $default_font_size);
-		$pdf->SetXY (170, 49);
+		$pdf->SetXY (170, $posy+2);
 		$pdf->MultiCell(31, 2, price($this->amount), 0, 'C', 0);
 
 		// Tableau
@@ -272,20 +283,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->SetXY (180, $this->tab_top+2);
 		$pdf->MultiCell(20,2,$outputlangs->transnoentities("Amount"), 0, 'R');
-		$pdf->line(9, $this->tab_top + 10, 201, $this->tab_top + 10 );
+		$pdf->line(9, $this->tab_top + 8, 201, $this->tab_top + 8);
 
 		$pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
-
-		$pdf->Rect(9, 14, 192, 31);
-		$pdf->line(9, 19, 112, 19);
-		$pdf->line(9, 25, 112, 25);
-		$pdf->line(9, 31, 112, 31);
-
-		$pdf->line(30, 14, 30, 45);
-		//$pdf->line(48, 38, 48, 45);
-		//$pdf->line(66, 38, 66, 45);
-		//$pdf->line(102, 38, 102, 45);
-		$pdf->line(112, 14, 112, 45);
 	}
 
 
