@@ -73,8 +73,8 @@ class modAccounting extends DolibarrModules
 		$this->langfiles = array("compta");
 
 		// Constants
-		$this->const = array(0=>array('MAIN_COMPANY_CODE_ALWAYS_REQUIRED','chaine','1','With this constants on, third party code is always required whatever is numbering module behaviour',0),
-							 1=>array('MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED','chaine','1','With this constants on, bank account number is always required',0),
+		$this->const = array(0=>array('MAIN_COMPANY_CODE_ALWAYS_REQUIRED','chaine','1','With this constants on, third party code is always required whatever is numbering module behaviour',0,'current',1),
+							 1=>array('MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED','chaine','1','With this constants on, bank account number is always required',0,'current',1),
 
 		);			// List of particular constants to add when module is enabled
 
