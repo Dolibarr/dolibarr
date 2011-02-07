@@ -712,7 +712,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '</td></tr>';
 
 	// EMail
-	print '<tr><td valign="top">'.$langs->trans("EMail").($conf->global->USER_MAIL_REQUIRED?'*':'').'</td>';
+    print '<tr><td valign="top"'.($conf->global->USER_MAIL_REQUIRED?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
 	print '<td>';
 	if ($ldap_mail)
 	{
