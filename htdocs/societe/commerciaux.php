@@ -21,7 +21,7 @@
 /**
  *  \file       htdocs/societe/commerciaux.php
  *  \ingroup    societe
- *  \brief      Page d'affectations des commerciaux aux societes
+ *  \brief      Page of links to sales representatives
  *  \version    $Id$
  */
 
@@ -87,7 +87,10 @@ if($_GET["socid"] && $_GET["delcommid"])
  *	View
  */
 
-llxHeader();
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$langs->trans("ThirdParty"),$help_url);
+
+$form = new Form($db);
 
 if ($_GET["socid"])
 {
@@ -104,25 +107,27 @@ if ($_GET["socid"])
 	 */
 
 	print '<table class="border" width="100%">';
-	print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$soc->nom.'</td></tr>';
 
-	print '<tr><td>';
-	print $langs->trans('CustomerCode').'</td><td width="20%">';
-	print $soc->code_client;
-	if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+    print '<tr><td width="20%">'.$langs->trans('Name').'</td>';
+    print '<td colspan="3">';
+    print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
+    print '</td></tr>';
+
+	print '<tr>';
+    print '<td>'.$langs->trans('CustomerCode').'</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
+    print $soc->code_client;
+    if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
     print '</td>';
-
-	// Prefix
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
-        print '<td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td>';
+       print '<td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td>';
     }
-    else print '<td>&nbsp;</td>';
+    print '</td>';
     print '</tr>';
 
 	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
 
-	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
+	print '<tr><td>'.$langs->trans('Zip').'</td><td width="20%">'.$soc->cp."</td>";
 	print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
 
 	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';
