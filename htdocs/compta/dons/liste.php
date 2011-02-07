@@ -80,7 +80,7 @@ if ($result)
 	}
 	else
 	{
-		print_barre_liste($langs->trans("Donation"), $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+		print_barre_liste($langs->trans("Donations"), $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
 	}
 	print "<table class=\"noborder\" width=\"100%\">";
 
