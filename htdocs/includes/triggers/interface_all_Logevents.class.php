@@ -184,7 +184,7 @@ class InterfaceLogevents
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $this->texte=$langs->transnoentities("UserDeleted",$object->login);
-            $this->desc=$langs->transnoentities("Userdeleted",$object->login);
+            $this->desc=$langs->transnoentities("UserDeleted",$object->login);
         }
 
 		// Groupes
