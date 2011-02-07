@@ -77,7 +77,7 @@ if ($_POST["action"] == 'add')
     $account->min_desired     = $_POST["account_min_desired"];
     $account->comment         = trim($_POST["account_comment"]);
 
-    if ($conf->global->MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
+    if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
     {
         $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountancyCode")).'</div>';
         $action='create';       // Force chargement page en mode creation
@@ -144,7 +144,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->min_desired     = $_POST["account_min_desired"];
     $account->comment         = trim($_POST["account_comment"]);
 
-    if ($conf->global->MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
+    if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
     {
         $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountancyCode")).'</div>';
         $action='edit';       // Force chargement page en mode creation
@@ -292,7 +292,7 @@ if ($action == 'create')
     */
 
 	// Accountancy code
-    if ($conf->global->MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)
+    if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)
     {
         print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountancyCode").'</td>';
         print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
@@ -566,7 +566,7 @@ else
         print '</td></tr>';
 
         // Accountancy code
-        if ($conf->global->MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)
+        if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)
         {
             print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountancyCode").'</td>';
             print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
