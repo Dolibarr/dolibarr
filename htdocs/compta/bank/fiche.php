@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 $langs->load("banks");
 $langs->load("companies");
 
+$action=GETPOST("action");
+
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
 {
@@ -49,7 +51,9 @@ $result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
  */
 if ($_POST["action"] == 'add')
 {
-    // Creation compte
+    $error=0;
+
+    // Create account
     $account = new Account($db,0);
 
     $account->ref           = dol_sanitizeFileName(trim($_POST["ref"]));
@@ -73,7 +77,21 @@ if ($_POST["action"] == 'add')
     $account->min_desired     = $_POST["account_min_desired"];
     $account->comment         = trim($_POST["account_comment"]);
 
-    if ($account->label)
+    if ($conf->global->MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
+    {
+        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountancyCode")).'</div>';
+        $action='create';       // Force chargement page en mode creation
+        $error++;
+    }
+
+    if (empty($account->label))
+    {
+        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("LabelBankCashAccount")).'</div>';
+        $action='create';       // Force chargement page en mode creation
+        $error++;
+    }
+
+    if (! $error)
     {
         $id = $account->create($user->id);
         if ($id > 0)
@@ -82,17 +100,16 @@ if ($_POST["action"] == 'add')
         }
         else {
             $message='<div class="error">'.$account->error().'</div>';
-            $_REQUEST["action"]='create';   // Force chargement page en mode creation
+            $action='create';   // Force chargement page en mode creation
         }
-    } else {
-        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("LabelBankCashAccount")).'</div>';
-        $_REQUEST["action"]='create';       // Force chargement page en mode creation
     }
 }
 
 if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 {
-    // Modification
+    $error=0;
+
+    // Update account
     $account = new Account($db, $_POST["id"]);
     $account->fetch($_POST["id"]);
 
@@ -127,7 +144,21 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->min_desired     = $_POST["account_min_desired"];
     $account->comment         = trim($_POST["account_comment"]);
 
-    if ($account->label)
+    if ($conf->global->MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
+    {
+        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountancyCode")).'</div>';
+        $action='edit';       // Force chargement page en mode creation
+        $error++;
+    }
+
+    if (empty($account->label))
+    {
+        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("LabelBankCashAccount")).'</div>';
+        $action='edit';       // Force chargement page en mode creation
+        $error++;
+    }
+
+    if (! $error)
     {
         $result = $account->update($user);
         if ($result >= 0)
@@ -137,11 +168,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
         else
         {
             $message='<div class="error">'.$account->error().'</div>';
-            $_REQUEST["action"]='edit';     // Force chargement page edition
+            $action='edit';     // Force chargement page edition
         }
-    } else {
-        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("LabelBankCashAccount")).'</div>';
-        $_REQUEST["action"]='create';       // Force chargement page en mode creation
     }
 }
 
@@ -173,7 +201,7 @@ $htmlcompany = new FormCompany($db);
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($_REQUEST["action"] == 'create')
+if ($action == 'create')
 {
 	$account=new Account($db);
 
@@ -213,17 +241,6 @@ if ($_REQUEST["action"] == 'create')
 	print '<td colspan="3">';
 	print $form->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]:1,"type");
 	print '</td></tr>';
-
-	// Code compta
-	if ($conf->global->MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)
-	{
-		print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountancyCode").'</td>';
-		print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
-	}
-	else
-	{
-		print '<input type="hidden" name="account_number" value="'.$account->account_number.'">';
-	}
 
 	// Currency
 	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Currency").'</td>';
@@ -266,6 +283,26 @@ if ($_REQUEST["action"] == 'create')
 	}
 	print '</td></tr>';
 
+    // Conciliable
+    /*print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
+    print '<td colspan="3">';
+    if ($account->type == 0 || $account->type == 1) print '<input type="checkbox" class="flat" name="norappro" '.($account->rappro?'':'checked="true"').'"> '.$langs->trans("DisableConciliation");
+    if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
+    print '</td></tr>';
+    */
+
+	// Accountancy code
+    if ($conf->global->MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)
+    {
+        print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountancyCode").'</td>';
+        print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
+    }
+    else
+    {
+        print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+        print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
+    }
+
 	// Web
 	print '<tr><td valign="top">'.$langs->trans("Web").'</td>';
 	print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$_POST["url"].'"></td></tr>';
@@ -307,7 +344,7 @@ if ($_REQUEST["action"] == 'create')
 /* ************************************************************************** */
 else
 {
-    if (($_GET["id"] || $_GET["ref"]) && $_REQUEST["action"] != 'edit')
+    if (($_GET["id"] || $_GET["ref"]) && $action != 'edit')
 	{
 		$account = new Account($db);
 		if ($_GET["id"])
@@ -331,7 +368,7 @@ else
 		/*
 		* Confirmation to delete
 		*/
-		if ($_REQUEST["action"] == 'delete')
+		if ($action == 'delete')
 		{
 			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
 			if ($ret == 'html') print '<br>';
@@ -387,12 +424,9 @@ else
 		if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
 		print '</td></tr>';
 
-		// Code compta
-		if ($conf->accounting->enabled)
-		{
-			print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
-			print '<td colspan="3">'.$account->account_number.'</td></tr>';
-		}
+		// Accountancy code
+		print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+		print '<td colspan="3">'.$account->account_number.'</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';
 		print '<td colspan="3">'.$account->min_allowed.'</td></tr>';
@@ -415,9 +449,8 @@ else
 
 
 		/*
-		* Barre d'actions
-		*
-		*/
+		 * Barre d'actions
+		 */
 		print '<div class="tabsAction">';
 
 		if ($user->rights->banque->configurer)
@@ -441,10 +474,10 @@ else
     /*                                                                            */
     /* ************************************************************************** */
 
-    if ($_REQUEST["id"] && $_REQUEST["action"] == 'edit' && $user->rights->banque->configurer)
+    if (GETPOST("id") && $action == 'edit' && $user->rights->banque->configurer)
     {
-        $account = new Account($db, $_REQUEST["id"]);
-        $account->fetch($_REQUEST["id"]);
+        $account = new Account($db);
+        $account->fetch(GETPOST("id"));
 
         print_fiche_titre($langs->trans("EditFinancialAccount"));
         print "<br>";
@@ -525,22 +558,24 @@ else
 		}
 		print '</td></tr>';
 
+		// Conciliable
         print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
         print '<td colspan="3">';
-        if ($account->type == 0 || $account->type == 1) print '<input type="checkbox" class="flat" name="norappro" '.($account->rappro?'':'checked="true"').'"> '.$langs->trans("DisableConciliation");
+        if ($account->type == 0 || $account->type == 1) print '<input type="checkbox" class="flat" name="norappro"'.($account->rappro?'':' checked="true"').'"> '.$langs->trans("DisableConciliation");
         if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
         print '</td></tr>';
 
-		// Code compta
-		if ($conf->accounting->enabled)
-		{
-			print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
-	        print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
-		}
-		else
-		{
-	        print '<input type="hidden" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'">';
-		}
+        // Accountancy code
+        if ($conf->global->MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)
+        {
+            print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountancyCode").'</td>';
+            print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
+        }
+        else
+        {
+            print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+            print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
+        }
 
 		// Balance
 		print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';
