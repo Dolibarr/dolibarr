@@ -3467,7 +3467,8 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
 		foreach($mesgarray as $message)
 		{
 			$ret++;
-			print $langs->trans($message)."<br>\n";
+			print $langs->trans($message);
+			if ($ret < sizeof($mesgarray)) print "<br>\n";
 		}
 		print '</div>';
 	}
