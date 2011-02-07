@@ -47,16 +47,16 @@ print_fiche_titre($langs->trans("DatabaseConfiguration"),'','setup');
 
 // Database
 print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
-print "<tr $bc[0]><td width=\"300\">".$langs->trans("Version")."</td><td>" . $db->getLabel()." ".$db->getVersion() . "</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("DatabaseServer")."</td><td>" . $conf->db->host . "</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("DatabasePort")."</td><td>" . (empty($conf->db->port)?$langs->trans("Default"):$conf->db->port) . "</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("DriverType")."</td><td>" . $conf->db->type . "</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("Password")."</td><td>" . preg_replace('/./i','*',$dolibarr_main_db_pass) . "</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("DBStoringCharset")."</td><td>" . $db->getDefaultCharacterSetDatabase() . "</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("DBSortingCharset")."</td><td>" . $db->getDefaultCollationDatabase() . "</td></tr>\n";
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Database").'</td></tr>'."\n";
+print '<tr '.$bc[0].'><td width="300">'.$langs->trans("Version").'</td><td>'.$db->getLabel().' '.$db->getVersion().'</td></tr>'."\n";
+print '<tr '.$bc[1].'><td width="300">'.$langs->trans("DatabaseServer").'</td><td>'.$conf->db->host.'</td></tr>'."\n";
+print '<tr '.$bc[0].'><td width="300">'.$langs->trans("DatabasePort").'</td><td>'.(empty($conf->db->port)?$langs->trans("Default"):$conf->db->port).'</td></tr>'."\n";
+print '<tr '.$bc[1].'><td width="300">'.$langs->trans("DatabaseName").'</td><td>'.$conf->db->name.'</td></tr>'."\n";
+print '<tr '.$bc[0].'><td width="300">'.$langs->trans("DriverType").'</td><td>'.$conf->db->type .'</td></tr>'."\n";
+print '<tr '.$bc[1].'><td width="300">'.$langs->trans("User").'</td><td>'.$conf->db->user.'</td></tr>'."\n";
+print '<tr '.$bc[0].'><td width="300">'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$dolibarr_main_db_pass).'</td></tr>'."\n";
+print '<tr '.$bc[1].'><td width="300">'.$langs->trans("DBStoringCharset").'</td><td>'.$db->getDefaultCharacterSetDatabase().'</td></tr>'."\n";
+print '<tr '.$bc[0].'><td width="300">'.$langs->trans("DBSortingCharset").'</td><td>'.$db->getDefaultCollationDatabase().'</td></tr>'."\n";
 print '</table>';
 
 
@@ -92,7 +92,7 @@ else
 		print '<tr class="liste_titre">';
 		print '<td width="300">'.$langs->trans("Parameter").'</td>';
 		print '<td>'.$langs->trans("Value").'</td>';
-		print "</tr>\n";
+		print '</tr>'."\n";
 
 		// arraytest is an array of test to do
 		$arraytest=array();
@@ -113,7 +113,7 @@ else
 			while ($row = $db->fetch_row($resql))
 			{
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print '<tr '.$bc[$var].'>';
 				print '<td>';
 				print $row[0];
 				print '</td>';
@@ -129,11 +129,11 @@ else
 				if ($show==1) print $html->textwithpicto($row[1],$text);
 				if ($show==2) print $html->textwithpicto($row[1],$text,1,'warning');
 				print '</td>';
-				print "</tr>\n";
+				print '</tr>'."\n";
 			}
 			$db->free($resql);
 		}
-		print "</table>\n";
+		print '</table>'."\n";
 	}
 }
 
