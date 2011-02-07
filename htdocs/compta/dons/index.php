@@ -87,7 +87,7 @@ for ($i = 0 ; $i < 3 ; $i++)
   print '<td><a href="liste.php?statut='.$i.'">'.$donstatic->LibStatut($i,4).'</a></td>';
   print '<td align="right">'.$nb[$i].'</td>';
   print '<td align="right">'.($nb[$i]?price($somme[$i],'MT'):'&nbsp;').'</td>';
-  print '<td align="right">'.($nb[$i]?price($somme[$i]/$nb[$i],'MT'):'&nbsp;').'</td>';
+  print '<td align="right">'.($nb[$i]?price(price2num($somme[$i]/$nb[$i],'MT')):'&nbsp;').'</td>';
   $totalnb += $nb[$i];
   $total += $somme[$i];
   print "</tr>";
@@ -97,7 +97,7 @@ print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
 print '<td align="right">'.$totalnb.'</td>';
 print '<td align="right">'.price($total,'MT').'</td>';
-print '<td align="right">'.($totalnb?price($total/$totalnb,'MT'):'&nbsp;').'</td>';
+print '<td align="right">'.($totalnb?price(price2num($total/$totalnb,'MT')):'&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
 
